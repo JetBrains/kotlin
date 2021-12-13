@@ -1085,6 +1085,26 @@ public actual inline fun CharArray.copyInto(destination: CharArray, destinationO
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
+@JsNativeImplementation("""
+ [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+     if (typeof TypedArray.prototype.slice === "undefined") {
+         function normalizeOffset(offset, length) {
+             if (offset < 0) return Math.max(0, offset + length);
+             return Math.min(offset, length);
+         }
+         Object.defineProperty(TypedArray.prototype, 'slice', {
+             value: function typedArraySlice(begin, end) {
+                 if (typeof end === "undefined") {
+                     end = this.length;
+                 }
+                 begin = normalizeOffset(begin || 0, this.length);
+                 end = Math.max(begin, normalizeOffset(end, this.length));
+                 return new this.constructor(this.subarray(begin, end));
+             }
+         });
+     }
+ })
+""")
 @Suppress("ACTUAL_WITHOUT_EXPECT", "NOTHING_TO_INLINE")
 public actual inline fun <T> Array<out T>.copyOf(): Array<T> {
     return this.asDynamic().slice()
@@ -1318,6 +1338,26 @@ public actual fun <T> Array<out T>.copyOfRange(fromIndex: Int, toIndex: Int): Ar
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
+@JsNativeImplementation("""
+ [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+     if (typeof TypedArray.prototype.slice === "undefined") {
+         function normalizeOffset(offset, length) {
+             if (offset < 0) return Math.max(0, offset + length);
+             return Math.min(offset, length);
+         }
+         Object.defineProperty(TypedArray.prototype, 'slice', {
+             value: function typedArraySlice(begin, end) {
+                 if (typeof end === "undefined") {
+                     end = this.length;
+                 }
+                 begin = normalizeOffset(begin || 0, this.length);
+                 end = Math.max(begin, normalizeOffset(end, this.length));
+                 return new this.constructor(this.subarray(begin, end));
+             }
+         });
+     }
+ })
+""")
 public actual fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return this.asDynamic().slice(fromIndex, toIndex)
@@ -1332,6 +1372,26 @@ public actual fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
+@JsNativeImplementation("""
+ [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+     if (typeof TypedArray.prototype.slice === "undefined") {
+         function normalizeOffset(offset, length) {
+             if (offset < 0) return Math.max(0, offset + length);
+             return Math.min(offset, length);
+         }
+         Object.defineProperty(TypedArray.prototype, 'slice', {
+             value: function typedArraySlice(begin, end) {
+                 if (typeof end === "undefined") {
+                     end = this.length;
+                 }
+                 begin = normalizeOffset(begin || 0, this.length);
+                 end = Math.max(begin, normalizeOffset(end, this.length));
+                 return new this.constructor(this.subarray(begin, end));
+             }
+         });
+     }
+ })
+""")
 public actual fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return this.asDynamic().slice(fromIndex, toIndex)
@@ -1346,6 +1406,26 @@ public actual fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArr
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
+@JsNativeImplementation("""
+ [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+     if (typeof TypedArray.prototype.slice === "undefined") {
+         function normalizeOffset(offset, length) {
+             if (offset < 0) return Math.max(0, offset + length);
+             return Math.min(offset, length);
+         }
+         Object.defineProperty(TypedArray.prototype, 'slice', {
+             value: function typedArraySlice(begin, end) {
+                 if (typeof end === "undefined") {
+                     end = this.length;
+                 }
+                 begin = normalizeOffset(begin || 0, this.length);
+                 end = Math.max(begin, normalizeOffset(end, this.length));
+                 return new this.constructor(this.subarray(begin, end));
+             }
+         });
+     }
+ })
+""")
 public actual fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return this.asDynamic().slice(fromIndex, toIndex)
@@ -1360,6 +1440,26 @@ public actual fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
+@JsNativeImplementation("""
+ [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+     if (typeof TypedArray.prototype.slice === "undefined") {
+         function normalizeOffset(offset, length) {
+             if (offset < 0) return Math.max(0, offset + length);
+             return Math.min(offset, length);
+         }
+         Object.defineProperty(TypedArray.prototype, 'slice', {
+             value: function typedArraySlice(begin, end) {
+                 if (typeof end === "undefined") {
+                     end = this.length;
+                 }
+                 begin = normalizeOffset(begin || 0, this.length);
+                 end = Math.max(begin, normalizeOffset(end, this.length));
+                 return new this.constructor(this.subarray(begin, end));
+             }
+         });
+     }
+ })
+""")
 public actual fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return withType("LongArray", this.asDynamic().slice(fromIndex, toIndex))
@@ -1374,6 +1474,26 @@ public actual fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
+@JsNativeImplementation("""
+ [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+     if (typeof TypedArray.prototype.slice === "undefined") {
+         function normalizeOffset(offset, length) {
+             if (offset < 0) return Math.max(0, offset + length);
+             return Math.min(offset, length);
+         }
+         Object.defineProperty(TypedArray.prototype, 'slice', {
+             value: function typedArraySlice(begin, end) {
+                 if (typeof end === "undefined") {
+                     end = this.length;
+                 }
+                 begin = normalizeOffset(begin || 0, this.length);
+                 end = Math.max(begin, normalizeOffset(end, this.length));
+                 return new this.constructor(this.subarray(begin, end));
+             }
+         });
+     }
+ })
+""")
 public actual fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return this.asDynamic().slice(fromIndex, toIndex)
@@ -1388,6 +1508,26 @@ public actual fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArr
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
+@JsNativeImplementation("""
+ [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+     if (typeof TypedArray.prototype.slice === "undefined") {
+         function normalizeOffset(offset, length) {
+             if (offset < 0) return Math.max(0, offset + length);
+             return Math.min(offset, length);
+         }
+         Object.defineProperty(TypedArray.prototype, 'slice', {
+             value: function typedArraySlice(begin, end) {
+                 if (typeof end === "undefined") {
+                     end = this.length;
+                 }
+                 begin = normalizeOffset(begin || 0, this.length);
+                 end = Math.max(begin, normalizeOffset(end, this.length));
+                 return new this.constructor(this.subarray(begin, end));
+             }
+         });
+     }
+ })
+""")
 public actual fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return this.asDynamic().slice(fromIndex, toIndex)
@@ -1402,6 +1542,26 @@ public actual fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleA
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
+@JsNativeImplementation("""
+ [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+     if (typeof TypedArray.prototype.slice === "undefined") {
+         function normalizeOffset(offset, length) {
+             if (offset < 0) return Math.max(0, offset + length);
+             return Math.min(offset, length);
+         }
+         Object.defineProperty(TypedArray.prototype, 'slice', {
+             value: function typedArraySlice(begin, end) {
+                 if (typeof end === "undefined") {
+                     end = this.length;
+                 }
+                 begin = normalizeOffset(begin || 0, this.length);
+                 end = Math.max(begin, normalizeOffset(end, this.length));
+                 return new this.constructor(this.subarray(begin, end));
+             }
+         });
+     }
+ })
+""")
 public actual fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return withType("BooleanArray", this.asDynamic().slice(fromIndex, toIndex))
@@ -1416,6 +1576,26 @@ public actual fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): Boolea
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
+@JsNativeImplementation("""
+ [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+     if (typeof TypedArray.prototype.slice === "undefined") {
+         function normalizeOffset(offset, length) {
+             if (offset < 0) return Math.max(0, offset + length);
+             return Math.min(offset, length);
+         }
+         Object.defineProperty(TypedArray.prototype, 'slice', {
+             value: function typedArraySlice(begin, end) {
+                 if (typeof end === "undefined") {
+                     end = this.length;
+                 }
+                 begin = normalizeOffset(begin || 0, this.length);
+                 end = Math.max(begin, normalizeOffset(end, this.length));
+                 return new this.constructor(this.subarray(begin, end));
+             }
+         });
+     }
+ })
+""")
 public actual fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return withType("CharArray", this.asDynamic().slice(fromIndex, toIndex))
@@ -1431,6 +1611,60 @@ public actual fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 @SinceKotlin("1.3")
+@JsNativeImplementation("""
+ if (typeof Array.prototype.fill === "undefined") {
+     // Polyfill from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill#Polyfill
+     Object.defineProperty(Array.prototype, 'fill', {
+         value: function (value) {
+             // Steps 1-2.
+             if (this == null) {
+                 throw new TypeError('this is null or not defined');
+             }
+
+             var O = Object(this);
+
+             // Steps 3-5.
+             var len = O.length >>> 0;
+
+             // Steps 6-7.
+             var start = arguments[1];
+             var relativeStart = start >> 0;
+
+             // Step 8.
+             var k = relativeStart < 0 ?
+                     Math.max(len + relativeStart, 0) :
+                     Math.min(relativeStart, len);
+
+             // Steps 9-10.
+             var end = arguments[2];
+             var relativeEnd = end === undefined ?
+                               len : end >> 0;
+
+             // Step 11.
+             var finalValue = relativeEnd < 0 ?
+                              Math.max(len + relativeEnd, 0) :
+                              Math.min(relativeEnd, len);
+
+             // Step 12.
+             while (k < finalValue) {
+                 O[k] = value;
+                 k++;
+             }
+
+             // Step 13.
+             return O;
+         }
+     });
+ }
+ 
+ [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+     if (typeof TypedArray.prototype.fill === "undefined") {
+         Object.defineProperty(TypedArray.prototype, 'fill', {
+             value: Array.prototype.fill
+         });
+     }
+ })
+ """)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
@@ -1447,6 +1681,60 @@ public actual fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 @SinceKotlin("1.3")
+@JsNativeImplementation("""
+ if (typeof Array.prototype.fill === "undefined") {
+     // Polyfill from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill#Polyfill
+     Object.defineProperty(Array.prototype, 'fill', {
+         value: function (value) {
+             // Steps 1-2.
+             if (this == null) {
+                 throw new TypeError('this is null or not defined');
+             }
+
+             var O = Object(this);
+
+             // Steps 3-5.
+             var len = O.length >>> 0;
+
+             // Steps 6-7.
+             var start = arguments[1];
+             var relativeStart = start >> 0;
+
+             // Step 8.
+             var k = relativeStart < 0 ?
+                     Math.max(len + relativeStart, 0) :
+                     Math.min(relativeStart, len);
+
+             // Steps 9-10.
+             var end = arguments[2];
+             var relativeEnd = end === undefined ?
+                               len : end >> 0;
+
+             // Step 11.
+             var finalValue = relativeEnd < 0 ?
+                              Math.max(len + relativeEnd, 0) :
+                              Math.min(relativeEnd, len);
+
+             // Step 12.
+             while (k < finalValue) {
+                 O[k] = value;
+                 k++;
+             }
+
+             // Step 13.
+             return O;
+         }
+     });
+ }
+ 
+ [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+     if (typeof TypedArray.prototype.fill === "undefined") {
+         Object.defineProperty(TypedArray.prototype, 'fill', {
+             value: Array.prototype.fill
+         });
+     }
+ })
+ """)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
@@ -1463,6 +1751,60 @@ public actual fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 @SinceKotlin("1.3")
+@JsNativeImplementation("""
+ if (typeof Array.prototype.fill === "undefined") {
+     // Polyfill from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill#Polyfill
+     Object.defineProperty(Array.prototype, 'fill', {
+         value: function (value) {
+             // Steps 1-2.
+             if (this == null) {
+                 throw new TypeError('this is null or not defined');
+             }
+
+             var O = Object(this);
+
+             // Steps 3-5.
+             var len = O.length >>> 0;
+
+             // Steps 6-7.
+             var start = arguments[1];
+             var relativeStart = start >> 0;
+
+             // Step 8.
+             var k = relativeStart < 0 ?
+                     Math.max(len + relativeStart, 0) :
+                     Math.min(relativeStart, len);
+
+             // Steps 9-10.
+             var end = arguments[2];
+             var relativeEnd = end === undefined ?
+                               len : end >> 0;
+
+             // Step 11.
+             var finalValue = relativeEnd < 0 ?
+                              Math.max(len + relativeEnd, 0) :
+                              Math.min(relativeEnd, len);
+
+             // Step 12.
+             while (k < finalValue) {
+                 O[k] = value;
+                 k++;
+             }
+
+             // Step 13.
+             return O;
+         }
+     });
+ }
+ 
+ [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+     if (typeof TypedArray.prototype.fill === "undefined") {
+         Object.defineProperty(TypedArray.prototype, 'fill', {
+             value: Array.prototype.fill
+         });
+     }
+ })
+ """)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
@@ -1479,6 +1821,60 @@ public actual fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: I
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 @SinceKotlin("1.3")
+@JsNativeImplementation("""
+ if (typeof Array.prototype.fill === "undefined") {
+     // Polyfill from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill#Polyfill
+     Object.defineProperty(Array.prototype, 'fill', {
+         value: function (value) {
+             // Steps 1-2.
+             if (this == null) {
+                 throw new TypeError('this is null or not defined');
+             }
+
+             var O = Object(this);
+
+             // Steps 3-5.
+             var len = O.length >>> 0;
+
+             // Steps 6-7.
+             var start = arguments[1];
+             var relativeStart = start >> 0;
+
+             // Step 8.
+             var k = relativeStart < 0 ?
+                     Math.max(len + relativeStart, 0) :
+                     Math.min(relativeStart, len);
+
+             // Steps 9-10.
+             var end = arguments[2];
+             var relativeEnd = end === undefined ?
+                               len : end >> 0;
+
+             // Step 11.
+             var finalValue = relativeEnd < 0 ?
+                              Math.max(len + relativeEnd, 0) :
+                              Math.min(relativeEnd, len);
+
+             // Step 12.
+             while (k < finalValue) {
+                 O[k] = value;
+                 k++;
+             }
+
+             // Step 13.
+             return O;
+         }
+     });
+ }
+ 
+ [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+     if (typeof TypedArray.prototype.fill === "undefined") {
+         Object.defineProperty(TypedArray.prototype, 'fill', {
+             value: Array.prototype.fill
+         });
+     }
+ })
+ """)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
@@ -1495,6 +1891,60 @@ public actual fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int =
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 @SinceKotlin("1.3")
+@JsNativeImplementation("""
+ if (typeof Array.prototype.fill === "undefined") {
+     // Polyfill from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill#Polyfill
+     Object.defineProperty(Array.prototype, 'fill', {
+         value: function (value) {
+             // Steps 1-2.
+             if (this == null) {
+                 throw new TypeError('this is null or not defined');
+             }
+
+             var O = Object(this);
+
+             // Steps 3-5.
+             var len = O.length >>> 0;
+
+             // Steps 6-7.
+             var start = arguments[1];
+             var relativeStart = start >> 0;
+
+             // Step 8.
+             var k = relativeStart < 0 ?
+                     Math.max(len + relativeStart, 0) :
+                     Math.min(relativeStart, len);
+
+             // Steps 9-10.
+             var end = arguments[2];
+             var relativeEnd = end === undefined ?
+                               len : end >> 0;
+
+             // Step 11.
+             var finalValue = relativeEnd < 0 ?
+                              Math.max(len + relativeEnd, 0) :
+                              Math.min(relativeEnd, len);
+
+             // Step 12.
+             while (k < finalValue) {
+                 O[k] = value;
+                 k++;
+             }
+
+             // Step 13.
+             return O;
+         }
+     });
+ }
+ 
+ [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+     if (typeof TypedArray.prototype.fill === "undefined") {
+         Object.defineProperty(TypedArray.prototype, 'fill', {
+             value: Array.prototype.fill
+         });
+     }
+ })
+ """)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
@@ -1511,6 +1961,60 @@ public actual fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 @SinceKotlin("1.3")
+@JsNativeImplementation("""
+ if (typeof Array.prototype.fill === "undefined") {
+     // Polyfill from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill#Polyfill
+     Object.defineProperty(Array.prototype, 'fill', {
+         value: function (value) {
+             // Steps 1-2.
+             if (this == null) {
+                 throw new TypeError('this is null or not defined');
+             }
+
+             var O = Object(this);
+
+             // Steps 3-5.
+             var len = O.length >>> 0;
+
+             // Steps 6-7.
+             var start = arguments[1];
+             var relativeStart = start >> 0;
+
+             // Step 8.
+             var k = relativeStart < 0 ?
+                     Math.max(len + relativeStart, 0) :
+                     Math.min(relativeStart, len);
+
+             // Steps 9-10.
+             var end = arguments[2];
+             var relativeEnd = end === undefined ?
+                               len : end >> 0;
+
+             // Step 11.
+             var finalValue = relativeEnd < 0 ?
+                              Math.max(len + relativeEnd, 0) :
+                              Math.min(relativeEnd, len);
+
+             // Step 12.
+             while (k < finalValue) {
+                 O[k] = value;
+                 k++;
+             }
+
+             // Step 13.
+             return O;
+         }
+     });
+ }
+ 
+ [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+     if (typeof TypedArray.prototype.fill === "undefined") {
+         Object.defineProperty(TypedArray.prototype, 'fill', {
+             value: Array.prototype.fill
+         });
+     }
+ })
+ """)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
@@ -1527,6 +2031,60 @@ public actual fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: I
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 @SinceKotlin("1.3")
+@JsNativeImplementation("""
+ if (typeof Array.prototype.fill === "undefined") {
+     // Polyfill from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill#Polyfill
+     Object.defineProperty(Array.prototype, 'fill', {
+         value: function (value) {
+             // Steps 1-2.
+             if (this == null) {
+                 throw new TypeError('this is null or not defined');
+             }
+
+             var O = Object(this);
+
+             // Steps 3-5.
+             var len = O.length >>> 0;
+
+             // Steps 6-7.
+             var start = arguments[1];
+             var relativeStart = start >> 0;
+
+             // Step 8.
+             var k = relativeStart < 0 ?
+                     Math.max(len + relativeStart, 0) :
+                     Math.min(relativeStart, len);
+
+             // Steps 9-10.
+             var end = arguments[2];
+             var relativeEnd = end === undefined ?
+                               len : end >> 0;
+
+             // Step 11.
+             var finalValue = relativeEnd < 0 ?
+                              Math.max(len + relativeEnd, 0) :
+                              Math.min(relativeEnd, len);
+
+             // Step 12.
+             while (k < finalValue) {
+                 O[k] = value;
+                 k++;
+             }
+
+             // Step 13.
+             return O;
+         }
+     });
+ }
+ 
+ [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+     if (typeof TypedArray.prototype.fill === "undefined") {
+         Object.defineProperty(TypedArray.prototype, 'fill', {
+             value: Array.prototype.fill
+         });
+     }
+ })
+ """)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
@@ -1543,6 +2101,60 @@ public actual fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex:
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 @SinceKotlin("1.3")
+@JsNativeImplementation("""
+ if (typeof Array.prototype.fill === "undefined") {
+     // Polyfill from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill#Polyfill
+     Object.defineProperty(Array.prototype, 'fill', {
+         value: function (value) {
+             // Steps 1-2.
+             if (this == null) {
+                 throw new TypeError('this is null or not defined');
+             }
+
+             var O = Object(this);
+
+             // Steps 3-5.
+             var len = O.length >>> 0;
+
+             // Steps 6-7.
+             var start = arguments[1];
+             var relativeStart = start >> 0;
+
+             // Step 8.
+             var k = relativeStart < 0 ?
+                     Math.max(len + relativeStart, 0) :
+                     Math.min(relativeStart, len);
+
+             // Steps 9-10.
+             var end = arguments[2];
+             var relativeEnd = end === undefined ?
+                               len : end >> 0;
+
+             // Step 11.
+             var finalValue = relativeEnd < 0 ?
+                              Math.max(len + relativeEnd, 0) :
+                              Math.min(relativeEnd, len);
+
+             // Step 12.
+             while (k < finalValue) {
+                 O[k] = value;
+                 k++;
+             }
+
+             // Step 13.
+             return O;
+         }
+     });
+ }
+ 
+ [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+     if (typeof TypedArray.prototype.fill === "undefined") {
+         Object.defineProperty(TypedArray.prototype, 'fill', {
+             value: Array.prototype.fill
+         });
+     }
+ })
+ """)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
@@ -1559,6 +2171,60 @@ public actual fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toInde
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
 @SinceKotlin("1.3")
+@JsNativeImplementation("""
+ if (typeof Array.prototype.fill === "undefined") {
+     // Polyfill from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill#Polyfill
+     Object.defineProperty(Array.prototype, 'fill', {
+         value: function (value) {
+             // Steps 1-2.
+             if (this == null) {
+                 throw new TypeError('this is null or not defined');
+             }
+
+             var O = Object(this);
+
+             // Steps 3-5.
+             var len = O.length >>> 0;
+
+             // Steps 6-7.
+             var start = arguments[1];
+             var relativeStart = start >> 0;
+
+             // Step 8.
+             var k = relativeStart < 0 ?
+                     Math.max(len + relativeStart, 0) :
+                     Math.min(relativeStart, len);
+
+             // Steps 9-10.
+             var end = arguments[2];
+             var relativeEnd = end === undefined ?
+                               len : end >> 0;
+
+             // Step 11.
+             var finalValue = relativeEnd < 0 ?
+                              Math.max(len + relativeEnd, 0) :
+                              Math.min(relativeEnd, len);
+
+             // Step 12.
+             while (k < finalValue) {
+                 O[k] = value;
+                 k++;
+             }
+
+             // Step 13.
+             return O;
+         }
+     });
+ }
+ 
+ [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+     if (typeof TypedArray.prototype.fill === "undefined") {
+         Object.defineProperty(TypedArray.prototype, 'fill', {
+             value: Array.prototype.fill
+         });
+     }
+ })
+ """)
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.fill(element: Char, fromIndex: Int = 0, toIndex: Int = size): Unit {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
@@ -1804,6 +2470,27 @@ public actual inline fun <T> Array<out T>.plusElement(element: T): Array<T> {
  * 
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
+@JsNativeImplementation("""
+[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+    if (typeof TypedArray.prototype.sort === "undefined") {
+        Object.defineProperty(TypedArray.prototype, 'sort', {
+            value: function(compareFunction) {
+                compareFunction = compareFunction || function (a, b) {
+                    if (a < b) return -1;
+                    if (a > b) return 1;
+                    if (a === b) {
+                        if (a !== 0) return 0;
+                        var ia = 1 / a;
+                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+                    }
+                    return a !== a ? (b !== b ? 0 : 1) : -1
+                }
+                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+            }
+        });
+    }
+});
+""")
 public actual fun IntArray.sort(): Unit {
     this.asDynamic().sort()
 }
@@ -1823,6 +2510,27 @@ public actual fun LongArray.sort(): Unit {
  * 
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
+@JsNativeImplementation("""
+[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+    if (typeof TypedArray.prototype.sort === "undefined") {
+        Object.defineProperty(TypedArray.prototype, 'sort', {
+            value: function(compareFunction) {
+                compareFunction = compareFunction || function (a, b) {
+                    if (a < b) return -1;
+                    if (a > b) return 1;
+                    if (a === b) {
+                        if (a !== 0) return 0;
+                        var ia = 1 / a;
+                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+                    }
+                    return a !== a ? (b !== b ? 0 : 1) : -1
+                }
+                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+            }
+        });
+    }
+});
+""")
 public actual fun ByteArray.sort(): Unit {
     this.asDynamic().sort()
 }
@@ -1832,6 +2540,27 @@ public actual fun ByteArray.sort(): Unit {
  * 
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
+@JsNativeImplementation("""
+[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+    if (typeof TypedArray.prototype.sort === "undefined") {
+        Object.defineProperty(TypedArray.prototype, 'sort', {
+            value: function(compareFunction) {
+                compareFunction = compareFunction || function (a, b) {
+                    if (a < b) return -1;
+                    if (a > b) return 1;
+                    if (a === b) {
+                        if (a !== 0) return 0;
+                        var ia = 1 / a;
+                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+                    }
+                    return a !== a ? (b !== b ? 0 : 1) : -1
+                }
+                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+            }
+        });
+    }
+});
+""")
 public actual fun ShortArray.sort(): Unit {
     this.asDynamic().sort()
 }
@@ -1841,6 +2570,27 @@ public actual fun ShortArray.sort(): Unit {
  * 
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
+@JsNativeImplementation("""
+[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+    if (typeof TypedArray.prototype.sort === "undefined") {
+        Object.defineProperty(TypedArray.prototype, 'sort', {
+            value: function(compareFunction) {
+                compareFunction = compareFunction || function (a, b) {
+                    if (a < b) return -1;
+                    if (a > b) return 1;
+                    if (a === b) {
+                        if (a !== 0) return 0;
+                        var ia = 1 / a;
+                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+                    }
+                    return a !== a ? (b !== b ? 0 : 1) : -1
+                }
+                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+            }
+        });
+    }
+});
+""")
 public actual fun DoubleArray.sort(): Unit {
     this.asDynamic().sort()
 }
@@ -1850,6 +2600,27 @@ public actual fun DoubleArray.sort(): Unit {
  * 
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
+@JsNativeImplementation("""
+[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+    if (typeof TypedArray.prototype.sort === "undefined") {
+        Object.defineProperty(TypedArray.prototype, 'sort', {
+            value: function(compareFunction) {
+                compareFunction = compareFunction || function (a, b) {
+                    if (a < b) return -1;
+                    if (a > b) return 1;
+                    if (a === b) {
+                        if (a !== 0) return 0;
+                        var ia = 1 / a;
+                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+                    }
+                    return a !== a ? (b !== b ? 0 : 1) : -1
+                }
+                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+            }
+        });
+    }
+});
+""")
 public actual fun FloatArray.sort(): Unit {
     this.asDynamic().sort()
 }
@@ -1859,6 +2630,27 @@ public actual fun FloatArray.sort(): Unit {
  * 
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
+@JsNativeImplementation("""
+[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+    if (typeof TypedArray.prototype.sort === "undefined") {
+        Object.defineProperty(TypedArray.prototype, 'sort', {
+            value: function(compareFunction) {
+                compareFunction = compareFunction || function (a, b) {
+                    if (a < b) return -1;
+                    if (a > b) return 1;
+                    if (a === b) {
+                        if (a !== 0) return 0;
+                        var ia = 1 / a;
+                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+                    }
+                    return a !== a ? (b !== b ? 0 : 1) : -1
+                }
+                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+            }
+        });
+    }
+});
+""")
 public actual fun CharArray.sort(): Unit {
     this.asDynamic().sort(::primitiveCompareTo)
 }
@@ -2041,6 +2833,27 @@ public actual fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit 
  */
 @Deprecated("Use other sorting functions from the Standard Library")
 @DeprecatedSinceKotlin(warningSince = "1.6")
+@JsNativeImplementation("""
+[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+    if (typeof TypedArray.prototype.sort === "undefined") {
+        Object.defineProperty(TypedArray.prototype, 'sort', {
+            value: function(compareFunction) {
+                compareFunction = compareFunction || function (a, b) {
+                    if (a < b) return -1;
+                    if (a > b) return 1;
+                    if (a === b) {
+                        if (a !== 0) return 0;
+                        var ia = 1 / a;
+                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+                    }
+                    return a !== a ? (b !== b ? 0 : 1) : -1
+                }
+                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+            }
+        });
+    }
+})
+""")
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.sort(noinline comparison: (a: Byte, b: Byte) -> Int): Unit {
     asDynamic().sort(comparison)
@@ -2051,6 +2864,27 @@ public inline fun ByteArray.sort(noinline comparison: (a: Byte, b: Byte) -> Int)
  */
 @Deprecated("Use other sorting functions from the Standard Library")
 @DeprecatedSinceKotlin(warningSince = "1.6")
+@JsNativeImplementation("""
+[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+    if (typeof TypedArray.prototype.sort === "undefined") {
+        Object.defineProperty(TypedArray.prototype, 'sort', {
+            value: function(compareFunction) {
+                compareFunction = compareFunction || function (a, b) {
+                    if (a < b) return -1;
+                    if (a > b) return 1;
+                    if (a === b) {
+                        if (a !== 0) return 0;
+                        var ia = 1 / a;
+                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+                    }
+                    return a !== a ? (b !== b ? 0 : 1) : -1
+                }
+                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+            }
+        });
+    }
+})
+""")
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.sort(noinline comparison: (a: Short, b: Short) -> Int): Unit {
     asDynamic().sort(comparison)
@@ -2061,6 +2895,27 @@ public inline fun ShortArray.sort(noinline comparison: (a: Short, b: Short) -> I
  */
 @Deprecated("Use other sorting functions from the Standard Library")
 @DeprecatedSinceKotlin(warningSince = "1.6")
+@JsNativeImplementation("""
+[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+    if (typeof TypedArray.prototype.sort === "undefined") {
+        Object.defineProperty(TypedArray.prototype, 'sort', {
+            value: function(compareFunction) {
+                compareFunction = compareFunction || function (a, b) {
+                    if (a < b) return -1;
+                    if (a > b) return 1;
+                    if (a === b) {
+                        if (a !== 0) return 0;
+                        var ia = 1 / a;
+                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+                    }
+                    return a !== a ? (b !== b ? 0 : 1) : -1
+                }
+                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+            }
+        });
+    }
+})
+""")
 @kotlin.internal.InlineOnly
 public inline fun IntArray.sort(noinline comparison: (a: Int, b: Int) -> Int): Unit {
     asDynamic().sort(comparison)
@@ -2071,6 +2926,27 @@ public inline fun IntArray.sort(noinline comparison: (a: Int, b: Int) -> Int): U
  */
 @Deprecated("Use other sorting functions from the Standard Library")
 @DeprecatedSinceKotlin(warningSince = "1.6")
+@JsNativeImplementation("""
+[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+    if (typeof TypedArray.prototype.sort === "undefined") {
+        Object.defineProperty(TypedArray.prototype, 'sort', {
+            value: function(compareFunction) {
+                compareFunction = compareFunction || function (a, b) {
+                    if (a < b) return -1;
+                    if (a > b) return 1;
+                    if (a === b) {
+                        if (a !== 0) return 0;
+                        var ia = 1 / a;
+                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+                    }
+                    return a !== a ? (b !== b ? 0 : 1) : -1
+                }
+                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+            }
+        });
+    }
+})
+""")
 @kotlin.internal.InlineOnly
 public inline fun LongArray.sort(noinline comparison: (a: Long, b: Long) -> Int): Unit {
     asDynamic().sort(comparison)
@@ -2081,6 +2957,27 @@ public inline fun LongArray.sort(noinline comparison: (a: Long, b: Long) -> Int)
  */
 @Deprecated("Use other sorting functions from the Standard Library")
 @DeprecatedSinceKotlin(warningSince = "1.6")
+@JsNativeImplementation("""
+[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+    if (typeof TypedArray.prototype.sort === "undefined") {
+        Object.defineProperty(TypedArray.prototype, 'sort', {
+            value: function(compareFunction) {
+                compareFunction = compareFunction || function (a, b) {
+                    if (a < b) return -1;
+                    if (a > b) return 1;
+                    if (a === b) {
+                        if (a !== 0) return 0;
+                        var ia = 1 / a;
+                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+                    }
+                    return a !== a ? (b !== b ? 0 : 1) : -1
+                }
+                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+            }
+        });
+    }
+})
+""")
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.sort(noinline comparison: (a: Float, b: Float) -> Int): Unit {
     asDynamic().sort(comparison)
@@ -2091,6 +2988,27 @@ public inline fun FloatArray.sort(noinline comparison: (a: Float, b: Float) -> I
  */
 @Deprecated("Use other sorting functions from the Standard Library")
 @DeprecatedSinceKotlin(warningSince = "1.6")
+@JsNativeImplementation("""
+[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+    if (typeof TypedArray.prototype.sort === "undefined") {
+        Object.defineProperty(TypedArray.prototype, 'sort', {
+            value: function(compareFunction) {
+                compareFunction = compareFunction || function (a, b) {
+                    if (a < b) return -1;
+                    if (a > b) return 1;
+                    if (a === b) {
+                        if (a !== 0) return 0;
+                        var ia = 1 / a;
+                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+                    }
+                    return a !== a ? (b !== b ? 0 : 1) : -1
+                }
+                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+            }
+        });
+    }
+})
+""")
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.sort(noinline comparison: (a: Double, b: Double) -> Int): Unit {
     asDynamic().sort(comparison)
@@ -2101,6 +3019,27 @@ public inline fun DoubleArray.sort(noinline comparison: (a: Double, b: Double) -
  */
 @Deprecated("Use other sorting functions from the Standard Library")
 @DeprecatedSinceKotlin(warningSince = "1.6")
+@JsNativeImplementation("""
+[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+    if (typeof TypedArray.prototype.sort === "undefined") {
+        Object.defineProperty(TypedArray.prototype, 'sort', {
+            value: function(compareFunction) {
+                compareFunction = compareFunction || function (a, b) {
+                    if (a < b) return -1;
+                    if (a > b) return 1;
+                    if (a === b) {
+                        if (a !== 0) return 0;
+                        var ia = 1 / a;
+                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+                    }
+                    return a !== a ? (b !== b ? 0 : 1) : -1
+                }
+                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+            }
+        });
+    }
+})
+""")
 @kotlin.internal.InlineOnly
 public inline fun CharArray.sort(noinline comparison: (a: Char, b: Char) -> Int): Unit {
     asDynamic().sort(comparison)

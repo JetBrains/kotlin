@@ -11,6 +11,7 @@ fun box(): String {
     assertEquals(a * b, 84)
     assertEquals(a * c, 88)
     assertEquals(a * d, -4)
+    assertEquals(js("Math.imul.called"), js("undefined"))
 
     return "OK"
 }

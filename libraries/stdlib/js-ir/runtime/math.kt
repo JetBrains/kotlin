@@ -6,7 +6,7 @@
 package kotlin.js
 
 @JsNativeImplementation("""
-if (typeof Math == "object" && Math !== null & typeof Math.imul === "undefined") {
+if (typeof Math.imul === "undefined") {
   Math.imul = function imul(a, b) {
     return ((a & 0xffff0000) * (b & 0xffff) + (a & 0xffff) * (b | 0)) | 0; 
   }

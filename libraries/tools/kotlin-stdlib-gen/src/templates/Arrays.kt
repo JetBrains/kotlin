@@ -986,7 +986,7 @@ object ArrayOps : TemplateGroupBase() {
                 specialFor(ArraysOfPrimitives) {
                     on(Backend.IR) {
                         annotation("""
-                           @JsNativeImplementation(\"\"\"
+                           @JsNativeImplementation(${"\"\"\""}
                             [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
                                 if (typeof TypedArray.prototype.slice === "undefined") {
                                     function normalizeOffset(offset, length) {
@@ -1005,7 +1005,7 @@ object ArrayOps : TemplateGroupBase() {
                                     });
                                 }
                             })
-                           \"\"\")
+                           ${"\"\"\""})
                         """.trimIndent())
                     }
                 }
@@ -1119,7 +1119,7 @@ object ArrayOps : TemplateGroupBase() {
                     suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
                     on(Backend.IR) {
                         annotation("""
-                           @JsNativeImplementation(\"\"\"
+                           @JsNativeImplementation(${"\"\"\""}
                             [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
                                 if (typeof TypedArray.prototype.slice === "undefined") {
                                     function normalizeOffset(offset, length) {
@@ -1138,7 +1138,7 @@ object ArrayOps : TemplateGroupBase() {
                                     });
                                 }
                             })
-                           \"\"\")
+                           ${"\"\"\""})
                         """.trimIndent())
                     }
                 }
@@ -1272,7 +1272,7 @@ object ArrayOps : TemplateGroupBase() {
                         on(Backend.IR) {
                             on(Backend.IR) {
                                 annotation("""
-                                    @JsNativeImplementation(\"\"\"
+                                    @JsNativeImplementation(${"\"\"\""}
                                     [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
                                         if (typeof TypedArray.prototype.sort === "undefined") {
                                             Object.defineProperty(TypedArray.prototype, 'sort', {
@@ -1292,7 +1292,7 @@ object ArrayOps : TemplateGroupBase() {
                                             });
                                         }
                                     });
-                                    \"\"\")
+                                    ${"\"\"\""})
                                 """.trimIndent())
                             }
                             if (primitive == PrimitiveType.Char) {
@@ -1369,7 +1369,7 @@ object ArrayOps : TemplateGroupBase() {
             signature("sort(noinline comparison: (a: T, b: T) -> Int)")
             on(Backend.IR) {
                 annotation("""
-                    @JsNativeImplementation(\"\"\"
+                    @JsNativeImplementation(${"\"\"\""}
                     [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
                         if (typeof TypedArray.prototype.sort === "undefined") {
                             Object.defineProperty(TypedArray.prototype, 'sort', {
@@ -1389,7 +1389,7 @@ object ArrayOps : TemplateGroupBase() {
                             });
                         }
                     })
-                    \"\"\")
+                    ${"\"\"\""})
                 """.trimIndent())
             }
             body { "asDynamic().sort(comparison)" }
@@ -1756,7 +1756,7 @@ object ArrayOps : TemplateGroupBase() {
                 suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
                 on(Backend.IR) {
                     annotation("""
-                       @JsNativeImplementation(\"\"\"
+                       @JsNativeImplementation(${"\"\"\""}
                         if (typeof Array.prototype.fill === "undefined") {
                             // Polyfill from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill#Polyfill
                             Object.defineProperty(Array.prototype, 'fill', {
@@ -1809,7 +1809,7 @@ object ArrayOps : TemplateGroupBase() {
                                 });
                             }
                         })
-                        \"\"\")
+                        ${"\"\"\""})
                     """.trimIndent())
                 }
                 body {
