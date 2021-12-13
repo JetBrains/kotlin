@@ -983,9 +983,6 @@ class ComposableFunctionBodyTransformer(
                     returnVar?.let { irReturn(declaration.symbol, irGet(it)) }
                 )
             )
-            if (collectSourceInformation && scope.isInlinedLambda) {
-                scope.realizeEndCalls { irEndReplaceableGroup() }
-            }
         } else {
             declaration.body = IrBlockBodyImpl(
                 body.startOffset,
