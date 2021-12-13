@@ -153,8 +153,7 @@ private class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrEl
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        val superQualifierClass = expression.superQualifierSymbol?.owner
-        if (superQualifierClass == null || !superQualifierClass.isInterface || expression.isSuperToAny()) {
+        if (expression.superQualifierSymbol?.owner?.isInterface != true || expression.isSuperToAny()) {
             return super.visitCall(expression)
         }
 

@@ -11,6 +11,7 @@ final class User$Companion : java/lang/Object, kotlinx/parcelize/Parceler {
         LABEL (L0)
         LINENUMBER (10)
           ALOAD (0)
+          CHECKCAST (kotlinx/parcelize/Parceler)
           ILOAD (1)
           INVOKESTATIC (kotlinx/parcelize/Parceler$DefaultImpls, newArray, (Lkotlinx/parcelize/Parceler;I)[Ljava/lang/Object;)
           CHECKCAST ([LUser;)

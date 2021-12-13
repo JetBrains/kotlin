@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineScopeResolver
 import org.jetbrains.kotlin.backend.jvm.ir.findInlineCallSites
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irGetField
@@ -26,7 +25,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -86,11 +84,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
         override fun visitCall(expression: IrCall, data: IrDeclaration?): IrExpression {
             expression.transformChildren(this, data)
 
-            val callee = expression.symbol.owner
-
-            reinterpretMovedDispatchReceiver(expression, callee)
-
-            if (callee.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
+            if (expression.symbol.owner.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR) {
                 return optimizePropertyAccess(expression, data)
             }
 
@@ -108,33 +102,6 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
 
             return expression
         }
-
-        private fun reinterpretMovedDispatchReceiver(expression: IrCall, callee: IrSimpleFunction) {
-            val movedDispatchReceiverIndex = callee.valueParameters.indexOfFirst {
-                it.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
-            }
-            if (movedDispatchReceiverIndex >= 0) {
-                val movedDispatchReceiverParameter = callee.valueParameters[movedDispatchReceiverIndex]
-                expression.putValueArgument(
-                    movedDispatchReceiverIndex,
-                    expression.getValueArgument(movedDispatchReceiverIndex)
-                        ?.reinterpretAsDispatchReceiverOfType(movedDispatchReceiverParameter.type)
-                )
-            }
-        }
-
-        // Given a dispatch receiver expression, wrap it in REINTERPRET_CAST to the given type,
-        // unless it's a value of inline class (which could be boxed at this point).
-        // Avoids a CHECKCAST on a moved dispatch receiver argument.
-        private fun IrExpression.reinterpretAsDispatchReceiverOfType(irType: IrType): IrExpression =
-            if (this.type.isInlineClassType())
-                this
-            else
-                IrTypeOperatorCallImpl(
-                    this.startOffset, this.endOffset,
-                    irType, IrTypeOperator.REINTERPRET_CAST, irType,
-                    this
-                )
 
         private fun optimizePropertyAccess(expression: IrCall, data: IrDeclaration?): IrExpression {
             val accessor = expression.symbol.owner as? IrSimpleFunction ?: return expression

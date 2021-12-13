@@ -1050,12 +1050,6 @@ class ExpressionCodegen(
                 MaterialValue(this, boxedRightType, expression.type)
             }
 
-            IrTypeOperator.REINTERPRET_CAST -> {
-                val targetType = typeMapper.mapType(typeOperand)
-                expression.argument.accept(this, data).materialize()
-                MaterialValue(this, targetType, typeOperand)
-            }
-
             IrTypeOperator.INSTANCEOF -> {
                 expression.argument.accept(this, data).materializeAt(context.irBuiltIns.anyNType)
                 val type = typeMapper.boxType(typeOperand)
