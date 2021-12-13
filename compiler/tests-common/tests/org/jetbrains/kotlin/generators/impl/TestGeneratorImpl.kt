@@ -127,7 +127,7 @@ private class TestGeneratorImplInstance(
             val realName = when (clazz) {
                 TransformingTestMethodModel.TransformerFunctionsClassPlaceHolder::class.java ->
                     "org.jetbrains.kotlin.test.utils.TransformersFunctions"
-                else -> clazz.name
+                else -> clazz.canonicalName
             }
             p.println("import $realName;")
         }
