@@ -38,9 +38,21 @@ class ModuleInfo(val moduleName: String) {
         abstract fun execute(testDirectory: File, sourceDirectory: File)
     }
 
-    class ModuleStep(val id: Int, val dependencies: Collection<String>, val dirtyFiles: Collection<String>, val modifications: List<Modification>)
+    class ModuleStep(
+        val id: Int,
+        val dependencies: Collection<String>,
+        val dirtyFiles: Collection<String>,
+        val modifications: List<Modification>,
+        val directives: Set<StepDirectives>
+    )
+
+
 
     val steps = mutableListOf<ModuleStep>()
+}
+
+enum class StepDirectives(val mnemonic: String) {
+    FAST_PATH_UPDATE("FP")
 }
 
 const val MODULES_LIST = "MODULES"
@@ -183,10 +195,18 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
         return modifications
     }
 
+    private fun MutableSet<StepDirectives>.parseStepFlags(flags: String) {
+        val tokens = flags.trim().split(" ").map { it.trim() }
+        for (directive in StepDirectives.values()) {
+            if (directive.mnemonic in tokens) add(directive)
+        }
+    }
+
     private fun parseStep(stepId: Int): ModuleInfo.ModuleStep {
         val dependencies = mutableSetOf<String>()
         val dirtyFiles = mutableSetOf<String>()
         val modifications = mutableListOf<ModuleInfo.Modification>()
+        val directives = mutableSetOf<StepDirectives>()
 
         loop { line ->
             if (line.matches(STEP_PATTERN.toRegex()))
@@ -201,12 +221,13 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
                 "dependencies" -> line.substring(opIndex + 1).split(",").filter { it.isNotBlank() }.forEach { dependencies.add(it.trim()) }
                 "dirty" -> line.substring(opIndex + 1).split(",").filter { it.isNotBlank() }.forEach { dirtyFiles.add(it.trim()) }
                 "modifications" -> modifications.addAll(parseModifications())
+                "flags" -> directives.parseStepFlags(line.substring(opIndex + 1))
                 else -> println(diagnosticMessage("Unknown op $op", line))
             }
             false
         }
 
-        return ModuleInfo.ModuleStep(stepId, dependencies, dirtyFiles, modifications)
+        return ModuleInfo.ModuleStep(stepId, dependencies, dirtyFiles, modifications, directives)
     }
 
     override fun parse(entryName: String): ModuleInfo {
