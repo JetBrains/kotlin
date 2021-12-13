@@ -144,6 +144,9 @@ class FirDelegatedPropertyInferenceSession(
         return typeContext.typeSubstitutorByTypeConstructor(bindings)
     }
 
+    override fun hasSyntheticTypeVariables(): Boolean {
+        return syntheticTypeVariableByTypeVariable.isNotEmpty()
+    }
 
     override fun isSyntheticTypeVariable(typeVariable: TypeVariableMarker): Boolean {
         return typeVariable in syntheticTypeVariableByTypeVariable.values

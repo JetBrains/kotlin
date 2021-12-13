@@ -32,6 +32,7 @@ abstract class FirInferenceSession {
 
     abstract fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>)
 
+    abstract fun hasSyntheticTypeVariables(): Boolean
     abstract fun isSyntheticTypeVariable(typeVariable: TypeVariableMarker): Boolean
     abstract fun fixSyntheticTypeVariableWithNotEnoughInformation(
         typeVariable: TypeVariableMarker,
@@ -66,6 +67,7 @@ abstract class FirStubInferenceSession : FirInferenceSession() {
 
     override fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>) {}
 
+    override fun hasSyntheticTypeVariables(): Boolean = false
     override fun isSyntheticTypeVariable(typeVariable: TypeVariableMarker): Boolean = false
     override fun fixSyntheticTypeVariableWithNotEnoughInformation(
         typeVariable: TypeVariableMarker,

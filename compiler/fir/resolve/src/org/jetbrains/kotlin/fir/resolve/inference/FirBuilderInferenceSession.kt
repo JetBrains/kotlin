@@ -41,6 +41,8 @@ class FirBuilderInferenceSession(
     override val currentConstraintStorage: ConstraintStorage
         get() = ConstraintStorage.Empty
 
+    override fun hasSyntheticTypeVariables(): Boolean = false
+
     override fun isSyntheticTypeVariable(typeVariable: TypeVariableMarker): Boolean {
         return false
     }
