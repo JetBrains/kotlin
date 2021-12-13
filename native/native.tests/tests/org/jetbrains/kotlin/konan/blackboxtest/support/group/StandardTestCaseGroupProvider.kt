@@ -12,10 +12,6 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GeneratedSources
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestRoots
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.DEFAULT_FILE_NAME
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeFactory
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.computeGeneratedSourcesDir
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.computePackageName
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
@@ -43,13 +39,6 @@ internal class StandardTestCaseGroupProvider(private val settings: Settings) : T
         }
 
         TestCaseGroup.Default(disabledTestCaseIds = emptySet(), testCases = testCases)
-    }
-
-    override fun setPreprocessors(testDataDir: File, preprocessors: List<(String) -> String>) {
-        if (preprocessors.isNotEmpty())
-            sourceTransformers[testDataDir.canonicalPath] = preprocessors
-        else
-            sourceTransformers.remove(testDataDir.canonicalPath)
     }
 
     override fun getTestCaseGroup(testCaseGroupId: TestCaseGroupId): TestCaseGroup? {
@@ -101,7 +90,7 @@ internal class StandardTestCaseGroupProvider(private val settings: Settings) : T
         fun finishTestFile(forceFinish: Boolean, location: Location) {
             val needToFinish = forceFinish
                     || currentTestFileName != null
-                    || (currentTestFileName == null /*&& testFiles.isEmpty()*/ && currentTestFileText.hasAnythingButComments())
+                    || (/*currentTestFileName == null && testFiles.isEmpty() &&*/ currentTestFileText.hasAnythingButComments())
 
             if (needToFinish) {
                 val fileName = currentTestFileName ?: DEFAULT_FILE_NAME
@@ -119,8 +108,7 @@ internal class StandardTestCaseGroupProvider(private val settings: Settings) : T
             }
         }
 
-        val text = testDataFile.applySourceTransformers(sourceTransformers[testDataFile.canonicalPath] ?: listOf())
-        text.lines().forEachIndexed { lineNumber, line ->
+        testDataFile.readLines().forEachIndexed { lineNumber, line ->
             val location = Location(testDataFile, lineNumber)
             val expectFileDirectiveAfterModuleDirective =
                 lastParsedDirective == TestDirectives.MODULE // Only FILE directive may follow MODULE directive.

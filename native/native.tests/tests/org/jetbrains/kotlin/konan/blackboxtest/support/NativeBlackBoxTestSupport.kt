@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addToStdlib.cast
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -32,7 +33,6 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
      */
     override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
         enclosingTestInstance.testRunProvider = getOrCreateTestRunProvider()
-        enclosingTestInstance.onRunProviderSet()
 
         // Set the essential compiler property.
         System.setProperty("kotlin.native.home", getOrCreateGlobalSettings().kotlinNativeHome.path)
@@ -46,9 +46,15 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
             val enclosingTestClass = enclosingTestClass
 
             return root.getStore(NAMESPACE).getOrComputeIfAbsent(enclosingTestClass.sanitizedName) {
-                val (testSettings, testSettingsAnnotation) = computeTestSettings(enclosingTestClass)
-                val requiredSettings: Set<KClass<*>> =
-                    /* Always required */ setOf(GlobalSettings::class, Binaries::class) +/* Custom */ testSettings.requiredSettings
+                val computedTestSettings = computeTestSettings(enclosingTestClass)
+                val requiredSettings: Set<KClass<*>> = buildSet {
+                    // Always required:
+                    this += GlobalSettings::class
+                    this += Binaries::class
+
+                    // Custom:
+                    addAll(computedTestSettings.testSettings.requiredSettings)
+                }
 
                 val globalSettings = getOrCreateGlobalSettings()
 
@@ -62,7 +68,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
                     }
                 })
 
-                val testCaseGroupProvider = createTestCaseGroupProvider(settings, testSettings, testSettingsAnnotation)
+                val testCaseGroupProvider = createTestCaseGroupProvider(settings, computedTestSettings, enclosingTestInstance)
 
                 TestRunProvider(settings, testCaseGroupProvider)
             }.cast()
@@ -80,11 +86,11 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
                 GlobalSettings()
             }.cast()
 
-        private fun computeTestSettings(enclosingTestClass: Class<*>): Pair<TestSettings, Annotation?> {
-            val findTestSettings: Class<*>.() -> Pair<TestSettings, Annotation>? = {
+        private fun computeTestSettings(enclosingTestClass: Class<*>): ComputedTestSettings {
+            val findTestSettings: Class<*>.() -> ComputedTestSettings? = {
                 annotations.asSequence().mapNotNull { annotation ->
                     val testSettings = annotation.annotationClass.findAnnotation<TestSettings>() ?: return@mapNotNull null
-                    testSettings to annotation
+                    ComputedTestSettings(testSettings, annotation)
                 }.firstOrNull()
             }
 
@@ -147,29 +153,29 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
 
         private fun createTestCaseGroupProvider(
             settings: Settings,
-            testSettings: TestSettings,
-            testSettingsAnnotation: Annotation?
+            computedTestSettings: ComputedTestSettings,
+            enclosingTestInstance: AbstractNativeBlackBoxTest
         ): TestCaseGroupProvider {
-            // Try to find a constructor that accepts the setting and the annotation.
-            if (testSettingsAnnotation != null) {
-                val testSettingsAnnotationClass = testSettingsAnnotation.annotationClass
-                testSettings.providerClass.constructors.asSequence()
-                    .forEach { c ->
-                        val (p1, p2) = c.parameters.takeIf { it.size == 2 } ?: return@forEach
-                        if (p1.hasTypeOf<Settings>() && p2.hasTypeOf(testSettingsAnnotationClass))
-                            return c.call(settings, testSettingsAnnotation).cast()
-                    }
+            val (testSettings: TestSettings, testSettingsAnnotation: Annotation?) = computedTestSettings
+            val providerClass: KClass<out TestCaseGroupProvider> = testSettings.providerClass
+
+            // Assumption: For simplicity’s sake TestCaseGroupProvider has just one constructor.
+            val constructor = providerClass.constructors.singleOrNull()
+                ?: fail { "No or multiple constructors found for $providerClass" }
+
+            val testSettingsAnnotationClass: KClass<out Annotation>? = testSettingsAnnotation?.annotationClass
+            val sourceTransformersProvider = enclosingTestInstance.safeAs<ExternalSourceTransformersProvider>()
+
+            val arguments = constructor.parameters.map { parameter ->
+                when {
+                    parameter.hasTypeOf<Settings>() -> settings
+                    sourceTransformersProvider != null && parameter.hasTypeOf<ExternalSourceTransformersProvider>() -> sourceTransformersProvider
+                    testSettingsAnnotationClass != null && parameter.hasTypeOf(testSettingsAnnotationClass) -> testSettingsAnnotation
+                    else -> fail { "Can't provide all arguments for $constructor" }
+                }
             }
 
-            // ... or the settings at least.
-            testSettings.providerClass.constructors.asSequence()
-                .forEach { c ->
-                    val p = c.parameters.singleOrNull() ?: return@forEach
-                    if (p.hasTypeOf<Settings>())
-                        return c.call(settings).cast()
-                }
-
-            fail { "No suitable constructor for ${testSettings.providerClass}" }
+            return constructor.call(*arguments.toTypedArray()).cast()
         }
 
         private inline fun <reified T : Any> KParameter.hasTypeOf(): Boolean = hasTypeOf(T::class)
@@ -178,3 +184,5 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
         private val TestMetadata.testRoot: File get() = getAbsoluteFile(localPath = value)
     }
 }
+
+private data class ComputedTestSettings(val testSettings: TestSettings, val annotation: Annotation?)

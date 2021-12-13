@@ -41,9 +41,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 
 internal class ExtTestCaseGroupProvider(
-    private val settings: Settings
+    private val settings: Settings,
+    private val sourceTransformersProvider: ExternalSourceTransformersProvider
 ) : TestCaseGroupProvider, TestDisposable(parentDisposable = settings) {
-    private val sourceTransformers: MutableMap<String, List<(String) -> String>> = mutableMapOf()
     private val structureFactory = ExtTestDataFileStructureFactory(parentDisposable = this)
     private val sharedModules = ThreadSafeCache<String, TestModule.Shared?>()
 
@@ -61,9 +61,7 @@ internal class ExtTestCaseGroupProvider(
         val testCases = mutableListOf<TestCase>()
 
         testDataFiles.forEach { testDataFile ->
-            val extTestDataFile = ExtTestDataFile(
-                settings, structureFactory, testDataFile, sourceTransformers[testDataFile.canonicalPath] ?: listOf()
-            )
+            val extTestDataFile = ExtTestDataFile(settings, structureFactory, sourceTransformersProvider, testDataFile)
 
             if (extTestDataFile.isRelevant)
                 testCases += extTestDataFile.createTestCase(
@@ -75,13 +73,6 @@ internal class ExtTestCaseGroupProvider(
         }
 
         TestCaseGroup.Default(disabledTestCaseIds, testCases)
-    }
-
-    override fun setPreprocessors(testDataDir: File, preprocessors: List<(String) -> String>) {
-        if (preprocessors.isNotEmpty())
-            sourceTransformers[testDataDir.canonicalPath] = preprocessors
-        else
-            sourceTransformers.remove(testDataDir.canonicalPath)
     }
 
     override fun getTestCaseGroup(testCaseGroupId: TestCaseGroupId): TestCaseGroup? {
@@ -133,15 +124,17 @@ internal class ExtTestCaseGroupProvider(
 private class ExtTestDataFile(
     private val settings: Settings,
     structureFactory: ExtTestDataFileStructureFactory,
-    private val testDataFile: File,
-    sourceTransformers: List<(String) -> String>
+    sourceTransformersProvider: ExternalSourceTransformersProvider,
+    private val testDataFile: File
 ) {
     private val structure by lazy {
-        structureFactory.ExtTestDataFileStructure(testDataFile, sourceTransformers) { line ->
-            // Remove all diagnostic parameters from the text. Examples:
-            //   <!NO_TAIL_CALLS_FOUND!>, <!NON_TAIL_RECURSIVE_CALL!>, <!>.
-            line.replace(DIAGNOSTIC_REGEX) { match -> match.groupValues[1] }
-        }
+        val customTransformers: ExternalSourceTransformers? = sourceTransformersProvider.getSourceTransformers(testDataFile)
+        val allTransformers: ExternalSourceTransformers = if (customTransformers.isNullOrEmpty())
+            MANDATORY_SOURCE_TRANSFORMERS
+        else
+            MANDATORY_SOURCE_TRANSFORMERS + customTransformers
+
+        structureFactory.ExtTestDataFileStructure(testDataFile, allTransformers)
     }
 
     private val testDataFileSettings by lazy {
@@ -633,14 +626,14 @@ private class ExtTestDataFile(
         private fun Directives.multiValues(key: String, predicate: (String) -> Boolean = { true }): Set<String> =
             listValues(key)?.flatMap { it.split(' ') }?.filter(predicate)?.toSet().orEmpty()
 
-        private val DIAGNOSTIC_REGEX = Regex("<!.*?!>(.*?)<!>")
-
         private const val THREAD_LOCAL_ANNOTATION = "@kotlin.native.ThreadLocal"
 
         private val BOX_FUNCTION_NAME = Name.identifier("box")
         private val OPT_IN_ANNOTATION_NAME = Name.identifier("OptIn")
         private val HELPERS_PACKAGE_NAME = Name.identifier("helpers")
         private val TYPE_OF_NAME = Name.identifier("typeOf")
+
+        private val MANDATORY_SOURCE_TRANSFORMERS: ExternalSourceTransformers = listOf(DiagnosticsRemovingSourceTransformer)
     }
 }
 
@@ -659,16 +652,12 @@ private typealias SharedModuleCache = (moduleName: String, generator: SharedModu
 private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : TestDisposable(parentDisposable) {
     private val psiFactory = createPsiFactory(parentDisposable = this)
 
-    inner class ExtTestDataFileStructure(
-        originalTestDataFile: File,
-        sourceTransformers: List<(String) -> String>,
-        initialCleanUpTransformation: (String) -> String
-    ) {
+    inner class ExtTestDataFileStructure(originalTestDataFile: File, sourceTransformers: ExternalSourceTransformers) {
         init {
             assertNotDisposed()
         }
 
-        private val filesAndModules = FilesAndModules(originalTestDataFile, initialCleanUpTransformation, sourceTransformers)
+        private val filesAndModules = FilesAndModules(originalTestDataFile, sourceTransformers)
 
         val directives: Directives get() = filesAndModules.directives
 
@@ -824,16 +813,12 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             ExtTestModule(name, dependencies, friends)
     }
 
-    private inner class FilesAndModules(
-        originalTestDataFile: File,
-        initialCleanUpTransformation: (String) -> String,
-        sourceTransformers: List<(String) -> String>
-    ) {
+    private inner class FilesAndModules(originalTestDataFile: File, sourceTransformers: ExternalSourceTransformers) {
         private val testFileFactory = ExtTestFileFactory()
 
         private val generatedFiles = TestFiles.createTestFiles(
             /* testFileName = */ DEFAULT_FILE_NAME,
-            /* expectedText = */ originalTestDataFile.applySourceTransformers(sourceTransformers),
+            /* expectedText = */ originalTestDataFile.readText(),
             /* factory = */ testFileFactory,
             /* preserveLocations = */ true
         )
@@ -842,7 +827,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             // Clean up contents of every individual test file. Important: This should be done only after parsing testData file,
             // because parsing of testData file relies on certain directives which could be removed by the transformation.
             generatedFiles.forEach { file ->
-                file.text = file.text.lineSequence().joinToString("\n", transform = initialCleanUpTransformation)
+                file.text = sourceTransformers.fold(file.text) { source, transformer -> transformer(source) }
             }
 
             val modules = generatedFiles.map { it.module }.associateBy { it.name }

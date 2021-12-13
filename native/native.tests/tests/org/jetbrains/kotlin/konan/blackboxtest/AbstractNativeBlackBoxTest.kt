@@ -7,31 +7,17 @@ package org.jetbrains.kotlin.konan.blackboxtest
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
-import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseId
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestRun
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestRunProvider
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.TreeNode
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.joinPackageNames
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.prependPackageName
 import org.junit.jupiter.api.DynamicNode
 import org.junit.jupiter.api.DynamicTest.dynamicTest
 import org.junit.jupiter.api.extension.ExtendWith
-import java.io.File
 
 @ExtendWith(NativeBlackBoxTestSupport::class)
 abstract class AbstractNativeBlackBoxTest {
     internal lateinit var testRunProvider: TestRunProvider
-    private val toBeRegistered = mutableListOf<Pair<File, List<(String) -> String>>>()
-    internal fun onRunProviderSet() {
-        for ((file, transformer) in toBeRegistered) {
-            testRunProvider.setProcessors(file, transformer)
-        }
-    }
-
-    fun register(@TestDataFile testDataFilePath: String, sourceTransformers: List<(String) -> String>) =
-        toBeRegistered.add(File(testDataFilePath) to sourceTransformers)
-
-    fun register(@TestDataFile testDataFilePath: String, sourceTransformer: (String) -> String) =
-        register(testDataFilePath, listOf(sourceTransformer))
 
     /**
      * Run JUnit test.

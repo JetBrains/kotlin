@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
+import org.jetbrains.kotlin.konan.blackboxtest.AbstractExternalNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider
@@ -19,7 +20,7 @@ fun main() {
     generateTestGroupSuiteWithJUnit5 {
         // External box tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
-            testClass<AbstractNativeBlackBoxTest>(
+            testClass<AbstractExternalNativeBlackBoxTest>(
                 suiteTestClassName = "ExternalTestGenerated",
                 annotations = listOf(external(), provider<UseExtTestCaseGroupProvider>())
             ) {

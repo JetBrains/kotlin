@@ -65,10 +65,6 @@ internal class PredefinedTestCaseGroupProvider(private val settings: Settings, a
         TestCaseGroup.Default(disabledTestCaseIds = emptySet(), testCases = listOf(testCase))
     }
 
-    override fun setPreprocessors(testDataDir: File, preprocessors: List<(String) -> String>) {
-        // do nothing
-    }
-
     override fun getTestCaseGroup(testCaseGroupId: TestCaseGroupId): TestCaseGroup? {
         assertTrue(testCaseGroupId is TestCaseGroupId.Named)
         return lazyTestCaseGroups[testCaseGroupId.cast()]
