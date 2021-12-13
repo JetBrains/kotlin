@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
+import org.jetbrains.kotlin.resolve.calls.inference.registerTypeVariableIfNotPresent
 import org.jetbrains.kotlin.resolve.descriptorUtil.BUILDER_INFERENCE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker

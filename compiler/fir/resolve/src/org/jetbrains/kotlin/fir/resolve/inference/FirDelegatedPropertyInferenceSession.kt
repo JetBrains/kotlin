@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubsti
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
+import org.jetbrains.kotlin.resolve.calls.inference.registerTypeVariableIfNotPresent
 import org.jetbrains.kotlin.types.model.*
 
 class FirDelegatedPropertyInferenceSession(
@@ -336,12 +337,5 @@ class FirDelegatedPropertyInferenceSession(
         }
 
         return introducedConstraint
-    }
-}
-
-
-fun NewConstraintSystemImpl.registerTypeVariableIfNotPresent(typeVariable: TypeVariableMarker) {
-    if (typeVariable.freshTypeConstructor(typeSystemContext) !in allTypeVariables) {
-        registerVariable(typeVariable)
     }
 }
