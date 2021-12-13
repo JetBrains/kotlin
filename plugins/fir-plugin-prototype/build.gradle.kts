@@ -62,6 +62,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
 }
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
+    dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
     jvmArgs!!.removeIf { it.contains("-Xmx") }
