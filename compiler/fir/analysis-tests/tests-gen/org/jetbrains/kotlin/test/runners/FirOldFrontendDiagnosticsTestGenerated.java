@@ -10601,6 +10601,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("conflicting.kt")
+                public void testConflicting() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/conflicting.kt");
+                }
+
+                @Test
+                @TestMetadata("conflictingWithDifferentOrder.kt")
+                public void testConflictingWithDifferentOrder() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/conflictingWithDifferentOrder.kt");
+                }
+
+                @Test
                 @TestMetadata("contextKeywordWithElvis.kt")
                 public void testContextKeywordWithElvis() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/contextKeywordWithElvis.kt");
@@ -10682,6 +10694,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 @TestMetadata("noLabelsByClassName.kt")
                 public void testNoLabelsByClassName() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/noLabelsByClassName.kt");
+                }
+
+                @Test
+                @TestMetadata("nonConflicting.kt")
+                public void testNonConflicting() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/nonConflicting.kt");
                 }
 
                 @Test
