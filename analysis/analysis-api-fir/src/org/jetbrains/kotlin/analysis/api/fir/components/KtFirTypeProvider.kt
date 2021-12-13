@@ -135,7 +135,9 @@ internal class KtFirTypeProvider(
         return when (this) {
             // We also need to collect those on `upperBound` due to nullability.
             is ConeFlexibleType -> lowerBound.getDirectSuperTypes(shouldApproximate) + upperBound.getDirectSuperTypes(shouldApproximate)
-            is ConeDefinitelyNotNullType -> original.getDirectSuperTypes(shouldApproximate).map { ConeDefinitelyNotNullType(it) }
+            is ConeDefinitelyNotNullType -> original.getDirectSuperTypes(shouldApproximate).map {
+                ConeDefinitelyNotNullType.create(it, analysisSession.rootModuleSession.typeContext) ?: it
+            }
             is ConeIntersectionType -> intersectedTypes.asSequence().flatMap { it.getDirectSuperTypes(shouldApproximate) }
             is ConeClassErrorType -> emptySequence()
             is ConeLookupTagBasedType -> getSubstitutedSuperTypes(shouldApproximate)

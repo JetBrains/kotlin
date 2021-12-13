@@ -256,7 +256,7 @@ class ConeTypeVariableType(
 
 }
 
-data class ConeDefinitelyNotNullType(val original: ConeKotlinType) : ConeSimpleKotlinType(), DefinitelyNotNullTypeMarker {
+data class ConeDefinitelyNotNullType(val original: ConeSimpleKotlinType) : ConeSimpleKotlinType(), DefinitelyNotNullTypeMarker {
     override val typeArguments: Array<out ConeTypeProjection>
         get() = original.typeArguments
 

@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible as coneLowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible as coneUpperBoundIfFlexible
 
@@ -68,15 +69,16 @@ private fun ConeTypeContext.makesSenseToBeDefinitelyNotNull(originalType: ConeKo
     }
 }
 
-// TODO: leave only one of `create` and `makeConeTypeDefinitelyNotNullOrNotNull`
 fun ConeDefinitelyNotNullType.Companion.create(
     original: ConeKotlinType,
     typeContext: ConeTypeContext
 ): ConeDefinitelyNotNullType? {
-    return when {
-        original is ConeDefinitelyNotNullType -> original
-        typeContext.makesSenseToBeDefinitelyNotNull(original) -> ConeDefinitelyNotNullType(original.coneLowerBoundIfFlexible())
-        else -> null
+    return when (original) {
+        is ConeDefinitelyNotNullType -> original
+        is ConeFlexibleType -> create(original.lowerBound, typeContext)
+        is ConeSimpleKotlinType -> runIf(typeContext.makesSenseToBeDefinitelyNotNull(original)) {
+            ConeDefinitelyNotNullType(original.coneLowerBoundIfFlexible())
+        }
     }
 }
 
