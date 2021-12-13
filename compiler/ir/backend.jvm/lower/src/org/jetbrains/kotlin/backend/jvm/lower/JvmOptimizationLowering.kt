@@ -123,11 +123,15 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
             }
         }
 
-        // Given a dispatch receiver expression, wrap it in REINTERPRET_CAST to the given type,
-        // unless it's a value of inline class (which could be boxed at this point).
-        // Avoids a CHECKCAST on a moved dispatch receiver argument.
+        // Given a dispatch receiver expression, wrap it in REINTERPRET_CAST to the given type
+        // to avoid a CHECKCAST on a moved dispatch receiver argument.
+        //
+        // Do not wrap if it's a value of inline class (which could be boxed at this point).
+        //
+        // Do not wrap if the value is already a type operator call as that could discard a
+        // needed type conversion.
         private fun IrExpression.reinterpretAsDispatchReceiverOfType(irType: IrType): IrExpression =
-            if (this.type.isInlineClassType())
+            if (this.type.isInlineClassType() || this is IrTypeOperatorCall)
                 this
             else
                 IrTypeOperatorCallImpl(
