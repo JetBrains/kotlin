@@ -105,7 +105,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
     private fun ConeDefinitelyNotNullType.substituteOriginal(): ConeKotlinType? {
         val substituted = substituteOrNull(original)
             ?.withNullability(ConeNullability.NOT_NULL, typeContext)
-            ?.withAttributes(original.attributes, typeContext)
+            ?.withAttributes(original.attributes)
             ?: return null
         return ConeDefinitelyNotNullType.create(substituted, typeContext) ?: substituted
     }
@@ -193,7 +193,7 @@ class ConeSubstitutorByMap(
         if (type !is ConeTypeParameterType) return null
         val result =
             substitution[type.lookupTag.symbol].updateNullabilityIfNeeded(type)
-                ?.withCombinedAttributesFrom(type, useSiteSession.typeContext)
+                ?.withCombinedAttributesFrom(type)
                 ?: return null
         if (type.isUnsafeVarianceType(useSiteSession)) {
             return useSiteSession.typeApproximator.approximateToSuperType(
@@ -223,7 +223,7 @@ fun createTypeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, ConeK
         override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
             if (type !is ConeLookupTagBasedType && type !is ConeStubType) return null
             val new = map[type.typeConstructor(context)] ?: return null
-            return new.approximateIntegerLiteralType().updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type, context)
+            return new.approximateIntegerLiteralType().updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type)
         }
     }
 }
@@ -235,7 +235,7 @@ internal class TypeSubstitutorByTypeConstructor(
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeLookupTagBasedType && type !is ConeStubType) return null
         val new = map[type.typeConstructor(typeContext)] ?: return null
-        return new.approximateIntegerLiteralType().updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type, typeContext)
+        return new.approximateIntegerLiteralType().updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type)
     }
 }
 

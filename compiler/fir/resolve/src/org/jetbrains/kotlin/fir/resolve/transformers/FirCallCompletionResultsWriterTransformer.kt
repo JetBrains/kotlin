@@ -344,7 +344,7 @@ class FirCallCompletionResultsWriterTransformer(
 
     private fun ConeKotlinType.removeExactAttribute(): ConeKotlinType {
         if (attributes.contains(CompilerConeAttributes.Exact)) {
-            return withAttributes(attributes.remove(CompilerConeAttributes.Exact), session.typeContext)
+            return withAttributes(attributes.remove(CompilerConeAttributes.Exact))
         }
 
         return this
@@ -910,7 +910,7 @@ internal class FirDeclarationCompletionResultsWriter(
             typeRef.resolvedTypeFromPrototype(it)
         } ?: typeRef
         if (data is ApproximationData.ApproximateByStatus) {
-            return result.approximatedIfNeededOrSelf(typeApproximator, data.visibility, typeContext, data.isInline)
+            return result.approximatedIfNeededOrSelf(typeApproximator, data.visibility, data.isInline)
         }
         return result
     }
