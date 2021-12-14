@@ -7205,6 +7205,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         public void testPackageAndPrivateDeclarationDoNotClash() throws Exception {
             runTest("js/js.translator/testData/box/multiFile/packageAndPrivateDeclarationDoNotClash.kt");
         }
+
+        @Test
+        @TestMetadata("samePrivateVals.kt")
+        public void testSamePrivateVals() throws Exception {
+            runTest("js/js.translator/testData/box/multiFile/samePrivateVals.kt");
+        }
     }
 
     @Nested
