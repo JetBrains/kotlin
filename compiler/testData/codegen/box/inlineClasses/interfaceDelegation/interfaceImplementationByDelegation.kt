@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 interface IFoo {
     fun getO(): String
@@ -7,8 +9,7 @@ interface IFoo {
     val ok: String get() = getO() + k
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class InlineFooImpl(val s: String): IFoo {
     override fun getO(): String = s
     override val k: String get() = "K"

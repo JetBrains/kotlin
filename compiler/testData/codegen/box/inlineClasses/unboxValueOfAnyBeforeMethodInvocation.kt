@@ -1,7 +1,8 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class NullableInt(private val holder: Any?) {
     val intValue: Int get() = holder as Int
 }

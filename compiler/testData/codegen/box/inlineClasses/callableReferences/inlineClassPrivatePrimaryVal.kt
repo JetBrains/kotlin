@@ -1,24 +1,24 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
 import kotlin.test.assertEquals
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Z(private val x: Int) {
     companion object {
         val xref = Z::x
     }
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class L(private val x: Long) {
     companion object {
         val xref = L::x
     }
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class S(private val x: String) {
     companion object {
         val xref = S::x

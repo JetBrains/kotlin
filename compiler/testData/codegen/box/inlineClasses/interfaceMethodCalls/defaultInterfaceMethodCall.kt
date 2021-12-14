@@ -1,24 +1,23 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 interface IFoo {
     fun foo() = bar()
     fun bar(): String
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Z(val x: Int) : IFoo {
     override fun bar(): String = "OK"
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class L(val x: Long) : IFoo {
     override fun bar(): String = "OK"
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class S(val x: String) : IFoo {
     override fun bar(): String = "OK"
 }

@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 fun <T> underlying(a: IC): T = bar(a) {
     it.value as T
@@ -24,8 +26,7 @@ fun <T> IC.extensionValue(): T = value as T
 
 fun <T> normalValue(ic: IC): T = ic.value as T
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class IC(val value: Int) {
     fun <T> dispatchValue(): T = value as T
 }

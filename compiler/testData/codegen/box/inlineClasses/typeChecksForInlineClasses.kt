@@ -1,15 +1,15 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class AsAny(val a: Any?) {
     fun myEq(other: Any?): Boolean {
         return other is AsAny && other.a == a
     }
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class AsInt(val a: Int) {
     fun myEq(other: Any?): Boolean {
         return other is AsInt && other.a == a

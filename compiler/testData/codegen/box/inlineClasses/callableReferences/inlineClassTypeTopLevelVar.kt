@@ -1,6 +1,8 @@
 // WITH_STDLIB
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Z(val x: Int)
 
 var topLevel = Z(42)

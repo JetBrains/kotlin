@@ -1,18 +1,20 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
 import kotlin.test.*
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class I(val x: Int)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class JLI(val x: java.lang.Integer)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class U(val x: Unit?)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class N(val x: Nothing?)
 
 val icUnit = U(Unit)

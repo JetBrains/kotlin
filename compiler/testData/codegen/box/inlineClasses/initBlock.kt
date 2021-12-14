@@ -1,15 +1,15 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class SingleInitBlock(val s: String) {
     init {
         res = s
     }
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class MultipleInitBlocks(val a: Any?) {
     init {
         res = "O"
@@ -19,8 +19,7 @@ value class MultipleInitBlocks(val a: Any?) {
     }
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Lambda(val s: String) {
     init {
         val lambda = { res = s }
@@ -28,8 +27,7 @@ value class Lambda(val s: String) {
     }
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class FunLiteral(val s: String) {
     init {
         val funLiteral = fun() {
@@ -39,8 +37,7 @@ value class FunLiteral(val s: String) {
     }
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class ObjectLiteral(val s: String) {
     init {
         val objectLiteral = object {
@@ -52,8 +49,7 @@ value class ObjectLiteral(val s: String) {
     }
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class LocalFunction(val s: String) {
     init {
         fun local() {
@@ -63,8 +59,7 @@ value class LocalFunction(val s: String) {
     }
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class LocalClass(val s: String) {
     init {
         class Local {
@@ -76,8 +71,7 @@ value class LocalClass(val s: String) {
     }
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Getter(val s: String) {
     init {
         res = ok
@@ -87,8 +81,7 @@ value class Getter(val s: String) {
         get() = s
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class GetterThis(val s: String) {
     init {
         res = this.ok
@@ -98,8 +91,7 @@ value class GetterThis(val s: String) {
         get() = s
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Method(val s: String) {
     init {
         res = ok(this)
@@ -108,8 +100,7 @@ value class Method(val s: String) {
     fun ok(m: Method): String = m.s
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class MethodThis(val s: String) {
     init {
         res = this.ok(this)
@@ -118,8 +109,7 @@ value class MethodThis(val s: String) {
     fun ok(m: MethodThis): String = m.s
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class InlineFun(val s: String) {
     init {
         res = ok()
@@ -128,8 +118,7 @@ value class InlineFun(val s: String) {
     inline fun ok(): String = s
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class InlineFunThis(val s: String) {
     init {
         res = this.ok()

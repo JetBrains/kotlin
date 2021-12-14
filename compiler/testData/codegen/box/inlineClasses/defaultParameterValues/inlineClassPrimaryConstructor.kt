@@ -1,13 +1,14 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Z(val x: Int = 1234)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class L(val x: Long = 1234L)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class S(val x: String = "foobar")
 
 fun box(): String {

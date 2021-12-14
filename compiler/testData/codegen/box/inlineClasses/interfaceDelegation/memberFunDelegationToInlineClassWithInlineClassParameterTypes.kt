@@ -1,8 +1,10 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
 import kotlin.test.assertEquals
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class S(val x: String)
 
 interface IFoo<T> {
@@ -14,8 +16,7 @@ interface IFoo<T> {
     fun <X> T.genericMemberExtFun(x: X): String
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class FooImpl(val xs: Array<String>) : IFoo<S> {
     override fun memberFun(s1: S, s2: String): String = xs[0] + s1.x + s2
     override fun memberFunT(x1: S, x2: String): String = xs[0] + x1.x + x2

@@ -1,13 +1,15 @@
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
 // FILE: javaDefaultMethod.kt
 interface K2 : J {
     override fun get2() = "Kotlin"
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class K(val k: String) : K2 {
     override fun get2() = k
 }

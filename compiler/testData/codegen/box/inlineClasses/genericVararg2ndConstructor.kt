@@ -1,8 +1,9 @@
 // WITH_STDLIB
 // KT-41771
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Polynomial<T : Any>(val coefficients: List<T>) {
     constructor(vararg coefficients: T) : this(coefficients.toList())
 }

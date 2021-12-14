@@ -1,15 +1,16 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 import kotlin.reflect.KProperty
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class ICInt(val i: Int)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class ICLong(val l: Long)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class ICOverIC(val o: ICLong)
 
 class Delegate<T>(var f: () -> T) {

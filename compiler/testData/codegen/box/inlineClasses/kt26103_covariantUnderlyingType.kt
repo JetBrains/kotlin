@@ -1,29 +1,29 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class GList<T>(val xs: List<T>)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class GSList<T>(val ss: List<String>)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class SList(val ss: List<String>)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class IList(val ints: List<Int>)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class GIList<T>(val ints: List<Int>)
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class II(val i: Int)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class IIList(val iis: List<II>)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class GIIList<T>(val iis: List<II>)
 
 fun testGList(gl: GList<String>) {

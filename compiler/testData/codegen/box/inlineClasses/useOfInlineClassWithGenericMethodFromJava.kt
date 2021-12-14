@@ -1,10 +1,11 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 // FILE: a.kt
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class IC(val v: Int) {
     fun <T> getT(): T? = null
 }

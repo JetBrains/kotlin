@@ -3,13 +3,14 @@
 // IGNORE_BACKEND: JS, JS_IR, NATIVE
 // IGNORE_BACKEND: JS_IR_ES6
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 class CharacterLiteral(private val prefix: NamelessString, private val s: NamelessString) {
     override fun toString(): String = "$prefix'$s'"
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class NamelessString(val b: ByteArray) {
     override fun toString(): String = String(b)
 }

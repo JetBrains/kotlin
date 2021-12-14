@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 interface IFoo1<out T> {
     fun foo(): T
@@ -8,8 +10,7 @@ interface IFoo2<out T> {
     fun foo(): T
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class X(val x: String)
 
 class Test : IFoo1<X>, IFoo2<X> {

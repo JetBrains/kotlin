@@ -2,6 +2,9 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // JVM_TARGET: 1.8
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
 // FILE: jvmDefaultEnable.kt
 
 interface IFooBar {
@@ -11,12 +14,10 @@ interface IFooBar {
 
 interface IFooBar2 : IFooBar
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Test1(override val bar: String): IFooBar
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Test2(override val bar: String): IFooBar2
 
 fun box(): String {

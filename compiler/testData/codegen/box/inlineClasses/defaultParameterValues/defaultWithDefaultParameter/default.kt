@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM
@@ -9,7 +11,7 @@ interface Path {
     fun Int.extension(s: String = "K") = "${this}extension$s"
 }
 
-@JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class RealPath(val x: Int) : Path
 
 fun box(): String {

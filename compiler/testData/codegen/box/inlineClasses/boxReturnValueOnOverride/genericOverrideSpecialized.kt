@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 interface GFoo<out T> {
     fun foo(): T
@@ -10,8 +12,7 @@ interface IBar {
 
 interface SFooBar : GFoo<IBar>
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class X(val x: String) : IBar {
     override fun bar(): String = x
 }

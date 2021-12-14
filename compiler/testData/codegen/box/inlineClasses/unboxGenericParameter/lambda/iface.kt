@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 fun <T> underlying(a: IC): T = bar(a) {
     (it.value as FooHolder).value as T
@@ -28,8 +30,7 @@ interface Foo
 
 class FooHolder(val value: Any): Foo
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class IC(val value: Foo): Foo {
     fun <T> dispatchValue(): T = (value as FooHolder).value as T
 }

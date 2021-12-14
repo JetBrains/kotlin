@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 interface IBase
 
@@ -6,8 +8,7 @@ interface IQ : IBase {
     fun ok(): String
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class X(val t: IQ): IQ {
     override fun ok(): String = t.ok()
 }

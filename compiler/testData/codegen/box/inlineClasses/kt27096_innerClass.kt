@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 class Outer<X>(val x: X) {
     inner class Inner<Y>(val y: Y) {
@@ -13,14 +15,13 @@ class Outer<X>(val x: X) {
     }
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Z1<X, Y>(val x: Outer<X>.Inner<Y>)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Z2<X, Y>(val z: Z1<X, Y>)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class ZN<X, Y>(val z: Z1<X, Y>?)
 
 fun <X, Y> wrap1(xy : Outer<X>.Inner<Y>): Z1<X, Y>? = if (xy.hasNull) null else Z1(xy)

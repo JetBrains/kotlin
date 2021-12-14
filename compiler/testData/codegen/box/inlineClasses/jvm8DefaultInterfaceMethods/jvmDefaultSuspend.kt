@@ -2,6 +2,8 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // JVM_TARGET: 1.8
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 import kotlin.coroutines.*
 
@@ -9,8 +11,7 @@ interface IOk {
     fun ok(): String = "OK"
 }
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class InlineClass(val s: String) : IOk
 
 suspend fun returnsUnboxed() = InlineClass("")

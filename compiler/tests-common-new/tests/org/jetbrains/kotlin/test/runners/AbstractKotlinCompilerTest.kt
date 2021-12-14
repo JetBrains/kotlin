@@ -87,8 +87,8 @@ abstract class AbstractKotlinCompilerTest {
         contentModifier: ReplacingSourceTransformer,
     ) {
         class SourceTransformer(testServices: TestServices) : ReversibleSourceFilePreprocessor(testServices) {
-            override fun process(file: TestFile, content: String): String = contentModifier.invokeForTestFile(file, content)
-            override fun revert(file: TestFile, actualContent: String): String = contentModifier.revertForFile(file, actualContent)
+            override fun process(file: TestFile, content: String): String = contentModifier.invokeForTestFile(content)
+            override fun revert(file: TestFile, actualContent: String): String = contentModifier.revertForFile(actualContent)
         }
         testRunner(filePath) {
             configuration.invoke(this)

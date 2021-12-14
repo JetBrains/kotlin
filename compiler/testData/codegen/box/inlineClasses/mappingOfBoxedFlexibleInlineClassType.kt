@@ -1,6 +1,8 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
+// WORKS_WHEN_VALUE_CLASS
 
+// LANGUAGE: +ValueClasses
 // FILE: JavaClass.java
 
 public class JavaClass {
@@ -9,17 +11,16 @@ public class JavaClass {
 
 // FILE: test.kt
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class IcInt(val i: Int)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class IcLong(val l: Long)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class IcAny(val a: Any?)
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class IcOverIc(val o: IcInt)
 
 fun box(): String {

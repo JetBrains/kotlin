@@ -5,29 +5,21 @@
 
 package org.jetbrains.kotlin.test.utils
 
-import org.jetbrains.kotlin.test.model.TestFile
 import java.util.function.Function
 
 class ReplacingSourceTransformer(val from: String, val to: String) : Function<String, String>, (String) -> String {
     init {
         require(from.isNotEmpty()) { "Cannot replace empty string" }
-        require(from.lines().size == 1) { "Multiline text cannot be replaced yet" }
-        require(to.lines().size == from.lines().size) { "Number of lines cannot change" }
     }
 
-    private val replacements: MutableMap<String?, List<List<String>>> = mutableMapOf()
+    private val randomComment: String = CharArray(6) { (('0'..'9') + ('a'..'z') + ('A'..'Z')).random() }
+        .joinToString("", prefix = "/* ", postfix = " */")
 
-    fun invokeForTestFile(testFile: TestFile?, source: String): String {
-        val value = source.lines().map { it.split(from) }
-        replacements[testFile?.relativePath] = value
-        return value.joinToString("\n") { it.joinToString(to) }
-    }
+    fun invokeForTestFile(source: String): String = source.replace(from, to + randomComment)
 
-    fun revertForFile(testFile: TestFile?, actual: String): String = actual.lines().mapIndexed { index, line ->
-        val partition = replacements[testFile?.relativePath]?.elementAtOrNull(index) ?: return@mapIndexed line
-        if (partition.joinToString(to) == line) partition.joinToString(from) else line
-    }.joinToString("\n")
+    fun revertForFile(actual: String): String =
+        actual.replace(to + randomComment, from).replace(randomComment, "")
 
-    override fun apply(source: String): String = invokeForTestFile(null, source)
-    override fun invoke(source: String): String = invokeForTestFile(null, source)
+    override fun apply(source: String): String = invokeForTestFile(source)
+    override fun invoke(source: String): String = invokeForTestFile(source)
 }

@@ -1,7 +1,8 @@
 // WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Rgba(val value: Int) {
     inline val r: Int get() = (value shr 0) and 0xFF
     inline val g: Int get() = (value shr 8) and 0xFF
@@ -20,8 +21,7 @@ fun Rgba.withG(g: Int) = Rgba(r, g, b, a)
 fun Rgba.withB(b: Int) = Rgba(r, g, b, a)
 fun Rgba.withA(a: Int) = Rgba(r, g, b, a)
 
-@Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
-@kotlin.jvm.JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class RgbaArray(val array: IntArray) {
     constructor(size: Int) : this(IntArray(size))
     operator fun get(index: Int): Rgba = Rgba(array[index])
