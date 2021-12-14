@@ -337,6 +337,31 @@ abstract class MyAnotherAbstractTestRunner : MyAbstractTestRunner() {
 }
 ```
 
+# Debugging tests (JS and WASM only):
+
+Kotlin/JS and Kotlin/WASM tests support the following system properties to make debugging them more convenient:
+- `kotlin.js.debugMode` for setting a debug mode for Kotlin/JS tests
+- `kotlin.wasm.debugMode` for setting a debug mode for Kotlin/WASM tests
+- `org.jetbrains.kotlin.compiler.ir.dump.strategy` for the IR dump strategy to use. Set it to `"KotlinLike"`
+   if you want the IR dump to be more human-readable.
+
+Note that to pass a system property from gradle task invocation, its name should be prefixed with `fd.`.
+For example, to debug Kotlin/JS tests, run:
+
+```
+./gradlew :js:js.tests:jsIrTest -Pfd.kotlin.js.debugMode=2
+```
+
+To debug WASM tests, run:
+```
+./gradlew :js:js.tests:wasmTest -Pfd.kotlin.wasm.debugMode=2
+```
+
+Values of the debug mode: `0` (or `false`), `1` (or `true`), `2`.
+
+Debug mode `2` will ensure that IR is dumped to a file after each lowering phase.
+The IR dumps will appear next to the generated `.js` or `.wat` file.
+
 # Code style
 
 Please keep your abstract test runners as simple as possible. Ideally each abstract test runner should contain **only** test configuration with DSL and nothing else. All services implementations should be declared in separate files. 

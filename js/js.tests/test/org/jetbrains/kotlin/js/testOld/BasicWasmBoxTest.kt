@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
+import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.Directives
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TestFiles
@@ -147,15 +148,9 @@ abstract class BasicWasmBoxTest(
         testFunction: String
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
-        val debugMode: Int = when (System.getProperty("kotlin.wasm.debugMode")) {
-            "2", "super_debug" -> 2
-            "1", "true", "debug" -> 1
-            "0", "false", "", null -> 0
-            else -> 0
-        }
-
-        val phaseConfig = if (debugMode >= 1) {
-            val allPhasesSet = if (debugMode >= 2) wasmPhases.toPhaseMap().values.toSet() else emptySet()
+        val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
+        val phaseConfig = if (debugMode >= DebugMode.DEBUG) {
+            val allPhasesSet = if (debugMode >= DebugMode.SUPER_DEBUG) wasmPhases.toPhaseMap().values.toSet() else emptySet()
             val dumpOutputDir = File(outputWatFile.parent, outputWatFile.nameWithoutExtension + "-irdump")
             println("\n ------ Dumping phases to file://$dumpOutputDir")
             println("\n ------  KT file://${testFile.absolutePath}")
@@ -211,7 +206,7 @@ abstract class BasicWasmBoxTest(
 
         outputJsFile.write(compilerResult.js + "\n" + testRunner)
 
-        if (debugMode >= 2) {
+        if (debugMode >= DebugMode.SUPER_DEBUG) {
             createDirectoryToRunInBrowser(outputBrowserDir, compilerResult)
         }
     }
