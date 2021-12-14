@@ -62,7 +62,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         visitJump(continueExpression)
     }
 
-    private fun visitClassAndChildren(klass: FirClass, type: ConeKotlinType) {
+    private fun visitClassAndChildren(klass: FirClass, type: ConeClassLikeType) {
         val typeRef = buildResolvedTypeRef {
             this.type = type
         }

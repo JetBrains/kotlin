@@ -62,17 +62,6 @@ fun collectSymbolsForType(type: ConeKotlinType, useSiteSession: FirSession): Lis
 }
 
 fun lookupSuperTypes(
-    type: ConeKotlinType,
-    lookupInterfaces: Boolean,
-    deep: Boolean,
-    useSiteSession: FirSession,
-    substituteTypes: Boolean,
-    supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
-): List<ConeClassLikeType> {
-    return lookupSuperTypes(collectSymbolsForType(type, useSiteSession), lookupInterfaces, deep, useSiteSession, substituteTypes, supertypeSupplier)
-}
-
-fun lookupSuperTypes(
     symbols: List<FirClassifierSymbol<*>>,
     lookupInterfaces: Boolean,
     deep: Boolean,

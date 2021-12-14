@@ -264,7 +264,7 @@ class Fir2IrTypeConverter(
         return classIdToSymbolMap[classId] ?: getArrayClassSymbol(classId)
     }
 
-    private fun approximateType(type: ConeKotlinType): ConeKotlinType {
+    private fun approximateType(type: ConeSimpleKotlinType): ConeKotlinType {
         if (type is ConeClassLikeType && type.typeArguments.isEmpty()) return type
         val substitutor = object : AbstractConeSubstitutor(session.typeContext) {
             override fun substituteType(type: ConeKotlinType): ConeKotlinType? {

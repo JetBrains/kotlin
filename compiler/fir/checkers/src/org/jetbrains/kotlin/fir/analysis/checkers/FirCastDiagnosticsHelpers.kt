@@ -83,8 +83,8 @@ fun checkCasting(
  * (i.e. java.lang.String -> kotlin.String) and ignore mappings that go the other way.
  */
 private fun isRelated(
-    aType: ConeKotlinType,
-    bType: ConeKotlinType,
+    aType: ConeSimpleKotlinType,
+    bType: ConeSimpleKotlinType,
     aClassSymbol: FirRegularClassSymbol?,
     bClassSymbol: FirRegularClassSymbol?,
     context: CheckerContext
@@ -97,7 +97,7 @@ private fun isRelated(
         return true
     }
 
-    fun getCorrespondingKotlinClass(type: ConeKotlinType): ConeKotlinType {
+    fun getCorrespondingKotlinClass(type: ConeSimpleKotlinType): ConeKotlinType {
         return context.session.platformClassMapper.getCorrespondingKotlinClass(type.classId)?.defaultType(listOf()) ?: type
     }
 
@@ -108,7 +108,7 @@ private fun isRelated(
             AbstractTypeChecker.isSubtypeOf(typeContext, bNormalizedType, aNormalizedType)
 }
 
-private fun isFinal(type: ConeKotlinType, session: FirSession): Boolean {
+private fun isFinal(type: ConeSimpleKotlinType, session: FirSession): Boolean {
     return !type.canHaveSubtypes(session)
 }
 
@@ -275,7 +275,7 @@ fun shouldCheckForExactType(expression: FirTypeOperatorCall, context: CheckerCon
 
 fun isRefinementUseless(
     context: CheckerContext,
-    candidateType: ConeKotlinType,
+    candidateType: ConeSimpleKotlinType,
     targetType: ConeKotlinType,
     shouldCheckForExactType: Boolean,
     arg: FirExpression,
@@ -292,7 +292,7 @@ fun isRefinementUseless(
     }
 }
 
-private fun isExactTypeCast(context: CheckerContext, candidateType: ConeKotlinType, targetType: ConeKotlinType): Boolean {
+private fun isExactTypeCast(context: CheckerContext, candidateType: ConeSimpleKotlinType, targetType: ConeKotlinType): Boolean {
     if (!AbstractTypeChecker.equalTypes(context.session.typeContext, candidateType, targetType, stubTypesEqualToAnything = false))
         return false
     // See comments at [isUpcast] why we need to check the existence of @ExtensionFunctionType
