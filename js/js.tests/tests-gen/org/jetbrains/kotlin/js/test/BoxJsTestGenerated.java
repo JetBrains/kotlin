@@ -8239,6 +8239,28 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Nested
+        @TestMetadata("js/js.translator/testData/box/polyfills/expm1")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Expm1 {
+            @Test
+            public void testAllFilesPresentInExpm1() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/expm1"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
+
+            @Test
+            @TestMetadata("expm1WithExistedIntrinsic.kt")
+            public void testExpm1WithExistedIntrinsic() throws Exception {
+                runTest("js/js.translator/testData/box/polyfills/expm1/expm1WithExistedIntrinsic.kt");
+            }
+
+            @Test
+            @TestMetadata("expm1WithoutExistedIntrinsic.kt")
+            public void testExpm1WithoutExistedIntrinsic() throws Exception {
+                runTest("js/js.translator/testData/box/polyfills/expm1/expm1WithoutExistedIntrinsic.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("js/js.translator/testData/box/polyfills/fill")
         @TestDataPath("$PROJECT_ROOT")
         public class Fill {
@@ -8279,6 +8301,28 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             @TestMetadata("globalThisWithoutExistedIntrinsic.kt")
             public void testGlobalThisWithoutExistedIntrinsic() throws Exception {
                 runTest("js/js.translator/testData/box/polyfills/globalThis/globalThisWithoutExistedIntrinsic.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("js/js.translator/testData/box/polyfills/hypot")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Hypot {
+            @Test
+            public void testAllFilesPresentInHypot() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/hypot"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
+
+            @Test
+            @TestMetadata("hypotWithExistedIntrinsic.kt")
+            public void testHypotWithExistedIntrinsic() throws Exception {
+                runTest("js/js.translator/testData/box/polyfills/hypot/hypotWithExistedIntrinsic.kt");
+            }
+
+            @Test
+            @TestMetadata("hypotWithoutExistedIntrinsic.kt")
+            public void testHypotWithoutExistedIntrinsic() throws Exception {
+                runTest("js/js.translator/testData/box/polyfills/hypot/hypotWithoutExistedIntrinsic.kt");
             }
         }
 
@@ -8349,6 +8393,28 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Nested
+        @TestMetadata("js/js.translator/testData/box/polyfills/log1p")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Log1p {
+            @Test
+            public void testAllFilesPresentInLog1p() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/log1p"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
+
+            @Test
+            @TestMetadata("log1pWithExistedIntrinsic.kt")
+            public void testLog1pWithExistedIntrinsic() throws Exception {
+                runTest("js/js.translator/testData/box/polyfills/log1p/log1pWithExistedIntrinsic.kt");
+            }
+
+            @Test
+            @TestMetadata("log1pWithoutExistedIntrinsic.kt")
+            public void testLog1pWithoutExistedIntrinsic() throws Exception {
+                runTest("js/js.translator/testData/box/polyfills/log1p/log1pWithoutExistedIntrinsic.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("js/js.translator/testData/box/polyfills/log2")
         @TestDataPath("$PROJECT_ROOT")
         public class Log2 {
@@ -8393,6 +8459,28 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Nested
+        @TestMetadata("js/js.translator/testData/box/polyfills/sinh")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Sinh {
+            @Test
+            public void testAllFilesPresentInSinh() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/sinh"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
+
+            @Test
+            @TestMetadata("sinhWithExistedIntrinsic.kt")
+            public void testSinhWithExistedIntrinsic() throws Exception {
+                runTest("js/js.translator/testData/box/polyfills/sinh/sinhWithExistedIntrinsic.kt");
+            }
+
+            @Test
+            @TestMetadata("sinhWithoutExistedIntrinsic.kt")
+            public void testSinhWithoutExistedIntrinsic() throws Exception {
+                runTest("js/js.translator/testData/box/polyfills/sinh/sinhWithoutExistedIntrinsic.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("js/js.translator/testData/box/polyfills/sort")
         @TestDataPath("$PROJECT_ROOT")
         public class Sort {
@@ -8411,6 +8499,28 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             @TestMetadata("sortWithoutExistedIntrinsic.kt")
             public void testSortWithoutExistedIntrinsic() throws Exception {
                 runTest("js/js.translator/testData/box/polyfills/sort/sortWithoutExistedIntrinsic.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("js/js.translator/testData/box/polyfills/tanh")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Tanh {
+            @Test
+            public void testAllFilesPresentInTanh() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/polyfills/tanh"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
+            }
+
+            @Test
+            @TestMetadata("tanhWithExistedIntrinsic.kt")
+            public void testTanhWithExistedIntrinsic() throws Exception {
+                runTest("js/js.translator/testData/box/polyfills/tanh/tanhWithExistedIntrinsic.kt");
+            }
+
+            @Test
+            @TestMetadata("tanhWithoutExistedIntrinsic.kt")
+            public void testTanhWithoutExistedIntrinsic() throws Exception {
+                runTest("js/js.translator/testData/box/polyfills/tanh/tanhWithoutExistedIntrinsic.kt");
             }
         }
 

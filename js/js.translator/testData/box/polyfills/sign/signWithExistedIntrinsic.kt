@@ -2,7 +2,7 @@
 // IGNORE_BACKEND: JS
 // FILE: main.js
 Math.sign = function sign(x) {
-    trunc.called = true
+    sign.called = true
     return x > 0 ? 1 : -1;
 }
 

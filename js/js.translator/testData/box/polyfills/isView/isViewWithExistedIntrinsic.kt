@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: main.js
-ArrayBuffer.isView = function isView(compareFunction) {
+ArrayBuffer.isView = function isView(a) {
     isView.called = true
     return a != null && a.__proto__ != null && a.__proto__.__proto__ === Int8Array.prototype.__proto__;
 }
