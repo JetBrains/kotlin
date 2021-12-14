@@ -1,0 +1,64 @@
+FILE: accessToMemberAfterReceiverReassignment.kt
+    public final class My : R|kotlin/Any| {
+        public constructor(x: R|My?|, z: R|My?| = Null(null)): R|My| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|My?| = R|<local>/x|
+            public get(): R|My?|
+
+        public final val z: R|My?| = R|<local>/z|
+            public get(): R|My?|
+
+    }
+    public final fun baseTest(): R|kotlin/Unit| {
+        lvar y: R|My?| = R|/My.My|(R|/My.My|(Null(null)))
+        when () {
+            !=(R|<local>/y|?.{ $subj$.R|/My.x| }, Null(null)) ->  {
+                R|<local>/y|.R|/My.x|.R|/My.x|
+                R|<local>/y| = R|/My.My|(Null(null))
+                R|<local>/y|.R|/My.x|.<Inapplicable(UNSAFE_CALL): /My.x>#
+            }
+        }
+
+    }
+    public final fun deepChainTest(): R|kotlin/Unit| {
+        lvar y: R|My?| = R|/My.My|(R|/My.My|(Null(null)))
+        when () {
+            !=(R|<local>/y|?.{ $subj$.R|/My.x| }?.{ $subj$.R|/My.x| }, Null(null)) ->  {
+                R|<local>/y|.R|/My.x|.R|/My.x|.R|/My.x|
+                R|<local>/y| = R|/My.My|(Null(null))
+                R|<local>/y|.R|/My.x|.<Inapplicable(UNSAFE_CALL): /My.x>#.<Inapplicable(UNSAFE_CALL): /My.x>#
+            }
+        }
+
+    }
+    public final fun backwardAliasTest(z: R|My|): R|kotlin/Unit| {
+        lvar y: R|My| = R|<local>/z|
+        when () {
+            !=(R|<local>/y|.R|/My.x|, Null(null)) ->  {
+                R|<local>/y|.R|/My.x|.R|/My.x|
+                R|<local>/y| = R|/My.My|(Null(null))
+                R|<local>/y|.R|/My.x|.<Inapplicable(UNSAFE_CALL): /My.x>#
+            }
+        }
+
+    }
+    public final fun severalMembersTest(): R|kotlin/Unit| {
+        lvar y: R|My| = R|/My.My|(R|/My.My|(Null(null)), R|/My.My|(Null(null)))
+        when () {
+            !=(R|<local>/y|.R|/My.x|, Null(null)) ->  {
+                when () {
+                    !=(R|<local>/y|.R|/My.z|, Null(null)) ->  {
+                        R|<local>/y|.R|/My.x|.R|/My.x|
+                        R|<local>/y|.R|/My.z|.R|/My.z|
+                        R|<local>/y| = R|/My.My|(Null(null))
+                        R|<local>/y|.R|/My.x|.<Inapplicable(UNSAFE_CALL): /My.x>#
+                        R|<local>/y|.R|/My.z|.<Inapplicable(UNSAFE_CALL): /My.z>#
+                    }
+                }
+
+            }
+        }
+
+    }

@@ -863,7 +863,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         if (possiblyChangedVariables.isEmpty()) return
         val flow = node.flow
         for (variable in possiblyChangedVariables) {
-            flow.removeAllAboutVariable(variable)
+            logicSystem.removeAllAboutVariable(flow, variable)
         }
     }
 
@@ -1170,7 +1170,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val isAssignment = assignment != null
         if (isAssignment) {
             logicSystem.removeLocalVariableAlias(flow, propertyVariable)
-            flow.removeAllAboutVariable(propertyVariable)
+            logicSystem.removeAllAboutVariable(flow, propertyVariable)
             logicSystem.recordNewAssignment(flow, propertyVariable, context.newAssignmentIndex())
         }
 
@@ -1506,13 +1506,6 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
     private fun FLOW.addTypeStatement(info: TypeStatement) {
         logicSystem.addTypeStatement(this, info)
-    }
-
-    private fun FLOW.removeAllAboutVariable(variable: RealVariable?) {
-        if (variable == null) return
-        logicSystem.removeTypeStatementsAboutVariable(this, variable)
-        logicSystem.removeLogicStatementsAboutVariable(this, variable)
-        logicSystem.removeAliasInformationAboutVariable(this, variable)
     }
 
     private fun FLOW.fork(): FLOW {

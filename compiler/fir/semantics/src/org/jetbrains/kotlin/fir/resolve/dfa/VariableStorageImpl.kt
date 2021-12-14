@@ -106,7 +106,9 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         }
 
         val receiverVariable = receiver?.let { getOrCreateVariable(flow, it) }
-        return RealVariable(identifier, isThisReference, receiverVariable, counter++, stability)
+        return RealVariable(identifier, isThisReference, receiverVariable, counter++, stability).also {
+            (receiverVariable as? RealVariable)?.dependentVariables?.add(it)
+        }
     }
 
     @JvmName("getOrCreateRealVariableOrNull")

@@ -3075,6 +3075,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
         }
 
+        @TestMetadata("accessToMemberAfterReceiverReassignment.kt")
+        public void testAccessToMemberAfterReceiverReassignment() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/accessToMemberAfterReceiverReassignment.kt");
+        }
+
         public void testAllFilesPresentInSmartcasts() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
         }

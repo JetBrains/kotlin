@@ -135,11 +135,11 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
         val variables = flows.flatMap { it.approvedTypeStatements.keys }.toSet()
         for (variable in variables) {
             val info = mergeOperation(flows.map { it.getApprovedTypeStatements(variable) }) ?: continue
-            removeTypeStatementsAboutVariable(commonFlow, variable)
+            commonFlow.approvedTypeStatements -= variable
+            commonFlow.approvedTypeStatementsDiff -= variable
             val thereWereReassignments = variable.hasDifferentReassignments(flows)
             if (thereWereReassignments) {
-                removeLogicStatementsAboutVariable(commonFlow, variable)
-                removeAliasInformationAboutVariable(commonFlow, variable)
+                removeAllAboutVariable(commonFlow, variable)
             }
             commonFlow.addApprovedStatements(info)
         }
@@ -222,18 +222,24 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
                     flow.logicStatements[backAlias]?.let { existing -> existing + newStatements } ?: newStatements.toPersistentList()
                 flow.logicStatements = flow.logicStatements.put(backAlias, replacedStatements)
             }
-            flow.approvedTypeStatements[alias]?.let { it ->
-                val newStatements = it.replaceVariable(alias, backAlias)
-                val replacedStatements =
-                    flow.approvedTypeStatements[backAlias]?.let { existing -> existing + newStatements } ?: newStatements
-                flow.approvedTypeStatements = flow.approvedTypeStatements.put(backAlias, replacedStatements.toPersistent())
+
+            fun processApprovedStatements(isDiff: Boolean) {
+                val statements = if (isDiff) flow.approvedTypeStatementsDiff else flow.approvedTypeStatements
+                statements[alias]?.let { it ->
+                    val newStatements = it.replaceVariable(alias, backAlias)
+                    val replacedStatements =
+                        statements[backAlias]?.let { existing -> existing + newStatements } ?: newStatements
+                    val result = statements.put(backAlias, replacedStatements.toPersistent())
+                    if (isDiff) {
+                        flow.approvedTypeStatementsDiff = result
+                    } else {
+                        flow.approvedTypeStatements = result
+                    }
+                }
             }
-            flow.approvedTypeStatementsDiff[alias]?.let { it ->
-                val newStatements = it.replaceVariable(alias, backAlias)
-                val replacedStatements =
-                    flow.approvedTypeStatementsDiff[backAlias]?.let { existing -> existing + newStatements } ?: newStatements
-                flow.approvedTypeStatementsDiff = flow.approvedTypeStatementsDiff.put(backAlias, replacedStatements.toPersistent())
-            }
+
+            processApprovedStatements(isDiff = false)
+            processApprovedStatements(isDiff = true)
         }
 
         val original = flow.directAliasMap[alias]?.variable
@@ -310,16 +316,30 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
     override fun removeTypeStatementsAboutVariable(flow: PersistentFlow, variable: RealVariable) {
         flow.approvedTypeStatements -= variable
         flow.approvedTypeStatementsDiff -= variable
+        variable.forEachTransitiveDependentVariable {
+            flow.approvedTypeStatements -= it
+            flow.approvedTypeStatementsDiff -= it
+        }
     }
 
     override fun removeLogicStatementsAboutVariable(flow: PersistentFlow, variable: DataFlowVariable) {
         flow.logicStatements -= variable
+        val realVariable = variable as? RealVariable
+        realVariable?.forEachTransitiveDependentVariable {
+            flow.logicStatements -= it
+        }
         var newLogicStatements = flow.logicStatements
         for ((key, implications) in flow.logicStatements) {
             val implicationsToDelete = mutableListOf<Implication>()
             implications.forEach { implication ->
-                if (implication.effect.variable == variable) {
+                val implicationVariable = implication.effect.variable
+                if (implicationVariable == variable) {
                     implicationsToDelete += implication
+                }
+                realVariable?.forEachTransitiveDependentVariable {
+                    if (implicationVariable == it) {
+                        implicationsToDelete += implication
+                    }
                 }
             }
             if (implicationsToDelete.isEmpty()) continue
@@ -343,6 +363,13 @@ abstract class PersistentLogicSystem(context: ConeInferenceContext) : LogicSyste
             } else {
                 flow.backwardsAliasMap.put(existedAlias, updatedBackwardsAliasList)
             }
+        }
+    }
+
+    private fun RealVariable.forEachTransitiveDependentVariable(action: (RealVariable) -> Unit) {
+        dependentVariables.forEach {
+            it.forEachTransitiveDependentVariable(action)
+            action(it)
         }
     }
 

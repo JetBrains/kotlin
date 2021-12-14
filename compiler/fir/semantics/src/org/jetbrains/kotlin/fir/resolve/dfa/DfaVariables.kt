@@ -61,6 +61,8 @@ class RealVariable(
     variableIndexForDebug: Int,
     val stability: PropertyStability,
 ) : DataFlowVariable(variableIndexForDebug) {
+    val dependentVariables = mutableSetOf<RealVariable>()
+
     override fun equals(other: Any?): Boolean {
         return this === other
     }

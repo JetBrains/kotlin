@@ -3475,6 +3475,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
         @TestDataPath("$PROJECT_ROOT")
         public class Smartcasts {
             @Test
+            @TestMetadata("accessToMemberAfterReceiverReassignment.kt")
+            public void testAccessToMemberAfterReceiverReassignment() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/accessToMemberAfterReceiverReassignment.kt");
+            }
+
+            @Test
             public void testAllFilesPresentInSmartcasts() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/smartcasts"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
             }
