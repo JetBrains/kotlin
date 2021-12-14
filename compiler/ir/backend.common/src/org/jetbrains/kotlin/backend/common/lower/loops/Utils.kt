@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -13,9 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.types.isNothing
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -83,10 +82,45 @@ internal val IrExpression.canChangeValueDuringExecution: Boolean
 internal val IrExpression.canHaveSideEffects: Boolean
     get() = !isTrivial()
 
+private fun Any?.toByte(): Byte? =
+    when (this) {
+        is Number -> toByte()
+        is Char -> code.toByte()
+        else -> null
+    }
+
+private fun Any?.toShort(): Short? =
+    when (this) {
+        is Number -> toShort()
+        is Char -> code.toShort()
+        else -> null
+    }
+
+private fun Any?.toInt(): Int? =
+    when (this) {
+        is Number -> toInt()
+        is Char -> code
+        else -> null
+    }
+
 private fun Any?.toLong(): Long? =
     when (this) {
         is Number -> toLong()
         is Char -> code.toLong()
+        else -> null
+    }
+
+private fun Any?.toFloat(): Float? =
+    when (this) {
+        is Number -> toFloat()
+        is Char -> code.toFloat()
+        else -> null
+    }
+
+private fun Any?.toDouble(): Double? =
+    when (this) {
+        is Number -> toDouble()
+        is Char -> code.toDouble()
         else -> null
     }
 
@@ -133,20 +167,33 @@ internal fun DeclarationIrBuilder.createLoopTemporaryVariableIfNecessary(
     }
 
 internal fun IrExpression.castIfNecessary(targetClass: IrClass) =
-    // This expression's type could be Nothing from an exception throw.
-    if (type == targetClass.defaultType || type.isNothing()) {
-        this
-    } else {
-        val numberCastFunctionName = Name.identifier("to${targetClass.name.asString()}")
-        val classifier = type.getClass() ?: error("Has to be a class ${type.render()}")
-        val castFun = classifier.functions.single {
-            it.name == numberCastFunctionName &&
-                    it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null && it.valueParameters.isEmpty()
+    when {
+        // This expression's type could be Nothing from an exception throw.
+        type == targetClass.defaultType || type.isNothing() -> this
+        this is IrConst<*> && targetClass.defaultType.isPrimitiveType() -> { // TODO: convert unsigned too?
+            val targetType = targetClass.defaultType
+            when (targetType.getPrimitiveType()) {
+                PrimitiveType.BYTE -> IrConstImpl.byte(startOffset, endOffset, targetType, value.toByte()!!)
+                PrimitiveType.SHORT -> IrConstImpl.short(startOffset, endOffset, targetType, value.toShort()!!)
+                PrimitiveType.INT -> IrConstImpl.int(startOffset, endOffset, targetType, value.toInt()!!)
+                PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, targetType, value.toLong()!!)
+                PrimitiveType.FLOAT -> IrConstImpl.float(startOffset, endOffset, targetType, value.toFloat()!!)
+                PrimitiveType.DOUBLE -> IrConstImpl.double(startOffset, endOffset, targetType, value.toDouble()!!)
+                else -> error("Cannot cast expression of type ${type.render()} to ${targetType.render()}")
+            }
         }
-        IrCallImpl(
-            startOffset, endOffset,
-            castFun.returnType, castFun.symbol,
-            typeArgumentsCount = 0,
-            valueArgumentsCount = 0
-        ).apply { dispatchReceiver = this@castIfNecessary }
+        else -> {
+            val numberCastFunctionName = Name.identifier("to${targetClass.name.asString()}")
+            val classifier = type.getClass() ?: error("Has to be a class ${type.render()}")
+            val castFun = classifier.functions.single {
+                it.name == numberCastFunctionName &&
+                        it.dispatchReceiverParameter != null && it.extensionReceiverParameter == null && it.valueParameters.isEmpty()
+            }
+            IrCallImpl(
+                startOffset, endOffset,
+                castFun.returnType, castFun.symbol,
+                typeArgumentsCount = 0,
+                valueArgumentsCount = 0
+            ).apply { dispatchReceiver = this@castIfNecessary }
+        }
     }
