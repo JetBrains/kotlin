@@ -1,6 +1,6 @@
 import java.lang.System;
 
-@kotlin.Suppress(names = {"CANNOT_INFER_PARAMETER_TYPE", "UNRESOLVED_REFERENCE"})
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 @kotlin.Metadata()
 public final class NonExistentClassWIthoutCorrectionKt {
 }

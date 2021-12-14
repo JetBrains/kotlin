@@ -1,7 +1,7 @@
 // NON_EXISTENT_CLASS
 // NO_VALIDATION
 
-@file:Suppress("CANNOT_INFER_PARAMETER_TYPE", "UNRESOLVED_REFERENCE")
+@file:Suppress("UNRESOLVED_REFERENCE")
 
 typealias String2 = String
 typealias Coocoo = ABC
@@ -11,7 +11,7 @@ typealias Coocoo3<X> = ABC<String, X>
 object NonExistentType {
     val a: ABCDEF? = null
     val b: List<ABCDEF>? = null
-    val c: (ABCDEF) -> Unit = { f -> }
+    val c: (ABCDEF) -> Unit = { f: ABCDEF -> }
     val d: ABCDEF<String, (List<ABCDEF>) -> Unit>? = null
 
     lateinit var string2: String2
