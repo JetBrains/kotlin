@@ -63,6 +63,7 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         is FirExpressionWithSmartcast -> originalExpression.unwrapElement()
         is FirSafeCallExpression -> regularQualifiedAccess.unwrapElement()
         is FirCheckedSafeCallSubject -> originalReceiverRef.value.unwrapElement()
+        is FirCheckNotNullCall -> argument.unwrapElement()
         else -> this
     }
 

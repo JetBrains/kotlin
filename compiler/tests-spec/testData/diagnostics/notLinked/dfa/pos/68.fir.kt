@@ -6,8 +6,8 @@
 // TESTCASE NUMBER: 1
 fun case_1(x: Any?) {
     if (x!! is Int) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>.inv()
     }
 }
 

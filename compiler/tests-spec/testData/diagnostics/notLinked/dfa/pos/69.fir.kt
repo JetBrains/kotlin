@@ -5,8 +5,8 @@
 // TESTCASE NUMBER: 1
 fun test1(x: ClassLevel1?) {
     if (x!! is ClassLevel2) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1? & ClassLevel1")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1? & ClassLevel1")!>x<!>.<!UNRESOLVED_REFERENCE!>test2<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1? & ClassLevel2")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel1? & ClassLevel2")!>x<!>.test2()
     }
 }
 
@@ -37,6 +37,6 @@ fun case_4(x: Any?) {
 fun case_5(x: Class) {
     if (x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.prop_8 != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class")!>x<!>.prop_8.prop_8
     }
 }
