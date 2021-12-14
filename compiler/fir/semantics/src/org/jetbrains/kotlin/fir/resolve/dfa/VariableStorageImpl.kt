@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
@@ -179,6 +180,7 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
         }
         if (originalFir is FirThisReceiverExpression) return PropertyStability.STABLE_VALUE
         if (this !is FirVariableSymbol<*>) return null
+        if (this is FirFieldSymbol && !this.isFinal) return PropertyStability.MUTABLE_PROPERTY
 
         val property = this.fir as? FirProperty ?: return PropertyStability.STABLE_VALUE
 
