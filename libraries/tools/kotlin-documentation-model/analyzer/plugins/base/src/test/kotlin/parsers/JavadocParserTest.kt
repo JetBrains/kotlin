@@ -5,10 +5,9 @@ import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.model.DEnum
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.doc.*
-import org.jetbrains.dokka.model.doc.P
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import utils.*
+import utils.text
 
 class JavadocParserTest : BaseAbstractTest() {
 
@@ -246,6 +245,107 @@ class JavadocParserTest : BaseAbstractTest() {
                     ),
                     root.children
                 )
+            }
+        }
+    }
+
+    @Test
+    fun `description list tag`() {
+        val source = """
+            |/src/main/kotlin/test/Test.java
+            |package example
+            |
+            | /**
+            | * <dl>
+            | *     <dt>
+            | *         <code>name="<i>name</i>"</code>
+            | *     </dt>
+            | *     <dd>
+            | *         A URI path segment. The subdirectory name for this value is contained in the
+            | *         <code>path</code> attribute.
+            | *     </dd>
+            | *     <dt>
+            | *         <code>path="<i>path</i>"</code>
+            | *     </dt>
+            | *     <dd>
+            | *         The subdirectory you're sharing. While the <i>name</i> attribute is a URI path
+            | *         segment, the <i>path</i> value is an actual subdirectory name. 
+            | *     </dd>
+            | * </dl>
+            | */
+            | public class Test  {}
+            """.trimIndent()
+
+        val expected = listOf(
+            Dl(
+                listOf(
+                    Dt(
+                        listOf(
+                            CodeInline(
+                                listOf(
+                                    Text("name=\""),
+                                    I(
+                                        listOf(
+                                            Text("name")
+                                        )
+                                    ),
+                                    Text("\"")
+                                )
+                            ),
+                        )
+                    ),
+                    Dd(
+                        listOf(
+                            Text(" A URI path segment. The subdirectory name for this value is contained in the "),
+                            CodeInline(
+                                listOf(
+                                    Text("path")
+                                )
+                            ),
+                            Text(" attribute. ")
+                        )
+                    ),
+
+                    Dt(
+                        listOf(
+                            CodeInline(
+                                listOf(
+                                    Text("path=\""),
+                                    I(
+                                        listOf(
+                                            Text("path")
+                                        )
+                                    ),
+                                    Text("\"")
+                                )
+                            )
+                        )
+                    ),
+                    Dd(
+                        listOf(
+                            Text(" The subdirectory you're sharing. While the "),
+                            I(
+                                listOf(
+                                    Text("name")
+                                )
+                            ),
+                            Text(" attribute is a URI path segment, the "),
+                            I(
+                                listOf(
+                                    Text("path")
+                                )
+                            ),
+                            Text(" value is an actual subdirectory name. ")
+                        )
+                    )
+                )
+            )
+        )
+
+        testInline(source, configuration) {
+            documentablesCreationStage = { modules ->
+                val docs = modules.first().packages.first().classlikes.single().documentation.first().value
+                assertEquals(expected, docs.children.first().root.children)
             }
         }
     }
