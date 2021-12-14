@@ -247,6 +247,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             testClass<AbstractLoweredIrInterpreterTest> {
                 model("ir/loweredIr")
             }
+
+            testClass<AbstractFirDiagnosticsTestWithJvmIrBackend> {
+                model("diagnostics/firTestWithJvmBackend")
+            }
         }
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/fir/fir2ir/testData") {

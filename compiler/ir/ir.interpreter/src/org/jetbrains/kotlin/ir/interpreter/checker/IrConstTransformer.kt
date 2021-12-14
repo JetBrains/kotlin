@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.isPrimitiveArray
@@ -29,7 +30,11 @@ class IrConstTransformer(
     private fun IrExpression.reportIfError(original: IrExpression): IrExpression {
         if (this is IrErrorExpression) {
             onError(original, this)
-            return original
+            return when (mode) {
+                // need to pass any const value to be able to get some bytecode and then report error
+                EvaluationMode.ONLY_INTRINSIC_CONST -> IrConstImpl.int(startOffset, endOffset, type, 0)
+                else -> original
+            }
         }
         return this
     }
