@@ -1085,26 +1085,6 @@ public actual inline fun CharArray.copyInto(destination: CharArray, destinationO
  * 
  * @sample samples.collections.Arrays.CopyOfOperations.copyOf
  */
-@JsNativeImplementation("""
- [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-     if (typeof TypedArray.prototype.slice === "undefined") {
-         function normalizeOffset(offset, length) {
-             if (offset < 0) return Math.max(0, offset + length);
-             return Math.min(offset, length);
-         }
-         Object.defineProperty(TypedArray.prototype, 'slice', {
-             value: function typedArraySlice(begin, end) {
-                 if (typeof end === "undefined") {
-                     end = this.length;
-                 }
-                 begin = normalizeOffset(begin || 0, this.length);
-                 end = Math.max(begin, normalizeOffset(end, this.length));
-                 return new this.constructor(this.subarray(begin, end));
-             }
-         });
-     }
- })
-""")
 @Suppress("ACTUAL_WITHOUT_EXPECT", "NOTHING_TO_INLINE")
 public actual inline fun <T> Array<out T>.copyOf(): Array<T> {
     return this.asDynamic().slice()
@@ -1338,26 +1318,6 @@ public actual fun <T> Array<out T>.copyOfRange(fromIndex: Int, toIndex: Int): Ar
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
-@JsNativeImplementation("""
- [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-     if (typeof TypedArray.prototype.slice === "undefined") {
-         function normalizeOffset(offset, length) {
-             if (offset < 0) return Math.max(0, offset + length);
-             return Math.min(offset, length);
-         }
-         Object.defineProperty(TypedArray.prototype, 'slice', {
-             value: function typedArraySlice(begin, end) {
-                 if (typeof end === "undefined") {
-                     end = this.length;
-                 }
-                 begin = normalizeOffset(begin || 0, this.length);
-                 end = Math.max(begin, normalizeOffset(end, this.length));
-                 return new this.constructor(this.subarray(begin, end));
-             }
-         });
-     }
- })
-""")
 public actual fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return this.asDynamic().slice(fromIndex, toIndex)
@@ -1372,26 +1332,6 @@ public actual fun ByteArray.copyOfRange(fromIndex: Int, toIndex: Int): ByteArray
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
-@JsNativeImplementation("""
- [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-     if (typeof TypedArray.prototype.slice === "undefined") {
-         function normalizeOffset(offset, length) {
-             if (offset < 0) return Math.max(0, offset + length);
-             return Math.min(offset, length);
-         }
-         Object.defineProperty(TypedArray.prototype, 'slice', {
-             value: function typedArraySlice(begin, end) {
-                 if (typeof end === "undefined") {
-                     end = this.length;
-                 }
-                 begin = normalizeOffset(begin || 0, this.length);
-                 end = Math.max(begin, normalizeOffset(end, this.length));
-                 return new this.constructor(this.subarray(begin, end));
-             }
-         });
-     }
- })
-""")
 public actual fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArray {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return this.asDynamic().slice(fromIndex, toIndex)
@@ -1406,26 +1346,6 @@ public actual fun ShortArray.copyOfRange(fromIndex: Int, toIndex: Int): ShortArr
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
-@JsNativeImplementation("""
- [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-     if (typeof TypedArray.prototype.slice === "undefined") {
-         function normalizeOffset(offset, length) {
-             if (offset < 0) return Math.max(0, offset + length);
-             return Math.min(offset, length);
-         }
-         Object.defineProperty(TypedArray.prototype, 'slice', {
-             value: function typedArraySlice(begin, end) {
-                 if (typeof end === "undefined") {
-                     end = this.length;
-                 }
-                 begin = normalizeOffset(begin || 0, this.length);
-                 end = Math.max(begin, normalizeOffset(end, this.length));
-                 return new this.constructor(this.subarray(begin, end));
-             }
-         });
-     }
- })
-""")
 public actual fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return this.asDynamic().slice(fromIndex, toIndex)
@@ -1440,26 +1360,6 @@ public actual fun IntArray.copyOfRange(fromIndex: Int, toIndex: Int): IntArray {
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
-@JsNativeImplementation("""
- [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-     if (typeof TypedArray.prototype.slice === "undefined") {
-         function normalizeOffset(offset, length) {
-             if (offset < 0) return Math.max(0, offset + length);
-             return Math.min(offset, length);
-         }
-         Object.defineProperty(TypedArray.prototype, 'slice', {
-             value: function typedArraySlice(begin, end) {
-                 if (typeof end === "undefined") {
-                     end = this.length;
-                 }
-                 begin = normalizeOffset(begin || 0, this.length);
-                 end = Math.max(begin, normalizeOffset(end, this.length));
-                 return new this.constructor(this.subarray(begin, end));
-             }
-         });
-     }
- })
-""")
 public actual fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return withType("LongArray", this.asDynamic().slice(fromIndex, toIndex))
@@ -1474,26 +1374,6 @@ public actual fun LongArray.copyOfRange(fromIndex: Int, toIndex: Int): LongArray
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
-@JsNativeImplementation("""
- [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-     if (typeof TypedArray.prototype.slice === "undefined") {
-         function normalizeOffset(offset, length) {
-             if (offset < 0) return Math.max(0, offset + length);
-             return Math.min(offset, length);
-         }
-         Object.defineProperty(TypedArray.prototype, 'slice', {
-             value: function typedArraySlice(begin, end) {
-                 if (typeof end === "undefined") {
-                     end = this.length;
-                 }
-                 begin = normalizeOffset(begin || 0, this.length);
-                 end = Math.max(begin, normalizeOffset(end, this.length));
-                 return new this.constructor(this.subarray(begin, end));
-             }
-         });
-     }
- })
-""")
 public actual fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArray {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return this.asDynamic().slice(fromIndex, toIndex)
@@ -1508,26 +1388,6 @@ public actual fun FloatArray.copyOfRange(fromIndex: Int, toIndex: Int): FloatArr
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
-@JsNativeImplementation("""
- [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-     if (typeof TypedArray.prototype.slice === "undefined") {
-         function normalizeOffset(offset, length) {
-             if (offset < 0) return Math.max(0, offset + length);
-             return Math.min(offset, length);
-         }
-         Object.defineProperty(TypedArray.prototype, 'slice', {
-             value: function typedArraySlice(begin, end) {
-                 if (typeof end === "undefined") {
-                     end = this.length;
-                 }
-                 begin = normalizeOffset(begin || 0, this.length);
-                 end = Math.max(begin, normalizeOffset(end, this.length));
-                 return new this.constructor(this.subarray(begin, end));
-             }
-         });
-     }
- })
-""")
 public actual fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleArray {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return this.asDynamic().slice(fromIndex, toIndex)
@@ -1542,26 +1402,6 @@ public actual fun DoubleArray.copyOfRange(fromIndex: Int, toIndex: Int): DoubleA
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
-@JsNativeImplementation("""
- [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-     if (typeof TypedArray.prototype.slice === "undefined") {
-         function normalizeOffset(offset, length) {
-             if (offset < 0) return Math.max(0, offset + length);
-             return Math.min(offset, length);
-         }
-         Object.defineProperty(TypedArray.prototype, 'slice', {
-             value: function typedArraySlice(begin, end) {
-                 if (typeof end === "undefined") {
-                     end = this.length;
-                 }
-                 begin = normalizeOffset(begin || 0, this.length);
-                 end = Math.max(begin, normalizeOffset(end, this.length));
-                 return new this.constructor(this.subarray(begin, end));
-             }
-         });
-     }
- })
-""")
 public actual fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): BooleanArray {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return withType("BooleanArray", this.asDynamic().slice(fromIndex, toIndex))
@@ -1576,26 +1416,6 @@ public actual fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): Boolea
  * @throws IndexOutOfBoundsException if [fromIndex] is less than zero or [toIndex] is greater than the size of this array.
  * @throws IllegalArgumentException if [fromIndex] is greater than [toIndex].
  */
-@JsNativeImplementation("""
- [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-     if (typeof TypedArray.prototype.slice === "undefined") {
-         function normalizeOffset(offset, length) {
-             if (offset < 0) return Math.max(0, offset + length);
-             return Math.min(offset, length);
-         }
-         Object.defineProperty(TypedArray.prototype, 'slice', {
-             value: function typedArraySlice(begin, end) {
-                 if (typeof end === "undefined") {
-                     end = this.length;
-                 }
-                 begin = normalizeOffset(begin || 0, this.length);
-                 end = Math.max(begin, normalizeOffset(end, this.length));
-                 return new this.constructor(this.subarray(begin, end));
-             }
-         });
-     }
- })
-""")
 public actual fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray {
     AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
     return withType("CharArray", this.asDynamic().slice(fromIndex, toIndex))

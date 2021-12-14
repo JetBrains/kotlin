@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNativeImplementation
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.js.backend.ast.JsCode
 import org.jetbrains.kotlin.js.backend.ast.JsSingleLineComment
@@ -20,6 +21,9 @@ class JsPolyfills private constructor(
     constructor(generateRegionComments: Boolean = false) : this(mutableSetOf<String>(), generateRegionComments)
 
     fun registerDeclarationNativeImplementation(declaration: IrDeclaration) {
+        if (declaration is IrFunction && declaration.name.toString().contains("sort")) {
+            System.`out`.println(declaration)
+        }
         val implementation = declaration.getJsNativeImplementation() ?: return
         polyfills.add(implementation.trimIndent())
     }

@@ -983,32 +983,6 @@ object ArrayOps : TemplateGroupBase() {
                     suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
                     returns("Array<T>")
                 }
-                specialFor(ArraysOfPrimitives) {
-                    on(Backend.IR) {
-                        annotation("""
-                           @JsNativeImplementation(${"\"\"\""}
-                            [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-                                if (typeof TypedArray.prototype.slice === "undefined") {
-                                    function normalizeOffset(offset, length) {
-                                        if (offset < 0) return Math.max(0, offset + length);
-                                        return Math.min(offset, length);
-                                    }
-                                    Object.defineProperty(TypedArray.prototype, 'slice', {
-                                        value: function typedArraySlice(begin, end) {
-                                            if (typeof end === "undefined") {
-                                                end = this.length;
-                                            }
-                                            begin = normalizeOffset(begin || 0, this.length);
-                                            end = Math.max(begin, normalizeOffset(end, this.length));
-                                            return new this.constructor(this.subarray(begin, end));
-                                        }
-                                    });
-                                }
-                            })
-                           ${"\"\"\""})
-                        """.trimIndent())
-                    }
-                }
                 val rangeCheck = "AbstractList.checkRangeIndexes(fromIndex, toIndex, size)"
                 when (primitive) {
                     PrimitiveType.Char, PrimitiveType.Boolean, PrimitiveType.Long ->
@@ -1117,30 +1091,6 @@ object ArrayOps : TemplateGroupBase() {
                     family = ArraysOfObjects
                     returns("Array<T>")
                     suppress("ACTUAL_WITHOUT_EXPECT") // TODO: KT-21937
-                    on(Backend.IR) {
-                        annotation("""
-                           @JsNativeImplementation(${"\"\"\""}
-                            [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-                                if (typeof TypedArray.prototype.slice === "undefined") {
-                                    function normalizeOffset(offset, length) {
-                                        if (offset < 0) return Math.max(0, offset + length);
-                                        return Math.min(offset, length);
-                                    }
-                                    Object.defineProperty(TypedArray.prototype, 'slice', {
-                                        value: function typedArraySlice(begin, end) {
-                                            if (typeof end === "undefined") {
-                                                end = this.length;
-                                            }
-                                            begin = normalizeOffset(begin || 0, this.length);
-                                            end = Math.max(begin, normalizeOffset(end, this.length));
-                                            return new this.constructor(this.subarray(begin, end));
-                                        }
-                                    });
-                                }
-                            })
-                           ${"\"\"\""})
-                        """.trimIndent())
-                    }
                 }
                 when (primitive) {
                     null -> {
@@ -1270,31 +1220,29 @@ object ArrayOps : TemplateGroupBase() {
                             body { "definedExternally" }
                         }
                         on(Backend.IR) {
-                            on(Backend.IR) {
-                                annotation("""
-                                    @JsNativeImplementation(${"\"\"\""}
-                                    [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-                                        if (typeof TypedArray.prototype.sort === "undefined") {
-                                            Object.defineProperty(TypedArray.prototype, 'sort', {
-                                                value: function(compareFunction) {
-                                                    compareFunction = compareFunction || function (a, b) {
-                                                        if (a < b) return -1;
-                                                        if (a > b) return 1;
-                                                        if (a === b) {
-                                                            if (a !== 0) return 0;
-                                                            var ia = 1 / a;
-                                                            return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
-                                                        }
-                                                        return a !== a ? (b !== b ? 0 : 1) : -1
+                            annotation("""
+                                @JsNativeImplementation(${"\"\"\""}
+                                [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+                                    if (typeof TypedArray.prototype.sort === "undefined") {
+                                        Object.defineProperty(TypedArray.prototype, 'sort', {
+                                            value: function(compareFunction) {
+                                                compareFunction = compareFunction || function (a, b) {
+                                                    if (a < b) return -1;
+                                                    if (a > b) return 1;
+                                                    if (a === b) {
+                                                        if (a !== 0) return 0;
+                                                        var ia = 1 / a;
+                                                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
                                                     }
-                                                    return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+                                                    return a !== a ? (b !== b ? 0 : 1) : -1
                                                 }
-                                            });
-                                        }
-                                    });
-                                    ${"\"\"\""})
-                                """.trimIndent())
-                            }
+                                                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+                                            }
+                                        });
+                                    }
+                                });
+                                ${"\"\"\""})
+                            """.trimIndent())
                             if (primitive == PrimitiveType.Char) {
                                 // Requires comparator because default comparator of 'Array.prototype.sort' compares
                                 // string representation of values
