@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -57,13 +56,30 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
                 firClass = firClass.declarations.singleOrNull { (it as? FirRegularClass)?.name?.asString() == midName } as? FirRegularClass
                     ?: return null
             }
+            val scope = firClass.unsubstitutedScope(fir2IrComponents.session, fir2IrComponents.scopeSession, withForcedTypeCalculator = true)
             when (symbol) {
                 is IrClassSymbol -> {
                     firCandidates = listOf(firClass)
-                    parent = classifierStorage.getIrClassSymbol(firParentClass!!.symbol).owner
+                    parent = firParentClass?.let { classifierStorage.getIrClassSymbol(it.symbol).owner } ?: packageFragment
                 }
                 is IrConstructorSymbol -> {
-                    firCandidates = firClass.declarations.filter { it is FirConstructor }
+                    val constructors = mutableListOf<FirConstructor>()
+                    scope.processDeclaredConstructors { constructors.add(it.fir) }
+                    firCandidates = constructors
+                    parent = classifierStorage.getIrClassSymbol(firClass.symbol).owner
+                }
+                is IrSimpleFunctionSymbol -> {
+                    val lastName = Name.guessByFirstCharacter(nameSegments.last())
+                    val functions = mutableListOf<FirSimpleFunction>()
+                    scope.processFunctionsByName(lastName) { functions.add(it.fir) }
+                    firCandidates = functions
+                    parent = classifierStorage.getIrClassSymbol(firClass.symbol).owner
+                }
+                is IrPropertySymbol -> {
+                    val lastName = Name.guessByFirstCharacter(nameSegments.last())
+                    val properties = mutableListOf<FirVariable>()
+                    scope.processPropertiesByName(lastName) { properties.add(it.fir) }
+                    firCandidates = properties
                     parent = classifierStorage.getIrClassSymbol(firClass.symbol).owner
                 }
                 else -> {
