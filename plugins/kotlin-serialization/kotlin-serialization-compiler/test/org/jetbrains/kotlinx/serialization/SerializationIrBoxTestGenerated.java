@@ -26,6 +26,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("classSerializerAsObject.kt")
+    public void testClassSerializerAsObject() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/boxIr/classSerializerAsObject.kt");
+    }
+
+    @Test
     @TestMetadata("multimoduleInheritance.kt")
     public void testMultimoduleInheritance() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/boxIr/multimoduleInheritance.kt");

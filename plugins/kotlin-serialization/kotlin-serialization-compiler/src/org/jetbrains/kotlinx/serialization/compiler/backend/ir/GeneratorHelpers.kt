@@ -1093,7 +1093,14 @@ interface IrBuilderExtension {
 
         val typeParameters = ctorDecl.parentAsClass.typeParameters
         val substitutedReturnType = ctorDecl.returnType.substitute(typeParameters, typeArgs)
-        return irInvoke(null, ctor, typeArguments = typeArgs, valueArguments = args, returnTypeHint = substitutedReturnType)
+        return irInvoke(
+            null,
+            ctor,
+            // User may declare serializer with fixed type arguments, e.g. class SomeSerializer : KSerializer<ClosedRange<Float>>
+            typeArguments = typeArgs.takeIf { it.size == ctorDecl.typeParameters.size }.orEmpty(),
+            valueArguments = args.takeIf { it.size == ctorDecl.valueParameters.size }.orEmpty(),
+            returnTypeHint = substitutedReturnType
+        )
     }
 
     fun collectSerialInfoAnnotations(irClass: IrClass): List<IrConstructorCall> {
