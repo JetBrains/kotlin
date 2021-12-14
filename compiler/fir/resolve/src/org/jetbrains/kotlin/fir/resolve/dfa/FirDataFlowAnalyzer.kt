@@ -556,17 +556,14 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val leftIsNullable = leftOperand.coneType.isMarkedNullable
         val rightIsNullable = rightOperand.coneType.isMarkedNullable
 
-        // left == right && right not null -> left != null
-        // [processEqNull] adds both implications: operator call could be true or false. We definitely need the matched case only.
-        fun shouldAddImplicationForStatement(operationStatement: OperationStatement): Boolean {
-            // Only if operation statement is == True, i.e., left == right
-            return (operation.isEq() && operationStatement.operation == Operation.EqTrue) ||
-                    (!operation.isEq() && operationStatement.operation == Operation.EqFalse)
-        }
-        when {
-            leftIsNullable && rightIsNullable -> return
-            leftIsNullable -> processEqNull(node, leftOperand, operation.invert(), ::shouldAddImplicationForStatement)
-            rightIsNullable -> processEqNull(node, rightOperand, operation.invert(), ::shouldAddImplicationForStatement)
+        if (leftIsNullable || rightIsNullable) {
+            if (leftIsNullable && rightIsNullable) return
+            processEqNull(
+                node,
+                if (leftIsNullable) leftOperand else rightOperand,
+                operation.invert(),
+                checkAddImplicationForStatement = true
+            )
         }
 
         processPossibleIdentity(node, leftOperand, rightOperand, operation)
@@ -589,7 +586,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         node: EqualityOperatorCallNode,
         operand: FirExpression,
         operation: FirOperation,
-        shouldAddImplicationForStatement: (OperationStatement) -> Boolean = { true }
+        checkAddImplicationForStatement: Boolean = false
     ) {
         val flow = node.flow
         val expressionVariable = variableStorage.createSyntheticVariable(node.fir)
@@ -602,6 +599,15 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             false -> operandVariable notEq null
         }
 
+        // left == right && right not null -> left != null
+        // [processEqNull] adds both implications: operator call could be true or false. We definitely need the matched case only.
+        fun shouldAddImplicationForStatement(operationStatement: OperationStatement): Boolean {
+            if (!checkAddImplicationForStatement) return true
+            // Only if operation statement is == True, i.e., left == right
+            val operationStatementOp = operationStatement.operation
+            return !isEq && operationStatementOp == Operation.EqTrue || isEq && operationStatementOp == Operation.EqFalse
+        }
+
         logicSystem.approveOperationStatement(flow, predicate).forEach { effect ->
             if (shouldAddImplicationForStatement(expressionVariable eq true)) {
                 flow.addImplication((expressionVariable eq true) implies effect)
@@ -611,18 +617,21 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
             }
         }
 
-        if (shouldAddImplicationForStatement(expressionVariable eq isEq)) {
+        val expressionVariableIsEq = shouldAddImplicationForStatement(expressionVariable eq isEq)
+        val expressionVariableIsNotEq = shouldAddImplicationForStatement(expressionVariable notEq isEq)
+
+        if (expressionVariableIsEq) {
             flow.addImplication((expressionVariable eq isEq) implies (operandVariable eq null))
         }
-        if (shouldAddImplicationForStatement(expressionVariable notEq isEq)) {
+        if (expressionVariableIsNotEq) {
             flow.addImplication((expressionVariable notEq isEq) implies (operandVariable notEq null))
         }
 
         if (operandVariable.isReal()) {
-            if (shouldAddImplicationForStatement(expressionVariable eq isEq)) {
+            if (expressionVariableIsEq) {
                 flow.addImplication((expressionVariable eq isEq) implies (operandVariable typeNotEq any))
             }
-            if (shouldAddImplicationForStatement(expressionVariable notEq isEq)) {
+            if (expressionVariableIsNotEq) {
                 flow.addImplication((expressionVariable notEq isEq) implies (operandVariable typeEq any))
             }
 
@@ -633,6 +642,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
                 flow.addImplication((expressionVariable notEq !isEq) implies (operandVariable typeEq nullableNothing))
             }
         }
+
         node.flow = flow
     }
 
