@@ -8,7 +8,6 @@ public final class SimpleClass<in T#0 /* A */> : kotlin/Any {
   // signature: <init>(I)V
   public constructor(p: kotlin/Int /* = ... */)
 
-  // requires language version 1.3.0 (level=ERROR)
   // signature: g(Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
   protected final inline suspend fun <reified T#1 /* T */> g(crossinline a: kotlin/Function0<T#0>, noinline b: suspend kotlin/Function1<kotlin/coroutines/Continuation<T#1>, kotlin/Any?>): kotlin/Unit
 

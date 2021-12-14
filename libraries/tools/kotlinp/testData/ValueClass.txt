@@ -32,7 +32,6 @@ public final value class A : kotlin/Any {
 public final value class B : kotlin/Any {
 
   // requires language version 1.3.0 (level=ERROR)
-  // requires language version 1.3.0 (level=ERROR)
   // signature: constructor-impl(Lkotlin/jvm/functions/Function1;)Lkotlin/jvm/functions/Function1;
   public constructor(f: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>)
 
@@ -45,7 +44,6 @@ public final value class B : kotlin/Any {
   // signature: toString-impl(Lkotlin/jvm/functions/Function1;)Ljava/lang/String;
   public open /* synthesized */ fun toString(): kotlin/String
 
-  // requires language version 1.3.0 (level=ERROR)
   // field: f:Lkotlin/jvm/functions/Function1;
   private final val f: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>
     private final get
