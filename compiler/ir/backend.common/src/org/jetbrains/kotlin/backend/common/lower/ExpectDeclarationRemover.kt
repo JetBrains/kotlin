@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
+import org.jetbrains.kotlin.resolve.multiplatform.onlyFromThisModule
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 // `doRemove` means should expect-declaration be removed from IR
@@ -143,7 +144,7 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
     private fun MemberDescriptor.findExpectForActual(): MemberDescriptor? {
         if (!isActual) error(this)
         return with(ExpectedActualResolver) {
-            findCompatibleExpectedForActual(this@findExpectForActual.module).singleOrNull()
+            findCompatibleExpectedForActual(onlyFromThisModule(this@findExpectForActual.module)).singleOrNull()
         }
     }
 

@@ -26,22 +26,22 @@ import org.jetbrains.kotlin.utils.keysToMap
 object ExpectedActualResolver {
     // FIXME(dsavvinov): review clients, as they won't work properly in HMPP projects
     fun MemberDescriptor.findCompatibleActualForExpected(platformModule: ModuleDescriptor): List<MemberDescriptor> =
-        findActualForExpected(this, platformModule)?.get(Compatible).orEmpty()
+        findActualForExpected(this, platformModule, onlyFromThisModule(platformModule))?.get(Compatible).orEmpty()
 
     fun MemberDescriptor.findAnyActualForExpected(platformModule: ModuleDescriptor): List<MemberDescriptor> {
-        val actualsGroupedByCompatibility = findActualForExpected(this, platformModule)
+        val actualsGroupedByCompatibility = findActualForExpected(this, platformModule, onlyFromThisModule(platformModule))
         return actualsGroupedByCompatibility?.get(Compatible)
                 ?: actualsGroupedByCompatibility?.values?.flatten()
                 ?: emptyList()
     }
 
-    fun MemberDescriptor.findCompatibleExpectedForActual(commonModule: ModuleDescriptor): List<MemberDescriptor> =
-        findExpectedForActual(this, commonModule)?.get(Compatible).orEmpty()
+    fun MemberDescriptor.findCompatibleExpectedForActual(moduleFilter: ModuleFilter): List<MemberDescriptor> =
+        findExpectedForActual(this, moduleFilter)?.get(Compatible).orEmpty()
 
     fun findActualForExpected(
         expected: MemberDescriptor,
         platformModule: ModuleDescriptor,
-        moduleVisibilityFilter: ModuleFilter = onlyFromThisModule(platformModule)
+        moduleVisibilityFilter: ModuleFilter,
     ): Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>? {
         return when (expected) {
             is CallableMemberDescriptor -> {
@@ -69,8 +69,7 @@ object ExpectedActualResolver {
 
     fun findExpectedForActual(
         actual: MemberDescriptor,
-        commonModule: ModuleDescriptor,
-        moduleFilter: (ModuleDescriptor) -> Boolean = onlyFromThisModule(commonModule)
+        moduleFilter: (ModuleDescriptor) -> Boolean
     ): Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>? {
         return when (actual) {
             is CallableMemberDescriptor -> {
@@ -79,10 +78,10 @@ object ExpectedActualResolver {
                     is ClassifierDescriptorWithTypeParameters -> {
                         // TODO: replace with 'singleOrNull' as soon as multi-module diagnostic tests are refactored
                         val expectedClass =
-                            findExpectedForActual(container, commonModule, moduleFilter)?.values?.firstOrNull()?.firstOrNull() as? ClassDescriptor
+                            findExpectedForActual(container, moduleFilter)?.values?.firstOrNull()?.firstOrNull() as? ClassDescriptor
                         expectedClass?.getMembers(actual.name)?.filterIsInstance<CallableMemberDescriptor>().orEmpty()
                     }
-                    is PackageFragmentDescriptor -> actual.findNamesakesFromModule(commonModule, moduleFilter)
+                    is PackageFragmentDescriptor -> actual.findNamesakesFromModule(actual.module, moduleFilter)
                     else -> return null // do not report anything for incorrect code, e.g. 'actual' local function
                 }
 
@@ -101,7 +100,7 @@ object ExpectedActualResolver {
                 }
             }
             is ClassifierDescriptorWithTypeParameters -> {
-                actual.findClassifiersFromModule(commonModule, moduleFilter).filter { declaration ->
+                actual.findClassifiersFromModule(actual.module, moduleFilter).filter { declaration ->
                     actual != declaration &&
                     declaration is ClassDescriptor && declaration.isExpect
                 }.groupBy { expected ->
@@ -534,19 +533,15 @@ object ExpectedActualResolver {
     }
 }
 
-fun DeclarationDescriptor.findExpects(inModule: ModuleDescriptor = this.module): List<MemberDescriptor> {
+fun DeclarationDescriptor.findExpects(): List<MemberDescriptor> {
     return ExpectedActualResolver.findExpectedForActual(
-        this as MemberDescriptor,
-        inModule,
-        { true }
+        this as MemberDescriptor, ALL_MODULES
     )?.get(Compatible).orEmpty()
 }
 
 fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor = this.module): List<MemberDescriptor> {
     return ExpectedActualResolver.findActualForExpected(
-        (this as MemberDescriptor),
-        inModule,
-        { true }
+        (this as MemberDescriptor), inModule, ALL_MODULES
     )?.get(Compatible).orEmpty()
 }
 
