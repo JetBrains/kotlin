@@ -47,6 +47,13 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("diagnostics/nativeTests")
             }
 
+            testClass<AbstractDiagnosticsWithMultiplatformCompositeAnalysisTest> {
+                model(
+                    "diagnostics/testsWithMultiplatformCompositeAnalysis",
+                    pattern = "^(.*)\\.kts?$", excludedPattern = excludedFirTestdataPattern
+                )
+            }
+
             testClass<AbstractForeignAnnotationsSourceJavaTest> {
                 model("diagnostics/foreignAnnotationsTests/tests", excludedPattern = excludedFirTestdataPattern)
                 model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedFirTestdataPattern)

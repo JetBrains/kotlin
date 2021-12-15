@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
+@DefaultImplementation(ModuleStructureOracle.SingleModule::class)
 interface ModuleStructureOracle {
-    // May be faster than `findAllImplementingModules(module).isNotEmpty()`
+    // May be faster than `findAllReversedDependsOnPaths(module).isNotEmpty()`
     fun hasImplementingModules(module: ModuleDescriptor): Boolean
 
     fun findAllReversedDependsOnPaths(module: ModuleDescriptor): List<ModulePath>

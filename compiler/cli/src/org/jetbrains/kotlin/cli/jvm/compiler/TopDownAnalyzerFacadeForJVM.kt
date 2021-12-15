@@ -95,10 +95,11 @@ object TopDownAnalyzerFacadeForJVM {
         sourceModuleSearchScope: GlobalSearchScope = newModuleSearchScope(project, files),
         klibList: List<KotlinLibrary> = emptyList(),
         explicitModuleDependencyList: List<ModuleDescriptorImpl> = emptyList(),
-        explicitModuleFriendsList: List<ModuleDescriptorImpl> = emptyList()
+        explicitModuleFriendsList: List<ModuleDescriptorImpl> = emptyList(),
+        explicitCompilerEnvironment: TargetEnvironment = CompilerEnvironment
     ): AnalysisResult {
         val container = createContainer(
-            project, files, trace, configuration, packagePartProvider, declarationProviderFactory, CompilerEnvironment,
+            project, files, trace, configuration, packagePartProvider, declarationProviderFactory, explicitCompilerEnvironment,
             sourceModuleSearchScope, klibList, explicitModuleDependencyList = explicitModuleDependencyList,
             explicitModuleFriendsList = explicitModuleFriendsList
         )

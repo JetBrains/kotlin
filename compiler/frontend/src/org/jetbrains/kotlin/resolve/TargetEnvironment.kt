@@ -33,7 +33,6 @@ abstract class TargetEnvironment(private val name: String) {
             container.useInstance(BodyResolveCache.ThrowException)
             container.useImpl<CompilerLocalDescriptorResolver>()
             container.useImpl<BasicAbsentDescriptorHandler>()
-            container.useInstance(ModuleStructureOracle.SingleModule)
             container.useImpl<MainFunctionDetector.Factory.Ordinary>()
         }
     }
