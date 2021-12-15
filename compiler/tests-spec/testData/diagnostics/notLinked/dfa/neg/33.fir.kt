@@ -23,7 +23,7 @@ fun case_1(x: Int?) {
  */
 fun case_2(x: Int?, y: Nothing?) {
     if (x == y) {
-        nullableStringArg(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!>)
+        nullableStringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>x<!>)
     }
 }
 

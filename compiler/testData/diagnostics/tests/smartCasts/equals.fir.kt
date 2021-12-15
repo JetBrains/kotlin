@@ -20,6 +20,6 @@ fun bar(i: TestWithEquals?) {
 
 fun gav(i: TestWithEquals?, j: TestWithEquals?) {
     if (j == null) {
-        if (i == j) foo(<!ARGUMENT_TYPE_MISMATCH!>i<!>)
+        if (i == j) foo(i)
     }
 }

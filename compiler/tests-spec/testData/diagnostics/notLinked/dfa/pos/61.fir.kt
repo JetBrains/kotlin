@@ -157,8 +157,8 @@ class Case11 {
         var y: String? = "xyz"
         if (y == case_12)
             throw Exception()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>y<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>y<!><!UNSAFE_CALL!>.<!>length
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>y<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.String")!>y<!>.length
     }
     constructor()
 }

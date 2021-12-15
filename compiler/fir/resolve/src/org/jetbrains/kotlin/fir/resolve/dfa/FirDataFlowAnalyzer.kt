@@ -477,11 +477,15 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
 
         val leftConst = leftOperand as? FirConstExpression<*>
         val rightConst = rightOperand as? FirConstExpression<*>
+        val leftIsNullConst = leftConst?.kind == ConstantValueKind.Null
+        val rightIsNullConst = rightConst?.kind == ConstantValueKind.Null
+        val leftIsNull = leftIsNullConst || leftOperand.coneType.isNullableNothing && !rightIsNullConst
+        val rightIsNull = rightIsNullConst || rightOperand.coneType.isNullableNothing && !leftIsNullConst
 
         when {
             leftConst != null && rightConst != null -> return
-            leftConst?.kind == ConstantValueKind.Null -> processEqNull(node, rightOperand, operation)
-            rightConst?.kind == ConstantValueKind.Null -> processEqNull(node, leftOperand, operation)
+            leftIsNull -> processEqNull(node, rightOperand, operation)
+            rightIsNull -> processEqNull(node, leftOperand, operation)
             leftConst != null -> processEqWithConst(node, rightOperand, leftConst, operation)
             rightConst != null -> processEqWithConst(node, leftOperand, rightConst, operation)
             else -> processEq(node, leftOperand, rightOperand, operation)

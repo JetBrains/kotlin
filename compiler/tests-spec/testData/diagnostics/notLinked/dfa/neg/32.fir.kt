@@ -24,8 +24,8 @@ fun case_1(x: Int?) {
  */
 fun case_2(x: Int?, y: Nothing?) {
     if (x == y) {
-        stringArg(<!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x!!<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
+        stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x!!<!>)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing")!>x<!>
     }
 }
 

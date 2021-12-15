@@ -49,8 +49,8 @@ fun case_3(y: Nothing?) {
             break@outer
         }
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>length
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>length
 }
 
 /*
@@ -68,8 +68,8 @@ fun case_4(y: Nothing?) {
             }
         }
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!><!UNSAFE_CALL!>.<!>length
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String? & kotlin.Nothing?")!>x<!><!UNSAFE_CALL!>.<!>length
 }
 
 // TESTCASE NUMBER: 5

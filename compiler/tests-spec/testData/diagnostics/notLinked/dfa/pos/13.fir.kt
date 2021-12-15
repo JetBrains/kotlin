@@ -7,68 +7,68 @@ fun <T> case_1(x: T) {
     var y = null
 
     if (y != x) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!><!UNSAFE_CALL!>.<!>funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.funNullableAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { <!UNSAFE_CALL!>equals<!>(null) }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { propT }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { <!UNSAFE_CALL!>propAny<!> }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { propNullableT }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { propNullableAny }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { funT() }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { <!UNSAFE_CALL!>funAny<!>() }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { funNullableT() }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.apply { funNullableAny(); <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!><!UNSAFE_CALL!>.<!>equals(null) }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!><!UNSAFE_CALL!>.<!>equals(null) }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.propT }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!><!UNSAFE_CALL!>.<!>propAny }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.propNullableT }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.propNullableAny }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.funT() }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!><!UNSAFE_CALL!>.<!>funAny() }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.funNullableT() }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T")!>it<!>.funNullableAny() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.apply { equals(null) }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.apply { propT }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.apply { propAny }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.apply { propNullableT }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.apply { propNullableAny }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.apply { funT() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.apply { funAny() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.apply { funNullableT() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.apply { funNullableAny(); <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.equals(null) }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.equals(null) }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.propT }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.propAny }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.propNullableT }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.propNullableAny }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.funT() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.funAny() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.funNullableT() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!!")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T!!")!>it<!>.funNullableAny() }
     }
 }
 
 // TESTCASE NUMBER: 2
 fun <T> case_2(x: T?, y: Nothing?) {
     if (y != x) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!><!UNSAFE_CALL!>.<!>propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!><!UNSAFE_CALL!>.<!>funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.funNullableAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { <!UNSAFE_CALL!>equals<!>(null) }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { propT }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { <!UNSAFE_CALL!>propAny<!> }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { propNullableT }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { propNullableAny }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { funT() }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { <!UNSAFE_CALL!>funAny<!>() }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { funNullableT() }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.apply { funNullableAny(); <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!><!UNSAFE_CALL!>.<!>equals(null) }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!><!UNSAFE_CALL!>.<!>equals(null) }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!>.propT }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!><!UNSAFE_CALL!>.<!>propAny }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!>.propNullableT }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!>.propNullableAny }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!>.funT() }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!><!UNSAFE_CALL!>.<!>funAny() }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!>.funNullableT() }
-        <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>it<!>.funNullableAny() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.apply { equals(null) }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.apply { propT }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.apply { propAny }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.apply { propNullableT }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.apply { propNullableAny }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.apply { funT() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.apply { funAny() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.apply { funNullableT() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.apply { funNullableAny(); <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.equals(null) }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?!!")!>it<!>.equals(null) }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?!!")!>it<!>.propT }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?!!")!>it<!>.propAny }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?!!")!>it<!>.propNullableT }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?!!")!>it<!>.propNullableAny }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?!!")!>it<!>.funT() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?!!")!>it<!>.funAny() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?!!")!>it<!>.funNullableT() }
+        <!DEBUG_INFO_EXPRESSION_TYPE("T? & T?!!")!>x<!>.also { <!DEBUG_INFO_EXPRESSION_TYPE("T?!!")!>it<!>.funNullableAny() }
     }
 }
 

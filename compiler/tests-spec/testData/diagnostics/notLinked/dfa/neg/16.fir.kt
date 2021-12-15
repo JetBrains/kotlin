@@ -10,8 +10,8 @@
 fun case_1(x: ClassWithCustomEquals) {
     val y = null
     if (<!SENSELESS_COMPARISON!>x == y<!>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals & kotlin.Nothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals & kotlin.Nothing")!>x<!>.inv()
     }
 }
 
@@ -30,8 +30,8 @@ fun case_2(x: ClassWithCustomEquals) {
  */
 fun case_3(x: ClassWithCustomEquals, y: Nothing?) {
     if (<!SENSELESS_COMPARISON!>x == y<!>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals & kotlin.Nothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals & kotlin.Nothing")!>x<!>.inv()
     }
 }
 
@@ -43,8 +43,8 @@ fun case_3(x: ClassWithCustomEquals, y: Nothing?) {
 fun case_4(x: ClassWithCustomEquals) {
     val y = null
     if (<!SENSELESS_COMPARISON!>y == x<!>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals & kotlin.Nothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals & kotlin.Nothing")!>x<!>.inv()
     }
 }
 
@@ -55,8 +55,8 @@ fun case_4(x: ClassWithCustomEquals) {
  */
 fun case_5(x: ClassWithCustomEquals, y: Nothing?) {
     if (<!SENSELESS_COMPARISON!>y == x<!>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals & kotlin.Nothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals & kotlin.Nothing")!>x<!>.inv()
     }
 }
 
@@ -68,8 +68,8 @@ fun case_5(x: ClassWithCustomEquals, y: Nothing?) {
 fun case_6(x: ClassWithCustomEquals) {
     val y = null
     if (<!SENSELESS_COMPARISON!>x == y<!> == true) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals & kotlin.Nothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals & kotlin.Nothing")!>x<!>.inv()
     }
 }
 
@@ -88,8 +88,8 @@ fun case_7(x: ClassWithCustomEquals) {
  */
 fun case_8(x: ClassWithCustomEquals, y: Nothing?) {
     if (!(<!SENSELESS_COMPARISON!>y == x<!>) == false) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals & kotlin.Nothing")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithCustomEquals & kotlin.Nothing")!>x<!>.inv()
     }
 }
 
