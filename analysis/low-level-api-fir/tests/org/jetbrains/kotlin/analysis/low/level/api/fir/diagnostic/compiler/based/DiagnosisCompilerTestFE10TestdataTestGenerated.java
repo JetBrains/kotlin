@@ -20058,6 +20058,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("enumConstName.kt")
+                public void testEnumConstName() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/enumConstName.kt");
+                }
+
+                @Test
                 @TestMetadata("fromJava.kt")
                 public void testFromJava() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/fromJava.kt");
@@ -20067,6 +20073,18 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 @TestMetadata("fromJavaSubclass.kt")
                 public void testFromJavaSubclass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/fromJavaSubclass.kt");
+                }
+
+                @Test
+                @TestMetadata("ifConstVal.kt")
+                public void testIfConstVal() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/ifConstVal.kt");
+                }
+
+                @Test
+                @TestMetadata("kCallable.kt")
+                public void testKCallable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/kCallable.kt");
                 }
 
                 @Test
@@ -20082,9 +20100,21 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("stdlibConstFun.kt")
+                public void testStdlibConstFun() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/stdlibConstFun.kt");
+                }
+
+                @Test
                 @TestMetadata("types.kt")
                 public void testTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/types.kt");
+                }
+
+                @Test
+                @TestMetadata("unsigned.kt")
+                public void testUnsigned() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/unsigned.kt");
                 }
             }
 

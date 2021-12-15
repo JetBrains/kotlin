@@ -35,6 +35,24 @@ public class LoweredIrInterpreterTestGenerated extends AbstractLoweredIrInterpre
         }
 
         @Test
+        @TestMetadata("booleanOperations.kt")
+        public void testBooleanOperations() throws Exception {
+            runTest("compiler/testData/ir/loweredIr/interpreter/booleanOperations.kt");
+        }
+
+        @Test
+        @TestMetadata("byteOperations.kt")
+        public void testByteOperations() throws Exception {
+            runTest("compiler/testData/ir/loweredIr/interpreter/byteOperations.kt");
+        }
+
+        @Test
+        @TestMetadata("charOperations.kt")
+        public void testCharOperations() throws Exception {
+            runTest("compiler/testData/ir/loweredIr/interpreter/charOperations.kt");
+        }
+
+        @Test
         @TestMetadata("constTrimIndent.kt")
         public void testConstTrimIndent() throws Exception {
             runTest("compiler/testData/ir/loweredIr/interpreter/constTrimIndent.kt");
@@ -47,9 +65,21 @@ public class LoweredIrInterpreterTestGenerated extends AbstractLoweredIrInterpre
         }
 
         @Test
+        @TestMetadata("doubleOperations.kt")
+        public void testDoubleOperations() throws Exception {
+            runTest("compiler/testData/ir/loweredIr/interpreter/doubleOperations.kt");
+        }
+
+        @Test
         @TestMetadata("enumName.kt")
         public void testEnumName() throws Exception {
             runTest("compiler/testData/ir/loweredIr/interpreter/enumName.kt");
+        }
+
+        @Test
+        @TestMetadata("floatOperations.kt")
+        public void testFloatOperations() throws Exception {
+            runTest("compiler/testData/ir/loweredIr/interpreter/floatOperations.kt");
         }
 
         @Test
@@ -59,21 +89,45 @@ public class LoweredIrInterpreterTestGenerated extends AbstractLoweredIrInterpre
         }
 
         @Test
+        @TestMetadata("intOperations.kt")
+        public void testIntOperations() throws Exception {
+            runTest("compiler/testData/ir/loweredIr/interpreter/intOperations.kt");
+        }
+
+        @Test
         @TestMetadata("kCallableName.kt")
         public void testKCallableName() throws Exception {
             runTest("compiler/testData/ir/loweredIr/interpreter/kCallableName.kt");
         }
 
         @Test
-        @TestMetadata("primitiveOperations.kt")
-        public void testPrimitiveOperations() throws Exception {
-            runTest("compiler/testData/ir/loweredIr/interpreter/primitiveOperations.kt");
+        @TestMetadata("longOperations.kt")
+        public void testLongOperations() throws Exception {
+            runTest("compiler/testData/ir/loweredIr/interpreter/longOperations.kt");
+        }
+
+        @Test
+        @TestMetadata("shortOperations.kt")
+        public void testShortOperations() throws Exception {
+            runTest("compiler/testData/ir/loweredIr/interpreter/shortOperations.kt");
         }
 
         @Test
         @TestMetadata("stdlibConst.kt")
         public void testStdlibConst() throws Exception {
             runTest("compiler/testData/ir/loweredIr/interpreter/stdlibConst.kt");
+        }
+
+        @Test
+        @TestMetadata("stringOperations.kt")
+        public void testStringOperations() throws Exception {
+            runTest("compiler/testData/ir/loweredIr/interpreter/stringOperations.kt");
+        }
+
+        @Test
+        @TestMetadata("unsignedConst.kt")
+        public void testUnsignedConst() throws Exception {
+            runTest("compiler/testData/ir/loweredIr/interpreter/unsignedConst.kt");
         }
     }
 }

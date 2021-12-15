@@ -1,0 +1,61 @@
+package
+
+public const val and: kotlin.UByte
+public const val byteVal: kotlin.UByte = 1.toUByte()
+public const val compareTo1: kotlin.Int
+public const val compareTo2: kotlin.Int
+public const val compareTo3: kotlin.Int
+public const val compareTo4: kotlin.Int
+public const val convert1: kotlin.Byte
+public const val convert10: kotlin.ULong
+public const val convert2: kotlin.Short
+public const val convert3: kotlin.Int
+public const val convert4: kotlin.Long
+public const val convert5: kotlin.Float
+public const val convert6: kotlin.Double
+public const val convert7: kotlin.UByte
+public const val convert8: kotlin.UShort
+public const val convert9: kotlin.UInt
+public const val div1: kotlin.UInt
+public const val div2: kotlin.UInt
+public const val div3: kotlin.UInt
+public const val div4: kotlin.ULong
+public const val equals1: kotlin.Boolean
+public const val equals2: kotlin.Boolean
+public const val equals3: kotlin.Boolean
+public const val equals4: kotlin.Boolean
+public const val floorDiv1: kotlin.UInt
+public const val floorDiv2: kotlin.UInt
+public const val floorDiv3: kotlin.UInt
+public const val floorDiv4: kotlin.ULong
+public const val intVal: kotlin.UInt = 3.toUInt()
+public const val inv: kotlin.UByte
+public const val longVal: kotlin.ULong = 4.toULong()
+public const val minus1: kotlin.UInt
+public const val minus2: kotlin.UInt
+public const val minus3: kotlin.UInt
+public const val minus4: kotlin.ULong
+public const val mod1: kotlin.UByte
+public const val mod2: kotlin.UShort
+public const val mod3: kotlin.UInt
+public const val mod4: kotlin.ULong
+public const val or: kotlin.UByte
+public const val plus1: kotlin.UInt
+public const val plus2: kotlin.UInt
+public const val plus3: kotlin.UInt
+public const val plus4: kotlin.ULong
+public const val rem1: kotlin.UInt
+public const val rem2: kotlin.UInt
+public const val rem3: kotlin.UInt
+public const val rem4: kotlin.ULong
+public const val shortVal: kotlin.UShort = 2.toUShort()
+public const val times1: kotlin.UInt
+public const val times2: kotlin.UInt
+public const val times3: kotlin.UInt
+public const val times4: kotlin.ULong
+public const val toString1: kotlin.String
+public const val toString2: kotlin.String
+public const val toString3: kotlin.String
+public const val toString4: kotlin.String
+public const val xor: kotlin.UByte
+

@@ -20110,6 +20110,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 public void testTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/types.kt");
                 }
+
+                @Test
+                @TestMetadata("unsigned.kt")
+                public void testUnsigned() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/unsigned.kt");
+                }
             }
 
             @Nested

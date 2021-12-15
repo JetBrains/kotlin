@@ -278,6 +278,7 @@ private val jvmFilePhases = listOf(
     mainMethodGenerationPhase,
 
     inventNamesForLocalClassesPhase,
+    kCallableNamePropertyPhase,
     annotationPhase,
     annotationImplementationPhase,
     polymorphicSignaturePhase,
