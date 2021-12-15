@@ -4,9 +4,14 @@ This directory contains a set of samples demonstrating how one can work with Kot
 built using Gradle build tool. See `README.md` in sample directories to learn more about specific samples and
 the building process.
 
+The following Kotlin Multiplatform Mobile samples used to be located in this directory, but were superseded:
+* `calculator` - see https://github.com/Kotlin/kmm-basic-sample instead.
+* `cocoapods` - see https://github.com/Kotlin/kmm-with-cocoapods-sample instead.
+
+More Kotlin Multiplatform Mobile samples can be found here: https://kotlinlang.org/docs/kmm-samples.html.
+
+The samples that are in this directory mostly illustrate the other use cases for Kotlin/Native:
   * `androidNativeActivity` - Android Native Activity rendering 3D graphics using OpenGLES
-  * `calculator` - iOS Swift application, using Kotlin/Native code compiled into the framework
-  * `cocoapods` - A Kotlin/Native application using the `AFNetworking` library from CocoaPods.
   * `csvparser` - simple CSV file parser and analyzer
   * `echoServer` - TCP/IP echo server
   * `gitchurn` - program interoperating with `libgit2` for GIT repository analysis
