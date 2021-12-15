@@ -150,7 +150,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
             valueParameters = removeAtStub.valueParameters.map { stubParameter ->
                 stubParameter.copyWithCustomTypeSubstitution(this) { it }
             }
-            body = createThrowingStubBody(this)
+            body = createThrowingStubBody(context, this)
         }
     }
 
@@ -176,7 +176,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
             dispatchReceiverParameter = function.dispatchReceiverParameter?.copyWithSubstitution(this, substitutionMap)
             extensionReceiverParameter = function.extensionReceiverParameter?.copyWithSubstitution(this, substitutionMap)
             valueParameters = function.valueParameters.map { it.copyWithSubstitution(this, substitutionMap) }
-            body = createThrowingStubBody(this)
+            body = createThrowingStubBody(context, this)
         }
     }
 
@@ -192,17 +192,8 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
                 function.returnType
         }
 
-    private fun createThrowingStubBody(function: IrSimpleFunction) =
-        context.createIrBuilder(function.symbol).irBlockBody {
-            // Function body consist only of throwing UnsupportedOperationException statement
-            +irCall(this@CollectionStubMethodLowering.context.ir.symbols.throwUnsupportedOperationException)
-                .apply {
-                    putValueArgument(0, irString("Operation is not supported for read-only collection"))
-                }
-        }
-
     private fun isEffectivelyOverriddenBy(superFun: IrSimpleFunction, overridingFun: IrSimpleFunction): Boolean {
-        // Function 'f0' is overridden by function 'f1' if all of the following conditions are met,
+        // Function 'f0' is overridden by function 'f1' if all the following conditions are met,
         // assuming type parameter Ti of 'f1' is "equal" to type parameter Si of 'f0':
         //  - names are same;
         //  - 'f1' has the same number of type parameters,
@@ -390,3 +381,13 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     private val IrClass.superClassChain: Sequence<IrClass>
         get() = generateSequence(this) { it.superClass }
 }
+
+
+fun createThrowingStubBody(context: JvmBackendContext, function: IrSimpleFunction) =
+    context.createIrBuilder(function.symbol).irBlockBody {
+        // Function body consist only of throwing UnsupportedOperationException statement
+        +irCall(context.ir.symbols.throwUnsupportedOperationException)
+            .apply {
+                putValueArgument(0, irString("Operation is not supported for read-only collection"))
+            }
+    }

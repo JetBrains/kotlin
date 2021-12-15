@@ -1786,6 +1786,17 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             }
 
             @Nested
+            @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs")
+            @TestDataPath("$PROJECT_ROOT")
+            @NativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)
+            public class BridgesForStubs {
+                @Test
+                public void testAllFilesPresentInBridgesForStubs() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections")
             @TestDataPath("$PROJECT_ROOT")
             @NativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)

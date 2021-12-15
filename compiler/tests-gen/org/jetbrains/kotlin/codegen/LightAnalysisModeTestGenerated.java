@@ -2238,6 +2238,54 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/builtinStubMethods/substitutedListWithExtraSuperInterface.kt");
         }
 
+        @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class BridgesForStubs extends AbstractLightAnalysisModeTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInBridgesForStubs() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @TestMetadata("derivedEmptyListAdd.kt")
+            public void testDerivedEmptyListAdd() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs/derivedEmptyListAdd.kt");
+            }
+
+            @TestMetadata("derivedEmptyListSeveralModulesAdd.kt")
+            public void testDerivedEmptyListSeveralModulesAdd() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs/derivedEmptyListSeveralModulesAdd.kt");
+            }
+
+            @TestMetadata("derivedEmptyStringListAdd.kt")
+            public void testDerivedEmptyStringListAdd() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs/derivedEmptyStringListAdd.kt");
+            }
+
+            @TestMetadata("emptyListAdd.kt")
+            public void testEmptyListAdd() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs/emptyListAdd.kt");
+            }
+
+            @TestMetadata("emptyListAddWithIndex.kt")
+            public void testEmptyListAddWithIndex() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs/emptyListAddWithIndex.kt");
+            }
+
+            @TestMetadata("emptyListSet.kt")
+            public void testEmptyListSet() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs/emptyListSet.kt");
+            }
+
+            @TestMetadata("emptyStringListAdd.kt")
+            public void testEmptyStringListAdd() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs/emptyStringListAdd.kt");
+            }
+        }
+
         @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

@@ -430,7 +430,17 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         }.apply {
             copyAttributes(target)
             copyParametersWithErasure(this@addBridge, bridge.overridden)
-            body = context.createIrBuilder(symbol, startOffset, endOffset).run { irExprBody(delegatingCall(this@apply, target)) }
+
+            // If target is a throwing stub, bridge also should just throw UnsupportedOperationException.
+            // Otherwise, it might throw ClassCastException when downcasting bridge argument to expected type.
+            // See KT-49765
+            body = if (target.isThrowingStub()) {
+                createThrowingStubBody(context, this)
+            } else {
+                context.createIrBuilder(symbol, startOffset, endOffset).run {
+                    irExprBody(delegatingCall(this@apply, target))
+                }
+            }
 
             if (!bridge.overridden.returnType.isTypeParameterWithPrimitiveUpperBound()) {
                 // The generated bridge method overrides all of the symbols which were overridden by its overrides.
@@ -445,6 +455,19 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                 overriddenSymbols = inheritedOverrides.filter { it !in redundantOverrides }
             }
         }
+
+    private fun IrSimpleFunction.isThrowingStub(): Boolean {
+        if (this.origin != IrDeclarationOrigin.IR_BUILTINS_STUB &&
+            this.origin != IrDeclarationOrigin.BRIDGE &&
+            this.origin != IrDeclarationOrigin.BRIDGE_SPECIAL
+        ) {
+            return false
+        }
+        val body = this.body as? IrBlockBody ?: return false
+        if (body.statements.size != 1) return false
+        val irCall = body.statements[0] as? IrCall ?: return false
+        return irCall.symbol == context.ir.symbols.throwUnsupportedOperationException
+    }
 
     private fun IrType.isTypeParameterWithPrimitiveUpperBound(): Boolean =
         isTypeParameter() && eraseTypeParameters().isPrimitiveType()
