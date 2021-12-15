@@ -59,7 +59,9 @@ enum class TestProperty(shortName: String) {
     }
 }
 
-fun Test.setUpBlackBoxTest(tag: String) {
+fun blackBoxTest(taskName: String, vararg tags: String) = projectTest(taskName, jUnitMode = JUnitMode.JUnit5) {
+    group = "verification"
+
     if (kotlinBuildProperties.isKotlinNativeEnabled) {
         dependsOn(":kotlin-native:dist")
 
@@ -95,33 +97,62 @@ fun Test.setUpBlackBoxTest(tag: String) {
         ignoreFailures = true // Don't fail Gradle task if there are failed tests. Let the subsequent tasks to run as well.
 
         useJUnitPlatform {
-            includeTags(tag)
+            includeTags(*tags)
         }
-    } else {
+    } else
         doFirst {
             throw GradleException(
                 """
-                    Can't run Kotlin/Native tests. The Kotlin/Native part of the project is currently disabled.
-                    Make sure that "kotlin.native.enabled" is set to "true" in local.properties file,
-                    or is passed as a Gradle command-line parameter via "-Pkotlin.native.enabled=true".
+                    Can't run task $path. The Kotlin/Native part of the project is currently disabled.
+                    Make sure that "kotlin.native.enabled" is set to "true" in local.properties file, or is passed
+                    as a Gradle command-line parameter via "-Pkotlin.native.enabled=true".
                 """.trimIndent()
             )
         }
-    }
+}
+
+@Suppress("PropertyName")
+val TEST_GROUPING_TASK_MARKER = "groupingTaskMarker"
+
+fun Test.isGroupingTest() = TEST_GROUPING_TASK_MARKER in inputs.properties
+
+// N.B. Have to register grouping tasks as Test, otherwise IDEA will not show test results correctly in the Run tool window.
+fun groupingTest(taskName: String, vararg dependencyTasks: Any) = getOrCreateTask<Test>(taskName) {
+    group = "verification"
+    dependsOn(*dependencyTasks)
+
+    inputs.property(TEST_GROUPING_TASK_MARKER, 1) // Mark it as a test grouping task to distinguish from other test tasks.
 }
 
 // Tasks that run different sorts of tests. Most frequent use case: running specific tests from the IDE.
-val infrastructureTest = projectTest("infrastructureTest", jUnitMode = JUnitMode.JUnit5) { setUpBlackBoxTest("infrastructure") }
-val externalTest = projectTest("externalTest", jUnitMode = JUnitMode.JUnit5) { setUpBlackBoxTest("external") }
+val infrastructureTest = blackBoxTest("infrastructureTest", "infrastructure")
+val externalTest = blackBoxTest("externalTest", "external")
 
 // Tasks that do not run tests directly, but group other test tasks. Most frequent use case: running groups of tests on CI server.
-val dailyTest by tasks.registering(Test::class) { dependsOn(externalTest) }
-val fullTest by tasks.registering(Test::class) { dependsOn(dailyTest, infrastructureTest) }
+val dailyTest = groupingTest("dailyTest", externalTest)
+val fullTest = groupingTest("fullTest", dailyTest, infrastructureTest)
 
-// Just an alias for daily test task.
-val test by tasks.getting(Test::class) { dependsOn(dailyTest) }
+// "test" task is created by convention. We can't just remove it. So, let it be just an alias for daily test task.
+val test by groupingTest("test", dailyTest)
 
-tasks.withType<Test> { group = "verification" }
+gradle.taskGraph.whenReady {
+    allTasks.forEach { task ->
+        if (task.project == project && task is Test && task.isGroupingTest()) {
+            val commandLineIncludePatterns = task.commandLineIncludePatterns
+            if (commandLineIncludePatterns.isNotEmpty()) {
+                val testTasks = tasks.withType<Test>().filterNot { it.isGroupingTest() }.map { it.path }.sorted()
+                throw GradleException(
+                    buildString {
+                        appendLine("Task ${task.path} is only used for grouping of tests. Running it with command-line filter won't have any effect.")
+                        appendLine("Make sure you apply the filter to one of the following Kotlin/Native test tasks:")
+                        testTasks.forEach { append("  ").appendLine(it) }
+                        appendLine("Your command-line filter is: $commandLineIncludePatterns(--tests filter)")
+                    }
+                )
+            }
+        }
+    }
+}
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateNativeBlackboxTestsKt") {
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11))
