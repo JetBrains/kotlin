@@ -5,141 +5,93 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.Util.snapshot
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.readBytes
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.JavaSourceFile
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
-import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 import java.io.File
 
 abstract class ClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
 
-    protected abstract val testSourceFile: ChangeableTestSourceFile
-
-    private lateinit var testClassSnapshot: ClassSnapshot
-
-    @Before
-    fun setUp() {
-        testClassSnapshot = testSourceFile.compileAndSnapshot()
-    }
-
-    @Test
-    fun `test ClassSnapshotter's result against expected snapshot`() {
-        assertEquals(getExpectedSnapshotFile().readText(), testClassSnapshot.toGson())
-    }
-
-    private fun getExpectedSnapshotFile() = testSourceFile.sourceFile.asFile().path.let {
-        File(it.substringBeforeLast("src") + "expected-snapshot" + it.substringAfterLast("src").substringBeforeLast('.') + ".json")
-    }
-
-    @Test
-    fun `test ClassSnapshotter extracts ABI info from a class`() {
-        // Change public method signature
-        val updatedSnapshot = testSourceFile.changePublicMethodSignature().compileAndSnapshot()
-
-        // The snapshot must change
-        assertNotEquals(testClassSnapshot.toGson(), updatedSnapshot.toGson())
-    }
-
-    @Test
-    fun `test ClassSnapshotter does not extract non-ABI info from a class`() {
-        // Change method implementation
-        val updatedSnapshot = testSourceFile.changeMethodImplementation().compileAndSnapshot()
-
-        // The snapshot must not change
-        assertEquals(testClassSnapshot.toGson(), updatedSnapshot.toGson())
-    }
-}
-
-class KotlinClassesClasspathSnapshotterTest : ClasspathSnapshotterTest() {
-    override val testSourceFile = SimpleKotlinClass(tmpDir)
-}
-
-@RunWith(Parameterized::class)
-class JavaClassesClasspathSnapshotterTest(private val protoBased: Boolean) : ClasspathSnapshotTestCommon() {
-
     companion object {
-        @Parameterized.Parameters(name = "protoBased={0}")
-        @JvmStatic
-        fun parameters() = listOf(true, false)
+        val testDataDir =
+            File("compiler/incremental-compilation-impl/testData/org/jetbrains/kotlin/incremental/classpathDiff/ClasspathSnapshotterTest")
     }
 
-    private val testSourceFile = SimpleJavaClass(tmpDir)
+    protected abstract val sourceFile: TestSourceFile
+    protected abstract val sourceFileWithAbiChange: TestSourceFile
+    protected abstract val sourceFileWithNonAbiChange: TestSourceFile
 
-    private lateinit var testClassSnapshot: ClassSnapshot
-
-    @Before
-    fun setUp() {
-        testClassSnapshot = testSourceFile.compile().snapshot(protoBased)
-    }
+    private val expectedSnapshotFile: File
+        get() = sourceFile.asFile().path.let {
+            File(it.substringBeforeLast("src") + "expected-snapshot" + it.substringAfterLast("src").substringBeforeLast('.') + ".json")
+        }
 
     @Test
     fun `test ClassSnapshotter's result against expected snapshot`() {
-        assertEquals(getExpectedSnapshotFile().readText(), testClassSnapshot.toGson())
-    }
+        val classSnapshot = sourceFile.compileSingle().let {
+            ClassSnapshotter.snapshot(listOf(ClassFileWithContents(it, it.readBytes())), includeDebugInfoInSnapshot = true)
+        }.single()
 
-    private fun getExpectedSnapshotFile() = testSourceFile.sourceFile.asFile().path.let {
-        File(
-            it.substringBeforeLast("src") + "expected-snapshot" + it.substringAfterLast("src")
-                .substringBeforeLast('.') + "-protoBased=$protoBased.json"
-        )
+        assertEquals(expectedSnapshotFile.readText(), classSnapshot.toGson())
     }
 
     @Test
     fun `test ClassSnapshotter extracts ABI info from a class`() {
-        // Change public method signature
-        val updatedSnapshot = testSourceFile.changePublicMethodSignature().compile().snapshot(protoBased)
-
-        // The snapshot must change
-        assertNotEquals(testClassSnapshot.toGson(), updatedSnapshot.toGson())
+        // After an ABI change, the snapshot must change
+        assertNotEquals(sourceFile.compileAndSnapshot().toGson(), sourceFileWithAbiChange.compileAndSnapshot().toGson())
     }
 
     @Test
     fun `test ClassSnapshotter does not extract non-ABI info from a class`() {
-        // Change method implementation
-        val updatedSnapshot = testSourceFile.changeMethodImplementation().compile().snapshot(protoBased)
-
-        // The snapshot must not change
-        assertEquals(testClassSnapshot.toGson(), updatedSnapshot.toGson())
+        // After a non-ABI change, the snapshot must not change
+        assertEquals(sourceFile.compileAndSnapshot().toGson(), sourceFileWithNonAbiChange.compileAndSnapshot().toGson())
     }
 }
 
-class JavaClassWithNestedClassesClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
+class KotlinOnlyClasspathSnapshotterTest : ClasspathSnapshotterTest() {
 
-    private val testSourceFile = JavaClassWithNestedClasses(tmpDir)
+    override val sourceFile = TestSourceFile(
+        KotlinSourceFile(
+            baseDir = File(testDataDir, "src/kotlin"), relativePath = "com/example/SimpleClass.kt",
+            preCompiledClassFile = ClassFile(File(testDataDir, "classes/kotlin"), "com/example/SimpleClass.class")
+        ), tmpDir
+    )
 
-    private lateinit var testClassSnapshot: ClassSnapshot
+    override val sourceFileWithAbiChange = TestSourceFile(
+        KotlinSourceFile(
+            baseDir = File(testDataDir, "src-changed/kotlin/abi-change"), relativePath = "com/example/SimpleClass.kt",
+            preCompiledClassFile = ClassFile(File(testDataDir, "classes-changed/kotllin/abi-change"), "com/example/SimpleClass.class")
+        ), tmpDir
+    )
 
-    @Before
-    fun setUp() {
-        testClassSnapshot = testSourceFile.compileAndSnapshotNestedClass()
-    }
+    override val sourceFileWithNonAbiChange = TestSourceFile(
+        KotlinSourceFile(
+            baseDir = File(testDataDir, "src-changed/kotlin/non-abi-change"), relativePath = "com/example/SimpleClass.kt",
+            preCompiledClassFile = ClassFile(File(testDataDir, "classes-changed/kotlin/non-abi-change"), "com/example/SimpleClass.class")
+        ), tmpDir
+    )
+}
 
-    private fun TestSourceFile.compileAndSnapshotNestedClass(): ClassSnapshot {
-        return compileAndSnapshotAll().single {
-            if (it is RegularJavaClassSnapshot) {
-                it.classAbiExcludingMembers.name == testSourceFile.nestedClassToTest
-            } else false
-        }
-    }
+class JavaOnlyClasspathSnapshotterTest : ClasspathSnapshotterTest() {
 
-    @Test
-    fun `test ClassSnapshotter's result against expected snapshot`() {
-        val expectedSnapshotFile = File("${testDataDir.path}/expected-snapshot/java/${testSourceFile.nestedClassToTest}.json")
-        assertEquals(expectedSnapshotFile.readText(), testClassSnapshot.toGson())
-    }
+    override val sourceFile = TestSourceFile(
+        JavaSourceFile(
+            baseDir = File(testDataDir, "src/java"), relativePath = "com/example/SimpleClass.java",
+        ), tmpDir
+    )
 
-    @Test
-    fun `test ClassSnapshotter extracts ABI info from a class`() {
-        val updatedSnapshot = testSourceFile.changePublicMethodSignature().compileAndSnapshotNestedClass()
-        assertNotEquals(testClassSnapshot.toGson(), updatedSnapshot.toGson())
-    }
+    override val sourceFileWithAbiChange = TestSourceFile(
+        JavaSourceFile(
+            baseDir = File(testDataDir, "src-changed/java/abi-change"), relativePath = "com/example/SimpleClass.java",
+        ), tmpDir
+    )
 
-    @Test
-    fun `test ClassSnapshotter does not extract non-ABI info from a class`() {
-        val updatedSnapshot = testSourceFile.changeMethodImplementation().compileAndSnapshotNestedClass()
-        assertEquals(testClassSnapshot.toGson(), updatedSnapshot.toGson())
-    }
+    override val sourceFileWithNonAbiChange = TestSourceFile(
+        JavaSourceFile(
+            baseDir = File(testDataDir, "src-changed/java/non-abi-change"), relativePath = "com/example/SimpleClass.java",
+        ), tmpDir
+    )
 }

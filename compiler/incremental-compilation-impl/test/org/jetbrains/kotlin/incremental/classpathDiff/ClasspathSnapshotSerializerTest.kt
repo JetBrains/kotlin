@@ -5,19 +5,26 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.Util.readBytes
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.JavaSourceFile
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
 import org.jetbrains.kotlin.incremental.storage.fromByteArray
 import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import java.io.File
 
 abstract class ClasspathSnapshotSerializerTest : ClasspathSnapshotTestCommon() {
 
-    protected abstract val testSourceFile: ChangeableTestSourceFile
+    companion object {
+        val testDataDir =
+            File("compiler/incremental-compilation-impl/testData/org/jetbrains/kotlin/incremental/classpathDiff/ClasspathSnapshotterTest")
+    }
+
+    protected abstract val sourceFile: TestSourceFile
 
     @Test
-    open fun `test ClassSnapshotDataSerializer`() {
-        val originalSnapshot = testSourceFile.compileAndSnapshot()
+    open fun `test ClassSnapshotExternalizer`() {
+        val originalSnapshot = sourceFile.compileAndSnapshot()
         val serializedSnapshot = ClassSnapshotExternalizer.toByteArray(originalSnapshot)
         val deserializedSnapshot = ClassSnapshotExternalizer.fromByteArray(serializedSnapshot)
 
@@ -26,21 +33,20 @@ abstract class ClasspathSnapshotSerializerTest : ClasspathSnapshotTestCommon() {
 }
 
 class KotlinClassesClasspathSnapshotSerializerTest : ClasspathSnapshotSerializerTest() {
-    override val testSourceFile = SimpleKotlinClass(tmpDir)
+
+    override val sourceFile = TestSourceFile(
+        KotlinSourceFile(
+            baseDir = File(testDataDir, "src/kotlin"), relativePath = "com/example/SimpleClass.kt",
+            preCompiledClassFile = ClassFile(File(testDataDir, "classes/kotlin"), "com/example/SimpleClass.class")
+        ), tmpDir
+    )
 }
 
 class JavaClassesClasspathSnapshotSerializerTest : ClasspathSnapshotSerializerTest() {
 
-    override val testSourceFile = SimpleJavaClass(tmpDir)
-
-    @Test
-    override fun `test ClassSnapshotDataSerializer`() {
-        val originalSnapshot = testSourceFile.compile().let {
-            ClassSnapshotter.snapshot(listOf(ClassFileWithContents(it, it.readBytes())), includeDebugInfoInSnapshot = false)
-        }.single()
-        val serializedSnapshot = ClassSnapshotExternalizer.toByteArray(originalSnapshot)
-        val deserializedSnapshot = ClassSnapshotExternalizer.fromByteArray(serializedSnapshot)
-
-        assertEquals(originalSnapshot.toGson(), deserializedSnapshot.toGson())
-    }
+    override val sourceFile = TestSourceFile(
+        JavaSourceFile(
+            baseDir = File(testDataDir, "src/java"), relativePath = "com/example/SimpleClass.java",
+        ), tmpDir
+    )
 }
