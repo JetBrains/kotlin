@@ -156,13 +156,11 @@ class ClasspathRootsResolver(
 
     private fun modularBinaryRoot(root: VirtualFile): JavaModule? {
         val isJar = root.fileSystem.protocol == StandardFileSystems.JAR_PROTOCOL
-        val manifest: Attributes? by lazy(NONE) { readManifestAttributes(root) }
+        val manifest = lazy(NONE) { readManifestAttributes(root) }
 
         val moduleInfoFile =
             root.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)
-                ?: root.takeIf { isJar }?.findFileByRelativePath(MULTI_RELEASE_MODULE_INFO_CLS_FILE)?.takeIf {
-                    manifest?.getValue(IS_MULTI_RELEASE)?.equals("true", ignoreCase = true) == true
-                }
+                ?: if (isJar) tryLoadVersionSpecificModuleInfo(root, manifest) else null
 
         if (moduleInfoFile != null) {
             val moduleInfo = JavaModuleInfo.read(moduleInfoFile, javaFileManager, searchScope) ?: return null
@@ -173,7 +171,7 @@ class ClasspathRootsResolver(
         if (isJar) {
             val moduleRoot = listOf(JavaModule.Root(root, isBinary = true))
 
-            val automaticModuleName = manifest?.getValue(AUTOMATIC_MODULE_NAME)
+            val automaticModuleName = manifest.value?.getValue(AUTOMATIC_MODULE_NAME)
             if (automaticModuleName != null) {
                 return JavaModule.Automatic(automaticModuleName, moduleRoot)
             }
@@ -187,6 +185,23 @@ class ClasspathRootsResolver(
             return JavaModule.Automatic(moduleName, moduleRoot)
         }
 
+        return null
+    }
+
+    private fun tryLoadVersionSpecificModuleInfo(root: VirtualFile, manifest: Lazy<Attributes?>): VirtualFile? {
+        val versionsDir = root.findChild("META-INF")?.findChild("versions") ?: return null
+
+        val isMultiReleaseJar = manifest.value?.getValue(IS_MULTI_RELEASE)?.equals("true", ignoreCase = true)
+        if (isMultiReleaseJar != true) return null
+
+        val versions = versionsDir.children.filter {
+            val version = it.name.toIntOrNull()
+            version != null && version >= 9
+        }.sortedBy { it.name.toInt() }
+        for (version in versions) {
+            val file = version.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)
+            if (file != null) return file
+        }
         return null
     }
 
@@ -323,7 +338,6 @@ class ClasspathRootsResolver(
     }
 
     private companion object {
-        const val MULTI_RELEASE_MODULE_INFO_CLS_FILE = "META-INF/versions/9/${PsiJavaModule.MODULE_INFO_CLS_FILE}"
         const val AUTOMATIC_MODULE_NAME = "Automatic-Module-Name"
         const val IS_MULTI_RELEASE = "Multi-Release"
     }

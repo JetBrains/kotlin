@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.util.concurrent.TimeUnit
 import java.util.jar.Manifest
+import kotlin.test.fail
 
 class Java11ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     override val testDataPath: String
@@ -78,13 +79,13 @@ class Java11ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         )
     }
 
-    private fun createMultiReleaseJar(jdk9Home: File, destination: File, mainRoot: File, java9Root: File): File {
+    private fun createMultiReleaseJar(jdkHome: File, destination: File, mainRoot: File, version: Int, versionSpecificRoot: File): File {
         val command = listOf<String>(
-                File(jdk9Home, "bin/jar").path,
-                "--create", "--file=$destination",
-                "-C", mainRoot.path, ".",
-                "--release", "9",
-                "-C", java9Root.path, "."
+            File(jdkHome, "bin/jar").path,
+            "--create", "--file=$destination",
+            "-C", mainRoot.path, ".",
+            "--release", version.toString(),
+            "-C", versionSpecificRoot.path, "."
         )
 
         val process = ProcessBuilder().command(command).inheritIO().start()
@@ -124,8 +125,7 @@ class Java11ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
     fun testAllModulePathAndNamedModule() {
         try {
             module("main", addModules = listOf("ALL-MODULE-PATH"))
-        }
-        catch (e: JavaCompilationError) {
+        } catch (e: JavaCompilationError) {
             // Java compilation should fail, it's expected
         }
     }
@@ -176,10 +176,10 @@ class Java11ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
             "-Xmodule-path=${a.path}"
         )
         compileLibrary(
-                "moduleB",
-                additionalOptions = kotlinOptions,
-                compileJava = { _, _, _ -> error("No .java files in moduleB in this test") },
-                checkKotlinOutput = checkKotlinOutput("moduleB")
+            "moduleB",
+            additionalOptions = kotlinOptions,
+            compileJava = { _, _, _ -> error("No .java files in moduleB in this test") },
+            checkKotlinOutput = checkKotlinOutput("moduleB")
         )
     }
 
@@ -192,12 +192,17 @@ class Java11ModulesIntegrationTest : AbstractKotlinCompilerIntegrationTest() {
         libraryOut11.mkdirs()
         File(libraryOut, "module-info.class").renameTo(File(libraryOut11, "module-info.class"))
 
-        // Use the name other from 'library' to prevent it from being loaded as an automatic module if module-info.class is not found
-        val libraryJar = createMultiReleaseJar(
-            KtTestUtil.getJdk11Home(), File(tmpdir, "multi-release-library.jar"), libraryOut, libraryOut11
-        )
-
-        module("main", listOf(libraryJar))
+        for (version in listOf(9, 10, 11)) {
+            try {
+                // Use the name other from 'library' to prevent it from being loaded as an automatic module if module-info.class is not found.
+                val libraryJar = createMultiReleaseJar(
+                    KtTestUtil.getJdk11Home(), File(tmpdir, "multi-release-library-jdk$version.jar"), libraryOut, version, libraryOut11
+                )
+                module("main", listOf(libraryJar))
+            } catch (e: Throwable) {
+                fail("Fail on testing that module-info.class is loaded from META-INF/versions/$version", e)
+            }
+        }
     }
 
     fun testAutomaticModuleNames() {
