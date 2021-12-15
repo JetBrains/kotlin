@@ -25344,6 +25344,22 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Sealed {
+            @Test
+            public void testAllFilesPresentInSealed() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("result.kt")
+            public void testResult() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/result.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter")
         @TestDataPath("$PROJECT_ROOT")
         public class UnboxGenericParameter {
