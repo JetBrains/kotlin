@@ -62,7 +62,13 @@ enum class TestProperty(shortName: String) {
 fun Test.setUpBlackBoxTest(tag: String) {
     if (kotlinBuildProperties.isKotlinNativeEnabled) {
         dependsOn(":kotlin-native:dist")
+
         workingDir = rootDir
+        outputs.upToDateWhen {
+            // Don't treat any test task as up-to-date, no matter what.
+            // Note: this project should contain only test tasks, including ones that build binaries, and ones that run binaries.
+            false
+        }
 
         maxHeapSize = "6G" // Extra heap space for Kotlin/Native compiler.
         jvmArgs("-XX:MaxJavaStackTraceDepth=1000000") // Effectively remove the limit for the amount of stack trace elements in Throwable.
