@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 interface Context
 
 enum class Result {
