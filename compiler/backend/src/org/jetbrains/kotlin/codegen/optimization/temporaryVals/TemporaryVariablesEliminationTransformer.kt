@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization.temporaryVals
 
+import org.jetbrains.kotlin.codegen.inline.isSuspendInlineMarker
 import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.removeUnusedLocalVariables
@@ -22,6 +23,9 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
 
     override fun transform(internalClassName: String, methodNode: MethodNode) {
         if (!state.isIrBackend) return
+
+        // If there are any suspend inline markers, don't touch anything now.
+        if (methodNode.instructions.any { isSuspendInlineMarker(it) }) return
 
         simplifyTrivialInstructions(methodNode)
 

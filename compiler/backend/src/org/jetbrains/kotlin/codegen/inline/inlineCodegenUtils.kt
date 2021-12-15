@@ -637,6 +637,9 @@ internal fun isBeforeFakeContinuationConstructorCallMarker(insn: AbstractInsnNod
 internal fun isAfterFakeContinuationConstructorCallMarker(insn: AbstractInsnNode) =
     isSuspendMarker(insn, INLINE_MARKER_AFTER_FAKE_CONTINUATION_CONSTRUCTOR_CALL)
 
+internal fun isSuspendInlineMarker(insn: AbstractInsnNode) =
+    isInlineMarker(insn, "mark")
+
 private fun isSuspendMarker(insn: AbstractInsnNode, id: Int) =
     isInlineMarker(insn, "mark") && insn.previous.intConstant == id
 
