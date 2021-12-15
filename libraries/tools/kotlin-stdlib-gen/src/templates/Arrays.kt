@@ -1220,35 +1220,12 @@ object ArrayOps : TemplateGroupBase() {
                             body { "definedExternally" }
                         }
                         on(Backend.IR) {
-                            annotation("""
-                                @JsNativeImplementation(${"\"\"\""}
-                                [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-                                    if (typeof TypedArray.prototype.sort === "undefined") {
-                                        Object.defineProperty(TypedArray.prototype, 'sort', {
-                                            value: function(compareFunction) {
-                                                compareFunction = compareFunction || function (a, b) {
-                                                    if (a < b) return -1;
-                                                    if (a > b) return 1;
-                                                    if (a === b) {
-                                                        if (a !== 0) return 0;
-                                                        var ia = 1 / a;
-                                                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
-                                                    }
-                                                    return a !== a ? (b !== b ? 0 : 1) : -1
-                                                }
-                                                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
-                                            }
-                                        });
-                                    }
-                                });
-                                ${"\"\"\""})
-                            """.trimIndent())
                             if (primitive == PrimitiveType.Char) {
                                 // Requires comparator because default comparator of 'Array.prototype.sort' compares
                                 // string representation of values
-                                body { "this.asDynamic().sort(::primitiveCompareTo)" }
+                                body { "nativeSortWith(::primitiveCompareTo)" }
                             } else {
-                                body { "this.asDynamic().sort()" }
+                                body { "nativeSort()" }
                             }
                         }
                     } else {
@@ -1315,32 +1292,7 @@ object ArrayOps : TemplateGroupBase() {
             deprecate(Deprecation("Use other sorting functions from the Standard Library", warningSince = "1.6"))
             inlineOnly()
             signature("sort(noinline comparison: (a: T, b: T) -> Int)")
-            on(Backend.IR) {
-                annotation("""
-                    @JsNativeImplementation(${"\"\"\""}
-                    [Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-                        if (typeof TypedArray.prototype.sort === "undefined") {
-                            Object.defineProperty(TypedArray.prototype, 'sort', {
-                                value: function(compareFunction) {
-                                    compareFunction = compareFunction || function (a, b) {
-                                        if (a < b) return -1;
-                                        if (a > b) return 1;
-                                        if (a === b) {
-                                            if (a !== 0) return 0;
-                                            var ia = 1 / a;
-                                            return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
-                                        }
-                                        return a !== a ? (b !== b ? 0 : 1) : -1
-                                    }
-                                    return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
-                                }
-                            });
-                        }
-                    })
-                    ${"\"\"\""})
-                """.trimIndent())
-            }
-            body { "asDynamic().sort(comparison)" }
+            body { "nativeSortWith(comparison)" }
         }
         specialFor(ArraysOfObjects) {
             deprecate(

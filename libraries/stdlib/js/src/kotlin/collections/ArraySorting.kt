@@ -5,9 +5,11 @@
 
 package kotlin.collections
 
+import kotlin.js.nativeSortWith
+
 internal fun <T> sortArrayWith(array: Array<out T>, comparison: (T, T) -> Int) {
     if (getStableSortingIsSupported()) {
-        array.asDynamic().sort(comparison)
+        array.nativeSortWith(comparison)
     } else {
         mergeSort(array.unsafeCast<Array<T>>(), 0, array.lastIndex, Comparator(comparison))
     }
@@ -16,7 +18,7 @@ internal fun <T> sortArrayWith(array: Array<out T>, comparison: (T, T) -> Int) {
 internal fun <T> sortArrayWith(array: Array<out T>, comparator: Comparator<in T>) {
     if (getStableSortingIsSupported()) {
         val comparison = { a: T, b: T -> comparator.compare(a, b) }
-        array.asDynamic().sort(comparison)
+        array.nativeSortWith(comparison)
     } else {
         mergeSort(array.unsafeCast<Array<T>>(), 0, array.lastIndex, comparator)
     }
@@ -31,7 +33,7 @@ internal fun <T> sortArrayWith(array: Array<out T>, fromIndex: Int, toIndex: Int
 internal fun <T : Comparable<T>> sortArray(array: Array<out T>) {
     if (getStableSortingIsSupported()) {
         val comparison = { a: T, b: T -> a.compareTo(b) }
-        array.asDynamic().sort(comparison)
+        array.nativeSortWith(comparison)
     } else {
         mergeSort(array.unsafeCast<Array<T>>(), 0, array.lastIndex, naturalOrder())
     }
@@ -47,7 +49,7 @@ private fun getStableSortingIsSupported(): Boolean {
     // so we create slightly more elements to test stability
     for (index in 0 until 600) array.asDynamic().push(index)
     val comparison = { a: Int, b: Int -> (a and 3) - (b and 3) }
-    array.asDynamic().sort(comparison)
+    array.nativeSortWith(comparison)
     for (index in 1 until array.size) {
         val a = array[index - 1]
         val b = array[index]

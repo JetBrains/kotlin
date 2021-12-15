@@ -2290,29 +2290,8 @@ public actual inline fun <T> Array<out T>.plusElement(element: T): Array<T> {
  * 
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
-@JsNativeImplementation("""
-[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-    if (typeof TypedArray.prototype.sort === "undefined") {
-        Object.defineProperty(TypedArray.prototype, 'sort', {
-            value: function(compareFunction) {
-                compareFunction = compareFunction || function (a, b) {
-                    if (a < b) return -1;
-                    if (a > b) return 1;
-                    if (a === b) {
-                        if (a !== 0) return 0;
-                        var ia = 1 / a;
-                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
-                    }
-                    return a !== a ? (b !== b ? 0 : 1) : -1
-                }
-                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
-            }
-        });
-    }
-});
-""")
 public actual fun IntArray.sort(): Unit {
-    this.asDynamic().sort()
+    nativeSort()
 }
 
 /**
@@ -2330,29 +2309,8 @@ public actual fun LongArray.sort(): Unit {
  * 
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
-@JsNativeImplementation("""
-[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-    if (typeof TypedArray.prototype.sort === "undefined") {
-        Object.defineProperty(TypedArray.prototype, 'sort', {
-            value: function(compareFunction) {
-                compareFunction = compareFunction || function (a, b) {
-                    if (a < b) return -1;
-                    if (a > b) return 1;
-                    if (a === b) {
-                        if (a !== 0) return 0;
-                        var ia = 1 / a;
-                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
-                    }
-                    return a !== a ? (b !== b ? 0 : 1) : -1
-                }
-                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
-            }
-        });
-    }
-});
-""")
 public actual fun ByteArray.sort(): Unit {
-    this.asDynamic().sort()
+    nativeSort()
 }
 
 /**
@@ -2360,29 +2318,8 @@ public actual fun ByteArray.sort(): Unit {
  * 
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
-@JsNativeImplementation("""
-[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-    if (typeof TypedArray.prototype.sort === "undefined") {
-        Object.defineProperty(TypedArray.prototype, 'sort', {
-            value: function(compareFunction) {
-                compareFunction = compareFunction || function (a, b) {
-                    if (a < b) return -1;
-                    if (a > b) return 1;
-                    if (a === b) {
-                        if (a !== 0) return 0;
-                        var ia = 1 / a;
-                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
-                    }
-                    return a !== a ? (b !== b ? 0 : 1) : -1
-                }
-                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
-            }
-        });
-    }
-});
-""")
 public actual fun ShortArray.sort(): Unit {
-    this.asDynamic().sort()
+    nativeSort()
 }
 
 /**
@@ -2390,29 +2327,8 @@ public actual fun ShortArray.sort(): Unit {
  * 
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
-@JsNativeImplementation("""
-[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-    if (typeof TypedArray.prototype.sort === "undefined") {
-        Object.defineProperty(TypedArray.prototype, 'sort', {
-            value: function(compareFunction) {
-                compareFunction = compareFunction || function (a, b) {
-                    if (a < b) return -1;
-                    if (a > b) return 1;
-                    if (a === b) {
-                        if (a !== 0) return 0;
-                        var ia = 1 / a;
-                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
-                    }
-                    return a !== a ? (b !== b ? 0 : 1) : -1
-                }
-                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
-            }
-        });
-    }
-});
-""")
 public actual fun DoubleArray.sort(): Unit {
-    this.asDynamic().sort()
+    nativeSort()
 }
 
 /**
@@ -2420,29 +2336,8 @@ public actual fun DoubleArray.sort(): Unit {
  * 
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
-@JsNativeImplementation("""
-[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-    if (typeof TypedArray.prototype.sort === "undefined") {
-        Object.defineProperty(TypedArray.prototype, 'sort', {
-            value: function(compareFunction) {
-                compareFunction = compareFunction || function (a, b) {
-                    if (a < b) return -1;
-                    if (a > b) return 1;
-                    if (a === b) {
-                        if (a !== 0) return 0;
-                        var ia = 1 / a;
-                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
-                    }
-                    return a !== a ? (b !== b ? 0 : 1) : -1
-                }
-                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
-            }
-        });
-    }
-});
-""")
 public actual fun FloatArray.sort(): Unit {
-    this.asDynamic().sort()
+    nativeSort()
 }
 
 /**
@@ -2450,29 +2345,8 @@ public actual fun FloatArray.sort(): Unit {
  * 
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
-@JsNativeImplementation("""
-[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-    if (typeof TypedArray.prototype.sort === "undefined") {
-        Object.defineProperty(TypedArray.prototype, 'sort', {
-            value: function(compareFunction) {
-                compareFunction = compareFunction || function (a, b) {
-                    if (a < b) return -1;
-                    if (a > b) return 1;
-                    if (a === b) {
-                        if (a !== 0) return 0;
-                        var ia = 1 / a;
-                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
-                    }
-                    return a !== a ? (b !== b ? 0 : 1) : -1
-                }
-                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
-            }
-        });
-    }
-});
-""")
 public actual fun CharArray.sort(): Unit {
-    this.asDynamic().sort(::primitiveCompareTo)
+    nativeSortWith(::primitiveCompareTo)
 }
 
 /**
@@ -2653,30 +2527,9 @@ public actual fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit 
  */
 @Deprecated("Use other sorting functions from the Standard Library")
 @DeprecatedSinceKotlin(warningSince = "1.6")
-@JsNativeImplementation("""
-[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-    if (typeof TypedArray.prototype.sort === "undefined") {
-        Object.defineProperty(TypedArray.prototype, 'sort', {
-            value: function(compareFunction) {
-                compareFunction = compareFunction || function (a, b) {
-                    if (a < b) return -1;
-                    if (a > b) return 1;
-                    if (a === b) {
-                        if (a !== 0) return 0;
-                        var ia = 1 / a;
-                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
-                    }
-                    return a !== a ? (b !== b ? 0 : 1) : -1
-                }
-                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
-            }
-        });
-    }
-})
-""")
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.sort(noinline comparison: (a: Byte, b: Byte) -> Int): Unit {
-    asDynamic().sort(comparison)
+    nativeSortWith(comparison)
 }
 
 /**
@@ -2684,30 +2537,9 @@ public inline fun ByteArray.sort(noinline comparison: (a: Byte, b: Byte) -> Int)
  */
 @Deprecated("Use other sorting functions from the Standard Library")
 @DeprecatedSinceKotlin(warningSince = "1.6")
-@JsNativeImplementation("""
-[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-    if (typeof TypedArray.prototype.sort === "undefined") {
-        Object.defineProperty(TypedArray.prototype, 'sort', {
-            value: function(compareFunction) {
-                compareFunction = compareFunction || function (a, b) {
-                    if (a < b) return -1;
-                    if (a > b) return 1;
-                    if (a === b) {
-                        if (a !== 0) return 0;
-                        var ia = 1 / a;
-                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
-                    }
-                    return a !== a ? (b !== b ? 0 : 1) : -1
-                }
-                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
-            }
-        });
-    }
-})
-""")
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.sort(noinline comparison: (a: Short, b: Short) -> Int): Unit {
-    asDynamic().sort(comparison)
+    nativeSortWith(comparison)
 }
 
 /**
@@ -2715,30 +2547,9 @@ public inline fun ShortArray.sort(noinline comparison: (a: Short, b: Short) -> I
  */
 @Deprecated("Use other sorting functions from the Standard Library")
 @DeprecatedSinceKotlin(warningSince = "1.6")
-@JsNativeImplementation("""
-[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-    if (typeof TypedArray.prototype.sort === "undefined") {
-        Object.defineProperty(TypedArray.prototype, 'sort', {
-            value: function(compareFunction) {
-                compareFunction = compareFunction || function (a, b) {
-                    if (a < b) return -1;
-                    if (a > b) return 1;
-                    if (a === b) {
-                        if (a !== 0) return 0;
-                        var ia = 1 / a;
-                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
-                    }
-                    return a !== a ? (b !== b ? 0 : 1) : -1
-                }
-                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
-            }
-        });
-    }
-})
-""")
 @kotlin.internal.InlineOnly
 public inline fun IntArray.sort(noinline comparison: (a: Int, b: Int) -> Int): Unit {
-    asDynamic().sort(comparison)
+    nativeSortWith(comparison)
 }
 
 /**
@@ -2746,30 +2557,9 @@ public inline fun IntArray.sort(noinline comparison: (a: Int, b: Int) -> Int): U
  */
 @Deprecated("Use other sorting functions from the Standard Library")
 @DeprecatedSinceKotlin(warningSince = "1.6")
-@JsNativeImplementation("""
-[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-    if (typeof TypedArray.prototype.sort === "undefined") {
-        Object.defineProperty(TypedArray.prototype, 'sort', {
-            value: function(compareFunction) {
-                compareFunction = compareFunction || function (a, b) {
-                    if (a < b) return -1;
-                    if (a > b) return 1;
-                    if (a === b) {
-                        if (a !== 0) return 0;
-                        var ia = 1 / a;
-                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
-                    }
-                    return a !== a ? (b !== b ? 0 : 1) : -1
-                }
-                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
-            }
-        });
-    }
-})
-""")
 @kotlin.internal.InlineOnly
 public inline fun LongArray.sort(noinline comparison: (a: Long, b: Long) -> Int): Unit {
-    asDynamic().sort(comparison)
+    nativeSortWith(comparison)
 }
 
 /**
@@ -2777,30 +2567,9 @@ public inline fun LongArray.sort(noinline comparison: (a: Long, b: Long) -> Int)
  */
 @Deprecated("Use other sorting functions from the Standard Library")
 @DeprecatedSinceKotlin(warningSince = "1.6")
-@JsNativeImplementation("""
-[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-    if (typeof TypedArray.prototype.sort === "undefined") {
-        Object.defineProperty(TypedArray.prototype, 'sort', {
-            value: function(compareFunction) {
-                compareFunction = compareFunction || function (a, b) {
-                    if (a < b) return -1;
-                    if (a > b) return 1;
-                    if (a === b) {
-                        if (a !== 0) return 0;
-                        var ia = 1 / a;
-                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
-                    }
-                    return a !== a ? (b !== b ? 0 : 1) : -1
-                }
-                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
-            }
-        });
-    }
-})
-""")
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.sort(noinline comparison: (a: Float, b: Float) -> Int): Unit {
-    asDynamic().sort(comparison)
+    nativeSortWith(comparison)
 }
 
 /**
@@ -2808,30 +2577,9 @@ public inline fun FloatArray.sort(noinline comparison: (a: Float, b: Float) -> I
  */
 @Deprecated("Use other sorting functions from the Standard Library")
 @DeprecatedSinceKotlin(warningSince = "1.6")
-@JsNativeImplementation("""
-[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-    if (typeof TypedArray.prototype.sort === "undefined") {
-        Object.defineProperty(TypedArray.prototype, 'sort', {
-            value: function(compareFunction) {
-                compareFunction = compareFunction || function (a, b) {
-                    if (a < b) return -1;
-                    if (a > b) return 1;
-                    if (a === b) {
-                        if (a !== 0) return 0;
-                        var ia = 1 / a;
-                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
-                    }
-                    return a !== a ? (b !== b ? 0 : 1) : -1
-                }
-                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
-            }
-        });
-    }
-})
-""")
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.sort(noinline comparison: (a: Double, b: Double) -> Int): Unit {
-    asDynamic().sort(comparison)
+    nativeSortWith(comparison)
 }
 
 /**
@@ -2839,30 +2587,9 @@ public inline fun DoubleArray.sort(noinline comparison: (a: Double, b: Double) -
  */
 @Deprecated("Use other sorting functions from the Standard Library")
 @DeprecatedSinceKotlin(warningSince = "1.6")
-@JsNativeImplementation("""
-[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
-    if (typeof TypedArray.prototype.sort === "undefined") {
-        Object.defineProperty(TypedArray.prototype, 'sort', {
-            value: function(compareFunction) {
-                compareFunction = compareFunction || function (a, b) {
-                    if (a < b) return -1;
-                    if (a > b) return 1;
-                    if (a === b) {
-                        if (a !== 0) return 0;
-                        var ia = 1 / a;
-                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
-                    }
-                    return a !== a ? (b !== b ? 0 : 1) : -1
-                }
-                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
-            }
-        });
-    }
-})
-""")
 @kotlin.internal.InlineOnly
 public inline fun CharArray.sort(noinline comparison: (a: Char, b: Char) -> Int): Unit {
-    asDynamic().sort(comparison)
+    nativeSortWith(comparison)
 }
 
 /**

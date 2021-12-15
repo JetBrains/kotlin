@@ -21,9 +21,6 @@ class JsPolyfills private constructor(
     constructor(generateRegionComments: Boolean = false) : this(mutableSetOf<String>(), generateRegionComments)
 
     fun registerDeclarationNativeImplementation(declaration: IrDeclaration) {
-        if (declaration is IrFunction && declaration.name.toString().contains("sort")) {
-            System.`out`.println(declaration)
-        }
         val implementation = declaration.getJsNativeImplementation() ?: return
         polyfills.add(implementation.trimIndent())
     }
