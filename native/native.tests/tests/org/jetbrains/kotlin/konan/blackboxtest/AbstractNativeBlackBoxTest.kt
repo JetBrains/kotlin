@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.blackboxtest
 
 import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestRunSettings
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TreeNode
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.joinPackageNames
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(NativeBlackBoxTestSupport::class)
 abstract class AbstractNativeBlackBoxTest {
+    internal lateinit var testRunSettings: TestRunSettings
     internal lateinit var testRunProvider: TestRunProvider
 
     /**
@@ -35,7 +37,7 @@ abstract class AbstractNativeBlackBoxTest {
      * This function should be called from a method annotated with [org.junit.jupiter.api.Test].
      */
     internal fun runTestCase(testCaseId: TestCaseId) {
-        val testRun = testRunProvider.getSingleTestRun(testCaseId)
+        val testRun = testRunProvider.getSingleTestRun(testCaseId, testRunSettings)
         performTestRun(testRun)
     }
 
@@ -55,7 +57,7 @@ abstract class AbstractNativeBlackBoxTest {
      * This function should be called from a method annotated with [org.junit.jupiter.api.TestFactory].
      */
     internal fun dynamicTestCase(testCaseId: TestCaseId): Collection<DynamicNode> {
-        val testRunNodes = testRunProvider.getTestRuns(testCaseId)
+        val testRunNodes = testRunProvider.getTestRuns(testCaseId, testRunSettings)
         return buildJUnitDynamicNodes(testRunNodes)
     }
 
@@ -90,7 +92,7 @@ abstract class AbstractNativeBlackBoxTest {
         }
 
     private fun performTestRun(testRun: TestRun) {
-        val testRunner = testRunProvider.createRunner(testRun)
+        val testRunner = testRunProvider.createRunner(testRun, testRunSettings)
         testRunner.run()
     }
 }

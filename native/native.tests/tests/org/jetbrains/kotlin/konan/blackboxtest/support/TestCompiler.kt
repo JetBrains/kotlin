@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilation.Companion
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependencies
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allFriends
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Binaries
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GlobalSettings
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.*
@@ -26,7 +24,7 @@ import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
-internal class TestCompilationFactory(private val settings: Settings) {
+internal class TestCompilationFactory {
     private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation>()
 
     private sealed interface TestCompilationCacheKey {
@@ -34,7 +32,7 @@ internal class TestCompilationFactory(private val settings: Settings) {
         data class Executable(val sourceModules: Set<TestModule>) : TestCompilationCacheKey
     }
 
-    fun testCasesToExecutable(testCases: Collection<TestCase>): TestCompilation {
+    fun testCasesToExecutable(testCases: Collection<TestCase>, settings: Settings): TestCompilation {
         val rootModules = testCases.flatMapToSet { testCase -> testCase.rootModules }
         val cacheKey = TestCompilationCacheKey.Executable(rootModules)
 
@@ -44,16 +42,18 @@ internal class TestCompilationFactory(private val settings: Settings) {
         // Long pass.
         val freeCompilerArgs = rootModules.first().testCase.freeCompilerArgs // Should be identical inside the same test case group.
         val extras = testCases.first().extras // Should be identical inside the same test case group.
-        val libraries = rootModules.flatMapToSet { it.allDependencies }.map { moduleToKlib(it, freeCompilerArgs) }
-        val friends = rootModules.flatMapToSet { it.allFriends }.map { moduleToKlib(it, freeCompilerArgs) }
+        val libraries = rootModules.flatMapToSet { it.allDependencies }.map { moduleToKlib(it, freeCompilerArgs, settings) }
+        val friends = rootModules.flatMapToSet { it.allFriends }.map { moduleToKlib(it, freeCompilerArgs, settings) }
 
         return cachedCompilations.computeIfAbsent(cacheKey) {
             TestCompilationImpl(
-                settings = settings,
+                targets = settings.get(),
+                home = settings.get(),
+                classLoader = settings.get(),
                 freeCompilerArgs = freeCompilerArgs,
                 sourceModules = rootModules,
                 dependencies = TestCompilationDependencies(libraries = libraries, friends = friends),
-                expectedArtifactFile = artifactFileForExecutable(rootModules),
+                expectedArtifactFile = settings.artifactFileForExecutable(rootModules),
                 specificCompilerArgs = {
                     add("-produce", "program")
                     when (extras) {
@@ -67,7 +67,7 @@ internal class TestCompilationFactory(private val settings: Settings) {
                             add(testRunnerArg)
                         }
                     }
-                    settings.get<GlobalSettings>().getRootCacheDirectory(debuggable = true)?.let { rootCacheDir ->
+                    settings.getRootCacheDirectory(debuggable = true)?.let { rootCacheDir ->
                         add("-Xcache-directory=$rootCacheDir")
                     }
                 }
@@ -75,7 +75,7 @@ internal class TestCompilationFactory(private val settings: Settings) {
         }
     }
 
-    private fun moduleToKlib(sourceModule: TestModule, freeCompilerArgs: TestCompilerArgs): TestCompilation {
+    private fun moduleToKlib(sourceModule: TestModule, freeCompilerArgs: TestCompilerArgs, settings: Settings): TestCompilation {
         val sourceModules = setOf(sourceModule)
         val cacheKey = TestCompilationCacheKey.Klib(sourceModules, freeCompilerArgs)
 
@@ -83,35 +83,37 @@ internal class TestCompilationFactory(private val settings: Settings) {
         cachedCompilations[cacheKey]?.let { return it }
 
         // Long pass.
-        val libraries = sourceModule.allDependencies.map { moduleToKlib(it, freeCompilerArgs) }
-        val friends = sourceModule.allFriends.map { moduleToKlib(it, freeCompilerArgs) }
+        val libraries = sourceModule.allDependencies.map { moduleToKlib(it, freeCompilerArgs, settings) }
+        val friends = sourceModule.allFriends.map { moduleToKlib(it, freeCompilerArgs, settings) }
 
         return cachedCompilations.computeIfAbsent(cacheKey) {
             TestCompilationImpl(
-                settings = settings,
+                targets = settings.get(),
+                home = settings.get(),
+                classLoader = settings.get(),
                 freeCompilerArgs = freeCompilerArgs,
                 sourceModules = sourceModules,
                 dependencies = TestCompilationDependencies(libraries = libraries, friends = friends),
-                expectedArtifactFile = artifactFileForKlib(sourceModule, freeCompilerArgs),
+                expectedArtifactFile = settings.artifactFileForKlib(sourceModule, freeCompilerArgs),
                 specificCompilerArgs = { add("-produce", "library") }
             )
         }
     }
 
-    private fun artifactFileForExecutable(modules: Set<TestModule.Exclusive>) = when (modules.size) {
+    private fun Settings.artifactFileForExecutable(modules: Set<TestModule.Exclusive>) = when (modules.size) {
         1 -> artifactFileForExecutable(modules.first())
-        else -> multiModuleArtifactFile(modules, settings.get<GlobalSettings>().target.family.exeSuffix)
+        else -> multiModuleArtifactFile(modules, get<KotlinNativeTargets>().testTarget.family.exeSuffix)
     }
 
-    private fun artifactFileForExecutable(module: TestModule.Exclusive) =
-        singleModuleArtifactFile(module, settings.get<GlobalSettings>().target.family.exeSuffix)
+    private fun Settings.artifactFileForExecutable(module: TestModule.Exclusive) =
+        singleModuleArtifactFile(module, get<KotlinNativeTargets>().testTarget.family.exeSuffix)
 
-    private fun artifactFileForKlib(module: TestModule, freeCompilerArgs: TestCompilerArgs) = when (module) {
+    private fun Settings.artifactFileForKlib(module: TestModule, freeCompilerArgs: TestCompilerArgs) = when (module) {
         is TestModule.Exclusive -> singleModuleArtifactFile(module, "klib")
-        is TestModule.Shared -> settings.get<Binaries>().sharedBinariesDir.resolve("${module.name}-${prettyHash(freeCompilerArgs.hashCode())}.klib")
+        is TestModule.Shared -> get<Binaries>().sharedBinariesDir.resolve("${module.name}-${prettyHash(freeCompilerArgs.hashCode())}.klib")
     }
 
-    private fun singleModuleArtifactFile(module: TestModule.Exclusive, extension: String): File {
+    private fun Settings.singleModuleArtifactFile(module: TestModule.Exclusive, extension: String): File {
         val artifactFileName = buildString {
             append(module.testCase.nominalPackageName.compressedPackageName).append('.')
             if (extension == "klib") append(module.name).append('.')
@@ -120,7 +122,7 @@ internal class TestCompilationFactory(private val settings: Settings) {
         return artifactDirForPackageName(module.testCase.nominalPackageName).resolve(artifactFileName)
     }
 
-    private fun multiModuleArtifactFile(modules: Collection<TestModule>, extension: String): File {
+    private fun Settings.multiModuleArtifactFile(modules: Collection<TestModule>, extension: String): File {
         var filesCount = 0
         var hash = 0
         val uniquePackageNames = hashSetOf<PackageName>()
@@ -153,8 +155,8 @@ internal class TestCompilationFactory(private val settings: Settings) {
         return artifactDirForPackageName(commonPackageName).resolve(artifactFileName)
     }
 
-    private fun artifactDirForPackageName(packageName: PackageName?): File {
-        val baseDir = settings.get<Binaries>().testBinariesDir
+    private fun Settings.artifactDirForPackageName(packageName: PackageName?): File {
+        val baseDir = get<Binaries>().testBinariesDir
         val outputDir = if (packageName != null) baseDir.resolve(packageName.compressedPackageName) else baseDir
 
         outputDir.mkdirs()
@@ -234,7 +236,9 @@ internal class TestCompilationDependencies(
 }
 
 private class TestCompilationImpl(
-    private val settings: Settings,
+    private val targets: KotlinNativeTargets,
+    private val home: KotlinNativeHome,
+    private val classLoader: KotlinNativeClassLoader,
     private val freeCompilerArgs: TestCompilerArgs,
     private val sourceModules: Collection<TestModule>,
     private val dependencies: TestCompilationDependencies,
@@ -254,8 +258,8 @@ private class TestCompilationImpl(
         add(
             "-enable-assertions",
             "-g",
-            "-target", settings.get<GlobalSettings>().target.name,
-            "-repo", settings.get<GlobalSettings>().kotlinNativeHome.resolve("klib").path,
+            "-target", targets.testTarget.name,
+            "-repo", home.dir.resolve("klib").path,
             "-output", expectedArtifactFile.path,
             "-Xskip-prerelease-check",
             "-Xverify-ir",
@@ -286,7 +290,7 @@ private class TestCompilationImpl(
         val (loggedCompilerCall: LoggedData, result: TestCompilationResult.ImmediateResult) = try {
             val (exitCode, compilerOutput, compilerOutputHasErrors, duration) = callCompiler(
                 compilerArgs = compilerArgs,
-                lazyKotlinNativeClassLoader = settings.get<GlobalSettings>().lazyKotlinNativeClassLoader
+                kotlinNativeClassLoader = classLoader.classLoader
             )
 
             val loggedCompilerCall =
@@ -341,14 +345,12 @@ private inline fun buildArgs(builderAction: ArgsBuilder.() -> Unit): Array<Strin
     return ArgsBuilder().apply(builderAction).build()
 }
 
-private fun callCompiler(compilerArgs: Array<String>, lazyKotlinNativeClassLoader: Lazy<ClassLoader>): CompilerCallResult {
+private fun callCompiler(compilerArgs: Array<String>, kotlinNativeClassLoader: ClassLoader): CompilerCallResult {
     val compilerXmlOutput: ByteArrayOutputStream
     val exitCode: ExitCode
 
     @OptIn(ExperimentalTime::class)
     val duration = measureTime {
-        val kotlinNativeClassLoader by lazyKotlinNativeClassLoader
-
         val servicesClass = Class.forName(Services::class.java.canonicalName, true, kotlinNativeClassLoader)
         val emptyServices = servicesClass.getField("EMPTY").get(servicesClass)
 

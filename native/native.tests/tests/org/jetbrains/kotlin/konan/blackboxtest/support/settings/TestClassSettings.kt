@@ -5,28 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.settings
 
-import gnu.trove.THashMap
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestDisposable
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
-import kotlin.reflect.KClass
-
-internal class Settings(settings: Iterable<Any>) : TestDisposable(parentDisposable = null) {
-    private val map: Map<KClass<*>, Any> = THashMap<KClass<*>, Any>().apply {
-        settings.forEach { setting ->
-            val previous = put(setting::class, setting)
-            assertTrue(previous == null) { "Duplicated settings: ${setting::class}, $previous, $setting" }
-        }
-
-        compact()
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun <T : Any> get(clazz: KClass<out T>): T = map[clazz] as T? ?: fail { "No such setting: $clazz" }
-
-    inline fun <reified T : Any> get(): T = get(T::class)
-}
 
 /**
  * The directories with original sources (aka testData).
@@ -44,3 +23,8 @@ internal class GeneratedSources(val testSourcesDir: File, val sharedSourcesDir: 
  * [sharedBinariesDir] - The directory with compiled shared modules (klibs).
  */
 internal class Binaries(val testBinariesDir: File, val sharedBinariesDir: File)
+
+/**
+ * The [TestConfiguration] of the current test class and the [Annotation] with specific parameters.
+ */
+internal data class ComputedTestConfiguration(val configuration: TestConfiguration, val annotation: Annotation)

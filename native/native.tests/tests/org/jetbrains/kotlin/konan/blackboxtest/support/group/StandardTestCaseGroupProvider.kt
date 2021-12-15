@@ -20,33 +20,31 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertNotEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 
-internal class StandardTestCaseGroupProvider(private val settings: Settings) : TestCaseGroupProvider {
-    val sourceTransformers: MutableMap<String, List<(String) -> String>> = mutableMapOf()
+internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
+    // Create and cache test cases in groups on demand.
+    private val cachedTestCaseGroups = ThreadSafeCache<TestCaseGroupId.TestDataDir, TestCaseGroup?>()
 
-    // Load test cases in groups on demand.
-    private val lazyTestCaseGroups = ThreadSafeFactory<TestCaseGroupId.TestDataDir, TestCaseGroup?> { testCaseGroupId ->
-        val testDataFiles = testCaseGroupId.dir.listFiles()
-            ?: return@ThreadSafeFactory null // `null` means that there is no such testDataDir.
+    override fun getTestCaseGroup(testCaseGroupId: TestCaseGroupId, settings: Settings): TestCaseGroup? {
+        check(testCaseGroupId is TestCaseGroupId.TestDataDir)
 
-        val testCases = testDataFiles.mapNotNull { testDataFile ->
-            if (!testDataFile.isFile || testDataFile.extension != "kt")
-                return@mapNotNull null
+        return cachedTestCaseGroups.computeIfAbsent(testCaseGroupId) {
+            val testDataFiles = testCaseGroupId.dir.listFiles()
+                ?: return@computeIfAbsent null // `null` means that there is no such testDataDir.
 
-            createTestCase(testDataFile)
+            val testCases = testDataFiles.mapNotNull { testDataFile ->
+                if (!testDataFile.isFile || testDataFile.extension != "kt")
+                    return@mapNotNull null
+
+                createTestCase(testDataFile, settings)
+            }
+
+            TestCaseGroup.Default(disabledTestCaseIds = emptySet(), testCases = testCases)
         }
-
-        TestCaseGroup.Default(disabledTestCaseIds = emptySet(), testCases = testCases)
     }
 
-    override fun getTestCaseGroup(testCaseGroupId: TestCaseGroupId): TestCaseGroup? {
-        assertTrue(testCaseGroupId is TestCaseGroupId.TestDataDir)
-        return lazyTestCaseGroups[testCaseGroupId.cast()]
-    }
-
-    private fun createTestCase(testDataFile: File): TestCase {
+    private fun createTestCase(testDataFile: File, settings: Settings): TestCase {
         val generatedSourcesDir = computeGeneratedSourcesDir(
             testDataBaseDir = settings.get<TestRoots>().baseDir,
             testDataFile = testDataFile,

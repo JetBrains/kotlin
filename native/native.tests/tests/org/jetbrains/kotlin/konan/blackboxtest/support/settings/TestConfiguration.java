@@ -14,7 +14,7 @@ import java.lang.annotation.*;
  */
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface TestSettings {
+public @interface TestConfiguration {
     Class<? extends TestCaseGroupProvider> providerClass();
     Class<?>[] requiredSettings() default {};
 }

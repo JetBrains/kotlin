@@ -7,17 +7,16 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.group
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GlobalSettings
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeFactory
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.expandGlobTo
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.junit.jupiter.api.fail
 import java.io.File
 
-internal class PredefinedTestCaseGroupProvider(private val settings: Settings, annotation: PredefinedTestCases) : TestCaseGroupProvider {
+internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) : TestCaseGroupProvider {
     private val testCaseIdToPredefinedTestCase: Map<TestCaseId.Named, PredefinedTestCase> = buildMap {
         annotation.testCases.forEach { predefinedTestCase ->
             val testCaseId = TestCaseId.Named(predefinedTestCase.name)
@@ -36,55 +35,56 @@ internal class PredefinedTestCaseGroupProvider(private val settings: Settings, a
         }
     }
 
-    private val lazyTestCaseGroups = ThreadSafeFactory<TestCaseGroupId.Named, TestCaseGroup?> { testCaseGroupId ->
-        val testCaseId = testCaseGroupIdToTestCaseId[testCaseGroupId] ?: return@ThreadSafeFactory null
-        val predefinedTestCase = testCaseIdToPredefinedTestCase[testCaseId] ?: return@ThreadSafeFactory null
+    private val cachedTestCaseGroups = ThreadSafeCache<TestCaseGroupId.Named, TestCaseGroup?>()
 
-        val module = TestModule.Exclusive(
-            name = testCaseId.uniqueName,
-            directDependencySymbols = emptySet(),
-            directFriendSymbols = emptySet()
-        )
+    override fun getTestCaseGroup(testCaseGroupId: TestCaseGroupId, settings: Settings): TestCaseGroup? {
+        check(testCaseGroupId is TestCaseGroupId.Named)
 
-        predefinedTestCase.sourceLocations
-            .expandGlobs { "No files found for test case $testCaseId" }
-            .forEach { file -> module.files += TestFile.createCommitted(file, module) }
+        return cachedTestCaseGroups.computeIfAbsent(testCaseGroupId) {
+            val testCaseId = testCaseGroupIdToTestCaseId[testCaseGroupId] ?: return@computeIfAbsent null
+            val predefinedTestCase = testCaseIdToPredefinedTestCase[testCaseId] ?: return@computeIfAbsent null
 
-        val testCase = TestCase(
-            id = testCaseId,
-            kind = TestKind.STANDALONE,
-            modules = setOf(module),
-            freeCompilerArgs = predefinedTestCase.freeCompilerArgs
-                .parseCompilerArgs { "Failed to parse free compiler arguments for test case $testCaseId" },
-            nominalPackageName = PackageName(testCaseId.uniqueName),
-            expectedOutputDataFile = null,
-            extras = WithTestRunnerExtras(runnerType = predefinedTestCase.runnerType)
-        )
-        testCase.initialize(null)
+            val module = TestModule.Exclusive(
+                name = testCaseId.uniqueName,
+                directDependencySymbols = emptySet(),
+                directFriendSymbols = emptySet()
+            )
 
-        TestCaseGroup.Default(disabledTestCaseIds = emptySet(), testCases = listOf(testCase))
+            predefinedTestCase.sourceLocations
+                .expandGlobs(settings) { "No files found for test case $testCaseId" }
+                .forEach { file -> module.files += TestFile.createCommitted(file, module) }
+
+            val testCase = TestCase(
+                id = testCaseId,
+                kind = TestKind.STANDALONE,
+                modules = setOf(module),
+                freeCompilerArgs = predefinedTestCase.freeCompilerArgs
+                    .parseCompilerArgs(settings) { "Failed to parse free compiler arguments for test case $testCaseId" },
+                nominalPackageName = PackageName(testCaseId.uniqueName),
+                expectedOutputDataFile = null,
+                extras = WithTestRunnerExtras(runnerType = predefinedTestCase.runnerType)
+            )
+            testCase.initialize(null)
+
+            TestCaseGroup.Default(disabledTestCaseIds = emptySet(), testCases = listOf(testCase))
+        }
     }
 
-    override fun getTestCaseGroup(testCaseGroupId: TestCaseGroupId): TestCaseGroup? {
-        assertTrue(testCaseGroupId is TestCaseGroupId.Named)
-        return lazyTestCaseGroups[testCaseGroupId.cast()]
-    }
-
-    private fun Array<String>.expandGlobs(noExpandedFilesErrorMessage: () -> String): Set<File> {
+    private fun Array<String>.expandGlobs(settings: Settings, noExpandedFilesErrorMessage: () -> String): Set<File> {
         val files = buildSet {
             this@expandGlobs.forEach { pathPattern ->
-                expandGlobTo(getAbsoluteFile(substituteRealPaths(pathPattern)), this)
+                expandGlobTo(getAbsoluteFile(substituteRealPaths(pathPattern, settings)), this)
             }
         }
         assertTrue(files.isNotEmpty(), noExpandedFilesErrorMessage)
         return files
     }
 
-    private fun Array<String>.parseCompilerArgs(parsingErrorMessage: () -> String): TestCompilerArgs =
+    private fun Array<String>.parseCompilerArgs(settings: Settings, parsingErrorMessage: () -> String): TestCompilerArgs =
         if (isEmpty())
             TestCompilerArgs.EMPTY
         else {
-            val freeCompilerArgs = map { arg -> substituteRealPaths(arg) }
+            val freeCompilerArgs = map { arg -> substituteRealPaths(arg, settings) }
             val forbiddenCompilerArgs = TestCompilerArgs.findForbiddenArgs(freeCompilerArgs)
             assertTrue(forbiddenCompilerArgs.isEmpty()) {
                 """
@@ -98,10 +98,10 @@ internal class PredefinedTestCaseGroupProvider(private val settings: Settings, a
             TestCompilerArgs(freeCompilerArgs)
         }
 
-    private fun substituteRealPaths(value: String): String =
+    private fun substituteRealPaths(value: String, settings: Settings): String =
         if ('$' in value) {
             // N.B. Here, more substitutions can be supported in the future if it would be necessary.
-            value.replace(PredefinedPaths.KOTLIN_NATIVE_DISTRIBUTION, settings.get<GlobalSettings>().kotlinNativeHome.path)
+            value.replace(PredefinedPaths.KOTLIN_NATIVE_DISTRIBUTION, settings.get<KotlinNativeHome>().path)
         } else
             value
 }

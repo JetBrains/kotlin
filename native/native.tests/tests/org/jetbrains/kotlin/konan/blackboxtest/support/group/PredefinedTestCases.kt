@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support.group
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestRunnerType
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestSettings
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestConfiguration
 
 @Target(AnnotationTarget.CLASS)
-@TestSettings(providerClass = PredefinedTestCaseGroupProvider::class)
+@TestConfiguration(providerClass = PredefinedTestCaseGroupProvider::class)
 internal annotation class PredefinedTestCases(vararg val testCases: PredefinedTestCase)
 
 @Target()

@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.group
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseGroup
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseGroupId
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
 
 internal interface TestCaseGroupProvider {
-    fun getTestCaseGroup(testCaseGroupId: TestCaseGroupId): TestCaseGroup?
+    fun getTestCaseGroup(testCaseGroupId: TestCaseGroupId, settings: Settings): TestCaseGroup?
 }

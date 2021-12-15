@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.group
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GeneratedSources
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestRoots
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestSettings
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestConfiguration
 
 @Target(AnnotationTarget.CLASS)
-@TestSettings(providerClass = StandardTestCaseGroupProvider::class, requiredSettings = [TestRoots::class, GeneratedSources::class])
+@TestConfiguration(providerClass = StandardTestCaseGroupProvider::class, requiredSettings = [TestRoots::class, GeneratedSources::class])
 annotation class UseStandardTestCaseGroupProvider

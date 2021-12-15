@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.ExternalSourceTransformersProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.GeneratedSources
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestRoots
@@ -37,48 +38,51 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTarget
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 
-internal class ExtTestCaseGroupProvider(
-    private val settings: Settings,
-    private val sourceTransformersProvider: ExternalSourceTransformersProvider
-) : TestCaseGroupProvider, TestDisposable(parentDisposable = settings) {
+internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(parentDisposable = null) {
     private val structureFactory = ExtTestDataFileStructureFactory(parentDisposable = this)
     private val sharedModules = ThreadSafeCache<String, TestModule.Shared?>()
 
-    private val lazyTestCaseGroups = ThreadSafeFactory<TestCaseGroupId.TestDataDir, TestCaseGroup?> { testCaseGroupId ->
-        if (testCaseGroupId.dir in excludes) return@ThreadSafeFactory TestCaseGroup.ALL_DISABLED
+    private val cachedTestCaseGroups = ThreadSafeCache<TestCaseGroupId.TestDataDir, TestCaseGroup?>()
 
-        val (excludedTestDataFiles, testDataFiles) = testCaseGroupId.dir.listFiles()
-            ?.filter { file -> file.isFile && file.extension == "kt" }
-            ?.partition { file -> file in excludes }
-            ?: return@ThreadSafeFactory null
-
-        val disabledTestCaseIds = hashSetOf<TestCaseId>()
-        excludedTestDataFiles.mapTo(disabledTestCaseIds, TestCaseId::TestDataFile)
-
-        val testCases = mutableListOf<TestCase>()
-
-        testDataFiles.forEach { testDataFile ->
-            val extTestDataFile = ExtTestDataFile(settings, structureFactory, sourceTransformersProvider, testDataFile)
-
-            if (extTestDataFile.isRelevant)
-                testCases += extTestDataFile.createTestCase(
-                    definitelyStandaloneTest = testDataFile in standalones,
-                    sharedModules = sharedModules
-                )
-            else
-                disabledTestCaseIds += TestCaseId.TestDataFile(testDataFile)
-        }
-
-        TestCaseGroup.Default(disabledTestCaseIds, testCases)
-    }
-
-    override fun getTestCaseGroup(testCaseGroupId: TestCaseGroupId): TestCaseGroup? {
+    override fun getTestCaseGroup(testCaseGroupId: TestCaseGroupId, settings: Settings): TestCaseGroup? {
         assertNotDisposed()
-        assertTrue(testCaseGroupId is TestCaseGroupId.TestDataDir)
-        return lazyTestCaseGroups[testCaseGroupId.cast()]
+        check(testCaseGroupId is TestCaseGroupId.TestDataDir)
+
+        return cachedTestCaseGroups.computeIfAbsent(testCaseGroupId) {
+            if (testCaseGroupId.dir in excludes) return@computeIfAbsent TestCaseGroup.ALL_DISABLED
+
+            val (excludedTestDataFiles, testDataFiles) = testCaseGroupId.dir.listFiles()
+                ?.filter { file -> file.isFile && file.extension == "kt" }
+                ?.partition { file -> file in excludes }
+                ?: return@computeIfAbsent null
+
+            val disabledTestCaseIds = hashSetOf<TestCaseId>()
+            excludedTestDataFiles.mapTo(disabledTestCaseIds, TestCaseId::TestDataFile)
+
+            val testCases = mutableListOf<TestCase>()
+
+            testDataFiles.forEach { testDataFile ->
+                val extTestDataFile = ExtTestDataFile(
+                    testDataFile = testDataFile,
+                    structureFactory = structureFactory,
+                    customSourceTransformers = settings.get<ExternalSourceTransformersProvider>().getSourceTransformers(testDataFile),
+                    testRoots = settings.get(),
+                    generatedSources = settings.get()
+                )
+
+                if (extTestDataFile.isRelevant)
+                    testCases += extTestDataFile.createTestCase(
+                        definitelyStandaloneTest = testDataFile in standalones,
+                        sharedModules = sharedModules
+                    )
+                else
+                    disabledTestCaseIds += TestCaseId.TestDataFile(testDataFile)
+            }
+
+            TestCaseGroup.Default(disabledTestCaseIds, testCases)
+        }
     }
 
     companion object {
@@ -122,19 +126,19 @@ internal class ExtTestCaseGroupProvider(
 }
 
 private class ExtTestDataFile(
-    private val settings: Settings,
+    private val testDataFile: File,
     structureFactory: ExtTestDataFileStructureFactory,
-    sourceTransformersProvider: ExternalSourceTransformersProvider,
-    private val testDataFile: File
+    customSourceTransformers: ExternalSourceTransformers?,
+    testRoots: TestRoots,
+    private val generatedSources: GeneratedSources
 ) {
     private val structure by lazy {
-        val customTransformers: ExternalSourceTransformers? = sourceTransformersProvider.getSourceTransformers(testDataFile)
-        val allTransformers: ExternalSourceTransformers = if (customTransformers.isNullOrEmpty())
+        val allSourceTransformers: ExternalSourceTransformers = if (customSourceTransformers.isNullOrEmpty())
             MANDATORY_SOURCE_TRANSFORMERS
         else
-            MANDATORY_SOURCE_TRANSFORMERS + customTransformers
+            MANDATORY_SOURCE_TRANSFORMERS + customSourceTransformers
 
-        structureFactory.ExtTestDataFileStructure(testDataFile, allTransformers)
+        structureFactory.ExtTestDataFileStructure(testDataFile, allSourceTransformers)
     }
 
     private val testDataFileSettings by lazy {
@@ -152,12 +156,12 @@ private class ExtTestDataFile(
             optInsForCompiler = optInsForCompiler,
             expectActualLinker = EXPECT_ACTUAL_LINKER_DIRECTIVE in structure.directives,
             generatedSourcesDir = computeGeneratedSourcesDir(
-                testDataBaseDir = settings.get<TestRoots>().baseDir,
+                testDataBaseDir = testRoots.baseDir,
                 testDataFile = testDataFile,
-                generatedSourcesBaseDir = settings.get<GeneratedSources>().testSourcesDir
+                generatedSourcesBaseDir = generatedSources.testSourcesDir
             ),
             nominalPackageName = computePackageName(
-                testDataBaseDir = settings.get<TestRoots>().baseDir,
+                testDataBaseDir = testRoots.baseDir,
                 testDataFile = testDataFile
             )
         )
@@ -575,7 +579,7 @@ private class ExtTestDataFile(
             testCaseDir = testDataFileSettings.generatedSourcesDir,
             findOrGenerateSharedModule = { moduleName: String, generator: SharedModuleGenerator ->
                 sharedModules.computeIfAbsent(moduleName) {
-                    generator(settings.get<GeneratedSources>().sharedSourcesDir)
+                    generator(generatedSources.sharedSourcesDir)
                 }
             }
         )
