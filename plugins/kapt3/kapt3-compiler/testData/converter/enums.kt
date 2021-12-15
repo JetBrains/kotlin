@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 enum class Enum1 {
     BLACK, WHITE
 }
