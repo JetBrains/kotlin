@@ -26,6 +26,11 @@
 #include "Runtime.h"
 #include "RuntimePrivate.hpp"
 #include "Worker.h"
+#include "KString.h"
+
+#ifndef KONAN_NO_THREADS
+#include <thread>
+#endif
 
 using kotlin::internal::FILE_NOT_INITIALIZED;
 using kotlin::internal::FILE_BEING_INITIALIZED;
@@ -364,6 +369,35 @@ bool Kotlin_memoryLeakCheckerEnabled() {
 KBoolean Konan_Platform_getMemoryLeakChecker() {
   return g_checkLeaks;
 }
+
+KInt Konan_Platform_getAvailableProcessors() {
+#ifdef KONAN_NO_THREADS
+    return 1;
+#else
+    auto res = std::thread::hardware_concurrency();
+    // C++ standard says that if this function can return 0 if value is not "well defined or not computable"
+    // In current libstdc++ implementation, seems it can happen only on unsupported targets.
+    // We consider such systems as single-threaded
+    if (res == 0) {
+        res = 1;
+    }
+    // Probably it can't happen, but let's not allow overflows
+    if (res > std::numeric_limits<int>::max()) {
+        res = std::numeric_limits<int>::max();
+    }
+    return static_cast<KInt>(res);
+#endif
+}
+
+OBJ_GETTER0(Konan_Platform_getAvailableProcessorsEnv) {
+    char* env = getenv("KOTLIN_NATIVE_AVAILABLE_PROCESSORS");
+    if (env == nullptr) {
+        RETURN_OBJ(nullptr)
+    }
+    RETURN_RESULT_OF(CreateStringFromCString, env)
+}
+
+
 
 void Konan_Platform_setMemoryLeakChecker(KBoolean value) {
   g_checkLeaks = value;

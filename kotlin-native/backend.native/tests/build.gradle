@@ -4114,11 +4114,7 @@ createInterop("sysstat") {
 }
 
 createInterop("cstdlib") {
-    def f = File.createTempFile("cstdlib.empty", ".def")
-    it.packageName 'cstdlib'
-//    it.headers 'stdlib.h'
-    f.write("headers = stdlib.h")
-    it.defFile f
+    it.defFile 'interop/basics/cstdlib.def'
 }
 
 createInterop("cstdio") {
@@ -4422,6 +4418,15 @@ standaloneTest("interop_objc_allocException") {
     expectedExitStatus = 0
     source = "interop/objc/allocException.kt"
     UtilsKt.dependsOnPlatformLibs(it)
+}
+
+interopTest("interop_available_processors") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = 'interop/basics/available_processors.kt'
+    interop = 'cstdlib'
+    outputChecker = {
+        s -> Integer.parseInt(s.trim()) == Runtime.getRuntime().availableProcessors()
+    }
 }
 
 interopTest("interop0") {
