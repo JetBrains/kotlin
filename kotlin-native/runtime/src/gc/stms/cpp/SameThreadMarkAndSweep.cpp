@@ -103,12 +103,17 @@ ALWAYS_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointRegular(size
 }
 
 NO_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointSlowPath(SafepointFlag flag) noexcept {
-    RuntimeAssert(flag != SafepointFlag::kNone, "Must've been handled by the caller");
-    // No need to check for kNeedsSuspend, because `suspendIfRequested` checks for its own atomic.
-    threadData_.suspensionData().suspendIfRequested();
-    if (flag == SafepointFlag::kNeedsGC) {
-        RuntimeLogDebug({kTagGC}, "Attempt to GC at SafePoint");
-        ScheduleAndWaitFullGC();
+    switch (flag) {
+        case SafepointFlag::kNone:
+            RuntimeAssert(false, "Must've been handled by the caller");
+            return;
+        case SafepointFlag::kNeedsSuspend:
+            threadData_.suspensionData().suspendIfRequested();
+            return;
+        case SafepointFlag::kNeedsGC:
+            RuntimeLogDebug({kTagGC}, "Attempt to GC at SafePoint");
+            ScheduleAndWaitFullGC();
+            return;
     }
 }
 
