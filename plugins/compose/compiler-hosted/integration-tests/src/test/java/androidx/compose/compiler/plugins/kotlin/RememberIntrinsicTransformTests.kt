@@ -153,7 +153,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 %composer.cache(%dirty and 0b1110 === 0b0100) {
                   val tmp0_return = 1
                   tmp0_return
@@ -185,7 +185,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(x)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 %composer.cache(%dirty and 0b1110 === 0b0100 || %dirty and 0b1000 !== 0 && %composer.changed(x)) {
                   val tmp0_return = 1
                   tmp0_return
@@ -529,7 +529,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 A(%composer, 0)
                 if (condition) {
                   val foo = %composer.cache(false) {
@@ -571,7 +571,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(condition)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (condition) {
                   A(%composer, 0)
                   val foo = remember({
@@ -725,7 +725,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
               if (%changed and 0b0001110000000000 === 0) {
                 %dirty = %dirty or if (%composer.changed(d)) 0b100000000000 else 0b010000000000
               }
-              if (%dirty and 0b0001011011011011 xor 0b010010010010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b0001011011011011 !== 0b010010010010 || !%composer.skipping) {
                 val foo = %composer.cache(%dirty and 0b1110 === 0b0100 or %dirty and 0b01110000 === 0b00100000 or %dirty and 0b001110000000 === 0b000100000000 or %dirty and 0b0001110000000000 === 0b100000000000) {
                   val tmp0_return = Foo()
                   tmp0_return
@@ -790,7 +790,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(<unsafe-coerce>(inlineInt))) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 val a = InlineInt(123)
                 val foo = %composer.cache(%dirty and 0b1110 === 0b0100 or false) {
                   val tmp0_return = Foo()
@@ -873,7 +873,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 val b = someInt()
                 val foo = %composer.cache(%dirty and 0b1110 === 0b0100 or %composer.changed(b)) {
                   val tmp0_return = Foo(a, b)
@@ -941,7 +941,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%default and 0b0001 === 0 && %composer.changed(a)) 0b0100 else 0b0010
               }
-              if (%dirty and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
                   %composer.startDefaults()
                   if (%default and 0b0001 !== 0) {

@@ -100,7 +100,7 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
             }
             internal object ComposableSingletons%TestKt {
               val lambda-1: Function2<Composer, Int, Unit> = composableLambdaInstance(<>, false) { %composer: Composer?, %changed: Int ->
-                if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
                   A(%composer, 0)
                 } else {
                   %composer.skipToGroupEnd()
@@ -127,7 +127,7 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
               sourceInformation(%composer, "C(Test)")
               if (%changed !== 0 || !%composer.skipping) {
                 IW({ %composer: Composer?, %changed: Int ->
-                  if (%changed and 0b1011 xor 0b0010 !== 0 || !%composer.skipping) {
+                  if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
                     A(%composer, 0)
                   } else {
                     %composer.skipToGroupEnd()
