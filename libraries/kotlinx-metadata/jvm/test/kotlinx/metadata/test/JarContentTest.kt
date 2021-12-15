@@ -5,7 +5,7 @@
 
 package kotlinx.metadata.test
 
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolverBase
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassReader.SKIP_DEBUG
 import org.jetbrains.org.objectweb.asm.ClassReader.SKIP_FRAMES
@@ -58,6 +58,6 @@ class JarContentTest {
             listOf("Char", "Byte", "Short", "Int", "Float", "Long", "Double", "String", "Enum")
                 .map { "kotlin/jvm/internal/${it}CompanionObject" }
         val PREDEFINED_STRINGS =
-            JvmNameResolver.PREDEFINED_STRINGS + listOf("kotlin/jvm/functions", "kotlin/reflect/KFunction") + INTERNAL_COMPANIONS
+            JvmNameResolverBase.PREDEFINED_STRINGS + listOf("kotlin/jvm/functions", "kotlin/reflect/KFunction") + INTERNAL_COMPANIONS
     }
 }

@@ -404,7 +404,7 @@ class GenerationState private constructor(
         classBuilderMode == ClassBuilderMode.LIGHT_CLASSES && origin.originKind in doNotGenerateInLightClassMode
 
     companion object {
-        private val LANGUAGE_TO_METADATA_VERSION = EnumMap<LanguageVersion, JvmMetadataVersion>(LanguageVersion::class.java).apply {
+        val LANGUAGE_TO_METADATA_VERSION = EnumMap<LanguageVersion, JvmMetadataVersion>(LanguageVersion::class.java).apply {
             val oldMetadataVersion = JvmMetadataVersion(1, 1, 18)
             this[KOTLIN_1_0] = oldMetadataVersion
             this[KOTLIN_1_1] = oldMetadataVersion

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.StringTableTypes.Record
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.StringTableTypes.Record.Operation.*
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolverBase
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
@@ -81,7 +82,7 @@ class JvmNameResolverTest : KtUsefulTestCase() {
     }
 
     fun testPredefined() {
-        for ((index, predefined) in JvmNameResolver.PREDEFINED_STRINGS.withIndex()) {
+        for ((index, predefined) in JvmNameResolverBase.PREDEFINED_STRINGS.withIndex()) {
             assertEquals("Predefined string failed: $predefined (index $index)", predefined, str("ignored", predefinedIndex = index))
         }
     }

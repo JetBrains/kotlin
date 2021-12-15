@@ -19,15 +19,17 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.types.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.serialization.FirElementAwareStringTable
 import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.fir.serialization.FirSerializerExtension
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmFlags
@@ -43,22 +45,36 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 class FirJvmSerializerExtension(
     override val session: FirSession,
     private val bindings: JvmSerializationBindings,
-    state: GenerationState,
-    private val irClass: IrClass,
+    private val metadata: MetadataSource?,
     private val localDelegatedProperties: List<FirProperty>,
     private val approximator: AbstractTypeApproximator,
-    typeMapper: IrTypeMapper,
-    private val components: Fir2IrComponents
+    private val scopeSession: ScopeSession,
+    private val globalBindings: JvmSerializationBindings,
+    private val useTypeTable: Boolean,
+    private val moduleName: String,
+    private val classBuilderMode: ClassBuilderMode,
+    private val isParamAssertionsDisabled: Boolean,
+    private val unifiedNullChecks: Boolean,
+    override val metadataVersion: BinaryVersion,
+    private val jvmDefaultMode: JvmDefaultMode,
+    override val stringTable: FirElementAwareStringTable
 ) : FirSerializerExtension() {
-    private val globalBindings = state.globalSerializationBindings
-    override val stringTable = FirJvmElementAwareStringTable(typeMapper, components)
-    private val useTypeTable = state.useTypeTableInSerializer
-    private val moduleName = state.moduleName
-    private val classBuilderMode = state.classBuilderMode
-    private val isParamAssertionsDisabled = state.isParamAssertionsDisabled
-    private val unifiedNullChecks = state.unifiedNullChecks
-    override val metadataVersion = state.metadataVersion
-    private val jvmDefaultMode = state.jvmDefaultMode
+
+    constructor(
+        session: FirSession,
+        bindings: JvmSerializationBindings,
+        state: GenerationState,
+        metadata: MetadataSource?,
+        localDelegatedProperties: List<FirProperty>,
+        approximator: AbstractTypeApproximator,
+        typeMapper: IrTypeMapper,
+        components: Fir2IrComponents
+    ) : this(
+        session, bindings, metadata, localDelegatedProperties, approximator, components.scopeSession,
+        state.globalSerializationBindings, state.useTypeTableInSerializer, state.moduleName, state.classBuilderMode,
+        state.isParamAssertionsDisabled, state.unifiedNullChecks, state.metadataVersion, state.jvmDefaultMode,
+        FirJvmElementAwareStringTable(typeMapper, components)
+    )
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
     override fun shouldSerializeFunction(function: FirFunction): Boolean {
@@ -84,7 +100,7 @@ class FirJvmSerializerExtension(
         versionRequirementTable: MutableVersionRequirementTable,
         childSerializer: FirElementSerializer
     ) {
-        assert((irClass.metadata as FirMetadataSource.Class).fir == klass)
+        assert((metadata as FirMetadataSource.Class).fir == klass)
         if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
             proto.setExtension(JvmProtoBuf.classModuleName, stringTable.getStringIndex(moduleName))
         }
@@ -140,7 +156,7 @@ class FirJvmSerializerExtension(
         extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Property>>
     ) {
         for (localVariable in localDelegatedProperties) {
-            val serializer = FirElementSerializer.createForLambda(session, components.scopeSession,this, approximator)
+            val serializer = FirElementSerializer.createForLambda(session, scopeSession,this, approximator)
             proto.addExtension(extension, serializer.propertyProto(localVariable)?.build() ?: continue)
         }
     }

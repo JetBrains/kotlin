@@ -24,7 +24,7 @@ class FirJvmBackendExtension(private val session: FirSession, private val compon
         bindings: JvmSerializationBindings,
         parentSerializer: MetadataSerializer?
     ): MetadataSerializer {
-        return FirMetadataSerializer(session, context, klass, bindings, components, parentSerializer)
+        return makeFirMetadataSerializerForIrClass(session, context, klass, bindings, components, parentSerializer)
     }
 
     override fun generateMetadataExtraFlags(abiStability: JvmAbiStability?): Int =

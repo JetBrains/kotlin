@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.metadata.jvm.serialization
 
+import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf.StringTableTypes.Record
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolver
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmNameResolverBase
 import org.jetbrains.kotlin.metadata.serialization.StringTable
 import java.io.OutputStream
 
@@ -73,7 +75,7 @@ open class JvmStringTable(nameResolver: JvmNameResolver? = null) : StringTable {
         if (isLocal || '$' in className) {
             strings.add(className)
         } else {
-            val predefinedIndex = JvmNameResolver.getPredefinedStringIndex(className)
+            val predefinedIndex = JvmNameResolverBase.getPredefinedStringIndex(className)
             if (predefinedIndex != null) {
                 record.predefinedIndex = predefinedIndex
                 // TODO: move all records with predefined names to the end and do not write associated strings for them (since they are ignored)
@@ -98,4 +100,20 @@ open class JvmStringTable(nameResolver: JvmNameResolver? = null) : StringTable {
             build().writeDelimitedTo(output)
         }
     }
+
+    fun toNameResolver(): NameResolver =
+        JvmNameResolverBase(
+            strings.toTypedArray(),
+            localNames,
+            ArrayList<Record>().apply {
+                this.ensureCapacity(records.size)
+                for (recordBuilder in records) {
+                    val record = recordBuilder.build()
+                    repeat(record.range) {
+                        this.add(record)
+                    }
+                }
+                this.trimToSize()
+            }
+        )
 }
