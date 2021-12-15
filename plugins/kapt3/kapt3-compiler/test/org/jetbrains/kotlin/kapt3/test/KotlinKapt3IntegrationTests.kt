@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.kapt3.test
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance

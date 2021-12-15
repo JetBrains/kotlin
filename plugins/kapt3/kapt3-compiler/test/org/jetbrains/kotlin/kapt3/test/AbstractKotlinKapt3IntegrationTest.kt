@@ -43,12 +43,10 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.extensions.AnalysisHandlerExtension
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Files
-import java.util.ArrayList
 import javax.annotation.processing.Completion
 import javax.annotation.processing.ProcessingEnvironment
 import javax.annotation.processing.Processor
@@ -80,14 +78,6 @@ abstract class AbstractKotlinKapt3IntegrationTest : KotlinKapt3TestBase() {
         vararg supportedAnnotations: String,
         options: Map<String, String> = emptyMap(),
         process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit
-    ) = testAP(true, name, options, process, *supportedAnnotations)
-
-    private fun testAP(
-        shouldRun: Boolean,
-        name: String,
-        options: Map<String, String>,
-        process: (Set<TypeElement>, RoundEnvironment, ProcessingEnvironment) -> Unit,
-        vararg supportedAnnotations: String
     ) {
         this.mutableOptions = options
 
@@ -115,7 +105,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : KotlinKapt3TestBase() {
                 annotation: AnnotationMirror?,
                 member: ExecutableElement?,
                 userText: String?
-            ): Iterable<Completion>? {
+            ): Iterable<Completion> {
                 return emptyList()
             }
 
@@ -126,8 +116,8 @@ abstract class AbstractKotlinKapt3IntegrationTest : KotlinKapt3TestBase() {
         _processors = listOf(processor)
         doTest(ktFileName.canonicalPath)
 
-        if (started != shouldRun) {
-            fail("Annotation processor " + (if (shouldRun) "was not started" else "was started"))
+        if (!started) {
+            fail("Annotation processor was not started")
         }
     }
 
@@ -168,7 +158,7 @@ abstract class AbstractKotlinKapt3IntegrationTest : KotlinKapt3TestBase() {
 
             mutableOptions?.let { processingOptions.putAll(it) }
             flags.addAll(kaptFlagsToAdd)
-            flags.removeAll(kaptFlagsToRemove)
+            flags.removeAll(kaptFlagsToRemove.toSet())
             detectMemoryLeaks = DetectMemoryLeaksMode.NONE
         }.build()
 
@@ -208,7 +198,8 @@ abstract class AbstractKotlinKapt3IntegrationTest : KotlinKapt3TestBase() {
 
         override fun loadProcessors() = LoadedProcessors(
             processors.map { IncrementalProcessor(it, DeclaredProcType.NON_INCREMENTAL, logger) },
-            Kapt3ExtensionForTests::class.java.classLoader)
+            Kapt3ExtensionForTests::class.java.classLoader
+        )
 
         override fun saveStubs(kaptContext: KaptContext, stubs: List<KaptStub>) {
             if (this.savedStubs != null) {
