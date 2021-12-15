@@ -277,7 +277,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
             ProtoEnumFlags.descriptorVisibility(Flags.VISIBILITY.get(proto.flags))
         )
         descriptor.returnType = classDescriptor.defaultType
-
+        descriptor.isExpect = classDescriptor.isExpect
         descriptor.setHasStableParameterNames(!Flags.IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES.get(proto.flags))
 
         return descriptor
