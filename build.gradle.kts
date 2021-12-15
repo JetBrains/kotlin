@@ -118,39 +118,10 @@ rootProject.apply {
 
 IdeVersionConfigurator.setCurrentIde(project)
 
-extra["versions.protobuf"] = "2.6.1"
-extra["versions.javax.inject"] = "1"
-extra["versions.jsr305"] = "1.3.9"
-extra["versions.jansi"] = "1.16"
-extra["versions.jline"] = "3.3.1"
-extra["versions.junit"] = "4.13.2"
-extra["versions.javaslang"] = "2.0.6"
-extra["versions.ant"] = "1.10.7"
-extra["versions.android"] = "2.3.1"
-extra["versions.kotlinx-coroutines-core"] = "1.5.0"
-extra["versions.kotlinx-coroutines-core-jvm"] = "1.5.0"
-extra["versions.kotlinx-coroutines-jdk8"] = "1.5.0"
-extra["versions.json"] = "20160807"
-extra["versions.native-platform"] = "0.14"
-extra["versions.robolectric"] = "4.0"
-extra["versions.org.springframework"] = "4.2.0.RELEASE"
-extra["versions.jflex"] = "1.7.0"
-extra["versions.markdown"] = "0.1.25"
-extra["versions.trove4j"] = "1.0.20181211"
-extra["versions.completion-ranking-kotlin"] = "0.1.3"
-extra["versions.r8"] = "2.2.64"
-val immutablesVersion = "0.3.1"
-extra["versions.kotlinx-collections-immutable"] = immutablesVersion
-extra["versions.kotlinx-collections-immutable-jvm"] = immutablesVersion
-
-// NOTE: please, also change KTOR_NAME in pathUtil.kt and all versions in corresponding jar names in daemon tests.
-extra["versions.ktor-network"] = "1.0.1"
-
 if (!project.hasProperty("versions.kotlin-native")) {
     extra["versions.kotlin-native"] = "1.6.20-dev-5356"
 }
 
-extra["versions.kotlinx-metadata-jvm"] = "0.4.0"
 
 val useJvmFir by extra(project.kotlinBuildProperties.useFir)
 
