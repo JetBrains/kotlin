@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.openapi.diagnostic.ControlFlowException
+import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementResolveResult
 import com.intellij.psi.ResolveResult
@@ -26,7 +27,8 @@ object KtFirReferenceResolver : ResolveCache.PolyVariantResolver<KtReference> {
             val resolveToPsiElements = try {
                 analyse(ref.expression) { ref.getResolvedToPsi(this) }
             } catch (e: Throwable) {
-                if (e is ControlFlowException) throw e
+                if (e is ControlFlowException || e is IndexNotReadyException) throw e
+
                 throw KtReferenceResolveException(ref, e)
             }
             resolveToPsiElements.map { KotlinResolveResult(it) }.toTypedArray()
