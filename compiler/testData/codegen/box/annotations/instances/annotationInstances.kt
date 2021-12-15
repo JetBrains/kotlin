@@ -60,7 +60,7 @@ fun box(): String {
     assert(anno.intArr.contentEquals(intArrayOf(1, 2)))
     assert(anno.arrOfE.contentEquals(arrayOf(E.E0)))
     assert(anno.arrOfA.size == 1)
-//    assert(anno.arrOfK.size == 2) TODO(KT-47703): Array<KClass> to Array<j.l.Class> conversion
+    assert(anno.arrOfK.size == 2)
     val ann = anno.a
     assertEquals(ann.b, 1.toByte())
     assertEquals(ann.s, 1.toShort())

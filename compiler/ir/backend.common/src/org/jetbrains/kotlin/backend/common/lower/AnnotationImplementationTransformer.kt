@@ -147,8 +147,6 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
             .mapNotNull { it.correspondingPropertySymbol?.owner }
     }
 
-    open fun IrBuilderWithScope.kClassExprToJClassIfNeeded(irExpression: IrExpression): IrExpression = irExpression
-
     abstract fun getArrayContentEqualsSymbol(type: IrType): IrFunctionSymbol
 
     fun generatedEquals(irBuilder: IrBlockBodyBuilder, type: IrType, arg1: IrExpression, arg2: IrExpression): IrExpression =
