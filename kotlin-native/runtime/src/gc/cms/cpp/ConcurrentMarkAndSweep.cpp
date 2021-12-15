@@ -57,8 +57,6 @@ struct SweepTraits {
     }
 };
 
-// Global, because it's accessed on a hot path: avoid memory load from `this`.
-std::atomic<bool> gNeedSafepointSlowpath = false;
 } // namespace
 
 ALWAYS_INLINE void gc::ConcurrentMarkAndSweep::ThreadData::SafePointFunctionPrologue() noexcept {
@@ -71,9 +69,7 @@ ALWAYS_INLINE void gc::ConcurrentMarkAndSweep::ThreadData::SafePointLoopBody() n
 
 void gc::ConcurrentMarkAndSweep::ThreadData::SafePointAllocation(size_t size) noexcept {
     threadData_.gcScheduler().OnSafePointAllocation(size);
-    if (gNeedSafepointSlowpath.load()) {
-        SafePointSlowPath();
-    }
+    mm::SuspendIfRequested();
 }
 void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGC() noexcept {
     ThreadStateGuard guard(ThreadState::kNative);
@@ -98,13 +94,7 @@ void gc::ConcurrentMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
 
 ALWAYS_INLINE void gc::ConcurrentMarkAndSweep::ThreadData::SafePointRegular(size_t weight) noexcept {
     threadData_.gcScheduler().OnSafePointRegular(weight);
-    if (gNeedSafepointSlowpath.load()) {
-        SafePointSlowPath();
-    }
-}
-
-NO_EXTERNAL_CALLS_CHECK NO_INLINE void gc::ConcurrentMarkAndSweep::ThreadData::SafePointSlowPath() noexcept {
-    threadData_.suspensionData().suspendIfRequested();
+    mm::SuspendIfRequested();
 }
 
 gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep() noexcept :
@@ -131,22 +121,11 @@ gc::ConcurrentMarkAndSweep::~ConcurrentMarkAndSweep() {
     gcThread_.join();
 }
 
-
-void gc::ConcurrentMarkAndSweep::RequestThreadsSuspension() noexcept {
-    gNeedSafepointSlowpath = true;
-    bool didSuspend = mm::RequestThreadsSuspension();
-    RuntimeAssert(didSuspend, "Only GC thread can request suspension");
-}
-
-void gc::ConcurrentMarkAndSweep::ResumeThreads() noexcept {
-    mm::ResumeThreads();
-    gNeedSafepointSlowpath = false;
-}
-
 bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     RuntimeLogDebug({kTagGC}, "Attempt to suspend threads by thread %d", konan::currentThreadId());
     auto timeStartUs = konan::getTimeMicros();
-    RequestThreadsSuspension();
+    bool didSuspend = mm::RequestThreadsSuspension();
+    RuntimeAssert(didSuspend, "Only GC thread can request suspension");
     RuntimeLogDebug({kTagGC}, "Requested thread suspension by thread %d", konan::currentThreadId());
 
     RuntimeAssert(!kotlin::mm::IsCurrentThreadRegistered(), "Concurrent GC must run on unregistered thread");
@@ -179,7 +158,7 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 
     auto objectFactoryIterable = mm::GlobalData::Instance().objectFactory().LockForIter();
 
-    ResumeThreads();
+    mm::ResumeThreads();
     auto timeResumeUs = konan::getTimeMicros();
 
     RuntimeLogDebug({kTagGC},

@@ -86,6 +86,12 @@ void kotlin::mm::WaitForThreadsSuspension() noexcept {
     }
 }
 
+ALWAYS_INLINE void kotlin::mm::SuspendIfRequested() noexcept {
+    if (IsThreadSuspensionRequested()) {
+        mm::ThreadRegistry::Instance().CurrentThreadData()->suspensionData().suspendIfRequestedSlowPath();
+    }
+}
+
 void kotlin::mm::ResumeThreads() noexcept {
     // From the std::condition_variable docs:
     // Even if the shared variable is atomic, it must be modified under

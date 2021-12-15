@@ -67,7 +67,6 @@ public:
 
     private:
         void SafePointRegular(size_t weight) noexcept;
-        void SafePointSlowPath() noexcept;
 
         ConcurrentMarkAndSweep& gc_;
         mm::ThreadData& threadData_;
@@ -81,8 +80,6 @@ public:
 private:
     // Returns `true` if GC has happened, and `false` if not (because someone else has suspended the threads).
     bool PerformFullGC(int64_t epoch) noexcept;
-    void RequestThreadsSuspension() noexcept;
-    void ResumeThreads() noexcept;
 
     uint64_t lastGCTimestampUs_ = 0;
     GCStateHolder state_;

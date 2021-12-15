@@ -49,6 +49,8 @@ public:
     }
 
 private:
+    friend void SuspendIfRequested() noexcept;
+
     std::atomic<ThreadState> state_;
     std::atomic<bool> suspended_;
     void suspendIfRequestedSlowPath() noexcept;
@@ -56,6 +58,7 @@ private:
 
 bool RequestThreadsSuspension() noexcept;
 void WaitForThreadsSuspension() noexcept;
+void SuspendIfRequested() noexcept;
 
 /**
  * Suspends all threads registered in ThreadRegistry except threads that are in the Native state.
