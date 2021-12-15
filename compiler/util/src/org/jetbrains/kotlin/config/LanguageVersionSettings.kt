@@ -282,6 +282,8 @@ enum class LanguageFeature(
     ContextReceivers(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
     KotlinFunInterfaceConstructorReference(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
     ValueClasses(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
+    SealedInlineClasses(sinceVersion = null, defaultState = State.DISABLED, kind = UNSTABLE_FEATURE),
+
     ;
 
     val presentableName: String

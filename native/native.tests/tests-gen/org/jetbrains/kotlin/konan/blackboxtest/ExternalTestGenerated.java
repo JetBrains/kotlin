@@ -21565,6 +21565,23 @@ public class ExternalTestGenerated extends AbstractExternalNativeBlackBoxTest {
             }
 
             @Nested
+            @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed")
+            @TestDataPath("$PROJECT_ROOT")
+            @NativeBlackBoxTestCaseGroupProvider(ExtTestCaseGroupProvider.class)
+            public class Sealed {
+                @Test
+                public void testAllFilesPresentInSealed() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+
+                @Test
+                @TestMetadata("result.kt")
+                public void testResult() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/result.kt");
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter")
             @TestDataPath("$PROJECT_ROOT")
             @Tag("external")

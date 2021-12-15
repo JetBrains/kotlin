@@ -19092,6 +19092,22 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/inlineClasses/sealed")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Sealed {
+            @Test
+            public void testAllFilesPresentInSealed() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+            }
+
+            @Test
+            @TestMetadata("result.kt")
+            public void testResult() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/result.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter")
         @TestDataPath("$PROJECT_ROOT")
         public class UnboxGenericParameter {

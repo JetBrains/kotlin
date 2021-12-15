@@ -749,7 +749,9 @@ public class DefaultErrorMessages {
         MAP.put(NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED, "Constructor must be private or protected in sealed class");
 
         MAP.put(VALUE_CLASS_NOT_TOP_LEVEL, "Value classes cannot be local or inner");
-        MAP.put(VALUE_CLASS_NOT_FINAL, "Value classes can be only final");
+        MAP.put(VALUE_CLASS_NOT_FINAL, "Value classes can be only final or sealed");
+        MAP.put(SEALED_INLINE_CLASS_WITH_UNDERLYING_VALUE, "Sealed inline class cannot have underlying value");
+        MAP.put(INLINE_CLASS_UNDERLYING_VALUE_IS_SUBCLASS_OF_ANOTHER_UNDERLYING_VALUE, "Sealed inline class subclass cannot have underlying value of the same type as other subclass");
         MAP.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, "Primary constructor is required for value class");
         MAP.put(INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, "Inline class must have exactly one primary constructor parameter"); // +
         MAP.put(VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER, "Value class primary constructor must only have final read-only (val) property parameter");

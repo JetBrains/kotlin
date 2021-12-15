@@ -1,0 +1,33 @@
+package
+
+public sealed inline class Result {
+    protected constructor Result()
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+
+    public final class Error : Result {
+        public constructor Error(/*0*/ value: kotlin.Throwable)
+        public final val value: kotlin.Throwable
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final inline class FileNotFound : Result {
+        public constructor FileNotFound(/*0*/ value: kotlin.Int)
+        public final val value: kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    public final inline class Ok : Result {
+        public constructor Ok(/*0*/ value: kotlin.Any)
+        public final val value: kotlin.Any
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+}
+

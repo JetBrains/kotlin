@@ -16986,6 +16986,32 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             public void testVarargsOnParametersOfInlineClassType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/varargsOnParametersOfInlineClassType.kt");
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/inlineClasses/sealed")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Sealed {
+                @Test
+                public void testAllFilesPresentInSealed() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inlineClasses/sealed"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Nested
+                @TestMetadata("compiler/testData/diagnostics/tests/inlineClasses/sealed/without-value")
+                @TestDataPath("$PROJECT_ROOT")
+                public class Without_value {
+                    @Test
+                    public void testAllFilesPresentInWithout_value() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inlineClasses/sealed/without-value"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                    }
+
+                    @Test
+                    @TestMetadata("nested.kt")
+                    public void testNested() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/without-value/nested.kt");
+                    }
+                }
+            }
         }
 
         @Nested

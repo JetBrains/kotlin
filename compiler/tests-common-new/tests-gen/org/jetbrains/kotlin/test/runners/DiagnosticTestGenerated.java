@@ -16992,6 +16992,34 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             public void testVarargsOnParametersOfInlineClassType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/varargsOnParametersOfInlineClassType.kt");
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/inlineClasses/sealed")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Sealed {
+                @Test
+                public void testAllFilesPresentInSealed() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inlineClasses/sealed"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("flat.kt")
+                public void testFlat() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/flat.kt");
+                }
+
+                @Test
+                @TestMetadata("nested.kt")
+                public void testNested() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/nested.kt");
+                }
+
+                @Test
+                @TestMetadata("with-value.kt")
+                public void testWith_value() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/with-value.kt");
+                }
+            }
         }
 
         @Nested

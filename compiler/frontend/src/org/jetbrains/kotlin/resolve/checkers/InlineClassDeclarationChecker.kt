@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isNothing
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -68,33 +69,45 @@ object InlineClassDeclarationChecker : DeclarationChecker {
             trace.report(Errors.INLINE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS.on(contextReceiverList))
         }
 
+        val isSealed = descriptor.modality == Modality.SEALED
+
         val modalityModifier = declaration.modalityModifier()
-        if (modalityModifier != null && descriptor.modality != Modality.FINAL) {
+        if (modalityModifier != null && descriptor.modality != Modality.FINAL && !isSealed) {
+            trace.report(Errors.VALUE_CLASS_NOT_FINAL.on(modalityModifier))
+            return
+        }
+
+        if (modalityModifier != null && isSealed && !context.languageVersionSettings.supportsFeature(LanguageFeature.SealedInlineClasses)) {
             trace.report(Errors.VALUE_CLASS_NOT_FINAL.on(modalityModifier))
             return
         }
 
         val primaryConstructor = declaration.primaryConstructor
-        if (primaryConstructor == null) {
+        if (primaryConstructor == null && !isSealed) {
             trace.report(Errors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS.on(inlineOrValueKeyword))
             return
         }
 
-        val baseParameter = primaryConstructor.valueParameters.singleOrNull()
-        if (baseParameter == null) {
-            (primaryConstructor.valueParameterList ?: declaration).let {
+        if (isSealed && primaryConstructor != null) {
+            trace.report(Errors.SEALED_INLINE_CLASS_WITH_UNDERLYING_VALUE.on(primaryConstructor))
+            return
+        }
+
+        val baseParameter = primaryConstructor?.valueParameters?.singleOrNull()
+        if (!isSealed && baseParameter == null) {
+            (primaryConstructor?.valueParameterList ?: declaration).let {
                 trace.report(Errors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE.on(it))
                 return
             }
         }
 
-        if (!isParameterAcceptableForInlineClass(baseParameter)) {
+        if (baseParameter != null && !isParameterAcceptableForInlineClass(baseParameter)) {
             trace.report(Errors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER.on(baseParameter))
             return
         }
 
         val baseParameterType = descriptor.safeAs<ClassDescriptor>()?.defaultType?.substitutedUnderlyingType()
-        val baseParameterTypeReference = baseParameter.typeReference
+        val baseParameterTypeReference = baseParameter?.typeReference
         if (baseParameterType != null && baseParameterTypeReference != null) {
             if (baseParameterType.isInapplicableParameterType() &&
                 !(context.languageVersionSettings.supportsFeature(LanguageFeature.GenericInlineClassParameter) &&
@@ -124,9 +137,25 @@ object InlineClassDeclarationChecker : DeclarationChecker {
                 }
             } else {
                 val typeDescriptor = type.constructor.declarationDescriptor ?: continue
-                if (!DescriptorUtils.isInterface(typeDescriptor)) {
+                val parentIsSealed =
+                    context.languageVersionSettings.supportsFeature(LanguageFeature.SealedInlineClasses) &&
+                            typeDescriptor.isSealedInlineClass()
+                if (!DescriptorUtils.isInterface(typeDescriptor) && !parentIsSealed) {
                     trace.report(Errors.VALUE_CLASS_CANNOT_EXTEND_CLASSES.on(typeReference))
                     return
+                }
+                if (parentIsSealed && baseParameterType != null && baseParameterTypeReference != null) {
+                    val children = (typeDescriptor as ClassDescriptor).sealedSubclasses.filter { it.isInlineClass() }
+                    for (child in children) {
+                        if (child == descriptor) continue
+                        val anotherType = child.defaultType.substitutedUnderlyingType() ?: continue
+                        if (baseParameterType.isSubtypeOf(anotherType)) {
+                            trace.report(
+                                Errors.INLINE_CLASS_UNDERLYING_VALUE_IS_SUBCLASS_OF_ANOTHER_UNDERLYING_VALUE.on(baseParameterTypeReference)
+                            )
+                            break
+                        }
+                    }
                 }
             }
         }
@@ -138,6 +167,9 @@ object InlineClassDeclarationChecker : DeclarationChecker {
             return
         }
     }
+
+    private fun DeclarationDescriptor.isSealedInlineClass(): Boolean =
+        this is ClassDescriptor && isInlineClass() && modality == Modality.SEALED
 
     private fun KotlinType.isInapplicableParameterType() =
         isUnit() || isNothing() || isTypeParameter() || isGenericArrayOfTypeParameter()
