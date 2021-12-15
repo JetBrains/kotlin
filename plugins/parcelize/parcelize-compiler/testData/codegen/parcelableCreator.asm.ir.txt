@@ -138,7 +138,7 @@ public final class ParcelableCreatorKt : java/lang/Object {
           LDC (Landroid/os/Parcelable;)
           INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
           INVOKEINTERFACE (kotlin/reflect/KClass, getSimpleName, ()Ljava/lang/String;)
-          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/Object;)Ljava/lang/StringBuilder;)
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/String;)Ljava/lang/StringBuilder;)
           INVOKEVIRTUAL (java/lang/StringBuilder, toString, ()Ljava/lang/String;)
           INVOKESPECIAL (java/lang/IllegalArgumentException, <init>, (Ljava/lang/String;)V)
           ATHROW
@@ -191,7 +191,7 @@ public final class ParcelableCreatorKt : java/lang/Object {
           LDC (LA;)
           INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
           INVOKEINTERFACE (kotlin/reflect/KClass, getSimpleName, ()Ljava/lang/String;)
-          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/Object;)Ljava/lang/StringBuilder;)
+          INVOKEVIRTUAL (java/lang/StringBuilder, append, (Ljava/lang/String;)Ljava/lang/StringBuilder;)
           INVOKEVIRTUAL (java/lang/StringBuilder, toString, ()Ljava/lang/String;)
           INVOKESPECIAL (java/lang/IllegalArgumentException, <init>, (Ljava/lang/String;)V)
           ATHROW
