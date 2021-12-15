@@ -20,9 +20,6 @@ import kotlin.test.fail
 
 abstract class ClasspathChangesComputerTest : ClasspathSnapshotTestCommon() {
 
-    // TODO Add more test cases:
-    //   - inline functions
-
     companion object {
         val testDataDir =
             File("compiler/incremental-compilation-impl/testData/org/jetbrains/kotlin/incremental/classpathDiff/ClasspathChangesComputerTest")
@@ -124,6 +121,75 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
                 LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example")
             ),
             fqNames = setOf("com.example")
+        ).assertEquals(changes)
+    }
+
+    @Test
+    fun testDifferentClassKinds() {
+        val changes = computeClasspathChanges(File(testDataDir, "testDifferentClassKinds_KotlinOnly/src"), tmpDir)
+        Changes(
+            lookupSymbols = setOf(
+                // NormalClass
+                LookupSymbol(name = "propertyInNormalClass", scope = "com.example.NormalClass"),
+                LookupSymbol(name = "functionInNormalClass", scope = "com.example.NormalClass"),
+
+                // NormalClass.CompanionObject
+                LookupSymbol(name = "propertyInCompanionObject", scope = "com.example.NormalClass.CompanionObject"),
+                LookupSymbol(name = "functionInCompanionObject", scope = "com.example.NormalClass.CompanionObject"),
+
+                // FileFacade
+                LookupSymbol(name = "propertyInFileFacade", scope = "com.example"),
+                LookupSymbol(name = "functionInFileFacade", scope = "com.example"),
+
+                // MultifileClass
+                LookupSymbol(name = "propertyInMultifileClass1", scope = "com.example"),
+                LookupSymbol(name = "functionInMultifileClass1", scope = "com.example"),
+                LookupSymbol(name = "propertyInMultifileClass2", scope = "com.example"),
+                LookupSymbol(name = "functionInMultifileClass2", scope = "com.example"),
+
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.NormalClass"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.NormalClass.CompanionObject"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example"),
+            ),
+            fqNames = setOf(
+                "com.example.NormalClass",
+                "com.example.NormalClass.CompanionObject",
+                "com.example"
+            )
+        ).assertEquals(changes)
+    }
+
+    @Test
+    fun testConstantsAndInlineFunctions() {
+        val changes = computeClasspathChanges(File(testDataDir, "testConstantsAndInlineFunctions_KotlinOnly/src"), tmpDir)
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "constantChangedType", scope = "com.example.SomeClass.CompanionObject"),
+                // TODO (Fix in next commit). Missing:
+                // LookupSymbol(name = "constantChangedValue", scope = "com.example.SomeClass.CompanionObject")
+
+                LookupSymbol(name = "inlineFunctionChangedSignature", scope = "com.example.SomeClass"),
+                LookupSymbol(name = "inlineFunctionChangedImplementation", scope = "com.example.SomeClass"),
+
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SomeClass"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SomeClass.CompanionObject"),
+
+                // TODO (Fix in next commit). Incorrect:
+                LookupSymbol(name = "privateInlineFunctionChangedSignature", scope = "com.example.SomeClass"),
+
+                // TODO (Fix in next commit). Incorrect:
+                LookupSymbol(name = "constantChangedType", scope = "com.example.SomeClass"),
+                LookupSymbol(name = "constantChangedType", scope = "com.example.SomeClass.Companion"),
+                LookupSymbol(name = "constantChangedValue", scope = "com.example.SomeClass"),
+                LookupSymbol(name = "constantChangedValue", scope = "com.example.SomeClass.Companion"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SomeClass.Companion"),
+            ),
+            fqNames = setOf(
+                "com.example.SomeClass",
+                "com.example.SomeClass.CompanionObject",
+                // TODO (Fix in next commit). Incorrect:
+                "com.example.SomeClass.Companion"
+            )
         ).assertEquals(changes)
     }
 }

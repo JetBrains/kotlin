@@ -204,6 +204,9 @@ object ConstantExternalizer : DataExternalizer<Any> {
         }
     }
 
+    // The constants' values are provided by ASM, so their types can only be the following.
+    // See https://asm.ow2.io/javadoc/org/objectweb/asm/ClassVisitor.html#visitField(int,java.lang.String,java.lang.String,java.lang.String,java.lang.Object)
+    // (Note: Boolean constants have Integer (0, 1) values in ASM.)
     private enum class Kind {
         INT, FLOAT, LONG, DOUBLE, STRING
     }
