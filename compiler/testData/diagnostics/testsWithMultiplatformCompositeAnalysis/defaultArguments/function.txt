@@ -1,0 +1,49 @@
+// -- Module: <m1-common> --
+package
+
+public fun test(): kotlin.Unit
+public expect fun topLevelFunction(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String = ...): kotlin.Unit
+public fun A.test(): kotlin.Unit
+public expect fun kotlin.String.topLevelExtensionFunction(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String = ...): kotlin.Unit
+
+public final expect class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final expect fun memberFunction(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String = ...): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public expect companion object Companion {
+        public final expect fun companionFunction(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String = ...): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public final expect fun kotlin.String.companionExtensionFunction(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String = ...): kotlin.Unit
+    }
+}
+
+// -- Module: <m2-jvm> --
+package
+
+public fun testJvm(): kotlin.Unit
+public actual fun topLevelFunction(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String): kotlin.Unit
+public fun A.testJvm(): kotlin.Unit
+public actual fun kotlin.String.topLevelExtensionFunction(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String): kotlin.Unit
+
+public final actual class A {
+    public constructor A()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final actual fun memberFunction(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public actual companion object Companion {
+        private constructor Companion()
+        public final actual fun companionFunction(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        public final actual fun kotlin.String.companionExtensionFunction(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String): kotlin.Unit
+    }
+}
+
