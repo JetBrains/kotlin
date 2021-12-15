@@ -15,4 +15,4 @@ const val stringClassName = ::String.name
 const val lengthPropName = String::length.name
 
 const val errorAccess = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>SomeClassWithName(1)::property.name<!>
-const val errorPlus = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"" + ::SomeClassWithName.<!UNRESOLVED_REFERENCE!>property<!><!>
+const val errorPlus = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>"" + SomeClassWithName(1)::property<!>

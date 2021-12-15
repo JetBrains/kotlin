@@ -4,6 +4,7 @@ public const val anotherPropName: kotlin.String
 public const val barName: kotlin.String
 public const val className: kotlin.String
 public const val errorAccess: kotlin.String
+public const val errorPlus: kotlin.String
 public const val fooName: kotlin.String
 public const val lengthPropName: kotlin.String
 public const val propName: kotlin.String

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.checkDeclarationParents
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
-import org.jetbrains.kotlin.backend.common.lower.optimizations.foldConstantLoweringPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.ir.constantValue
 import org.jetbrains.kotlin.backend.jvm.ir.shouldContainSuspendMarkers
@@ -161,17 +160,6 @@ private val jvmLocalClassExtractionPhase = makeIrFilePhase(
     description = "Move local classes from field initializers and anonymous init blocks into the containing class"
 )
 
-private val computeStringTrimPhase = makeIrFilePhase<JvmBackendContext>(
-    { context ->
-        if (context.state.canReplaceStdlibRuntimeApiBehavior)
-            StringTrimLowering(context)
-        else
-            FileLoweringPass.Empty
-    },
-    name = "StringTrimLowering",
-    description = "Compute trimIndent and trimMargin operations on constant strings"
-)
-
 private val defaultArgumentStubPhase = makeIrFilePhase(
     ::JvmDefaultArgumentStubGenerator,
     name = "DefaultArgumentsStubGenerator",
@@ -290,7 +278,6 @@ private val jvmFilePhases = listOf(
     mainMethodGenerationPhase,
 
     inventNamesForLocalClassesPhase,
-    kCallableNamePropertyPhase,
     annotationPhase,
     annotationImplementationPhase,
     polymorphicSignaturePhase,
@@ -338,8 +325,6 @@ private val jvmFilePhases = listOf(
     jvmDefaultConstructorPhase,
 
     flattenStringConcatenationPhase,
-    foldConstantLoweringPhase,
-    computeStringTrimPhase,
     jvmStringConcatenationLowering,
 
     defaultArgumentStubPhase,
