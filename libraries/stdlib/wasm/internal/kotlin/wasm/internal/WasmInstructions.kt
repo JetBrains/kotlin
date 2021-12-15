@@ -246,6 +246,38 @@ public external fun wasm_f64_min(a: Double, b: Double): Double
 @WasmOp(WasmOp.F64_MAX)
 public external fun wasm_f64_max(a: Double, b: Double): Double
 
+@WasmOp(WasmOp.F64_SQRT)
+public external fun wasm_f64_sqrt(a: Double): Double
+
+@WasmOp(WasmOp.F64_CEIL)
+public external fun wasm_f64_ceil(a: Double): Double
+
+@WasmOp(WasmOp.F64_FLOOR)
+public external fun wasm_f64_floor(a: Double): Double
+
+@WasmOp(WasmOp.F64_TRUNC)
+public external fun wasm_f64_truncate(a: Double): Double
+
+@WasmOp(WasmOp.F64_COPYSIGN)
+public external fun wasm_f64_copysign(a: Double, b: Double): Double
+
+@WasmOp(WasmOp.F64_ABS)
+public external fun wasm_f64_abs(a: Double): Double
+
+@WasmOp(WasmOp.F32_SQRT)
+public external fun wasm_f32_sqrt(a: Float): Float
+
+@WasmOp(WasmOp.F32_CEIL)
+public external fun wasm_f32_ceil(a: Float): Float
+
+@WasmOp(WasmOp.F32_FLOOR)
+public external fun wasm_f32_floor(a: Float): Float
+
+@WasmOp(WasmOp.F32_TRUNC)
+public external fun wasm_f32_truncate(a: Float): Float
+
+@WasmOp(WasmOp.F32_ABS)
+public external fun wasm_f32_abs(a: Float): Float
 
 @WasmOp(WasmOp.REF_IS_NULL)
 public external fun wasm_ref_is_null(a: Any?): Boolean

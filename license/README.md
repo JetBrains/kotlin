@@ -125,6 +125,10 @@ the Kotlin IntelliJ IDEA plugin:
    - License: MIT ([license/third_party/asmble_license.txt][asmble])
    - Origin: Copyright (C) 2018 Chad Retz
 
+ - Path: libraries/stdlib/wasm/src/kotlin/math/fdlibm/
+   - License: SUN ([license/third_party/sun_license.txt][sun])
+   - Origin: Copyright (C) 1993 by Sun Microsystems, Inc.
+   
 ## Kotlin Test Data
 
 The following source code is used for testing the Kotlin compiler and/or plugin and is not incorporated into
