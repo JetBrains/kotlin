@@ -106,8 +106,6 @@ abstract class IdSignatureBuilder<D> {
     protected open fun platformSpecificAlias(descriptor: TypeAliasDescriptor) {}
     protected open fun platformSpecificPackage(descriptor: PackageFragmentDescriptor) {}
 
-    protected open fun isKotlinPackage(descriptor: PackageFragmentDescriptor): Boolean = true
-
     fun buildSignature(declaration: D): IdSignature {
         reset()
 

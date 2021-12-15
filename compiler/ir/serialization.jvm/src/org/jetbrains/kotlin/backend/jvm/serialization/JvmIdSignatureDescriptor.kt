@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.load.java.descriptors.JavaForKotlinOverridePropertyDescriptor
-import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
@@ -31,11 +30,6 @@ class JvmIdSignatureDescriptor(mangler: KotlinMangler.DescriptorMangler) : IdSig
         override fun platformSpecificFunction(descriptor: FunctionDescriptor) {
             keepTrackOfOverridesForPossiblyClashingFakeOverride(descriptor)
             computeStoredFileSignature(descriptor)
-        }
-
-        override fun isKotlinPackage(descriptor: PackageFragmentDescriptor): Boolean {
-            return true
-//            return descriptor !is LazyJavaPackageFragment
         }
 
         override fun platformSpecificClass(descriptor: ClassDescriptor) {
