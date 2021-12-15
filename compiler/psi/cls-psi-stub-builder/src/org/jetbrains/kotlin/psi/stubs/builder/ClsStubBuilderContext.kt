@@ -10,16 +10,13 @@ import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.deserialization.AnnotationAndConstantLoader
-import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
-import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.serialization.deserialization.*
 
 data class ClassIdWithTarget(val classId: ClassId, val target: AnnotationUseSiteTarget?)
 
 class ClsStubBuilderComponents(
     val classDataFinder: ClassDataFinder,
-    val annotationLoader: AnnotationAndConstantLoader<ClassId, Unit>,
+    val annotationLoader: AnnotationLoader<ClassId>,
     val virtualFileForDebug: VirtualFile
 ) {
     fun createContext(
