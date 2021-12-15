@@ -501,7 +501,7 @@ class Fir2IrClassifierStorage(
             return createLocalIrClassOnTheFly(firClass).symbol
         }
         val signature = signatureComposer.composeSignature(firClass)!!
-        symbolTable.referenceClassIfAny(signature)?.let { irClassSymbol ->
+        symbolTable.referenceClassIfAny(signature)?.takeIf { it.isBound }?.let { irClassSymbol ->
             val irClass = irClassSymbol.owner
             classCache[firClass as FirRegularClass] = irClass
             val mappedTypeParameters = firClass.typeParameters.filterIsInstance<FirTypeParameter>().zip(irClass.typeParameters)

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComp
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.backend.common.serialization.mangle.collectForMangler
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -19,11 +20,15 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.signaturer.irName
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.types.RawType
+import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
@@ -253,14 +258,9 @@ open class FirJvmMangleComputer(
                 }
             }
             is ConeFlexibleType -> {
-                // TODO: is that correct way to mangle flexible type?
-                with(MangleConstant.FLEXIBLE_TYPE) {
-                    tBuilder.appendSignature(prefix)
-                    mangleType(tBuilder, type.lowerBound)
-                    tBuilder.appendSignature(separator)
-                    mangleType(tBuilder, type.upperBound)
-                    tBuilder.appendSignature(suffix)
-                }
+                // Need to reproduce type approximation done for flexible types in TypeTranslator.
+                // For now, we replicate the current behaviour of Fir2IrTypeConverter and just take the upper bound
+                mangleType(tBuilder, type.upperBound)
             }
             is ConeDefinitelyNotNullType -> {
                 // E.g. not-null type parameter in Java
