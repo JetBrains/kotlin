@@ -6,23 +6,16 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import com.google.gson.GsonBuilder
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.JavaSourceFile
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.asFile
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.snapshot
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.Util.compile
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.Util.compileAll
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.Util.snapshot
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.Util.snapshotAll
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
 
 abstract class ClasspathSnapshotTestCommon {
-
-    companion object {
-        val testDataDir =
-            File("compiler/incremental-compilation-impl/testData/org/jetbrains/kotlin/incremental/classpathDiff/ClasspathSnapshotTestCommon")
-    }
 
     @get:Rule
     val tmpDir = TemporaryFolder()
@@ -53,44 +46,31 @@ abstract class ClasspathSnapshotTestCommon {
     /** Same as [SourceFile] but with a [TemporaryFolder] to store the results of operations on the [SourceFile]. */
     open class TestSourceFile(val sourceFile: SourceFile, private val tmpDir: TemporaryFolder) {
 
-        fun replace(oldValue: String, newValue: String, preCompiledKotlinClassFile: ClassFile? = null): TestSourceFile {
-            val fileContents = sourceFile.asFile().readText()
-            check(fileContents.contains(oldValue)) { "String '$oldValue' not found in file '${sourceFile.asFile().path}'" }
-
-            val newSourceFile = when (sourceFile) {
-                is KotlinSourceFile -> KotlinSourceFile(tmpDir.newFolder(), sourceFile.unixStyleRelativePath, preCompiledKotlinClassFile!!)
-                is JavaSourceFile -> JavaSourceFile(tmpDir.newFolder(), sourceFile.unixStyleRelativePath)
-            }
-            newSourceFile.asFile().parentFile.mkdirs()
-            newSourceFile.asFile().writeText(fileContents.replace(oldValue, newValue))
-            return TestSourceFile(newSourceFile, tmpDir)
-        }
-
-        /**
-         * Compiles this source file and returns a single generated .class file, or fails if zero or more than one .class file was
-         * generated.
-         *
-         * Alternatively, the caller can call [compileAll] to get all generated .class files.
-         */
-        fun compile(): ClassFile = compileAll().single()
+        fun asFile() = sourceFile.asFile()
 
         /** Compiles this source file and returns all generated .class files. */
         @Suppress("MemberVisibilityCanBePrivate")
-        fun compileAll(): List<ClassFile> = sourceFile.compile(tmpDir)
+        fun compile(): List<ClassFile> = sourceFile.compile(tmpDir)
 
-        /**
-         * Compiles this source file and returns the snapshot of a single generated .class file, or fails if zero or more than one .class
-         * file was generated.
-         *
-         * Alternatively, the caller can call [compileAndSnapshotAll] to get the snapshots of all generated .class files.
-         */
-        fun compileAndSnapshot() = compile().snapshot()
+        fun compileSingle(): ClassFile = compile().single()
 
-        /** Compiles this source file and returns the snapshots of all generated .class files. */
-        fun compileAndSnapshotAll(): List<ClassSnapshot> = compileAll().snapshotAll()
+        fun compileAndSnapshot() = compileSingle().snapshot()
     }
 
-    object Util {
+    object CompileUtil {
+
+        fun SourceFile.compile(tmpDir: TemporaryFolder): List<ClassFile> {
+            return if (this is KotlinSourceFile) {
+                preCompiledClassFiles.forEach {
+                    preCompileKotlinFilesIfNecessary(baseDir, it.classRoot, classpath = emptyList(), tmpDir)
+                }
+                preCompiledClassFiles
+            } else {
+                val srcDir = tmpDir.newFolder()
+                asFile().copyTo(File(srcDir, unixStyleRelativePath))
+                compileAll(srcDir, classpath = emptyList(), tmpDir)
+            }
+        }
 
         /** Compiles the source files in the given directory and returns all generated .class files. */
         fun compileAll(srcDir: File, classpath: List<File>, tmpDir: TemporaryFolder): List<ClassFile> {
@@ -140,19 +120,6 @@ abstract class ClasspathSnapshotTestCommon {
             }
         }
 
-        fun SourceFile.compile(tmpDir: TemporaryFolder): List<ClassFile> {
-            return if (this is KotlinSourceFile) {
-                preCompiledClassFiles.forEach {
-                    preCompileKotlinFilesIfNecessary(baseDir, it.classRoot, classpath = emptyList(), tmpDir)
-                }
-                preCompiledClassFiles
-            } else {
-                val srcDir = tmpDir.newFolder()
-                asFile().copyTo(File(srcDir, unixStyleRelativePath))
-                compileAll(srcDir, classpath = emptyList(), tmpDir)
-            }
-        }
-
         private fun doCompileKotlin(srcDir: File, classpath: List<File>, tmpDir: TemporaryFolder): List<ClassFile> {
             if (srcDir.walk().none { it.path.endsWith(".kt") }) {
                 return emptyList()
@@ -187,70 +154,21 @@ abstract class ClasspathSnapshotTestCommon {
                 .map { ClassFile(classesDir, it.toRelativeString(classesDir)) }
                 .sortedBy { it.unixStyleRelativePath.substringBefore(".class") }
         }
+    }
+
+    object ClassFileUtil {
 
         // `ClassFile`s in production code could be in a jar, but the `ClassFile`s in tests are currently in a directory, so converting it
         // to a File is possible.
-        @Suppress("MemberVisibilityCanBePrivate")
         fun ClassFile.asFile() = File(classRoot, unixStyleRelativePath)
 
-        @Suppress("MemberVisibilityCanBePrivate")
         fun ClassFile.readBytes() = asFile().readBytes()
 
-        fun ClassFile.snapshot(protoBased: Boolean? = null): ClassSnapshot = listOf(this).snapshotAll(protoBased).single()
+        fun ClassFile.snapshot(protoBased: Boolean? = null): ClassSnapshot = listOf(this).snapshot(protoBased).single()
 
-        fun List<ClassFile>.snapshotAll(protoBased: Boolean? = null): List<ClassSnapshot> {
+        fun List<ClassFile>.snapshot(protoBased: Boolean? = null): List<ClassSnapshot> {
             val classFilesWithContents = this.map { ClassFileWithContents(it, it.readBytes()) }
-            return ClassSnapshotter.snapshot(classFilesWithContents, protoBased, includeDebugInfoInSnapshot = true)
+            return ClassSnapshotter.snapshot(classFilesWithContents, protoBased)
         }
-    }
-
-    abstract class ChangeableTestSourceFile(sourceFile: SourceFile, tmpDir: TemporaryFolder) : TestSourceFile(sourceFile, tmpDir) {
-
-        abstract fun changePublicMethodSignature(): TestSourceFile
-
-        abstract fun changeMethodImplementation(): TestSourceFile
-    }
-
-    class SimpleKotlinClass(tmpDir: TemporaryFolder) : ChangeableTestSourceFile(
-        KotlinSourceFile(
-            baseDir = File(testDataDir, "src/kotlin"), relativePath = "com/example/SimpleKotlinClass.kt",
-            preCompiledClassFile = ClassFile(File(testDataDir, "classes/kotlin/original"), "com/example/SimpleKotlinClass.class")
-        ), tmpDir
-    ) {
-
-        override fun changePublicMethodSignature() = replace(
-            "publicFunction()", "publicFunction(newParam: Int)",
-            preCompiledKotlinClassFile = ClassFile(
-                File(testDataDir, "classes/kotlin/changedPublicMethodSignature"), "com/example/SimpleKotlinClass.class"
-            )
-        )
-
-        override fun changeMethodImplementation() = replace(
-            "I'm in a public function", "This function's implementation has changed!",
-            preCompiledKotlinClassFile = ClassFile(
-                File(testDataDir, "classes/kotlin/changedMethodImplementation"), "com/example/SimpleKotlinClass.class"
-            )
-        )
-    }
-
-    class SimpleJavaClass(tmpDir: TemporaryFolder) : ChangeableTestSourceFile(
-        JavaSourceFile(File(testDataDir, "src/java"), "com/example/SimpleJavaClass.java"), tmpDir
-    ) {
-
-        override fun changePublicMethodSignature() = replace("publicMethod()", "publicMethod(int newParam)")
-
-        override fun changeMethodImplementation() = replace("I'm in a public method", "This method's implementation has changed!")
-    }
-
-    class JavaClassWithNestedClasses(tmpDir: TemporaryFolder) : ChangeableTestSourceFile(
-        JavaSourceFile(File(testDataDir, "src/java"), "com/example/JavaClassWithNestedClasses.java"), tmpDir
-    ) {
-
-        /** The source file contains multiple classes, select the one that we want to test. */
-        val nestedClassToTest = "com/example/JavaClassWithNestedClasses\$InnerClass"
-
-        override fun changePublicMethodSignature() = replace("publicMethod()", "publicMethod(int newParam)")
-
-        override fun changeMethodImplementation() = replace("I'm in a public method", "This method's implementation has changed!")
     }
 }

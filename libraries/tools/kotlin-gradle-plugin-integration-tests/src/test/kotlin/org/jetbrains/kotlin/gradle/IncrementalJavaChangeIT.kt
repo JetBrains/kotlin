@@ -55,18 +55,6 @@ class IncrementalJavaChangeClasspathSnapshotIT : IncrementalJavaChangeDefaultIT(
             }
         )
     }
-
-    @Test
-    fun testAddingInnerClass() {
-        doTest(
-            "A.kt",
-            { content: String -> content.substringBeforeLast("}") + " class InnerClass }" },
-            assertResults = {
-                assertTasksExecuted(":lib:compileKotlin", ":app:compileKotlin")
-                assertCompiledKotlinFiles(project.projectDir.getFilesByNames("AAA.kt", "AA.kt", "BB.kt", "A.kt", "B.kt"))
-            }
-        )
-    }
 }
 
 class IncrementalJavaChangePreciseIT : IncrementalCompilationJavaChangesBase(usePreciseJavaTracking = true) {

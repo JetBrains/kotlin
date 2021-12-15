@@ -143,7 +143,7 @@ internal fun ClasspathSnapshot.removeDuplicateAndInaccessibleClasses(): List<Cla
  *
  * If there are duplicate classes on the classpath, retain only the first one to match the compiler's behavior.
  */
-internal fun ClasspathSnapshot.getNonDuplicateClassSnapshots(): List<ClassSnapshotWithHash> {
+private fun ClasspathSnapshot.getNonDuplicateClassSnapshots(): List<ClassSnapshotWithHash> {
     val classSnapshots = LinkedHashMap<String, ClassSnapshotWithHash>(classpathEntrySnapshots.sumOf { it.classSnapshots.size })
     for (classpathEntrySnapshot in classpathEntrySnapshots) {
         for ((unixStyleRelativePath, classSnapshot) in classpathEntrySnapshot.classSnapshots) {

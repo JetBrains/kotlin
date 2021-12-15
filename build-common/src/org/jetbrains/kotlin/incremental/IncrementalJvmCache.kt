@@ -652,8 +652,10 @@ private fun getConstantsMap(bytes: ByteArray): LinkedHashMap<String, Any> {
 
     ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
         override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
-            val staticFinal = Opcodes.ACC_STATIC or Opcodes.ACC_FINAL or Opcodes.ACC_PRIVATE
-            if (value != null && access and staticFinal == Opcodes.ACC_STATIC or Opcodes.ACC_FINAL) {
+            if (access and Opcodes.ACC_PRIVATE == Opcodes.ACC_PRIVATE) return null
+
+            val staticFinal = Opcodes.ACC_STATIC or Opcodes.ACC_FINAL
+            if (value != null && access and staticFinal == staticFinal) {
                 result[name] = value
             }
             return null
@@ -689,7 +691,9 @@ private fun getInlineFunctionsMap(header: KotlinClassHeader, bytes: ByteArray): 
             desc: String,
             signature: String?,
             exceptions: Array<out String>?
-        ): MethodVisitor {
+        ): MethodVisitor? {
+            if (access and Opcodes.ACC_PRIVATE == Opcodes.ACC_PRIVATE) return null
+
             val dummyClassWriter = ClassWriter(0)
             dummyClassWriter.visit(dummyVersion, 0, "dummy", null, AsmTypes.OBJECT_TYPE.internalName, null)
 
