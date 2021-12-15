@@ -24,6 +24,7 @@ internal const val PRODUCE_ZIPPED_KLIB = "-Xir-produce-klib-file"
 
 internal const val MODULE_NAME = "-Xir-module-name"
 
+internal const val PER_MODULE = "-Xir-per-module"
 internal const val PER_MODULE_OUTPUT_NAME = "-Xir-per-module-output-name"
 
 internal const val WASM_BACKEND = "-Xwasm"

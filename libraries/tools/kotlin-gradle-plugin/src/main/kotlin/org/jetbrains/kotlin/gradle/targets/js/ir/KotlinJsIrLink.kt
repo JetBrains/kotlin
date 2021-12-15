@@ -17,6 +17,8 @@ import org.gradle.api.tasks.*
 import org.gradle.work.InputChanges
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
@@ -41,6 +43,7 @@ import org.jetbrains.kotlin.gradle.utils.getCacheDirectory
 import org.jetbrains.kotlin.gradle.utils.getDependenciesCacheDirectories
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
+import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
 import javax.inject.Inject
 
@@ -70,8 +73,15 @@ abstract class KotlinJsIrLink @Inject constructor(
     @get:Internal
     internal lateinit var compilation: KotlinCompilationData<*>
 
+    @Transient
+    @get:Internal
+    internal val propertiesProvider = PropertiesProvider(project)
+
     @get:Input
-    internal val incrementalJsIr: Boolean = PropertiesProvider(project).incrementalJsIr
+    internal val incrementalJsIr: Boolean = propertiesProvider.incrementalJsIr
+
+    @get:Input
+    val outputGranularity: KotlinJsIrOutputGranularity = propertiesProvider.jsIrOutputGranularity
 
     // Link tasks are not affected by compiler plugin
     override val pluginClasspath: ConfigurableFileCollection = project.objects.fileCollection()
@@ -111,6 +121,15 @@ abstract class KotlinJsIrLink @Inject constructor(
     ) {
         KotlinBuildStatsService.applyIfInitialised {
             it.report(BooleanMetrics.JS_IR_INCREMENTAL, incrementalJsIr)
+            val newArgs = K2JSCompilerArguments()
+            parseCommandLineArguments(ArgumentUtils.convertArgumentsToStringList(args), newArgs)
+            it.report(
+                StringMetrics.JS_OUTPUT_GRANULARITY,
+                if (newArgs.irPerModule)
+                    KotlinJsIrOutputGranularity.PER_MODULE.name.toLowerCase()
+                else
+                    KotlinJsIrOutputGranularity.WHOLE_PROGRAM.name.toLowerCase()
+            )
         }
         if (incrementalJsIr && mode == DEVELOPMENT) {
             val visitedCompilations = mutableSetOf<KotlinCompilation<*>>()
@@ -176,6 +195,11 @@ abstract class KotlinJsIrLink @Inject constructor(
             DEVELOPMENT -> {
                 kotlinOptions.configureOptions(GENERATE_D_TS)
             }
+        }
+        val alreadyDefinedOutputMode = kotlinOptions.freeCompilerArgs
+            .any { it.startsWith(PER_MODULE) }
+        if (!alreadyDefinedOutputMode) {
+            kotlinOptions.freeCompilerArgs += outputGranularity.toCompilerArgument()
         }
         super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
     }
