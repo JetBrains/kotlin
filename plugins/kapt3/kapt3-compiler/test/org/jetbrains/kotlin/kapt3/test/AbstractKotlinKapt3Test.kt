@@ -81,11 +81,10 @@ abstract class AbstractKotlinKapt3Test : KotlinKapt3TestBase() {
         super.tearDown()
     }
 
-    private fun createTempFile(prefix: String, suffix: String, text: String): File {
-        return FileUtil.createTempFile(prefix, suffix, false).apply {
+    private fun createTempJavaFile(prefix: String, text: String): File =
+        FileUtil.createTempFile(prefix, ".java", false).apply {
             writeText(text)
         }
-    }
 
     override fun loadMultiFiles(files: List<TestFile>) {
         val project = myEnvironment.project
@@ -115,11 +114,10 @@ abstract class AbstractKotlinKapt3Test : KotlinKapt3TestBase() {
 
         val project = myEnvironment.project
 
-        val javacOptions = wholeFile.getOptionValues("JAVAC_OPTION")
-            .map { opt ->
-                val (key, value) = opt.split('=').map { it.trim() }.also { assert(it.size == 2) }
-                key to value
-            }.toMap()
+        val javacOptions = wholeFile.getOptionValues("JAVAC_OPTION").associate { opt ->
+            val (key, value) = opt.split('=').map { it.trim() }.also { assert(it.size == 2) }
+            key to value
+        }
 
         val options = KaptOptions.Builder().apply {
             projectBaseDir = project.basePath?.let { File(it) }
@@ -132,7 +130,7 @@ abstract class AbstractKotlinKapt3Test : KotlinKapt3TestBase() {
 
             this.javacOptions.putAll(javacOptions)
             flags.addAll(kaptFlagsToAdd)
-            flags.removeAll(kaptFlagsToRemove)
+            flags.removeAll(kaptFlagsToRemove.toSet())
 
             detectMemoryLeaks = DetectMemoryLeaksMode.NONE
         }.build()
@@ -164,11 +162,9 @@ abstract class AbstractKotlinKapt3Test : KotlinKapt3TestBase() {
 
             val javaFiles = files
                 .filter { it.name.lowercase().endsWith(".java") }
-                .map { createTempFile(it.name.substringBeforeLast('.'), ".java", it.content) }
+                .map { createTempJavaFile(it.name.substringBeforeLast('.'), it.content) }
 
             check(kaptContext, javaFiles, txtFile, wholeFile)
-        } catch (e: Throwable) {
-            throw RuntimeException(e)
         } finally {
             kaptContext?.close()
         }
@@ -191,7 +187,7 @@ abstract class AbstractKotlinKapt3Test : KotlinKapt3TestBase() {
 
         val kaptStubs = converter.convert()
         val convertedFiles = kaptStubs.map { stub ->
-            val sourceFile = createTempFile("stub", ".java", stub.file.prettyPrint(kaptContext.context))
+            val sourceFile = createTempJavaFile("stub", stub.file.prettyPrint(kaptContext.context))
             stub.writeMetadataIfNeeded(forSource = sourceFile)
             sourceFile
         }
@@ -236,10 +232,10 @@ abstract class AbstractKotlinKapt3Test : KotlinKapt3TestBase() {
 
 open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(), CustomJdkTestLauncher {
     companion object {
-        private val KOTLIN_METADATA_GROUP = "[a-z0-9]+ = (\\{.+?\\}|[0-9]+)"
+        private const val KOTLIN_METADATA_GROUP = "[a-z0-9]+ = (\\{.+?\\}|[0-9]+)"
         private val KOTLIN_METADATA_REGEX = "@kotlin\\.Metadata\\(($KOTLIN_METADATA_GROUP)(, $KOTLIN_METADATA_GROUP)*\\)".toRegex()
 
-        private val EXPECTED_ERROR = "EXPECTED_ERROR"
+        private const val EXPECTED_ERROR = "EXPECTED_ERROR"
 
         internal fun removeMetadataAnnotationContents(s: String): String {
             return s.replace(KOTLIN_METADATA_REGEX, "@kotlin.Metadata()")
@@ -290,14 +286,14 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
 
         val convertedFiles = convert(kaptContext, javaFiles, generateNonExistentClass)
 
-        kaptContext.javaLog.interceptorData.files = convertedFiles.map { it.sourceFile to it }.toMap()
+        kaptContext.javaLog.interceptorData.files = convertedFiles.associateBy { it.sourceFile }
         if (validate) kaptContext.compiler.enterTrees(convertedFiles)
 
         val actualRaw = convertedFiles
             .sortedBy { it.sourceFile.name }
             .joinToString(FILE_SEPARATOR) { it.prettyPrint(kaptContext.context) }
 
-        val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' }))
+        val actual = StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' })
             .trimTrailingWhitespacesAndAddNewlineAtEOF()
             .let { removeMetadataAnnotationContents(it) }
 
@@ -318,7 +314,7 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
                     val javaLocation = "($kind:${it.lineNumber}:${it.columnNumber}) "
                     javaLocation + it.getMessage(Locale.US).lines().first()
                 }
-                .map { "// " + EXPECTED_ERROR + it }
+                .map { "// $EXPECTED_ERROR$it" }
                 .sorted()
 
             log.flush()
@@ -358,7 +354,7 @@ abstract class AbstractKotlinKaptContextTest : AbstractKotlinKapt3Test() {
 
         val stubJavaFiles = kaptContext.options.sourcesOutputDir.walkTopDown().filter { it.isFile && it.extension == "java" }
         val actualRaw = stubJavaFiles.sortedBy { it.name }.joinToString(FILE_SEPARATOR) { it.name + ":\n\n" + it.readText() }
-        val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' })).trimTrailingWhitespacesAndAddNewlineAtEOF()
+        val actual = StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' }).trimTrailingWhitespacesAndAddNewlineAtEOF()
         KotlinTestUtils.assertEqualsToFile(txtFile, actual)
     }
 }
