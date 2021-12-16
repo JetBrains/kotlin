@@ -13,6 +13,7 @@ import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.deserialization.common.jvm.impl.VirtualFileKotlinClass
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -37,7 +38,7 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
         val virtualFile = content.file
 
-        if (isKotlinInternalCompiledFile(virtualFile, content.content)) {
+        if (ClsClassFinder.isKotlinInternalCompiledFile(virtualFile, content.content)) {
             return null
         }
 
@@ -51,7 +52,7 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
     }
 
     private fun doBuildFileStub(file: VirtualFile, fileContent: ByteArray): PsiFileStub<KtFile>? {
-        val kotlinClass: KotlinJvmBinaryClass = IDEKotlinBinaryClassCache.getInstance().getKotlinBinaryClass(file, fileContent)
+        val kotlinClass = ClsKotlinBinaryClassCache.getInstance().getKotlinBinaryClass(file, fileContent)
             ?: error("Can't find binary class for Kotlin file: $file")
         val header = kotlinClass.classHeader
         val classId = kotlinClass.classId
@@ -63,7 +64,7 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
 
         val components = createStubBuilderComponents(file, packageFqName, fileContent)
         if (header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS) {
-            val partFiles = findMultifileClassParts(file, classId, header.multifilePartNames)
+            val partFiles = ClsClassFinder.findMultifileClassParts(file, classId, header.multifilePartNames)
             return createMultifileClassStub(header, partFiles, classId.asSingleFqName(), components)
         }
 
