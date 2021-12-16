@@ -20,7 +20,6 @@ import com.intellij.util.io.EnumeratorStringDescriptor
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
-import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.metadata.deserialization.supertypes
 import org.jetbrains.kotlin.name.FqName
@@ -125,7 +124,9 @@ abstract class AbstractIncrementalCache<ClassName>(
      *
      * The `srcFile` argument may be `null` (e.g., if we are processing .class files in jars where source files are not available).
      */
-    protected fun addToClassStorage(proto: ProtoBuf.Class, nameResolver: NameResolver, srcFile: File?) {
+    protected fun addToClassStorage(classProtoData: ClassProtoData, srcFile: File?) {
+        val (proto, nameResolver) = classProtoData
+
         val supertypes = proto.supertypes(TypeTable(proto.typeTable))
         val parents = supertypes.map { nameResolver.getClassId(it.className).asSingleFqName() }
             .filter { it.asString() != "kotlin.Any" }

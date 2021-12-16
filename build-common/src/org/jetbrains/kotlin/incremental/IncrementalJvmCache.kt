@@ -30,11 +30,10 @@ import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCache
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.*
@@ -182,12 +181,7 @@ open class IncrementalJvmCache(
                 inlineFunctionsMap.process(kotlinClassInfo, changesCollector)
             }
             KotlinClassHeader.Kind.CLASS -> {
-                if (sourceFiles != null) {
-                    assert(sourceFiles.size == 1) { "Class is expected to have only one source file: $sourceFiles" }
-                    addToClassStorage(kotlinClassInfo, sourceFiles.single())
-                } else {
-                    addToClassStorage(kotlinClassInfo, null)
-                }
+                addToClassStorage(kotlinClassInfo.protoData as ClassProtoData, sourceFiles?.let { sourceFiles.single() })
 
                 protoMap.process(kotlinClassInfo, changesCollector)
                 constantsMap.process(kotlinClassInfo, changesCollector)
@@ -202,8 +196,7 @@ open class IncrementalJvmCache(
         val jvmClassName = JvmClassName.byClassId(serializedJavaClass.classId)
         javaSourcesProtoMap.process(jvmClassName, serializedJavaClass, collector)
         source?.let { sourceToClassesMap.add(source, jvmClassName) }
-        val (proto, nameResolver) = serializedJavaClass.toProtoData()
-        addToClassStorage(proto, nameResolver, source)
+        addToClassStorage(serializedJavaClass.toProtoData(), source)
 //        collector.addJavaProto(ClassProtoData(proto, nameResolver))
         dirtyOutputClassesMap.notDirty(jvmClassName)
     }
@@ -317,15 +310,11 @@ open class IncrementalJvmCache(
         private fun put(kotlinClassInfo: KotlinClassInfo, changesCollector: ChangesCollector) {
             val key = kotlinClassInfo.className.internalName
             val oldData = storage[key]
-            val newData = ProtoMapValue(
-                kotlinClassInfo.classKind != KotlinClassHeader.Kind.CLASS,
-                BitEncoding.decodeBytes(kotlinClassInfo.classHeaderData),
-                kotlinClassInfo.classHeaderStrings
-            )
+            val newData = kotlinClassInfo.protoMapValue
             storage[key] = newData
 
             val packageFqName = kotlinClassInfo.className.packageFqName
-            changesCollector.collectProtoChanges(oldData?.toProtoData(packageFqName), newData.toProtoData(packageFqName), packageProtoKey = key)
+            changesCollector.collectProtoChanges(oldData?.toProtoData(packageFqName), kotlinClassInfo.protoData, packageProtoKey = key)
         }
 
         operator fun contains(className: JvmClassName): Boolean =
@@ -402,20 +391,29 @@ open class IncrementalJvmCache(
                 storage.remove(key)
             }
 
-            for (const in oldMap.keys + newMap.keys) {
-                //Constant can be declared via companion object or via const field declaration
-                changesCollector.collectMemberIfValueWasChanged(
-                    kotlinClassInfo.scopeFqName(companion = true),
-                    const,
-                    oldMap[const],
-                    newMap[const]
-                )
-                changesCollector.collectMemberIfValueWasChanged(
-                    kotlinClassInfo.scopeFqName(companion = false),
-                    const,
-                    oldMap[const],
-                    newMap[const]
-                )
+            val allConstants = oldMap.keys + newMap.keys
+            if (allConstants.isEmpty()) return
+
+            // If a constant is defined in a companion object, it will be found in the constantsMap of the containing class, not the
+            // companion object's class, so we will need to correct its scope.
+            // (See https://youtrack.jetbrains.com/issue/KT-44741#focus=Comments-27-5659564.0-0 for more details.)
+            // Note: This only applies to a *constant* defined in a *companion object* (it's not an issue for inline functions, or top-level
+            // constants, or constants in non-companion objects).
+            val companionObjectClassId = if (kotlinClassInfo.classKind == KotlinClassHeader.Kind.CLASS) {
+                val protoData = kotlinClassInfo.protoData as ClassProtoData
+                if (protoData.proto.hasCompanionObjectName()) {
+                    val companionObjectName = Name.identifier(protoData.nameResolver.getString(protoData.proto.companionObjectName))
+                    kotlinClassInfo.classId.createNestedClassId(companionObjectName)
+                } else null
+            } else null
+            val scope = companionObjectClassId?.asSingleFqName() ?: kotlinClassInfo.scopeFqName()
+
+            // Here we assume that the old and new classes have the same KotlinClassHeader.Kind, so that the scopes of the old and new
+            // constants are the same and their values can be compared.
+            // If the class kinds are different, the changes will be detected when comparing protos (in that case, the changes collected
+            // here will be a subset of those changes).
+            for (const in allConstants) {
+                changesCollector.collectMemberIfValueWasChanged(scope, const, oldMap[const], newMap[const])
             }
         }
 
@@ -503,11 +501,6 @@ open class IncrementalJvmCache(
             value.dumpCollection()
     }
 
-    private fun addToClassStorage(classInfo: KotlinClassInfo, srcFile: File?) {
-        val (nameResolver, proto) = JvmProtoBufUtil.readClassDataFrom(classInfo.classHeaderData, classInfo.classHeaderStrings)
-        addToClassStorage(proto, nameResolver, srcFile)
-    }
-
     private inner class InlineFunctionsMap(storageFile: File) :
         BasicStringMap<LinkedHashMap<String, Long>>(storageFile, LinkedHashMapExternalizer(StringExternalizer, LongExternalizer)) {
 
@@ -544,6 +537,11 @@ open class IncrementalJvmCache(
 
         override fun dumpValue(value: LinkedHashMap<String, Long>): String =
             value.dumpMap { java.lang.Long.toHexString(it) }
+    }
+
+    private fun KotlinClassInfo.scopeFqName() = when (classKind) {
+        KotlinClassHeader.Kind.CLASS -> classId.asSingleFqName()
+        else -> classId.packageFqName
     }
 }
 
@@ -613,18 +611,32 @@ class KotlinClassInfo constructor(
     val classKind: KotlinClassHeader.Kind,
     val classHeaderData: Array<String>, // Can be empty
     val classHeaderStrings: Array<String>, // Can be empty
-    @Suppress("SpellCheckingInspection") val multifileClassName: String?,
+    val multifileClassName: String?,
     val constantsMap: LinkedHashMap<String, Any>,
     val inlineFunctionsMap: LinkedHashMap<String, Long>
 ) {
 
     val className: JvmClassName by lazy { JvmClassName.byClassId(classId) }
 
-    fun scopeFqName(companion: Boolean = false) = when (classKind) {
-        KotlinClassHeader.Kind.CLASS -> {
-            className.fqNameForClassNameWithoutDollars.let { if (companion) it.child(DEFAULT_NAME_FOR_COMPANION_OBJECT) else it }
+    val protoMapValue: ProtoMapValue by lazy {
+        ProtoMapValue(
+            isPackageFacade = classKind != KotlinClassHeader.Kind.CLASS,
+            BitEncoding.decodeBytes(classHeaderData),
+            classHeaderStrings
+        )
+    }
+
+    /**
+     * Returns the [ProtoData] of this class.
+     *
+     * NOTE: The caller needs to ensure `classKind != KotlinClassHeader.Kind.MULTIFILE_CLASS` first, as the compiler doesn't write proto
+     * data to [KotlinClassHeader.Kind.MULTIFILE_CLASS] classes.
+     */
+    val protoData: ProtoData by lazy {
+        check(classKind != KotlinClassHeader.Kind.MULTIFILE_CLASS) {
+            "Proto data is not available for KotlinClassHeader.Kind.MULTIFILE_CLASS: $classId"
         }
-        else -> className.packageFqName
+        protoMapValue.toProtoData(className.packageFqName)
     }
 
     companion object {
