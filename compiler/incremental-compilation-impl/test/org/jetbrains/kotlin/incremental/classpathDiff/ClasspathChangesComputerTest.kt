@@ -181,9 +181,6 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
                 LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SomeClass.CompanionObject"),
 
                 // TODO (Fix in next commit). Incorrect:
-                LookupSymbol(name = "privateInlineFunctionChangedSignature", scope = "com.example.SomeClass"),
-
-                // TODO (Fix in next commit). Incorrect:
                 LookupSymbol(name = "constantChangedType", scope = "com.example.SomeClass"),
                 LookupSymbol(name = "constantChangedType", scope = "com.example.SomeClass.Companion"),
                 LookupSymbol(name = "constantChangedValue", scope = "com.example.SomeClass"),
