@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
-import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 open class KotlinClsStubBuilder : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + KotlinStubVersions.CLASSFILE_STUB_VERSION
@@ -122,11 +121,15 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
     }
 }
 
-class AnnotationLoaderForClassFileStubBuilder(
+private class AnnotationLoaderForClassFileStubBuilder(
     kotlinClassFinder: KotlinClassFinder,
     private val cachedFile: VirtualFile,
     private val cachedFileContent: ByteArray
-) : AbstractBinaryClassAnnotationAndConstantLoader<ClassId, Unit>(LockBasedStorageManager.NO_LOCKS, kotlinClassFinder) {
+) : AbstractBinaryClassAnnotationLoader<ClassId, AnnotationLoaderForClassFileStubBuilder.AnnotationsClassIdContainer>(kotlinClassFinder) {
+
+    override fun getAnnotationsContainer(binaryClass: KotlinJvmBinaryClass): AnnotationsClassIdContainer {
+        return loadAnnotationsAndInitializers(binaryClass)
+    }
 
     override fun getCachedFileContent(kotlinClass: KotlinJvmBinaryClass): ByteArray? {
         if ((kotlinClass as? VirtualFileKotlinClass)?.file == cachedFile) {
@@ -137,9 +140,6 @@ class AnnotationLoaderForClassFileStubBuilder(
 
     override fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): ClassId = nameResolver.getClassId(proto.id)
 
-    override fun loadConstant(desc: String, initializer: Any) = null
-
-    override fun transformToUnsignedConstant(constant: Unit) = null
 
     override fun loadAnnotation(
         annotationClassId: ClassId, source: SourceElement, result: MutableList<ClassId>
@@ -157,9 +157,10 @@ class AnnotationLoaderForClassFileStubBuilder(
             }
 
             override fun visitEnd() {
-                if (!isRepeatableWithImplicitContainer(annotationClassId, arguments)) {
-                    result.add(annotationClassId)
-                }
+                // todo
+//                if (!isRepeatableWithImplicitContainer(annotationClassId, arguments)) {
+//                    result.add(annotationClassId)
+//                }
             }
 
             override fun visit(name: Name?, value: Any?) = Unit
@@ -169,9 +170,58 @@ class AnnotationLoaderForClassFileStubBuilder(
         }
     }
 
-    override fun loadAnnotationMethodDefaultValue(
-        annotationClass: KotlinJvmBinaryClass,
-        methodSignature: MemberSignature,
-        visitResult: (Unit) -> Unit
-    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? = null
+    private fun loadAnnotationsAndInitializers(kotlinClass: KotlinJvmBinaryClass): AnnotationsClassIdContainer {
+        val memberAnnotations = HashMap<MemberSignature, MutableList<ClassId>>()
+
+        kotlinClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
+            override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor {
+                return AnnotationVisitorForMethod(MemberSignature.fromMethodNameAndDesc(name.asString(), desc))
+            }
+
+            override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor {
+                val signature = MemberSignature.fromFieldNameAndDesc(name.asString(), desc)
+                return MemberAnnotationVisitor(signature)
+            }
+
+            inner class AnnotationVisitorForMethod(signature: MemberSignature) : MemberAnnotationVisitor(signature),
+                KotlinJvmBinaryClass.MethodAnnotationVisitor {
+
+                override fun visitParameterAnnotation(
+                    index: Int, classId: ClassId, source: SourceElement
+                ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                    val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(signature, index)
+                    var result = memberAnnotations[paramSignature]
+                    if (result == null) {
+                        result = ArrayList()
+                        memberAnnotations[paramSignature] = result
+                    }
+                    return loadAnnotationIfNotSpecial(classId, source, result)
+                }
+
+                override fun visitAnnotationMemberDefaultValue(): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                    return null
+                }
+            }
+
+            open inner class MemberAnnotationVisitor(protected val signature: MemberSignature) : KotlinJvmBinaryClass.AnnotationVisitor {
+                private val result = ArrayList<ClassId>()
+
+                override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+                    return loadAnnotationIfNotSpecial(classId, source, result)
+                }
+
+                override fun visitEnd() {
+                    if (result.isNotEmpty()) {
+                        memberAnnotations[signature] = result
+                    }
+                }
+            }
+        }, getCachedFileContent(kotlinClass))
+
+        return AnnotationsClassIdContainer(memberAnnotations)
+    }
+
+    class AnnotationsClassIdContainer(
+        override val memberAnnotations: Map<MemberSignature, List<ClassId>>
+    ) : AbstractBinaryClassAnnotationLoader.AnnotationsContainer<ClassId>()
 }
