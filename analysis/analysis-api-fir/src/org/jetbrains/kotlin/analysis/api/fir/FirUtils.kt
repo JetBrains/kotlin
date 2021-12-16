@@ -48,6 +48,9 @@ private fun FirBasedSymbol<*>.isInvokeFunction() =
 fun FirFunctionCall.getCalleeSymbol(): FirBasedSymbol<*>? =
     calleeReference.getResolvedSymbolOfNameReference()
 
+fun FirFunctionCall.getCandidateSymbols(): Collection<FirBasedSymbol<*>> =
+    calleeReference.getCandidateSymbols()
+
 fun FirReference.getResolvedSymbolOfNameReference(): FirBasedSymbol<*>? =
     (this as? FirResolvedNamedReference)?.resolvedSymbol
 

@@ -676,9 +676,33 @@ public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolv
         }
 
         @Test
+        @TestMetadata("getFunction.kt")
+        public void testGetFunction() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/getFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("getOperator.kt")
+        public void testGetOperator() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/getOperator.kt");
+        }
+
+        @Test
         @TestMetadata("set.kt")
         public void testSet() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/set.kt");
+        }
+
+        @Test
+        @TestMetadata("setFunction.kt")
+        public void testSetFunction() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/setFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("setOperator.kt")
+        public void testSetOperator() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/setOperator.kt");
         }
     }
 
