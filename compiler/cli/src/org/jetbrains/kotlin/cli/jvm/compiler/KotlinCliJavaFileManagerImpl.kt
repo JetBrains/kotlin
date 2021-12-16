@@ -100,7 +100,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                 classId.outerClassId?.let { outerClassId ->
                     val outerClass = outerClassFromRequest ?: findClass(outerClassId, searchScope)
 
-                    return if (outerClass is BinaryJavaClass)
+                    return@getOrPut if (outerClass is BinaryJavaClass)
                         outerClass.findInnerClass(classId.shortClassName, classFileContentFromRequest)
                     else
                         outerClass?.findInnerClass(classId.shortClassName)
