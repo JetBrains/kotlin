@@ -44,7 +44,7 @@ internal fun customizeKotlinDependencies(project: Project) {
         configureKotlinTestDependency(project)
     }
     configureDefaultVersionsResolutionStrategy(project)
-    excludeStdlibCommonFromPlatformCompilations(project)
+    excludeStdlibAndKotlinTestCommonFromPlatformCompilations(project)
 }
 
 private fun configureDefaultVersionsResolutionStrategy(project: Project) {
@@ -59,18 +59,17 @@ private fun configureDefaultVersionsResolutionStrategy(project: Project) {
     }
 }
 
-//region stdlib
-private fun excludeStdlibCommonFromPlatformCompilations(project: Project) {
+private fun excludeStdlibAndKotlinTestCommonFromPlatformCompilations(project: Project) {
     val multiplatformExtension = project.multiplatformExtensionOrNull ?: return
 
     multiplatformExtension.targets.matching { it !is KotlinMetadataTarget }.all {
-        it.excludeStdlibCommonFromPlatformCompilations()
+        it.excludeStdlibAndKotlinTestCommonFromPlatformCompilations()
     }
 }
 
 // there several JVM-like targets, like KotlinWithJava, or KotlinAndroid, and they don't have common supertype
 // aside from KotlinTarget
-private fun KotlinTarget.excludeStdlibCommonFromPlatformCompilations() {
+private fun KotlinTarget.excludeStdlibAndKotlinTestCommonFromPlatformCompilations() {
     compilations.all {
         listOfNotNull(
             it.compileDependencyConfigurationName,
@@ -81,13 +80,16 @@ private fun KotlinTarget.excludeStdlibCommonFromPlatformCompilations() {
             // Additional configurations for (old) jvmWithJava-preset. Remove it when we drop it completely
             (it as? KotlinWithJavaCompilation<*>)?.apiConfigurationName
         ).forEach { configurationName ->
-            project.configurations.getByName(configurationName).exclude(
-                mapOf("group" to "org.jetbrains.kotlin", "module" to "kotlin-stdlib-common")
-            )
+            project.configurations.getByName(configurationName).apply {
+                exclude(mapOf("group" to "org.jetbrains.kotlin", "module" to "kotlin-stdlib-common"))
+                exclude(mapOf("group" to "org.jetbrains.kotlin", "module" to "kotlin-test-common"))
+                exclude(mapOf("group" to "org.jetbrains.kotlin", "module" to "kotlin-test-annotations-common"))
+            }
         }
     }
 }
 
+//region stdlib
 internal fun configureStdlibDefaultDependency(project: Project) = with(project) {
     if (!PropertiesProvider(project).stdlibDefaultDependency)
         return
