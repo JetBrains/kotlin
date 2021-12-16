@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPrope
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPluginBlackBoxCodegenTest
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPluginDiagnosticTest
 import org.jetbrains.kotlin.generators.TestGroup
+import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.incremental.*
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
 import org.jetbrains.kotlin.lombok.AbstractLombokCompileTest
 import org.jetbrains.kotlin.noarg.*
 import org.jetbrains.kotlin.parcelize.test.runners.*
+import org.jetbrains.kotlin.psi.stubs.file.builder.AbstractClsStubBuilderTest
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverScriptTest
 import org.jetbrains.kotlin.samWithReceiver.AbstractSamWithReceiverTest
 import org.jetbrains.kotlin.test.TargetBackend
@@ -42,6 +44,7 @@ import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsIrTest
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     generateTestGroupSuite(args) {
+        generateStubBuilderTests()
         testGroup("compiler/incremental-compilation-impl/test", "jps-plugin/testData") {
             fun incrementalJvmTestData(targetBackend: TargetBackend): TestGroup.TestClass.() -> Unit = {
                 model("incremental/pureKotlin", extension = null, recursive = false, targetBackend = targetBackend)
@@ -406,6 +409,17 @@ fun main(args: Array<String>) {
             testClass<AbstractAtomicfuJsIrTest> {
                 model("box/")
             }
+        }
+    }
+}
+
+private fun TestGroupSuite.generateStubBuilderTests() {
+    testGroup(
+        "compiler/psi/cls-psi-file-stub-builder/tests",
+        "compiler/psi/cls-psi-file-stub-builder/testData",
+    ) {
+        testClass<AbstractClsStubBuilderTest> {
+            model("clsFileStubBuilder", extension = null, recursive = false)
         }
     }
 }

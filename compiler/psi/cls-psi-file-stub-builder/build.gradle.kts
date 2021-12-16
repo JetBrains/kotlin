@@ -13,9 +13,20 @@ dependencies {
     implementation(project(":core:compiler.common.jvm"))
 
     api(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
+
+    testImplementation(projectTests(":compiler:tests-common"))
+
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {}
+    "test" {  projectDefault() }
 }
+
+projectTest {
+    dependsOn(":dist")
+    workingDir = rootDir
+}
+
+
+testsJar()
