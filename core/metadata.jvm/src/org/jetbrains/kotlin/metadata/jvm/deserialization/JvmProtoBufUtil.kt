@@ -56,10 +56,14 @@ object JvmProtoBufUtil {
      */
     @JvmStatic
     fun writeData(message: MessageLite, stringTable: JvmStringTable): Array<String> =
-        BitEncoding.encodeBytes(ByteArrayOutputStream().apply {
+        BitEncoding.encodeBytes(writeDataBytes(stringTable, message))
+
+    @JvmStatic
+    fun writeDataBytes(stringTable: JvmStringTable, message: MessageLite) =
+        ByteArrayOutputStream().apply {
             stringTable.serializeTo(this)
             message.writeTo(this)
-        }.toByteArray())
+        }.toByteArray()
 
     // returns JVM signature in the format: "equals(Ljava/lang/Object;)Z"
     fun getJvmMethodSignature(
