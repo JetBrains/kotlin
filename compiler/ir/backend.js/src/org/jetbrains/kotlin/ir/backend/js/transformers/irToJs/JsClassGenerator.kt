@@ -31,7 +31,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private val baseClass: IrType? = irClass.superTypes.firstOrNull { !it.classifierOrFail.isInterface }
 
     private val baseClassRef by lazy { // Lazy in case was not collected by namer during JsClassGenerator construction
-        baseClass?.getClassRef(context)
+        if (baseClass != null && !baseClass.isAny()) baseClass.getClassRef(context) else null
     }
     private val classPrototypeRef = prototypeOf(classNameRef)
     private val classBlock = JsGlobalBlock()
@@ -49,11 +49,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         // We'll use IrSimpleFunction::correspondingProperty to collect them into set
         val properties = mutableSetOf<IrProperty>()
 
-        val jsClass = JsClass(name = className)
-
-        if (baseClass != null && !baseClass.isAny()) {
-            jsClass.baseClass = baseClassRef
-        }
+        val jsClass = JsClass(name = className, baseClass = baseClassRef)
 
         if (es6mode) classModel.preDeclarationBlock.statements += jsClass.makeStmt()
 
@@ -329,12 +325,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     }
 
     private fun generateInheritanceCode(): List<JsStatement> {
-        if (baseClass == null || baseClass.isAny()) {
-            return emptyList()
-        }
+        val baseClassPrototype = baseClassRef ?: return emptyList()
 
         val createCall = jsAssignment(
-            classPrototypeRef, JsInvocation(Namer.JS_OBJECT_CREATE_FUNCTION, prototypeOf(baseClassRef!!))
+            classPrototypeRef, JsInvocation(Namer.JS_OBJECT_CREATE_FUNCTION, prototypeOf(baseClassPrototype))
         ).makeStmt()
 
         val ctorAssign = jsAssignment(JsNameRef(Namer.CONSTRUCTOR_NAME, classPrototypeRef), classNameRef).makeStmt()
@@ -363,6 +357,8 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         metadataLiteral.propertyInitializers += generateSuperClasses()
 
         metadataLiteral.propertyInitializers += generateAssociatedKeyProperties()
+
+        generateFastPrototype()?.let { metadataLiteral.propertyInitializers += it }
 
         if (isCoroutineClass()) {
             metadataLiteral.propertyInitializers += generateSuspendArity()
@@ -401,6 +397,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 }
             )
         )
+    }
+
+    private fun generateFastPrototype() = baseClassRef?.let {
+        JsPropertyInitializer(JsNameRef(Namer.METADATA_FAST_PROTOTYPE), prototypeOf(it))
     }
 
     private fun IrType.isFunctionType() = isFunctionOrKFunction() || isSuspendFunctionOrKFunction()

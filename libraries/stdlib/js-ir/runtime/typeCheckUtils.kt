@@ -8,29 +8,54 @@ package kotlin.js
 private external interface Metadata {
     val interfaces: Array<Ctor>
     val suspendArity: Array<Int>?
+
+    // This field gives fast access to the prototype of metadata owner (Object.getPrototypeOf())
+    // Can be pre-initialized or lazy initialized and then should be immutable
+    var fastPrototype: Prototype?
+
+    // The hint is used as a sort of flag, pointed to the class or the interface, which is not a parent for metadata owner
+    // Can be mutated quite often
+    var nonParentHint: dynamic
 }
 
 private external interface Ctor {
     val `$metadata$`: Metadata?
-    val prototype: Ctor?
+    val prototype: Prototype?
 }
 
-private fun isInterfaceImpl(ctor: Ctor, iface: dynamic): Boolean {
-    if (ctor === iface) return true
+private external interface Prototype {
+    val constructor: Ctor?
+}
 
-    val metadata = ctor.`$metadata$`
-    if (metadata != null) {
-        val interfaces = metadata.interfaces
+private fun Ctor.getPrototype() = prototype?.let { js("Object").getPrototypeOf(it).unsafeCast<Prototype>() }
+
+private fun isInterfaceImpl(ctor: Ctor, iface: dynamic): Boolean {
+    if (ctor === iface) {
+        return true
+    }
+
+    val superPrototype = ctor.`$metadata$`?.run {
+        if (nonParentHint != null && nonParentHint === iface) {
+            return false
+        }
         for (i in interfaces) {
             if (isInterfaceImpl(i, iface)) {
                 return true
             }
         }
+        if (fastPrototype == null) {
+            fastPrototype = ctor.getPrototype()
+        }
+        fastPrototype
     }
 
-    val superPrototype = if (ctor.prototype != null) js("Object").getPrototypeOf(ctor.prototype) else null
-    val superConstructor: Ctor? = if (superPrototype != null) superPrototype.constructor else null
-    return superConstructor != null && isInterfaceImpl(superConstructor, iface)
+    (superPrototype ?: ctor.getPrototype())?.constructor?.let {
+        if (isInterfaceImpl(it, iface)) {
+            return true
+        }
+        ctor.`$metadata$`?.run { nonParentHint = iface }
+    }
+    return false
 }
 
 internal fun isInterface(obj: dynamic, iface: dynamic): Boolean {
