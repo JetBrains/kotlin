@@ -72,17 +72,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             }
 
             private fun addMissingSupertypes(clazz: IrClass) {
-                val suspendFunctionTypes = mutableSetOf<IrSimpleType>()
-                for (superType in getAllSubstitutedSupertypes(clazz)) {
-                    when {
-                        superType.isFunctionMarker() -> Unit // Proceed with others.
-                        superType.isFunction() -> {
-                            // Mixing suspend and non-suspend function supertypes is not allowed by the frontend. So can stop here.
-                            return
-                        }
-                        superType.isSuspendFunction() -> suspendFunctionTypes += superType
-                    }
-                }
+                val suspendFunctionTypes = getAllSubstitutedSupertypes(clazz).filter { it.isSuspendFunction() }.toSet()
 
                 for (suspendFunctionType in suspendFunctionTypes) {
                     val suspendFunctionClassSymbol = suspendFunctionType.classOrNull ?: continue
