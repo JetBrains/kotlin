@@ -81,6 +81,13 @@ fun blackBoxTest(taskName: String, vararg tags: String) = projectTest(taskName, 
         // additional stack frames more compared to the old one because of another launcher, etc. and it turns out this is not enough.
         jvmArgs("-Xss2m")
 
+        if (!kotlinBuildProperties.isTeamcityBuild
+            && minOf(kotlinBuildProperties.junit5NumberOfThreadsForParallelExecution ?: 16, Runtime.getRuntime().availableProcessors()) > 4
+        ) {
+            logger.info("JVM C2 compiler has been disabled for task $path")
+            jvmArgs("-XX:TieredStopAtLevel=1") // Disable C2 if there are more than 4 CPUs at the host machine.
+        }
+
         TestProperty.KOTLIN_NATIVE_HOME.setUpFromGradleProperty(this) {
             project(":kotlin-native").projectDir.resolve("dist").absolutePath
         }
