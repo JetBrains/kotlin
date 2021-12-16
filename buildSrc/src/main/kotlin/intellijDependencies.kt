@@ -19,6 +19,7 @@ fun Project.jpsBuildTest() = "com.jetbrains.intellij.idea:jps-build-test:$intell
 fun Project.intellijPlatformUtil() = "com.jetbrains.intellij.platform:util:$intellijVersion"
 fun Project.intellijJavaRt() = "com.jetbrains.intellij.java:java-rt:$intellijVersion"
 fun Project.intellijAnalysis() = "com.jetbrains.intellij.platform:analysis:$intellijVersion"
+fun Project.intellijResources() = "com.jetbrains.intellij.platform:resources:$intellijVersion"
 
 /**
  * Runtime version of annotations that are already in Kotlin stdlib (historically Kotlin has older version of this one).

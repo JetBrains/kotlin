@@ -22,6 +22,7 @@ dependencies {
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 
     testImplementation(intellijCore())
+    testRuntimeOnly(intellijResources()) { isTransitive = false }
 
     testApi(projectTests(":compiler:tests-common"))
     testApi(project(":kotlin-annotation-processing-base"))
