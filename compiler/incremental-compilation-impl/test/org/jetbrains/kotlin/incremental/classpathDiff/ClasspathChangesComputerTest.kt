@@ -171,27 +171,17 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
         Changes(
             lookupSymbols = setOf(
                 LookupSymbol(name = "constantChangedType", scope = "com.example.SomeClass.CompanionObject"),
-                // TODO (Fix in next commit). Missing:
-                // LookupSymbol(name = "constantChangedValue", scope = "com.example.SomeClass.CompanionObject")
+                LookupSymbol(name = "constantChangedValue", scope = "com.example.SomeClass.CompanionObject"),
 
                 LookupSymbol(name = "inlineFunctionChangedSignature", scope = "com.example.SomeClass"),
                 LookupSymbol(name = "inlineFunctionChangedImplementation", scope = "com.example.SomeClass"),
 
                 LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SomeClass"),
                 LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SomeClass.CompanionObject"),
-
-                // TODO (Fix in next commit). Incorrect:
-                LookupSymbol(name = "constantChangedType", scope = "com.example.SomeClass"),
-                LookupSymbol(name = "constantChangedType", scope = "com.example.SomeClass.Companion"),
-                LookupSymbol(name = "constantChangedValue", scope = "com.example.SomeClass"),
-                LookupSymbol(name = "constantChangedValue", scope = "com.example.SomeClass.Companion"),
-                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SomeClass.Companion"),
             ),
             fqNames = setOf(
                 "com.example.SomeClass",
                 "com.example.SomeClass.CompanionObject",
-                // TODO (Fix in next commit). Incorrect:
-                "com.example.SomeClass.Companion"
             )
         ).assertEquals(changes)
     }

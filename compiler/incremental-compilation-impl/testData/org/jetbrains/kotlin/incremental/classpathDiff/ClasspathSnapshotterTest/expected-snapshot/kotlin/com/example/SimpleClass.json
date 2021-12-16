@@ -34,6 +34,14 @@
     "className$delegate": {
       "initializer": {},
       "_value": {}
+    },
+    "protoMapValue$delegate": {
+      "initializer": {},
+      "_value": {}
+    },
+    "protoData$delegate": {
+      "initializer": {},
+      "_value": {}
     }
   },
   "supertypes": [

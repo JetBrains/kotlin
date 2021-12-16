@@ -117,7 +117,7 @@ open class IncrementalJsCache(
                 registerOutputForFile(srcFile, classId.asSingleFqName())
 
                 if (protoData is ClassProtoData) {
-                    addToClassStorage(protoData.proto, protoData.nameResolver, srcFile)
+                    addToClassStorage(protoData, srcFile)
                 }
             }
 
