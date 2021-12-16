@@ -31,6 +31,8 @@ class FacadeClassSourceShimForFragmentCompilation(private val containingFile: Ps
         get() = DeserializedContainerAbiStability.STABLE
     override val presentableString: String
         get() = "Fragment for $containingFile"
+    override val compilerVersion: String?
+        get() = null
 
     override fun getContainingFile(): SourceFile {
         return containingFile

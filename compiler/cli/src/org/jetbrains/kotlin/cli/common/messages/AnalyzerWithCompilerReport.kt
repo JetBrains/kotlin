@@ -172,7 +172,7 @@ class AnalyzerWithCompilerReport(
                 )
             }
 
-            if (diagnostics.any { it.factory == Errors.PRE_RELEASE_CLASS }) {
+            if (diagnostics.any { it.factory == Errors.PRE_RELEASE_CLASS || it.factory == Errors.PRE_RELEASE_CLASS_WITH_COMPILER_VERSION }) {
                 messageCollector.report(
                     ERROR,
                     "Pre-release classes were found in dependencies. " +

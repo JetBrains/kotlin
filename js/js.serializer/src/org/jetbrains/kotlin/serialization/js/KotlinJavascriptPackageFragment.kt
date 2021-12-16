@@ -100,5 +100,8 @@ class KotlinJavascriptPackageFragment(
 
         override val presentableString: String
             get() = "Package '$fqName'"
+
+        override val compilerVersion: String?
+            get() = null
     }
 }

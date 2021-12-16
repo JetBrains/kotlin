@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 class KotlinClassHeader(
     val kind: Kind,
     val metadataVersion: JvmMetadataVersion,
+    val compilerVersion: String?,
     val data: Array<String>?,
     val incompatibleData: Array<String>?,
     val strings: Array<String>?,

@@ -51,6 +51,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
     }
 
     private int[] metadataVersionArray = null;
+    private String compilerVersion = null;
     private String extraString = null;
     private int extraInt = 0;
     private String packageName = null;
@@ -87,6 +88,7 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
         return new KotlinClassHeader(
                 headerKind,
                 metadataVersion,
+                compilerVersion,
                 data,
                 incompatibleData,
                 strings,
@@ -148,6 +150,11 @@ public class ReadKotlinClassHeaderAnnotationVisitor implements AnnotationVisitor
             else if (METADATA_VERSION_FIELD_NAME.equals(string)) {
                 if (value instanceof int[]) {
                     metadataVersionArray = (int[]) value;
+                }
+            }
+            else if (COMPILER_VERSION_FIELD_NAME.equals(string)) {
+                if (value instanceof String) {
+                    compilerVersion = (String) value;
                 }
             }
             else if (METADATA_EXTRA_STRING_FIELD_NAME.equals(string)) {
