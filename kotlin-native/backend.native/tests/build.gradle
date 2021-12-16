@@ -6033,6 +6033,10 @@ fileCheckTest("filecheck_bce") {
     annotatedSource = project.file('filecheck/bce.kt')
 }
 
+fileCheckTest("filecheck_adopted_function_reference") {
+    annotatedSource = project.file('filecheck/adopted_function_reference.kt')
+}
+
 fileCheckTest("filecheck_signext_zeroext0") {
     annotatedSource = project.file('filecheck/signext_zeroext0.kt')
     if (project.testTarget == 'mingw_x64') {
