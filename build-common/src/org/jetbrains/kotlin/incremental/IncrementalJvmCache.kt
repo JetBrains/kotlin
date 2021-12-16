@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.incremental
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
+import com.intellij.util.containers.CollectionFactory
 import com.intellij.util.io.BooleanDataDescriptor
 import com.intellij.util.io.EnumeratorStringDescriptor
 import gnu.trove.THashSet
@@ -547,7 +548,7 @@ open class IncrementalJvmCache(
 }
 
 private object PathCollectionExternalizer :
-    CollectionExternalizer<String>(PathStringDescriptor, { THashSet(FileUtil.PATH_HASHING_STRATEGY) })
+    CollectionExternalizer<String>(PathStringDescriptor, { THashSet(CollectionFactory.createFilePathSet()) })
 
 sealed class ChangeInfo(val fqName: FqName) {
     open class MembersChanged(fqName: FqName, val names: Collection<String>) : ChangeInfo(fqName) {
