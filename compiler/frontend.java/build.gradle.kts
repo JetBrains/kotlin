@@ -11,6 +11,8 @@ dependencies {
     api("javax.annotation:jsr250-api:1.0")
     api(project(":compiler:frontend"))
     api(project(":compiler:resolution.common.jvm"))
+    api(project(":compiler:frontend.common.jvm"))
+
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
