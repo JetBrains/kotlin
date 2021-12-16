@@ -53,7 +53,6 @@ class IrModuleToJsTransformerTmp(
     private val backendContext: JsIrBackendContext,
     private val mainArguments: List<String>?,
     private val generateScriptModule: Boolean = false,
-    var namer: NameTables = NameTables(emptyList(), context = backendContext),
     private val relativeRequirePath: Boolean = false,
     private val moduleToName: Map<IrModuleFragment, String> = emptyMap(),
     private val removeUnusedAssociatedObjects: Boolean = true,
@@ -160,16 +159,18 @@ class IrModuleToJsTransformerTmp(
     private fun generateProgramFragment(file: IrFile, exports: List<ExportedDeclaration>): JsIrProgramFragment {
         val nameGenerator = JsNameLinkingNamer(backendContext)
 
+        val globalNameScope = NameTable<IrDeclaration>()
+
         val staticContext = JsStaticContext(
             backendContext = backendContext,
             irNamer = nameGenerator,
-            globalNameScope = namer.globalNames
+            globalNameScope = globalNameScope
         )
 
         val result = JsIrProgramFragment(file.fqName.asString())
 
         val internalModuleName = JsName("_", false)
-        val globalNames = NameTable<String>(namer.globalNames)
+        val globalNames = NameTable<String>(globalNameScope)
         val exportStatements =
             ExportModelToJsStatements(staticContext, { globalNames.declareFreshName(it, it) }).generateModuleExport(
                 ExportedModule(mainModuleName, moduleKind, exports),
