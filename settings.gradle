@@ -293,7 +293,8 @@ include ":benchmarks",
         ":wasm:wasm.ir"
 
 include ":compiler:psi",
-        ":compiler:psi:cls-psi-stub-builder"
+        ":compiler:psi:cls-psi-stub-builder",
+        ":compiler:psi:cls-psi-file-stub-builder"
 
 
 include ":kotlinx-atomicfu-compiler-plugin",
