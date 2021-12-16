@@ -9,10 +9,10 @@ dependencies {
     api(project(":core:deserialization.common.jvm"))
     api(project(":core:deserialization"))
     implementation(project(":compiler:psi:cls-psi-stub-builder"))
+    implementation(project(":core:deserialization.common.jvm.impl"))
     implementation(project(":core:compiler.common.jvm"))
 
     api(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
-
 }
 
 sourceSets {
