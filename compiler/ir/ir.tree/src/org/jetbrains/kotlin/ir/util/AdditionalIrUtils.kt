@@ -206,14 +206,14 @@ class NaiveSourceBasedFileEntryImpl(
     }
 
     override fun getLineNumber(offset: Int): Int {
-        assert(offset != UNDEFINED_OFFSET)
         if (offset == SYNTHETIC_OFFSET) return 0
+        if (offset < 0) return -1
         return calculatedBeforeLineNumbers.get(offset)
     }
 
     override fun getColumnNumber(offset: Int): Int {
-        assert(offset != UNDEFINED_OFFSET)
         if (offset == SYNTHETIC_OFFSET) return 0
+        if (offset < 0) return -1
         val lineNumber = getLineNumber(offset)
         return offset - lineStartOffsets[lineNumber]
     }
