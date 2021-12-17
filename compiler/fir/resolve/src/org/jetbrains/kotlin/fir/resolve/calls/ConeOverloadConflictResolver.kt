@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.types.ConeDynamicType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
@@ -132,7 +134,11 @@ class ConeOverloadConflictResolver(
     ): Candidate? {
         if (candidates.size <= 1) return candidates.singleOrNull()
 
-        val candidateSignatures = candidates.map { candidateCall ->
+        val bestCandidatesByReceiverType = candidates.filter { candidate ->
+            isAppropriateForReceiverType(candidate)
+        }
+
+        val candidateSignatures = bestCandidatesByReceiverType.map { candidateCall ->
             createFlatSignature(candidateCall)
         }
 
@@ -143,6 +149,13 @@ class ConeOverloadConflictResolver(
         }
 
         return bestCandidatesByParameterTypes.exactMaxWith()?.origin
+    }
+
+    private fun isAppropriateForReceiverType(candidate: Candidate): Boolean {
+        val function = candidate.symbol.fir as? FirSimpleFunction ?: return true
+        val functionReceiver = function.receiverTypeRef?.coneType ?: return true
+        val callReceiver = candidate.callInfo.explicitReceiver?.typeRef?.coneType ?: return true
+        return callReceiver is ConeDynamicType == functionReceiver is ConeDynamicType
     }
 
     /**

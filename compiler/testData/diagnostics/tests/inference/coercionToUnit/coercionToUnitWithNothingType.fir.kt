@@ -42,7 +42,7 @@ fun test(i: Inv<Nothing>, iUnit: Inv<Unit>) {
     }
     launch {
         @Suppress("UNSUPPORTED")
-        run<dynamic> <!ARGUMENT_TYPE_MISMATCH!>{ "" }<!>
+        run<dynamic> { "" }
     }
 
     if (iUnit is String) {

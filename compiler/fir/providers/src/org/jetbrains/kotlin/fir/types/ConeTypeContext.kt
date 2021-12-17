@@ -107,7 +107,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun FlexibleTypeMarker.asDynamicType(): DynamicTypeMarker? {
         assert(this is ConeKotlinType)
-        return null // TODO
+        return this as? DynamicTypeMarker
     }
 
     override fun FlexibleTypeMarker.asRawType(): RawTypeMarker? {

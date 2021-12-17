@@ -44,6 +44,7 @@ fun ConeClassLikeType.fullyExpandedType(
 fun ConeKotlinType.fullyExpandedType(
     useSiteSession: FirSession
 ): ConeKotlinType = when (this) {
+    is ConeDynamicType -> this
     is ConeFlexibleType ->
         ConeFlexibleType(lowerBound.fullyExpandedType(useSiteSession), upperBound.fullyExpandedType(useSiteSession))
     is ConeClassLikeType -> fullyExpandedType(useSiteSession)
