@@ -221,18 +221,18 @@ fun case_13() {
     val x3 = null as MutableList<Int>
     val x4 = select(null as List<Int>, null)
 
-    val result_1 = select(x1, <!ARGUMENT_TYPE_MISMATCH!>x2<!>, x3, x4)
-    val result_2 = select(<!ARGUMENT_TYPE_MISMATCH!>x2<!>, x1)
-    val result_3 = select(<!ARGUMENT_TYPE_MISMATCH!>x2<!>, x1, x3)
-    val result_4 = select(x3, <!ARGUMENT_TYPE_MISMATCH!>x2<!>)
-    val result_5 = select(x4, <!ARGUMENT_TYPE_MISMATCH!>x2<!>)
-    val result_6 = select(x4, x3, <!ARGUMENT_TYPE_MISMATCH!>x2<!>)
-    val result_7 = select(A(x1), A(<!ARGUMENT_TYPE_MISMATCH!>x2<!>), A(x3), A(x4))
-    val result_8 = select(A(<!ARGUMENT_TYPE_MISMATCH!>x2<!>), A(x1))
-    val result_9 = select(A(<!ARGUMENT_TYPE_MISMATCH!>x2<!>), A(x1), A(x3))
-    val result_10 = select(A(x3), A(<!ARGUMENT_TYPE_MISMATCH!>x2<!>))
-    val result_11 = select(A(x4), A(<!ARGUMENT_TYPE_MISMATCH!>x2<!>))
-    val result_12 = select(A(x4), A(x3), A(<!ARGUMENT_TYPE_MISMATCH!>x2<!>))
+    val result_1 = select(x1, x2, x3, x4)
+    val result_2 = select(x2, x1)
+    val result_3 = select(x2, x1, x3)
+    val result_4 = select(x3, x2)
+    val result_5 = select(x4, x2)
+    val result_6 = select(x4, x3, x2)
+    val result_7 = select(A(x1), A(x2), A(x3), A(x4))
+    val result_8 = select(A(x2), A(x1))
+    val result_9 = select(A(x2), A(x1), A(x3))
+    val result_10 = select(A(x3), A(x2))
+    val result_11 = select(A(x4), A(x2))
+    val result_12 = select(A(x4), A(x3), A(x2))
 
     result_1
     result_2
