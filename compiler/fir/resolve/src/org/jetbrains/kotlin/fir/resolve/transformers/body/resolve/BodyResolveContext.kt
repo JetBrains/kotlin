@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
@@ -53,27 +52,31 @@ class BodyResolveContext(
     @set:PrivateForInline
     lateinit var file: FirFile
 
-    var towerDataContextsForClassParts = FirTowerDataContextsForClassParts(forMemberDeclarations = FirTowerDataContext())
+    var regularTowerDataContexts = FirRegularTowerDataContexts(forMemberDeclarations = FirTowerDataContext())
         private set
 
+    val specialTowerDataContexts = FirSpecialTowerDataContexts()
+
     val towerDataContext: FirTowerDataContext
-        get() = towerDataContextsForClassParts.currentContext
+        get() = regularTowerDataContexts.currentContext
+            ?: specialTowerDataContexts.currentContext
+            ?: throw AssertionError("Not current data context found, towerDataMode = $towerDataMode")
 
     @OptIn(PrivateForInline::class)
     var towerDataMode: FirTowerDataMode
-        get() = towerDataContextsForClassParts.mode
+        get() = regularTowerDataContexts.mode
         set(value) {
-            towerDataContextsForClassParts.mode = value
+            regularTowerDataContexts.mode = value
         }
 
     val implicitReceiverStack: ImplicitReceiverStack
         get() = towerDataContext.implicitReceiverStack
 
     private val towerDataContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirTowerDataContext>
-        get() = towerDataContextsForClassParts.towerDataContextForAnonymousFunctions
+        get() = specialTowerDataContexts.towerDataContextForAnonymousFunctions
 
     private val towerDataContextForCallableReferences: MutableMap<FirCallableReferenceAccess, FirTowerDataContext>
-        get() = towerDataContextsForClassParts.towerDataContextForCallableReferences
+        get() = specialTowerDataContexts.towerDataContextForCallableReferences
 
     @set:PrivateForInline
     var containers: ArrayDeque<FirDeclaration> = ArrayDeque()
@@ -94,13 +97,13 @@ class BodyResolveContext(
     val topClassDeclaration: FirRegularClass?
         get() = containingClassDeclarations.lastOrNull()
 
-    private inline fun <T> withNewTowerDataForClassParts(newContexts: FirTowerDataContextsForClassParts, f: () -> T): T {
-        val old = towerDataContextsForClassParts
-        towerDataContextsForClassParts = newContexts
+    private inline fun <T> withNewTowerDataForClass(newContexts: FirRegularTowerDataContexts, f: () -> T): T {
+        val old = regularTowerDataContexts
+        regularTowerDataContexts = newContexts
         return try {
             f()
         } finally {
-            towerDataContextsForClassParts = old
+            regularTowerDataContexts = old
         }
     }
 
@@ -175,7 +178,11 @@ class BodyResolveContext(
 
     @PrivateForInline
     fun replaceTowerDataContext(newContext: FirTowerDataContext) {
-        towerDataContextsForClassParts.currentContext = newContext
+        if (towerDataMode == FirTowerDataMode.SPECIAL) {
+            specialTowerDataContexts.currentContext = newContext
+        } else {
+            regularTowerDataContexts.currentContext = newContext
+        }
     }
 
     @PrivateForInline
@@ -280,10 +287,10 @@ class BodyResolveContext(
     // ANALYSIS PUBLIC API
 
     fun getPrimaryConstructorPureParametersScope(): FirLocalScope? =
-        towerDataContextsForClassParts.primaryConstructorPureParametersScope
+        regularTowerDataContexts.primaryConstructorPureParametersScope
 
     fun getPrimaryConstructorAllParametersScope(): FirLocalScope? =
-        towerDataContextsForClassParts.primaryConstructorAllParametersScope
+        regularTowerDataContexts.primaryConstructorAllParametersScope
 
     @OptIn(PrivateForInline::class)
     fun storeClassIfNotNested(klass: FirRegularClass, session: FirSession) {
@@ -310,7 +317,9 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     inline fun <T> withAnonymousFunctionTowerDataContext(symbol: FirAnonymousFunctionSymbol, f: () -> T): T {
         return withTowerModeCleanup {
-            towerDataContextsForClassParts.setAnonymousFunctionContextIfAny(symbol)
+            if (specialTowerDataContexts.setAnonymousFunctionContextIfAny(symbol)) {
+                regularTowerDataContexts.mode = FirTowerDataMode.SPECIAL
+            }
             f()
         }
     }
@@ -318,7 +327,9 @@ class BodyResolveContext(
     @OptIn(PrivateForInline::class)
     inline fun <T> withCallableReferenceTowerDataContext(access: FirCallableReferenceAccess, f: () -> T): T {
         return withTowerModeCleanup {
-            towerDataContextsForClassParts.setCallableReferenceContextIfAny(access)
+            if (specialTowerDataContexts.setCallableReferenceContextIfAny(access)) {
+                regularTowerDataContexts.mode = FirTowerDataMode.SPECIAL
+            }
             f()
         }
     }
@@ -460,7 +471,7 @@ class BodyResolveContext(
                 null to null
             }
 
-        val newContexts = FirTowerDataContextsForClassParts(
+        val newContexts = FirRegularTowerDataContexts(
             forMembersResolution,
             newTowerDataContextForStaticNestedClasses,
             statics,
@@ -470,7 +481,7 @@ class BodyResolveContext(
             primaryConstructorAllParametersScope
         )
 
-        return withNewTowerDataForClassParts(newContexts) {
+        return withNewTowerDataForClass(newContexts) {
             f()
         }
     }
