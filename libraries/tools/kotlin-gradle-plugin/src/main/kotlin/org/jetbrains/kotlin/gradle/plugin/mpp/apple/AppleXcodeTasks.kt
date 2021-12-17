@@ -87,12 +87,14 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): Ta
 
     val frameworkBuildType = framework.buildType
     val frameworkTarget = framework.target
+    val isRequestedFramework = envTargets.contains(frameworkTarget.konanTarget)
+
     val frameworkTaskName = lowerCamelCaseName(
         "assemble",
         framework.namePrefix,
         frameworkBuildType.getName(),
         "AppleFrameworkForXcode",
-        if (!needFatFramework) frameworkTarget.name else null
+        if (isRequestedFramework && needFatFramework) null else frameworkTarget.name //for fat framework we need common name
     )
 
     val envBuildType = XcodeEnvironment.buildType
@@ -112,7 +114,7 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): Ta
     }
 
     return when {
-        !envTargets.contains(frameworkTarget.konanTarget) -> locateOrRegisterTask<DefaultTask>(frameworkTaskName) { task ->
+        !isRequestedFramework -> locateOrRegisterTask<DefaultTask>(frameworkTaskName) { task ->
             task.description = "Packs $frameworkBuildType ${frameworkTarget.name} framework for Xcode"
             task.isEnabled = false
         }
