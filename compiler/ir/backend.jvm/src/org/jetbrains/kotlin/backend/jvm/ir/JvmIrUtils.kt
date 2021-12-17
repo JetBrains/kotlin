@@ -94,13 +94,6 @@ fun IrFunction.hasPlatformDependent(): Boolean = propertyIfAccessor.hasAnnotatio
 fun IrFunction.getJvmVisibilityOfDefaultArgumentStub() =
     if (DescriptorVisibilities.isPrivate(visibility) || isInlineOnly()) JavaDescriptorVisibilities.PACKAGE_VISIBILITY else DescriptorVisibilities.PUBLIC
 
-fun IrValueParameter.isInlineParameter() =
-    index >= 0 && !isNoinline && (type.isFunction() || type.isSuspendFunctionTypeOrSubtype()) &&
-            // Parameters with default values are always nullable, so check the expression too.
-            // Note that the frontend has a diagnostic for nullable inline parameters, so actually
-            // making this return `false` requires using `@Suppress`.
-            (!type.isNullable() || defaultValue?.expression?.type?.isNullable() == false)
-
 fun IrDeclaration.isInCurrentModule(): Boolean =
     getPackageFragment() is IrFile
 
