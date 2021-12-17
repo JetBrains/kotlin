@@ -498,7 +498,8 @@ include ":generators:analysis-api-generator",
         ":analysis:analysis-internal-utils",
         ":analysis:symbol-light-classes",
         ":analysis:project-structure",
-        ":analysis:analysis-api-fe10"
+        ":analysis:analysis-api-fe10",
+        ":analysis:decompiled:decompiler-to-psi"
 
 
 if (buildProperties.inJpsBuildIdeaSync) {
