@@ -28,6 +28,9 @@ import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.types.typeUtil.isSignedOrUnsignedNumberType as classicIsSignedOrUnsignedNumberType
+import org.jetbrains.kotlin.types.typeUtil.isStubTypeForVariableInSubtyping as isSimpleTypeStubTypeForVariableInSubtyping
+import org.jetbrains.kotlin.types.typeUtil.isStubTypeForBuilderInference as isSimpleTypeStubTypeForBuilderInference
+import org.jetbrains.kotlin.types.typeUtil.isStubType as isSimpleTypeStubType
 
 interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSystemCommonBackendContext {
     override fun TypeConstructorMarker.isDenotable(): Boolean {
@@ -84,20 +87,17 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun SimpleTypeMarker.isStubType(): Boolean {
         require(this is SimpleType, this::errorMessage)
-        return this is AbstractStubType || isDefNotNullStubType<AbstractStubType>()
+        return this.isSimpleTypeStubType()
     }
-
-    private inline fun <reified S : AbstractStubType> SimpleTypeMarker.isDefNotNullStubType() =
-        this is DefinitelyNotNullType && this.original is S
 
     override fun SimpleTypeMarker.isStubTypeForVariableInSubtyping(): Boolean {
         require(this is SimpleType, this::errorMessage)
-        return this is StubTypeForTypeVariablesInSubtyping || isDefNotNullStubType<StubTypeForTypeVariablesInSubtyping>()
+        return this.isSimpleTypeStubTypeForVariableInSubtyping()
     }
 
     override fun SimpleTypeMarker.isStubTypeForBuilderInference(): Boolean {
         require(this is SimpleType, this::errorMessage)
-        return this is StubTypeForBuilderInference || isDefNotNullStubType<StubTypeForBuilderInference>()
+        return this.isSimpleTypeStubTypeForBuilderInference()
     }
 
     override fun TypeConstructorMarker.unwrapStubTypeVariableConstructor(): TypeConstructorMarker {
