@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import java.io.File
 import kotlin.io.path.createTempDirectory
@@ -66,7 +67,16 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
 
         val configuration = createConfiguration("stdlib")
 
-        actualizeCacheForModule(stdlibKlibPath, cacheDir.canonicalPath, configuration, listOf(stdlibKlibPath), emptyList(), IrFactoryImpl, ::emptyChecker)
+        actualizeCacheForModule(
+            stdlibKlibPath,
+            cacheDir.canonicalPath,
+            configuration,
+            listOf(stdlibKlibPath),
+            emptyList(),
+            IrFactoryImpl,
+            null, // TODO: mainArguments
+            ::emptyChecker
+        )
 
         stdlibCacheDir = cacheDir
     }
@@ -209,6 +219,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             dependenciesPaths,
             icCaches.map { it.canonicalPath },// + moduleCacheDir.canonicalPath,
             IrFactoryImpl,
+            null, // TODO: mainArguments
             ::dirtyFilesChecker
         )
 
