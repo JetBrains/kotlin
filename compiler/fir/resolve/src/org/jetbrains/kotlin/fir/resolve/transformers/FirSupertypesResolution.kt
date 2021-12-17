@@ -243,9 +243,11 @@ open class FirSupertypeResolverVisitor(
         if (firProviderInterceptor != null) firProviderInterceptor.getFirClassifierContainerFileIfAny(symbol)
         else session.firProvider.getFirClassifierContainerFileIfAny(symbol.classId)
 
-    private fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? =
-        if (firProviderInterceptor != null) firProviderInterceptor.getFirClassifierByFqName(classId)
-        else session.firProvider.getFirClassifierByFqName(classId)
+    private fun getFirClassifierByFqName(classId: ClassId) = when {
+        firProviderInterceptor != null -> firProviderInterceptor.getFirClassifierByFqName(classId)
+        !classId.isLocal -> session.firProvider.getFirClassifierByFqName(classId)
+        else -> localClassesNavigationInfo?.parentForClass?.entries?.find { it.key.symbol.classId == classId }?.value
+    }
 
     override fun visitElement(element: FirElement, data: Any?) {}
 
