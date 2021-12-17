@@ -141,7 +141,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 // so we need regenerate `defineProperty` with setter.
                 // P.S. If the overridden property is owned by an interface - we should generate defineProperty
                 // for overridden property in the first class which override those properties
-                val hasOverriddenExportedInterfaceProperties = overriddenSymbols.any { it.owner.parentClassOrNull.isExportedInterface() }
+                val hasOverriddenExportedInterfaceProperties = overriddenSymbols.any { it.owner.isDefinedInsideExportedInterface() }
                         && !overriddenSymbols.any { it.owner.parentClassOrNull.isExportedClass() }
 
                 val getterOverridesExternal = property.getter?.overridesExternal() == true
@@ -210,6 +210,11 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private inline fun IrSimpleFunction?.getOrGenerateIfFinal(generateFunc: IrSimpleFunction.() -> JsFunction?): JsExpression? {
         if (this == null) return null
         return if (modality == Modality.FINAL) accessorRef() else generateFunc()
+    }
+
+    private fun IrSimpleFunction.isDefinedInsideExportedInterface(): Boolean {
+        return (!isFakeOverride && parentClassOrNull.isExportedInterface()) ||
+                overriddenSymbols.any { it.owner.isDefinedInsideExportedInterface() }
     }
 
     private fun IrSimpleFunction?.shouldExportAccessor(): Boolean {
