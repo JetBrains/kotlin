@@ -12,23 +12,38 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 class FirSpecialTowerDataContexts {
     val towerDataContextForAnonymousFunctions: MutableMap<FirAnonymousFunctionSymbol, FirTowerDataContext> = mutableMapOf()
     val towerDataContextForCallableReferences: MutableMap<FirCallableReferenceAccess, FirTowerDataContext> = mutableMapOf()
-    var currentContext: FirTowerDataContext? = null
 
-    fun setAnonymousFunctionContextIfAny(symbol: FirAnonymousFunctionSymbol): Boolean {
-        val context = towerDataContextForAnonymousFunctions[symbol]
-        if (context != null) {
-            currentContext = context
-            return true
-        }
-        return false
+    fun getAnonymousFunctionContext(symbol: FirAnonymousFunctionSymbol): FirTowerDataContext? {
+        return towerDataContextForAnonymousFunctions[symbol]
     }
 
-    fun setCallableReferenceContextIfAny(access: FirCallableReferenceAccess): Boolean {
-        val context = towerDataContextForCallableReferences[access]
-        if (context != null) {
-            currentContext = context
-            return true
-        }
-        return false
+    fun getCallableReferenceContext(access: FirCallableReferenceAccess): FirTowerDataContext? {
+        return towerDataContextForCallableReferences[access]
+    }
+
+    fun storeAnonymousFunctionContext(symbol: FirAnonymousFunctionSymbol, context: FirTowerDataContext) {
+        towerDataContextForAnonymousFunctions[symbol] = context
+    }
+
+    fun dropAnonymousFunctionContext(symbol: FirAnonymousFunctionSymbol) {
+        towerDataContextForAnonymousFunctions.remove(symbol)
+    }
+
+    fun storeCallableReferenceContext(access: FirCallableReferenceAccess, context: FirTowerDataContext) {
+        towerDataContextForCallableReferences[access] = context
+    }
+
+    fun dropCallableReferenceContext(access: FirCallableReferenceAccess) {
+        towerDataContextForCallableReferences.remove(access)
+    }
+
+    fun putAll(contexts: FirSpecialTowerDataContexts) {
+        towerDataContextForCallableReferences.putAll(contexts.towerDataContextForCallableReferences)
+        towerDataContextForAnonymousFunctions.putAll(contexts.towerDataContextForAnonymousFunctions)
+    }
+
+    fun clear() {
+        towerDataContextForAnonymousFunctions.clear()
+        towerDataContextForCallableReferences.clear()
     }
 }
