@@ -499,7 +499,8 @@ include ":generators:analysis-api-generator",
         ":analysis:symbol-light-classes",
         ":analysis:project-structure",
         ":analysis:analysis-api-fe10",
-        ":analysis:decompiled:decompiler-to-psi"
+        ":analysis:decompiled:decompiler-to-psi",
+        ":analysis:decompiled:light-classes-for-decompiled"
 
 
 if (buildProperties.inJpsBuildIdeaSync) {
