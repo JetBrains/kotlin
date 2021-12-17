@@ -32,6 +32,11 @@ fun IrType.isSubtypeOfClass(superClass: IrClassSymbol): Boolean =
 fun IrType.isSubtypeOf(superType: IrType, typeSystem: IrTypeSystemContext): Boolean =
     AbstractTypeChecker.isSubtypeOf(createIrTypeCheckerState(typeSystem), this, superType)
 
+@Suppress("DEPRECATION_ERROR")
+@Deprecated("rhizomedb & noria compatibility", level = DeprecationLevel.ERROR)
+fun IrType.isSubtypeOf(superType: IrType, irBuiltIns: org.jetbrains.kotlin.ir.descriptors.IrBuiltIns): Boolean =
+    isSubtypeOf(superType, IrTypeSystemContextImpl(irBuiltIns.irBuiltIns))
+
 fun IrType.isNullable(): Boolean =
     when (this) {
         is IrDefinitelyNotNullType -> false
