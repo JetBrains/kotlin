@@ -40,6 +40,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/fastPath2/");
     }
 
+    @TestMetadata("privateInlineFunction1")
+    public void testPrivateInlineFunction1() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/privateInlineFunction1/");
+    }
+
     @TestMetadata("simple")
     public void testSimple() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/simple/");
