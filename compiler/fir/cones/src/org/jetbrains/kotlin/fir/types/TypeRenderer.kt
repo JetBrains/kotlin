@@ -30,6 +30,11 @@ fun ConeKotlinType.render(): String {
         is ConeLookupTagBasedType -> {
             "${renderAttributes()}${lookupTag.name.asString()}"
         }
+        is ConeDynamicType -> {
+            buildString {
+                append("dynamic")
+            }
+        }
         is ConeFlexibleType -> {
             buildString {
                 append("ft<")
