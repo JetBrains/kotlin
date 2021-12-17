@@ -55,6 +55,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/privateInlineFunction1/");
     }
 
+    @TestMetadata("renameFile")
+    public void testRenameFile() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/renameFile/");
+    }
+
     @TestMetadata("simple")
     public void testSimple() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/simple/");
