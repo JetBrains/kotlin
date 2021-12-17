@@ -153,7 +153,12 @@ val commonCompilerModules = arrayOf(
     ":core:compiler.common",
     ":core:compiler.common.jvm",
     ":core:util.runtime",
-    ":compiler:frontend.java" // TODO this is fe10 module but some utils used in fir ide now
+    ":core:deserialization.common.jvm.impl",
+    ":compiler:frontend.java", // TODO this is fe10 module but some utils used in fir ide now
+    ":analysis:decompiled:decompiler-to-stubs",
+    ":analysis:decompiled:decompiler-to-file-stubs",
+    ":analysis:decompiled:decompiler-to-psi",
+    ":analysis:decompiled:light-classes-for-decompiled",
 ).also { extra["commonCompilerModules"] = it }
 
 val firCompilerCoreModules = arrayOf(
@@ -223,7 +228,8 @@ val fe10CompilerModules = arrayOf(
     ":native:frontend.native",
     ":native:kotlin-native-utils",
     ":kotlin-build-common",
-    ":compiler:backend.common.jvm"
+    ":compiler:backend.common.jvm",
+    ":analysis:decompiled:light-classes-for-decompiled-fe10",
 ).also { extra["fe10CompilerModules"] = it }
 
 extra["compilerModules"] =
