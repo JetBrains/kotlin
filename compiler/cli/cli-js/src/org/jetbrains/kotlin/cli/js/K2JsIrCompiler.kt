@@ -287,7 +287,14 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
                 val translationMode = TranslationMode.fromFlags(false, arguments.irPerModule)
 
-                val compiledModule = generateJsFromAst(moduleName, moduleKind, SourceMapsInfo.from(configurationJs), setOf(translationMode), caches)
+                val compiledModule = generateJsFromAst(
+                    moduleName,
+                    moduleKind,
+                    SourceMapsInfo.from(configurationJs),
+                    setOf(translationMode),
+                    caches,
+                    relativeRequirePath = true
+                )
 
                 val outputs = compiledModule.outputs.values.single()
 
