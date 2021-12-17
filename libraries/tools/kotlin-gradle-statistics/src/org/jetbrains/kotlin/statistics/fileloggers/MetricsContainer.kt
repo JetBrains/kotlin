@@ -119,7 +119,11 @@ class MetricsContainer : IStatisticsValuesConsumer {
 
     fun flush(trackingFile: IRecordLogger?) {
         if (trackingFile == null) return
-        for (entry in numericalMetrics.entries.union(booleanMetrics.entries).union(stringMetrics.entries)) {
+        val allMetrics = TreeMap<MetricDescriptor, IMetricContainer<out Any>>()
+        allMetrics.putAll(numericalMetrics)
+        allMetrics.putAll(booleanMetrics)
+        allMetrics.putAll(stringMetrics)
+        for (entry in allMetrics.entries) {
             val suffix = if (entry.key.projectHash == null) "" else ".${entry.key.projectHash}"
             trackingFile.append("${entry.key.name}$suffix=${entry.value.toStringRepresentation()}")
         }
