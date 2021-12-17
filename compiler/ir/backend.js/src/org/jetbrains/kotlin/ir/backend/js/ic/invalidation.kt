@@ -153,6 +153,7 @@ private fun buildCacheForModule(
     cacheConsumer: PersistentCacheConsumer,
     signatureDeserializers: Map<FilePath, Map<IdSignature, Int>>,
     fileFingerPrints: Map<String, Hash>,
+    mainArguments: List<String>?,
     cacheExecutor: CacheExecutor
 ) {
     val dirtyIrFiles = irModule.files.filter { it.fileEntry.name in dirtyFiles }
@@ -194,7 +195,7 @@ private fun buildCacheForModule(
 
     // TODO: actual way of building a cache could change in future
 
-    cacheExecutor.execute(irModule, dependencies, deserializer, configuration, dirtyFiles, cacheConsumer, emptySet(), null) // TODO: main arguments?
+    cacheExecutor.execute(irModule, dependencies, deserializer, configuration, dirtyFiles, cacheConsumer, emptySet(), mainArguments)
 
     cacheConsumer.commitLibraryPath(libraryInfo.libPath.toCanonicalPath(), libraryInfo.flatHash, libraryInfo.transHash)
 }
@@ -382,6 +383,7 @@ fun actualizeCacheForModule(
     dependencies: Collection<ModulePath>,
     icCachePaths: Collection<String>,
     irFactory: IrFactory,
+    mainArguments: List<String>?,
     executor: CacheExecutor
 ): CacheUpdateStatus {
     val modulePath = moduleName.toCanonicalPath()
@@ -409,7 +411,17 @@ fun actualizeCacheForModule(
     val currentModule = libraries[moduleName.toCanonicalPath()] ?: error("No loaded library found for path $moduleName")
     val persistentCacheConsumer = createCacheConsumer(cachePath)
 
-    return actualizeCacheForModule(currentModule, cacheInfo, compilerConfiguration, dependencyGraph, persistentCacheProviders, persistentCacheConsumer, irFactory, executor)
+    return actualizeCacheForModule(
+        currentModule,
+        cacheInfo,
+        compilerConfiguration,
+        dependencyGraph,
+        persistentCacheProviders,
+        persistentCacheConsumer,
+        irFactory,
+        mainArguments,
+        executor
+    )
 }
 
 
@@ -421,6 +433,7 @@ private fun actualizeCacheForModule(
     persistentCacheProviders: Map<KotlinLibrary, PersistentCacheProvider>,
     persistentCacheConsumer: PersistentCacheConsumer,
     irFactory: IrFactory,
+    mainArguments: List<String>?,
     cacheExecutor: CacheExecutor
 ): CacheUpdateStatus {
     // 1. Invalidate
@@ -517,6 +530,7 @@ private fun actualizeCacheForModule(
         persistentCacheConsumer,
         deserializers,
         fileFingerPrints,
+        mainArguments,
         cacheExecutor
     )
     return CacheUpdateStatus.DIRTY // invalidated and re-built
