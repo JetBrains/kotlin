@@ -17,13 +17,15 @@ class ModuleInfo(val moduleName: String) {
 
     sealed class Modification {
         class Delete(private val fileName: String) : Modification() {
-            override fun execute(testDirectory: File, sourceDirectory: File) {
-                File(sourceDirectory, fileName).delete()
+            override fun execute(testDirectory: File, sourceDirectory: File, deletedFilesCollector: (File) -> Unit) {
+                val file = File(sourceDirectory, fileName)
+                file.delete()
+                deletedFilesCollector(file)
             }
         }
 
         class Update(private val fromFile: String, private val toFile: String) : Modification() {
-            override fun execute(testDirectory: File, sourceDirectory: File) {
+            override fun execute(testDirectory: File, sourceDirectory: File, deletedFilesCollector: (File) -> Unit) {
                 val toFile = File(sourceDirectory, toFile)
                 if (toFile.exists()) {
                     toFile.delete()
@@ -35,7 +37,7 @@ class ModuleInfo(val moduleName: String) {
             }
         }
 
-        abstract fun execute(testDirectory: File, sourceDirectory: File)
+        abstract fun execute(testDirectory: File, sourceDirectory: File, deletedFilesCollector: (File) -> Unit = {})
     }
 
     class ModuleStep(
@@ -45,8 +47,6 @@ class ModuleInfo(val moduleName: String) {
         val modifications: List<Modification>,
         val directives: Set<StepDirectives>
     )
-
-
 
     val steps = mutableListOf<ModuleStep>()
 }

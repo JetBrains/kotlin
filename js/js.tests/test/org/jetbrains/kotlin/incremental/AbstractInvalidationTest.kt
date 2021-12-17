@@ -129,8 +129,9 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 val moduleSourceDir = File(sourceDir, module)
                 val moduleInfo = moduleInfos[module] ?: error("No module info found for $module")
                 val moduleStep = moduleInfo.steps[projStep.id]
+                val deletedFiles = mutableListOf<File>()
                 for (modification in moduleStep.modifications) {
-                    modification.execute(moduleTestDir, moduleSourceDir)
+                    modification.execute(moduleTestDir, moduleSourceDir) { deletedFiles.add(it) }
                 }
 
                 val dependencies = moduleStep.dependencies.map { resolveModuleArtifact(it, buildDir) }
