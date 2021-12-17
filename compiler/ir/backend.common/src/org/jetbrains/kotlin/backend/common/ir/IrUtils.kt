@@ -48,6 +48,15 @@ fun ir2stringWhole(ir: IrElement?): String {
     return strWriter.toString()
 }
 
+@Suppress("DEPRECATION_ERROR")
+@Deprecated("rhizomedb & noria compatibility", level = DeprecationLevel.ERROR)
+fun IrClass.addSimpleDelegatingConstructor(
+    superConstructor: IrConstructor,
+    irBuiltIns: org.jetbrains.kotlin.ir.descriptors.IrBuiltIns,
+    isPrimary: Boolean = false,
+    origin: IrDeclarationOrigin? = null
+): IrConstructor = addSimpleDelegatingConstructor(superConstructor, irBuiltIns.irBuiltIns, isPrimary, origin)
+
 fun IrClass.addSimpleDelegatingConstructor(
     superConstructor: IrConstructor,
     irBuiltIns: IrBuiltIns,
@@ -487,6 +496,15 @@ fun IrClass.addFakeOverrides(typeSystem: IrTypeSystemContext, implementedMembers
     IrOverridingUtil(typeSystem, FakeOverrideBuilderForLowerings())
         .buildFakeOverridesForClassUsingOverriddenSymbols(this, implementedMembers, compatibilityMode = false)
         .forEach { addChild(it) }
+}
+
+@Suppress("DEPRECATION_ERROR")
+@Deprecated("rhizomedb & noria compatibility", level = DeprecationLevel.ERROR)
+fun IrClass.addFakeOverrides(
+    irBuiltIns: org.jetbrains.kotlin.ir.descriptors.IrBuiltIns,
+    implementedMembers: List<IrOverridableMember> = emptyList()
+) {
+    addFakeOverrides(IrTypeSystemContextImpl(irBuiltIns.irBuiltIns), implementedMembers)
 }
 
 fun IrFactory.createStaticFunctionWithReceivers(
