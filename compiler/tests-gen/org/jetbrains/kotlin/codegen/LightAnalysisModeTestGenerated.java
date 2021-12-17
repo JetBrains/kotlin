@@ -2425,6 +2425,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/callableReference/kt21092b.kt");
         }
 
+        @TestMetadata("kt49526_sam.kt")
+        public void ignoreKt49526_sam() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt49526_sam.kt");
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
@@ -2556,6 +2561,21 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("kt47988.kt")
         public void testKt47988() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/kt47988.kt");
+        }
+
+        @TestMetadata("kt49526.kt")
+        public void testKt49526() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt49526.kt");
+        }
+
+        @TestMetadata("kt49526a.kt")
+        public void testKt49526a() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt49526a.kt");
+        }
+
+        @TestMetadata("kt49526b.kt")
+        public void testKt49526b() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt49526b.kt");
         }
 
         @TestMetadata("kt50172.kt")

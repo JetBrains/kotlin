@@ -2192,6 +2192,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/types/kt36143.kt");
         }
 
+        @TestMetadata("kt49526.kt")
+        public void testKt49526() throws Exception {
+            runTest("compiler/testData/ir/irText/types/kt49526.kt");
+        }
+
         @TestMetadata("localVariableOfIntersectionType.kt")
         public void testLocalVariableOfIntersectionType() throws Exception {
             runTest("compiler/testData/ir/irText/types/localVariableOfIntersectionType.kt");

@@ -74,7 +74,10 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
     fun generateCallableReference(ktCallableReference: KtCallableReferenceExpression): IrExpression {
         val resolvedCall = getResolvedCall(ktCallableReference.callableReference)!!
         val resolvedDescriptor = resolvedCall.resultingDescriptor
-        val callableReferenceType = getTypeInferredByFrontendOrFail(ktCallableReference)
+        val callableReferenceType =
+            context.typeTranslator.approximateFunctionReferenceType(
+                getTypeInferredByFrontendOrFail(ktCallableReference)
+            )
         val callBuilder = unwrapCallableDescriptorAndTypeArguments(resolvedCall)
 
         return when {

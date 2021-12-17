@@ -1748,6 +1748,26 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/callableReference/kt47988.kt");
         }
 
+        @TestMetadata("kt49526.kt")
+        public void testKt49526() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt49526.kt");
+        }
+
+        @TestMetadata("kt49526_sam.kt")
+        public void testKt49526_sam() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt49526_sam.kt");
+        }
+
+        @TestMetadata("kt49526a.kt")
+        public void testKt49526a() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt49526a.kt");
+        }
+
+        @TestMetadata("kt49526b.kt")
+        public void testKt49526b() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt49526b.kt");
+        }
+
         @TestMetadata("kt50172.kt")
         public void testKt50172() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/kt50172.kt");

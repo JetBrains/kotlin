@@ -1979,6 +1979,30 @@ public class NativeExtBlackBoxTestGenerated extends AbstractNativeBlackBoxTest {
             }
 
             @Test
+            @TestMetadata("kt49526.kt")
+            public void testKt49526() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/kt49526.kt");
+            }
+
+            @Test
+            @TestMetadata("kt49526_sam.kt")
+            public void testKt49526_sam() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/kt49526_sam.kt");
+            }
+
+            @Test
+            @TestMetadata("kt49526a.kt")
+            public void testKt49526a() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/kt49526a.kt");
+            }
+
+            @Test
+            @TestMetadata("kt49526b.kt")
+            public void testKt49526b() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/kt49526b.kt");
+            }
+
+            @Test
             @TestMetadata("kt50172.kt")
             public void testKt50172() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/kt50172.kt");

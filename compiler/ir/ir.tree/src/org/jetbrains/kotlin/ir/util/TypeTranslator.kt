@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.builtins.isKFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -201,6 +202,38 @@ abstract class TypeTranslator(
 
         // Assume that other types are approximated properly.
         return properlyApproximatedType
+    }
+
+    fun approximateFunctionReferenceType(kotlinType: KotlinType): KotlinType {
+        // This is a hack to support intersection types in function references on JVM.
+        // Function reference type KFunctionN<T1, ..., TN, R> might contain intersection types in its top-level arguments.
+        // Intersection types in expressions and local variable declarations usually don't bother us.
+        // However, in case of function references type mapping affects behavior:
+        // resulting function reference class will have a bridge method, which will downcast its arguments to the expected types.
+        // This would cause ClassCastException in case of usual type approximation,
+        // because '{ X1 & ... & Xm }' would be approximated to 'Nothing'.
+        // JVM_OLD just relies on type mapping for generic argument types in such case.
+        if (!kotlinType.isKFunctionType)
+            return kotlinType
+        if (kotlinType !is SimpleType)
+            return kotlinType
+        if (kotlinType.arguments.none { it.type.constructor is IntersectionTypeConstructor })
+            return kotlinType
+        val functionParameterTypes = kotlinType.arguments.subList(0, kotlinType.arguments.size - 1)
+        val functionReturnType = kotlinType.arguments.last()
+        return kotlinType.replace(
+            newArguments = functionParameterTypes.map { approximateFunctionReferenceParameterType(it) } + functionReturnType
+        )
+    }
+
+    private fun approximateFunctionReferenceParameterType(typeProjection: TypeProjection): TypeProjection {
+        if (typeProjection.isStarProjection) return typeProjection
+        val typeConstructor = typeProjection.type.constructor as? IntersectionTypeConstructor
+            ?: return typeProjection
+        // 'mapType' takes common supertype for intersection type supertypes, regardless of variance.
+        val newType = typeConstructor.getAlternativeType()
+            ?: commonSupertype(typeConstructor.supertypes)
+        return TypeProjectionImpl(typeProjection.projectionKind, newType)
     }
 
     private val isWithNewInference = languageVersionSettings.supportsFeature(LanguageFeature.NewInference)

@@ -3019,6 +3019,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("kt49526.kt")
+        public void testKt49526() throws Exception {
+            runTest("compiler/testData/ir/irText/types/kt49526.kt");
+        }
+
+        @Test
         @TestMetadata("localVariableOfIntersectionType.kt")
         public void testLocalVariableOfIntersectionType() throws Exception {
             runTest("compiler/testData/ir/irText/types/localVariableOfIntersectionType.kt");
