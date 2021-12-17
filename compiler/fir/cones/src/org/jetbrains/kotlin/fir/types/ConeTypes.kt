@@ -80,9 +80,8 @@ open class ConeFlexibleType(
 
     final override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as ConeFlexibleType
+        // I suppose dynamic type (see below) and flexible type should use the same equals
+        if (other !is ConeFlexibleType) return false
 
         if (lowerBound != other.lowerBound) return false
         if (upperBound != other.upperBound) return false
@@ -95,6 +94,16 @@ open class ConeFlexibleType(
         result = 31 * result + upperBound.hashCode()
         return result
     }
+}
+
+@RequiresOptIn(message = "Please use ConeDynamicType.create instead")
+annotation class DynamicTypeConstructor
+
+class ConeDynamicType @DynamicTypeConstructor constructor(
+    lowerBound: ConeSimpleKotlinType,
+    upperBound: ConeSimpleKotlinType
+) : ConeFlexibleType(lowerBound, upperBound), DynamicTypeMarker {
+    companion object
 }
 
 fun ConeSimpleKotlinType.unwrapDefinitelyNotNull(): ConeSimpleKotlinType {
