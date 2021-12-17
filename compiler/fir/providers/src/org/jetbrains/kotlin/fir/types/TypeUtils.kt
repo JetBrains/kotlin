@@ -94,6 +94,11 @@ fun ConeDefinitelyNotNullType.Companion.create(
     }
 }
 
+@OptIn(DynamicTypeConstructor::class)
+fun ConeDynamicType.Companion.create(session: FirSession): ConeDynamicType =
+    ConeDynamicType(session.builtinTypes.nothingType.type, session.builtinTypes.nullableAnyType.type)
+
+
 fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(
     typeContext: ConeTypeContext,
     avoidComprehensiveCheck: Boolean = false,
@@ -124,6 +129,7 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeTypeProjection
 fun <T : ConeKotlinType> T.withArguments(replacement: (ConeTypeProjection) -> ConeTypeProjection) =
     withArguments(typeArguments.map(replacement).toTypedArray())
 
+@OptIn(DynamicTypeConstructor::class)
 fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
     if (this.attributes == attributes) {
         return this
@@ -136,6 +142,7 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
         is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.withAttributes(attributes))
         is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable, attributes)
         is ConeRawType -> ConeRawType(lowerBound.withAttributes(attributes), upperBound.withAttributes(attributes))
+        is ConeDynamicType -> ConeDynamicType(lowerBound.withAttributes(attributes), upperBound.withAttributes(attributes))
         is ConeFlexibleType -> ConeFlexibleType(lowerBound.withAttributes(attributes), upperBound.withAttributes(attributes))
         is ConeTypeVariableType -> ConeTypeVariableType(nullability, lookupTag, attributes)
         is ConeCapturedType -> ConeCapturedType(
@@ -165,6 +172,7 @@ fun <T : ConeKotlinType> T.withNullability(
         is ConeErrorType -> this
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable, attributes)
         is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable, attributes)
+        is ConeDynamicType -> this
         is ConeFlexibleType -> {
             if (nullability == ConeNullability.UNKNOWN) {
                 if (lowerBound.nullability != upperBound.nullability || lowerBound.nullability == ConeNullability.UNKNOWN) {
