@@ -22,6 +22,10 @@ class LocalClassesNavigationInfo(
         }
     }
 
+    val parentForClassId by lazy {
+        parentForClass.mapKeys { (key, _) -> key.symbol.classId }
+    }
+
     private fun pathForCallable(callableMemberDeclaration: FirCallableDeclaration): List<FirClassLikeDeclaration> {
         val result = mutableListOf<FirClassLikeDeclaration>()
         var current = parentClassForFunction[callableMemberDeclaration]
