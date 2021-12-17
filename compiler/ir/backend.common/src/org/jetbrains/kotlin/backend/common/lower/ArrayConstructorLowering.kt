@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.functions
@@ -69,6 +66,10 @@ private class ArrayConstructorTransformer(
         // (and similar for primitive arrays)
         val size = expression.getValueArgument(0)!!.transform(this, null)
         val invokable = expression.getValueArgument(1)!!.transform(this, null)
+        if (invokable.type.isNothing()) {
+            // Expressions of type 'Nothing' don't terminate.
+            return invokable
+        }
         val scope = (currentScope ?: createScope(container)).scope
         return context.createIrBuilder(scope.scopeOwnerSymbol).irBlock(expression.startOffset, expression.endOffset) {
             val index = createTmpVariable(irInt(0), isMutable = true)
@@ -89,7 +90,10 @@ private class ArrayConstructorTransformer(
                     +irCall(result.type.getClass()!!.functions.single { it.name == OperatorNameConventions.SET }).apply {
                         dispatchReceiver = irGet(result)
                         putValueArgument(0, irGet(tempIndex))
-                        putValueArgument(1, generator.inline(parent, listOf(tempIndex)).patchDeclarationParents(scope.getLocalDeclarationParent()))
+                        val inlined = generator
+                            .inline(parent, listOf(tempIndex))
+                            .patchDeclarationParents(scope.getLocalDeclarationParent())
+                        putValueArgument(1, inlined)
                     }
                     val inc = index.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INC }
                     +irSet(index.symbol, irCallOp(inc.symbol, index.type, irGet(index)))

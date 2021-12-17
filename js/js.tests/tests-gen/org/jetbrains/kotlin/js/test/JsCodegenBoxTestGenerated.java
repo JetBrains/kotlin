@@ -538,6 +538,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt47483.kt")
+        public void testKt47483() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/kt47483.kt");
+        }
+
+        @Test
         @TestMetadata("kt503.kt")
         public void testKt503() throws Exception {
             runTest("compiler/testData/codegen/box/arrays/kt503.kt");
