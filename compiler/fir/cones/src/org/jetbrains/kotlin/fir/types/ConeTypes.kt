@@ -175,6 +175,11 @@ fun ConeKotlinType.lowerBoundIfFlexible(): ConeSimpleKotlinType {
     }
 }
 
+open class ConeDynamicType(
+    lowerBound: ConeSimpleKotlinType,
+    upperBound: ConeSimpleKotlinType
+) : ConeFlexibleType(lowerBound, upperBound)
+
 class ConeCapturedTypeConstructor(
     val projection: ConeTypeProjection,
     var supertypes: List<ConeKotlinType>? = null,

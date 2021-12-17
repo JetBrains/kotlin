@@ -484,7 +484,13 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 ) to diagnostic
             }
             is FirFunctionTypeRef -> createFunctionalType(typeRef) to null
-            is FirDynamicTypeRef -> ConeKotlinErrorType(ConeUnsupportedDynamicType()) to null
+            is FirDynamicTypeRef -> {
+                val coneType = ConeDynamicType(
+                    session.builtinTypes.nothingType.type,
+                    session.builtinTypes.nullableAnyType.type,
+                )
+                coneType to null
+            }
             else -> error(typeRef.render())
         }
     }
