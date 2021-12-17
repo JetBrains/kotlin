@@ -4217,6 +4217,12 @@ public class IrCompileKotlinAgainstInlineKotlinTestGenerated extends AbstractIrC
         }
 
         @Test
+        @TestMetadata("inheritFromJava.kt")
+        public void testInheritFromJava() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/signatureMangling/inheritFromJava.kt");
+        }
+
+        @Test
         @TestMetadata("rawType.kt")
         public void testRawType() throws Exception {
             runTest("compiler/testData/codegen/boxInline/signatureMangling/rawType.kt");
