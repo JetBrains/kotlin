@@ -13,12 +13,15 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.classic.ClassicBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJsArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
+import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
+import org.jetbrains.kotlin.test.runners.codegen.commonClassicFrontendHandlersForCodegenTest
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
 abstract class AbstractJsTest(
@@ -41,6 +44,13 @@ abstract class AbstractJsTest(
 
     override val recompileFacade: Constructor<AbstractTestFacade<BinaryArtifacts.Js, BinaryArtifacts.Js>>
         get() = { RecompileModuleJsBackendFacade(it, frontendFacade, frontendToBackendConverter) }
+
+    override fun TestConfigurationBuilder.configureFrontendHandlers() {
+        classicFrontendHandlersStep {
+            commonClassicFrontendHandlersForCodegenTest()
+            useHandlers(::ClassicDiagnosticsHandler)
+        }
+    }
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

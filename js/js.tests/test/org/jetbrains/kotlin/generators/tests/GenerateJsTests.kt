@@ -118,6 +118,14 @@ fun main(args: Array<String>) {
             testClass<AbstractIrJsTypeScriptExportTest> {
                 model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
             }
+
+            testClass<AbstractFirIrBoxJsTest> {
+                model("box/", pattern = "^([^_](.+))\\.kt$")
+            }
+
+            testClass<AbstractFirJsTest> {
+                model("box/", pattern = "^([^_](.+))\\.kt$")
+            }
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
@@ -147,6 +155,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractIrCodegenWasmJsInteropJsTest> {
                 model("codegen/boxWasmJsInterop")
+            }
+
+            testClass<AbstractFirIrJsCodegenBoxTest> {
+                model("codegen/box", excludeDirs = jvmOnlyBoxTests + "compileKotlinAgainstKotlin")
             }
         }
     }
