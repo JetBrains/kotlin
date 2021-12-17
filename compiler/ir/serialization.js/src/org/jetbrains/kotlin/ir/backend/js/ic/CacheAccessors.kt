@@ -184,7 +184,8 @@ class PersistentCacheProviderImpl(private val cachePath: String) : PersistentCac
     }
 
     override fun filePaths(): Iterable<String> {
-        return File(cachePath).listFiles()!!.filter { it.isDirectory }.mapNotNull { f ->
+        val files = File(cachePath).listFiles() ?: return emptyList()
+        return files.filter { it.isDirectory }.mapNotNull { f ->
             val fileInfo = File(f, fileInfoFile)
             if (fileInfo.exists()) {
                 fileInfo.readLines()[0]
