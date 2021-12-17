@@ -24,10 +24,8 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.NewCapturedType
-import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
-import org.jetbrains.kotlin.types.checker.intersectTypes
+import org.jetbrains.kotlin.types.checker.*
+import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -391,3 +389,13 @@ private fun NewCapturedType.unCaptureTopLevelType(): UnwrappedType {
 
 fun KotlinType?.shouldBeUpdated() =
     this == null || contains { it is StubTypeForBuilderInference || it.constructor is TypeVariableTypeConstructorMarker || it.isError }
+
+fun KotlinType.isStubType() = this is AbstractStubType || isDefNotNullStubType<AbstractStubType>()
+
+fun KotlinType.isStubTypeForVariableInSubtyping(): Boolean =
+    this is StubTypeForTypeVariablesInSubtyping || isDefNotNullStubType<StubTypeForTypeVariablesInSubtyping>()
+
+fun KotlinType.isStubTypeForBuilderInference(): Boolean =
+    this is StubTypeForBuilderInference || isDefNotNullStubType<StubTypeForBuilderInference>()
+
+private inline fun <reified S : AbstractStubType> KotlinType.isDefNotNullStubType() = this is DefinitelyNotNullType && this.original is S

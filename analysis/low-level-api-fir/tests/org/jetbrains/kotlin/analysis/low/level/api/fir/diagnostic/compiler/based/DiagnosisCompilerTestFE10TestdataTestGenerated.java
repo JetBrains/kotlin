@@ -13945,6 +13945,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("kt49829.kt")
+                public void testKt49829() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt49829.kt");
+                }
+
+                @Test
                 @TestMetadata("labaledCall.kt")
                 public void testLabaledCall() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/labaledCall.kt");
