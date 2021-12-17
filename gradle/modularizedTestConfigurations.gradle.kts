@@ -38,6 +38,7 @@ fun generateVmParametersForJpsConfiguration(path: String, additionalParameters: 
         "-Didea.is.unit.test=true",
         "-Didea.ignore.disabled.plugins=true",
         "-Didea.home.path=$ideaSdkPath",
+        "-Didea.use.native.fs.for.win=false",
         "-Djps.kotlin.home=${ideaPluginDir.absolutePath}",
         "-Dkotlin.ni=" + if (rootProject.hasProperty("newInferenceTests")) "true" else "false",
         "-Duse.jps=true",

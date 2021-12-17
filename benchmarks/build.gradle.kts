@@ -76,6 +76,7 @@ tasks.matching { it is JavaExec && it.name in benchmarkTasks }.configureEach {
     this as JavaExec
     dependsOn(":createIdeaHomeForTests")
     systemProperty("idea.home.path", ideaHomePathForTests().canonicalPath)
+    systemProperty("idea.use.native.fs.for.win", false)
 }
 
 tasks.register<JavaExec>("runBenchmark") {

@@ -123,6 +123,7 @@ val jmhExec by tasks.registering(JavaExec::class) {
 
     workingDir = rootDir
     systemProperty("idea.home.path", project.ideaHomePathForTests().absolutePath)
+    systemProperty("idea.use.native.fs.for.win", false)
     systemProperty("idea.max.intellisense.filesize", 5000 * 1024)
     configurations.plusAssign(project.configurations["api"])
 }
