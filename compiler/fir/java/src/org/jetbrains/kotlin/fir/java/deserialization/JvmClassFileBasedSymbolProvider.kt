@@ -81,7 +81,7 @@ class JvmClassFileBasedSymbolProvider(
                 FirDeserializationContext.createForPackage(
                     packageFqName, packageProto, nameResolver, moduleData,
                     JvmBinaryAnnotationDeserializer(session, kotlinJvmBinaryClass, kotlinClassFinder, byteContent),
-                    FirConstDeserializer(session, facadeBinaryClass ?: kotlinJvmBinaryClass),
+                    FirJvmConstDeserializer(session, facadeBinaryClass ?: kotlinJvmBinaryClass),
                     source
                 ),
             )

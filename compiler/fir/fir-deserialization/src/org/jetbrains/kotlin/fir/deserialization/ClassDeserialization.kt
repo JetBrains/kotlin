@@ -67,6 +67,12 @@ fun deserializeClassToSymbol(
     }
     val isSealed = modality == Modality.SEALED
     val annotationDeserializer = defaultAnnotationDeserializer ?: FirBuiltinAnnotationDeserializer(session)
+    val jvmBinaryClass = (containerSource as? KotlinJvmBinarySourceElement)?.binaryClass
+    val constDeserializer = if (jvmBinaryClass != null) {
+        FirJvmConstDeserializer(session, jvmBinaryClass)
+    } else {
+        FirConstDeserializer(session)
+    }
     val context =
         parentContext?.childContext(
             classProto.typeParameterList,
@@ -83,7 +89,7 @@ fun deserializeClassToSymbol(
             nameResolver,
             moduleData,
             annotationDeserializer,
-            FirConstDeserializer(session, (containerSource as? KotlinJvmBinarySourceElement)?.binaryClass),
+            constDeserializer,
             containerSource,
             symbol
         )
