@@ -205,7 +205,7 @@ private fun buildCacheForModule(
 
     cacheExecutor.execute(irModule, dependencies, deserializer, configuration, dirtyFiles, deletedFiles, cacheConsumer, emptySet(), mainArguments)
 
-    cacheConsumer.commitLibraryPath(libraryInfo.libPath.toCanonicalPath(), libraryInfo.flatHash, libraryInfo.transHash)
+    cacheConsumer.commitLibraryInfo(libraryInfo.libPath.toCanonicalPath(), libraryInfo.flatHash, libraryInfo.transHash, irModule.name.asString())
 }
 
 private fun loadModules(
@@ -548,6 +548,7 @@ private fun actualizeCacheForModule(
     return CacheUpdateStatus.DIRTY // invalidated and re-built
 }
 
+// Used for tests only
 fun rebuildCacheForDirtyFiles(
     library: KotlinLibrary,
     configuration: CompilerConfiguration,
@@ -584,6 +585,8 @@ fun rebuildCacheForDirtyFiles(
     jsIrLinker.postProcess()
 
     val currentIrModule = irModules.find { it.second == library }?.first!!
+
+    cacheConsumer.commitLibraryInfo(library.libraryFile.path.toCanonicalPath(), 0UL, 0UL, currentIrModule.name.asString())
 
     buildCacheForModuleFiles(
         currentIrModule,
@@ -634,7 +637,7 @@ fun loadModuleCaches(icCachePaths: Collection<String>): Map<String, ModuleCache>
     return icCacheMap.entries.associate { (lib, cache) ->
         val provider = createCacheProvider(cache.path)
         val files = provider.filePaths()
-        lib to ModuleCache(lib, files.associate { f ->
+        lib to ModuleCache(provider.moduleName(), files.associate { f ->
             f to FileCache(f, provider.binaryAst(f), provider.dts(f), provider.sourceMap(f))
         })
     }

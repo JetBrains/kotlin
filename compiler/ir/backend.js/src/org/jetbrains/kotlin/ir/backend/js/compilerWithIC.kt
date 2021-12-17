@@ -102,8 +102,6 @@ fun compileWithIC(
     val ast = transformer.generateBinaryAst(dirtyFiles)
 
     ast.entries.forEach { (path, bytes) -> cacheConsumer.commitBinaryAst(path, bytes) }
-
-    cacheConsumer.commitModuleName(module.name.asString())
 }
 
 fun lowerPreservingTags(modules: Iterable<IrModuleFragment>, context: JsIrBackendContext, phaseConfig: PhaseConfig, controller: WholeWorldStageController) {
@@ -128,6 +126,7 @@ fun generateJsFromAst(
     sourceMapsInfo: SourceMapsInfo?,
     translationModes: Set<TranslationMode>,
     caches: Map<String, ModuleCache>,
+    relativeRequirePath: Boolean = false,
 ): CompilerResult {
     fun compilationOutput(multiModule: Boolean): CompilationOutputs {
         val deserializer = JsIrAstDeserializer()
@@ -144,7 +143,7 @@ fun generateJsFromAst(
             moduleKind = moduleKind,
             jsIrProgram,
             sourceMapsInfo = sourceMapsInfo,
-            relativeRequirePath = false,
+            relativeRequirePath = relativeRequirePath,
             generateScriptModule = false,
         )
     }
