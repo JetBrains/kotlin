@@ -1,0 +1,9 @@
+STEP 0:
+    dependencies: stdlib, lib1
+    dirty: l2.kt
+
+STEP 1:
+    dependencies: stdlib, lib1
+    modifications:
+        U : l22.kt.1 -> l22.kt
+    dirty: l2.kt, l22.kt

@@ -40,6 +40,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/fastPath2/");
     }
 
+    @TestMetadata("moveInlineFunctionBetweenModules")
+    public void testMoveInlineFunctionBetweenModules() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/moveInlineFunctionBetweenModules/");
+    }
+
     @TestMetadata("privateInlineFunction1")
     public void testPrivateInlineFunction1() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/privateInlineFunction1/");
