@@ -29,10 +29,19 @@ interface IrGeneratorWithScope : IrGenerator {
 
 interface IrGeneratorContextInterface {
     val irBuiltIns: IrBuiltIns
+
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated("rhizomedb & noria compatibility", level = DeprecationLevel.ERROR)
+    fun getIrBuiltIns() = org.jetbrains.kotlin.ir.descriptors.IrBuiltIns(irBuiltIns)
 }
 
 interface IrGeneratorContext : IrGeneratorContextInterface {
     val irFactory: IrFactory get() = irBuiltIns.irFactory
 }
 
-open class IrGeneratorContextBase(override val irBuiltIns: IrBuiltIns) : IrGeneratorContext
+open class IrGeneratorContextBase(override val irBuiltIns: IrBuiltIns) : IrGeneratorContext {
+
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated("noria compatibility", level = DeprecationLevel.ERROR)
+    constructor(irBuiltIns: org.jetbrains.kotlin.ir.descriptors.IrBuiltIns) : this(irBuiltIns.irBuiltIns)
+}
