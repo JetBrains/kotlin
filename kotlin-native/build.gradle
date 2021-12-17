@@ -41,11 +41,12 @@ buildscript {
             mavenCentral()
             jcenter()
         }
+        gradlePluginPortal()
     }
 
     dependencies {
         //classpath project(":kotlin-native-utils")
-        classpath 'com.github.jengelman.gradle.plugins:shadow:5.1.0'
+        classpath 'gradle.plugin.com.github.johnrengelman:shadow:7.1.1'
     }
 }
 import org.jetbrains.kotlin.konan.*

@@ -56,7 +56,7 @@ dependencies {
 
     // Located in <repo root>/shared and always provided by the composite build.
     api("org.jetbrains.kotlin:kotlin-native-shared:$konanVersion")
-    implementation("com.github.jengelman.gradle.plugins:shadow:$shadowVersion")
+    implementation("gradle.plugin.com.github.johnrengelman:shadow:$shadowVersion")
 
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
 }

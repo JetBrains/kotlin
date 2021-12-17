@@ -157,7 +157,7 @@ dependencies {
     implementation("net.rubygrapefruit:native-platform-windows-i386:${property("versions.native-platform")}")
     implementation("com.jakewharton.dex:dex-method-list:3.0.0")
 
-    implementation("com.github.jengelman.gradle.plugins:shadow:${rootProject.extra["versions.shadow"]}")
+    implementation("gradle.plugin.com.github.johnrengelman:shadow:${rootProject.extra["versions.shadow"]}")
     implementation("net.sf.proguard:proguard-gradle:6.2.2")
     implementation("org.jetbrains.intellij.deps:asm-all:8.0.1")
 

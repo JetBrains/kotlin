@@ -29,6 +29,8 @@ class ComponentsXmlResourceTransformerPatched : Transformer {
     private val components: MutableMap<String, Xpp3Dom> =
         LinkedHashMap<String, Xpp3Dom>()
 
+    override fun getName() = "ComponentsXmlResourceTransformerPatched"
+
     override fun canTransformResource(element: FileTreeElement): Boolean {
         val path = element.relativePath.pathString
         return COMPONENTS_XML_PATH == path
@@ -107,7 +109,7 @@ class ComponentsXmlResourceTransformerPatched : Transformer {
                 }
                 Xpp3DomWriter.write(writer, dom)
             } finally {
-                IOUtil.close(writer)
+                writer.close()
             }
             return baos.toByteArray()
         }

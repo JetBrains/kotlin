@@ -14,9 +14,11 @@ import shadow.org.apache.commons.io.IOUtils
 import shadow.org.apache.tools.zip.ZipEntry
 import shadow.org.apache.tools.zip.ZipFile
 
-class CollisionTransformer: Transformer {
+class CollisionTransformer : Transformer {
     var resolvedConflicts = mutableMapOf<String, File>()
     private val foundConflictsFiles = mutableSetOf<String>()
+
+    override fun getName() = "CollisionTransformer"
 
     override fun canTransformResource(element: FileTreeElement): Boolean  {
         val result = element.name in resolvedConflicts.keys

@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.pill.PillExtension
 import java.lang.reflect.Modifier
 import java.net.URLClassLoader
 
@@ -7,11 +6,15 @@ plugins {
     id("jps-compatible")
 }
 
+repositories {
+    gradlePluginPortal()
+}
+
 dependencies {
     compileOnly(kotlin("stdlib", embeddedKotlinVersion))
     compileOnly(gradleApi())
     compileOnly(gradleKotlinDsl())
-    compileOnly("com.github.jengelman.gradle.plugins:shadow:${rootProject.extra["versions.shadow"]}")
+    compileOnly("gradle.plugin.com.github.johnrengelman:shadow:${rootProject.extra["versions.shadow"]}")
 }
 
 sourceSets {

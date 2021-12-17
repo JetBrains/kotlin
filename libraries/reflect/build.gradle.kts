@@ -65,6 +65,8 @@ class KotlinModuleShadowTransformer(private val logger: Logger) : Transformer {
     private data class Entry(val path: String, val bytes: ByteArray)
     private val data = mutableListOf<Entry>()
 
+    override fun getName() = "KotlinModuleShadowTransformer"
+
     override fun canTransformResource(element: FileTreeElement): Boolean =
             element.path.substringAfterLast(".") == KOTLIN_MODULE
 
