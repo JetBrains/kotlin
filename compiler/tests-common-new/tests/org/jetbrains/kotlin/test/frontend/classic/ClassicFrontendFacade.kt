@@ -74,7 +74,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
 class ClassicFrontendFacade(
-    testServices: TestServices,
+    testServices: TestServices
 ) : FrontendFacade<ClassicFrontendOutputArtifact>(testServices, FrontendKinds.ClassicFrontend) {
 
     override val additionalServices: List<ServiceRegistrationData>
