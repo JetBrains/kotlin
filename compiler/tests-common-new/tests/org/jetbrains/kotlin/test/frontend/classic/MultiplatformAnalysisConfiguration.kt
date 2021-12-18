@@ -145,9 +145,10 @@ private object CompositeAnalysisModuleStructureOracle : ModuleStructureOracle {
 
     override fun findAllDependsOnPaths(module: ModuleDescriptor): List<ModulePath> {
         return module.expectedByModules.flatMap { expectedByModule ->
-            if (expectedByModule.expectedByModules.isEmpty()) listOf(ModulePath(listOf(expectedByModule)))
+            val head = listOf(module, expectedByModule)
+            if (expectedByModule.expectedByModules.isEmpty()) listOf(ModulePath(head))
             else findAllDependsOnPaths(expectedByModule).map { path ->
-                ModulePath(listOf(expectedByModule) + path.nodes)
+                ModulePath(head + path.nodes)
             }
         }
     }
