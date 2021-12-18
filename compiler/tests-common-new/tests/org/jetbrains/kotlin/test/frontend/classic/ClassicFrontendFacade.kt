@@ -76,8 +76,13 @@ import java.io.File
 class ClassicFrontendFacade(
     testServices: TestServices,
 ) : FrontendFacade<ClassicFrontendOutputArtifact>(testServices, FrontendKinds.ClassicFrontend) {
+
     override val additionalServices: List<ServiceRegistrationData>
         get() = listOf(service(::ModuleDescriptorProvider))
+
+    private val multiplatformAnalysisConfiguration by lazy {
+        MultiplatformAnalysisConfiguration(testServices)
+    }
 
     override fun analyze(module: TestModule): ClassicFrontendOutputArtifact {
         val moduleDescriptorProvider = testServices.moduleDescriptorProvider
@@ -85,9 +90,8 @@ class ClassicFrontendFacade(
         val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(module)
         val project = compilerConfigurationProvider.getProject(module)
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
-        val multiplatformConfiguration = MultiplatformAnalysisConfiguration(testServices)
 
-        val ktFilesMap = multiplatformConfiguration.getKtFilesForForSourceFiles(project, module)
+        val ktFilesMap = multiplatformAnalysisConfiguration.getKtFilesForForSourceFiles(project, module)
         val ktFiles = ktFilesMap.values.toList()
 
         setupJavacIfNeeded(module, ktFiles, configuration)
@@ -97,10 +101,10 @@ class ClassicFrontendFacade(
             configuration,
             packagePartProviderFactory,
             ktFiles,
-            compilerEnvironment = multiplatformConfiguration.getCompilerEnvironment(module),
-            dependencyDescriptors = multiplatformConfiguration.getDependencyDescriptors(module),
-            friendsDescriptors = multiplatformConfiguration.getFriendDescriptors(module),
-            dependsOnDescriptors = multiplatformConfiguration.getDependsOnDescriptors(module)
+            compilerEnvironment = multiplatformAnalysisConfiguration.getCompilerEnvironment(module),
+            dependencyDescriptors = multiplatformAnalysisConfiguration.getDependencyDescriptors(module),
+            friendsDescriptors = multiplatformAnalysisConfiguration.getFriendDescriptors(module),
+            dependsOnDescriptors = multiplatformAnalysisConfiguration.getDependsOnDescriptors(module)
         )
         moduleDescriptorProvider.replaceModuleDescriptorForModule(module, analysisResult.moduleDescriptor)
         return ClassicFrontendOutputArtifact(
