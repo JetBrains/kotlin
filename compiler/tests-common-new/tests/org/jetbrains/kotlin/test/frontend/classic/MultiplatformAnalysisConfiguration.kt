@@ -45,7 +45,10 @@ internal interface MultiplatformAnalysisConfiguration {
 }
 
 /**
- * Traditional 'compiler cli' configuration...
+ * Traditional 'compiler cli' configuration in which every platform gets analyzed 'separate'
+ * by including dependsOn source files directly into the module descriptor.
+ *
+ * This mode works similar to how actual user projects would compile platforms like 'jvm', 'native' or js targets.
  */
 internal class MultiplatformSeparateAnalysisConfiguration(
     private val dependencyProvider: DependencyProvider,
@@ -82,9 +85,9 @@ internal class MultiplatformSeparateAnalysisConfiguration(
                 val dependencyModule = dependencyProvider.getTestModule(dependency.moduleName)
                 val artifact = dependencyProvider.getArtifact(dependencyModule, FrontendKinds.ClassicFrontend)
                 /*
-                * We need create KtFiles again with new project because otherwise we can access to some caches using
-                *   old project as key which may leads to missing services in core environment
-                */
+                We need create KtFiles again with new project because otherwise we can access to some caches using
+                old project as key which may leads to missing services in core environment
+                 */
                 val ktFiles = sourceFileProvider.getKtFilesForSourceFiles(artifact.allKtFiles.keys, project)
                 ktFiles.values.forEach { ktFile -> ktFile.isCommonSource = true }
                 ktFilesMap.putAll(ktFiles)
@@ -97,7 +100,9 @@ internal class MultiplatformSeparateAnalysisConfiguration(
 }
 
 /**
- * Metadata / IDE like configuration...
+ * Configuration that will work 'more similar' to how the IDE works where dependsOn edges will be located
+ * in separate module descriptors. The key difference to the IDE is, that this mode will not (yet) support
+ * reversed depends on paths see [CompositeAnalysisModuleStructureOracle]
  */
 internal class MultiplatformCompositeAnalysisConfiguration(
     private val dependencyProvider: DependencyProvider,
@@ -140,7 +145,11 @@ private object CompositeAnalysisModuleStructureOracle : ModuleStructureOracle {
     }
 
     override fun findAllReversedDependsOnPaths(module: ModuleDescriptor): List<ModulePath> {
-        return emptyList() // <- Not supported, yet
+        /*
+        This feature is not supported yet, since during testing of 'common modules',
+        the 'less common modules' are not available as descriptors.
+         */
+        return emptyList()
     }
 
     override fun findAllDependsOnPaths(module: ModuleDescriptor): List<ModulePath> {
