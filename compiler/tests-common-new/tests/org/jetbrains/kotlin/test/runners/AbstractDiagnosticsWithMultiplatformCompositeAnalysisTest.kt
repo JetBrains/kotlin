@@ -13,7 +13,7 @@ abstract class AbstractDiagnosticsWithMultiplatformCompositeAnalysisTest : Abstr
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.defaultDirectives {
-            +MultiplatformDiagnosticsDirectives.MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE
+            +MultiplatformDiagnosticsDirectives.MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE_ENABLED
             LanguageSettingsDirectives.LANGUAGE with "+MultiPlatformProjects"
         }
     }

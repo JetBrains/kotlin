@@ -61,7 +61,7 @@ import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.directives.MultiplatformDiagnosticsDirectives.MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE
+import org.jetbrains.kotlin.test.directives.MultiplatformDiagnosticsDirectives.MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE_ENABLED
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -347,8 +347,8 @@ class ClassicFrontendFacade(
         files: List<KtFile>,
     ): AnalysisResult {
         // See 'TODO' for adding dependency manager
-        require(module.dependsOnDependencies.isEmpty() || MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE !in module.directives) {
-            "Analyzing common modules with 'dependsOn' edges in ${MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE.name} is not supported yet.\n" +
+        require(module.dependsOnDependencies.isEmpty() || MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE_ENABLED !in module.directives) {
+            "Analyzing common modules with 'dependsOn' edges in ${MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE_ENABLED.name} is not supported yet.\n" +
                     "Module: ${module.name}\n" +
                     "dependsOn: ${module.dependsOnDependencies.map { it.moduleName }}"
         }

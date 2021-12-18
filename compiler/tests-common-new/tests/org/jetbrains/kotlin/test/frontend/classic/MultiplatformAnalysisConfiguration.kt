@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.resolve.ModulePath
 import org.jetbrains.kotlin.resolve.ModuleStructureOracle
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
-import org.jetbrains.kotlin.test.directives.MultiplatformDiagnosticsDirectives.MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE
+import org.jetbrains.kotlin.test.directives.MultiplatformDiagnosticsDirectives.MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE_ENABLED
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 
 internal fun MultiplatformAnalysisConfiguration(testServices: TestServices): MultiplatformAnalysisConfiguration {
-    return if (testServices.moduleStructure.allDirectives.contains(MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE))
+    return if (testServices.moduleStructure.allDirectives.contains(MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE_ENABLED))
         MultiplatformCompositeAnalysisConfiguration(
             testServices.dependencyProvider,
             testServices.sourceFileProvider,
