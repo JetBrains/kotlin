@@ -23,17 +23,19 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 
 internal fun MultiplatformAnalysisConfiguration(testServices: TestServices): MultiplatformAnalysisConfiguration {
-    return if (testServices.moduleStructure.allDirectives.contains(MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE_ENABLED))
+    return if (testServices.moduleStructure.allDirectives.contains(MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE_ENABLED)) {
         MultiplatformCompositeAnalysisConfiguration(
             testServices.dependencyProvider,
             testServices.sourceFileProvider,
             testServices.moduleDescriptorProvider,
         )
-    else MultiplatformSeparateAnalysisConfiguration(
-        testServices.dependencyProvider,
-        testServices.sourceFileProvider,
-        testServices.moduleDescriptorProvider
-    )
+    } else {
+        MultiplatformSeparateAnalysisConfiguration(
+            testServices.dependencyProvider,
+            testServices.sourceFileProvider,
+            testServices.moduleDescriptorProvider
+        )
+    }
 }
 
 internal interface MultiplatformAnalysisConfiguration {
