@@ -25,10 +25,14 @@ private const val LOCKS = "locks"
 private const val AFU_LOCKS_PKG = "$AFU_PKG.$LOCKS"
 private const val ATOMICFU_RUNTIME_FUNCTION_PREDICATE = "atomicfu_"
 private const val REENTRANT_LOCK_TYPE = "ReentrantLock"
+private const val TRACE_BASE_TYPE = "TraceBase"
 private const val GETTER = "atomicfu\$getter"
 private const val SETTER = "atomicfu\$setter"
 private const val GET = "get"
 private const val ATOMIC_VALUE_FACTORY = "atomic"
+private const val TRACE = "Trace"
+private const val INVOKE = "invoke"
+private const val APPEND = "append"
 private const val ATOMIC_ARRAY_OF_NULLS_FACTORY = "atomicArrayOfNulls"
 private const val REENTRANT_LOCK_FACTORY = "reentrantLock"
 
@@ -98,6 +102,17 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
     private inner class AtomicTransformer : IrElementTransformer<IrFunction?> {
 
         override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement {
+            // Erase messages added by the Trace object from the function body:
+            // val trace = Trace(size)
+            // Messages may be added via trace invocation:
+            // trace { "Doing something" }
+            // or via multi-append of arguments:
+            // trace.append(index, "CAS", value)
+            (declaration.body as? IrBlockBody)?.let { body ->
+                body.statements.removeIf {
+                    it is IrCall && (it.isTraceInvoke() || it.isTraceAppend())
+                }
+            }
             return super.visitFunction(declaration, declaration)
         }
 
@@ -276,6 +291,16 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
                 it.type.isAtomicArrayType() && symbol.owner.name.asString() == GET
             } ?: false
 
+        private fun IrCall.isTraceInvoke(): Boolean =
+            symbol.isKotlinxAtomicfuPackage() &&
+            symbol.owner.name.asString() == INVOKE &&
+            symbol.owner.dispatchReceiverParameter?.type?.isTraceBaseType() == true
+
+        private fun IrCall.isTraceAppend(): Boolean =
+            symbol.isKotlinxAtomicfuPackage() &&
+            symbol.owner.name.asString() == APPEND &&
+            symbol.owner.dispatchReceiverParameter?.type?.isTraceBaseType() == true
+
         private fun IrCall.getAccessors(): List<IrExpression> {
             val isArrayElement = isArrayElementGetter()
             val valueType = type.atomicToValueType()
@@ -318,6 +343,7 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
                 isAtomicFactory() -> getValueArgument(0) ?: error("Atomic factory should take at least one argument: ${this.render()}")
                 isAtomicArrayFactory() -> buildObjectArray()
                 isReentrantLockFactory() -> context.buildConstNull()
+                isTraceFactory() -> context.buildConstNull()
                 else -> null
             }
 
@@ -344,6 +370,7 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
     private fun IrType.isAtomicValueType() = belongsTo(AFU_PKG, ATOMIC_VALUE_TYPES)
     private fun IrType.isAtomicArrayType() = belongsTo(AFU_PKG, ATOMIC_ARRAY_TYPES)
     private fun IrType.isReentrantLockType() = belongsTo(AFU_LOCKS_PKG, REENTRANT_LOCK_TYPE)
+    private fun IrType.isTraceBaseType() = belongsTo(AFU_PKG, TRACE_BASE_TYPE)
 
     private fun IrType.belongsTo(packageName: String, typeNames: Set<String>) =
         getSignature()?.let { sig ->
@@ -370,6 +397,10 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
     private fun IrCall.isAtomicFactory(): Boolean =
         symbol.isKotlinxAtomicfuPackage() && symbol.owner.name.asString() == ATOMIC_VALUE_FACTORY &&
                 type.isAtomicValueType()
+
+    private fun IrCall.isTraceFactory(): Boolean =
+        symbol.isKotlinxAtomicfuPackage() && symbol.owner.name.asString() == TRACE &&
+                type.isTraceBaseType()
 
     private fun IrCall.isAtomicArrayFactory(): Boolean =
         symbol.isKotlinxAtomicfuPackage() && symbol.owner.name.asString() == ATOMIC_ARRAY_OF_NULLS_FACTORY &&
