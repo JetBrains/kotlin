@@ -33026,6 +33026,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("exhaustiveWhenWithConstVal.kt")
+            public void testExhaustiveWhenWithConstVal() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/exhaustiveWhenWithConstVal.kt");
+            }
+
+            @Test
             @TestMetadata("ExhaustiveWithNullabilityCheck.kt")
             public void testExhaustiveWithNullabilityCheck() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/when/ExhaustiveWithNullabilityCheck.kt");

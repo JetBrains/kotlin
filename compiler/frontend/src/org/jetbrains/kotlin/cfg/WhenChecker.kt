@@ -361,7 +361,30 @@ object WhenChecker {
         if (expression.subjectExpression == null) return
 
         val checkedTypes = HashSet<Pair<KotlinType, Boolean>>()
-        val checkedConstants = HashSet<CompileTimeConstant<*>>()
+        /*
+         * `true` in map means that constant can be removed and nothing breaks
+         * `false` means opposite
+         *
+         * Example:
+         *   const val myF = false
+         *   const val myT = true
+         *
+         *   fun test_1(someBoolean: Boolean) {
+         *       val s = when (someBoolean) {
+         *           myT -> 1
+         *           myF -> 2
+         *           true -> 3    // DUPLICATE_LABEL_IN_WHEN
+         *           false -> 4   // DUPLICATE_LABEL_IN_WHEN
+         *       }
+         *   }
+         *
+         * In this case myT and myF actually are `true` and `false` correspondingly, but
+         *   const vals are not treated by exhaustive checkers, so removal `true` or `false`
+         *   branches will break code, so we need to report DUPLICATE_LABEL_IN_WHEN on `myT` and
+         *   `myF`, not on `true` and `false`
+         */
+        val checkedConstants = mutableMapOf<CompileTimeConstant<*>, Boolean>()
+        val notTrivialBranches = mutableMapOf<CompileTimeConstant<*>, KtExpression>()
         for (entry in expression.entries) {
             if (entry.isElse) continue
 
@@ -372,10 +395,37 @@ object WhenChecker {
                         val constant = ConstantExpressionEvaluator.getConstant(
                             constantExpression, trace.bindingContext
                         ) ?: continue@conditions
-                        if (checkedConstants.contains(constant)) {
-                            trace.report(Errors.DUPLICATE_LABEL_IN_WHEN.on(constantExpression))
-                        } else {
-                            checkedConstants.add(constant)
+
+                        fun report(reportOn: KtExpression) {
+                            trace.report(Errors.DUPLICATE_LABEL_IN_WHEN.on(reportOn))
+                        }
+
+                        when (checkedConstants[constant]) {
+                            true -> {
+                                // already found trivial constant in previous branches
+                                report(constantExpression)
+                            }
+                            false -> {
+                                // already found bad constant in previous branches
+                                val isTrivial = constant.isTrivial()
+                                if (isTrivial) {
+                                    // this constant is trivial -> report on first non trivial constant
+                                    val reportOn = notTrivialBranches.remove(constant)!!
+                                    report(reportOn)
+                                    checkedConstants[constant] = true
+                                } else {
+                                    // this constant is also not trivial -> report on it
+                                    report(constantExpression)
+                                }
+                            }
+                            null -> {
+                                // met constant for a first time
+                                val isTrivial = constant.isTrivial()
+                                checkedConstants[constant] = isTrivial
+                                if (!isTrivial) {
+                                    notTrivialBranches[constant] = constantExpression
+                                }
+                            }
                         }
 
                     }
@@ -394,7 +444,10 @@ object WhenChecker {
                 }
             }
         }
+    }
 
+    private fun CompileTimeConstant<*>.isTrivial(): Boolean {
+        return !usesVariableAsConstant
     }
 
     fun checkDeprecatedWhenSyntax(trace: BindingTrace, expression: KtWhenExpression) {

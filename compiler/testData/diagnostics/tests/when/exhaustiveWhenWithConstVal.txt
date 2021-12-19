@@ -1,0 +1,10 @@
+package
+
+public const val myF: kotlin.Boolean = false
+public const val myT: kotlin.Boolean = true
+public fun test_1(/*0*/ someBoolean: kotlin.Boolean): kotlin.Unit
+public fun test_2(/*0*/ someBoolean: kotlin.Boolean): kotlin.Unit
+public fun test_3(/*0*/ someBoolean: kotlin.Boolean): kotlin.Unit
+public fun test_4(/*0*/ someBoolean: kotlin.Boolean): kotlin.Unit
+public fun test_5(/*0*/ someBoolean: kotlin.Boolean): kotlin.Unit
+
