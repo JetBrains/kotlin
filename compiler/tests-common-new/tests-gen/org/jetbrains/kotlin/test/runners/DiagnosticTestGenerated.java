@@ -4949,6 +4949,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("duplicateLabelWithNonTrivialCondition_disabled.kt")
+                public void testDuplicateLabelWithNonTrivialCondition_disabled() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/duplicateLabelWithNonTrivialCondition_disabled.kt");
+                }
+
+                @Test
+                @TestMetadata("duplicateLabelWithNonTrivialCondition_enabled.kt")
+                public void testDuplicateLabelWithNonTrivialCondition_enabled() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/duplicateLabelWithNonTrivialCondition_enabled.kt");
+                }
+
+                @Test
                 @TestMetadata("equals.kt")
                 public void testEquals() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/equals.kt");

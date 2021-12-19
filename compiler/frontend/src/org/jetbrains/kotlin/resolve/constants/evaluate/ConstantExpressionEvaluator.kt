@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.math.BigInteger
 import java.util.*
 
@@ -369,6 +368,17 @@ class ConstantExpressionEvaluator(
                 KotlinBuiltIns.isArray(type) -> isTypeParameterOrArrayOfTypeParameter(type.arguments.singleOrNull()?.type)
                 else -> type.constructor.declarationDescriptor is TypeParameterDescriptor
             }
+
+        fun isComplexBooleanConstant(
+            expression: KtExpression,
+            constant: CompileTimeConstant<*>
+        ): Boolean {
+            if (constant.isError) return false
+            val constantValue = constant.toConstantValue(constant.moduleDescriptor.builtIns.booleanType)
+            if (!constantValue.getType(constant.moduleDescriptor).isBoolean()) return false
+            if (expression is KtConstantExpression || constant.parameters.usesVariableAsConstant) return false
+            return true
+        }
     }
 }
 
@@ -409,15 +419,13 @@ private class ConstantExpressionEvaluatorVisitor(
         return null
     }
 
-    @Suppress("warnings")
     private fun shouldSkipComplexBooleanValue(
         expression: KtExpression,
         constant: CompileTimeConstant<*>
     ): Boolean {
-        if (constant.isError) return false
-        val constantValue = constant.toConstantValue(builtIns.booleanType)
-        if (!constantValue.getType(constantExpressionEvaluator.module).isBoolean()) return false
-        if (expression is KtConstantExpression || constant.parameters.usesVariableAsConstant) return false
+        if (!ConstantExpressionEvaluator.isComplexBooleanConstant(expression, constant)) {
+            return false
+        }
 
         if (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitSimplificationOfNonTrivialConstBooleanExpressions)) {
             return true
@@ -430,6 +438,7 @@ private class ConstantExpressionEvaluatorVisitor(
                 parent is KtWhenConditionWithExpression ||
                 parent is KtContainerNode && (parent.parent is KtWhileExpression || parent.parent is KtDoWhileExpression)
             ) {
+                val constantValue = constant.toConstantValue(builtIns.booleanType)
                 trace.report(Errors.NON_TRIVIAL_BOOLEAN_CONSTANT.on(expression, constantValue.value as Boolean))
             }
             return false

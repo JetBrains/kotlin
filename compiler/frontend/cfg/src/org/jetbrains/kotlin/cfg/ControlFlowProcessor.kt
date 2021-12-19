@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValu
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.contracts.description.isDefinitelyVisited
@@ -1321,7 +1322,11 @@ class ControlFlowProcessor(
             builder.bindLabel(doneLabel)
 
             mergeValues(branches, expression)
-            WhenChecker.checkDuplicatedLabels(expression, trace)
+            WhenChecker.checkDuplicatedLabels(
+                expression,
+                trace,
+                languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT
+            )
         }
 
         override fun visitObjectLiteralExpression(expression: KtObjectLiteralExpression) {
