@@ -8,4 +8,9 @@ class NormalClass {
         val propertyInCompanionObject = 0
         fun functionInCompanionObject() = 0
     }
+
+    class NestedClass {
+        val propertyInNestedClass = 0
+        fun functionInNestedClass() = 0
+    }
 }

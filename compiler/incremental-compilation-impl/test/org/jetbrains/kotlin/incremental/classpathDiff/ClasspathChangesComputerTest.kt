@@ -137,6 +137,10 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
                 LookupSymbol(name = "propertyInCompanionObject", scope = "com.example.NormalClass.CompanionObject"),
                 LookupSymbol(name = "functionInCompanionObject", scope = "com.example.NormalClass.CompanionObject"),
 
+                // NormalClass.NestedClass
+                LookupSymbol(name = "propertyInNestedClass", scope = "com.example.NormalClass.NestedClass"),
+                LookupSymbol(name = "functionInNestedClass", scope = "com.example.NormalClass.NestedClass"),
+
                 // FileFacade
                 LookupSymbol(name = "propertyInFileFacade", scope = "com.example"),
                 LookupSymbol(name = "functionInFileFacade", scope = "com.example"),
@@ -149,11 +153,13 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
 
                 LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.NormalClass"),
                 LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.NormalClass.CompanionObject"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.NormalClass.NestedClass"),
                 LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example"),
             ),
             fqNames = setOf(
                 "com.example.NormalClass",
                 "com.example.NormalClass.CompanionObject",
+                "com.example.NormalClass.NestedClass",
                 "com.example"
             )
         ).assertEquals(changes)
