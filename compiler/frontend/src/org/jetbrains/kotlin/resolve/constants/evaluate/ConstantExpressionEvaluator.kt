@@ -1091,7 +1091,7 @@ private class ConstantExpressionEvaluatorVisitor(
         expectedType: KotlinType
     ): CompileTimeConstant<*> {
         if (parameters.isUnsignedNumberLiteral && !checkAccessibilityOfUnsignedTypes()) {
-            return UnsignedErrorValueTypeConstant(value, parameters)
+            return UnsignedErrorValueTypeConstant(value, constantExpressionEvaluator.module, parameters)
         }
 
         if (parameters.isUnsignedLongNumberLiteral) {

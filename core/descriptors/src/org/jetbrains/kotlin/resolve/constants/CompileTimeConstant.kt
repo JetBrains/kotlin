@@ -32,6 +32,8 @@ interface CompileTimeConstant<out T> {
 
     val parameters: CompileTimeConstant.Parameters
 
+    val moduleDescriptor: ModuleDescriptor
+
     fun toConstantValue(expectedType: KotlinType): ConstantValue<T>
 
     fun getValue(expectedType: KotlinType): T = toConstantValue(expectedType).value
@@ -68,15 +70,15 @@ interface CompileTimeConstant<out T> {
 }
 
 class TypedCompileTimeConstant<out T>(
-        val constantValue: ConstantValue<T>,
-        module: ModuleDescriptor,
-        override val parameters: CompileTimeConstant.Parameters
+    val constantValue: ConstantValue<T>,
+    override val moduleDescriptor: ModuleDescriptor,
+    override val parameters: CompileTimeConstant.Parameters
 ) : CompileTimeConstant<T> {
 
     override val isError: Boolean
         get() = constantValue is ErrorValue
 
-    val type: KotlinType = constantValue.getType(module)
+    val type: KotlinType = constantValue.getType(moduleDescriptor)
 
     override fun toConstantValue(expectedType: KotlinType): ConstantValue<T> = constantValue
 
@@ -114,6 +116,7 @@ fun hasUnsignedTypesInModuleDependencies(module: ModuleDescriptor): Boolean {
 
 class UnsignedErrorValueTypeConstant(
     private val value: Number,
+    override val moduleDescriptor: ModuleDescriptor,
     override val parameters: CompileTimeConstant.Parameters
 ) : CompileTimeConstant<Unit> {
     val errorValue = ErrorValue.ErrorValueWithMessage(
@@ -134,7 +137,7 @@ class UnsignedErrorValueTypeConstant(
 
 class IntegerValueTypeConstant(
     private val value: Number,
-    module: ModuleDescriptor,
+    override val moduleDescriptor: ModuleDescriptor,
     override val parameters: CompileTimeConstant.Parameters,
     private val newInferenceEnabled: Boolean,
     val convertedFromSigned: Boolean = false
@@ -174,9 +177,9 @@ class IntegerValueTypeConstant(
 
     private val typeConstructor =
         if (newInferenceEnabled) {
-            IntegerLiteralTypeConstructor(value.toLong(), module, parameters)
+            IntegerLiteralTypeConstructor(value.toLong(), moduleDescriptor, parameters)
         } else {
-            IntegerValueTypeConstructor(value.toLong(), module, parameters)
+            IntegerValueTypeConstructor(value.toLong(), moduleDescriptor, parameters)
         }
 
     override fun toConstantValue(expectedType: KotlinType): ConstantValue<Number> {
