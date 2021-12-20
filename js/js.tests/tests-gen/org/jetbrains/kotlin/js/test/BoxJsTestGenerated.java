@@ -2282,6 +2282,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             }
 
             @Test
+            @TestMetadata("redundantCast.kt")
+            public void testRedundantCast() throws Exception {
+                runTest("js/js.translator/testData/box/expression/cast/redundantCast.kt");
+            }
+
+            @Test
             @TestMetadata("reifiedToNotNull.kt")
             public void testReifiedToNotNull() throws Exception {
                 runTest("js/js.translator/testData/box/expression/cast/reifiedToNotNull.kt");
