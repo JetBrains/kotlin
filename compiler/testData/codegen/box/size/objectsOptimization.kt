@@ -7,9 +7,9 @@
 
 // ONLY_IR_DCE
 // JS_DROP_REGION_COMMENTS
-// JS_DCE_EXPECTED_OUTPUT_SIZE: JS_IR      12_474
-// JS_DCE_EXPECTED_OUTPUT_SIZE: JS_IR_ES6  11_842
-// JS_DCE_EXPECTED_OUTPUT_SIZE_SWC:        21_211
+// JS_DCE_EXPECTED_OUTPUT_SIZE: JS_IR      12_408
+// JS_DCE_EXPECTED_OUTPUT_SIZE: JS_IR_ES6  11_776
+// JS_DCE_EXPECTED_OUTPUT_SIZE_SWC:        21_145
 // ^^^ The swc CLI blows the code size in tests due to 2 reasons: runtime helpers inlining into each file and fixed 4 spaces identation.
 //  See KT-89683.
 
