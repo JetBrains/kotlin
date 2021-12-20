@@ -74,7 +74,9 @@ open class VariantPublishingConfigurator @Inject constructor(
             variant.containingModule::ifMadePublic
         )
 
-        configureSourceElementsPublishing(variant)
+        /** The MPP plugin doesn't publish the source artifacts as variants; keep that behavior for legacymapped variants */
+        if (variant !is LegacyMappedVariant)
+            configureSourceElementsPublishing(variant)
 
         registerPlatformVariantsInRootModule(
             publishedModuleHolder,
