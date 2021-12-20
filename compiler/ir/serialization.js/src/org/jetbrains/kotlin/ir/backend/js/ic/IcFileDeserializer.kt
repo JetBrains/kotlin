@@ -125,7 +125,7 @@ class IcFileDeserializer(
         { _, s -> s },
         enqueueAllDeclarations = true,
         deserializedSymbols = deserializedSymbols,
-        ::deserializePublicSymbol
+        deserializePublicSymbol = ::deserializePublicSymbol
     )
 
     private val declarationDeserializer = IrDeclarationDeserializer(

@@ -27,6 +27,7 @@ class IrSymbolDeserializer(
     val handleExpectActualMapping: (IdSignature, IrSymbol) -> IrSymbol,
     private val enqueueAllDeclarations: Boolean = false,
     val deserializedSymbols: MutableMap<IdSignature, IrSymbol> = mutableMapOf(), // Per-file signature cache. TODO: do we really need it?
+    val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
     val deserializePublicSymbol: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol,
 ) {
 
@@ -39,7 +40,7 @@ class IrSymbolDeserializer(
     }
 
     private fun referenceDeserializedSymbol(symbolKind: BinarySymbolData.SymbolKind, idSig: IdSignature): IrSymbol {
-        return referenceDeserializedSymbol(symbolTable, fileSymbol, symbolKind, idSig)
+        return symbolProcessor(referenceDeserializedSymbol(symbolTable, fileSymbol, symbolKind, idSig), idSig)
     }
 
     fun referenceLocalIrSymbol(symbol: IrSymbol, signature: IdSignature) {
@@ -116,14 +117,5 @@ internal fun referenceDeserializedSymbol(
             IrLocalDelegatedPropertySymbolImpl()
         BinarySymbolData.SymbolKind.FILE_SYMBOL -> fileSymbol ?: error("File symbol is not provided")
         else -> error("Unexpected classifier symbol kind: $symbolKind for signature $idSig")
-    }.also {
-        it.privateSignature = idSig.withFile(fileSymbol)
     }
-}
-
-private fun IdSignature.withFile(fileSymbol: IrFileSymbol?): IdSignature {
-    return fileSymbol?.let {
-        val signature = it.signature ?: IdSignature.FileSignature(it)
-        IdSignature.CompositeSignature(signature, this)
-    } ?: this
 }
