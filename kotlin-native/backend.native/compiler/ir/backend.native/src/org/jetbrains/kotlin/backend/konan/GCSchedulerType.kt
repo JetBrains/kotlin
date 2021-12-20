@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+// Must match `GCSchedulerType` in CompilerConstants.hpp
 enum class GCSchedulerType(val value: Int) {
     DISABLED(0),
     WITH_TIMER(1),
-    ON_SAFE_POINTS(2)
+    ON_SAFE_POINTS(2),
+    AGGRESSIVE(3),
 }

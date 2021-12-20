@@ -320,10 +320,6 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         null
                     }
                 })
-                if (memoryModel != MemoryModel.EXPERIMENTAL && arguments.gcAggressive) {
-                    configuration.report(ERROR, "-Xgc-aggressive is only supported for -memory-model experimental")
-                }
-                put(GARBAGE_COLLECTOR_AGRESSIVE, arguments.gcAggressive)
                 put(PROPERTY_LAZY_INITIALIZATION, when (arguments.propertyLazyInitialization) {
                     null -> {
                         when (memoryModel) {

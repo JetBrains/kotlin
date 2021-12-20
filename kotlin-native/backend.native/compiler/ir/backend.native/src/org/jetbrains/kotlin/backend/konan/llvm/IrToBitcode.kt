@@ -2735,7 +2735,6 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             return
 
         overrideRuntimeGlobal("Kotlin_destroyRuntimeMode", Int32(context.config.destroyRuntimeMode.value))
-        overrideRuntimeGlobal("Kotlin_gcAggressive", Int32(if (context.config.gcAggressive) 1 else 0))
         overrideRuntimeGlobal("Kotlin_workerExceptionHandling", Int32(context.config.workerExceptionHandling.value))
         overrideRuntimeGlobal("Kotlin_freezingEnabled", Int32(if (context.config.freezing.enableFreezeAtRuntime) 1 else 0))
         overrideRuntimeGlobal("Kotlin_gcSchedulerType", Int32(context.config.gcSchedulerType.value))

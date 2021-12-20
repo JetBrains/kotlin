@@ -113,7 +113,7 @@ ext.isNoopGC = project.globalTestArgs.contains("-Xgc=noop")
 if (ext.isExperimentalMM) {
     // TODO: Make it more aggressive and only turn it on for a subset of tests.
     tasks.withType(KonanCompileNativeBinary.class).configureEach {
-        extraOpts "-Xgc-aggressive"
+        extraOpts "-Xbinary=gcSchedulerType=aggressive"
     }
 }
 

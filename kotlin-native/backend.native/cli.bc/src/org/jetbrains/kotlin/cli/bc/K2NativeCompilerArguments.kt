@@ -330,9 +330,6 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value="-Xgc", valueDescription = "<gc>", description = "GC to use, 'noop' and 'stms' are currently supported. Works only with -memory-model experimental")
     var gc: String? = null
 
-    @Argument(value="-Xgc-aggressive", description = "Make GC agressive. Works only with -memory-model experimental")
-    var gcAggressive: Boolean = false
-
     @Argument(value = "-Xir-property-lazy-initialization", valueDescription = "{disable|enable}", description = "Initialize top level properties lazily per file")
     var propertyLazyInitialization: String? = null
 

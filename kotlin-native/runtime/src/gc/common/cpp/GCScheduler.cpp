@@ -18,7 +18,7 @@ using namespace kotlin;
 namespace {
 
 class GCEmptySchedulerData : public gc::GCSchedulerData {
-    void OnSafePoint(gc::GCSchedulerThreadData& threadData) noexcept override {}
+    void UpdateFromThreadData(gc::GCSchedulerThreadData& threadData) noexcept override {}
     void OnPerformFullGC() noexcept override {}
     void UpdateAliveSetBytes(size_t bytes) noexcept override {}
 };
@@ -31,7 +31,7 @@ public:
             return std::chrono::microseconds(config_.regularGcIntervalUs);
         }) {}
 
-    void OnSafePoint(gc::GCSchedulerThreadData& threadData) noexcept override {
+    void UpdateFromThreadData(gc::GCSchedulerThreadData& threadData) noexcept override {
         size_t allocatedBytes = threadData.allocatedBytes();
         if (allocatedBytes > config_.allocationThresholdBytes) {
             RuntimeAssert(static_cast<bool>(scheduleGC_), "scheduleGC_ cannot be empty");
@@ -75,7 +75,7 @@ public:
         timeOfLastGcNs_(currentTimeCallbackNs_()),
         scheduleGC_(std::move(scheduleGC)) {}
 
-    void OnSafePoint(gc::GCSchedulerThreadData& threadData) noexcept override {
+    void UpdateFromThreadData(gc::GCSchedulerThreadData& threadData) noexcept override {
         size_t allocatedBytes = threadData.allocatedBytes();
         if (allocatedBytes > config_.allocationThresholdBytes ||
             currentTimeCallbackNs_() - timeOfLastGcNs_ >= config_.cooldownThresholdNs) {
@@ -96,6 +96,24 @@ private:
     std::function<void()> scheduleGC_;
 };
 
+class GCSchedulerDataAggressive : public gc::GCSchedulerData {
+public:
+    GCSchedulerDataAggressive(gc::GCSchedulerConfig& config, std::function<void()> scheduleGC) noexcept :
+        scheduleGC_(std::move(scheduleGC)) {
+        RuntimeLogInfo({kTagGC}, "Initialize GC scheduler config in the aggressive mode");
+        // TODO: Make it even more aggressive and run on a subset of backend.native tests.
+        config.threshold = 1000;
+        config.allocationThresholdBytes = 10000;
+    }
+
+    void UpdateFromThreadData(gc::GCSchedulerThreadData& threadData) noexcept override { scheduleGC_(); }
+
+    void OnPerformFullGC() noexcept override {}
+    void UpdateAliveSetBytes(size_t bytes) noexcept override {}
+
+private:
+    std::function<void()> scheduleGC_;
+};
 
 KStdUniquePtr<gc::GCSchedulerData> MakeEmptyGCSchedulerData() noexcept {
     return ::make_unique<GCEmptySchedulerData>();
@@ -111,6 +129,10 @@ KStdUniquePtr<gc::GCSchedulerData> MakeGCSchedulerDataWithoutTimer(
     return ::make_unique<GCSchedulerDataWithoutTimer>(config, std::move(scheduleGC), std::move(currentTimeCallbackNs));
 }
 
+KStdUniquePtr<gc::GCSchedulerData> MakeGCShedulerDataAggressive(gc::GCSchedulerConfig& config, std::function<void()> scheduleGC) noexcept {
+    return ::make_unique<GCSchedulerDataAggressive>(config, std::move(scheduleGC));
+}
+
 } // namespace
 
 KStdUniquePtr<gc::GCSchedulerData> kotlin::gc::MakeGCSchedulerData(SchedulerType type, gc::GCSchedulerConfig& config, std::function<void()> scheduleGC) noexcept {
@@ -121,6 +143,8 @@ KStdUniquePtr<gc::GCSchedulerData> kotlin::gc::MakeGCSchedulerData(SchedulerType
             return MakeGCSchedulerDataWithTimer(config, std::move(scheduleGC));
         case SchedulerType::kOnSafepoints:
             return MakeGCSchedulerDataWithoutTimer(config, std::move(scheduleGC), []() { return konan::getTimeNanos(); });
+        case SchedulerType::kAggressive:
+            return MakeGCShedulerDataAggressive(config, std::move(scheduleGC));
     }
 }
 

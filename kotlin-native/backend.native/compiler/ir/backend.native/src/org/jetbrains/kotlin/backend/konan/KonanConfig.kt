@@ -94,7 +94,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
         realGc
     }
-    val gcAggressive: Boolean get() = configuration.get(KonanConfigKeys.GARBAGE_COLLECTOR_AGRESSIVE)!!
     val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
     val workerExceptionHandling: WorkerExceptionHandling get() = configuration.get(KonanConfigKeys.WORKER_EXCEPTION_HANDLING)!!
     val runtimeLogs: String? get() = configuration.get(KonanConfigKeys.RUNTIME_LOGS)
@@ -119,7 +118,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val gcSchedulerType: GCSchedulerType by lazy {
         configuration.get(BinaryOptions.gcSchedulerType) ?: when {
             !target.supportsThreads() -> GCSchedulerType.ON_SAFE_POINTS
-            gcAggressive -> GCSchedulerType.ON_SAFE_POINTS
             else -> GCSchedulerType.WITH_TIMER
         }
     }

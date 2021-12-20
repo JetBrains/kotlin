@@ -58,12 +58,11 @@ enum class WorkerExceptionHandling : int32_t {
 enum class GCSchedulerType {
     kDisabled = 0,
     kWithTimer = 1,
-    kOnSafepoints = 2
+    kOnSafepoints = 2,
+    kAggressive = 3,
 };
 
 DestroyRuntimeMode destroyRuntimeMode() noexcept;
-
-bool gcAggressive() noexcept;
 
 ALWAYS_INLINE inline bool shouldContainDebugInfo() noexcept {
     return KonanNeedDebugInfo != 0;
