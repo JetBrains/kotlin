@@ -26,15 +26,15 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
-    @TestMetadata("metaSerializable.kt")
-    public void testMetaSerializable() throws Exception {
-        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/boxIr/metaSerializable.kt");
-    }
-
-    @Test
     @TestMetadata("classSerializerAsObject.kt")
     public void testClassSerializerAsObject() throws Exception {
         runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/boxIr/classSerializerAsObject.kt");
+    }
+
+    @Test
+    @TestMetadata("metaSerializable.kt")
+    public void testMetaSerializable() throws Exception {
+        runTest("plugins/kotlin-serialization/kotlin-serialization-compiler/testData/boxIr/metaSerializable.kt");
     }
 
     @Test

@@ -124,30 +124,5 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             Renderers.RENDER_TYPE,
             Renderers.RENDER_TYPE
         )
-
-        MAP.put(
-            SerializationErrors.MULTIPLE_SERIALIZER_PARAMS,
-            "Can not have more than one parameter with @MetaSerializable.Serializer"
-        )
-
-        MAP.put(
-            SerializationErrors.SERIALIZER_PARAM_WRONG_TYPE,
-            "Parameter annotated with @MetaSerializable.Serializer should be of KClass<out KSerializer<*>> type, but was ''{0}''",
-            Renderers.RENDER_TYPE
-        )
-
-        MAP.put(
-            SerializationErrors.SERIALIZABLE_AND_META_ANNOTATION,
-            "Class ''{0}'' should not be annotations with both Serializable and meta-serializable annotations. " +
-                    "Serializer parameter of meta-serializable annotation will be ignored",
-            Renderers.RENDER_TYPE,
-        )
-
-        MAP.put(
-            SerializationErrors.MULTIPLE_META_ANNOTATIONS,
-            "Class ''{0}'' has multiple meta-serializable annotations. " +
-                    "Serializer parameter of some of meta-serializable annotations will be ignored",
-            Renderers.RENDER_TYPE,
-        )
     }
 }

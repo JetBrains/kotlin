@@ -40,7 +40,6 @@ object SerializationAnnotations {
     internal val additionalSerializersFqName = FqName("kotlinx.serialization.UseSerializers")
 
     internal val metaSerializableAnnotationFqName = FqName("kotlinx.serialization.MetaSerializable")
-    internal val metaSerializableSerializerAnnotationFqName = FqName("kotlinx.serialization.MetaSerializable.Serializer")
 }
 
 object SerialEntityNames {

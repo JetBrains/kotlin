@@ -42,11 +42,6 @@ public interface SerializationErrors {
 
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> INCONSISTENT_INHERITABLE_SERIALINFO = DiagnosticFactory2.create(ERROR);
 
-    DiagnosticFactory0<PsiElement> MULTIPLE_SERIALIZER_PARAMS = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory1<PsiElement, KotlinType> SERIALIZER_PARAM_WRONG_TYPE = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory1<PsiElement, KotlinType> SERIALIZABLE_AND_META_ANNOTATION = DiagnosticFactory1.create(WARNING);
-    DiagnosticFactory1<PsiElement, KotlinType> MULTIPLE_META_ANNOTATIONS = DiagnosticFactory1.create(WARNING);
-
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {
