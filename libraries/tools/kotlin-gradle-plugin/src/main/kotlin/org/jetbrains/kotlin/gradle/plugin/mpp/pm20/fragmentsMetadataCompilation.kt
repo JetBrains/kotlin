@@ -10,7 +10,6 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCommonSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -153,8 +152,12 @@ private fun configureMetadataJarTask(
     module.fragments.all { fragment ->
         allMetadataJar.configure { jar ->
             val metadataOutput = project.files(Callable {
-                val compilationData = registry.byFragment(fragment)
-                project.filesWithUnpackedArchives(compilationData.output.allOutputs, setOf(KLIB_FILE_EXTENSION))
+                val compilationData = registry.getForFragmentOrNull(fragment)
+                compilationData?.run {
+                    if (!fragment.isNativeHostSpecific())
+                        project.filesWithUnpackedArchives(compilationData.output.allOutputs, setOf(KLIB_FILE_EXTENSION))
+                    else emptyList<Any>()
+                } ?: emptyList<Any>()
             })
             jar.from(metadataOutput) { spec ->
                 spec.into(fragment.fragmentName)
