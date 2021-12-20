@@ -267,6 +267,9 @@ class JavaOnlyClasspathChangesComputerTest(private val protoBased: Boolean) : Cl
 
 class KotlinAndJavaClasspathChangesComputerTest : ClasspathSnapshotTestCommon() {
 
+    // TODO Add more test cases:
+    //   - Java class converted to Kotlin class
+
     @Test
     fun testImpactAnalysis() {
         val changes =

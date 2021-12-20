@@ -698,7 +698,7 @@ private class ConstantsClassVisitor : ClassVisitor(Opcodes.API_VERSION) {
 
 private class InlineFunctionsClassVisitor(
     private val inlineFunctionNames: Set<String>,
-    cv: ClassVisitor // Note: cv must not override the visitMethod (it will not be called with the current implementation below)
+    cv: ConstantsClassVisitor // Note: cv must not override the visitMethod (it will not be called with the current implementation below)
 ) : ClassVisitor(Opcodes.API_VERSION, cv) {
 
     private val result = LinkedHashMap<String, Long>()
