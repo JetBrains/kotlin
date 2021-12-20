@@ -29,8 +29,12 @@ class ClassFile(
     }
 }
 
-/** Information to locate a .class file, plus their contents. */
+/** Contains the contents of a [ClassFile] and information extracted from the contents. */
 class ClassFileWithContents(
     val classFile: ClassFile,
     val contents: ByteArray
-)
+) {
+    val classInfo: BasicClassInfo by lazy {
+        BasicClassInfo.compute(contents)
+    }
+}

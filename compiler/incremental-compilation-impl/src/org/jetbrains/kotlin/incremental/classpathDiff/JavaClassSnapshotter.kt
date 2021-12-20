@@ -14,7 +14,7 @@ import org.jetbrains.org.objectweb.asm.tree.ClassNode
 /** Computes a [JavaClassSnapshot] of a Java class. */
 object JavaClassSnapshotter {
 
-    fun snapshot(classContents: ByteArray, classInfo: BasicClassInfo, includeDebugInfoInSnapshot: Boolean? = null): JavaClassSnapshot {
+    fun snapshot(classFile: ClassFileWithContents, includeDebugInfoInSnapshot: Boolean? = null): JavaClassSnapshot {
         // We will extract ABI information from the given class and store it into the `abiClass` variable.
         // It is acceptable to collect more info than required, but it is incorrect to collect less info than required.
         // There are 2 approaches:
@@ -29,7 +29,7 @@ object JavaClassSnapshotter {
         //   - SKIP_CODE and SKIP_FRAMES are set as method bodies will not be part of the ABI of the class.
         //   - SKIP_DEBUG is not set as it would skip method parameters, which may be used by annotation processors like Room.
         //   - EXPAND_FRAMES is not needed (and not relevant when SKIP_CODE is set).
-        val classReader = ClassReader(classContents)
+        val classReader = ClassReader(classFile.contents)
         classReader.accept(abiClass, ClassReader.SKIP_CODE or ClassReader.SKIP_FRAMES)
 
         // Then, remove non-ABI info, which includes:
@@ -52,7 +52,10 @@ object JavaClassSnapshotter {
         abiClass.methods.clear()
         val classAbiExcludingMembers = abiClass.let { snapshotJavaElement(it, it.name, includeDebugInfoInSnapshot) }
 
-        return RegularJavaClassSnapshot(classInfo.classId, classInfo.supertypes, classAbiExcludingMembers, fieldsAbi, methodsAbi)
+        return RegularJavaClassSnapshot(
+            classFile.classInfo.classId, classFile.classInfo.supertypes,
+            classAbiExcludingMembers, fieldsAbi, methodsAbi
+        )
     }
 
     private val gson by lazy {

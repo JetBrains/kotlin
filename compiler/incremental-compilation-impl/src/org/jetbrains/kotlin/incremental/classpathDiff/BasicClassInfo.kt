@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.ClassReader.*
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 
@@ -46,10 +47,7 @@ class BasicClassInfo(
             val innerClassesClassVisitor = InnerClassesClassVisitor(kotlinClassHeaderClassVisitor)
             val basicClassInfoVisitor = BasicClassInfoClassVisitor(innerClassesClassVisitor)
 
-            ClassReader(classContents).accept(
-                basicClassInfoVisitor,
-                ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES
-            )
+            ClassReader(classContents).accept(basicClassInfoVisitor, SKIP_CODE or SKIP_DEBUG or SKIP_FRAMES)
 
             val className = basicClassInfoVisitor.getClassName()
             val innerClassesInfo = innerClassesClassVisitor.getInnerClassesInfo()

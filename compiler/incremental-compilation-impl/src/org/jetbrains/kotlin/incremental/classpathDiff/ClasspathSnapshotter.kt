@@ -76,18 +76,13 @@ object ClassSnapshotter {
         protoBased: Boolean? = null,
         includeDebugInfoInSnapshot: Boolean? = null
     ): List<ClassSnapshot> {
-        val classesInfo: List<BasicClassInfo> = classes.map { BasicClassInfo.compute(it.contents) }
-
         // Find inaccessible classes first, their snapshots will be `InaccessibleClassSnapshot`s.
-        val inaccessibleClasses: Set<BasicClassInfo> = getInaccessibleClasses(classesInfo).toSet()
+        val classesInfo: List<BasicClassInfo> = classes.map { it.classInfo }
+        val inaccessibleClassesInfo: Set<BasicClassInfo> = getInaccessibleClasses(classesInfo).toSet()
 
         // Snapshot the remaining accessible classes
-        val accessibleClasses: List<ClassFileWithContents> = classes.mapIndexedNotNull { index, clazz ->
-            if (classesInfo[index] in inaccessibleClasses) null else clazz
-        }
-        val accessibleClassesInfo: List<BasicClassInfo> = classesInfo.filterNot { it in inaccessibleClasses }
-        val accessibleSnapshots: List<ClassSnapshot> =
-            doSnapshot(accessibleClasses, accessibleClassesInfo, protoBased, includeDebugInfoInSnapshot)
+        val accessibleClasses: List<ClassFileWithContents> = classes.filter { it.classInfo !in inaccessibleClassesInfo }
+        val accessibleSnapshots: List<ClassSnapshot> = doSnapshot(accessibleClasses, protoBased, includeDebugInfoInSnapshot)
         val accessibleClassSnapshots: Map<ClassFileWithContents, ClassSnapshot> = accessibleClasses.zipToMap(accessibleSnapshots)
 
         return classes.map { accessibleClassSnapshots[it] ?: InaccessibleClassSnapshot }
@@ -95,58 +90,47 @@ object ClassSnapshotter {
 
     private fun doSnapshot(
         classes: List<ClassFileWithContents>,
-        classesInfo: List<BasicClassInfo>,
         protoBased: Boolean? = null,
         includeDebugInfoInSnapshot: Boolean? = null
     ): List<ClassSnapshot> {
         // Snapshot Kotlin classes first
-        val kotlinSnapshots: List<KotlinClassSnapshot?> = classes.mapIndexed { index, clazz ->
-            trySnapshotKotlinClass(clazz, classesInfo[index])
+        val kotlinSnapshots: List<KotlinClassSnapshot?> = classes.map { clazz ->
+            trySnapshotKotlinClass(clazz)
         }
         val kotlinClassSnapshots: Map<ClassFileWithContents, KotlinClassSnapshot?> = classes.zipToMap(kotlinSnapshots)
 
         // Snapshot the remaining Java classes
         val javaClasses: List<ClassFileWithContents> = classes.filter { kotlinClassSnapshots[it] == null }
-        val javaClassesInfo: List<BasicClassInfo> = classesInfo.mapIndexedNotNull { index, classInfo ->
-            val javaClass = classes[index]
-            if (kotlinClassSnapshots[javaClass] == null) classInfo else null
-        }
-        val javaSnapshots: List<JavaClassSnapshot> =
-            snapshotJavaClasses(javaClasses, javaClassesInfo, protoBased, includeDebugInfoInSnapshot)
+        val javaSnapshots: List<JavaClassSnapshot> = snapshotJavaClasses(javaClasses, protoBased, includeDebugInfoInSnapshot)
         val javaClassSnapshots: Map<ClassFileWithContents, JavaClassSnapshot> = javaClasses.zipToMap(javaSnapshots)
 
         return classes.map { kotlinClassSnapshots[it] ?: javaClassSnapshots[it]!! }
     }
 
     /** Creates [KotlinClassSnapshot] of the given class, or returns `null` if the class is not a Kotlin class. */
-    private fun trySnapshotKotlinClass(classFile: ClassFileWithContents, classInfo: BasicClassInfo): KotlinClassSnapshot? {
-        return if (classInfo.isKotlinClass) {
-            val kotlinClassInfo = KotlinClassInfo.createFrom(classInfo.classId, classInfo.kotlinClassHeader!!, classFile.contents)
-            KotlinClassSnapshot(kotlinClassInfo, classInfo.supertypes)
+    private fun trySnapshotKotlinClass(classFile: ClassFileWithContents): KotlinClassSnapshot? {
+        return if (classFile.classInfo.isKotlinClass) {
+            val kotlinClassInfo =
+                KotlinClassInfo.createFrom(classFile.classInfo.classId, classFile.classInfo.kotlinClassHeader!!, classFile.contents)
+            KotlinClassSnapshot(kotlinClassInfo, classFile.classInfo.supertypes)
         } else null
     }
 
     /** Creates [JavaClassSnapshot]s of the given Java classes. */
     private fun snapshotJavaClasses(
         classes: List<ClassFileWithContents>,
-        classesInfo: List<BasicClassInfo>,
         protoBased: Boolean? = null,
         includeDebugInfoInSnapshot: Boolean? = null
     ): List<JavaClassSnapshot> {
         return if (protoBased ?: protoBasedDefaultValue) {
-            snapshotJavaClassesProtoBased(classes, classesInfo)
+            snapshotJavaClassesProtoBased(classes)
         } else {
-            classes.mapIndexed { index, clazz ->
-                JavaClassSnapshotter.snapshot(clazz.contents, classesInfo[index], includeDebugInfoInSnapshot)
-            }
+            classes.map { JavaClassSnapshotter.snapshot(it, includeDebugInfoInSnapshot) }
         }
     }
 
-    private fun snapshotJavaClassesProtoBased(
-        classFilesWithContents: List<ClassFileWithContents>,
-        classesInfo: List<BasicClassInfo>
-    ): List<JavaClassSnapshot> {
-        val classIds = classesInfo.map { it.classId }
+    private fun snapshotJavaClassesProtoBased(classFilesWithContents: List<ClassFileWithContents>): List<JavaClassSnapshot> {
+        val classIds = classFilesWithContents.map { it.classInfo.classId }
         val classesContents = classFilesWithContents.map { it.contents }
         val descriptors: List<JavaClassDescriptor?> = JavaClassDescriptorCreator.create(classIds, classesContents)
         val snapshots: List<JavaClassSnapshot> = descriptors.mapIndexed { index, descriptor ->
