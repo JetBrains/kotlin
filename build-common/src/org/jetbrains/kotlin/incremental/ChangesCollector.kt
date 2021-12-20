@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
-import org.jetbrains.kotlin.metadata.deserialization.supertypes
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
@@ -45,10 +44,22 @@ class ChangesCollector {
         fun ClassProtoData.getNonPrivateMemberNames(): Set<String> {
             return proto.getNonPrivateNames(
                 nameResolver,
+                // The types below should match the logic at `DifferenceCalculatorForClass.difference`
                 ProtoBuf.Class::getConstructorList,
                 ProtoBuf.Class::getFunctionList,
-                ProtoBuf.Class::getPropertyList
+                ProtoBuf.Class::getPropertyList,
+                ProtoBuf.Class::getTypeAliasList
             ) + proto.enumEntryList.map { nameResolver.getString(it.name) }
+        }
+
+        fun PackagePartProtoData.getNonPrivateMemberNames(): Set<String> {
+            return proto.getNonPrivateNames(
+                nameResolver,
+                // The types below should match the logic at `DifferenceCalculatorForPackageFacade.difference`
+                ProtoBuf.Package::getFunctionList,
+                ProtoBuf.Package::getPropertyList,
+                ProtoBuf.Package::getTypeAliasList
+            )
         }
     }
 
@@ -182,13 +193,7 @@ class ChangesCollector {
         }
 
     private fun PackagePartProtoData.collectAllFromPackage(isRemoved: Boolean) {
-        val memberNames =
-            proto.getNonPrivateNames(
-                nameResolver,
-                ProtoBuf.Package::getFunctionList,
-                ProtoBuf.Package::getPropertyList
-            )
-
+        val memberNames = getNonPrivateMemberNames()
         if (isRemoved) {
             collectRemovedMembers(packageFqName, memberNames)
         } else {

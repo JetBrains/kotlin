@@ -111,12 +111,14 @@ object KotlinClassSnapshotExternalizer : DataExternalizer<KotlinClassSnapshot> {
     override fun save(output: DataOutput, snapshot: KotlinClassSnapshot) {
         KotlinClassInfoExternalizer.save(output, snapshot.classInfo)
         ListExternalizer(JvmClassNameExternalizer).save(output, snapshot.supertypes)
+        NullableValueExternalizer(ListExternalizer(PackageMemberExternalizer)).save(output, snapshot.packageMembers)
     }
 
     override fun read(input: DataInput): KotlinClassSnapshot {
         return KotlinClassSnapshot(
             classInfo = KotlinClassInfoExternalizer.read(input),
-            supertypes = ListExternalizer(JvmClassNameExternalizer).read(input)
+            supertypes = ListExternalizer(JvmClassNameExternalizer).read(input),
+            packageMembers = NullableValueExternalizer(ListExternalizer(PackageMemberExternalizer)).read(input)
         )
     }
 }
@@ -142,6 +144,21 @@ object KotlinClassInfoExternalizer : DataExternalizer<KotlinClassInfo> {
             multifileClassName = NullableValueExternalizer(StringExternalizer).read(input),
             constantsMap = LinkedHashMapExternalizer(StringExternalizer, ConstantExternalizer).read(input),
             inlineFunctionsMap = LinkedHashMapExternalizer(StringExternalizer, LongExternalizer).read(input)
+        )
+    }
+}
+
+object PackageMemberExternalizer : DataExternalizer<PackageMember> {
+
+    override fun save(output: DataOutput, packageMember: PackageMember) {
+        FqNameExternalizer.save(output, packageMember.packageFqName)
+        StringExternalizer.save(output, packageMember.memberName)
+    }
+
+    override fun read(input: DataInput): PackageMember {
+        return PackageMember(
+            packageFqName = FqNameExternalizer.read(input),
+            memberName = StringExternalizer.read(input)
         )
     }
 }

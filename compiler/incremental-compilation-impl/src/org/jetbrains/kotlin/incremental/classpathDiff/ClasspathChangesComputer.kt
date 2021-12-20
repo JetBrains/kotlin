@@ -201,38 +201,16 @@ object ClasspathChangesComputer {
     }
 
     private fun DirtyData.normalize(currentClassSnapshots: List<ClassSnapshot>, previousClassSnapshots: List<ClassSnapshot>): ChangeSet {
-        val allClassIds = currentClassSnapshots.map { it.getClassId() }.toSet() + previousClassSnapshots.map { it.getClassId() }
-        val fqNameToClassId = HashMap<FqName, ClassId>(allClassIds.size)
-        allClassIds.forEach { classId ->
-            val fqName = classId.asSingleFqName()
-            check(!fqNameToClassId.contains(fqName)) {
-                "Ambiguous FqName $fqName corresponds to two different `ClassId`s: ${fqNameToClassId[fqName]} and $classId"
-            }
-            fqNameToClassId[fqName] = classId
-        }
+        val changedLookupSymbols =
+            dirtyLookupSymbols.filterLookupSymbols(currentClassSnapshots).toSet() +
+                    dirtyLookupSymbols.filterLookupSymbols(previousClassSnapshots)
 
         val changes = ChangeSet.Collector().run {
-            dirtyLookupSymbols.forEach {
-                val lookupSymbolFqName = if (it.scope.isEmpty()) FqName(it.name) else FqName("${it.scope}.${it.name}")
-                val lookupSymbolClassId: ClassId? = fqNameToClassId[lookupSymbolFqName]
-                if (lookupSymbolClassId != null) {
-                    addChangedClass(lookupSymbolClassId)
-                } else {
-                    // When lookupSymbolClassId == null, it means that either (1) the LookupSymbol does not refer to a class (it refers to
-                    // a class member or a package-level member), or (2) it refers to a class outside allClassIds. In the following, we
-                    // assume that (1) is the case.
-                    // (2) should typically never happen. In the case that it happens, we will collect incorrect changes, but it's
-                    // acceptable to collect more changes than necessary; also, we do not need to collect changes outside allClassIds, so
-                    // we're not collecting fewer changes than required.
-                    val scopeClassId: ClassId? = fqNameToClassId[FqName(it.scope)]
-                    if (scopeClassId != null) {
-                        addChangedClassMember(scopeClassId, it.name)
-                    } else {
-                        // Similarly, when scopeClassId == null, we assume that LookupSymbol.scope does not refer to a class outside
-                        // allClassIds. It means that the LookupSymbol does not refer to a class member. Therefore, it must refer to a
-                        // package-level member.
-                        addChangedTopLevelMember(FqName(it.scope), it.name)
-                    }
+            changedLookupSymbols.forEach {
+                when (it) {
+                    is ClassSymbol -> addChangedClass(it.classId)
+                    is ClassMember -> addChangedClassMember(it.classId, it.memberName)
+                    is PackageMember -> addChangedTopLevelMember(it.packageFqName, it.memberName)
                 }
             }
             getChanges()
@@ -243,14 +221,13 @@ object ClasspathChangesComputer {
         //   2. dirtyClassesFqNames => This should be derived from dirtyLookupSymbols.
         //   3. dirtyClassesFqNamesForceRecompile => Should be irrelevant.
         // Double-check that the assumption at bullet 2 above is correct.
-        val changedFqNames: Set<FqName> =
-            changes.changedClasses.map { it.asSingleFqName() }.toSet() +
-                    changes.changedClassMembers.keys.map { it.asSingleFqName() } +
-                    changes.changedTopLevelMembers.keys
-        check(dirtyClassesFqNames.toSet() == changedFqNames) {
-            "Two sets differ:\n" +
-                    "dirtyClassesFqNames: $dirtyClassesFqNames\n" +
-                    "changedFqNames: $changedFqNames"
+        val derivedDirtyFqNames: Set<FqName> = dirtyLookupSymbols.flatMap {
+            val lookupSymbolFqName = if (it.scope.isEmpty()) FqName(it.name) else FqName("${it.scope}.${it.name}")
+            val scopeFqName = FqName(it.scope)
+            listOf(lookupSymbolFqName, scopeFqName)
+        }.toSet()
+        (dirtyClassesFqNames - derivedDirtyFqNames).let {
+            check(it.isEmpty()) { "FqNames found in dirtyClassesFqNames but not in dirtyLookupSymbols: $it" }
         }
 
         return changes

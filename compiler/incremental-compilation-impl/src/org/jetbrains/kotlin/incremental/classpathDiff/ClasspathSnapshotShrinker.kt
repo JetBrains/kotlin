@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnable
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun
 import org.jetbrains.kotlin.incremental.LookupStorage
+import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotShrinker.shrink
 import org.jetbrains.kotlin.incremental.storage.ListExternalizer
 import org.jetbrains.kotlin.incremental.storage.LookupSymbolKey
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.incremental.storage.loadFromFile
 import org.jetbrains.kotlin.incremental.storage.saveToFile
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 object ClasspathSnapshotShrinker {
@@ -34,6 +34,8 @@ object ClasspathSnapshotShrinker {
     ): List<ClassSnapshotWithHash> {
         val lookupSymbols = metrics.measure(BuildTime.GET_LOOKUP_SYMBOLS) {
             lookupStorage.lookupSymbols
+                .map { LookupSymbol(it.name, it.scope) }
+                .filterLookupSymbols(allClasses.map { it.classSnapshot })
         }
         return shrink(allClasses, lookupSymbols, metrics)
     }
@@ -41,7 +43,7 @@ object ClasspathSnapshotShrinker {
     /** Shrinks the given classes by retaining only classes that are referenced by the given lookup symbols. */
     fun shrink(
         allClasses: List<ClassSnapshotWithHash>,
-        lookupSymbols: Collection<LookupSymbolKey>,
+        lookupSymbols: List<ProgramSymbol>,
         metrics: BuildMetricsReporter = DoNothingBuildMetricsReporter
     ): List<ClassSnapshotWithHash> {
         val referencedClasses = metrics.measure(BuildTime.FIND_REFERENCED_CLASSES) {
@@ -59,28 +61,28 @@ object ClasspathSnapshotShrinker {
      */
     private fun findReferencedClasses(
         allClasses: List<ClassSnapshotWithHash>,
-        lookupSymbols: Collection<LookupSymbolKey>
+        lookupSymbols: List<ProgramSymbol>
     ): List<ClassSnapshotWithHash> {
-        val potentialClassNamesOfReferencedClasses =
-            lookupSymbols.flatMap {
-                val lookupSymbolFqName = if (it.scope.isEmpty()) FqName(it.name) else FqName("${it.scope}.${it.name}")
-                listOf(
-                    lookupSymbolFqName, // If LookupSymbol refers to a class, the class's FqName will be captured here.
-                    FqName(it.scope) // If LookupSymbol refers to a class member, the class's FqName will be captured here.
-                )
-            }.toSet() // Use Set for presence check
-        val potentialPackageNamesOfReferencedPackageLevelMembers =
-            lookupSymbols.map {
-                FqName(it.scope) // If LookupSymbol refers to a package-level member, the package's FqName will be captured here.
-            }.toSet() // Use Set for presence check
+        val lookedUpClassIds: Set<ClassId> = lookupSymbols.mapNotNullTo(mutableSetOf()) {
+            when (it) {
+                is ClassSymbol -> it.classId
+                is ClassMember -> it.classId
+                is PackageMember -> null
+            }
+        }
+        val lookedUpPackageMembers: Set<PackageMember> = lookupSymbols.filterIsInstanceTo(mutableSetOf())
 
         return allClasses.filter {
-            val classId = it.classSnapshot.getClassId()
-
-            (classId.asSingleFqName() in potentialClassNamesOfReferencedClasses) ||
-                    (it.classSnapshot is KotlinClassSnapshot
-                            && it.classSnapshot.classInfo.classKind != KotlinClassHeader.Kind.CLASS
-                            && classId.packageFqName in potentialPackageNamesOfReferencedPackageLevelMembers)
+            val isPackageFacade =
+                it.classSnapshot is KotlinClassSnapshot && it.classSnapshot.classInfo.classKind != KotlinClassHeader.Kind.CLASS
+            if (isPackageFacade) {
+                // If packageMembers == null (e.g., if classKind == KotlinClassHeader.Kind.MULTIFILE_CLASS -- see
+                // `KotlinClassSnapshot.packageMembers`'s kdoc), it means that we don't have the information, so we will always include the
+                // class (it's okay to over-approximate the result).
+                (it.classSnapshot as KotlinClassSnapshot).packageMembers?.any { member -> member in lookedUpPackageMembers } ?: true
+            } else {
+                it.classSnapshot.getClassId() in lookedUpClassIds
+            }
         }
     }
 
@@ -210,9 +212,7 @@ internal fun shrinkAndSaveClasspathSnapshot(
             if (addedLookupSymbols.isEmpty()) {
                 ShrinkMode.IncrementalNoNewLookups(shrunkCurrentClasspathAgainstPreviousLookups!!)
             } else {
-                ShrinkMode.Incremental(
-                    currentClasspathSnapshot!!, shrunkCurrentClasspathAgainstPreviousLookups!!, addedLookupSymbols
-                )
+                ShrinkMode.Incremental(currentClasspathSnapshot!!, shrunkCurrentClasspathAgainstPreviousLookups!!, addedLookupSymbols)
             }
         }
         is NotAvailableDueToMissingClasspathSnapshot, is NotAvailableForNonIncrementalRun -> ShrinkMode.NonIncremental
@@ -229,8 +229,11 @@ internal fun shrinkAndSaveClasspathSnapshot(
         is ShrinkMode.Incremental -> metrics.measure(BuildTime.SHRINK_CURRENT_CLASSPATH_SNAPSHOT_AFTER_COMPILATION) {
             val shrunkClasses = shrinkMode.shrunkCurrentClasspathAgainstPreviousLookups.map { it.classSnapshot.getClassId() }.toSet()
             val notYetShrunkClasses = shrinkMode.currentClasspathSnapshot.filter { it.classSnapshot.getClassId() !in shrunkClasses }
+            val addedLookupSymbols = shrinkMode.addedLookupSymbols
+                .map { LookupSymbol(it.name, it.scope) }
+                .filterLookupSymbols(shrinkMode.currentClasspathSnapshot.map { it.classSnapshot })
             // Don't provide a BuildMetricsReporter for the following call as the sub-BuildTimes in it have a different parent
-            val shrunkRemainingClassesAgainstNewLookups = shrink(notYetShrunkClasses, shrinkMode.addedLookupSymbols)
+            val shrunkRemainingClassesAgainstNewLookups = shrink(notYetShrunkClasses, addedLookupSymbols)
 
             shrinkMode.shrunkCurrentClasspathAgainstPreviousLookups + shrunkRemainingClassesAgainstNewLookups
         }

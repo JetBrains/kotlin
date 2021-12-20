@@ -25,8 +25,10 @@ abstract class ClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
     protected abstract val sourceFileWithNonAbiChange: TestSourceFile
 
     private val expectedSnapshotFile: File
-        get() = sourceFile.asFile().path.let {
-            File(it.substringBeforeLast("src") + "expected-snapshot" + it.substringAfterLast("src").substringBeforeLast('.') + ".json")
+        get() = sourceFile.asFile().let {
+            val srcDir = File(it.path.substringBeforeLast("src") + "src")
+            val relativePath = it.relativeTo(srcDir)
+            testDataDir.resolve("expected-snapshot").resolve(relativePath.parent).resolve(relativePath.nameWithoutExtension + ".json")
         }
 
     @Test

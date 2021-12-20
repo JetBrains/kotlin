@@ -55,7 +55,17 @@ class ClassSnapshotWithHash(val classSnapshot: ClassSnapshot, val hash: Long) {
 /** [ClassSnapshot] of a Kotlin class. */
 class KotlinClassSnapshot(
     val classInfo: KotlinClassInfo,
-    val supertypes: List<JvmClassName>
+    val supertypes: List<JvmClassName>,
+
+    /**
+     * Package-level members if this class is a package facade (classInfo.classKind != KotlinClassHeader.Kind.CLASS).
+     *
+     * Note that MULTIFILE_CLASS classes do not have proto data, so we can't extract their package-level members even though they are
+     * package facades.
+     *
+     * Therefore, the [packageMembers] property below is not null iff classInfo.classKind !in setOf(CLASS, MULTIFILE_CLASS)
+     */
+    val packageMembers: List<PackageMember>?
 ) : ClassSnapshot() {
 
     override fun toString() = classInfo.classId.toString()
