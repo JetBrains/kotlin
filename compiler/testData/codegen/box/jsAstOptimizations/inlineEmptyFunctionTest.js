@@ -8,7 +8,8 @@ function box() {
     var tmp;
     var tmp_0;
     if (equals(OK, 'OK') && flag1 === 1) {
-      tmp_0 = typeof flag2 === 'number';
+      flag2;
+      tmp_0 = true;
     } else {
       tmp_0 = false;
     }
@@ -26,7 +27,8 @@ function box() {
     var tmp_1;
     var tmp_2;
     if (equals(OK, 'OK') && flag1 === 1) {
-      tmp_2 = typeof flag2 === 'number';
+      flag2;
+      tmp_2 = true;
     } else {
       tmp_2 = false;
     }
