@@ -19,9 +19,7 @@ object OptionalAnnotationUtil {
         assert(descriptor.isExpect) { "Not an expected class: $descriptor" }
 
         if (isOptionalAnnotationClass(descriptor)) {
-            with(ExpectedActualResolver) {
-                return descriptor.findCompatibleActualForExpected(descriptor.module).isEmpty()
-            }
+            return descriptor.findCompatibleActualsForExpected(descriptor.module).isEmpty()
         }
 
         return false

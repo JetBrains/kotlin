@@ -26,8 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.model.CollectionLiteralKotlinCallArgum
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.isParameterOfAnnotation
-import org.jetbrains.kotlin.resolve.multiplatform.ALL_MODULES
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
+import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleExpectsForActual
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
@@ -112,10 +111,8 @@ fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
 private fun ValueParameterDescriptor.checkExpectedParameter(checker: (ValueParameterDescriptor) -> Boolean): Boolean {
     val function = containingDeclaration
     if (function is FunctionDescriptor && function.isActual) {
-        with(ExpectedActualResolver) {
-            val expected = function.findCompatibleExpectedForActual(ALL_MODULES).firstOrNull()
-            return expected is FunctionDescriptor && checker(expected.valueParameters[index])
-        }
+        val expected = function.findCompatibleExpectsForActual().firstOrNull()
+        return expected is FunctionDescriptor && checker(expected.valueParameters[index])
     }
     return false
 }

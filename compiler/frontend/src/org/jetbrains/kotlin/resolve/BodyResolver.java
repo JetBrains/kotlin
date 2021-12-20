@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver;
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolverKt;
 import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.types.*;
@@ -532,7 +532,7 @@ public class BodyResolver {
                     }
                     parentEnumOrSealed.add(currentDescriptor.getTypeConstructor());
                     if (currentDescriptor.isExpect()) {
-                        List<MemberDescriptor> actualDescriptors = ExpectedActualResolver.INSTANCE.findCompatibleActualForExpected(
+                        List<MemberDescriptor> actualDescriptors = ExpectedActualResolverKt.findCompatibleActualsForExpected(
                                 currentDescriptor, DescriptorUtilsKt.getModule( currentDescriptor)
                         );
                         for (MemberDescriptor actualDescriptor: actualDescriptors) {

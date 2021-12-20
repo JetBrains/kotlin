@@ -24,24 +24,11 @@ import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.keysToMap
 
 object ExpectedActualResolver {
-    // FIXME(dsavvinov): review clients, as they won't work properly in HMPP projects
-    fun MemberDescriptor.findCompatibleActualForExpected(platformModule: ModuleDescriptor): List<MemberDescriptor> =
-        findActualForExpected(this, platformModule, onlyFromThisModule(platformModule))?.get(Compatible).orEmpty()
-
-    fun MemberDescriptor.findAnyActualForExpected(platformModule: ModuleDescriptor): List<MemberDescriptor> {
-        val actualsGroupedByCompatibility = findActualForExpected(this, platformModule, onlyFromThisModule(platformModule))
-        return actualsGroupedByCompatibility?.get(Compatible)
-                ?: actualsGroupedByCompatibility?.values?.flatten()
-                ?: emptyList()
-    }
-
-    fun MemberDescriptor.findCompatibleExpectedForActual(moduleFilter: ModuleFilter): List<MemberDescriptor> =
-        findExpectedForActual(this, moduleFilter)?.get(Compatible).orEmpty()
 
     fun findActualForExpected(
         expected: MemberDescriptor,
         platformModule: ModuleDescriptor,
-        moduleVisibilityFilter: ModuleFilter,
+        moduleVisibilityFilter: ModuleFilter = allModulesProvidingActualsFor(expected.module),
     ): Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>? {
         return when (expected) {
             is CallableMemberDescriptor -> {
@@ -69,7 +56,7 @@ object ExpectedActualResolver {
 
     fun findExpectedForActual(
         actual: MemberDescriptor,
-        moduleFilter: (ModuleDescriptor) -> Boolean
+        moduleFilter: (ModuleDescriptor) -> Boolean = allModulesProvidingExpectsFor(actual.module)
     ): Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>? {
         return when (actual) {
             is CallableMemberDescriptor -> {
@@ -533,19 +520,39 @@ object ExpectedActualResolver {
     }
 }
 
-fun DeclarationDescriptor.findExpects(): List<MemberDescriptor> {
-    return ExpectedActualResolver.findExpectedForActual(
-        this as MemberDescriptor, ALL_MODULES
-    )?.get(Compatible).orEmpty()
+// FIXME(dsavvinov): review clients, as they won't work properly in HMPP projects
+@JvmOverloads
+fun MemberDescriptor.findCompatibleActualsForExpected(
+    platformModule: ModuleDescriptor, moduleFilter: ModuleFilter = allModulesProvidingActualsFor(module)
+): List<MemberDescriptor> =
+    ExpectedActualResolver.findActualForExpected(this, platformModule, moduleFilter)?.get(Compatible).orEmpty()
+
+@JvmOverloads
+fun MemberDescriptor.findAnyActualsForExpected(
+    platformModule: ModuleDescriptor, moduleFilter: ModuleFilter = allModulesProvidingActualsFor(module)
+): List<MemberDescriptor> {
+    val actualsGroupedByCompatibility = ExpectedActualResolver.findActualForExpected(this, platformModule, moduleFilter)
+    return actualsGroupedByCompatibility?.get(Compatible)
+        ?: actualsGroupedByCompatibility?.values?.flatten()
+        ?: emptyList()
 }
 
-fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor = this.module): List<MemberDescriptor> {
-    return ExpectedActualResolver.findActualForExpected(
-        (this as MemberDescriptor), inModule, ALL_MODULES
-    )?.get(Compatible).orEmpty()
+fun MemberDescriptor.findCompatibleExpectsForActual(
+    moduleFilter: ModuleFilter = allModulesProvidingExpectsFor(module)
+): List<MemberDescriptor> =
+    ExpectedActualResolver.findExpectedForActual(this, moduleFilter)?.get(Compatible).orEmpty()
+
+fun DeclarationDescriptor.findExpects(): List<MemberDescriptor> {
+    if(this !is MemberDescriptor) return emptyList()
+    return this.findCompatibleExpectsForActual()
+}
+
+fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor): List<MemberDescriptor> {
+    if(this !is MemberDescriptor) return emptyList()
+    return this.findCompatibleActualsForExpected(inModule)
 }
 
 // TODO: Klibs still need to better handle source in deserialized descriptors.
-val DeclarationDescriptorWithSource.couldHaveASource: Boolean get() =
-    this.source.containingFile != SourceFile.NO_SOURCE_FILE ||
-    this is DeserializedDescriptor
+val DeclarationDescriptorWithSource.couldHaveASource: Boolean
+    get() = this.source.containingFile != SourceFile.NO_SOURCE_FILE ||
+            this is DeserializedDescriptor

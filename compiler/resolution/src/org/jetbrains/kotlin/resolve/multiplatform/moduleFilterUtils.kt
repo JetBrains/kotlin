@@ -15,4 +15,12 @@ fun onlyFromThisModule(module: ModuleDescriptor): ModuleFilter = { it == module 
 
 val ALL_MODULES: ModuleFilter = { true }
 
+fun allModulesProvidingExpectsFor(platformModule: ModuleDescriptor): ModuleFilter = {
+    it == platformModule || it in platformModule.allExpectedByModules
+}
+
+fun allModulesProvidingActualsFor(commonModule: ModuleDescriptor): ModuleFilter = {
+    it == commonModule || commonModule in it.allExpectedByModules
+}
+
 fun <T : DeclarationDescriptor> Iterable<T>.applyFilter(filter: ModuleFilter): List<T> = filter { filter(it.module) }

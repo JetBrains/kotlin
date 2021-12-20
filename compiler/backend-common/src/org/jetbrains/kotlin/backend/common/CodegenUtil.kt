@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
+import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleExpectsForActual
 import org.jetbrains.kotlin.resolve.multiplatform.onlyFromThisModule
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.getExceptionMessage
@@ -182,9 +182,7 @@ object CodegenUtil {
 
     @JvmStatic
     fun findExpectedFunctionForActual(descriptor: FunctionDescriptor): FunctionDescriptor? {
-        val compatibleExpectedFunctions = with(ExpectedActualResolver) {
-            descriptor.findCompatibleExpectedForActual(onlyFromThisModule(descriptor.module))
-        }
+        val compatibleExpectedFunctions = descriptor.findCompatibleExpectsForActual(onlyFromThisModule(descriptor.module))
         return compatibleExpectedFunctions.firstOrNull() as FunctionDescriptor?
     }
 
