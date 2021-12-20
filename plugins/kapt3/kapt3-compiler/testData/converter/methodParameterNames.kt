@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 interface Intf {
     fun foo(abc: String)
 

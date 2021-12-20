@@ -53,12 +53,14 @@ interface CodegenFactory {
         val bindingContext: BindingContext,
         val languageVersionSettings: LanguageVersionSettings,
         val ignoreErrors: Boolean,
+        val skipBodies: Boolean,
     ) {
         companion object {
             fun fromGenerationState(state: GenerationState): IrConversionInput =
                 with(state) {
                     IrConversionInput(
-                        project, files, configuration, module, originalFrontendBindingContext, languageVersionSettings, ignoreErrors
+                        project, files, configuration, module, originalFrontendBindingContext, languageVersionSettings, ignoreErrors,
+                        skipBodies = !state.classBuilderMode.generateBodies
                     )
                 }
         }

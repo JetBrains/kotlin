@@ -269,7 +269,8 @@ object KotlinToJVMBytecodeCompiler {
             result.moduleDescriptor,
             result.bindingContext,
             configuration.languageVersionSettings,
-            false,
+            ignoreErrors = false,
+            skipBodies = false,
         )
 
         val performanceManager = environment.configuration[CLIConfigurationKeys.PERF_MANAGER]

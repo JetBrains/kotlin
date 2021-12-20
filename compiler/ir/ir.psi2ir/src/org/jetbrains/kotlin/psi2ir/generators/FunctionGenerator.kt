@@ -54,7 +54,8 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             origin,
             getOrFail(BindingContext.FUNCTION, ktFunction)
         ) {
-            ktFunction.bodyExpression?.let { generateFunctionBody(it) }
+            if (context.configuration.skipBodies) null
+            else ktFunction.bodyExpression?.let { generateFunctionBody(it) }
         }
 
     fun generateLambdaFunctionDeclaration(ktFunction: KtFunctionLiteral): IrSimpleFunction {
@@ -131,12 +132,14 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                 irAccessor, ktAccessor ?: ktProperty, ktProperty.receiverTypeReference,
                 ktProperty.contextReceivers.mapNotNull { it.typeReference() }
             )
-            val ktBodyExpression = ktAccessor?.bodyExpression
-            irAccessor.body =
-                if (ktBodyExpression != null)
-                    createBodyGenerator(irAccessor.symbol).generateFunctionBody(ktBodyExpression)
-                else
-                    generateDefaultAccessorBody(descriptor, irAccessor)
+            if (context.configuration.generateBodies) {
+                val ktBodyExpression = ktAccessor?.bodyExpression
+                irAccessor.body =
+                    if (ktBodyExpression != null)
+                        createBodyGenerator(irAccessor.symbol).generateFunctionBody(ktBodyExpression)
+                    else
+                        generateDefaultAccessorBody(descriptor, irAccessor)
+            }
         }
 
     fun generateDefaultAccessorForPrimaryConstructorParameter(

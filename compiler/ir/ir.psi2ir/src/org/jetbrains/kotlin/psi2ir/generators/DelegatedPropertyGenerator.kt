@@ -104,7 +104,9 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
             accessorDescriptor
         ).buildWithScope { irAccessor ->
             FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irAccessor, ktProperty, null, emptyList())
-            irAccessor.body = generateBody(irAccessor)
+            if (context.configuration.generateBodies) {
+                irAccessor.body = generateBody(irAccessor)
+            }
         }
 
 
