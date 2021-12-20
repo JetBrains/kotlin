@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.ic.ModuleCache
 import org.jetbrains.kotlin.ir.backend.js.ic.PersistentCacheConsumer
+import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
@@ -82,6 +83,7 @@ fun compileWithIC(
     symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
 
     allModules.forEach {
+        collectNativeImplementations(context, module)
         moveBodilessDeclarationsToSeparatePlace(context, it)
     }
 

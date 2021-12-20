@@ -49,6 +49,9 @@ fun IrAnnotationContainer.getJsName(): String? =
 fun IrAnnotationContainer.getJsNativeImplementation(): String? =
     getAnnotation(JsAnnotations.jsNativeImplementationFqn)?.getSingleConstStringArgument()
 
+fun IrAnnotationContainer.hasJsNativeImplementation(): Boolean =
+    hasAnnotation(JsAnnotations.jsNativeImplementationFqn)
+
 fun IrAnnotationContainer.getJsFunAnnotation(): String? =
     getAnnotation(JsAnnotations.jsFunFqn)?.getSingleConstStringArgument()
 

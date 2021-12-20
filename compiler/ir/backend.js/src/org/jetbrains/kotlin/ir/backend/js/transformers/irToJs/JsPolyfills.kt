@@ -7,45 +7,42 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNativeImplementation
+import org.jetbrains.kotlin.ir.backend.js.utils.hasJsNativeImplementation
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.js.backend.ast.JsCode
 import org.jetbrains.kotlin.js.backend.ast.JsSingleLineComment
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 
-class JsPolyfills private constructor(
-    private val polyfills: MutableSet<String>,
-    private val generateRegionComments: Boolean = false,
-) : Iterable<String> by polyfills {
-    constructor(polyfills: Iterable<String>) : this(polyfills.toMutableSet())
-    constructor(generateRegionComments: Boolean = false) : this(mutableSetOf<String>(), generateRegionComments)
+class JsPolyfills(private val generateRegionComments: Boolean = false) {
+    private val declarationsWithNativeImplementations = hashMapOf<IrModuleFragment, HashSet<IrDeclaration>>()
 
-    fun registerDeclarationNativeImplementation(declaration: IrDeclaration) {
-        val implementation = declaration.getJsNativeImplementation() ?: return
-        polyfills.add(implementation.trimIndent())
+    fun registerDeclarationNativeImplementation(module: IrModuleFragment, declaration: IrDeclaration) {
+        if (!declaration.hasJsNativeImplementation()) return
+        val declarations = declarationsWithNativeImplementations[module] ?: hashSetOf()
+        declarations.add(declaration)
+        declarationsWithNativeImplementations[module] = declarations
     }
 
-    fun addAllNeededPolyfillsTo(body: MutableList<JsStatement>) {
-        if (polyfills.isEmpty()) return
-        body.startRegion("block: polyfills")
-        body += polyfills.map { JsCode(it) }
-        body.endRegion()
+    fun saveOnlyIntersectionOfNextDeclarationsFor(module: IrModuleFragment, declarations: Set<IrDeclaration>) {
+        val polyfills = declarationsWithNativeImplementations[module] ?: return
+        declarationsWithNativeImplementations[module] = polyfills.intersect(declarations).toHashSet()
     }
 
-    operator fun plusAssign(another: JsPolyfills) {
-        polyfills.addAll(another.polyfills)
-    }
+    fun getAllPolyfillsFor(module: IrModuleFragment): List<JsStatement> {
+        val declarations = declarationsWithNativeImplementations[module] ?: emptySet()
 
-    private fun MutableList<JsStatement>.startRegion(description: String = "") {
-        if (generateRegionComments) {
-            this += JsSingleLineComment("region $description")
+        if (declarations.isEmpty()) return emptyList()
+
+        return mutableListOf<JsStatement>().apply {
+            plusAssign(
+                declarations.asSequence()
+                .map { it.getJsNativeImplementation() }
+                .distinct()
+                .map { JsCode(it) }
+            )
         }
     }
-
-    private fun MutableList<JsStatement>.endRegion() {
-        if (generateRegionComments) {
-            this += JsSingleLineComment("endregion")
-        }
-    }
-
 }

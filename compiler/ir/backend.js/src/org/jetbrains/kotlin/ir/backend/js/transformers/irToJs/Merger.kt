@@ -18,6 +18,7 @@ class Merger(
     private val generateScriptModule: Boolean,
     private val generateRegionComments: Boolean,
     private val generateCallToMain: Boolean,
+    private val polyfillStatements: List<JsStatement>
 ) {
 
     private val importStatements = mutableMapOf<String, JsStatement>()
@@ -133,9 +134,6 @@ class Merger(
 
         val moduleBody = mutableListOf<JsStatement>()
 
-        val polyfills = JsPolyfills(generateRegionComments)
-            .apply { fragments.forEach { this += it.polyfills } }
-
         val preDeclarationBlock = JsGlobalBlock()
         val postDeclarationBlock = JsGlobalBlock()
 
@@ -184,15 +182,14 @@ class Merger(
 
         val internalModuleName = JsName("_", false)
 
-        val program = JsProgram().apply {
-            polyfills.addAllNeededPolyfillsTo(globalBlock.statements)
-        }
+        val program = JsProgram()
 
         if (generateScriptModule) {
             with(program.globalBlock) {
                 if (!generateScriptModule) {
                     statements += JsStringLiteral("use strict").makeStmt()
                 }
+                statements.addWithComment("block: polyfills", polyfillStatements)
                 statements.addWithComment("block: imports", importStatements)
                 statements += moduleBody
                 statements.addWithComment("block: exports", exportStatements)
@@ -215,6 +212,7 @@ class Merger(
                 }
             }
 
+            program.globalBlock.statements.addWithComment("block: polyfills", polyfillStatements)
             program.globalBlock.statements += ModuleWrapperTranslation.wrap(
                 moduleName,
                 rootFunction,

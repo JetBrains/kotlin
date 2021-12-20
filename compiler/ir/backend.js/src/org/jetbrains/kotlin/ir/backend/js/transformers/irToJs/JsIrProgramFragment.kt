@@ -21,10 +21,14 @@ class JsIrProgramFragment(val packageFqn: String) {
     var testFunInvocation: JsStatement? = null
     var suiteFn: JsName? = null
     val definitions = mutableSetOf<String>()
-    lateinit var polyfills: JsPolyfills
 }
 
-class JsIrModule(val moduleName: String, val externalModuleName: String, val fragments: List<JsIrProgramFragment>)
+class JsIrModule(
+    val moduleName: String,
+    val externalModuleName: String,
+    val fragments: List<JsIrProgramFragment>,
+    val polyfills: List<JsStatement> = emptyList()
+)
 
 class JsIrProgram(val modules: List<JsIrModule>) {
 
