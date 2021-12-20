@@ -44,7 +44,6 @@ class FragmentMappedKotlinSourceSet(
 
     override val languageSettings: LanguageSettingsBuilder = underlyingFragment.languageSettings
 
-    // FIXME: not supported yet
     override val resources: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name resources")
 
     override fun kotlin(configureClosure: Closure<Any?>): SourceDirectorySet =

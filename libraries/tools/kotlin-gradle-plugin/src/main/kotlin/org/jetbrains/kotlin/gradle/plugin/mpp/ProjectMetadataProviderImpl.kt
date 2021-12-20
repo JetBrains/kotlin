@@ -35,7 +35,8 @@ private class ProjectMetadataProviderImpl(
                 val moduleId = moduleIdentifier
                 val module = dependencyProject.kpmModules.single { it.moduleIdentifier == moduleId }
                 val metadataCompilationRegistry = dependencyProject.metadataCompilationRegistryByModuleId.getValue(moduleId)
-                metadataCompilationRegistry.byFragment(module.fragments.getByName(sourceSetName)).output.classesDirs
+                metadataCompilationRegistry.getForFragmentOrNull(module.fragments.getByName(sourceSetName))?.output?.classesDirs
+                    ?: dependencyProject.files()
             }
             projectExtension is KotlinMultiplatformExtension ->
                 projectExtension.targets.getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME).compilations

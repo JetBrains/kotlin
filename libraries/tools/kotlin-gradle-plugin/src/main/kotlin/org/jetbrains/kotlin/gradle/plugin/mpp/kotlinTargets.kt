@@ -29,6 +29,7 @@ import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatCompilationResolverPlugin
@@ -92,7 +93,9 @@ abstract class AbstractKotlinTarget(
     }
 
     override val components: Set<SoftwareComponent> by lazy {
-        buildAdhocComponentsFromKotlinVariants(kotlinComponents)
+        if (!project.hasKpmModel) {
+            buildAdhocComponentsFromKotlinVariants(kotlinComponents)
+        } else emptySet()
     }
 
     private fun buildAdhocComponentsFromKotlinVariants(kotlinVariants: Set<KotlinTargetComponent>): Set<SoftwareComponent> {

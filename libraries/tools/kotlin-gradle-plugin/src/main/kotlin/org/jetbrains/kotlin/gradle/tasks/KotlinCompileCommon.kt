@@ -73,7 +73,9 @@ abstract class KotlinCompileCommon @Inject constructor(
                         val fragment = compilation.fragment
                         project.files(
                             fragment.refinesClosure.minus(fragment).map {
-                                compilation.metadataCompilationRegistry.byFragment(it).output.classesDirs
+                                val compilation = compilation.metadataCompilationRegistry.getForFragmentOrNull(it)
+                                    ?: return@map project.files()
+                                compilation.output.classesDirs
                             }
                         )
                     }
