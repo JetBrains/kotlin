@@ -10,7 +10,7 @@ dependencies {
     api(project(":core:deserialization"))
     implementation(project(":core:compiler.common.jvm"))
 
-    api(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
+    api(intellijCore())
 
 }
 

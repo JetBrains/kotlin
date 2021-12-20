@@ -8,8 +8,8 @@ dependencies {
     api(project(":core:deserialization.common"))
     api(project(":core:deserialization.common.jvm"))
     implementation(project(":core:compiler.common.jvm"))
-    api(intellijCoreDep()) { includeJars("intellij-core", rootProject = rootProject) }
-    implementation(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 
     implementation(project(":core:descriptors.jvm"))
 
