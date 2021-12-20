@@ -57,6 +57,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
                     computeNativeHome(),
                     computeNativeClassLoader(),
                     computeTestMode(),
+                    computeOptimizationMode(),
                     CacheKind::class to computeCacheKind(),
                     computeBaseDirs(),
                     computeTimeouts()
@@ -81,55 +82,47 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
             }
         )
 
-        private fun computeTestMode(): TestMode = systemProperty(
-            name = TEST_MODE,
-            transform = { testModeName ->
-                TestMode.values().firstOrNull { it.name == testModeName } ?: fail {
-                    buildString {
-                        appendLine("Unknown test mode name $testModeName.")
-                        appendLine("One of the following test modes should be passed through $TEST_MODE system property:")
-                        TestMode.values().forEach { testMode ->
-                            appendLine("- ${testMode.name}: ${testMode.description}")
-                        }
-                    }
-                }
+        private fun computeTestMode(): TestMode = enumSystemProperty(TEST_MODE, TestMode.values(), default = TestMode.WITH_MODULES)
 
-            },
-            default = TestMode.WITH_MODULES
-        )
+        private fun computeOptimizationMode(): OptimizationMode =
+            enumSystemProperty(OPTIMIZATION_MODE, OptimizationMode.values(), default = OptimizationMode.DEBUG)
 
         private fun computeCacheKind(): CacheKind {
-            val useCache = systemProperty(
-                name = USE_CACHE,
-                transform = { useCacheValue ->
-                    useCacheValue.toBooleanStrictOrNull() ?: fail { "Invalid value for $USE_CACHE system property: $useCacheValue" }
-                },
-                default = true
-            )
-
+            val useCache = systemProperty(USE_CACHE, String::toBooleanStrictOrNull, default = true)
             return if (useCache) CacheKind.WithStaticCache else CacheKind.WithoutCache
         }
 
         private fun computeBaseDirs(): BaseDirs = BaseDirs(File(requiredEnvironmentVariable(PROJECT_BUILD_DIR)))
 
         private fun computeTimeouts(): Timeouts {
-            val executionTimeout = systemProperty(
-                name = EXECUTION_TIMEOUT,
-                transform = { executionTimeoutValue ->
-                    executionTimeoutValue.toLongOrNull()?.milliseconds
-                        ?: fail { "Invalid value for $EXECUTION_TIMEOUT system property: $executionTimeoutValue" }
-                },
-                default = 10.seconds
-            )
-
+            val executionTimeout = systemProperty(EXECUTION_TIMEOUT, { it.toLongOrNull()?.milliseconds }, default = 10.seconds)
             return Timeouts(executionTimeout)
         }
 
         private fun requiredSystemProperty(name: String): String =
             System.getProperty(name) ?: fail { "Unspecified $name system property" }
 
-        private fun <T> systemProperty(name: String, transform: (String) -> T, default: T): T =
-            System.getProperty(name)?.let(transform) ?: default
+        private fun <T> systemProperty(propertyName: String, transform: (String) -> T?, default: T): T {
+            val propertyValue = System.getProperty(propertyName)
+            return if (propertyValue != null) {
+                transform(propertyValue) ?: fail { "Invalid value for $propertyName system property: $propertyValue" }
+            } else
+                default
+        }
+
+        private inline fun <reified E : Enum<E>> enumSystemProperty(propertyName: String, values: Array<out E>, default: E): E {
+            val optionName = System.getProperty(propertyName)
+            return if (optionName != null) {
+                values.firstOrNull { it.name == optionName } ?: fail {
+                    buildString {
+                        appendLine("Unknown ${E::class.java.simpleName} name $optionName.")
+                        appendLine("One of the following ${E::class.java.simpleName} should be passed through $propertyName system property:")
+                        values.forEach { value -> appendLine("- ${value.name}: $value") }
+                    }
+                }
+            } else
+                default
+        }
 
         private fun requiredEnvironmentVariable(name: String): String =
             System.getenv(name) ?: fail { "Unspecified $name environment variable" }
@@ -139,6 +132,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
         private const val KOTLIN_NATIVE_HOME = "kotlin.internal.native.test.nativeHome"
         private const val COMPILER_CLASSPATH = "kotlin.internal.native.test.compilerClasspath"
         private const val TEST_MODE = "kotlin.internal.native.test.mode"
+        private const val OPTIMIZATION_MODE = "kotlin.internal.native.test.optimizationMode"
         private const val USE_CACHE = "kotlin.internal.native.test.useCache"
         private const val EXECUTION_TIMEOUT = "kotlin.internal.native.test.executionTimeout"
         private const val PROJECT_BUILD_DIR = "PROJECT_BUILD_DIR"

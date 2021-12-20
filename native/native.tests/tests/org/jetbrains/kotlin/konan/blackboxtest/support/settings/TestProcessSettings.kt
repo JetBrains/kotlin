@@ -30,7 +30,7 @@ internal class KotlinNativeClassLoader(private val lazyClassLoader: Lazy<ClassLo
 }
 
 // TODO: in fact, only WITH_MODULES mode is supported now
-internal enum class TestMode(val description: String) {
+internal enum class TestMode(private val description: String) {
     ONE_STAGE(
         description = "Compile test files altogether without producing intermediate KLIBs."
     ),
@@ -40,7 +40,17 @@ internal enum class TestMode(val description: String) {
     WITH_MODULES(
         description = "Compile each test file as one or many modules (depending on MODULE directives declared in the file)." +
                 " Then link the KLIBs into the single executable file."
-    )
+    );
+
+    override fun toString() = description
+}
+
+internal enum class OptimizationMode(private val description: String, val compilerFlag: String?) {
+    DEBUG("Build with debug information", "-g"),
+    OPT("Build with optimizations applied", "-opt"),
+    NO("Don't use any specific optimizations", null);
+
+    override fun toString() = description + if (compilerFlag == null) "" else " ($compilerFlag)"
 }
 
 /**
@@ -63,10 +73,10 @@ internal sealed interface CacheKind {
         fun getRootCacheDirectory(
             kotlinNativeHome: KotlinNativeHome,
             kotlinNativeTargets: KotlinNativeTargets,
-            debuggable: Boolean
+            optimizationMode: OptimizationMode
         ): File? = kotlinNativeHome.dir
             .resolve("klib/cache")
-            .resolve(computeCacheDirName(kotlinNativeTargets.testTarget, CACHE_KIND, debuggable))
+            .resolve(computeCacheDirName(kotlinNativeTargets.testTarget, CACHE_KIND, optimizationMode == OptimizationMode.DEBUG))
             .takeIf { it.exists() }
 
         private const val CACHE_KIND = "STATIC"
@@ -78,5 +88,5 @@ internal sealed interface CacheKind {
     }
 }
 
-internal fun Settings.getRootCacheDirectory(debuggable: Boolean): File? =
-    get<CacheKind>().safeAs<CacheKind.WithStaticCache>()?.getRootCacheDirectory(get(), get(), debuggable)
+internal fun Settings.getRootCacheDirectory(): File? =
+    get<CacheKind>().safeAs<CacheKind.WithStaticCache>()?.getRootCacheDirectory(get(), get(), get())

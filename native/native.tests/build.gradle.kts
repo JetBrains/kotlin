@@ -48,6 +48,7 @@ enum class TestProperty(shortName: String) {
     KOTLIN_NATIVE_HOME("nativeHome"),
     COMPILER_CLASSPATH("compilerClasspath"),
     TEST_MODE("mode"),
+    OPTIMIZATION_MODE("optimizationMode"),
     USE_CACHE("useCache"),
     EXECUTION_TIMEOUT("executionTimeout");
 

@@ -113,11 +113,12 @@ internal class TestCompilerArgs(val compilerArgs: List<String>) {
             "-trw", "-generate-worker-test-runner",
             "-nomain",
             "-output",
-            "-entry",
+            "-entry", "-e",
             "-produce",
             "-repo",
             "-target",
-            "-Xinclude"
+            "-Xinclude",
+            "-g", "-opt"
         )
     }
 }
