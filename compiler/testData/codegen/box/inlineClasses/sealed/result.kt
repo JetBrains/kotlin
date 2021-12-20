@@ -1,5 +1,5 @@
 // CHECK_BYTECODE_LISTING
-// LANGUAGE: -JvmInlineValueClasses, +GenericInlineClassParameter
+// LANGUAGE: -JvmInlineValueClasses, +GenericInlineClassParameter, +SealedInlineClasses
 // IGNORE_BACKED: JVM
 
 sealed inline class Result<out T> {

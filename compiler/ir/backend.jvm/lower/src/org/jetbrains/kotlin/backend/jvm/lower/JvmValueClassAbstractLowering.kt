@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.MemoizedValueClassAbstractReplacements
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
@@ -63,15 +64,21 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
             declaration.declarations.removeIf {
                 it == irConstructor || (it is IrFunction && it.isSpecificFieldGetter() && !it.visibility.isPublicAPI)
             }
-            buildPrimaryValueClassConstructor(declaration, irConstructor)
-            buildBoxFunction(declaration)
-            buildUnboxFunctions(declaration)
-            buildSpecializedEqualsMethod(declaration)
+            if (declaration.modality != Modality.SEALED) {
+                buildPrimaryValueClassConstructor(declaration, irConstructor)
+                buildBoxFunction(declaration)
+                buildUnboxFunctions(declaration)
+                buildSpecializedEqualsMethod(declaration)
+            } else {
+                buildAdditionalMethodsForSealedInlineClass(declaration)
+            }
             addJvmInlineAnnotation(declaration)
         }
 
         return declaration
     }
+
+    protected open fun buildAdditionalMethodsForSealedInlineClass(declaration: IrClass) {}
 
     protected fun transformFunctionFlat(function: IrFunction): List<IrDeclaration>? {
         if (function is IrConstructor && function.isPrimary && function.constructedClass.isSpecificLoweringLogicApplicable()) {

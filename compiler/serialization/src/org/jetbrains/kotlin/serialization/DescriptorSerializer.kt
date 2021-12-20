@@ -175,10 +175,10 @@ class DescriptorSerializer private constructor(
         classDescriptor.inlineClassRepresentation?.let { inlineClassRepresentation ->
             builder.inlineClassUnderlyingPropertyName = getSimpleNameIndex(inlineClassRepresentation.underlyingPropertyName)
 
-            val property = callableMembers.single {
+            val property = callableMembers.singleOrNull {
                 it is PropertyDescriptor && it.extensionReceiverParameter == null && it.name == inlineClassRepresentation.underlyingPropertyName
             }
-            if (!property.visibility.isPublicAPI) {
+            if (property?.visibility?.isPublicAPI != true) {
                 if (useTypeTable()) {
                     builder.inlineClassUnderlyingTypeId = typeId(inlineClassRepresentation.underlyingType)
                 } else {

@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtParameter
@@ -21,9 +18,11 @@ abstract class FunctionsFromAnyGenerator(protected val declaration: KtClassOrObj
 
     open fun generate() {
         val properties = primaryConstructorProperties
-        generateToStringIfNeeded(properties)
-        generateHashCodeIfNeeded(properties)
-        generateEqualsIfNeeded(properties)
+        if (properties.isNotEmpty() || (classDescriptor.isInline && classDescriptor.modality == Modality.SEALED)) {
+            generateToStringIfNeeded(properties)
+            generateHashCodeIfNeeded(properties)
+            generateEqualsIfNeeded(properties)
+        }
     }
 
     protected abstract fun generateToStringMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>)

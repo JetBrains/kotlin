@@ -22,6 +22,9 @@ fun <D : IrAttributeContainer> D.copyAttributes(other: IrAttributeContainer?): D
 val IrClass.isSingleFieldValueClass: Boolean
     get() = valueClassRepresentation is InlineClassRepresentation
 
+val IrClass.isInline: Boolean
+    get() = isSingleFieldValueClass
+
 val IrClass.isMultiFieldValueClass: Boolean
     get() = valueClassRepresentation is MultiFieldValueClassRepresentation
 
