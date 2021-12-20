@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 open class Test {
 
     open fun getTestNoSuspend(text: String): String {
