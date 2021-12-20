@@ -1428,6 +1428,8 @@ public final class Regex {
 
     public final fun replace(input: kotlin.CharSequence, replacement: kotlin.String): kotlin.String
 
+    public final fun replaceFirst(input: kotlin.CharSequence, transform: (kotlin.text.MatchResult) -> kotlin.CharSequence): kotlin.String
+
     public final fun replaceFirst(input: kotlin.CharSequence, replacement: kotlin.String): kotlin.String
 
     public final fun split(input: kotlin.CharSequence, limit: kotlin.Int = ...): kotlin.collections.List<kotlin.String>

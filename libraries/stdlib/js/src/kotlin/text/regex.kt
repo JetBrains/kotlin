@@ -178,8 +178,7 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
      * replacement for that match.
      */
     public actual fun replace(input: CharSequence, transform: (MatchResult) -> CharSequence): String {
-        var match = find(input)
-        if (match == null) return input.toString()
+        var match: MatchResult? = find(input) ?: return input.toString()
 
         var lastStart = 0
         val length = input.length
@@ -232,6 +231,28 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
             append(substituteGroupRefs(match, replacement))
             append(input.substring(match.range.last + 1, input.length))
         }
+    }
+
+    /**
+     * Replaces the first occurrence of this regular expression in the specified [input] string with the result of
+     * the given function [transform] that takes [MatchResult] and returns a string to be used as a
+     * replacement for that match.
+     */
+    public actual fun replaceFirst(input: CharSequence, transform: (MatchResult) -> CharSequence): String {
+        val firstMatch: MatchResult = find(input) ?: return input.toString()
+
+        val length = input.length
+        val sb = StringBuilder(length)
+
+        sb.append(input, 0, firstMatch.range.start)
+        sb.append(transform(firstMatch))
+
+        val lastStart = firstMatch.range.endInclusive + 1
+        if (lastStart < length) {
+            sb.append(input, lastStart, length)
+        }
+
+        return sb.toString()
     }
 
     /**

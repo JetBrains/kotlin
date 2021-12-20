@@ -46,6 +46,7 @@ expect class Regex {
     fun replace(input: CharSequence, replacement: String): String
     fun replace(input: CharSequence, transform: (MatchResult) -> CharSequence): String
     fun replaceFirst(input: CharSequence, replacement: String): String
+    fun replaceFirst(input: CharSequence, transform: (MatchResult) -> CharSequence): String
 
     /**
      * Returns the first match of a regular expression in the [input], beginning at the specified [startIndex].

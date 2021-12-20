@@ -17,6 +17,7 @@ const val containsMatchIn3 = Regex("[0-9]").<!EVALUATED: `false`!>containsMatchI
 const val replace1 = Regex("0").<!EVALUATED: `There are n apples`!>replace("There are 0 apples", "n")<!>
 const val replace2 = Regex("(red|green|blue)").<!EVALUATED: `Roses are red!, Violets are blue!`!>replace("Roses are red, Violets are blue") { it.value + "!" }<!>
 const val replace3 = Regex("(red|green|blue)").<!EVALUATED: `Roses are REPLACED, Violets are blue`!>replaceFirst("Roses are red, Violets are blue", "REPLACED")<!>
+const val replace4 = Regex("(red|green|blue)").<!EVALUATED: `Roses are red!, Violets are blue`!>replaceFirst("Roses are red, Violets are blue") { it.value + "!" }<!>
 const val split = Regex("\\W+").split("Roses are red, Violets are blue").<!EVALUATED: `6`!>size<!>
 
 //find
