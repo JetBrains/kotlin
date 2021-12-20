@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import com.github.jengelman.gradle.plugins.shadow.transformers.ComponentsXmlResourceTransformer
 import org.gradle.internal.jvm.Jvm
 
 description = "Shaded Maven dependencies resolver"
@@ -53,7 +54,7 @@ val relocatedJar by task<ShadowJar> {
     destinationDirectory.set(File(buildDir, "libs"))
     archiveClassifier.set("before-proguard")
 
-    transform(ComponentsXmlResourceTransformerPatched())
+    transform(ComponentsXmlResourceTransformer())
 
     if (kotlinBuildProperties.relocation) {
         (packagesToRelocate + mavenPackagesToRelocate).forEach {
