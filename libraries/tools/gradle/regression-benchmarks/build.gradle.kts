@@ -68,3 +68,9 @@ fun addBenchmarkTask(
         argumentProviders.add(scriptArgs)
     }
 }
+
+addBenchmarkTask(
+    taskName = "benchmarkRegressionDuckduckgo",
+    script = "duckduckgo.benchmark.kts",
+    JavaLanguageVersion.of(11)
+)

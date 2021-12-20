@@ -1,0 +1,57 @@
+diff --git a/app/src/main/java/com/duckduckgo/app/tabs/model/TabRepository.kt b/app/src/main/java/com/duckduckgo/app/tabs/model/TabRepository.kt
+index 221e9837..d5b38082 100644
+--- a/app/src/main/java/com/duckduckgo/app/tabs/model/TabRepository.kt
++++ b/app/src/main/java/com/duckduckgo/app/tabs/model/TabRepository.kt
+@@ -19,6 +19,7 @@ package com.duckduckgo.app.tabs.model
+ import androidx.lifecycle.LiveData
+ import androidx.lifecycle.MutableLiveData
+ import com.duckduckgo.app.global.model.Site
++import kotlinx.coroutines.ExperimentalCoroutinesApi
+ import kotlinx.coroutines.flow.Flow
+ import kotlinx.coroutines.flow.SharedFlow
+ 
+@@ -36,6 +37,7 @@ interface TabRepository {
+     /**
+      * @return the tabs that are marked as "deletable" in the DB
+      */
++    @ExperimentalCoroutinesApi
+     val flowDeletableTabs: Flow<List<TabEntity>>
+ 
+     val liveSelectedTab: LiveData<TabEntity>
+diff --git a/build.gradle b/build.gradle
+index 4497fd12..c3f5b97c 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -2,10 +2,10 @@
+ buildscript {
+ 
+     ext {
+-        kotlin_version = '1.5.10'
++        kotlin_version = '1.6.10'
+     }
+     ext.spotless = "5.14.0"
+-    ext.anvil_version = "2.3.3"
++    ext.anvil_version = "2.3.10-1-6-0"
+ 
+     ext.gradle_plugin = "7.0.3"
+ 
+@@ -41,4 +41,4 @@ allprojects {
+ 
+ task clean(type: Delete) {
+     delete rootProject.buildDir
+-}
+\ No newline at end of file
++}
+diff --git a/versions.properties b/versions.properties
+index fae6ae6e..6debdaa6 100644
+--- a/versions.properties
++++ b/versions.properties
+@@ -73,7 +73,7 @@ version.io.reactivex.rxjava2..rxandroid=2.0.2
+ 
+ version.io.reactivex.rxjava2..rxjava=2.2.9
+ 
+-version.kotlin=1.5.31
++version.kotlin=1.6.10
+ 
+ version.kotlinx.coroutines=1.5.2
+ 
