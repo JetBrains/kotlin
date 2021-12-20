@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.org.objectweb.asm.ClassReader.*
 import java.io.File
 import java.security.MessageDigest
 
@@ -646,83 +647,86 @@ class KotlinClassInfo constructor(
         }
 
         fun createFrom(classId: ClassId, classHeader: KotlinClassHeader, classContents: ByteArray): KotlinClassInfo {
+            val constantsAndInlineFunctions = getConstantsAndInlineFunctions(classHeader, classContents)
+
             return KotlinClassInfo(
                 classId,
                 classHeader.kind,
                 classHeader.data ?: emptyArray(),
                 classHeader.strings ?: emptyArray(),
                 classHeader.multifileClassName,
-                getConstantsMap(classContents),
-                getInlineFunctionsMap(classHeader, classContents)
+                constantsMap = constantsAndInlineFunctions.first,
+                inlineFunctionsMap = constantsAndInlineFunctions.second
             )
         }
     }
 }
 
-private fun getConstantsMap(bytes: ByteArray): LinkedHashMap<String, Any> {
-    val result = LinkedHashMap<String, Any>()
+/** Parses the class file only once to get both constants and inline functions. */
+private fun getConstantsAndInlineFunctions(
+    classHeader: KotlinClassHeader,
+    classContents: ByteArray
+): Pair<LinkedHashMap<String, Any>, LinkedHashMap<String, Long>> {
+    val constantsClassVisitor = ConstantsClassVisitor()
+    val inlineFunctionNames = inlineFunctionsJvmNames(classHeader)
 
-    ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
-        override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
-            if (access and Opcodes.ACC_PRIVATE == Opcodes.ACC_PRIVATE) return null
-
-            val staticFinal = Opcodes.ACC_STATIC or Opcodes.ACC_FINAL
-            if (value != null && access and staticFinal == staticFinal) {
-                result[name] = value
-            }
-            return null
-        }
-    }, ClassReader.SKIP_CODE or ClassReader.SKIP_DEBUG or ClassReader.SKIP_FRAMES)
-
-    return result
+    return if (inlineFunctionNames.isEmpty()) {
+        ClassReader(classContents).accept(constantsClassVisitor, SKIP_CODE or SKIP_DEBUG or SKIP_FRAMES)
+        Pair(constantsClassVisitor.getResult(), LinkedHashMap())
+    } else {
+        val inlineFunctionsClassVisitor = InlineFunctionsClassVisitor(inlineFunctionNames, constantsClassVisitor)
+        ClassReader(classContents).accept(inlineFunctionsClassVisitor, 0)
+        Pair(constantsClassVisitor.getResult(), inlineFunctionsClassVisitor.getResult())
+    }
 }
 
-private fun getInlineFunctionsMap(header: KotlinClassHeader, bytes: ByteArray): LinkedHashMap<String, Long> {
-    val inlineFunctions = inlineFunctionsJvmNames(header)
-    if (inlineFunctions.isEmpty()) return LinkedHashMap()
+private class ConstantsClassVisitor : ClassVisitor(Opcodes.API_VERSION) {
+    private val result = LinkedHashMap<String, Any>()
 
-    val result = LinkedHashMap<String, Long>()
-    var dummyVersion: Int = -1
-    ClassReader(bytes).accept(object : ClassVisitor(Opcodes.API_VERSION) {
+    override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
+        if (access and Opcodes.ACC_PRIVATE == Opcodes.ACC_PRIVATE) return null
 
-        override fun visit(
-            version: Int,
-            access: Int,
-            name: String?,
-            signature: String?,
-            superName: String?,
-            interfaces: Array<out String>?
-        ) {
-            super.visit(version, access, name, signature, superName, interfaces)
-            dummyVersion = version
+        val staticFinal = Opcodes.ACC_STATIC or Opcodes.ACC_FINAL
+        if (value != null && access and staticFinal == staticFinal) {
+            result[name] = value
         }
+        return null
+    }
 
-        override fun visitMethod(
-            access: Int,
-            name: String,
-            desc: String,
-            signature: String?,
-            exceptions: Array<out String>?
-        ): MethodVisitor? {
-            if (access and Opcodes.ACC_PRIVATE == Opcodes.ACC_PRIVATE) return null
+    fun getResult() = result
+}
 
-            val dummyClassWriter = ClassWriter(0)
-            dummyClassWriter.visit(dummyVersion, 0, "dummy", null, AsmTypes.OBJECT_TYPE.internalName, null)
+private class InlineFunctionsClassVisitor(
+    private val inlineFunctionNames: Set<String>,
+    cv: ClassVisitor // Note: cv must not override the visitMethod (it will not be called with the current implementation below)
+) : ClassVisitor(Opcodes.API_VERSION, cv) {
 
-            return object : MethodVisitor(Opcodes.API_VERSION, dummyClassWriter.visitMethod(0, name, desc, null, exceptions)) {
-                override fun visitEnd() {
-                    val jvmName = name + desc
-                    if (jvmName !in inlineFunctions) return
+    private val result = LinkedHashMap<String, Long>()
+    private var dummyVersion: Int = -1
 
-                    val dummyBytes = dummyClassWriter.toByteArray()!!
+    override fun visit(version: Int, access: Int, name: String?, signature: String?, superName: String?, interfaces: Array<out String>?) {
+        super.visit(version, access, name, signature, superName, interfaces)
+        dummyVersion = version
+    }
 
-                    val hash = dummyBytes.md5()
-                    result[jvmName] = hash
-                }
+    override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
+        if (access and Opcodes.ACC_PRIVATE == Opcodes.ACC_PRIVATE) return null
+
+        val dummyClassWriter = ClassWriter(0)
+        dummyClassWriter.visit(dummyVersion, 0, "dummy", null, AsmTypes.OBJECT_TYPE.internalName, null)
+
+        return object : MethodVisitor(Opcodes.API_VERSION, dummyClassWriter.visitMethod(0, name, desc, null, exceptions)) {
+            override fun visitEnd() {
+                val jvmName = name + desc
+                if (jvmName !in inlineFunctionNames) return
+
+                val dummyBytes = dummyClassWriter.toByteArray()!!
+
+                val hash = dummyBytes.md5()
+                result[jvmName] = hash
             }
         }
+    }
 
-    }, 0)
-
-    return result
+    fun getResult() = result
 }
