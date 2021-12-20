@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.analysis.decompiler.psi.text
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.decompiler.psi.DeserializerForClassfileDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.psi.ResolverForDecompiler
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder.findMultifileClassParts
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.stubs.file.builder.ClsClassFinder.findMultifileClassParts
-import org.jetbrains.kotlin.psi.stubs.file.builder.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.isFlexible

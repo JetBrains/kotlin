@@ -9,9 +9,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
-import org.jetbrains.kotlin.psi.stubs.file.builder.ClsClassFinder.isKotlinInternalCompiledFile
-import org.jetbrains.kotlin.psi.stubs.file.builder.ClsKotlinBinaryClassCache
-import org.jetbrains.kotlin.psi.stubs.file.builder.KotlinClsStubBuilder
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder.isKotlinInternalCompiledFile
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinClsStubBuilder
 
 class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
     private val stubBuilder = KotlinClsStubBuilder()

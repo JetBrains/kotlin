@@ -112,6 +112,7 @@ include ":benchmarks",
         ":compiler:resolution.common.jvm",
         ":compiler:resolution",
         ":compiler:serialization",
+        ":compiler:psi",
         ":compiler:visualizer",
         ":compiler:visualizer:common",
         ":compiler:visualizer:render-fir",
@@ -291,10 +292,6 @@ include ":benchmarks",
         ":kotlin-serialization",
         ":kotlin-serialization-unshaded",
         ":wasm:wasm.ir"
-
-include ":compiler:psi",
-        ":compiler:psi:cls-psi-stub-builder",
-        ":compiler:psi:cls-psi-file-stub-builder"
 
 
 include ":kotlinx-atomicfu-compiler-plugin",
@@ -500,6 +497,8 @@ include ":generators:analysis-api-generator",
         ":analysis:project-structure",
         ":analysis:analysis-api-fe10",
         ":analysis:decompiled:decompiler-to-psi",
+        ":analysis:decompiled:decompiler-to-stubs",
+        ":analysis:decompiled:decompiler-to-file-stubs",
         ":analysis:decompiled:light-classes-for-decompiled",
         ":analysis:decompiled:light-classes-for-decompiled-fe10"
 

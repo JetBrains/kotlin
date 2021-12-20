@@ -8,8 +8,8 @@ dependencies {
     implementation(project(":compiler:frontend.java"))
     implementation(project(":core:compiler.common"))
     implementation(project(":compiler:light-classes"))
-    implementation(project(":compiler:psi:cls-psi-stub-builder"))
-    implementation(project(":compiler:psi:cls-psi-file-stub-builder"))
+    implementation(project(":analysis:decompiled:decompiler-to-stubs"))
+    implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     implementation(intellijCore())
 }
 

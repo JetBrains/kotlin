@@ -2,10 +2,10 @@
 
 package org.jetbrains.kotlin.analysis.decompiler.psi
 
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 
 interface ResolverForDecompiler {
     fun resolveTopLevelClass(classId: ClassId): ClassDescriptor?

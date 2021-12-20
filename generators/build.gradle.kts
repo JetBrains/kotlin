@@ -76,7 +76,6 @@ dependencies {
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":js:js.tests"))
-    testImplementation(projectTests(":compiler:psi:cls-psi-file-stub-builder"))
     testApiJUnit5()
 
     if (Ide.IJ()) {
