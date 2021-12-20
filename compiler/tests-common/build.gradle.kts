@@ -7,6 +7,7 @@ plugins {
 dependencies {
     testApi(kotlinStdlib("jdk8"))
     testApi(project(":kotlin-scripting-compiler"))
+    testApi(project(":kotlin-scripting-compiler-js"))
     testApi(project(":core:descriptors"))
     testApi(project(":core:descriptors.jvm"))
     testApi(project(":core:deserialization"))

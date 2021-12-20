@@ -10,7 +10,6 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.cli.js.loadPluginsForTests
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
@@ -22,7 +21,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
-import org.jetbrains.kotlin.scripting.compiler.plugin.loadScriptConfiguration
+import org.jetbrains.kotlin.scripting.js.loadScriptConfiguration
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.JUnit4Assertions

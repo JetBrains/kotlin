@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.engine.ScriptEngineNashorn
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
-import org.jetbrains.kotlin.scripting.repl.js.*
+import org.jetbrains.kotlin.scripting.js.*
+import org.jetbrains.kotlin.scripting.repl.js.JsEvaluationState
+import org.jetbrains.kotlin.scripting.repl.js.JsReplEvaluator
 import java.util.concurrent.locks.ReentrantReadWriteLock
 
 // 1. Compile dependencies

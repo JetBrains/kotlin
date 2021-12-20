@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
 import org.junit.Assert
 import org.junit.Test
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
-import org.jetbrains.kotlin.scripting.repl.js.makeReplCodeLine
+import org.jetbrains.kotlin.scripting.js.makeReplCodeLine
 
 abstract class AbstractReplTestRunner : TestCase() {
     abstract fun getTester(): AbstractJsReplTest

@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigura
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.platform
+import org.jetbrains.kotlin.scripting.js.JsReplCompiler
+import org.jetbrains.kotlin.scripting.js.JsReplCompilerState
+import org.jetbrains.kotlin.scripting.js.ReplMessageCollector
 import org.jetbrains.kotlin.scripting.repl.js.*
 import java.io.Closeable
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
