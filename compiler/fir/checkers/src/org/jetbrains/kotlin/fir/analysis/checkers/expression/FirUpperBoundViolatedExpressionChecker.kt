@@ -5,22 +5,23 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
-import org.jetbrains.kotlin.fir.analysis.checkers.FirTypeRefSource
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.checkers.TypeArgumentWithSourceInfo
 import org.jetbrains.kotlin.fir.analysis.checkers.checkUpperBoundViolated
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceiver
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.isTypeAliasedConstructor
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
-import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
-import org.jetbrains.kotlin.fir.types.toSymbol
+import org.jetbrains.kotlin.fir.types.*
 
 object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChecker() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -39,29 +40,46 @@ object FirUpperBoundViolatedExpressionChecker : FirQualifiedAccessExpressionChec
             calleeSymbol = calleReference.candidateSymbol as? FirCallableSymbol<*>
         }
 
-        val typeArguments: List<FirTypeProjection>?
-        val typeArgumentRefsAndSources: List<FirTypeRefSource>?
-        val typeParameters: List<FirTypeParameterSymbol>?
+        val typeArguments: List<TypeArgumentWithSourceInfo>
+        val typeParameters: List<FirTypeParameterSymbol>
 
         if (calleeSymbol is FirConstructorSymbol && calleeSymbol.isTypeAliasedConstructor) {
-            typeArguments = null
-            typeArgumentRefsAndSources = expression.typeArguments.map {
-                FirTypeRefSource((it as? FirTypeProjectionWithVariance)?.typeRef, it.source)
+            val constructedType = expression.typeRef.coneType.fullyExpandedType(context.session)
+            typeArguments = constructedType.typeArguments.map {
+                TypeArgumentWithSourceInfo(it, typeRef = null, expression.source)
             }
-            typeParameters = null
+
+            typeParameters = (constructedType.toSymbol(context.session) as? FirRegularClassSymbol)?.typeParameterSymbols ?: return
         } else {
-            typeArguments = expression.typeArguments
-            typeArgumentRefsAndSources = null
-            typeParameters = calleeSymbol?.typeParameterSymbols
+            typeArguments = expression.typeArguments.map { firTypeProjection ->
+                TypeArgumentWithSourceInfo(
+                    firTypeProjection.toConeTypeProjection(),
+                    (firTypeProjection as? FirTypeProjectionWithVariance)?.typeRef,
+                    firTypeProjection.source
+                )
+            }
+            typeParameters = calleeSymbol?.typeParameterSymbols ?: return
         }
 
+        // Neither common calls nor type alias constructor calls may contain projections
+        // That should be checked somewhere else
+        if (typeArguments.any { it.coneTypeProjection !is ConeKotlinType }) {
+            return
+        }
+
+        if (typeArguments.size != typeParameters.size) return
+
+        val substitutor = substitutorByMap(
+            typeParameters.withIndex().associate { Pair(it.value, typeArguments[it.index].coneTypeProjection as ConeKotlinType) },
+            context.session,
+        )
+
         checkUpperBoundViolated(
-            expression.typeRef,
             context,
             reporter,
             typeParameters,
             typeArguments,
-            typeArgumentRefsAndSources
+            substitutor,
         )
     }
 }
