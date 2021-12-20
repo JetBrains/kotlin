@@ -18,4 +18,5 @@ fun main(args: Array<String>) {
 private fun TestGroupSuite.generateTests() {
     generateAnalysisApiTests()
     generateFirLowLevelApiTests()
+    generateDecompiledTests()
 }

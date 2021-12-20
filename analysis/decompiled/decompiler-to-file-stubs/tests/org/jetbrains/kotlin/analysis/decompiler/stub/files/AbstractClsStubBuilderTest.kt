@@ -50,7 +50,7 @@ abstract class AbstractClsStubBuilderTest : KotlinTestWithEnvironment() {
         registerApplicationService(ClsKotlinBinaryClassCache::class.java, ClsKotlinBinaryClassCache())
     }
 
-    fun doTest(testDirectory: String) {
+    fun runTest(testDirectory: String) {
         val testDirectoryPath = Paths.get(testDirectory)
         val testData = TestData.createFromDirectory(testDirectoryPath)
 
