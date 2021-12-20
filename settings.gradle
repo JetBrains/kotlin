@@ -500,7 +500,8 @@ include ":generators:analysis-api-generator",
         ":analysis:project-structure",
         ":analysis:analysis-api-fe10",
         ":analysis:decompiled:decompiler-to-psi",
-        ":analysis:decompiled:light-classes-for-decompiled"
+        ":analysis:decompiled:light-classes-for-decompiled",
+        ":analysis:decompiled:light-classes-for-decompiled-fe10"
 
 
 if (buildProperties.inJpsBuildIdeaSync) {

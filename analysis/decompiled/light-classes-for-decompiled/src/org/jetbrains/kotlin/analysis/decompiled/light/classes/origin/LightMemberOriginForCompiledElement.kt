@@ -47,7 +47,7 @@ data class LightMemberOriginForCompiledField(val psiField: PsiField, val file: K
     override val originalElement: KtDeclaration? by lazyPub {
         val desc = MapPsiToAsmDesc.typeDesc(psiField.type)
         val signature = MemberSignature.fromFieldNameAndDesc(psiField.name, desc)
-        findDeclarationInCompiledFile(file, psiField, signature)
+        KotlinDeclarationInCompiledFileSearcher.getInstance().findDeclarationInCompiledFile(file, psiField, signature)
     }
 }
 
@@ -70,6 +70,6 @@ data class LightMemberOriginForCompiledMethod(val psiMethod: PsiMethod, val file
         val desc = MapPsiToAsmDesc.methodDesc(psiMethod)
         val name = if (psiMethod.isConstructor) "<init>" else psiMethod.name
         val signature = MemberSignature.fromMethodNameAndDesc(name, desc)
-        findDeclarationInCompiledFile(file, psiMethod, signature)
+        KotlinDeclarationInCompiledFileSearcher.getInstance().findDeclarationInCompiledFile(file, psiMethod, signature)
     }
 }
