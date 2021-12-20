@@ -1,0 +1,12 @@
+<modules>
+    <!-- Module script for production -->
+    <module name="name" type="java-production" outputDir="output">
+        <sources path="s1"/>
+        <sources path="s2"/>
+        <!-- Java source roots -->
+        <javaSourceRoots path="java"/>
+        <!-- Classpath -->
+        <classpath path="cp1"/>
+        <classpath path="cp2"/>
+    </module>
+</modules>
