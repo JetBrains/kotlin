@@ -357,4 +357,11 @@ public abstract class FileBasedKotlinClass implements KotlinJvmBinaryClass {
 
     @Override
     public abstract String toString();
+
+    // Declared explicitly to workaround KT-50400
+    @Nullable
+    @Override
+    public String getContainingLibrary() {
+        return KotlinJvmBinaryClass.DefaultImpls.getContainingLibrary(this);
+    }
 }
