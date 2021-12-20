@@ -134,7 +134,7 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("target we compile for")
         val TEMPORARY_FILES_DIR: CompilerConfigurationKey<String?>
                 = CompilerConfigurationKey.create("directory for temporary files")
-        val SAVE_LLVM_IR: CompilerConfigurationKey<Boolean>
+        val SAVE_LLVM_IR: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create("save LLVM IR")
         val VERIFY_BITCODE: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("verify bitcode")

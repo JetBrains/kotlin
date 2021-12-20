@@ -9,10 +9,13 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.toKStringFromUtf8
 import llvm.*
+import org.jetbrains.kotlin.backend.common.phaser.ActionState
+import org.jetbrains.kotlin.backend.common.phaser.BeforeOrAfter
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.linkObjC
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.isBitcode
@@ -47,6 +50,20 @@ val CompilerOutputKind.involvesLinkStage: Boolean
 val CompilerOutputKind.isCache: Boolean
     get() = (this == CompilerOutputKind.STATIC_CACHE || this == CompilerOutputKind.DYNAMIC_CACHE)
 
+internal fun llvmIrDumpCallback(state: ActionState, module: IrModuleFragment, context: Context) {
+    module.let{}
+    if (state.beforeOrAfter == BeforeOrAfter.AFTER && state.phase.name in context.configuration.getList(KonanConfigKeys.SAVE_LLVM_IR)) {
+        val moduleName: String = memScoped {
+            val sizeVar = alloc<size_tVar>()
+            LLVMGetModuleIdentifier(context.llvmModule, sizeVar.ptr)!!.toKStringFromUtf8()
+        }
+        val output = context.config.tempFiles.create("$moduleName.${state.phase.name}", ".ll")
+        if (LLVMPrintModuleToFile(context.llvmModule, output.absolutePath, null) != 0) {
+            error("Can't dump LLVM IR to ${output.absolutePath}")
+        }
+    }
+}
+
 internal fun produceCStubs(context: Context) {
     val llvmModule = context.llvmModule!!
     context.cStubsManager.compile(
@@ -55,17 +72,6 @@ internal fun produceCStubs(context: Context) {
             context.inVerbosePhase
     ).forEach {
         parseAndLinkBitcodeFile(context, llvmModule, it.absolutePath)
-    }
-    // TODO: Consider adding LLVM_IR compiler output kind.
-    if (context.configuration.getBoolean(KonanConfigKeys.SAVE_LLVM_IR)) {
-        val moduleName: String = memScoped {
-            val sizeVar = alloc<size_tVar>()
-            LLVMGetModuleIdentifier(context.llvmModule, sizeVar.ptr)!!.toKStringFromUtf8()
-        }
-        val output = context.config.tempFiles.create(moduleName,".ll")
-        if (LLVMPrintModuleToFile(context.llvmModule, output.absolutePath, null) != 0) {
-            error("Can't dump LLVM IR to ${output.absolutePath}")
-        }
     }
 }
 

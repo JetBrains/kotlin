@@ -1,5 +1,11 @@
 package org.jetbrains.kotlin.backend.konan
 
+import kotlinx.cinterop.alloc
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.ptr
+import kotlinx.cinterop.toKStringFromUtf8
+import llvm.LLVMGetModuleIdentifier
+import llvm.LLVMPrintModuleToFile
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.StringConcatenationLowering
@@ -20,8 +26,16 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 private val validateAll = false
-private val filePhaseActions = if (validateAll) setOf(defaultDumper, ::fileValidationCallback) else setOf(defaultDumper)
-private val modulePhaseActions = if (validateAll) setOf(defaultDumper, ::moduleValidationCallback) else setOf(defaultDumper)
+
+private val filePhaseActions = setOfNotNull(
+        defaultDumper,
+        ::fileValidationCallback.takeIf { validateAll }
+)
+private val modulePhaseActions = setOfNotNull(
+        defaultDumper,
+        ::llvmIrDumpCallback,
+        ::moduleValidationCallback.takeIf { validateAll }
+)
 
 private fun makeKonanFileLoweringPhase(
         lowering: (Context) -> FileLoweringPass,

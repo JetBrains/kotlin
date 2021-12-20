@@ -62,6 +62,12 @@ open class FileCheckTest : DefaultTask() {
     var checkPrefix: String? = null
 
     /**
+     * Compiler pipeline phase name, after which check should be done
+     */
+    @Input
+    var phaseToCheck: String = "CStubs"
+
+    /**
      * Should we generate framework instead of an executable?
      * This option is useful for, well, checking framework-specific code.
      */

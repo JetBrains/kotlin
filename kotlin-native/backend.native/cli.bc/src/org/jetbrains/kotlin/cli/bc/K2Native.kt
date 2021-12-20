@@ -182,7 +182,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 arguments.manifestFile ?.let{ put(MANIFEST_FILE, it) }
                 arguments.runtimeFile ?.let{ put(RUNTIME_FILE, it) }
                 arguments.temporaryFilesDir?.let { put(TEMPORARY_FILES_DIR, it) }
-                put(SAVE_LLVM_IR, arguments.saveLlvmIr)
+                put(SAVE_LLVM_IR, arguments.saveLlvmIrAfter.toList())
 
                 put(LIST_TARGETS, arguments.listTargets)
                 put(OPTIMIZATION, arguments.optimization)

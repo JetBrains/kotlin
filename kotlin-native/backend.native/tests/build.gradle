@@ -5955,7 +5955,7 @@ pluginTest("runtime_basic_init", "nopPlugin") {
 Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
     return project.tasks.create(name, FileCheckTest) { task ->
         task.configure(configureClosure)
-        task.llvmIr = project.file("$testOutputFileCheck/$name/$target/out.ll")
+        task.llvmIr = project.file("$testOutputFileCheck/$name/$target/out.${task.phaseToCheck}.ll")
         if (task.enabled) {
             konanArtifacts {
                 def lib = task.interop
@@ -5971,7 +5971,8 @@ Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
                         srcFiles task.annotatedSource
                         baseDir "$testOutputFileCheck/$name"
                         extraOpts project.globalTestArgs
-                        extraOpts "-Xtemporary-files-dir=$testOutputFileCheck/$name/$target", "-Xsave-llvm-ir"
+                        extraOpts "-Xtemporary-files-dir=$testOutputFileCheck/$name/$target"
+                        extraOpts "-Xsave-llvm-ir-after=${task.phaseToCheck}"
                         if (lib != null) {
                             libraries {
                                 artifact lib
@@ -5984,7 +5985,9 @@ Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
                         srcFiles task.annotatedSource
                         baseDir "$testOutputFileCheck/$name"
                         extraOpts project.globalTestArgs
-                        extraOpts "-Xtemporary-files-dir=$testOutputFileCheck/$name/$target", "-Xsave-llvm-ir", "-Xmeaningful-bridge-names"
+                        extraOpts "-Xtemporary-files-dir=$testOutputFileCheck/$name/$target", "-Xmeaningful-bridge-names"
+                        extraOpts "-Xsave-llvm-ir-after=${task.phaseToCheck}"
+
                         if (lib != null) {
                             libraries {
                                 artifact lib
