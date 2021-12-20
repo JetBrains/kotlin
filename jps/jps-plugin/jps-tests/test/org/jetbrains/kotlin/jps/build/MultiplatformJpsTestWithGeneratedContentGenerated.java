@@ -41,16 +41,6 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
-        @TestMetadata("editingCKotlin")
-        public void testEditingCKotlin() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingCKotlin/");
-        }
-
-        @TestMetadata("editingPJsKotlin")
-        public void testEditingPJsKotlin() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingPJsKotlin/");
-        }
-
         @TestMetadata("editingPJvmJava")
         public void testEditingPJvmJava() throws Exception {
             runTest("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingPJvmJava/");
@@ -59,32 +49,6 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
         @TestMetadata("editingPJvmKotlin")
         public void testEditingPJvmKotlin() throws Exception {
             runTest("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingPJvmKotlin/");
-        }
-
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingCKotlin")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class EditingCKotlin extends AbstractMultiplatformJpsTestWithGeneratedContent {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInEditingCKotlin() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingCKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
-            }
-        }
-
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingPJsKotlin")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class EditingPJsKotlin extends AbstractMultiplatformJpsTestWithGeneratedContent {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInEditingPJsKotlin() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingPJsKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
-            }
         }
 
         @TestMetadata("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingPJvmJava")
@@ -175,16 +139,6 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
-        @TestMetadata("editingCKotlin")
-        public void testEditingCKotlin() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingCKotlin/");
-        }
-
-        @TestMetadata("editingPJsKotlin")
-        public void testEditingPJsKotlin() throws Exception {
-            runTest("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingPJsKotlin/");
-        }
-
         @TestMetadata("editingPJvmJava")
         public void testEditingPJvmJava() throws Exception {
             runTest("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingPJvmJava/");
@@ -193,32 +147,6 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
         @TestMetadata("editingPJvmKotlin")
         public void testEditingPJvmKotlin() throws Exception {
             runTest("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingPJvmKotlin/");
-        }
-
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingCKotlin")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class EditingCKotlin extends AbstractMultiplatformJpsTestWithGeneratedContent {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInEditingCKotlin() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingCKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
-            }
-        }
-
-        @TestMetadata("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingPJsKotlin")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class EditingPJsKotlin extends AbstractMultiplatformJpsTestWithGeneratedContent {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInEditingPJsKotlin() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingPJsKotlin"), Pattern.compile("^([^\\.]+)$"), null, true);
-            }
         }
 
         @TestMetadata("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingPJvmJava")
