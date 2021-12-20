@@ -71,7 +71,7 @@ class JsIrBackendFacade(
         configuration: CompilerConfiguration,
         inputArtifact: BinaryArtifacts.KLib,
     ): BinaryArtifacts.Js? {
-        val (irModuleFragment, dependencyModules, _, symbolTable, deserializer, _) = moduleInfo
+        val (irModuleFragment, dependencyModules, _, symbolTable, deserializer) = moduleInfo
 
         val splitPerModule = JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in module.directives
         val splitPerFile = JsEnvironmentConfigurationDirectives.SPLIT_PER_FILE in module.directives
@@ -86,7 +86,6 @@ class JsIrBackendFacade(
         }
 
         val testPackage = extractTestPackage(testServices)
-        val lowerPerModule = JsEnvironmentConfigurationDirectives.LOWER_PER_MODULE in module.directives
         val skipRegularMode = JsEnvironmentConfigurationDirectives.SKIP_REGULAR_MODE in module.directives
 
         if (skipRegularMode) return null
@@ -132,12 +131,10 @@ class JsIrBackendFacade(
             deserializer,
             phaseConfig,
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, TEST_FUNCTION))),
-            dceDriven = false,
             dceRuntimeDiagnostic = null,
             es6mode = false,
             propertyLazyInitialization = JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION in module.directives,
             baseClassIntoMetadata = false,
-            lowerPerModule = lowerPerModule,
             safeExternalBoolean = JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN in module.directives,
             safeExternalBooleanDiagnostic = module.directives[JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC].singleOrNull(),
             granularity = granularity,
@@ -221,10 +218,7 @@ class JsIrBackendFacade(
             symbolTable,
             messageLogger,
             loadFunctionInterfacesIntoStdlib = true,
-            emptyMap(),
-            { emptySet() },
-            { if (it == mainModuleLib) moduleDescriptor else testServices.jsLibraryProvider.getDescriptorByCompiledLibrary(it) },
-        )
+        ) { if (it == mainModuleLib) moduleDescriptor else testServices.jsLibraryProvider.getDescriptorByCompiledLibrary(it) }
     }
 
     private fun loadIrFromSources(
@@ -254,14 +248,11 @@ class JsIrBackendFacade(
             inputArtifact.allKtFiles.values.toList(),
             sortDependencies(JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices)),
             emptyMap(),
-            emptyMap(),
             symbolTable,
             messageLogger,
             loadFunctionInterfacesIntoStdlib = true,
             verifySignatures,
-            { emptySet() },
-            { testServices.jsLibraryProvider.getDescriptorByCompiledLibrary(it) },
-        )
+        ) { testServices.jsLibraryProvider.getDescriptorByCompiledLibrary(it) }
     }
 
     private fun jsOutputSink(perFileOutputDir: File): CompilerOutputSink {

@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
-import org.jetbrains.kotlin.ir.backend.js.ic.icCompile
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
@@ -20,8 +18,6 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.StageController
-import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
@@ -53,13 +49,11 @@ fun compile(
     phaseConfig: PhaseConfig,
     irFactory: IrFactory,
     exportedDeclarations: Set<FqName> = emptySet(),
-    dceDriven: Boolean = false,
     dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
     es6mode: Boolean = false,
     propertyLazyInitialization: Boolean,
     verifySignatures: Boolean = true,
     baseClassIntoMetadata: Boolean = false,
-    lowerPerModule: Boolean = false,
     safeExternalBoolean: Boolean = false,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
     filesToLower: Set<String>? = null,
@@ -67,20 +61,7 @@ fun compile(
     icCompatibleIr2Js: Boolean = false,
 ): LoweredIr {
 
-    if (lowerPerModule) {
-        return icCompile(
-            depsDescriptors,
-            exportedDeclarations,
-            dceRuntimeDiagnostic,
-            es6mode,
-            propertyLazyInitialization,
-            baseClassIntoMetadata,
-            safeExternalBoolean,
-            safeExternalBooleanDiagnostic,
-        )
-    }
-
-    val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, _) =
+    val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
         loadIr(depsDescriptors, irFactory, verifySignatures, filesToLower, loadFunctionInterfacesIntoStdlib = true)
 
     return compileIr(
@@ -93,12 +74,10 @@ fun compile(
         deserializer,
         phaseConfig,
         exportedDeclarations,
-        dceDriven,
         dceRuntimeDiagnostic,
         es6mode,
         propertyLazyInitialization,
         baseClassIntoMetadata,
-        lowerPerModule,
         safeExternalBoolean,
         safeExternalBooleanDiagnostic,
         granularity,
@@ -116,12 +95,10 @@ fun compileIr(
     deserializer: JsIrLinker,
     phaseConfig: PhaseConfig,
     exportedDeclarations: Set<FqName>,
-    dceDriven: Boolean,
     dceRuntimeDiagnostic: RuntimeDiagnostic?,
     es6mode: Boolean,
     propertyLazyInitialization: Boolean,
     baseClassIntoMetadata: Boolean,
-    lowerPerModule: Boolean,
     safeExternalBoolean: Boolean,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic?,
     granularity: JsGenerationGranularity,
@@ -170,53 +147,11 @@ fun compileIr(
     // TODO should be done incrementally
     generateJsTests(context, allModules.last())
 
-    if (dceDriven) {
-        val controller = MutableController(context, pirLowerings)
-
-        check(irFactory is PersistentIrFactory)
-        irFactory.stageController = controller
-
-        controller.currentStage = controller.lowerings.size + 1
-
-        eliminateDeadDeclarations(allModules, context)
-
-        irFactory.stageController = StageController(controller.currentStage)
-    } else {
-        // TODO is this reachable when lowerPerModule == true?
-        if (lowerPerModule) {
-            val controller = WholeWorldStageController()
-            check(irFactory is PersistentIrFactory)
-            irFactory.stageController = controller
-            allModules.forEach {
-                lowerPreservingIcData(it, context, controller)
-            }
-            irFactory.stageController = object : StageController(irFactory.stageController.currentStage) {}
-        } else {
-            (irFactory.stageController as? WholeWorldStageController)?.let {
-                lowerPreservingTags(allModules, context, phaseConfig, it)
-            } ?: jsPhases.invokeToplevel(phaseConfig, context, allModules)
-        }
-    }
+    (irFactory.stageController as? WholeWorldStageController)?.let {
+        lowerPreservingTags(allModules, context, phaseConfig, it)
+    } ?: jsPhases.invokeToplevel(phaseConfig, context, allModules)
 
     return LoweredIr(context, moduleFragment, allModules)
-}
-
-fun lowerPreservingIcData(module: IrModuleFragment, context: JsIrBackendContext, controller: WholeWorldStageController) {
-    // Lower all the things
-    controller.currentStage = 0
-
-    pirLowerings.forEachIndexed { i, lowering ->
-        controller.currentStage = i + 1
-        when (lowering) {
-            is DeclarationLowering ->
-                lowering.declarationTransformer(context).lower(module)
-            is BodyLowering ->
-                lowering.bodyLowering(context).lower(module)
-            is ModuleLowering -> { /*TODO what about other lowerings? */ }
-        }
-    }
-
-    controller.currentStage = pirLowerings.size + 1
 }
 
 fun generateJsCode(

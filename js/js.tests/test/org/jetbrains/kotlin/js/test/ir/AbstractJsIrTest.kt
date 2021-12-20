@@ -53,7 +53,6 @@ abstract class AbstractJsIrTest(
             defaultDirectives {
                 val runIc = getBoolean("kotlin.js.ir.icMode")
                 if (runIc) +JsEnvironmentConfigurationDirectives.RUN_IC
-                if (runIc || getBoolean("kotlin.js.ir.lowerPerModule")) +JsEnvironmentConfigurationDirectives.LOWER_PER_MODULE
                 if (getBoolean("kotlin.js.ir.klibMainModule")) +JsEnvironmentConfigurationDirectives.KLIB_MAIN_MODULE
                 if (getBoolean("kotlin.js.ir.perModule", true)) +JsEnvironmentConfigurationDirectives.PER_MODULE
                 if (getBoolean("kotlin.js.ir.dce", true)) +JsEnvironmentConfigurationDirectives.RUN_IR_DCE

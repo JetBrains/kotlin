@@ -252,7 +252,7 @@ private fun createLinker(
     val moduleDescriptor = loadedModules.keys.last()
     val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
     val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-    return JsIrLinker(null, logger, irBuiltIns, symbolTable, null, null)
+    return JsIrLinker(null, logger, irBuiltIns, symbolTable, null)
 }
 
 

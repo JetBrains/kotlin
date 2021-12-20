@@ -132,9 +132,6 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     )
     var irDceRuntimeDiagnostic: String? by NullableStringFreezableVar(null)
 
-    @Argument(value = "-Xir-dce-driven", description = "Perform a more experimental faster dead code elimination")
-    var irDceDriven: Boolean by FreezableVar(false)
-
     @Argument(value = "-Xir-dce-print-reachability-info", description = "Print declarations' reachability info to stdout during performing DCE")
     var irDcePrintReachabilityInfo: Boolean by FreezableVar(false)
 

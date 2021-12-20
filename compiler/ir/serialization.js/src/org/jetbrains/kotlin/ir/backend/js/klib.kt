@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.js.ic.ICCache
-import org.jetbrains.kotlin.ir.backend.js.ic.SerializedIcData
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
@@ -71,7 +69,6 @@ import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.utils.DFS
 import java.io.File
-import org.jetbrains.kotlin.konan.file.File as KFile
 
 val KotlinLibrary.moduleName: String
     get() = manifestProperties.getProperty(KLIB_PROPERTY_UNIQUE_NAME)
@@ -82,11 +79,6 @@ val KotlinLibrary.isBuiltIns: Boolean
     get() = manifestProperties
         .propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true)
         .isEmpty()
-
-// TODO: The only place loadKlib() is used now is Wasm backend.
-// Need to move it to SearchPathResolver too.
-fun loadKlib(klibPath: String) =
-    resolveSingleFileKlib(KFile(KFile(klibPath).absolutePath))
 
 private val CompilerConfiguration.metadataVersion
     get() = get(CommonConfigurationKeys.METADATA_VERSION) as? KlibMetadataVersion ?: KlibMetadataVersion.INSTANCE
@@ -255,9 +247,7 @@ data class IrModuleInfo(
     val allDependencies: List<IrModuleFragment>,
     val bultins: IrBuiltIns,
     val symbolTable: SymbolTable,
-    val deserializer: JsIrLinker,
-    val moduleFragmentToUniqueName: Map<IrModuleFragment, String>,
-    val loweredIrLoaded: Set<IrModuleFragment> = emptySet(),
+    val deserializer: JsIrLinker
 )
 
 fun sortDependencies(mapping: Map<KotlinLibrary, ModuleDescriptor>): Collection<KotlinLibrary> {
@@ -267,14 +257,6 @@ fun sortDependencies(mapping: Map<KotlinLibrary, ModuleDescriptor>): Collection<
         val descriptor = mapping[m] ?: error("No descriptor found for library ${m.libraryName}")
         descriptor.allDependencyModules.filter { it != descriptor }.map { m2l[it] }
     }.reversed()
-}
-
-interface LoweringsCacheProvider {
-    fun cacheByPath(path: String): SerializedIcData?
-}
-
-object EmptyLoweringsCacheProvider : LoweringsCacheProvider {
-    override fun cacheByPath(path: String): SerializedIcData? = null
 }
 
 fun deserializeDependencies(
@@ -294,14 +276,6 @@ fun deserializeDependencies(
             else -> irLinker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
         }
     }
-}
-
-fun Map<IrModuleFragment, KotlinLibrary>.getUniqueNameForEachFragment(): Map<IrModuleFragment, String> {
-    return this.entries.mapNotNull { (moduleFragment, klib) ->
-        klib.manifestProperties.getProperty(KLIB_PROPERTY_JS_OUTPUT_NAME)?.let {
-            moduleFragment to it
-        }
-    }.toMap()
 }
 
 fun getFunctionFactoryCallback(stdlibModule: IrModuleFragment) = { packageFragmentDescriptor: PackageFragmentDescriptor ->
@@ -345,31 +319,13 @@ fun loadIr(
                 mainModule.files,
                 sortDependencies(depsDescriptors.descriptors),
                 friendModules,
-                depsDescriptors.loweredIcData,
                 symbolTable,
                 messageLogger,
                 loadFunctionInterfacesIntoStdlib,
                 verifySignatures,
-                { depsDescriptors.modulesWithCaches(it) },
-                { depsDescriptors.getModuleDescriptor(it) },
-            )
+            ) { depsDescriptors.getModuleDescriptor(it) }
         }
         is MainModule.Klib -> {
-            val loweredIcData = if (!depsDescriptors.icUseGlobalSignatures && !depsDescriptors.icUseStdlibCache) emptyMap() else {
-                val result = mutableMapOf<ModuleDescriptor, SerializedIcData>()
-
-                for (lib in depsDescriptors.moduleDependencies.keys) {
-                    val path = lib.libraryFile.absolutePath
-                    val icData = depsDescriptors.loweringsCacheProvider.cacheByPath(path)
-                    if (icData != null) {
-                        val desc = depsDescriptors.getModuleDescriptor(lib)
-                        result[desc] = icData
-                    }
-                }
-
-                result
-            }
-
             val mainPath = File(mainModule.libPath).canonicalPath
             val mainModuleLib = allDependencies.find { it.libraryFile.canonicalPath == mainPath }
                 ?: error("No module with ${mainModule.libPath} found")
@@ -386,10 +342,7 @@ fun loadIr(
                 symbolTable,
                 messageLogger,
                 loadFunctionInterfacesIntoStdlib,
-                loweredIcData,
-                { depsDescriptors.modulesWithCaches(it) },
-                { depsDescriptors.getModuleDescriptor(it) },
-            )
+            ) { depsDescriptors.getModuleDescriptor(it) }
         }
     }
 }
@@ -404,8 +357,6 @@ fun getIrModuleInfoForKlib(
     symbolTable: SymbolTable,
     messageLogger: IrMessageLogger,
     loadFunctionInterfacesIntoStdlib: Boolean,
-    loweredIcData: Map<ModuleDescriptor, SerializedIcData>,
-    filterModulesWithCache: (Iterable<IrModuleFragment>) -> Set<IrModuleFragment>,
     mapping: (KotlinLibrary) -> ModuleDescriptor,
 ): IrModuleInfo {
     val mainModuleLib = sortedDependencies.last()
@@ -422,7 +373,6 @@ fun getIrModuleInfoForKlib(
             symbolTable,
             null,
             null,
-            loweredIcData,
             friendModules,
             allowUnboundSymbols
         )
@@ -443,11 +393,7 @@ fun getIrModuleInfoForKlib(
     ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     irLinker.postProcess()
 
-    return IrModuleInfo(
-        moduleFragment, deserializedModuleFragments, irBuiltIns, symbolTable, irLinker,
-        deserializedModuleFragmentsToLib.getUniqueNameForEachFragment(),
-        filterModulesWithCache(deserializedModuleFragments)
-    )
+    return IrModuleInfo(moduleFragment, deserializedModuleFragments, irBuiltIns, symbolTable, irLinker)
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -458,12 +404,10 @@ fun getIrModuleInfoForSourceFiles(
     files: List<KtFile>,
     allSortedDependencies: Collection<KotlinLibrary>,
     friendModules: Map<String, List<String>>,
-    loweredIcData: Map<ModuleDescriptor, SerializedIcData>,
     symbolTable: SymbolTable,
     messageLogger: IrMessageLogger,
     loadFunctionInterfacesIntoStdlib: Boolean,
     verifySignatures: Boolean,
-    filterModulesWithCache: (Iterable<IrModuleFragment>) -> Set<IrModuleFragment>,
     mapping: (KotlinLibrary) -> ModuleDescriptor
 ): IrModuleInfo {
     val irBuiltIns = psi2IrContext.irBuiltIns
@@ -481,7 +425,6 @@ fun getIrModuleInfoForSourceFiles(
             symbolTable,
             feContext,
             null,
-            loweredIcData,
             friendModules,
             allowUnboundSymbols
         )
@@ -517,11 +460,7 @@ fun getIrModuleInfoForSourceFiles(
         irBuiltIns.knownBuiltins.forEach { it.acceptVoid(mangleChecker) }
     }
 
-    return IrModuleInfo(
-        moduleFragment, deserializedModuleFragments, irBuiltIns, symbolTable, irLinker,
-        deserializedModuleFragmentsToLib.getUniqueNameForEachFragment(),
-        filterModulesWithCache(deserializedModuleFragments)
-    )
+    return IrModuleInfo(moduleFragment, deserializedModuleFragments, irBuiltIns, symbolTable, irLinker)
 }
 
 fun prepareAnalyzedSourceModule(
@@ -531,13 +470,10 @@ fun prepareAnalyzedSourceModule(
     dependencies: List<String>,
     friendDependencies: List<String>,
     analyzer: AbstractAnalyzerWithCompilerReport,
-    icUseGlobalSignatures: Boolean = false,
-    icUseStdlibCache: Boolean = false,
-    icCache: Map<String, ICCache> = emptyMap(),
     errorPolicy: ErrorTolerancePolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT,
 ): ModulesStructure {
     val mainModule = MainModule.SourceFiles(files)
-    val sourceModule = ModulesStructure(project, mainModule, configuration, dependencies, friendDependencies, icUseGlobalSignatures, icUseStdlibCache, icCache)
+    val sourceModule = ModulesStructure(project, mainModule, configuration, dependencies, friendDependencies)
     return sourceModule.apply {
         runAnalysis(errorPolicy, analyzer)
     }
@@ -626,19 +562,7 @@ class ModulesStructure(
     val compilerConfiguration: CompilerConfiguration,
     val dependencies: Collection<String>,
     friendDependenciesPaths: Collection<String>,
-    val icUseGlobalSignatures: Boolean,
-    val icUseStdlibCache: Boolean,
-    val icCache: Map<String, ICCache>,
 ) {
-    val loweringsCacheProvider: LoweringsCacheProvider = when {
-        icUseStdlibCache -> object : LoweringsCacheProvider {
-            override fun cacheByPath(path: String): SerializedIcData? {
-                return icCache[path]?.serializedIcData
-            }
-        }
-        icUseGlobalSignatures -> EmptyLoweringsCacheProvider
-        else -> EmptyLoweringsCacheProvider
-    }
 
     val allResolvedDependencies = jsResolveLibraries(
         dependencies,
@@ -662,7 +586,7 @@ class ModulesStructure(
         }.toMap()
     }
 
-    val builtInsDep = allDependencies.find { it.library.isBuiltIns }
+    private val builtInsDep = allDependencies.find { it.library.isBuiltIns }
 
     class JsFrontEndResult(val jsAnalysisResult: AnalysisResult, val hasErrors: Boolean) {
         val moduleDescriptor: ModuleDescriptor
@@ -719,8 +643,6 @@ class ModulesStructure(
     // TODO: these are roughly equivalent to KlibResolvedModuleDescriptorsFactoryImpl. Refactor me.
     val descriptors = mutableMapOf<KotlinLibrary, ModuleDescriptorImpl>()
 
-    val loweredIcData = mutableMapOf<ModuleDescriptor, SerializedIcData>()
-
     fun getModuleDescriptor(current: KotlinLibrary): ModuleDescriptorImpl = descriptors.getOrPut(current) {
         val isBuiltIns = current.unresolvedDependencies.isEmpty()
 
@@ -738,15 +660,7 @@ class ModulesStructure(
         val dependencies = moduleDependencies.getValue(current).map { getModuleDescriptor(it) }
         md.setDependencies(listOf(md) + dependencies)
 
-        loweringsCacheProvider.cacheByPath(current.libraryFile.absolutePath)?.let { icData ->
-            loweredIcData[md] = icData
-        }
-
         md
-    }
-
-    fun modulesWithCaches(allModules: Iterable<IrModuleFragment>): Set<IrModuleFragment> {
-        return allModules.filter { it.descriptor in loweredIcData }.toSet()
     }
 
     val builtInModuleDescriptor =

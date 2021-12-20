@@ -210,11 +210,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val LOWER_PER_MODULE by directive(
-        description = "",
-        applicability = DirectiveApplicability.Global
-    )
-
     val KLIB_MAIN_MODULE by directive(
         description = "Specify that main module is actually a klib",
         applicability = DirectiveApplicability.Global

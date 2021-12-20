@@ -37,10 +37,6 @@ class TestModuleCache(val files: MutableMap<String, FileCache>) {
                 return 0L
             }
 
-            override fun serializedParts(path: String): SerializedIcDataForFile {
-                error("Is not supported")
-            }
-
             override fun inlineGraphForFile(path: String, sigResolver: (Int) -> IdSignature): Collection<Pair<IdSignature, TransHash>> {
                 error("Is not supported")
             }
@@ -94,10 +90,6 @@ class TestModuleCache(val files: MutableMap<String, FileCache>) {
                 hashes: Collection<Pair<IdSignature, TransHash>>,
                 sigResolver: (IdSignature) -> Int
             ) {
-
-            }
-
-            override fun commitICCacheData(path: String, icData: SerializedIcDataForFile) {
 
             }
 

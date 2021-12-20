@@ -31,15 +31,15 @@ abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
         configuration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
         configuration.put(CommonConfigurationKeys.MODULE_NAME, MAIN_MODULE_NAME)
         val kLib = MainModule.Klib(mainModulePath)
-        val moduleStructure = ModulesStructure(project, kLib, configuration, libraries, emptyList(), false, false, emptyMap())
+        val moduleStructure = ModulesStructure(project, kLib, configuration, libraries, emptyList())
 
         val ir = compile(
             moduleStructure,
             PhaseConfig(jsPhases),
             IrFactoryImplForJsIC(WholeWorldStageController()),
+            exportedDeclarations = setOf(FqName("box")),
             propertyLazyInitialization = true,
             granularity = JsGenerationGranularity.PER_MODULE,
-            exportedDeclarations = setOf(FqName("box")),
             icCompatibleIr2Js = true
         )
 

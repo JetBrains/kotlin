@@ -40,14 +40,15 @@ import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
-import org.jetbrains.kotlin.ir.backend.js.ic.*
+import org.jetbrains.kotlin.ir.backend.js.ic.actualizeCacheForModule
+import org.jetbrains.kotlin.ir.backend.js.ic.buildCacheForModuleFiles
+import org.jetbrains.kotlin.ir.backend.js.ic.loadModuleCaches
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformerTmp
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
-import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrFactory
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
@@ -76,13 +77,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
     override fun createArguments(): K2JSCompilerArguments {
         return K2JSCompilerArguments()
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    private fun usePerFileInvalidator(configuration: CompilerConfiguration): Boolean = true
-
-    private fun IcCacheInfo.toICCacheMap(): Map<String, ICCache> {
-        return data.map { it.key to ICCache(PersistentCacheProvider.EMPTY, PersistentCacheConsumer.EMPTY, it.value) }.toMap()
     }
 
     override fun doExecute(
@@ -184,10 +178,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         val outputFile = File(outputFilePath)
 
         val moduleName = arguments.irModuleName ?: FileUtil.getNameWithoutExtension(outputFile)
-        configurationJs.put(
-            CommonConfigurationKeys.MODULE_NAME,
-            moduleName
-        )
+        configurationJs.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
 
         // TODO: in this method at least 3 different compiler configurations are used (original, env.configuration, jsConfig.configuration)
         // Such situation seems a bit buggy...
@@ -246,10 +237,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     configurationJs,
                     libraries,
                     friendLibraries,
-                    AnalyzerWithCompilerReport(config.configuration),
-                    icUseGlobalSignatures = icCaches.isNotEmpty(),
-                    icUseStdlibCache = icCaches.isNotEmpty(),
-                    icCache = if (icCaches.isNotEmpty()) checkCaches(libraries, icCaches, skipLib = includes).toICCacheMap() else emptyMap()
+                    AnalyzerWithCompilerReport(config.configuration)
                 )
                 val result = sourceModule.jsFrontEndResult.jsAnalysisResult
                 if (result is JsAnalysisResult.RetryWithAdditionalRoots) {
@@ -323,10 +311,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     kLib,
                     configurationJs,
                     libraries,
-                    friendLibraries,
-                    icUseGlobalSignatures = icCaches.isNotEmpty(),
-                    icUseStdlibCache = icCaches.isNotEmpty(),
-                    icCache = if (icCaches.isNotEmpty()) checkCaches(libraries, icCaches, skipLib = includes).toICCacheMap() else emptyMap()
+                    friendLibraries
                 )
             } else {
                 sourceModule
@@ -389,7 +374,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             }
             try {
                 val irFactory = when {
-                    arguments.irDceDriven -> PersistentIrFactory()
                     arguments.irNewIr2Js -> IrFactoryImplForJsIC(WholeWorldStageController())
                     else -> IrFactoryImpl
                 }
@@ -402,7 +386,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                         arguments.irDceRuntimeDiagnostic,
                         messageCollector
                     ),
-                    dceDriven = arguments.irDceDriven,
                     propertyLazyInitialization = arguments.irPropertyLazyInitialization,
                     baseClassIntoMetadata = arguments.irBaseClassInMetadata,
                     safeExternalBoolean = arguments.irSafeExternalBoolean,
@@ -410,7 +393,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                         arguments.irSafeExternalBooleanDiagnostic,
                         messageCollector
                     ),
-                    lowerPerModule = false,//icCaches.isNotEmpty(),
                     granularity = granularity,
                     icCompatibleIr2Js = arguments.irNewIr2Js,
                 )
@@ -596,11 +578,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS to SourceMapSourceEmbedding.ALWAYS,
             K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_NEVER to SourceMapSourceEmbedding.NEVER,
             K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_INLINING to SourceMapSourceEmbedding.INLINING
-        )
-        private val produceMap = mapOf(
-            null to ProduceKind.DEFAULT,
-            "js" to ProduceKind.JS,
-            "klib" to ProduceKind.KLIB
         )
 
         @JvmStatic

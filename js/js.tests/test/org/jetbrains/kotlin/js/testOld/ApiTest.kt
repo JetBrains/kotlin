@@ -77,10 +77,7 @@ class ApiTest : KotlinTestWithEnvironment() {
                 MainModule.Klib(File(fullRuntimeKlib).canonicalPath),
                 configuration,
                 listOf(fullRuntimeKlib),
-                emptyList(),
-                false,
-                false,
-                emptyMap()
+                emptyList()
             )
 
             return loadIr(
