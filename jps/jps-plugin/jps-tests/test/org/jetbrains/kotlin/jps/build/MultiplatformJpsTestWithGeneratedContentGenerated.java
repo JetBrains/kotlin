@@ -41,6 +41,16 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
+        @TestMetadata("editingCKotlin")
+        public void testEditingCKotlin() throws Exception {
+            runTest("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingCKotlin/");
+        }
+
+        @TestMetadata("editingPJsKotlin")
+        public void testEditingPJsKotlin() throws Exception {
+            runTest("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingPJsKotlin/");
+        }
+
         @TestMetadata("editingPJvmJava")
         public void testEditingPJvmJava() throws Exception {
             runTest("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simple/editingPJvmJava/");
@@ -163,6 +173,16 @@ public class MultiplatformJpsTestWithGeneratedContentGenerated extends AbstractM
 
         public void testAllFilesPresentInSimpleNewMpp() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp"), Pattern.compile("^([^\\.]+)$"), null, true);
+        }
+
+        @TestMetadata("editingCKotlin")
+        public void testEditingCKotlin() throws Exception {
+            runTest("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingCKotlin/");
+        }
+
+        @TestMetadata("editingPJsKotlin")
+        public void testEditingPJsKotlin() throws Exception {
+            runTest("jps-plugin/testData/incremental/multiModule/multiplatform/withGeneratedContent/simpleNewMpp/editingPJsKotlin/");
         }
 
         @TestMetadata("editingPJvmJava")
