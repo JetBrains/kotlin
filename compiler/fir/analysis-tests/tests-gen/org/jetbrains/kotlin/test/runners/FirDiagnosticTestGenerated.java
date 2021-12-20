@@ -5664,6 +5664,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("resolveToLocalFromCallSite.kt")
+            public void testResolveToLocalFromCallSite() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/resolveToLocalFromCallSite.kt");
+            }
+
+            @Test
             @TestMetadata("selfReferenceToCompanionObject.kt")
             public void testSelfReferenceToCompanionObject() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/selfReferenceToCompanionObject.kt");

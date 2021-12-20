@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.resolve.FirRegularTowerDataContexts
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
@@ -205,7 +206,14 @@ private class ReturnTypeCalculatorWithJump(
     ) -> FirDesignatedBodyResolveTransformerForReturnTypeCalculator = ::FirDesignatedBodyResolveTransformerForReturnTypeCalculator,
 ) : ReturnTypeCalculator {
 
+    @OptIn(PrivateForInline::class)
     var outerBodyResolveContext: BodyResolveContext? = null
+        set(context) {
+            field = context
+            outerTowerDataContexts = context?.regularTowerDataContexts
+        }
+
+    var outerTowerDataContexts: FirRegularTowerDataContexts? = null
 
     override fun tryCalculateReturnType(declaration: FirTypedDeclaration): FirResolvedTypeRef {
         if (declaration is FirValueParameter && declaration.returnTypeRef is FirImplicitTypeRef) {
@@ -253,6 +261,7 @@ private class ReturnTypeCalculatorWithJump(
         }
     }
 
+    @OptIn(PrivateForInline::class)
     private fun computeReturnTypeRef(declaration: FirCallableDeclaration): FirResolvedTypeRef {
         val symbol = declaration.symbol
         val provider = session.firProvider
@@ -277,6 +286,9 @@ private class ReturnTypeCalculatorWithJump(
             (listOf(file) + outerClasses.filterNotNull().asReversed()) to null
         }
 
+        val previousTowerDataContexts = outerBodyResolveContext?.regularTowerDataContexts
+        outerBodyResolveContext?.regularTowerDataContexts = outerTowerDataContexts!!
+
         val transformer = createTransformer(
             (designation.drop(1) + declaration).iterator(),
             session,
@@ -293,6 +305,9 @@ private class ReturnTypeCalculatorWithJump(
 
         val newReturnTypeRef = transformedDeclaration.returnTypeRef
         require(newReturnTypeRef is FirResolvedTypeRef) { transformedDeclaration.render() }
+        if (previousTowerDataContexts != null) {
+            outerBodyResolveContext.regularTowerDataContexts = previousTowerDataContexts
+        }
         return newReturnTypeRef
     }
 }
