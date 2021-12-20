@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.unsubstitutedUnderlyingType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.types.typeUtil.isSignedOrUnsignedNumberType as classicIsSignedOrUnsignedNumberType
@@ -644,12 +645,13 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return (types as List<KotlinType>).map { it.unwrap().attributes }.reduce { x, y -> x.union(y) }.toList()
     }
 
-    override fun KotlinTypeMarker.replaceTypeAttributes(newAttributes: List<AnnotationMarker>): KotlinTypeMarker {
+    override fun KotlinTypeMarker.replaceCustomAttributes(newAttributes: List<AnnotationMarker>): KotlinTypeMarker {
         require(this is KotlinType)
-        if (newAttributes.isEmpty()) return this
         @Suppress("UNCHECKED_CAST")
+        val attributes = (newAttributes as List<TypeAttribute<*>>).filterNot { it is AnnotationsTypeAttribute }.toMutableList()
+        attributes.addIfNotNull(this.attributes.annotationsAttribute)
         return this.unwrap().replaceAttributes(
-            TypeAttributes.create(newAttributes as List<TypeAttribute<*>>)
+            TypeAttributes.create(attributes)
         )
     }
 

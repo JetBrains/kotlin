@@ -405,16 +405,19 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return (types as List<ConeKotlinType>).map { it.attributes }.reduce { x, y -> x.union(y) }.toList()
     }
 
-    override fun KotlinTypeMarker.replaceTypeAttributes(newAttributes: List<AnnotationMarker>): KotlinTypeMarker {
+    private fun AnnotationMarker.isCustomAttribute(): Boolean {
+        val compilerAttributes = CompilerConeAttributes.classIdByCompilerAttribute
+        return this !in compilerAttributes && this !is CustomAnnotationTypeAttribute
+    }
+
+    override fun KotlinTypeMarker.replaceCustomAttributes(newAttributes: List<AnnotationMarker>): KotlinTypeMarker {
         require(this is ConeKotlinType)
-        if (newAttributes.isEmpty()) return this
         @Suppress("UNCHECKED_CAST")
-        return createSimpleType(
-            this.typeConstructor(),
-            this.getArguments(),
-            this.isNullable,
-            this.isExtensionFunctionType,
-            newAttributes as List<ConeAttribute<*>>
+        val newCustomAttributes = (newAttributes as List<ConeAttribute<*>>).filter { it.isCustomAttribute() }
+        val attributesToKeep = this.attributes.filterNot { it.isCustomAttribute() }
+        return withAttributes(
+            ConeAttributes.create(newCustomAttributes + attributesToKeep),
+            this@ConeInferenceContext
         )
     }
 
