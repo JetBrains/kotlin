@@ -21,12 +21,15 @@ import org.jetbrains.jps.builders.java.JavaModuleBuildTargetType;
 import org.jetbrains.kotlin.build.JvmSourceRoot;
 import org.jetbrains.kotlin.config.IncrementalCompilation;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 
 public class KotlinModuleXmlGeneratorTest extends TestCase {
+    private final static String testDataPath = "jps-plugin/testData/modules.xml";
+
     public void testBasic() {
         String actual = new KotlinModuleXmlBuilder().addModule(
                 "name",
@@ -42,7 +45,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.emptyList(),
                 IncrementalCompilation.isEnabledForJvm()
         ).asText().toString();
-        KotlinTestUtils.assertEqualsToFile(new File("/basic.xml"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File(testDataPath + "/basic.xml"), actual);
     }
 
     public void testFiltered() {
@@ -60,7 +63,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.emptyList(),
                 IncrementalCompilation.isEnabledForJvm()
         ).asText().toString();
-        KotlinTestUtils.assertEqualsToFile(new File("/filtered.xml"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File(testDataPath + "/filtered.xml"), actual);
     }
 
     public void testMultiple() {
@@ -94,7 +97,7 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 IncrementalCompilation.isEnabledForJvm()
         );
         String actual = builder.asText().toString();
-        KotlinTestUtils.assertEqualsToFile(new File("/multiple.xml"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File(testDataPath + "/multiple.xml"), actual);
     }
 
     public void testModularJdkRoot() {
@@ -112,6 +115,6 @@ public class KotlinModuleXmlGeneratorTest extends TestCase {
                 Collections.emptyList(),
                 IncrementalCompilation.isEnabledForJvm()
         ).asText().toString();
-        KotlinTestUtils.assertEqualsToFile(new File("/modularJdkRoot.xml"), actual);
+        KotlinTestUtils.assertEqualsToFile(new File(testDataPath + "/modularJdkRoot.xml"), actual);
     }
 }
