@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParameters
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
@@ -19,6 +20,8 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.isInt
@@ -123,7 +126,9 @@ class MemoizedInlineClassReplacements(
                 copyTypeParametersFrom(irClass)
                 addValueParameter {
                     name = InlineClassDescriptorResolver.BOXING_VALUE_PARAMETER_NAME
-                    type = irClass.inlineClassRepresentation!!.underlyingType
+                    type =
+                        if (irClass.modality == Modality.SEALED) context.irBuiltIns.anyNType
+                        else getInlineClassUnderlyingType(irClass)
                 }
             }
         }
@@ -138,7 +143,12 @@ class MemoizedInlineClassReplacements(
             irFactory.buildFun {
                 name = Name.identifier(KotlinTypeMapper.UNBOX_JVM_METHOD_NAME)
                 origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
-                returnType = irClass.inlineClassRepresentation!!.underlyingType
+                returnType =
+                    if (irClass.modality == Modality.SEALED) context.irBuiltIns.anyNType
+                    else getInlineClassUnderlyingType(irClass)
+                if (irClass.modality == Modality.SEALED) {
+                    modality = Modality.OPEN
+                }
             }.apply {
                 parent = irClass
                 createDispatchReceiverParameter()
@@ -158,7 +168,10 @@ class MemoizedInlineClassReplacements(
                 parent = irClass
                 // We ignore type arguments here, since there is no good way to go from type arguments to types in the IR anyway.
                 val typeArgument =
-                    IrSimpleTypeImpl(null, irClass.symbol, false, List(irClass.typeParameters.size) { IrStarProjectionImpl }, listOf())
+                    if (irClass.modality == Modality.SEALED) context.irBuiltIns.anyNType
+                    else IrSimpleTypeImpl(
+                        null, irClass.symbol, false, List(irClass.typeParameters.size) { IrStarProjectionImpl }, listOf()
+                    )
                 addValueParameter {
                     name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_FIRST_PARAMETER_NAME
                     type = typeArgument

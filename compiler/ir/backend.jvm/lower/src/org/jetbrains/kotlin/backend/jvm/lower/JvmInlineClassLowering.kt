@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.*
@@ -36,6 +39,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val jvmInlineClassPhase = makeIrFilePhase(
@@ -91,10 +96,18 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             declaration.declarations.removeIf {
                 it == irConstructor || (it is IrFunction && it.isInlineClassFieldGetter && !it.visibility.isPublicAPI)
             }
-            buildPrimaryInlineClassConstructor(declaration, irConstructor)
-            buildBoxFunction(declaration)
-            buildUnboxFunction(declaration)
-            buildSpecializedEqualsMethod(declaration)
+            if (declaration.modality != Modality.SEALED) {
+                buildPrimaryInlineClassConstructor(declaration, irConstructor)
+                buildBoxFunction(declaration)
+                buildUnboxFunction(declaration)
+                buildSpecializedEqualsMethod(declaration)
+            } else {
+                val inlineSubclasses = declaration.sealedSubclasses.filter { it.owner.isInline }
+                val noinlineSubclasses = declaration.sealedSubclasses.filterNot { it.owner.isInline }
+                buildBoxFunctionForSealed(declaration, inlineSubclasses, noinlineSubclasses)
+                buildUnboxFunctionForSealed(declaration, inlineSubclasses, noinlineSubclasses)
+                buildSpecializedEqualsMethodForSealed(declaration, inlineSubclasses, noinlineSubclasses)
+            }
             addJvmInlineAnnotation(declaration)
         }
 
@@ -443,7 +456,8 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         if (field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD &&
             parent is IrClass &&
             parent.isInline &&
-            field.name == parent.inlineClassFieldName) {
+            field.name == parent.inlineClassFieldName
+        ) {
             val receiver = expression.receiver!!.transform(this, null)
             return coerceInlineClasses(receiver, receiver.type, field.type)
         }
@@ -522,7 +536,9 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             copyParameterDeclarationsFrom(irConstructor)
             annotations = irConstructor.annotations
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
-                +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
+                +irDelegatingConstructorCall(irClass.superTypes.single {
+                    it.asClass().kind == ClassKind.CLASS
+                }.asClass().constructors.single())
                 +irSetField(
                     irGet(irClass.thisReceiver!!),
                     getInlineClassBackingField(irClass),
@@ -554,6 +570,8 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         irClass.declarations += function
     }
 
+    private fun IrType.asClass(): IrClass = classifierOrFail.owner.cast()
+
     private fun buildBoxFunction(irClass: IrClass) {
         val function = context.inlineClassReplacements.getBoxFunction(irClass)
         with(context.createIrBuilder(function.symbol)) {
@@ -567,6 +585,32 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         irClass.declarations += function
     }
 
+    private fun buildBoxFunctionForSealed(
+        irClass: IrClass,
+        inlineSubclasses: List<IrClassSymbol>,
+        noinlineSubclasses: List<IrClassSymbol>
+    ) {
+        val function = context.inlineClassReplacements.getBoxFunction(irClass)
+        with(context.createIrBuilder(function.symbol)) {
+            val branches = noinlineSubclasses.map {
+                irBranch(
+                    irIs(irGet(function.valueParameters[0]), it.owner.defaultType),
+                    irGet(function.valueParameters[0])
+                )
+            } + inlineSubclasses.map {
+                irBranch(
+                    irIs(irGet(function.valueParameters[0]), getInlineClassUnderlyingType(it.owner)),
+                    irCall(this@JvmInlineClassLowering.context.inlineClassReplacements.getBoxFunction(it.owner)).apply {
+                        passTypeArgumentsFrom(function)
+                        putValueArgument(0, irGet(function.valueParameters[0]))
+                    }
+                )
+            } + irBranch(irTrue(), irGet(function.valueParameters[0]))
+            function.body = irExprBody(irWhen(irClass.defaultType, branches))
+        }
+        irClass.declarations += function
+    }
+
     private fun buildUnboxFunction(irClass: IrClass) {
         val function = context.inlineClassReplacements.getUnboxFunction(irClass)
         val field = getInlineClassBackingField(irClass)
@@ -574,6 +618,33 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         function.body = context.createIrBuilder(function.symbol).irBlockBody {
             val thisVal = irGet(function.dispatchReceiverParameter!!)
             +irReturn(irGetField(thisVal, field))
+        }
+
+        irClass.declarations += function
+    }
+
+    private fun buildUnboxFunctionForSealed(
+        irClass: IrClass,
+        inlineSubclasses: List<IrClassSymbol>,
+        noinlineSubclasses: List<IrClassSymbol>
+    ) {
+        val function = context.inlineClassReplacements.getUnboxFunction(irClass)
+
+        with(context.createIrBuilder(function.symbol)) {
+            val branches = noinlineSubclasses.map {
+                irBranch(
+                    irIs(irGet(function.dispatchReceiverParameter!!), it.owner.defaultType),
+                    irGet(function.dispatchReceiverParameter!!)
+                )
+            } + inlineSubclasses.map {
+                irBranch(
+                    irIs(irGet(function.dispatchReceiverParameter!!), it.owner.defaultType),
+                    irCall(this@JvmInlineClassLowering.context.inlineClassReplacements.getUnboxFunction(it.owner)).apply {
+                        dispatchReceiver = irGet(function.dispatchReceiverParameter!!)
+                    }
+                )
+            } + irBranch(irTrue(), irGet(function.dispatchReceiverParameter!!))
+            function.body = irExprBody(irWhen(this@JvmInlineClassLowering.context.irBuiltIns.anyNType, branches))
         }
 
         irClass.declarations += function
@@ -592,6 +663,53 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                     coerceInlineClasses(irGet(right), right.type, type)
                 )
             )
+        }
+
+        irClass.declarations += function
+    }
+
+    private fun buildSpecializedEqualsMethodForSealed(
+        irClass: IrClass,
+        inlineSubclasses: List<IrClassSymbol>,
+        noinlineSubclasses: List<IrClassSymbol>
+    ) {
+        val boolAnd = context.ir.symbols.getBinaryOperator(
+            OperatorNameConventions.AND, context.irBuiltIns.booleanType, context.irBuiltIns.booleanType
+        )
+        val equals = context.ir.symbols.getBinaryOperator(
+            OperatorNameConventions.EQUALS, context.irBuiltIns.anyNType, context.irBuiltIns.anyNType
+        )
+
+        val function = context.inlineClassReplacements.getSpecializedEqualsMethod(irClass, context.irBuiltIns)
+        val left = function.valueParameters[0]
+        val right = function.valueParameters[1]
+
+        function.body = context.createIrBuilder(irClass.symbol).run {
+            val branches = noinlineSubclasses.map {
+                irBranch(
+                    irCallOp(
+                        boolAnd, context.irBuiltIns.booleanType,
+                        irIs(irGet(left), it.owner.defaultType),
+                        irIs(irGet(right), it.owner.defaultType),
+                    ),
+                    irCallOp(equals, context.irBuiltIns.booleanType, irGet(left), irGet(right))
+                )
+            } + inlineSubclasses.map {
+                val eq = this@JvmInlineClassLowering.context.inlineClassReplacements
+                    .getSpecializedEqualsMethod(it.owner, context.irBuiltIns)
+                irBranch(
+                    irCallOp(
+                        boolAnd, context.irBuiltIns.booleanType,
+                        irIs(irGet(left), getInlineClassUnderlyingType(it.owner)),
+                        irIs(irGet(right), getInlineClassUnderlyingType(it.owner)),
+                    ),
+                    irCall(eq).apply {
+                        putValueArgument(0, irGet(left))
+                        putValueArgument(1, irGet(right))
+                    }
+                )
+            } + irBranch(irTrue(), irFalse())
+            irExprBody(irWhen(context.irBuiltIns.booleanType, branches))
         }
 
         irClass.declarations += function
