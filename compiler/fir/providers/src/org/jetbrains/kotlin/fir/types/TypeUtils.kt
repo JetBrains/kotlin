@@ -113,6 +113,10 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes, typeSystem
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable, attributes)
         is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.withAttributes(attributes, typeSystemContext))
         is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullability.isNullable, attributes)
+        is ConeRawType -> ConeRawType(
+            lowerBound.withAttributes(attributes, typeSystemContext),
+            upperBound.withAttributes(attributes, typeSystemContext)
+        )
         is ConeFlexibleType -> ConeFlexibleType(
             lowerBound.withAttributes(attributes, typeSystemContext),
             upperBound.withAttributes(attributes, typeSystemContext)
