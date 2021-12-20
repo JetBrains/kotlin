@@ -222,6 +222,21 @@ public class DirectiveTestUtils {
 
     private static final DirectiveHandler COUNT_IF = new CountNodesDirective<>("CHECK_IF_COUNT", JsIf.class);
 
+    private static final DirectiveHandler COUNT_TERNARY_OPERATOR =
+            new CountNodesDirective<>("CHECK_TERNARY_OPERATOR_COUNT", JsConditional.class);
+
+    private static final DirectiveHandler COUNT_BINOPS = new CountNodesDirective<JsBinaryOperation>("CHECK_BINOP_COUNT",
+                                                                                                        JsBinaryOperation.class) {
+        @Override
+        protected int getActualCountFor(@NotNull JsBinaryOperation node, @NotNull ArgumentsHelper arguments) {
+            String symbol = arguments.findNamedArgument("symbol");
+            if (symbol == null) {
+                return 1;
+            }
+            return node.getOperator().getSymbol().equals(symbol) ? 1 : 0;
+        }
+    };
+
     private static final DirectiveHandler COUNT_DEBUGGER = new CountNodesDirective<>("CHECK_DEBUGGER_COUNT", JsDebugger.class);
 
     private static final DirectiveHandler COUNT_STRING_LITERALS = new CountNodesDirective<>("CHECK_STRING_LITERAL_COUNT", JsStringLiteral.class);
@@ -366,6 +381,8 @@ public class DirectiveTestUtils {
             COUNT_NEW,
             COUNT_CASES,
             COUNT_IF,
+            COUNT_TERNARY_OPERATOR,
+            COUNT_BINOPS,
             COUNT_DEBUGGER,
             COUNT_STRING_LITERALS,
             NOT_REFERENCED,
