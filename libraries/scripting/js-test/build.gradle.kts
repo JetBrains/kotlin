@@ -9,7 +9,7 @@ dependencies {
 
     testCompile(project(":kotlin-scripting-js"))
     testCompile(project(":compiler:plugin-api"))
-    testCompile(project(":kotlin-scripting-compiler"))
+    testCompile(project(":kotlin-scripting-compiler-js"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":compiler:backend.js"))
     testCompile(project(":compiler:ir.tree.impl"))
