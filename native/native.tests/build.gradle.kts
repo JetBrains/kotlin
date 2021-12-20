@@ -146,12 +146,8 @@ fun groupingTest(taskName: String, vararg dependencyTasks: Any) = getOrCreateTas
 val infrastructureTest = blackBoxTest("infrastructureTest", "infrastructure")
 val externalTest = blackBoxTest("externalTest", "external")
 
-// Tasks that do not run tests directly, but group other test tasks. Most frequent use case: running groups of tests on CI server.
-val dailyTest = groupingTest("dailyTest", externalTest)
-val fullTest = groupingTest("fullTest", dailyTest, infrastructureTest)
-
-// "test" task is created by convention. We can't just remove it. So, let it be just an alias for daily test task.
-val test by groupingTest("test", dailyTest)
+// "test" task is created by convention. We can't just remove it. So, let it be just an alias for external test task.
+val test by groupingTest("test", externalTest)
 
 gradle.taskGraph.whenReady {
     allTasks.forEach { task ->
