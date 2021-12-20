@@ -13,6 +13,10 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.engine.ScriptEngineNashorn
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
+import org.jetbrains.kotlin.scripting.js.JsReplCompilerState
+import org.jetbrains.kotlin.scripting.js.JsScriptDependencyCompiler
+import org.jetbrains.kotlin.scripting.js.createCompileResult
+import org.jetbrains.kotlin.scripting.js.readLibrariesFromConfiguration
 import org.jetbrains.kotlin.scripting.repl.js.*
 import java.util.concurrent.locks.ReentrantReadWriteLock
 

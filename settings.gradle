@@ -236,6 +236,7 @@ include ":benchmarks",
         ":kotlin-scripting-jvm-host",
         ":kotlin-scripting-intellij",
         ":kotlin-scripting-compiler",
+        ":kotlin-scripting-compiler-js",
         ":kotlin-scripting-compiler-embeddable",
         ":kotlin-scripting-compiler-impl",
         ":kotlin-scripting-compiler-impl-embeddable",
@@ -602,6 +603,7 @@ project(':kotlin-scripting-jsr223-test').projectDir = "$rootDir/libraries/script
 project(':kotlin-scripting-jsr223').projectDir = "$rootDir/libraries/scripting/jsr223-embeddable" as File
 project(':kotlin-scripting-intellij').projectDir = "$rootDir/libraries/scripting/intellij" as File
 project(':kotlin-scripting-compiler').projectDir = "$rootDir/plugins/scripting/scripting-compiler" as File
+project(':kotlin-scripting-compiler-js').projectDir = "$rootDir/plugins/scripting/scripting-compiler-js" as File
 project(':kotlin-scripting-compiler-embeddable').projectDir = "$rootDir/plugins/scripting/scripting-compiler-embeddable" as File
 project(':kotlin-scripting-compiler-impl').projectDir = "$rootDir/plugins/scripting/scripting-compiler-impl" as File
 project(':kotlin-scripting-compiler-impl-embeddable').projectDir = "$rootDir/plugins/scripting/scripting-compiler-impl-embeddable" as File

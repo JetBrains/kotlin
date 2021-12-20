@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.scripting.extensions.ScriptExtraImportsProviderExtension
 import org.jetbrains.kotlin.scripting.extensions.ScriptingResolveExtension
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.net.URLClassLoader
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
@@ -51,7 +52,6 @@ class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
             CompilerConfigurationExtension.registerExtension(project, ScriptingCompilerConfigurationExtension(project, hostConfiguration))
             CollectAdditionalSourcesExtension.registerExtension(project, ScriptingCollectAdditionalSourcesExtension(project))
             ScriptEvaluationExtension.registerExtensionIfRequired(project, JvmCliScriptEvaluationExtension())
-            ScriptEvaluationExtension.registerExtensionIfRequired(project, JsScriptEvaluationExtension())
             ShellExtension.registerExtensionIfRequired(project, JvmCliReplShellExtension())
             ReplFactoryExtension.registerExtensionIfRequired(project, JvmStandardReplFactoryExtension())
 

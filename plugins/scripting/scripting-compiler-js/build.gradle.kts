@@ -1,4 +1,4 @@
-description = "Kotlin Scripting Compiler Plugin"
+description = "Kotlin Scripting Compiler JS Plugin"
 
 plugins {
     kotlin("jvm")
@@ -7,17 +7,17 @@ plugins {
 
 dependencies {
     compileOnly(project(":compiler:frontend"))
-    compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:psi"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:backend.js"))
     compileOnly(project(":core:descriptors.runtime"))
     compileOnly(project(":compiler:ir.tree.impl"))
-    compileOnly(project(":compiler:backend.jvm.entrypoint"))
     compileOnly(project(":kotlin-reflect-api"))
     compile(project(":kotlin-scripting-common"))
-    compile(project(":kotlin-scripting-jvm"))
-    compile(project(":kotlin-scripting-compiler-impl"))
+    compile(project(":kotlin-scripting-js"))
+    compile(project(":kotlin-util-klib"))
+    compile(project(":kotlin-scripting-compiler"))
     compile(kotlinStdlib())
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
@@ -26,15 +26,11 @@ dependencies {
     testCompile(project(":compiler:util"))
     testCompile(project(":compiler:cli"))
     testCompile(project(":compiler:cli-common"))
-    testCompile(project(":compiler:frontend.java"))
+    testCompile(project(":compiler:backend.js"))
     testCompile(projectTests(":compiler:tests-common"))
     testCompile(commonDep("junit:junit"))
 
     testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
-    testImplementation(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
-    testRuntimeOnly(intellijDep()) { includeJars("jps-model", "jna") }
-
-    testImplementation(project(":kotlin-reflect"))
 }
 
 sourceSets {
@@ -49,23 +45,3 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
 }
 
 publish()
-
-runtimeJar()
-sourcesJar()
-javadocJar()
-
-testsJar()
-
-projectTest(parallel = true) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
-}
-
-projectTest(taskName = "testWithIr", parallel = true) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
-    systemProperty("kotlin.script.test.base.compiler.arguments", "-Xuse-ir")
-}
-

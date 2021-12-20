@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.scripting.compiler.plugin.impl
+package org.jetbrains.kotlin.scripting.js
 
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -15,10 +15,8 @@ import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptCompilerProxy
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.withMessageCollector
 import org.jetbrains.kotlin.scripting.repl.js.JsCompiledScript
-import org.jetbrains.kotlin.scripting.repl.js.JsCoreScriptingCompiler
-import org.jetbrains.kotlin.scripting.repl.js.JsScriptDependencyCompiler
-import org.jetbrains.kotlin.scripting.repl.js.readLibrariesFromConfiguration
 import kotlin.script.experimental.api.*
 
 class JsScriptCompilerWithDependenciesProxy(private val environment: KotlinCoreEnvironment) : ScriptCompilerProxy {
@@ -38,7 +36,7 @@ class JsScriptCompilerWithDependenciesProxy(private val environment: KotlinCoreE
             environment.configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
             try {
                 val dependenciesCode = scriptDependencyCompiler?.let { scriptDependencyCompiler = null; it.compile(dependencies) } ?: ""
-                when (val compileResult = compiler.compile(org.jetbrains.kotlin.scripting.repl.js.makeReplCodeLine(0, script.text))) {
+                when (val compileResult = compiler.compile(makeReplCodeLine(0, script.text))) {
                     is ReplCompileResult.CompiledClasses -> {
                         val compileJsCode = compileResult.data as String
                         ResultWithDiagnostics.Success(
