@@ -111,6 +111,10 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
             }
         }
 
+        if (project.hasKpmModel && !result.isKpm) {
+            mapTargetCompilationsToKpmVariants(result)
+        }
+
         return result
     }
 

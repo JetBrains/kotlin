@@ -10,6 +10,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.mapTargetCompilationsToKpmVariants
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTargetConfigurator
@@ -98,6 +100,14 @@ open class KotlinJsTargetPreset(
 
     companion object {
         const val PRESET_NAME = "js"
+    }
+
+    override fun createTarget(name: String): KotlinJsTarget {
+        val result = super.createTarget(name)
+        if (project.hasKpmModel) {
+            mapTargetCompilationsToKpmVariants(result)
+        }
+        return result
     }
 }
 
