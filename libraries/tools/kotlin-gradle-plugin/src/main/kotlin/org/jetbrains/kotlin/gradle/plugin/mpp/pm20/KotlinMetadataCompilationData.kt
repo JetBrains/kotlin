@@ -60,7 +60,13 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
         createMetadataDependencyTransformationClasspath(
             project,
             resolvableMetadataConfiguration(fragment.containingModule),
-            lazy { fragment.refinesClosure.minus(fragment).map { metadataCompilationRegistry.byFragment(it).output.classesDirs } },
+            lazy {
+                fragment.refinesClosure.minus(fragment).map {
+                    val compilation = metadataCompilationRegistry.getForFragmentOrNull(it)
+                        ?: return@map project.files()
+                    compilation.output.classesDirs
+                }
+            },
             resolvedMetadataFiles
         )
     }
@@ -90,7 +96,9 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
         get() = metadataCompilationRegistry.run {
             fragment.refinesClosure.minus(fragment)
                 .map {
-                    metadataCompilationRegistry.byFragment(it).output.classesDirs
+                    val compilation = metadataCompilationRegistry.getForFragmentOrNull(it)
+                        ?: return@map project.files()
+                    compilation.output.classesDirs
                 }
         }
 }
@@ -111,7 +119,11 @@ internal open class KotlinCommonFragmentMetadataCompilationDataImpl(
     resolvedMetadataFiles), KotlinCommonFragmentMetadataCompilationData {
 
     override val isActive: Boolean
-        get() = !fragment.isNativeShared()
+        get() = !fragment.isNativeShared() &&
+                fragment.containingModule.variantsContainingFragment(fragment).run {
+                    !all { it.platformType in setOf(KotlinPlatformType.androidJvm, KotlinPlatformType.jvm)} &&
+                            !all { it.platformType == KotlinPlatformType.js }
+                }
 
     override val kotlinOptions: KotlinMultiplatformCommonOptions = KotlinMultiplatformCommonOptionsImpl()
 }
@@ -121,7 +133,9 @@ interface KotlinNativeFragmentMetadataCompilationData :
     KotlinNativeCompilationData<KotlinCommonOptions>
 
 internal fun KotlinGradleFragment.isNativeShared(): Boolean =
-    containingModule.variantsContainingFragment(this).all { it.platformType == KotlinPlatformType.native }
+    containingModule.variantsContainingFragment(this).run {
+        any() && all { it.platformType == KotlinPlatformType.native }
+    }
 
 internal fun KotlinGradleFragment.isNativeHostSpecific(): Boolean =
     this in getHostSpecificFragments(containingModule)
@@ -186,8 +200,8 @@ internal class MetadataCompilationRegistry {
         withAllNativeCallbacks.forEach { it.invoke(compilationData) }
     }
 
-    fun byFragment(fragment: KotlinGradleFragment): KotlinMetadataCompilationData<*> =
-        listOf(commonCompilationDataPerFragment.getValue(fragment), nativeCompilationDataPerFragment.getValue(fragment)).single {
+    fun getForFragmentOrNull(fragment: KotlinGradleFragment): KotlinMetadataCompilationData<*>? =
+        listOf(commonCompilationDataPerFragment.getValue(fragment), nativeCompilationDataPerFragment.getValue(fragment)).singleOrNull {
             it.isActive
         }
 
