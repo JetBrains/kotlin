@@ -238,6 +238,7 @@ include ":benchmarks",
         ":kotlin-gradle-plugin-integration-tests",
         ":gradle:android-test-fixes",
         ":gradle:regression-benchmark-templates",
+        ":gradle:regression-benchmarks",
         ":kotlin-tooling-metadata",
         ":kotlin-allopen",
         ":kotlin-noarg",
@@ -626,6 +627,7 @@ project(':kotlin-gradle-plugin-test-utils-embeddable').projectDir = "$rootDir/li
 project(':kotlin-gradle-plugin-integration-tests').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-integration-tests" as File
 project(':gradle:android-test-fixes').projectDir = "$rootDir/libraries/tools/gradle/android-test-fixes" as File
 project(":gradle:regression-benchmark-templates").projectDir = "$rootDir/libraries/tools/gradle/regression-benchmark-templates" as File
+project(":gradle:regression-benchmarks").projectDir = "$rootDir/libraries/tools/gradle/regression-benchmarks" as File
 project(':kotlin-tooling-metadata').projectDir = "$rootDir/libraries/tools/kotlin-tooling-metadata" as File
 project(':kotlin-allopen').projectDir = "$rootDir/libraries/tools/kotlin-allopen" as File
 project(':kotlin-noarg').projectDir = "$rootDir/libraries/tools/kotlin-noarg" as File
