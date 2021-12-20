@@ -590,10 +590,10 @@ tasks {
         delete = setOf(artifactsDir)
     }
 
-    listOf("clean", "assemble", "install").forEach { taskName ->
+    listOf("clean", "assemble", "install", "publish").forEach { taskName ->
         register("coreLibs${taskName.capitalize()}") {
             for (projectName in coreLibProjects) {
-                if (projectName.startsWith(":kotlin-test:") && taskName == "install") continue
+                if (projectName.startsWith(":kotlin-test:") && (taskName == "install" || taskName == "publish")) continue
                 dependsOn("$projectName:$taskName")
             }
         }

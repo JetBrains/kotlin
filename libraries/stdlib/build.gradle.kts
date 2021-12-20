@@ -6,6 +6,7 @@ import plugins.configureDefaultPublishing
 plugins {
     id("kotlin-multiplatform")
     `maven-publish`
+    signing
 }
 
 
@@ -334,3 +335,5 @@ tasks {
         }
     }
 }
+
+configureDefaultPublishing()
