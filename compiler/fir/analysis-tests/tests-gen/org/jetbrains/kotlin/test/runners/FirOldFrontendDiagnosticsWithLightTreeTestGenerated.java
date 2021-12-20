@@ -10655,6 +10655,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("labelFromFunctionName.kt")
+                public void testLabelFromFunctionName() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/labelFromFunctionName.kt");
+                }
+
+                @Test
                 @TestMetadata("labelsFromClassNameForbidden.kt")
                 public void testLabelsFromClassNameForbidden() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/extensions/contextReceivers/labelsFromClassNameForbidden.kt");

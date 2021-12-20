@@ -190,7 +190,7 @@ object LabelResolver {
                     ]
                     val thisReceivers = labelNameToReceiverMap?.get(labelName.identifier)
                     val thisReceiver = when {
-                        thisReceivers == null -> declarationDescriptor.extensionReceiverParameter
+                        thisReceivers.isNullOrEmpty() -> declarationDescriptor.extensionReceiverParameter
                         thisReceivers.size == 1 -> thisReceivers.single()
                         else -> {
                             BindingContextUtils.reportAmbiguousLabel(context.trace, targetLabel, declarationsByLabel)
