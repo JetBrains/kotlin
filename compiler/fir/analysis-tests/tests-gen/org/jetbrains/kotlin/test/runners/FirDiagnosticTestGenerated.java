@@ -5646,6 +5646,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("localScopesInAnonymousObject.kt")
+            public void testLocalScopesInAnonymousObject() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/localScopesInAnonymousObject.kt");
+            }
+
+            @Test
             @TestMetadata("qualifierPriority.kt")
             public void testQualifierPriority() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/qualifierPriority.kt");
