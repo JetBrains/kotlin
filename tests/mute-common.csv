@@ -99,6 +99,3 @@ org.jetbrains.kotlin.jps.build.KotlinJpsBuildTestIncremental.testCircularDepende
 org.jetbrains.kotlin.jps.build.KotlinJpsBuildTestIncremental.testCircularDependencyWithReferenceToOldVersionLib, Temporary muted due to problems with IC and JVM IR backend,,
 org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.SamConversions.testMethodAdded, KT-44844 fixed in IDEA 212,,
 org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.SamConversions.testMethodAddedSamAdapter, KT-44844 fixed in IDEA 212,,
-org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.SamConversions.testMethodSignatureChanged, KT-44844 fixed in IDEA 212,,
-org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.SamConversions.testMethodSignatureChangedSamAdapter, KT-44844 fixed in IDEA 212,,
-org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.SamConversions.testMethodAddDefault, KT-45191 fixed in IDEA 212,,
