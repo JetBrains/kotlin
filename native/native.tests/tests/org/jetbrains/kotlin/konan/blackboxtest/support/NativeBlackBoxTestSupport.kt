@@ -58,6 +58,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
                     computeNativeClassLoader(),
                     computeTestMode(),
                     computeOptimizationMode(),
+                    computeMemoryModel(),
                     CacheKind::class to computeCacheKind(),
                     computeBaseDirs(),
                     computeTimeouts()
@@ -86,6 +87,9 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
 
         private fun computeOptimizationMode(): OptimizationMode =
             enumSystemProperty(OPTIMIZATION_MODE, OptimizationMode.values(), default = OptimizationMode.DEBUG)
+
+        private fun computeMemoryModel(): MemoryModel =
+            enumSystemProperty(MEMORY_MODEL, MemoryModel.values(), default = MemoryModel.DEFAULT)
 
         private fun computeCacheKind(): CacheKind {
             val useCache = systemProperty(USE_CACHE, String::toBooleanStrictOrNull, default = true)
@@ -133,6 +137,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
         private const val COMPILER_CLASSPATH = "kotlin.internal.native.test.compilerClasspath"
         private const val TEST_MODE = "kotlin.internal.native.test.mode"
         private const val OPTIMIZATION_MODE = "kotlin.internal.native.test.optimizationMode"
+        private const val MEMORY_MODEL = "kotlin.internal.native.test.memoryModel"
         private const val USE_CACHE = "kotlin.internal.native.test.useCache"
         private const val EXECUTION_TIMEOUT = "kotlin.internal.native.test.executionTimeout"
         private const val PROJECT_BUILD_DIR = "PROJECT_BUILD_DIR"

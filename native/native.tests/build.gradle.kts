@@ -49,6 +49,7 @@ enum class TestProperty(shortName: String) {
     COMPILER_CLASSPATH("compilerClasspath"),
     TEST_MODE("mode"),
     OPTIMIZATION_MODE("optimizationMode"),
+    MEMORY_MODEL("memoryModel"),
     USE_CACHE("useCache"),
     EXECUTION_TIMEOUT("executionTimeout");
 

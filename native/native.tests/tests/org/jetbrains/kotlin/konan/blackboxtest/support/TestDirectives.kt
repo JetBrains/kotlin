@@ -118,7 +118,8 @@ internal class TestCompilerArgs(val compilerArgs: List<String>) {
             "-repo",
             "-target",
             "-Xinclude",
-            "-g", "-opt"
+            "-g", "-opt",
+            "-memory-model"
         )
     }
 }

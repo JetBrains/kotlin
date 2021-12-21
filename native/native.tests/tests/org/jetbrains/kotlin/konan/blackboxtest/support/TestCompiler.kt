@@ -51,6 +51,7 @@ internal class TestCompilationFactory {
                 home = settings.get(),
                 classLoader = settings.get(),
                 optimizationMode = settings.get(),
+                memoryModel = settings.get(),
                 freeCompilerArgs = freeCompilerArgs,
                 sourceModules = rootModules,
                 dependencies = TestCompilationDependencies(libraries = libraries, friends = friends),
@@ -93,6 +94,7 @@ internal class TestCompilationFactory {
                 home = settings.get(),
                 classLoader = settings.get(),
                 optimizationMode = settings.get(),
+                memoryModel = settings.get(),
                 freeCompilerArgs = freeCompilerArgs,
                 sourceModules = sourceModules,
                 dependencies = TestCompilationDependencies(libraries = libraries, friends = friends),
@@ -242,6 +244,7 @@ private class TestCompilationImpl(
     private val home: KotlinNativeHome,
     private val classLoader: KotlinNativeClassLoader,
     private val optimizationMode: OptimizationMode,
+    private val memoryModel: MemoryModel,
     private val freeCompilerArgs: TestCompilerArgs,
     private val sourceModules: Collection<TestModule>,
     private val dependencies: TestCompilationDependencies,
@@ -268,6 +271,7 @@ private class TestCompilationImpl(
             "-Xbinary=runtimeAssertionsMode=panic"
         )
         optimizationMode.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
+        memoryModel.compilerFlags?.let { compilerFlags -> add(compilerFlags) }
 
         addFlattened(dependencies.libraries) { library -> listOf("-l", library.resultingArtifactPath) }
         dependencies.friends.takeIf(Collection<*>::isNotEmpty)?.let { friends ->

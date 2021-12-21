@@ -53,6 +53,13 @@ internal enum class OptimizationMode(private val description: String, val compil
     override fun toString() = description + if (compilerFlag == null) "" else " ($compilerFlag)"
 }
 
+internal enum class MemoryModel(val compilerFlags: List<String>?) {
+    DEFAULT(null),
+    EXPERIMENTAL(listOf("-memory-model", "experimental"));
+
+    override fun toString() = compilerFlags?.joinToString(prefix = "(", separator = " ", postfix = ")").orEmpty()
+}
+
 /**
  * Current project's directories.
  */
