@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.konan.util.visibleName
 
-class KotlinNativeFramework : KotlinNativeArtifact() {
+open class KotlinNativeFramework : KotlinNativeArtifact() {
     lateinit var target: KonanTarget
     var embedBitcode: BitcodeEmbeddingMode? = null
 

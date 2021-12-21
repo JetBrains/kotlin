@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform")
+    id 'org.jetbrains.kotlin.multiplatform'
 }
 
 kotlin {
@@ -10,40 +10,39 @@ kotlin {
 }
 
 kotlinArtifacts {
-    Native.Library("mylib") {
-        target = linuxX64
-    }
-    Native.Library("myslib") {
-        target = linuxX64
-        isStatic = false
+    Native.Library("groolib") {
         modes(DEBUG)
-        addModule(project(":lib"))
+        target = iosX64
+        isStatic = false
+        linkerOptions = ["a", "b"]
         kotlinOptions {
-            verbose = false
-            freeCompilerArgs = emptyList()
+            verbose = true
+            freeCompilerArgs = ["foo"]
         }
+        binaryOption("name", "value")
+        setModules(
+            project(":shared"),
+            project(":lib")
+        )
     }
-    Native.Framework("myframe") {
+    Native.Framework("grooframe") {
         modes(DEBUG, RELEASE)
         target = iosArm64
         isStatic = false
         embedBitcode = EmbedBitcodeMode.MARKER
         kotlinOptions {
-            verbose = false
+            verbose = true
         }
+        addModule(project(":shared"))
     }
-    Native.FatFramework("myfatframe") {
+    Native.FatFramework("groofatframe") {
         targets(iosX64, iosSimulatorArm64)
         embedBitcode = EmbedBitcodeMode.DISABLE
         kotlinOptions {
-            suppressWarnings = false
+            suppressWarnings = true
         }
     }
     Native.XCFramework {
         targets(iosX64, iosArm64, iosSimulatorArm64)
-        setModules(
-            project(":shared"),
-            project(":lib")
-        )
     }
 }

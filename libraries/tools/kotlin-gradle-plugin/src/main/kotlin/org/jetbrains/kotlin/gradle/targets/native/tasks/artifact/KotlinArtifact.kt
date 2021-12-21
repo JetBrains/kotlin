@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks.artifact
 
-import org.gradle.api.Plugin
+import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
-import org.gradle.kotlin.dsl.create
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
-import javax.inject.Inject
 
 abstract class KotlinArtifact {
     internal val modules = mutableSetOf<Any>()
@@ -36,12 +35,16 @@ abstract class KotlinArtifact {
 
 abstract class KotlinNativeArtifact : KotlinArtifact() {
     var modes: Set<NativeBuildType> = NativeBuildType.DEFAULT_BUILD_TYPES
-    var isStatic: Boolean = false
-    var linkerOptions: List<String> = emptyList()
+    fun modes(vararg modes: NativeBuildType) {
+        this.modes = modes.toSet()
+    }
+
+    @JvmField var isStatic: Boolean = false
+    @JvmField var linkerOptions: List<String> = emptyList()
 
     internal var kotlinOptionsFn: KotlinCommonToolOptions.() -> Unit = {}
-    fun kotlinOptions(fn: KotlinCommonToolOptions.() -> Unit) {
-        kotlinOptionsFn = fn
+    fun kotlinOptions(fn: Action<KotlinCommonToolOptions>) {
+        kotlinOptionsFn = fn::execute
     }
 
     internal val binaryOptions: MutableMap<String, String> = mutableMapOf()
@@ -92,35 +95,5 @@ abstract class KotlinNativeArtifact : KotlinArtifact() {
         }
         deps.forEach { dependencies.add(exportConfigurationName, it) }
         return exportConfigurationName
-    }
-}
-
-open class ArtifactType<T : KotlinArtifact>(internal val create: () -> T)
-object Library : ArtifactType<KotlinNativeLibrary>({ KotlinNativeLibrary() })
-object Framework : ArtifactType<KotlinNativeFramework>({ KotlinNativeFramework() })
-object FatFramework : ArtifactType<KotlinNativeFatFramework>({ KotlinNativeFatFramework() })
-object XCFramework : ArtifactType<KotlinNativeXCFramework>({ KotlinNativeXCFramework() })
-
-@RequiresOptIn(
-    message = "This API is experimental. It may be changed in the future.",
-    level = RequiresOptIn.Level.WARNING
-)
-@Retention(AnnotationRetention.BINARY)
-@Target(AnnotationTarget.FUNCTION)
-annotation class ExperimentalArtifactDsl
-
-private val SAFE_NAME_PATTERN = """\W""".toRegex()
-
-@ExperimentalArtifactDsl
-fun <T : KotlinArtifact> Project.kotlinArtifact(type: ArtifactType<T>, configure: T.() -> Unit) =
-    kotlinArtifact(name.replace(SAFE_NAME_PATTERN, "_"), type, configure)
-
-@ExperimentalArtifactDsl
-fun <T : KotlinArtifact> Project.kotlinArtifact(name: String, type: ArtifactType<T>, configure: T.() -> Unit) {
-    val artifact = type.create()
-    artifact.addModule(this)
-    configure(artifact)
-    if (artifact.validate(this, name)) {
-        artifact.registerAssembleTask(this, name)
     }
 }

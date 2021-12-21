@@ -18,8 +18,12 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
 
-class KotlinNativeFatFramework : KotlinNativeArtifact() {
+open class KotlinNativeFatFramework : KotlinNativeArtifact() {
     var targets: Set<KonanTarget> = emptySet()
+    fun targets(vararg targets: KonanTarget) {
+        this.targets = targets.toSet()
+    }
+
     var embedBitcode: BitcodeEmbeddingMode? = null
 
     private val kind = NativeOutputKind.FRAMEWORK
