@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 
-internal fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
+fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
     return when (this) {
         is IrClassSymbol -> BinarySymbolData.SymbolKind.CLASS_SYMBOL
         is IrConstructorSymbol -> BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL
