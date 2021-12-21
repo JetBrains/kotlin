@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.konan.util.visibleName
 
-class KotlinNativeLibrary : KotlinNativeArtifact() {
+open class KotlinNativeLibrary : KotlinNativeArtifact() {
     lateinit var target: KonanTarget
 
     private val kind: NativeOutputKind

@@ -18,14 +18,23 @@ class NativeLibraryDslIT : BaseGradleIT() {
             build(":shared:tasks") {
                 assertSuccessful()
                 assertTasksRegistered(
-                    ":shared:assembleMylibDebugSharedLibraryLinuxX64",
-                    ":shared:assembleMyslibDebugSharedLibraryLinuxX64",
-                    ":shared:assembleMylibReleaseSharedLibraryLinuxX64",
+                    ":shared:assembleMyfatframeFatFramework",
+                    ":shared:assembleMyframeFramework",
                     ":shared:assembleMylibSharedLibrary",
-                    ":shared:assembleMyslibSharedLibrary"
+                    ":shared:assembleMyslibSharedLibrary",
+                    ":shared:assembleSharedXCFramework"
                 )
                 assertTasksNotRegistered(
                     ":shared:assembleMyslibReleaseSharedLibraryLinuxX64"
+                )
+            }
+            build(":lib:tasks") {
+                assertSuccessful()
+                assertTasksRegistered(
+                    ":lib:assembleGroofatframeFatFramework",
+                    ":lib:assembleGrooframeFramework",
+                    ":lib:assembleGroolibSharedLibrary",
+                    ":lib:assembleLibXCFramework"
                 )
             }
         }
