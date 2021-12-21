@@ -1499,7 +1499,7 @@ public actual fun CharArray.copyOf(newSize: Int): CharArray {
  * @sample samples.collections.Arrays.CopyOfOperations.resizingCopyOf
  */
 public actual fun <T> Array<T>.copyOf(newSize: Int): Array<T?> {
-    TODO("Wasm stdlib: copyOf(newSize: Int)")
+    return this.copyOfNulls(newSize)
 }
 
 /**
@@ -2299,7 +2299,7 @@ public actual inline fun <T> Array<T>.plusElement(element: T): Array<T> {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun IntArray.sort(): Unit {
-    TODO("Wasm stdlib: sort()")
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2308,7 +2308,7 @@ public actual fun IntArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun LongArray.sort(): Unit {
-    TODO("Wasm stdlib: sort()")
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2317,7 +2317,7 @@ public actual fun LongArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun ByteArray.sort(): Unit {
-    TODO("Wasm stdlib: sort()")
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2326,7 +2326,7 @@ public actual fun ByteArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun ShortArray.sort(): Unit {
-    TODO("Wasm stdlib: sort()")
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2335,7 +2335,7 @@ public actual fun ShortArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun DoubleArray.sort(): Unit {
-    TODO("Wasm stdlib: sort()")
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2344,7 +2344,7 @@ public actual fun DoubleArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun FloatArray.sort(): Unit {
-    TODO("Wasm stdlib: sort()")
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2353,7 +2353,7 @@ public actual fun FloatArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun CharArray.sort(): Unit {
-    TODO("Wasm stdlib: sort()")
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2364,7 +2364,7 @@ public actual fun CharArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArrayOfComparable
  */
 public actual fun <T : Comparable<T>> Array<out T>.sort(): Unit {
-    TODO("Wasm stdlib: sort()")
+    if (size > 1) sortArray(this, 0, size)
 }
 
 /**
@@ -2383,7 +2383,8 @@ public actual fun <T : Comparable<T>> Array<out T>.sort(): Unit {
 @SinceKotlin("1.4")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun <T : Comparable<T>> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: sort(fromIndex: Int = 0, toIndex: Int = size)")
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2400,7 +2401,8 @@ public actual fun <T : Comparable<T>> Array<out T>.sort(fromIndex: Int = 0, toIn
 @SinceKotlin("1.4")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: sort(fromIndex: Int = 0, toIndex: Int = size)")
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2417,7 +2419,8 @@ public actual fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit 
 @SinceKotlin("1.4")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: sort(fromIndex: Int = 0, toIndex: Int = size)")
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2434,7 +2437,8 @@ public actual fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit
 @SinceKotlin("1.4")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: sort(fromIndex: Int = 0, toIndex: Int = size)")
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2451,7 +2455,8 @@ public actual fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 @SinceKotlin("1.4")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: sort(fromIndex: Int = 0, toIndex: Int = size)")
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2468,7 +2473,8 @@ public actual fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit 
 @SinceKotlin("1.4")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: sort(fromIndex: Int = 0, toIndex: Int = size)")
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2485,7 +2491,8 @@ public actual fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit
 @SinceKotlin("1.4")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: sort(fromIndex: Int = 0, toIndex: Int = size)")
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2502,7 +2509,8 @@ public actual fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Uni
 @SinceKotlin("1.4")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: sort(fromIndex: Int = 0, toIndex: Int = size)")
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArray(this, fromIndex, toIndex)
 }
 
 /**
@@ -2527,7 +2535,8 @@ public actual fun <T> Array<out T>.sortWith(comparator: Comparator<in T>): Unit 
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun <T> Array<out T>.sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    TODO("Wasm stdlib: sortWith(comparator: Comparator<in T>, fromIndex: Int = 0, toIndex: Int = size)")
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    sortArrayWith(this, fromIndex, toIndex, comparator)
 }
 
 /**
