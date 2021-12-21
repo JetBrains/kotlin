@@ -53,6 +53,7 @@ internal class TestCompilationFactory {
                 optimizationMode = settings.get(),
                 memoryModel = settings.get(),
                 threadStateChecker = settings.get(),
+                gcType = settings.get(),
                 freeCompilerArgs = freeCompilerArgs,
                 sourceModules = rootModules,
                 dependencies = TestCompilationDependencies(libraries = libraries, friends = friends),
@@ -97,6 +98,7 @@ internal class TestCompilationFactory {
                 optimizationMode = settings.get(),
                 memoryModel = settings.get(),
                 threadStateChecker = settings.get(),
+                gcType = settings.get(),
                 freeCompilerArgs = freeCompilerArgs,
                 sourceModules = sourceModules,
                 dependencies = TestCompilationDependencies(libraries = libraries, friends = friends),
@@ -248,6 +250,7 @@ private class TestCompilationImpl(
     private val optimizationMode: OptimizationMode,
     private val memoryModel: MemoryModel,
     private val threadStateChecker: ThreadStateChecker,
+    private val gcType: GCType,
     private val freeCompilerArgs: TestCompilerArgs,
     private val sourceModules: Collection<TestModule>,
     private val dependencies: TestCompilationDependencies,
@@ -276,6 +279,7 @@ private class TestCompilationImpl(
         optimizationMode.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         memoryModel.compilerFlags?.let { compilerFlags -> add(compilerFlags) }
         threadStateChecker.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
+        gcType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
 
         addFlattened(dependencies.libraries) { library -> listOf("-l", library.resultingArtifactPath) }
         dependencies.friends.takeIf(Collection<*>::isNotEmpty)?.let { friends ->

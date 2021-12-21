@@ -64,6 +64,13 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
                 }
             }
 
+            val gcType = computeGCType()
+            if (gcType != GCType.UNSPECIFIED) {
+                assertEquals(MemoryModel.EXPERIMENTAL, memoryModel) {
+                    "GC type can be specified only with experimental memory model"
+                }
+            }
+
             return root.getStore(NAMESPACE).getOrComputeIfAbsent(TestProcessSettings::class.java.name) {
                 TestProcessSettings(
                     computeNativeTargets(),
@@ -73,6 +80,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
                     optimizationMode,
                     memoryModel,
                     threadStateChecker,
+                    gcType,
                     CacheKind::class to computeCacheKind(),
                     computeBaseDirs(),
                     computeTimeouts()
@@ -110,6 +118,8 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
             val useThreadStateChecker = systemProperty(USE_THREAD_STATE_CHECKER, String::toBooleanStrictOrNull, default = false)
             return if (useThreadStateChecker) ThreadStateChecker.ENABLED else ThreadStateChecker.DISABLED
         }
+
+        private fun computeGCType(): GCType = enumSystemProperty(GC_TYPE, GCType.values(), default = GCType.UNSPECIFIED)
 
         private fun computeCacheKind(): CacheKind {
             val useCache = systemProperty(USE_CACHE, String::toBooleanStrictOrNull, default = true)
@@ -159,6 +169,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
         private const val OPTIMIZATION_MODE = "kotlin.internal.native.test.optimizationMode"
         private const val MEMORY_MODEL = "kotlin.internal.native.test.memoryModel"
         private const val USE_THREAD_STATE_CHECKER = "kotlin.internal.native.test.useThreadStateChecker"
+        private const val GC_TYPE = "kotlin.internal.native.test.gcType"
         private const val USE_CACHE = "kotlin.internal.native.test.useCache"
         private const val EXECUTION_TIMEOUT = "kotlin.internal.native.test.executionTimeout"
         private const val PROJECT_BUILD_DIR = "PROJECT_BUILD_DIR"

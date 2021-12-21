@@ -45,6 +45,9 @@ internal enum class TestMode(private val description: String) {
     override fun toString() = description
 }
 
+/**
+ * Optimization mode to be applied.
+ */
 internal enum class OptimizationMode(private val description: String, val compilerFlag: String?) {
     DEBUG("Build with debug information", "-g"),
     OPT("Build with optimizations applied", "-opt"),
@@ -53,6 +56,9 @@ internal enum class OptimizationMode(private val description: String, val compil
     override fun toString() = description + compilerFlag?.let { " ($it)" }.orEmpty()
 }
 
+/**
+ * The Kotlin/Native memoty model.
+ */
 internal enum class MemoryModel(val compilerFlags: List<String>?) {
     DEFAULT(null),
     EXPERIMENTAL(listOf("-memory-model", "experimental"));
@@ -60,9 +66,23 @@ internal enum class MemoryModel(val compilerFlags: List<String>?) {
     override fun toString() = compilerFlags?.joinToString(prefix = "(", separator = " ", postfix = ")").orEmpty()
 }
 
+/**
+ * Thread state checked. Can be applied only with [MemoryModel.EXPERIMENTAL] and [OptimizationMode.DEBUG].
+ */
 internal enum class ThreadStateChecker(val compilerFlag: String?) {
     DISABLED(null),
     ENABLED("-Xcheck-state-at-external-calls");
+
+    override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
+}
+
+/**
+ * Garbage collector type. Can be applied only with [MemoryModel.EXPERIMENTAL].
+ */
+internal enum class GCType(val compilerFlag: String?) {
+    UNSPECIFIED(null),
+    NOOP("-Xgc=noop"),
+    STMS("-Xgc=stms");
 
     override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
 }
