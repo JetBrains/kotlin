@@ -118,7 +118,6 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
                 LookupSymbol(name = "addedTopLevelFunction", scope = "com.example"),
                 LookupSymbol(name = "removedTopLevelFunction", scope = "com.example"),
                 LookupSymbol(name = "movedTopLevelFunction", scope = "com.example"),
-                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example")
             ),
             fqNames = setOf("com.example")
         ).assertEquals(changes)
@@ -154,7 +153,6 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
                 LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.NormalClass"),
                 LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.NormalClass.CompanionObject"),
                 LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.NormalClass.NestedClass"),
-                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example"),
             ),
             fqNames = setOf(
                 "com.example.NormalClass",

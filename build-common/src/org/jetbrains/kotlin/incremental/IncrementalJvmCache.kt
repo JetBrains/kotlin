@@ -612,7 +612,7 @@ class KotlinClassInfo constructor(
     val classKind: KotlinClassHeader.Kind,
     val classHeaderData: Array<String>, // Can be empty
     val classHeaderStrings: Array<String>, // Can be empty
-    val multifileClassName: String?,
+    val multifileClassName: String?, // Not null iff classKind == KotlinClassHeader.Kind.MULTIFILE_CLASS_PART
     val constantsMap: LinkedHashMap<String, Any>,
     val inlineFunctionsMap: LinkedHashMap<String, Long>
 ) {
@@ -637,7 +637,7 @@ class KotlinClassInfo constructor(
         check(classKind != KotlinClassHeader.Kind.MULTIFILE_CLASS) {
             "Proto data is not available for KotlinClassHeader.Kind.MULTIFILE_CLASS: $classId"
         }
-        protoMapValue.toProtoData(className.packageFqName)
+        protoMapValue.toProtoData(classId.packageFqName)
     }
 
     companion object {

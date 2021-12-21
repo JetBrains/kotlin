@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
-import org.jetbrains.kotlin.incremental.JavaClassDescriptorCreator
-import org.jetbrains.kotlin.incremental.KotlinClassInfo
-import org.jetbrains.kotlin.incremental.md5
-import org.jetbrains.kotlin.incremental.toSerializedJavaClass
+import org.jetbrains.kotlin.incremental.*
+import org.jetbrains.kotlin.incremental.ChangesCollector.Companion.getNonPrivateMemberNames
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.DFS
 import java.io.File
@@ -112,7 +110,13 @@ object ClassSnapshotter {
         return if (classFile.classInfo.isKotlinClass) {
             val kotlinClassInfo =
                 KotlinClassInfo.createFrom(classFile.classInfo.classId, classFile.classInfo.kotlinClassHeader!!, classFile.contents)
-            KotlinClassSnapshot(kotlinClassInfo, classFile.classInfo.supertypes)
+            val packageMembers = when (kotlinClassInfo.classKind) {
+                CLASS, MULTIFILE_CLASS -> null // See `KotlinClassSnapshot.packageMembers`'s kdoc
+                else -> (kotlinClassInfo.protoData as PackagePartProtoData).getNonPrivateMemberNames().map {
+                    PackageMember(kotlinClassInfo.classId.packageFqName, it)
+                }
+            }
+            KotlinClassSnapshot(kotlinClassInfo, classFile.classInfo.supertypes, packageMembers)
         } else null
     }
 
@@ -172,8 +176,8 @@ object ClassSnapshotter {
         fun BasicClassInfo.isInaccessible(): Boolean {
             return if (this.isKotlinClass) {
                 when (this.kotlinClassHeader!!.kind) {
-                    KotlinClassHeader.Kind.CLASS -> isPrivate || isLocal || isAnonymous || isSynthetic
-                    KotlinClassHeader.Kind.SYNTHETIC_CLASS -> true
+                    CLASS -> isPrivate || isLocal || isAnonymous || isSynthetic
+                    SYNTHETIC_CLASS -> true
                     // We're not sure about the other kinds of Kotlin classes, so we assume it's accessible (see this method's kdoc)
                     else -> false
                 }
