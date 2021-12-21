@@ -5126,6 +5126,22 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             public void testPlusAssignWithLambdaInRhs() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/plusAssignWithLambdaInRhs.kt");
             }
+
+            @Nested
+            @TestMetadata("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Problems {
+                @Test
+                public void testAllFilesPresentInProblems() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("expectedType.kt")
+                public void testExpectedType() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems/expectedType.kt");
+                }
+            }
         }
 
         @Nested
