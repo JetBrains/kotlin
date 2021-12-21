@@ -178,7 +178,8 @@ public actual class Regex actual constructor(pattern: String, options: Set<Regex
      * replacement for that match.
      */
     public actual fun replace(input: CharSequence, transform: (MatchResult) -> CharSequence): String {
-        var match: MatchResult? = find(input) ?: return input.toString()
+        var match = find(input)
+        if (match == null) return input.toString()
 
         var lastStart = 0
         val length = input.length

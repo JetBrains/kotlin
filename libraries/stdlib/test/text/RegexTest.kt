@@ -327,7 +327,7 @@ class RegexTest {
         val pattern = "\\d+".toRegex()
         assertEquals("no_match", pattern.replaceFirst("no_match") { it.value.length.toString() })
         assertEquals("6", pattern.replaceFirst("012345") { it.value.length.toString() })
-        assertEquals("abc[123]de", pattern.replaceFirst("abc123de") { "[${it.value}]" })
+        assertEquals("abc[123]de45", pattern.replaceFirst("abc123de45") { "[${it.value}]" })
     }
 
     private fun testSplitEquals(expected: List<String>, input: CharSequence, regex: Regex, limit: Int = 0) {
