@@ -21,7 +21,7 @@ interface TestVersions {
     }
 
     object Kotlin {
-        const val STABLE_RELEASE = "1.4.32"
+        const val STABLE_RELEASE = "1.5.32"
 
         // Copied from KOTLIN_VERSION.kt file
         val CURRENT
