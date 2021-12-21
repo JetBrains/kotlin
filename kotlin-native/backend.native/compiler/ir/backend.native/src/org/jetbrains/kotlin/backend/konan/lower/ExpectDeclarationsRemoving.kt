@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
+import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualsForExpected
 
 /**
  * This pass removes all declarations with `isExpect == true`.
@@ -107,7 +108,7 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
 
         if (!descriptor.isExpect) error(this)
 
-        findCompatibleActualForExpected(descriptor.module).singleOrNull() ?: error(descriptor)
+        findCompatibleActualsForExpected(descriptor.module).singleOrNull() ?: error(descriptor)
     } as T
 
     private fun IrExpression.remapExpectValueSymbols(): IrExpression {
