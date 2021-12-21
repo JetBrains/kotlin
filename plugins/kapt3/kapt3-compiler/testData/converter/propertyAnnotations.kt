@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 annotation class Anno
 
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.CLASS)
