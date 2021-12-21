@@ -118,7 +118,6 @@ class FunctionReferenceBuilder(
             returnType = callee.returnType
             isSuspend = callee.isSuspend
         }.apply {
-            annotations += superMethod.owner.annotations
             overriddenSymbols += superMethod
             dispatchReceiverParameter = parentAsClass.thisReceiver!!.copyTo(this)
             createLambdaInvokeMethod()
