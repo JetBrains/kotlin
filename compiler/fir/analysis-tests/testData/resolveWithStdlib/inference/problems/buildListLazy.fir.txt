@@ -1,0 +1,41 @@
+FILE: buildListLazy.kt
+    public final data class NameAndSafeValue : R|kotlin/Any| {
+        public constructor(name: R|kotlin/String|, value: R|kotlin/Int|): R|NameAndSafeValue| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+
+        public final val value: R|kotlin/Int| = R|<local>/value|
+            public get(): R|kotlin/Int|
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final operator fun component2(): R|kotlin/Int|
+
+        public final fun copy(name: R|kotlin/String| = this@R|/NameAndSafeValue|.R|/NameAndSafeValue.name|, value: R|kotlin/Int| = this@R|/NameAndSafeValue|.R|/NameAndSafeValue.value|): R|NameAndSafeValue|
+
+    }
+    public final fun getEnv(): R|kotlin/collections/List<NameAndSafeValue>| {
+        ^getEnv R|kotlin/collections/listOf|<R|NameAndSafeValue|>()
+    }
+    private final val environment: R|kotlin/collections/List<NameAndSafeValue>|by R|kotlin/lazy|<R|kotlin/collections/List<NameAndSafeValue>|>(<L> = lazy@fun <anonymous>(): R|kotlin/collections/List<NameAndSafeValue>| <inline=NoInline>  {
+        ^ R|kotlin/collections/buildList|<R|NameAndSafeValue|>(<L> = buildList@fun R|kotlin/collections/MutableList<NameAndSafeValue>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|/getEnv|().R|kotlin/collections/forEach|<R|NameAndSafeValue|>(<L> = forEach@fun <anonymous>(<destruct>: R|NameAndSafeValue|): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                lval name: R|kotlin/String| = R|<local>/<destruct>|.R|/NameAndSafeValue.component1|()
+                lval value: R|kotlin/Int| = R|<local>/<destruct>|.R|/NameAndSafeValue.component2|()
+                this@R|special/anonymous|.R|kotlin/collections/plusAssign|<R|NameAndSafeValue|>(R|/NameAndSafeValue.NameAndSafeValue|(R|<local>/name|, R|<local>/value|))
+            }
+            )
+            this@R|special/anonymous|.<Inapplicable(INAPPLICABLE): kotlin/collections/sortBy>#<R|NameAndSafeValue|, R|ERROR CLASS: Cannot infer argument for type parameter R|>(<L> = sortBy@fun <anonymous>(it: R|NameAndSafeValue|): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=CrossInline, kind=UNKNOWN>  {
+                ^ R|<local>/it|.<Unresolved name: name>#
+            }
+            )
+        }
+        )
+    }
+    )
+        private get(): R|kotlin/collections/List<NameAndSafeValue>| {
+            ^ D|/environment|.R|kotlin/getValue|<R|kotlin/collections/List<NameAndSafeValue>|>(Null(null), ::R|/environment|)
+        }

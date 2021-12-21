@@ -5289,6 +5289,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
                 }
 
                 @Test
+                @TestMetadata("buildListLazy.kt")
+                public void testBuildListLazy() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems/buildListLazy.kt");
+                }
+
+                @Test
                 @TestMetadata("buildSetWithVisitor.kt")
                 public void testBuildSetWithVisitor() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems/buildSetWithVisitor.kt");
