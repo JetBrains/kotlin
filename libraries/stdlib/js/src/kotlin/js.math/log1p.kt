@@ -6,14 +6,13 @@
 @file:JsQualifier("Math")
 package kotlin.js
 
+import kotlin.js.math.defineTaylorNBound
+
 @PublishedApi
 @JsName("log1p")
 @JsNativeImplementation("""
 if (typeof Math.log1p === "undefined") {
-    var epsilon = 2.220446049250313E-16;
-    var taylor_2_bound = Math.sqrt(epsilon);
-    var taylor_n_bound = Math.sqrt(taylor_2_bound);
-    
+    $defineTaylorNBound
     Math.log1p = function(x) {
         if (Math.abs(x) < taylor_n_bound) {
             var x2 = x * x;

@@ -6,16 +6,13 @@
 @file:JsQualifier("Math")
 package kotlin.js
 
+import kotlin.js.math.defineUpperTaylorNBound
+
 @PublishedApi
 @JsName("asinh")
 @JsNativeImplementation("""
 if (typeof Math.asinh === "undefined") {
-    var epsilon = 2.220446049250313E-16;
-    var taylor_2_bound = Math.sqrt(epsilon);
-    var taylor_n_bound = Math.sqrt(taylor_2_bound);
-    var upper_taylor_2_bound = 1/taylor_2_bound;
-    var upper_taylor_n_bound = 1/taylor_n_bound;
-    
+    $defineUpperTaylorNBound
     var asinh = function(x) {
         if (x >= +taylor_n_bound)
         {

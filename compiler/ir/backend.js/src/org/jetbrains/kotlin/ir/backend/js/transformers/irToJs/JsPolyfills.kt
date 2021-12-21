@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNativeImplementation
 import org.jetbrains.kotlin.ir.backend.js.utils.hasJsNativeImplementation
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.js.backend.ast.JsCode
 import org.jetbrains.kotlin.js.backend.ast.JsSingleLineComment

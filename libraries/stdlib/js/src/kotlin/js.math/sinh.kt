@@ -6,14 +6,13 @@
 @file:JsQualifier("Math")
 package kotlin.js
 
+import kotlin.js.math.defineTaylorNBound
+
 @PublishedApi
 @JsName("sinh")
 @JsNativeImplementation("""
 if (typeof Math.sinh === "undefined") {
-    var epsilon = 2.220446049250313E-16;
-    var taylor_2_bound = Math.sqrt(epsilon);
-    var taylor_n_bound = Math.sqrt(taylor_2_bound);
-    
+    $defineTaylorNBound
     Math.sinh = function(x) {
         if (Math.abs(x) < taylor_n_bound) {
             var result = x;
