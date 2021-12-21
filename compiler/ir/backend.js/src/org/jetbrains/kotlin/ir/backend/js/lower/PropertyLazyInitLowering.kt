@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.prependFunctionCall
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.persistent.PersistentIrElementBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.Name
@@ -58,8 +57,6 @@ class PropertyLazyInitLowering(
 
         val file = container.parent as? IrFile
             ?: return
-
-        container.assertCompatibleDeclaration()
 
         val initFun = (when {
             file in fileToInitializationFuns -> fileToInitializationFuns[file]
@@ -221,7 +218,6 @@ class RemoveInitializersForLazyProperties(
             ?.takeIf { it.isForLazyInit() }
             ?.backingField
             ?.let {
-                it.assertCompatibleDeclaration()
                 it.initializer = null
             }
 
@@ -278,18 +274,12 @@ private fun IrDeclaration.propertyWithPersistentSafe(transform: IrDeclaration.()
     withPersistentSafe(transform)
 
 private fun <T> IrDeclaration.withPersistentSafe(transform: IrDeclaration.() -> T?): T? =
-    if (this !is PersistentIrElementBase<*> || this.createdOn <= this.factory.stageController.currentStage) {
-        transform()
-    } else null
+    transform()
 
 private fun IrDeclaration.isCompatibleDeclaration(context: JsIrBackendContext) =
     correspondingProperty?.let {
         it.isForLazyInit() && !it.hasAnnotation(context.intrinsics.jsEagerInitializationAnnotationSymbol)
     } ?: true && withPersistentSafe { origin in compatibleOrigins } == true
-
-private fun IrDeclaration.assertCompatibleDeclaration() {
-    assert(this !is PersistentIrElementBase<*> || this.createdOn <= this.factory.stageController.currentStage)
-}
 
 private val compatibleOrigins = listOf(
     IrDeclarationOrigin.DEFINED,

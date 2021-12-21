@@ -129,7 +129,6 @@ val useJvmFir by extra(project.kotlinBuildProperties.useFir)
 val irCompilerModules = arrayOf(
     ":compiler:ir.tree",
     ":compiler:ir.tree.impl",
-    ":compiler:ir.tree.persistent",
     ":compiler:ir.serialization.common",
     ":compiler:ir.serialization.js",
     ":compiler:ir.serialization.jvm",

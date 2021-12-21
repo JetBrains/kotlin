@@ -161,7 +161,6 @@ class FunctionInlining(
                 // there also get temporary declaration like this which leads to some unclear behaviour. Since I am not aware
                 // enough about PIR internals the simplest way seemed to me is to unregister temporary function. Hope it is going
                 // to be removed ASAP along with registering every PIR declaration.
-                factory.unlistFunction(this)
 
                 parent = callee.parent
                 if (performRecursiveInline) {
@@ -582,12 +581,6 @@ class FunctionInlining(
                 if (argument.isInlinableLambdaArgument) {
                     substituteMap[argument.parameter] = argument.argumentExpression
                     (argument.argumentExpression as? IrFunctionReference)?.let { evaluationStatements += evaluateArguments(it) }
-
-                    (argument.argumentExpression as? IrFunctionExpression)?.let {
-                        if (deepInline) {
-                            it.function.factory.unlistFunction(it.function)
-                        }
-                    }
 
                     return@forEach
                 }

@@ -239,6 +239,4 @@ interface IrFactory {
         endOffset: Int,
         initializer: IrBlockBody.() -> Unit,
     ): IrBlockBody
-
-    fun unlistFunction(f: IrFunction) {}
 }

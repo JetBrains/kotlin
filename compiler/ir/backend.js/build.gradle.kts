@@ -11,7 +11,6 @@ dependencies {
     api(project(":compiler:ir.backend.common"))
     api(project(":compiler:ir.serialization.common"))
     api(project(":compiler:ir.serialization.js"))
-    api(project(":compiler:ir.tree.persistent"))
     api(project(":js:js.ast"))
     api(project(":js:js.frontend"))
     api(project(":js:js.sourcemap"))
