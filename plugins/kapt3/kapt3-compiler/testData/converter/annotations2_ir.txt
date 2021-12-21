@@ -27,18 +27,18 @@ public final class AnnotationsTest {
     @Anno(value = "top-level-fun")
     public static final void topLevelFun(@org.jetbrains.annotations.NotNull()
     @Anno(value = "top-level-fun-receiver")
-    java.lang.String $this$topLevelFun) {
+    java.lang.String p0) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
+    int p0) {
+        return null;
     }
 
     @Anno(value = "top-level-val")
     @java.lang.Deprecated()
     public static void getTopLevelVal$annotations(int p0) {
-    }
-
-    @org.jetbrains.annotations.NotNull()
-    public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
-    int $this$topLevelVal) {
-        return null;
     }
 }
 
