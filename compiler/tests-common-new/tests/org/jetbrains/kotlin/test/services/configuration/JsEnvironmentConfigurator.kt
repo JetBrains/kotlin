@@ -53,11 +53,12 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         const val TEST_DATA_DIR_PATH = "js/js.translator/testData"
         const val OLD_MODULE_SUFFIX = "_old"
 
+        // Keep names short to keep path lengths under 255 for Windows
         private val outputDirByMode = mapOf(
-            TranslationMode.FULL to "outputDir",
-            TranslationMode.FULL_DCE to "dceOutputDir",
-            TranslationMode.PER_MODULE to "perModuleOutputDir",
-            TranslationMode.PER_MODULE_DCE to "perModuleDceOutputDir"
+            TranslationMode.FULL to "out",
+            TranslationMode.FULL_DCE to "outMin",
+            TranslationMode.PER_MODULE to "outPm",
+            TranslationMode.PER_MODULE_DCE to "outPmMin"
         )
 
         private const val OUTPUT_KLIB_DIR_NAME = "outputKlibDir"
