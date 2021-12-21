@@ -649,6 +649,42 @@ public class KtFe10ResolveCallTestGenerated extends AbstractKtFe10ResolveCallTes
     }
 
     @Test
+    @TestMetadata("unresolvableOperator_elvis_1.kt")
+    public void testUnresolvableOperator_elvis_1() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/unresolvableOperator_elvis_1.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvableOperator_elvis_2.kt")
+    public void testUnresolvableOperator_elvis_2() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/unresolvableOperator_elvis_2.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvableOperator_eqeqeq_1.kt")
+    public void testUnresolvableOperator_eqeqeq_1() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/unresolvableOperator_eqeqeq_1.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvableOperator_eqeqeq_2.kt")
+    public void testUnresolvableOperator_eqeqeq_2() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/unresolvableOperator_eqeqeq_2.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvableOperator_excleqeq_1.kt")
+    public void testUnresolvableOperator_excleqeq_1() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/unresolvableOperator_excleqeq_1.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvableOperator_excleqeq_2.kt")
+    public void testUnresolvableOperator_excleqeq_2() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/unresolvableOperator_excleqeq_2.kt");
+    }
+
+    @Test
     @TestMetadata("unresolvedSuperReference.kt")
     public void testUnresolvedSuperReference() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/unresolvedSuperReference.kt");

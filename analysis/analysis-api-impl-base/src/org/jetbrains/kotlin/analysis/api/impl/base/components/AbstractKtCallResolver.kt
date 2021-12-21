@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.calls.KtCompoundAccess
 import org.jetbrains.kotlin.analysis.api.calls.KtExplicitReceiverValue
 import org.jetbrains.kotlin.analysis.api.components.KtCallResolver
 import org.jetbrains.kotlin.analysis.api.impl.barebone.parentOfType
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 
@@ -44,6 +45,16 @@ abstract class AbstractKtCallResolver : KtCallResolver() {
     }
 
     protected companion object {
-        val nonCallBinaryOperator = setOf(KtTokens.ELVIS, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ)
+        private val nonCallBinaryOperator: Set<KtSingleValueToken> = setOf(KtTokens.ELVIS, KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ)
+
+        /**
+         * We don't want to resolve the operators from the [AbstractKtCallResolver.nonCallBinaryOperator] list, because it's either
+         * not possible or not desirable.
+         */
+        fun KtElement.isNotResolvable(): Boolean {
+            return this is KtBinaryExpression && operationToken in nonCallBinaryOperator ||
+                    this is KtOperationReferenceExpression && operationSignTokenType in nonCallBinaryOperator
+        }
+
     }
 }

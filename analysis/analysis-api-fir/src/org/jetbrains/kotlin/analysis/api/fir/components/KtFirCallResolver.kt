@@ -69,7 +69,8 @@ internal class KtFirCallResolver(
     }
 
     override fun resolveCall(psi: KtElement): KtCallInfo? = withValidityAssertion {
-        if (psi is KtBinaryExpression && psi.operationToken in nonCallBinaryOperator) return null
+        if (psi.isNotResolvable()) return null
+
         val containingCallExpressionForCalleeExpression = psi.getContainingCallExpressionForCalleeExpression()
         val containingBinaryExpressionForLhs = psi.getContainingBinaryExpressionForIncompleteLhs()
         val containingUnaryExpressionForIncOrDec = psi.getContainingUnaryIncOrDecExpression()

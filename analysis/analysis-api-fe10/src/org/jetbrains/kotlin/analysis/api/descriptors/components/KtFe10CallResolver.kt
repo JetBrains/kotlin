@@ -119,6 +119,8 @@ internal class KtFe10CallResolver(
         get() = analysisSession.token
 
     override fun resolveCall(psi: KtElement): KtCallInfo? = with(analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)) {
+        if (psi.isNotResolvable()) return null
+
         val parentBinaryExpression = psi.parentOfType<KtBinaryExpression>()
         val lhs = KtPsiUtil.deparenthesize(parentBinaryExpression?.left)
         val unwrappedPsi = KtPsiUtil.deparenthesize(psi as? KtExpression) ?: psi
