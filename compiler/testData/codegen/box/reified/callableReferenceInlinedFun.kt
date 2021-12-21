@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// IGNORE_BACKEND: NATIVE
 
 inline fun <reified T> baz(value: T): String = "OK" + value
 
