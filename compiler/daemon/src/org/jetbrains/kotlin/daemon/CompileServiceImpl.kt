@@ -801,18 +801,21 @@ class CompileServiceImpl(
         compilationOptions: CompilationOptions,
         servicesFacade: CompilerServicesFacadeBase,
         compilationResults: CompilationResults?
-    ) = compileImpl(
-        sessionId,
-        compilerArguments,
-        compilationOptions,
-        servicesFacade,
-        compilationResults,
-        hasIncrementalCaches = JpsCompilerServicesFacade::hasIncrementalCaches,
-        createMessageCollector = ::CompileServicesFacadeMessageCollector,
-        createReporter = ::DaemonMessageReporter,
-        createServices = this::createCompileServices,
-        getICReporter = { a, b, c -> getBuildReporter(a, b!!, c)}
-    )
+    ) = ifAlive {
+        compileImpl(
+            sessionId,
+            compilerArguments,
+            compilationOptions,
+            servicesFacade,
+            compilationResults,
+            hasIncrementalCaches = JpsCompilerServicesFacade::hasIncrementalCaches,
+            createMessageCollector = ::CompileServicesFacadeMessageCollector,
+            createReporter = ::DaemonMessageReporter,
+            createServices = this::createCompileServices,
+            getICReporter = { a, b, c -> getBuildReporter(a, b!!, c)}
+        )
+    }
+
 
     @Deprecated("The usages should be replaced with other `leaseReplSession` method", ReplaceWith("leaseReplSession"))
     override fun leaseReplSession(
