@@ -35,7 +35,7 @@ object ClasspathSnapshotShrinker {
         val lookupSymbols = metrics.measure(BuildTime.GET_LOOKUP_SYMBOLS) {
             lookupStorage.lookupSymbols
                 .map { LookupSymbol(it.name, it.scope) }
-                .filter(allClasses.map { it.classSnapshot })
+                .filterLookupSymbols(allClasses.map { it.classSnapshot })
         }
         return shrink(allClasses, lookupSymbols, metrics)
     }
@@ -231,7 +231,7 @@ internal fun shrinkAndSaveClasspathSnapshot(
             val notYetShrunkClasses = shrinkMode.currentClasspathSnapshot.filter { it.classSnapshot.getClassId() !in shrunkClasses }
             val addedLookupSymbols = shrinkMode.addedLookupSymbols
                 .map { LookupSymbol(it.name, it.scope) }
-                .filter(shrinkMode.currentClasspathSnapshot.map { it.classSnapshot })
+                .filterLookupSymbols(shrinkMode.currentClasspathSnapshot.map { it.classSnapshot })
             // Don't provide a BuildMetricsReporter for the following call as the sub-BuildTimes in it have a different parent
             val shrunkRemainingClassesAgainstNewLookups = shrink(notYetShrunkClasses, addedLookupSymbols)
 

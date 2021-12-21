@@ -202,7 +202,8 @@ object ClasspathChangesComputer {
 
     private fun DirtyData.normalize(currentClassSnapshots: List<ClassSnapshot>, previousClassSnapshots: List<ClassSnapshot>): ChangeSet {
         val changedLookupSymbols =
-            dirtyLookupSymbols.filter(currentClassSnapshots).toSet() + dirtyLookupSymbols.filter(previousClassSnapshots)
+            dirtyLookupSymbols.filterLookupSymbols(currentClassSnapshots).toSet() +
+                    dirtyLookupSymbols.filterLookupSymbols(previousClassSnapshots)
 
         val changes = ChangeSet.Collector().run {
             changedLookupSymbols.forEach {

@@ -32,7 +32,7 @@ data class PackageMember(val packageFqName: FqName, val memberName: String) : Pr
  *
  * It's okay if the returned result is an over-approximation.
  */
-internal fun Collection<LookupSymbol>.filter(classpath: List<ClassSnapshot>): List<ProgramSymbol> {
+internal fun Collection<LookupSymbol>.filterLookupSymbols(classpath: List<ClassSnapshot>): List<ProgramSymbol> {
     val (packageFacades, regularClasses) = classpath.partition {
         it is KotlinClassSnapshot && it.classInfo.classKind != KotlinClassHeader.Kind.CLASS
     }
