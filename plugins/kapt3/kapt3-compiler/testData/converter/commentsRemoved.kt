@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // !KEEP_KDOC_COMMENTS_IN_STUBS
 /** Test. */
 class Test {
