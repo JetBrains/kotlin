@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.konan.util.visibleName
 
 class KotlinNativeFramework : KotlinNativeArtifact() {
     lateinit var target: KonanTarget
-    var embedBitcode: BitcodeEmbeddingMode? = null
+    @JvmField var embedBitcode: BitcodeEmbeddingMode? = null
 
     private val kind = NativeOutputKind.FRAMEWORK
 

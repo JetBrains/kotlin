@@ -20,7 +20,11 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 class KotlinNativeXCFramework : KotlinNativeArtifact() {
     var targets: Set<KonanTarget> = emptySet()
-    var embedBitcode: BitcodeEmbeddingMode? = null
+    fun targets(vararg targets: KonanTarget) {
+        this.targets = targets.toSet()
+    }
+
+    @JvmField var embedBitcode: BitcodeEmbeddingMode? = null
 
     private val kind = NativeOutputKind.FRAMEWORK
 
