@@ -67,8 +67,6 @@ fun blackBoxTest(taskName: String, vararg tags: String) = projectTest(taskName, 
     group = "verification"
 
     if (kotlinBuildProperties.isKotlinNativeEnabled) {
-        dependsOn(":kotlin-native:dist")
-
         workingDir = rootDir
         outputs.upToDateWhen {
             // Don't treat any test task as up-to-date, no matter what.
@@ -94,6 +92,7 @@ fun blackBoxTest(taskName: String, vararg tags: String) = projectTest(taskName, 
         }
 
         TestProperty.KOTLIN_NATIVE_HOME.setUpFromGradleProperty(this) {
+            dependsOn(":kotlin-native:dist")
             project(":kotlin-native").projectDir.resolve("dist").absolutePath
         }
 
