@@ -57,7 +57,7 @@ internal enum class OptimizationMode(private val description: String, val compil
 }
 
 /**
- * The Kotlin/Native memoty model.
+ * The Kotlin/Native memory model.
  */
 internal enum class MemoryModel(val compilerFlags: List<String>?) {
     DEFAULT(null),
