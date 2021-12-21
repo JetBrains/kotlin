@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
 import org.jetbrains.kotlin.backend.konan.descriptors.propertyIfAccessor
 import org.jetbrains.kotlin.backend.konan.ir.ModuleIndex
-import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualsForExpected
 
@@ -103,13 +101,10 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
     private fun IrClass.findActualForExpected(): IrClass =
             moduleIndex.classes[descriptor.findActualForExpect()]!!
 
-    private inline fun <reified T : MemberDescriptor> T.findActualForExpect() = with(ExpectedActualResolver) {
-        val descriptor = this@findActualForExpect
-
-        if (!descriptor.isExpect) error(this)
-
-        findCompatibleActualsForExpected(descriptor.module).singleOrNull() ?: error(descriptor)
-    } as T
+    private inline fun <reified T : MemberDescriptor> T.findActualForExpect(): T {
+        if (!this.isExpect) error(this)
+        return (findCompatibleActualsForExpected(module).singleOrNull() ?: error(this)) as T
+    }
 
     private fun IrExpression.remapExpectValueSymbols(): IrExpression {
         class SymbolRemapper : DeepCopySymbolRemapper() {
