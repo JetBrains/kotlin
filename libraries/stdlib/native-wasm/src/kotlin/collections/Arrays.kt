@@ -123,3 +123,18 @@ public actual inline fun <reified T> Collection<T>.toTypedArray(): Array<T> {
     @Suppress("UNCHECKED_CAST")
     return result as Array<T>
 }
+
+/**
+ * Returns a new array which is a copy of the original array with new elements filled with null values.
+ */
+internal fun <E> Array<E>.copyOfNulls(newSize: Int): Array<E?>  = copyOfNulls(0, newSize)
+
+internal fun <E> Array<E>.copyOfNulls(fromIndex: Int, toIndex: Int): Array<E?> {
+    val newSize = toIndex - fromIndex
+    if (newSize < 0) {
+        throw IllegalArgumentException("$fromIndex > $toIndex")
+    }
+    val result = @Suppress("TYPE_PARAMETER_AS_REIFIED") arrayOfNulls<E>(newSize)
+    this.copyInto(result, 0, fromIndex, toIndex.coerceAtMost(size))
+    return result
+}
