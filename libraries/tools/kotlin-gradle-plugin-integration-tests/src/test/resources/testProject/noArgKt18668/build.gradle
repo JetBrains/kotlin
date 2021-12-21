@@ -1,16 +1,7 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlin_version"
-    }
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+    id "org.jetbrains.kotlin.plugin.noarg"
 }
-
-apply plugin: "kotlin"
-apply plugin: "kotlin-noarg"
 
 repositories {
     mavenLocal()
@@ -23,8 +14,4 @@ noArg {
 
 sourceSets {
     main.kotlin.srcDir 'src'
-}
-
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

@@ -26,7 +26,13 @@ internal val DEFAULT_GROOVY_SETTINGS_FILE =
             id "org.jetbrains.kotlin.multiplatform" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.multiplatform.pm20" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.plugin.allopen" version "${'$'}kotlin_version"
+            id "org.jetbrains.kotlin.plugin.spring" version "${'$'}kotlin_version"
+            id "org.jetbrains.kotlin.plugin.jpa" version "${'$'}kotlin_version"
+            id "org.jetbrains.kotlin.plugin.noarg" version "${'$'}kotlin_version"
+            id "org.jetbrains.kotlin.plugin.lombok" version "${'$'}kotlin_version"
+            id "org.jetbrains.kotlin.plugin.serialization" version "${'$'}kotlin_version"
             id "org.jetbrains.kotlin.test.fixes.android" version "${'$'}test_fixes_version"
+            id "org.jetbrains.kotlin.gradle-subplugin-example" version "${'$'}kotlin_version"
         }
         
         resolutionStrategy {
@@ -48,6 +54,10 @@ internal val DEFAULT_GROOVY_SETTINGS_FILE =
                         break
                     case "kotlin2js":
                         useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version")
+                        break
+                    case "org.jetbrains.kotlin.plugin.sam.with.receiver":
+                        useModule("org.jetbrains.kotlin:kotlin-sam-with-receiver:${'$'}kotlin_version")
+                        break
                 }
             }
         }
@@ -76,7 +86,13 @@ internal val DEFAULT_KOTLIN_SETTINGS_FILE =
             id("org.jetbrains.kotlin.multiplatform") version kotlin_version
             id("org.jetbrains.kotlin.multiplatform.pm20") version kotlin_version
             id("org.jetbrains.kotlin.plugin.allopen") version kotlin_version
+            id("org.jetbrains.kotlin.plugin.spring") version kotlin_version
+            id("org.jetbrains.kotlin.plugin.jpa") version kotlin_version
+            id("org.jetbrains.kotlin.plugin.noarg") version kotlin_version
+            id("org.jetbrains.kotlin.plugin.lombok") version kotlin_version
+            id("org.jetbrains.kotlin.plugin.serialization") version kotlin_version
             id("org.jetbrains.kotlin.test.fixes.android") version test_fixes_version
+            id("org.jetbrains.kotlin.gradle-subplugin-example") version kotlin_version
         }
         
         resolutionStrategy {
@@ -93,6 +109,8 @@ internal val DEFAULT_KOTLIN_SETTINGS_FILE =
                     "com.android.feature" -> useModule("com.android.tools.build:gradle:${'$'}android_tools_version")
                     "kotlin-dce-js" -> useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version")
                     "kotlin2js" -> useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version")
+                    "org.jetbrains.kotlin.plugin.sam.with.receiver" ->
+                        useModule("org.jetbrains.kotlin:kotlin-sam-with-receiver:${'$'}kotlin_version")
                 }
             }
         }
