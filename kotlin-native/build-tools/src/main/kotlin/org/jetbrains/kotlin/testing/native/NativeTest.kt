@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.bitcode.CompileToBitcode
 import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
 import org.jetbrains.kotlin.konan.target.*
 import java.io.OutputStream
+import java.time.Duration
 
 open class CompileNativeTest @Inject constructor(
         @InputFile val inputFile: File,
@@ -311,6 +312,10 @@ private fun createTestTask(
         workingDir = project.buildDir.resolve("testReports/$testName")
         val xmlReport = workingDir.resolve("report.xml")
         executable(linkTask.outputFile)
+        project.objects.property<Duration>(Duration::class.java).also {
+            it.set(Duration.ofMinutes(10))
+            setProperty("timeout", it)
+        }
         val filter = project.findProperty("gtest_filter");
         if (filter != null) {
             args("--gtest_filter=${filter}")
