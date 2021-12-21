@@ -306,25 +306,8 @@ class FirDelegatedPropertyInferenceSession(
         var introducedConstraint = false
 
         for (initialConstraint in storage.initialConstraints) {
-            val lower =
-                nonFixedToVariablesSubstitutor.substituteOrSelf(callSubstitutor.substituteOrSelf(initialConstraint.a as ConeKotlinType)) // TODO: SUB
-            val upper =
-                nonFixedToVariablesSubstitutor.substituteOrSelf(callSubstitutor.substituteOrSelf(initialConstraint.b as ConeKotlinType)) // TODO: SUB
-
-            if (commonSystem.isProperType(lower) && (lower == upper || commonSystem.isProperType(upper))) continue
-
-            introducedConstraint = true
-
-            when (initialConstraint.constraintKind) {
-                ConstraintKind.LOWER -> error("LOWER constraint shouldn't be used, please use UPPER")
-
-                ConstraintKind.UPPER -> commonSystem.addSubtypeConstraint(lower, upper, initialConstraint.position)
-
-                ConstraintKind.EQUALITY ->
-                    with(commonSystem) {
-                        addSubtypeConstraint(lower, upper, initialConstraint.position)
-                        addSubtypeConstraint(upper, lower, initialConstraint.position)
-                    }
+            if (integrateConstraintToSystem(commonSystem, initialConstraint, callSubstitutor, nonFixedToVariablesSubstitutor)) {
+                introducedConstraint = true
             }
         }
 
