@@ -6019,6 +6019,10 @@ fileCheckTest("filecheck_escape_analysis_enabled") {
     checkPrefix = "CHECK-OPT"
 }
 
+fileCheckTest("filecheck_enum_when") {
+    annotatedSource = project.file('filecheck/enum_when.kt')
+}
+
 fileCheckTest("filecheck_escape_analysis_disabled") {
     annotatedSource = project.file('filecheck/escape_analysis.kt')
     enabled = project.globalTestArgs.contains('-g')
