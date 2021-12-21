@@ -4,8 +4,6 @@ pluginManagement {
     }
 }
 
-enableFeaturePreview("GRADLE_METADATA")
-
 val hostOs = System.getProperty("os.name")
 val isMacos = hostOs == "Mac OS X"
 val isLinux = hostOs == "Linux"
