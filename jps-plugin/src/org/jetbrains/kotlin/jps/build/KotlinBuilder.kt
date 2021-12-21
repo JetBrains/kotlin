@@ -572,17 +572,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             build()
         }
 
-        val paths = computeKotlinPathsForJpsPlugin()
-        if (paths == null || !paths.homePath.exists()) {
-            messageCollector.report(
-                ERROR, "Cannot find kotlinc home. Make sure the plugin is properly installed, " +
-                        "or specify $JPS_KOTLIN_HOME_PROPERTY system property"
-            )
-            return null
-        }
-
         return JpsCompilerEnvironment(
-            paths,
+            computeKotlinPathsForJpsPlugin(messageCollector) ?: return null,
             compilerServices,
             classesToLoadByParent,
             messageCollector,
@@ -593,23 +584,23 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
     // When JPS is run on TeamCity, it can not rely on Kotlin plugin layout,
     // so the path to Kotlin is specified in a system property
-    private fun computeKotlinPathsForJpsPlugin(): KotlinPaths? {
+    private fun computeKotlinPathsForJpsPlugin(messageCollector: MessageCollectorAdapter): KotlinPaths? {
         if (System.getProperty("kotlin.jps.tests").equals("true", ignoreCase = true)) {
             return PathUtil.kotlinPathsForDistDirectory
         }
 
-        val jpsKotlinHome = System.getProperty(JPS_KOTLIN_HOME_PROPERTY)
-        if (jpsKotlinHome != null) {
-            return KotlinPathsFromHomeDir(File(jpsKotlinHome))
+        val jpsKotlinHome = System.getProperty(JPS_KOTLIN_HOME_PROPERTY)?.let { File(it) }
+        return when {
+            jpsKotlinHome == null -> {
+                messageCollector.report(ERROR, "Make sure that '$JPS_KOTLIN_HOME_PROPERTY' system property is set in JPS process")
+                null
+            }
+            jpsKotlinHome.exists() -> KotlinPathsFromHomeDir(jpsKotlinHome)
+            else -> {
+                messageCollector.report(ERROR, "Cannot find kotlinc home at $jpsKotlinHome")
+                null
+            }
         }
-
-        val jar = PathUtil.pathUtilJar.takeIf(File::exists)
-        if (jar?.name == "kotlin-jps-plugin.jar") {
-            val pluginHome = jar.parentFile.parentFile.parentFile
-            return KotlinPathsFromHomeDir(File(pluginHome, PathUtil.HOME_FOLDER_NAME))
-        }
-
-        return null
     }
 
     private fun getGeneratedFiles(
