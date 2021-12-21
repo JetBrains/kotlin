@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.SKIP_TXT
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_IDENTICAL
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
-import org.jetbrains.kotlin.test.directives.MultiplatformDiagnosticsDirectives.MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE_ENABLED
+import org.jetbrains.kotlin.test.directives.MultiplatformDiagnosticsDirectives.ENABLE_MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE
 
 abstract class AbstractDiagnosticsWithMultiplatformCompositeAnalysisTest : AbstractDiagnosticTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.defaultDirectives {
             LANGUAGE with "+MultiPlatformProjects"
-            +MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE_ENABLED
+            +ENABLE_MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE
             +SKIP_TXT
             +FIR_IDENTICAL
         }
