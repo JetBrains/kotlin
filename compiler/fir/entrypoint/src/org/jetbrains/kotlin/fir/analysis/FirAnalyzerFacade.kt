@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
@@ -61,12 +60,9 @@ class FirAnalyzerFacade(
         if (firFiles != null) return
         val firProvider = (session.firProvider as FirProviderImpl)
         firFiles = if (useLightTree) {
-            val builder = LightTree2Fir(session, firProvider.kotlinScopeProvider)
-            originalFiles.map {
-                builder.buildFirFile(it).also { firFile ->
-                    firProvider.recordFile(firFile)
-                }
-            }
+            // In 1.6.1x IDE plugin fir compiler is packed right now, but :compiler:fir:raw-fir:light-tree2fir is not, because of that
+            // plugin verification error is reported
+            error("light tree mode is not supported")
         } else {
             val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, PsiHandlingMode.COMPILER)
             ktFiles.map {
