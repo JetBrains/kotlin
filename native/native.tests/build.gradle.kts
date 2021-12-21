@@ -50,6 +50,7 @@ enum class TestProperty(shortName: String) {
     TEST_MODE("mode"),
     OPTIMIZATION_MODE("optimizationMode"),
     MEMORY_MODEL("memoryModel"),
+    USE_THREAD_STATE_CHECKER("useThreadStateChecker"),
     USE_CACHE("useCache"),
     EXECUTION_TIMEOUT("executionTimeout");
 

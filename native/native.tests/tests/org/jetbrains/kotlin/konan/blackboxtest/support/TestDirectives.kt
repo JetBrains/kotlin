@@ -119,7 +119,8 @@ internal class TestCompilerArgs(val compilerArgs: List<String>) {
             "-target",
             "-Xinclude",
             "-g", "-opt",
-            "-memory-model"
+            "-memory-model",
+            "-Xcheck-state-at-external-calls"
         )
     }
 }

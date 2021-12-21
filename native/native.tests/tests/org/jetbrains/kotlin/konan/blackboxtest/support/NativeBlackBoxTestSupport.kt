@@ -50,20 +50,35 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
 
         /*************** Test process settings ***************/
 
-        private fun ExtensionContext.getOrCreateTestProcessSettings(): TestProcessSettings =
-            root.getStore(NAMESPACE).getOrComputeIfAbsent(TestProcessSettings::class.java.name) {
+        private fun ExtensionContext.getOrCreateTestProcessSettings(): TestProcessSettings {
+            val optimizationMode = computeOptimizationMode()
+            val memoryModel = computeMemoryModel()
+
+            val threadStateChecker = computeThreadStateChecker()
+            if (threadStateChecker == ThreadStateChecker.ENABLED) {
+                assertEquals(MemoryModel.EXPERIMENTAL, memoryModel) {
+                    "Thread state checker can be enabled only with experimental memory model"
+                }
+                assertEquals(OptimizationMode.DEBUG, optimizationMode) {
+                    "Thread state checker can be enabled only with debug optimization mode"
+                }
+            }
+
+            return root.getStore(NAMESPACE).getOrComputeIfAbsent(TestProcessSettings::class.java.name) {
                 TestProcessSettings(
                     computeNativeTargets(),
                     computeNativeHome(),
                     computeNativeClassLoader(),
                     computeTestMode(),
-                    computeOptimizationMode(),
-                    computeMemoryModel(),
+                    optimizationMode,
+                    memoryModel,
+                    threadStateChecker,
                     CacheKind::class to computeCacheKind(),
                     computeBaseDirs(),
                     computeTimeouts()
                 )
             }.cast()
+        }
 
         private fun computeNativeTargets(): KotlinNativeTargets {
             val hostTarget = HostManager.host
@@ -90,6 +105,11 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
 
         private fun computeMemoryModel(): MemoryModel =
             enumSystemProperty(MEMORY_MODEL, MemoryModel.values(), default = MemoryModel.DEFAULT)
+
+        private fun computeThreadStateChecker(): ThreadStateChecker {
+            val useThreadStateChecker = systemProperty(USE_THREAD_STATE_CHECKER, String::toBooleanStrictOrNull, default = false)
+            return if (useThreadStateChecker) ThreadStateChecker.ENABLED else ThreadStateChecker.DISABLED
+        }
 
         private fun computeCacheKind(): CacheKind {
             val useCache = systemProperty(USE_CACHE, String::toBooleanStrictOrNull, default = true)
@@ -138,6 +158,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
         private const val TEST_MODE = "kotlin.internal.native.test.mode"
         private const val OPTIMIZATION_MODE = "kotlin.internal.native.test.optimizationMode"
         private const val MEMORY_MODEL = "kotlin.internal.native.test.memoryModel"
+        private const val USE_THREAD_STATE_CHECKER = "kotlin.internal.native.test.useThreadStateChecker"
         private const val USE_CACHE = "kotlin.internal.native.test.useCache"
         private const val EXECUTION_TIMEOUT = "kotlin.internal.native.test.executionTimeout"
         private const val PROJECT_BUILD_DIR = "PROJECT_BUILD_DIR"

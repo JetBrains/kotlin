@@ -50,7 +50,7 @@ internal enum class OptimizationMode(private val description: String, val compil
     OPT("Build with optimizations applied", "-opt"),
     NO("Don't use any specific optimizations", null);
 
-    override fun toString() = description + if (compilerFlag == null) "" else " ($compilerFlag)"
+    override fun toString() = description + compilerFlag?.let { " ($it)" }.orEmpty()
 }
 
 internal enum class MemoryModel(val compilerFlags: List<String>?) {
@@ -58,6 +58,13 @@ internal enum class MemoryModel(val compilerFlags: List<String>?) {
     EXPERIMENTAL(listOf("-memory-model", "experimental"));
 
     override fun toString() = compilerFlags?.joinToString(prefix = "(", separator = " ", postfix = ")").orEmpty()
+}
+
+internal enum class ThreadStateChecker(val compilerFlag: String?) {
+    DISABLED(null),
+    ENABLED("-Xcheck-state-at-external-calls");
+
+    override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
 }
 
 /**
