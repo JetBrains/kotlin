@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.FileLocalIdSignat
 import org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature as ProtoFileSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature as ProtoLocalSignature
-import org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature as ProtoLoweredIdSignature
 
 class IdSignatureDeserializer(private val libraryFile: IrLibraryFile, fileSymbol: IrFileSymbol?) {
 
@@ -63,10 +62,6 @@ class IdSignatureDeserializer(private val libraryFile: IrLibraryFile, fileSymbol
         return IdSignature.ScopeLocalDeclaration(proto)
     }
 
-    private fun deserializeLoweredDeclarationSignature(proto: ProtoLoweredIdSignature): IdSignature.LoweredDeclarationSignature {
-        return IdSignature.LoweredDeclarationSignature(deserializeIdSignature(proto.parentSignature), proto.stage, proto.index)
-    }
-
     private fun deserializeCompositeIdSignature(proto: ProtoCompositeSignature): IdSignature.CompositeSignature {
         val containerSig = deserializeIdSignature(proto.containerSig)
         val innerSig = deserializeIdSignature(proto.innerSig)
@@ -92,8 +87,6 @@ class IdSignatureDeserializer(private val libraryFile: IrLibraryFile, fileSymbol
             ProtoIdSignature.IdSigCase.COMPOSITE_SIG -> deserializeCompositeIdSignature(proto.compositeSig)
             ProtoIdSignature.IdSigCase.LOCAL_SIG -> deserializeLocalIdSignature(proto.localSig)
             ProtoIdSignature.IdSigCase.FILE_SIG -> deserializeFileIdSignature(proto.fileSig)
-            // IR IC part
-            ProtoIdSignature.IdSigCase.IC_SIG -> deserializeLoweredDeclarationSignature(proto.icSig)
             else -> error("Unexpected IdSignature kind: ${proto.idSigCase}")
         }
     }

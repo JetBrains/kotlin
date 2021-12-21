@@ -168,7 +168,7 @@ fun generateIrForKlibSerialization(
         psi2IrContext.irBuiltIns,
         psi2IrContext.symbolTable,
         feContext,
-        serializedIrFiles.let { ICData(it, errorPolicy.allowErrors) }
+        ICData(serializedIrFiles, errorPolicy.allowErrors)
     )
 
     sortedDependencies.map { irLinker.deserializeOnlyHeaderModule(getDescriptorByLibrary(it), it) }

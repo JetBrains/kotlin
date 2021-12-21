@@ -32,7 +32,6 @@ interface Mapping {
         }
 
         abstract val keys: Set<K>
-        abstract val values: Collection<V>
     }
 }
 
@@ -42,7 +41,7 @@ interface DelegateFactory {
     fun <K : IrDeclaration, V : Collection<IrDeclaration>> newDeclarationToDeclarationCollectionMapping(): Mapping.Delegate<K, V>
 }
 
-private object DefaultDelegateFactory : DelegateFactory {
+object DefaultDelegateFactory : DelegateFactory {
     override fun <K : IrDeclaration, V : IrDeclaration> newDeclarationToDeclarationMapping(): Mapping.Delegate<K, V> = newMappingImpl()
 
     override fun <K : IrDeclaration, V : Collection<IrDeclaration>> newDeclarationToDeclarationCollectionMapping(): Mapping.Delegate<K, V> = newMappingImpl()
@@ -64,9 +63,6 @@ private object DefaultDelegateFactory : DelegateFactory {
 
         override val keys: Set<K>
             get() = map.keys
-
-        override val values: Collection<V>
-            get() = map.values
     }
 }
 

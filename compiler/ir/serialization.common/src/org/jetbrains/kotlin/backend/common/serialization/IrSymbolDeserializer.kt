@@ -25,11 +25,11 @@ class IrSymbolDeserializer(
     val actuals: List<Actual>,
     val enqueueLocalTopLevelDeclaration: (IdSignature) -> Unit,
     val handleExpectActualMapping: (IdSignature, IrSymbol) -> IrSymbol,
-    private val enqueueAllDeclarations: Boolean = false,
-    val deserializedSymbols: MutableMap<IdSignature, IrSymbol> = mutableMapOf(), // Per-file signature cache. TODO: do we really need it?
     val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
-    val deserializePublicSymbol: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol,
+    val deserializePublicSymbol: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol
 ) {
+
+    val deserializedSymbols: MutableMap<IdSignature, IrSymbol> = mutableMapOf()
 
     fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         return deserializedSymbols.getOrPut(idSig) {
@@ -56,9 +56,7 @@ class IrSymbolDeserializer(
     private fun deserializeIrSymbolData(idSignature: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         if (!idSignature.isPubliclyVisible) {
             return deserializedSymbols.getOrPut(idSignature) {
-                if (enqueueAllDeclarations) {
-                    enqueueLocalTopLevelDeclaration(idSignature)
-                } else if (idSignature.hasTopLevel) {
+                if (idSignature.hasTopLevel) {
                     enqueueLocalTopLevelDeclaration(idSignature.topLevelSignature())
                 }
                 referenceDeserializedSymbol(symbolKind, idSignature)

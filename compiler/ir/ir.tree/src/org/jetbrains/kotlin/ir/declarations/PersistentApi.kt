@@ -5,15 +5,9 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.util.IdSignature
 
 open class StageController(open val currentStage: Int = 0) {
-    open fun lazyLower(declaration: IrDeclaration) {}
-
-    open fun lazyLower(body: IrBody) {}
-
     open fun <T> withStage(stage: Int, fn: () -> T): T = fn()
 
     open val bodiesEnabled: Boolean get() = true
@@ -23,8 +17,6 @@ open class StageController(open val currentStage: Int = 0) {
     open fun <T> restrictTo(declaration: IrDeclaration, fn: () -> T): T = fn()
 
     open fun <T> bodyLowering(fn: () -> T): T = fn()
-
-    open fun canModify(element: IrElement): Boolean = true
 
     open fun <T> unrestrictDeclarationListsAccess(fn: () -> T): T = fn()
 

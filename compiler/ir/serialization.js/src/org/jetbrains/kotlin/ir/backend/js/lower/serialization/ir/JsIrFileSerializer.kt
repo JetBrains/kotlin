@@ -22,8 +22,6 @@ class JsIrFileSerializer(
     compatibilityMode: CompatibilityMode,
     skipExpects: Boolean,
     bodiesOnlyForInlines: Boolean = false,
-    icMode: Boolean = false,
-    allowErrorStatementOrigins: Boolean = false,
     normalizeAbsolutePaths: Boolean,
     sourceBaseDirs: Collection<String>
 ) : IrFileSerializer(
@@ -33,8 +31,6 @@ class JsIrFileSerializer(
     compatibilityMode,
     bodiesOnlyForInlines = bodiesOnlyForInlines,
     skipExpects = skipExpects,
-    skipMutableState = icMode,
-    allowErrorStatementOrigins = allowErrorStatementOrigins,
     normalizeAbsolutePaths = normalizeAbsolutePaths,
     sourceBaseDirs = sourceBaseDirs
 ) {

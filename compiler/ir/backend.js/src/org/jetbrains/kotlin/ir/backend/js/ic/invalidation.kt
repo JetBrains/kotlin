@@ -315,12 +315,8 @@ fun interface CacheExecutor {
     )
 }
 
-private fun File.md5(additional: Iterable<ULong> = emptyList()): ULong {
+private fun File.md5(): ULong {
     val md5 = MessageDigest.getInstance("MD5")
-
-    for (ul in additional) {
-        md5.update(ul.toLong().toByteArray())
-    }
 
     fun File.process(prefix: String = "") {
         if (isDirectory) {

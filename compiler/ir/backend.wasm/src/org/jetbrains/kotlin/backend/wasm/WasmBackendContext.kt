@@ -53,7 +53,7 @@ class WasmBackendContext(
         )
     }
 
-    override val mapping = JsMapping(irFactory)
+    override val mapping = JsMapping()
 
     override val coroutineSymbols =
         JsCommonCoroutineSymbols(symbolTable, module,this)

@@ -31,8 +31,8 @@ class JsIrModuleSerializer(
             messageLogger,
             DeclarationTable(globalDeclarationTable),
             expectDescriptorToSymbol,
-            skipExpects = skipExpects,
             compatibilityMode = compatibilityMode,
+            skipExpects = skipExpects,
             normalizeAbsolutePaths = normalizeAbsolutePaths,
             sourceBaseDirs = sourceBaseDirs
         )

@@ -42,13 +42,4 @@ public interface IrValueParameterOrBuilder extends
    * <code>optional int32 default_value = 4;</code>
    */
   int getDefaultValue();
-
-  /**
-   * <code>optional int32 index = 105;</code>
-   */
-  boolean hasIndex();
-  /**
-   * <code>optional int32 index = 105;</code>
-   */
-  int getIndex();
 }

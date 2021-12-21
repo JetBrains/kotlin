@@ -136,19 +136,6 @@ public final class IdSignature extends
             idSigCase_ = 7;
             break;
           }
-          case 810: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature.Builder subBuilder = null;
-            if (idSigCase_ == 101) {
-              subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature) idSig_).toBuilder();
-            }
-            idSig_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature.PARSER, extensionRegistry);
-            if (subBuilder != null) {
-              subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature) idSig_);
-              idSig_ = subBuilder.buildPartial();
-            }
-            idSigCase_ = 101;
-            break;
-          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -194,7 +181,6 @@ public final class IdSignature extends
     COMPOSITE_SIG(5),
     LOCAL_SIG(6),
     FILE_SIG(7),
-    IC_SIG(101),
     IDSIG_NOT_SET(0);
     private int value = 0;
     private IdSigCase(int value) {
@@ -209,7 +195,6 @@ public final class IdSignature extends
         case 5: return COMPOSITE_SIG;
         case 6: return LOCAL_SIG;
         case 7: return FILE_SIG;
-        case 101: return IC_SIG;
         case 0: return IDSIG_NOT_SET;
         default: throw new java.lang.IllegalArgumentException(
           "Value is undefined for this oneof enum.");
@@ -345,31 +330,6 @@ public final class IdSignature extends
     return org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature.getDefaultInstance();
   }
 
-  public static final int IC_SIG_FIELD_NUMBER = 101;
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature ic_sig = 101;</code>
-   *
-   * <pre>
-   * JS IC related stuff below. Proto indices 100+ were chosen due to compatibility considerations.
-   * </pre>
-   */
-  public boolean hasIcSig() {
-    return idSigCase_ == 101;
-  }
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature ic_sig = 101;</code>
-   *
-   * <pre>
-   * JS IC related stuff below. Proto indices 100+ were chosen due to compatibility considerations.
-   * </pre>
-   */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature getIcSig() {
-    if (idSigCase_ == 101) {
-       return (org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature) idSig_;
-    }
-    return org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature.getDefaultInstance();
-  }
-
   private void initFields() {
   }
   private byte memoizedIsInitialized = -1;
@@ -392,12 +352,6 @@ public final class IdSignature extends
     }
     if (hasCompositeSig()) {
       if (!getCompositeSig().isInitialized()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-    }
-    if (hasIcSig()) {
-      if (!getIcSig().isInitialized()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -430,9 +384,6 @@ public final class IdSignature extends
     }
     if (idSigCase_ == 7) {
       output.writeMessage(7, (org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature) idSig_);
-    }
-    if (idSigCase_ == 101) {
-      output.writeMessage(101, (org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature) idSig_);
     }
     output.writeRawBytes(unknownFields);
   }
@@ -471,10 +422,6 @@ public final class IdSignature extends
     if (idSigCase_ == 7) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(7, (org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature) idSig_);
-    }
-    if (idSigCase_ == 101) {
-      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeMessageSize(101, (org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature) idSig_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -616,9 +563,6 @@ public final class IdSignature extends
       if (idSigCase_ == 7) {
         result.idSig_ = idSig_;
       }
-      if (idSigCase_ == 101) {
-        result.idSig_ = idSig_;
-      }
       result.bitField0_ = to_bitField0_;
       result.idSigCase_ = idSigCase_;
       return result;
@@ -655,10 +599,6 @@ public final class IdSignature extends
           mergeFileSig(other.getFileSig());
           break;
         }
-        case IC_SIG: {
-          mergeIcSig(other.getIcSig());
-          break;
-        }
         case IDSIG_NOT_SET: {
           break;
         }
@@ -683,12 +623,6 @@ public final class IdSignature extends
       }
       if (hasCompositeSig()) {
         if (!getCompositeSig().isInitialized()) {
-          
-          return false;
-        }
-      }
-      if (hasIcSig()) {
-        if (!getIcSig().isInitialized()) {
           
           return false;
         }
@@ -1142,94 +1076,6 @@ public final class IdSignature extends
      */
     public Builder clearFileSig() {
       if (idSigCase_ == 7) {
-        idSigCase_ = 0;
-        idSig_ = null;
-        
-      }
-      return this;
-    }
-
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature ic_sig = 101;</code>
-     *
-     * <pre>
-     * JS IC related stuff below. Proto indices 100+ were chosen due to compatibility considerations.
-     * </pre>
-     */
-    public boolean hasIcSig() {
-      return idSigCase_ == 101;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature ic_sig = 101;</code>
-     *
-     * <pre>
-     * JS IC related stuff below. Proto indices 100+ were chosen due to compatibility considerations.
-     * </pre>
-     */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature getIcSig() {
-      if (idSigCase_ == 101) {
-        return (org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature) idSig_;
-      }
-      return org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature.getDefaultInstance();
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature ic_sig = 101;</code>
-     *
-     * <pre>
-     * JS IC related stuff below. Proto indices 100+ were chosen due to compatibility considerations.
-     * </pre>
-     */
-    public Builder setIcSig(org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature value) {
-      if (value == null) {
-        throw new NullPointerException();
-      }
-      idSig_ = value;
-
-      idSigCase_ = 101;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature ic_sig = 101;</code>
-     *
-     * <pre>
-     * JS IC related stuff below. Proto indices 100+ were chosen due to compatibility considerations.
-     * </pre>
-     */
-    public Builder setIcSig(
-        org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature.Builder builderForValue) {
-      idSig_ = builderForValue.build();
-
-      idSigCase_ = 101;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature ic_sig = 101;</code>
-     *
-     * <pre>
-     * JS IC related stuff below. Proto indices 100+ were chosen due to compatibility considerations.
-     * </pre>
-     */
-    public Builder mergeIcSig(org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature value) {
-      if (idSigCase_ == 101 &&
-          idSig_ != org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature.getDefaultInstance()) {
-        idSig_ = org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature) idSig_)
-            .mergeFrom(value).buildPartial();
-      } else {
-        idSig_ = value;
-      }
-
-      idSigCase_ = 101;
-      return this;
-    }
-    /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.LoweredIdSignature ic_sig = 101;</code>
-     *
-     * <pre>
-     * JS IC related stuff below. Proto indices 100+ were chosen due to compatibility considerations.
-     * </pre>
-     */
-    public Builder clearIcSig() {
-      if (idSigCase_ == 101) {
         idSigCase_ = 0;
         idSig_ = null;
         

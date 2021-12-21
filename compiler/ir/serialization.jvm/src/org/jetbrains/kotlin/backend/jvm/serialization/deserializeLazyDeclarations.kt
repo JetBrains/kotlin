@@ -69,11 +69,10 @@ fun deserializeFromByteArray(
         fileSymbol = dummyIrFile.symbol,
         /* TODO */ actuals = emptyList(),
         enqueueLocalTopLevelDeclaration = {}, // just link to it in symbolTable
-        handleExpectActualMapping = { _, _ -> TODO() },
-        deserializePublicSymbol = { idSignature, symbolKind ->
-            referencePublicSymbol(symbolTable, descriptorFinder, idSignature, symbolKind)
-        }
-    )
+        handleExpectActualMapping = { _, _ -> TODO() }
+    ) { idSignature, symbolKind ->
+        referencePublicSymbol(symbolTable, descriptorFinder, idSignature, symbolKind)
+    }
 
     val lazyIrFactory = LazyIrFactory(irBuiltIns.irFactory)
 
