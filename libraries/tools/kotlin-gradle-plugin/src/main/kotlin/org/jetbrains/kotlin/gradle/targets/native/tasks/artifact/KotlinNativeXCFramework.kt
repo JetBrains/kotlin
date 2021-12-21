@@ -72,6 +72,7 @@ class KotlinNativeXCFramework : KotlinNativeArtifact() {
 
                 val group = AppleTarget.values().firstOrNull { it.targets.contains(target) }
                 holder.fatTasks[group]?.configure { fatTask ->
+                    fatTask.baseName = name
                     fatTask.fromFrameworkDescriptors(listOf(descriptor))
                     fatTask.dependsOn(targetTask)
                 }
