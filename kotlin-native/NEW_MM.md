@@ -119,7 +119,8 @@ The list of known performance issues:
     * Look for `Worker`s that were `Worker.start`ed, but never stopped via `Worker.requestTermination()` (also, note that this call also returns a `Future`).
     * Make sure that `execute` and `executeAfter` are only called on `Worker`s that were `Worker.start`ed or if the receiving `Worker` manually processes events with `Worker.processQueue`.
 
-We measured performance regressions with a slowdown up to a factor of 5. If you observe anything more significant, report to [this performance meta issue](https://youtrack.jetbrains.com/issue/KT-48526).
+In some of our measurements we observed performance regressions with a slowdown up to a factor of 5. In some other cases we observed performance improvements instead.
+If you observe regressions more significant than 5x, please report to [this performance meta issue](https://youtrack.jetbrains.com/issue/KT-48526).
 
 ## Known bugs
 
