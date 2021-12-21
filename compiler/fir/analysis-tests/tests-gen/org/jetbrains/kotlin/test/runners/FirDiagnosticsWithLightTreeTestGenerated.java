@@ -5143,6 +5143,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 }
 
                 @Test
+                @TestMetadata("buildSetWithVisitor.kt")
+                public void testBuildSetWithVisitor() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems/buildSetWithVisitor.kt");
+                }
+
+                @Test
                 @TestMetadata("expectedType.kt")
                 public void testExpectedType() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/inference/problems/expectedType.kt");
