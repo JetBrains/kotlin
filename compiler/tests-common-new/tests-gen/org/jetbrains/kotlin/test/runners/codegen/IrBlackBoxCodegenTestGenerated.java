@@ -1922,6 +1922,42 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt49092a.kt")
+        public void testKt49092a() throws Exception {
+            runTest("compiler/testData/codegen/box/boxingOptimization/kt49092a.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49092b.kt")
+        public void testKt49092b() throws Exception {
+            runTest("compiler/testData/codegen/box/boxingOptimization/kt49092b.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49092c.kt")
+        public void testKt49092c() throws Exception {
+            runTest("compiler/testData/codegen/box/boxingOptimization/kt49092c.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49092d.kt")
+        public void testKt49092d() throws Exception {
+            runTest("compiler/testData/codegen/box/boxingOptimization/kt49092d.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49092e.kt")
+        public void testKt49092e() throws Exception {
+            runTest("compiler/testData/codegen/box/boxingOptimization/kt49092e.kt");
+        }
+
+        @Test
+        @TestMetadata("kt49092f.kt")
+        public void testKt49092f() throws Exception {
+            runTest("compiler/testData/codegen/box/boxingOptimization/kt49092f.kt");
+        }
+
+        @Test
         @TestMetadata("kt49548.kt")
         public void testKt49548() throws Exception {
             runTest("compiler/testData/codegen/box/boxingOptimization/kt49548.kt");

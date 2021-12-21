@@ -42,7 +42,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
             return
 
         val interpreter = RedundantBoxingInterpreter(node.instructions, generationState)
-        val frames = analyze(internalClassName, node, interpreter)
+        val frames = BoxingAnalyzer(internalClassName, node, interpreter).analyze()
 
         interpretPopInstructionsForBoxedValues(interpreter, node, frames)
 

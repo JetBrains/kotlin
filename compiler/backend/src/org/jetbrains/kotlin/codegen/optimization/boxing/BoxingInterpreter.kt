@@ -29,13 +29,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
 import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
-import org.jetbrains.kotlin.types.*
 
 open class BoxingInterpreter(
     private val insnList: InsnList,
@@ -148,6 +148,15 @@ open class BoxingInterpreter(
                 value.type != null && isProgressionClass(value.type)
 
     override fun merge(v: BasicValue, w: BasicValue) =
+        mergeStackValues(v, w)
+
+    fun mergeLocalVariableValues(v: BasicValue, w: BasicValue) =
+        merge(v, w, isLocalVariable = true)
+
+    fun mergeStackValues(v: BasicValue, w: BasicValue) =
+        merge(v, w, isLocalVariable = false)
+
+    private fun merge(v: BasicValue, w: BasicValue, isLocalVariable: Boolean) =
         when {
             v == StrictBasicValue.UNINITIALIZED_VALUE || w == StrictBasicValue.UNINITIALIZED_VALUE ->
                 StrictBasicValue.UNINITIALIZED_VALUE
@@ -156,17 +165,31 @@ open class BoxingInterpreter(
                 when {
                     v is TaintedBoxedValue -> v
                     w is TaintedBoxedValue -> w
-                    v.type != w.type -> v.taint()
+                    v.type != w.type -> mergeBoxedHazardous(v, w, isLocalVariable)
                     else -> v
                 }
             }
             v is BoxedBasicValue ->
-                v.taint()
+                mergeBoxedHazardous(v, w, isLocalVariable)
             w is BoxedBasicValue ->
-                w.taint()
+                mergeBoxedHazardous(w, v, isLocalVariable)
             else ->
                 super.merge(v, w)
         }
+
+    private fun mergeBoxedHazardous(boxed: BoxedBasicValue, other: BasicValue, isLocalVariable: Boolean): BasicValue {
+        if (isLocalVariable) {
+            return boxed.taint()
+        }
+
+        // If we merge a boxed stack value with a value of a different type, mark it as merge hazard immediately:
+        // its intended boxed use might be dead code (KT-49092), in which case boxing elimination would produce incompatible stacks.
+        onMergeFail(boxed)
+        if (other is BoxedBasicValue) {
+            onMergeFail(other)
+        }
+        return boxed
+    }
 
     protected open fun onNewBoxedValue(value: BoxedBasicValue) {}
     protected open fun onUnboxing(insn: AbstractInsnNode, value: BoxedBasicValue, resultType: Type) {}
