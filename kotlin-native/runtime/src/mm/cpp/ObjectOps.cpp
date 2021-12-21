@@ -58,24 +58,18 @@ ALWAYS_INLINE OBJ_GETTER(mm::CompareAndSwapHeapRef, ObjHeader** location, ObjHea
 OBJ_GETTER(mm::AllocateObject, ThreadData* threadData, const TypeInfo* typeInfo) noexcept {
     AssertThreadState(threadData, ThreadState::kRunnable);
     // TODO: Make this work with GCs that can stop thread at any point.
-    auto* object = threadData->objectFactoryThreadQueue().CreateObject(typeInfo);
+    auto* object = threadData->gc().CreateObject(typeInfo);
     RETURN_OBJ(object);
 }
 
 OBJ_GETTER(mm::AllocateArray, ThreadData* threadData, const TypeInfo* typeInfo, uint32_t elements) noexcept {
     AssertThreadState(threadData, ThreadState::kRunnable);
     // TODO: Make this work with GCs that can stop thread at any point.
-    auto* array = threadData->objectFactoryThreadQueue().CreateArray(typeInfo, static_cast<uint32_t>(elements));
+    auto* array = threadData->gc().CreateArray(typeInfo, static_cast<uint32_t>(elements));
     // `ArrayHeader` and `ObjHeader` are expected to be compatible.
     RETURN_OBJ(reinterpret_cast<ObjHeader*>(array));
 }
 
 size_t mm::GetAllocatedHeapSize(ObjHeader* object) noexcept {
-    RuntimeAssert(object->heap(), "Object must be a heap object");
-    const auto* typeInfo = object->type_info();
-    if (typeInfo->IsArray()) {
-        return mm::ObjectFactory<gc::GC>::ThreadQueue::ArrayAllocatedSize(typeInfo, object->array()->count_);
-    } else {
-        return mm::ObjectFactory<gc::GC>::ThreadQueue::ObjectAllocatedSize(typeInfo);
-    }
+    return gc::GC::GetAllocatedHeapSize(object);
 }

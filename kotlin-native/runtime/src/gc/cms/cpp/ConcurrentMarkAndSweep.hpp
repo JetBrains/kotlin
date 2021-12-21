@@ -49,12 +49,10 @@ public:
         using ObjectData = ConcurrentMarkAndSweep::ObjectData;
         using Allocator = AllocatorWithGC<AlignedAllocator, ThreadData>;
 
-        explicit ThreadData(ConcurrentMarkAndSweep& gc, mm::ThreadData& threadData) noexcept : gc_(gc), threadData_(threadData) {}
+        explicit ThreadData(ConcurrentMarkAndSweep& gc, mm::ThreadData& threadData, GCSchedulerThreadData& gcScheduler) noexcept :
+            gc_(gc), gcScheduler_(gcScheduler) {}
         ~ThreadData() = default;
 
-        void SafePointFunctionPrologue() noexcept;
-        void SafePointLoopBody() noexcept;
-        void SafePointExceptionUnwind() noexcept;
         void SafePointAllocation(size_t size) noexcept;
 
         void ScheduleAndWaitFullGC() noexcept;
@@ -66,20 +64,21 @@ public:
         Allocator CreateAllocator() noexcept { return Allocator(AlignedAllocator(), *this); }
 
     private:
-        void SafePointRegular(size_t weight) noexcept;
-
         ConcurrentMarkAndSweep& gc_;
-        mm::ThreadData& threadData_;
+        GCSchedulerThreadData& gcScheduler_;
     };
 
     using Allocator = ThreadData::Allocator;
 
-    ConcurrentMarkAndSweep() noexcept;
+    ConcurrentMarkAndSweep(mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory, GCScheduler& scheduler) noexcept;
     ~ConcurrentMarkAndSweep();
 
 private:
     // Returns `true` if GC has happened, and `false` if not (because someone else has suspended the threads).
     bool PerformFullGC(int64_t epoch) noexcept;
+
+    mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory_;
+    GCScheduler& gcScheduler_;
 
     uint64_t lastGCTimestampUs_ = 0;
     GCStateHolder state_;

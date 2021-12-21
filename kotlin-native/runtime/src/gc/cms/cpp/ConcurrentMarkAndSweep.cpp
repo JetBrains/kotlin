@@ -59,16 +59,8 @@ struct SweepTraits {
 
 } // namespace
 
-ALWAYS_INLINE void gc::ConcurrentMarkAndSweep::ThreadData::SafePointFunctionPrologue() noexcept {
-    SafePointRegular(GCSchedulerThreadData::kFunctionPrologueWeight);
-}
-
-ALWAYS_INLINE void gc::ConcurrentMarkAndSweep::ThreadData::SafePointLoopBody() noexcept {
-    SafePointRegular(GCSchedulerThreadData::kLoopBodyWeight);
-}
-
 void gc::ConcurrentMarkAndSweep::ThreadData::SafePointAllocation(size_t size) noexcept {
-    threadData_.gcScheduler().OnSafePointAllocation(size);
+    gcScheduler_.OnSafePointAllocation(size);
     mm::SuspendIfRequested();
 }
 void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGC() noexcept {
@@ -92,14 +84,12 @@ void gc::ConcurrentMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
     ScheduleAndWaitFullGC();
 }
 
-ALWAYS_INLINE void gc::ConcurrentMarkAndSweep::ThreadData::SafePointRegular(size_t weight) noexcept {
-    threadData_.gcScheduler().OnSafePointRegular(weight);
-    mm::SuspendIfRequested();
-}
-
-gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep() noexcept :
-    finalizerProcessor_(make_unique<FinalizerProcessor>([this](int64_t epoch) { state_.finalized(epoch);})) {
-    mm::GlobalData::Instance().gcScheduler().SetScheduleGC([this]() NO_EXTERNAL_CALLS_CHECK NO_INLINE {
+gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
+        mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory, GCScheduler& gcScheduler) noexcept :
+    objectFactory_(objectFactory),
+    gcScheduler_(gcScheduler),
+    finalizerProcessor_(make_unique<FinalizerProcessor>([this](int64_t epoch) { state_.finalized(epoch); })) {
+    gcScheduler_.SetScheduleGC([this]() NO_EXTERNAL_CALLS_CHECK NO_INLINE {
         RuntimeLogDebug({kTagGC}, "Scheduling GC by thread %d", konan::currentThreadId());
         state_.schedule();
     });
@@ -114,7 +104,6 @@ gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep() noexcept :
         }
     });
 }
-
 
 gc::ConcurrentMarkAndSweep::~ConcurrentMarkAndSweep() {
     state_.shutdown();
@@ -134,7 +123,7 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     auto timeSuspendUs = konan::getTimeMicros();
     RuntimeLogDebug({kTagGC}, "Suspended all threads in %" PRIu64 " microseconds", timeSuspendUs - timeStartUs);
 
-    auto& scheduler = mm::GlobalData::Instance().gcScheduler();
+    auto& scheduler = gcScheduler_;
     scheduler.gcData().OnPerformFullGC();
 
     state_.start(epoch);
@@ -144,7 +133,7 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     auto timeRootSetUs = konan::getTimeMicros();
     // Can be unsafe, because we've stopped the world.
 
-    auto objectsCountBefore = mm::GlobalData::Instance().objectFactory().GetSizeUnsafe();
+    auto objectsCountBefore = objectFactory_.GetSizeUnsafe();
     RuntimeLogInfo(
             {kTagGC}, "Collected root set of size %zu in %" PRIu64 " microseconds", graySet.size(),
             timeRootSetUs - timeSuspendUs);
@@ -156,7 +145,7 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     auto timeSweepExtraObjectsUs = konan::getTimeMicros();
     RuntimeLogDebug({kTagGC}, "Sweeped extra objects in %" PRIu64 " microseconds", timeSweepExtraObjectsUs - timeMarkUs);
 
-    auto objectFactoryIterable = mm::GlobalData::Instance().objectFactory().LockForIter();
+    auto objectFactoryIterable = objectFactory_.LockForIter();
 
     mm::ResumeThreads();
     auto timeResumeUs = konan::getTimeMicros();
@@ -170,7 +159,7 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     RuntimeLogDebug({kTagGC}, "Swept in %" PRIu64 " microseconds", timeSweepUs - timeResumeUs);
 
     // Can be unsafe, because we have a lock in objectFactoryIterable
-    auto objectsCountAfter = mm::GlobalData::Instance().objectFactory().GetSizeUnsafe();
+    auto objectsCountAfter = objectFactory_.GetSizeUnsafe();
     auto extraObjectsCountAfter = mm::GlobalData::Instance().extraObjectDataFactory().GetSizeUnsafe();
 
     auto finalizersCount = finalizerQueue.size();

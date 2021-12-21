@@ -18,7 +18,7 @@ KStdVector<ObjHeader*> kotlin::gc::collectRootSet() {
     for (auto& thread : mm::GlobalData::Instance().threadRegistry().LockForIter()) {
         // TODO: Maybe it's more efficient to do by the suspending thread?
         thread.Publish();
-        thread.gcScheduler().OnStoppedForGC();
+        thread.gc().OnStoppedForGC();
         size_t stack = 0;
         size_t tls = 0;
         for (auto value : mm::ThreadRootSet(thread)) {

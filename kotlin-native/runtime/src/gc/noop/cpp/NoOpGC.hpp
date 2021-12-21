@@ -10,6 +10,7 @@
 
 #include "Allocator.hpp"
 #include "GCScheduler.hpp"
+#include "ObjectFactory.hpp"
 #include "Utils.hpp"
 #include "Types.h"
 
@@ -33,7 +34,7 @@ public:
     public:
         using ObjectData = NoOpGC::ObjectData;
 
-        explicit ThreadData(NoOpGC& gc, mm::ThreadData& threadData) noexcept {}
+        ThreadData(NoOpGC& gc, mm::ThreadData& threadData, GCSchedulerThreadData&) noexcept {}
         ~ThreadData() = default;
 
         void SafePointFunctionPrologue() noexcept {}
@@ -50,7 +51,7 @@ public:
     private:
     };
 
-    NoOpGC() noexcept {}
+    NoOpGC(mm::ObjectFactory<NoOpGC>&, GCScheduler&) noexcept {}
     ~NoOpGC() = default;
 
     GCScheduler& scheduler() noexcept { return scheduler_; }

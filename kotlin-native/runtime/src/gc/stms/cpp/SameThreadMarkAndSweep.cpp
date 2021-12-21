@@ -64,16 +64,8 @@ std::atomic<gc::SameThreadMarkAndSweep::SafepointFlag> gSafepointFlag = gc::Same
 
 } // namespace
 
-ALWAYS_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointFunctionPrologue() noexcept {
-    SafePointRegular(GCSchedulerThreadData::kFunctionPrologueWeight);
-}
-
-ALWAYS_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointLoopBody() noexcept {
-    SafePointRegular(GCSchedulerThreadData::kLoopBodyWeight);
-}
-
 void gc::SameThreadMarkAndSweep::ThreadData::SafePointAllocation(size_t size) noexcept {
-    threadData_.gcScheduler().OnSafePointAllocation(size);
+    gcScheduler_.OnSafePointAllocation(size);
     SafepointFlag flag = gSafepointFlag.load();
     if (flag != SafepointFlag::kNone) {
         SafePointSlowPath(flag);
@@ -85,7 +77,7 @@ void gc::SameThreadMarkAndSweep::ThreadData::ScheduleAndWaitFullGC() noexcept {
 
     if (!didGC) {
         // If we failed to suspend threads, someone else might be asking to suspend them.
-        threadData_.suspensionData().suspendIfRequested();
+        mm::SuspendIfRequested();
     }
 }
 
@@ -94,21 +86,13 @@ void gc::SameThreadMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
     ScheduleAndWaitFullGC();
 }
 
-ALWAYS_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointRegular(size_t weight) noexcept {
-    threadData_.gcScheduler().OnSafePointRegular(weight);
-    SafepointFlag flag = gSafepointFlag.load();
-    if (flag != SafepointFlag::kNone) {
-        SafePointSlowPath(flag);
-    }
-}
-
 NO_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointSlowPath(SafepointFlag flag) noexcept {
     switch (flag) {
         case SafepointFlag::kNone:
             RuntimeAssert(false, "Must've been handled by the caller");
             return;
         case SafepointFlag::kNeedsSuspend:
-            threadData_.suspensionData().suspendIfRequested();
+            mm::SuspendIfRequested();
             return;
         case SafepointFlag::kNeedsGC:
             RuntimeLogDebug({kTagGC}, "Attempt to GC at SafePoint");
@@ -117,8 +101,10 @@ NO_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointSlowPath(Safepoi
     }
 }
 
-gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep() noexcept {
-    mm::GlobalData::Instance().gcScheduler().SetScheduleGC([]() {
+gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep(
+        mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory, GCScheduler& gcScheduler) noexcept :
+    objectFactory_(objectFactory), gcScheduler_(gcScheduler) {
+    gcScheduler_.SetScheduleGC([]() {
         RuntimeLogDebug({kTagGC}, "Scheduling GC by thread %d", konan::currentThreadId());
         gSafepointFlag = SafepointFlag::kNeedsGC;
     });
@@ -146,7 +132,7 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
         auto timeSuspendUs = konan::getTimeMicros();
         RuntimeLogDebug({kTagGC}, "Suspended all threads in %" PRIu64 " microseconds", timeSuspendUs - timeStartUs);
 
-        auto& scheduler = mm::GlobalData::Instance().gcScheduler();
+        auto& scheduler = gcScheduler_;
         scheduler.gcData().OnPerformFullGC();
 
         RuntimeLogInfo(
@@ -154,7 +140,7 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
         auto graySet = collectRootSet();
         auto timeRootSetUs = konan::getTimeMicros();
         // Can be unsafe, because we've stopped the world.
-        auto objectsCountBefore = mm::GlobalData::Instance().objectFactory().GetSizeUnsafe();
+        auto objectsCountBefore = objectFactory_.GetSizeUnsafe();
 
         RuntimeLogInfo(
                 {kTagGC}, "Collected root set of size %zu in %" PRIu64 " microseconds", graySet.size(),
@@ -166,12 +152,12 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
         gc::SweepExtraObjects<SweepTraits>(mm::GlobalData::Instance().extraObjectDataFactory());
         auto timeSweepExtraObjectsUs = konan::getTimeMicros();
         RuntimeLogDebug({kTagGC}, "Sweeped extra objects in %" PRIu64 " microseconds", timeSweepExtraObjectsUs - timeMarkUs);
-        finalizerQueue = gc::Sweep<SweepTraits>(mm::GlobalData::Instance().objectFactory());
+        finalizerQueue = gc::Sweep<SweepTraits>(objectFactory_);
         auto timeSweepUs = konan::getTimeMicros();
         RuntimeLogDebug({kTagGC}, "Sweeped in %" PRIu64 " microseconds", timeSweepUs - timeSweepExtraObjectsUs);
 
         // Can be unsafe, because we've stopped the world.
-        auto objectsCountAfter = mm::GlobalData::Instance().objectFactory().GetSizeUnsafe();
+        auto objectsCountAfter = objectFactory_.GetSizeUnsafe();
         auto extraObjectsCountAfter = mm::GlobalData::Instance().extraObjectDataFactory().GetSizeUnsafe();
 
         gSafepointFlag = SafepointFlag::kNone;
@@ -205,4 +191,8 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
     RuntimeLogInfo({kTagGC}, "Finished running finalizers in %" PRIu64 " microseconds", timeAfterUs - timeBeforeUs);
 
     return true;
+}
+
+gc::SameThreadMarkAndSweep::SafepointFlag gc::internal::loadSafepointFlag() noexcept {
+    return gSafepointFlag.load();
 }

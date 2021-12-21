@@ -691,6 +691,16 @@ public:
 
     void ClearForTests() { storage_.ClearForTests(); }
 
+    static size_t GetAllocatedHeapSize(ObjHeader* object) noexcept {
+        RuntimeAssert(object->heap(), "Object must be a heap object");
+        const auto* typeInfo = object->type_info();
+        if (typeInfo->IsArray()) {
+            return ThreadQueue::ArrayAllocatedSize(typeInfo, object->array()->count_);
+        } else {
+            return ThreadQueue::ObjectAllocatedSize(typeInfo);
+        }
+    }
+
 private:
     Storage storage_;
 };

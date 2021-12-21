@@ -15,6 +15,7 @@
 
 #include "ExtraObjectData.hpp"
 #include "FinalizerHooksTestSupport.hpp"
+#include "GCImpl.hpp"
 #include "GlobalData.hpp"
 #include "ObjectOps.hpp"
 #include "ObjectTestSupport.hpp"
@@ -187,10 +188,10 @@ test_support::Object<Payload>& AllocateObjectWithFinalizer(mm::ThreadData& threa
 
 KStdVector<ObjHeader*> Alive(mm::ThreadData& threadData) {
     KStdVector<ObjHeader*> objects;
-    for (auto node : threadData.objectFactoryThreadQueue()) {
+    for (auto node : threadData.gc().impl().objectFactoryThreadQueue()) {
         objects.push_back(node.IsArray() ? node.GetArrayHeader()->obj() : node.GetObjHeader());
     }
-    for (auto node : mm::GlobalData::Instance().objectFactory().LockForIter()) {
+    for (auto node : mm::GlobalData::Instance().gc().impl().objectFactory().LockForIter()) {
         objects.push_back(node.IsArray() ? node.GetArrayHeader()->obj() : node.GetObjHeader());
     }
     return objects;
@@ -215,11 +216,10 @@ WeakCounter& InstallWeakCounter(mm::ThreadData& threadData, ObjHeader* objHeader
 
 class SameThreadMarkAndSweepTest : public testing::Test {
 public:
-
     ~SameThreadMarkAndSweepTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
         mm::GlobalData::Instance().extraObjectDataFactory().ClearForTests();
-        mm::GlobalData::Instance().objectFactory().ClearForTests();
+        mm::GlobalData::Instance().gc().impl().objectFactory().ClearForTests();
     }
 
     testing::MockFunction<void(ObjHeader*)>& finalizerHook() { return finalizerHooks_.finalizerHook(); }

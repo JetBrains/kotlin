@@ -7,6 +7,7 @@
 #include "gmock/gmock.h"
 
 #include "GC.hpp"
+#include "GCTestSupport.hpp"
 #include "GlobalData.hpp"
 #include "GlobalsRegistry.hpp"
 #include "TestSupport.hpp"
@@ -45,15 +46,14 @@ extern "C" void Kotlin_TestSupport_AssertClearGlobalState() {
     // Validate that global registries are empty.
     auto globals = mm::GlobalsRegistry::Instance().LockForIter();
     auto extraObjects = mm::GlobalData::Instance().extraObjectDataFactory().LockForIter();
-    auto objects = mm::GlobalData::Instance().objectFactory().LockForIter();
     auto stableRefs = mm::StableRefRegistry::Instance().LockForIter();
     auto threads = mm::ThreadRegistry::Instance().LockForIter();
 
     EXPECT_THAT(collectCopy(globals), testing::UnorderedElementsAre());
     EXPECT_THAT(collectPointers(extraObjects), testing::UnorderedElementsAre());
-    EXPECT_THAT(collectCopy(objects), testing::UnorderedElementsAre());
     EXPECT_THAT(collectCopy(stableRefs), testing::UnorderedElementsAre());
     EXPECT_THAT(collectPointers(threads), testing::UnorderedElementsAre());
+    gc::AssertClear(mm::GlobalData::Instance().gc());
 }
 
 void kotlin::DeinitMemoryForTests(MemoryState* memoryState) {

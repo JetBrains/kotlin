@@ -51,12 +51,11 @@ public:
         using ObjectData = SameThreadMarkAndSweep::ObjectData;
         using Allocator = AllocatorWithGC<AlignedAllocator, ThreadData>;
 
-        explicit ThreadData(SameThreadMarkAndSweep& gc, mm::ThreadData& threadData) noexcept : gc_(gc), threadData_(threadData) {}
+        ThreadData(SameThreadMarkAndSweep& gc, mm::ThreadData& threadData, GCSchedulerThreadData& gcScheduler) noexcept :
+            gc_(gc), gcScheduler_(gcScheduler) {}
         ~ThreadData() = default;
 
-        void SafePointFunctionPrologue() noexcept;
-        void SafePointLoopBody() noexcept;
-        void SafePointExceptionUnwind() noexcept;
+        void SafePointSlowPath(SafepointFlag flag) noexcept;
         void SafePointAllocation(size_t size) noexcept;
 
         void ScheduleAndWaitFullGC() noexcept;
@@ -67,16 +66,14 @@ public:
         Allocator CreateAllocator() noexcept { return Allocator(AlignedAllocator(), *this); }
 
     private:
-        void SafePointRegular(size_t weight) noexcept;
-        void SafePointSlowPath(SafepointFlag flag) noexcept;
 
         SameThreadMarkAndSweep& gc_;
-        mm::ThreadData& threadData_;
+        GCSchedulerThreadData& gcScheduler_;
     };
 
     using Allocator = ThreadData::Allocator;
 
-    SameThreadMarkAndSweep() noexcept;
+    SameThreadMarkAndSweep(mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory, GCScheduler& gcScheduler) noexcept;
     ~SameThreadMarkAndSweep() = default;
     void StopFinalizerThreadForTests() noexcept {}
 
@@ -86,7 +83,16 @@ private:
 
     size_t epoch_ = 0;
     uint64_t lastGCTimestampUs_ = 0;
+
+    mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory_;
+    GCScheduler& gcScheduler_;
 };
+
+namespace internal {
+
+SameThreadMarkAndSweep::SafepointFlag loadSafepointFlag() noexcept;
+
+} // namespace internal
 
 } // namespace gc
 } // namespace kotlin

@@ -5,15 +5,12 @@
 
 #pragma once
 
-#include "ConcurrentMarkAndSweep.hpp"
+#include "GC.hpp"
 
 namespace kotlin {
 namespace gc {
 
-using GC = kotlin::gc::ConcurrentMarkAndSweep;
+void AssertClear(GC& gc) noexcept;
 
-inline constexpr bool kSupportsMultipleMutators = true;
-
-} // namespace gc
+}
 } // namespace kotlin
-

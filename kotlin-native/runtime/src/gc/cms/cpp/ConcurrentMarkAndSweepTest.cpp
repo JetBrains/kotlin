@@ -15,6 +15,7 @@
 
 #include "ExtraObjectData.hpp"
 #include "FinalizerHooksTestSupport.hpp"
+#include "GCImpl.hpp"
 #include "GlobalData.hpp"
 #include "ObjectOps.hpp"
 #include "ObjectTestSupport.hpp"
@@ -187,10 +188,10 @@ test_support::Object<Payload>& AllocateObjectWithFinalizer(mm::ThreadData& threa
 
 KStdVector<ObjHeader*> Alive(mm::ThreadData& threadData) {
     KStdVector<ObjHeader*> objects;
-    for (auto node : threadData.objectFactoryThreadQueue()) {
+    for (auto node : threadData.gc().impl().objectFactoryThreadQueue()) {
         objects.push_back(node.IsArray() ? node.GetArrayHeader()->obj() : node.GetObjHeader());
     }
-    for (auto node : mm::GlobalData::Instance().objectFactory().LockForIter()) {
+    for (auto node : mm::GlobalData::Instance().gc().impl().objectFactory().LockForIter()) {
         objects.push_back(node.IsArray() ? node.GetArrayHeader()->obj() : node.GetObjHeader());
     }
     return objects;
@@ -219,7 +220,7 @@ public:
     ~ConcurrentMarkAndSweepTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
         mm::GlobalData::Instance().extraObjectDataFactory().ClearForTests();
-        mm::GlobalData::Instance().objectFactory().ClearForTests();
+        mm::GlobalData::Instance().gc().ClearForTests();
     }
 
     testing::MockFunction<void(ObjHeader*)>& finalizerHook() { return finalizerHooks_.finalizerHook(); }
@@ -338,7 +339,7 @@ TEST_F(ConcurrentMarkAndSweepTest, FreeObjectsWithFinalizers) {
         EXPECT_CALL(finalizerHook(), Call(object1.header()));
         EXPECT_CALL(finalizerHook(), Call(object2.header()));
         threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
-        threadData.gc().StopFinalizerThreadForTests();
+        threadData.gc().impl().gc().StopFinalizerThreadForTests();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre());
     });
@@ -358,7 +359,7 @@ TEST_F(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeak) {
         ASSERT_THAT(weak1->referred, object1.header());
 
         threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
-        threadData.gc().StopFinalizerThreadForTests();
+        threadData.gc().impl().gc().StopFinalizerThreadForTests();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre());
     });
@@ -509,7 +510,7 @@ TEST_F(ConcurrentMarkAndSweepTest, ObjectsWithCyclesAndFinalizers) {
         EXPECT_CALL(finalizerHook(), Call(object5.header()));
         EXPECT_CALL(finalizerHook(), Call(object6.header()));
         threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
-        threadData.gc().StopFinalizerThreadForTests();
+        threadData.gc().impl().gc().StopFinalizerThreadForTests();
 
         EXPECT_THAT(
                 Alive(threadData),

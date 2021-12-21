@@ -30,7 +30,7 @@ public:
     ~ExtraObjectDataTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
         mm::GlobalData::Instance().extraObjectDataFactory().ClearForTests();
-        mm::GlobalData::Instance().objectFactory().ClearForTests();
+        mm::GlobalData::Instance().gc().ClearForTests();
     }
 };
 

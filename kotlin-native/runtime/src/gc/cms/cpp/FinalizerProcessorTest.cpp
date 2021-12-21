@@ -15,6 +15,7 @@
 
 #include "ExtraObjectData.hpp"
 #include "FinalizerHooksTestSupport.hpp"
+#include "GCImpl.hpp"
 #include "GlobalData.hpp"
 #include "ObjectOps.hpp"
 #include "ObjectTestSupport.hpp"
@@ -55,7 +56,7 @@ public:
    ~FinalizerProcessorTest() {
        mm::GlobalsRegistry::Instance().ClearForTests();
        mm::GlobalData::Instance().extraObjectDataFactory().ClearForTests();
-       mm::GlobalData::Instance().objectFactory().ClearForTests();
+       mm::GlobalData::Instance().gc().ClearForTests();
    }
 
    testing::MockFunction<void(ObjHeader*)>& finalizerHook() { return finalizerHooks_.finalizerHook(); }
@@ -94,7 +95,7 @@ TEST_F(FinalizerProcessorTest, RemoveObject) {
         mm::ObjectFactory<kotlin::gc::ConcurrentMarkAndSweep>::FinalizerQueue queue;
         auto &object = AllocateObjectWithFinalizer(*mm::ThreadRegistry::Instance().CurrentThreadData());
         mm::ThreadRegistry::Instance().CurrentThreadData()->Publish();
-        auto &factory = mm::GlobalData::Instance().objectFactory();
+        auto& factory = mm::GlobalData::Instance().gc().impl().objectFactory();
         auto iter = factory.LockForIter();
         auto iterator = iter.begin();
         iter.MoveAndAdvance(queue, iterator);
@@ -121,7 +122,7 @@ TEST_F(FinalizerProcessorTest, ScheduleTasksWhileFinalizing) {
                 auto& object = AllocateObjectWithFinalizer(*mm::ThreadRegistry::Instance().CurrentThreadData());
                 headers.push_back(object.header());
             }
-            auto& factory = mm::GlobalData::Instance().objectFactory();
+            auto& factory = mm::GlobalData::Instance().gc().impl().objectFactory();
             mm::ThreadRegistry::Instance().CurrentThreadData()->Publish();
             auto iter = factory.LockForIter();
             mm::ObjectFactory<kotlin::gc::ConcurrentMarkAndSweep>::FinalizerQueue queue;

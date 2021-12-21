@@ -27,8 +27,6 @@ public:
     GlobalsRegistry& globalsRegistry() noexcept { return globalsRegistry_; }
     StableRefRegistry& stableRefRegistry() noexcept { return stableRefRegistry_; }
     ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
-    ObjectFactory<gc::GC>& objectFactory() noexcept { return objectFactory_; }
-    gc::GCScheduler& gcScheduler() noexcept { return gcScheduler_; }
     gc::GC& gc() noexcept { return gc_; }
 
 private:
@@ -42,8 +40,6 @@ private:
     GlobalsRegistry globalsRegistry_;
     StableRefRegistry stableRefRegistry_;
     ExtraObjectDataFactory extraObjectDataFactory_;
-    ObjectFactory<gc::GC> objectFactory_;
-    gc::GCScheduler gcScheduler_;
     gc::GC gc_;
 };
 

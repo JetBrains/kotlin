@@ -35,7 +35,7 @@ public:
 
     ~InitSingletonTest() {
         globalConstructor_ = nullptr;
-        mm::GlobalData::Instance().objectFactory().ClearForTests();
+        mm::GlobalData::Instance().gc().ClearForTests();
         mm::GlobalData::Instance().globalsRegistry().ClearForTests();
     }
 

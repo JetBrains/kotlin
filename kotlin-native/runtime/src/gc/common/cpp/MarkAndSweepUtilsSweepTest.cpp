@@ -9,6 +9,7 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
+#include "Allocator.hpp"
 #include "FinalizerHooksTestSupport.hpp"
 #include "ObjectFactory.hpp"
 #include "ObjectTestSupport.hpp"
