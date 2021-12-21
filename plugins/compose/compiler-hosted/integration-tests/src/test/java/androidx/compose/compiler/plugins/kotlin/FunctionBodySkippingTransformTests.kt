@@ -1453,8 +1453,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                     a = 0
                   }
                   if (%default and 0b0010 !== 0) {
-                    b = Foo(
-                    )
+                    b = Foo()
                     %dirty = %dirty and 0b01110000.inv()
                   }
                 } else {
@@ -1521,8 +1520,7 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransfomrTestsBas
                 %composer.startDefaults()
                 if (%changed and 0b0001 === 0 || %composer.defaultsInvalid) {
                   if (%default and 0b0001 !== 0) {
-                    b = Foo(
-                    )
+                    b = Foo()
                     %dirty = %dirty and 0b01110000.inv()
                   }
                 } else {

@@ -184,8 +184,7 @@ class DefaultParamTransformTests : ComposeIrTransformTest() {
             }
             ) { }
             fun Foo() {
-              Bar(
-              )
+              Bar()
             }
         """
     )
