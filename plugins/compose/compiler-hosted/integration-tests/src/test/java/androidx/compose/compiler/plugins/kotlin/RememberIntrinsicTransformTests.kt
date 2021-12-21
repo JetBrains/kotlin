@@ -21,6 +21,9 @@ import org.junit.Ignore
 import org.junit.Test
 
 class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
+    override val intrinsicRememberEnabled: Boolean
+        get() = true
+
     private fun comparisonPropagation(
         @Language("kotlin")
         unchecked: String,
@@ -792,7 +795,7 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
               }
               if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
                 val a = InlineInt(123)
-                val foo = %composer.cache(%dirty and 0b1110 === 0b0100 or false) {
+                val foo = %composer.cache(%dirty and 0b1110 === 0b0100) {
                   val tmp0_return = Foo()
                   tmp0_return
                 }
@@ -914,6 +917,139 @@ class RememberIntrinsicTransformTests : ComposeIrTransformTest() {
               }
               %composer.endReplaceableGroup()
               return tmp0
+            }
+        """
+    )
+
+    @Test
+    fun testRememberMemoizedLambda(): Unit = comparisonPropagation(
+        "",
+        """
+            @Composable
+            fun Test(a: Int) {
+                used { a }
+            }
+        """,
+        """
+            @Composable
+            fun Test(a: Int, %composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test):Test.kt")
+              val %dirty = %changed
+              if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                used(%composer.cache(%dirty and 0b1110 === 0b0100) {
+                  {
+                    a
+                  }
+                }
+                )
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(a, %composer, %changed or 0b0001)
+              }
+            }
+        """
+    )
+
+    @Test
+    fun testRememberFunctionReference(): Unit = comparisonPropagation(
+        """
+            fun effect(): Int = 0
+        """,
+        """
+            @Composable
+            fun Test(a: Int) {
+                used(remember(a, ::effect))
+            }
+        """,
+        """
+            @Composable
+            fun Test(a: Int, %composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test):Test.kt")
+              val %dirty = %changed
+              if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                used(%composer.cache(%dirty and 0b1110 === 0b0100, effect))
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(a, %composer, %changed or 0b0001)
+              }
+            }
+        """
+    )
+
+    @Test
+    fun testRememberAdaptedFunctionReference(): Unit = comparisonPropagation(
+        """
+            fun effect(a: Int = 0): Int = a
+        """,
+        """
+            @Composable
+            fun Test(a: Int) {
+                used(remember(a, ::effect))
+            }
+        """,
+        """
+            @Composable
+            fun Test(a: Int, %composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test):Test.kt")
+              val %dirty = %changed
+              if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                used(%composer.cache(%dirty and 0b1110 === 0b0100, {
+                  effect()
+                }
+                ))
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(a, %composer, %changed or 0b0001)
+              }
+            }
+        """
+    )
+    @Test
+    fun testRememberPropertyReference(): Unit = comparisonPropagation(
+        """
+            class A(val value: Int)
+        """.trimIndent(),
+        """
+            @Composable
+            fun Test(a: A) {
+                used(remember(a, a::value))
+            }
+        """,
+        """
+            @Composable
+            fun Test(a: A, %composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test):Test.kt")
+              val %dirty = %changed
+              if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(a)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                used(%composer.cache(%dirty and 0b1110 === 0b0100, a::value))
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(a, %composer, %changed or 0b0001)
+              }
             }
         """
     )
