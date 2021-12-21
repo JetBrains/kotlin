@@ -38,7 +38,7 @@ fun buildDecompiledText(
     packageFqName: FqName,
     descriptors: List<DeclarationDescriptor>,
     descriptorRenderer: DescriptorRenderer,
-    indexers: Collection<DecompiledTextIndexer<*>>,
+    indexers: Collection<DecompiledTextIndexer<*>> = listOf(ByDescriptorIndexer),
 ): DecompiledText {
     val builder = StringBuilder()
 

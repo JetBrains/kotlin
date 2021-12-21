@@ -27,7 +27,7 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
         return listOf(descriptor.toStringKey())
     }
 
-    internal fun getDeclarationForDescriptor(descriptor: DeclarationDescriptor, file: KtDecompiledFile): KtDeclaration? {
+    fun getDeclarationForDescriptor(descriptor: DeclarationDescriptor, file: KtDecompiledFile): KtDeclaration? {
         val original = descriptor.original
 
         if (original is TypeAliasConstructorDescriptor) {
