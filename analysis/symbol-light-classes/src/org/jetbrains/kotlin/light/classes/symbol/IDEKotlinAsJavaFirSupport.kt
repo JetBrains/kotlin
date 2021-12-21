@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.light.classes.symbol
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
+import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
@@ -20,7 +23,10 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.getOrCreateFirLightClas
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.parentOrNull
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupport() {
@@ -62,14 +68,9 @@ class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupp
     override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> =
         fqName.toClassIdSequence().flatMap {
             project.createDeclarationProvider(searchScope).getClassesByClassId(it)
-        }.filter {
-            //TODO Do not return LC came from LibrarySources
-            when (it.getKtModule(project)) {
-                is KtLibrarySourceModule -> false
-                is KtNotUnderContentRootModule -> false
-                else -> true
-            }
-        }.toSet()
+        }
+            .filter { it.isFromSourceOrLibraryBinary(project) }
+            .toSet()
 
     override fun packageExists(fqName: FqName, scope: GlobalSearchScope): Boolean =
         project.createPackageProvider(scope).doKotlinPackageExists(fqName)
@@ -80,8 +81,11 @@ class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupp
             .map { fqn.child(it) }
 
     override fun getLightClass(classOrObject: KtClassOrObject): KtLightClass? {
-        if (!classOrObject.isFromSource()) return null
-        return getOrCreateFirLightClass(classOrObject)
+        return when (classOrObject.getKtModule(project)) {
+            is KtSourceModule -> getOrCreateFirLightClass(classOrObject)
+            is KtLibraryModule -> DecompiledLightClassesFactory.getLightClassForDecompiledClassOrObject(classOrObject, project)
+            else -> null
+        }
     }
 
     override fun getLightClassForScript(script: KtScript): KtLightClass =
@@ -105,7 +109,7 @@ class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupp
         project.createDeclarationProvider(scope)
             .getFacadeFilesInPackage(packageFqName)
             .asSequence()
-            .filter { it.isFromSource() }
+            .filter { it.isFromSourceOrLibraryBinary(project) }
             .groupBy { it.javaFileFacadeFqName }
             .mapNotNull {
                 project.getService(SymbolLightClassFacadeCache::class.java)
@@ -115,13 +119,13 @@ class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupp
     override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> =
         project.createDeclarationProvider(scope)
             .getFacadeFilesInPackage(packageFqName)
-            .filter { it.isFromSource() }
+            .filter { it.isFromSourceOrLibraryBinary(project) }
             .mapTo(mutableSetOf()) { it.javaFileFacadeFqName.shortName().asString() }
 
     override fun findFilesForFacade(facadeFqName: FqName, scope: GlobalSearchScope): Collection<KtFile> {
         return project.createDeclarationProvider(scope)
             .findFilesForFacade(facadeFqName)
-            .filter { it.isFromSource() }
+            .filter { it.isFromSourceOrLibraryBinary(project) }
     }
 
     override fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass =
@@ -132,10 +136,10 @@ class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupp
 }
 
 
-private fun KtElement.isFromSource(): Boolean {
-    if (this is KtFile && isCompiled) {
-        // small optimisation to not invoke expensive getKtModule
-        return false
+private fun KtElement.isFromSourceOrLibraryBinary(project: Project): Boolean {
+    return when (getKtModule(project)) {
+        is KtSourceModule -> true
+        is KtLibraryModule -> true
+        else -> false
     }
-    return getKtModule(project) is KtSourceModule
 }
