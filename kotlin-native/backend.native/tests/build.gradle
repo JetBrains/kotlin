@@ -6037,6 +6037,12 @@ fileCheckTest("filecheck_adopted_function_reference") {
     annotatedSource = project.file('filecheck/adopted_function_reference.kt')
 }
 
+fileCheckTest("filecheck_single_tls_load") {
+    enabled = isExperimentalMM && project.globalTestArgs.contains("-opt")
+    annotatedSource = project.file('filecheck/single_tls_load.kt')
+    phaseToCheck = "OptimizeTLSDataLoads"
+}
+
 fileCheckTest("filecheck_signext_zeroext0") {
     annotatedSource = project.file('filecheck/signext_zeroext0.kt')
     if (project.testTarget == 'mingw_x64') {
