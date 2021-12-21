@@ -35170,9 +35170,27 @@ public class ExternalTestGenerated extends AbstractExternalNativeBlackBoxTest {
                 }
 
                 @Test
+                @TestMetadata("kt50258.kt")
+                public void testKt50258() throws Exception {
+                    runTest("compiler/testData/codegen/box/when/enumOptimization/kt50258.kt");
+                }
+
+                @Test
                 @TestMetadata("manyWhensWithinClass.kt")
                 public void testManyWhensWithinClass() throws Exception {
                     runTest("compiler/testData/codegen/box/when/enumOptimization/manyWhensWithinClass.kt");
+                }
+
+                @Test
+                @TestMetadata("nestedWhenInCondition.kt")
+                public void testNestedWhenInCondition() throws Exception {
+                    runTest("compiler/testData/codegen/box/when/enumOptimization/nestedWhenInCondition.kt");
+                }
+
+                @Test
+                @TestMetadata("nestedWhenInResult.kt")
+                public void testNestedWhenInResult() throws Exception {
+                    runTest("compiler/testData/codegen/box/when/enumOptimization/nestedWhenInResult.kt");
                 }
 
                 @Test

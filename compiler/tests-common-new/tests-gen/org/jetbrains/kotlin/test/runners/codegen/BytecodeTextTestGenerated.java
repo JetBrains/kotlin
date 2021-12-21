@@ -5743,6 +5743,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("nestedWhenInCondition.kt")
+        public void testNestedWhenInCondition() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/nestedWhenInCondition.kt");
+        }
+
+        @Test
         @TestMetadata("nonConstantEnum.kt")
         public void testNonConstantEnum() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/whenEnumOptimization/nonConstantEnum.kt");
