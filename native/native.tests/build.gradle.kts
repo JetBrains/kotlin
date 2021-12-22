@@ -97,7 +97,9 @@ fun blackBoxTest(taskName: String, vararg tags: String) = projectTest(taskName, 
         }
 
         TestProperty.COMPILER_CLASSPATH.setUpFromGradleProperty(this) {
-            configurations.detachedConfiguration(dependencies.project(":kotlin-native-compiler-embeddable")).files.joinToString(";")
+            val kotlinNativeCompilerEmbeddable = configurations.detachedConfiguration(dependencies.project(":kotlin-native-compiler-embeddable"))
+            dependsOn(kotlinNativeCompilerEmbeddable)
+            kotlinNativeCompilerEmbeddable.files.joinToString(";")
         }
 
         // Pass Gradle properties as JVM properties so test process can read them.
