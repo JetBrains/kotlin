@@ -419,8 +419,9 @@ class Fir2IrConverter(
             irGenerationExtensions: Collection<IrGenerationExtension>
         ): Fir2IrResult {
             val moduleDescriptor = FirModuleDescriptor(session)
-            val symbolTable = SymbolTable(signaturer, irFactory)
             val signatureComposer = FirBasedSignatureComposer(mangler)
+            val wrappedSignaturer = WrappedDescriptorSignatureComposer(signaturer, signatureComposer)
+            val symbolTable = SymbolTable(wrappedSignaturer, irFactory)
             val components = Fir2IrComponentsStorage(session, scopeSession, symbolTable, irFactory, signatureComposer, fir2IrExtensions)
             val converter = Fir2IrConverter(moduleDescriptor, components)
 
@@ -520,6 +521,17 @@ class Fir2IrConverter(
             moduleDescriptor: ModuleDescriptor
         ): IrSymbol? {
             error("Should not be called")
+        }
+    }
+}
+
+private class WrappedDescriptorSignatureComposer(
+    private val delegate: IdSignatureComposer,
+    private val firComposer: Fir2IrSignatureComposer
+) : IdSignatureComposer by delegate {
+    override fun withFileSignature(fileSignature: IdSignature.FileSignature, body: () -> Unit) {
+        firComposer.withFileSignature(fileSignature) {
+            delegate.withFileSignature(fileSignature, body)
         }
     }
 }
