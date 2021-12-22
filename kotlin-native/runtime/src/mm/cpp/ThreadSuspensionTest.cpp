@@ -4,14 +4,18 @@
  */
 
 #include "MemoryPrivate.hpp"
+#include "Runtime.h"
+#include "RuntimePrivate.hpp"
 #include "ThreadSuspension.hpp"
 #include "ThreadState.hpp"
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
+#include <future>
 #include <thread>
 #include <TestSupport.hpp>
+#include <TestSupportCompilerGenerated.hpp>
 
 #include <iostream>
 
@@ -53,6 +57,17 @@ void reportProgress(size_t currentIteration, size_t totalIterations) {
     if (currentIteration % kDefaultReportingStep == 0) {
        std::cout << "Iteration: " << currentIteration << " of " << totalIterations << std::endl;
     }
+}
+
+testing::MockFunction<void()>* initializationMock = nullptr;
+
+void initializationFunction() {
+    ASSERT_NE(initializationMock, nullptr);
+    initializationMock->Call();
+}
+
+test_support::ScopedMockFunction<void(), /* Strict = */ true> ScopedInitializationMock() {
+    return test_support::ScopedMockFunction(&initializationMock);
 }
 
 } // namespace
@@ -202,4 +217,57 @@ TEST_F(ThreadSuspensionTest, ConcurrentSuspend) {
         thread.join();
     }
     EXPECT_EQ(successCount, 1u);
+}
+
+TEST_F(ThreadSuspensionTest, FileInitializationWithSuspend) {
+    ASSERT_THAT(collectThreadData(), testing::IsEmpty());
+    ASSERT_FALSE(mm::IsThreadSuspensionRequested());
+
+    volatile int lock = internal::FILE_NOT_INITIALIZED;
+
+    auto scopedInitializationMock = ScopedInitializationMock();
+    EXPECT_CALL(*scopedInitializationMock, Call()).WillOnce([] {
+        EXPECT_EQ(GetThreadState(), ThreadState::kRunnable);
+        // Give other threads a chance to call CallInitGlobalPossiblyLock.
+        std::this_thread::yield();
+        mm::SuspendIfRequested();
+    });
+
+    for (size_t i = 0; i < kThreadCount; i++) {
+        threads.emplace_back([this, i, &lock] {
+            ScopedMemoryInit init;
+            auto* threadData = init.memoryState()->GetThreadData();
+            ASSERT_EQ(threadData->state(), ThreadState::kRunnable);
+
+            waitUntilCanStart(i);
+
+            CallInitGlobalPossiblyLock(&lock, initializationFunction);
+            // Try to suspend to handle a case when this thread doesn't call the initialization function.
+            mm::SuspendIfRequested();
+        });
+    }
+    waitUntilThreadsAreReady();
+
+    auto gcThread = std::async(std::launch::async, [] {
+        mm::RequestThreadsSuspension();
+        mm::WaitForThreadsSuspension();
+        mm::ResumeThreads();
+    });
+    while(!mm::IsThreadSuspensionRequested()) {
+    }
+    canStart = true;
+
+    auto futureStatus = gcThread.wait_for(std::chrono::seconds(10));
+    EXPECT_NE(futureStatus, std::future_status::timeout);
+    if (futureStatus == std::future_status::timeout) {
+        // Possibly CallInitGlobalPossiblyLock is hanging in a dead-lock.
+        // Set the lock variable to FILE_INITIALIZED to interrupt the loop inside CallInitGlobalPossiblyLock.
+        // And wait for the gc thread to stop.
+        lock = internal::FILE_INITIALIZED;
+        gcThread.wait();
+    }
+
+    for (auto& t : threads) {
+        t.join();
+    }
 }
