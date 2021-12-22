@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.test.directives.MultiplatformDiagnosticsDirectives.ENABLE_MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.types.typeUtil.closure
 
 internal fun MultiplatformAnalysisConfiguration(testServices: TestServices): MultiplatformAnalysisConfiguration {
     return if (testServices.moduleStructure.allDirectives.contains(ENABLE_MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE)) {
@@ -122,12 +121,7 @@ internal class MultiplatformCompositeAnalysisConfiguration(
     }
 
     override fun getDependencyDescriptors(module: TestModule): List<ModuleDescriptorImpl> {
-        // Transitive dependsOn descriptors should also be returned as dependencies
-        val allDependsOnDependencies = module.dependsOnDependencies.closure(preserveOrder = true) { dependsOnDependency ->
-            dependencyProvider.getTestModule(dependsOnDependency.moduleName).dependsOnDependencies
-        }
-        val allDependencies = (module.allDependencies + allDependsOnDependencies).distinct()
-        return getDescriptors(allDependencies, dependencyProvider, moduleDescriptorProvider)
+        return getDescriptors(module.allDependencies, dependencyProvider, moduleDescriptorProvider)
     }
 
     override fun getDependsOnDescriptors(module: TestModule): List<ModuleDescriptorImpl> {
