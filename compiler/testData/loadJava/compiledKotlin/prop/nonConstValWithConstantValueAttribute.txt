@@ -1,0 +1,25 @@
+package test
+
+public val nonConstVal1: kotlin.Int = 1
+    public fun <get-nonConstVal1>(): kotlin.Int
+
+public final class C {
+    /*primary*/ public constructor C()
+    public final val nonConstVal2: kotlin.Int = 2
+        public final fun <get-nonConstVal2>(): kotlin.Int
+
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
+        public final val nonConstVal3: kotlin.Int = 3
+            public final fun <get-nonConstVal3>(): kotlin.Int
+    }
+}
+
+public interface I {
+
+    public companion object Companion {
+        /*primary*/ private constructor Companion()
+        public final val nonConstVal4: kotlin.Int = 4
+            public final fun <get-nonConstVal4>(): kotlin.Int
+    }
+}
