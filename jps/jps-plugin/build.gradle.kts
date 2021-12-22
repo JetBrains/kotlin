@@ -17,7 +17,7 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compile(project(":js:js.frontend"))
     compile(projectRuntimeJar(":kotlin-preloader"))
-    compile(project(":idea:idea-jps-common"))
+    compile(project(":jps:jps-common"))
     compileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
     compileOnly(intellijDep()) {
         includeJars("jdom", "trove4j", "jps-model", "platform-api", "util", rootProject = rootProject)
