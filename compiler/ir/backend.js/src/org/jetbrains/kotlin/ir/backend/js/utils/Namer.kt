@@ -20,6 +20,8 @@ object Namer {
 
     val IMPLICIT_RECEIVER_NAME = "this"
 
+    val ARGUMENTS = JsNameRef("arguments")
+
     val PROTOTYPE_NAME = "prototype"
     val CONSTRUCTOR_NAME = "constructor"
 

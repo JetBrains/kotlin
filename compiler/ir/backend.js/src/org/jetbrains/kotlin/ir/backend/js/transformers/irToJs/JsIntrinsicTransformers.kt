@@ -236,6 +236,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             add(intrinsics.jsInvokeSuspendSuperType, suspendInvokeTransform)
             add(intrinsics.jsInvokeSuspendSuperTypeWithReceiver, suspendInvokeTransform)
             add(intrinsics.jsInvokeSuspendSuperTypeWithReceiverAndParam, suspendInvokeTransform)
+
+            add(intrinsics.jsArguments) { _, _ -> Namer.ARGUMENTS }
         }
     }
 

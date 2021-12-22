@@ -196,6 +196,9 @@ internal fun <A> slice(a: A): A
 internal fun unreachable(): Nothing
 
 @JsIntrinsic
+internal fun jsArguments(): Any?
+
+@JsIntrinsic
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE") // TODO: mark `inline` and skip in inliner
 internal fun <reified T : Any> jsClassIntrinsic(): JsClass<T>
 

@@ -215,6 +215,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val unreachable = getInternalFunction("unreachable")
 
+    val jsArguments = getInternalFunction("jsArguments")
+
     val returnIfSuspended = getInternalFunction("returnIfSuspended")
     val getContinuation = getInternalFunction("getContinuation")
 
