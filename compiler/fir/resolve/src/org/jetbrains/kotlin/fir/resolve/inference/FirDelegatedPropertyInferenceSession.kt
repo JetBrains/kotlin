@@ -26,7 +26,7 @@ class FirDelegatedPropertyInferenceSession(
     val property: FirProperty,
     resolutionContext: ResolutionContext,
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
-) : AbstractManyCandidatesInferenceSession(resolutionContext) {
+) : FirInferenceSessionForChainedResolve(resolutionContext) {
 
     private val currentConstraintSystem = components.session.inferenceComponents.createConstraintSystem()
     override val currentConstraintStorage: ConstraintStorage get() = currentConstraintSystem.currentStorage()

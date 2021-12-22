@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.InitialConstraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.types.model.*
 
-abstract class AbstractManyCandidatesInferenceSession(
+abstract class FirInferenceSessionForChainedResolve(
     protected val resolutionContext: ResolutionContext
 ) : FirInferenceSession() {
     override fun fixSyntheticTypeVariableWithNotEnoughInformation(

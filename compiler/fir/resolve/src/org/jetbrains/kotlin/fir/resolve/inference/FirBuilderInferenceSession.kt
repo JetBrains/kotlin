@@ -32,7 +32,7 @@ class FirBuilderInferenceSession(
     private val lambda: FirAnonymousFunction,
     resolutionContext: ResolutionContext,
     private val stubsForPostponedVariables: Map<ConeTypeVariable, ConeStubType>,
-) : AbstractManyCandidatesInferenceSession(resolutionContext) {
+) : FirInferenceSessionForChainedResolve(resolutionContext) {
     private val commonCalls: MutableList<Pair<FirStatement, Candidate>> = mutableListOf()
 
     override val currentConstraintStorage: ConstraintStorage
