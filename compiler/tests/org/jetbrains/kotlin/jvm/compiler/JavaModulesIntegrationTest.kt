@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.AbstractCliTest
 import org.jetbrains.kotlin.cli.AbstractCliTest.getNormalizedCompilerOutput
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.util.concurrent.TimeUnit
 import java.util.jar.Manifest
@@ -76,7 +75,7 @@ abstract class JavaModulesIntegrationTest(private val jdkVersion: Int, private v
 
     private fun runModule(className: String, modulePath: List<File>): ModuleRunResult {
         val command = listOf(
-            File(KtTestUtil.getJdk11Home(), "bin/java").path,
+            File(jdkHome, "bin/java").path,
             "-p", (modulePath + ForTestCompileRuntime.runtimeJarForTests()).joinToString(File.pathSeparator, transform = File::getPath),
             "-m", className
         )
@@ -204,7 +203,7 @@ abstract class JavaModulesIntegrationTest(private val jdkVersion: Int, private v
 
         val kotlinOptions = mutableListOf(
             "$testDataDirectory/someOtherDirectoryWithTheActualModuleInfo/module-info.java",
-            "-jdk-home", KtTestUtil.getJdk11Home().path,
+            "-jdk-home", jdkHome.path,
             "-Xmodule-path=${a.path}"
         )
         compileLibrary(
@@ -228,7 +227,7 @@ abstract class JavaModulesIntegrationTest(private val jdkVersion: Int, private v
             try {
                 // Use the name other from 'library' to prevent it from being loaded as an automatic module if module-info.class is not found.
                 val libraryJar = createMultiReleaseJar(
-                    KtTestUtil.getJdk11Home(), File(tmpdir, "multi-release-library-jdk$version.jar"), libraryOut, version, libraryOut11
+                    jdkHome, File(tmpdir, "multi-release-library-jdk$version.jar"), libraryOut, version, libraryOut11
                 )
                 module("main", listOf(libraryJar))
             } catch (e: Throwable) {
