@@ -90,6 +90,8 @@ internal class LLFirProvider(
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> =
         declarationProvider.getClassNamesInPackage(fqName)
 
+    override fun containsKotlinPackage(): Boolean = false
+
     @NoMutableState
     private inner class SymbolProvider : FirSymbolProvider(session) {
         override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> =
