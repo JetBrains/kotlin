@@ -31,5 +31,3 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
         freeCompilerArgs = freeCompilerArgs - "-progressive" + "-Xskip-metadata-version-check"
     }
 }
-
-publish()
