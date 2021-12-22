@@ -17,7 +17,15 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.ir.util.IdSignature
 
 @NoMutableState
-class FirBasedSignatureComposer(private val mangler: FirMangler) : Fir2IrSignatureComposer {
+class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignatureComposer {
+    var fileSignature: IdSignature.FileSignature? = null
+
+    override fun withFileSignature(sig: IdSignature.FileSignature, body: () -> Unit) {
+        fileSignature = sig
+        body()
+        fileSignature = null
+    }
+
     inner class SignatureBuilder : FirVisitor<Unit, Any?>() {
         var hashId: Long? = null
         var mask = 0L
