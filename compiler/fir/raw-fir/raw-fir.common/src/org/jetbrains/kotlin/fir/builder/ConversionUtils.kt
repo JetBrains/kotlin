@@ -441,14 +441,15 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     if (getter == null || getter is FirDefaultPropertyAccessor) {
         val annotations = getter?.annotations
         val returnTarget = FirFunctionTarget(null, isLambda = false)
+        val getterStatus = getter?.status
         getter = buildPropertyAccessor {
             this.source = fakeSource
             this.moduleData = moduleData
             origin = FirDeclarationOrigin.Source
             returnTypeRef = buildImplicitTypeRef()
             isGetter = true
-            status = FirDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL).apply {
-                isInline = this@generateAccessorsByDelegate.getter?.status?.isInline ?: isInline
+            status = FirDeclarationStatusImpl(getterStatus?.visibility ?: Visibilities.Unknown, Modality.FINAL).apply {
+                isInline = getterStatus?.isInline ?: isInline
             }
             symbol = FirPropertyAccessorSymbol()
 
@@ -479,14 +480,15 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     if (isVar && (setter == null || setter is FirDefaultPropertyAccessor)) {
         val annotations = setter?.annotations
         val parameterAnnotations = setter?.valueParameters?.firstOrNull()?.annotations
+        val setterStatus = setter?.status
         setter = buildPropertyAccessor {
             this.source = fakeSource
             this.moduleData = moduleData
             origin = FirDeclarationOrigin.Source
             returnTypeRef = moduleData.session.builtinTypes.unitType
             isGetter = false
-            status = FirDeclarationStatusImpl(Visibilities.Unknown, Modality.FINAL).apply {
-                isInline = this@generateAccessorsByDelegate.setter?.status?.isInline ?: isInline
+            status = FirDeclarationStatusImpl(setterStatus?.visibility ?: Visibilities.Unknown, Modality.FINAL).apply {
+                isInline = setterStatus?.isInline ?: isInline
             }
             val parameter = buildValueParameter {
                 source = fakeSource
