@@ -25,7 +25,9 @@ internal fun expandGlobTo(unexpandedPath: File, output: MutableCollection<File>)
             val basePath: File = paths[index - 1]
             val basePathAsPath: Path = basePath.toPath()
 
-            val pattern: String = unexpandedPath.relativeTo(basePath).path
+            val pattern: String = unexpandedPath.relativeTo(basePath).path.let { pattern ->
+                if (File.separatorChar == '\\') pattern.replace("\\", "\\\\") else pattern
+            }
             val matcher: PathMatcher = FileSystems.getDefault().getPathMatcher("glob:$pattern")
 
             Files.walkFileTree(basePathAsPath, object : SimpleFileVisitor<Path>() {
