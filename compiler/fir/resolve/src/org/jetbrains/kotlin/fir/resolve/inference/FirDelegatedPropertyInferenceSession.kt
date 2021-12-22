@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
-import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.NotFixedTypeToVariableSubstitutorForDelegateInference
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
@@ -110,7 +110,7 @@ class FirDelegatedPropertyInferenceSession(
         completionMode: ConstraintSystemCompletionMode
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
 
-    private fun createNonFixedTypeToVariableSubstitutor(): ConeSubstitutor {
+    private fun createNonFixedTypeToVariableSubstitutor(): NotFixedTypeToVariableSubstitutorForDelegateInference {
         val typeContext = components.session.typeContext
 
         val bindings = mutableMapOf<TypeVariableMarker, ConeKotlinType>()
@@ -118,13 +118,7 @@ class FirDelegatedPropertyInferenceSession(
             bindings[synthetic] = variable.defaultType(typeContext) as ConeKotlinType
         }
 
-        return object : AbstractConeSubstitutor(typeContext) {
-            override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
-                if (type !is ConeStubType) return null
-                if (type.constructor.isTypeVariableInSubtyping) return null
-                return bindings[type.constructor.variable].updateNullabilityIfNeeded(type)
-            }
-        }
+        return NotFixedTypeToVariableSubstitutorForDelegateInference(bindings, typeContext)
     }
 
 

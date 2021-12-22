@@ -13,9 +13,10 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.typeConstructor
 
-abstract class AbstractConeSubstitutor(private val typeContext: ConeTypeContext) : ConeSubstitutor() {
+abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContext) : ConeSubstitutor() {
     private fun wrapProjection(old: ConeTypeProjection, newType: ConeKotlinType): ConeTypeProjection {
         return when (old) {
             is ConeStarProjection -> old
@@ -204,3 +205,27 @@ fun createTypeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, ConeK
         }
     }
 }
+
+internal class TypeSubstitutorByTypeConstructor(
+    private val map: Map<TypeConstructorMarker, ConeKotlinType>,
+    context: ConeTypeContext
+) : AbstractConeSubstitutor(context), TypeSubstitutorMarker {
+    override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+        if (type !is ConeLookupTagBasedType && type !is ConeStubType) return null
+        val new = map[type.typeConstructor(typeContext)] ?: return null
+        return new.approximateIntegerLiteralType().updateNullabilityIfNeeded(type)?.withCombinedAttributesFrom(type, typeContext)
+    }
+}
+
+// Note: builder inference uses TypeSubstitutorByTypeConstructor for not fixed type substitution
+class NotFixedTypeToVariableSubstitutorForDelegateInference(
+    private val bindings: Map<TypeVariableMarker, ConeKotlinType>,
+    typeContext: ConeTypeContext
+) : AbstractConeSubstitutor(typeContext) {
+    override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+        if (type !is ConeStubType) return null
+        if (type.constructor.isTypeVariableInSubtyping) return null
+        return bindings[type.constructor.variable].updateNullabilityIfNeeded(type)
+    }
+}
+

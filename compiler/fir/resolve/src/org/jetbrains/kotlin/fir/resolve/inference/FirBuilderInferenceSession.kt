@@ -165,14 +165,14 @@ class FirBuilderInferenceSession(
     }
 
     private fun createNonFixedTypeToVariableSubstitutor(): ConeSubstitutor {
-        val ctx = components.session.typeContext
+        val typeContext = components.session.typeContext
 
         val bindings = mutableMapOf<TypeConstructorMarker, ConeKotlinType>()
         for ((variable, nonFixedType) in stubsForPostponedVariables) {
             bindings[nonFixedType.constructor] = variable.defaultType
         }
 
-        return ctx.typeSubstitutorByTypeConstructor(bindings)
+        return typeContext.typeSubstitutorByTypeConstructor(bindings)
     }
 
     private fun integrateConstraints(
