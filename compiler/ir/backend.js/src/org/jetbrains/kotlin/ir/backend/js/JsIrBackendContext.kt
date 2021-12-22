@@ -45,6 +45,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.isNullable
+import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceMapNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class JsIrBackendContext(
     val module: ModuleDescriptor,
@@ -161,7 +163,13 @@ class JsIrBackendContext(
         return numbers + listOf(Name.identifier("String"), Name.identifier("Boolean"))
     }
 
-    fun getOperatorByName(name: Name, type: IrSimpleType) = operatorMap[name]?.get(type.classifier)
+    fun getOperatorByName(name: Name, lhsType: IrSimpleType, rhsType: IrSimpleType?) =
+        operatorMap[name]?.get(lhsType.classifier)?.let { candidates ->
+            if (rhsType == null)
+                candidates.singleOrNull()
+            else
+                candidates.singleOrNull { it.owner.valueParameters[0].type.cast<IrSimpleType>().classifier == rhsType.classifier }
+        }
 
     override val coroutineSymbols =
         JsCommonCoroutineSymbols(symbolTable, module, this)
@@ -311,17 +319,16 @@ class JsIrBackendContext(
     val klocalDelegateBuilder =
         getFunctions(FqName("kotlin.js.getLocalDelegateReference")).single().let { symbolTable.referenceSimpleFunction(it) }
 
-    private fun referenceOperators(): Map<Name, MutableMap<IrClassifierSymbol, IrSimpleFunctionSymbol>> {
+    private fun referenceOperators(): Map<Name, Map<IrClassSymbol, Collection<IrSimpleFunctionSymbol>>> {
         val primitiveIrSymbols = irBuiltIns.primitiveIrTypes.map { it.classifierOrFail as IrClassSymbol }
-
-        return OperatorNames.ALL.map { name ->
-            // TODO to replace KotlinType with IrType we need right equals on IrType
-            name to primitiveIrSymbols.fold(mutableMapOf<IrClassifierSymbol, IrSimpleFunctionSymbol>()) { m, s ->
-                val function = s.owner.declarations.filterIsInstance<IrSimpleFunction>().singleOrNull { it.name == name }
-                function?.let { m.put(s, it.symbol) }
-                m
+        return OperatorNames.ALL.associateWith { name ->
+            primitiveIrSymbols.associateWith { classSymbol ->
+                classSymbol.owner.declarations
+                    .filterIsInstanceMapNotNull<IrSimpleFunction, IrSimpleFunctionSymbol> { function ->
+                        function.symbol.takeIf { function.name == name }
+                    }
             }
-        }.toMap()
+        }
     }
 
     private fun findProperty(memberScope: MemberScope, name: Name): List<PropertyDescriptor> =
