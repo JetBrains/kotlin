@@ -322,6 +322,10 @@ open class FirJvmMangleComputer(
     override fun visitConstructor(constructor: FirConstructor, data: Boolean) =
         constructor.mangleFunction(isCtor = true, isStatic = false, constructor)
 
+    override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Boolean) {
+        propertyAccessor.mangleFunction(isCtor = false, propertyAccessor.isStatic, propertyAccessor.propertySymbol!!.fir)
+    }
+
     override fun computeMangle(declaration: FirDeclaration): String {
         declaration.accept(this, true)
         return builder.toString()
