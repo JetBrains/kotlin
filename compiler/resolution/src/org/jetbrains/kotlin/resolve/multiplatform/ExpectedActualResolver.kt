@@ -28,7 +28,7 @@ object ExpectedActualResolver {
     fun findActualForExpected(
         expected: MemberDescriptor,
         platformModule: ModuleDescriptor,
-        moduleVisibilityFilter: ModuleFilter = allModulesProvidingActualsFor(expected.module),
+        moduleVisibilityFilter: ModuleFilter = allModulesProvidingActualsFor(expected.module, platformModule),
     ): Map<ExpectActualCompatibility<MemberDescriptor>, List<MemberDescriptor>>? {
         return when (expected) {
             is CallableMemberDescriptor -> {
@@ -523,13 +523,13 @@ object ExpectedActualResolver {
 // FIXME(dsavvinov): review clients, as they won't work properly in HMPP projects
 @JvmOverloads
 fun MemberDescriptor.findCompatibleActualsForExpected(
-    platformModule: ModuleDescriptor, moduleFilter: ModuleFilter = allModulesProvidingActualsFor(module)
+    platformModule: ModuleDescriptor, moduleFilter: ModuleFilter = allModulesProvidingActualsFor(module, platformModule)
 ): List<MemberDescriptor> =
     ExpectedActualResolver.findActualForExpected(this, platformModule, moduleFilter)?.get(Compatible).orEmpty()
 
 @JvmOverloads
 fun MemberDescriptor.findAnyActualsForExpected(
-    platformModule: ModuleDescriptor, moduleFilter: ModuleFilter = allModulesProvidingActualsFor(module)
+    platformModule: ModuleDescriptor, moduleFilter: ModuleFilter = allModulesProvidingActualsFor(module, platformModule)
 ): List<MemberDescriptor> {
     val actualsGroupedByCompatibility = ExpectedActualResolver.findActualForExpected(this, platformModule, moduleFilter)
     return actualsGroupedByCompatibility?.get(Compatible)
