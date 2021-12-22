@@ -165,7 +165,7 @@ object MockLibraryUtil {
         return jarFile
     }
 
-    private fun runJvmCompiler(args: List<String>) {
+    fun runJvmCompiler(args: List<String>) {
         runCompiler(compiler2JVMClass, args)
     }
 

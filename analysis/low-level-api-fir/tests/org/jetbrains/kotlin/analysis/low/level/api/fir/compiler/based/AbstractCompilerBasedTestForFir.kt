@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.AbstractCompilerBasedTest
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.TestKtModuleProvider
+import org.jetbrains.kotlin.analysis.api.impl.barebone.test.TestKtSourceModule
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.projectModuleProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.createResolveStateForNoCaching
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.FirLazyTransformerForIDE
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -57,7 +59,7 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
 
         override fun analyze(module: TestModule): FirOutputArtifact {
             val moduleInfoProvider = testServices.projectModuleProvider
-            val moduleInfo = moduleInfoProvider.getModule(module.name)
+            val moduleInfo = moduleInfoProvider.getModule(module.name) as TestKtSourceModule
 
             val project = testServices.compilerConfigurationProvider.getProject(module)
             val resolveState = createResolveStateForNoCaching(moduleInfo, project)

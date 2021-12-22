@@ -19,4 +19,5 @@ private fun TestGroupSuite.generateTests() {
     generateAnalysisApiTests()
     generateFirLowLevelApiTests()
     generateDecompiledTests()
+    generateSymbolLightClassesTests()
 }

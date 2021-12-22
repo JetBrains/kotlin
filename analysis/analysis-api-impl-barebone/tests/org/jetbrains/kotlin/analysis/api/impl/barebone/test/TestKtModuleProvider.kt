@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.barebone.test
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
@@ -15,18 +13,18 @@ import org.jetbrains.kotlin.test.services.TestServices
 class TestKtModuleProvider(
     private val testServices: TestServices
 ) : TestService {
-    private val cache = mutableMapOf<String, TestKtSourceModule>()
+    private val cache = mutableMapOf<String, TestKtModule>()
 
-    fun registerModuleInfo(project: Project, testModule: TestModule, ktFiles: Map<TestFile, KtFile>) {
-        cache[testModule.name] = TestKtSourceModule(project, testModule, ktFiles, testServices)
+    fun registerModuleInfo(testModule: TestModule, ktModule: TestKtModule) {
+        cache[testModule.name] = ktModule
     }
 
-    fun getModuleInfoByKtFile(ktFile: KtFile): TestKtSourceModule =
+    fun getModuleInfoByKtFile(ktFile: KtFile): TestKtModule =
         cache.values.first { moduleSourceInfo ->
             (if (ktFile.isPhysical) ktFile else ktFile.originalFile) in moduleSourceInfo.ktFiles
         }
 
-    fun getModule(moduleName: String): TestKtSourceModule =
+    fun getModule(moduleName: String): TestKtModule =
         cache.getValue(moduleName)
 }
 

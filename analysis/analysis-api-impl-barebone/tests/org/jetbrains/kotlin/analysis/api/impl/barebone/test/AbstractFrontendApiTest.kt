@@ -33,8 +33,8 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 import java.nio.file.Path
 import java.nio.file.Paths
-import kotlin.io.path.exists
 import java.util.concurrent.ExecutionException
+import kotlin.io.path.exists
 import kotlin.io.path.nameWithoutExtension
 
 interface FrontendApiTestConfiguratorService {
@@ -56,7 +56,7 @@ interface FrontendApiTestConfiguratorService {
 
     fun doOutOfBlockModification(file: KtFile)
 
-    fun preprocessTestDataPath(path: Path) : Path = path
+    fun preprocessTestDataPath(path: Path): Path = path
 }
 
 abstract class AbstractFrontendApiTest(val configurator: FrontendApiTestConfiguratorService) : TestWithDisposable() {
@@ -99,7 +99,7 @@ abstract class AbstractFrontendApiTest(val configurator: FrontendApiTestConfigur
         }
     }
 
-    private fun getTestDataFileSiblingPath(extension: String, testPrefix: String?): Path {
+    protected fun getTestDataFileSiblingPath(extension: String, testPrefix: String?): Path {
         val extensionWithDot = "." + extension.removePrefix(".")
         val baseName = testDataPath.nameWithoutExtension
 
@@ -139,6 +139,13 @@ abstract class AbstractFrontendApiTest(val configurator: FrontendApiTestConfigur
         this.testInfo = this@AbstractFrontendApiTest.testInfo
     }
 
+    protected open fun handleInitializationError(exception: Throwable, moduleStructure: TestModuleStructure): InitializationErrorAction =
+        InitializationErrorAction.THROW
+
+    enum class InitializationErrorAction {
+        IGNORE, THROW
+    }
+
     protected fun runTest(@TestDataFile path: String) {
         testDataPath = configurator.preprocessTestDataPath(Paths.get(path))
         val testConfiguration = testConfiguration(path, configure)
@@ -147,26 +154,36 @@ abstract class AbstractFrontendApiTest(val configurator: FrontendApiTestConfigur
         val moduleStructure = testConfiguration.moduleStructureExtractor.splitTestDataByModules(
             path,
             testConfiguration.directives,
-        ).also { testModuleStructure ->
-            testConfiguration.testServices.register(TestModuleStructure::class, testModuleStructure)
-            testConfiguration.preAnalysisHandlers.forEach { preprocessor ->
-                preprocessor.preprocessModuleStructure(testModuleStructure)
-            }
-        }
-
+        )
         val singleModule = moduleStructure.modules.single()
         val project = testServices.compilerConfigurationProvider.getProject(singleModule)
         val moduleInfoProvider = testServices.projectModuleProvider
-
-        val moduleInfo = moduleInfoProvider.getModule(singleModule.name)
-
         with(project as MockProject) {
             configurator.registerProjectServices(this)
         }
 
         registerApplicationServices()
+        testConfiguration.testServices.register(TestModuleStructure::class, moduleStructure)
+        testConfiguration.preAnalysisHandlers.forEach { preprocessor ->
+            try {
+                preprocessor.preprocessModuleStructure(moduleStructure)
+            } catch (exception: Throwable) {
+                when (handleInitializationError(exception, moduleStructure)) {
+                    InitializationErrorAction.IGNORE -> {}
+                    InitializationErrorAction.THROW -> throw exception
+                }
+            }
+        }
 
-        val ktFiles = moduleInfo.testFilesToKtFiles.filterKeys { testFile -> !testFile.isAdditional }.values.toList()
+
+        val moduleInfo = moduleInfoProvider.getModule(singleModule.name)
+
+        val ktFiles = when (moduleInfo) {
+            is TestKtSourceModule -> moduleInfo.testFilesToKtFiles.filterKeys { testFile -> !testFile.isAdditional }.values.toList()
+            is TestKtLibraryModule -> moduleInfo.ktFiles.toList()
+            else -> error("Unexpected $moduleInfo")
+        }
+
         configurator.prepareTestFiles(ktFiles, singleModule, testServices)
         doTestByFileStructure(ktFiles, moduleStructure, testServices)
         if (!enableTestInDependedMode || ktFiles.any {

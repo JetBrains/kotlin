@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.test
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.analysis.api.impl.barebone.test.TestKtSourceModule
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.projectModuleProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
@@ -34,7 +35,7 @@ class KtFe10ModuleRegistrarPreAnalysisHandler(
 
         ktFilesByModule.forEach { (testModule, ktFiles) ->
             val project = testServices.compilerConfigurationProvider.getProject(testModule)
-            moduleInfoProvider.registerModuleInfo(project, testModule, ktFiles)
+            moduleInfoProvider.registerModuleInfo(testModule, TestKtSourceModule(project, testModule, ktFiles, testServices))
 
             with(project as MockProject) {
                 registerService(KotlinModificationTrackerFactory::class.java, KotlinStaticModificationTrackerFactory::class.java)

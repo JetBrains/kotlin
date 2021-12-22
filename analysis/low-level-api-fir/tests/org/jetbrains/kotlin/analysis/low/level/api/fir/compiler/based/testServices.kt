@@ -85,7 +85,7 @@ private class KotlinProjectStructureProviderTestImpl(testServices: TestServices)
     private val moduleInfoProvider = testServices.projectModuleProvider
     override fun getKtModuleForKtElement(element: PsiElement): KtModule {
         val containingFile = element.containingFile as KtFile
-        return moduleInfoProvider.getModuleInfoByKtFile(containingFile)
+        return moduleInfoProvider.getModuleInfoByKtFile(containingFile) as KtModule
     }
 }
 

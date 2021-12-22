@@ -16,7 +16,7 @@ import com.intellij.util.cls.ClsFormatException
 import com.intellij.util.containers.ContainerUtil
 import java.io.IOException
 
-internal class ClsJavaStubByVirtualFileCache {
+class ClsJavaStubByVirtualFileCache {
     private class CachedJavaStub(val modificationStamp: Long, val javaFileStub: PsiJavaFileStubImpl)
 
     private val cache = ContainerUtil.createConcurrentWeakKeySoftValueMap<VirtualFile, CachedJavaStub>()
