@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.util.DeserializableClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -40,7 +41,8 @@ class Fir2IrLazyClass(
     override var origin: IrDeclarationOrigin,
     override val fir: FirRegularClass,
     override val symbol: Fir2IrClassSymbol,
-) : IrClass(), AbstractFir2IrLazyDeclaration<FirRegularClass, IrClass>, IrMaybeDeserializedClass, Fir2IrComponents by components {
+) : IrClass(), AbstractFir2IrLazyDeclaration<FirRegularClass, IrClass>,
+    IrMaybeDeserializedClass, DeserializableClass, Fir2IrComponents by components {
     init {
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
@@ -226,5 +228,12 @@ class Fir2IrLazyClass(
             OperatorNameConventions.HASH_CODE, OperatorNameConventions.TO_STRING -> fir.valueParameters.isEmpty()
             else -> false
         }
+    }
+
+    private var irLoaded: Boolean? = null
+
+    override fun loadIr(): Boolean {
+        assert(parent is IrPackageFragment)
+        return irLoaded ?: extensions.deserializeToplevelClass(this, this)
     }
 }
