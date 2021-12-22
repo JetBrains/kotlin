@@ -1,3 +1,3 @@
 idePluginDependency {
-    publishProjectJars(listOf(":idea:idea-jps-common"))
+    publishProjectJars(listOf(":jps:jps-common"))
 }
