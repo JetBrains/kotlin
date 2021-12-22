@@ -6,3 +6,5 @@ package pkg
 
 @JvmRecord
 data class MyRec(val name: String)
+// JDK 15 should be used to compile this file
+// COMPILATION_ERRORS

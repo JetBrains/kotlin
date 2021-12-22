@@ -14,3 +14,4 @@ class C : A(), I {
 }
 
 // LAZINESS:NoLaziness
+// COMPILATION_ERRORS

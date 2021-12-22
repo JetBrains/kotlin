@@ -107,3 +107,5 @@ class Foo {
   val foo2: Foo get() = getMeNonNullFoo()
   fun getMeNonNullFoo() : Foo = Foo()
 }
+
+// COMPILATION_ERRORS

@@ -8,3 +8,4 @@ lateinit var c: String
 
 lateinit var d: String
 	internal set
+// COMPILATION_ERRORS

@@ -29,3 +29,4 @@ inline class InlineInheritance(val v: Int) : I {
 }
 
 // FIR_COMPARISON
+// COMPILATION_ERRORS

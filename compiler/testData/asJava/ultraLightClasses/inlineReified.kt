@@ -11,3 +11,4 @@ class C {
 }
 
 // FIR_COMPARISON
+// COMPILATION_ERRORS

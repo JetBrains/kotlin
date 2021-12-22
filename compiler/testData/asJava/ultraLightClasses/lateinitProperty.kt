@@ -40,3 +40,5 @@ open class D {
     private lateinit var b: String
         private set
 }
+
+// COMPILATION_ERRORS

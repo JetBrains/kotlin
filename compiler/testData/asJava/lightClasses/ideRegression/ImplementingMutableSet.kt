@@ -26,3 +26,4 @@ class SmartSet<T> private constructor() : AbstractSet<T>(), MutableSet<T> {
         size = 0
     }
 }
+// COMPILATION_ERRORS

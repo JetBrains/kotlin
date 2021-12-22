@@ -25,3 +25,4 @@ class C(
     @JvmField
     var b: Int = 1
 )
+// COMPILATION_ERRORS

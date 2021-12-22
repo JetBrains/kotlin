@@ -6,3 +6,4 @@ class TypeHierarchyMap<TValue> : Map<Class<*>, TValue> {
         TODO("not implemented")
     }
 }
+// COMPILATION_ERRORS

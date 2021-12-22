@@ -34,3 +34,4 @@ class InvalidPublicSupertype {
         override fun run() {}
     }
 }
+// COMPILATION_ERRORS

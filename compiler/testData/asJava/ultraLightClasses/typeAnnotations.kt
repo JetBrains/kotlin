@@ -27,3 +27,4 @@ class klass {
     val x: @A0 Int = 2
     val y: List<@A0 Int>? = null
 }
+// COMPILATION_ERRORS

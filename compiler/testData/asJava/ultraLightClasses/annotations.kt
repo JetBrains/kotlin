@@ -63,3 +63,5 @@ class Example(@field:Ann val foo: String,    // annotate Java field
               @param:Ann val quux: String)   // annotate Java constructor parameter
 
 class CtorAnnotations(@Anno val x: String, @param:Anno val y: String, val z: String)
+
+// COMPILATION_ERRORS
