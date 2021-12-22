@@ -219,7 +219,7 @@ internal class TypeSubstitutorByTypeConstructor(
 
 // Note: builder inference uses TypeSubstitutorByTypeConstructor for not fixed type substitution
 class NotFixedTypeToVariableSubstitutorForDelegateInference(
-    private val bindings: Map<TypeVariableMarker, ConeKotlinType>,
+    val bindings: Map<TypeVariableMarker, ConeKotlinType>,
     typeContext: ConeTypeContext
 ) : AbstractConeSubstitutor(typeContext) {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {

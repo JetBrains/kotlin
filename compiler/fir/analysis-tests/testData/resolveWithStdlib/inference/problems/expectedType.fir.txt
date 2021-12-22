@@ -61,8 +61,8 @@ FILE: expectedType.kt
         public final val property: R|FirProperty| = R|<local>/property|
             public get(): R|FirProperty|
 
-        public final val expectedType: R|ConeKotlinType?|by <Inapplicable(INAPPLICABLE): /myLazy>#<R|ConeKotlinType|>(<L> = myLazy@fun <anonymous>(): R|ConeKotlinType| <inline=NoInline>  {
-            ^ this@R|/Session|.R|/Session.property|.R|/FirProperty.returnTypeRef|.<Inapplicable(INAPPLICABLE): /coneTypeSafe>#<R|ConeKotlinType|>()
+        public final val expectedType: R|ConeKotlinType?|by R|/myLazy|<R|ConeKotlinType?|>(<L> = myLazy@fun <anonymous>(): R|ConeKotlinType?| <inline=NoInline>  {
+            ^ this@R|/Session|.R|/Session.property|.R|/FirProperty.returnTypeRef|.R|/coneTypeSafe|<R|ConeKotlinType|>()
         }
         )
             public get(): R|ConeKotlinType?| {

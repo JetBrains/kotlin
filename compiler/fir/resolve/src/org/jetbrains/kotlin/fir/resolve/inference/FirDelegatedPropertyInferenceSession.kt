@@ -300,7 +300,10 @@ class FirDelegatedPropertyInferenceSession(
         var introducedConstraint = false
 
         for (initialConstraint in storage.initialConstraints) {
-            if (integrateConstraintToSystem(commonSystem, initialConstraint, callSubstitutor, nonFixedToVariablesSubstitutor)) {
+            if (integrateConstraintToSystem(
+                    commonSystem, initialConstraint, callSubstitutor, nonFixedToVariablesSubstitutor, storage.fixedTypeVariables
+                )
+            ) {
                 introducedConstraint = true
             }
         }

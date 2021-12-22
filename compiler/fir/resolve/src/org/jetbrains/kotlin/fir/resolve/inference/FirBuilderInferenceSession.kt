@@ -197,7 +197,10 @@ class FirBuilderInferenceSession(
 
         for (initialConstraint in storage.initialConstraints) {
             if (initialConstraint.position is BuilderInferencePosition) continue
-            if (integrateConstraintToSystem(commonSystem, initialConstraint, callSubstitutor, nonFixedToVariablesSubstitutor)) {
+            if (integrateConstraintToSystem(
+                    commonSystem, initialConstraint, callSubstitutor, nonFixedToVariablesSubstitutor, storage.fixedTypeVariables
+                )
+            ) {
                 introducedConstraint = true
             }
         }

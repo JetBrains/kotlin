@@ -13,14 +13,12 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeBuilderInferenceSubstitutionConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.InitialConstraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
-import org.jetbrains.kotlin.types.model.StubTypeMarker
-import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
-import org.jetbrains.kotlin.types.model.TypeVariableMarker
-import org.jetbrains.kotlin.types.model.safeSubstitute
+import org.jetbrains.kotlin.types.model.*
 
 abstract class AbstractManyCandidatesInferenceSession(
     protected val resolutionContext: ResolutionContext
@@ -60,8 +58,10 @@ abstract class AbstractManyCandidatesInferenceSession(
         initialConstraint: InitialConstraint,
         callSubstitutor: ConeSubstitutor,
         nonFixedToVariablesSubstitutor: ConeSubstitutor,
+        fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>,
     ): Boolean {
-        val substitutedConstraintWith = initialConstraint.substitute(callSubstitutor).substitute(nonFixedToVariablesSubstitutor)
+        val substitutedConstraintWith =
+            initialConstraint.substitute(callSubstitutor).substitute(nonFixedToVariablesSubstitutor, fixedTypeVariables)
         val lower = substitutedConstraintWith.a // TODO: SUB
         val upper = substitutedConstraintWith.b // TODO: SUB
 
@@ -94,5 +94,32 @@ abstract class AbstractManyCandidatesInferenceSession(
             this.constraintKind,
             ConeBuilderInferenceSubstitutionConstraintPosition(this) // TODO
         )
+    }
+
+    protected fun InitialConstraint.substitute(
+        substitutor: TypeSubstitutorMarker,
+        fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
+    ): InitialConstraint {
+        val substituted = substitute(substitutor)
+        val a = a
+        // In situation when some type variable _T is fixed to Stub(_T)?,
+        // we are not allowed just to substitute Stub(_T) with T because nullabilities are different here!
+        // To compensate this, we have to substitute Stub(_T) <: SomeType constraint with T <: SomeType? adding nullability to upper type
+        if (a is ConeStubTypeForChainInference && substituted.a !is ConeStubTypeForChainInference) {
+            val constructor = a.constructor
+            val fixedTypeVariableType = fixedTypeVariables[constructor.variable.typeConstructor]
+            if (fixedTypeVariableType is ConeStubTypeForChainInference &&
+                fixedTypeVariableType.constructor === constructor &&
+                fixedTypeVariableType.isMarkedNullable
+            ) {
+                return InitialConstraint(
+                    substituted.a,
+                    (substituted.b as ConeKotlinType).withNullability(ConeNullability.NULLABLE, resolutionContext.typeContext),
+                    substituted.constraintKind,
+                    substituted.position
+                )
+            }
+        }
+        return substituted
     }
 }
