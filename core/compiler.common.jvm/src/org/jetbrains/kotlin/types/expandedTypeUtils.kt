@@ -33,7 +33,7 @@ private fun TypeSystemCommonBackendContext.computeExpandedTypeInner(
         classifier.isInlineClass() -> {
             // kotlinType is the boxed inline class type
 
-            val underlyingType = kotlinType.getSubstitutedUnderlyingType() ?: return null
+            val underlyingType = kotlinType.getUnsubstitutedUnderlyingType() ?: return null
             val expandedUnderlyingType = computeExpandedTypeInner(underlyingType, visitedClassifiers) ?: return null
             when {
                 !kotlinType.isNullableType() -> expandedUnderlyingType
