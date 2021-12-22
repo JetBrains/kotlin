@@ -1862,38 +1862,44 @@ public class ExternalTestGenerated extends AbstractExternalNativeBlackBoxTest {
             }
 
             @Nested
-            @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections")
+            @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses")
             @TestDataPath("$PROJECT_ROOT")
             @Tag("external")
             @UseExtTestCaseGroupProvider()
-            public class ExtendJavaCollections {
+            public class ExtendJavaClasses {
                 @Test
                 @TestMetadata("abstractSet.kt")
                 public void testAbstractSet() throws Exception {
-                    runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/abstractSet.kt");
+                    runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/abstractSet.kt");
                 }
 
                 @Test
-                public void testAllFilesPresentInExtendJavaCollections() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                public void testAllFilesPresentInExtendJavaClasses() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                 }
 
                 @Test
                 @TestMetadata("arrayList.kt")
                 public void testArrayList() throws Exception {
-                    runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/arrayList.kt");
+                    runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/arrayList.kt");
+                }
+
+                @Test
+                @TestMetadata("extendArrayListThroughKotlin.kt")
+                public void testExtendArrayListThroughKotlin() throws Exception {
+                    runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/extendArrayListThroughKotlin.kt");
                 }
 
                 @Test
                 @TestMetadata("hashMap.kt")
                 public void testHashMap() throws Exception {
-                    runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/hashMap.kt");
+                    runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/hashMap.kt");
                 }
 
                 @Test
                 @TestMetadata("hashSet.kt")
                 public void testHashSet() throws Exception {
-                    runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/hashSet.kt");
+                    runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/hashSet.kt");
                 }
             }
 

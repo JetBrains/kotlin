@@ -17,12 +17,12 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.*
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -235,9 +234,12 @@ abstract class DeclarationStubGenerator(
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
     internal fun generateValueParameterStub(descriptor: ValueParameterDescriptor, index: Int): IrValueParameter = with(descriptor) {
-        IrLazyValueParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), this, name, index,
-                             type.toIrType(), varargElementType?.toIrType(), isCrossinline, isNoinline, isHidden = false, isAssignable = false, this@DeclarationStubGenerator, typeTranslator)
-        .also { irValueParameter ->
+        IrLazyValueParameter(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), this, name, index,
+            type.toIrType(), varargElementType?.toIrType(),
+            isCrossinline = isCrossinline, isNoinline = isNoinline, isHidden = false, isAssignable = false,
+            stubGenerator = this@DeclarationStubGenerator, typeTranslator = typeTranslator
+        ).also { irValueParameter ->
             if (descriptor.declaresDefaultValue()) {
                 irValueParameter.defaultValue = irValueParameter.createStubDefaultValue()
             }
@@ -324,7 +326,8 @@ abstract class DeclarationStubGenerator(
                 descriptor.index,
                 descriptor.isReified,
                 descriptor.variance,
-                this, typeTranslator)
+                this, typeTranslator
+            )
         }
     }
 
@@ -344,7 +347,8 @@ abstract class DeclarationStubGenerator(
         }
     }
 
-    private fun findDescriptorBySignature(signature: IdSignature): DeclarationDescriptor? = when (signature) {
+    private fun findDescriptorBySignature(signature: IdSignature): DeclarationDescriptor? =
+        when (signature) {
             is IdSignature.AccessorSignature -> findDescriptorForAccessorSignature(signature)
             is IdSignature.CommonSignature -> findDescriptorForPublicSignature(signature)
             else -> error("only PublicSignature or AccessorSignature should reach this point, got $signature")

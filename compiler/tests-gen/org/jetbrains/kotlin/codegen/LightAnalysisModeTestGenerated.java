@@ -2321,51 +2321,96 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             }
         }
 
-        @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections")
+        @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ExtendJavaCollections extends AbstractLightAnalysisModeTest {
+        public static class ExtendJavaClasses extends AbstractLightAnalysisModeTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
             @TestMetadata("abstractList.kt")
             public void testAbstractList() throws Exception {
-                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/abstractList.kt");
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/abstractList.kt");
             }
 
             @TestMetadata("abstractMap.kt")
             public void testAbstractMap() throws Exception {
-                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/abstractMap.kt");
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/abstractMap.kt");
             }
 
             @TestMetadata("abstractSet.kt")
             public void testAbstractSet() throws Exception {
-                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/abstractSet.kt");
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/abstractSet.kt");
             }
 
-            public void testAllFilesPresentInExtendJavaCollections() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            public void testAllFilesPresentInExtendJavaClasses() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
             @TestMetadata("arrayList.kt")
             public void testArrayList() throws Exception {
-                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/arrayList.kt");
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/arrayList.kt");
+            }
+
+            @TestMetadata("charSequenceGetOverriddenInJavaSuperClass.kt")
+            public void testCharSequenceGetOverriddenInJavaSuperClass() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/charSequenceGetOverriddenInJavaSuperClass.kt");
+            }
+
+            @TestMetadata("extendArrayListThroughKotlin.kt")
+            public void testExtendArrayListThroughKotlin() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/extendArrayListThroughKotlin.kt");
             }
 
             @TestMetadata("hashMap.kt")
             public void testHashMap() throws Exception {
-                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/hashMap.kt");
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/hashMap.kt");
             }
 
             @TestMetadata("hashSet.kt")
             public void testHashSet() throws Exception {
-                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/hashSet.kt");
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/hashSet.kt");
             }
 
             @TestMetadata("mapEntry.kt")
             public void testMapEntry() throws Exception {
-                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/mapEntry.kt");
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/mapEntry.kt");
+            }
+
+            @TestMetadata("numberMixedHierarchy.kt")
+            public void testNumberMixedHierarchy() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/numberMixedHierarchy.kt");
+            }
+
+            @TestMetadata("removeAtBridgeToJavaClass.kt")
+            public void testRemoveAtBridgeToJavaClass() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/removeAtBridgeToJavaClass.kt");
+            }
+
+            @TestMetadata("removeAtBridgeToJavaDefault.kt")
+            public void testRemoveAtBridgeToJavaDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/removeAtBridgeToJavaDefault.kt");
+            }
+
+            @TestMetadata("removeAtBridgeToJavaSuperClass.kt")
+            public void testRemoveAtBridgeToJavaSuperClass() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/removeAtBridgeToJavaSuperClass.kt");
+            }
+
+            @TestMetadata("superCallToFakeRemoveAt.kt")
+            public void testSuperCallToFakeRemoveAt() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/superCallToFakeRemoveAt.kt");
+            }
+
+            @TestMetadata("superCallToRemoveAt.kt")
+            public void testSuperCallToRemoveAt() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/superCallToRemoveAt.kt");
+            }
+
+            @TestMetadata("superCallToRemoveAtInJavaDefault.kt")
+            public void testSuperCallToRemoveAtInJavaDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/superCallToRemoveAtInJavaDefault.kt");
             }
         }
 

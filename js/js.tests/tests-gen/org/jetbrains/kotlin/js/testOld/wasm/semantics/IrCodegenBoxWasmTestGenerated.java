@@ -1616,36 +1616,41 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             }
         }
 
-        @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections")
+        @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class ExtendJavaCollections extends AbstractIrCodegenBoxWasmTest {
+        public static class ExtendJavaClasses extends AbstractIrCodegenBoxWasmTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
             }
 
             @TestMetadata("abstractSet.kt")
             public void testAbstractSet() throws Exception {
-                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/abstractSet.kt");
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/abstractSet.kt");
             }
 
-            public void testAllFilesPresentInExtendJavaCollections() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            public void testAllFilesPresentInExtendJavaClasses() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
 
             @TestMetadata("arrayList.kt")
             public void testArrayList() throws Exception {
-                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/arrayList.kt");
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/arrayList.kt");
+            }
+
+            @TestMetadata("extendArrayListThroughKotlin.kt")
+            public void testExtendArrayListThroughKotlin() throws Exception {
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/extendArrayListThroughKotlin.kt");
             }
 
             @TestMetadata("hashMap.kt")
             public void testHashMap() throws Exception {
-                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/hashMap.kt");
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/hashMap.kt");
             }
 
             @TestMetadata("hashSet.kt")
             public void testHashSet() throws Exception {
-                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaCollections/hashSet.kt");
+                runTest("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses/hashSet.kt");
             }
         }
 
