@@ -442,6 +442,9 @@ if (attachedIntellijVersion == "212") { // Latest available platform in scope of
     intellij "jvm-run-configurations/kotlin.jvm-run-configurations.iml"
 }
 
+include ":jps:jps-common",
+        ":jps:jps-plugin"
+
 include ":generators:frontend-api-generator",
         ":idea-frontend-fir:idea-fir-low-level-api",
         ":idea-frontend-fir:idea-frontend-fir-generator",
