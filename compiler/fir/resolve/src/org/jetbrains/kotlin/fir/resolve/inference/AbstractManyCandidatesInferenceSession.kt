@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeBuilderInferenceSubstitutionConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.InitialConstraint
@@ -62,23 +61,22 @@ abstract class AbstractManyCandidatesInferenceSession(
         callSubstitutor: ConeSubstitutor,
         nonFixedToVariablesSubstitutor: ConeSubstitutor,
     ): Boolean {
-        val substitutedConstraint = initialConstraint.substitute(callSubstitutor)
-        val lower =
-            nonFixedToVariablesSubstitutor.substituteOrSelf(substitutedConstraint.a as ConeKotlinType) // TODO: SUB
-        val upper =
-            nonFixedToVariablesSubstitutor.substituteOrSelf(substitutedConstraint.b as ConeKotlinType) // TODO: SUB
+        val substitutedConstraintWith = initialConstraint.substitute(callSubstitutor).substitute(nonFixedToVariablesSubstitutor)
+        val lower = substitutedConstraintWith.a // TODO: SUB
+        val upper = substitutedConstraintWith.b // TODO: SUB
 
         if (commonSystem.isProperType(lower) && (lower == upper || commonSystem.isProperType(upper))) return false
 
+        val position = substitutedConstraintWith.position
         when (initialConstraint.constraintKind) {
             ConstraintKind.LOWER -> error("LOWER constraint shouldn't be used, please use UPPER")
 
-            ConstraintKind.UPPER -> commonSystem.addSubtypeConstraint(lower, upper, substitutedConstraint.position)
+            ConstraintKind.UPPER -> commonSystem.addSubtypeConstraint(lower, upper, position)
 
             ConstraintKind.EQUALITY ->
                 with(commonSystem) {
-                    addSubtypeConstraint(lower, upper, substitutedConstraint.position)
-                    addSubtypeConstraint(upper, lower, substitutedConstraint.position)
+                    addSubtypeConstraint(lower, upper, position)
+                    addSubtypeConstraint(upper, lower, position)
                 }
         }
         return true
