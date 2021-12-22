@@ -18,6 +18,7 @@ import org.jetbrains.kotlinx.dataframe.io.toHTML
 import org.jetbrains.kotlinx.dataframe.io.writeCSV
 import org.jetbrains.kotlinx.dataframe.math.median
 import java.io.File
+import java.io.InputStream
 import java.util.zip.ZipInputStream
 import kotlin.reflect.typeOf
 import kotlin.script.experimental.annotations.KotlinScript
@@ -37,6 +38,7 @@ abstract class BenchmarkTemplate(
     private val gitCommitSha: String,
 ) {
     private val workingDir = File(args.first())
+    val currentKotlinVersion: String = args[1]
     private val gradleProfilerDir = workingDir.resolve("gradle-profiler")
     private val projectRepoDir = workingDir.resolve(projectName)
     private val scenariosDir = workingDir.resolve("scenarios")
@@ -44,9 +46,9 @@ abstract class BenchmarkTemplate(
 
     private val gitOperationsPrinter = TextProgressMonitor()
 
-    fun runAllBenchmarks(
+    fun <T : InputStream> runAllBenchmarks(
         suite: ScenarioSuite,
-        benchmarks: Map<BenchmarkName, PatchFile?>
+        benchmarks: Map<BenchmarkName, (() -> Pair<String, T>)?>
     ) {
         printStartingMessage()
         downloadGradleProfilerIfNotAvailable()
@@ -54,7 +56,10 @@ abstract class BenchmarkTemplate(
 
         val results = benchmarks.map { (name, patchFile) ->
             repoReset()
-            patchFile?.let { repoApplyPatch(it) }
+            patchFile?.let {
+                val (patchName, patch) = it()
+                repoApplyPatch(patchName, patch)
+            }
             runBenchmark(suite, name)
         }
         aggregateBenchmarkResults(*results.toTypedArray())
@@ -106,12 +111,21 @@ abstract class BenchmarkTemplate(
         return projectRepoDir
     }
 
-    fun repoApplyPatch(patchFile: PatchFile) {
-        println("Applying patch $patchFile to repository")
+    fun repoApplyPatchFromFile(
+        patchFile: String
+    ) {
         val patch = File(patchFile)
+        repoApplyPatch(patch.name, patch.inputStream())
+    }
+
+    fun repoApplyPatch(
+        patchName: String,
+        patch: InputStream
+    ) {
+        println("Applying patch $patchName to repository")
         Git.open(projectRepoDir)
             .apply()
-            .setPatch(patch.inputStream())
+            .setPatch(patch)
             .call()
     }
 
@@ -359,7 +373,6 @@ abstract class BenchmarkTemplate(
 }
 
 typealias BenchmarkName = String
-typealias PatchFile = String
 
 class BenchmarkFailedException(exitCode: Int) : Exception(
     "Benchmark process was not finished successfully with $exitCode exit code."

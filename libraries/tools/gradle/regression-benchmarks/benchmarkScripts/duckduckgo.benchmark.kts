@@ -1,12 +1,24 @@
 // Android application written in Kotlin:
 // - kind of big codebase
 // - uses Kotlin compiler plugins and kapt
-
 @file:BenchmarkProject(
     name = "duckduckgo",
     gitUrl = "https://github.com/duckduckgo/Android.git",
     gitCommitSha = "659bd5aaac1fba922a6df9053daa2b7bcd610375"
 )
+
+import java.io.File
+
+val stableReleasePatch = {
+    "duckduckgo-kotlin-1.6.10.patch" to File("benchmarkScripts/files/duckduckgo-kotlin-1.6.10.patch").inputStream()
+}
+
+val currentReleasePatch = {
+    "duckduckgo-kotlin-current.patch" to File("benchmarkScripts/files/duckduckgo-kotlin-current.patch")
+        .readText()
+        .run { replace("<kotlin_version>", currentKotlinVersion) }
+        .byteInputStream()
+}
 
 runAllBenchmarks(
     suite {
@@ -31,7 +43,7 @@ runAllBenchmarks(
         }
     },
     mapOf(
-        "1.6.10" to "benchmarkScripts/files/duckduckgo-kotlin-1.6.10.patch",
-        "1.6.20" to "benchmarkScripts/files/duckduckgo-kotlin-current.patch"
+        "1.6.10" to stableReleasePatch,
+        "1.6.20" to currentReleasePatch
     )
 )
