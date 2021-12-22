@@ -14,5 +14,13 @@ val FirCallableDeclaration.irName: Name
         is FirConstructor -> SpecialNames.INIT
         is FirSimpleFunction -> this.name
         is FirVariable -> this.name
+        is FirPropertyAccessor -> {
+            val prefix = when {
+                isGetter -> "<get-"
+                isSetter -> "<set-"
+                else -> error("unknown property accessor kind $this")
+            }
+            Name.special(prefix + propertySymbol!!.fir.name + ">")
+        }
         else -> SpecialNames.ANONYMOUS
     }

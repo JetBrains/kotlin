@@ -113,8 +113,7 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
             }
         }
 
-        // The next line should have singleOrNull, but in some cases we get multiple references to the same FIR declaration.
-        val firDeclaration = firCandidates.firstOrNull { fir2IrComponents.signatureComposer.composeSignature(it) == signature }
+        val firDeclaration = findDeclarationByHash(firCandidates, signature.id)
             ?: return null
 
         return when (kind) {
@@ -138,4 +137,15 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
             else -> error("Don't know how to deal with this symbol kind: $kind")
         }
     }
+
+    private fun findDeclarationByHash(candidates: Collection<FirDeclaration>, hash: Long?): FirDeclaration? =
+        candidates.firstOrNull { candidate ->
+            if (hash == null) {
+                // We don't compute id for type aliases and classes.
+                candidate is FirClass || candidate is FirTypeAlias
+            } else {
+                // The next line should have singleOrNull, but in some cases we get multiple references to the same FIR declaration.
+                with(fir2IrComponents.signatureComposer.mangler) { candidate.signatureMangle(compatibleMode = false) == hash }
+            }
+        }
 }
