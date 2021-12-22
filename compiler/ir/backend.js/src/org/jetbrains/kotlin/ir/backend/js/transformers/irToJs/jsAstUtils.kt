@@ -319,6 +319,9 @@ fun argumentsWithVarargAsSingleArray(
     }
 }
 
+/**
+ * Returns the index of the vararg parameter of the function if there is one, otherwise returns -1.
+ */
 fun IrFunction.varargParameterIndex() = valueParameters.indexOfFirst { it.varargElementType != null }
 
 fun translateCallArguments(

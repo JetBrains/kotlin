@@ -1,11 +1,11 @@
 open class A<T> {
-    open fun foo(t: T) = "A"
+    open fun foo(t: T, vararg xs: Int) = "A"
 }
 
 open class B : A<String>()
 
 class Z : B() {
-    override fun foo(t: String) = "Z"
+    override fun foo(t: String, vararg xs: Int) = "Z"
 }
 
 
