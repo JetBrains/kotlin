@@ -27,7 +27,7 @@ index 4497fd12..730df20a 100644
  
      ext {
 -        kotlin_version = '1.5.10'
-+        kotlin_version = '1.6.255-SNAPSHOT'
++        kotlin_version = '<kotlin_version>'
      }
      ext.spotless = "5.14.0"
 -    ext.anvil_version = "2.3.3"
@@ -67,7 +67,7 @@ index fae6ae6e..81cb692c 100644
  version.io.reactivex.rxjava2..rxjava=2.2.9
  
 -version.kotlin=1.5.31
-+version.kotlin=1.6.255-SNAPSHOT
++version.kotlin=<kotlin_version>
  
  version.kotlinx.coroutines=1.5.2
  

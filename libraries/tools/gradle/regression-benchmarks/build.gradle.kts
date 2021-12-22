@@ -23,7 +23,8 @@ dependencies {
 val service = project.extensions.getByType<JavaToolchainService>()
 
 abstract class ScriptArgumentProvider @Inject constructor(
-    layout: ProjectLayout
+    layout: ProjectLayout,
+    private val releaseKotlinVersion: String
 ) : CommandLineArgumentProvider {
     @get:Classpath
     abstract val scriptClasspath: ConfigurableFileCollection
@@ -40,7 +41,8 @@ abstract class ScriptArgumentProvider @Inject constructor(
             "-no-stdlib",
             "-classpath", scriptClasspath.asFileTree.files.joinToString(separator = File.pathSeparator),
             "-script", "benchmarkScripts/${script.get()}",
-            scriptOutputDirectories.get().asFile.absolutePath
+            scriptOutputDirectories.get().asFile.absolutePath,
+            releaseKotlinVersion
         )
     }
 }
@@ -62,7 +64,7 @@ fun addBenchmarkTask(
         classpath = compilerClasspath
         mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
 
-        val scriptArgs = objects.newInstance<ScriptArgumentProvider>()
+        val scriptArgs = objects.newInstance<ScriptArgumentProvider>(version)
         scriptArgs.script.set(script)
         scriptArgs.scriptClasspath.from(scriptsClasspath)
         argumentProviders.add(scriptArgs)
