@@ -193,6 +193,15 @@ internal fun jsBind(receiver: Any?, target: Any?): Any?
 internal fun <A> slice(a: A): A
 
 @JsIntrinsic
+internal fun <T> jsArrayLike2Array(arrayLike: Any?): Array<T>
+
+@JsIntrinsic
+internal fun <T> jsSliceArrayLikeFromIndex(arrayLike: Any?, start: Int): Array<T>
+
+@JsIntrinsic
+internal fun <T> jsSliceArrayLikeFromIndexToIndex(arrayLike: Any?, start: Int, end: Int): Array<T>
+
+@JsIntrinsic
 internal fun unreachable(): Nothing
 
 @JsIntrinsic

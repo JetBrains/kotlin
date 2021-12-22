@@ -242,6 +242,13 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsClass = getInternalFunction("jsClassIntrinsic")
     val arrayLiteral: IrSimpleFunctionSymbol = getInternalFunction("arrayLiteral")
 
+    // The following 3 functions are all lowered into [].slice.call(...), they only differ
+    // in the number of arguments.
+    // See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/slice
+    val jsArrayLike2Array = getInternalFunction("jsArrayLike2Array")
+    val jsSliceArrayLikeFromIndex = getInternalFunction("jsSliceArrayLikeFromIndex")
+    val jsSliceArrayLikeFromIndexToIndex = getInternalFunction("jsSliceArrayLikeFromIndexToIndex")
+
     internal inner class JsReflectionSymbols : ReflectionSymbols {
         override val createKType = getInternalWithoutPackageOrNull("createKType")
         override val createDynamicKType = getInternalWithoutPackageOrNull("createDynamicKType")
