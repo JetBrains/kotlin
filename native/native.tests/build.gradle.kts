@@ -104,6 +104,10 @@ fun blackBoxTest(taskName: String, vararg tags: String) = projectTest(taskName, 
 
         // Pass Gradle properties as JVM properties so test process can read them.
         TestProperty.TEST_MODE.setUpFromGradleProperty(this)
+        TestProperty.OPTIMIZATION_MODE.setUpFromGradleProperty(this)
+        TestProperty.MEMORY_MODEL.setUpFromGradleProperty(this)
+        TestProperty.USE_THREAD_STATE_CHECKER.setUpFromGradleProperty(this)
+        TestProperty.GC_TYPE.setUpFromGradleProperty(this)
         TestProperty.USE_CACHE.setUpFromGradleProperty(this)
         TestProperty.EXECUTION_TIMEOUT.setUpFromGradleProperty(this)
 
