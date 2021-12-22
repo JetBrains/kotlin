@@ -20,4 +20,5 @@ class Derived: Base {
     override suspend fun foo() { ... }
 }
 
+// WITH_STDLIB
 // FIR_COMPARISON
