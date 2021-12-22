@@ -14,11 +14,13 @@ dependencies {
     compile(project(":native:frontend.native"))
     compileOnly(intellijDep())
     compileOnly(jpsStandalone()) { includeJars("jps-model") }
+
+    testCompile(commonDep("junit:junit"))
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {}
+    "test" { projectDefault() }
 }
 
 runtimeJar()
