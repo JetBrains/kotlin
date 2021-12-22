@@ -8,14 +8,13 @@ package org.jetbrains.kotlin.fir.resolve.providers
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 abstract class FirProvider : FirSessionComponent {
     /**
@@ -42,6 +41,8 @@ abstract class FirProvider : FirSessionComponent {
     abstract fun getFirFilesByPackage(fqName: FqName): List<FirFile>
 
     abstract fun getClassNamesInPackage(fqName: FqName): Set<Name>
+
+    open fun containsKotlinPackage(): Boolean = getFirFilesByPackage(StandardClassIds.BASE_KOTLIN_PACKAGE).isNotEmpty()
 }
 
 val FirSession.firProvider: FirProvider by FirSession.sessionComponentAccessor()
