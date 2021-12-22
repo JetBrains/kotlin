@@ -20,22 +20,10 @@ dependencies {
     api(project(":kotlin-scripting-compiler"))
     api(kotlinStdlib())
     compileOnly(intellijCore())
-
-    testApi(project(":compiler:frontend"))
-    testApi(project(":compiler:plugin-api"))
-    testApi(project(":compiler:util"))
-    testApi(project(":compiler:cli"))
-    testApi(project(":compiler:cli-common"))
-    testApi(project(":compiler:backend.js"))
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(commonDependency("junit:junit"))
-
-    testImplementation(intellijCore())
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
