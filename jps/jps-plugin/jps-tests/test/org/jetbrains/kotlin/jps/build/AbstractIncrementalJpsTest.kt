@@ -168,12 +168,6 @@ abstract class AbstractIncrementalJpsTest(
         }
     }
 
-    // JPS forces rebuild of all files when JVM constant has been changed and Callbacks.ConstantAffectionResolver
-    // is not provided, so ConstantAffectionResolver is mocked with empty implementation
-    // Usages in Kotlin files are expected to be found by KotlinLookupConstantSearch
-    protected open val mockConstantSearch: Callbacks.ConstantAffectionResolver?
-        get() = MockJavaConstantSearch(workDir)
-
     private fun build(
         name: String?,
         scope: CompileScopeTestBuilder = CompileScopeTestBuilder.make().allModules()
