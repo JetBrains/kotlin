@@ -19,6 +19,6 @@ public class A<T> {
 // FILE: k.kt
 
 fun test() {
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>A.create().bar()<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>A<String?>().bar()<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
+    A.create().bar()<!UNNECESSARY_SAFE_CALL!>?.<!>length
+    A<String?>().bar()<!UNNECESSARY_SAFE_CALL!>?.<!>length
 }

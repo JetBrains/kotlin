@@ -115,7 +115,7 @@ fun case_4(value_1: Number, value_2: (() -> Unit)?) {
  * ISSUES: KT-26612
  */
 fun case_5(value_1: Number?, value_2: String?) {
-    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_2.case_5(value_1)) {
+    when (value_2.case_5(value_1)) {
         true -> {
             println(value_2<!UNSAFE_CALL!>.<!>length)
             println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.toByte())
@@ -124,6 +124,7 @@ fun case_5(value_1: Number?, value_2: String?) {
             println(value_2<!UNSAFE_CALL!>.<!>length)
             println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.inv())
         }
+        else -> {}
     }
 }
 

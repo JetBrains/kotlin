@@ -31,6 +31,6 @@ import p.*
 
 fun test(b: B?) {
     if (b is C) {
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!><!DEBUG_INFO_SMARTCAST!>b<!>?.getParent()<!>
+        <!DEBUG_INFO_SMARTCAST!>b<!>?.getParent()
     }
 }

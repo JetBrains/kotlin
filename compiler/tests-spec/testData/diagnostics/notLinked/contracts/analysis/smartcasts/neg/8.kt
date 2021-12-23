@@ -110,7 +110,7 @@ fun case_4(value_1: Number, value_2: (() -> Unit)?) {
 
 // TESTCASE NUMBER: 5
 fun case_5(value_1: Number?, value_2: String?) {
-    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_2.case_5(value_1)) {
+    when (value_2.case_5(value_1)) {
         true -> {
             println(value_2<!UNSAFE_CALL!>.<!>length)
             println(value_1<!UNSAFE_CALL!>.<!>toByte())
@@ -119,6 +119,7 @@ fun case_5(value_1: Number?, value_2: String?) {
             println(value_2<!UNSAFE_CALL!>.<!>length)
             println(value_1.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inv<!>())
         }
+        else -> {}
     }
 }
 

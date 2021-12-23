@@ -63,17 +63,17 @@ public class A {
 
 // FILE: main.kt
 fun main(a: A) {
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a.foo("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
+    a.foo("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
     a.foo("", null).length
     a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, "").length
 
     a.bar().length
     a.bar()<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.length
 
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a.field<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
+    a.field<!UNNECESSARY_SAFE_CALL!>?.<!>length
     a.field.length
 
     a.baz()<!UNSAFE_CALL!>.<!>get(0)
     a.baz()!!.get(0).get(0)
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a.baz()!!.get(0)<!UNNECESSARY_SAFE_CALL!>?.<!>get(0)<!>
+    a.baz()!!.get(0)<!UNNECESSARY_SAFE_CALL!>?.<!>get(0)
 }

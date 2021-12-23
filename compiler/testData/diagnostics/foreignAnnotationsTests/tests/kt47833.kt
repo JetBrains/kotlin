@@ -1,5 +1,7 @@
 // FIR_IDENTICAL
+// SKIP_TXT
 // FILE: main.kt
+
 sealed class ClientBootResult
 
 object ClientBootSuccess : ClientBootResult()

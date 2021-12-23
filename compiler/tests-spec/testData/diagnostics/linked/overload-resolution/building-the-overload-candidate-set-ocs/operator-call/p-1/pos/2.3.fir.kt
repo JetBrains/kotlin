@@ -8,18 +8,13 @@
 package testPackCase1
 
 fun case1(a: A, c: C) {
-
-    <!DEBUG_INFO_CALL("fqName: testPackCase1.B.plusAssign; typeCall: operator function")!><!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a?.b<!> += c<!>
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a?.b<!> .<!DEBUG_INFO_CALL("fqName: testPackCase1.B.plusAssign; typeCall: operator function")!>plusAssign(c)<!>
+    a?.b <!UNSAFE_CALL!>.<!><!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>plusAssign(c)<!>
 
     val x = {
-        <!DEBUG_INFO_CALL("fqName: testPackCase1.B.plusAssign; typeCall: operator function")!><!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a?.b<!> += c<!>
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a?.b<!>.<!DEBUG_INFO_CALL("fqName: testPackCase1.B.plusAssign; typeCall: operator function")!>plusAssign(c)<!>
+        a?.b<!UNSAFE_CALL!>.<!><!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>plusAssign(c)<!>
     }()
 
-    <!DEBUG_INFO_CALL("fqName: testPackCase1.B.plusAssign; typeCall: operator function")!><!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a?.b<!> += { c }()<!>
-
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a?.b<!>.<!DEBUG_INFO_CALL("fqName: testPackCase1.B.plusAssign; typeCall: operator function")!>plusAssign({ c }())<!>
+    a?.b<!UNSAFE_CALL!>.<!><!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>plusAssign({ c }())<!>
 }
 
 class A(val b: B)

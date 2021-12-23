@@ -3,66 +3,66 @@
 // FIXME: rename identifiers.kt
 
 // FILE: 1.kt
-package <!INVALID_CHARACTERS_NATIVE_WARNING!>`check.pkg`<!>
+package <!INVALID_CHARACTERS_NATIVE_ERROR!>`check.pkg`<!>
 
 // FILE: 2.kt
 package totally.normal.pkg
 
-class <!INVALID_CHARACTERS_NATIVE_WARNING!>`Check.Class`<!>
+class <!INVALID_CHARACTERS_NATIVE_ERROR!>`Check.Class`<!>
 class NormalClass {
-    fun <!INVALID_CHARACTERS_NATIVE_WARNING!>`check$member`<!>() {}
+    fun <!INVALID_CHARACTERS_NATIVE_ERROR!>`check$member`<!>() {}
 }
 
-object <!INVALID_CHARACTERS_NATIVE_WARNING!>`Check;Object`<!>
+object <!INVALID_CHARACTERS_NATIVE_ERROR!>`Check;Object`<!>
 object NormalObject
 
-data class Pair(val first: Int, val <!INVALID_CHARACTERS_NATIVE_WARNING!>`next,one`<!>: Int)
+data class Pair(val first: Int, val <!INVALID_CHARACTERS_NATIVE_ERROR!>`next,one`<!>: Int)
 
 object Delegate {
     operator fun getValue(thisRef: Any?, property: kotlin.reflect.KProperty<*>): Any? = null
 }
 
-fun <!INVALID_CHARACTERS_NATIVE_WARNING!>`check(function`<!>() {
-    val <!INVALID_CHARACTERS_NATIVE_WARNING!>`check)variable`<!> = 1
-    val <!INVALID_CHARACTERS_NATIVE_WARNING!>`check[delegated[variable`<!> by Delegate
+fun <!INVALID_CHARACTERS_NATIVE_ERROR!>`check(function`<!>() {
+    val <!INVALID_CHARACTERS_NATIVE_ERROR!>`check)variable`<!> = 1
+    val <!INVALID_CHARACTERS_NATIVE_ERROR!>`check[delegated[variable`<!> by Delegate
 
     val normalVariable = 2
     val normalDelegatedVariable by Delegate
 
-    val (check, <!INVALID_CHARACTERS_NATIVE_WARNING!>`destructuring]declaration`<!>) = Pair(1, 2)
+    val (check, <!INVALID_CHARACTERS_NATIVE_ERROR!>`destructuring]declaration`<!>) = Pair(1, 2)
 }
 
 fun normalFunction() {}
 
-val <!INVALID_CHARACTERS_NATIVE_WARNING!>`check{property`<!> = 1
-val <!INVALID_CHARACTERS_NATIVE_WARNING!>`check}delegated}property`<!> by Delegate
+val <!INVALID_CHARACTERS_NATIVE_ERROR!>`check{property`<!> = 1
+val <!INVALID_CHARACTERS_NATIVE_ERROR!>`check}delegated}property`<!> by Delegate
 val normalProperty = 2
 val normalDelegatedProperty by Delegate
 
-fun checkValueParameter(<!INVALID_CHARACTERS_NATIVE_WARNING!>`check/parameter`<!>: Int) {}
+fun checkValueParameter(<!INVALID_CHARACTERS_NATIVE_ERROR!>`check/parameter`<!>: Int) {}
 
-fun <<!INVALID_CHARACTERS_NATIVE_WARNING!>`check<type<parameter`<!>, normalTypeParameter> checkTypeParameter() {}
+fun <<!INVALID_CHARACTERS_NATIVE_ERROR!>`check<type<parameter`<!>, normalTypeParameter> checkTypeParameter() {}
 
-enum class <!INVALID_CHARACTERS_NATIVE_WARNING!>`Check>Enum>Entry`<!> {
-    <!INVALID_CHARACTERS_NATIVE_WARNING!>`CHECK:ENUM:ENTRY`<!>;
+enum class <!INVALID_CHARACTERS_NATIVE_ERROR!>`Check>Enum>Entry`<!> {
+    <!INVALID_CHARACTERS_NATIVE_ERROR!>`CHECK:ENUM:ENTRY`<!>;
 }
 
-typealias <!INVALID_CHARACTERS_NATIVE_WARNING!>`check\typealias`<!> = Any
+typealias <!INVALID_CHARACTERS_NATIVE_ERROR!>`check\typealias`<!> = Any
 
-fun <!INVALID_CHARACTERS_NATIVE_WARNING!>`check&`<!>() {}
+fun <!INVALID_CHARACTERS_NATIVE_ERROR!>`check&`<!>() {}
 
-fun <!INVALID_CHARACTERS_NATIVE_WARNING!>`check~`<!>() {}
+fun <!INVALID_CHARACTERS_NATIVE_ERROR!>`check~`<!>() {}
 
-fun <!INVALID_CHARACTERS_NATIVE_WARNING!>`check*`<!>() {}
+fun <!INVALID_CHARACTERS_NATIVE_ERROR!>`check*`<!>() {}
 
-fun <!INVALID_CHARACTERS_NATIVE_WARNING!>`check?`<!>() {}
+fun <!INVALID_CHARACTERS_NATIVE_ERROR!>`check?`<!>() {}
 
-fun <!INVALID_CHARACTERS_NATIVE_WARNING!>`check#`<!>() {}
+fun <!INVALID_CHARACTERS_NATIVE_ERROR!>`check#`<!>() {}
 
-fun <!INVALID_CHARACTERS_NATIVE_WARNING!>`check|`<!>() {}
+fun <!INVALID_CHARACTERS_NATIVE_ERROR!>`check|`<!>() {}
 
-fun <!INVALID_CHARACTERS_NATIVE_WARNING!>`check§`<!>() {}
+fun <!INVALID_CHARACTERS_NATIVE_ERROR!>`check§`<!>() {}
 
-fun <!INVALID_CHARACTERS_NATIVE_WARNING!>`check%`<!>() {}
+fun <!INVALID_CHARACTERS_NATIVE_ERROR!>`check%`<!>() {}
 
-fun <!INVALID_CHARACTERS_NATIVE_WARNING!>`check@`<!>() {}
+fun <!INVALID_CHARACTERS_NATIVE_ERROR!>`check@`<!>() {}

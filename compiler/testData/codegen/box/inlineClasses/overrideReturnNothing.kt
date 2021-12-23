@@ -1,8 +1,6 @@
 // WITH_STDLIB
-// CHECK_BYTECODE_LISTING
 // IGNORE_BACKEND: JS, JS_IR, WASM, NATIVE
 // TODO: Fir2Ir generates overrides as finals.
-// IGNORE_BACKEND_FIR: JVM_IR
 
 @JvmInline
 value class Inlined(val value: Int)

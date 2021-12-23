@@ -4,7 +4,7 @@
 
 fun foo(f: Boolean): Int {
     val i: Int
-    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (f) {
+    <!NO_ELSE_IN_WHEN!>when<!> (f) {
         true -> i = 1
     }
     <!VAL_REASSIGNMENT!>i<!> = 3

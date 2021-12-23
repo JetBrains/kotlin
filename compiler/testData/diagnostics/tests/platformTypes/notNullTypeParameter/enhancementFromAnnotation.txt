@@ -27,3 +27,4 @@ public open class C</*0*/ F : kotlin.Any!> : B<F!>, A<F!> {
     // Static members
     public open fun create(): C<kotlin.String!>!
 }
+

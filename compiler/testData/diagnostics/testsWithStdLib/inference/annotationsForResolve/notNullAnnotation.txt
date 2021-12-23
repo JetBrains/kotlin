@@ -38,3 +38,4 @@ public interface TypePredicate : (KotlinType) -> kotlin.Boolean {
     public abstract override /*1*/ fun invoke(/*0*/ typeToCheck: KotlinType): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

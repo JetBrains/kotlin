@@ -41,6 +41,7 @@ fun getSequence(a: Foo) =
             Foo.E-> {
                 yield("E")
             }
+            else -> {}
         }
         yield("end")
     }

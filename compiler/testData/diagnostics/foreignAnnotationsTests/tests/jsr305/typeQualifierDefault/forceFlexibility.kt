@@ -97,7 +97,7 @@ public class A {
 
 // FILE: main.kt
 fun main(a: A) {
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a.foo("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
+    a.foo("", null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
     a.foo("", null).length
     a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>, "").length
 

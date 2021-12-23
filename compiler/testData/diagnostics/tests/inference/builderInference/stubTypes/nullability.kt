@@ -34,27 +34,27 @@ fun test(a: String?) {
     }
     val ret2 = build2 {
         emit(1)
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>get()<!UNNECESSARY_SAFE_CALL!>?.<!>equals("")<!>
+        get()<!UNNECESSARY_SAFE_CALL!>?.<!>equals("")
         val x = get()
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>x<!UNNECESSARY_SAFE_CALL!>?.<!>equals("")<!>
+        x<!UNNECESSARY_SAFE_CALL!>?.<!>equals("")
         x <!USELESS_ELVIS!>?: 1<!>
         x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
         ""
     }
     val ret3 = build3 {
         emit(1)
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>get()<!UNNECESSARY_SAFE_CALL!>?.<!>equals("")<!>
+        get()<!UNNECESSARY_SAFE_CALL!>?.<!>equals("")
         val x = get()
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>x<!UNNECESSARY_SAFE_CALL!>?.<!>equals("")<!>
+        x<!UNNECESSARY_SAFE_CALL!>?.<!>equals("")
         x <!USELESS_ELVIS!>?: 1<!>
         x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
         ""
     }
     val ret4 = build4(1) {
         emit(1)
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>get()<!UNNECESSARY_SAFE_CALL!>?.<!>equals("")<!>
+        get()<!UNNECESSARY_SAFE_CALL!>?.<!>equals("")
         val x = get()
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>x<!UNNECESSARY_SAFE_CALL!>?.<!>equals("")<!>
+        x<!UNNECESSARY_SAFE_CALL!>?.<!>equals("")
         x <!USELESS_ELVIS!>?: 1<!>
         x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
         ""

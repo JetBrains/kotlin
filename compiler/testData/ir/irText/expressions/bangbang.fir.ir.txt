@@ -25,11 +25,11 @@ FILE fqName:<root> fileName:/bangbang.kt
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
                   $this: GET_VAR 'val tmp_0: kotlin.Any? [val] declared in <root>.test2' type=kotlin.Any? origin=null
-  FUN name:test3 visibility:public modality:FINAL <X> (a:X of <root>.test3) returnType:X of <root>.test3
+  FUN name:test3 visibility:public modality:FINAL <X> (a:X of <root>.test3) returnType:{X of <root>.test3 & Any}
     TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?]
     VALUE_PARAMETER name:a index:0 type:X of <root>.test3
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test3 <X> (a: X of <root>.test3): X of <root>.test3 declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun test3 <X> (a: X of <root>.test3): {X of <root>.test3 & Any} declared in <root>'
         CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type={X of <root>.test3 & Any} origin=EXCLEXCL
           <T0>: X of <root>.test3
           arg0: GET_VAR 'a: X of <root>.test3 declared in <root>.test3' type=X of <root>.test3 origin=null

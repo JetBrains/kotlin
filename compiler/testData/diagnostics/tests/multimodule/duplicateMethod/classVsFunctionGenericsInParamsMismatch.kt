@@ -31,6 +31,6 @@ fun test(b: B?, c: C) {
     b?.foo(1, 1)
     c.foo(1, 1)
     if (b is C) {
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>b<!UNNECESSARY_SAFE_CALL!>?.<!><!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(1, 1)<!>
+        b<!UNNECESSARY_SAFE_CALL!>?.<!><!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(1, 1)
     }
 }

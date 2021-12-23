@@ -53,7 +53,7 @@ fun case_3(x: Class?) {
  * ISSUES: KT-30376
  */
 fun case_4(x: Class?) {
-    if (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>x!!<!UNNECESSARY_SAFE_CALL!>?.<!>prop_8<!>?.prop_8?.prop_8?.prop_8 == null == true) else {
+    if (x!!<!UNNECESSARY_SAFE_CALL!>?.<!>prop_8?.prop_8?.prop_8?.prop_8 == null == true) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8
@@ -68,7 +68,7 @@ fun case_4(x: Class?) {
  * ISSUES: KT-30376
  */
 fun case_5(x: Class?) {
-    if (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>x?.prop_8!!<!UNNECESSARY_SAFE_CALL!>?.<!>prop_8<!>?.prop_8?.prop_8 == null == true) else {
+    if (x?.prop_8!!<!UNNECESSARY_SAFE_CALL!>?.<!>prop_8?.prop_8?.prop_8 == null == true) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8
@@ -83,7 +83,7 @@ fun case_5(x: Class?) {
  * ISSUES: KT-30376
  */
 fun case_6(x: Class?) {
-    if (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>x?.prop_8?.prop_8?.prop_8!!<!UNNECESSARY_SAFE_CALL!>?.<!>prop_8<!> == null == true) else {
+    if (x?.prop_8?.prop_8?.prop_8!!<!UNNECESSARY_SAFE_CALL!>?.<!>prop_8 == null == true) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8

@@ -28,4 +28,4 @@ fun test12(x: TC<Number, <!UPPER_BOUND_VIOLATED!>List<Any><!>>) {}
 val test13 = TC<Number, Collection<Number>>()
 val test14 = TC<Number, Collection<Int>>()
 val test15 = TC<Number, List<Int>>()
-val test16 = TC<Number, <!UPPER_BOUND_VIOLATED!>List<Any><!>>()
+val test16 = TC<Number, <!UPPER_BOUND_VIOLATED, UPPER_BOUND_VIOLATED!>List<Any><!>>()

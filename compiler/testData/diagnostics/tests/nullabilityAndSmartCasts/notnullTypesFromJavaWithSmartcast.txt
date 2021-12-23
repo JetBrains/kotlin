@@ -11,3 +11,4 @@ public open class JClass {
     // Static members
     @org.jetbrains.annotations.NotNull public open fun </*0*/ T : kotlin.Any!> getNotNullT(): T
 }
+

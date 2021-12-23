@@ -14,7 +14,7 @@ public class J {
 fun list(j: J): Any {
     val a = j.n()!!
 
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>get(0)<!>
+    a<!UNNECESSARY_SAFE_CALL!>?.<!>get(0)
     if (<!SENSELESS_COMPARISON!>a == null<!>) {}
     a<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
 

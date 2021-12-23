@@ -34,6 +34,6 @@ import p.*
 
 fun test(b: B?) {
     if (b is C && b is D) {
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>b<!UNNECESSARY_SAFE_CALL!>?.<!>getParent()<!>
+        b<!UNNECESSARY_SAFE_CALL!>?.<!>getParent()
     }
 }

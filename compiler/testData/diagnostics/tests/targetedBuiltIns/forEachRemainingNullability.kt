@@ -36,7 +36,7 @@ fun foo(x: Iterator<String>, y: Iterator<String?>) {
     x.forEachRemaining(<!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     x.forEachRemaining { it -> it.length }
-    x.forEachRemaining { it -> <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>it<!UNNECESSARY_SAFE_CALL!>?.<!>length<!> }
+    x.forEachRemaining { it -> it<!UNNECESSARY_SAFE_CALL!>?.<!>length }
     y.forEachRemaining { it -> it<!UNSAFE_CALL!>.<!>length }
     y.forEachRemaining { it -> it?.length }
 }

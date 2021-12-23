@@ -18,3 +18,4 @@ public open class IntBox : Box<kotlin.Int!> {
     @java.lang.Override public open override /*1*/ fun put(/*0*/ @org.jetbrains.annotations.NotNull t: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

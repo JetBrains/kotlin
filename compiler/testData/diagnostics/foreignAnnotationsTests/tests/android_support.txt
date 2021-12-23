@@ -12,3 +12,4 @@ public open class A</*0*/ T : kotlin.Any!> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

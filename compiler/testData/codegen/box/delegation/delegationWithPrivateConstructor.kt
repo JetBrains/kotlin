@@ -1,4 +1,4 @@
-class MyObject private constructor(val delegate: Interface) : Interface by delegate {
+class MyObject private constructor(private val delegate: Interface) : Interface by delegate {
     constructor() : this(Delegate())
 }
 
@@ -8,7 +8,7 @@ class Delegate : Interface {
     }
 }
 
-private interface Interface {
+interface Interface {
     fun greet(): String
 }
 

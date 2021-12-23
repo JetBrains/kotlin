@@ -25,9 +25,9 @@ fun A.test2() {
     this.bar()
     this.buzz()
 
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>this<!UNNECESSARY_SAFE_CALL!>?.<!>foo()<!> // warning
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>this<!UNNECESSARY_SAFE_CALL!>?.<!>bar()<!> // warning
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>this<!UNNECESSARY_SAFE_CALL!>?.<!>buzz()<!> // warning
+    this<!UNNECESSARY_SAFE_CALL!>?.<!>foo() // warning
+    this<!UNNECESSARY_SAFE_CALL!>?.<!>bar() // warning
+    this<!UNNECESSARY_SAFE_CALL!>?.<!>buzz() // warning
 }
 
 fun A?.test3() {

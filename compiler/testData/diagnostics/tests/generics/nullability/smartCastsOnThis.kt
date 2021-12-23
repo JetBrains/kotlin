@@ -11,7 +11,7 @@ fun <T : String?> T.foo() {
         if (<!SENSELESS_COMPARISON!>this != null<!>) {}
 
         <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>length<!>
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>this<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
+        this<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
         <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>bar1<!>()
         bar2()
@@ -19,14 +19,14 @@ fun <T : String?> T.foo() {
         <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>bar4<!>()
 
 
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>this<!UNNECESSARY_SAFE_CALL!>?.<!>bar1()<!>
+        this<!UNNECESSARY_SAFE_CALL!>?.<!>bar1()
     }
 
     <!UNSAFE_CALL!>length<!>
 
     if (this is String) {
         <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>length<!>
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>this<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
+        this<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
         <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>bar1<!>()
         bar2()

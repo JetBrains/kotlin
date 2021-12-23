@@ -42,3 +42,4 @@ public/*package*/ open class Outer {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+

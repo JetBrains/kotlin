@@ -14,18 +14,16 @@ fun foo1(x : Season?) : String {
     when(val xx = x) {
         Season.AUTUMN, Season.SPRING -> return "autumn_or_spring $xx";
         Season.SUMMER, null -> return "summer_or_null $xx"
+        else -> return "other"
     }
-
-    return "other"
 }
 
 fun foo2(x : Season?) : String {
     when(val xx = x) {
         Season.AUTUMN, Season.SPRING -> return "autumn_or_spring $xx";
         Season.SUMMER -> return "summer"
+        else -> return "other"
     }
-
-    return "other"
 }
 
 fun box() : String {

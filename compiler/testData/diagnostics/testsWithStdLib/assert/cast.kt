@@ -16,5 +16,5 @@ fun test1(a: A) {
 fun test2() {
     val a: A? = null;
     assert((a as B).bool())
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!><!DEBUG_INFO_SMARTCAST!>a<!><!UNNECESSARY_SAFE_CALL!>?.<!>bool()<!>
+    <!DEBUG_INFO_SMARTCAST!>a<!><!UNNECESSARY_SAFE_CALL!>?.<!>bool()
 }

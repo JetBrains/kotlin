@@ -116,8 +116,8 @@ public final class Main</*0*/ L> {
     public constructor Main</*0*/ L>(/*0*/ x: L?, /*1*/ y: L)
     public final val vx01: Foo<Bar<L>>
     public final val vx02: Foo<Bar<L>>
-    public final val vx11: OutBar<Bar<out OutBar<L>>>
-    public final val vx12: OutBar<Bar<out OutBar<L>>>
+    public final val vx11: OutBar<Bar<out OutBar<L & Any>>>
+    public final val vx12: OutBar<Bar<out OutBar<L & Any>>>
     public final val vx21: OutBar<Bar<in OutBar<L>>>
     public final val vx22: OutBar<Bar<in OutBar<L>>>
     public final val x00: Bar<L>
@@ -128,12 +128,12 @@ public final class Main</*0*/ L> {
     public final val x11: Foo<Bar<L>>
     public final val x110: Bar<L>
     public final val x111: Bar<L>
-    public final val x12: Foo<out Bar<out L>>
-    public final val x120: Bar<out L>
-    public final val x121: Bar<out L>
+    public final val x12: Foo<Bar<L & Any>>
+    public final val x120: Bar<L & Any>
+    public final val x121: Bar<L & Any>
     public final val x122: Bar<L>
     public final val x123: Bar<L>
-    public final val x13: Foo<out Bar<out L>>
+    public final val x13: Foo<Bar<L & Any>>
     public final val x133: Bar<L?>
     public final val x135: Bar<L>
     public final val x137: Bar<L>
@@ -146,8 +146,8 @@ public final class Main</*0*/ L> {
     public final val x154: Bar<L?>
     public final val x161: Bar<L>
     public final val x162: Bar<L>
-    public final val x163: Bar<out L>
-    public final val x164: Bar<out L>
+    public final val x163: Bar<L & Any>
+    public final val x164: Bar<L & Any>
     public final val x170: Bar<L>
     public final val x171: Bar<L>
     public final val x180: [ERROR : <ERROR FUNCTION RETURN TYPE>]
@@ -164,24 +164,24 @@ public final class Main</*0*/ L> {
     public final val x231: Foo<Foo<Bar<out L>>>
     public final val x240: Foo<Foo<Bar<in L>>>
     public final val x241: Foo<Foo<Bar<in L>>>
-    public final val x250: Bar<out L>
-    public final val x251: Bar<out L>
-    public final val x260: Foo<out Foo<out Bar<out L>>>
-    public final val x261: Foo<out Foo<out Bar<out L>>>
+    public final val x250: Bar<out L & Any>
+    public final val x251: Bar<out L & Any>
+    public final val x260: Foo<out Foo<out Bar<out L & Any>>>
+    public final val x261: Foo<out Foo<out Bar<out L & Any>>>
     public final val x270: Foo<out Foo<Bar<out L>>>
     public final val x271: Foo<out Foo<Bar<out L>>>
-    public final val x280: OutBar<OutBar<OutBar<L>>>
-    public final val x281: OutBar<OutBar<OutBar<L>>>
+    public final val x280: OutBar<OutBar<OutBar<L & Any>>>
+    public final val x281: OutBar<OutBar<OutBar<L & Any>>>
     public final val x290: OutBar<Bar<OutBar<L>>>
     public final val x291: OutBar<Bar<OutBar<L>>>
     public final val x30: Foo<Bar<L>>
-    public final val x300: OutBar<Bar<out OutBar<L>>>
-    public final val x301: OutBar<Bar<out OutBar<L>>>
+    public final val x300: OutBar<Bar<out OutBar<L & Any>>>
+    public final val x301: OutBar<Bar<out OutBar<L & Any>>>
     public final val x31: Foo<Bar<L>>
-    public final val x310: Bar<out L>
-    public final val x311: Bar<out L>
-    public final val x320: OutBar<L>
-    public final val x321: OutBar<L>
+    public final val x310: OutBarAliasUseSite<L & Any> /* = Bar<out L & Any> */
+    public final val x311: OutBarAliasUseSite<L & Any> /* = Bar<out L & Any> */
+    public final val x320: OutBarAliasDecSite<L & Any> /* = OutBar<L & Any> */
+    public final val x321: OutBarAliasDecSite<L & Any> /* = OutBar<L & Any> */
     public final val x330: OutBar<InBar<OutBar<L>>>
     public final val x331: OutBar<InBar<OutBar<L>>>
     public final val x340: OutBar<Bar<in OutBar<L>>>
@@ -212,15 +212,15 @@ public final class Main</*0*/ L> {
     public final val x451: OutBar<OutBar<Bar<L>>>
     public final val x460: Bar<OutBar<OutBar<L>>>
     public final val x461: Bar<OutBar<OutBar<L>>>
-    public final val x470: OutBar<OutBar<OutBar<L>>>
-    public final val x471: OutBar<OutBar<OutBar<L>>>
+    public final val x470: OutBar<OutBar<OutBar<L & Any>>>
+    public final val x471: OutBar<OutBar<OutBar<L & Any>>>
     public final val x480: Bar<L>
     public final val x481: Bar<L>
     public final val x482: Bar<kotlin.Nothing>
     public final val x50: Bar<in L>
     public final val x51: Bar<in L>
-    public final val x60: OutBar<L>
-    public final val x61: OutBar<L>
+    public final val x60: OutBar<L & Any>
+    public final val x61: OutBar<L & Any>
     public final val x70: InBar<L>
     public final val x71: InBar<L>
     public final val x80: Foo<Bar<L>>

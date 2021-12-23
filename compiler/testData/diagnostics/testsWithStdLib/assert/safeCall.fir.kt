@@ -4,7 +4,7 @@
 
 fun test1(s: String?) {
     assert(s!!.isEmpty())
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>s<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
+    s<!UNNECESSARY_SAFE_CALL!>?.<!>length
 }
 
 fun test2(s: String?) {
@@ -20,7 +20,7 @@ fun test3(s: String?) {
 fun test4() {
     val s: String? = null;
     assert(s!!.isEmpty())
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>s<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
+    s<!UNNECESSARY_SAFE_CALL!>?.<!>length
 }
 
 fun test5() {

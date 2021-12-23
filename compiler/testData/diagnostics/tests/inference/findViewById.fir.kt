@@ -54,5 +54,5 @@ fun test2(t: Test?) {
     val xSafeCallSafeCastExplicitType = t?.findViewById<X>(0) <!USELESS_CAST!>as? X<!>
 
     val xSafeCallCast = t?.findViewById(0) as X
-    val xSafeCallCastExplicitType = <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>t<!UNNECESSARY_SAFE_CALL!>?.<!>findViewById<X>(0)<!> as X
+    val xSafeCallCastExplicitType = t<!UNNECESSARY_SAFE_CALL!>?.<!>findViewById<X>(0) as X
 }

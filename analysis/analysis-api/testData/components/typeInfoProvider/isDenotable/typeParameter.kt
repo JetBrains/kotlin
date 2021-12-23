@@ -3,7 +3,7 @@ interface A
 fun <T> test(t: T) {
     @Denotable("T") t
     if (t != null) {
-        (@Nondenotable("T!!") t).equals("")
+        (@Denotable("T!!") t).equals("")
     }
     val outs = take(getOutProjection())
     @Denotable("A") outs
