@@ -521,7 +521,7 @@ private fun ModuleDescriptor.getPackageFragments(): List<PackageFragmentDescript
 internal class CAdapterGenerator(val context: Context) : DeclarationDescriptorVisitor<Boolean, Void?> {
 
     private val scopes = mutableListOf<ExportedElementScope>()
-    internal val prefix = context.config.fullExportedNamePrefix
+    internal val prefix = context.config.fullExportedNamePrefix.replace("-|\\.".toRegex(), "_")
     private lateinit var outputStreamWriter: PrintWriter
     private val paramNamesRecorded = mutableMapOf<String, Int>()
 
