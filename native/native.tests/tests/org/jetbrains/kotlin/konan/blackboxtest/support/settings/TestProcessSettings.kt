@@ -103,24 +103,30 @@ internal class Timeouts(val executionTimeout: Duration)
 internal sealed interface CacheKind {
     object WithoutCache : CacheKind
 
-    object WithStaticCache : CacheKind {
-        fun getRootCacheDirectory(
-            kotlinNativeHome: KotlinNativeHome,
-            kotlinNativeTargets: KotlinNativeTargets,
-            optimizationMode: OptimizationMode
-        ): File? = kotlinNativeHome.dir
+    class WithStaticCache(
+        kotlinNativeHome: KotlinNativeHome,
+        kotlinNativeTargets: KotlinNativeTargets,
+        optimizationMode: OptimizationMode
+    ) : CacheKind {
+        val rootCacheDir: File? = kotlinNativeHome.dir
             .resolve("klib/cache")
-            .resolve(computeCacheDirName(kotlinNativeTargets.testTarget, CACHE_KIND, optimizationMode == OptimizationMode.DEBUG))
-            .takeIf { it.exists() }
+            .resolve(
+                computeCacheDirName(
+                    testTarget = kotlinNativeTargets.testTarget,
+                    cacheKind = CACHE_KIND,
+                    debuggable = optimizationMode == OptimizationMode.DEBUG
+                )
+            ).takeIf { it.exists() }
 
-        private const val CACHE_KIND = "STATIC"
+        companion object {
+            private const val CACHE_KIND = "STATIC"
+        }
     }
 
     companion object {
+        val CacheKind.rootCacheDir: File? get() = safeAs<WithStaticCache>()?.rootCacheDir
+
         private fun computeCacheDirName(testTarget: KonanTarget, cacheKind: String, debuggable: Boolean) =
             "$testTarget${if (debuggable) "-g" else ""}$cacheKind"
     }
 }
-
-internal fun Settings.getRootCacheDirectory(): File? =
-    get<CacheKind>().safeAs<CacheKind.WithStaticCache>()?.getRootCacheDirectory(get(), get(), get())

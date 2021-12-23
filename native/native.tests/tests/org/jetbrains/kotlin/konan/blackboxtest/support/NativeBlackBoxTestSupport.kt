@@ -76,8 +76,10 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
                 val nativeHome = computeNativeHome()
                 val hostManager = HostManager(distribution = Distribution(nativeHome.path), experimental = false)
 
+                val nativeTargets = computeNativeTargets(hostManager)
+
                 TestProcessSettings(
-                    computeNativeTargets(hostManager),
+                    nativeTargets,
                     nativeHome,
                     computeNativeClassLoader(),
                     computeTestMode(),
@@ -85,7 +87,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
                     memoryModel,
                     threadStateChecker,
                     gcType,
-                    CacheKind::class to computeCacheKind(),
+                    CacheKind::class to computeCacheKind(nativeHome, nativeTargets, optimizationMode),
                     computeBaseDirs(),
                     computeTimeouts()
                 )
@@ -127,9 +129,16 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
 
         private fun computeGCType(): GCType = enumSystemProperty(GC_TYPE, GCType.values(), default = GCType.UNSPECIFIED)
 
-        private fun computeCacheKind(): CacheKind {
+        private fun computeCacheKind(
+            kotlinNativeHome: KotlinNativeHome,
+            kotlinNativeTargets: KotlinNativeTargets,
+            optimizationMode: OptimizationMode
+        ): CacheKind {
             val useCache = systemProperty(USE_CACHE, String::toBooleanStrictOrNull, default = true)
-            return if (useCache) CacheKind.WithStaticCache else CacheKind.WithoutCache
+            return if (useCache)
+                CacheKind.WithStaticCache(kotlinNativeHome, kotlinNativeTargets, optimizationMode)
+            else
+                CacheKind.WithoutCache
         }
 
         private fun computeBaseDirs(): BaseDirs = BaseDirs(File(requiredEnvironmentVariable(PROJECT_BUILD_DIR)))

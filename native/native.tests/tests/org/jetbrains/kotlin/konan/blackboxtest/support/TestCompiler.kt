@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilationResult.Com
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependencies
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allFriends
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.CacheKind.Companion.rootCacheDir
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.*
@@ -71,7 +72,7 @@ internal class TestCompilationFactory {
                             add(testRunnerArg)
                         }
                     }
-                    settings.getRootCacheDirectory()?.let { rootCacheDir ->
+                    settings.get<CacheKind>().rootCacheDir?.let { rootCacheDir ->
                         add("-Xcache-directory=$rootCacheDir")
                     }
                 }
