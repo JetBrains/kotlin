@@ -30,6 +30,9 @@ class Class
 
 external interface ExternalInterface
 
+@JsName("bbb")
+fun zzz(x: Int = 10) {}
+
 // FILE: file2.kt
 
 @file:JsExport
