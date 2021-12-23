@@ -143,8 +143,9 @@ class KotlinConstraintSystemCompleter(
                 continue
 
             // Stage 7: try to complete call with the builder inference if there are uninferred type variables
-            val areThereAppearedProperConstraintsForSomeVariable =
-                tryToCompleteWithBuilderInference(completionMode, topLevelType, postponedArguments, analyze)
+            val areThereAppearedProperConstraintsForSomeVariable = tryToCompleteWithBuilderInference(
+                completionMode, topLevelAtoms, topLevelType, postponedArguments, collectVariablesFromContext, analyze
+            )
 
             if (areThereAppearedProperConstraintsForSomeVariable)
                 continue
@@ -166,8 +167,10 @@ class KotlinConstraintSystemCompleter(
 
     private fun ConstraintSystemCompletionContext.tryToCompleteWithBuilderInference(
         completionMode: ConstraintSystemCompletionMode,
+        topLevelAtoms: List<ResolvedAtom>,
         topLevelType: UnwrappedType,
         postponedArguments: List<PostponedResolvedAtom>,
+        collectVariablesFromContext: Boolean,
         analyze: (PostponedResolvedAtom) -> Unit
     ): Boolean {
         if (completionMode == ConstraintSystemCompletionMode.PARTIAL) return false
@@ -180,7 +183,6 @@ class KotlinConstraintSystemCompleter(
         val lambdaArguments = postponedArguments.filterIsInstance<ResolvedLambdaAtom>().takeIf { it.isNotEmpty() } ?: return false
         val useBuilderInferenceWithoutAnnotation =
             languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceWithoutAnnotation)
-        val allNotFixedInputTypeVariables = mutableSetOf<TypeVariableTypeConstructorMarker>()
 
         for (argument in lambdaArguments) {
             if (!argument.atom.hasBuilderInferenceAnnotation && !useBuilderInferenceWithoutAnnotation)
@@ -191,8 +193,6 @@ class KotlinConstraintSystemCompleter(
 
             if (notFixedInputTypeVariables.isEmpty()) continue
 
-            allNotFixedInputTypeVariables.addAll(notFixedInputTypeVariables)
-
             for (variable in notFixedInputTypeVariables) {
                 getBuilder().markPostponedVariable(notFixedTypeVariables.getValue(variable).typeVariable)
             }
@@ -201,7 +201,7 @@ class KotlinConstraintSystemCompleter(
         }
 
         val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-            this, allNotFixedInputTypeVariables.toList(), postponedArguments, completionMode, topLevelType
+            this, getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms), postponedArguments, completionMode, topLevelType
         )
 
         // continue completion (rerun stages) only if ready for fixation variables with proper constraints have appeared
