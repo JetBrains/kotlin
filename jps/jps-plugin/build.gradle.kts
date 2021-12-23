@@ -5,6 +5,14 @@ plugins {
 
 val compilerModules: Array<String> by rootProject.extra
 
+val generateTests by generator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsKt") {
+    javaLauncher.set(
+        javaToolchains.launcherFor {
+            languageVersion.set(JavaLanguageVersion.of(11))
+        }
+    )
+}
+
 dependencies {
     compile(project(":kotlin-build-common"))
     compile(project(":core:descriptors"))
@@ -14,6 +22,8 @@ dependencies {
     compile(project(":daemon-common-new"))
     compile(projectRuntimeJar(":kotlin-daemon-client"))
     compile(projectRuntimeJar(":kotlin-daemon"))
+    testImplementation(projectTests(":generators:test-generator")) // TODO FIX ME
+    testCompile(projectTests(":generators:test-generator"))
     compile(project(":compiler:frontend.java"))
     compile(project(":js:js.frontend"))
     compile(projectRuntimeJar(":kotlin-preloader"))
