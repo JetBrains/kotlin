@@ -132,7 +132,6 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
     )
 
     // TODO(1.2.80): try replace allDependencies with KotlinChunk.collectDependentChunksRecursivelyExportedOnly
-    @Deprecated("Consider using precalculated KotlinChunk.collectDependentChunksRecursivelyExportedOnly")
     val allDependencies by lazy {
         JpsJavaExtensionService.dependencies(module).recursively().exportedOnly()
             .includedIn(JpsJavaClasspathKind.compile(isTests))
@@ -166,7 +165,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
         val moduleExcludes = module.excludeRootsList.urls.mapTo(java.util.HashSet(), JpsPathUtil::urlToFile)
 
         val compilerExcludes = JpsJavaExtensionService.getInstance()
-            .getOrCreateCompilerConfiguration(module.project)
+            .getCompilerConfiguration(module.project)
             .compilerExcludes
 
         val buildRootIndex = localContext.projectDescriptor.buildRootIndex
