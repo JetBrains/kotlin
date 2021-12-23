@@ -16337,6 +16337,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/jvmFieldInInlineClassCompanion.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
+        @TestMetadata("jvmInline.kt")
+        public void testJvmInline() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmInline.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
         @TestMetadata("jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt")
         public void testJvmOverloadsOnTopLevelFunctionReturningInlineClassValue() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
@@ -36170,24 +36175,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             public void testUnsignedLongToString_jvm8() throws Exception {
                 runTest("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics/unsignedLongToString_jvm8.kt");
             }
-        }
-    }
-
-    @TestMetadata("compiler/testData/codegen/box/valueClasses")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class ValueClasses extends AbstractLightAnalysisModeTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInValueClasses() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-        }
-
-        @TestMetadata("jvmInline.kt")
-        public void testJvmInline() throws Exception {
-            runTest("compiler/testData/codegen/box/valueClasses/jvmInline.kt");
         }
     }
 

@@ -20578,6 +20578,18 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("jvmInline.kt")
+        public void testJvmInline() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmInline.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("jvmInline.kt")
+        public void testJvmInline_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmInline.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt")
         public void testJvmOverloadsOnTopLevelFunctionReturningInlineClassValue() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
@@ -47359,22 +47371,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             public void testUnsignedLongToString_jvm8() throws Exception {
                 runTest("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics/unsignedLongToString_jvm8.kt");
             }
-        }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/codegen/box/valueClasses")
-    @TestDataPath("$PROJECT_ROOT")
-    public class ValueClasses {
-        @Test
-        public void testAllFilesPresentInValueClasses() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-        }
-
-        @Test
-        @TestMetadata("jvmInline.kt")
-        public void testJvmInline() throws Exception {
-            runTest("compiler/testData/codegen/box/valueClasses/jvmInline.kt");
         }
     }
 

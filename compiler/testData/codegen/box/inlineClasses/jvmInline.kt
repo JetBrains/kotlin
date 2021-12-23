@@ -1,6 +1,8 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: ANDROID
 // IGNORE_BACKEND: NATIVE
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 // FILE: 1.kt
 
@@ -13,17 +15,22 @@ annotation class JvmInline
 import kotlin.jvm.JvmInline
 import kotlin.coroutines.*
 
-@JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class VCString(val a: String)
-@JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class VCStringNullable(val a: String?)
-@JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class VCAny(val a: Any)
-@JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class VCAnyNullable(val a: Any?)
-@JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class VCInt(val a: Int)
-@JvmInline
+
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class VCIntNullable(val a: Int?)
 
 var result: Any? = null

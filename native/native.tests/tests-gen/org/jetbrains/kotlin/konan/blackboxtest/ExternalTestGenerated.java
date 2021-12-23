@@ -16024,6 +16024,7 @@ public class ExternalTestGenerated extends AbstractExternalNativeBlackBoxTest {
                 register("compiler/testData/codegen/box/inlineClasses/javaClassIntrinsicOnInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/javaPrimitiveTypeIC.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/jvmFieldInInlineClassCompanion.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                register("compiler/testData/codegen/box/inlineClasses/jvmInline.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/jvmStaticFunInInlineClassCompanion.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/jvmStaticPropertyAccessorInInlineClassCompanion.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -16721,6 +16722,13 @@ public class ExternalTestGenerated extends AbstractExternalNativeBlackBoxTest {
             public void testIterateOverListOfInlineClassValues() throws Exception {
                 // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                 runTest("compiler/testData/codegen/box/inlineClasses/iterateOverListOfInlineClassValues.kt");
+            }
+
+            @Test
+            @TestMetadata("jvmInline.kt")
+            public void testJvmInline() throws Exception {
+                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                runTest("compiler/testData/codegen/box/inlineClasses/jvmInline.kt");
             }
 
             @Test
@@ -34730,24 +34738,6 @@ public class ExternalTestGenerated extends AbstractExternalNativeBlackBoxTest {
                 public void testAllFilesPresentInJvm8Intrinsics() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                 }
-            }
-        }
-
-        @Nested
-        @TestMetadata("compiler/testData/codegen/box/valueClasses")
-        @TestDataPath("$PROJECT_ROOT")
-        @Tag("external")
-        @UseExtTestCaseGroupProvider()
-        public class ValueClasses {
-            @Test
-            public void testAllFilesPresentInValueClasses() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-            }
-
-            @Test
-            @TestMetadata("jvmInline.kt")
-            public void testJvmInline() throws Exception {
-                runTest("compiler/testData/codegen/box/valueClasses/jvmInline.kt");
             }
         }
 
