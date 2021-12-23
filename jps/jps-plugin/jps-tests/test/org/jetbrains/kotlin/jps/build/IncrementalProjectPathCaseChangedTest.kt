@@ -22,11 +22,11 @@ import org.jetbrains.kotlin.incremental.testingUtils.Modification
 
 class IncrementalProjectPathCaseChangedTest : AbstractIncrementalJpsTest(checkDumpsCaseInsensitively = true) {
     fun testProjectPathCaseChanged() {
-        doTest("jps-plugin/testData/incremental/custom/projectPathCaseChanged/")
+        doTest("jps/jps-plugin/testData/incremental/custom/projectPathCaseChanged/")
     }
 
     fun testProjectPathCaseChangedMultiFile() {
-        doTest("jps-plugin/testData/incremental/custom/projectPathCaseChangedMultiFile/")
+        doTest("jps/jps-plugin/testData/incremental/custom/projectPathCaseChangedMultiFile/")
     }
 
     override fun doTest(testDataPath: String) {
