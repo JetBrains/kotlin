@@ -105,6 +105,37 @@ class VisibilityFilterTest : BaseAbstractTest() {
     }
 
     @Test
+    fun `private setter with false global includeNonPublic`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    includeNonPublic = false
+                    sourceRoots = listOf("src/main/kotlin/basic/Test.kt")
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/basic/Test.kt
+            |package example
+            |
+            |var property: Int = 0
+            |private set 
+            |
+            |
+        """.trimMargin(),
+            configuration
+        ) {
+            preMergeDocumentablesTransformationStage = {
+                Assertions.assertNull(
+                    it.first().packages.first().properties.first().setter
+                )
+            }
+        }
+    }
+
+    @Test
     fun `private function with false global true package includeNonPublic`() {
         val configuration = dokkaConfiguration {
             sourceSets {
