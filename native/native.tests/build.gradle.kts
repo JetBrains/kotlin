@@ -47,6 +47,7 @@ enum class TestProperty(shortName: String) {
     // effect on other Gradle tasks (ex: :kotlin-native:dist) that might be executed along with test task.
     KOTLIN_NATIVE_HOME("nativeHome"),
     COMPILER_CLASSPATH("compilerClasspath"),
+    TEST_TARGET("target"),
     TEST_MODE("mode"),
     OPTIMIZATION_MODE("optimizationMode"),
     MEMORY_MODEL("memoryModel"),
@@ -57,10 +58,12 @@ enum class TestProperty(shortName: String) {
 
     private val propertyName = "kotlin.internal.native.test.$shortName"
 
-    fun setUpFromGradleProperty(task: Test, defaultValue: () -> Any? = { null }) {
-        val propertyValue = task.project.findProperty(propertyName) ?: defaultValue()
+    fun setUpFromGradleProperty(task: Test, defaultValue: () -> String? = { null }) {
+        val propertyValue = readGradleProperty(task) ?: defaultValue()
         if (propertyValue != null) task.systemProperty(propertyName, propertyValue)
     }
+
+    fun readGradleProperty(task: Test): String? = task.project.findProperty(propertyName)?.toString()
 }
 
 fun blackBoxTest(taskName: String, vararg tags: String) = projectTest(taskName, jUnitMode = JUnitMode.JUnit5) {
@@ -92,7 +95,8 @@ fun blackBoxTest(taskName: String, vararg tags: String) = projectTest(taskName, 
         }
 
         TestProperty.KOTLIN_NATIVE_HOME.setUpFromGradleProperty(this) {
-            dependsOn(":kotlin-native:dist")
+            val testTarget = TestProperty.TEST_TARGET.readGradleProperty(this)
+            dependsOn(if (testTarget != null) ":kotlin-native:${testTarget}CrossDist" else ":kotlin-native:dist")
             project(":kotlin-native").projectDir.resolve("dist").absolutePath
         }
 
@@ -103,6 +107,7 @@ fun blackBoxTest(taskName: String, vararg tags: String) = projectTest(taskName, 
         }
 
         // Pass Gradle properties as JVM properties so test process can read them.
+        TestProperty.TEST_TARGET.setUpFromGradleProperty(this)
         TestProperty.TEST_MODE.setUpFromGradleProperty(this)
         TestProperty.OPTIMIZATION_MODE.setUpFromGradleProperty(this)
         TestProperty.MEMORY_MODEL.setUpFromGradleProperty(this)

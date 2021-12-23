@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.blackboxtest.support
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
+import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
@@ -50,31 +51,34 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
 
         /*************** Test process settings ***************/
 
-        private fun ExtensionContext.getOrCreateTestProcessSettings(): TestProcessSettings {
-            val optimizationMode = computeOptimizationMode()
-            val memoryModel = computeMemoryModel()
+        private fun ExtensionContext.getOrCreateTestProcessSettings(): TestProcessSettings =
+            root.getStore(NAMESPACE).getOrComputeIfAbsent(TestProcessSettings::class.java.name) {
+                val optimizationMode = computeOptimizationMode()
+                val memoryModel = computeMemoryModel()
 
-            val threadStateChecker = computeThreadStateChecker()
-            if (threadStateChecker == ThreadStateChecker.ENABLED) {
-                assertEquals(MemoryModel.EXPERIMENTAL, memoryModel) {
-                    "Thread state checker can be enabled only with experimental memory model"
+                val threadStateChecker = computeThreadStateChecker()
+                if (threadStateChecker == ThreadStateChecker.ENABLED) {
+                    assertEquals(MemoryModel.EXPERIMENTAL, memoryModel) {
+                        "Thread state checker can be enabled only with experimental memory model"
+                    }
+                    assertEquals(OptimizationMode.DEBUG, optimizationMode) {
+                        "Thread state checker can be enabled only with debug optimization mode"
+                    }
                 }
-                assertEquals(OptimizationMode.DEBUG, optimizationMode) {
-                    "Thread state checker can be enabled only with debug optimization mode"
-                }
-            }
 
-            val gcType = computeGCType()
-            if (gcType != GCType.UNSPECIFIED) {
-                assertEquals(MemoryModel.EXPERIMENTAL, memoryModel) {
-                    "GC type can be specified only with experimental memory model"
+                val gcType = computeGCType()
+                if (gcType != GCType.UNSPECIFIED) {
+                    assertEquals(MemoryModel.EXPERIMENTAL, memoryModel) {
+                        "GC type can be specified only with experimental memory model"
+                    }
                 }
-            }
 
-            return root.getStore(NAMESPACE).getOrComputeIfAbsent(TestProcessSettings::class.java.name) {
+                val nativeHome = computeNativeHome()
+                val hostManager = HostManager(distribution = Distribution(nativeHome.path), experimental = false)
+
                 TestProcessSettings(
-                    computeNativeTargets(),
-                    computeNativeHome(),
+                    computeNativeTargets(hostManager),
+                    nativeHome,
                     computeNativeClassLoader(),
                     computeTestMode(),
                     optimizationMode,
@@ -86,11 +90,13 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
                     computeTimeouts()
                 )
             }.cast()
-        }
 
-        private fun computeNativeTargets(): KotlinNativeTargets {
+        private fun computeNativeTargets(hostManager: HostManager): KotlinNativeTargets {
             val hostTarget = HostManager.host
-            return KotlinNativeTargets(testTarget = hostTarget, hostTarget = hostTarget)
+            return KotlinNativeTargets(
+                testTarget = systemProperty(TEST_TARGET, hostManager::targetByName, default = hostTarget),
+                hostTarget = hostTarget
+            )
         }
 
         private fun computeNativeHome(): KotlinNativeHome = KotlinNativeHome(File(requiredSystemProperty(KOTLIN_NATIVE_HOME)))
@@ -165,6 +171,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
 
         private const val KOTLIN_NATIVE_HOME = "kotlin.internal.native.test.nativeHome"
         private const val COMPILER_CLASSPATH = "kotlin.internal.native.test.compilerClasspath"
+        private const val TEST_TARGET = "kotlin.internal.native.test.target"
         private const val TEST_MODE = "kotlin.internal.native.test.mode"
         private const val OPTIMIZATION_MODE = "kotlin.internal.native.test.optimizationMode"
         private const val MEMORY_MODEL = "kotlin.internal.native.test.memoryModel"
@@ -183,7 +190,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
                 val testProcessSettings = getOrCreateTestProcessSettings()
                 val computedTestConfiguration = computeTestConfiguration(enclosingTestClass)
 
-                /// Put settings that are always required:
+                // Put settings that are always required:
                 val settings = mutableListOf(
                     computedTestConfiguration,
                     computeBinariesDirs(testProcessSettings.get(), testProcessSettings.get(), enclosingTestClass)
