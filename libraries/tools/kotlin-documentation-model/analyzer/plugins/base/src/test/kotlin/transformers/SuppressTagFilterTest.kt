@@ -89,6 +89,26 @@ class SuppressTagFilterTest : BaseAbstractTest() {
     }
 
     @Test
+    fun `should filter setter`() {
+        testInline(
+            """
+            |/src/suppressed/Suppressed.kt
+            |var property: Int
+            |/** @suppress */
+            |private set
+            """.trimIndent(), configuration
+        ) {
+            preMergeDocumentablesTransformationStage = { modules ->
+                val prop = modules.flatMap { it.packages }.flatMap { it.properties }
+                    .find { it.name == "property" }
+                assertNotNull(prop)
+                assertNotNull(prop.getter)
+                assertNull(prop.setter)
+            }
+        }
+    }
+
+    @Test
     fun `should filter top level type aliases`() {
         testInline(
             """

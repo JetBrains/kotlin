@@ -27,7 +27,7 @@ abstract class SuppressedByConditionDocumentableFilterTransformer(val context: D
         val classlikes = dPackage.classlikes.map { processClassLike(it) }
         val typeAliases = dPackage.typealiases.map { processMember(it) }
         val functions = dPackage.functions.map { processMember(it) }
-        val properies = dPackage.properties.map { processMember(it) }
+        val properies = dPackage.properties.map { processProperty(it) }
 
         val wasChanged = (classlikes + typeAliases + functions + properies).any { it.changed }
         return (dPackage.takeIf { !wasChanged } ?: dPackage.copy(
@@ -43,7 +43,7 @@ abstract class SuppressedByConditionDocumentableFilterTransformer(val context: D
 
         val functions = classlike.functions.map { processMember(it) }
         val classlikes = classlike.classlikes.map { processClassLike(it) }
-        val properties = classlike.properties.map { processMember(it) }
+        val properties = classlike.properties.map { processProperty(it) }
         val companion = (classlike as? WithCompanion)?.companion?.let { processClassLike(it) }
 
         val wasClasslikeChanged = (functions + classlikes + properties).any { it.changed } || companion?.changed == true
@@ -104,7 +104,7 @@ abstract class SuppressedByConditionDocumentableFilterTransformer(val context: D
         if (shouldBeSuppressed(dEnumEntry)) return DocumentableWithChanges.filteredDocumentable()
 
         val functions = dEnumEntry.functions.map { processMember(it) }
-        val properties = dEnumEntry.properties.map { processMember(it) }
+        val properties = dEnumEntry.properties.map { processProperty(it) }
         val classlikes = dEnumEntry.classlikes.map { processClassLike(it) }
 
         val wasChanged = (functions + properties + classlikes).any { it.changed }
@@ -112,6 +112,19 @@ abstract class SuppressedByConditionDocumentableFilterTransformer(val context: D
             functions = functions.mapNotNull { it.documentable },
             classlikes = classlikes.mapNotNull { it.documentable },
             properties = properties.mapNotNull { it.documentable },
+        )).let { DocumentableWithChanges(it, wasChanged) }
+    }
+
+    private fun processProperty(dProperty: DProperty): DocumentableWithChanges<DProperty> {
+        if (shouldBeSuppressed(dProperty)) return DocumentableWithChanges.filteredDocumentable()
+
+        val getter = dProperty.getter?.let { processMember(it) } ?: DocumentableWithChanges(null, false)
+        val setter = dProperty.setter?.let { processMember(it) } ?: DocumentableWithChanges(null, false)
+
+        val wasChanged = getter.changed || setter.changed
+        return (dProperty.takeIf { !wasChanged } ?: dProperty.copy(
+            getter = getter.documentable,
+            setter = setter.documentable
         )).let { DocumentableWithChanges(it, wasChanged) }
     }
 
