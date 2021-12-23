@@ -254,6 +254,7 @@ message Statement {
         Try try_statement = 37;
         Empty empty = 38;
         SingleLineComment single_line_comment = 39;
+        Code code = 40;
     }
 }
 
@@ -373,6 +374,10 @@ message Catch {
 message Empty {
 }
 
+message Code {
+    required string value = 1;
+}
+
 message SingleLineComment {
     required string message = 1;
 }
@@ -404,7 +409,7 @@ message Fragment {
     optional string dts = 15;
     optional int32 suite_function = 16;
     repeated int32 definitions = 17;
-    repeated string polyfills = 18;
+    optional GlobalBlock polyfills = 18;
 }
 
 message InlinedLocalDeclarations {

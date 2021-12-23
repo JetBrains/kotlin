@@ -106,8 +106,10 @@ private fun processUselessPolyfills(
     usefulDeclarations: Set<IrDeclaration>,
     context: JsIrBackendContext
 ) {
-    modules.forEach {
-        context.polyfills.saveOnlyIntersectionOfNextDeclarationsFor(it, usefulDeclarations)
+    modules.forEach { module ->
+        module.files.forEach {
+            context.polyfills.saveOnlyIntersectionOfNextDeclarationsFor(it, usefulDeclarations)
+        }
     }
 }
 

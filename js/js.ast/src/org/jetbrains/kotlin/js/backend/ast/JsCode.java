@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.js.backend.ast;
 import org.jetbrains.annotations.NotNull;
 
 public class JsCode extends SourceInfoAwareJsNode implements JsStatement {
-    private String code;
+    private String value;
 
     public JsCode(String code) {
-        this.code = code;
+        this.value = code;
     }
 
-    public String getCode() {
-        return code;
+    public String getValue() {
+        return value;
     }
 
     @Override
@@ -30,6 +30,6 @@ public class JsCode extends SourceInfoAwareJsNode implements JsStatement {
     @NotNull
     @Override
     public JsCode deepCopy() {
-        return new JsCode(code);
+        return new JsCode(value);
     }
 }

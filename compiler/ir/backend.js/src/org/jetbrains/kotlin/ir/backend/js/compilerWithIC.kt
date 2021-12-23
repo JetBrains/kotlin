@@ -130,6 +130,7 @@ fun generateJsFromAst(
     caches: Map<String, ModuleCache>,
     relativeRequirePath: Boolean = false,
 ): CompilerResult {
+<<<<<<< HEAD
     fun compilationOutput(multiModule: Boolean): CompilationOutputs {
         val deserializer = JsIrAstDeserializer()
         val jsIrProgram = JsIrProgram(caches.values.map {
@@ -146,6 +147,26 @@ fun generateJsFromAst(
             jsIrProgram,
             sourceMapsInfo = sourceMapsInfo,
             relativeRequirePath = relativeRequirePath,
+=======
+    val deserializer = JsIrAstDeserializer()
+    val fragments = JsIrProgram(
+        caches.values.map {
+            JsIrModule(
+                it.name,
+                it.name,
+                it.asts.values
+                    .sortedBy { it.name }
+                    .mapNotNull { it.ast?.let { deserializer.deserialize(ByteArrayInputStream(it))} }
+            )
+        }
+    )
+    return CompilerResult(
+        generateSingleWrappedModuleBody(
+            mainModuleName,
+            moduleKind,
+            fragments.modules.flatMap { it.fragments },
+            sourceMapsInfo = null,
+>>>>>>> chore: rework polyfills with file persistence for IC.
             generateScriptModule = false,
         )
     }

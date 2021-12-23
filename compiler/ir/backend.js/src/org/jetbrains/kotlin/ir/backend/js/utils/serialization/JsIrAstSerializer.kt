@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragmen
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstSerializerBase
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.OutputStream
 
@@ -60,6 +61,7 @@ class JsIrAstSerializer: JsAstSerializerBase() {
         fragmentBuilder.declarationBlock = serializeBlock(fragment.declarations)
         fragmentBuilder.initializerBlock = serializeBlock(fragment.initializers)
         fragmentBuilder.exportBlock = serializeBlock(fragment.exports)
+        fragmentBuilder.polyfills = serializeBlock(fragment.polyfills)
 
         for ((key, name) in fragment.nameBindings.entries) {
             val nameBindingBuilder = NameBinding.newBuilder()

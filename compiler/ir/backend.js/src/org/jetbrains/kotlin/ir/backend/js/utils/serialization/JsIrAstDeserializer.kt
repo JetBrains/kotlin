@@ -59,6 +59,9 @@ class JsIrAstDeserializer : JsAstDeserializerBase() {
         if (proto.hasExportBlock()) {
             fragment.exports.statements += deserializeGlobalBlock(proto.exportBlock).statements
         }
+        if (proto.hasPolyfills()) {
+            fragment.polyfills.statements += deserializeGlobalBlock(proto.polyfills).statements
+        }
 
         proto.nameBindingList.associateTo(fragment.nameBindings) { nameBindingProto ->
             deserializeString(nameBindingProto.signatureId) to deserializeName(nameBindingProto.nameId)

@@ -21,13 +21,13 @@ class JsIrProgramFragment(val packageFqn: String) {
     var testFunInvocation: JsStatement? = null
     var suiteFn: JsName? = null
     val definitions = mutableSetOf<String>()
+    val polyfills = JsGlobalBlock()
 }
 
 class JsIrModule(
     val moduleName: String,
     val externalModuleName: String,
     val fragments: List<JsIrProgramFragment>,
-    val polyfills: List<JsStatement> = emptyList()
 )
 
 class JsIrProgram(val modules: List<JsIrModule>) {

@@ -98,7 +98,7 @@ class IrModuleToJsTransformer(
                 exportedModule,
                 namer,
                 refInfo,
-                generateMainCall = true
+                generateMainCall = true,
             )
 
             val dependencies = others.mapIndexed { index, module ->
@@ -112,7 +112,7 @@ class IrModuleToJsTransformer(
                     ExportedModule(moduleName, exportedModule.moduleKind, exportedDeclarations),
                     namer,
                     refInfo,
-                    generateMainCall = false
+                    generateMainCall = false,
                 )
             }.reversed()
 
@@ -123,7 +123,8 @@ class IrModuleToJsTransformer(
                 emptyList(),
                 exportedModule,
                 namer,
-                EmptyCrossModuleReferenceInfo
+                EmptyCrossModuleReferenceInfo,
+                generateMainCall = true,
             )
         }
     }
@@ -134,7 +135,7 @@ class IrModuleToJsTransformer(
         exportedModule: ExportedModule,
         namer: NameTables,
         refInfo: CrossModuleReferenceInfo,
-        generateMainCall: Boolean = true
+        generateMainCall: Boolean = true,
     ): CompilationOutputs {
 
         val nameGenerator = refInfo.withReferenceTracking(

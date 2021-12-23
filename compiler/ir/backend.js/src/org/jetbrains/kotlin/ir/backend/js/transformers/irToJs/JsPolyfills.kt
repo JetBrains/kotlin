@@ -8,38 +8,36 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNativeImplementation
 import org.jetbrains.kotlin.ir.backend.js.utils.hasJsNativeImplementation
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.js.backend.ast.JsCode
-import org.jetbrains.kotlin.js.backend.ast.JsSingleLineComment
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 
-class JsPolyfills(private val generateRegionComments: Boolean = false) {
-    private val declarationsWithNativeImplementations = hashMapOf<IrModuleFragment, HashSet<IrDeclaration>>()
+class JsPolyfills {
+    private val polyfillsPerFile = hashMapOf<IrFile, HashSet<IrDeclaration>>()
 
-    fun registerDeclarationNativeImplementation(module: IrModuleFragment, declaration: IrDeclaration) {
+    fun registerDeclarationNativeImplementation(file: IrFile, declaration: IrDeclaration) {
         if (!declaration.hasJsNativeImplementation()) return
-        val declarations = declarationsWithNativeImplementations[module] ?: hashSetOf()
+        val declarations = polyfillsPerFile[file] ?: hashSetOf()
         declarations.add(declaration)
-        declarationsWithNativeImplementations[module] = declarations
+        polyfillsPerFile[file] = declarations
     }
 
-    fun saveOnlyIntersectionOfNextDeclarationsFor(module: IrModuleFragment, declarations: Set<IrDeclaration>) {
-        val polyfills = declarationsWithNativeImplementations[module] ?: return
-        declarationsWithNativeImplementations[module] = polyfills.intersect(declarations).toHashSet()
+    fun saveOnlyIntersectionOfNextDeclarationsFor(file: IrFile, declarations: Set<IrDeclaration>) {
+        val polyfills = polyfillsPerFile[file] ?: return
+        polyfillsPerFile[file] = polyfills.intersect(declarations).toHashSet()
     }
 
-    fun getAllPolyfillsFor(module: IrModuleFragment): List<JsStatement> {
-        val declarations = declarationsWithNativeImplementations[module] ?: emptySet()
+    fun getAllPolyfillsFor(file: IrFile): List<JsStatement> =
+        polyfillsPerFile[file].orEmpty().asImplementationList()
 
-        if (declarations.isEmpty()) return emptyList()
+    private fun Iterable<Iterable<IrDeclaration>>.asFlatJsCodeList() =
+        asSequence().flatten().asImplementationList()
 
-        return mutableListOf<JsStatement>().apply {
-            plusAssign(
-                declarations.asSequence()
-                .map { it.getJsNativeImplementation() }
-                .distinct()
-                .map { JsCode(it) }
-            )
-        }
-    }
+    private fun Iterable<IrDeclaration>.asImplementationList() =
+        asSequence().asImplementationList()
+
+    private fun Sequence<IrDeclaration>.asImplementationList(): List<JsCode> =
+        map { it.getJsNativeImplementation()!! }
+            .distinct()
+            .map { JsCode(it) }
+            .toList()
 }

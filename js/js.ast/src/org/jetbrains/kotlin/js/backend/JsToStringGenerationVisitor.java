@@ -1250,7 +1250,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitCode(@NotNull JsCode code) {
-        p.print(code.getCode());
+        p.print(code.getValue());
     }
 
 

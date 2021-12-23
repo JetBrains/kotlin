@@ -155,7 +155,6 @@ class IrModuleToJsTransformerTmp(
                         val exports = exportData[m]!![it]!!
                         generateProgramFragment(it, exports)
                     },
-                    backendContext.polyfills.getAllPolyfillsFor(m)
                 )
             }
         )
@@ -175,7 +174,9 @@ class IrModuleToJsTransformerTmp(
             globalNameScope = globalNameScope
         )
 
-        val result = JsIrProgramFragment(file.fqName.asString())
+        val result = JsIrProgramFragment(file.fqName.asString()).apply {
+            polyfills.statements += backendContext.polyfills.getAllPolyfillsFor(file)
+        }
 
         val internalModuleName = JsName("_", false)
         val globalNames = NameTable<String>(globalNameScope)
@@ -331,7 +332,6 @@ fun generateWrappedModuleBody(
             generateScriptModule,
             generateCallToMain = true,
             moduleToRef[main]!!,
-            main.polyfills
         )
 
         val dependencies = others.map { module ->
@@ -345,7 +345,6 @@ fun generateWrappedModuleBody(
                 generateScriptModule,
                 generateCallToMain = false,
                 moduleToRef[module]!!,
-                module.polyfills
             )
         }
 
@@ -357,7 +356,6 @@ fun generateWrappedModuleBody(
             program.modules.flatMap { it.fragments },
             sourceMapsInfo,
             generateScriptModule,
-            polyfills = program.modules.flatMap { it.polyfills },
             generateCallToMain = true,
         )
     }
@@ -371,7 +369,6 @@ private fun generateSingleWrappedModuleBody(
     generateScriptModule: Boolean,
     generateCallToMain: Boolean,
     crossModuleReferences: CrossModuleReferences = CrossModuleReferences.Empty,
-    polyfills: List<JsStatement> = emptyList()
 ): CompilationOutputs {
     val program = Merger(
         moduleName,
@@ -381,7 +378,6 @@ private fun generateSingleWrappedModuleBody(
         generateScriptModule,
         generateRegionComments = true,
         generateCallToMain,
-        polyfills
     ).merge()
 
     program.resolveTemporaryNames()
