@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.incremental.testingUtils.Modification
 
 class IncrementalRenameModuleTest : AbstractIncrementalJpsTest() {
     fun testRenameModule() {
-        doTest("jps-plugin/testData/incremental/custom/renameModule/")
+        doTest("jps/jps-plugin/testData/incremental/custom/renameModule/")
     }
 
     override fun performAdditionalModifications(modifications: List<Modification>) {
