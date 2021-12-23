@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.InaccessibleImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
 import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
+import org.jetbrains.kotlin.fir.resolve.inference.FirBuilderInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
@@ -348,6 +349,13 @@ class BodyResolveContext(
             containingClass = this@BodyResolveContext.containingClass
             replaceTowerDataContext(this@BodyResolveContext.towerDataContext)
             anonymousFunctionsAnalyzedInDependentContext.addAll(this@BodyResolveContext.anonymousFunctionsAnalyzedInDependentContext)
+            // Looks like we should copy this session only for builder inference to be able
+            // to use information from local class inside it.
+            // However, we should not copy other kinds of inference sessions,
+            // otherwise we can "inherit" type variables from there provoking inference problems
+            if (this@BodyResolveContext.inferenceSession is FirBuilderInferenceSession) {
+                inferenceSession = this@BodyResolveContext.inferenceSession
+            }
         }
 
     // withElement PUBLIC API

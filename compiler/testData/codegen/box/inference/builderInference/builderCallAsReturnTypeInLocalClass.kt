@@ -1,6 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER on buildList calls (E)
 @OptIn(ExperimentalStdlibApi::class)
 fun foo1() {
     buildList {

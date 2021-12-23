@@ -8,7 +8,7 @@ fun Wrapper.accept(visitor: AnyVisitor) {
     visitor.visit(this)
 }
 
-fun bar(wrapper: Wrapper) = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>buildSet<!> {
+fun bar(wrapper: Wrapper) = buildSet {
     wrapper.accept(object : AnyVisitor() {
         override fun visit(arg: Wrapper) {
             add(arg.tag)

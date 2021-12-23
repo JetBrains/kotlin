@@ -19,8 +19,8 @@ FILE: buildSetWithVisitor.kt
     public final fun R|Wrapper|.accept(visitor: R|AnyVisitor|): R|kotlin/Unit| {
         R|<local>/visitor|.R|/AnyVisitor.visit|(this@R|/accept|)
     }
-    public final fun bar(wrapper: R|Wrapper|): R|kotlin/collections/Set<ERROR CLASS: Cannot infer argument for type parameter E>| {
-        ^bar <CS errors: kotlin/collections/buildSet>#<R|ERROR CLASS: Cannot infer argument for type parameter E|>(<L> = buildSet@fun R|kotlin/collections/MutableSet<ERROR CLASS: Cannot infer argument for type parameter E>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+    public final fun bar(wrapper: R|Wrapper|): R|kotlin/collections/Set<kotlin/String>| {
+        ^bar R|kotlin/collections/buildSet|<R|kotlin/String|>(<L> = buildSet@fun R|kotlin/collections/MutableSet<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             R|<local>/wrapper|.R|/accept|(object : R|AnyVisitor| {
                 private constructor(): R|<anonymous>| {
                     super<R|AnyVisitor|>()
