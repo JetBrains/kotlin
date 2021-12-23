@@ -1,10 +1,10 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Analysis API FIR Tests" type="GradleRunConfiguration" factoryName="Gradle" folderName="Analysis">
+  <configuration default="false" name="Symbol Light Classes Tests" type="GradleRunConfiguration" factoryName="Gradle" folderName="Analysis">
     <ExternalSystemSettings>
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value=":analysis:analysis-api-fir:test --tests *" />
+      <option name="scriptParameters" value=":analysis:symbol-light-classes:test --tests *" />
       <option name="taskDescriptions">
         <list />
       </option>

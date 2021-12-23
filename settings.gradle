@@ -485,6 +485,7 @@ if (attachedIntellijVersion == "212") { // Latest available platform in scope of
 }
 
 include ":generators:analysis-api-generator",
+        ":analysis",
         ":analysis:low-level-api-fir",
         ":analysis:analysis-api-fir:analysis-api-fir-generator",
         ":analysis:analysis-api-fir",
