@@ -105,7 +105,7 @@ fun case_4(value_1: Number, value_2: (() -> Unit)?) {
  * ISSUES: KT-26612
  */
 fun case_5(value_1: Number?, value_2: String?) {
-    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_2.case_5(value_1)) {
+    <!NO_ELSE_IN_WHEN!>when<!> (value_2.case_5(value_1)) {
         true -> {
             println(value_2.length)
             println(value_1.toByte())

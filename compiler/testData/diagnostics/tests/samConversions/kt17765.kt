@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: Test.java
 public class Test {
     interface MyRunnable extends Runnable {}
@@ -8,5 +9,5 @@ public class Test {
 
 // FILE: 1.kt
 fun main(args: Array<String>) {
-    Test.<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> {  }
+    Test.foo {  }
 }

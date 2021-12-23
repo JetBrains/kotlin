@@ -27,7 +27,7 @@ fun test_2(cond: Boolean?) {
 }
 
 fun test_3(cond: Boolean) {
-    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (cond) {
+    <!NO_ELSE_IN_WHEN!>when<!> (cond) {
         true -> 1
     }
 }

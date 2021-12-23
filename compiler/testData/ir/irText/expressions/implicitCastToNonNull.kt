@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun test1(x: String?) =
     if (x == null) 0 else x.length
 

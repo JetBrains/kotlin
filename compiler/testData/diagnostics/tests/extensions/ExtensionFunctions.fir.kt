@@ -9,7 +9,7 @@ fun <T: Any, E> T.foo(x : E, y : A) : T   {
   y plus 1
   y + 1.0
 
-  <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>this<!UNNECESSARY_SAFE_CALL!>?.<!>minus<T>(this)<!>
+  this<!UNNECESSARY_SAFE_CALL!>?.<!>minus<T>(this)
 
   return this
 }
@@ -69,7 +69,7 @@ import outer.*
             command?.equals1(null)
 
             val c = Command()
-            <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>c<!UNNECESSARY_SAFE_CALL!>?.<!>equals2(null)<!>
+            c<!UNNECESSARY_SAFE_CALL!>?.<!>equals2(null)
 
             if (command == null) 1
         }

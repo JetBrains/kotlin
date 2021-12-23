@@ -60,11 +60,11 @@ fun case_5(value_1: Int, value_2: Int, value_3: Boolean?) {
             false -> "2"
             null -> "3"
         }
-        value_1 == 5 -> <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_3) {
+        value_1 == 5 -> <!NO_ELSE_IN_WHEN!>when<!> (value_3) {
             true -> "1"
             false -> "2"
         }
-        value_1 == 6 -> <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_3) {}
+        value_1 == 6 -> <!NO_ELSE_IN_WHEN!>when<!> (value_3) {}
     }
 }
 

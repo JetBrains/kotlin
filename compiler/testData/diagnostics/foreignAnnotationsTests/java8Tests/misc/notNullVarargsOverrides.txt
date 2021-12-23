@@ -4,7 +4,7 @@ public final class A : BaseClass {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open override /*1*/ /*fake_override*/ fun loadCache(/*0*/ @org.checkerframework.checker.nullness.qual.NonNull vararg args: @org.checkerframework.checker.nullness.qual.NonNull kotlin.Any /*kotlin.Array<(out) @org.checkerframework.checker.nullness.qual.NonNull kotlin.Any>*/): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun loadCache(/*0*/ @org.checkerframework.checker.nullness.qual.NonNull vararg args: @org.checkerframework.checker.nullness.qual.NonNull kotlin.Any /*kotlin.Array<(out) @org.checkerframework.checker.nullness.qual.NonNull kotlin.Any>!*/): kotlin.Unit
     public open fun loadCache(/*0*/ vararg args: kotlin.Any? /*kotlin.Array<out kotlin.Any?>*/): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -21,6 +21,7 @@ public open class BaseClass {
     public constructor BaseClass()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open fun loadCache(/*0*/ @org.checkerframework.checker.nullness.qual.NonNull vararg args: @org.checkerframework.checker.nullness.qual.NonNull kotlin.Any /*kotlin.Array<(out) @org.checkerframework.checker.nullness.qual.NonNull kotlin.Any>*/): kotlin.Unit
+    public open fun loadCache(/*0*/ @org.checkerframework.checker.nullness.qual.NonNull vararg args: @org.checkerframework.checker.nullness.qual.NonNull kotlin.Any /*kotlin.Array<(out) @org.checkerframework.checker.nullness.qual.NonNull kotlin.Any>!*/): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

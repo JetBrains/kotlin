@@ -12,7 +12,7 @@ fun <S : Any?> select(x: S, y: S): S {
 }
 
 fun <T : Any?> foo(a: Array<In<T>>, b: Array<In<String>>): Boolean {
-  return select<Array<out In<Nothing>>>(x = a, y = b).get(index = 0).ofType<Any?>(y = true)
+  return select<Array<out In<Nothing>>>(x = a, y = b).get(index = 0).ofType<Any>(y = true)
 }
 
 inline fun <reified K : Any?> In<K>.ofType(y: Any?): Boolean {
@@ -24,3 +24,4 @@ fun test() {
   val a2: Array<In<String>> = arrayOf<In<String>>(elements = [In<String>()])
   foo<Int>(a = a1, b = a2) /*~> Unit */
 }
+

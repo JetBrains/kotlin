@@ -25,20 +25,20 @@ fun test() {
     // platform type with no annotation
     val platformJ = J.staticJ
 
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>platformNN<!UNNECESSARY_SAFE_CALL!>?.<!>foo()<!>
+    platformNN<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
     platformN?.foo()
     platformJ?.foo()
 
     if (platformNN != null) {
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>platformNN<!UNNECESSARY_SAFE_CALL!>?.<!>foo()<!>
+        platformNN<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
     }
 
     if (platformN != null) {
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>platformN<!UNNECESSARY_SAFE_CALL!>?.<!>foo()<!>
+        platformN<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
     }
 
     if (platformJ != null) {
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>platformJ<!UNNECESSARY_SAFE_CALL!>?.<!>foo()<!>
+        platformJ<!UNNECESSARY_SAFE_CALL!>?.<!>foo()
     }
 }
 
