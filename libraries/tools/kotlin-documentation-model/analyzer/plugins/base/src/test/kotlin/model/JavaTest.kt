@@ -1,5 +1,6 @@
 package model
 
+import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.base.transformers.documentables.InheritorsInfo
 import org.jetbrains.dokka.links.*
@@ -21,7 +22,12 @@ class JavaTest : AbstractModelTest("/src/main/kotlin/java/Test.java", "java") {
                 sourceRoots = listOf("src/")
                 analysisPlatform = Platform.jvm.toString()
                 classpath += jvmStdlibPath!!
-                includeNonPublic = true
+                documentedVisibilities = setOf(
+                    DokkaConfiguration.Visibility.PUBLIC,
+                    DokkaConfiguration.Visibility.PRIVATE,
+                    DokkaConfiguration.Visibility.PROTECTED,
+                    DokkaConfiguration.Visibility.PACKAGE,
+                )
             }
         }
     }
