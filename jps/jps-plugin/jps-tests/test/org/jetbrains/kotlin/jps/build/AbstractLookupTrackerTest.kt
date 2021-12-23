@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.jps.build
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ThrowableRunnable
-import com.intellij.util.containers.StringInterner
+import com.intellij.util.containers.Interner
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.ExitCode
@@ -336,7 +336,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
                             else -> "(" + it.name + ")"
                         }
 
-                    it.scopeKind.toString()[0].toLowerCase()
+                    it.scopeKind.toString()[0].lowercaseChar()
                         .toString() + ":" + it.scopeFqName.let { if (it.isNotEmpty()) it else "<root>" } + name
                 }.joinToString(separator = " ", prefix = "/*", postfix = "*/")
 
@@ -355,7 +355,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
 
 class TestLookupTracker : LookupTracker {
     val lookups = arrayListOf<LookupInfo>()
-    private val interner = StringInterner()
+    private val interner = Interner.createStringInterner<String>()
 
     override val requiresPosition: Boolean
         get() = true

@@ -97,7 +97,7 @@ object CompilerRunnerUtil {
             Class.forName("org.jetbrains.kotlin.config.Services", true, classLoader),
             Array<String>::class.java
         )
-        exec.invoke(compiler.newInstance(), out, environment.services, arguments)
+        exec.invoke(compiler.getDeclaredConstructor().newInstance(), out, environment.services, arguments)
     }
 
     fun invokeClassesFqNames(
