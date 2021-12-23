@@ -317,13 +317,15 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 sourceModule
             }
 
+
             if (arguments.wasm) {
                 val res = compileWasm(
                     module,
                     PhaseConfig(wasmPhases),
                     IrFactoryImpl,
                     exportedDeclarations = setOf(FqName("main")),
-                    emitNameSection  = arguments.wasmDebug,
+                    emitNameSection = arguments.wasmDebug,
+                    propertyLazyInitialization = arguments.irPropertyLazyInitialization,
                 )
                 val outputWasmFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "wasm")!!
                 outputWasmFile.writeBytes(res.wasm)

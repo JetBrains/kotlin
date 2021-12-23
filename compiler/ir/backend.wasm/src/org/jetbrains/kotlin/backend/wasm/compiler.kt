@@ -29,6 +29,7 @@ fun compileWasm(
     phaseConfig: PhaseConfig,
     irFactory: IrFactory,
     exportedDeclarations: Set<FqName> = emptySet(),
+    propertyLazyInitialization: Boolean,
     emitNameSection: Boolean = false,
 ): WasmCompilerResult {
     val mainModule = depsDescriptors.mainModule
@@ -46,7 +47,7 @@ fun compileWasm(
     }
 
     val moduleDescriptor = moduleFragment.descriptor
-    val context = WasmBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, configuration)
+    val context = WasmBackendContext(moduleDescriptor, irBuiltIns, symbolTable, moduleFragment, propertyLazyInitialization, configuration)
 
     // Load declarations referenced during `context` initialization
     allModules.forEach {

@@ -30,6 +30,7 @@ interface JsCommonBackendContext : CommonBackendContext {
     override val mapping: JsMapping
 
     val reflectionSymbols: ReflectionSymbols
+    val propertyLazyInitialization: PropertyLazyInitialization
 
     override val inlineClassesUtils: JsCommonInlineClassesUtils
 

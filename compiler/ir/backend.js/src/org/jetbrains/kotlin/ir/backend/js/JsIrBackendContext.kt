@@ -56,7 +56,7 @@ class JsIrBackendContext(
     override val scriptMode: Boolean = false,
     override val es6mode: Boolean = false,
     val dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
-    val propertyLazyInitialization: Boolean = false,
+    propertyLazyInitialization: Boolean = false,
     val baseClassIntoMetadata: Boolean = false,
     val safeExternalBoolean: Boolean = false,
     val safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
@@ -65,8 +65,6 @@ class JsIrBackendContext(
     val icCompatibleIr2Js: Boolean = false,
 ) : JsCommonBackendContext {
 
-    val fileToInitializationFuns: MutableMap<IrFile, IrSimpleFunction?> = mutableMapOf()
-    val fileToInitializerPureness: MutableMap<IrFile, Boolean> = mutableMapOf()
     val fieldToInitializer: MutableMap<IrField, IrExpression> = mutableMapOf()
 
     val localClassNames: MutableMap<IrClass, String> = mutableMapOf()
@@ -142,6 +140,11 @@ class JsIrBackendContext(
     val intrinsics: JsIntrinsics = JsIntrinsics(irBuiltIns, this)
     override val reflectionSymbols: ReflectionSymbols get() = intrinsics.reflectionSymbols
 
+    override val propertyLazyInitialization: PropertyLazyInitialization = PropertyLazyInitialization(
+        enabled = propertyLazyInitialization,
+        eagerInitialization = symbolTable.referenceClass(getJsInternalClass("EagerInitialization"))
+    )
+
     override val catchAllThrowableType: IrType
         get() = dynamicType
 
@@ -207,7 +210,8 @@ class JsIrBackendContext(
 
             override val getContinuation = symbolTable.referenceSimpleFunction(getJsInternalFunction("getContinuation"))
 
-            override val coroutineContextGetter = symbolTable.referenceSimpleFunction(context.coroutineSymbols.coroutineContextProperty.getter!!)
+            override val coroutineContextGetter =
+                symbolTable.referenceSimpleFunction(context.coroutineSymbols.coroutineContextProperty.getter!!)
 
             override val suspendCoroutineUninterceptedOrReturn =
                 symbolTable.referenceSimpleFunction(getJsInternalFunction(COROUTINE_SUSPEND_OR_RETURN_JS_NAME))
