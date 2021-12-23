@@ -15,9 +15,9 @@ fun <S> generate(@BuilderInference g: suspend GenericController<S>.() -> Unit): 
 @BuilderInference
 suspend fun <S> GenericController<List<S>>.yieldGenerate(g: suspend GenericController<S>.() -> Unit): Unit = TODO()
 
-val test1 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test1 = generate {
     // TODO: KT-15185
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>yieldGenerate<!> {
+    yieldGenerate {
         yield(4)
     }
 }

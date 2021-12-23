@@ -12,18 +12,18 @@ fun <S> Builder<S>.extensionAdd(s: S) {}
 
 suspend fun <S> Builder<S>.safeExtensionAdd(s: S) {}
 
-val member = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+val member = build {
     add(42)
 }
 
-val memberWithoutAnn = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>wrongBuild<!> {
+val memberWithoutAnn = wrongBuild {
     <!ILLEGAL_SUSPEND_FUNCTION_CALL!>add<!>(42)
 }
 
-val extension = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+val extension = build {
     extensionAdd("foo")
 }
 
-val safeExtension = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>build<!> {
+val safeExtension = build {
     safeExtensionAdd("foo")
 }

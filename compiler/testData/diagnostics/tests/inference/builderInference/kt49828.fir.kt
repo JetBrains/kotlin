@@ -204,7 +204,7 @@ interface Foo2<K, V> {
 fun <L, K, V> twoBuilderLambdas(@BuilderInference block: Foo<L>.() -> Unit, @BuilderInference block2: Foo2<K, V>.() -> Unit) {}
 
 fun test() {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>twoBuilderLambdas<!>(
+    twoBuilderLambdas(
         {
             add("")
             with (get()) {

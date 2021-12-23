@@ -18,6 +18,6 @@ val test1 = generate {
     yield(<!NO_COMPANION_OBJECT!>A<!>)
 }
 
-val test2: Int = <!INITIALIZER_TYPE_MISMATCH, NEW_INFERENCE_ERROR!>generate {
-    yield(A())
-}<!>
+val test2: Int = generate {
+    yield(<!ARGUMENT_TYPE_MISMATCH!>A()<!>)
+}

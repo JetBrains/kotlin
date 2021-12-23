@@ -52,7 +52,7 @@ private fun CoroutineScope.asFairChannel(flow: Flow<*>): ReceiveChannel<Any> {
 }
 
 private fun CoroutineScope.asChannel(flow: Flow<*>): ReceiveChannel<Any> {
-  return <this>.produce<@ParameterName(name = "value") Any>(block = local suspend fun ProducerScope<@ParameterName(name = "value") Any>.<anonymous>() {
+  return <this>.produce<Any>(block = local suspend fun ProducerScope<Any>.<anonymous>() {
     flow.collect<Any?>(action = local suspend fun <anonymous>(value: @ParameterName(name = "value") Any?) {
       return $this$produce.<get-channel>().send(e = { // BLOCK
         val <elvis>: @ParameterName(name = "value") Any? = value

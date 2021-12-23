@@ -497,6 +497,9 @@ internal object PostponedVariablesInitializerResolutionStage : ResolutionStage()
             if (!parameter.hasBuilderInferenceAnnotation()) continue
             val type = parameter.returnTypeRef.coneType
             val receiverType = type.receiverType(callInfo.session) ?: continue
+            val dontUseBuilderInferenceIfPossible =
+                context.session.languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceOnlyIfNeeded)
+            if (dontUseBuilderInferenceIfPossible) continue
 
             for (freshVariable in candidate.freshVariables) {
                 if (candidate.csBuilder.isPostponedTypeVariable(freshVariable)) continue

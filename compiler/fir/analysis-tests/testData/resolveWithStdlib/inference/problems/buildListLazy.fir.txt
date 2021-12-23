@@ -28,8 +28,8 @@ FILE: buildListLazy.kt
                 this@R|special/anonymous|.R|kotlin/collections/plusAssign|<R|NameAndSafeValue|>(R|/NameAndSafeValue.NameAndSafeValue|(R|<local>/name|, R|<local>/value|))
             }
             )
-            this@R|special/anonymous|.<Inapplicable(INAPPLICABLE): kotlin/collections/sortBy>#<R|NameAndSafeValue|, R|ERROR CLASS: Cannot infer argument for type parameter R|>(<L> = sortBy@fun <anonymous>(it: R|NameAndSafeValue|): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=CrossInline, kind=UNKNOWN>  {
-                ^ R|<local>/it|.<Unresolved name: name>#
+            this@R|special/anonymous|.R|kotlin/collections/sortBy|<R|NameAndSafeValue|, R|kotlin/String|>(<L> = sortBy@fun <anonymous>(it: R|NameAndSafeValue|): R|kotlin/String?| <inline=CrossInline, kind=UNKNOWN>  {
+                ^ R|<local>/it|.R|/NameAndSafeValue.name|
             }
             )
         }

@@ -20,12 +20,12 @@ import kotlin.math.max
 class NewConstraintSystemImpl(
     private val constraintInjector: ConstraintInjector,
     val typeSystemContext: TypeSystemInferenceExtensionContext
-) : TypeSystemInferenceExtensionContext by typeSystemContext,
+) : ConstraintSystemCompletionContext(),
+    TypeSystemInferenceExtensionContext by typeSystemContext,
     NewConstraintSystem,
     ConstraintSystemBuilder,
     ConstraintInjector.Context,
     ResultTypeResolver.Context,
-    ConstraintSystemCompletionContext,
     PostponedArgumentsAnalyzerContext
 {
     private val utilContext = constraintInjector.constraintIncorporator.utilContext

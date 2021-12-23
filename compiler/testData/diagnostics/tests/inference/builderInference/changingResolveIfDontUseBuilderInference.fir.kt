@@ -20,10 +20,10 @@ fun <K> id(x: K): K = x
 fun main() {
     val x: Map<in String, String> = buildMap {
         put("", "")
-        swap(foo())
+        swap(<!ARGUMENT_TYPE_MISMATCH!>foo()<!>)
     } // `Map<CharSequence, String>` if we use builder inference, `Map<String, String>` if we don't
 
     val y: MutableMap<String, CharSequence> = build7 {
-        <!ARGUMENT_TYPE_MISMATCH!>id(run { this })<!>
+        <!ARGUMENT_TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>id(run { this })<!>
     }
 }

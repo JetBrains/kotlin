@@ -126,6 +126,7 @@ digraph complexPostponedCfg_kt {
     35 -> {36} [color=green];
     36 -> {37};
     37 -> {38};
+    38 -> {10} [color=red];
     38 -> {22} [color=green];
     39 -> {40};
     40 -> {41};

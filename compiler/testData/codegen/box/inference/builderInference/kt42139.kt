@@ -1,7 +1,5 @@
 // !LANGUAGE: +UnrestrictedBuilderInference
 // WITH_STDLIB
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER on select call (K)
 
 fun <R> select(vararg x: R) = x[0]
 fun <K> myEmptyList(): List<K> = emptyList()

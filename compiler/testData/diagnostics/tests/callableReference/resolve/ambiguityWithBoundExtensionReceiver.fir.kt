@@ -10,6 +10,6 @@ fun A.foo() = ""
 
 class A {
     fun main() {
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>) <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>checkType<!> { _<String>() }
+        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>bar<!>(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>) checkType { _<String>() }
     }
 }

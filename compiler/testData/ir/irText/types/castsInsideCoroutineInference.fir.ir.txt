@@ -94,8 +94,8 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
               BLOCK_BODY
                 VAR name:channel type:<root>.ChannelCoroutine<kotlin.Any> [val]
                   TYPE_OP type=<root>.ChannelCoroutine<kotlin.Any> origin=CAST typeOperand=<root>.ChannelCoroutine<kotlin.Any>
-                    CALL 'public abstract fun <get-channel> (): <root>.SendChannel<E of <root>.ProducerScope> declared in <root>.ProducerScope' type=<root>.SendChannel<kotlin.Nothing> origin=GET_PROPERTY
-                      $this: GET_VAR '$this$produce: <root>.ProducerScope<kotlin.Any> declared in <root>.asFairChannel.<anonymous>' type=<root>.ProducerScope<kotlin.Nothing> origin=null
+                    CALL 'public abstract fun <get-channel> (): <root>.SendChannel<E of <root>.ProducerScope> declared in <root>.ProducerScope' type=<root>.SendChannel<kotlin.Any> origin=GET_PROPERTY
+                      $this: GET_VAR '$this$produce: <root>.ProducerScope<kotlin.Any> declared in <root>.asFairChannel.<anonymous>' type=<root>.ProducerScope<kotlin.Any> origin=null
                 CALL 'public final fun collect <T> (action: kotlin.coroutines.SuspendFunction1<@[ParameterName(name = 'value')] T of <root>.collect, kotlin.Unit>): kotlin.Unit [inline,suspend] declared in <root>' type=kotlin.Unit origin=null
                   <T>: kotlin.Any?
                   $receiver: GET_VAR 'flow: <root>.Flow<*> declared in <root>.asFairChannel' type=<root>.Flow<*> origin=null
@@ -123,12 +123,12 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
     VALUE_PARAMETER name:flow index:0 type:<root>.Flow<*>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='private final fun asChannel (flow: <root>.Flow<*>): <root>.ReceiveChannel<kotlin.Any> declared in <root>'
-        CALL 'public final fun produce <E> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<E of <root>.produce>, kotlin.Unit>): <root>.ReceiveChannel<E of <root>.produce> declared in <root>' type=<root>.ReceiveChannel<@[ParameterName(name = 'value')] kotlin.Any> origin=null
-          <E>: @[ParameterName(name = 'value')] kotlin.Any
+        CALL 'public final fun produce <E> (block: @[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<E of <root>.produce>, kotlin.Unit>): <root>.ReceiveChannel<E of <root>.produce> declared in <root>' type=<root>.ReceiveChannel<kotlin.Any> origin=null
+          <E>: kotlin.Any
           $receiver: GET_VAR '<this>: <root>.CoroutineScope declared in <root>.asChannel' type=<root>.CoroutineScope origin=null
-          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<@[ParameterName(name = 'value')] kotlin.Any>, kotlin.Unit> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ProducerScope<@[ParameterName(name = 'value')] kotlin.Any>) returnType:kotlin.Unit [suspend]
-              $receiver: VALUE_PARAMETER name:$this$produce type:<root>.ProducerScope<@[ParameterName(name = 'value')] kotlin.Any>
+          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.coroutines.SuspendFunction1<<root>.ProducerScope<kotlin.Any>, kotlin.Unit> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.ProducerScope<kotlin.Any>) returnType:kotlin.Unit [suspend]
+              $receiver: VALUE_PARAMETER name:$this$produce type:<root>.ProducerScope<kotlin.Any>
               BLOCK_BODY
                 CALL 'public final fun collect <T> (action: kotlin.coroutines.SuspendFunction1<@[ParameterName(name = 'value')] T of <root>.collect, kotlin.Unit>): kotlin.Unit [inline,suspend] declared in <root>' type=kotlin.Unit origin=null
                   <T>: kotlin.Any?
@@ -139,8 +139,8 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='local final fun <anonymous> (value: @[ParameterName(name = 'value')] kotlin.Any?): kotlin.Unit [suspend] declared in <root>.asChannel.<anonymous>'
                           CALL 'public abstract fun send (e: E of <root>.SendChannel): kotlin.Unit [suspend] declared in <root>.SendChannel' type=kotlin.Unit origin=null
-                            $this: CALL 'public abstract fun <get-channel> (): <root>.SendChannel<E of <root>.ProducerScope> declared in <root>.ProducerScope' type=<root>.SendChannel<@[ParameterName(name = 'value')] kotlin.Any> origin=GET_PROPERTY
-                              $this: GET_VAR '$this$produce: <root>.ProducerScope<@[ParameterName(name = 'value')] kotlin.Any> declared in <root>.asChannel.<anonymous>' type=<root>.ProducerScope<@[ParameterName(name = 'value')] kotlin.Any> origin=null
+                            $this: CALL 'public abstract fun <get-channel> (): <root>.SendChannel<E of <root>.ProducerScope> declared in <root>.ProducerScope' type=<root>.SendChannel<kotlin.Any> origin=GET_PROPERTY
+                              $this: GET_VAR '$this$produce: <root>.ProducerScope<kotlin.Any> declared in <root>.asChannel.<anonymous>' type=<root>.ProducerScope<kotlin.Any> origin=null
                             e: BLOCK type=@[ParameterName(name = 'value')] kotlin.Any origin=ELVIS
                               VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:@[ParameterName(name = 'value')] kotlin.Any? [val]
                                 GET_VAR 'value: @[ParameterName(name = 'value')] kotlin.Any? declared in <root>.asChannel.<anonymous>.<anonymous>' type=@[ParameterName(name = 'value')] kotlin.Any? origin=null
