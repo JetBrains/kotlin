@@ -580,6 +580,12 @@ internal fun PhaseConfig.disableUnless(phase: AnyNamedPhase, condition: Boolean)
 
 internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
     with(config.configuration) {
+        // The original comment around [checkSamSuperTypesPhase] still holds, but in order to be on par with JVM_IR
+        // (which doesn't report error for these corner cases), we turn off the checker for now (the problem with variances
+        // is workarounded in [FunctionReferenceLowering] by taking erasure of SAM conversion type).
+        // Also see https://youtrack.jetbrains.com/issue/KT-50399 for more details.
+        disable(checkSamSuperTypesPhase)
+
         disable(localEscapeAnalysisPhase)
 
         // Don't serialize anything to a final executable.
