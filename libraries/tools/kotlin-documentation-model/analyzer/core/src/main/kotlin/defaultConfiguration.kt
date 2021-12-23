@@ -50,6 +50,7 @@ data class DokkaSourceSetImpl(
     override val noJdkLink: Boolean = DokkaDefaults.noJdkLink,
     override val suppressedFiles: Set<File> = emptySet(),
     override val analysisPlatform: Platform = DokkaDefaults.analysisPlatform,
+    override val documentedVisibilities: Set<DokkaConfiguration.Visibility> = DokkaDefaults.documentedVisibilities,
 ) : DokkaSourceSet
 
 data class DokkaModuleDescriptionImpl(
@@ -81,6 +82,7 @@ data class PackageOptionsImpl(
     override val reportUndocumented: Boolean?,
     override val skipDeprecated: Boolean,
     override val suppress: Boolean,
+    override val documentedVisibilities: Set<DokkaConfiguration.Visibility>,
 ) : DokkaConfiguration.PackageOptions
 
 
