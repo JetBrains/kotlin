@@ -1,15 +1,15 @@
 //RELEASE_COROUTINE_NEEDED
 //CHECK_BY_JAVA_FILE
 class Foo {
-  suspend fun doSomething(foo: Foo): Bar {}
+  suspend fun doSomething(foo: Foo): Bar { TODO() }
 }
 
 class Boo {
-    private suspend fun doSomething(foo: Foo): Bar {}
+    private suspend fun doSomething(foo: Foo): Bar { TODO() }
 }
 
 class Bar {
-  fun <T> async(block: suspend () -> T)
+  fun <T> async(block: suspend () -> T) {}
 }
 
 interface Base {
@@ -17,7 +17,7 @@ interface Base {
 }
 
 class Derived: Base {
-    override suspend fun foo() { ... }
+    override suspend fun foo() { }
 }
 
 // WITH_STDLIB
