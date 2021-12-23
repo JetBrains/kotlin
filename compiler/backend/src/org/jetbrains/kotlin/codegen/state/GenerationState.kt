@@ -412,8 +412,8 @@ class GenerationState private constructor(
             this[KOTLIN_1_3] = oldMetadataVersion
             this[KOTLIN_1_4] = JvmMetadataVersion(1, 4, 3)
             this[KOTLIN_1_5] = JvmMetadataVersion(1, 5, 1)
-            this[KOTLIN_1_6] = JvmMetadataVersion.INSTANCE
-            this[KOTLIN_1_7] = JvmMetadataVersion(1, 7, 0)
+            this[KOTLIN_1_6] = JvmMetadataVersion(1, 6, 0)
+            this[KOTLIN_1_7] = JvmMetadataVersion.INSTANCE
             this[KOTLIN_1_8] = JvmMetadataVersion(1, 8, 0)
             this[KOTLIN_1_9] = JvmMetadataVersion(1, 9, 0)
 

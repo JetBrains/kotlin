@@ -7,6 +7,6 @@ class Controller<T : Number> {
 
 fun <S : Number> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
 
-val test = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
-    yield("foo")
+val test = generate {
+    yield(<!TYPE_MISMATCH!>"foo"<!>)
 }

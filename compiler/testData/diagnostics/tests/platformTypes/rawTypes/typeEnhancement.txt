@@ -28,3 +28,4 @@ public/*package*/ open class Test {
     // Static members
     public/*package*/ final var rawField: A<(raw) kotlin.Any!>!
 }
+

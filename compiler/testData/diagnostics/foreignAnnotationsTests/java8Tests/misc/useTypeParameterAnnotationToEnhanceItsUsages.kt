@@ -10,5 +10,5 @@ public interface MapLike<@org.jetbrains.annotations.NotNull K> {
 
 // FILE: main.kt
 fun test2(map : MapLike<Int>, x2: Int?) {
-    map.put(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>x2<!>)
+    map.put(<!TYPE_MISMATCH!>x2<!>)
 }

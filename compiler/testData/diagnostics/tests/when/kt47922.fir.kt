@@ -13,7 +13,7 @@ abstract class NonSealedBase {
 sealed class ToState
 
 val sealedTest: SealedBase.() -> ToState? = {
-    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!>(this) {}
+    <!NO_ELSE_IN_WHEN!>when<!>(this) {}
 }
 
 val nonSealedTest: NonSealedBase.() -> ToState? = {

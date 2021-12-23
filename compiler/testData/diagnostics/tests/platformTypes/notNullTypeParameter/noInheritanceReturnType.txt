@@ -12,3 +12,4 @@ public open class A</*0*/ T : kotlin.Any!> {
     // Static members
     public open fun create(): A<kotlin.String!>!
 }
+

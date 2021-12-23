@@ -73,3 +73,4 @@ public abstract class MyList</*0*/ E : kotlin.Any!> : MyCollection<E!>, kotlin.c
     invisible_fake open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> finishToArray(/*0*/ p0: kotlin.Array<(out) T!>!, /*1*/ p1: kotlin.collections.(Mutable)Iterator<*>!): kotlin.Array<(out) T!>!
     invisible_fake open override /*1*/ /*fake_override*/ fun hugeCapacity(/*0*/ p0: kotlin.Int): kotlin.Int
 }
+
