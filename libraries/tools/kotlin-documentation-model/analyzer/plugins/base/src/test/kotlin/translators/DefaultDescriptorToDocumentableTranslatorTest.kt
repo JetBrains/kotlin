@@ -1,5 +1,6 @@
 package translators
 
+import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.model.*
 import org.junit.jupiter.api.Assertions.*
 import org.jetbrains.dokka.model.doc.CodeBlock
@@ -232,13 +233,18 @@ class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
     }
 
     @Test
-    fun `derived properties with includeNonPublic`() {
+    fun `derived properties with non-public code included`() {
 
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
                     sourceRoots = listOf("src/main/kotlin")
-                    includeNonPublic = true
+                    documentedVisibilities = setOf(
+                        DokkaConfiguration.Visibility.PUBLIC,
+                        DokkaConfiguration.Visibility.PRIVATE,
+                        DokkaConfiguration.Visibility.PROTECTED,
+                        DokkaConfiguration.Visibility.INTERNAL,
+                    )
                 }
             }
         }
@@ -471,7 +477,7 @@ class DefaultDescriptorToDocumentableTranslatorTest : BaseAbstractTest() {
 
 
     @Test
-    fun `derived properties with no includeNonPublic`() {
+    fun `derived properties with only public code`() {
 
         val configuration = dokkaConfiguration {
             sourceSets {

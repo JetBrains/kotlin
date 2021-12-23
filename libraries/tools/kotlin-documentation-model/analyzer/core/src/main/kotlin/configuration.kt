@@ -19,6 +19,7 @@ object DokkaDefaults {
     const val delayTemplateSubstitution: Boolean = false
 
     const val includeNonPublic: Boolean = false
+    val documentedVisibilities: Set<DokkaConfiguration.Visibility> = setOf(DokkaConfiguration.Visibility.PUBLIC)
     const val reportUndocumented: Boolean = false
     const val skipEmptyPackages: Boolean = true
     const val skipDeprecated: Boolean = false
@@ -122,6 +123,7 @@ interface DokkaConfiguration : Serializable {
         val dependentSourceSets: Set<DokkaSourceSetID>
         val samples: Set<File>
         val includes: Set<File>
+        @Deprecated(message = "Use [documentedVisibilities] property for a more flexible control over documented visibilities")
         val includeNonPublic: Boolean
         val reportUndocumented: Boolean
         val skipEmptyPackages: Boolean
@@ -136,6 +138,38 @@ interface DokkaConfiguration : Serializable {
         val noJdkLink: Boolean
         val suppressedFiles: Set<File>
         val analysisPlatform: Platform
+        val documentedVisibilities: Set<Visibility>
+    }
+
+    enum class Visibility {
+        /**
+         * `public` modifier for Java, default visibility for Kotlin
+         */
+        PUBLIC,
+
+        /**
+         * `private` modifier for both Kotlin and Java
+         */
+        PRIVATE,
+
+        /**
+         * `protected` modifier for both Kotlin and Java
+         */
+        PROTECTED,
+
+        /**
+         * Kotlin-specific `internal` modifier
+         */
+        INTERNAL,
+
+        /**
+         * Java-specific package-private visibility (no modifier)
+         */
+        PACKAGE;
+
+        companion object {
+            fun fromString(value: String) = valueOf(value.toUpperCase())
+        }
     }
 
     interface SourceLinkDefinition : Serializable {
@@ -153,10 +187,12 @@ interface DokkaConfiguration : Serializable {
 
     interface PackageOptions : Serializable {
         val matchingRegex: String
+        @Deprecated(message = "Use [documentedVisibilities] property for a more flexible control over documented visibilities")
         val includeNonPublic: Boolean
         val reportUndocumented: Boolean?
         val skipDeprecated: Boolean
         val suppress: Boolean
+        val documentedVisibilities: Set<Visibility>
     }
 
     interface ExternalDocumentationLink : Serializable {

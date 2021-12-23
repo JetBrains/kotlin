@@ -1,5 +1,6 @@
 package transformers
 
+import org.jetbrains.dokka.DokkaDefaults
 import org.jetbrains.dokka.PackageOptionsImpl
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
@@ -181,6 +182,7 @@ class SuppressedByConfigurationDocumentableFilterTransformerTest : BaseAbstractT
         matchingRegex = matchingRegex,
         suppress = suppress,
         includeNonPublic = true,
+        documentedVisibilities = DokkaDefaults.documentedVisibilities,
         reportUndocumented = false,
         skipDeprecated = false
     )
