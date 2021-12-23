@@ -3,8 +3,11 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package kotlin.js
+package kotlin
 
+/**
+ * Forces a top-level property to be initialized eagerly, opposed to lazily on the first access to file and/or property.
+ */
 @ExperimentalStdlibApi
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.PROPERTY)

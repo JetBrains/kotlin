@@ -63,6 +63,8 @@ class WasmSymbols(
 
     internal val reflectionSymbols: WasmReflectionSymbols = WasmReflectionSymbols()
 
+    internal val eagerInitialization: IrClassSymbol = getIrClass(FqName("kotlin.EagerInitialization"))
+
     override val throwNullPointerException = getInternalFunction("THROW_NPE")
     override val throwISE = getInternalFunction("THROW_ISE")
     override val throwTypeCastException = getInternalFunction("THROW_CCE")

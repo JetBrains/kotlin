@@ -32,10 +32,8 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
-import org.jetbrains.kotlin.test.DebugMode
-import org.jetbrains.kotlin.test.Directives
-import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
-import org.jetbrains.kotlin.test.TestFiles
+import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.Closeable
 import java.io.File
@@ -178,11 +176,14 @@ abstract class BasicWasmBoxTest(
             AnalyzerWithCompilerReport(config.configuration)
         )
 
+        val directives = KotlinTestUtils.parseDirectives(FileUtil.loadFile(testFile))
+
         val compilerResult = compileWasm(
             sourceModule,
             phaseConfig = phaseConfig,
             irFactory = IrFactoryImpl,
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
+            propertyLazyInitialization = directives.contains(JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION.name),
             emitNameSection = true,
         )
 

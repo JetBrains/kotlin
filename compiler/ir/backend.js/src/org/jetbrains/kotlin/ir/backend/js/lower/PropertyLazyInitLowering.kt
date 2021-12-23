@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.backend.common.ir.isTopLevel
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
+import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.prependFunctionCall
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
@@ -28,25 +27,23 @@ import kotlin.collections.component2
 import kotlin.collections.set
 
 class PropertyLazyInitLowering(
-    private val context: JsIrBackendContext
+    private val context: JsCommonBackendContext
 ) : BodyLoweringPass {
 
     private val irBuiltIns
         get() = context.irBuiltIns
 
-    private val calculator = JsIrArithBuilder(context)
-
     private val irFactory
         get() = context.irFactory
 
     private val fileToInitializationFuns
-        get() = context.fileToInitializationFuns
+        get() = context.propertyLazyInitialization.fileToInitializationFuns
 
     private val fileToInitializerPureness
-        get() = context.fileToInitializerPureness
+        get() = context.propertyLazyInitialization.fileToInitializerPureness
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        if (!context.propertyLazyInitialization) {
+        if (!context.propertyLazyInitialization.enabled) {
             return
         }
 
@@ -132,32 +129,35 @@ class PropertyLazyInitLowering(
         body = irFactory.createBlockBody(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            buildBodyWithIfGuard(initializers, initializedField)
+            listOf(buildBodyWithIfGuard(initializers, initializedField))
         )
     }
 
     private fun buildBodyWithIfGuard(
         initializers: Map<IrField, IrExpression>,
         initializedField: IrField
-    ): List<IrStatement> {
-        val statements = initializers
-            .map { (field, expression) ->
-                createIrSetField(field, expression)
+    ): IrStatement {
+        val statements = buildList<IrStatement> {
+            val upGuard = createIrSetField(
+                initializedField,
+                JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
+            )
+            add(upGuard)
+            initializers.forEach { (field, expression) ->
+                add(createIrSetField(field, expression))
             }
-
-        val upGuard = createIrSetField(
-            initializedField,
-            JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
-        )
+            add(JsIrBuilder.buildBlock(irBuiltIns.unitType))
+        }
 
         return JsIrBuilder.buildIfElse(
             type = irBuiltIns.unitType,
-            cond = calculator.not(createIrGetField(initializedField)),
-            thenBranch = JsIrBuilder.buildComposite(
+            cond = createIrGetField(initializedField),
+            thenBranch = JsIrBuilder.buildBlock(irBuiltIns.unitType),
+            elseBranch = JsIrBuilder.buildComposite(
                 type = irBuiltIns.unitType,
-                statements = mutableListOf(upGuard).apply { addAll(statements) }
+                statements = statements
             )
-        ).let { listOf(it) }
+        )
     }
 
     companion object {
@@ -188,14 +188,14 @@ private fun allFieldsInFilePure(fieldToInitializer: Collection<IrExpression>): B
         }
 
 class RemoveInitializersForLazyProperties(
-    private val context: JsIrBackendContext
+    private val context: JsCommonBackendContext
 ) : DeclarationTransformer {
 
     private val fileToInitializerPureness
-        get() = context.fileToInitializerPureness
+        get() = context.propertyLazyInitialization.fileToInitializerPureness
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (!context.propertyLazyInitialization) {
+        if (!context.propertyLazyInitialization.enabled) {
             return null
         }
 
@@ -235,7 +235,10 @@ class RemoveInitializersForLazyProperties(
     }
 }
 
-private fun calculateFieldToExpression(declarations: Collection<IrDeclaration>, context: JsIrBackendContext): Map<IrField, IrExpression> =
+private fun calculateFieldToExpression(
+    declarations: Collection<IrDeclaration>,
+    context: JsCommonBackendContext
+): Map<IrField, IrExpression> =
     declarations
         .asSequence()
         .filter { it.isCompatibleDeclaration(context) }
@@ -276,9 +279,9 @@ private fun IrDeclaration.propertyWithPersistentSafe(transform: IrDeclaration.()
 private fun <T> IrDeclaration.withPersistentSafe(transform: IrDeclaration.() -> T?): T? =
     transform()
 
-private fun IrDeclaration.isCompatibleDeclaration(context: JsIrBackendContext) =
+private fun IrDeclaration.isCompatibleDeclaration(context: JsCommonBackendContext) =
     correspondingProperty?.let {
-        it.isForLazyInit() && !it.hasAnnotation(context.intrinsics.jsEagerInitializationAnnotationSymbol)
+        it.isForLazyInit() && !it.hasAnnotation(context.propertyLazyInitialization.eagerInitialization)
     } ?: true && withPersistentSafe { origin in compatibleOrigins } == true
 
 private val compatibleOrigins = listOf(
