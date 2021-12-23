@@ -43,13 +43,10 @@ class PrimaryConstructorLowering(val context: JsCommonBackendContext) : Declarat
     private val unitType = context.irBuiltIns.unitType
 
     private fun createPrimaryConstructor(irClass: IrClass): IrConstructor {
-        // TODO better API for declaration creation. This case doesn't fit the usual transformFlat-like API.
-        val declaration = context.irFactory.stageController.unrestrictDeclarationListsAccess {
-            irClass.addConstructor {
-                origin = SYNTHETIC_PRIMARY_CONSTRUCTOR
-                isPrimary = true
-                visibility = DescriptorVisibilities.PRIVATE
-            }
+        val declaration = irClass.addConstructor {
+            origin = SYNTHETIC_PRIMARY_CONSTRUCTOR
+            isPrimary = true
+            visibility = DescriptorVisibilities.PRIVATE
         }
 
         declaration.body = irClass.run {

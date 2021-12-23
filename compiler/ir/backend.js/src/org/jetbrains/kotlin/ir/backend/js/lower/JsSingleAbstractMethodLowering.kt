@@ -45,9 +45,7 @@ class JsSingleAbstractMethodLowering(context: CommonBackendContext) : SingleAbst
 
         for (wrapper in cachedImplementations.values + inlineCachedImplementations.values) {
             val parentClass = wrapper.parent as IrDeclarationContainer
-            context.irFactory.stageController.unrestrictDeclarationListsAccess {
-                parentClass.declarations += wrapper
-            }
+            parentClass.declarations += wrapper
         }
     }
 

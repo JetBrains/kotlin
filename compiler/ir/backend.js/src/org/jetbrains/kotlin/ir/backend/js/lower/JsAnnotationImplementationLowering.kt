@@ -38,9 +38,7 @@ class JsAnnotationImplementationTransformer(val jsContext: JsIrBackendContext) :
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
         if (declaration.isAnnotationClass) {
-            context.irFactory.stageController.unrestrictDeclarationListsAccess {
-                implementGeneratedFunctions(declaration, declaration)
-            }
+            implementGeneratedFunctions(declaration, declaration)
         }
         return super.visitClassNew(declaration)
     }

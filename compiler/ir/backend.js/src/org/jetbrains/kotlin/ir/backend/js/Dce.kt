@@ -33,18 +33,11 @@ fun eliminateDeadDeclarations(
     removeUnusedAssociatedObjects: Boolean = true,
 ) {
 
-    val allRoots = context.irFactory.stageController.withInitialIr { buildRoots(modules, context) }
+    val allRoots = buildRoots(modules, context)
 
     val usefulDeclarations = usefulDeclarations(allRoots, context, removeUnusedAssociatedObjects)
 
-    context.irFactory.stageController.unrestrictDeclarationListsAccess {
-        processUselessDeclarations(
-            modules,
-            usefulDeclarations,
-            context,
-            removeUnusedAssociatedObjects,
-        )
-    }
+    processUselessDeclarations(modules, usefulDeclarations, context, removeUnusedAssociatedObjects)
 }
 
 private fun IrField.isConstant(): Boolean {
@@ -276,32 +269,30 @@ fun usefulDeclarations(
     }
 
     // use withInitialIr to avoid ConcurrentModificationException in dce-driven lowering when adding roots' nested declarations (members)
-    context.irFactory.stageController.withInitialIr {
-        // Add roots
-        roots.forEach {
-            it.enqueue(null, null, altFromFqn = "<ROOT>")
-        }
+    // Add roots
+    roots.forEach {
+        it.enqueue(null, null, altFromFqn = "<ROOT>")
+    }
 
-        // Add roots' nested declarations
-        roots.forEach {
-            it.acceptVoid(
-                object : IrElementVisitorVoid {
-                    override fun visitElement(element: IrElement) {
-                        element.acceptChildrenVoid(this)
-                    }
-
-                    override fun visitBody(body: IrBody) {
-                        // Skip
-                    }
-
-                    override fun visitDeclaration(declaration: IrDeclarationBase) {
-                        if (declaration !== it) declaration.enqueue(it, "roots' nested declaration")
-
-                        super.visitDeclaration(declaration)
-                    }
+    // Add roots' nested declarations
+    roots.forEach {
+        it.acceptVoid(
+            object : IrElementVisitorVoid {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
                 }
-            )
-        }
+
+                override fun visitBody(body: IrBody) {
+                    // Skip
+                }
+
+                override fun visitDeclaration(declaration: IrDeclarationBase) {
+                    if (declaration !== it) declaration.enqueue(it, "roots' nested declaration")
+
+                    super.visitDeclaration(declaration)
+                }
+            }
+        )
     }
 
     val toStringMethod =

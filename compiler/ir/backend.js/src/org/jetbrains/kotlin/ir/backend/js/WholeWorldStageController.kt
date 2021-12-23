@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -19,8 +17,6 @@ class WholeWorldStageController : StageController() {
 
     override var currentDeclaration: IrDeclaration? = null
     private var index: Int = 0
-
-    var declarationListsRestricted: Boolean = false
 
     override fun <T> restrictTo(declaration: IrDeclaration, fn: () -> T): T {
         val previousCurrentDeclaration = currentDeclaration
@@ -37,56 +33,20 @@ class WholeWorldStageController : StageController() {
         }
     }
 
-    override fun createSignature(parentSignature: IdSignature): IdSignature {
-        return IdSignature.LoweredDeclarationSignature(parentSignature, currentStage, index++)
-    }
-
-    override fun <T> withStage(stage: Int, fn: () -> T): T {
+    override fun <T> withInitialIr(block: () -> T): T {
         val oldStage = currentStage
-        currentStage = stage
+        currentStage = 0
         val oldCurrentDeclaration = currentDeclaration
         currentDeclaration = null
         return try {
-            fn()
+            block()
         } finally {
             currentStage = oldStage
             currentDeclaration = oldCurrentDeclaration
         }
     }
 
-    override fun <T> withInitialIr(block: () -> T): T {
-        return withStage(0) {
-            declarationRestriction(true, block)
-        }
-    }
-
-    override fun <T> bodyLowering(fn: () -> T): T {
-        val wasRestricted = declarationListsRestricted
-        declarationListsRestricted = true
-
-        return try {
-            fn()
-        } finally {
-            declarationListsRestricted = wasRestricted
-        }
-    }
-
-    override fun <T> unrestrictDeclarationListsAccess(fn: () -> T): T {
-        return declarationRestriction(false, fn)
-    }
-
-    private fun <T> declarationRestriction(value: Boolean, fn: () -> T): T{
-        val wasRestricted = declarationListsRestricted
-        declarationListsRestricted = value
-
-        return try {
-            fn()
-        } finally {
-            declarationListsRestricted = wasRestricted
-        }
-    }
-
-    override fun canAccessDeclarationsOf(irClass: IrClass): Boolean {
-        return !declarationListsRestricted || irClass.visibility == DescriptorVisibilities.LOCAL/* && irClass !in context.extractedLocalClasses*/
+    override fun createSignature(parentSignature: IdSignature): IdSignature {
+        return IdSignature.LoweredDeclarationSignature(parentSignature, currentStage, index++)
     }
 }

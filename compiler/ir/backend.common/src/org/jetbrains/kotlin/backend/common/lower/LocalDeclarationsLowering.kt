@@ -85,7 +85,7 @@ class LocalDeclarationsLowering(
     BodyLoweringPass {
 
     override fun lower(irFile: IrFile) {
-        runOnFilePostfix(irFile, allowDeclarationModification = true)
+        runOnFilePostfix(irFile)
     }
 
     object DECLARATION_ORIGIN_FIELD_FOR_CAPTURED_VALUE :

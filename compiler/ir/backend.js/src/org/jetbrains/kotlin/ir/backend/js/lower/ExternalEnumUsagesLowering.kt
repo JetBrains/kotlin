@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
@@ -51,10 +54,6 @@ class ExternalEnumUsagesLowering(val context: JsIrBackendContext) : BodyLowering
             isStatic = true
         }.also {
             it.parent = irClass
-
-            // TODO need a way to emerge local declarations from BodyLoweringPass
-            context.irFactory.stageController.unrestrictDeclarationListsAccess {
-                irClass.declarations += it
-            }
+            irClass.declarations += it
         }
 }

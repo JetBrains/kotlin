@@ -364,10 +364,8 @@ class EnumClassCreateInitializerLowering(val context: JsCommonBackendContext) : 
 
             // TODO Why not move to upper level?
             // TODO Also doesn't fit the transformFlat-ish API
-            context.irFactory.stageController.unrestrictDeclarationListsAccess {
-                declaration.declarations += entryInstancesInitializedVar
-                declaration.declarations += initEntryInstancesFun
-            }
+            declaration.declarations += entryInstancesInitializedVar
+            declaration.declarations += initEntryInstancesFun
 
             return null
         }
@@ -428,9 +426,7 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsCommonBackendContex
 
                 // TODO prettify
                 entryGetInstanceFun.parent = irClass.parent
-                context.irFactory.stageController.unrestrictDeclarationListsAccess {
-                    (irClass.parent as IrDeclarationContainer).declarations += entryGetInstanceFun
-                }
+                (irClass.parent as IrDeclarationContainer).declarations += entryGetInstanceFun
 
                 return listOf(declaration) // TODO not null?
             }

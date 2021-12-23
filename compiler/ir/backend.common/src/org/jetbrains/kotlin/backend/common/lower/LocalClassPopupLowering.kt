@@ -20,7 +20,7 @@ open class LocalClassPopupLowering(
     val recordExtractedLocalClasses: BackendContext.(IrClass) -> Unit = {},
 ) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
-        runOnFilePostfix(irFile, withLocalDeclarations = true, allowDeclarationModification = true)
+        runOnFilePostfix(irFile, withLocalDeclarations = true)
     }
 
     private data class ExtractedLocalClass(
