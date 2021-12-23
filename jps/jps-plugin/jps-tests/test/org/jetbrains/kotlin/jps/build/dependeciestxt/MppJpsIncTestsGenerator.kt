@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.jps.build.dependeciestxt
 
 import java.io.File
+import java.util.*
 
 /**
  * Utility for generating common/platform module stub contents based on it's dependencies.
@@ -29,7 +30,7 @@ fun actualizeMppJpsIncTestCaseDirs(rootDir: String, dir: String) {
 }
 
 class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (TestCase) -> File) {
-    val ModulesTxt.Module.capitalName get() = name.capitalize()
+    val ModulesTxt.Module.capitalName get() = name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
     val testCases: List<TestCase>
 
@@ -308,7 +309,7 @@ class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (Tes
         protected fun serviceKtFile(module: ModulesTxt.Module, fileNameSuffix: String = ""): File {
             val suffix =
                 if (module.isCommonModule) "${module.serviceName}Header"
-                else "${module.name.capitalize()}${module.contentsSettings.serviceNameSuffix}Impl"
+                else "${module.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}${module.contentsSettings.serviceNameSuffix}Impl"
 
             return File(dir, "${module.indexedName}_service$suffix.kt$fileNameSuffix")
         }

@@ -21,6 +21,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.builders.BuildRootDescriptor
 import org.jetbrains.jps.builders.BuildTarget
+import org.jetbrains.jps.builders.BuildTargetIndex
 import org.jetbrains.jps.builders.FileProcessor
 import org.jetbrains.jps.builders.impl.DirtyFilesHolderBase
 import org.jetbrains.jps.builders.java.JavaSourceRootDescriptor
@@ -31,7 +32,6 @@ import org.jetbrains.jps.incremental.FSOperations
 import org.jetbrains.jps.incremental.ModuleBuildTarget
 import org.jetbrains.jps.incremental.fs.CompilationRound
 import java.io.File
-import java.util.HashMap
 import kotlin.collections.*
 
 /**
@@ -156,8 +156,28 @@ class FSOperationsHelper(
             val target = rd.target
             if (target in chunkTargets) return true
 
-            val targetOfFileWithDependencies = cache.getOrPut(target) { buildTargetIndex.getDependenciesRecursively(target, context) }
+            val targetOfFileWithDependencies = cache.getOrPut(target) { buildTargetIndex.myGetDependenciesRecursively(target, context) }
             return ContainerUtil.intersects(targetOfFileWithDependencies, chunkTargets)
+        }
+
+        // Copy-pasted from Intellij's deprecated method org.jetbrains.jps.builders.impl.BuildTargetIndexImpl.getDependenciesRecursively
+        private fun BuildTargetIndex.myGetDependenciesRecursively(target: BuildTarget<*>, context: CompileContext): Set<BuildTarget<*>> {
+            fun BuildTargetIndex.collectDependenciesRecursively(
+                target: BuildTarget<*>,
+                result: java.util.LinkedHashSet<in BuildTarget<*>>
+            ) {
+                if (result.add(target)) {
+                    for (dep in getDependencies(target, context)) {
+                        collectDependenciesRecursively(dep, result)
+                    }
+                }
+            }
+
+            val result = LinkedHashSet<BuildTarget<*>>()
+            for (dep in getDependencies(target, context)) {
+                collectDependenciesRecursively(dep, result)
+            }
+            return result
         }
 
         override fun belongsToCurrentTargetChunk(file: File): Boolean {
