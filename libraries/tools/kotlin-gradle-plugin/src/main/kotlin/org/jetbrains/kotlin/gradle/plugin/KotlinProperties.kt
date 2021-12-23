@@ -75,7 +75,19 @@ internal class PropertiesProvider private constructor(private val project: Proje
     }
 
     val coroutines: Coroutines?
-        get() = property("kotlin.coroutines")?.let { Coroutines.byCompilerArgument(it) }
+        get() {
+            val propValue = property("kotlin.coroutines")?.let { Coroutines.byCompilerArgument(it) }
+            if (propValue != null) {
+                SingleWarningPerBuild.show(
+                    project,
+                    """
+                    'kotlin.coroutines' property does nothing since 1.5.0 release 
+                    and scheduled to be removed in Kotlin 1.7.0 release!    
+                    """.trimIndent()
+                )
+            }
+            return propValue
+        }
 
     val singleBuildMetricsFile: File?
         get() = property("kotlin.internal.single.build.metrics.file")?.let { File(it) }

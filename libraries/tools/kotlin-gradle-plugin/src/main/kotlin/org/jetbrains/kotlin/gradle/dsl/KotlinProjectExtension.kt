@@ -23,16 +23,18 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.tasks.CompileUsingKotlinDaemon
 import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import javax.inject.Inject
 import kotlin.reflect.KClass
 
 private const val KOTLIN_PROJECT_EXTENSION_NAME = "kotlin"
 
 internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinTopLevelExtension>): KotlinTopLevelExtension {
     val kotlinExt = extensions.create(KOTLIN_PROJECT_EXTENSION_NAME, extensionClass.java, this)
-    DslObject(kotlinExt).extensions.create("experimental", ExperimentalExtension::class.java)
+    DslObject(kotlinExt).extensions.create("experimental", ExperimentalExtension::class.java, this)
     return topLevelExtension
 }
 
@@ -286,8 +288,20 @@ open class KotlinAndroidProjectExtension(project: Project) : KotlinSingleTargetE
     open fun target(body: KotlinAndroidTarget.() -> Unit) = target.run(body)
 }
 
-open class ExperimentalExtension {
+open class ExperimentalExtension @Inject constructor(
+    private val project: Project
+) {
     var coroutines: Coroutines? = null
+        set(value) {
+            SingleWarningPerBuild.show(
+                project,
+                """
+                'kotlin.experimental.coroutines' option does nothing since 1.5.0 release 
+                and scheduled to be removed in Kotlin 1.7.0 release!    
+                """.trimIndent()
+            )
+            field = value
+        }
 }
 
 enum class Coroutines {
