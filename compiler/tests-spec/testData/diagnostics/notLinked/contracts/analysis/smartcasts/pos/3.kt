@@ -111,7 +111,7 @@ class case_3_class {
         val o = case_3_class()
         contracts.case_3(value_1, value_2, o.prop_1, this.prop_1)
         println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.dec())
-        println(<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte()<!>)
+        println(value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte())
         println(<!DEBUG_INFO_SMARTCAST!>o.prop_1<!>.plus(3))
     }
 }
@@ -163,22 +163,22 @@ class case_6_class {
         val o = case_6_class()
         if (contracts.case_6_1(value_1, value_2, o.prop_1, this.prop_1)) {
             println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.dec())
-            println(<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte()<!>)
+            println(value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte())
             println(<!DEBUG_INFO_SMARTCAST!>o.prop_1<!>.plus(3))
         }
         if (!contracts.case_6_2(value_1, value_2, o.prop_1, this.prop_1)) {
             println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.dec())
-            println(<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte()<!>)
+            println(value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte())
             println(<!DEBUG_INFO_SMARTCAST!>o.prop_1<!>.plus(3))
         }
         if (contracts.case_6_3(value_1, value_2, o.prop_1, this.prop_1) != null) {
             println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.dec())
-            println(<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte()<!>)
+            println(value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte())
             println(<!DEBUG_INFO_SMARTCAST!>o.prop_1<!>.plus(3))
         }
         if (contracts.case_6_4(value_1, value_2, o.prop_1, this.prop_1) == null) {
             println(<!DEBUG_INFO_SMARTCAST!>value_1<!>.dec())
-            println(<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte()<!>)
+            println(value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte())
             println(<!DEBUG_INFO_SMARTCAST!>o.prop_1<!>.plus(3))
         }
     }

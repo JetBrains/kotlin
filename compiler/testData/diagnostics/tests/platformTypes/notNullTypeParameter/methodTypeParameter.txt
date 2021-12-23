@@ -12,3 +12,4 @@ public open class A {
     public open fun </*0*/ T : kotlin.Any!> bar(/*0*/ @org.jetbrains.annotations.NotNull x: T, /*1*/ y: T!): kotlin.Unit
     public open fun platformString(): kotlin.String!
 }
+

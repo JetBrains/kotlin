@@ -147,7 +147,7 @@ fun main(a: A, b: B, c: C) {
     c.foo2(<!NULL_FOR_NONNULL_TYPE!>null<!>).length
     c.foo3(<!NULL_FOR_NONNULL_TYPE!>null<!>).length
     c.bar1(null).length
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>c.bar1(null)<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
+    c.bar1(null)<!UNNECESSARY_SAFE_CALL!>?.<!>length
     c.bar2(null)<!UNSAFE_CALL!>.<!>length
     c.baz(<!NULL_FOR_NONNULL_TYPE!>null<!>).length
 }

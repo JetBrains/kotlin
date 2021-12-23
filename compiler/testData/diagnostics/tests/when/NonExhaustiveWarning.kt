@@ -17,7 +17,7 @@ enum class X { A, B, C, D }
 
 fun foo(arg: X): String {
     var res = "XXX"
-    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (arg) {
+    <!NO_ELSE_IN_WHEN!>when<!> (arg) {
         X.A -> res = "A"
         X.B -> res = "B"
     }

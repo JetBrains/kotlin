@@ -17,4 +17,4 @@ class A {
 open class Test
 inline class ExtendTest(val x: Int): <!SUPERTYPE_NOT_INITIALIZED, VALUE_CLASS_CANNOT_EXTEND_CLASSES!>Test<!>
 
-inline class ImplementByDelegation(val x: Int) : <!VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION!>Comparable<Int><!> by x
+inline class ImplementByDelegation(val x: Int) : Comparable<Int> by x

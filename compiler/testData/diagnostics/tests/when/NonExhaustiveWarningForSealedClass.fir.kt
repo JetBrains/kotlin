@@ -23,7 +23,7 @@ object Last : S()
 fun use(s: String) = s
 
 fun foo(s: S) {
-    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (s) {
+    <!NO_ELSE_IN_WHEN!>when<!> (s) {
         First -> {}
         is Derived -> use(s.s)
     }

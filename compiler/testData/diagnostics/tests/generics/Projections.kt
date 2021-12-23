@@ -20,7 +20,7 @@ class Inv<T>() {
 fun testInOut() {
     In<String>().f("1");
     (null <!CAST_NEVER_SUCCEEDS!>as<!> In<<!REDUNDANT_PROJECTION!>in<!> String>).f("1")
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> In<*>).<!NONE_APPLICABLE!>f<!>("1") // Wrong Arg
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> In<*>).f(<!TYPE_MISMATCH!>"1"<!>) // Wrong Arg
 
     In<String>().f(1);
     (null <!CAST_NEVER_SUCCEEDS!>as<!> In<<!REDUNDANT_PROJECTION!>in<!> String>).f(1)
