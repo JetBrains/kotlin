@@ -14,6 +14,8 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty0
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
+import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.system.measureTimeMillis
 
 class TestConf {
@@ -249,8 +251,13 @@ private suspend fun evaluateInRepl(
 
             if (doCompile) {
                 val codeLineForCompilation = nextCodeLine(code, lineCounter)
-
-                val timeMillis = measureTimeMillis { compiler.compile(codeLineForCompilation, newCompilationConfiguration) }
+                val compilationResult: ResultWithDiagnostics<LinkedSnippet<KJvmCompiledScript>>
+                val timeMillis = measureTimeMillis {
+                    compilationResult = compiler.compile(codeLineForCompilation, newCompilationConfiguration)
+                }
+                if (compilationResult is ResultWithDiagnostics.Failure) {
+                    System.err.println(compilationResult.reports.joinToString("\n", "Compilation failed:\n") { it.toString() })
+                }
 
                 loggingInfo?.compile?.writeValue(timeMillis)
             }

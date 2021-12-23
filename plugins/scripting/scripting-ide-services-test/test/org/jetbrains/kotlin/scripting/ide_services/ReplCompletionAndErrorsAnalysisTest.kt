@@ -442,6 +442,39 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
         }
     }
 
+    @Test
+    fun testProtectedInheritedMemberCompletion() = test {
+        run {
+            code = """
+                open class Base {
+                    private val xyz1: Float = 7.0f
+                    protected val xyz2: Int = 42
+                    internal val xyz3: String = ""
+                    public val xyz4: Byte = 8
+                }
+            """.trimIndent()
+            doCompile
+        }
+
+        run {
+            val definition = "val c = x"
+            code = """
+                object : Base() {
+                    fun g() {
+                        $definition
+                    }
+                }
+            """.trimIndent()
+            cursor = code.indexOf(definition) + definition.length
+
+            expect {
+                addCompletion("xyz2", "xyz2", "Int", "property")
+                addCompletion("xyz3", "xyz3", "String", "property")
+                addCompletion("xyz4", "xyz4", "Byte", "property")
+            }
+        }
+    }
+
     @Ignore("Should be fixed by KT-39314")
     @Test
     fun ignore_testDefaultImportsNotFirst() = test {
