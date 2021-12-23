@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class KotlinModuleXmlGeneratorTest extends TestCase {
-    private final static String testDataPath = "jps-plugin/testData/modules.xml";
+    private final static String testDataPath = "jps/jps-plugin/testData/modules.xml";
 
     public void testBasic() {
         String actual = new KotlinModuleXmlBuilder().addModule(
