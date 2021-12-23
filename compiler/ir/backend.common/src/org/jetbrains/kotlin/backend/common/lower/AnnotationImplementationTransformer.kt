@@ -65,13 +65,15 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
         return super.visitClassNew(declaration)
     }
 
+    abstract fun chooseConstructor(implClass: IrClass, expression: IrConstructorCall) : IrConstructor
+
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
         val constructedClass = expression.type.classOrNull?.owner ?: return super.visitConstructorCall(expression)
         if (!constructedClass.isAnnotationClass) return super.visitConstructorCall(expression)
         if (constructedClass.typeParameters.isNotEmpty()) return super.visitConstructorCall(expression) // Not supported yet
 
         val implClass = implementations.getOrPut(constructedClass) { createAnnotationImplementation(constructedClass) }
-        val ctor = implClass.constructors.single()
+        val ctor = chooseConstructor(implClass, expression)
         val newCall = IrConstructorCallImpl.fromSymbolOwner(
             expression.startOffset,
             expression.endOffset,

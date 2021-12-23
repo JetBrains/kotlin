@@ -41,6 +41,10 @@ class JvmAnnotationImplementationTransformer(val jvmContext: JvmBackendContext, 
     private val inInlineFunctionScope: Boolean
         get() = allScopes.any { it.irElement.safeAs<IrDeclaration>()?.isInPublicInlineScope == true }
 
+    @Suppress("UNUSED_PARAMETER")
+    override fun chooseConstructor(implClass: IrClass, expression: IrConstructorCall) =
+        implClass.constructors.single()
+
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
         val constructedClass = expression.type.classOrNull
         if (constructedClass?.owner?.isAnnotationClass == true && inInlineFunctionScope) {

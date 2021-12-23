@@ -5,18 +5,19 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
 import org.jetbrains.kotlin.backend.common.lower.AnnotationImplementationTransformer
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.isFinalClass
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
-import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.putArgument
 
 
 internal class NativeAnnotationImplementationTransformer(context: Context, irFile: IrFile) :
@@ -35,31 +36,61 @@ internal class NativeAnnotationImplementationTransformer(context: Context, irFil
         parent = irFile!!
     }
 
+    /**
+     * When annotation is defined in another module, default values can be not available
+     * during incremental compilation.
+     *
+     * In that case we need to delegate evaluating defaults to original class constructor.
+     * The simplest way to do that - generate a constructor for each set of arguments used for
+     * instantiating annotations, hope there shouldn't be too many of them in each module.
+     */
+    override fun chooseConstructor(implClass: IrClass, expression: IrConstructorCall) : IrConstructor {
+        val existingValueArguments = (0 until expression.valueArgumentsCount)
+                .filter { expression.getValueArgument(it) != null }
+                .map { expression.symbol.owner.valueParameters[it].name }
+                .toSet()
+        return implClass.constructors.singleOrNull { cons ->
+            cons.valueParameters.map { it.name }.toSet() == existingValueArguments
+        } ?: implClass.addConstructor {
+            startOffset = SYNTHETIC_OFFSET
+            endOffset = SYNTHETIC_OFFSET
+            visibility = DescriptorVisibilities.PUBLIC
+        }.apply {
+            expression.symbol.owner.valueParameters
+                    .filter { it.name in existingValueArguments }
+                    .forEach { parameter -> addValueParameter(parameter.name.asString(), parameter.type) }
+            createConstructorBody(this, expression.symbol.owner)
+        }
+    }
+
+
     override fun implementAnnotationPropertiesAndConstructor(implClass: IrClass, annotationClass: IrClass, generatedConstructor: IrConstructor) {
         require(!annotationClass.isFinalClass) { "Annotation class ${annotationClass.kotlinFqName} shouldn't be final" }
         val properties = annotationClass.getAnnotationProperties()
         properties.forEach { property ->
-            val propType = property.getter!!.returnType
-            val propName = property.name
-            val parameter = generatedConstructor.addValueParameter(propName.asString(), propType)
-            // VALUE_FROM_PARAMETER
-            val originalParameter = ((property.backingField?.initializer?.expression as? IrGetValue)?.symbol?.owner as? IrValueParameter)
-            if (originalParameter?.defaultValue != null) {
-                parameter.defaultValue = originalParameter.defaultValue!!.deepCopyWithVariables().also { it.transformChildrenVoid() }
-            }
+            generatedConstructor.addValueParameter(property.name.asString(), property.getter!!.returnType)
         }
+        createConstructorBody(generatedConstructor, annotationClass.constructors.single())
+    }
 
-        generatedConstructor.body = context.irFactory.createBlockBody(
+    private fun createConstructorBody(constructor: IrConstructor, delegate: IrConstructor) {
+        /**
+         * We need to delegate to base constructor, instead of calling primary with default values
+         * as default values can be not available. {@see chooseConstructor} for details
+         */
+        constructor.body = context.irFactory.createBlockBody(
                 SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, listOf(
                 IrDelegatingConstructorCallImpl(
-                        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.irBuiltIns.unitType, annotationClass.constructors.single().symbol,
-                        typeArgumentsCount = 0, valueArgumentsCount = generatedConstructor.valueParameters.size
+                        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.irBuiltIns.unitType, delegate.symbol,
+                        typeArgumentsCount = 0, valueArgumentsCount = delegate.valueParameters.size
                 ).apply {
-                    generatedConstructor.valueParameters.forEach {
-                        putValueArgument(it.index, IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, it.symbol))
+                    constructor.valueParameters.forEach { param ->
+                        putArgument(delegate.valueParameters.single { it.name == param.name },
+                                IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, param.symbol))
                     }
                 }
         ))
+
     }
 
     override val forbidDirectFieldAccessInMethods = true
