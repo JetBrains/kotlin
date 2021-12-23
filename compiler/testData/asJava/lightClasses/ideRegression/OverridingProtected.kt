@@ -11,5 +11,4 @@ class C : A() {
 }
 
 // LAZINESS:NoLaziness
-// FIR_COMPARISON
 // COMPILATION_ERRORS

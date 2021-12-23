@@ -8,4 +8,3 @@ class PlatformTypes {
     fun bothNotNull() = Collections.emptyList<String>()!!
 }
 
-// FIR_COMPARISON

@@ -6,5 +6,4 @@ fun foo() {
 
 }
 
-// FIR_COMPARISON
 // SKIP_IDE_TEST

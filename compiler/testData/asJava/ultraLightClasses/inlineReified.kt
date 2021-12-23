@@ -10,5 +10,4 @@ class C {
         inline set(value) {}
 }
 
-// FIR_COMPARISON
 // COMPILATION_ERRORS

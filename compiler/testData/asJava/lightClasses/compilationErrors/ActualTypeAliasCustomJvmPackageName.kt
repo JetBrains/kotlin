@@ -5,5 +5,4 @@ package p
 
 actual typealias B = List<Int>
 
-// FIR_COMPARISON
 // SKIP_IDE_TEST

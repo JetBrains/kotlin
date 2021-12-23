@@ -52,4 +52,3 @@ class Container {
     fun <Q : Final> typeParameter(x: Out<Q>, y: In<Q>) {}
 }
 
-// FIR_COMPARISON

@@ -1,5 +1,4 @@
 // p.B.Nested
-// FIR_COMPARISON
 
 package p
 

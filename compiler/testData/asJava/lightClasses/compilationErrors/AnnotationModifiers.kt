@@ -12,4 +12,3 @@ class A {
     var c: String = ""
 }
 
-// FIR_COMPARISON

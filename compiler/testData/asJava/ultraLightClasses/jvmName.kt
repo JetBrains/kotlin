@@ -23,4 +23,3 @@ class C {
     fun foo(x: List<Int>) {}
 }
 
-// FIR_COMPARISON

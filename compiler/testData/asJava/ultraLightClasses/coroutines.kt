@@ -21,4 +21,3 @@ class Derived: Base {
 }
 
 // WITH_STDLIB
-// FIR_COMPARISON

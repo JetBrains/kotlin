@@ -9,4 +9,3 @@ interface KtInterface {
     fun withoutBody()
 }
 
-// FIR_COMPARISON

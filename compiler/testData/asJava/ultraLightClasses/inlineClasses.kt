@@ -28,5 +28,4 @@ inline class InlineInheritance(val v: Int) : I {
     fun z() = 7
 }
 
-// FIR_COMPARISON
 // COMPILATION_ERRORS
