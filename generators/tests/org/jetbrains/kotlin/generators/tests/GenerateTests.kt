@@ -42,7 +42,7 @@ import org.jetbrains.kotlinx.atomicfu.AbstractAtomicfuJsIrTest
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     generateTestGroupSuite(args) {
-        testGroup("compiler/incremental-compilation-impl/test", "jps-plugin/testData") {
+        testGroup("compiler/incremental-compilation-impl/test", "jps/jps-plugin/testData") {
             fun incrementalJvmTestData(targetBackend: TargetBackend): TestGroup.TestClass.() -> Unit = {
                 model("incremental/pureKotlin", extension = null, recursive = false, targetBackend = targetBackend)
                 model("incremental/classHierarchyAffected", extension = null, recursive = false, targetBackend = targetBackend)

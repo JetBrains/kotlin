@@ -830,7 +830,7 @@ tasks {
 
     register("jps-tests") {
         dependsOn("dist")
-        dependsOn(":jps-plugin:test")
+        dependsOn(":jps:jps-plugin:test")
     }
 
     register("frontendApiTests") {
