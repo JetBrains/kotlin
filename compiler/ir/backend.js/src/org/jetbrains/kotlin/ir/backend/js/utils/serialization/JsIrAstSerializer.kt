@@ -92,8 +92,6 @@ class JsIrAstSerializer: JsAstSerializerBase() {
             fragmentBuilder.addDefinitions(serialize(it))
         }
 
-        fragmentBuilder.addAllPolyfills(fragment.polyfills)
-
         return fragmentBuilder.build()
     }
 

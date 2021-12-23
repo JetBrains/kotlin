@@ -83,7 +83,6 @@ class JsIrAstDeserializer : JsAstDeserializerBase() {
 
         fragment.dts = proto.dts
         fragment.definitions += proto.definitionsList.map { deserializeString(it) }
-        fragment.polyfills = JsPolyfills(proto.polyfillsList)
 
         return fragment
     }
