@@ -117,15 +117,4 @@ interface CallResolutionInterceptorExtension {
         extensionReceiver: ReceiverValueWithSmartCastInfo?
     ): Collection<VariableDescriptor> = candidates
 
-    @Suppress("DeprecatedCallableAddReplaceWith")
-    @Deprecated("Please use dedicated interceptVariableCandidates and interceptFunctionCandidates instead")
-    fun interceptCandidates(
-        candidates: Collection<FunctionDescriptor>,
-        scopeTower: ImplicitScopeTower,
-        resolutionContext: BasicCallResolutionContext,
-        resolutionScope: ResolutionScope,
-        callResolver: CallResolver?,
-        name: Name,
-        location: LookupLocation
-    ): Collection<FunctionDescriptor> = candidates
 }
