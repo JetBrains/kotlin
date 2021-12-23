@@ -82,6 +82,6 @@ fun test() {
     val i : Int? = null
     i<!UNSAFE_CALL!>.<!>(fun Int.() = 1)();
     {}<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!>()
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>1<!UNNECESSARY_SAFE_CALL!>?.<!>(fun Int.() = 1)()<!>
+    1<!UNNECESSARY_SAFE_CALL!>?.<!>(fun Int.() = 1)()
     1.<!NO_RECEIVER_ALLOWED!>{}<!>()
 }

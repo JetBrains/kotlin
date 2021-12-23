@@ -6,7 +6,7 @@ public open class Box</*0*/ T : kotlin.Any!> {
     public constructor Box</*0*/ T : kotlin.Any!>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open fun put(/*0*/ @org.jetbrains.annotations.NotNull t: T): kotlin.Unit
+    public open fun put(/*0*/ @org.jetbrains.annotations.NotNull t: T & Any): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 

@@ -57,13 +57,13 @@ fun test() {
         if (get() === null) {}
 
         if (x != null) {
-            <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()<!>
-            <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>x<!UNNECESSARY_SAFE_CALL!>?.<!>equals(1)<!>
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>hashCode()
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>equals(1)
             x.equals("")
             x.hashCode()
             x.toString()
             x.test()
-            <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()<!>
+            x<!UNNECESSARY_SAFE_CALL!>?.<!>test2()
             x.test2()
         }
 

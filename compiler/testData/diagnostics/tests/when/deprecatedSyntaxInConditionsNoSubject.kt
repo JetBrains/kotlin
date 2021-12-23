@@ -54,7 +54,7 @@ fun testWithSubject_ok(x: Boolean, y: Boolean?, any: Any, z: Boolean) {
     }
 
     var b = z
-    when (z) {
+    <!NO_ELSE_IN_WHEN!>when<!> (z) {
         b++ -> {}
         b-- -> {}
     }

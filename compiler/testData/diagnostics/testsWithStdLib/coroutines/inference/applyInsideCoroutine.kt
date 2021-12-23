@@ -7,26 +7,26 @@ class Controller<T> {
 
 fun <S> generate(g: suspend Controller<S>.() -> Unit): S = TODO()
 
-val test1 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>apply<!> {
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>yield<!>(4)
+val test1 = generate {
+    apply {
+        yield(4)
     }
 }
 
-val test2 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
+val test2 = generate {
     yield(B)
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>apply<!> {
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>yield<!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>C<!>)
+    apply {
+        yield(C)
     }
 }
 
-val test3 = <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>generate<!> {
-    this.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>let<!> {
+val test3 = generate {
+    this.let {
         yield(B)
     }
 
-    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>apply<!> {
-        <!DEBUG_INFO_MISSING_UNRESOLVED!>yield<!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>C<!>)
+    apply {
+        yield(C)
     }
 }
 

@@ -22,6 +22,6 @@ class A : J(), WithDeprecation {
 fun main() {
     J().<!DEPRECATION!>foo<!>()
 
-    J2().<!DEPRECATION!>foo<!>()
-    A().<!DEPRECATION!>foo<!>()
+    J2().foo()
+    A().foo()
 }

@@ -408,7 +408,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
         val FIRST_NON_DEPRECATED = KOTLIN_1_5
 
         @JvmField
-        val LATEST_STABLE = KOTLIN_1_6
+        val LATEST_STABLE = KOTLIN_1_7
     }
 }
 

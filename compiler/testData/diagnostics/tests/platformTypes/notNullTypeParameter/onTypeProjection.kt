@@ -15,6 +15,6 @@ public class A<T> {
 // FILE: k.kt
 
 fun test(a: A<out CharSequence>) {
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a.bar()<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a.bar()<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
+    a.bar()<!UNNECESSARY_SAFE_CALL!>?.<!>length
+    a.bar()<!UNNECESSARY_SAFE_CALL!>?.<!>length
 }

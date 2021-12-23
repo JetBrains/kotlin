@@ -66,26 +66,26 @@ fun foo(a: A?) {
         <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>q()<!>
         <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>w<!>++
 
-        (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>l<!>) += 1
-        (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>l<!>)[0]
-        (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>l<!>)[0]++
-        (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>l<!>)[0] = 1
+        (a<!UNNECESSARY_SAFE_CALL!>?.<!>l) += 1
+        (a<!UNNECESSARY_SAFE_CALL!>?.<!>l)[0]
+        (a<!UNNECESSARY_SAFE_CALL!>?.<!>l)[0]++
+        (a<!UNNECESSARY_SAFE_CALL!>?.<!>l)[0] = 1
 
-        (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>ll<!>)[0][0]
-        (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>ll<!>)[0][0]++
-        (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>ll<!>)[0][0] = 1
-        (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>q<!>)()
-        (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>w<!>)++
+        (a<!UNNECESSARY_SAFE_CALL!>?.<!>ll)[0][0]
+        (a<!UNNECESSARY_SAFE_CALL!>?.<!>ll)[0][0]++
+        (a<!UNNECESSARY_SAFE_CALL!>?.<!>ll)[0][0] = 1
+        (a<!UNNECESSARY_SAFE_CALL!>?.<!>q)()
+        (a<!UNNECESSARY_SAFE_CALL!>?.<!>w)++
 
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>l<!>.plusAssign(1)
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>l<!>.get(0)
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>l<!>.get(0).inc()
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>l<!>.set(0, 1)
+        a<!UNNECESSARY_SAFE_CALL!>?.<!>l.plusAssign(1)
+        a<!UNNECESSARY_SAFE_CALL!>?.<!>l.get(0)
+        a<!UNNECESSARY_SAFE_CALL!>?.<!>l.get(0).inc()
+        a<!UNNECESSARY_SAFE_CALL!>?.<!>l.set(0, 1)
 
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>ll<!>.get(0).get(0)
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>ll<!>.get(0).get(0).inc()
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>ll<!>.get(0).set(0, 1)
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>q<!>.invoke()
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>w<!>.inc()
+        a<!UNNECESSARY_SAFE_CALL!>?.<!>ll.get(0).get(0)
+        a<!UNNECESSARY_SAFE_CALL!>?.<!>ll.get(0).get(0).inc()
+        a<!UNNECESSARY_SAFE_CALL!>?.<!>ll.get(0).set(0, 1)
+        a<!UNNECESSARY_SAFE_CALL!>?.<!>q.invoke()
+        a<!UNNECESSARY_SAFE_CALL!>?.<!>w.inc()
     }
 }
