@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.analysis.api.assertIsValidAndAccessible
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirReceiverParameterSymbol
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtProperty
 
@@ -30,6 +32,8 @@ internal class KtFirSymbolContainingDeclarationProvider(
     override val token: ValidityToken,
 ) : KtSymbolContainingDeclarationProvider(), KtFirAnalysisSessionComponent {
     override fun getContainingDeclaration(symbol: KtSymbol): KtSymbolWithKind? {
+        assertIsValidAndAccessible()
+
         if (symbol is KtReceiverParameterSymbol) {
             return (symbol as KtFirReceiverParameterSymbol).firRef.withFir {
                 firSymbolBuilder.buildSymbol(it) as KtSymbolWithKind
@@ -93,6 +97,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
                 return source.psi as KtDeclaration
             KtFakeSourceElementKind.PropertyFromParameter -> return source.psi?.parentOfType<KtPrimaryConstructor>()!!
             KtFakeSourceElementKind.DefaultAccessor -> return source.psi as KtProperty
+            KtFakeSourceElementKind.ItLambdaParameter -> return source.psi as KtFunctionLiteral
             KtRealSourceElementKind -> source.psi!!
             else -> error("Unexpected FirSourceElement: kind=${source.kind} element=${source.psi!!::class.simpleName}")
         }
