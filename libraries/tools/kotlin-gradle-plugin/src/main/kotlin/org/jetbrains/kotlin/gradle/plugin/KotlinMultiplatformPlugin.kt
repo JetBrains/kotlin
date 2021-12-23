@@ -217,9 +217,17 @@ internal fun <T> Project.whenEvaluated(fn: Project.() -> T) {
 
     /* Make sure that all afterEvaluate blocks from the AndroidPlugin get scheduled first */
     val isDispatched = AtomicBoolean(false)
-    androidPluginIds.forEach { androidPluginId ->
-        pluginManager.withPlugin(androidPluginId) {
-            if (!isDispatched.getAndSet(true)) {
+
+    fun isAndroidPluginApplied(): Boolean =
+        androidPluginIds.any { pluginManager.hasPlugin(it) }
+
+    if (isAndroidPluginApplied()) {
+        if (!isDispatched.getAndSet(true)) {
+            afterEvaluate { fn() }
+        }
+    } else {
+        plugins.all {
+            if (!isDispatched.get() && isAndroidPluginApplied() && !isDispatched.getAndSet(true)) {
                 afterEvaluate { fn() }
             }
         }
