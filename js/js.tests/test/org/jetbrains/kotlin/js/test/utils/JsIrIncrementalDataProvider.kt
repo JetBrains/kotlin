@@ -71,7 +71,7 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
 
     private fun recordIncrementalDataForRuntimeKlib(module: TestModule) {
         val runtimeKlibPath = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
-        val libs = runtimeKlibPath.map {
+        val libs = runtimeKlibPath.filterNotNull().map {
             val descriptor = testServices.jsLibraryProvider.getDescriptorByPath(it)
             testServices.jsLibraryProvider.getCompiledLibraryByDescriptor(descriptor)
         }
@@ -81,7 +81,9 @@ class JsIrIncrementalDataProvider(private val testServices: TestServices) : Test
             .run { if (shouldBeGenerated()) arguments() else null }
 
         runtimeKlibPath.forEach {
-            recordIncrementalData(it, null, libs, configuration, mainArguments)
+            if (it != null) {
+                recordIncrementalData(it, null, libs, configuration, mainArguments)
+            }
         }
     }
 
