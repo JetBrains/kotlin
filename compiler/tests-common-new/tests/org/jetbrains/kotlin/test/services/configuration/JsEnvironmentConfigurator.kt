@@ -153,13 +153,13 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
                     ConfigurationDirectives.WITH_STDLIB in module.directives
 
             val names = if (needsFullIrRuntime) listOf("full.stdlib", "kotlin.test") else listOf("reduced.stdlib")
-            names.mapTo(result) { System.getProperty("kotlin.js.$it.path") }
+            names.mapNotNullTo(result) { System.getProperty("kotlin.js.$it.path") }
             val runtimeClasspaths = testServices.runtimeClasspathProviders.flatMap { it.runtimeClassPaths(module) }
             runtimeClasspaths.mapTo(result) { it.absolutePath }
             return result
         }
 
-        fun getDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<ModuleDescriptorImpl> {
+        fun getKlibDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<File> {
             val visited = mutableSetOf<TestModule>()
             fun getRecursive(module: TestModule, kind: DependencyRelation) {
                 val dependencies = if (kind == DependencyRelation.FriendDependency) module.friendDependencies else module.regularDependencies
@@ -171,8 +171,11 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
                 }
             }
             getRecursive(module, kind)
-            return visited
-                .map { testServices.dependencyProvider.getArtifact(it, ArtifactKinds.KLib).outputFile }
+            return visited.map { testServices.dependencyProvider.getArtifact(it, ArtifactKinds.KLib).outputFile }
+        }
+
+        fun getDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<ModuleDescriptorImpl> {
+            return getKlibDependencies(module, testServices, kind)
                 .map { testServices.jsLibraryProvider.getDescriptorByPath(it.absolutePath) }
         }
 
