@@ -181,7 +181,7 @@ class FirCallCompleter(
             initialType,
             transformer.resolutionContext
         ) {
-            analyzer.analyze(candidate.system.asPostponedArgumentsAnalyzerContext(), it, candidate, completionMode)
+            analyzer.analyze(candidate.system, it, candidate, completionMode)
         }
     }
 

@@ -18,7 +18,10 @@ import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
-import org.jetbrains.kotlin.resolve.calls.inference.model.*
+import org.jetbrains.kotlin.resolve.calls.inference.model.BuilderInferencePosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.registerTypeVariableIfNotPresent
 import org.jetbrains.kotlin.types.model.*
 
@@ -204,7 +207,7 @@ class FirDelegatedPropertyInferenceSession(
                     found
                 }.candidate
                 postponedArgumentsAnalyzer.analyze(
-                    commonSystem.asPostponedArgumentsAnalyzerContext(),
+                    commonSystem,
                     lambdaAtom,
                     containingCandidateForLambda,
                     ConstraintSystemCompletionMode.FULL,
