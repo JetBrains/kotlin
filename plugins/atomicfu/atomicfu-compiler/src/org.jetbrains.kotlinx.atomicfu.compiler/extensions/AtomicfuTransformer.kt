@@ -29,6 +29,8 @@ private const val TRACE_BASE_TYPE = "TraceBase"
 private const val GETTER = "atomicfu\$getter"
 private const val SETTER = "atomicfu\$setter"
 private const val GET = "get"
+private const val GET_VALUE = "getValue"
+private const val SET_VALUE = "setValue"
 private const val ATOMIC_VALUE_FACTORY = "atomic"
 private const val TRACE = "Trace"
 private const val INVOKE = "invoke"
@@ -100,6 +102,43 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
     }
 
     private inner class AtomicTransformer : IrElementTransformer<IrFunction?> {
+
+        override fun visitProperty(declaration: IrProperty, data: IrFunction?): IrStatement {
+            // Support transformation for delegated properties:
+            if (declaration.isDelegated && declaration.backingField?.type?.isAtomicValueType() == true) {
+                declaration.backingField?.let { delegateBackingField ->
+                    delegateBackingField.initializer?.let {
+                        val initializer = it.expression as IrCall
+                        when {
+                            initializer.isAtomicFieldGetter() -> {
+                                // val _a = atomic(0)
+                                // var a: Int by _a
+                                // Accessors of the delegated property `a` are implemented via the generated property `a$delegate`,
+                                // that is the copy of the original `_a`.
+                                // They should be delegated to the value of the original field `_a` instead of `a$delegate`.
+
+                                // fun <get-a>() = a$delegate.value -> _a.value
+                                // fun <set-a>(value: Int) = { a$delegate.value = value } -> { _a.value = value }
+                                val initializerName = initializer.symbol.owner.name.asString()
+                                val originalFieldName = initializerName.getFieldName()
+                                val originalProperty = (declaration.parent as IrDeclarationContainer).declarations.single {
+                                    it is IrProperty && it.name.asString() == originalFieldName &&
+                                            it.backingField != null && it.backingField!!.type == delegateBackingField.type
+                                }
+                                declaration.transform(DelegatePropertyTransformer((originalProperty as IrProperty).backingField!!), null)
+                            }
+                            initializer.isAtomicFactory() -> {
+                                // var a by atomic(77) -> var a: Int = 77
+                                it.expression = initializer.eraseAtomicFactory()!!
+                                declaration.transform(DelegatePropertyTransformer(delegateBackingField), null)
+                            }
+                            else -> error("Unexpected initializer of the delegated property: $initializer")
+                        }
+                    }
+                }
+            }
+            return super.visitProperty(declaration, data)
+        }
 
         override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement {
             return super.visitFunction(declaration, declaration)
@@ -233,6 +272,38 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
             return super.visitConstructorCall(expression, data)
         }
 
+        private inner class DelegatePropertyTransformer(private val originalField: IrField) : IrElementTransformerVoid() {
+            override fun visitCall(expression: IrCall): IrExpression {
+                // Accessors of the delegated property have following signatures:
+
+                // public inline operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T)
+                // public inline operator fun getValue(thisRef: Any?, property: KProperty<*>): T
+
+                // getValue/setValue should get and set the value of the originalField
+                val name = expression.symbol.owner.name.asString()
+                if (expression.symbol.isKotlinxAtomicfuPackage() && (name == GET_VALUE || name == SET_VALUE)) {
+                    val type = originalField.type.atomicToValueType()
+                    val isSetter = name == SET_VALUE
+                    val runtimeFunction = getRuntimeFunctionSymbol(name, type)
+                    val thisRef = expression.getValueArgument(0)!!
+                    val receiver = if (thisRef.isConstNull()) null else thisRef
+                    val fieldAccessors = listOf(
+                        originalField.buildFieldGetter(receiver, type),
+                        originalField.buildFieldSetter(receiver, type)
+                    )
+                    return buildCall(
+                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                        target = runtimeFunction,
+                        type = type,
+                        typeArguments = if (runtimeFunction.owner.typeParameters.size == 1) listOf(type) else emptyList(),
+                        valueArguments = if (isSetter) listOf(expression.getValueArgument(2)!!, fieldAccessors[0], fieldAccessors[1]) else
+                                fieldAccessors
+                    )
+                }
+                return super.visitCall(expression)
+            }
+        }
+
         private fun IrExpression.getReceiverAccessors(parent: IrFunction?): List<IrExpression>? =
             when {
                 this is IrCall -> getAccessors()
@@ -319,6 +390,12 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
             )
         }
 
+        private fun IrField.buildFieldGetter(receiver: IrExpression?, type: IrType) =
+            context.buildFieldAccessor(this, receiver, type, false)
+
+        private fun IrField.buildFieldSetter(receiver: IrExpression?, type: IrType) =
+            context.buildFieldAccessor(this, receiver, type, true)
+
         private fun getRuntimeFunctionSymbol(name: String, type: IrType): IrSimpleFunctionSymbol {
             val functionName = when (name) {
                 "value.<get-value>" -> "getValue"
@@ -340,7 +417,7 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
 
         private fun IrCall.getAtomicFunctionName(): String =
             symbol.signature?.let { signature ->
-                if (signature is IdSignature.AccessorSignature) signature.accessorSignature else signature.asPublic()
+                if (signature is AccessorSignature) signature.accessorSignature else signature.asPublic()
             }?.declarationFqName?.let { name ->
                 if (name.substringBefore('.') in ATOMIC_VALUE_TYPES) {
                     name.substringAfter('.')
@@ -414,6 +491,9 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
     private fun IrCall.isAtomicArrayFactory(): Boolean =
         symbol.isKotlinxAtomicfuPackage() && symbol.owner.name.asString() == ATOMIC_ARRAY_OF_NULLS_FACTORY &&
                 type.isAtomicArrayType()
+
+    private fun IrCall.isAtomicFieldGetter(): Boolean =
+        type.isAtomicValueType() && symbol.owner.name.asString().startsWith("<get-")
 
     private fun IrConstructorCall.isAtomicArrayConstructor(): Boolean = type.isAtomicArrayType()
 
