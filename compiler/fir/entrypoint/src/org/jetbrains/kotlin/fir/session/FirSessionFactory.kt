@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -97,7 +98,7 @@ object FirSessionFactory {
             librariesScope,
             projectEnvironment,
             projectEnvironment.getPackagePartProvider(librariesScope),
-            languageVersionSettings
+            languageVersionSettings,
         )
 
         val mainModuleData = FirModuleDataImpl(

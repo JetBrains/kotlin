@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.js.analyze
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.DelegatingGlobalSearchScope
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
@@ -181,6 +184,25 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
         }
 
         return hasErrors
+    }
+
+    companion object {
+        fun newModuleSearchScope(project: Project, files: Collection<KtFile>): GlobalSearchScope {
+            // In case of separate modules, the source module scope generally consists of the following scopes:
+            // 1) scope which only contains passed Kotlin source files (.kt and .kts)
+            // 2) scope which contains all Java source files (.java) in the project
+            return GlobalSearchScope.filesScope(project, files.map { it.virtualFile }.toSet()).uniteWith(AllJsSourcesInProjectScope(project))
+        }
+    }
+
+    // TODO: limit this scope to the Java source roots, which the module has in its CONTENT_ROOTS
+    class AllJsSourcesInProjectScope(project: Project) : DelegatingGlobalSearchScope(GlobalSearchScope.allScope(project)) {
+        // 'isDirectory' check is needed because otherwise directories such as 'frontend.java' would be recognized
+        // as Java source files, which makes no sense
+        override fun contains(file: VirtualFile) =
+            file.name.contains(Regex(".js")) && !file.isDirectory
+
+        override fun toString() = "All JavaScript sources in the project"
     }
 }
 
