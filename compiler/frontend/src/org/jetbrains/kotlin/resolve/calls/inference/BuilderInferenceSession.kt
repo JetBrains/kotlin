@@ -438,10 +438,12 @@ class BuilderInferenceSession(
         integrateConstraints(initialStorage, nonFixedToVariablesSubstitutor, false)
 
         for (call in commonCalls) {
-            integrateConstraints(call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor, false)
+            val storage = call.callResolutionResult.constraintSystem.getBuilder().currentStorage()
+            integrateConstraints(storage, nonFixedToVariablesSubstitutor, false)
         }
         for (call in partiallyResolvedCallsInfo) {
-            integrateConstraints(call.callResolutionResult.constraintSystem, nonFixedToVariablesSubstitutor, true)
+            val storage = call.callResolutionResult.constraintSystem.getBuilder().currentStorage()
+            integrateConstraints(storage, nonFixedToVariablesSubstitutor, true)
         }
 
         return commonSystem.notFixedTypeVariables.all { it.value.constraints.isEmpty() }
@@ -469,7 +471,8 @@ class BuilderInferenceSession(
         nonFixedTypesToResultSubstitutor: NewTypeSubstitutor,
         nonFixedTypesToResult: Map<TypeConstructor, UnwrappedType>
     ) {
-        val resultingCallSubstitutor = completedCall.callResolutionResult.constraintSystem.fixedTypeVariables.entries
+        val storage = completedCall.callResolutionResult.constraintSystem.getBuilder().currentStorage()
+        val resultingCallSubstitutor = storage.fixedTypeVariables.entries
             .associate { it.key to nonFixedTypesToResultSubstitutor.safeSubstitute(it.value as UnwrappedType) } // TODO: SUB
 
         val resultingSubstitutor =

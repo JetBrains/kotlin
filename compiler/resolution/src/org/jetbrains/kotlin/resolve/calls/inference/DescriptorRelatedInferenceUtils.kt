@@ -70,7 +70,7 @@ fun CallableDescriptor.substituteAndApproximateTypes(
 fun PostponedArgumentsAnalyzerContext.addSubsystemFromArgument(argument: KotlinCallArgument?): Boolean {
     return when (argument) {
         is SubKotlinCallArgument -> {
-            addOtherSystem(argument.callResult.constraintSystem)
+            addOtherSystem(argument.callResult.constraintSystem.getBuilder().currentStorage())
             true
         }
 
