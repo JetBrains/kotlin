@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.asJava.builder.LightClassBuilderResult
 import org.jetbrains.kotlin.asJava.builder.LightClassConstructionContext
 import org.jetbrains.kotlin.asJava.builder.LightClassDataHolder
 import org.jetbrains.kotlin.asJava.classes.*
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
 
 typealias LightClassBuilder = (LightClassConstructionContext) -> LightClassBuilderResult
 
@@ -92,6 +94,11 @@ abstract class LightClassGenerationSupport {
         }
 
         return getUltraLightClassSupport(element).let { support ->
+            if (support.languageVersionSettings.getFlag(AnalysisFlags.eagerResolveOfLightClasses)) {
+                val descriptor = resolveToDescriptor(element)
+                (descriptor as? LazyClassDescriptor)?.forceResolveAllContents()
+            }
+
             when {
                 element is KtObjectDeclaration && element.isObjectLiteral() ->
                     KtUltraLightClassForAnonymousDeclaration(element, support)
