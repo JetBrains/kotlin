@@ -269,7 +269,7 @@ class BuilderInferenceSession(
         for (nestedSession in nestedInferenceSessions) {
             when (nestedSession) {
                 is BuilderInferenceSession -> add(nestedSession)
-                is DelegatedPropertyInferenceSession -> addAll(nestedSession.getNestedBuilderInferenceSessions())
+                is DelegateInferenceSession -> addAll(nestedSession.getNestedBuilderInferenceSessions())
             }
         }
     }

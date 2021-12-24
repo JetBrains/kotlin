@@ -656,7 +656,7 @@ class DelegatedPropertyResolver(
         inferenceSession: InferenceSession
     ): UnwrappedType {
         val expectedType = if (variableDescriptor.type !is DeferredType) variableDescriptor.type.unwrap() else null
-        val newInferenceSession = DelegatedPropertyInferenceSession(
+        val newInferenceSession = DelegateInferenceSession(
             variableDescriptor, expectedType, psiCallResolver,
             postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter,
             callComponents, builtIns, inferenceSession
