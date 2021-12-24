@@ -241,19 +241,24 @@ public class ClassFileFactory implements OutputFileCollection {
     @NotNull
     public PackageCodegen forPackage(@NotNull FqName fqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
-        registerSourceFiles(files);
+        sourceFiles.addAll(toIoFilesIgnoringNonPhysical(files));
         return new PackageCodegenImpl(state, files, fqName);
     }
 
     @NotNull
     public MultifileClassCodegen forMultifileClass(@NotNull FqName facadeFqName, @NotNull Collection<KtFile> files) {
         assert !isDone : "Already done!";
-        registerSourceFiles(files);
+        sourceFiles.addAll(toIoFilesIgnoringNonPhysical(files));
         return new MultifileClassCodegenImpl(state, files, facadeFqName);
     }
 
-    public void registerSourceFiles(@NotNull Collection<KtFile> files) {
-        sourceFiles.addAll(toIoFilesIgnoringNonPhysical(files));
+    public void registerSourceFiles(@NotNull Collection<File> files) {
+        for (File file : files) {
+            // We ignore non-physical files here, because this code is needed to tell the make what inputs affect which outputs
+            // a non-physical file cannot be processed by make
+            if (file == null) continue;
+            sourceFiles.add(file);
+        }
     }
 
     @NotNull
