@@ -147,7 +147,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             return getMainModule(testServices).name
         }
 
-        fun getRuntimePathsForModule(module: TestModule, testServices: TestServices): List<String> {
+        fun getRuntimePathsForModule(module: TestModule, testServices: TestServices): List<String?> {
             val result = mutableListOf<String>()
             val needsFullIrRuntime = JsEnvironmentConfigurationDirectives.KJS_WITH_FULL_RUNTIME in module.directives ||
                     ConfigurationDirectives.WITH_STDLIB in module.directives
@@ -159,7 +159,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             return result
         }
 
-        fun getDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<ModuleDescriptorImpl> {
+        fun getKlibDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<File> {
             val visited = mutableSetOf<TestModule>()
             fun getRecursive(module: TestModule, kind: DependencyRelation) {
                 val dependencies = if (kind == DependencyRelation.FriendDependency) module.friendDependencies else module.regularDependencies
@@ -171,8 +171,11 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
                 }
             }
             getRecursive(module, kind)
-            return visited
-                .map { testServices.dependencyProvider.getArtifact(it, ArtifactKinds.KLib).outputFile }
+            return visited.map { testServices.dependencyProvider.getArtifact(it, ArtifactKinds.KLib).outputFile }
+        }
+
+        fun getDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<ModuleDescriptorImpl> {
+            return getKlibDependencies(module, testServices, kind)
                 .map { testServices.jsLibraryProvider.getDescriptorByPath(it.absolutePath) }
         }
 
