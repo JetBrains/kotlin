@@ -117,7 +117,7 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
 
         return dependentTypeParameters.any { (typeParameter, _) ->
             returnType.contains {
-                it.typeConstructor(asConstraintSystemCompleterContext()) == getTypeParameterByVariable(typeParameter) && !it.isMarkedNullable()
+                it.typeConstructor(this) == getTypeParameterByVariable(typeParameter) && !it.isMarkedNullable()
             }
         }
     }
@@ -125,7 +125,7 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
     private fun NewConstraintSystemImpl.getDependentTypeParameters(
         variable: TypeConstructorMarker,
         dependentTypeParametersSeen: List<Pair<TypeConstructorMarker, ConeKotlinType?>> = listOf()
-    ): List<Pair<ConeTypeVariableTypeConstructor, ConeKotlinType?>> = with(asConstraintSystemCompleterContext()) {
+    ): List<Pair<ConeTypeVariableTypeConstructor, ConeKotlinType?>> {
         val dependentTypeParameters = getBuilder().currentStorage().notFixedTypeVariables.asSequence()
             .flatMap { (typeConstructor, constraints) ->
                 require(typeConstructor is ConeTypeVariableTypeConstructor)
@@ -170,13 +170,11 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
         (getBuilder().currentStorage().allTypeVariables[typeConstructor] as? ConeTypeParameterBasedTypeVariable)?.typeParameterSymbol?.toLookupTag()
 
     private fun NewConstraintSystemImpl.getDependingOnTypeParameter(variable: TypeConstructorMarker): List<ConeTypeVariableTypeConstructor> =
-        with(asConstraintSystemCompleterContext()) {
-            getBuilder().currentStorage().notFixedTypeVariables[variable]?.constraints?.mapNotNull {
-                if (it.position.from is ConeDeclaredUpperBoundConstraintPosition && it.kind == ConstraintKind.UPPER) {
-                    it.type.typeConstructor() as? ConeTypeVariableTypeConstructor
-                } else null
-            } ?: emptyList()
-        }
+        getBuilder().currentStorage().notFixedTypeVariables[variable]?.constraints?.mapNotNull {
+            if (it.position.from is ConeDeclaredUpperBoundConstraintPosition && it.kind == ConstraintKind.UPPER) {
+                it.type.typeConstructor() as? ConeTypeVariableTypeConstructor
+            } else null
+        } ?: emptyList()
 
     private fun ConeTypeVariable.recordInfoAboutTypeVariableUsagesAsInvariantOrContravariantParameter() {
         this.typeConstructor.recordInfoAboutTypeVariableUsagesAsInvariantOrContravariantParameter()
