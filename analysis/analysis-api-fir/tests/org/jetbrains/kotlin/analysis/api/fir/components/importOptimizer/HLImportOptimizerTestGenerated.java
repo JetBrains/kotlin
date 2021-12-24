@@ -78,6 +78,12 @@ public class HLImportOptimizerTestGenerated extends AbstractHLImportOptimizerTes
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedInvokeOperatorImport.kt");
     }
 
+    @Test
+    @TestMetadata("usedTypeAsTypeParameter.kt")
+    public void testUsedTypeAsTypeParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedTypeAsTypeParameter.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors")
     @TestDataPath("$PROJECT_ROOT")
@@ -115,6 +121,12 @@ public class HLImportOptimizerTestGenerated extends AbstractHLImportOptimizerTes
         @TestMetadata("usedInvokeOperator_invalidArguments.kt")
         public void testUsedInvokeOperator_invalidArguments() throws Exception {
             runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/usedInvokeOperator_invalidArguments.kt");
+        }
+
+        @Test
+        @TestMetadata("usedTypeAsTypeParameter_missingOuterType.kt")
+        public void testUsedTypeAsTypeParameter_missingOuterType() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/usedTypeAsTypeParameter_missingOuterType.kt");
         }
 
         @Test

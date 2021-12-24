@@ -119,11 +119,15 @@ internal class KtFirImportOptimizer(
 
             override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
                 processTypeRef(resolvedTypeRef)
+
+                resolvedTypeRef.delegatedTypeRef?.accept(this)
                 super.visitTypeRef(resolvedTypeRef)
             }
 
             override fun visitErrorTypeRef(errorTypeRef: FirErrorTypeRef) {
                 processTypeRef(errorTypeRef)
+
+                errorTypeRef.delegatedTypeRef?.accept(this)
                 super.visitErrorTypeRef(errorTypeRef)
             }
 
