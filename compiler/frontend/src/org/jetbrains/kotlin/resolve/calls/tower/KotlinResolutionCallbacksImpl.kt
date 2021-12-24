@@ -103,6 +103,9 @@ class KotlinResolutionCallbacksImpl(
         ) as KotlinType
     }
 
+    override fun createEmptyConstraintSystem(): NewConstraintSystem =
+        NewConstraintSystemImpl(callComponents.constraintInjector, callComponents.builtIns, callComponents.kotlinTypeRefiner)
+
     override fun resolveCallableReferenceArgument(
         argument: CallableReferenceKotlinCallArgument,
         expectedType: UnwrappedType?,

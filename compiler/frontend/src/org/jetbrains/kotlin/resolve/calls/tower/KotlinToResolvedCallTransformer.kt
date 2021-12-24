@@ -107,7 +107,8 @@ class KotlinToResolvedCallTransformer(
             is CompletedCallResolutionResult, is ErrorCallResolutionResult -> {
                 val candidate = (baseResolvedCall as SingleCallResolutionResult).resultCallAtom
 
-                val resultSubstitutor = baseResolvedCall.constraintSystem.buildResultingSubstitutor(typeSystemContext)
+                val resultSubstitutor =
+                    baseResolvedCall.constraintSystem.getBuilder().currentStorage().buildResultingSubstitutor(typeSystemContext)
                 if (context.inferenceSession.writeOnlyStubs(baseResolvedCall)) {
                     val stub = createStubResolvedCallAndWriteItToTrace<CallableDescriptor>(
                         candidate,
