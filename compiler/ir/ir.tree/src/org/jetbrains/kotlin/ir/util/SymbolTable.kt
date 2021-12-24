@@ -459,6 +459,10 @@ open class SymbolTable(
         )
     }
 
+    fun declareClassWithSignature(sig: IdSignature, symbol: IrClassSymbol) {
+        classSymbolTable.set(sig, symbol)
+    }
+
     fun declareClassIfNotExists(descriptor: ClassDescriptor, classFactory: (IrClassSymbol) -> IrClass): IrClass =
         classSymbolTable.declareIfNotExists(descriptor, { signature -> createClassSymbol(descriptor, signature) }, classFactory)
 
@@ -844,6 +848,10 @@ open class SymbolTable(
                 declare(descriptor!!, { IrSimpleFunctionSymbolImpl(descriptor) }, functionFactory)
             }
         }
+    }
+
+    fun declareSimpleFunctionWithSignature(sig: IdSignature, symbol: IrSimpleFunctionSymbol) {
+        simpleFunctionSymbolTable.set(sig, symbol)
     }
 
     override fun referenceSimpleFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol =

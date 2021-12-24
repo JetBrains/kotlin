@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import java.io.File
 
 abstract class AbstractFirAnalyzerFacade {
@@ -116,7 +116,7 @@ class FirAnalyzerFacade(
             session, _scopeSession!!, firFiles!! + commonFirFiles,
             languageVersionSettings, signaturer,
             fir2IrExtensions,
-            FirJvmKotlinMangler(session), IrFactoryImpl,
+            FirJvmKotlinMangler(session), JvmIrMangler, IrFactoryImpl,
             FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider(),
             irGeneratorExtensions
