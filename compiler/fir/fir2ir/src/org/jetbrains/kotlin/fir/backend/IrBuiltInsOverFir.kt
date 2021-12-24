@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.backend.common.ir.addFakeOverrides
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -30,10 +31,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrClassPublicSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorPublicSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionPublicSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -46,6 +44,7 @@ class IrBuiltInsOverFir(
     private val components: Fir2IrComponents,
     override val languageVersionSettings: LanguageVersionSettings,
     private val moduleDescriptor: FirModuleDescriptor,
+    irMangler: KotlinMangler.IrMangler,
     private val tryLoadBuiltInsFirst: Boolean = false
 ) : IrBuiltIns() {
 
@@ -55,6 +54,8 @@ class IrBuiltInsOverFir(
 
     override val operatorsPackageFragment = createPackage(KOTLIN_INTERNAL_IR_FQN)
     private val kotlinIrPackage = createPackage(kotlinPackage)
+
+    private val irSignatureBuilder = PublicIdSignatureComputer(irMangler)
 
     override val booleanNotSymbol: IrSimpleFunctionSymbol by lazy {
         boolean.ensureLazyContentsCreated()
@@ -365,9 +366,12 @@ class IrBuiltInsOverFir(
                 vararg valueParameterTypes: Pair<String, IrType>,
                 builder: IrSimpleFunction.() -> Unit = {}
             ) =
-                createFunction(fqName, name, returnType, valueParameterTypes, origin = BUILTIN_OPERATOR).also {
+                createFunction(name, returnType, valueParameterTypes, origin = BUILTIN_OPERATOR).also {
                     declarations.add(it)
                     it.builder()
+                }.also {
+                    it.parent = operatorsPackageFragment
+                    components.symbolTable.declareSimpleFunctionWithSignature(irSignatureBuilder.computeSignature(it), it.symbol)
                 }.symbol
 
             primitiveFloatingPointIrTypes.forEach { fpType ->
@@ -400,7 +404,7 @@ class IrBuiltInsOverFir(
                 }
 
                 createFunction(
-                    fqName, "CHECK_NOT_NULL",
+                    "CHECK_NOT_NULL",
                     IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList(), emptyList()),
                     arrayOf("" to IrSimpleTypeImpl(typeParameter.symbol, hasQuestionMark = true, emptyList(), emptyList())),
                     origin = BUILTIN_OPERATOR
@@ -408,6 +412,8 @@ class IrBuiltInsOverFir(
                     it.typeParameters = listOf(typeParameter)
                     typeParameter.parent = it
                     declarations.add(it)
+                    it.parent = operatorsPackageFragment
+                    components.symbolTable.declareSimpleFunctionWithSignature(irSignatureBuilder.computeSignature(it), it.symbol)
                 }.symbol
             }
 
@@ -494,9 +500,11 @@ class IrBuiltInsOverFir(
             vararg argumentTypes: Pair<String, IrType>,
             builder: IrSimpleFunction.() -> Unit
         ) =
-            owner.createFunction(kotlinPackage, name, returnType, argumentTypes).also {
+            owner.createFunction(name, returnType, argumentTypes).also {
                 it.builder()
                 this.owner.declarations.add(it)
+                it.parent = kotlinIrPackage
+                components.symbolTable.declareSimpleFunctionWithSignature(irSignatureBuilder.computeSignature(it), it.symbol)
             }.symbol
 
         val kotlinKt = kotlinIrPackage.createClass(kotlinPackage.child(Name.identifier("KotlinKt")))
@@ -671,6 +679,7 @@ class IrBuiltInsOverFir(
                     }.also {
                         it.parent = parent
                         it.createImplicitParameterDeclarationWithWrappedDescriptor()
+                        components.symbolTable.declareClassWithSignature(irSignatureBuilder.computeSignature(it), it.symbol)
                     }
                 }
             ).symbol)
@@ -704,7 +713,7 @@ class IrBuiltInsOverFir(
         builderBlock: IrClassBuilder.() -> Unit = {},
         block: IrClass.() -> Unit = {}
     ): IrClassSymbol {
-        val signature = IdSignature.CommonSignature(fqName.parent().asString(), fqName.shortName().asString(), null, 0)
+        val signature = getPublicSignature(fqName.parent(), fqName.shortName().asString())
 
         return this.createClass(
             signature, *supertypes,
@@ -749,15 +758,16 @@ class IrBuiltInsOverFir(
         build: IrConstructor.() -> Unit = {}
     ): IrConstructorSymbol {
         val name = SpecialNames.INIT
-        val signature =
-            IdSignature.CommonSignature(this.packageFqName!!.asString(), classId!!.relativeClassName.child(name).asString(), null, 0)
         val ctor = irFactory.createConstructor(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrConstructorPublicSymbolImpl(signature), name, visibility, defaultType,
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, IrConstructorSymbolImpl(), name, visibility, defaultType,
             isInline = false, isExternal = false, isPrimary = isPrimary, isExpect = false
         )
         ctor.parent = this
         ctor.build()
         declarations.add(ctor)
+        components.symbolTable.declareConstructorWithSignature(
+            irSignatureBuilder.computeSignature(ctor), ctor.symbol
+        )
         return ctor.symbol
     }
 
@@ -777,12 +787,6 @@ class IrBuiltInsOverFir(
         isOperator: Boolean = false,
         build: IrFunctionBuilder.() -> Unit = {}
     ) = parent.createFunction(
-        IdSignature.CommonSignature(
-            this.packageFqName!!.asString(),
-            classId!!.relativeClassName.child(Name.identifier(name)).asString(),
-            null,
-            0
-        ),
         name, returnType, valueParameterTypes, origin, modality, isOperator, build
     ).also { fn ->
         fn.addDispatchReceiver { type = this@createMemberFunction.defaultType }
@@ -800,6 +804,9 @@ class IrBuiltInsOverFir(
                 fn.overriddenSymbols += it.symbol
             }
         }
+        components.symbolTable.declareSimpleFunctionWithSignature(
+            irSignatureBuilder.computeSignature(fn), fn.symbol
+        )
     }
 
     private fun IrClass.createMemberFunction(
@@ -830,7 +837,6 @@ class IrBuiltInsOverFir(
     }
 
     private fun IrDeclarationParent.createFunction(
-        signature: IdSignature,
         name: String,
         returnType: IrType,
         valueParameterTypes: Array<out Pair<String, IrType>>,
@@ -838,36 +844,19 @@ class IrBuiltInsOverFir(
         modality: Modality = Modality.FINAL,
         isOperator: Boolean = false,
         build: IrFunctionBuilder.() -> Unit = {}
-    ) = IrFunctionBuilder().run {
+    ) = irFactory.buildFun {
         this.name = Name.identifier(name)
         this.returnType = returnType
         this.origin = origin
         this.modality = modality
         this.isOperator = isOperator
         build()
-        irFactory.createFunction(
-            startOffset, endOffset, origin, IrSimpleFunctionPublicSymbolImpl(signature), this.name, visibility, modality, this.returnType,
-            isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect, isFakeOverride, containerSource,
-        ).also { fn ->
-            valueParameterTypes.forEachIndexed { index, (pName, irType) ->
-                fn.addValueParameter(Name.identifier(pName.ifBlank { "arg$index" }), irType, origin)
-            }
-            fn.parent = this@createFunction
+    }.also { fn ->
+        valueParameterTypes.forEachIndexed { index, (pName, irType) ->
+            fn.addValueParameter(Name.identifier(pName.ifBlank { "arg$index" }), irType, origin)
         }
+        fn.parent = this@createFunction
     }
-
-    private fun IrDeclarationParent.createFunction(
-        packageFqName: FqName,
-        name: String,
-        returnType: IrType,
-        valueParameterTypes: Array<out Pair<String, IrType>>,
-        origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB,
-        modality: Modality = Modality.FINAL,
-        isOperator: Boolean = false
-    ) = createFunction(
-        IdSignature.CommonSignature(packageFqName.asString(), name, null, 0),
-        name, returnType, valueParameterTypes, origin, modality, isOperator
-    )
 
     private fun IrClass.addArrayMembers(elementType: IrType) {
         addConstructor {
@@ -1001,7 +990,7 @@ class IrBuiltInsOverFir(
     ) =
         createClass(
             parent,
-            IdSignature.CommonSignature(parent.kotlinFqName.asString(), primitiveType.arrayTypeName.asString(), null, 0),
+            getPublicSignature(parent.kotlinFqName, primitiveType.arrayTypeName.asString()),
             build = { modality = Modality.FINAL }
         ) {
             configureSuperTypes()
