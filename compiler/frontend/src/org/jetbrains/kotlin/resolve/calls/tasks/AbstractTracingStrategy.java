@@ -115,8 +115,8 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors) {
-        trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(reference, descriptors));
+    public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> resolvedCalls) {
+        trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(reference, resolvedCalls));
     }
 
     @Override
