@@ -55,6 +55,7 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.load.java.JavaClassesTracker
@@ -279,7 +280,7 @@ class IncrementalFirJvmCompilerRunner(
             val (irModuleFragment, components) = Fir2IrConverter.createModuleFragment(
                 cycleResult.session, cycleResult.scopeSession, cycleResult.fir + allCommonFirFiles,
                 cycleResult.session.languageVersionSettings, signaturer,
-                extensions, FirJvmKotlinMangler(cycleResult.session), IrFactoryImpl,
+                extensions, FirJvmKotlinMangler(cycleResult.session), JvmIrMangler, IrFactoryImpl,
                 FirJvmVisibilityConverter,
                 Fir2IrJvmSpecialAnnotationSymbolProvider(),
                 irGenerationExtensions

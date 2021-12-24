@@ -422,6 +422,7 @@ class Fir2IrConverter(
             signaturer: IdSignatureComposer,
             fir2IrExtensions: Fir2IrExtensions,
             mangler: FirMangler,
+            irMangler: KotlinMangler.IrMangler,
             irFactory: IrFactory,
             visibilityConverter: Fir2IrVisibilityConverter,
             specialSymbolProvider: Fir2IrSpecialSymbolProvider?,
@@ -446,7 +447,7 @@ class Fir2IrConverter(
             components.typeConverter = typeConverter
             val irBuiltIns =
                 IrBuiltInsOverFir(
-                    components, languageVersionSettings, moduleDescriptor,
+                    components, languageVersionSettings, moduleDescriptor, irMangler,
                     languageVersionSettings.getFlag(AnalysisFlags.builtInsFromSources)
                 )
             components.irBuiltIns = irBuiltIns
