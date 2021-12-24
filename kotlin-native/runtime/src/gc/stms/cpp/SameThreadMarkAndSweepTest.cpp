@@ -19,6 +19,7 @@
 #include "GlobalData.hpp"
 #include "ObjectOps.hpp"
 #include "ObjectTestSupport.hpp"
+#include "SingleThreadExecutor.hpp"
 #include "TestSupport.hpp"
 #include "ThreadData.hpp"
 
@@ -646,101 +647,65 @@ namespace {
 
 class Mutator : private Pinned {
 public:
-    Mutator() : thread_(&Mutator::RunLoop, this) {}
-
-    ~Mutator() {
-        {
-            std::unique_lock guard(queueMutex_);
-            shutdownRequested_ = true;
-        }
-        queueCV_.notify_one();
-        thread_.join();
-        RuntimeAssert(queue_.empty(), "The queue must be empty, has size=%zu", queue_.size());
-        RuntimeAssert(memory_ == nullptr, "Memory must have been deinitialized");
-        RuntimeAssert(stackRoots_.empty(), "Stack roots must be empty, has size=%zu", stackRoots_.size());
-        RuntimeAssert(globalRoots_.empty(), "Global roots must be empty, has size=%zu", globalRoots_.size());
-    }
+    Mutator() : executor_(MakeSingleThreadExecutorWithContext<Context>()) {}
 
     template <typename F>
     [[nodiscard]] std::future<void> Execute(F&& f) {
-        std::packaged_task<void()> task([this, f = std::forward<F>(f)]() { f(*memory_->memoryState()->GetThreadData(), *this); });
-        auto future = task.get_future();
-        {
-            std::unique_lock guard(queueMutex_);
-            queue_.push_back(std::move(task));
-        }
-        queueCV_.notify_one();
-        return future;
+        return executor_.Execute(
+                [this, f = std::forward<F>(f)] { f(*executor_.thread().context().memory_->memoryState()->GetThreadData(), *this); });
     }
 
     StackObjectHolder& AddStackRoot() {
-        RuntimeAssert(std::this_thread::get_id() == thread_.get_id(), "AddStackRoot can only be called in the mutator thread");
-        auto holder = make_unique<StackObjectHolder>(*memory_->memoryState()->GetThreadData());
+        RuntimeAssert(std::this_thread::get_id() == executor_.thread().get_id(), "AddStackRoot can only be called in the mutator thread");
+        auto& context = executor_.thread().context();
+        auto holder = make_unique<StackObjectHolder>(*context.memory_->memoryState()->GetThreadData());
         auto& holderRef = *holder;
-        stackRoots_.push_back(std::move(holder));
+        context.stackRoots_.push_back(std::move(holder));
         return holderRef;
     }
 
     StackObjectHolder& AddStackRoot(ObjHeader* object) {
-        RuntimeAssert(std::this_thread::get_id() == thread_.get_id(), "AddStackRoot can only be called in the mutator thread");
+        RuntimeAssert(std::this_thread::get_id() == executor_.thread().get_id(), "AddStackRoot can only be called in the mutator thread");
+        auto& context = executor_.thread().context();
         auto holder = make_unique<StackObjectHolder>(object);
         auto& holderRef = *holder;
-        stackRoots_.push_back(std::move(holder));
+        context.stackRoots_.push_back(std::move(holder));
         return holderRef;
     }
 
     GlobalObjectHolder& AddGlobalRoot() {
-        RuntimeAssert(std::this_thread::get_id() == thread_.get_id(), "AddGlobalRoot can only be called in the mutator thread");
-        auto holder = make_unique<GlobalObjectHolder>(*memory_->memoryState()->GetThreadData());
+        RuntimeAssert(std::this_thread::get_id() == executor_.thread().get_id(), "AddGlobalRoot can only be called in the mutator thread");
+        auto& context = executor_.thread().context();
+        auto holder = make_unique<GlobalObjectHolder>(*context.memory_->memoryState()->GetThreadData());
         auto& holderRef = *holder;
-        globalRoots_.push_back(std::move(holder));
+        context.globalRoots_.push_back(std::move(holder));
         return holderRef;
     }
 
     GlobalObjectHolder& AddGlobalRoot(ObjHeader* object) {
-        RuntimeAssert(std::this_thread::get_id() == thread_.get_id(), "AddGlobalRoot can only be called in the mutator thread");
-        auto holder = make_unique<GlobalObjectHolder>(*memory_->memoryState()->GetThreadData(), object);
+        RuntimeAssert(std::this_thread::get_id() == executor_.thread().get_id(), "AddGlobalRoot can only be called in the mutator thread");
+        auto& context = executor_.thread().context();
+        auto holder = make_unique<GlobalObjectHolder>(*context.memory_->memoryState()->GetThreadData(), object);
         auto& holderRef = *holder;
-        globalRoots_.push_back(std::move(holder));
+        context.globalRoots_.push_back(std::move(holder));
         return holderRef;
     }
 
-    KStdVector<ObjHeader*> Alive() { return ::Alive(*memory_->memoryState()->GetThreadData()); }
+    KStdVector<ObjHeader*> Alive() { return ::Alive(*executor_.thread().context().memory_->memoryState()->GetThreadData()); }
 
 private:
-    void RunLoop() {
-        memory_ = make_unique<ScopedMemoryInit>();
-        AssertThreadState(memory_->memoryState(), ThreadState::kRunnable);
+    struct Context {
+        KStdUniquePtr<ScopedMemoryInit> memory_;
+        KStdVector<KStdUniquePtr<StackObjectHolder>> stackRoots_;
+        KStdVector<KStdUniquePtr<GlobalObjectHolder>> globalRoots_;
 
-        while (true) {
-            std::packaged_task<void()> task;
-            {
-                std::unique_lock guard(queueMutex_);
-                queueCV_.wait(guard, [this]() { return !queue_.empty() || shutdownRequested_; });
-                if (shutdownRequested_) {
-                    globalRoots_.clear();
-                    stackRoots_.clear();
-                    memory_.reset();
-                    return;
-                }
-                task = std::move(queue_.front());
-                queue_.pop_front();
-            }
-            task();
+        Context() : memory_(make_unique<ScopedMemoryInit>()) {
+            // SingleThreadExecutor must work in the runnable state, so that GC does not collect between tasks.
+            AssertThreadState(memory_->memoryState(), ThreadState::kRunnable);
         }
-    }
+    };
 
-    KStdUniquePtr<ScopedMemoryInit> memory_;
-
-    // TODO: Consider full runtime init instead, and interact with initialized worker
-    std::condition_variable queueCV_;
-    std::mutex queueMutex_;
-    KStdDeque<std::packaged_task<void()>> queue_;
-    bool shutdownRequested_ = false;
-    std::thread thread_;
-
-    KStdVector<KStdUniquePtr<GlobalObjectHolder>> globalRoots_;
-    KStdVector<KStdUniquePtr<StackObjectHolder>> stackRoots_;
+    SingleThreadExecutor<ThreadWithContext<Context>> executor_;
 };
 
 } // namespace
