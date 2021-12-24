@@ -111,8 +111,12 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
         val allCandidates = arrayListOf<ResolutionResultCallInfo<D>>()
 
         if (hasOneSuccessfulAndOneErrorCandidate) {
-            val goodCandidate = resolvedCallsInfo.first { it.callResolutionResult.constraintSystem.errors.isEmpty() && it.callResolutionResult.diagnostics.isEmpty() }
-            val badCandidate = resolvedCallsInfo.first { it.callResolutionResult.constraintSystem.errors.isNotEmpty() || it.callResolutionResult.diagnostics.isNotEmpty()}
+            val goodCandidate = resolvedCallsInfo.first {
+                it.callResolutionResult.constraintSystem.errors.isEmpty() && it.callResolutionResult.diagnostics.isEmpty()
+            }
+            val badCandidate = resolvedCallsInfo.first {
+                it.callResolutionResult.constraintSystem.errors.isNotEmpty() || it.callResolutionResult.diagnostics.isNotEmpty()
+            }
 
             for (callInfo in listOf(goodCandidate, badCandidate)) {
                 val atomsToAnalyze = mutableListOf<ResolvedAtom>(callInfo.callResolutionResult)
@@ -152,7 +156,11 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
                 )
             }
         } else {
-            val commonSystem = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns, callComponents.kotlinTypeRefiner).apply {
+            val commonSystem = NewConstraintSystemImpl(
+                callComponents.constraintInjector,
+                builtIns,
+                callComponents.kotlinTypeRefiner
+            ).apply {
                 addOtherSystem(currentConstraintSystem())
             }
 
@@ -167,11 +175,13 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
         }
 
         val results = allCandidates.map { it.resolutionResult }
-        errorCallsInfo.filter { it.callResolutionResult !in results }.mapTo(allCandidates) { ResolutionResultCallInfo(it.callResolutionResult, it.result) }
+        errorCallsInfo.filter { it.callResolutionResult !in results }.mapTo(allCandidates) {
+            ResolutionResultCallInfo(it.callResolutionResult, it.result)
+        }
         return allCandidates
     }
 
-    override fun computeCompletionMode(candidate: ResolutionCandidate) = null
+    override fun computeCompletionMode(candidate: ResolutionCandidate): ConstraintSystemCompletionMode? = null
 
     override fun resolveReceiverIndependently(): Boolean = false
 
