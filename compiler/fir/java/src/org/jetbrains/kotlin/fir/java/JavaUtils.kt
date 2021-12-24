@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildArrayOfCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
-import org.jetbrains.kotlin.fir.lookupTracker
-import org.jetbrains.kotlin.fir.recordTypeResolveAsLookup
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.expectedConeType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.createArrayType
@@ -98,6 +96,5 @@ private fun FirConstExpression<*>.setProperType(session: FirSession): FirConstEx
         type = kind.expectedConeType(session)
     }
     replaceTypeRef(typeRef)
-    session.lookupTracker?.recordTypeResolveAsLookup(typeRef, source, null)
     return this
 }
