@@ -197,7 +197,7 @@ class KotlinResolutionCallbacksImpl(
         val approximatesExpectedType =
             typeApproximator.approximateToSubType(expectedType, TypeApproximatorConfiguration.LocalDeclaration) ?: expectedType
 
-        val coroutineSession =
+        val builderInferenceSession =
             if (stubsForPostponedVariables.isNotEmpty()) {
                 BuilderInferenceSession(
                     psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter,
@@ -211,8 +211,8 @@ class KotlinResolutionCallbacksImpl(
             }
 
 
-        val temporaryTrace = if (coroutineSession != null)
-            TemporaryBindingTrace.create(trace, "Trace to resolve coroutine $lambdaArgument")
+        val temporaryTrace = if (builderInferenceSession != null)
+            TemporaryBindingTrace.create(trace, "Trace to resolve builder inference lambda: $lambdaArgument")
         else
             null
 
@@ -223,14 +223,16 @@ class KotlinResolutionCallbacksImpl(
             .replaceContextDependency(lambdaInfo.contextDependency)
             .replaceExpectedType(approximatesExpectedType)
             .replaceDataFlowInfo(psiCallArgument.dataFlowInfoBeforeThisArgument).let {
-                if (coroutineSession != null) it.replaceInferenceSession(coroutineSession) else it
+                if (builderInferenceSession != null) it.replaceInferenceSession(builderInferenceSession) else it
             }
 
         val functionTypeInfo = expressionTypingServices.getTypeInfo(psiCallArgument.expression, actualContext)
         (temporaryTrace ?: trace).record(BindingContext.NEW_INFERENCE_LAMBDA_INFO, psiCallArgument.ktFunction, LambdaInfo.STUB_EMPTY)
 
-        if (coroutineSession?.hasInapplicableCall() == true) {
-            return ReturnArgumentsAnalysisResult(ReturnArgumentsInfo.empty, coroutineSession, hasInapplicableCallForBuilderInference = true)
+        if (builderInferenceSession?.hasInapplicableCall() == true) {
+            return ReturnArgumentsAnalysisResult(
+                ReturnArgumentsInfo.empty, builderInferenceSession, hasInapplicableCallForBuilderInference = true
+            )
         } else {
             temporaryTrace?.commit()
         }
@@ -277,7 +279,7 @@ class KotlinResolutionCallbacksImpl(
                 lastExpressionCoercedToUnit,
                 returnArgumentFound
             ),
-            coroutineSession,
+            builderInferenceSession,
         )
     }
 
