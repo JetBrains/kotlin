@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.types.TypeConstructor
 
-abstract class ManyCandidatesResolver<D : CallableDescriptor>(
+abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
     private val psiCallResolver: PSICallResolver,
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
     protected val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
@@ -31,9 +31,9 @@ abstract class ManyCandidatesResolver<D : CallableDescriptor>(
     protected val partiallyResolvedCallsInfo = arrayListOf<PSIPartialCallInfo>()
     private val errorCallsInfo = arrayListOf<PSIErrorCallInfo<D>>()
     private val completedCalls = hashSetOf<ResolvedAtom>()
-    protected val nestedInferenceSessions = hashSetOf<ManyCandidatesResolver<*>>()
+    protected val nestedInferenceSessions = hashSetOf<StubTypesBasedInferenceSession<*>>()
 
-    fun addNestedInferenceSession(inferenceSession: ManyCandidatesResolver<*>) {
+    fun addNestedInferenceSession(inferenceSession: StubTypesBasedInferenceSession<*>) {
         nestedInferenceSessions.add(inferenceSession)
     }
 

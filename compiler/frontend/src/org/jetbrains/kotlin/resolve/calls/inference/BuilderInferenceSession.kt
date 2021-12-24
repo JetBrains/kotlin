@@ -57,14 +57,14 @@ class BuilderInferenceSession(
     private val typeApproximator: TypeApproximator,
     private val missingSupertypesResolver: MissingSupertypesResolver,
     private val lambdaArgument: LambdaKotlinCallArgument
-) : ManyCandidatesResolver<CallableDescriptor>(
+) : StubTypesBasedInferenceSession<CallableDescriptor>(
     psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents, builtIns
 ) {
     private lateinit var lambda: ResolvedLambdaAtom
     private val commonSystem = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns, callComponents.kotlinTypeRefiner)
 
     init {
-        if (topLevelCallContext.inferenceSession is ManyCandidatesResolver<*>) {
+        if (topLevelCallContext.inferenceSession is StubTypesBasedInferenceSession<*>) {
             topLevelCallContext.inferenceSession.addNestedInferenceSession(this)
         }
         stubsForPostponedVariables.keys.forEach(commonSystem::registerVariable)
