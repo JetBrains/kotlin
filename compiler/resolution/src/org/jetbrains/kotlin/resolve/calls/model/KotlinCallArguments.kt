@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.scopes.receivers.DetailedReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
@@ -58,6 +59,10 @@ interface LambdaKotlinCallArgument : PostponableKotlinCallArgument {
      */
     var hasBuilderInferenceAnnotation: Boolean
         get() = false
+        set(@Suppress("UNUSED_PARAMETER") value) {}
+
+    var builderInferenceSession: InferenceSession?
+        get() = null
         set(@Suppress("UNUSED_PARAMETER") value) {}
 
     /**

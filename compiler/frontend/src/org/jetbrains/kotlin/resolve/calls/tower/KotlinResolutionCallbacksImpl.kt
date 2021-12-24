@@ -213,6 +213,7 @@ class KotlinResolutionCallbacksImpl(
                 null
             }
 
+        lambdaArgument.builderInferenceSession = builderInferenceSession
 
         val temporaryTrace = if (builderInferenceSession != null)
             TemporaryBindingTrace.create(trace, "Trace to resolve builder inference lambda: $lambdaArgument")
