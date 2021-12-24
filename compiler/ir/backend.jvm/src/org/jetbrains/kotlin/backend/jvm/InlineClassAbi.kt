@@ -42,7 +42,10 @@ object InlineClassAbi {
         val representation = klass.inlineClassRepresentation ?: return null
 
         // TODO: Apply type substitutions
-        val underlyingType = representation.underlyingType.unboxInlineClass()
+        var underlyingType = representation.underlyingType.unboxInlineClass()
+        if (!underlyingType.isNullable() && underlyingType.isTypeParameter()) {
+            underlyingType = underlyingType.erasedUpperBound.defaultType
+        }
         if (!type.isNullable())
             return underlyingType
         if (underlyingType.isNullable() || underlyingType.isPrimitiveType())
