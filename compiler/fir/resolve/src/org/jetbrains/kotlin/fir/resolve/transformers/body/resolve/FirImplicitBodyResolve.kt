@@ -245,7 +245,9 @@ private class ReturnTypeCalculatorWithJump(
                 val baseDeclaration = baseSymbol.fir as FirTypedDeclaration
                 val baseReturnTypeRef = tryCalculateReturnType(baseDeclaration)
                 val baseReturnType = baseReturnTypeRef.type
-                session.lookupTracker?.recordTypeResolveAsLookup(baseReturnTypeRef, declaration.source, null)
+                session.lookupTracker?.recordTypeResolveAsLookup(
+                    baseReturnTypeRef, declaration.source, session.firProvider.getFirCallableContainerFile(declaration.symbol)?.source
+                )
                 val coneType = substitutor.substituteOrSelf(baseReturnType)
                 val returnType = declaration.returnTypeRef.resolvedTypeFromPrototype(coneType)
                 declaration.replaceReturnTypeRef(returnType)
