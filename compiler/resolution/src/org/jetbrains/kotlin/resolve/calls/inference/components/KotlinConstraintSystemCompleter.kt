@@ -96,7 +96,7 @@ class KotlinConstraintSystemCompleter(
 
             // Stage 2: collect parameter types for postponed arguments
             val wasBuiltNewExpectedTypeForSomeArgument = postponedArgumentInputTypesResolver.collectParameterTypesAndBuildNewExpectedTypes(
-                asConstraintSystemCompletionContext(),
+                this,
                 postponedArgumentsWithRevisableType,
                 completionMode,
                 dependencyProvider,
@@ -110,7 +110,7 @@ class KotlinConstraintSystemCompleter(
                 // Stage 3: fix variables for parameter types of all postponed arguments
                 for (argument in postponedArguments) {
                     val wasFixedSomeVariable = postponedArgumentInputTypesResolver.fixNextReadyVariableForParameterTypeIfNeeded(
-                        asConstraintSystemCompletionContext(),
+                        this,
                         argument,
                         postponedArguments,
                         topLevelType,
@@ -126,7 +126,7 @@ class KotlinConstraintSystemCompleter(
                 // Stage 4: create atoms with revised expected types if needed
                 for (argument in postponedArgumentsWithRevisableType) {
                     val wasTransformedSomeArgument = transformToAtomWithNewFunctionalExpectedType(
-                        asConstraintSystemCompletionContext(), argument, diagnosticsHolder
+                        this, argument, diagnosticsHolder
                     )
 
                     if (wasTransformedSomeArgument)

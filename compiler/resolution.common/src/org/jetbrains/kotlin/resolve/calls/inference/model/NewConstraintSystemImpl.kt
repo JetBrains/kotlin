@@ -104,8 +104,6 @@ class NewConstraintSystemImpl(
 
     override fun asPostponedArgumentsAnalyzerContext() = apply { checkState(State.BUILDING) }
 
-    override fun asConstraintSystemCompletionContext(): ConstraintSystemCompletionContext = apply { checkState(State.BUILDING) }
-
     // ConstraintSystemOperation
     override fun registerVariable(variable: TypeVariableMarker) {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)

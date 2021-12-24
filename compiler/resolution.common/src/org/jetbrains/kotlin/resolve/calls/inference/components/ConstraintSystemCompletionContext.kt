@@ -32,7 +32,5 @@ interface ConstraintSystemCompletionContext : VariableFixationFinder.Context, Re
 
     fun fixVariable(variable: TypeVariableMarker, resultType: KotlinTypeMarker, position: FixVariableConstraintPosition<*>)
 
-    fun asConstraintSystemCompletionContext(): ConstraintSystemCompletionContext
-
     fun couldBeResolvedWithUnrestrictedBuilderInference(): Boolean
 }

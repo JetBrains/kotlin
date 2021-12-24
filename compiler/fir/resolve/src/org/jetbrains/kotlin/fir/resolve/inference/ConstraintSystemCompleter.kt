@@ -74,7 +74,7 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents, p
 
             // Stage 2
             val newExpectedTypeWasBuilt = postponedArgumentsInputTypesResolver.collectParameterTypesAndBuildNewExpectedTypes(
-                asConstraintSystemCompletionContext(),
+                this,
                 postponedArgumentsWithRevisableType,
                 completionMode,
                 dependencyProvider,
@@ -88,7 +88,7 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents, p
                 // Stage 3
                 for (argument in postponedArguments) {
                     val variableWasFixed = postponedArgumentsInputTypesResolver.fixNextReadyVariableForParameterTypeIfNeeded(
-                        asConstraintSystemCompletionContext(),
+                        this,
                         argument,
                         postponedArguments,
                         candidateReturnType,
@@ -104,7 +104,7 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents, p
                 // Stage 4
                 for (argument in postponedArgumentsWithRevisableType) {
                     val argumentWasTransformed =
-                        transformToAtomWithNewFunctionalExpectedType(asConstraintSystemCompletionContext(), context, argument)
+                        transformToAtomWithNewFunctionalExpectedType(this, context, argument)
 
                     if (argumentWasTransformed)
                         continue@completion
@@ -215,7 +215,7 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents, p
         while (true) {
             val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
                 this,
-                getOrderedAllTypeVariables(asConstraintSystemCompletionContext(), topLevelAtoms, collectVariablesFromContext),
+                getOrderedAllTypeVariables(this, topLevelAtoms, collectVariablesFromContext),
                 postponedArguments,
                 completionMode,
                 topLevelType
@@ -228,13 +228,13 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents, p
 
             when {
                 variableForFixation.hasProperConstraint -> {
-                    fixVariable(asConstraintSystemCompletionContext(), topLevelType, variableWithConstraints, postponedArguments)
+                    fixVariable(this, topLevelType, variableWithConstraints, postponedArguments)
                     return true
                 }
                 context.inferenceSession.isSyntheticTypeVariable(variableWithConstraints.typeVariable) -> {
                     context.inferenceSession.fixSyntheticTypeVariableWithNotEnoughInformation(
                         variableWithConstraints.typeVariable as ConeTypeVariable,
-                        asConstraintSystemCompletionContext()
+                        this
                     )
                     return true
                 }
