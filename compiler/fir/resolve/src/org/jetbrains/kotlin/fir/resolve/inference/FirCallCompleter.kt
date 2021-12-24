@@ -97,7 +97,7 @@ class FirCallCompleter(
         if (call is FirExpression) {
             val resolvedTypeRef = typeRef.resolvedTypeFromPrototype(initialType)
             call.resultType = resolvedTypeRef
-            session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, call.source, null)
+            session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, call.source, components.context.file.source)
         }
 
         addConstraintFromExpectedType(
@@ -127,7 +127,8 @@ class FirCallCompleter(
                             components.returnTypeCalculator,
                             session.typeApproximator,
                             components.dataFlowAnalyzer,
-                            components.integerLiteralAndOperatorApproximationTransformer
+                            components.integerLiteralAndOperatorApproximationTransformer,
+                            components.context
                         ),
                         null
                     )
@@ -239,6 +240,7 @@ class FirCallCompleter(
             session.typeApproximator,
             components.dataFlowAnalyzer,
             components.integerLiteralAndOperatorApproximationTransformer,
+            components.context,
             mode
         )
     }
@@ -306,19 +308,20 @@ class FirCallCompleter(
             )
 
             val lookupTracker = session.lookupTracker
+            val fileSource = components.file.source
             lambdaArgument.valueParameters.forEachIndexed { index, parameter ->
                 val newReturnType = parameters[index].approximateLambdaInputType()
                 val newReturnTypeRef = if (parameter.returnTypeRef is FirImplicitTypeRef) {
                     newReturnType.toFirResolvedTypeRef(parameter.source)
                 } else parameter.returnTypeRef.resolvedTypeFromPrototype(newReturnType)
                 parameter.replaceReturnTypeRef(newReturnTypeRef)
-                lookupTracker?.recordTypeResolveAsLookup(newReturnTypeRef, parameter.source, null)
+                lookupTracker?.recordTypeResolveAsLookup(newReturnTypeRef, parameter.source, fileSource)
             }
 
             lambdaArgument.replaceValueParameters(lambdaArgument.valueParameters + listOfNotNull(itParam))
             lambdaArgument.replaceReturnTypeRef(
                 expectedReturnTypeRef?.also {
-                    lookupTracker?.recordTypeResolveAsLookup(it, lambdaArgument.source, null)
+                    lookupTracker?.recordTypeResolveAsLookup(it, lambdaArgument.source, fileSource)
                 } ?: components.noExpectedType
             )
 
