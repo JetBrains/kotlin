@@ -64,7 +64,6 @@ TEST(ThreadWithContextTest, ContextThreadBound) {
     EXPECT_CALL(function, Call()).WillOnce([&] { EXPECT_THAT(std::this_thread::get_id(), createdThread); });
     auto thread = ::make_unique<ThreadWithContext<PinnedContext>>([] { return PinnedContext(); }, function.AsStdFunction());
     thread->waitInitialized();
-    testing::Mock::VerifyAndClearExpectations(&function);
     testing::Mock::VerifyAndClearExpectations(&mocks.ctorMock);
     EXPECT_THAT(createdThread, thread->get_id());
     EXPECT_THAT(thread->context(), testing::Ref(*createdContext));
@@ -73,6 +72,8 @@ TEST(ThreadWithContextTest, ContextThreadBound) {
         EXPECT_THAT(std::this_thread::get_id(), createdThread);
     });
     thread.reset();
+    // The function is expected to be called at some point between `waitInitialized` and the thread exit.
+    testing::Mock::VerifyAndClearExpectations(&function);
     testing::Mock::VerifyAndClearExpectations(&mocks.dtorMock);
 }
 
