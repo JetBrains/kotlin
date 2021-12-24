@@ -59,4 +59,7 @@ object AnalysisFlags {
 
     @JvmStatic
     val allowFullyQualifiedNameInKClass by AnalysisFlag.Delegates.Boolean
+
+    @JvmStatic
+    val eagerResolveOfLightClasses by AnalysisFlag.Delegates.Boolean
 }
