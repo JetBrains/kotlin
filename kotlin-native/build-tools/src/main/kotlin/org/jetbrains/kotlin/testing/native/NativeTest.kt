@@ -12,12 +12,18 @@ import org.gradle.api.*
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.workers.WorkAction
+import org.gradle.workers.WorkParameters
+import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.ExecClang
 import org.jetbrains.kotlin.bitcode.CompileToBitcode
 import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
+import org.jetbrains.kotlin.gradle.plugin.tasks.KonanInteropTask
+import org.jetbrains.kotlin.gradle.plugin.tasks.interchangeBox
 import org.jetbrains.kotlin.konan.target.*
 import java.io.OutputStream
 import java.time.Duration
+import java.util.concurrent.TimeUnit
 
 open class CompileNativeTest @Inject constructor(
         @InputFile val inputFile: File,
@@ -306,14 +312,14 @@ private fun createTestTask(
         dependsOn(compileTask)
     }
 
-    return project.tasks.create(testName, Exec::class.java).apply {
+    return project.tasks.create(testName, ExecRunnerWithTimeout::class.java).apply {
         dependsOn(linkTask)
 
         workingDir = project.buildDir.resolve("testReports/$testName")
         val xmlReport = workingDir.resolve("report.xml")
         executable(linkTask.outputFile)
         project.objects.property<Duration>(Duration::class.java).also {
-            it.set(Duration.ofMinutes(10))
+            it.set(Duration.ofMinutes(2))
             setProperty("timeout", it)
         }
         val filter = project.findProperty("gtest_filter");
@@ -337,6 +343,52 @@ private fun createTestTask(
         val reportWithPrefixes = workingDir.resolve("report-with-prefixes.xml")
         val reportTask = project.tasks.register("${testName}Report", ReportWithPrefixes::class.java, testName, xmlReport, reportWithPrefixes)
         finalizedBy(reportTask)
+    }
+}
+
+abstract class ExecRunnerWithTimeout @Inject constructor(@Internal val workerExecutor: WorkerExecutor): Exec() {
+    internal interface Params : WorkParameters {
+        var executableName: String
+        var timeOut: Duration
+    }
+
+    internal abstract class RunLLDB @Inject constructor() : WorkAction<Params> {
+        override fun execute() {
+            val timeout = System.nanoTime() + parameters.timeOut.toMillis()
+            val pid = ProcessHandle.current()
+                    .children()
+                    .filter {
+                        println("Process: ${it.info().commandLine().get()}")
+                        it.info().command()
+                                .takeIf { !it.isEmpty() }
+                                ?.get()
+                                ?.contains(parameters.executableName)
+                                ?: false
+                    }
+                    .map { it.pid() }
+                    .findFirst()
+            while (!pid.isEmpty() && System.nanoTime() < timeout) {
+                Thread.onSpinWait()
+            }
+            if (!pid.isEmpty() && System.nanoTime() >= timeout) {
+                ProcessBuilder("lldb",
+                        "-o", "process attach -p ${pid.get()}",
+                        "-o", "process save-core",
+                        "-o", "exit"
+                ).start().waitFor(1L, TimeUnit.MINUTES)
+            }
+        }
+    }
+
+    @TaskAction
+    override fun exec() {
+        val queue = workerExecutor.noIsolation()
+        queue.submit(RunLLDB::class.java, Action<Params> {
+            executableName = executable!!
+            timeOut = timeout.get().dividedBy(2L)
+        })
+        super.exec()
+        queue.await()
     }
 }
 
