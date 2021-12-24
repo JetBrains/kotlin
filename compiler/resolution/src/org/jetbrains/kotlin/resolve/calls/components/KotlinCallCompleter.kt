@@ -206,7 +206,7 @@ class KotlinCallCompleter(
 
             CandidateWithDiagnostics(candidate, diagnosticsHolder.getDiagnostics() + candidate.diagnostics)
         }
-        return AllCandidatesResolutionResult(completedCandidates)
+        return AllCandidatesResolutionResult(completedCandidates, resolutionCallbacks.createEmptyConstraintSystem())
     }
 
     private fun ResolutionCandidate.runCompletion(
@@ -328,17 +328,17 @@ class KotlinCallCompleter(
         diagnosticsHolder: KotlinDiagnosticsHolder.SimpleHolder,
         forwardToInferenceSession: Boolean = false
     ): CallResolutionResult {
-        val systemStorage = getSystem().asReadOnlyStorage()
+        val constraintSystem = getSystem()
         val allDiagnostics = diagnosticsHolder.getDiagnostics() + diagnostics
 
         if (isErrorCandidate()) {
-            return ErrorCallResolutionResult(resolvedCall, allDiagnostics, systemStorage)
+            return ErrorCallResolutionResult(resolvedCall, allDiagnostics, constraintSystem)
         }
 
         return if (type == ConstraintSystemCompletionMode.FULL) {
-            CompletedCallResolutionResult(resolvedCall, allDiagnostics, systemStorage)
+            CompletedCallResolutionResult(resolvedCall, allDiagnostics, constraintSystem)
         } else {
-            PartialCallResolutionResult(resolvedCall, allDiagnostics, systemStorage, forwardToInferenceSession)
+            PartialCallResolutionResult(resolvedCall, allDiagnostics, constraintSystem, forwardToInferenceSession)
         }
     }
 }

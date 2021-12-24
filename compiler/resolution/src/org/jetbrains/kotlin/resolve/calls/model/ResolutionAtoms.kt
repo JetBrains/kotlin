@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
@@ -252,7 +253,7 @@ class ResolvedCollectionLiteralAtom(
 sealed class CallResolutionResult(
     resultCallAtom: ResolvedCallAtom?,
     val diagnostics: List<KotlinCallDiagnostic>,
-    val constraintSystem: ConstraintStorage
+    val constraintSystem: NewConstraintSystem
 ) : ResolvedAtom() {
     init {
         setAnalyzedResults(listOfNotNull(resultCallAtom))
@@ -283,31 +284,32 @@ sealed class CallResolutionResult(
 open class SingleCallResolutionResult(
     val resultCallAtom: ResolvedCallAtom,
     diagnostics: List<KotlinCallDiagnostic>,
-    constraintSystem: ConstraintStorage
+    constraintSystem: NewConstraintSystem
 ) : CallResolutionResult(resultCallAtom, diagnostics, constraintSystem)
 
 class PartialCallResolutionResult(
     resultCallAtom: ResolvedCallAtom,
     diagnostics: List<KotlinCallDiagnostic>,
-    constraintSystem: ConstraintStorage,
+    constraintSystem: NewConstraintSystem,
     val forwardToInferenceSession: Boolean = false
 ) : SingleCallResolutionResult(resultCallAtom, diagnostics, constraintSystem)
 
 class CompletedCallResolutionResult(
     resultCallAtom: ResolvedCallAtom,
     diagnostics: List<KotlinCallDiagnostic>,
-    constraintSystem: ConstraintStorage
+    constraintSystem: NewConstraintSystem
 ) : SingleCallResolutionResult(resultCallAtom, diagnostics, constraintSystem)
 
 class ErrorCallResolutionResult(
     resultCallAtom: ResolvedCallAtom,
     diagnostics: List<KotlinCallDiagnostic>,
-    constraintSystem: ConstraintStorage
+    constraintSystem: NewConstraintSystem
 ) : SingleCallResolutionResult(resultCallAtom, diagnostics, constraintSystem)
 
 class AllCandidatesResolutionResult(
-    val allCandidates: Collection<CandidateWithDiagnostics>
-) : CallResolutionResult(null, emptyList(), ConstraintStorage.Empty)
+    val allCandidates: Collection<CandidateWithDiagnostics>,
+    constraintSystem: NewConstraintSystem
+) : CallResolutionResult(null, emptyList(), constraintSystem)
 
 data class CandidateWithDiagnostics(val candidate: ResolutionCandidate, val diagnostics: List<KotlinCallDiagnostic>)
 

@@ -541,7 +541,7 @@ class PSICallResolver(
 
             val psiKotlinCall = variable.resolvedCall.atom.psiKotlinCall
 
-            val variableResult = PartialCallResolutionResult(variable.resolvedCall, listOf(), variable.getSystem().asReadOnlyStorage())
+            val variableResult = PartialCallResolutionResult(variable.resolvedCall, listOf(), variable.getSystem())
 
             return SubKotlinCallArgumentImpl(
                 CallMaker.makeExternalValueArgument((variableReceiver.receiverValue as ExpressionReceiver).expression),

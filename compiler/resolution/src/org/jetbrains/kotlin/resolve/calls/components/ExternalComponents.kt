@@ -98,6 +98,8 @@ interface KotlinResolutionCallbacks {
 
     fun findResultType(constraintSystem: NewConstraintSystem, typeVariable: TypeVariableTypeConstructor): KotlinType?
 
+    fun createEmptyConstraintSystem(): NewConstraintSystem
+
     fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom)
 
     fun isCompileTimeConstant(resolvedAtom: ResolvedCallAtom, expectedType: UnwrappedType): Boolean

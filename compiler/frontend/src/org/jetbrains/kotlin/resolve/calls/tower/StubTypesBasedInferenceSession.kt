@@ -65,7 +65,8 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
     }
 
     override fun currentConstraintSystem(): ConstraintStorage {
-        return partiallyResolvedCallsInfo.lastOrNull()?.callResolutionResult?.constraintSystem ?: ConstraintStorage.Empty
+        return partiallyResolvedCallsInfo.lastOrNull()?.callResolutionResult?.constraintSystem?.getBuilder()?.currentStorage()
+            ?: ConstraintStorage.Empty
     }
 
     override fun callCompleted(resolvedAtom: ResolvedAtom): Boolean =
@@ -116,7 +117,7 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
             for (callInfo in listOf(goodCandidate, badCandidate)) {
                 val atomsToAnalyze = mutableListOf<ResolvedAtom>(callInfo.callResolutionResult)
                 val system = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns, callComponents.kotlinTypeRefiner).apply {
-                    addOtherSystem(callInfo.callResolutionResult.constraintSystem)
+                    addOtherSystem(callInfo.callResolutionResult.constraintSystem.getBuilder().currentStorage())
                     /*
                      * This is needed for very stupid case, when we have some delegate with good `getValue` and bad `setValue` that
                      *   was provided by some function call with generic (e.g. var x by lazy { "" })
@@ -129,7 +130,8 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
                      *   stub atoms in order to call completer doesn't fail
                      */
                     if (callInfo === badCandidate) {
-                        for ((typeVariable, fixedType) in allCandidates[0].resolutionResult.constraintSystem.fixedTypeVariables) {
+                        val storage = allCandidates[0].resolutionResult.constraintSystem.getBuilder().currentStorage()
+                        for ((typeVariable, fixedType) in storage.fixedTypeVariables) {
                             if (typeVariable in this.notFixedTypeVariables) {
                                 val type = (typeVariable as TypeConstructor).typeForTypeVariable()
                                 addEqualityConstraint(
@@ -178,7 +180,7 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
         commonSystem: NewConstraintSystem
     ): CallResolutionResult {
         val diagnostics = diagnosticsHolder.getDiagnostics() + callResolutionResult.diagnostics + commonSystem.errors.asDiagnostics()
-        return CompletedCallResolutionResult(callResolutionResult.resultCallAtom, diagnostics, commonSystem.asReadOnlyStorage())
+        return CompletedCallResolutionResult(callResolutionResult.resultCallAtom, diagnostics, commonSystem)
     }
 }
 
