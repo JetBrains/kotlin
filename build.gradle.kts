@@ -460,6 +460,7 @@ allprojects {
 
     val commonCompilerArgs = listOfNotNull(
         "-opt-in=kotlin.RequiresOptIn",
+        "-Xklib-relative-path-base=$rootDir".takeIf { !kotlinBuildProperties.getBoolean("kotlin.build.use.absolute.paths.in.klib") },
         "-progressive".takeIf { hasProperty("test.progressive.mode") }
     )
 
