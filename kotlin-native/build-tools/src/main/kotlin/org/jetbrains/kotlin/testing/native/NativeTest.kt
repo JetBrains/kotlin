@@ -319,7 +319,7 @@ private fun createTestTask(
         val xmlReport = workingDir.resolve("report.xml")
         executable(linkTask.outputFile)
         project.objects.property<Duration>(Duration::class.java).also {
-            it.set(Duration.ofMinutes(2))
+            it.set(Duration.ofMinutes(10))
             setProperty("timeout", it)
         }
         val filter = project.findProperty("gtest_filter");
@@ -354,9 +354,9 @@ abstract class ExecRunnerWithTimeout @Inject constructor(@Internal val workerExe
 
     internal abstract class RunLLDB @Inject constructor() : WorkAction<Params> {
         override fun execute() {
-            val timeout = System.nanoTime() + parameters.timeOut.toMillis()
-            val pid = ProcessHandle.current()
-                    .children()
+            Thread.sleep(Duration.ofSeconds(1L).toMillis())
+            val testProcess = ProcessHandle.current()
+                    .descendants()
                     .filter {
                         println("Process: ${it.info().commandLine().get()}")
                         it.info().command()
@@ -365,17 +365,23 @@ abstract class ExecRunnerWithTimeout @Inject constructor(@Internal val workerExe
                                 ?.contains(parameters.executableName)
                                 ?: false
                     }
-                    .map { it.pid() }
                     .findFirst()
-            while (!pid.isEmpty() && System.nanoTime() < timeout) {
-                Thread.onSpinWait()
-            }
-            if (!pid.isEmpty() && System.nanoTime() >= timeout) {
-                ProcessBuilder("lldb",
-                        "-o", "process attach -p ${pid.get()}",
-                        "-o", "process save-core",
-                        "-o", "exit"
-                ).start().waitFor(1L, TimeUnit.MINUTES)
+            if (testProcess.isPresent) {
+                val timeout = System.nanoTime() + parameters.timeOut.toMillis()
+                println("Wait for process: ${testProcess.get().info().command()}")
+                while (testProcess.get().isAlive && System.nanoTime() < timeout) {
+                    Thread.onSpinWait()
+                }
+                println("Wait is over")
+                if (testProcess.get().isAlive && System.nanoTime() >= timeout) {
+                    println("Let's start LLDB")
+                    val handle = testProcess.get()
+                    ProcessBuilder("lldb",
+                            "-o", "process attach -p ${handle.pid()}",
+                            "-o", "process save-core ${handle.info().command()}.core.${handle.pid()}",
+                            "-o", "exit"
+                    ).start().waitFor(1L, TimeUnit.MINUTES)
+                }
             }
         }
     }
