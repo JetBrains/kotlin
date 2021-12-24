@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintS
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.DelegatedPropertyConstraintPositionImpl
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.resolve.calls.tower.ManyCandidatesResolver
+import org.jetbrains.kotlin.resolve.calls.tower.StubTypesBasedInferenceSession
 import org.jetbrains.kotlin.resolve.calls.tower.PSICallResolver
 import org.jetbrains.kotlin.resolve.calls.tower.PSIPartialCallInfo
 import org.jetbrains.kotlin.types.ErrorUtils
@@ -36,11 +36,11 @@ class DelegatedPropertyInferenceSession(
     callComponents: KotlinCallComponents,
     builtIns: KotlinBuiltIns,
     override val parentSession: InferenceSession?
-) : ManyCandidatesResolver<FunctionDescriptor>(
+) : StubTypesBasedInferenceSession<FunctionDescriptor>(
     psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents, builtIns
 ) {
     init {
-        if (parentSession is ManyCandidatesResolver<*>) {
+        if (parentSession is StubTypesBasedInferenceSession<*>) {
             parentSession.addNestedInferenceSession(this)
         }
     }
