@@ -19,6 +19,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckDslScopeViolation,
         CheckLowPriorityInOverloadResolution,
         PostponedVariablesInitializerResolutionStage,
+        ConstraintSystemForks
     )
 
     object SyntheticSelect : CallKind(
@@ -27,7 +28,8 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CreateFreshTypeVariableSubstitutorStage,
         CollectTypeVariableUsagesInfo,
         CheckArguments,
-        EagerResolveOfCallableReferences
+        EagerResolveOfCallableReferences,
+        ConstraintSystemForks,
     )
 
     object Function : CallKind(
@@ -47,6 +49,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         EagerResolveOfCallableReferences,
         CheckLowPriorityInOverloadResolution,
         PostponedVariablesInitializerResolutionStage,
+        ConstraintSystemForks,
     )
 
     object DelegatingConstructorCall : CallKind(
@@ -62,6 +65,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckDslScopeViolation,
         CheckArguments,
         EagerResolveOfCallableReferences,
+        ConstraintSystemForks,
     )
 
     object CallableReference : CallKind(
@@ -84,7 +88,8 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CreateFreshTypeVariableSubstitutorStage,
         CollectTypeVariableUsagesInfo,
         CheckArguments,
-        EagerResolveOfCallableReferences
+        EagerResolveOfCallableReferences,
+        ConstraintSystemForks,
     )
 
     internal class CustomForIde(vararg resolutionSequence: ResolutionStage) : CallKind(*resolutionSequence)

@@ -1312,6 +1312,12 @@ internal class RedundantSpreadOperatorInNamedFormInFunctionImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.RedundantSpreadOperatorInNamedFormInFunction(), KtAbstractFirDiagnostic<KtExpression>
 
+internal class InferenceUnsuccessfulForkImpl(
+    override val message: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.InferenceUnsuccessfulFork(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class OverloadResolutionAmbiguityImpl(
     override val candidates: List<KtSymbol>,
     override val firDiagnostic: KtPsiDiagnostic,

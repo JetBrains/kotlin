@@ -1095,6 +1095,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RedundantSpreadOperatorInNamedFormInFunction::class
     }
 
+    abstract class InferenceUnsuccessfulFork : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InferenceUnsuccessfulFork::class
+        abstract val message: String
+    }
+
     abstract class OverloadResolutionAmbiguity : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = OverloadResolutionAmbiguity::class
         abstract val candidates: List<KtSymbol>

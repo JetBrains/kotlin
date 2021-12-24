@@ -50,6 +50,8 @@ class ConstraintSystemCompleter(private val components: BodyResolveComponents, p
     ) = with(c) {
         val topLevelTypeVariables = candidateReturnType.extractTypeVariables()
 
+        c.processForkConstraints()
+
         completion@ while (true) {
             val postponedArguments = getOrderedNotAnalyzedPostponedArguments(topLevelAtoms) // TODO: This is very slow
 

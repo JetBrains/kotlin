@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
+import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 /**
  * Every type variable can be in the following states:
@@ -42,6 +46,7 @@ interface ConstraintStorage {
     val postponedTypeVariables: List<TypeVariableMarker>
     val builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables: Map<Pair<TypeConstructorMarker, List<Pair<TypeConstructorMarker, Int>>>, KotlinTypeMarker>
     val builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
+    val constraintsFromAllForkPoints: List<Pair<IncorporationConstraintPosition, ForkPointData>>
 
     object Empty : ConstraintStorage {
         override val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker> get() = emptyMap()
@@ -55,6 +60,7 @@ interface ConstraintStorage {
         override val postponedTypeVariables: List<TypeVariableMarker> get() = emptyList()
         override val builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables: Map<Pair<TypeConstructorMarker, List<Pair<TypeConstructorMarker, Int>>>, KotlinTypeMarker> = emptyMap()
         override val builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker> = emptyMap()
+        override val constraintsFromAllForkPoints: List<Pair<IncorporationConstraintPosition, ForkPointData>> = emptyList()
     }
 }
 
@@ -113,14 +119,16 @@ class InitialConstraint(
     val constraintKind: ConstraintKind, // see [checkConstraint]
     val position: ConstraintPosition
 ) {
-    override fun toString(): String {
+    override fun toString(): String = "${asStringWithoutPosition()} from $position"
+
+    fun asStringWithoutPosition(): String {
         val sign =
             when (constraintKind) {
                 ConstraintKind.EQUALITY -> "=="
                 ConstraintKind.LOWER -> ":>"
                 ConstraintKind.UPPER -> "<:"
             }
-        return "$a $sign $b from $position"
+        return "$a $sign $b"
     }
 }
 

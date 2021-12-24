@@ -133,6 +133,8 @@ class ConstrainingTypeIsError(
     val position: IncorporationConstraintPosition
 ) : ConstraintSystemError(INAPPLICABLE)
 
+class NoSuccessfulFork(val position: IncorporationConstraintPosition) : ConstraintSystemError(INAPPLICABLE)
+
 class OnlyInputTypesDiagnostic(val typeVariable: TypeVariableMarker) : ConstraintSystemError(INAPPLICABLE)
 
 object LowerPriorityToPreserveCompatibility : ConstraintSystemError(RESOLVED_NEED_PRESERVE_COMPATIBILITY)

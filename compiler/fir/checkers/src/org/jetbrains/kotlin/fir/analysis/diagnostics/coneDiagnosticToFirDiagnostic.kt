@@ -370,6 +370,12 @@ private fun ConstraintSystemError.toDiagnostic(
                 typeVariableName,
             )
         }
+        is NoSuccessfulFork -> {
+            FirErrors.INFERENCE_UNSUCCESSFUL_FORK.createOn(
+                source,
+                position.initialConstraint.asStringWithoutPosition(),
+            )
+        }
         else -> null
     }
 }

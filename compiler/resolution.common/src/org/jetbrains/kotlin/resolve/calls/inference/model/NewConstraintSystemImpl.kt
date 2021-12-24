@@ -40,6 +40,8 @@ class NewConstraintSystemImpl(
 
     private var couldBeResolvedWithUnrestrictedBuilderInference: Boolean = false
 
+    override var atCompletionState: Boolean = false
+
     private enum class State {
         BUILDING,
         TRANSACTION,
@@ -100,7 +102,11 @@ class NewConstraintSystemImpl(
         storage.missedConstraints.add(position to constraints)
     }
 
-    override fun asConstraintSystemCompleterContext() = apply { checkState(State.BUILDING) }
+    override fun asConstraintSystemCompleterContext() = apply {
+        checkState(State.BUILDING)
+
+        this.atCompletionState = true
+    }
 
     override fun asPostponedArgumentsAnalyzerContext() = apply { checkState(State.BUILDING) }
 
@@ -203,6 +209,7 @@ class NewConstraintSystemImpl(
         val beforeTypeVariablesTransactionSize = typeVariablesTransaction.size
         val beforeMissedConstraintsCount = storage.missedConstraints.size
         val beforeConstraintCountByVariables = storage.notFixedTypeVariables.mapValues { it.value.rawConstraintsCount }
+        val beforeConstraintsFromAllForks = storage.constraintsFromAllForkPoints.size
 
         state = State.TRANSACTION
         // typeVariablesTransaction is clear
@@ -218,6 +225,7 @@ class NewConstraintSystemImpl(
         storage.maxTypeDepthFromInitialConstraints = beforeMaxTypeDepthFromInitialConstraints
         storage.errors.trimToSize(beforeErrorsCount)
         storage.missedConstraints.trimToSize(beforeMissedConstraintsCount)
+        storage.constraintsFromAllForkPoints.trimToSize(beforeConstraintsFromAllForks)
 
         val addedInitialConstraints = storage.initialConstraints.subList(beforeInitialConstraintCount, storage.initialConstraints.size)
 
@@ -336,6 +344,54 @@ class NewConstraintSystemImpl(
             checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
             return storage.postponedTypeVariables
         }
+
+    override val constraintsFromAllForkPoints: MutableList<Pair<IncorporationConstraintPosition, ForkPointData>>
+        get() {
+            checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+            return storage.constraintsFromAllForkPoints
+        }
+
+    override fun processForkConstraints() {
+        if (constraintsFromAllForkPoints.isEmpty()) return
+        val allForkPointsData = constraintsFromAllForkPoints.toList()
+        constraintsFromAllForkPoints.clear()
+
+        // There may be multiple fork points:
+        // - One from subtyping A<Int> & A<T> <: A<Xv>
+        // - Another one from B<String> & B<F> <: B<Yv>
+        // Each of them defines two sets of constraints, e.g. for the first for point:
+        // 1. {Xv=Int} – is a one-element set (but potentially there might be more constraints in the set)
+        // 2. {Xv=T} – second constraints set
+        for ((position, forkPointData) in allForkPointsData) {
+            if (!processForkPointData(forkPointData, position)) {
+                addError(NoSuccessfulFork(position))
+            }
+        }
+    }
+
+    /**
+     * @return true if there is a successful constraints set for the fork
+     */
+    private fun processForkPointData(
+        forkPointData: ForkPointData,
+        position: IncorporationConstraintPosition
+    ): Boolean {
+        return forkPointData.any { constraintSetForSingleFork ->
+            runTransaction {
+                constraintInjector.processForkConstraints(
+                    this@NewConstraintSystemImpl.apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
+                    constraintSetForSingleFork,
+                    position,
+                )
+
+                if (constraintsFromAllForkPoints.isNotEmpty()) {
+                    processForkConstraints()
+                }
+
+                !hasContradiction
+            }
+        }
+    }
 
     // ConstraintInjector.Context, KotlinConstraintSystemCompleter.Context
     override fun addError(error: ConstraintSystemError) {

@@ -125,4 +125,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
 
     override val isForcedConsiderExtensionReceiverFromConstrainsInLambda: Boolean
         get() = true
+
+    override val isForcedAllowForkingInferenceSystem: Boolean
+        get() = true
 }

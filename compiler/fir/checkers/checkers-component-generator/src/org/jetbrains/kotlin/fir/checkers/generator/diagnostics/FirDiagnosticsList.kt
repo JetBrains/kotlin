@@ -503,6 +503,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION by deprecationError<KtExpression>(LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm)
         val REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION by warning<KtExpression>()
         val REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION by warning<KtExpression>()
+
+        val INFERENCE_UNSUCCESSFUL_FORK by error<PsiElement> {
+            parameter<String>("message")
+        }
     }
 
     val AMBIGUITY by object : DiagnosticGroup("Ambiguity") {

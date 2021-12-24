@@ -7,14 +7,19 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirVisibilityChecker
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.matchingParameterFunctionType
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.directExpansionType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.inference.*
+import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
+import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
+import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
+import org.jetbrains.kotlin.fir.resolve.inference.hasBuilderInferenceAnnotation
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
@@ -25,6 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -524,6 +530,18 @@ internal object CheckDeprecatedSinceKotlin : ResolutionStage() {
         val deprecation = symbol.getDeprecation(callInfo.callSite)
         if (deprecation != null && deprecation.deprecationLevel == DeprecationLevelValue.HIDDEN) {
             sink.yieldDiagnostic(HiddenCandidate)
+        }
+    }
+}
+
+internal object ConstraintSystemForks : ResolutionStage() {
+    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+        if (candidate.system.hasContradiction) return
+
+        candidate.system.processForkConstraints()
+
+        if (candidate.system.hasContradiction) {
+            sink.yieldDiagnostic(candidate.system.errors.firstOrNull()?.let(::InferenceError) ?: InapplicableCandidate)
         }
     }
 }
