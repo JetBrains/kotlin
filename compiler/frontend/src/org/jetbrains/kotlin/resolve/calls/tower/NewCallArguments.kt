@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.StatementFilter
 import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.util.getCall
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
@@ -113,6 +114,12 @@ class LambdaKotlinCallArgumentImpl(
     override var hasBuilderInferenceAnnotation = false
         set(value) {
             assert(!field)
+            field = value
+        }
+
+    override var builderInferenceSession: InferenceSession? = null
+        set(value) {
+            assert(field == null)
             field = value
         }
 }
