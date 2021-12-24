@@ -325,10 +325,10 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         }
     }
 
-    private fun coerceInlineClasses(argument: IrExpression, from: IrType, to: IrType): IrExpression {
+    private fun coerceInlineClasses(argument: IrExpression, from: IrType, to: IrType, skipCast: Boolean = false): IrExpression {
         return IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, to, context.ir.symbols.unsafeCoerceIntrinsic).apply {
             val underlyingType = from.erasedUpperBound.inlineClassRepresentation?.underlyingType
-            if (underlyingType?.isTypeParameter() == true) {
+            if (underlyingType?.isTypeParameter() == true && !skipCast) {
                 putTypeArgument(0, from)
                 putTypeArgument(1, underlyingType)
                 putValueArgument(
@@ -545,7 +545,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         function.valueParameters.forEach { it.transformChildrenVoid() }
         function.body = context.createIrBuilder(function.symbol).irBlockBody {
             val argument = function.valueParameters[0]
-            val thisValue = irTemporary(coerceInlineClasses(irGet(argument), argument.type, function.returnType))
+            val thisValue = irTemporary(coerceInlineClasses(irGet(argument), argument.type, function.returnType, skipCast = true))
             valueMap[irClass.thisReceiver!!.symbol] = thisValue
             for (initBlock in initBlocks) {
                 for (stmt in initBlock.body.statements) {
