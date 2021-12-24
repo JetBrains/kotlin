@@ -70,7 +70,7 @@ public interface TracingStrategy {
         public void wrongNumberOfTypeArguments(@NotNull BindingTrace trace, int expectedTypeArgumentCount, @NotNull CallableDescriptor descriptor) {}
 
         @Override
-        public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors) {}
+        public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> resolvedCalls) {}
 
         @Override
         public <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors) {}
@@ -135,7 +135,7 @@ public interface TracingStrategy {
             @NotNull CallableDescriptor descriptor
     );
 
-    <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors);
+    <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> resolvedCalls);
 
     <D extends CallableDescriptor> void noneApplicable(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors);
 

@@ -69,7 +69,7 @@ class TracingStrategyForImplicitConstructorDelegationCall(
         reportError(trace)
     }
 
-    override fun <D : CallableDescriptor?> ambiguity(trace: BindingTrace, descriptors: MutableCollection<out ResolvedCall<D>>) {
+    override fun <D : CallableDescriptor?> ambiguity(trace: BindingTrace, resolvedCalls: MutableCollection<out ResolvedCall<D>>) {
         reportError(trace)
     }
 

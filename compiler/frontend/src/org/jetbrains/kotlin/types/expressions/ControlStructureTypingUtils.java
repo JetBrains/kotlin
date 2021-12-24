@@ -634,7 +634,7 @@ public class ControlStructureTypingUtils {
 
         @Override
         public <D extends CallableDescriptor> void ambiguity(
-                @NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors
+                @NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> resolvedCalls
         ) {
             logError();
         }

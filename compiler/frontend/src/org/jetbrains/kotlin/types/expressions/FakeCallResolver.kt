@@ -95,8 +95,8 @@ class FakeCallResolver(
         val call: Call
     ) : TracingStrategy by TracingStrategyImpl.create(fakeExpression, call) {
 
-        override fun <D : CallableDescriptor?> ambiguity(trace: BindingTrace, descriptors: Collection<ResolvedCall<D>>) {
-            trace.report(Errors.COMPONENT_FUNCTION_AMBIGUITY.on(reportErrorsOn, name, descriptors))
+        override fun <D : CallableDescriptor?> ambiguity(trace: BindingTrace, resolvedCalls: Collection<ResolvedCall<D>>) {
+            trace.report(Errors.COMPONENT_FUNCTION_AMBIGUITY.on(reportErrorsOn, name, resolvedCalls))
         }
 
         override fun unsafeCall(trace: BindingTrace, type: KotlinType, isCallForImplicitInvoke: Boolean) {
@@ -117,8 +117,8 @@ class FakeCallResolver(
         val call: Call
     ) : TracingStrategy by TracingStrategyImpl.create(fakeExpression, call) {
 
-        override fun <D : CallableDescriptor?> ambiguity(trace: BindingTrace, descriptors: Collection<ResolvedCall<D>>) {
-            trace.report(Errors.ITERATOR_AMBIGUITY.on(reportErrorsOn, descriptors))
+        override fun <D : CallableDescriptor?> ambiguity(trace: BindingTrace, resolvedCalls: Collection<ResolvedCall<D>>) {
+            trace.report(Errors.ITERATOR_AMBIGUITY.on(reportErrorsOn, resolvedCalls))
         }
 
         override fun unsafeCall(trace: BindingTrace, type: KotlinType, isCallForImplicitInvoke: Boolean) {
