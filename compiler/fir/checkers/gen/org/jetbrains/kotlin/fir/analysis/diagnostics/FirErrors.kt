@@ -306,6 +306,7 @@ object FirErrors {
     val VALUE_CLASS_NOT_FINAL by error0<KtDeclaration>(SourceElementPositioningStrategies.MODALITY_MODIFIER)
     val ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS by error0<KtDeclaration>(SourceElementPositioningStrategies.INLINE_OR_VALUE_MODIFIER)
     val INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE by error0<KtElement>()
+    val VALUE_CLASS_EMPTY_CONSTRUCTOR by error0<KtElement>()
     val VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER by error0<KtParameter>()
     val PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS by error0<KtProperty>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
     val DELEGATED_PROPERTY_INSIDE_VALUE_CLASS by error0<PsiElement>()

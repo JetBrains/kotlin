@@ -120,7 +120,7 @@ class SimpleTestClassModel(
                 }
             }
         }
-        if (result.any { it is WithoutJvmInlineTestMethodModel }) {
+        if (result.any { it is TransformingTestMethodModel && it.shouldBeGenerated() }) {
             val additionalRunner =
                 RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments, withTransformer = true)
             result.add(additionalRunner)

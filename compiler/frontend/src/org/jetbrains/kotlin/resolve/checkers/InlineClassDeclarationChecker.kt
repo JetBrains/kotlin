@@ -80,31 +80,47 @@ object InlineClassDeclarationChecker : DeclarationChecker {
             return
         }
 
-        val baseParameter = primaryConstructor.valueParameters.singleOrNull()
-        if (baseParameter == null) {
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)) {
+            if (primaryConstructor.valueParameters.isEmpty()) {
+                (primaryConstructor.valueParameterList ?: declaration).let {
+                    trace.report(Errors.VALUE_CLASS_EMPTY_CONSTRUCTOR.on(it))
+                    return
+                }
+            }
+        } else if (primaryConstructor.valueParameters.size != 1) {
             (primaryConstructor.valueParameterList ?: declaration).let {
                 trace.report(Errors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE.on(it))
                 return
             }
         }
 
-        if (!isParameterAcceptableForInlineClass(baseParameter)) {
-            trace.report(Errors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER.on(baseParameter))
-            return
+        var baseParametersOk = true
+        for (baseParameter in primaryConstructor.valueParameters) {
+
+            if (!isParameterAcceptableForInlineClass(baseParameter)) {
+                trace.report(Errors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER.on(baseParameter))
+                baseParametersOk = false
+                continue
+            }
+
+            val baseParameterType = descriptor.safeAs<ClassDescriptor>()?.defaultType?.substitutedUnderlyingType()
+            val baseParameterTypeReference = baseParameter.typeReference
+            if (baseParameterType != null && baseParameterTypeReference != null) {
+                if (baseParameterType.isInapplicableParameterType()) {
+                    trace.report(Errors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE.on(baseParameterTypeReference, baseParameterType))
+                    baseParametersOk = false
+                    continue
+                }
+
+                if (baseParameterType.isRecursiveInlineClassType()) { // todo check work for MF VC
+                    trace.report(Errors.VALUE_CLASS_CANNOT_BE_RECURSIVE.on(baseParameterTypeReference))
+                    baseParametersOk = false
+                    continue
+                }
+            }
         }
-
-        val baseParameterType = descriptor.safeAs<ClassDescriptor>()?.defaultType?.substitutedUnderlyingType()
-        val baseParameterTypeReference = baseParameter.typeReference
-        if (baseParameterType != null && baseParameterTypeReference != null) {
-            if (baseParameterType.isInapplicableParameterType()) {
-                trace.report(Errors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE.on(baseParameterTypeReference, baseParameterType))
-                return
-            }
-
-            if (baseParameterType.isRecursiveInlineClassType()) {
-                trace.report(Errors.VALUE_CLASS_CANNOT_BE_RECURSIVE.on(baseParameterTypeReference))
-                return
-            }
+        if (!baseParametersOk) {
+            return
         }
 
         for (supertypeEntry in declaration.superTypeListEntries) {
@@ -129,7 +145,8 @@ object InlineClassDeclarationChecker : DeclarationChecker {
         }
 
         if (descriptor.getAllSuperClassifiers().any {
-                it.fqNameUnsafe == StandardNames.FqNames.cloneable || it.fqNameUnsafe == javaLangCloneable }
+                it.fqNameUnsafe == StandardNames.FqNames.cloneable || it.fqNameUnsafe == javaLangCloneable
+            }
         ) {
             trace.report(Errors.VALUE_CLASS_CANNOT_BE_CLONEABLE.on(inlineOrValueKeyword))
             return

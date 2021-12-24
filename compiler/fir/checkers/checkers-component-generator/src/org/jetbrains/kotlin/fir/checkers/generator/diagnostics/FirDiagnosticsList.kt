@@ -405,6 +405,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val VALUE_CLASS_NOT_FINAL by error<KtDeclaration>(PositioningStrategy.MODALITY_MODIFIER)
         val ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
         val INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE by error<KtElement>()
+        val VALUE_CLASS_EMPTY_CONSTRUCTOR by error<KtElement>()
         val VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER by error<KtParameter>()
         val PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS by error<KtProperty>(PositioningStrategy.DECLARATION_SIGNATURE)
         val DELEGATED_PROPERTY_INSIDE_VALUE_CLASS by error<PsiElement>()

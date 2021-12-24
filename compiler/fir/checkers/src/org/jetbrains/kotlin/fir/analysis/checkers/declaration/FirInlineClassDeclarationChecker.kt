@@ -15,18 +15,21 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.reportOnWithSuppression
+import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableReference
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
@@ -60,8 +63,9 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
         }
 
         var primaryConstructor: FirConstructor? = null
-        var primaryConstructorParameter: FirValueParameter? = null
-        var primaryConstructorProperty: FirProperty? = null
+        var primaryConstructorParametersByName = mapOf<Name, FirValueParameter>()
+        val primaryConstructorPropertiesByName = mutableMapOf<Name, FirProperty>()
+        var primaryConstructorParametersSymbolsSet = setOf<FirValueParameterSymbol>()
 
         for (innerDeclaration in declaration.declarations) {
             when (innerDeclaration) {
@@ -69,7 +73,9 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                     when {
                         innerDeclaration.isPrimary -> {
                             primaryConstructor = innerDeclaration
-                            primaryConstructorParameter = innerDeclaration.valueParameters.singleOrNull()
+                            primaryConstructorParametersByName = innerDeclaration.valueParameters.associateBy { it.name }
+                            primaryConstructorParametersSymbolsSet =
+                                primaryConstructorParametersByName.map { (_, parameter) -> parameter.symbol }.toSet()
                         }
 
                         innerDeclaration.body != null -> {
@@ -100,7 +106,7 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                     if (innerDeclaration.isSynthetic) {
                         val symbol = innerDeclaration.initializer?.toResolvedCallableSymbol()
                         if (context.languageVersionSettings.supportsFeature(LanguageFeature.InlineClassImplementationByDelegation) &&
-                            symbol != null && symbol == primaryConstructorParameter?.symbol
+                            symbol != null && symbol in primaryConstructorParametersSymbolsSet
                         ) {
                             continue
                         }
@@ -115,8 +121,8 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
                     }
                 }
                 is FirProperty -> {
-                    if (innerDeclaration.isRelatedToParameter(primaryConstructorParameter)) {
-                        primaryConstructorProperty = innerDeclaration
+                    if (innerDeclaration.isRelatedToParameter(primaryConstructorParametersByName[innerDeclaration.name])) {
+                        primaryConstructorPropertiesByName[innerDeclaration.name] = innerDeclaration
                     } else {
                         when {
                             innerDeclaration.delegate != null ->
@@ -147,35 +153,42 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
             return
         }
 
-        if (primaryConstructorParameter == null) {
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)) {
+            if (primaryConstructorParametersByName.isEmpty()) {
+                reporter.reportOnWithSuppression(primaryConstructor, FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR, context)
+                return
+            }
+        } else if (primaryConstructorParametersByName.size != 1) {
             reporter.reportOnWithSuppression(primaryConstructor, FirErrors.INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, context)
             return
         }
 
-        withSuppressedDiagnostics(primaryConstructor, context) { context ->
-            withSuppressedDiagnostics(primaryConstructorParameter, context) { context ->
-                when {
-                    primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorProperty) ->
-                        reporter.reportOn(
-                            primaryConstructorParameter.source,
-                            FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
-                            context
-                        )
+        for ((name, primaryConstructorParameter) in primaryConstructorParametersByName) {
+            withSuppressedDiagnostics(primaryConstructor, context) { context ->
+                withSuppressedDiagnostics(primaryConstructorParameter, context) { context ->
+                    when {
+                        primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->
+                            reporter.reportOn(
+                                primaryConstructorParameter.source,
+                                FirErrors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER,
+                                context
+                            )
 
-                    primaryConstructorParameter.returnTypeRef.isInapplicableParameterType() ->
-                        reporter.reportOn(
-                            primaryConstructorParameter.returnTypeRef.source,
-                            FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
-                            primaryConstructorParameter.returnTypeRef.coneType,
-                            context
-                        )
+                        primaryConstructorParameter.returnTypeRef.isInapplicableParameterType() ->
+                            reporter.reportOn(
+                                primaryConstructorParameter.returnTypeRef.source,
+                                FirErrors.VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE,
+                                primaryConstructorParameter.returnTypeRef.coneType,
+                                context
+                            )
 
-                    primaryConstructorParameter.returnTypeRef.coneType.isRecursiveInlineClassType(context.session) ->
-                        reporter.reportOnWithSuppression(
-                            primaryConstructorParameter.returnTypeRef,
-                            FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE,
-                            context
-                        )
+                        primaryConstructorParameter.returnTypeRef.coneType.isRecursiveInlineClassType(context.session) ->
+                            reporter.reportOnWithSuppression(
+                                primaryConstructorParameter.returnTypeRef,
+                                FirErrors.VALUE_CLASS_CANNOT_BE_RECURSIVE,
+                                context
+                            )
+                    }
                 }
             }
         }

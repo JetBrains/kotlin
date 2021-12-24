@@ -47483,6 +47483,28 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/valueClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ValueClasses {
+        @Test
+        public void testAllFilesPresentInValueClasses() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("equality.kt")
+        public void testEquality() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/equality.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equality.kt")
+        public void testEquality_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/equality.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/vararg")
     @TestDataPath("$PROJECT_ROOT")
     public class Vararg {

@@ -300,7 +300,7 @@ class NewTestGeneratorImpl(
     private fun TestClassModel.predefinedNativeTransformers(recursive: Boolean): List<Pair<String, String>> =
         methods.mapNotNull { method ->
             (method as? TransformingTestMethodModel)
-                ?.takeIf { it.registerInConstructor }
+                ?.takeIf { it.registerInConstructor && it.shouldBeGenerated() }
                 ?.let { it.source.file.invariantSeparatorsPath to it.transformer }
         } + if (recursive) innerTestClasses.flatMap { it.predefinedNativeTransformers(true) } else listOf()
 }
