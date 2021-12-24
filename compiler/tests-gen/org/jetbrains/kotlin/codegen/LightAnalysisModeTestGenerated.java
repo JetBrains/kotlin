@@ -17823,9 +17823,19 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultConstructorParameterValuesOfInlineClassType.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
             }
 
+            @TestMetadata("defaultConstructorParameterValuesOfInlineClassTypeGeneric.kt")
+            public void testDefaultConstructorParameterValuesOfInlineClassTypeGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultConstructorParameterValuesOfInlineClassTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
             @TestMetadata("defaultInterfaceFunParameterValuesOfInlineClassType.kt")
             public void testDefaultInterfaceFunParameterValuesOfInlineClassType() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultInterfaceFunParameterValuesOfInlineClassType.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("defaultInterfaceFunParameterValuesOfInlineClassTypeGeneric.kt")
+            public void testDefaultInterfaceFunParameterValuesOfInlineClassTypeGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultInterfaceFunParameterValuesOfInlineClassTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
             }
 
             @TestMetadata("defaultParameterValuesOfInlineClassType.kt")
@@ -17838,9 +17848,24 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeBoxing.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
             }
 
+            @TestMetadata("defaultParameterValuesOfInlineClassTypeBoxingGeneric.kt")
+            public void testDefaultParameterValuesOfInlineClassTypeBoxingGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeBoxingGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("defaultParameterValuesOfInlineClassTypeGeneric.kt")
+            public void testDefaultParameterValuesOfInlineClassTypeGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
             @TestMetadata("defaultValueOfInlineClassTypeInInlineFun.kt")
             public void testDefaultValueOfInlineClassTypeInInlineFun() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFun.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("defaultValueOfInlineClassTypeInInlineFunGeneric.kt")
+            public void testDefaultValueOfInlineClassTypeInInlineFunGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFunGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
             }
 
             @TestMetadata("defaultValueOfInlineClassTypeInInlineFunInInlineClass.kt")
@@ -17848,9 +17873,19 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFunInInlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
             }
 
+            @TestMetadata("defaultValueOfInlineClassTypeInInlineFunInInlineClassGeneric.kt")
+            public void testDefaultValueOfInlineClassTypeInInlineFunInInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFunInInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
             @TestMetadata("inlineClassFun.kt")
             public void testInlineClassFun() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassFun.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("inlineClassFunGeneric.kt")
+            public void testInlineClassFunGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassFunGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
             }
 
             @TestMetadata("inlineClassPrimaryConstructor.kt")
@@ -17858,14 +17893,29 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructor.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
             }
 
+            @TestMetadata("inlineClassPrimaryConstructorGeneric.kt")
+            public void testInlineClassPrimaryConstructorGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructorGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
             @TestMetadata("inlineClassPrimaryConstructorWithInlineClassValue.kt")
             public void testInlineClassPrimaryConstructorWithInlineClassValue() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructorWithInlineClassValue.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
             }
 
+            @TestMetadata("inlineClassPrimaryConstructorWithInlineClassValueGeneric.kt")
+            public void testInlineClassPrimaryConstructorWithInlineClassValueGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructorWithInlineClassValueGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
             @TestMetadata("inlineClassSecondaryConstructor.kt")
             public void testInlineClassSecondaryConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassSecondaryConstructor.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("inlineClassSecondaryConstructorGeneric.kt")
+            public void testInlineClassSecondaryConstructorGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassSecondaryConstructorGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
             }
 
             @TestMetadata("kt26554.kt")
@@ -17876,6 +17926,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("kt27416.kt")
             public void testKt27416() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/kt27416.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @TestMetadata("kt27416Generic.kt")
+            public void testKt27416Generic() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/kt27416Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
             }
 
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter")

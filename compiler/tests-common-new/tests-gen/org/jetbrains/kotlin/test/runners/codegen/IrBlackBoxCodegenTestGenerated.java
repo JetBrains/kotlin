@@ -23913,6 +23913,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("defaultConstructorParameterValuesOfInlineClassTypeGeneric.kt")
+            public void testDefaultConstructorParameterValuesOfInlineClassTypeGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultConstructorParameterValuesOfInlineClassTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("defaultConstructorParameterValuesOfInlineClassTypeGeneric.kt")
+            public void testDefaultConstructorParameterValuesOfInlineClassTypeGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultConstructorParameterValuesOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("defaultConstructorParameterValuesOfInlineClassType.kt")
             public void testDefaultConstructorParameterValuesOfInlineClassType_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultConstructorParameterValuesOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -23922,6 +23934,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("defaultInterfaceFunParameterValuesOfInlineClassType.kt")
             public void testDefaultInterfaceFunParameterValuesOfInlineClassType() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultInterfaceFunParameterValuesOfInlineClassType.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("defaultInterfaceFunParameterValuesOfInlineClassTypeGeneric.kt")
+            public void testDefaultInterfaceFunParameterValuesOfInlineClassTypeGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultInterfaceFunParameterValuesOfInlineClassTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("defaultInterfaceFunParameterValuesOfInlineClassTypeGeneric.kt")
+            public void testDefaultInterfaceFunParameterValuesOfInlineClassTypeGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultInterfaceFunParameterValuesOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -23943,9 +23967,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("defaultParameterValuesOfInlineClassTypeBoxingGeneric.kt")
+            public void testDefaultParameterValuesOfInlineClassTypeBoxingGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeBoxingGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("defaultParameterValuesOfInlineClassTypeBoxingGeneric.kt")
+            public void testDefaultParameterValuesOfInlineClassTypeBoxingGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeBoxingGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("defaultParameterValuesOfInlineClassTypeBoxing.kt")
             public void testDefaultParameterValuesOfInlineClassTypeBoxing_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeBoxing.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("defaultParameterValuesOfInlineClassTypeGeneric.kt")
+            public void testDefaultParameterValuesOfInlineClassTypeGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("defaultParameterValuesOfInlineClassTypeGeneric.kt")
+            public void testDefaultParameterValuesOfInlineClassTypeGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultParameterValuesOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -23961,9 +24009,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("defaultValueOfInlineClassTypeInInlineFunGeneric.kt")
+            public void testDefaultValueOfInlineClassTypeInInlineFunGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFunGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("defaultValueOfInlineClassTypeInInlineFunGeneric.kt")
+            public void testDefaultValueOfInlineClassTypeInInlineFunGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("defaultValueOfInlineClassTypeInInlineFunInInlineClass.kt")
             public void testDefaultValueOfInlineClassTypeInInlineFunInInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFunInInlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("defaultValueOfInlineClassTypeInInlineFunInInlineClassGeneric.kt")
+            public void testDefaultValueOfInlineClassTypeInInlineFunInInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFunInInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("defaultValueOfInlineClassTypeInInlineFunInInlineClassGeneric.kt")
+            public void testDefaultValueOfInlineClassTypeInInlineFunInInlineClassGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultValueOfInlineClassTypeInInlineFunInInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -23985,6 +24057,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("inlineClassFunGeneric.kt")
+            public void testInlineClassFunGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassFunGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("inlineClassFunGeneric.kt")
+            public void testInlineClassFunGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("inlineClassFun.kt")
             public void testInlineClassFun_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -23997,9 +24081,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("inlineClassPrimaryConstructorGeneric.kt")
+            public void testInlineClassPrimaryConstructorGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructorGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("inlineClassPrimaryConstructorGeneric.kt")
+            public void testInlineClassPrimaryConstructorGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("inlineClassPrimaryConstructorWithInlineClassValue.kt")
             public void testInlineClassPrimaryConstructorWithInlineClassValue() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructorWithInlineClassValue.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("inlineClassPrimaryConstructorWithInlineClassValueGeneric.kt")
+            public void testInlineClassPrimaryConstructorWithInlineClassValueGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructorWithInlineClassValueGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("inlineClassPrimaryConstructorWithInlineClassValueGeneric.kt")
+            public void testInlineClassPrimaryConstructorWithInlineClassValueGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassPrimaryConstructorWithInlineClassValueGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24018,6 +24126,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("inlineClassSecondaryConstructor.kt")
             public void testInlineClassSecondaryConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassSecondaryConstructor.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("inlineClassSecondaryConstructorGeneric.kt")
+            public void testInlineClassSecondaryConstructorGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassSecondaryConstructorGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("inlineClassSecondaryConstructorGeneric.kt")
+            public void testInlineClassSecondaryConstructorGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/inlineClassSecondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24042,6 +24162,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("kt27416.kt")
             public void testKt27416() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/kt27416.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("kt27416Generic.kt")
+            public void testKt27416Generic() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/kt27416Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("kt27416Generic.kt")
+            public void testKt27416Generic_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/kt27416Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
