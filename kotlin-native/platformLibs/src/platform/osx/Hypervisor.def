@@ -1,4 +1,4 @@
-depends = darwin osx posix
+depends = Kernel darwin osx posix
 language = Objective-C
 package = platform.Hypervisor
 
