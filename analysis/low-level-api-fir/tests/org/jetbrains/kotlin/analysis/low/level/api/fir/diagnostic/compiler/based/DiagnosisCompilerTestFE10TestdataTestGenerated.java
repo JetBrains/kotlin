@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.base
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.test.utils.TransformersFunctions;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32114,6 +32115,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("recursiveMultiFieldValueClasses.kt")
+            public void testRecursiveMultiFieldValueClasses() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/valueClasses/recursiveMultiFieldValueClasses.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
+            }
+
+            @Test
             @TestMetadata("recursiveValueClasses.kt")
             public void testRecursiveValueClasses() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/valueClasses/recursiveValueClasses.kt");
@@ -32165,6 +32172,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             @TestMetadata("valueClassWithForbiddenUnderlyingType.kt")
             public void testValueClassWithForbiddenUnderlyingType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/valueClasses/valueClassWithForbiddenUnderlyingType.kt");
+            }
+
+            @Test
+            @TestMetadata("valueClassWithForbiddenUnderlyingTypeMultiField.kt")
+            public void testValueClassWithForbiddenUnderlyingTypeMultiField() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/valueClasses/valueClassWithForbiddenUnderlyingTypeMultiField.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithUniversal());
             }
 
             @Test

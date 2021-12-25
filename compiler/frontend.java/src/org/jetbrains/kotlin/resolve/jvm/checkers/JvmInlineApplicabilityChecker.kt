@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -36,9 +35,7 @@ class JvmInlineApplicabilityChecker : DeclarationChecker {
             context.trace.report(ErrorsJvm.JVM_INLINE_WITHOUT_VALUE_CLASS.on(annotationEntry))
         }
 
-        if (descriptor.isValue && annotation == null && !descriptor.isExpect &&
-            !context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)
-        ) {
+        if (descriptor.isValue && annotation == null && !descriptor.isExpect) {
             val valueKeyword = declaration.modifierList?.getModifier(KtTokens.VALUE_KEYWORD) ?: return
             context.trace.report(ErrorsJvm.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION.on(valueKeyword))
         }

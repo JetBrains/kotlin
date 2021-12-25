@@ -1110,6 +1110,11 @@ internal class InlineClassConstructorWrongParametersSizeImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.InlineClassConstructorWrongParametersSize(), KtAbstractFirDiagnostic<KtElement>
 
+internal class ValueClassEmptyConstructorImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ValueClassEmptyConstructor(), KtAbstractFirDiagnostic<KtElement>
+
 internal class ValueClassConstructorNotFinalReadOnlyParameterImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,

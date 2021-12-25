@@ -928,6 +928,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InlineClassConstructorWrongParametersSize::class
     }
 
+    abstract class ValueClassEmptyConstructor : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = ValueClassEmptyConstructor::class
+    }
+
     abstract class ValueClassConstructorNotFinalReadOnlyParameter : KtFirDiagnostic<KtParameter>() {
         override val diagnosticClass get() = ValueClassConstructorNotFinalReadOnlyParameter::class
     }
