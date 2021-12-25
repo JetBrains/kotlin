@@ -54,7 +54,7 @@ class ExampleAnnotationProcessor : AbstractProcessor() {
                         simpleName.replaceFirstChar(Char::uppercaseChar) +
                         generatedFileSuffix
 
-            filer.createSourceFile(packageName + '.' + generatedJavaClassName).openWriter().use {
+            filer.createSourceFile("$packageName.$generatedJavaClassName").openWriter().use {
                 with(it) {
                     appendLine("package $packageName;")
                     appendLine("public final class $generatedJavaClassName {}")
