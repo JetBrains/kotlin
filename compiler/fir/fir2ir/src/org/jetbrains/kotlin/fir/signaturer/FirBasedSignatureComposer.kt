@@ -158,7 +158,7 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
     }
 
     private fun isTopLevelPrivate(declaration: FirDeclaration, containingClass: ConeClassLikeLookupTag?): Boolean =
-        containingClass == null && declaration is FirMemberDeclaration && declaration.visibility == Visibilities.Private
+        containingClass == null && declaration is FirCallableDeclaration && declaration.visibility == Visibilities.Private
 
     private fun FirProperty.getterOrDefault() =
         getter ?: FirDefaultPropertyGetter(
