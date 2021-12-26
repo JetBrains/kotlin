@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.collectForMangle
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -157,7 +158,8 @@ open class FirJvmMangleComputer(
             mangleType(builder, it.typeRef.coneType)
         }
 
-        receiverTypeRef?.let {
+        val receiverType = receiverTypeRef ?: (this as? FirPropertyAccessor)?.propertySymbol?.fir?.receiverTypeRef
+        receiverType?.let {
             builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
             mangleType(builder, it.coneType)
         }
@@ -323,7 +325,12 @@ open class FirJvmMangleComputer(
         constructor.mangleFunction(isCtor = true, isStatic = false, constructor)
 
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Boolean) {
-        propertyAccessor.mangleFunction(isCtor = false, propertyAccessor.isStatic, propertyAccessor.propertySymbol!!.fir)
+        if (propertyAccessor is FirSyntheticPropertyAccessor) {
+            // No need to distinguish between the accessor and its delegate.
+            visitSimpleFunction(propertyAccessor.delegate, data)
+        } else {
+            propertyAccessor.mangleFunction(isCtor = false, propertyAccessor.isStatic, propertyAccessor.propertySymbol!!.fir)
+        }
     }
 
     override fun computeMangle(declaration: FirDeclaration): String {
