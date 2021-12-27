@@ -61,6 +61,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-stdlib-jdk7",
     ":kotlin-stdlib-jdk8",
     ":kotlin-stdlib-js",
+    ":kotlin-stdlib-wasm",
     ":examples:annotation-processor-example",
     ":kotlin-script-runtime",
     ":kotlin-scripting-common",
