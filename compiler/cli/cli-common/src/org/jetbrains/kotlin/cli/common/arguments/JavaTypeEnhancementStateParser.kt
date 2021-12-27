@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.toKotlinVersion
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
@@ -204,7 +202,7 @@ class JavaTypeEnhancementStateParser(
     }
 
     companion object {
-        private val DEFAULT = JavaTypeEnhancementStateParser(MessageCollector.NONE, LanguageVersion.LATEST_STABLE.toKotlinVersion())
+        private val DEFAULT = JavaTypeEnhancementStateParser(MessageCollector.NONE, KotlinVersion.CURRENT)
         private const val NULLABILITY_ANNOTATIONS_COMPILER_OPTION = "-Xnullability-annotations"
 
         fun parsePlainNullabilityAnnotationReportLevels(nullabilityAnnotations: String): Pair<FqName, ReportLevel> =
