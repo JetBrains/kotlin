@@ -32,7 +32,7 @@ enum class JdkMajorVersion(
 }
 
 fun Project.configureJvmDefaultToolchain() {
-    configureJvmToolchain(JdkMajorVersion.JDK_1_8)
+    configureJvmToolchain(JdkMajorVersion.JDK_16)
 }
 
 fun Project.shouldOverrideObsoleteJdk(
