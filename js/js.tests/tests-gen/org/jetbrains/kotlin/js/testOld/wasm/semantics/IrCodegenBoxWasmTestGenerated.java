@@ -25681,6 +25681,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/strings/concatDynamicWithConstants.kt");
         }
 
+        @TestMetadata("concatDynamicWithSpecialSymbols.kt")
+        public void testConcatDynamicWithSpecialSymbols() throws Exception {
+            runTest("compiler/testData/codegen/box/strings/concatDynamicWithSpecialSymbols.kt");
+        }
+
         @TestMetadata("concatGenericWithNullablePrimitiveUpperBound.kt")
         public void testConcatGenericWithNullablePrimitiveUpperBound() throws Exception {
             runTest("compiler/testData/codegen/box/strings/concatGenericWithNullablePrimitiveUpperBound.kt");
