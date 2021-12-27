@@ -16197,6 +16197,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/fieldNameClash.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
+        @TestMetadata("funInterfaceDoubleSuffux.kt")
+        public void testFunInterfaceDoubleSuffux() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/funInterfaceDoubleSuffux.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @TestMetadata("funInterfaceDoubleSuffux2.kt")
+        public void testFunInterfaceDoubleSuffux2() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/funInterfaceDoubleSuffux2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
         @TestMetadata("functionExpression.kt")
         public void testFunctionExpression() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/functionExpression.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());

@@ -12829,6 +12829,16 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/inlineClasses/fieldNameClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
+        @TestMetadata("funInterfaceDoubleSuffux.kt")
+        public void testFunInterfaceDoubleSuffux() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/funInterfaceDoubleSuffux.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @TestMetadata("funInterfaceDoubleSuffux2.kt")
+        public void testFunInterfaceDoubleSuffux2() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/funInterfaceDoubleSuffux2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
         @TestMetadata("functionExpression.kt")
         public void testFunctionExpression() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/functionExpression.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
