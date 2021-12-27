@@ -1427,18 +1427,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
-        @TestMetadata("noInline.kt")
-        public void testNoInline() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/constProperty/noInline.kt");
-        }
-
-        @Test
-        @TestMetadata("noInlineInCmp.kt")
-        public void testNoInlineInCmp() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/constProperty/noInlineInCmp.kt");
-        }
-
-        @Test
         @TestMetadata("nonConstValHasNoDefaultValue_after.kt")
         public void testNonConstValHasNoDefaultValue_after() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/constProperty/nonConstValHasNoDefaultValue_after.kt");
@@ -1534,12 +1522,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("noInlineNonStaticJavaField.kt")
         public void testNoInlineNonStaticJavaField() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/constants/noInlineNonStaticJavaField.kt");
-        }
-
-        @Test
-        @TestMetadata("noInlineNonStaticJavaField_lv10.kt")
-        public void testNoInlineNonStaticJavaField_lv10() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/constants/noInlineNonStaticJavaField_lv10.kt");
         }
 
         @Test
@@ -4165,12 +4147,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
-        @TestMetadata("negateConstantCompare.kt")
-        public void testNegateConstantCompare() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/lazyCodegen/negateConstantCompare.kt");
-        }
-
-        @Test
         @TestMetadata("negateObjectComp.kt")
         public void testNegateObjectComp() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/lazyCodegen/negateObjectComp.kt");
@@ -5828,12 +5804,6 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("inlineStringConstInsideWhen.kt")
         public void testInlineStringConstInsideWhen() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/inlineStringConstInsideWhen.kt");
-        }
-
-        @Test
-        @TestMetadata("nonInlinedConst.kt")
-        public void testNonInlinedConst() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/whenStringOptimization/nonInlinedConst.kt");
         }
 
         @Test

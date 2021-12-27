@@ -4681,11 +4681,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/constants/kt9532.kt");
         }
 
-        @TestMetadata("kt9532_lv10.kt")
-        public void testKt9532_lv10() throws Exception {
-            runTest("compiler/testData/codegen/box/constants/kt9532_lv10.kt");
-        }
-
         @TestMetadata("long.kt")
         public void testLong() throws Exception {
             runTest("compiler/testData/codegen/box/constants/long.kt");

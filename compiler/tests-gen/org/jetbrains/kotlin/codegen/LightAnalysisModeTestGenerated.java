@@ -6021,11 +6021,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/constants/kt9532.kt");
         }
 
-        @TestMetadata("kt9532_lv10.kt")
-        public void testKt9532_lv10() throws Exception {
-            runTest("compiler/testData/codegen/box/constants/kt9532_lv10.kt");
-        }
-
         @TestMetadata("long.kt")
         public void testLong() throws Exception {
             runTest("compiler/testData/codegen/box/constants/long.kt");
@@ -11980,11 +11975,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/codegen/box/delegation/simple.kt");
-        }
-
-        @TestMetadata("simple1.0.kt")
-        public void testSimple1_0() throws Exception {
-            runTest("compiler/testData/codegen/box/delegation/simple1.0.kt");
         }
 
         @TestMetadata("viaTypeAlias.kt")
@@ -20829,11 +20819,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("stream.kt")
         public void testStream() throws Exception {
             runTest("compiler/testData/codegen/box/jdk/stream.kt");
-        }
-
-        @TestMetadata("streamBackwardCompatibility.kt")
-        public void testStreamBackwardCompatibility() throws Exception {
-            runTest("compiler/testData/codegen/box/jdk/streamBackwardCompatibility.kt");
         }
 
         @TestMetadata("useStream.kt")

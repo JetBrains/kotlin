@@ -7992,12 +7992,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
-        @TestMetadata("kt9532_lv10.kt")
-        public void testKt9532_lv10() throws Exception {
-            runTest("compiler/testData/codegen/box/constants/kt9532_lv10.kt");
-        }
-
-        @Test
         @TestMetadata("long.kt")
         public void testLong() throws Exception {
             runTest("compiler/testData/codegen/box/constants/long.kt");
@@ -14767,12 +14761,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/codegen/box/delegation/simple.kt");
-        }
-
-        @Test
-        @TestMetadata("simple1.0.kt")
-        public void testSimple1_0() throws Exception {
-            runTest("compiler/testData/codegen/box/delegation/simple1.0.kt");
         }
 
         @Test
@@ -27381,12 +27369,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("stream.kt")
         public void testStream() throws Exception {
             runTest("compiler/testData/codegen/box/jdk/stream.kt");
-        }
-
-        @Test
-        @TestMetadata("streamBackwardCompatibility.kt")
-        public void testStreamBackwardCompatibility() throws Exception {
-            runTest("compiler/testData/codegen/box/jdk/streamBackwardCompatibility.kt");
         }
 
         @Test
