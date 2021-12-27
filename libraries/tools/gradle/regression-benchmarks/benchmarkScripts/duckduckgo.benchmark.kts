@@ -24,8 +24,6 @@ runAllBenchmarks(
     suite {
         scenario {
             title = "Clean build"
-            warmups = 3
-            iterations = 7
             useGradleArgs("--no-build-cache")
 
             runTasks("assembleDebug")
@@ -33,13 +31,28 @@ runAllBenchmarks(
         }
 
         scenario {
-            title = "Incremental build with ABI change"
-            warmups = 3
-            iterations = 7
+            title = "Incremental build with ABI change in common ViewModelFactory"
             useGradleArgs("--no-build-cache")
 
             runTasks("assembleDebug")
             applyAbiChangeTo("common/src/main/java/com/duckduckgo/app/global/ViewModelFactory.kt")
+        }
+
+        scenario {
+            title = "Incremetal build with ABI change in Kapt component"
+            useGradleArgs("--no-build-cache")
+
+            runTasks("assembleDebug")
+            applyAbiChangeTo("vpn-main/src/main/java/com/duckduckgo/mobile/android/vpn/di/VpnComponent.kt")
+        }
+
+        scenario {
+            title = "Incremental build with change in Android common string resource"
+            useGradleArgs("--no-build-cache")
+
+            runTasks("assembleDebug")
+
+            applyAndroidResourceValueChange("common-ui/src/main/res/values/strings.xml")
         }
     },
     mapOf(
