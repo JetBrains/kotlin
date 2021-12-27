@@ -1,10 +1,14 @@
 // WITH_STDLIB
 // FILE: main.js
-Math.hypot = function hypot(a, b) {
-    hypot.called = true
-    return Math.sqrt(a*a + b*b)
-}
+var isLegacyBackend =
+    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
 
+if (!isLegacyBackend) {
+    Math.hypot = function hypot(a, b) {
+        hypot.called = true
+        return Math.sqrt(a*a + b*b)
+    }
+}
 // FILE: main.kt
 import kotlin.math.hypot
 

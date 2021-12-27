@@ -1,8 +1,12 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: main.js
-Math.log1p = undefined
+var isLegacyBackend =
+    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
 
+if (!isLegacyBackend) {
+    Math.log1p = undefined
+}
 // FILE: main.kt
 import kotlin.math.ln1p
 

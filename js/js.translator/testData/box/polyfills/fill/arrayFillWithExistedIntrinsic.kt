@@ -1,13 +1,17 @@
 // WITH_STDLIB
 // FILE: main.js
-Int32Array.prototype.fill = function fill(value) {
-    fill.called = true
-    for (var i = 0; i < this.length; i++) {
-        this[i] = value;
-    }
-    return this
-}
+var isLegacyBackend =
+    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
 
+if (!isLegacyBackend) {
+    Int32Array.prototype.fill = function fill(value) {
+        fill.called = true
+        for (var i = 0; i < this.length; i++) {
+            this[i] = value;
+        }
+        return this
+    }
+}
 // FILE: main.kt
 fun box(): String {
     val int = IntArray(4).apply { fill(42) }

@@ -1,8 +1,12 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: main.js
-Math.acosh = undefined
+var isLegacyBackend =
+    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
 
+if (!isLegacyBackend) {
+    Math.acosh = undefined
+}
 // FILE: main.kt
 import kotlin.math.acosh
 

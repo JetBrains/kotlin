@@ -1,8 +1,12 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: main.js
-Array.prototype.fill = undefined
+var isLegacyBackend =
+    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
 
+if (!isLegacyBackend) {
+    Array.prototype.fill = undefined
+}
 // FILE: main.kt
 fun box(): String {
     val int = IntArray(4).apply { fill(42) }

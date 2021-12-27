@@ -1,15 +1,19 @@
 // WITH_STDLIB
 // FILE: main.js
-Math.expm1 = function expm1(x) {
-    expm1.called = true
-    switch (x) {
-       case -1: return -0.6321205588285577
-       case 0: return 0.0
-       case 1: return 1.718281828459045
-       case 2: return 6.38905609893065
+var isLegacyBackend =
+    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
+
+if (!isLegacyBackend) {
+    Math.expm1 = function expm1(x) {
+        expm1.called = true
+        switch (x) {
+           case -1: return -0.6321205588285577
+           case 0: return 0.0
+           case 1: return 1.718281828459045
+           case 2: return 6.38905609893065
+        }
     }
 }
-
 // FILE: main.kt
 import kotlin.math.expm1
 

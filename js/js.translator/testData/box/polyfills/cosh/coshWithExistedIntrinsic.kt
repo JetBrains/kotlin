@@ -1,15 +1,19 @@
 // WITH_STDLIB
 // FILE: main.js
-Math.cosh = function cosh(x) {
-    cosh.called = true
-    switch (x) {
-       case -1: return 1.5430806348152437
-       case 0: return 1.0
-       case 1: return 1.5430806348152437
-       case 2: return 3.7621956910836314
+var isLegacyBackend =
+    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
+
+if (!isLegacyBackend) {
+    Math.cosh = function cosh(x) {
+        cosh.called = true
+        switch (x) {
+           case -1: return 1.5430806348152437
+           case 0: return 1.0
+           case 1: return 1.5430806348152437
+           case 2: return 3.7621956910836314
+        }
     }
 }
-
 // FILE: main.kt
 import kotlin.math.cosh
 

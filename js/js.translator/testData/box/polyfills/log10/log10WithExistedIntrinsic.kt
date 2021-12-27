@@ -1,10 +1,14 @@
 // WITH_STDLIB
 // FILE: main.js
-Math.log10 = function log10(x) {
-    log10.called = true
-    return Math.log(x) * Math.LOG10E;
-}
+var isLegacyBackend =
+    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
 
+if (!isLegacyBackend) {
+    Math.log10 = function log10(x) {
+        log10.called = true
+        return Math.log(x) * Math.LOG10E;
+    }
+}
 // FILE: main.kt
 import kotlin.math.log10
 

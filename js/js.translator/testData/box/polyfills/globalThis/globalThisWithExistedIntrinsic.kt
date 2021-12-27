@@ -1,8 +1,12 @@
 // !LANGUAGE: +JsAllowInvalidCharsIdentifiersEscaping
 // IGNORE_BACKEND: JS
 // FILE: main.js
-globalThis = { "Is Just Created Global This": true }
+var isLegacyBackend =
+    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
 
+if (!isLegacyBackend) {
+    globalThis = { "Is Just Created Global This": true }
+}
 // FILE: main.kt
 external val `Is Just Created Global This`: Boolean
 

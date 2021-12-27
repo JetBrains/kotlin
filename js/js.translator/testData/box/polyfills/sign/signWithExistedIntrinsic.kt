@@ -1,10 +1,14 @@
 // WITH_STDLIB
 // FILE: main.js
-Math.sign = function sign(x) {
-    sign.called = true
-    return x > 0 ? 1 : -1;
-}
+var isLegacyBackend =
+    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
 
+if (!isLegacyBackend) {
+    Math.sign = function sign(x) {
+        sign.called = true
+        return x > 0 ? 1 : -1;
+    }
+}
 // FILE: main.kt
 import kotlin.math.sign
 

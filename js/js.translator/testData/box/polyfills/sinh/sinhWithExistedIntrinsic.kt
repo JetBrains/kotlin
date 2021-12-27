@@ -1,15 +1,19 @@
 // WITH_STDLIB
 // FILE: main.js
-Math.sinh = function sinh(x) {
-    sinh.called = true
-    switch (x) {
-        case -1: return -1.1752011936438014
-        case 0: return 0
-        case 1: return 1.1752011936438014
-        case 2: return 3.626860407847019
+var isLegacyBackend =
+    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
+
+if (!isLegacyBackend) {
+    Math.sinh = function sinh(x) {
+        sinh.called = true
+        switch (x) {
+            case -1: return -1.1752011936438014
+            case 0: return 0
+            case 1: return 1.1752011936438014
+            case 2: return 3.626860407847019
+        }
     }
 }
-
 // FILE: main.kt
 import kotlin.math.sinh
 

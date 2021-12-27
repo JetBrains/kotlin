@@ -1,15 +1,19 @@
 // WITH_STDLIB
 // FILE: main.js
-Math.atanh = function atanh(x) {
-    atanh.called = true
-    switch (x) {
-        case -1: return -Infinity
-        case 0: return 0.0
-        case 0.5: return 0.5493061443340548
-        case 1: return Infinity
+var isLegacyBackend =
+    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
+
+if (!isLegacyBackend) {
+    Math.atanh = function atanh(x) {
+        atanh.called = true
+        switch (x) {
+            case -1: return -Infinity
+            case 0: return 0.0
+            case 0.5: return 0.5493061443340548
+            case 1: return Infinity
+        }
     }
 }
-
 // FILE: main.kt
 import kotlin.math.atanh
 

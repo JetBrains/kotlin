@@ -1,15 +1,19 @@
 // WITH_STDLIB
 // FILE: main.js
-Math.log1p = function log1p(x) {
-    log1p.called = true
-    switch (x) {
-        case -2: return NaN
-        case -1: return -Infinity
-        case 0: return 0
-        case 1: return 0.6931471805599453
+var isLegacyBackend =
+    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
+
+if (!isLegacyBackend) {
+    Math.log1p = function log1p(x) {
+        log1p.called = true
+        switch (x) {
+            case -2: return NaN
+            case -1: return -Infinity
+            case 0: return 0
+            case 1: return 0.6931471805599453
+        }
     }
 }
-
 // FILE: main.kt
 import kotlin.math.ln1p
 

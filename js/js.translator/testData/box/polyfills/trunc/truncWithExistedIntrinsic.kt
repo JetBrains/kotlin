@@ -1,16 +1,20 @@
 // WITH_STDLIB
 // FILE: main.js
-Math.trunc = function trunc(x) {
-    trunc.called = true
-    if (isNaN(x)) {
-        return NaN;
-    }
-    if (x > 0) {
-        return Math.floor(x);
-    }
-    return Math.ceil(x);
-}
+var isLegacyBackend =
+    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
 
+if (!isLegacyBackend) {
+    Math.trunc = function trunc(x) {
+        trunc.called = true
+        if (isNaN(x)) {
+            return NaN;
+        }
+        if (x > 0) {
+            return Math.floor(x);
+        }
+        return Math.ceil(x);
+    }
+}
 // FILE: main.kt
 import kotlin.math.truncate
 

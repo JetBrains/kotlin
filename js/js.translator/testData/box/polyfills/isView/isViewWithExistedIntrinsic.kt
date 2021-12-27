@@ -1,10 +1,14 @@
 // WITH_STDLIB
 // FILE: main.js
-ArrayBuffer.isView = function isView(a) {
-    isView.called = true
-    return a != null && a.__proto__ != null && a.__proto__.__proto__ === Int8Array.prototype.__proto__;
-}
+var isLegacyBackend =
+    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
 
+if (!isLegacyBackend) {
+    ArrayBuffer.isView = function isView(a) {
+        isView.called = true
+        return a != null && a.__proto__ != null && a.__proto__.__proto__ === Int8Array.prototype.__proto__;
+    }
+}
 // FILE: main.kt
 fun box(): String {
     val intArr = intArrayOf(5, 4, 3, 2, 1)

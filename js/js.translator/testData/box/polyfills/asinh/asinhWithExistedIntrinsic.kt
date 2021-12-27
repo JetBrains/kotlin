@@ -1,12 +1,17 @@
 // WITH_STDLIB
 // FILE: main.js
-Math.asinh = function asinh(x) {
-    asinh.called = true
-    switch (x) {
-        case -1: return -0.8813735870195429
-        case 0: return 0.0
-        case 1: return 0.8813735870195429
-        case 2: return 1.4436354751788103
+var isLegacyBackend =
+    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
+
+if (!isLegacyBackend) {
+    Math.asinh = function asinh(x) {
+        asinh.called = true
+        switch (x) {
+            case -1: return -0.8813735870195429
+            case 0: return 0.0
+            case 1: return 0.8813735870195429
+            case 2: return 1.4436354751788103
+        }
     }
 }
 
