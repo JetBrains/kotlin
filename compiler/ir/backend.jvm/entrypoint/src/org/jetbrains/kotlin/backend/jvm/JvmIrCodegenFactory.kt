@@ -55,6 +55,7 @@ open class JvmIrCodegenFactory(
     private val jvmGeneratorExtensions: JvmGeneratorExtensionsImpl = JvmGeneratorExtensionsImpl(configuration),
     private val prefixPhases: CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment>? = null,
     private val evaluatorFragmentInfoForPsi2Ir: EvaluatorFragmentInfo? = null,
+    private val shouldStubAndNotLinkUnboundSymbols: Boolean = false,
 ) : CodegenFactory {
     data class JvmIrBackendInput(
         val irModuleFragment: IrModuleFragment,
@@ -159,10 +160,11 @@ open class JvmIrCodegenFactory(
             irLinker.deserializeIrModuleHeader(it, kotlinLibrary, _moduleName = it.name.asString())
         }
 
-        val stubGeneratorForMissingClasses = DeclarationStubGeneratorForNotFoundClasses(stubGenerator)
-        val irProviders = if (evaluatorFragmentInfoForPsi2Ir != null) {
-            listOf(stubGenerator, irLinker, stubGeneratorForMissingClasses)
+
+        val irProviders = if (shouldStubAndNotLinkUnboundSymbols) {
+            listOf(stubGenerator)
         } else {
+            val stubGeneratorForMissingClasses = DeclarationStubGeneratorForNotFoundClasses(stubGenerator)
             listOf(irLinker, stubGeneratorForMissingClasses)
         }
 
