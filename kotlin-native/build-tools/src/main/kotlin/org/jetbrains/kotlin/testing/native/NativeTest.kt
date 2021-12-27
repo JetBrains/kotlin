@@ -367,7 +367,7 @@ abstract class ExecRunnerWithTimeout @Inject constructor(@Internal val workerExe
                     .findFirst()
             if (testProcess.isPresent) {
                 val timeout = System.currentTimeMillis() + parameters.timeOut.toMillis()
-                println("Wait for process: ${testProcess.get().info().command()}")
+                println("Wait for process: ${testProcess.get().pid()} ${testProcess.get().info().command()}")
                 while (testProcess.get().isAlive && System.currentTimeMillis() < timeout) {
                     Thread.onSpinWait()
                 }
@@ -375,11 +375,14 @@ abstract class ExecRunnerWithTimeout @Inject constructor(@Internal val workerExe
                 if (testProcess.get().isAlive && System.currentTimeMillis() >= timeout) {
                     println("Let's kill it with sigabrt")
                     val handle = testProcess.get()
-                    val procBuilder = ProcessBuilder("kill", "-ABRT", handle.pid().toString())
+                    val procBuilder = ProcessBuilder("lldb",
+                            "-o", "process attach -p ${handle.pid()}",
+                            "-o", "process save-core ${handle.info().command().get()}.core.${handle.pid()}",
+                            "-o", "exit")
                     val proc = procBuilder.start()
+                    proc.waitFor(5L, TimeUnit.MINUTES)
                     val stdOut = proc.inputStream.bufferedReader().readText()
                     val stdErr = proc.errorStream.bufferedReader().readText()
-                    proc.waitFor(1L, TimeUnit.MINUTES)
                     println("DONE:")
                     println(stdOut)
                     println(stdErr)
