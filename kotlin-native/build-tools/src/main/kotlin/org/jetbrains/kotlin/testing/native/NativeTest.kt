@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.testing.native
 
 import groovy.lang.Closure
-import java.io.File
 import javax.inject.Inject
 import org.gradle.api.*
 import org.gradle.api.file.ConfigurableFileCollection
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
 import org.jetbrains.kotlin.gradle.plugin.tasks.KonanInteropTask
 import org.jetbrains.kotlin.gradle.plugin.tasks.interchangeBox
 import org.jetbrains.kotlin.konan.target.*
-import java.io.OutputStream
+import java.io.*
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 
@@ -367,20 +366,23 @@ abstract class ExecRunnerWithTimeout @Inject constructor(@Internal val workerExe
                     }
                     .findFirst()
             if (testProcess.isPresent) {
-                val timeout = System.nanoTime() + parameters.timeOut.toMillis()
+                val timeout = System.currentTimeMillis() + parameters.timeOut.toMillis()
                 println("Wait for process: ${testProcess.get().info().command()}")
-                while (testProcess.get().isAlive && System.nanoTime() < timeout) {
+                while (testProcess.get().isAlive && System.currentTimeMillis() < timeout) {
                     Thread.onSpinWait()
                 }
                 println("Wait is over")
-                if (testProcess.get().isAlive && System.nanoTime() >= timeout) {
-                    println("Let's start LLDB")
+                if (testProcess.get().isAlive && System.currentTimeMillis() >= timeout) {
+                    println("Let's kill it with sigabrt")
                     val handle = testProcess.get()
-                    ProcessBuilder("lldb",
-                            "-o", "process attach -p ${handle.pid()}",
-                            "-o", "process save-core ${handle.info().command()}.core.${handle.pid()}",
-                            "-o", "exit"
-                    ).start().waitFor(1L, TimeUnit.MINUTES)
+                    val procBuilder = ProcessBuilder("kill", "-ABRT", handle.pid().toString())
+                    val proc = procBuilder.start()
+                    val stdOut = proc.inputStream.bufferedReader().readText()
+                    val stdErr = proc.errorStream.bufferedReader().readText()
+                    proc.waitFor(1L, TimeUnit.MINUTES)
+                    println("DONE:")
+                    println(stdOut)
+                    println(stdErr)
                 }
             }
         }
