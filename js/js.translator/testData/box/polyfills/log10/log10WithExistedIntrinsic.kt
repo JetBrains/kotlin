@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
 // FILE: main.js
 Math.log10 = function log10(x) {
     log10.called = true

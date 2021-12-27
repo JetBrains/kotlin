@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
 // FILE: main.js
 Math.expm1 = function expm1(x) {
     expm1.called = true

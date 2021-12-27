@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
 // FILE: main.js
 Math.cosh = function cosh(x) {
     cosh.called = true

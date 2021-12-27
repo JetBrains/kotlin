@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
 // FILE: main.js
 Math.sinh = function sinh(x) {
     sinh.called = true

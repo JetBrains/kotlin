@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
 // FILE: main.js
 ArrayBuffer.isView = function isView(a) {
     isView.called = true

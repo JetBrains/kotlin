@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
 // FILE: main.js
 Math.clz32 = (function(log, LN2) {
     return function clz32(x) {

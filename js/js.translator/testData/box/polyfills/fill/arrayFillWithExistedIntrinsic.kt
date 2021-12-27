@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
 // FILE: main.js
 Int32Array.prototype.fill = function fill(value) {
     fill.called = true
