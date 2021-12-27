@@ -122,6 +122,9 @@ class FunctionInlining(
             return expression
 
         val actualCallee = inlineFunctionResolver.getFunctionDeclaration(callee.symbol)
+        if (actualCallee.body == null) {
+            return expression
+        }
 
         val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull()
             ?: allScopes.map { it.irElement }.filterIsInstance<IrDeclaration>().lastOrNull()?.parent

@@ -8,12 +8,12 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -113,14 +113,26 @@ class ReturnableBlockTransformer(val context: CommonBackendContext, val containe
             }
         }
 
-        val newStatements = expression.statements.mapIndexed { i, s ->
-            if (i == expression.statements.lastIndex && s is IrReturn && s.returnTargetSymbol == expression.symbol) {
-                s.transformChildrenVoid()
-                if (!hasReturned) s.value else {
-                    builder.irSet(variable.symbol, s.value)
+
+        fun transformSingleStatement(statement: IrStatement, isLastInList: Boolean): IrStatement {
+            return if (isLastInList && statement is IrReturn && statement.returnTargetSymbol == expression.symbol) {
+                statement.transformChildrenVoid()
+                if (!hasReturned) statement.value else {
+                    builder.irSet(variable.symbol, statement.value)
                 }
             } else {
-                s.transformStatement(this)
+                statement.transformStatement(this)
+            }
+        }
+
+        val newStatements = expression.statements.mapIndexed { i, s ->
+            if (expression.statements.size == 1 && s is IrInlinedFunctionBlock) {
+                val transformed = s.statements.mapIndexed { j, it -> transformSingleStatement(it, j == s.statements.lastIndex) }
+                s.statements.clear()
+                s.statements.addAll(transformed)
+                s
+            } else {
+                transformSingleStatement(s, i == expression.statements.lastIndex)
             }
         }
 
