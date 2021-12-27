@@ -146,6 +146,12 @@ public class AtomicfuJsIrTestGenerated extends AbstractAtomicfuJsIrTest {
     }
 
     @Test
+    @TestMetadata("TraceTest.kt")
+    public void testTraceTest() throws Exception {
+        runTest("plugins/atomicfu/atomicfu-compiler/testData/box/TraceTest.kt");
+    }
+
+    @Test
     @TestMetadata("UncheckedCastTest.kt")
     public void testUncheckedCastTest() throws Exception {
         runTest("plugins/atomicfu/atomicfu-compiler/testData/box/UncheckedCastTest.kt");
