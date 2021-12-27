@@ -129,7 +129,8 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
                             }
                             initializer.isAtomicFactory() -> {
                                 // var a by atomic(77) -> var a: Int = 77
-                                it.expression = initializer.eraseAtomicFactory()!!
+                                it.expression = initializer.eraseAtomicFactory()
+                                    ?: error("Atomic factory was expected but found ${initializer.render()}")
                                 declaration.transform(DelegatePropertyTransformer(delegateBackingField), null)
                             }
                             else -> error("Unexpected initializer of the delegated property: $initializer")
@@ -288,8 +289,8 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
                     val thisRef = expression.getValueArgument(0)!!
                     val receiver = if (thisRef.isConstNull()) null else thisRef
                     val fieldAccessors = listOf(
-                        originalField.buildFieldGetter(receiver, type),
-                        originalField.buildFieldSetter(receiver, type)
+                        context.buildFieldAccessor(originalField, receiver, false),
+                        context.buildFieldAccessor(originalField, receiver, true)
                     )
                     return buildCall(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
@@ -368,33 +369,36 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
                 it.type.isAtomicArrayType() && symbol.owner.name.asString() == GET
             } ?: false
 
+        private fun IrCall.getAccessors(): List<IrExpression> =
+            if (!isArrayElementGetter()) {
+                val field = getBackingField()
+                listOf(
+                    context.buildFieldAccessor(field, dispatchReceiver, false),
+                    context.buildFieldAccessor(field, dispatchReceiver, true)
+                )
+            } else {
+                val index = getValueArgument(0)!!
+                val arrayGetter = dispatchReceiver as IrCall
+                val arrayField = arrayGetter.getBackingField()
+                listOf(
+                    context.buildArrayElementAccessor(arrayField, arrayGetter, index, false),
+                    context.buildArrayElementAccessor(arrayField, arrayGetter, index, true)
+                )
+            }
+
         private fun IrStatement.isTrace() =
             this is IrCall && (isTraceInvoke() || isTraceAppend())
 
         private fun IrCall.isTraceInvoke(): Boolean =
             symbol.isKotlinxAtomicfuPackage() &&
-            symbol.owner.name.asString() == INVOKE &&
-            symbol.owner.dispatchReceiverParameter?.type?.isTraceBaseType() == true
+                    symbol.owner.name.asString() == INVOKE &&
+                    symbol.owner.dispatchReceiverParameter?.type?.isTraceBaseType() == true
 
         private fun IrCall.isTraceAppend(): Boolean =
             symbol.isKotlinxAtomicfuPackage() &&
-            symbol.owner.name.asString() == APPEND &&
-            symbol.owner.dispatchReceiverParameter?.type?.isTraceBaseType() == true
+                    symbol.owner.name.asString() == APPEND &&
+                    symbol.owner.dispatchReceiverParameter?.type?.isTraceBaseType() == true
 
-        private fun IrCall.getAccessors(): List<IrExpression> {
-            val isArrayElement = isArrayElementGetter()
-            val valueType = type.atomicToValueType()
-            return listOf(
-                context.buildAccessorLambda(this, valueType, false, isArrayElement),
-                context.buildAccessorLambda(this, valueType, true, isArrayElement)
-            )
-        }
-
-        private fun IrField.buildFieldGetter(receiver: IrExpression?, type: IrType) =
-            context.buildFieldAccessor(this, receiver, type, false)
-
-        private fun IrField.buildFieldSetter(receiver: IrExpression?, type: IrType) =
-            context.buildFieldAccessor(this, receiver, type, true)
 
         private fun getRuntimeFunctionSymbol(name: String, type: IrType): IrSimpleFunctionSymbol {
             val functionName = when (name) {
@@ -417,11 +421,11 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
 
         private fun IrCall.getAtomicFunctionName(): String =
             symbol.signature?.let { signature ->
-                if (signature is AccessorSignature) signature.accessorSignature else signature.asPublic()
-            }?.declarationFqName?.let { name ->
-                if (name.substringBefore('.') in ATOMIC_VALUE_TYPES) {
-                    name.substringAfter('.')
-                } else name
+                signature.getDeclarationNameBySignature()?.let { name ->
+                    if (name.substringBefore('.') in ATOMIC_VALUE_TYPES) {
+                        name.substringAfter('.')
+                    } else name
+                }
             } ?: error("Incorrect pattern of the atomic function name: ${symbol.owner.render()}")
 
         private fun IrCall.eraseAtomicFactory() =
