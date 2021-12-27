@@ -176,10 +176,16 @@ fun ConeSubstitutor.chain(other: ConeSubstitutor): ConeSubstitutor {
     return ChainedSubstitutor(this, other)
 }
 
-data class ConeSubstitutorByMap(
+class ConeSubstitutorByMap(
+    // Used only for sake of optimizations at org.jetbrains.kotlin.analysis.api.fir.types.KtFirMapBackedSubstitutor
     val substitution: Map<FirTypeParameterSymbol, ConeKotlinType>,
-    val useSiteSession: FirSession
+    private val useSiteSession: FirSession
 ) : AbstractConeSubstitutor(useSiteSession.typeContext) {
+
+    private val hashCode by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        substitution.hashCode()
+    }
+
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeTypeParameterType) return null
         val result =
@@ -193,6 +199,19 @@ data class ConeSubstitutorByMap(
         }
         return result
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is ConeSubstitutorByMap) return false
+
+        if (hashCode != other.hashCode) return false
+        if (substitution != other.substitution) return false
+        if (useSiteSession != other.useSiteSession) return false
+
+        return true
+    }
+
+    override fun hashCode() = hashCode
 }
 
 fun createTypeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, ConeKotlinType>, context: ConeTypeContext): ConeSubstitutor {
