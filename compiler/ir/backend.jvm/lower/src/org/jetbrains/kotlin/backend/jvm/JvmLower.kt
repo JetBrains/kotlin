@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.checkDeclarationParents
 import org.jetbrains.kotlin.backend.common.lower.*
+import org.jetbrains.kotlin.backend.common.lower.inline.*
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.ir.constantValue
@@ -19,10 +20,12 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -277,6 +280,26 @@ private val kotlinNothingValueExceptionPhase = makeIrFilePhase<CommonBackendCont
     description = "Throw proper exception for calls returning value of type 'kotlin.Nothing'"
 )
 
+private val functionInliningPhase = makeIrModulePhase<JvmBackendContext>(
+    { context ->
+        class JvmInlineFunctionResolver : InlineFunctionResolver {
+            override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction {
+                return (symbol.owner as? IrSimpleFunction)?.resolveFakeOverride() ?: symbol.owner
+            }
+
+            override fun getFunctionSymbol(irFunction: IrFunction): IrFunctionSymbol {
+                return irFunction.symbol
+            }
+        }
+        FunctionInlining(context, JvmInlineFunctionResolver(), context.innerClassesSupport)
+    },
+    name = "FunctionInliningPhase",
+    description = "Perform function inlining",
+    prerequisite = setOf(
+        expectDeclarationsRemovingPhase,
+    )
+)
+
 private val jvmFilePhases = listOf(
     typeAliasAnnotationMethodsPhase,
     provisionalFunctionExpressionPhase,
@@ -412,6 +435,9 @@ private fun buildJvmLoweringPhases(
                 fileClassPhase then
                 jvmStaticInObjectPhase then
                 repeatedAnnotationPhase then
+
+                functionInliningPhase then
+
                 buildLoweringsPhase(phases) then
                 generateMultifileFacadesPhase then
                 resolveInlineCallsPhase then
