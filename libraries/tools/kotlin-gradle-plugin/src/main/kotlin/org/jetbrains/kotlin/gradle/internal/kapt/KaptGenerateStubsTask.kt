@@ -108,6 +108,15 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     @get:Input
     abstract val verbose: Property<Boolean>
 
+    /**
+     * Changes in this additional sources will trigger stubs regeneration,
+     * but the sources themselves will not be used to find kapt annotations and generate stubs.
+     */
+    @get:InputFiles
+    @get:IgnoreEmptyDirectories
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val additionalSources: ConfigurableFileCollection
+
     override fun source(vararg sources: Any): SourceTask {
         return super.source(sourceRootsContainer.add(sources))
     }

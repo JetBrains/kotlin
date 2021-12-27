@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
+import kotlin.io.path.createDirectory
 
 @DisplayName("Build cache relocation")
 @SimpleGradlePluginTests
@@ -153,6 +154,33 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         ) {
             it.subProject("app").buildGradle.append("\nkapt.useBuildCache = true")
         }
+
+        checkBuildCacheRelocation(
+            firstProject,
+            secondProject,
+            listOf("assembleDebug"),
+            listOf("Debug").flatMap { buildType ->
+                listOf("kapt", "kaptGenerateStubs", "compile").map { kotlinTask ->
+                    ":app:$kotlinTask${buildType}Kotlin"
+                }
+            }
+        )
+    }
+
+    @DisplayName("KT-48617: Kapt ignores empty directories from Android variant")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_8)
+    @GradleTest
+    fun kaptIgnoreEmptyAndroidVariant(gradleVersion: GradleVersion) {
+        val (firstProject, secondProject) = prepareTestProjects(
+            "kapt2/android-dagger",
+            gradleVersion,
+            defaultBuildOptions.copy(androidVersion = TestVersions.AGP.AGP_42)
+        ) {
+            it.subProject("app").buildGradle.append("\nkapt.useBuildCache = true")
+        }
+
+        firstProject.subProject("app").javaSourcesDir()
+            .resolve("com/example/dagger/kotlin/fakeempty").createDirectory()
 
         checkBuildCacheRelocation(
             firstProject,
