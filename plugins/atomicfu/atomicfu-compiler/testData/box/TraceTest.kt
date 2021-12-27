@@ -70,12 +70,33 @@ class TraceTest {
         traceWithFormat.append(i, Status.END)
     }
 
+    fun testTraceInBlock() {
+        a1.lazySet(5)
+        if (a1.value == 5) {
+            defaultTrace { "Value checked" }
+            if (a1.compareAndSet(5, 10)) {
+                defaultTrace { "CAS succeeded" }
+            }
+        }
+        assertEquals(10, a1.value)
+        while (true) {
+            if (a1.value == 10) {
+                defaultTrace.append("Value checked", a1.value)
+                a1.value = 15
+                break
+            } else {
+                defaultTrace.append("Wrong value", a1.value)
+            }
+        }
+    }
+
     fun test() {
         testDefaultTrace()
         testTraceWithSize()
         testTraceWithFormat()
         testNamedTrace()
         testMultipleAppend()
+        testTraceInBlock()
     }
 }
 

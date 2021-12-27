@@ -102,18 +102,24 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
     private inner class AtomicTransformer : IrElementTransformer<IrFunction?> {
 
         override fun visitFunction(declaration: IrFunction, data: IrFunction?): IrStatement {
+            return super.visitFunction(declaration, declaration)
+        }
+
+        override fun visitBlockBody(body: IrBlockBody, data: IrFunction?): IrBody {
             // Erase messages added by the Trace object from the function body:
             // val trace = Trace(size)
             // Messages may be added via trace invocation:
             // trace { "Doing something" }
             // or via multi-append of arguments:
             // trace.append(index, "CAS", value)
-            (declaration.body as? IrBlockBody)?.let { body ->
-                body.statements.removeIf {
-                    it is IrCall && (it.isTraceInvoke() || it.isTraceAppend())
-                }
-            }
-            return super.visitFunction(declaration, declaration)
+            body.statements.removeIf { it.isTrace() }
+            return super.visitBlockBody(body, data)
+        }
+
+        override fun visitContainerExpression(expression: IrContainerExpression, data: IrFunction?): IrExpression {
+            // Erase messages added by the Trace object from blocks.
+            expression.statements.removeIf { it.isTrace() }
+            return super.visitContainerExpression(expression, data)
         }
 
         override fun visitCall(expression: IrCall, data: IrFunction?): IrElement {
@@ -290,6 +296,9 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
             dispatchReceiver?.let {
                 it.type.isAtomicArrayType() && symbol.owner.name.asString() == GET
             } ?: false
+
+        private fun IrStatement.isTrace() =
+            this is IrCall && (isTraceInvoke() || isTraceAppend())
 
         private fun IrCall.isTraceInvoke(): Boolean =
             symbol.isKotlinxAtomicfuPackage() &&
