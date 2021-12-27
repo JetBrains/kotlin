@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
-    @TestMetadata("jps-plugin/testData/incremental/mpp/allPlatforms")
+    @TestMetadata("jps/jps-plugin/testData/incremental/mpp/allPlatforms")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class AllPlatforms extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
@@ -28,20 +28,20 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
         }
 
         public void testAllFilesPresentInAllPlatforms() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/mpp/allPlatforms"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("touchActual")
         public void testTouchActual() throws Exception {
-            runTest("jps-plugin/testData/incremental/mpp/allPlatforms/touchActual/");
+            runTest("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual/");
         }
 
         @TestMetadata("touchExpect")
         public void testTouchExpect() throws Exception {
-            runTest("jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect/");
+            runTest("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect/");
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/mpp/allPlatforms/touchActual")
+        @TestMetadata("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TouchActual extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
@@ -50,11 +50,11 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
             }
 
             public void testAllFilesPresentInTouchActual() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/mpp/allPlatforms/touchActual"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchActual"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect")
+        @TestMetadata("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TouchExpect extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
@@ -63,12 +63,12 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
             }
 
             public void testAllFilesPresentInTouchExpect() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/allPlatforms/touchExpect"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
 
-    @TestMetadata("jps-plugin/testData/incremental/mpp/jvmOnly")
+    @TestMetadata("jps/jps-plugin/testData/incremental/mpp/jvmOnly")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class JvmOnly extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
@@ -77,15 +77,15 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
         }
 
         public void testAllFilesPresentInJvmOnly() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/mpp/jvmOnly"), Pattern.compile("^([^\\.]+)$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnly"), Pattern.compile("^([^\\.]+)$"), null, true);
         }
 
         @TestMetadata("multifilePartChanged")
         public void testMultifilePartChanged() throws Exception {
-            runTest("jps-plugin/testData/incremental/mpp/jvmOnly/multifilePartChanged/");
+            runTest("jps/jps-plugin/testData/incremental/mpp/jvmOnly/multifilePartChanged/");
         }
 
-        @TestMetadata("jps-plugin/testData/incremental/mpp/jvmOnly/multifilePartChanged")
+        @TestMetadata("jps/jps-plugin/testData/incremental/mpp/jvmOnly/multifilePartChanged")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class MultifilePartChanged extends AbstractIncrementalMultiplatformJvmCompilerRunnerTest {
@@ -94,7 +94,7 @@ public class IncrementalMultiplatformJvmCompilerRunnerTestGenerated extends Abst
             }
 
             public void testAllFilesPresentInMultifilePartChanged() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps-plugin/testData/incremental/mpp/jvmOnly/multifilePartChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/mpp/jvmOnly/multifilePartChanged"), Pattern.compile("^([^\\.]+)$"), null, true);
             }
         }
     }
