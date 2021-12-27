@@ -188,6 +188,9 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     // with a fake source that refers to the value parameter in the function type notation
     // e.g., `(x: Int) -> Unit` becomes `Function1<@ParameterName("x") Int, Unit>`
     object ParameterNameAnnotationCall : KtFakeSourceElementKind()
+
+    // for calling functions over a `dynamic` receiver
+    object DynamicReceiverCall : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {
