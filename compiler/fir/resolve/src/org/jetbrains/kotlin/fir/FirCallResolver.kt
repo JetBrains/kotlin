@@ -6,8 +6,12 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
+import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isReferredViaField
@@ -38,6 +42,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
@@ -180,6 +185,20 @@ class FirCallResolver(
             transformer.components.containingDeclarations,
             origin = origin
         )
+
+        val (applicability, candidates) = when (explicitReceiver?.typeRef?.coneType) {
+            is ConeDynamicType -> collectCandidatesForDynamic(qualifiedAccess, explicitReceiver, info)
+            else -> collectCandidatesViaTower(qualifiedAccess, explicitReceiver, info)
+        }
+
+        return ResolutionResult(info, applicability, candidates)
+    }
+
+    private fun collectCandidatesViaTower(
+        qualifiedAccess: FirQualifiedAccess,
+        explicitReceiver: FirExpression?,
+        info: CallInfo,
+    ): Pair<CandidateApplicability, Set<Candidate>> {
         towerResolver.reset()
         val result = towerResolver.runResolver(info, transformer.resolutionContext)
         val bestCandidates = result.bestCandidates()
@@ -204,8 +223,109 @@ class FirCallResolver(
         }
 
         reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, bestCandidates, reducedCandidates)
+        return result.currentApplicability to reducedCandidates
+    }
 
-        return ResolutionResult(info, result.currentApplicability, reducedCandidates)
+    private fun collectCandidatesForDynamic(
+        qualifiedAccess: FirQualifiedAccess,
+        explicitReceiver: FirExpression,
+        info: CallInfo,
+    ): Pair<CandidateApplicability, Set<Candidate>> {
+        val symbol = when (qualifiedAccess) {
+            is FirCall -> collectCandidatesForDynamicCall(qualifiedAccess, explicitReceiver)
+            else -> collectCandidatesForDynamicPropertyAccess(explicitReceiver)
+        }
+
+        val candidateFactory = CandidateFactory(components.transformer.resolutionContext, info)
+
+        val candidate = candidateFactory.createCandidate(
+            info,
+            symbol,
+            ExplicitReceiverKind.EXTENSION_RECEIVER,
+            null
+        ).apply {
+            substitutor = ConeSubstitutor.Empty
+            freshVariables = emptyList()
+            typeArgumentMapping = TypeArgumentMapping.NoExplicitArguments
+        }
+
+        return CandidateApplicability.RESOLVED to setOf(candidate)
+    }
+
+    private fun collectCandidatesForDynamicPropertyAccess(
+        explicitReceiver: FirExpression,
+    ): FirPropertySymbol {
+        val name = Name.identifier("doThings")
+        val callableId = CallableId(name)
+        val symbol = FirPropertySymbol(callableId)
+
+        val pseudoProperty = buildProperty {
+            this.name = name
+            this.symbol = symbol
+
+            status = FirResolvedDeclarationStatusImpl(
+                Visibilities.Public,
+                Modality.FINAL,
+                EffectiveVisibility.Public,
+            )
+
+            moduleData = components.session.moduleData
+            origin = FirDeclarationOrigin.Synthetic
+            returnTypeRef = explicitReceiver.typeRef
+            receiverTypeRef = explicitReceiver.typeRef
+            isVar = true
+            isLocal = false
+        }
+
+        return pseudoProperty.symbol
+    }
+
+    private fun collectCandidatesForDynamicCall(
+        call: FirCall,
+        explicitReceiver: FirExpression,
+    ): FirNamedFunctionSymbol {
+        val name = Name.identifier("doThings")
+        val callableId = CallableId(name)
+        val symbol = FirNamedFunctionSymbol(callableId)
+
+        val pseudoFunction = buildSimpleFunction {
+            status = FirResolvedDeclarationStatusImpl(
+                Visibilities.Public,
+                Modality.FINAL,
+                EffectiveVisibility.Public,
+            )
+
+            this.name = name
+            this.symbol = symbol
+
+            moduleData = components.session.moduleData
+            origin = FirDeclarationOrigin.Synthetic
+            returnTypeRef = explicitReceiver.typeRef
+            receiverTypeRef = explicitReceiver.typeRef
+
+            for (it in call.arguments.indices) {
+                val parameter = buildValueParameter {
+                    moduleData = components.session.moduleData
+                    origin = FirDeclarationOrigin.Synthetic
+                    returnTypeRef = session.builtinTypes.nullableAnyType
+                    this.name = Name.identifier("arg${it}")
+                    this.symbol = FirValueParameterSymbol(this.name)
+                    isCrossinline = false
+                    isNoinline = false
+                    isVararg = false
+                }
+
+                valueParameters.add(parameter)
+            }
+        }
+
+//        val pseudoReference = buildResolvedNamedReference {
+//            source = qualifiedAccess.calleeReference.source?.fakeElement(KtFakeSourceElementKind.DynamicReceiverCall)
+//            this.name = name
+//            resolvedSymbol = pseudoFunction.symbol
+//        }
+
+        return pseudoFunction.symbol
     }
 
     fun <T : FirQualifiedAccess> resolveVariableAccessAndSelectCandidate(qualifiedAccess: T, isUsedAsReceiver: Boolean): FirStatement {
