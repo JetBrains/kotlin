@@ -380,7 +380,7 @@ abstract class ExecRunnerWithTimeout @Inject constructor(@Internal val workerExe
                             "-o", "process save-core ${handle.info().command().get()}.core.${handle.pid()}",
                             "-o", "exit")
                     val proc = procBuilder.start()
-                    proc.waitFor(5L, TimeUnit.MINUTES)
+                    proc.waitFor(parameters.timeOut.toMinutes(), TimeUnit.MINUTES)
                     val stdOut = proc.inputStream.bufferedReader().readText()
                     val stdErr = proc.errorStream.bufferedReader().readText()
                     println("DONE:")
