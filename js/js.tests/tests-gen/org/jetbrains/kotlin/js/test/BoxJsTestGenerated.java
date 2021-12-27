@@ -4151,6 +4151,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("constValInInlineFun.kt")
+        public void testConstValInInlineFun() throws Exception {
+            runTest("js/js.translator/testData/box/incremental/constValInInlineFun.kt");
+        }
+
+        @Test
         @TestMetadata("coroutines.kt")
         public void testCoroutines() throws Exception {
             runTest("js/js.translator/testData/box/incremental/coroutines.kt");
