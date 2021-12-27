@@ -14740,6 +14740,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
     public static class Inference extends AbstractLightAnalysisModeTest {
+        @TestMetadata("kt49838.kt")
+        public void ignoreKt49838() throws Exception {
+            runTest("compiler/testData/codegen/box/inference/kt49838.kt");
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
@@ -14861,11 +14866,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("kt47316.kt")
         public void testKt47316() throws Exception {
             runTest("compiler/testData/codegen/box/inference/kt47316.kt");
-        }
-
-        @TestMetadata("kt49838.kt")
-        public void testKt49838() throws Exception {
-            runTest("compiler/testData/codegen/box/inference/kt49838.kt");
         }
 
         @TestMetadata("lambdaWithStarReturn.kt")
