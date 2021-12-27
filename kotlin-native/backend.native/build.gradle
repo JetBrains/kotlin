@@ -11,7 +11,7 @@ buildscript {
     apply plugin: 'project-report'
 }
 
-project.configureJvmDefaultToolchain()
+JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_16)
 
 apply plugin: 'java'
 apply plugin: 'kotlin'

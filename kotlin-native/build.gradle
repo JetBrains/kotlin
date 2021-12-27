@@ -66,7 +66,8 @@ convention.plugins.platformInfo = PlatformInfo
 if (isMac()) {
     checkXcodeVersion(project)
 }
-project.configureJvmDefaultToolchain()
+
+JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_16)
 
 ext {
     distDir = UtilsKt.getKotlinNativeDist(project)
