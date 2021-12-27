@@ -479,11 +479,11 @@ class IrDeclarationDeserializer(
     }
 
 
-    private fun IrField.withInitializerGuard(f: IrField.() -> Unit) {
+    private fun IrField.withInitializerGuard(isConst: Boolean, f: IrField.() -> Unit) {
         val oldBodiesPolicy = deserializeBodies
 
         try {
-            deserializeBodies = oldBodiesPolicy || type.checkObjectLeak()
+            deserializeBodies = isConst || oldBodiesPolicy || type.checkObjectLeak()
             f()
         } finally {
             deserializeBodies = oldBodiesPolicy
@@ -639,7 +639,7 @@ class IrDeclarationDeserializer(
         }
 
 
-    private fun deserializeIrField(proto: ProtoField): IrField =
+    private fun deserializeIrField(proto: ProtoField, isConst: Boolean): IrField =
         withDeserializedIrDeclarationBase(proto.base) { symbol, uniqId, startOffset, endOffset, origin, fcode ->
             checkSymbolType<IrFieldSymbol>(symbol)
             val nameType = BinaryNameAndType.decode(proto.nameType)
@@ -661,7 +661,7 @@ class IrDeclarationDeserializer(
 
             field.usingParent {
                 if (proto.hasInitializer()) {
-                    withInitializerGuard {
+                    withInitializerGuard(isConst) {
                         initializer = deserializeExpressionBody(proto.initializer)
                     }
                 }
@@ -732,7 +732,7 @@ class IrDeclarationDeserializer(
                             }
                         }
                         if (proto.hasBackingField()) {
-                            backingField = deserializeIrField(proto.backingField).also {
+                            backingField = deserializeIrField(proto.backingField, prop.isConst).also {
                                 it.correspondingPropertySymbol = symbol
                             }
                         }
@@ -763,7 +763,7 @@ class IrDeclarationDeserializer(
         val declaration: IrDeclaration = when (proto.declaratorCase!!) {
             IR_ANONYMOUS_INIT -> deserializeIrAnonymousInit(proto.irAnonymousInit)
             IR_CONSTRUCTOR -> deserializeIrConstructor(proto.irConstructor)
-            IR_FIELD -> deserializeIrField(proto.irField)
+            IR_FIELD -> deserializeIrField(proto.irField, isConst = false)
             IR_CLASS -> deserializeIrClass(proto.irClass)
             IR_FUNCTION -> deserializeIrFunction(proto.irFunction)
             IR_PROPERTY -> deserializeIrProperty(proto.irProperty)
