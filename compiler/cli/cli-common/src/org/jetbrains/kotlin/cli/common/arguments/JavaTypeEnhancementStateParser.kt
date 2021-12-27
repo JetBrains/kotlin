@@ -202,7 +202,7 @@ class JavaTypeEnhancementStateParser(
     }
 
     companion object {
-        private val DEFAULT = JavaTypeEnhancementStateParser(MessageCollector.NONE, KotlinVersion.CURRENT)
+        private val DEFAULT = JavaTypeEnhancementStateParser(MessageCollector.NONE, KotlinVersion(1, 6, 20))
         private const val NULLABILITY_ANNOTATIONS_COMPILER_OPTION = "-Xnullability-annotations"
 
         fun parsePlainNullabilityAnnotationReportLevels(nullabilityAnnotations: String): Pair<FqName, ReportLevel> =
