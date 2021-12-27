@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.gradle.benchmark
 
 class Scenario {
     lateinit var title: String
-    var warmups = 3
+    var warmups = 6
     var iterations = 10
     val tasks = mutableListOf<String>()
     val gradleArgs = mutableListOf<String>()
     val cleanupTasks = mutableListOf<String>()
     val applyAbiChange = mutableListOf<String>()
     val applyNonAbiChange = mutableListOf<String>()
+    val applyAndroidResourceValueChange = mutableListOf<String>()
 
     fun runTasks(vararg tasks: String) {
         this.tasks.addAll(tasks)
@@ -37,6 +38,10 @@ class Scenario {
      */
     fun applyNonAbiChangeTo(pathToClassFile: String) {
         applyNonAbiChange.add(pathToClassFile)
+    }
+
+    fun applyAndroidResourceValueChange(pathToResourceFile: String) {
+        applyAndroidResourceValueChange.add(pathToResourceFile)
     }
 }
 

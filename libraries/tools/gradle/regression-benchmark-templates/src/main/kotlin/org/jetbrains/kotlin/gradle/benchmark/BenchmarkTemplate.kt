@@ -303,6 +303,7 @@ abstract class BenchmarkTemplate(
         |    ${if (gradleArgs.isNotEmpty()) "gradle-args = [${gradleArgs.joinToString { "\"$it\"" }}]" else ""}
         |    ${if (cleanupTasks.isNotEmpty()) "cleanup-tasks = [${cleanupTasks.joinToString { "\"$it\"" }}]" else ""}
         |    ${if (applyAbiChange.isNotEmpty()) "apply-abi-change-to = [${applyAbiChange.joinToString { "\"$it\"" }}]" else ""}
+        |    ${if (applyAndroidResourceValueChange.isNotEmpty()) "apply-android-resource-value-change-to = [${applyAndroidResourceValueChange.joinToString { "\"$it\"" }}]" else ""}
         |}
         """.trimMargin()
 
