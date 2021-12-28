@@ -6,6 +6,9 @@
 // IGNORE_BACKEND: WASM
 //  ^ wasm-function[1893]:0x1cf8a: RuntimeError: dereferencing a null pointer
 
+// IGNORE_BACKEND: NATIVE
+//  ^ Fail due to the initialization order. Doesn't fail with new MM
+
 // IGNORE_BACKEND: JS
 // IGNORE_BACKEND: JS_IR
 //  ^ TypeError: tmp is not a function

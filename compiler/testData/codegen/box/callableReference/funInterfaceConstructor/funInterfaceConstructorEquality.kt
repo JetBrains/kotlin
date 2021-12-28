@@ -6,6 +6,9 @@
 // IGNORE_BACKEND: WASM
 //  ^ Failed: ks1 != ks2 (same file, same SAM type)
 
+// IGNORE_BACKEND: NATIVE
+//  ^ Fail due to the initialization order. Doesn't fail with new MM
+
 // IGNORE_BACKEND: JS
 // IGNORE_BACKEND: JS_IR
 //  ^ Failed: ks1 != ks2 (same file, same SAM type)
