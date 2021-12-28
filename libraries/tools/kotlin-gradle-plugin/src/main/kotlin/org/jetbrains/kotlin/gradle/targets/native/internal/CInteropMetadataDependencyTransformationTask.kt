@@ -12,6 +12,7 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.JarMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
@@ -31,7 +32,9 @@ import javax.inject.Inject
 
 internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTask(
     sourceSet: DefaultKotlinSourceSet,
-): TaskProvider<CInteropMetadataDependencyTransformationTask> {
+): TaskProvider<CInteropMetadataDependencyTransformationTask>? {
+    if (!kotlinPropertiesProvider.enableCInteropCommonization) return null
+
     return locateOrRegisterTask(
         lowerCamelCaseName("transform", sourceSet.name, "CInteropDependenciesMetadata"),
         args = listOf(
@@ -45,7 +48,9 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
 
 internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde(
     sourceSet: DefaultKotlinSourceSet,
-): TaskProvider<CInteropMetadataDependencyTransformationTask> {
+): TaskProvider<CInteropMetadataDependencyTransformationTask>? {
+    if (!kotlinPropertiesProvider.enableCInteropCommonization) return null
+
     return locateOrRegisterTask(
         lowerCamelCaseName("transform", sourceSet.name, "CInteropDependenciesMetadataForIde"),
         invokeWhenRegistered = { commonizeTask.dependsOn(this) },
