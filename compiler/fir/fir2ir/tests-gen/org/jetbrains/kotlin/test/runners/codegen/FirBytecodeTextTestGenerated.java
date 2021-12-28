@@ -2807,6 +2807,130 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ForInRangeWithUpperBoundMinus1 {
+            @Test
+            public void testAllFilesPresentInForInRangeWithUpperBoundMinus1() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("booleanArray.kt")
+            public void testBooleanArray() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/booleanArray.kt");
+            }
+
+            @Test
+            @TestMetadata("byteArray.kt")
+            public void testByteArray() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/byteArray.kt");
+            }
+
+            @Test
+            @TestMetadata("charArray.kt")
+            public void testCharArray() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/charArray.kt");
+            }
+
+            @Test
+            @TestMetadata("charSequence.kt")
+            public void testCharSequence() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/charSequence.kt");
+            }
+
+            @Test
+            @TestMetadata("doubleArray.kt")
+            public void testDoubleArray() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/doubleArray.kt");
+            }
+
+            @Test
+            @TestMetadata("emptyList.kt")
+            public void testEmptyList() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/emptyList.kt");
+            }
+
+            @Test
+            @TestMetadata("emptyMap.kt")
+            public void testEmptyMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/emptyMap.kt");
+            }
+
+            @Test
+            @TestMetadata("emptySet.kt")
+            public void testEmptySet() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/emptySet.kt");
+            }
+
+            @Test
+            @TestMetadata("floatArray.kt")
+            public void testFloatArray() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/floatArray.kt");
+            }
+
+            @Test
+            @TestMetadata("intArray.kt")
+            public void testIntArray() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/intArray.kt");
+            }
+
+            @Test
+            @TestMetadata("list.kt")
+            public void testList() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/list.kt");
+            }
+
+            @Test
+            @TestMetadata("longArray.kt")
+            public void testLongArray() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/longArray.kt");
+            }
+
+            @Test
+            @TestMetadata("map.kt")
+            public void testMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/map.kt");
+            }
+
+            @Test
+            @TestMetadata("mutableList.kt")
+            public void testMutableList() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/mutableList.kt");
+            }
+
+            @Test
+            @TestMetadata("mutableMap.kt")
+            public void testMutableMap() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/mutableMap.kt");
+            }
+
+            @Test
+            @TestMetadata("mutableSet.kt")
+            public void testMutableSet() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/mutableSet.kt");
+            }
+
+            @Test
+            @TestMetadata("set.kt")
+            public void testSet() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/set.kt");
+            }
+
+            @Test
+            @TestMetadata("shortArray.kt")
+            public void testShortArray() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/shortArray.kt");
+            }
+
+            @Test
+            @TestMetadata("string.kt")
+            public void testString() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1/string.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInReversed")
         @TestDataPath("$PROJECT_ROOT")
         public class ForInReversed {

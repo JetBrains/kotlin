@@ -2777,6 +2777,16 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ForInRangeWithUpperBoundMinus1 {
+            @Test
+            public void testAllFilesPresentInForInRangeWithUpperBoundMinus1() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInReversed")
         @TestDataPath("$PROJECT_ROOT")
         public class ForInReversed {
