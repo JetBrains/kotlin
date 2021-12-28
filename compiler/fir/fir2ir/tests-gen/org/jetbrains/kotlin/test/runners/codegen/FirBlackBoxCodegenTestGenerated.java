@@ -34262,6 +34262,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("forInRangeWithUpperBoundMinus1.kt")
+        public void testForInRangeWithUpperBoundMinus1() throws Exception {
+            runTest("compiler/testData/codegen/box/ranges/forInRangeWithUpperBoundMinus1.kt");
+        }
+
+        @Test
         @TestMetadata("forInStringVarUpdatedInLoopBody.kt")
         public void testForInStringVarUpdatedInLoopBody() throws Exception {
             runTest("compiler/testData/codegen/box/ranges/forInStringVarUpdatedInLoopBody.kt");
