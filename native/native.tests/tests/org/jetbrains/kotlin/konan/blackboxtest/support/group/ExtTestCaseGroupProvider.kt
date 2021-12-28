@@ -87,35 +87,7 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
 
     companion object {
         /** Test data files or test data directories that are excluded from testing. */
-        private val excludes: Set<File> = listOf(
-            "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt", // KT-36880
-            "compiler/testData/codegen/box/collections/kt41123.kt",                                                 // KT-42723
-            "compiler/testData/codegen/box/compileKotlinAgainstKotlin/clashingFakeOverrideSignatures.kt",           // KT-42020
-            "compiler/testData/codegen/box/compileKotlinAgainstKotlin/specialBridgesInDependencies.kt",             // KT-42723
-            "compiler/testData/codegen/box/coroutines/multiModule/",                                                // KT-40121
-            "compiler/testData/codegen/box/multiplatform/multiModule/expectActualLink.kt",                          // KT-41901
-            "compiler/testData/codegen/box/multiplatform/multiModule/expectActualMemberLink.kt",                    // KT-33091
-            "compiler/testData/codegen/box/multiplatform/multiModule/expectActualTypealiasLink.kt",                 // KT-40137
-
-            // Temporarily disabled because of java.lang.IllegalStateException: public final expect fun lastIndex(start: kotlin.Int, end: kotlin.Int = ...): kotlin.Unit defined in codegen.box.multiplatform.multiModule.defaultArgument.Test[SimpleFunctionDescriptorImpl@364e8b0e]
-            //        at org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier$copyDefaultArgumentsFromExpectToActual$1.visitValueParameter(ExpectDeclarationsRemoving.kt:238)
-            //        at org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid$DefaultImpls.visitValueParameter(IrElementVisitorVoid.kt:81)
-            //        at org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier$copyDefaultArgumentsFromExpectToActual$1.visitValueParameter(ExpectDeclarationsRemoving.kt:68)
-            //        at org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier$copyDefaultArgumentsFromExpectToActual$1.visitValueParameter(ExpectDeclarationsRemoving.kt:68)
-            //        at org.jetbrains.kotlin.ir.declarations.IrValueParameter.accept(IrValueParameter.kt:46)
-            //        at org.jetbrains.kotlin.ir.declarations.IrFunction.acceptChildren(IrFunction.kt:56)
-            //        at org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoidKt.acceptChildrenVoid(IrElementVisitorVoid.kt:287)
-            //        at org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier$copyDefaultArgumentsFromExpectToActual$1.visitElement(ExpectDeclarationsRemoving.kt:70)
-            //        at org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid$DefaultImpls.visitDeclaration(IrElementVisitorVoid.kt:40)
-            //        at org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier$copyDefaultArgumentsFromExpectToActual$1.visitDeclaration(ExpectDeclarationsRemoving.kt:68)
-            //        at org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid$DefaultImpls.visitFunction(IrElementVisitorVoid.kt:49)
-            //        at org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier$copyDefaultArgumentsFromExpectToActual$1.visitFunction(ExpectDeclarationsRemoving.kt:68)
-            //        at org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid$DefaultImpls.visitSimpleFunction(IrElementVisitorVoid.kt:52)
-            //        at org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier$copyDefaultArgumentsFromExpectToActual$1.visitSimpleFunction(ExpectDeclarationsRemoving.kt:68)
-            //        at org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid$DefaultImpls.visitSimpleFunction(IrElementVisitorVoid.kt:53)
-            // Test fails with the same exception in old test infra.
-            "compiler/testData/codegen/box/multiplatform/multiModule/defaultArgument.kt"
-        ).mapToSet(::getAbsoluteFile)
+        private val excludes: Set<File> = listOf<String>().mapToSet(::getAbsoluteFile)
 
         /** Tests that should be compiled and executed as standalone tests. */
         private val standalones: Set<File> = listOf(
