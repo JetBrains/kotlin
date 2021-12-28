@@ -1,15 +1,12 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: main.js
-var isLegacyBackend =
-    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
-
-if (!isLegacyBackend) {
-    Int32Array.prototype.sort = function sort(compareFunction) {
-        sort.called = true
+this.Int32Array = withMockedPrototype(Int32Array, {
+    sort(compareFunction) {
         return Array.prototype.sort.call(this, compareFunction);
     }
-}
+})
+
 // FILE: main.kt
 fun box(): String {
     val intArr = intArrayOf(5, 4, 3, 2, 1)

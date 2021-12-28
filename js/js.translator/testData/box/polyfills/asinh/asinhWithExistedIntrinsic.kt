@@ -1,12 +1,7 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
 // FILE: main.js
-var isLegacyBackend =
-    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
-
-if (!isLegacyBackend) {
-    Math.asinh = function asinh(x) {
-        asinh.called = true
+this.Math = withMocks(Math, {
+    asinh(x) {
         switch (x) {
             case -1: return -0.8813735870195429
             case 0: return 0.0
@@ -14,7 +9,7 @@ if (!isLegacyBackend) {
             case 2: return 1.4436354751788103
         }
     }
-}
+})
 
 // FILE: main.kt
 import kotlin.math.asinh

@@ -1,15 +1,11 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
 // FILE: main.js
-var isLegacyBackend =
-    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
-
-if (!isLegacyBackend) {
-    Math.hypot = function hypot(a, b) {
-        hypot.called = true
+this.Math = withMocks(Math, {
+    hypot(a, b) {
         return Math.sqrt(a*a + b*b)
     }
-}
+})
+
 // FILE: main.kt
 import kotlin.math.hypot
 

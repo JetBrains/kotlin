@@ -1,12 +1,7 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
 // FILE: main.js
-var isLegacyBackend =
-    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
-
-if (!isLegacyBackend) {
-    Math.trunc = function trunc(x) {
-        trunc.called = true
+this.Math = withMocks(Math, {
+    trunc(x) {
         if (isNaN(x)) {
             return NaN;
         }
@@ -15,7 +10,8 @@ if (!isLegacyBackend) {
         }
         return Math.ceil(x);
     }
-}
+})
+
 // FILE: main.kt
 import kotlin.math.truncate
 

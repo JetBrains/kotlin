@@ -1,12 +1,8 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: main.js
-var isLegacyBackend =
-    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
+this.Int32Array = withoutPropertiesInPrototype(Int32Array, ["fill"])
 
-if (!isLegacyBackend) {
-    Array.prototype.fill = undefined
-}
 // FILE: main.kt
 fun box(): String {
     val int = IntArray(4).apply { fill(42) }

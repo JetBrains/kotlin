@@ -1,18 +1,14 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
 // FILE: main.js
-var isLegacyBackend =
-    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
-
-if (!isLegacyBackend) {
-    Int32Array.prototype.fill = function fill(value) {
-        fill.called = true
+this.Int32Array = withMockedPrototype(Int32Array, {
+    fill(value) {
         for (var i = 0; i < this.length; i++) {
             this[i] = value;
         }
         return this
     }
-}
+})
+
 // FILE: main.kt
 fun box(): String {
     val int = IntArray(4).apply { fill(42) }

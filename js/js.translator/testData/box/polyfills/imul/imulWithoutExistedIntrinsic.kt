@@ -1,12 +1,6 @@
 // IGNORE_BACKEND: JS
-// IGNORE_BACKEND: JS
 // FILE: main.js
-var isLegacyBackend =
-    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
-
-if (!isLegacyBackend) {
-    Math.imul = undefined
-}
+this.Math = withoutProperties(Math, ["imul"])
 
 // FILE: main.kt
 fun box(): String {

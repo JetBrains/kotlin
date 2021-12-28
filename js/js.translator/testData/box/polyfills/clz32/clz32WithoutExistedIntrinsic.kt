@@ -1,12 +1,8 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: main.js
-var isLegacyBackend =
-    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
+this.Math = withoutProperties(Math, ["clz32"]);
 
-if (!isLegacyBackend) {
-    Math.clz32 = undefined;
-}
 // FILE: main.kt
 fun box(): String {
     val result = 4.countLeadingZeroBits()

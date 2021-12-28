@@ -1,15 +1,11 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
 // FILE: main.js
-var isLegacyBackend =
-    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
-
-if (!isLegacyBackend) {
-    Math.log10 = function log10(x) {
-        log10.called = true
+this.Math = withMocks(Math, {
+    log10(x) {
         return Math.log(x) * Math.LOG10E;
     }
-}
+})
+
 // FILE: main.kt
 import kotlin.math.log10
 

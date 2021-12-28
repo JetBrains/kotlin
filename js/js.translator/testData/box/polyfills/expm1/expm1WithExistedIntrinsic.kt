@@ -1,12 +1,7 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
 // FILE: main.js
-var isLegacyBackend =
-    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
-
-if (!isLegacyBackend) {
-    Math.expm1 = function expm1(x) {
-        expm1.called = true
+this.Math = withMocks(Math, {
+    expm1(x) {
         switch (x) {
            case -1: return -0.6321205588285577
            case 0: return 0.0
@@ -14,7 +9,8 @@ if (!isLegacyBackend) {
            case 2: return 6.38905609893065
         }
     }
-}
+})
+
 // FILE: main.kt
 import kotlin.math.expm1
 

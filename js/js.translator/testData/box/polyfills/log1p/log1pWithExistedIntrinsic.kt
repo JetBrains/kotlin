@@ -1,12 +1,7 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
 // FILE: main.js
-var isLegacyBackend =
-    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
-
-if (!isLegacyBackend) {
-    Math.log1p = function log1p(x) {
-        log1p.called = true
+this.Math = withMocks(Math, {
+    log1p(x) {
         switch (x) {
             case -2: return NaN
             case -1: return -Infinity
@@ -14,7 +9,8 @@ if (!isLegacyBackend) {
             case 1: return 0.6931471805599453
         }
     }
-}
+})
+
 // FILE: main.kt
 import kotlin.math.ln1p
 

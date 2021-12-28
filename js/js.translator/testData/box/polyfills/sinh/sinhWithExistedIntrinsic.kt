@@ -1,12 +1,8 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: main.js
-var isLegacyBackend =
-    typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
-
-if (!isLegacyBackend) {
-    Math.sinh = function sinh(x) {
-        sinh.called = true
+this.Math = withMocks(Math, {
+    sinh(x) {
         switch (x) {
             case -1: return -1.1752011936438014
             case 0: return 0
@@ -14,7 +10,8 @@ if (!isLegacyBackend) {
             case 2: return 3.626860407847019
         }
     }
-}
+})
+
 // FILE: main.kt
 import kotlin.math.sinh
 
