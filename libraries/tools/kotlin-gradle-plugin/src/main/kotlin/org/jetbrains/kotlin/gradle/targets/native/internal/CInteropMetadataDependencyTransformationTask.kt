@@ -13,6 +13,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.JarMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
@@ -63,12 +64,21 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
     )
 }
 
+/**
+ * The transformation tasks will internally access the lazy [GranularMetadataTransformation.metadataDependencyResolutions] property
+ * which internally will potentially resolve dependencies. Having multiple tasks accessing this synchronized lazy property
+ * during execution and/or configuration phase will result in an internal deadlock in Gradle
+ * `DefaultResourceLockCoordinationService.withStateLock`
+ *
+ * To avoid this deadlock tasks shall be ordered, so that dependsOn source sets (and source sets visible based on associate compilations)
+ * will run the transformation first.
+ */
 private fun CInteropMetadataDependencyTransformationTask.configureTaskOrder() {
-    val dependsOnTasks = Callable {
+    val tasksForVisibleSourceSets = Callable {
         val allVisibleSourceSets = sourceSet.resolveAllDependsOnSourceSets() + sourceSet.getAdditionalVisibleSourceSets()
         project.tasks.withType<CInteropMetadataDependencyTransformationTask>().matching { it.sourceSet in allVisibleSourceSets }
     }
-    mustRunAfter(dependsOnTasks)
+    mustRunAfter(tasksForVisibleSourceSets)
 }
 
 private fun CInteropMetadataDependencyTransformationTask.onlyIfSourceSetIsSharedNative() {
