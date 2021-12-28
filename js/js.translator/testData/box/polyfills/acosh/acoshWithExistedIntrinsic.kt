@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // FILE: main.js
+// IGNORE_BACKEND: JS
 var isLegacyBackend =
     typeof Kotlin != "undefined" && typeof Kotlin.kotlin != "undefined"
 
