@@ -121,7 +121,9 @@ sealed class ClangArgs(
         KonanTarget.LINUX_ARM32_HFP -> listOf(
                 "-mfpu=vfp", "-mfloat-abi=hard"
         )
-
+        KonanTarget.LINUX_ARM32_SFP -> listOf(
+                "-mfpu=vfp", "-mfloat-abi=softfp"
+        )
         KonanTarget.ANDROID_ARM32, KonanTarget.ANDROID_ARM64,
         KonanTarget.ANDROID_X86, KonanTarget.ANDROID_X64 -> {
             val clangTarget = targetTriple.withoutVendor()

@@ -20,6 +20,7 @@ fun KonanTarget.supportsMimallocAllocator(): Boolean =
          is KonanTarget.MACOS_ARM64 -> true
         is KonanTarget.LINUX_ARM64 -> true
         is KonanTarget.LINUX_ARM32_HFP -> true
+        is KonanTarget.LINUX_ARM32_SFP -> true
         is KonanTarget.ANDROID_X64 -> true
         is KonanTarget.ANDROID_ARM64 -> true
         is KonanTarget.IOS_ARM32 -> true
