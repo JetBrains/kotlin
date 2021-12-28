@@ -167,7 +167,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         buildAllModules().assertSuccessful()
         assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME)
 
-        setVersion(LanguageVersion.KOTLIN_1_3.versionString)
+        setVersion(LanguageVersion.KOTLIN_1_5.versionString)
         buildAllModules().assertSuccessful()
         assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME, "src/Bar.kt", "src/Foo.kt")
     }
