@@ -222,43 +222,48 @@ object FirConflictsChecker : FirBasicDeclarationChecker() {
             }
         }
 
-        inspector.declarationConflictingSymbols.forEach { (conflictingDeclaration, symbols) ->
-            val source = conflictingDeclaration.source
-            if (source != null && symbols.isNotEmpty()) {
-                when (conflictingDeclaration) {
-                    is FirSimpleFunction,
-                    is FirConstructor -> {
-                        reporter.reportOn(source, FirErrors.CONFLICTING_OVERLOADS, symbols, context)
+        context.addDeclaration(declaration)
+        try {
+            inspector.declarationConflictingSymbols.forEach { (conflictingDeclaration, symbols) ->
+                val source = conflictingDeclaration.source
+                if (source != null && symbols.isNotEmpty()) {
+                    when (conflictingDeclaration) {
+                        is FirSimpleFunction,
+                        is FirConstructor -> {
+                            reporter.reportOn(source, FirErrors.CONFLICTING_OVERLOADS, symbols, context)
+                        }
+                        else -> {
+                            val factory = if (conflictingDeclaration is FirClassLikeDeclaration &&
+                                conflictingDeclaration.getContainingDeclaration(context.session) == null &&
+                                symbols.any { it is FirClassLikeSymbol<*> }
+                            ) {
+                                FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION
+                            } else {
+                                FirErrors.REDECLARATION
+                            }
+                            reporter.reportOn(source, factory, symbols, context)
+                        }
+                    }
+                }
+            }
+
+            if (declaration.source?.kind !is KtFakeSourceElementKind) {
+                when (declaration) {
+                    is FirMemberDeclaration -> {
+                        if (declaration is FirFunction) {
+                            checkConflictingParameters(declaration.valueParameters, context, reporter)
+                        }
+                        checkConflictingParameters(declaration.typeParameters, context, reporter)
+                    }
+                    is FirTypeParametersOwner -> {
+                        checkConflictingParameters(declaration.typeParameters, context, reporter)
                     }
                     else -> {
-                        val factory = if (conflictingDeclaration is FirClassLikeDeclaration &&
-                            conflictingDeclaration.getContainingDeclaration(context.session) == null &&
-                            symbols.any { it is FirClassLikeSymbol<*> }
-                        ) {
-                            FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION
-                        } else {
-                            FirErrors.REDECLARATION
-                        }
-                        reporter.reportOn(source, factory, symbols, context)
                     }
                 }
             }
-        }
-
-        if (declaration.source?.kind !is KtFakeSourceElementKind) {
-            when (declaration) {
-                is FirMemberDeclaration -> {
-                    if (declaration is FirFunction) {
-                        checkConflictingParameters(declaration.valueParameters, context, reporter)
-                    }
-                    checkConflictingParameters(declaration.typeParameters, context, reporter)
-                }
-                is FirTypeParametersOwner -> {
-                    checkConflictingParameters(declaration.typeParameters, context, reporter)
-                }
-                else -> {
-                }
-            }
+        } finally {
+            context.dropDeclaration()
         }
     }
 
