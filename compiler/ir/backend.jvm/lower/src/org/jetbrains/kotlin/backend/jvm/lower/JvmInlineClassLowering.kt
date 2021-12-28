@@ -120,6 +120,11 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             return null
         }
 
+        // If fun interface methods are already mangled, do not mangle them twice.
+        if (function is IrSimpleFunction && function.overriddenSymbols.any { it.owner.parentAsClass.isFun } &&
+            function.name.asString().substringAfterLast('-') == replacement.name.asString().substringAfterLast('-')
+        ) return null
+
         addBindingsFor(function, replacement)
         return when (function) {
             is IrSimpleFunction -> transformSimpleFunctionFlat(function, replacement)

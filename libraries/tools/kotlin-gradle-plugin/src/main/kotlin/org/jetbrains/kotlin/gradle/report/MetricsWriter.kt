@@ -15,10 +15,11 @@ import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
 import java.io.File
 import java.io.ObjectOutputStream
+import java.io.Serializable
 
 internal class MetricsWriter(
     private val outputFile: File,
-) : BuildExecutionDataProcessor {
+) : BuildExecutionDataProcessor, Serializable {
     override fun process(build: BuildExecutionData, log: Logger) {
         if (build.failureMessages.isNotEmpty()) return
 

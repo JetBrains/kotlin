@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.internal.build.metrics.GradleBuildMetricsData
 import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
 import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Test
 import java.io.File
+import java.io.ObjectInputStream
 import java.nio.file.FileSystemException
 import java.nio.file.Files
 import java.util.*
@@ -960,6 +962,21 @@ class KotlinGradleIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testSingleBuildMetricsFileSmoke() {
+        with(Project("simpleProject")) {
+            val metricsFile = projectDir.resolve("metrics.bin")
+            assertFalse { metricsFile.exists() }
+            build("compileKotlin", "-Pkotlin.internal.single.build.metrics.file=${metricsFile.absolutePath}") {
+                assertSuccessful()
+            }
+            assertTrue { metricsFile.exists() }
+            // test whether we can deserialize data from the file
+            ObjectInputStream(metricsFile.inputStream().buffered()).use { input ->
+                input.readObject() as GradleBuildMetricsData
+            }
+        }
+    }
 
     @Test
     fun testKt29971() = with(Project("kt-29971", GradleVersionRequired.FOR_MPP_SUPPORT)) {
