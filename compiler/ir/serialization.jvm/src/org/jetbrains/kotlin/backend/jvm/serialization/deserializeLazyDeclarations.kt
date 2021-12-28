@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
-import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.lazy.LazyIrFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -89,18 +88,13 @@ fun deserializeFromByteArray(
         compatibilityMode = CompatibilityMode.CURRENT,
     )
     for (declarationProto in irProto.declarationList) {
-        val declaration = deserializer.deserializeDeclaration(declarationProto)
-        // Either declaration is lazy, supplied by LazyIrFactory,
-        // or, if it is newly created, there must have been no references to it from the current module.
-        // These newly created declarations will never be used, so it does not matter if we patch their parent or not.
-        if (declaration is IrLazyDeclarationBase) {
-            declaration.parent = declaration.lazyParent()
-        }
+        deserializer.deserializeDeclaration(declarationProto, setParent = false)
     }
 
     symbolTable.signaturer.withFileSignature(dummyFileSignature) {
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
     }
+    toplevelParent.acceptChildrenVoid(PatchDeclarationParentsVisitor(toplevelParent))
     buildFakeOverridesForLocalClasses(symbolTable, typeSystemContext, symbolDeserializer, toplevelParent)
 }
 
