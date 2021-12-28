@@ -1,5 +1,6 @@
 // IGNORE_BACKEND: JVM
 // IGNORE_LIGHT_ANALYSIS
+// IGNORE_BACKEND: NATIVE
 
 // IGNORE_BACKEND_FIR: JVM_IR
 // FIR_STATUS: LambdaConversionException: Type mismatch for lambda argument 1: class java.lang.Object is not convertible to interface I1
