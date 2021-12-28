@@ -13,6 +13,7 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThis
 import org.jetbrains.kotlin.analysis.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.analysis.api.tokens.hackyAllowRunningOnEdt
@@ -192,7 +193,10 @@ internal fun FirLightClassBase.createMethods(
     fun handleDeclaration(declaration: KtCallableSymbol) {
         when (declaration) {
             is KtFunctionSymbol -> {
-                if (declaration.isInline || declaration.isHiddenOrSynthetic(project)) return
+                // TODO: check if it has expect modifier
+                if (declaration.hasReifiedParameters ||
+                    declaration.isHiddenOrSynthetic(project)
+                ) return
 
                 var methodIndex = METHOD_INDEX_BASE
                 result.add(
@@ -259,7 +263,7 @@ internal fun FirLightClassBase.createPropertyAccessors(
     if (declaration.hasJvmFieldAnnotation()) return
 
     fun KtPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
-        if (isInline) return false
+        if (declaration.hasReifiedParameters) return false
         if (!hasBody && visibility.isPrivateOrPrivateToThis()) return false
         if (declaration.isHiddenOrSynthetic(project, siteTarget)) return false
         if (isHiddenOrSynthetic(project)) return false
@@ -443,3 +447,6 @@ internal fun KtClassOrObject.checkIsInheritor(baseClassOrigin: KtClassOrObject, 
         }
     }
 }
+
+private val KtSymbolWithTypeParameters.hasReifiedParameters: Boolean
+    get() = typeParameters.any { it.isReified }
