@@ -14,6 +14,7 @@ import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
@@ -93,8 +94,8 @@ fun Project.enableGranularSourceSetsMetadata() {
     propertiesExtension.set("kotlin.mpp.enableGranularSourceSetsMetadata", "true")
 }
 
-fun Project.enableCInteropCommonization() {
-    propertiesExtension.set("kotlin.mpp.enableCInteropCommonization", "true")
+fun Project.enableCInteropCommonization(enabled: Boolean = true) {
+    propertiesExtension.set(KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION, enabled.toString())
 }
 
 fun Project.enableHierarchicalStructureByDefault() {
