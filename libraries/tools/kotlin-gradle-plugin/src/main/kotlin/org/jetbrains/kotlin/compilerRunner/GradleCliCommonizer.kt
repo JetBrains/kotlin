@@ -20,8 +20,14 @@ private const val KOTLIN_KLIB_COMMONIZER_EMBEDDABLE = "kotlin-klib-commonizer-em
  * when executing the commonizer (like jvm arguments, running in separate process, etc)
  */
 internal fun GradleCliCommonizer(project: Project): CliCommonizer {
+    return GradleCliCommonizer(
+        KotlinNativeCommonizerToolRunner(project)
+    )
+}
+
+internal fun GradleCliCommonizer(commonizerToolRunner: KotlinNativeCommonizerToolRunner): CliCommonizer {
     return CliCommonizer(CliCommonizer.Executor { arguments ->
-        KotlinNativeCommonizerToolRunner(project).run(arguments)
+        commonizerToolRunner.run(arguments)
     })
 }
 
