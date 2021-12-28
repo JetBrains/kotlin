@@ -301,7 +301,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                 ?.let {
                     val implClassDeclaration = it.parent as IrClass
 
-                    if (implClassDeclaration.shouldCopyFrom() && it.body != null) {
+                    if (implClassDeclaration.shouldCopyFrom()) {
                         val reference = context.getNameForStaticDeclaration(it).makeRef()
                         classModel.postDeclarationBlock.statements += jsAssignment(memberRef, reference).makeStmt()
                         if (isFakeOverride) {

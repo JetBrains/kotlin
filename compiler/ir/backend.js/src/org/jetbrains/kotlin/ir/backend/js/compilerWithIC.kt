@@ -99,7 +99,7 @@ fun compileWithIC(
         module.files.filter { it.fileEntry.name in dirties }
     } ?: module.files
 
-    val ast = transformer.generateBinaryAst(dirtyFiles)
+    val ast = transformer.generateBinaryAst(dirtyFiles, allModules)
 
     ast.entries.forEach { (path, bytes) -> cacheConsumer.commitBinaryAst(path, bytes) }
 }
