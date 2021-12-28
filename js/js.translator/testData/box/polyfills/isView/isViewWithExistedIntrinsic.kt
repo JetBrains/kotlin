@@ -1,10 +1,12 @@
 // WITH_STDLIB
+// IGNORE_BACKEND: JS
 // FILE: main.js
-this.ArrayBuffer = withMocks(ArrayBuffer, {
-    isView(a) {
+if (!isLegacyBackend()) {
+    ArrayBuffer.isView = function isView(a) {
+        isView.called = true;
         return a != null && a.__proto__ != null && a.__proto__.__proto__ === Int8Array.prototype.__proto__;
     }
-})
+}
 
 // FILE: main.kt
 fun box(): String {

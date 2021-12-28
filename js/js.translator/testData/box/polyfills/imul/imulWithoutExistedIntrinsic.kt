@@ -1,6 +1,8 @@
 // IGNORE_BACKEND: JS
 // FILE: main.js
-this.Math = withoutProperties(Math, ["imul"])
+if (!isLegacyBackend()) {
+    Math.imul = undefined;
+}
 
 // FILE: main.kt
 fun box(): String {

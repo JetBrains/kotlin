@@ -1,7 +1,9 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: main.js
-this.Math = withoutProperties(Math, ["hypot"])
+if (!isLegacyBackend()) {
+    Math.hypot = undefined;
+}
 
 // FILE: main.kt
 import kotlin.math.hypot

@@ -1,7 +1,9 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: main.js
-this.Math = withoutProperties(Math, ["cosh"])
+if (!isLegacyBackend()) {
+    Math.cosh = undefined;
+}
 
 // FILE: main.kt
 import kotlin.math.cosh

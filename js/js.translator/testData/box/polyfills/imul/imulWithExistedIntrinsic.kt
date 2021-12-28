@@ -1,10 +1,11 @@
 // IGNORE_BACKEND: JS
 // FILE: main.js
-this.Math = withMocks(Math, {
-   imul(a, b) {
+if (!isLegacyBackend()) {
+    Math.imul = function imul(a, b) {
+        imul.called = true;
         return a * b
     }
-})
+}
 
 // FILE: main.kt
 fun box(): String {

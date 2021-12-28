@@ -1,11 +1,12 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: main.js
-this.Int32Array = withMockedPrototype(Int32Array, {
-    sort(compareFunction) {
+if (!isLegacyBackend()) {
+    Int32Array.prototype.sort = function sort(compareFunction) {
+        sort.called = true;
         return Array.prototype.sort.call(this, compareFunction);
     }
-})
+}
 
 // FILE: main.kt
 fun box(): String {

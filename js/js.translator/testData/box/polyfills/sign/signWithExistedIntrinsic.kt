@@ -1,10 +1,12 @@
 // WITH_STDLIB
+// IGNORE_BACKEND: JS
 // FILE: main.js
-this.Math = withMocks(Math, {
-    sign(x) {
+if (!isLegacyBackend()) {
+    Math.sign = function sign(x) {
+        sign.called = true;
         return x > 0 ? 1 : -1;
     }
-})
+}
 
 // FILE: main.kt
 import kotlin.math.sign

@@ -1,7 +1,9 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: main.js
-this.Int32Array = withoutPropertiesInPrototype(Int32Array, ["fill"])
+if (!isLegacyBackend()) {
+    Int32Array.prototype.fill = undefined;
+}
 
 // FILE: main.kt
 fun box(): String {

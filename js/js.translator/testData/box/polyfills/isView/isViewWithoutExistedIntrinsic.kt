@@ -1,7 +1,9 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: main.js
-this.ArrayBuffer = withoutProperties(ArrayBuffer, ["isView"])
+if (!isLegacyBackend()) {
+    ArrayBuffer.isView = undefined;
+}
 
 // FILE: main.kt
 fun box(): String {

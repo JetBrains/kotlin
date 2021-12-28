@@ -1,13 +1,15 @@
 // WITH_STDLIB
+// IGNORE_BACKEND: JS
 // FILE: main.js
-this.Int32Array = withMockedPrototype(Int32Array, {
-    fill(value) {
+if (!isLegacyBackend()) {
+    Int32Array.prototype.fill = function fill(value) {
+        fill.called = true;
         for (var i = 0; i < this.length; i++) {
             this[i] = value;
         }
         return this
     }
-})
+}
 
 // FILE: main.kt
 fun box(): String {

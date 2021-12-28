@@ -1,15 +1,17 @@
 // WITH_STDLIB
+// IGNORE_BACKEND: JS
 // FILE: main.js
-this.Math = withMocks(Math, {
-    cosh(x) {
+if (!isLegacyBackend()) {
+    Math.cosh = function cosh(x) {
+        cosh.called = true;
         switch (x) {
-           case -1: return 1.5430806348152437
-           case 0: return 1.0
-           case 1: return 1.5430806348152437
-           case 2: return 3.7621956910836314
+            case -1: return 1.5430806348152437
+            case 0: return 1.0
+            case 1: return 1.5430806348152437
+            case 2: return 3.7621956910836314
         }
     }
-})
+}
 
 // FILE: main.kt
 import kotlin.math.cosh

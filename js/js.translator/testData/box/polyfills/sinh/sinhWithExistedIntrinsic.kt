@@ -1,7 +1,9 @@
 // WITH_STDLIB
+// IGNORE_BACKEND: JS
 // FILE: main.js
-this.Math = withMocks(Math, {
-    sinh(x) {
+if (!isLegacyBackend()) {
+    Math.sinh = function sinh(x) {
+        sinh.called = true;
         switch (x) {
             case -1: return -1.1752011936438014
             case 0: return 0
@@ -9,7 +11,7 @@ this.Math = withMocks(Math, {
             case 2: return 3.626860407847019
         }
     }
-})
+}
 
 // FILE: main.kt
 import kotlin.math.sinh

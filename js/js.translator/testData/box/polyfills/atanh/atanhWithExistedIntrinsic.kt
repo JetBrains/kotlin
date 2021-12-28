@@ -1,7 +1,9 @@
 // WITH_STDLIB
+// IGNORE_BACKEND: JS
 // FILE: main.js
-this.Math = withMocks(Math, {
-    atanh(x) {
+if (!isLegacyBackend()) {
+    Math.atanh = function atanh(x) {
+        atanh.called = true;
         switch (x) {
             case -1: return -Infinity
             case 0: return 0.0
@@ -9,7 +11,7 @@ this.Math = withMocks(Math, {
             case 1: return Infinity
         }
     }
-})
+}
 
 // FILE: main.kt
 import kotlin.math.atanh

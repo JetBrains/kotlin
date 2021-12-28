@@ -1,7 +1,9 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: main.js
-this.Math = withoutProperties(Math, ["trunc"])
+if (!isLegacyBackend()) {
+    Math.trunc = undefined;
+}
 
 // FILE: main.kt
 import kotlin.math.truncate

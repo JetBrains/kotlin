@@ -1,7 +1,9 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: main.js
-this.Math = withoutProperties(Math, ["log1p"])
+if (!isLegacyBackend()) {
+    Math.log1p = undefined;
+}
 
 // FILE: main.kt
 import kotlin.math.ln1p

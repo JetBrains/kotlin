@@ -1,7 +1,9 @@
 // WITH_STDLIB
+// IGNORE_BACKEND: JS
 // FILE: main.js
-this.Math = withMocks(Math, {
-    tanh(x) {
+if (!isLegacyBackend()) {
+    Math.tanh = function tanh(x) {
+        tanh.called = true;
         switch (x) {
             case -1: return -0.7615941559557649
             case 0: return 0
@@ -9,7 +11,7 @@ this.Math = withMocks(Math, {
             case Infinity: return 1
         }
     }
-})
+}
 
 // FILE: main.kt
 import kotlin.math.tanh

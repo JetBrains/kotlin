@@ -1,7 +1,9 @@
 // WITH_STDLIB
+// IGNORE_BACKEND: JS
 // FILE: main.js
-this.Math = withMocks(Math, {
-    trunc(x) {
+if (!isLegacyBackend()) {
+    Math.trunc = function trunc(x) {
+        trunc.called = true;
         if (isNaN(x)) {
             return NaN;
         }
@@ -10,7 +12,7 @@ this.Math = withMocks(Math, {
         }
         return Math.ceil(x);
     }
-})
+}
 
 // FILE: main.kt
 import kotlin.math.truncate

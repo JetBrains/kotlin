@@ -1,7 +1,9 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: main.js
-this.Math = withoutProperties(Math, ["clz32"]);
+if (!isLegacyBackend()) {
+    Math.clz32 = undefined;
+}
 
 // FILE: main.kt
 fun box(): String {

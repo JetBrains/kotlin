@@ -1,7 +1,9 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: main.js
-this.Math = withoutProperties(Math, ["sign"])
+if (!isLegacyBackend()) {
+    Math.sign = undefined;
+}
 
 // FILE: main.kt
 import kotlin.math.sign

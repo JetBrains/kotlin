@@ -1,10 +1,12 @@
 // WITH_STDLIB
+// IGNORE_BACKEND: JS
 // FILE: main.js
-this.Math = withMocks(Math, {
-    log10(x) {
+if (!isLegacyBackend()) {
+    Math.log10 = function log10(x) {
+        log10.called = true;
         return Math.log(x) * Math.LOG10E;
     }
-})
+}
 
 // FILE: main.kt
 import kotlin.math.log10

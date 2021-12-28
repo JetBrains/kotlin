@@ -1,10 +1,12 @@
 // WITH_STDLIB
+// IGNORE_BACKEND: JS
 // FILE: main.js
-this.Math = withMocks(Math, {
-    hypot(a, b) {
+if (!isLegacyBackend()) {
+    Math.hypot = function hypot(a, b) {
+        hypot.called = true;
         return Math.sqrt(a*a + b*b)
     }
-})
+}
 
 // FILE: main.kt
 import kotlin.math.hypot

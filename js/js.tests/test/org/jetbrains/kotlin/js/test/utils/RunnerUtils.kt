@@ -122,7 +122,7 @@ fun getAllFilesForRunner(
             }
             paths += outputFile
 
-            result[mode] = commonFiles + additionalFiles + inputJsFilesBefore + paths + additionalMainFiles + inputJsFilesAfter
+            result[mode] = additionalFiles + commonFiles + inputJsFilesBefore + paths + additionalMainFiles + inputJsFilesAfter
         }
 
         return result
@@ -132,7 +132,7 @@ fun getAllFilesForRunner(
         val dceOutputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.FULL_DCE)
 
         val artifactsPaths = modulesToArtifact.values.map { it.outputFile.absolutePath }.filter { !File(it).isDirectory }
-        val allJsFiles = commonFiles + additionalFiles + inputJsFilesBefore + artifactsPaths + additionalMainFiles + inputJsFilesAfter
+        val allJsFiles = additionalFiles + inputJsFilesBefore + commonFiles + artifactsPaths + additionalMainFiles + inputJsFilesAfter
 
         val result = mutableMapOf(TranslationMode.FULL to allJsFiles)
 
@@ -140,7 +140,7 @@ fun getAllFilesForRunner(
         val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in globalDirectives
         if (runIrDce) {
             val dceJsFiles = artifactsPaths.map { it.replace(outputDir.absolutePath, dceOutputDir.absolutePath) }
-            val dceAllJsFiles = commonFiles + additionalFiles + inputJsFilesBefore + dceJsFiles + additionalMainFiles + inputJsFilesAfter
+            val dceAllJsFiles = additionalFiles + inputJsFilesBefore + commonFiles + dceJsFiles + additionalMainFiles + inputJsFilesAfter
             result[TranslationMode.FULL_DCE] = dceAllJsFiles
         }
 

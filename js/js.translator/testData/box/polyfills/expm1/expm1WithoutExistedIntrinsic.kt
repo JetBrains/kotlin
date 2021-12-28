@@ -1,7 +1,9 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: JS
 // FILE: main.js
-this.Math = withoutProperties(Math, ["expm1"])
+if (!isLegacyBackend()) {
+    Math.expm1 = undefined;
+}
 
 // FILE: main.kt
 import kotlin.math.expm1
