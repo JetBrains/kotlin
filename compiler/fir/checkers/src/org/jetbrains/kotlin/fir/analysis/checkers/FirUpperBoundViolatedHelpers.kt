@@ -8,16 +8,23 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.resolve.withCombinedAttributesFrom
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.Variance
+import kotlin.reflect.KClass
 
 /**
  * Recursively analyzes type parameters and reports the diagnostic on the given source calculated using typeRef
@@ -44,23 +51,9 @@ fun checkUpperBoundViolated(
         return
     }
 
-    val count = minOf(typeParameterSymbols.size, type.typeArguments.size)
-    val substitution = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
+    val substitution = typeParameterSymbols.zip(type.typeArguments).toMap()
+    val substitutor = FE10LikeConeSubstitutor(substitution, context.session)
 
-    for (index in 0 until count) {
-        val typeArgument = type.typeArguments[index]
-        val typeParameterSymbol = typeParameterSymbols[index]
-
-        val typeArgumentType = typeArgument.type
-        if (typeArgumentType != null) {
-            substitution[typeParameterSymbol] = typeArgumentType
-        } else {
-            substitution[typeParameterSymbol] =
-                ConeStubTypeForTypeVariableInSubtyping(ConeTypeVariable("", typeParameterSymbol.toLookupTag()), ConeNullability.NOT_NULL)
-        }
-    }
-
-    val substitutor = substitutorByMap(substitution, context.session)
     val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef) ?: return
     val typeArgumentsWithSourceInfo = type.typeArguments.withIndex().map { (index, projection) ->
         val (argTypeRef, source) =
@@ -79,6 +72,87 @@ fun checkUpperBoundViolated(
         isIgnoreTypeParameters,
     )
 }
+
+private class FE10LikeConeSubstitutor(
+    private val substitution: Map<FirTypeParameterSymbol, ConeTypeProjection>,
+    private val useSiteSession: FirSession
+) : AbstractConeSubstitutor(useSiteSession.typeContext) {
+    override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+        if (type !is ConeTypeParameterType) return null
+        val projection = substitution[type.lookupTag.symbol] ?: return null
+
+        if (projection.isStarProjection) {
+            return StandardClassIds.Any.constructClassLikeType(emptyArray(), isNullable = true).withProjection(projection)
+        }
+
+        val result =
+            projection.type!!.updateNullabilityIfNeeded(type)
+                ?.withCombinedAttributesFrom(type, useSiteSession.typeContext)
+                ?: return null
+
+        if (type.isUnsafeVarianceType(useSiteSession)) {
+            useSiteSession.typeApproximator.approximateToSuperType(
+                result, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+            )?.let {
+                return it.withProjection(projection)
+            }
+        }
+
+        return result.withProjection(projection)
+    }
+
+    private fun ConeKotlinType.withProjection(projection: ConeTypeProjection): ConeKotlinType {
+        if (projection.kind == ProjectionKind.INVARIANT) return this
+        return withAttributes(ConeAttributes.create(listOf(OriginalProjectionTypeAttribute(projection))), useSiteSession.typeContext)
+    }
+
+    override fun substituteArgument(projection: ConeTypeProjection, lookupTag: ConeClassLikeLookupTag, index: Int): ConeTypeProjection? {
+        val substitutedProjection = super.substituteArgument(projection, lookupTag, index) ?: return null
+        if (substitutedProjection.isStarProjection) return null
+
+        val type = substitutedProjection.type!!
+
+        val projectionFromType = type.attributes.originalProjection?.data ?: type
+        val projectionKindFromType = projectionFromType.kind
+
+        if (projectionKindFromType == ProjectionKind.STAR) return ConeStarProjection
+
+        if (projectionKindFromType == ProjectionKind.INVARIANT || projectionKindFromType == projection.kind) {
+            return substitutedProjection
+        }
+
+        if (projection.kind == ProjectionKind.INVARIANT) {
+            return wrapProjection(projectionFromType, type)
+        }
+
+        return ConeStarProjection
+    }
+}
+
+private class OriginalProjectionTypeAttribute(val data: ConeTypeProjection) : ConeAttribute<OriginalProjectionTypeAttribute>() {
+    override fun union(other: OriginalProjectionTypeAttribute?): OriginalProjectionTypeAttribute? {
+        return other
+    }
+
+    override fun intersect(other: OriginalProjectionTypeAttribute?): OriginalProjectionTypeAttribute? {
+        return other
+    }
+
+    override fun add(other: OriginalProjectionTypeAttribute?): OriginalProjectionTypeAttribute? {
+        return other
+    }
+
+    override fun isSubtypeOf(other: OriginalProjectionTypeAttribute?): Boolean {
+        return true
+    }
+
+    override fun toString() = "OriginalProjectionTypeAttribute: $data"
+
+    override val key: KClass<out OriginalProjectionTypeAttribute>
+        get() = OriginalProjectionTypeAttribute::class
+}
+
+private val ConeAttributes.originalProjection: OriginalProjectionTypeAttribute? by ConeAttributes.attributeAccessor<OriginalProjectionTypeAttribute>()
 
 class TypeArgumentWithSourceInfo(
     val coneTypeProjection: ConeTypeProjection,

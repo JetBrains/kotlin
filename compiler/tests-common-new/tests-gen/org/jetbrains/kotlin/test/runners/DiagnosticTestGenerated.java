@@ -13888,6 +13888,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("unsoundness1.kt")
+            public void testUnsoundness1() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/unsoundness1.kt");
+            }
+
+            @Test
+            @TestMetadata("unsoundness2.kt")
+            public void testUnsoundness2() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/unsoundness2.kt");
+            }
+
+            @Test
             @TestMetadata("useFunctionLiteralsToInferType.kt")
             public void testUseFunctionLiteralsToInferType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/useFunctionLiteralsToInferType.kt");
@@ -31171,6 +31183,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("repeatedBound.kt")
             public void testRepeatedBound() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typeParameters/repeatedBound.kt");
+            }
+
+            @Test
+            @TestMetadata("starProjectionInsteadOutCaptured.kt")
+            public void testStarProjectionInsteadOutCaptured() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/starProjectionInsteadOutCaptured.kt");
             }
 
             @Test

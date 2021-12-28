@@ -55,7 +55,7 @@ class Test1<S1 : Test1<S1, K>, K : Any>
 class Test2<S2 : Test1<S2, *>>
 
 class Test3<S3 : Test3<S3, in K>, K : Any>
-class Test4<S4 : Test3<<!UPPER_BOUND_VIOLATED!>S4<!>, out Any>>
+class Test4<S4 : Test3<S4, out Any>>
 
 class Test5<S5 : Test5<S5, in K>, K : Any>
 class Test6<S6 : Test5<S6, in Any>>
@@ -66,9 +66,8 @@ class Test8<S8 : Test7<S8, <!UPPER_BOUND_VIOLATED!>in Any<!>>>
 class Class<V : Any>
 typealias Alias <V1> = (Class<V1>) -> Boolean
 
-/* TODO: Should not be errors. Uncomment after fixing of https://youtrack.jetbrains.com/issue/KT-48044
 abstract class Base<T : Base<T>> {}
 class DerivedOut<out O : Base<out O>> {}
-class DerivedIn<in I : Base<in I>> {}*/
+class DerivedIn<in I : Base<in I>> {}
 
 

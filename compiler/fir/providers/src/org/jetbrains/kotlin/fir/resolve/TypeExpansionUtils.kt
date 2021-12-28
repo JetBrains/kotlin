@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -115,10 +116,18 @@ private fun mapTypeAliasArguments(
             return null
         }
 
-        override fun substituteArgument(projection: ConeTypeProjection): ConeTypeProjection? {
+        override fun substituteArgument(
+            projection: ConeTypeProjection,
+            lookupTag: ConeClassLikeLookupTag,
+            index: Int
+        ): ConeTypeProjection? {
             val type = (projection as? ConeKotlinTypeProjection)?.type ?: return null
-            val symbol = (type as? ConeTypeParameterType)?.lookupTag?.symbol ?: return super.substituteArgument(projection)
-            val mappedProjection = typeAliasMap[symbol] ?: return super.substituteArgument(projection)
+            val symbol = (type as? ConeTypeParameterType)?.lookupTag?.symbol ?: return super.substituteArgument(
+                projection,
+                lookupTag,
+                index
+            )
+            val mappedProjection = typeAliasMap[symbol] ?: return super.substituteArgument(projection, lookupTag, index)
             var mappedType = (mappedProjection as? ConeKotlinTypeProjection)?.type.updateNullabilityIfNeeded(type)
             mappedType = when (mappedType) {
                 is ConeClassErrorType,
