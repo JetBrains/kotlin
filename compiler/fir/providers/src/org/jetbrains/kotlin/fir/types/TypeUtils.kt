@@ -418,14 +418,13 @@ fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus
     val typeConstructor = type.typeConstructor()
     if (argumentsCount != typeConstructor.parametersCount()) return null
 
-    if (type.typeArguments.all { it !is ConeStarProjection && it.kind == ProjectionKind.INVARIANT }) return null
+    if (type.typeArguments.all { it.kind == ProjectionKind.INVARIANT }) return null
 
     val newArguments: Array<ConeKotlinType> = Array(argumentsCount) { index ->
         val argument = type.typeArguments[index]
-        if (argument !is ConeStarProjection && argument.kind == ProjectionKind.INVARIANT)
-            return@Array argument.type!! // only star projection can return null, but it's guarded above
+        if (argument.kind == ProjectionKind.INVARIANT) return@Array argument.type!!
 
-        val lowerType = if (argument !is ConeStarProjection && argument.getVariance() == TypeVariance.IN) {
+        val lowerType = if (argument.kind == ProjectionKind.IN) {
             (argument as ConeKotlinTypeProjection).type
         } else {
             null
@@ -443,7 +442,7 @@ fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus
         val oldArgument = type.typeArguments[index]
         val newArgument = newArguments[index]
 
-        if (oldArgument !is ConeStarProjection && oldArgument.kind == ProjectionKind.INVARIANT) continue
+        if (oldArgument.kind == ProjectionKind.INVARIANT) continue
 
         val parameter = typeConstructor.getParameter(index)
         val upperBounds = (0 until parameter.upperBoundCount()).mapTo(mutableListOf()) { paramIndex ->
@@ -452,7 +451,7 @@ fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus
             )
         }
 
-        if (!oldArgument.isStarProjection() && oldArgument.getVariance() == TypeVariance.OUT) {
+        if (oldArgument.kind == ProjectionKind.OUT) {
             upperBounds += oldArgument.getType()
         }
 
