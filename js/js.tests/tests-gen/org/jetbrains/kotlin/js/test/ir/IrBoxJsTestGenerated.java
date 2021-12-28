@@ -4583,6 +4583,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("interfaceInheritanceCrossModule.kt")
+        public void testInterfaceInheritanceCrossModule() throws Exception {
+            runTest("js/js.translator/testData/box/incremental/interfaceInheritanceCrossModule.kt");
+        }
+
+        @Test
         @TestMetadata("jsModule.kt")
         public void testJsModule() throws Exception {
             runTest("js/js.translator/testData/box/incremental/jsModule.kt");
@@ -4598,6 +4604,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("multipleReimport.kt")
         public void testMultipleReimport() throws Exception {
             runTest("js/js.translator/testData/box/incremental/multipleReimport.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedClassesInDependency.kt")
+        public void testNestedClassesInDependency() throws Exception {
+            runTest("js/js.translator/testData/box/incremental/nestedClassesInDependency.kt");
         }
 
         @Test

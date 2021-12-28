@@ -104,14 +104,18 @@ class IrModuleToJsTransformerTmp(
         return CompilerResult(result, dts)
     }
 
-    fun generateBinaryAst(files: Iterable<IrFile>): Map<String, ByteArray> {
+    fun generateBinaryAst(files: Iterable<IrFile>, allModules: Iterable<IrModuleFragment>): Map<String, ByteArray> {
         val exportModelGenerator = ExportModelGenerator(backendContext, generateNamespacesForPackages = true)
 
         val exportData = files.associate { file ->
             file to exportModelGenerator.generateExportWithExternals(file)
         }
 
-        files.forEach { StaticMembersLowering(backendContext).lower(it) }
+        allModules.forEach {
+            it.files.forEach {
+                StaticMembersLowering(backendContext).lower(it)
+            }
+        }
 
         val serializer = JsIrAstSerializer()
 
