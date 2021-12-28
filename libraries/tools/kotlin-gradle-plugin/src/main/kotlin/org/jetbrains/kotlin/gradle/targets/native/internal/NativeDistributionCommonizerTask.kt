@@ -34,19 +34,7 @@ internal open class NativeDistributionCommonizerTask : DefaultTask() {
         get() = project.getAllCommonizerTargets()
 
     @get:Internal
-    val outputDirectories: Set<File>
-        get() {
-            val rootOutputDirectory = getRootOutputDirectory()
-            return commonizerTargets.map { target -> resolveCommonizedDirectory(rootOutputDirectory, target) }.toSet()
-        }
-
-    @get:Internal
     internal val commonizerRunner = KotlinNativeCommonizerToolRunner(project)
-
-    @get:Classpath
-    @Suppress("unused") // Only for up-to-date checker.
-    internal val commonizerClasspath: Set<File>
-        get() = commonizerRunner.classpath
 
     @get:Input
     @Suppress("unused") // Only for up-to-date checker.
@@ -65,7 +53,7 @@ internal open class NativeDistributionCommonizerTask : DefaultTask() {
 
     @TaskAction
     protected fun run() {
-        NativeDistributionCommonizationCache(project, GradleCliCommonizer(project)).commonizeNativeDistribution(
+        NativeDistributionCommonizationCache(project, GradleCliCommonizer(commonizerRunner)).commonizeNativeDistribution(
             konanHome = konanHome,
             outputDirectory = getRootOutputDirectory(),
             outputTargets = project.getAllCommonizerTargets(),
