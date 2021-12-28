@@ -58,7 +58,7 @@ abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
         val homePath = System.getProperty("java.home")
         val versionString = System.getProperty("java.version")
         val jdk = myModel.global.addSdk(name, homePath, versionString, JpsJavaSdkType.INSTANCE)
-        jdk.addRoot(JpsPathUtil.pathToUrl(path), JpsOrderRootType.COMPILED)
+        jdk.addRoot(StandardFileSystems.JRT_PROTOCOL_PREFIX + homePath + URLUtil.JAR_SEPARATOR + "java.base", JpsOrderRootType.COMPILED)
         return jdk.properties
     }
 
