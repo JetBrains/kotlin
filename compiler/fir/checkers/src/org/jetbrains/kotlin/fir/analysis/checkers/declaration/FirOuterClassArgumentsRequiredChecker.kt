@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentTypeRefAndSource
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentsTypeRefAndSource
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.resolve.isValidTypeParameterFromOuterDeclaration
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -56,8 +56,8 @@ object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker() {
             }
         }
 
-        for (index in type.typeArguments.indices) {
-            val firTypeRefSource = extractArgumentTypeRefAndSource(typeRef, index) ?: continue
+        val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef) ?: return
+        for (firTypeRefSource in typeRefAndSourcesForArguments) {
             firTypeRefSource.typeRef?.let { checkOuterClassArgumentsRequired(it, declaration, context, reporter) }
         }
     }

@@ -629,38 +629,33 @@ internal fun checkCondition(condition: FirExpression, context: CheckerContext, r
     }
 }
 
-fun extractArgumentTypeRefAndSource(typeRef: FirTypeRef?, index: Int): FirTypeRefSource? {
-    if (typeRef is FirResolvedTypeRef) {
-        val delegatedTypeRef = typeRef.delegatedTypeRef
-        if (delegatedTypeRef is FirUserTypeRef) {
-            var currentIndex = index
+fun extractArgumentsTypeRefAndSource(typeRef: FirTypeRef?): List<FirTypeRefSource>? {
+    if (typeRef !is FirResolvedTypeRef) return null
+    val result = mutableListOf<FirTypeRefSource>()
+    when (val delegatedTypeRef = typeRef.delegatedTypeRef) {
+        is FirUserTypeRef -> {
             val qualifier = delegatedTypeRef.qualifier
 
             for (i in qualifier.size - 1 downTo 0) {
-                val typeArguments = qualifier[i].typeArgumentList.typeArguments
-                if (currentIndex < typeArguments.size) {
-                    val typeArgument = typeArguments.elementAtOrNull(currentIndex)
-                    return if (typeArgument is FirTypeProjection)
-                        FirTypeRefSource((typeArgument as? FirTypeProjectionWithVariance)?.typeRef, typeArgument.source)
-                    else null
-                } else {
-                    currentIndex -= typeArguments.size
+                for (typeArgument in qualifier[i].typeArgumentList.typeArguments) {
+                    result.add(FirTypeRefSource((typeArgument as? FirTypeProjectionWithVariance)?.typeRef, typeArgument.source))
                 }
             }
-        } else if (delegatedTypeRef is FirFunctionTypeRef) {
-            val valueParameters = delegatedTypeRef.valueParameters
-            if (index < valueParameters.size) {
-                val valueParamTypeRef = valueParameters.elementAt(index).returnTypeRef
-                return FirTypeRefSource(valueParamTypeRef, valueParamTypeRef.source)
-            }
-            if (index == valueParameters.size) {
-                val returnTypeRef = delegatedTypeRef.returnTypeRef
-                return FirTypeRefSource(returnTypeRef, returnTypeRef.source)
-            }
         }
+        is FirFunctionTypeRef -> {
+            val valueParameters = delegatedTypeRef.valueParameters
+
+            for (valueParameter in valueParameters) {
+                val valueParamTypeRef = valueParameter.returnTypeRef
+                result.add(FirTypeRefSource(valueParamTypeRef, valueParamTypeRef.source))
+            }
+            val returnTypeRef = delegatedTypeRef.returnTypeRef
+            result.add(FirTypeRefSource(returnTypeRef, returnTypeRef.source))
+        }
+        else -> return null
     }
 
-    return null
+    return result
 }
 
 data class FirTypeRefSource(val typeRef: FirTypeRef?, val source: KtSourceElement?)

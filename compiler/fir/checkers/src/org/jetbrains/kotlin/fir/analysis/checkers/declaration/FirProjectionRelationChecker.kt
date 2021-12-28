@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentTypeRefAndSource
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentsTypeRefAndSource
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -52,6 +52,7 @@ object FirProjectionRelationChecker : FirBasicDeclarationChecker() {
 
         val size = minOf(typeParameters.size, typeArguments.size)
 
+        val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef) ?: return
         for (it in 0 until size) {
             val proto = typeParameters[it]
             val actual = typeArguments[it]
@@ -72,7 +73,7 @@ object FirProjectionRelationChecker : FirBasicDeclarationChecker() {
                 ProjectionRelation.None
             }
 
-            val argTypeRefSource = extractArgumentTypeRefAndSource(typeRef, it) ?: continue
+            val argTypeRefSource = typeRefAndSourcesForArguments.getOrNull(it) ?: continue
 
             if (projectionRelation != ProjectionRelation.None && typeRef.source?.kind !is KtFakeSourceElementKind) {
                 reporter.reportOn(

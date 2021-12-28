@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentTypeRefAndSource
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.extractArgumentsTypeRefAndSource
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -136,6 +136,7 @@ object FirClassVarianceChecker : FirClassChecker() {
             val fullyExpandedType = type.fullyExpandedType(context.session)
             val classSymbol = fullyExpandedType.lookupTag.toSymbol(context.session)
             if (classSymbol is FirClassSymbol<*>) {
+                val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef)
                 for ((index, typeArgument) in fullyExpandedType.typeArguments.withIndex()) {
                     val paramVariance = classSymbol.typeParameterSymbols.getOrNull(index)?.variance ?: continue
 
@@ -156,7 +157,7 @@ object FirClassVarianceChecker : FirClassChecker() {
                     }
 
                     if (newVariance != null) {
-                        val subTypeRefAndSource = extractArgumentTypeRefAndSource(typeRef, index)
+                        val subTypeRefAndSource = typeRefAndSourcesForArguments?.getOrNull(index)
 
                         checkVarianceConflict(
                             typeArgumentType, newVariance, subTypeRefAndSource?.typeRef, containingType,

@@ -61,10 +61,11 @@ fun checkUpperBoundViolated(
     }
 
     val substitutor = substitutorByMap(substitution, context.session)
+    val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef) ?: return
     val typeArgumentsWithSourceInfo = type.typeArguments.withIndex().map { (index, projection) ->
         val (argTypeRef, source) =
             if (!isAbbreviatedType)
-                extractArgumentTypeRefAndSource(typeRef, index) ?: return
+                typeRefAndSourcesForArguments.getOrNull(index) ?: return
             else
                 // For abbreviated arguments we use the whole typeRef as a place to report
                 FirTypeRefSource(null, typeRef.source)
