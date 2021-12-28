@@ -19474,6 +19474,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("annotatedMemberExtensionPropertyGeneric.kt")
+        public void testAnnotatedMemberExtensionPropertyGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionPropertyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("annotatedMemberExtensionPropertyGeneric.kt")
+        public void testAnnotatedMemberExtensionPropertyGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionPropertyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("annotatedMemberExtensionProperty.kt")
         public void testAnnotatedMemberExtensionProperty_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionProperty.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19483,6 +19495,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("anySuperCall.kt")
         public void testAnySuperCall() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/anySuperCall.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("anySuperCallGeneric.kt")
+        public void testAnySuperCallGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/anySuperCallGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("anySuperCallGeneric.kt")
+        public void testAnySuperCallGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/anySuperCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19498,6 +19522,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("boundCallableReferencePassedToInlineFunctionGeneric.kt")
+        public void testBoundCallableReferencePassedToInlineFunctionGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunctionGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("boundCallableReferencePassedToInlineFunctionGeneric.kt")
+        public void testBoundCallableReferencePassedToInlineFunctionGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunctionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("boundCallableReferencePassedToInlineFunction.kt")
         public void testBoundCallableReferencePassedToInlineFunction_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunction.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19507,6 +19543,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("boxImplDoesNotExecuteInSecondaryConstructor.kt")
         public void testBoxImplDoesNotExecuteInSecondaryConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInSecondaryConstructor.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("boxImplDoesNotExecuteInSecondaryConstructorGeneric.kt")
+        public void testBoxImplDoesNotExecuteInSecondaryConstructorGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInSecondaryConstructorGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("boxImplDoesNotExecuteInSecondaryConstructorGeneric.kt")
+        public void testBoxImplDoesNotExecuteInSecondaryConstructorGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInSecondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19522,6 +19570,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("boxImplDoesNotExecuteInitBlockGeneric.kt")
+        public void testBoxImplDoesNotExecuteInitBlockGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInitBlockGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("boxImplDoesNotExecuteInitBlockGeneric.kt")
+        public void testBoxImplDoesNotExecuteInitBlockGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInitBlockGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("boxImplDoesNotExecuteInitBlock.kt")
         public void testBoxImplDoesNotExecuteInitBlock_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInitBlock.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19531,6 +19591,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("boxNullableForFakeOverride.kt")
         public void testBoxNullableForFakeOverride() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boxNullableForFakeOverride.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("boxNullableForFakeOverrideGeneric.kt")
+        public void testBoxNullableForFakeOverrideGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxNullableForFakeOverrideGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("boxNullableForFakeOverrideGeneric.kt")
+        public void testBoxNullableForFakeOverrideGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxNullableForFakeOverrideGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19546,6 +19618,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("boxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt")
+        public void testBoxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("boxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt")
+        public void testBoxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("boxNullableValueOfInlineClassWithNonNullUnderlyingType.kt")
         public void testBoxNullableValueOfInlineClassWithNonNullUnderlyingType_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithNonNullUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19555,6 +19639,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("boxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt")
         public void testBoxNullableValueOfInlineClassWithPrimitiveUnderlyingType() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("boxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt")
+        public void testBoxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("boxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt")
+        public void testBoxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19570,6 +19666,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("boxResultInlineClassOfConstructorCallGeneric.kt")
+        public void testBoxResultInlineClassOfConstructorCallGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCallGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("boxResultInlineClassOfConstructorCallGeneric.kt")
+        public void testBoxResultInlineClassOfConstructorCallGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("boxResultInlineClassOfConstructorCall.kt")
         public void testBoxResultInlineClassOfConstructorCall_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19579,6 +19687,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("boxUnboxInlineClassesWithOperatorsGetSet.kt")
         public void testBoxUnboxInlineClassesWithOperatorsGetSet() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxInlineClassesWithOperatorsGetSet.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("boxUnboxInlineClassesWithOperatorsGetSetGeneric.kt")
+        public void testBoxUnboxInlineClassesWithOperatorsGetSetGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxInlineClassesWithOperatorsGetSetGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("boxUnboxInlineClassesWithOperatorsGetSetGeneric.kt")
+        public void testBoxUnboxInlineClassesWithOperatorsGetSetGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxInlineClassesWithOperatorsGetSetGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19594,6 +19714,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("boxUnboxOfInlineClassForCapturedVarsGeneric.kt")
+        public void testBoxUnboxOfInlineClassForCapturedVarsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxOfInlineClassForCapturedVarsGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("boxUnboxOfInlineClassForCapturedVarsGeneric.kt")
+        public void testBoxUnboxOfInlineClassForCapturedVarsGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxOfInlineClassForCapturedVarsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("boxUnboxOfInlineClassForCapturedVars.kt")
         public void testBoxUnboxOfInlineClassForCapturedVars_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxOfInlineClassForCapturedVars.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19603,6 +19735,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("bridgeForFunctionReturningInlineClass.kt")
         public void testBridgeForFunctionReturningInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/bridgeForFunctionReturningInlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("bridgeForFunctionReturningInlineClassGeneric.kt")
+        public void testBridgeForFunctionReturningInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/bridgeForFunctionReturningInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("bridgeForFunctionReturningInlineClassGeneric.kt")
+        public void testBridgeForFunctionReturningInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/bridgeForFunctionReturningInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19618,6 +19762,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("bridgeGenerationWithInlineClassOverAnyGeneric.kt")
+        public void testBridgeGenerationWithInlineClassOverAnyGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/bridgeGenerationWithInlineClassOverAnyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("bridgeGenerationWithInlineClassOverAnyGeneric.kt")
+        public void testBridgeGenerationWithInlineClassOverAnyGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/bridgeGenerationWithInlineClassOverAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("bridgeGenerationWithInlineClassOverAny.kt")
         public void testBridgeGenerationWithInlineClassOverAny_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/bridgeGenerationWithInlineClassOverAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19627,6 +19783,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("bridgesWhenInlineClassImplementsGenericInterface.kt")
         public void testBridgesWhenInlineClassImplementsGenericInterface() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/bridgesWhenInlineClassImplementsGenericInterface.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("bridgesWhenInlineClassImplementsGenericInterfaceGeneric.kt")
+        public void testBridgesWhenInlineClassImplementsGenericInterfaceGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/bridgesWhenInlineClassImplementsGenericInterfaceGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("bridgesWhenInlineClassImplementsGenericInterfaceGeneric.kt")
+        public void testBridgesWhenInlineClassImplementsGenericInterfaceGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/bridgesWhenInlineClassImplementsGenericInterfaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19654,6 +19822,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("callSpecializedEqualsViaReflectionGeneric.kt")
+        public void testCallSpecializedEqualsViaReflectionGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/callSpecializedEqualsViaReflectionGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("callSpecializedEqualsViaReflectionGeneric.kt")
+        public void testCallSpecializedEqualsViaReflectionGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/callSpecializedEqualsViaReflectionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("callSpecializedEqualsViaReflection.kt")
         public void testCallSpecializedEqualsViaReflection_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/callSpecializedEqualsViaReflection.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19663,6 +19843,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("callSpeciallyOverriddenPropertyOfInlineClass.kt")
         public void testCallSpeciallyOverriddenPropertyOfInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/callSpeciallyOverriddenPropertyOfInlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("callSpeciallyOverriddenPropertyOfInlineClassGeneric.kt")
+        public void testCallSpeciallyOverriddenPropertyOfInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/callSpeciallyOverriddenPropertyOfInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("callSpeciallyOverriddenPropertyOfInlineClassGeneric.kt")
+        public void testCallSpeciallyOverriddenPropertyOfInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/callSpeciallyOverriddenPropertyOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19678,6 +19870,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("callableReferencesWithInlineClassesGeneric.kt")
+        public void testCallableReferencesWithInlineClassesGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferencesWithInlineClassesGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("callableReferencesWithInlineClassesGeneric.kt")
+        public void testCallableReferencesWithInlineClassesGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferencesWithInlineClassesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("callableReferencesWithInlineClasses.kt")
         public void testCallableReferencesWithInlineClasses_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/callableReferencesWithInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19687,6 +19891,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("castInsideWhenExpression.kt")
         public void testCastInsideWhenExpression() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/castInsideWhenExpression.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("castInsideWhenExpressionGeneric.kt")
+        public void testCastInsideWhenExpressionGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/castInsideWhenExpressionGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("castInsideWhenExpressionGeneric.kt")
+        public void testCastInsideWhenExpressionGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/castInsideWhenExpressionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19702,6 +19918,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("checkBoxUnboxOfArgumentsOnInlinedFunctionsGeneric.kt")
+        public void testCheckBoxUnboxOfArgumentsOnInlinedFunctionsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxUnboxOfArgumentsOnInlinedFunctionsGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkBoxUnboxOfArgumentsOnInlinedFunctionsGeneric.kt")
+        public void testCheckBoxUnboxOfArgumentsOnInlinedFunctionsGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxUnboxOfArgumentsOnInlinedFunctionsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("checkBoxUnboxOfArgumentsOnInlinedFunctions.kt")
         public void testCheckBoxUnboxOfArgumentsOnInlinedFunctions_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkBoxUnboxOfArgumentsOnInlinedFunctions.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19711,6 +19939,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("checkBoxingAfterAssertionOperator.kt")
         public void testCheckBoxingAfterAssertionOperator() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingAfterAssertionOperator.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkBoxingAfterAssertionOperatorGeneric.kt")
+        public void testCheckBoxingAfterAssertionOperatorGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingAfterAssertionOperatorGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkBoxingAfterAssertionOperatorGeneric.kt")
+        public void testCheckBoxingAfterAssertionOperatorGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingAfterAssertionOperatorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19726,6 +19966,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("checkBoxingForComplexClassHierarchyGeneric.kt")
+        public void testCheckBoxingForComplexClassHierarchyGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForComplexClassHierarchyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkBoxingForComplexClassHierarchyGeneric.kt")
+        public void testCheckBoxingForComplexClassHierarchyGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForComplexClassHierarchyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("checkBoxingForComplexClassHierarchy.kt")
         public void testCheckBoxingForComplexClassHierarchy_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForComplexClassHierarchy.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19735,6 +19987,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("checkBoxingForNonLocalAndLabeledReturns.kt")
         public void testCheckBoxingForNonLocalAndLabeledReturns() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForNonLocalAndLabeledReturns.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkBoxingForNonLocalAndLabeledReturnsGeneric.kt")
+        public void testCheckBoxingForNonLocalAndLabeledReturnsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForNonLocalAndLabeledReturnsGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkBoxingForNonLocalAndLabeledReturnsGeneric.kt")
+        public void testCheckBoxingForNonLocalAndLabeledReturnsGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForNonLocalAndLabeledReturnsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19750,6 +20014,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("checkBoxingFromReturnTypeForInlineClassesGeneric.kt")
+        public void testCheckBoxingFromReturnTypeForInlineClassesGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingFromReturnTypeForInlineClassesGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkBoxingFromReturnTypeForInlineClassesGeneric.kt")
+        public void testCheckBoxingFromReturnTypeForInlineClassesGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingFromReturnTypeForInlineClassesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("checkBoxingFromReturnTypeForInlineClasses.kt")
         public void testCheckBoxingFromReturnTypeForInlineClasses_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingFromReturnTypeForInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19759,6 +20035,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("checkBoxingOnFunctionCalls.kt")
         public void testCheckBoxingOnFunctionCalls() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnFunctionCalls.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkBoxingOnFunctionCallsGeneric.kt")
+        public void testCheckBoxingOnFunctionCallsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnFunctionCallsGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkBoxingOnFunctionCallsGeneric.kt")
+        public void testCheckBoxingOnFunctionCallsGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnFunctionCallsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19774,6 +20062,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("checkBoxingOnLocalVariableAssignmentsGeneric.kt")
+        public void testCheckBoxingOnLocalVariableAssignmentsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnLocalVariableAssignmentsGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkBoxingOnLocalVariableAssignmentsGeneric.kt")
+        public void testCheckBoxingOnLocalVariableAssignmentsGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnLocalVariableAssignmentsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("checkBoxingOnLocalVariableAssignments.kt")
         public void testCheckBoxingOnLocalVariableAssignments_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnLocalVariableAssignments.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19783,6 +20083,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("checkBoxingUnboxingForInheritedTypeSpecializedFunctions.kt")
         public void testCheckBoxingUnboxingForInheritedTypeSpecializedFunctions() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingUnboxingForInheritedTypeSpecializedFunctions.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkBoxingUnboxingForInheritedTypeSpecializedFunctionsGeneric.kt")
+        public void testCheckBoxingUnboxingForInheritedTypeSpecializedFunctionsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingUnboxingForInheritedTypeSpecializedFunctionsGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkBoxingUnboxingForInheritedTypeSpecializedFunctionsGeneric.kt")
+        public void testCheckBoxingUnboxingForInheritedTypeSpecializedFunctionsGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingUnboxingForInheritedTypeSpecializedFunctionsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19798,6 +20110,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("checkCallingMembersInsideInlineClassGeneric.kt")
+        public void testCheckCallingMembersInsideInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkCallingMembersInsideInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkCallingMembersInsideInlineClassGeneric.kt")
+        public void testCheckCallingMembersInsideInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkCallingMembersInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("checkCallingMembersInsideInlineClass.kt")
         public void testCheckCallingMembersInsideInlineClass_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkCallingMembersInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19807,6 +20131,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("checkCastToInlineClass.kt")
         public void testCheckCastToInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkCastToInlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkCastToInlineClassGeneric.kt")
+        public void testCheckCastToInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkCastToInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkCastToInlineClassGeneric.kt")
+        public void testCheckCastToInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkCastToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19822,6 +20158,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("checkForInstanceOfInlineClassGeneric.kt")
+        public void testCheckForInstanceOfInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkForInstanceOfInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkForInstanceOfInlineClassGeneric.kt")
+        public void testCheckForInstanceOfInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkForInstanceOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("checkForInstanceOfInlineClass.kt")
         public void testCheckForInstanceOfInlineClass_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkForInstanceOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19831,6 +20179,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("checkLambdaWithInlineClassesInFunctionalType.kt")
         public void testCheckLambdaWithInlineClassesInFunctionalType() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkLambdaWithInlineClassesInFunctionalType.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkLambdaWithInlineClassesInFunctionalTypeGeneric.kt")
+        public void testCheckLambdaWithInlineClassesInFunctionalTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkLambdaWithInlineClassesInFunctionalTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkLambdaWithInlineClassesInFunctionalTypeGeneric.kt")
+        public void testCheckLambdaWithInlineClassesInFunctionalTypeGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkLambdaWithInlineClassesInFunctionalTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19846,6 +20206,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("checkUnboxingResultFromTypeVariableGeneric.kt")
+        public void testCheckUnboxingResultFromTypeVariableGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkUnboxingResultFromTypeVariableGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("checkUnboxingResultFromTypeVariableGeneric.kt")
+        public void testCheckUnboxingResultFromTypeVariableGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkUnboxingResultFromTypeVariableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("checkUnboxingResultFromTypeVariable.kt")
         public void testCheckUnboxingResultFromTypeVariable_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkUnboxingResultFromTypeVariable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19858,6 +20230,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("classInInlineClassInitGeneric.kt")
+        public void testClassInInlineClassInitGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/classInInlineClassInitGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("classInInlineClassInitGeneric.kt")
+        public void testClassInInlineClassInitGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/classInInlineClassInitGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("classInInlineClassInit.kt")
         public void testClassInInlineClassInit_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/classInInlineClassInit.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19867,6 +20251,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("classLiteralOnInlineClass.kt")
         public void testClassLiteralOnInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/classLiteralOnInlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("classLiteralOnInlineClassGeneric.kt")
+        public void testClassLiteralOnInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/classLiteralOnInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("classLiteralOnInlineClassGeneric.kt")
+        public void testClassLiteralOnInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/classLiteralOnInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19894,6 +20290,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("conformToComparableAndCallInterfaceMethodGeneric.kt")
+        public void testConformToComparableAndCallInterfaceMethodGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/conformToComparableAndCallInterfaceMethodGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("conformToComparableAndCallInterfaceMethodGeneric.kt")
+        public void testConformToComparableAndCallInterfaceMethodGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/conformToComparableAndCallInterfaceMethodGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("conformToComparableAndCallInterfaceMethod.kt")
         public void testConformToComparableAndCallInterfaceMethod_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/conformToComparableAndCallInterfaceMethod.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19903,6 +20311,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("constructorCallableReference.kt")
         public void testConstructorCallableReference() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/constructorCallableReference.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("constructorCallableReferenceGeneric.kt")
+        public void testConstructorCallableReferenceGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/constructorCallableReferenceGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("constructorCallableReferenceGeneric.kt")
+        public void testConstructorCallableReferenceGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/constructorCallableReferenceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19918,6 +20338,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("constructorImplVisibilityGeneric.kt")
+        public void testConstructorImplVisibilityGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/constructorImplVisibilityGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("constructorImplVisibilityGeneric.kt")
+        public void testConstructorImplVisibilityGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/constructorImplVisibilityGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("constructorImplVisibility.kt")
         public void testConstructorImplVisibility_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/constructorImplVisibility.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19927,6 +20359,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("correctBoxingForBranchExpressions.kt")
         public void testCorrectBoxingForBranchExpressions() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/correctBoxingForBranchExpressions.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("correctBoxingForBranchExpressionsGeneric.kt")
+        public void testCorrectBoxingForBranchExpressionsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/correctBoxingForBranchExpressionsGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("correctBoxingForBranchExpressionsGeneric.kt")
+        public void testCorrectBoxingForBranchExpressionsGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/correctBoxingForBranchExpressionsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19942,6 +20386,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("createInlineClassInArgumentPositionGeneric.kt")
+        public void testCreateInlineClassInArgumentPositionGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/createInlineClassInArgumentPositionGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("createInlineClassInArgumentPositionGeneric.kt")
+        public void testCreateInlineClassInArgumentPositionGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/createInlineClassInArgumentPositionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("createInlineClassInArgumentPosition.kt")
         public void testCreateInlineClassInArgumentPosition_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/createInlineClassInArgumentPosition.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19951,6 +20407,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("crossinlineWithInlineClassInParameter.kt")
         public void testCrossinlineWithInlineClassInParameter() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/crossinlineWithInlineClassInParameter.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("crossinlineWithInlineClassInParameterGeneric.kt")
+        public void testCrossinlineWithInlineClassInParameterGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/crossinlineWithInlineClassInParameterGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("crossinlineWithInlineClassInParameterGeneric.kt")
+        public void testCrossinlineWithInlineClassInParameterGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/crossinlineWithInlineClassInParameterGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -19978,6 +20446,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("defaultFunctionsFromAnyForInlineClassGeneric.kt")
+        public void testDefaultFunctionsFromAnyForInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/defaultFunctionsFromAnyForInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("defaultFunctionsFromAnyForInlineClassGeneric.kt")
+        public void testDefaultFunctionsFromAnyForInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/defaultFunctionsFromAnyForInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("defaultFunctionsFromAnyForInlineClass.kt")
         public void testDefaultFunctionsFromAnyForInlineClass_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/defaultFunctionsFromAnyForInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19987,6 +20467,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("defaultInterfaceMethodsInInlineClass.kt")
         public void testDefaultInterfaceMethodsInInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/defaultInterfaceMethodsInInlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("defaultInterfaceMethodsInInlineClassGeneric.kt")
+        public void testDefaultInterfaceMethodsInInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/defaultInterfaceMethodsInInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("defaultInterfaceMethodsInInlineClassGeneric.kt")
+        public void testDefaultInterfaceMethodsInInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/defaultInterfaceMethodsInInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20002,6 +20494,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("defaultWithInlineClassArgumentGeneric.kt")
+        public void testDefaultWithInlineClassArgumentGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/defaultWithInlineClassArgumentGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("defaultWithInlineClassArgumentGeneric.kt")
+        public void testDefaultWithInlineClassArgumentGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/defaultWithInlineClassArgumentGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("defaultWithInlineClassArgument.kt")
         public void testDefaultWithInlineClassArgument_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/defaultWithInlineClassArgument.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20011,6 +20515,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("elvisWithInlineClassAndNullConstant.kt")
         public void testElvisWithInlineClassAndNullConstant() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstant.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("elvisWithInlineClassAndNullConstantGeneric.kt")
+        public void testElvisWithInlineClassAndNullConstantGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstantGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("elvisWithInlineClassAndNullConstantGeneric.kt")
+        public void testElvisWithInlineClassAndNullConstantGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstantGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20026,6 +20542,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("emptyConstructorForInlineClassGeneric.kt")
+        public void testEmptyConstructorForInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("emptyConstructorForInlineClassGeneric.kt")
+        public void testEmptyConstructorForInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("emptyConstructorForInlineClass.kt")
         public void testEmptyConstructorForInlineClass_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20035,6 +20563,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("equalityChecksInlineClassNonNull.kt")
         public void testEqualityChecksInlineClassNonNull() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksInlineClassNonNull.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksInlineClassNonNullGeneric.kt")
+        public void testEqualityChecksInlineClassNonNullGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksInlineClassNonNullGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksInlineClassNonNullGeneric.kt")
+        public void testEqualityChecksInlineClassNonNullGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksInlineClassNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20050,6 +20590,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("equalityChecksMixedNullabilityGeneric.kt")
+        public void testEqualityChecksMixedNullabilityGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksMixedNullabilityGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksMixedNullabilityGeneric.kt")
+        public void testEqualityChecksMixedNullabilityGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksMixedNullabilityGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("equalityChecksMixedNullability.kt")
         public void testEqualityChecksMixedNullability_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksMixedNullability.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20059,6 +20611,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("equalityChecksNegatedInlineClassNonNull.kt")
         public void testEqualityChecksNegatedInlineClassNonNull() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedInlineClassNonNull.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksNegatedInlineClassNonNullGeneric.kt")
+        public void testEqualityChecksNegatedInlineClassNonNullGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedInlineClassNonNullGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksNegatedInlineClassNonNullGeneric.kt")
+        public void testEqualityChecksNegatedInlineClassNonNullGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedInlineClassNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20074,6 +20638,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("equalityChecksNegatedNonNullGeneric.kt")
+        public void testEqualityChecksNegatedNonNullGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNonNullGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksNegatedNonNullGeneric.kt")
+        public void testEqualityChecksNegatedNonNullGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("equalityChecksNegatedNonNull.kt")
         public void testEqualityChecksNegatedNonNull_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20083,6 +20659,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("equalityChecksNegatedNullable.kt")
         public void testEqualityChecksNegatedNullable() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNullable.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksNegatedNullableGeneric.kt")
+        public void testEqualityChecksNegatedNullableGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNullableGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksNegatedNullableGeneric.kt")
+        public void testEqualityChecksNegatedNullableGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNullableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20098,6 +20686,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("equalityChecksNegatedPrimitiveGeneric.kt")
+        public void testEqualityChecksNegatedPrimitiveGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedPrimitiveGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksNegatedPrimitiveGeneric.kt")
+        public void testEqualityChecksNegatedPrimitiveGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedPrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("equalityChecksNegatedPrimitive.kt")
         public void testEqualityChecksNegatedPrimitive_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20107,6 +20707,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("equalityChecksNonNull.kt")
         public void testEqualityChecksNonNull() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNonNull.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksNonNullGeneric.kt")
+        public void testEqualityChecksNonNullGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNonNullGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksNonNullGeneric.kt")
+        public void testEqualityChecksNonNullGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20122,6 +20734,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("equalityChecksNullableGeneric.kt")
+        public void testEqualityChecksNullableGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNullableGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksNullableGeneric.kt")
+        public void testEqualityChecksNullableGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNullableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("equalityChecksNullable.kt")
         public void testEqualityChecksNullable_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20131,6 +20755,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("equalityChecksPrimitive.kt")
         public void testEqualityChecksPrimitive() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitive.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksPrimitiveGeneric.kt")
+        public void testEqualityChecksPrimitiveGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitiveGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksPrimitiveGeneric.kt")
+        public void testEqualityChecksPrimitiveGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20146,6 +20782,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("equalityForBoxesOfNullableValuesOfInlineClassGeneric.kt")
+        public void testEqualityForBoxesOfNullableValuesOfInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityForBoxesOfNullableValuesOfInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalityForBoxesOfNullableValuesOfInlineClassGeneric.kt")
+        public void testEqualityForBoxesOfNullableValuesOfInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityForBoxesOfNullableValuesOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("equalityForBoxesOfNullableValuesOfInlineClass.kt")
         public void testEqualityForBoxesOfNullableValuesOfInlineClass_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalityForBoxesOfNullableValuesOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20155,6 +20803,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("equalsCallsLeftArgument.kt")
         public void testEqualsCallsLeftArgument() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalsCallsLeftArgument.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalsCallsLeftArgumentGeneric.kt")
+        public void testEqualsCallsLeftArgumentGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsCallsLeftArgumentGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalsCallsLeftArgumentGeneric.kt")
+        public void testEqualsCallsLeftArgumentGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsCallsLeftArgumentGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20170,6 +20830,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("equalsEvaluationOrderInlineClassGeneric.kt")
+        public void testEqualsEvaluationOrderInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalsEvaluationOrderInlineClassGeneric.kt")
+        public void testEqualsEvaluationOrderInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("equalsEvaluationOrderInlineClass.kt")
         public void testEqualsEvaluationOrderInlineClass_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20179,6 +20851,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("equalsEvaluationOrderNonNull.kt")
         public void testEqualsEvaluationOrderNonNull() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNonNull.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalsEvaluationOrderNonNullGeneric.kt")
+        public void testEqualsEvaluationOrderNonNullGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNonNullGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalsEvaluationOrderNonNullGeneric.kt")
+        public void testEqualsEvaluationOrderNonNullGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20194,6 +20878,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("equalsEvaluationOrderNullableGeneric.kt")
+        public void testEqualsEvaluationOrderNullableGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNullableGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalsEvaluationOrderNullableGeneric.kt")
+        public void testEqualsEvaluationOrderNullableGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNullableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("equalsEvaluationOrderNullable.kt")
         public void testEqualsEvaluationOrderNullable_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20206,6 +20902,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("equalsEvaluationOrderPrimitiveGeneric.kt")
+        public void testEqualsEvaluationOrderPrimitiveGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderPrimitiveGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalsEvaluationOrderPrimitiveGeneric.kt")
+        public void testEqualsEvaluationOrderPrimitiveGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderPrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("equalsEvaluationOrderPrimitive.kt")
         public void testEqualsEvaluationOrderPrimitive_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20215,6 +20923,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("equalsOperatorWithGenericCall.kt")
         public void testEqualsOperatorWithGenericCall() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalsOperatorWithGenericCall.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalsOperatorWithGenericCallGeneric.kt")
+        public void testEqualsOperatorWithGenericCallGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsOperatorWithGenericCallGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("equalsOperatorWithGenericCallGeneric.kt")
+        public void testEqualsOperatorWithGenericCallGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsOperatorWithGenericCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20236,9 +20956,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("extLambdaInInlineClassFun2Generic.kt")
+        public void testExtLambdaInInlineClassFun2Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFun2Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("extLambdaInInlineClassFun2Generic.kt")
+        public void testExtLambdaInInlineClassFun2Generic_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFun2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("extLambdaInInlineClassFun2.kt")
         public void testExtLambdaInInlineClassFun2_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFun2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("extLambdaInInlineClassFunGeneric.kt")
+        public void testExtLambdaInInlineClassFunGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFunGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("extLambdaInInlineClassFunGeneric.kt")
+        public void testExtLambdaInInlineClassFunGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20251,6 +20995,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("fieldNameClash.kt")
         public void testFieldNameClash() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/fieldNameClash.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("fieldNameClashGeneric.kt")
+        public void testFieldNameClashGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/fieldNameClashGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("fieldNameClashGeneric.kt")
+        public void testFieldNameClashGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/fieldNameClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20290,6 +21046,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("functionExpressionGeneric.kt")
+        public void testFunctionExpressionGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/functionExpressionGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("functionExpressionGeneric.kt")
+        public void testFunctionExpressionGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/functionExpressionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("functionExpression.kt")
         public void testFunctionExpression_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/functionExpression.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20326,6 +21094,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("initBlockGeneric.kt")
+        public void testInitBlockGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/initBlockGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("initBlockGeneric.kt")
+        public void testInitBlockGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/initBlockGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("initBlock.kt")
         public void testInitBlock_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/initBlock.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20335,6 +21115,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("inlineClassAsLastExpressionInInLambda.kt")
         public void testInlineClassAsLastExpressionInInLambda() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambda.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassAsLastExpressionInInLambdaGeneric.kt")
+        public void testInlineClassAsLastExpressionInInLambdaGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambdaGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassAsLastExpressionInInLambdaGeneric.kt")
+        public void testInlineClassAsLastExpressionInInLambdaGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20350,6 +21142,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("inlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric.kt")
+        public void testInlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric.kt")
+        public void testInlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassEqualityShouldUseTotalOrderForFloatingPointData.kt")
         public void testInlineClassEqualityShouldUseTotalOrderForFloatingPointData_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualityShouldUseTotalOrderForFloatingPointData.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20359,6 +21163,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("inlineClassFieldHandling.kt")
         public void testInlineClassFieldHandling() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFieldHandling.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassFieldHandlingGeneric.kt")
+        public void testInlineClassFieldHandlingGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFieldHandlingGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassFieldHandlingGeneric.kt")
+        public void testInlineClassFieldHandlingGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFieldHandlingGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20374,6 +21190,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("inlineClassFunctionInvokeGeneric.kt")
+        public void testInlineClassFunctionInvokeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFunctionInvokeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassFunctionInvokeGeneric.kt")
+        public void testInlineClassFunctionInvokeGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFunctionInvokeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassFunctionInvoke.kt")
         public void testInlineClassFunctionInvoke_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFunctionInvoke.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20383,6 +21211,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("inlineClassImplementsCollection.kt")
         public void testInlineClassImplementsCollection() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassImplementsCollection.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassImplementsCollectionGeneric.kt")
+        public void testInlineClassImplementsCollectionGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassImplementsCollectionGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassImplementsCollectionGeneric.kt")
+        public void testInlineClassImplementsCollectionGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassImplementsCollectionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20398,6 +21238,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("inlineClassInInitBlockGeneric.kt")
+        public void testInlineClassInInitBlockGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInInitBlockGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassInInitBlockGeneric.kt")
+        public void testInlineClassInInitBlockGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInInitBlockGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassInInitBlock.kt")
         public void testInlineClassInInitBlock_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInInitBlock.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20407,6 +21259,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("inlineClassInStringTemplate.kt")
         public void testInlineClassInStringTemplate() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInStringTemplate.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassInStringTemplateGeneric.kt")
+        public void testInlineClassInStringTemplateGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInStringTemplateGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassInStringTemplateGeneric.kt")
+        public void testInlineClassInStringTemplateGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInStringTemplateGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20422,6 +21286,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("inlineClassPropertyReferenceGetAndSetGeneric.kt")
+        public void testInlineClassPropertyReferenceGetAndSetGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassPropertyReferenceGetAndSetGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassPropertyReferenceGetAndSetGeneric.kt")
+        public void testInlineClassPropertyReferenceGetAndSetGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassPropertyReferenceGetAndSetGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassPropertyReferenceGetAndSet.kt")
         public void testInlineClassPropertyReferenceGetAndSet_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassPropertyReferenceGetAndSet.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20431,6 +21307,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("inlineClassValueCapturedInInlineLambda.kt")
         public void testInlineClassValueCapturedInInlineLambda() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInInlineLambda.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassValueCapturedInInlineLambdaGeneric.kt")
+        public void testInlineClassValueCapturedInInlineLambdaGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInInlineLambdaGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassValueCapturedInInlineLambdaGeneric.kt")
+        public void testInlineClassValueCapturedInInlineLambdaGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInInlineLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20446,6 +21334,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("inlineClassValueCapturedInNonInlineLambdaGeneric.kt")
+        public void testInlineClassValueCapturedInNonInlineLambdaGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInNonInlineLambdaGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassValueCapturedInNonInlineLambdaGeneric.kt")
+        public void testInlineClassValueCapturedInNonInlineLambdaGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInNonInlineLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassValueCapturedInNonInlineLambda.kt")
         public void testInlineClassValueCapturedInNonInlineLambda_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInNonInlineLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20455,6 +21355,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("inlineClassValuesInsideStrings.kt")
         public void testInlineClassValuesInsideStrings() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValuesInsideStrings.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassValuesInsideStringsGeneric.kt")
+        public void testInlineClassValuesInsideStringsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValuesInsideStringsGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassValuesInsideStringsGeneric.kt")
+        public void testInlineClassValuesInsideStringsGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValuesInsideStringsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20470,6 +21382,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("inlineClassWithCustomEqualsGeneric.kt")
+        public void testInlineClassWithCustomEqualsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithCustomEqualsGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassWithCustomEqualsGeneric.kt")
+        public void testInlineClassWithCustomEqualsGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithCustomEqualsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassWithCustomEquals.kt")
         public void testInlineClassWithCustomEquals_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithCustomEquals.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20479,6 +21403,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("inlineClassWithDefaultFunctionsFromAny.kt")
         public void testInlineClassWithDefaultFunctionsFromAny() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithDefaultFunctionsFromAny.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassWithDefaultFunctionsFromAnyGeneric.kt")
+        public void testInlineClassWithDefaultFunctionsFromAnyGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithDefaultFunctionsFromAnyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassWithDefaultFunctionsFromAnyGeneric.kt")
+        public void testInlineClassWithDefaultFunctionsFromAnyGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithDefaultFunctionsFromAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20494,6 +21430,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("inlineClassesAsInlineFunParametersGeneric.kt")
+        public void testInlineClassesAsInlineFunParametersGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesAsInlineFunParametersGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassesAsInlineFunParametersGeneric.kt")
+        public void testInlineClassesAsInlineFunParametersGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesAsInlineFunParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassesAsInlineFunParameters.kt")
         public void testInlineClassesAsInlineFunParameters_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesAsInlineFunParameters.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20503,6 +21451,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("inlineClassesCheckCast.kt")
         public void testInlineClassesCheckCast() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesCheckCast.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassesCheckCastGeneric.kt")
+        public void testInlineClassesCheckCastGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesCheckCastGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassesCheckCastGeneric.kt")
+        public void testInlineClassesCheckCastGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesCheckCastGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20518,6 +21478,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("inlineClassesInInlineLambdaParametersGeneric.kt")
+        public void testInlineClassesInInlineLambdaParametersGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesInInlineLambdaParametersGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassesInInlineLambdaParametersGeneric.kt")
+        public void testInlineClassesInInlineLambdaParametersGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesInInlineLambdaParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassesInInlineLambdaParameters.kt")
         public void testInlineClassesInInlineLambdaParameters_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesInInlineLambdaParameters.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20527,6 +21499,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("inlineClassesRefTypesInInlineLambdaParameters.kt")
         public void testInlineClassesRefTypesInInlineLambdaParameters() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesRefTypesInInlineLambdaParameters.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassesRefTypesInInlineLambdaParametersGeneric.kt")
+        public void testInlineClassesRefTypesInInlineLambdaParametersGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesRefTypesInInlineLambdaParametersGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineClassesRefTypesInInlineLambdaParametersGeneric.kt")
+        public void testInlineClassesRefTypesInInlineLambdaParametersGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesRefTypesInInlineLambdaParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20548,9 +21532,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("inlineExtLambdaInInlineClassFun2Generic.kt")
+        public void testInlineExtLambdaInInlineClassFun2Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFun2Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineExtLambdaInInlineClassFun2Generic.kt")
+        public void testInlineExtLambdaInInlineClassFun2Generic_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFun2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineExtLambdaInInlineClassFun2.kt")
         public void testInlineExtLambdaInInlineClassFun2_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFun2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("inlineExtLambdaInInlineClassFunGeneric.kt")
+        public void testInlineExtLambdaInInlineClassFunGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFunGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineExtLambdaInInlineClassFunGeneric.kt")
+        public void testInlineExtLambdaInInlineClassFunGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20566,6 +21574,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("inlineFunctionInsideInlineClassGeneric.kt")
+        public void testInlineFunctionInsideInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineFunctionInsideInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineFunctionInsideInlineClassGeneric.kt")
+        public void testInlineFunctionInsideInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineFunctionInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineFunctionInsideInlineClass.kt")
         public void testInlineFunctionInsideInlineClass_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineFunctionInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20575,6 +21595,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("inlineInCompanion.kt")
         public void testInlineInCompanion() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineInCompanion.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineInCompanionGeneric.kt")
+        public void testInlineInCompanionGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineInCompanionGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("inlineInCompanionGeneric.kt")
+        public void testInlineInCompanionGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineInCompanionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20602,6 +21634,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("iterateOverArrayOfInlineClassValuesGeneric.kt")
+        public void testIterateOverArrayOfInlineClassValuesGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/iterateOverArrayOfInlineClassValuesGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("iterateOverArrayOfInlineClassValuesGeneric.kt")
+        public void testIterateOverArrayOfInlineClassValuesGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/iterateOverArrayOfInlineClassValuesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("iterateOverArrayOfInlineClassValues.kt")
         public void testIterateOverArrayOfInlineClassValues_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/iterateOverArrayOfInlineClassValues.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20611,6 +21655,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("iterateOverListOfInlineClassValues.kt")
         public void testIterateOverListOfInlineClassValues() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/iterateOverListOfInlineClassValues.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("iterateOverListOfInlineClassValuesGeneric.kt")
+        public void testIterateOverListOfInlineClassValuesGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/iterateOverListOfInlineClassValuesGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("iterateOverListOfInlineClassValuesGeneric.kt")
+        public void testIterateOverListOfInlineClassValuesGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/iterateOverListOfInlineClassValuesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20626,6 +21682,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("javaClassIntrinsicOnInlineClassesGeneric.kt")
+        public void testJavaClassIntrinsicOnInlineClassesGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/javaClassIntrinsicOnInlineClassesGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("javaClassIntrinsicOnInlineClassesGeneric.kt")
+        public void testJavaClassIntrinsicOnInlineClassesGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/javaClassIntrinsicOnInlineClassesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("javaClassIntrinsicOnInlineClasses.kt")
         public void testJavaClassIntrinsicOnInlineClasses_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/javaClassIntrinsicOnInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20638,6 +21706,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("javaPrimitiveTypeICGeneric.kt")
+        public void testJavaPrimitiveTypeICGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/javaPrimitiveTypeICGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("javaPrimitiveTypeICGeneric.kt")
+        public void testJavaPrimitiveTypeICGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/javaPrimitiveTypeICGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("javaPrimitiveTypeIC.kt")
         public void testJavaPrimitiveTypeIC_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/javaPrimitiveTypeIC.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20647,6 +21727,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("jvmFieldInInlineClassCompanion.kt")
         public void testJvmFieldInInlineClassCompanion() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/jvmFieldInInlineClassCompanion.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("jvmFieldInInlineClassCompanionGeneric.kt")
+        public void testJvmFieldInInlineClassCompanionGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmFieldInInlineClassCompanionGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("jvmFieldInInlineClassCompanionGeneric.kt")
+        public void testJvmFieldInInlineClassCompanionGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmFieldInInlineClassCompanionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20674,6 +21766,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("jvmOverloadsOnTopLevelFunctionReturningInlineClassValueGeneric.kt")
+        public void testJvmOverloadsOnTopLevelFunctionReturningInlineClassValueGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmOverloadsOnTopLevelFunctionReturningInlineClassValueGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("jvmOverloadsOnTopLevelFunctionReturningInlineClassValueGeneric.kt")
+        public void testJvmOverloadsOnTopLevelFunctionReturningInlineClassValueGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmOverloadsOnTopLevelFunctionReturningInlineClassValueGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt")
         public void testJvmOverloadsOnTopLevelFunctionReturningInlineClassValue_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/jvmOverloadsOnTopLevelFunctionReturningInlineClassValue.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20683,6 +21787,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("jvmStaticFunInInlineClassCompanion.kt")
         public void testJvmStaticFunInInlineClassCompanion() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticFunInInlineClassCompanion.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("jvmStaticFunInInlineClassCompanionGeneric.kt")
+        public void testJvmStaticFunInInlineClassCompanionGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticFunInInlineClassCompanionGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("jvmStaticFunInInlineClassCompanionGeneric.kt")
+        public void testJvmStaticFunInInlineClassCompanionGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticFunInInlineClassCompanionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20698,6 +21814,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("jvmStaticPropertyAccessorInInlineClassCompanionGeneric.kt")
+        public void testJvmStaticPropertyAccessorInInlineClassCompanionGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticPropertyAccessorInInlineClassCompanionGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("jvmStaticPropertyAccessorInInlineClassCompanionGeneric.kt")
+        public void testJvmStaticPropertyAccessorInInlineClassCompanionGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticPropertyAccessorInInlineClassCompanionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("jvmStaticPropertyAccessorInInlineClassCompanion.kt")
         public void testJvmStaticPropertyAccessorInInlineClassCompanion_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticPropertyAccessorInInlineClassCompanion.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20710,6 +21838,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("jvmStaticVarInInlineClassCompanionGeneric.kt")
+        public void testJvmStaticVarInInlineClassCompanionGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticVarInInlineClassCompanionGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("jvmStaticVarInInlineClassCompanionGeneric.kt")
+        public void testJvmStaticVarInInlineClassCompanionGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticVarInInlineClassCompanionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("jvmStaticVarInInlineClassCompanion.kt")
         public void testJvmStaticVarInInlineClassCompanion_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/jvmStaticVarInInlineClassCompanion.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20719,6 +21859,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("kclassInAnnotation.kt")
         public void testKclassInAnnotation() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kclassInAnnotation.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kclassInAnnotationGeneric.kt")
+        public void testKclassInAnnotationGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kclassInAnnotationGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kclassInAnnotationGeneric.kt")
+        public void testKclassInAnnotationGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kclassInAnnotationGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20743,6 +21895,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("kt25750.kt")
         public void testKt25750() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt25750.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt25750Generic.kt")
+        public void testKt25750Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt25750Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt25750Generic.kt")
+        public void testKt25750Generic_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt25750Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20818,9 +21982,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt27096Generic.kt")
+        public void testKt27096Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt27096Generic.kt")
+        public void testKt27096Generic_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt27096_enum.kt")
         public void testKt27096_enum() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27096_enum.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt27096_enumGeneric.kt")
+        public void testKt27096_enumGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_enumGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt27096_enumGeneric.kt")
+        public void testKt27096_enumGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_enumGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20833,6 +22021,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("kt27096_functional.kt")
         public void testKt27096_functional() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27096_functional.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt27096_functionalGeneric.kt")
+        public void testKt27096_functionalGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_functionalGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt27096_functionalGeneric.kt")
+        public void testKt27096_functionalGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_functionalGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20860,6 +22060,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt27096_nullablePrimitiveGeneric.kt")
+        public void testKt27096_nullablePrimitiveGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullablePrimitiveGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt27096_nullablePrimitiveGeneric.kt")
+        public void testKt27096_nullablePrimitiveGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullablePrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt27096_nullablePrimitive.kt")
         public void testKt27096_nullablePrimitive_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullablePrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20869,6 +22081,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("kt27096_nullableReference.kt")
         public void testKt27096_nullableReference() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullableReference.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt27096_nullableReferenceGeneric.kt")
+        public void testKt27096_nullableReferenceGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullableReferenceGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt27096_nullableReferenceGeneric.kt")
+        public void testKt27096_nullableReferenceGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullableReferenceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20884,6 +22108,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt27096_primitiveGeneric.kt")
+        public void testKt27096_primitiveGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_primitiveGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt27096_primitiveGeneric.kt")
+        public void testKt27096_primitiveGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_primitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt27096_primitive.kt")
         public void testKt27096_primitive_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27096_primitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20893,6 +22129,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("kt27096_reference.kt")
         public void testKt27096_reference() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27096_reference.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt27096_referenceGeneric.kt")
+        public void testKt27096_referenceGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_referenceGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt27096_referenceGeneric.kt")
+        public void testKt27096_referenceGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_referenceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20926,6 +22174,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt27113aGeneric.kt")
+        public void testKt27113aGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27113aGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt27113aGeneric.kt")
+        public void testKt27113aGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27113aGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt27113a.kt")
         public void testKt27113a_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27113a.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20935,6 +22195,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("kt27132.kt")
         public void testKt27132() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27132.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt27132Generic.kt")
+        public void testKt27132Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27132Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt27132Generic.kt")
+        public void testKt27132Generic_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27132Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -20950,6 +22222,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt27140Generic.kt")
+        public void testKt27140Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27140Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt27140Generic.kt")
+        public void testKt27140Generic_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27140Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt27140.kt")
         public void testKt27140_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27140.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20962,6 +22246,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt27705Generic.kt")
+        public void testKt27705Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27705Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt27705Generic.kt")
+        public void testKt27705Generic_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27705Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt27705.kt")
         public void testKt27705_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27705.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20971,6 +22267,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("kt27706.kt")
         public void testKt27706() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27706.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt27706Generic.kt")
+        public void testKt27706Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27706Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt27706Generic.kt")
+        public void testKt27706Generic_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27706Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21034,6 +22342,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt33119Generic.kt")
+        public void testKt33119Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt33119Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt33119Generic.kt")
+        public void testKt33119Generic_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt33119Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt33119.kt")
         public void testKt33119_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt33119.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21058,6 +22378,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt37998Generic.kt")
+        public void testKt37998Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt37998Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt37998Generic.kt")
+        public void testKt37998Generic_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt37998Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt37998.kt")
         public void testKt37998_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt37998.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21067,6 +22399,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("kt38680.kt")
         public void testKt38680() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt38680.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt38680Generic.kt")
+        public void testKt38680Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt38680Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt38680Generic.kt")
+        public void testKt38680Generic_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt38680Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21082,6 +22426,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt38680aGeneric.kt")
+        public void testKt38680aGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt38680aGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt38680aGeneric.kt")
+        public void testKt38680aGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt38680aGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt38680a.kt")
         public void testKt38680a_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt38680a.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21091,6 +22447,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("kt38680b.kt")
         public void testKt38680b() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt38680b.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt38680bGeneric.kt")
+        public void testKt38680bGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt38680bGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt38680bGeneric.kt")
+        public void testKt38680bGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt38680bGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21109,6 +22477,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("kt44701_jvmOverloads.kt")
         public void testKt44701_jvmOverloads() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt44701_jvmOverloads.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt44701_jvmOverloadsGeneric.kt")
+        public void testKt44701_jvmOverloadsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt44701_jvmOverloadsGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt44701_jvmOverloadsGeneric.kt")
+        public void testKt44701_jvmOverloadsGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt44701_jvmOverloadsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21142,6 +22522,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt45084Generic.kt")
+        public void testKt45084Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt45084Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt45084Generic.kt")
+        public void testKt45084Generic_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt45084Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt45084.kt")
         public void testKt45084_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt45084.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21163,6 +22555,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("kt46554.kt")
         public void testKt46554() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt46554.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt46554Generic.kt")
+        public void testKt46554Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt46554Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt46554Generic.kt")
+        public void testKt46554Generic_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt46554Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21190,6 +22594,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt47762Generic.kt")
+        public void testKt47762Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt47762Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt47762Generic.kt")
+        public void testKt47762Generic_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt47762Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt47762.kt")
         public void testKt47762_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt47762.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21199,6 +22615,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("kt48993.kt")
         public void testKt48993() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt48993.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt48993Generic.kt")
+        public void testKt48993Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt48993Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("kt48993Generic.kt")
+        public void testKt48993Generic_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt48993Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21214,6 +22642,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("mangledDefaultParameterFunctionGeneric.kt")
+        public void testMangledDefaultParameterFunctionGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunctionGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("mangledDefaultParameterFunctionGeneric.kt")
+        public void testMangledDefaultParameterFunctionGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunctionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("mangledDefaultParameterFunction.kt")
         public void testMangledDefaultParameterFunction_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21223,6 +22663,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("mangledSuperCalls.kt")
         public void testMangledSuperCalls() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/mangledSuperCalls.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("mangledSuperCallsGeneric.kt")
+        public void testMangledSuperCallsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/mangledSuperCallsGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("mangledSuperCallsGeneric.kt")
+        public void testMangledSuperCallsGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/mangledSuperCallsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21244,6 +22696,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("mappingOfBoxedFlexibleInlineClassTypeGeneric.kt")
+        public void testMappingOfBoxedFlexibleInlineClassTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/mappingOfBoxedFlexibleInlineClassTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("mappingOfBoxedFlexibleInlineClassTypeGeneric.kt")
+        public void testMappingOfBoxedFlexibleInlineClassTypeGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/mappingOfBoxedFlexibleInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("mappingOfBoxedFlexibleInlineClassType.kt")
         public void testMappingOfBoxedFlexibleInlineClassType_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/mappingOfBoxedFlexibleInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21262,6 +22726,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("nestedInlineClassGeneric.kt")
+        public void testNestedInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/nestedInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("nestedInlineClassGeneric.kt")
+        public void testNestedInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/nestedInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("nestedInlineClass.kt")
         public void testNestedInlineClass_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/nestedInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21271,6 +22747,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("noAssertionsOnInlineClassBasedOnNullableType.kt")
         public void testNoAssertionsOnInlineClassBasedOnNullableType() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/noAssertionsOnInlineClassBasedOnNullableType.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("noAssertionsOnInlineClassBasedOnNullableTypeGeneric.kt")
+        public void testNoAssertionsOnInlineClassBasedOnNullableTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/noAssertionsOnInlineClassBasedOnNullableTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("noAssertionsOnInlineClassBasedOnNullableTypeGeneric.kt")
+        public void testNoAssertionsOnInlineClassBasedOnNullableTypeGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/noAssertionsOnInlineClassBasedOnNullableTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21286,9 +22774,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("noReturnTypeManglingGeneric.kt")
+        public void testNoReturnTypeManglingGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/noReturnTypeManglingGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("noReturnTypeManglingGeneric.kt")
+        public void testNoReturnTypeManglingGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/noReturnTypeManglingGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("noReturnTypeManglingJvmName.kt")
         public void testNoReturnTypeManglingJvmName() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/noReturnTypeManglingJvmName.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("noReturnTypeManglingJvmNameGeneric.kt")
+        public void testNoReturnTypeManglingJvmNameGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/noReturnTypeManglingJvmNameGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("noReturnTypeManglingJvmNameGeneric.kt")
+        public void testNoReturnTypeManglingJvmNameGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/noReturnTypeManglingJvmNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21310,6 +22822,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("nullableEqeqNonNullGeneric.kt")
+        public void testNullableEqeqNonNullGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/nullableEqeqNonNullGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("nullableEqeqNonNullGeneric.kt")
+        public void testNullableEqeqNonNullGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/nullableEqeqNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("nullableEqeqNonNull.kt")
         public void testNullableEqeqNonNull_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/nullableEqeqNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21319,6 +22843,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("nullableWrapperEquality.kt")
         public void testNullableWrapperEquality() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/nullableWrapperEquality.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("nullableWrapperEqualityGeneric.kt")
+        public void testNullableWrapperEqualityGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/nullableWrapperEqualityGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("nullableWrapperEqualityGeneric.kt")
+        public void testNullableWrapperEqualityGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/nullableWrapperEqualityGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21334,6 +22870,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("overridingFunCallingPrivateFunGeneric.kt")
+        public void testOverridingFunCallingPrivateFunGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/overridingFunCallingPrivateFunGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("overridingFunCallingPrivateFunGeneric.kt")
+        public void testOverridingFunCallingPrivateFunGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/overridingFunCallingPrivateFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("overridingFunCallingPrivateFun.kt")
         public void testOverridingFunCallingPrivateFun_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/overridingFunCallingPrivateFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21343,6 +22891,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("passInlineClassAsVararg.kt")
         public void testPassInlineClassAsVararg() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassAsVararg.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("passInlineClassAsVarargGeneric.kt")
+        public void testPassInlineClassAsVarargGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassAsVarargGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("passInlineClassAsVarargGeneric.kt")
+        public void testPassInlineClassAsVarargGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassAsVarargGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21358,6 +22918,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("passInlineClassWithSpreadOperatorToVarargsGeneric.kt")
+        public void testPassInlineClassWithSpreadOperatorToVarargsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassWithSpreadOperatorToVarargsGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("passInlineClassWithSpreadOperatorToVarargsGeneric.kt")
+        public void testPassInlineClassWithSpreadOperatorToVarargsGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassWithSpreadOperatorToVarargsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("passInlineClassWithSpreadOperatorToVarargs.kt")
         public void testPassInlineClassWithSpreadOperatorToVarargs_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassWithSpreadOperatorToVarargs.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21367,6 +22939,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("privateConstructorFunInterfaceMultiModule.kt")
         public void testPrivateConstructorFunInterfaceMultiModule() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/privateConstructorFunInterfaceMultiModule.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("privateConstructorFunInterfaceMultiModuleGeneric.kt")
+        public void testPrivateConstructorFunInterfaceMultiModuleGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/privateConstructorFunInterfaceMultiModuleGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("privateConstructorFunInterfaceMultiModuleGeneric.kt")
+        public void testPrivateConstructorFunInterfaceMultiModuleGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/privateConstructorFunInterfaceMultiModuleGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21382,6 +22966,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("propertyLoweringOrderGeneric.kt")
+        public void testPropertyLoweringOrderGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/propertyLoweringOrderGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("propertyLoweringOrderGeneric.kt")
+        public void testPropertyLoweringOrderGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/propertyLoweringOrderGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("propertyLoweringOrder.kt")
         public void testPropertyLoweringOrder_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/propertyLoweringOrder.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21391,6 +22987,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("referToPropertyInCompanionObjectOfInlineClass.kt")
         public void testReferToPropertyInCompanionObjectOfInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/referToPropertyInCompanionObjectOfInlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("referToPropertyInCompanionObjectOfInlineClassGeneric.kt")
+        public void testReferToPropertyInCompanionObjectOfInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/referToPropertyInCompanionObjectOfInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("referToPropertyInCompanionObjectOfInlineClassGeneric.kt")
+        public void testReferToPropertyInCompanionObjectOfInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/referToPropertyInCompanionObjectOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21406,6 +23014,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("referToUnderlyingPropertyInsideInlineClassGeneric.kt")
+        public void testReferToUnderlyingPropertyInsideInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyInsideInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("referToUnderlyingPropertyInsideInlineClassGeneric.kt")
+        public void testReferToUnderlyingPropertyInsideInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("referToUnderlyingPropertyInsideInlineClass.kt")
         public void testReferToUnderlyingPropertyInsideInlineClass_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21415,6 +23035,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("referToUnderlyingPropertyOfInlineClass.kt")
         public void testReferToUnderlyingPropertyOfInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyOfInlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("referToUnderlyingPropertyOfInlineClassGeneric.kt")
+        public void testReferToUnderlyingPropertyOfInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyOfInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("referToUnderlyingPropertyOfInlineClassGeneric.kt")
+        public void testReferToUnderlyingPropertyOfInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21439,6 +23071,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("result.kt")
         public void testResult() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/result.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("resultGeneric.kt")
+        public void testResultGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/resultGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("resultGeneric.kt")
+        public void testResultGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/resultGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21472,6 +23116,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("safeAsOfTypeParameterWithInlineClassBoundGeneric.kt")
+        public void testSafeAsOfTypeParameterWithInlineClassBoundGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/safeAsOfTypeParameterWithInlineClassBoundGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("safeAsOfTypeParameterWithInlineClassBoundGeneric.kt")
+        public void testSafeAsOfTypeParameterWithInlineClassBoundGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/safeAsOfTypeParameterWithInlineClassBoundGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("safeAsOfTypeParameterWithInlineClassBound.kt")
         public void testSafeAsOfTypeParameterWithInlineClassBound_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/safeAsOfTypeParameterWithInlineClassBound.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21481,6 +23137,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("samWrapperDifferentModule.kt")
         public void testSamWrapperDifferentModule() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/samWrapperDifferentModule.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("samWrapperDifferentModuleGeneric.kt")
+        public void testSamWrapperDifferentModuleGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/samWrapperDifferentModuleGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("samWrapperDifferentModuleGeneric.kt")
+        public void testSamWrapperDifferentModuleGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/samWrapperDifferentModuleGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21496,6 +23164,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("secondaryConstructorWithVarargGeneric.kt")
+        public void testSecondaryConstructorWithVarargGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorWithVarargGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("secondaryConstructorWithVarargGeneric.kt")
+        public void testSecondaryConstructorWithVarargGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorWithVarargGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("secondaryConstructorWithVararg.kt")
         public void testSecondaryConstructorWithVararg_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorWithVararg.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21508,9 +23188,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("secondaryConstructorsInsideInlineClassGeneric.kt")
+        public void testSecondaryConstructorsInsideInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("secondaryConstructorsInsideInlineClassGeneric.kt")
+        public void testSecondaryConstructorsInsideInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("secondaryConstructorsInsideInlineClassWithPrimitiveCarrierType.kt")
         public void testSecondaryConstructorsInsideInlineClassWithPrimitiveCarrierType() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassWithPrimitiveCarrierType.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("secondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric.kt")
+        public void testSecondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("secondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric.kt")
+        public void testSecondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21532,6 +23236,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("simpleSecondaryConstructorGeneric.kt")
+        public void testSimpleSecondaryConstructorGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructorGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("simpleSecondaryConstructorGeneric.kt")
+        public void testSimpleSecondaryConstructorGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("simpleSecondaryConstructor.kt")
         public void testSimpleSecondaryConstructor_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21541,6 +23257,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("smartCastOnThisOfInlineClassType.kt")
         public void testSmartCastOnThisOfInlineClassType() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/smartCastOnThisOfInlineClassType.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("smartCastOnThisOfInlineClassTypeGeneric.kt")
+        public void testSmartCastOnThisOfInlineClassTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/smartCastOnThisOfInlineClassTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("smartCastOnThisOfInlineClassTypeGeneric.kt")
+        public void testSmartCastOnThisOfInlineClassTypeGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/smartCastOnThisOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21556,6 +23284,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("stringPlusGeneric.kt")
+        public void testStringPlusGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/stringPlusGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("stringPlusGeneric.kt")
+        public void testStringPlusGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/stringPlusGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("stringPlus.kt")
         public void testStringPlus_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/stringPlus.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21565,6 +23305,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("toStringCallingPrivateFun.kt")
         public void testToStringCallingPrivateFun() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/toStringCallingPrivateFun.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("toStringCallingPrivateFunGeneric.kt")
+        public void testToStringCallingPrivateFunGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/toStringCallingPrivateFunGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("toStringCallingPrivateFunGeneric.kt")
+        public void testToStringCallingPrivateFunGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/toStringCallingPrivateFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21580,6 +23332,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("toStringOfUnboxedNullableGeneric.kt")
+        public void testToStringOfUnboxedNullableGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/toStringOfUnboxedNullableGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("toStringOfUnboxedNullableGeneric.kt")
+        public void testToStringOfUnboxedNullableGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/toStringOfUnboxedNullableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("toStringOfUnboxedNullable.kt")
         public void testToStringOfUnboxedNullable_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/toStringOfUnboxedNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21592,6 +23356,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("typeChecksForInlineClassesGeneric.kt")
+        public void testTypeChecksForInlineClassesGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/typeChecksForInlineClassesGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("typeChecksForInlineClassesGeneric.kt")
+        public void testTypeChecksForInlineClassesGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/typeChecksForInlineClassesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("typeChecksForInlineClasses.kt")
         public void testTypeChecksForInlineClasses_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/typeChecksForInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21601,6 +23377,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("UIntArraySortExample.kt")
         public void testUIntArraySortExample() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/UIntArraySortExample.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("UIntArraySortExampleGeneric.kt")
+        public void testUIntArraySortExampleGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/UIntArraySortExampleGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("UIntArraySortExampleGeneric.kt")
+        public void testUIntArraySortExampleGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/UIntArraySortExampleGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21622,6 +23410,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("unboxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt")
+        public void testUnboxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("unboxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt")
+        public void testUnboxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("unboxNullableValueOfInlineClassWithNonNullUnderlyingType.kt")
         public void testUnboxNullableValueOfInlineClassWithNonNullUnderlyingType_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNonNullUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21631,6 +23431,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("unboxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt")
         public void testUnboxNullableValueOfInlineClassWithPrimitiveUnderlyingType() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("unboxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt")
+        public void testUnboxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("unboxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt")
+        public void testUnboxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21646,6 +23458,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("unboxParameterOfSuspendLambdaBeforeInvokeGeneric.kt")
+        public void testUnboxParameterOfSuspendLambdaBeforeInvokeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxParameterOfSuspendLambdaBeforeInvokeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("unboxParameterOfSuspendLambdaBeforeInvokeGeneric.kt")
+        public void testUnboxParameterOfSuspendLambdaBeforeInvokeGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxParameterOfSuspendLambdaBeforeInvokeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("unboxParameterOfSuspendLambdaBeforeInvoke.kt")
         public void testUnboxParameterOfSuspendLambdaBeforeInvoke_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/unboxParameterOfSuspendLambdaBeforeInvoke.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21655,6 +23479,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("unboxReceiverOnCallingMethodFromInlineClass.kt")
         public void testUnboxReceiverOnCallingMethodFromInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/unboxReceiverOnCallingMethodFromInlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("unboxReceiverOnCallingMethodFromInlineClassGeneric.kt")
+        public void testUnboxReceiverOnCallingMethodFromInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxReceiverOnCallingMethodFromInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("unboxReceiverOnCallingMethodFromInlineClassGeneric.kt")
+        public void testUnboxReceiverOnCallingMethodFromInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxReceiverOnCallingMethodFromInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21676,6 +23512,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("unboxValueFromPlatformTypeGeneric.kt")
+        public void testUnboxValueFromPlatformTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxValueFromPlatformTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("unboxValueFromPlatformTypeGeneric.kt")
+        public void testUnboxValueFromPlatformTypeGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxValueFromPlatformTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("unboxValueFromPlatformType.kt")
         public void testUnboxValueFromPlatformType_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/unboxValueFromPlatformType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21685,6 +23533,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("unboxValueOfAnyBeforeMethodInvocation.kt")
         public void testUnboxValueOfAnyBeforeMethodInvocation() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/unboxValueOfAnyBeforeMethodInvocation.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("unboxValueOfAnyBeforeMethodInvocationGeneric.kt")
+        public void testUnboxValueOfAnyBeforeMethodInvocationGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxValueOfAnyBeforeMethodInvocationGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("unboxValueOfAnyBeforeMethodInvocationGeneric.kt")
+        public void testUnboxValueOfAnyBeforeMethodInvocationGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxValueOfAnyBeforeMethodInvocationGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21700,6 +23560,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("useInlineClassesInsideElvisOperatorGeneric.kt")
+        public void testUseInlineClassesInsideElvisOperatorGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/useInlineClassesInsideElvisOperatorGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("useInlineClassesInsideElvisOperatorGeneric.kt")
+        public void testUseInlineClassesInsideElvisOperatorGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/useInlineClassesInsideElvisOperatorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("useInlineClassesInsideElvisOperator.kt")
         public void testUseInlineClassesInsideElvisOperator_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/useInlineClassesInsideElvisOperator.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21709,6 +23581,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("useInlineFunctionInsideInlineClass.kt")
         public void testUseInlineFunctionInsideInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/useInlineFunctionInsideInlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("useInlineFunctionInsideInlineClassGeneric.kt")
+        public void testUseInlineFunctionInsideInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/useInlineFunctionInsideInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("useInlineFunctionInsideInlineClassGeneric.kt")
+        public void testUseInlineFunctionInsideInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/useInlineFunctionInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -21724,6 +23608,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("useOfInlineClassWithGenericMethodFromJavaGeneric.kt")
+        public void testUseOfInlineClassWithGenericMethodFromJavaGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/useOfInlineClassWithGenericMethodFromJavaGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("useOfInlineClassWithGenericMethodFromJavaGeneric.kt")
+        public void testUseOfInlineClassWithGenericMethodFromJavaGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/useOfInlineClassWithGenericMethodFromJavaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("useOfInlineClassWithGenericMethodFromJava.kt")
         public void testUseOfInlineClassWithGenericMethodFromJava_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/useOfInlineClassWithGenericMethodFromJava.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21736,6 +23632,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("useThisInsideInlineClassGeneric.kt")
+        public void testUseThisInsideInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/useThisInsideInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("useThisInsideInlineClassGeneric.kt")
+        public void testUseThisInsideInlineClassGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/useThisInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("useThisInsideInlineClass.kt")
         public void testUseThisInsideInlineClass_valueClasses() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/useThisInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21745,6 +23653,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("whenWithSubject.kt")
         public void testWhenWithSubject() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/whenWithSubject.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("whenWithSubjectGeneric.kt")
+        public void testWhenWithSubjectGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/whenWithSubjectGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @Test
+        @TestMetadata("whenWithSubjectGeneric.kt")
+        public void testWhenWithSubjectGeneric_valueClasses() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/whenWithSubjectGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -24417,9 +26337,27 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("defaultArgumentGeneric.kt")
+            public void testDefaultArgumentGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType/defaultArgumentGeneric.kt");
+            }
+
+            @Test
+            @TestMetadata("defaultGeneric.kt")
+            public void testDefaultGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType/defaultGeneric.kt");
+            }
+
+            @Test
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType/simple.kt");
+            }
+
+            @Test
+            @TestMetadata("simpleGeneric.kt")
+            public void testSimpleGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType/simpleGeneric.kt");
             }
         }
 
@@ -24436,6 +26374,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("argumentIC.kt")
             public void testArgumentIC() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentIC.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("argumentICGeneric.kt")
+            public void testArgumentICGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentICGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("argumentICGeneric.kt")
+            public void testArgumentICGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentICGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24469,6 +26419,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("mangledSamWrappersGeneric.kt")
+            public void testMangledSamWrappersGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/mangledSamWrappersGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("mangledSamWrappersGeneric.kt")
+            public void testMangledSamWrappersGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/mangledSamWrappersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("mangledSamWrappers.kt")
             public void testMangledSamWrappers_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/mangledSamWrappers.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24478,6 +26440,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("returnIC.kt")
             public void testReturnIC() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/returnIC.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("returnICGeneric.kt")
+            public void testReturnICGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/returnICGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("returnICGeneric.kt")
+            public void testReturnICGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/returnICGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24509,6 +26483,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("anonymousObjectInFunctionWithMangledNameGeneric.kt")
+            public void testAnonymousObjectInFunctionWithMangledNameGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/anonymousObjectInFunctionWithMangledNameGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("anonymousObjectInFunctionWithMangledNameGeneric.kt")
+            public void testAnonymousObjectInFunctionWithMangledNameGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/anonymousObjectInFunctionWithMangledNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("anonymousObjectInFunctionWithMangledName.kt")
             public void testAnonymousObjectInFunctionWithMangledName_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/anonymousObjectInFunctionWithMangledName.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24518,6 +26504,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("extensionFunctionsDoNotClash.kt")
             public void testExtensionFunctionsDoNotClash() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/extensionFunctionsDoNotClash.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("extensionFunctionsDoNotClashGeneric.kt")
+            public void testExtensionFunctionsDoNotClashGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/extensionFunctionsDoNotClashGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("extensionFunctionsDoNotClashGeneric.kt")
+            public void testExtensionFunctionsDoNotClashGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/extensionFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24533,6 +26531,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("functionsWithDifferentNullabilityDoNotClashGeneric.kt")
+            public void testFunctionsWithDifferentNullabilityDoNotClashGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/functionsWithDifferentNullabilityDoNotClashGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("functionsWithDifferentNullabilityDoNotClashGeneric.kt")
+            public void testFunctionsWithDifferentNullabilityDoNotClashGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/functionsWithDifferentNullabilityDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("functionsWithDifferentNullabilityDoNotClash.kt")
             public void testFunctionsWithDifferentNullabilityDoNotClash_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/functionsWithDifferentNullabilityDoNotClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24542,6 +26552,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("genericFunctionsDoNotClash.kt")
             public void testGenericFunctionsDoNotClash() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/genericFunctionsDoNotClash.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("genericFunctionsDoNotClashGeneric.kt")
+            public void testGenericFunctionsDoNotClashGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/genericFunctionsDoNotClashGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("genericFunctionsDoNotClashGeneric.kt")
+            public void testGenericFunctionsDoNotClashGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/genericFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24557,6 +26579,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("genericSignatureOfFunctionWithMangledNameGeneric.kt")
+            public void testGenericSignatureOfFunctionWithMangledNameGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/genericSignatureOfFunctionWithMangledNameGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("genericSignatureOfFunctionWithMangledNameGeneric.kt")
+            public void testGenericSignatureOfFunctionWithMangledNameGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/genericSignatureOfFunctionWithMangledNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("genericSignatureOfFunctionWithMangledName.kt")
             public void testGenericSignatureOfFunctionWithMangledName_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/genericSignatureOfFunctionWithMangledName.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24566,6 +26600,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("localClassInFunctionWithMangledName.kt")
             public void testLocalClassInFunctionWithMangledName() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/localClassInFunctionWithMangledName.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("localClassInFunctionWithMangledNameGeneric.kt")
+            public void testLocalClassInFunctionWithMangledNameGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/localClassInFunctionWithMangledNameGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("localClassInFunctionWithMangledNameGeneric.kt")
+            public void testLocalClassInFunctionWithMangledNameGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/localClassInFunctionWithMangledNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24581,6 +26627,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("mangledFunctionsCanBeOverriddenGeneric.kt")
+            public void testMangledFunctionsCanBeOverriddenGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsCanBeOverriddenGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("mangledFunctionsCanBeOverriddenGeneric.kt")
+            public void testMangledFunctionsCanBeOverriddenGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsCanBeOverriddenGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("mangledFunctionsCanBeOverridden.kt")
             public void testMangledFunctionsCanBeOverridden_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsCanBeOverridden.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24590,6 +26648,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("mangledFunctionsDoNotClash.kt")
             public void testMangledFunctionsDoNotClash() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsDoNotClash.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("mangledFunctionsDoNotClashGeneric.kt")
+            public void testMangledFunctionsDoNotClashGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsDoNotClashGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("mangledFunctionsDoNotClashGeneric.kt")
+            public void testMangledFunctionsDoNotClashGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24605,6 +26675,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("mangledFunctionsPresentInStackTraceGeneric.kt")
+            public void testMangledFunctionsPresentInStackTraceGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsPresentInStackTraceGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("mangledFunctionsPresentInStackTraceGeneric.kt")
+            public void testMangledFunctionsPresentInStackTraceGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsPresentInStackTraceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("mangledFunctionsPresentInStackTrace.kt")
             public void testMangledFunctionsPresentInStackTrace_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsPresentInStackTrace.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24614,6 +26696,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("mixedSignatureFunctionsDoNotClash.kt")
             public void testMixedSignatureFunctionsDoNotClash() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mixedSignatureFunctionsDoNotClash.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("mixedSignatureFunctionsDoNotClashGeneric.kt")
+            public void testMixedSignatureFunctionsDoNotClashGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mixedSignatureFunctionsDoNotClashGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("mixedSignatureFunctionsDoNotClashGeneric.kt")
+            public void testMixedSignatureFunctionsDoNotClashGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mixedSignatureFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24635,9 +26729,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("overridingMethodInGenericClass2Generic.kt")
+            public void testOverridingMethodInGenericClass2Generic() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClass2Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("overridingMethodInGenericClass2Generic.kt")
+            public void testOverridingMethodInGenericClass2Generic_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClass2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("overridingMethodInGenericClass2.kt")
             public void testOverridingMethodInGenericClass2_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClass2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("overridingMethodInGenericClassGeneric.kt")
+            public void testOverridingMethodInGenericClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("overridingMethodInGenericClassGeneric.kt")
+            public void testOverridingMethodInGenericClassGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24653,6 +26771,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("propertySetterWithInlineClassTypeArgumentGeneric.kt")
+            public void testPropertySetterWithInlineClassTypeArgumentGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/propertySetterWithInlineClassTypeArgumentGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("propertySetterWithInlineClassTypeArgumentGeneric.kt")
+            public void testPropertySetterWithInlineClassTypeArgumentGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/propertySetterWithInlineClassTypeArgumentGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("propertySetterWithInlineClassTypeArgument.kt")
             public void testPropertySetterWithInlineClassTypeArgument_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/propertySetterWithInlineClassTypeArgument.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24662,6 +26792,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("reflectionForFunctionWithMangledName.kt")
             public void testReflectionForFunctionWithMangledName() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForFunctionWithMangledName.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("reflectionForFunctionWithMangledNameGeneric.kt")
+            public void testReflectionForFunctionWithMangledNameGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForFunctionWithMangledNameGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("reflectionForFunctionWithMangledNameGeneric.kt")
+            public void testReflectionForFunctionWithMangledNameGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForFunctionWithMangledNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24677,6 +26819,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("reflectionForLocalClassInFunctionWithMangledNameGeneric.kt")
+            public void testReflectionForLocalClassInFunctionWithMangledNameGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForLocalClassInFunctionWithMangledNameGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("reflectionForLocalClassInFunctionWithMangledNameGeneric.kt")
+            public void testReflectionForLocalClassInFunctionWithMangledNameGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForLocalClassInFunctionWithMangledNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("reflectionForLocalClassInFunctionWithMangledName.kt")
             public void testReflectionForLocalClassInFunctionWithMangledName_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForLocalClassInFunctionWithMangledName.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24686,6 +26840,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("reflectionForPropertyOfInlineClassType.kt")
             public void testReflectionForPropertyOfInlineClassType() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForPropertyOfInlineClassType.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("reflectionForPropertyOfInlineClassTypeGeneric.kt")
+            public void testReflectionForPropertyOfInlineClassTypeGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForPropertyOfInlineClassTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("reflectionForPropertyOfInlineClassTypeGeneric.kt")
+            public void testReflectionForPropertyOfInlineClassTypeGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForPropertyOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24701,6 +26867,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("syntheticAccessorForFunctionWithMangledNameGeneric.kt")
+            public void testSyntheticAccessorForFunctionWithMangledNameGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorForFunctionWithMangledNameGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("syntheticAccessorForFunctionWithMangledNameGeneric.kt")
+            public void testSyntheticAccessorForFunctionWithMangledNameGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorForFunctionWithMangledNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("syntheticAccessorForFunctionWithMangledName.kt")
             public void testSyntheticAccessorForFunctionWithMangledName_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorForFunctionWithMangledName.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24710,6 +26888,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("syntheticAccessorsForPropertyOfInlineClassType.kt")
             public void testSyntheticAccessorsForPropertyOfInlineClassType() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorsForPropertyOfInlineClassType.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("syntheticAccessorsForPropertyOfInlineClassTypeGeneric.kt")
+            public void testSyntheticAccessorsForPropertyOfInlineClassTypeGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorsForPropertyOfInlineClassTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("syntheticAccessorsForPropertyOfInlineClassTypeGeneric.kt")
+            public void testSyntheticAccessorsForPropertyOfInlineClassTypeGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorsForPropertyOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24757,6 +26947,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("constructorReferencedFromOtherFile1Generic.kt")
+            public void testConstructorReferencedFromOtherFile1Generic() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile1Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("constructorReferencedFromOtherFile1Generic.kt")
+            public void testConstructorReferencedFromOtherFile1Generic_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile1Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("constructorReferencedFromOtherFile1.kt")
             public void testConstructorReferencedFromOtherFile1_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24766,6 +26968,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("constructorReferencedFromOtherFile2.kt")
             public void testConstructorReferencedFromOtherFile2() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("constructorReferencedFromOtherFile2Generic.kt")
+            public void testConstructorReferencedFromOtherFile2Generic() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile2Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("constructorReferencedFromOtherFile2Generic.kt")
+            public void testConstructorReferencedFromOtherFile2Generic_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24781,6 +26995,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("constructorWithDefaultParametersGeneric.kt")
+            public void testConstructorWithDefaultParametersGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorWithDefaultParametersGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("constructorWithDefaultParametersGeneric.kt")
+            public void testConstructorWithDefaultParametersGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorWithDefaultParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("constructorWithDefaultParameters.kt")
             public void testConstructorWithDefaultParameters_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorWithDefaultParameters.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24793,9 +27019,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("delegatingSuperConstructorCallGeneric.kt")
+            public void testDelegatingSuperConstructorCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCallGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("delegatingSuperConstructorCallGeneric.kt")
+            public void testDelegatingSuperConstructorCallGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("delegatingSuperConstructorCallInSecondaryConstructor.kt")
             public void testDelegatingSuperConstructorCallInSecondaryConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCallInSecondaryConstructor.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("delegatingSuperConstructorCallInSecondaryConstructorGeneric.kt")
+            public void testDelegatingSuperConstructorCallInSecondaryConstructorGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCallInSecondaryConstructorGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("delegatingSuperConstructorCallInSecondaryConstructorGeneric.kt")
+            public void testDelegatingSuperConstructorCallInSecondaryConstructorGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCallInSecondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24817,6 +27067,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("delegatingThisConstructorCallGeneric.kt")
+            public void testDelegatingThisConstructorCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingThisConstructorCallGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("delegatingThisConstructorCallGeneric.kt")
+            public void testDelegatingThisConstructorCallGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingThisConstructorCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("delegatingThisConstructorCall.kt")
             public void testDelegatingThisConstructorCall_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingThisConstructorCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24829,6 +27091,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("enumClassConstructorGeneric.kt")
+            public void testEnumClassConstructorGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/enumClassConstructorGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("enumClassConstructorGeneric.kt")
+            public void testEnumClassConstructorGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/enumClassConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("enumClassConstructor.kt")
             public void testEnumClassConstructor_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/enumClassConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24838,6 +27112,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("innerClassConstructor.kt")
             public void testInnerClassConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/innerClassConstructor.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("innerClassConstructorGeneric.kt")
+            public void testInnerClassConstructorGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/innerClassConstructorGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("innerClassConstructorGeneric.kt")
+            public void testInnerClassConstructorGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/innerClassConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24859,6 +27145,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("primaryConstructorGeneric.kt")
+            public void testPrimaryConstructorGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/primaryConstructorGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("primaryConstructorGeneric.kt")
+            public void testPrimaryConstructorGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/primaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("primaryConstructor.kt")
             public void testPrimaryConstructor_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/primaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24868,6 +27166,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("privateConstructor.kt")
             public void testPrivateConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/privateConstructor.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("privateConstructorGeneric.kt")
+            public void testPrivateConstructorGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/privateConstructorGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("privateConstructorGeneric.kt")
+            public void testPrivateConstructorGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/privateConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24883,6 +27193,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("sealedClassConstructorGeneric.kt")
+            public void testSealedClassConstructorGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/sealedClassConstructorGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("sealedClassConstructorGeneric.kt")
+            public void testSealedClassConstructorGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/sealedClassConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("sealedClassConstructor.kt")
             public void testSealedClassConstructor_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/sealedClassConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24892,6 +27214,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("secondaryConstructor.kt")
             public void testSecondaryConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/secondaryConstructor.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("secondaryConstructorGeneric.kt")
+            public void testSecondaryConstructorGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/secondaryConstructorGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("secondaryConstructorGeneric.kt")
+            public void testSecondaryConstructorGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/secondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24917,6 +27251,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("inlineCollectionOfInlineClassGeneric.kt")
+            public void testInlineCollectionOfInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineCollectionOfInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("inlineCollectionOfInlineClassGeneric.kt")
+            public void testInlineCollectionOfInlineClassGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineCollectionOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("inlineCollectionOfInlineClass.kt")
             public void testInlineCollectionOfInlineClass_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineCollectionOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24929,6 +27275,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("inlineListOfInlineClassGeneric.kt")
+            public void testInlineListOfInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineListOfInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("inlineListOfInlineClassGeneric.kt")
+            public void testInlineListOfInlineClassGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineListOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("inlineListOfInlineClass.kt")
             public void testInlineListOfInlineClass_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineListOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24938,6 +27296,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("inlineMapOfInlineClass.kt")
             public void testInlineMapOfInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineMapOfInlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("inlineMapOfInlineClassGeneric.kt")
+            public void testInlineMapOfInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineMapOfInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("inlineMapOfInlineClassGeneric.kt")
+            public void testInlineMapOfInlineClassGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineMapOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -24963,6 +27333,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("interfaceImplementationByDelegationGeneric.kt")
+            public void testInterfaceImplementationByDelegationGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/interfaceImplementationByDelegationGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("interfaceImplementationByDelegationGeneric.kt")
+            public void testInterfaceImplementationByDelegationGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/interfaceImplementationByDelegationGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("interfaceImplementationByDelegation.kt")
             public void testInterfaceImplementationByDelegation_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/interfaceImplementationByDelegation.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24975,6 +27357,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("kt38337Generic.kt")
+            public void testKt38337Generic() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/kt38337Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("kt38337Generic.kt")
+            public void testKt38337Generic_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/kt38337Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("kt38337.kt")
             public void testKt38337_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/kt38337.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -24984,6 +27378,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("memberExtValDelegationWithInlineClassParameterTypes.kt")
             public void testMemberExtValDelegationWithInlineClassParameterTypes() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberExtValDelegationWithInlineClassParameterTypes.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("memberExtValDelegationWithInlineClassParameterTypesGeneric.kt")
+            public void testMemberExtValDelegationWithInlineClassParameterTypesGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberExtValDelegationWithInlineClassParameterTypesGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("memberExtValDelegationWithInlineClassParameterTypesGeneric.kt")
+            public void testMemberExtValDelegationWithInlineClassParameterTypesGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberExtValDelegationWithInlineClassParameterTypesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25011,6 +27417,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("memberFunDelegatedToInlineClassIntGeneric.kt")
+            public void testMemberFunDelegatedToInlineClassIntGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassIntGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("memberFunDelegatedToInlineClassIntGeneric.kt")
+            public void testMemberFunDelegatedToInlineClassIntGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassIntGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("memberFunDelegatedToInlineClassInt.kt")
             public void testMemberFunDelegatedToInlineClassInt_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassInt.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25020,6 +27438,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("memberFunDelegatedToInlineClassLong.kt")
             public void testMemberFunDelegatedToInlineClassLong() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassLong.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("memberFunDelegatedToInlineClassLongGeneric.kt")
+            public void testMemberFunDelegatedToInlineClassLongGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassLongGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("memberFunDelegatedToInlineClassLongGeneric.kt")
+            public void testMemberFunDelegatedToInlineClassLongGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassLongGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25035,6 +27465,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("memberFunDelegationToInlineClassWithInlineClassParameterTypesGeneric.kt")
+            public void testMemberFunDelegationToInlineClassWithInlineClassParameterTypesGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationToInlineClassWithInlineClassParameterTypesGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("memberFunDelegationToInlineClassWithInlineClassParameterTypesGeneric.kt")
+            public void testMemberFunDelegationToInlineClassWithInlineClassParameterTypesGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationToInlineClassWithInlineClassParameterTypesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("memberFunDelegationToInlineClassWithInlineClassParameterTypes.kt")
             public void testMemberFunDelegationToInlineClassWithInlineClassParameterTypes_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationToInlineClassWithInlineClassParameterTypes.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25044,6 +27486,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("memberFunDelegationWithInlineClassParameterTypes.kt")
             public void testMemberFunDelegationWithInlineClassParameterTypes() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationWithInlineClassParameterTypes.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("memberFunDelegationWithInlineClassParameterTypesGeneric.kt")
+            public void testMemberFunDelegationWithInlineClassParameterTypesGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationWithInlineClassParameterTypesGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("memberFunDelegationWithInlineClassParameterTypesGeneric.kt")
+            public void testMemberFunDelegationWithInlineClassParameterTypesGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationWithInlineClassParameterTypesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25075,6 +27529,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("complexGenericMethodWithInlineClassOverride2Generic.kt")
+            public void testComplexGenericMethodWithInlineClassOverride2Generic() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride2Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("complexGenericMethodWithInlineClassOverride2Generic.kt")
+            public void testComplexGenericMethodWithInlineClassOverride2Generic_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("complexGenericMethodWithInlineClassOverride2.kt")
             public void testComplexGenericMethodWithInlineClassOverride2_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25087,9 +27553,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("complexGenericMethodWithInlineClassOverride3Generic.kt")
+            public void testComplexGenericMethodWithInlineClassOverride3Generic() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride3Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("complexGenericMethodWithInlineClassOverride3Generic.kt")
+            public void testComplexGenericMethodWithInlineClassOverride3Generic_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride3Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("complexGenericMethodWithInlineClassOverride3.kt")
             public void testComplexGenericMethodWithInlineClassOverride3_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("complexGenericMethodWithInlineClassOverrideGeneric.kt")
+            public void testComplexGenericMethodWithInlineClassOverrideGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverrideGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("complexGenericMethodWithInlineClassOverrideGeneric.kt")
+            public void testComplexGenericMethodWithInlineClassOverrideGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverrideGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25105,6 +27595,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("defaultInterfaceExtensionFunCallGeneric.kt")
+            public void testDefaultInterfaceExtensionFunCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceExtensionFunCallGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("defaultInterfaceExtensionFunCallGeneric.kt")
+            public void testDefaultInterfaceExtensionFunCallGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceExtensionFunCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("defaultInterfaceExtensionFunCall.kt")
             public void testDefaultInterfaceExtensionFunCall_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceExtensionFunCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25114,6 +27616,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("defaultInterfaceMethodCall.kt")
             public void testDefaultInterfaceMethodCall() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceMethodCall.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("defaultInterfaceMethodCallGeneric.kt")
+            public void testDefaultInterfaceMethodCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceMethodCallGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("defaultInterfaceMethodCallGeneric.kt")
+            public void testDefaultInterfaceMethodCallGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceMethodCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25129,6 +27643,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("genericDefaultInterfaceExtensionFunCallGeneric.kt")
+            public void testGenericDefaultInterfaceExtensionFunCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceExtensionFunCallGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("genericDefaultInterfaceExtensionFunCallGeneric.kt")
+            public void testGenericDefaultInterfaceExtensionFunCallGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceExtensionFunCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("genericDefaultInterfaceExtensionFunCall.kt")
             public void testGenericDefaultInterfaceExtensionFunCall_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceExtensionFunCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25138,6 +27664,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("genericDefaultInterfaceMethodCall.kt")
             public void testGenericDefaultInterfaceMethodCall() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceMethodCall.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("genericDefaultInterfaceMethodCallGeneric.kt")
+            public void testGenericDefaultInterfaceMethodCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceMethodCallGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("genericDefaultInterfaceMethodCallGeneric.kt")
+            public void testGenericDefaultInterfaceMethodCallGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceMethodCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25153,6 +27691,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("genericInterfaceMethodCallGeneric.kt")
+            public void testGenericInterfaceMethodCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericInterfaceMethodCallGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("genericInterfaceMethodCallGeneric.kt")
+            public void testGenericInterfaceMethodCallGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericInterfaceMethodCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("genericInterfaceMethodCall.kt")
             public void testGenericInterfaceMethodCall_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericInterfaceMethodCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25162,6 +27712,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("genericMethodWithInlineClassOverride.kt")
             public void testGenericMethodWithInlineClassOverride() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericMethodWithInlineClassOverride.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("genericMethodWithInlineClassOverrideGeneric.kt")
+            public void testGenericMethodWithInlineClassOverrideGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericMethodWithInlineClassOverrideGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("genericMethodWithInlineClassOverrideGeneric.kt")
+            public void testGenericMethodWithInlineClassOverrideGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericMethodWithInlineClassOverrideGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25177,6 +27739,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("interfaceSuperCallGeneric.kt")
+            public void testInterfaceSuperCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/interfaceSuperCallGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("interfaceSuperCallGeneric.kt")
+            public void testInterfaceSuperCallGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/interfaceSuperCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("interfaceSuperCall.kt")
             public void testInterfaceSuperCall_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/interfaceSuperCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25186,6 +27760,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("overriddenDefaultInterfaceMethodCall.kt")
             public void testOverriddenDefaultInterfaceMethodCall() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/overriddenDefaultInterfaceMethodCall.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("overriddenDefaultInterfaceMethodCallGeneric.kt")
+            public void testOverriddenDefaultInterfaceMethodCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/overriddenDefaultInterfaceMethodCallGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("overriddenDefaultInterfaceMethodCallGeneric.kt")
+            public void testOverriddenDefaultInterfaceMethodCallGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/overriddenDefaultInterfaceMethodCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25245,15 +27831,51 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("inlineClassInheritingDefaultMethodAllGeneric.kt")
+            public void testInlineClassInheritingDefaultMethodAllGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/inlineClassInheritingDefaultMethodAllGeneric.kt");
+            }
+
+            @Test
+            @TestMetadata("inlineClassInheritingDefaultMethodGeneric.kt")
+            public void testInlineClassInheritingDefaultMethodGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/inlineClassInheritingDefaultMethodGeneric.kt");
+            }
+
+            @Test
             @TestMetadata("javaDefaultMethod.kt")
             public void testJavaDefaultMethod() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/javaDefaultMethod.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
             }
 
             @Test
+            @TestMetadata("javaDefaultMethodGeneric.kt")
+            public void testJavaDefaultMethodGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/javaDefaultMethodGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("javaDefaultMethodGeneric.kt")
+            public void testJavaDefaultMethodGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/javaDefaultMethodGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("javaDefaultMethodOverriddenByKotlin.kt")
             public void testJavaDefaultMethodOverriddenByKotlin() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/javaDefaultMethodOverriddenByKotlin.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("javaDefaultMethodOverriddenByKotlinGeneric.kt")
+            public void testJavaDefaultMethodOverriddenByKotlinGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/javaDefaultMethodOverriddenByKotlinGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("javaDefaultMethodOverriddenByKotlinGeneric.kt")
+            public void testJavaDefaultMethodOverriddenByKotlinGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/javaDefaultMethodOverriddenByKotlinGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25275,9 +27897,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("jvmDefaultAllGeneric.kt")
+            public void testJvmDefaultAllGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultAllGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("jvmDefaultAllGeneric.kt")
+            public void testJvmDefaultAllGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultAllGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("jvmDefaultAllPrimaryProperty.kt")
             public void testJvmDefaultAllPrimaryProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultAllPrimaryProperty.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("jvmDefaultAllPrimaryPropertyGeneric.kt")
+            public void testJvmDefaultAllPrimaryPropertyGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultAllPrimaryPropertyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("jvmDefaultAllPrimaryPropertyGeneric.kt")
+            public void testJvmDefaultAllPrimaryPropertyGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultAllPrimaryPropertyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25290,6 +27936,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("jvmDefaultAllProperty.kt")
             public void testJvmDefaultAllProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultAllProperty.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("jvmDefaultAllPropertyGeneric.kt")
+            public void testJvmDefaultAllPropertyGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultAllPropertyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("jvmDefaultAllPropertyGeneric.kt")
+            public void testJvmDefaultAllPropertyGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultAllPropertyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25311,9 +27969,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("jvmDefaultEnableGeneric.kt")
+            public void testJvmDefaultEnableGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultEnableGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("jvmDefaultEnableGeneric.kt")
+            public void testJvmDefaultEnableGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultEnableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("jvmDefaultEnablePrimaryProperty.kt")
             public void testJvmDefaultEnablePrimaryProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultEnablePrimaryProperty.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("jvmDefaultEnablePrimaryPropertyGeneric.kt")
+            public void testJvmDefaultEnablePrimaryPropertyGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultEnablePrimaryPropertyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("jvmDefaultEnablePrimaryPropertyGeneric.kt")
+            public void testJvmDefaultEnablePrimaryPropertyGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultEnablePrimaryPropertyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25326,6 +28008,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("jvmDefaultEnableProperty.kt")
             public void testJvmDefaultEnableProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultEnableProperty.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("jvmDefaultEnablePropertyGeneric.kt")
+            public void testJvmDefaultEnablePropertyGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultEnablePropertyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("jvmDefaultEnablePropertyGeneric.kt")
+            public void testJvmDefaultEnablePropertyGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultEnablePropertyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25347,6 +28041,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("jvmDefaultGenericGeneric.kt")
+            public void testJvmDefaultGenericGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultGenericGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("jvmDefaultGenericGeneric.kt")
+            public void testJvmDefaultGenericGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultGenericGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("jvmDefaultGeneric.kt")
             public void testJvmDefaultGeneric_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25356,6 +28062,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("jvmDefaultSafeCall.kt")
             public void testJvmDefaultSafeCall() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultSafeCall.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("jvmDefaultSafeCallGeneric.kt")
+            public void testJvmDefaultSafeCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultSafeCallGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("jvmDefaultSafeCallGeneric.kt")
+            public void testJvmDefaultSafeCallGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultSafeCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25371,6 +28089,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("jvmDefaultSmartCastGeneric.kt")
+            public void testJvmDefaultSmartCastGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultSmartCastGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("jvmDefaultSmartCastGeneric.kt")
+            public void testJvmDefaultSmartCastGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultSmartCastGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("jvmDefaultSmartCast.kt")
             public void testJvmDefaultSmartCast_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultSmartCast.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25380,6 +28110,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("jvmDefaultSuspend.kt")
             public void testJvmDefaultSuspend() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultSuspend.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("jvmDefaultSuspendGeneric.kt")
+            public void testJvmDefaultSuspendGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultSuspendGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("jvmDefaultSuspendGeneric.kt")
+            public void testJvmDefaultSuspendGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods/jvmDefaultSuspendGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25405,6 +28147,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("captureLocalVarDelegatedToInlineClassGeneric.kt")
+            public void testCaptureLocalVarDelegatedToInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/captureLocalVarDelegatedToInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("captureLocalVarDelegatedToInlineClassGeneric.kt")
+            public void testCaptureLocalVarDelegatedToInlineClassGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/captureLocalVarDelegatedToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("captureLocalVarDelegatedToInlineClass.kt")
             public void testCaptureLocalVarDelegatedToInlineClass_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/captureLocalVarDelegatedToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25417,9 +28171,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("delegateClassVarToInlineClassGeneric.kt")
+            public void testDelegateClassVarToInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("delegateClassVarToInlineClassGeneric.kt")
+            public void testDelegateClassVarToInlineClassGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("delegateClassVarToInlineClassWithProvideDelegate.kt")
             public void testDelegateClassVarToInlineClassWithProvideDelegate() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClassWithProvideDelegate.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("delegateClassVarToInlineClassWithProvideDelegateGeneric.kt")
+            public void testDelegateClassVarToInlineClassWithProvideDelegateGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClassWithProvideDelegateGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("delegateClassVarToInlineClassWithProvideDelegateGeneric.kt")
+            public void testDelegateClassVarToInlineClassWithProvideDelegateGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClassWithProvideDelegateGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25441,6 +28219,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("delegateCompanionVarToInlineClassGeneric.kt")
+            public void testDelegateCompanionVarToInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateCompanionVarToInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("delegateCompanionVarToInlineClassGeneric.kt")
+            public void testDelegateCompanionVarToInlineClassGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateCompanionVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("delegateCompanionVarToInlineClass.kt")
             public void testDelegateCompanionVarToInlineClass_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateCompanionVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25450,6 +28240,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("delegateJvmStaticCompanionVarToInlineClass.kt")
             public void testDelegateJvmStaticCompanionVarToInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateJvmStaticCompanionVarToInlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("delegateJvmStaticCompanionVarToInlineClassGeneric.kt")
+            public void testDelegateJvmStaticCompanionVarToInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateJvmStaticCompanionVarToInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("delegateJvmStaticCompanionVarToInlineClassGeneric.kt")
+            public void testDelegateJvmStaticCompanionVarToInlineClassGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateJvmStaticCompanionVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25465,6 +28267,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("delegateLocalVarToInlineClassGeneric.kt")
+            public void testDelegateLocalVarToInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateLocalVarToInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("delegateLocalVarToInlineClassGeneric.kt")
+            public void testDelegateLocalVarToInlineClassGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateLocalVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("delegateLocalVarToInlineClass.kt")
             public void testDelegateLocalVarToInlineClass_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateLocalVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25474,6 +28288,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("delegateObjectVarToInlineClass.kt")
             public void testDelegateObjectVarToInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateObjectVarToInlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("delegateObjectVarToInlineClassGeneric.kt")
+            public void testDelegateObjectVarToInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateObjectVarToInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("delegateObjectVarToInlineClassGeneric.kt")
+            public void testDelegateObjectVarToInlineClassGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateObjectVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25489,6 +28315,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("delegatePrivateCompanionVarToInlineClassGeneric.kt")
+            public void testDelegatePrivateCompanionVarToInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatePrivateCompanionVarToInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("delegatePrivateCompanionVarToInlineClassGeneric.kt")
+            public void testDelegatePrivateCompanionVarToInlineClassGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatePrivateCompanionVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("delegatePrivateCompanionVarToInlineClass.kt")
             public void testDelegatePrivateCompanionVarToInlineClass_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatePrivateCompanionVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25498,6 +28336,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("delegateTopLevelVarToInlineClass.kt")
             public void testDelegateTopLevelVarToInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateTopLevelVarToInlineClass.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("delegateTopLevelVarToInlineClassGeneric.kt")
+            public void testDelegateTopLevelVarToInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateTopLevelVarToInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("delegateTopLevelVarToInlineClassGeneric.kt")
+            public void testDelegateTopLevelVarToInlineClassGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateTopLevelVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25513,6 +28363,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("delegatedPropertyOfInlineClassTypeGeneric.kt")
+            public void testDelegatedPropertyOfInlineClassTypeGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatedPropertyOfInlineClassTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("delegatedPropertyOfInlineClassTypeGeneric.kt")
+            public void testDelegatedPropertyOfInlineClassTypeGeneric_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatedPropertyOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("delegatedPropertyOfInlineClassType.kt")
             public void testDelegatedPropertyOfInlineClassType_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatedPropertyOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25525,6 +28387,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("kt27070Generic.kt")
+            public void testKt27070Generic() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt27070Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("kt27070Generic.kt")
+            public void testKt27070Generic_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt27070Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("kt27070.kt")
             public void testKt27070_valueClasses() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt27070.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25534,6 +28408,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             @TestMetadata("kt42933.kt")
             public void testKt42933() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt42933.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("kt42933Generic.kt")
+            public void testKt42933Generic() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt42933Generic.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+            }
+
+            @Test
+            @TestMetadata("kt42933Generic.kt")
+            public void testKt42933Generic_valueClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt42933Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -25660,9 +28546,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("anyGeneric.kt")
+                public void testAnyGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("anyGeneric.kt")
+                public void testAnyGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("anyN.kt")
                 public void testAnyN() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyN.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("anyNGeneric.kt")
+                public void testAnyNGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyNGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("anyNGeneric.kt")
+                public void testAnyNGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyNGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
                 @Test
@@ -25690,9 +28600,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("ifaceChildGeneric.kt")
+                public void testIfaceChildGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/ifaceChildGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("ifaceChildGeneric.kt")
+                public void testIfaceChildGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/ifaceChildGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("ifaceChild.kt")
                 public void testIfaceChild_valueClasses() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/ifaceChild.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
+                @TestMetadata("ifaceGeneric.kt")
+                public void testIfaceGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/ifaceGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("ifaceGeneric.kt")
+                public void testIfaceGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/ifaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
                 @Test
@@ -25714,6 +28648,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("primitiveGeneric.kt")
+                public void testPrimitiveGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/primitiveGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("primitiveGeneric.kt")
+                public void testPrimitiveGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/primitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("primitive.kt")
                 public void testPrimitive_valueClasses() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/primitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25732,6 +28678,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("resultAnyGeneric.kt")
+                public void testResultAnyGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/resultAnyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("resultAnyGeneric.kt")
+                public void testResultAnyGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/resultAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("resultAny.kt")
                 public void testResultAny_valueClasses() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/resultAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25741,6 +28699,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 @TestMetadata("string.kt")
                 public void testString() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/string.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("stringGeneric.kt")
+                public void testStringGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/stringGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("stringGeneric.kt")
+                public void testStringGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/stringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
                 @Test
@@ -25766,9 +28736,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("anyGeneric.kt")
+                public void testAnyGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("anyGeneric.kt")
+                public void testAnyGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("anyN.kt")
                 public void testAnyN() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyN.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("anyNGeneric.kt")
+                public void testAnyNGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyNGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("anyNGeneric.kt")
+                public void testAnyNGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyNGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
                 @Test
@@ -25796,9 +28790,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("ifaceChildGeneric.kt")
+                public void testIfaceChildGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/ifaceChildGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("ifaceChildGeneric.kt")
+                public void testIfaceChildGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/ifaceChildGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("ifaceChild.kt")
                 public void testIfaceChild_valueClasses() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/ifaceChild.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
+                @TestMetadata("ifaceGeneric.kt")
+                public void testIfaceGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/ifaceGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("ifaceGeneric.kt")
+                public void testIfaceGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/ifaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
                 @Test
@@ -25820,6 +28838,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("primitiveGeneric.kt")
+                public void testPrimitiveGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/primitiveGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("primitiveGeneric.kt")
+                public void testPrimitiveGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/primitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("primitive.kt")
                 public void testPrimitive_valueClasses() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/primitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25838,6 +28868,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("resultAnyGeneric.kt")
+                public void testResultAnyGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/resultAnyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("resultAnyGeneric.kt")
+                public void testResultAnyGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/resultAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("resultAny.kt")
                 public void testResultAny_valueClasses() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/resultAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25847,6 +28889,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 @TestMetadata("string.kt")
                 public void testString() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/string.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("stringGeneric.kt")
+                public void testStringGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/stringGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("stringGeneric.kt")
+                public void testStringGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/stringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
                 @Test
@@ -25872,9 +28926,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("anyGeneric.kt")
+                public void testAnyGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("anyGeneric.kt")
+                public void testAnyGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("anyN.kt")
                 public void testAnyN() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyN.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("anyNGeneric.kt")
+                public void testAnyNGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyNGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("anyNGeneric.kt")
+                public void testAnyNGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyNGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
                 @Test
@@ -25902,9 +28980,33 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("ifaceChildGeneric.kt")
+                public void testIfaceChildGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/ifaceChildGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("ifaceChildGeneric.kt")
+                public void testIfaceChildGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/ifaceChildGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("ifaceChild.kt")
                 public void testIfaceChild_valueClasses() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/ifaceChild.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
+                @TestMetadata("ifaceGeneric.kt")
+                public void testIfaceGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/ifaceGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("ifaceGeneric.kt")
+                public void testIfaceGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/ifaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
                 @Test
@@ -25926,6 +29028,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("primitiveGeneric.kt")
+                public void testPrimitiveGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/primitiveGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("primitiveGeneric.kt")
+                public void testPrimitiveGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/primitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("primitive.kt")
                 public void testPrimitive_valueClasses() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/primitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25944,6 +29058,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("resultAnyGeneric.kt")
+                public void testResultAnyGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/resultAnyGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("resultAnyGeneric.kt")
+                public void testResultAnyGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/resultAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("resultAny.kt")
                 public void testResultAny_valueClasses() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/resultAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -25953,6 +29079,18 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 @TestMetadata("string.kt")
                 public void testString() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/string.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("stringGeneric.kt")
+                public void testStringGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/stringGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+                }
+
+                @Test
+                @TestMetadata("stringGeneric.kt")
+                public void testStringGeneric_valueClasses() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/stringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
                 @Test
