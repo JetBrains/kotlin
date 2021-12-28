@@ -12,19 +12,21 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.JarMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetMetadataStorageForIde
+import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.outputFilesProvider
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import java.io.File
+import java.util.concurrent.Callable
 import javax.inject.Inject
 
 internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTask(
@@ -36,7 +38,8 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
             sourceSet,
             /* outputDirectory = */
             project.buildDir.resolve("kotlinSourceSetMetadata").resolve(sourceSet.name + "-cinterop")
-        )
+        ),
+        configureTask = { configureTaskOrder(); onlyIfSourceSetIsSharedNative() }
     )
 }
 
@@ -51,26 +54,26 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
             /* outputDirectory = */
             SourceSetMetadataStorageForIde.sourceSetStorage(project, sourceSet.name).resolve("cinterop")
         ),
+        configureTask = { configureTaskOrder(); onlyIfSourceSetIsSharedNative() }
     )
+}
+
+private fun CInteropMetadataDependencyTransformationTask.configureTaskOrder() {
+    val dependsOnTasks = Callable {
+        val allVisibleSourceSets = sourceSet.resolveAllDependsOnSourceSets() + sourceSet.getAdditionalVisibleSourceSets()
+        project.tasks.withType<CInteropMetadataDependencyTransformationTask>().matching { it.sourceSet in allVisibleSourceSets }
+    }
+    mustRunAfter(dependsOnTasks)
+}
+
+private fun CInteropMetadataDependencyTransformationTask.onlyIfSourceSetIsSharedNative() {
+    onlyIf { project.getCommonizerTarget(sourceSet) is SharedCommonizerTarget }
 }
 
 internal open class CInteropMetadataDependencyTransformationTask @Inject constructor(
     @get:Internal val sourceSet: DefaultKotlinSourceSet,
     @get:OutputDirectory val outputDirectory: File
 ) : DefaultTask() {
-
-    /**
-     * Esoteric output file that every [CInteropMetadataDependencyTransformationTask] will point to.
-     * Sharing this output file will tell Gradle that those tasks cannot run in parallel.
-     * Parallelling this task is not supported, because parallel access to [GranularMetadataTransformation.metadataDependencyResolutions]
-     * is not supported during Gradle's execution phase. This is due to this property's Lazy's lock and
-     * another Lock used by Gradle which would lead to deadlocking.
-     *
-     * This task could potentially be ordered topologically based on dependsOn edges or parent transformations, however
-     * we actually do not care about the actual order chosen by Gradle.
-     */
-    @get:OutputFile
-    protected val mutex: File = project.file(".cinteropMetadataDependencyTransformationMutex")
 
     @Suppress("unused")
     @get:InputFiles
