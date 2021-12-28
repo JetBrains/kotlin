@@ -1,5 +1,4 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS
 // FILE: main.js
 this.Math = withMocks(Math, {
     sinh(x) {
