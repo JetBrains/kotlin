@@ -119,19 +119,14 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
 
                                 // fun <get-a>() = a$delegate.value -> _a.value
                                 // fun <set-a>(value: Int) = { a$delegate.value = value } -> { _a.value = value }
-                                val initializerName = initializer.symbol.owner.name.asString()
-                                val originalFieldName = initializerName.getFieldName()
-                                val originalProperty = (declaration.parent as IrDeclarationContainer).declarations.single {
-                                    it is IrProperty && it.name.asString() == originalFieldName &&
-                                            it.backingField != null && it.backingField!!.type == delegateBackingField.type
-                                }
-                                declaration.transform(DelegatePropertyTransformer((originalProperty as IrProperty).backingField!!), null)
+                                val originalField = initializer.getBackingField()
+                                declaration.transform(DelegatePropertyTransformer(originalField, initializer.dispatchReceiver, false), null)
                             }
                             initializer.isAtomicFactory() -> {
                                 // var a by atomic(77) -> var a: Int = 77
                                 it.expression = initializer.eraseAtomicFactory()
                                     ?: error("Atomic factory was expected but found ${initializer.render()}")
-                                declaration.transform(DelegatePropertyTransformer(delegateBackingField), null)
+                                declaration.transform(DelegatePropertyTransformer(delegateBackingField, initializer.dispatchReceiver, true), null)
                             }
                             else -> error("Unexpected initializer of the delegated property: $initializer")
                         }
@@ -273,7 +268,11 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
             return super.visitConstructorCall(expression, data)
         }
 
-        private inner class DelegatePropertyTransformer(private val originalField: IrField) : IrElementTransformerVoid() {
+        private inner class DelegatePropertyTransformer(
+            val originalField: IrField,
+            val receiver: IrExpression?,
+            val isInitializedWithAtomicFactory: Boolean
+        ): IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 // Accessors of the delegated property have following signatures:
 
@@ -286,11 +285,15 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
                     val type = originalField.type.atomicToValueType()
                     val isSetter = name == SET_VALUE
                     val runtimeFunction = getRuntimeFunctionSymbol(name, type)
-                    val thisRef = expression.getValueArgument(0)!!
-                    val receiver = if (thisRef.isConstNull()) null else thisRef
+                    val dispatchReceiver = if (isInitializedWithAtomicFactory) {
+                        val thisRef = expression.getValueArgument(0)!!
+                        if (thisRef.isConstNull()) null else thisRef
+                    } else {
+                        receiver
+                    }
                     val fieldAccessors = listOf(
-                        context.buildFieldAccessor(originalField, receiver, false),
-                        context.buildFieldAccessor(originalField, receiver, true)
+                        context.buildFieldAccessor(originalField, dispatchReceiver, false),
+                        context.buildFieldAccessor(originalField, dispatchReceiver, true)
                     )
                     return buildCall(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
