@@ -31,6 +31,7 @@ internal fun Project.createCInteropMetadataDependencyClasspathForIde(sourceSet: 
 internal fun Project.createCInteropMetadataDependencyClasspath(sourceSet: DefaultKotlinSourceSet, forIde: Boolean): FileCollection {
     val dependencyTransformationTask = if (forIde) locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde(sourceSet)
     else locateOrRegisterCInteropMetadataDependencyTransformationTask(sourceSet)
+    if (dependencyTransformationTask == null) return project.files()
 
     /*
     The classpath will be assembled by three independent parts
