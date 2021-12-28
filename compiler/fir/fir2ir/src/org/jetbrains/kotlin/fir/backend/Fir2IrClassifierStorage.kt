@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -284,7 +287,7 @@ class Fir2IrClassifierStorage(
                     isInner = regularClass.isInner,
                     isData = regularClass.isData,
                     isExternal = regularClass.isExternal,
-                    isInline = regularClass.isInline,
+                    isInline = regularClass.isInline && regularClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.size == 1,
                     isExpect = regularClass.isExpect,
                     isFun = regularClass.isFun
                 ).apply {

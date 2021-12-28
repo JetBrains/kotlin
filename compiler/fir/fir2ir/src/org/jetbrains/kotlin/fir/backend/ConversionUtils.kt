@@ -621,7 +621,7 @@ fun Fir2IrComponents.createTemporaryVariableForSafeCallConstruction(
 
 // TODO: implement inlineClassRepresentation in FirRegularClass instead.
 fun Fir2IrComponents.computeInlineClassRepresentation(klass: FirRegularClass): InlineClassRepresentation<IrSimpleType>? {
-    if (!klass.isInline) return null
+    if (!(klass.isInline && klass.primaryConstructorIfAny(session)?.valueParameterSymbols?.size == 1)) return null
     val parameter = klass.getInlineClassUnderlyingParameter(session) ?: error("Inline class has no underlying parameter: ${klass.render()}")
     val underlyingType = parameter.returnTypeRef.toIrType(typeConverter)
     return InlineClassRepresentation(

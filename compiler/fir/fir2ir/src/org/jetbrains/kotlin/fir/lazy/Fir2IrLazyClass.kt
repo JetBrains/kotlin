@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
@@ -94,7 +95,7 @@ class Fir2IrLazyClass(
         get() = fir.isExternal
 
     override val isInline: Boolean
-        get() = fir.isInline
+        get() = fir.isInline && fir.primaryConstructorIfAny(session)?.valueParameterSymbols?.size == 1
 
     override val isExpect: Boolean
         get() = fir.isExpect

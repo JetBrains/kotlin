@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.resolve
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val JVM_INLINE_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmInline")
@@ -16,7 +19,8 @@ val JVM_INLINE_ANNOTATION_CLASS_ID = ClassId.topLevel(JVM_INLINE_ANNOTATION_FQ_N
 
 // FIXME: DeserializedClassDescriptor in reflection do not have @JvmInline annotation, that we
 // FIXME: would like to check as well.
-fun DeclarationDescriptor.isInlineClass(): Boolean = this is ClassDescriptor && (isInline || isValue)
+fun DeclarationDescriptor.isInlineClass(): Boolean =
+    this is ClassDescriptor && (isInline || isValue) && unsubstitutedPrimaryConstructor?.valueParameters?.size == 1
 
 fun KotlinType.unsubstitutedUnderlyingType(): KotlinType? =
     constructor.declarationDescriptor.safeAs<ClassDescriptor>()?.inlineClassRepresentation?.underlyingType

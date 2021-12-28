@@ -159,15 +159,15 @@ fun box(): String {
     assert(b.toString() == b.toString())
     assert(b.hashCode() == b.hashCode())
 
-    assert(f1.toString() == "to be replaced")
-    assert(f2.toString() == "to be replaced")
-    assert(f3.toString() == "to be replaced")
-    assert(f4.toString() == "to be replaced")
-    assert(f5.toString() == "to be replaced")
-    assert(f6.toString() == "to be replaced")
-    assert(a1.toString() == "to be replaced")
-    assert(a2.toString() == "to be replaced")
-    assert(b.toString() == "to be replaced")
+    assert(f1.toString() == "F1(x=1)") { f1.toString() }
+    assert(f2.toString() == "F2(x=4294967295)") { f2.toString() }
+    assert(f3.toString().startsWith("F3@")) { f3.toString() } // not data class yet
+    assert(f4.toString() == "F4(x=5)") { f4.toString() }
+    assert(f5.toString() == "F5(x=4294967294)") { f5.toString() }
+    assert(f6.toString() == "F6(x=678)") { f6.toString() }
+    assert(a1.toString().startsWith("A@")) { a1.toString() } // not data class yet
+    assert(a2.toString().startsWith("A@")) { a2.toString() } // not data class yet
+    assert(b.toString().let { it.startsWith("OverridenBToString(a1 = A@") && ", a2 = A@" in it }) { b.toString() } // not data class yet
 
     return "OK"
 }
