@@ -14932,9 +14932,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("annotatedMemberExtensionPropertyGeneric.kt")
+        public void testAnnotatedMemberExtensionPropertyGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionPropertyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("anySuperCall.kt")
         public void testAnySuperCall() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/anySuperCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("anySuperCallGeneric.kt")
+        public void testAnySuperCallGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/anySuperCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -14944,9 +14956,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("boundCallableReferencePassedToInlineFunctionGeneric.kt")
+        public void testBoundCallableReferencePassedToInlineFunctionGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boundCallableReferencePassedToInlineFunctionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("boxImplDoesNotExecuteInSecondaryConstructor.kt")
         public void testBoxImplDoesNotExecuteInSecondaryConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInSecondaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("boxImplDoesNotExecuteInSecondaryConstructorGeneric.kt")
+        public void testBoxImplDoesNotExecuteInSecondaryConstructorGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInSecondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -14956,9 +14980,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("boxImplDoesNotExecuteInitBlockGeneric.kt")
+        public void testBoxImplDoesNotExecuteInitBlockGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxImplDoesNotExecuteInitBlockGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("boxNullableForFakeOverride.kt")
         public void testBoxNullableForFakeOverride() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boxNullableForFakeOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("boxNullableForFakeOverrideGeneric.kt")
+        public void testBoxNullableForFakeOverrideGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxNullableForFakeOverrideGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -14968,9 +15004,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("boxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt")
+        public void testBoxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("boxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt")
         public void testBoxNullableValueOfInlineClassWithPrimitiveUnderlyingType() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("boxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt")
+        public void testBoxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -14980,9 +15028,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("boxResultInlineClassOfConstructorCallGeneric.kt")
+        public void testBoxResultInlineClassOfConstructorCallGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxResultInlineClassOfConstructorCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("boxUnboxInlineClassesWithOperatorsGetSet.kt")
         public void testBoxUnboxInlineClassesWithOperatorsGetSet() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxInlineClassesWithOperatorsGetSet.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("boxUnboxInlineClassesWithOperatorsGetSetGeneric.kt")
+        public void testBoxUnboxInlineClassesWithOperatorsGetSetGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxInlineClassesWithOperatorsGetSetGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -14992,9 +15052,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("boxUnboxOfInlineClassForCapturedVarsGeneric.kt")
+        public void testBoxUnboxOfInlineClassForCapturedVarsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/boxUnboxOfInlineClassForCapturedVarsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("bridgeForFunctionReturningInlineClass.kt")
         public void testBridgeForFunctionReturningInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/bridgeForFunctionReturningInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("bridgeForFunctionReturningInlineClassGeneric.kt")
+        public void testBridgeForFunctionReturningInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/bridgeForFunctionReturningInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15004,9 +15076,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("bridgeGenerationWithInlineClassOverAnyGeneric.kt")
+        public void testBridgeGenerationWithInlineClassOverAnyGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/bridgeGenerationWithInlineClassOverAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("bridgesWhenInlineClassImplementsGenericInterface.kt")
         public void testBridgesWhenInlineClassImplementsGenericInterface() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/bridgesWhenInlineClassImplementsGenericInterface.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("bridgesWhenInlineClassImplementsGenericInterfaceGeneric.kt")
+        public void testBridgesWhenInlineClassImplementsGenericInterfaceGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/bridgesWhenInlineClassImplementsGenericInterfaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15022,9 +15106,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("callableReferencesWithInlineClassesGeneric.kt")
+        public void testCallableReferencesWithInlineClassesGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/callableReferencesWithInlineClassesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("castInsideWhenExpression.kt")
         public void testCastInsideWhenExpression() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/castInsideWhenExpression.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("castInsideWhenExpressionGeneric.kt")
+        public void testCastInsideWhenExpressionGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/castInsideWhenExpressionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15034,9 +15130,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("checkBoxUnboxOfArgumentsOnInlinedFunctionsGeneric.kt")
+        public void testCheckBoxUnboxOfArgumentsOnInlinedFunctionsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxUnboxOfArgumentsOnInlinedFunctionsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("checkBoxingAfterAssertionOperator.kt")
         public void testCheckBoxingAfterAssertionOperator() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingAfterAssertionOperator.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("checkBoxingAfterAssertionOperatorGeneric.kt")
+        public void testCheckBoxingAfterAssertionOperatorGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingAfterAssertionOperatorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15046,9 +15154,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("checkBoxingForComplexClassHierarchyGeneric.kt")
+        public void testCheckBoxingForComplexClassHierarchyGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForComplexClassHierarchyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("checkBoxingForNonLocalAndLabeledReturns.kt")
         public void testCheckBoxingForNonLocalAndLabeledReturns() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForNonLocalAndLabeledReturns.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("checkBoxingForNonLocalAndLabeledReturnsGeneric.kt")
+        public void testCheckBoxingForNonLocalAndLabeledReturnsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingForNonLocalAndLabeledReturnsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15058,9 +15178,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("checkBoxingFromReturnTypeForInlineClassesGeneric.kt")
+        public void testCheckBoxingFromReturnTypeForInlineClassesGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingFromReturnTypeForInlineClassesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("checkBoxingOnFunctionCalls.kt")
         public void testCheckBoxingOnFunctionCalls() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnFunctionCalls.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("checkBoxingOnFunctionCallsGeneric.kt")
+        public void testCheckBoxingOnFunctionCallsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnFunctionCallsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15070,9 +15202,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("checkBoxingOnLocalVariableAssignmentsGeneric.kt")
+        public void testCheckBoxingOnLocalVariableAssignmentsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingOnLocalVariableAssignmentsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("checkBoxingUnboxingForInheritedTypeSpecializedFunctions.kt")
         public void testCheckBoxingUnboxingForInheritedTypeSpecializedFunctions() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingUnboxingForInheritedTypeSpecializedFunctions.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("checkBoxingUnboxingForInheritedTypeSpecializedFunctionsGeneric.kt")
+        public void testCheckBoxingUnboxingForInheritedTypeSpecializedFunctionsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkBoxingUnboxingForInheritedTypeSpecializedFunctionsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15082,9 +15226,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("checkCallingMembersInsideInlineClassGeneric.kt")
+        public void testCheckCallingMembersInsideInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkCallingMembersInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("checkCastToInlineClass.kt")
         public void testCheckCastToInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkCastToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("checkCastToInlineClassGeneric.kt")
+        public void testCheckCastToInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkCastToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15094,9 +15250,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("checkForInstanceOfInlineClassGeneric.kt")
+        public void testCheckForInstanceOfInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkForInstanceOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("checkLambdaWithInlineClassesInFunctionalType.kt")
         public void testCheckLambdaWithInlineClassesInFunctionalType() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/checkLambdaWithInlineClassesInFunctionalType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("checkLambdaWithInlineClassesInFunctionalTypeGeneric.kt")
+        public void testCheckLambdaWithInlineClassesInFunctionalTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkLambdaWithInlineClassesInFunctionalTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15106,9 +15274,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("checkUnboxingResultFromTypeVariableGeneric.kt")
+        public void testCheckUnboxingResultFromTypeVariableGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/checkUnboxingResultFromTypeVariableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("classInInlineClassInit.kt")
         public void testClassInInlineClassInit() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/classInInlineClassInit.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("classInInlineClassInitGeneric.kt")
+        public void testClassInInlineClassInitGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/classInInlineClassInitGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15124,9 +15304,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("conformToComparableAndCallInterfaceMethodGeneric.kt")
+        public void testConformToComparableAndCallInterfaceMethodGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/conformToComparableAndCallInterfaceMethodGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("constructorCallableReference.kt")
         public void testConstructorCallableReference() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/constructorCallableReference.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("constructorCallableReferenceGeneric.kt")
+        public void testConstructorCallableReferenceGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/constructorCallableReferenceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15136,15 +15328,33 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("correctBoxingForBranchExpressionsGeneric.kt")
+        public void testCorrectBoxingForBranchExpressionsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/correctBoxingForBranchExpressionsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("createInlineClassInArgumentPosition.kt")
         public void testCreateInlineClassInArgumentPosition() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/createInlineClassInArgumentPosition.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
+        @TestMetadata("createInlineClassInArgumentPositionGeneric.kt")
+        public void testCreateInlineClassInArgumentPositionGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/createInlineClassInArgumentPositionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("crossinlineWithInlineClassInParameter.kt")
         public void testCrossinlineWithInlineClassInParameter() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/crossinlineWithInlineClassInParameter.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("crossinlineWithInlineClassInParameterGeneric.kt")
+        public void testCrossinlineWithInlineClassInParameterGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/crossinlineWithInlineClassInParameterGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15160,9 +15370,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("defaultFunctionsFromAnyForInlineClassGeneric.kt")
+        public void testDefaultFunctionsFromAnyForInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/defaultFunctionsFromAnyForInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("defaultInterfaceMethodsInInlineClass.kt")
         public void testDefaultInterfaceMethodsInInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/defaultInterfaceMethodsInInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("defaultInterfaceMethodsInInlineClassGeneric.kt")
+        public void testDefaultInterfaceMethodsInInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/defaultInterfaceMethodsInInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15172,9 +15394,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("defaultWithInlineClassArgumentGeneric.kt")
+        public void testDefaultWithInlineClassArgumentGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/defaultWithInlineClassArgumentGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("elvisWithInlineClassAndNullConstant.kt")
         public void testElvisWithInlineClassAndNullConstant() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstant.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("elvisWithInlineClassAndNullConstantGeneric.kt")
+        public void testElvisWithInlineClassAndNullConstantGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/elvisWithInlineClassAndNullConstantGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15184,9 +15418,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("emptyConstructorForInlineClassGeneric.kt")
+        public void testEmptyConstructorForInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/emptyConstructorForInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("equalityChecksInlineClassNonNull.kt")
         public void testEqualityChecksInlineClassNonNull() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksInlineClassNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksInlineClassNonNullGeneric.kt")
+        public void testEqualityChecksInlineClassNonNullGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksInlineClassNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15196,9 +15442,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("equalityChecksMixedNullabilityGeneric.kt")
+        public void testEqualityChecksMixedNullabilityGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksMixedNullabilityGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("equalityChecksNegatedInlineClassNonNull.kt")
         public void testEqualityChecksNegatedInlineClassNonNull() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedInlineClassNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksNegatedInlineClassNonNullGeneric.kt")
+        public void testEqualityChecksNegatedInlineClassNonNullGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedInlineClassNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15208,9 +15466,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("equalityChecksNegatedNonNullGeneric.kt")
+        public void testEqualityChecksNegatedNonNullGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("equalityChecksNegatedNullable.kt")
         public void testEqualityChecksNegatedNullable() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksNegatedNullableGeneric.kt")
+        public void testEqualityChecksNegatedNullableGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedNullableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15220,9 +15490,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("equalityChecksNegatedPrimitiveGeneric.kt")
+        public void testEqualityChecksNegatedPrimitiveGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNegatedPrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("equalityChecksNonNull.kt")
         public void testEqualityChecksNonNull() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksNonNullGeneric.kt")
+        public void testEqualityChecksNonNullGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15232,9 +15514,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("equalityChecksNullableGeneric.kt")
+        public void testEqualityChecksNullableGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksNullableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("equalityChecksPrimitive.kt")
         public void testEqualityChecksPrimitive() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("equalityChecksPrimitiveGeneric.kt")
+        public void testEqualityChecksPrimitiveGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityChecksPrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15244,9 +15538,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("equalityForBoxesOfNullableValuesOfInlineClassGeneric.kt")
+        public void testEqualityForBoxesOfNullableValuesOfInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalityForBoxesOfNullableValuesOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("equalsCallsLeftArgument.kt")
         public void testEqualsCallsLeftArgument() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalsCallsLeftArgument.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("equalsCallsLeftArgumentGeneric.kt")
+        public void testEqualsCallsLeftArgumentGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsCallsLeftArgumentGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15256,9 +15562,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("equalsEvaluationOrderInlineClassGeneric.kt")
+        public void testEqualsEvaluationOrderInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("equalsEvaluationOrderNonNull.kt")
         public void testEqualsEvaluationOrderNonNull() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("equalsEvaluationOrderNonNullGeneric.kt")
+        public void testEqualsEvaluationOrderNonNullGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15268,15 +15586,33 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("equalsEvaluationOrderNullableGeneric.kt")
+        public void testEqualsEvaluationOrderNullableGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderNullableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("equalsEvaluationOrderPrimitive.kt")
         public void testEqualsEvaluationOrderPrimitive() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
+        @TestMetadata("equalsEvaluationOrderPrimitiveGeneric.kt")
+        public void testEqualsEvaluationOrderPrimitiveGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsEvaluationOrderPrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("equalsOperatorWithGenericCall.kt")
         public void testEqualsOperatorWithGenericCall() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/equalsOperatorWithGenericCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("equalsOperatorWithGenericCallGeneric.kt")
+        public void testEqualsOperatorWithGenericCallGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/equalsOperatorWithGenericCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15292,9 +15628,27 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("extLambdaInInlineClassFun2Generic.kt")
+        public void testExtLambdaInInlineClassFun2Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFun2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("extLambdaInInlineClassFunGeneric.kt")
+        public void testExtLambdaInInlineClassFunGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/extLambdaInInlineClassFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("fieldNameClash.kt")
         public void testFieldNameClash() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/fieldNameClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("fieldNameClashGeneric.kt")
+        public void testFieldNameClashGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/fieldNameClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15316,6 +15670,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("functionExpressionGeneric.kt")
+        public void testFunctionExpressionGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/functionExpressionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("genericInlineClassSynthMembers.kt")
         public void testGenericInlineClassSynthMembers() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/genericInlineClassSynthMembers.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -15334,9 +15694,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("initBlockGeneric.kt")
+        public void testInitBlockGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/initBlockGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassAsLastExpressionInInLambda.kt")
         public void testInlineClassAsLastExpressionInInLambda() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("inlineClassAsLastExpressionInInLambdaGeneric.kt")
+        public void testInlineClassAsLastExpressionInInLambdaGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassAsLastExpressionInInLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15346,9 +15718,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("inlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric.kt")
+        public void testInlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassEqualityShouldUseTotalOrderForFloatingPointDataGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassFieldHandling.kt")
         public void testInlineClassFieldHandling() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFieldHandling.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("inlineClassFieldHandlingGeneric.kt")
+        public void testInlineClassFieldHandlingGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFieldHandlingGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15358,9 +15742,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("inlineClassFunctionInvokeGeneric.kt")
+        public void testInlineClassFunctionInvokeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassFunctionInvokeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassInInitBlock.kt")
         public void testInlineClassInInitBlock() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInInitBlock.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("inlineClassInInitBlockGeneric.kt")
+        public void testInlineClassInInitBlockGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInInitBlockGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15370,9 +15766,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("inlineClassInStringTemplateGeneric.kt")
+        public void testInlineClassInStringTemplateGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassInStringTemplateGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassPropertyReferenceGetAndSet.kt")
         public void testInlineClassPropertyReferenceGetAndSet() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassPropertyReferenceGetAndSet.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("inlineClassPropertyReferenceGetAndSetGeneric.kt")
+        public void testInlineClassPropertyReferenceGetAndSetGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassPropertyReferenceGetAndSetGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15382,9 +15790,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("inlineClassValueCapturedInInlineLambdaGeneric.kt")
+        public void testInlineClassValueCapturedInInlineLambdaGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInInlineLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassValueCapturedInNonInlineLambda.kt")
         public void testInlineClassValueCapturedInNonInlineLambda() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInNonInlineLambda.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("inlineClassValueCapturedInNonInlineLambdaGeneric.kt")
+        public void testInlineClassValueCapturedInNonInlineLambdaGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValueCapturedInNonInlineLambdaGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15394,9 +15814,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("inlineClassValuesInsideStringsGeneric.kt")
+        public void testInlineClassValuesInsideStringsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassValuesInsideStringsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassWithCustomEquals.kt")
         public void testInlineClassWithCustomEquals() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithCustomEquals.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("inlineClassWithCustomEqualsGeneric.kt")
+        public void testInlineClassWithCustomEqualsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithCustomEqualsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15406,9 +15838,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("inlineClassWithDefaultFunctionsFromAnyGeneric.kt")
+        public void testInlineClassWithDefaultFunctionsFromAnyGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassWithDefaultFunctionsFromAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassesAsInlineFunParameters.kt")
         public void testInlineClassesAsInlineFunParameters() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesAsInlineFunParameters.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("inlineClassesAsInlineFunParametersGeneric.kt")
+        public void testInlineClassesAsInlineFunParametersGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesAsInlineFunParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15418,15 +15862,33 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("inlineClassesCheckCastGeneric.kt")
+        public void testInlineClassesCheckCastGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesCheckCastGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassesInInlineLambdaParameters.kt")
         public void testInlineClassesInInlineLambdaParameters() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesInInlineLambdaParameters.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
+        @TestMetadata("inlineClassesInInlineLambdaParametersGeneric.kt")
+        public void testInlineClassesInInlineLambdaParametersGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesInInlineLambdaParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineClassesRefTypesInInlineLambdaParameters.kt")
         public void testInlineClassesRefTypesInInlineLambdaParameters() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesRefTypesInInlineLambdaParameters.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("inlineClassesRefTypesInInlineLambdaParametersGeneric.kt")
+        public void testInlineClassesRefTypesInInlineLambdaParametersGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineClassesRefTypesInInlineLambdaParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15442,9 +15904,27 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("inlineExtLambdaInInlineClassFun2Generic.kt")
+        public void testInlineExtLambdaInInlineClassFun2Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFun2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("inlineExtLambdaInInlineClassFunGeneric.kt")
+        public void testInlineExtLambdaInInlineClassFunGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineExtLambdaInInlineClassFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("inlineFunctionInsideInlineClass.kt")
         public void testInlineFunctionInsideInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/inlineFunctionInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("inlineFunctionInsideInlineClassGeneric.kt")
+        public void testInlineFunctionInsideInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/inlineFunctionInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15454,9 +15934,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("iterateOverArrayOfInlineClassValuesGeneric.kt")
+        public void testIterateOverArrayOfInlineClassValuesGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/iterateOverArrayOfInlineClassValuesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("iterateOverListOfInlineClassValues.kt")
         public void testIterateOverListOfInlineClassValues() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/iterateOverListOfInlineClassValues.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("iterateOverListOfInlineClassValuesGeneric.kt")
+        public void testIterateOverListOfInlineClassValuesGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/iterateOverListOfInlineClassValuesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15475,6 +15967,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("kt25750.kt")
         public void testKt25750() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt25750.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("kt25750Generic.kt")
+        public void testKt25750Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt25750Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15514,15 +16012,33 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt27096Generic.kt")
+        public void testKt27096Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt27096_enum.kt")
         public void testKt27096_enum() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27096_enum.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
+        @TestMetadata("kt27096_enumGeneric.kt")
+        public void testKt27096_enumGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_enumGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt27096_functional.kt")
         public void testKt27096_functional() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27096_functional.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("kt27096_functionalGeneric.kt")
+        public void testKt27096_functionalGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_functionalGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15538,9 +16054,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt27096_nullablePrimitiveGeneric.kt")
+        public void testKt27096_nullablePrimitiveGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullablePrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt27096_nullableReference.kt")
         public void testKt27096_nullableReference() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullableReference.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("kt27096_nullableReferenceGeneric.kt")
+        public void testKt27096_nullableReferenceGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_nullableReferenceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15550,9 +16078,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt27096_primitiveGeneric.kt")
+        public void testKt27096_primitiveGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_primitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt27096_reference.kt")
         public void testKt27096_reference() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27096_reference.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("kt27096_referenceGeneric.kt")
+        public void testKt27096_referenceGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27096_referenceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15568,9 +16108,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt27113aGeneric.kt")
+        public void testKt27113aGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27113aGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt27132.kt")
         public void testKt27132() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27132.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("kt27132Generic.kt")
+        public void testKt27132Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27132Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15580,15 +16132,33 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt27140Generic.kt")
+        public void testKt27140Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27140Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt27705.kt")
         public void testKt27705() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27705.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
+        @TestMetadata("kt27705Generic.kt")
+        public void testKt27705Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27705Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt27706.kt")
         public void testKt27706() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt27706.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("kt27706Generic.kt")
+        public void testKt27706Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt27706Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15622,6 +16192,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt33119Generic.kt")
+        public void testKt33119Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt33119Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt34268.kt")
         public void testKt34268() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt34268.kt");
@@ -15640,9 +16216,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt37998Generic.kt")
+        public void testKt37998Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt37998Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt38680.kt")
         public void testKt38680() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt38680.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("kt38680Generic.kt")
+        public void testKt38680Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt38680Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15652,9 +16240,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt38680aGeneric.kt")
+        public void testKt38680aGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt38680aGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt38680b.kt")
         public void testKt38680b() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt38680b.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("kt38680bGeneric.kt")
+        public void testKt38680bGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt38680bGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15682,6 +16282,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt45084Generic.kt")
+        public void testKt45084Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt45084Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt45991.kt")
         public void testKt45991() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt45991.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -15694,9 +16300,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("kt46554Generic.kt")
+        public void testKt46554Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt46554Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("kt47762.kt")
         public void testKt47762() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/kt47762.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("kt47762Generic.kt")
+        public void testKt47762Generic() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt47762Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15712,9 +16330,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("mangledDefaultParameterFunctionGeneric.kt")
+        public void testMangledDefaultParameterFunctionGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunctionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("mangledSuperCalls.kt")
         public void testMangledSuperCalls() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/mangledSuperCalls.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("mangledSuperCallsGeneric.kt")
+        public void testMangledSuperCallsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/mangledSuperCallsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15730,9 +16360,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("nestedInlineClassGeneric.kt")
+        public void testNestedInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/nestedInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("noAssertionsOnInlineClassBasedOnNullableType.kt")
         public void testNoAssertionsOnInlineClassBasedOnNullableType() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/noAssertionsOnInlineClassBasedOnNullableType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("noAssertionsOnInlineClassBasedOnNullableTypeGeneric.kt")
+        public void testNoAssertionsOnInlineClassBasedOnNullableTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/noAssertionsOnInlineClassBasedOnNullableTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15742,15 +16384,33 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("noReturnTypeManglingGeneric.kt")
+        public void testNoReturnTypeManglingGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/noReturnTypeManglingGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("nullableEqeqNonNull.kt")
         public void testNullableEqeqNonNull() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/nullableEqeqNonNull.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
+        @TestMetadata("nullableEqeqNonNullGeneric.kt")
+        public void testNullableEqeqNonNullGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/nullableEqeqNonNullGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("nullableWrapperEquality.kt")
         public void testNullableWrapperEquality() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/nullableWrapperEquality.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("nullableWrapperEqualityGeneric.kt")
+        public void testNullableWrapperEqualityGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/nullableWrapperEqualityGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15766,9 +16426,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("overridingFunCallingPrivateFunGeneric.kt")
+        public void testOverridingFunCallingPrivateFunGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/overridingFunCallingPrivateFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("passInlineClassAsVararg.kt")
         public void testPassInlineClassAsVararg() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassAsVararg.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("passInlineClassAsVarargGeneric.kt")
+        public void testPassInlineClassAsVarargGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassAsVarargGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15778,9 +16450,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("passInlineClassWithSpreadOperatorToVarargsGeneric.kt")
+        public void testPassInlineClassWithSpreadOperatorToVarargsGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/passInlineClassWithSpreadOperatorToVarargsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("privateConstructorFunInterfaceMultiModule.kt")
         public void testPrivateConstructorFunInterfaceMultiModule() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/privateConstructorFunInterfaceMultiModule.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("privateConstructorFunInterfaceMultiModuleGeneric.kt")
+        public void testPrivateConstructorFunInterfaceMultiModuleGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/privateConstructorFunInterfaceMultiModuleGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15790,9 +16474,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("propertyLoweringOrderGeneric.kt")
+        public void testPropertyLoweringOrderGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/propertyLoweringOrderGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("referToPropertyInCompanionObjectOfInlineClass.kt")
         public void testReferToPropertyInCompanionObjectOfInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/referToPropertyInCompanionObjectOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("referToPropertyInCompanionObjectOfInlineClassGeneric.kt")
+        public void testReferToPropertyInCompanionObjectOfInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/referToPropertyInCompanionObjectOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15802,9 +16498,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("referToUnderlyingPropertyInsideInlineClassGeneric.kt")
+        public void testReferToUnderlyingPropertyInsideInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("referToUnderlyingPropertyOfInlineClass.kt")
         public void testReferToUnderlyingPropertyOfInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("referToUnderlyingPropertyOfInlineClassGeneric.kt")
+        public void testReferToUnderlyingPropertyOfInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/referToUnderlyingPropertyOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15817,6 +16525,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("result.kt")
         public void testResult() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/result.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("resultGeneric.kt")
+        public void testResultGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/resultGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15838,9 +16552,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("safeAsOfTypeParameterWithInlineClassBoundGeneric.kt")
+        public void testSafeAsOfTypeParameterWithInlineClassBoundGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/safeAsOfTypeParameterWithInlineClassBoundGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("samWrapperDifferentModule.kt")
         public void testSamWrapperDifferentModule() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/samWrapperDifferentModule.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("samWrapperDifferentModuleGeneric.kt")
+        public void testSamWrapperDifferentModuleGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/samWrapperDifferentModuleGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15850,9 +16576,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("secondaryConstructorWithVarargGeneric.kt")
+        public void testSecondaryConstructorWithVarargGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorWithVarargGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("secondaryConstructorsInsideInlineClass.kt")
         public void testSecondaryConstructorsInsideInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("secondaryConstructorsInsideInlineClassGeneric.kt")
+        public void testSecondaryConstructorsInsideInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15862,9 +16600,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("secondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric.kt")
+        public void testSecondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClassWithPrimitiveCarrierTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("simpleSecondaryConstructor.kt")
         public void testSimpleSecondaryConstructor() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("simpleSecondaryConstructorGeneric.kt")
+        public void testSimpleSecondaryConstructorGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/simpleSecondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15874,9 +16624,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("smartCastOnThisOfInlineClassTypeGeneric.kt")
+        public void testSmartCastOnThisOfInlineClassTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/smartCastOnThisOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("stringPlus.kt")
         public void testStringPlus() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/stringPlus.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("stringPlusGeneric.kt")
+        public void testStringPlusGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/stringPlusGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15886,9 +16648,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("toStringCallingPrivateFunGeneric.kt")
+        public void testToStringCallingPrivateFunGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/toStringCallingPrivateFunGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("toStringOfUnboxedNullable.kt")
         public void testToStringOfUnboxedNullable() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/toStringOfUnboxedNullable.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("toStringOfUnboxedNullableGeneric.kt")
+        public void testToStringOfUnboxedNullableGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/toStringOfUnboxedNullableGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15898,9 +16672,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("typeChecksForInlineClassesGeneric.kt")
+        public void testTypeChecksForInlineClassesGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/typeChecksForInlineClassesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("UIntArraySortExample.kt")
         public void testUIntArraySortExample() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/UIntArraySortExample.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("UIntArraySortExampleGeneric.kt")
+        public void testUIntArraySortExampleGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/UIntArraySortExampleGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15916,9 +16702,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("unboxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt")
+        public void testUnboxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("unboxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt")
         public void testUnboxNullableValueOfInlineClassWithPrimitiveUnderlyingType() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("unboxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt")
+        public void testUnboxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithPrimitiveUnderlyingTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15928,9 +16726,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("unboxParameterOfSuspendLambdaBeforeInvokeGeneric.kt")
+        public void testUnboxParameterOfSuspendLambdaBeforeInvokeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxParameterOfSuspendLambdaBeforeInvokeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("unboxReceiverOnCallingMethodFromInlineClass.kt")
         public void testUnboxReceiverOnCallingMethodFromInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/unboxReceiverOnCallingMethodFromInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("unboxReceiverOnCallingMethodFromInlineClassGeneric.kt")
+        public void testUnboxReceiverOnCallingMethodFromInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxReceiverOnCallingMethodFromInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15946,9 +16756,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("unboxValueFromPlatformTypeGeneric.kt")
+        public void testUnboxValueFromPlatformTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxValueFromPlatformTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("unboxValueOfAnyBeforeMethodInvocation.kt")
         public void testUnboxValueOfAnyBeforeMethodInvocation() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/unboxValueOfAnyBeforeMethodInvocation.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("unboxValueOfAnyBeforeMethodInvocationGeneric.kt")
+        public void testUnboxValueOfAnyBeforeMethodInvocationGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxValueOfAnyBeforeMethodInvocationGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15958,9 +16780,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("useInlineClassesInsideElvisOperatorGeneric.kt")
+        public void testUseInlineClassesInsideElvisOperatorGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/useInlineClassesInsideElvisOperatorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("useInlineFunctionInsideInlineClass.kt")
         public void testUseInlineFunctionInsideInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/useInlineFunctionInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("useInlineFunctionInsideInlineClassGeneric.kt")
+        public void testUseInlineFunctionInsideInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/useInlineFunctionInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Test
@@ -15970,9 +16804,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("useThisInsideInlineClassGeneric.kt")
+        public void testUseThisInsideInlineClassGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/useThisInsideInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
         @TestMetadata("whenWithSubject.kt")
         public void testWhenWithSubject() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/whenWithSubject.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+        }
+
+        @Test
+        @TestMetadata("whenWithSubjectGeneric.kt")
+        public void testWhenWithSubjectGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/whenWithSubjectGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
         @Nested
@@ -17259,9 +18105,27 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("defaultArgumentGeneric.kt")
+            public void testDefaultArgumentGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType/defaultArgumentGeneric.kt");
+            }
+
+            @Test
+            @TestMetadata("defaultGeneric.kt")
+            public void testDefaultGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType/defaultGeneric.kt");
+            }
+
+            @Test
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType/simple.kt");
+            }
+
+            @Test
+            @TestMetadata("simpleGeneric.kt")
+            public void testSimpleGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType/simpleGeneric.kt");
             }
         }
 
@@ -17281,6 +18145,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("argumentICGeneric.kt")
+            public void testArgumentICGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentICGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("argumentResult.kt")
             public void testArgumentResult() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/argumentResult.kt");
@@ -17293,9 +18163,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("mangledSamWrappersGeneric.kt")
+            public void testMangledSamWrappersGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/mangledSamWrappersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("returnIC.kt")
             public void testReturnIC() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/funInterface/returnIC.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("returnICGeneric.kt")
+            public void testReturnICGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/funInterface/returnICGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17321,9 +18203,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("anonymousObjectInFunctionWithMangledNameGeneric.kt")
+            public void testAnonymousObjectInFunctionWithMangledNameGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/anonymousObjectInFunctionWithMangledNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("extensionFunctionsDoNotClash.kt")
             public void testExtensionFunctionsDoNotClash() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/extensionFunctionsDoNotClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("extensionFunctionsDoNotClashGeneric.kt")
+            public void testExtensionFunctionsDoNotClashGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/extensionFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17333,9 +18227,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("functionsWithDifferentNullabilityDoNotClashGeneric.kt")
+            public void testFunctionsWithDifferentNullabilityDoNotClashGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/functionsWithDifferentNullabilityDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("genericFunctionsDoNotClash.kt")
             public void testGenericFunctionsDoNotClash() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/genericFunctionsDoNotClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("genericFunctionsDoNotClashGeneric.kt")
+            public void testGenericFunctionsDoNotClashGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/genericFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17345,9 +18251,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("localClassInFunctionWithMangledNameGeneric.kt")
+            public void testLocalClassInFunctionWithMangledNameGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/localClassInFunctionWithMangledNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("mangledFunctionsCanBeOverridden.kt")
             public void testMangledFunctionsCanBeOverridden() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsCanBeOverridden.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("mangledFunctionsCanBeOverriddenGeneric.kt")
+            public void testMangledFunctionsCanBeOverriddenGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsCanBeOverriddenGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17357,15 +18275,33 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("mangledFunctionsDoNotClashGeneric.kt")
+            public void testMangledFunctionsDoNotClashGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("mangledFunctionsPresentInStackTrace.kt")
             public void testMangledFunctionsPresentInStackTrace() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsPresentInStackTrace.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
+            @TestMetadata("mangledFunctionsPresentInStackTraceGeneric.kt")
+            public void testMangledFunctionsPresentInStackTraceGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mangledFunctionsPresentInStackTraceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("mixedSignatureFunctionsDoNotClash.kt")
             public void testMixedSignatureFunctionsDoNotClash() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mixedSignatureFunctionsDoNotClash.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("mixedSignatureFunctionsDoNotClashGeneric.kt")
+            public void testMixedSignatureFunctionsDoNotClashGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/mixedSignatureFunctionsDoNotClashGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17381,9 +18317,27 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("overridingMethodInGenericClass2Generic.kt")
+            public void testOverridingMethodInGenericClass2Generic() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClass2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("overridingMethodInGenericClassGeneric.kt")
+            public void testOverridingMethodInGenericClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/overridingMethodInGenericClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("propertySetterWithInlineClassTypeArgument.kt")
             public void testPropertySetterWithInlineClassTypeArgument() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/propertySetterWithInlineClassTypeArgument.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("propertySetterWithInlineClassTypeArgumentGeneric.kt")
+            public void testPropertySetterWithInlineClassTypeArgumentGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/propertySetterWithInlineClassTypeArgumentGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17393,9 +18347,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("reflectionForFunctionWithMangledNameGeneric.kt")
+            public void testReflectionForFunctionWithMangledNameGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForFunctionWithMangledNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("reflectionForPropertyOfInlineClassType.kt")
             public void testReflectionForPropertyOfInlineClassType() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForPropertyOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("reflectionForPropertyOfInlineClassTypeGeneric.kt")
+            public void testReflectionForPropertyOfInlineClassTypeGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/reflectionForPropertyOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17405,9 +18371,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("syntheticAccessorForFunctionWithMangledNameGeneric.kt")
+            public void testSyntheticAccessorForFunctionWithMangledNameGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorForFunctionWithMangledNameGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("syntheticAccessorsForPropertyOfInlineClassType.kt")
             public void testSyntheticAccessorsForPropertyOfInlineClassType() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorsForPropertyOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("syntheticAccessorsForPropertyOfInlineClassTypeGeneric.kt")
+            public void testSyntheticAccessorsForPropertyOfInlineClassTypeGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/functionNameMangling/syntheticAccessorsForPropertyOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
         }
 
@@ -17449,9 +18427,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("constructorReferencedFromOtherFile1Generic.kt")
+            public void testConstructorReferencedFromOtherFile1Generic() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile1Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("constructorReferencedFromOtherFile2.kt")
             public void testConstructorReferencedFromOtherFile2() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile2.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("constructorReferencedFromOtherFile2Generic.kt")
+            public void testConstructorReferencedFromOtherFile2Generic() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17461,9 +18451,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("constructorWithDefaultParametersGeneric.kt")
+            public void testConstructorWithDefaultParametersGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorWithDefaultParametersGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("delegatingSuperConstructorCall.kt")
             public void testDelegatingSuperConstructorCall() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("delegatingSuperConstructorCallGeneric.kt")
+            public void testDelegatingSuperConstructorCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17473,9 +18475,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("delegatingSuperConstructorCallInSecondaryConstructorGeneric.kt")
+            public void testDelegatingSuperConstructorCallInSecondaryConstructorGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingSuperConstructorCallInSecondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("delegatingThisConstructorCall.kt")
             public void testDelegatingThisConstructorCall() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingThisConstructorCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("delegatingThisConstructorCallGeneric.kt")
+            public void testDelegatingThisConstructorCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/delegatingThisConstructorCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17485,9 +18499,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("enumClassConstructorGeneric.kt")
+            public void testEnumClassConstructorGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/enumClassConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("innerClassConstructor.kt")
             public void testInnerClassConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/innerClassConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("innerClassConstructorGeneric.kt")
+            public void testInnerClassConstructorGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/innerClassConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17503,9 +18529,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("primaryConstructorGeneric.kt")
+            public void testPrimaryConstructorGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/primaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("privateConstructor.kt")
             public void testPrivateConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/privateConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("privateConstructorGeneric.kt")
+            public void testPrivateConstructorGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/privateConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17515,9 +18553,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("sealedClassConstructorGeneric.kt")
+            public void testSealedClassConstructorGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/sealedClassConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("secondaryConstructor.kt")
             public void testSecondaryConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/secondaryConstructor.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("secondaryConstructorGeneric.kt")
+            public void testSecondaryConstructorGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/secondaryConstructorGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
         }
 
@@ -17537,15 +18587,33 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("inlineCollectionOfInlineClassGeneric.kt")
+            public void testInlineCollectionOfInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineCollectionOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("inlineListOfInlineClass.kt")
             public void testInlineListOfInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineListOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
+            @TestMetadata("inlineListOfInlineClassGeneric.kt")
+            public void testInlineListOfInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineListOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("inlineMapOfInlineClass.kt")
             public void testInlineMapOfInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineMapOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("inlineMapOfInlineClassGeneric.kt")
+            public void testInlineMapOfInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineMapOfInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
         }
 
@@ -17565,15 +18633,33 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("interfaceImplementationByDelegationGeneric.kt")
+            public void testInterfaceImplementationByDelegationGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/interfaceImplementationByDelegationGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("kt38337.kt")
             public void testKt38337() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/kt38337.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
+            @TestMetadata("kt38337Generic.kt")
+            public void testKt38337Generic() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/kt38337Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("memberExtValDelegationWithInlineClassParameterTypes.kt")
             public void testMemberExtValDelegationWithInlineClassParameterTypes() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberExtValDelegationWithInlineClassParameterTypes.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("memberExtValDelegationWithInlineClassParameterTypesGeneric.kt")
+            public void testMemberExtValDelegationWithInlineClassParameterTypesGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberExtValDelegationWithInlineClassParameterTypesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17589,9 +18675,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("memberFunDelegatedToInlineClassIntGeneric.kt")
+            public void testMemberFunDelegatedToInlineClassIntGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassIntGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("memberFunDelegatedToInlineClassLong.kt")
             public void testMemberFunDelegatedToInlineClassLong() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassLong.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("memberFunDelegatedToInlineClassLongGeneric.kt")
+            public void testMemberFunDelegatedToInlineClassLongGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegatedToInlineClassLongGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17601,9 +18699,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("memberFunDelegationToInlineClassWithInlineClassParameterTypesGeneric.kt")
+            public void testMemberFunDelegationToInlineClassWithInlineClassParameterTypesGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationToInlineClassWithInlineClassParameterTypesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("memberFunDelegationWithInlineClassParameterTypes.kt")
             public void testMemberFunDelegationWithInlineClassParameterTypes() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationWithInlineClassParameterTypes.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("memberFunDelegationWithInlineClassParameterTypesGeneric.kt")
+            public void testMemberFunDelegationWithInlineClassParameterTypesGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/memberFunDelegationWithInlineClassParameterTypesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
         }
 
@@ -17629,9 +18739,27 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("complexGenericMethodWithInlineClassOverride2Generic.kt")
+            public void testComplexGenericMethodWithInlineClassOverride2Generic() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride2Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("complexGenericMethodWithInlineClassOverride3.kt")
             public void testComplexGenericMethodWithInlineClassOverride3() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride3.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("complexGenericMethodWithInlineClassOverride3Generic.kt")
+            public void testComplexGenericMethodWithInlineClassOverride3Generic() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride3Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("complexGenericMethodWithInlineClassOverrideGeneric.kt")
+            public void testComplexGenericMethodWithInlineClassOverrideGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverrideGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17641,9 +18769,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("defaultInterfaceExtensionFunCallGeneric.kt")
+            public void testDefaultInterfaceExtensionFunCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceExtensionFunCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("defaultInterfaceMethodCall.kt")
             public void testDefaultInterfaceMethodCall() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceMethodCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("defaultInterfaceMethodCallGeneric.kt")
+            public void testDefaultInterfaceMethodCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/defaultInterfaceMethodCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17653,9 +18793,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("genericDefaultInterfaceExtensionFunCallGeneric.kt")
+            public void testGenericDefaultInterfaceExtensionFunCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceExtensionFunCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("genericDefaultInterfaceMethodCall.kt")
             public void testGenericDefaultInterfaceMethodCall() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceMethodCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("genericDefaultInterfaceMethodCallGeneric.kt")
+            public void testGenericDefaultInterfaceMethodCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericDefaultInterfaceMethodCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17665,9 +18817,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("genericInterfaceMethodCallGeneric.kt")
+            public void testGenericInterfaceMethodCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericInterfaceMethodCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("genericMethodWithInlineClassOverride.kt")
             public void testGenericMethodWithInlineClassOverride() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericMethodWithInlineClassOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("genericMethodWithInlineClassOverrideGeneric.kt")
+            public void testGenericMethodWithInlineClassOverrideGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/genericMethodWithInlineClassOverrideGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17677,9 +18841,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("interfaceSuperCallGeneric.kt")
+            public void testInterfaceSuperCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/interfaceSuperCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("overriddenDefaultInterfaceMethodCall.kt")
             public void testOverriddenDefaultInterfaceMethodCall() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/overriddenDefaultInterfaceMethodCall.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("overriddenDefaultInterfaceMethodCallGeneric.kt")
+            public void testOverriddenDefaultInterfaceMethodCallGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/overriddenDefaultInterfaceMethodCallGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
         }
 
@@ -17719,9 +18895,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("captureLocalVarDelegatedToInlineClassGeneric.kt")
+            public void testCaptureLocalVarDelegatedToInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/captureLocalVarDelegatedToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("delegateClassVarToInlineClass.kt")
             public void testDelegateClassVarToInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("delegateClassVarToInlineClassGeneric.kt")
+            public void testDelegateClassVarToInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17731,9 +18919,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("delegateClassVarToInlineClassWithProvideDelegateGeneric.kt")
+            public void testDelegateClassVarToInlineClassWithProvideDelegateGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateClassVarToInlineClassWithProvideDelegateGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("delegateCompanionVarToInlineClass.kt")
             public void testDelegateCompanionVarToInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateCompanionVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("delegateCompanionVarToInlineClassGeneric.kt")
+            public void testDelegateCompanionVarToInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateCompanionVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17743,9 +18943,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("delegateLocalVarToInlineClassGeneric.kt")
+            public void testDelegateLocalVarToInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateLocalVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("delegateObjectVarToInlineClass.kt")
             public void testDelegateObjectVarToInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateObjectVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("delegateObjectVarToInlineClassGeneric.kt")
+            public void testDelegateObjectVarToInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateObjectVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17755,9 +18967,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("delegatePrivateCompanionVarToInlineClassGeneric.kt")
+            public void testDelegatePrivateCompanionVarToInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatePrivateCompanionVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("delegateTopLevelVarToInlineClass.kt")
             public void testDelegateTopLevelVarToInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateTopLevelVarToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("delegateTopLevelVarToInlineClassGeneric.kt")
+            public void testDelegateTopLevelVarToInlineClassGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegateTopLevelVarToInlineClassGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17767,15 +18991,33 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("delegatedPropertyOfInlineClassTypeGeneric.kt")
+            public void testDelegatedPropertyOfInlineClassTypeGeneric() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/delegatedPropertyOfInlineClassTypeGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("kt27070.kt")
             public void testKt27070() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt27070.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
+            @TestMetadata("kt27070Generic.kt")
+            public void testKt27070Generic() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt27070Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("kt42933.kt")
             public void testKt42933() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt42933.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("kt42933Generic.kt")
+            public void testKt42933Generic() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/propertyDelegation/kt42933Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
         }
 
@@ -17908,9 +19150,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 }
 
                 @Test
+                @TestMetadata("anyGeneric.kt")
+                public void testAnyGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("anyN.kt")
                 public void testAnyN() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
+                @TestMetadata("anyNGeneric.kt")
+                public void testAnyNGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/anyNGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
                 @Test
@@ -17926,6 +19180,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 }
 
                 @Test
+                @TestMetadata("ifaceChildGeneric.kt")
+                public void testIfaceChildGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/ifaceChildGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
+                @TestMetadata("ifaceGeneric.kt")
+                public void testIfaceGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/ifaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("nullableResult.kt")
                 public void testNullableResult() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/nullableResult.kt");
@@ -17935,6 +19201,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 @TestMetadata("primitive.kt")
                 public void testPrimitive() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/primitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
+                @TestMetadata("primitiveGeneric.kt")
+                public void testPrimitiveGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/primitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
                 @Test
@@ -17950,9 +19222,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 }
 
                 @Test
+                @TestMetadata("resultAnyGeneric.kt")
+                public void testResultAnyGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/resultAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("string.kt")
                 public void testString() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/string.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
+                @TestMetadata("stringGeneric.kt")
+                public void testStringGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/stringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
             }
 
@@ -17972,9 +19256,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 }
 
                 @Test
+                @TestMetadata("anyGeneric.kt")
+                public void testAnyGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("anyN.kt")
                 public void testAnyN() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
+                @TestMetadata("anyNGeneric.kt")
+                public void testAnyNGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/anyNGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
                 @Test
@@ -17990,6 +19286,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 }
 
                 @Test
+                @TestMetadata("ifaceChildGeneric.kt")
+                public void testIfaceChildGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/ifaceChildGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
+                @TestMetadata("ifaceGeneric.kt")
+                public void testIfaceGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/ifaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("nullableResult.kt")
                 public void testNullableResult() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/nullableResult.kt");
@@ -17999,6 +19307,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 @TestMetadata("primitive.kt")
                 public void testPrimitive() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/primitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
+                @TestMetadata("primitiveGeneric.kt")
+                public void testPrimitiveGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/primitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
                 @Test
@@ -18014,9 +19328,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 }
 
                 @Test
+                @TestMetadata("resultAnyGeneric.kt")
+                public void testResultAnyGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/resultAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("string.kt")
                 public void testString() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/string.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
+                @TestMetadata("stringGeneric.kt")
+                public void testStringGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/stringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
             }
 
@@ -18036,9 +19362,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 }
 
                 @Test
+                @TestMetadata("anyGeneric.kt")
+                public void testAnyGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("anyN.kt")
                 public void testAnyN() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyN.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
+                @TestMetadata("anyNGeneric.kt")
+                public void testAnyNGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/anyNGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
                 @Test
@@ -18054,6 +19392,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 }
 
                 @Test
+                @TestMetadata("ifaceChildGeneric.kt")
+                public void testIfaceChildGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/ifaceChildGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
+                @TestMetadata("ifaceGeneric.kt")
+                public void testIfaceGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/ifaceGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("nullableResult.kt")
                 public void testNullableResult() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/nullableResult.kt");
@@ -18063,6 +19413,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 @TestMetadata("primitive.kt")
                 public void testPrimitive() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/primitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
+                @TestMetadata("primitiveGeneric.kt")
+                public void testPrimitiveGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/primitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
 
                 @Test
@@ -18078,9 +19434,21 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 }
 
                 @Test
+                @TestMetadata("resultAnyGeneric.kt")
+                public void testResultAnyGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/resultAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
                 @TestMetadata("string.kt")
                 public void testString() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/string.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                }
+
+                @Test
+                @TestMetadata("stringGeneric.kt")
+                public void testStringGeneric() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/stringGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 }
             }
         }
