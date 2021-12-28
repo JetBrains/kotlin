@@ -6923,6 +6923,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("symbolRedeclaration.kt")
+        public void testSymbolRedeclaration() throws Exception {
+            runTest("js/js.translator/testData/box/multiModule/symbolRedeclaration.kt");
+        }
+
+        @Test
         @TestMetadata("useElementsFromDefaultPackageInAnotherModule.kt")
         public void testUseElementsFromDefaultPackageInAnotherModule() throws Exception {
             runTest("js/js.translator/testData/box/multiModule/useElementsFromDefaultPackageInAnotherModule.kt");

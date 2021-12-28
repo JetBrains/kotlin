@@ -99,8 +99,11 @@ private class JsIrModuleCrossModuleReferecenceBuilder(val module: JsIrModule, va
         val tagToName = module.fragments.flatMap { it.nameBindings.entries }.associate { it.key to it.value }
 
         val resultImports = imports.associate {
-
             val tag = it.tag
+            require(it.module::exportNames.isInitialized) {
+                // This situation appears in case of a dependent module redefine a symbol (function) from their dependency
+                "Cross module dependency resolution failed due to symbol '${tag.takeWhile { c -> c != '|' }}' redefinition"
+            }
             val exportedAs = it.module.exportNames[tag]!!
             val importedAs = tagToName[tag]!!
             val moduleName = it.module.module.import()
