@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: NATIVE
+
 abstract class Z {
     init {
         check(this)
