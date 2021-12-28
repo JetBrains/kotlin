@@ -84,6 +84,7 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
         useAfterAnalysisCheckers(
             ::JsFailingTestSuppressor,
             ::BlackBoxCodegenSuppressor,
+            ::JsArtifactsDumpHandler
         )
 
         facadeStep(frontendFacade)
@@ -101,7 +102,6 @@ abstract class AbstractJsBlackBoxCodegenTestBase<R : ResultingArtifact.FrontendO
         jsArtifactsHandlersStep {
             useHandlers(
                 ::NodeJsGeneratorHandler,
-                ::JsArtifactsDumpHandler,
                 ::JsBoxRunner,
                 ::JsMinifierRunner,
                 ::JsAstHandler

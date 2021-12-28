@@ -6,20 +6,20 @@
 package org.jetbrains.kotlin.js.test.handlers
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
-import org.jetbrains.kotlin.test.backend.handlers.JsBinaryArtifactHandler
+import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
-import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.JUnit5Assertions
+import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
 
-class JsArtifactsDumpHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
-    override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {}
+/**
+ * Copy JS artifacts from the temporary directory to the `js/js.tests/build/out` directory.
+ */
+class JsArtifactsDumpHandler(testServices: TestServices) : AfterAnalysisChecker(testServices) {
 
-    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+    override fun check(failedAssertions: List<WrappedException>) {
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
         val allDirectives = testServices.moduleStructure.allDirectives
 
