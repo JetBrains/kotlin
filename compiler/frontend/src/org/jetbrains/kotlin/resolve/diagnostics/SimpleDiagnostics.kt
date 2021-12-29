@@ -32,4 +32,13 @@ class SimpleDiagnostics(diagnostics: Collection<Diagnostic>) : SimpleGenericDiag
     override fun forElement(psiElement: PsiElement): MutableCollection<Diagnostic> = elementsCache.getDiagnostics(psiElement)
 
     override fun noSuppression() = this
+
+    //TODO: remove after switching to `all` mode
+    override fun iterator(): Iterator<Diagnostic> {
+        return super<SimpleGenericDiagnostics>.iterator()
+    }
+
+    override fun isEmpty(): Boolean {
+        return super<SimpleGenericDiagnostics>.isEmpty()
+    }
 }
