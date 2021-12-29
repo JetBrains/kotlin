@@ -5,17 +5,21 @@ plugins {
 }
 
 dependencies {
-    compile(kotlinStdlib())
+    api(kotlinStdlib())
     compileOnly(project(":kotlin-reflect-api"))
-    compile(project(":compiler:util"))
-    compile(project(":compiler:cli-common"))
-    compile(project(":compiler:frontend.java"))
-    compile(project(":js:js.frontend"))
-    compile(project(":native:frontend.native"))
-    compileOnly(intellijDep())
-    compileOnly(jpsStandalone()) { includeJars("jps-model") }
+    testImplementation(project(":kotlin-reflect"))
+    api(project(":compiler:util"))
+    api(project(":compiler:cli-common"))
+    api(project(":compiler:frontend.java"))
+    api(project(":js:js.frontend"))
+    api(project(":native:frontend.native"))
+    compileOnly(intellijCore())
+    compileOnly(jpsModel())
+    compileOnly(jpsModelImpl())
+    compileOnly(jpsModelSerialization())
 
-    testCompile(commonDep("junit:junit"))
+    testApi(jpsModelSerialization())
+    testApi(commonDependency("junit:junit"))
 }
 
 sourceSets {
