@@ -83,7 +83,11 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
     private fun lowerCast(argument: IrExpression, type: IrType): IrExpression = when {
         type.isReifiedTypeParameter ->
             builder.irAs(argument, type)
-        argument.type.isNullable() && !type.isNullable() ->
+        argument.type.isInlineClassType() && argument.type.isSubtypeOfClass(type.erasedUpperBound.symbol) ->
+            argument
+        type.isNullable() || argument.isDefinitelyNotNull() ->
+            builder.irAs(argument, type)
+        else -> {
             with(builder) {
                 irLetS(argument, irType = context.irBuiltIns.anyNType) { valueSymbol ->
                     irIfNull(
@@ -92,14 +96,30 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                         irCall(throwTypeCastException).apply {
                             putValueArgument(0, irString("null cannot be cast to non-null type ${type.render()}"))
                         },
-                        lowerCast(irGet(valueSymbol.owner), type.makeNullable())
+                        builder.irAs(irGet(valueSymbol.owner), type.makeNullable())
                     )
                 }
             }
-        argument.type.isInlineClassType() && argument.type.isSubtypeOfClass(type.erasedUpperBound.symbol) ->
-            argument
-        else ->
-            builder.irAs(argument, type)
+        }
+    }
+
+    // TODO extract null check elimination on IR somewhere?
+    private fun IrExpression.isDefinitelyNotNull(): Boolean =
+        when (this) {
+            is IrGetValue ->
+                this.symbol.owner.isDefinitelyNotNullVal()
+            is IrGetClass,
+            is IrConstructorCall ->
+                true
+            is IrCall ->
+                this.symbol == context.irBuiltIns.checkNotNullSymbol
+            else ->
+                false
+        }
+
+    private fun IrValueDeclaration.isDefinitelyNotNullVal(): Boolean {
+        val irVariable = this as? IrVariable ?: return false
+        return !irVariable.isVar && irVariable.initializer?.isDefinitelyNotNull() == true
     }
 
     private val jvmIndyLambdaMetafactoryIntrinsic = context.ir.symbols.indyLambdaMetafactoryIntrinsic

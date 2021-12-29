@@ -4537,6 +4537,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("exclExclAsNotNullType.kt")
+        public void testExclExclAsNotNullType() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/exclExclAsNotNullType.kt");
+        }
+
+        @Test
         @TestMetadata("expressionValueIsNotNull.kt")
         public void testExpressionValueIsNotNull() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/expressionValueIsNotNull.kt");
