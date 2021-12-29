@@ -221,20 +221,15 @@ object FirInlineClassDeclarationChecker : FirRegularClassChecker() {
         isRecursiveInlineClassType(hashSetOf(), session)
 
     private fun ConeKotlinType.isRecursiveInlineClassType(visited: HashSet<ConeKotlinType>, session: FirSession): Boolean {
-        if (!visited.add(this)) return true
 
-        val asRegularClass = this.toRegularClassSymbol(session) ?: return false
-
-        if (!asRegularClass.isInlineOrValueClass()) return false
+        val asRegularClass = this.toRegularClassSymbol(session)?.takeIf { it.isInlineOrValueClass() } ?: return false
         val primaryConstructor = asRegularClass.declarationSymbols
             .firstOrNull { it is FirConstructorSymbol && it.isPrimary } as FirConstructorSymbol?
             ?: return false
-        return primaryConstructor
-            .valueParameterSymbols
-            .firstOrNull()
-            ?.resolvedReturnTypeRef
-            ?.coneType
-            ?.isRecursiveInlineClassType(visited, session) == true
+
+        return !visited.add(this) || primaryConstructor.valueParameterSymbols.any {
+            it.resolvedReturnTypeRef.coneType.isRecursiveInlineClassType(visited, session)
+        }.also { visited.remove(this) }
     }
 
     private fun FirRegularClass.isSubtypeOfCloneable(session: FirSession): Boolean {

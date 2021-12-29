@@ -38,6 +38,12 @@ value class C4(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>D4?<!>, val y: <!VALUE_
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class D4(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>D4?<!>, val y: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>C4?<!>)
 
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class E4(val x: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>E4?<!>, val y: Int)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class F4(val x: Int, val y: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>F4?<!>)
+
 
 
 OPTIONAL_JVM_INLINE_ANNOTATION
@@ -66,3 +72,27 @@ value class A8<T : B8<<!UPPER_BOUND_VIOLATED!>T<!>>>(val x: <!VALUE_CLASS_HAS_IN
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class B8<T : A8<<!UPPER_BOUND_VIOLATED!>T<!>>>(val x: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>T?<!>, val y: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>T?<!>)
+
+interface I1
+interface I2
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class A<T, G : C?>(
+    val t1: List<T>,
+    val t2: UInt,
+    val t3: List<G?>,
+    val t4: UInt,
+    val t5: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>C<!>,
+    val t6: Int,
+    val t7: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>B<!>,
+    val t8: String,
+    val t9: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>T<!>,
+    val t10: Char,
+    val t11: <!VALUE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE!>T?<!>,
+) where T : I1, T : B?, T : I2
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class B(val x: UInt, val a: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>A<B, Nothing><!>) : I1, I2
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class C(val x: UInt, val a: <!VALUE_CLASS_CANNOT_BE_RECURSIVE!>A<B, Nothing><!>)

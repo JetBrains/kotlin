@@ -19,34 +19,51 @@ val JVM_INLINE_ANNOTATION_CLASS_ID = ClassId.topLevel(JVM_INLINE_ANNOTATION_FQ_N
 
 // FIXME: DeserializedClassDescriptor in reflection do not have @JvmInline annotation, that we
 // FIXME: would like to check as well.
-fun DeclarationDescriptor.isInlineClass(): Boolean =
-    this is ClassDescriptor && (isInline || isValue) && unsubstitutedPrimaryConstructor?.valueParameters?.size == 1
+fun DeclarationDescriptor.isInlineClass(): Boolean = when {
+    this !is ClassDescriptor -> false
+    isInline -> true
+    else -> isValue && (unsubstitutedPrimaryConstructor?.valueParameters?.size?.let { it == 1 } ?: true)
+}
+
+fun DeclarationDescriptor.isValueClass(): Boolean =
+    this is ClassDescriptor && isValue
+
+fun DeclarationDescriptor.isInlineOrValueClass(): Boolean = isInlineClass() || isValueClass()
 
 fun KotlinType.unsubstitutedUnderlyingType(): KotlinType? =
     constructor.declarationDescriptor.safeAs<ClassDescriptor>()?.inlineClassRepresentation?.underlyingType
+
+fun KotlinType.unsubstitutedUnderlyingTypes(): List<KotlinType> {
+    val declarationDescriptor = constructor.declarationDescriptor.safeAs<ClassDescriptor>() ?: return emptyList()
+    return when {
+        declarationDescriptor.isInlineClass() -> listOfNotNull(unsubstitutedUnderlyingType())
+        declarationDescriptor.isValueClass() ->
+            declarationDescriptor.unsubstitutedPrimaryConstructor?.valueParameters?.map { it.type } ?: emptyList()
+        else -> emptyList()
+    }
+}
+
 
 fun KotlinType.isInlineClassType(): Boolean = constructor.declarationDescriptor?.isInlineClass() ?: false
 
 fun KotlinType.substitutedUnderlyingType(): KotlinType? =
     unsubstitutedUnderlyingType()?.let { TypeSubstitutor.create(this).substitute(it, Variance.INVARIANT) }
 
-fun KotlinType.isRecursiveInlineClassType(): Boolean =
-    isRecursiveInlineClassTypeInner(hashSetOf())
+fun KotlinType.substitutedUnderlyingTypes(): List<KotlinType?> =
+    unsubstitutedUnderlyingTypes().map { TypeSubstitutor.create(this).substitute(it, Variance.INVARIANT) }
 
-private fun KotlinType.isRecursiveInlineClassTypeInner(visited: HashSet<ClassifierDescriptor>): Boolean {
-    val descriptor = constructor.declarationDescriptor?.original ?: return false
+fun KotlinType.isRecursiveInlineOrValueClassType(): Boolean =
+    isRecursiveInlineOrValueClassTypeInner(hashSetOf())
 
-    if (!visited.add(descriptor)) return true
-
-    return when (descriptor) {
-        is ClassDescriptor ->
-            descriptor.isInlineClass() &&
-                    unsubstitutedUnderlyingType()?.isRecursiveInlineClassTypeInner(visited) == true
-
-        is TypeParameterDescriptor ->
-            descriptor.upperBounds.any { it.isRecursiveInlineClassTypeInner(visited) }
-
-        else -> false
+private fun KotlinType.isRecursiveInlineOrValueClassTypeInner(visited: HashSet<ClassifierDescriptor>): Boolean {
+    val types = when (val descriptor = constructor.declarationDescriptor?.original?.takeIf { it.isInlineOrValueClass() }) {
+        is ClassDescriptor -> if (descriptor.isInlineOrValueClass()) unsubstitutedUnderlyingTypes() else emptyList()
+        is TypeParameterDescriptor -> descriptor.upperBounds
+        else -> emptyList()
+    }
+    return types.any {
+        val classifier = it.constructor.declarationDescriptor?.original ?: return@any false
+        !visited.add(classifier) || it.isRecursiveInlineOrValueClassTypeInner(visited).also { visited.remove(classifier) }
     }
 }
 

@@ -23,6 +23,8 @@ value class F6(val x: String)
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class A(
+    val f1: F1,
+    val f2: F2,
     val f3: F3,
     val f4: F4,
     val f5: F5,
@@ -46,7 +48,7 @@ fun box(): String {
     val f4 = F4(5)
     val f5 = F5(UInt.MAX_VALUE.dec())
     val f6 = F6("678")
-    val a1 = A(f3, f4, f5, f6, 9, UInt.MAX_VALUE - 2U, "0")
+    val a1 = A(f1, f2, f3, f4, f5, f6, 9, UInt.MAX_VALUE - 2U, "0")
     val a2 = a1
     val b = B(a1, a2)
 
@@ -59,6 +61,26 @@ fun box(): String {
     assert(f4.x == 5)
     assert(f5.x == UInt.MAX_VALUE - 1U)
     assert(f6.x == "678")
+
+    assert(f1 == a1.f1)
+    assert(f1.hashCode() == a1.f1.hashCode())
+    assert(f1.toString() == a1.f1.toString())
+    assert(f1 == a2.f1)
+    assert(f1.hashCode() == a2.f1.hashCode())
+    assert(f1.toString() == a2.f1.toString())
+    assert(a1.f1 == a2.f1)
+    assert(a1.f1.hashCode() == a2.f1.hashCode())
+    assert(a1.f1.toString() == a2.f1.toString())
+
+    assert(f2 == a1.f2)
+    assert(f2.hashCode() == a1.f2.hashCode())
+    assert(f2.toString() == a1.f2.toString())
+    assert(f2 == a2.f2)
+    assert(f2.hashCode() == a2.f2.hashCode())
+    assert(f2.toString() == a2.f2.toString())
+    assert(a1.f2 == a2.f2)
+    assert(a1.f2.hashCode() == a2.f2.hashCode())
+    assert(a1.f2.toString() == a2.f2.toString())
 
     assert(f1 == a1.f3.x)
     assert(f1.hashCode() == a1.f3.x.hashCode())
@@ -159,15 +181,17 @@ fun box(): String {
     assert(b.toString() == b.toString())
     assert(b.hashCode() == b.hashCode())
 
+    fun String.assertGoodBasicToString(expected: String) = assert(matches(Regex("^([_a-zA-Z]+[.])*$expected@[0-9a-f]+$"))) { this }
+
     assert(f1.toString() == "F1(x=1)") { f1.toString() }
     assert(f2.toString() == "F2(x=4294967295)") { f2.toString() }
-    assert(f3.toString().startsWith("F3@")) { f3.toString() } // not data class yet
+    f3.toString().assertGoodBasicToString("F3") // not data class yet
     assert(f4.toString() == "F4(x=5)") { f4.toString() }
     assert(f5.toString() == "F5(x=4294967294)") { f5.toString() }
     assert(f6.toString() == "F6(x=678)") { f6.toString() }
-    assert(a1.toString().startsWith("A@")) { a1.toString() } // not data class yet
-    assert(a2.toString().startsWith("A@")) { a2.toString() } // not data class yet
-    assert(b.toString().let { it.startsWith("OverridenBToString(a1 = A@") && ", a2 = A@" in it }) { b.toString() } // not data class yet
+    a1.toString().assertGoodBasicToString("A") // not data class yet
+    a2.toString().assertGoodBasicToString("A") // not data class yet
+    assert(b.toString() == "OverridenBToString(a1 = $a1, a2 = $a2)") { b.toString() }
 
     return "OK"
 }

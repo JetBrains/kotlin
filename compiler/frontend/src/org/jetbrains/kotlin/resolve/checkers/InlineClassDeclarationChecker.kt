@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.resolve.checkers
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.contracts.parsing.isEqualsDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -16,12 +15,10 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.modalityModifier
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
@@ -80,7 +77,7 @@ object InlineClassDeclarationChecker : DeclarationChecker {
             return
         }
 
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)) {
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses) && descriptor.isValueClass()) {
             if (primaryConstructor.valueParameters.isEmpty()) {
                 (primaryConstructor.valueParameterList ?: declaration).let {
                     trace.report(Errors.VALUE_CLASS_EMPTY_CONSTRUCTOR.on(it))
@@ -95,7 +92,9 @@ object InlineClassDeclarationChecker : DeclarationChecker {
         }
 
         var baseParametersOk = true
-        for (baseParameter in primaryConstructor.valueParameters) {
+        val baseParameterTypes = descriptor.safeAs<ClassDescriptor>()?.defaultType?.substitutedUnderlyingTypes() ?: emptyList()
+
+        for ((baseParameter, baseParameterType) in primaryConstructor.valueParameters zip baseParameterTypes) {
 
             if (!isParameterAcceptableForInlineClass(baseParameter)) {
                 trace.report(Errors.VALUE_CLASS_CONSTRUCTOR_NOT_FINAL_READ_ONLY_PARAMETER.on(baseParameter))
@@ -103,7 +102,6 @@ object InlineClassDeclarationChecker : DeclarationChecker {
                 continue
             }
 
-            val baseParameterType = descriptor.safeAs<ClassDescriptor>()?.defaultType?.substitutedUnderlyingType()
             val baseParameterTypeReference = baseParameter.typeReference
             if (baseParameterType != null && baseParameterTypeReference != null) {
                 if (baseParameterType.isInapplicableParameterType()) {
@@ -112,7 +110,7 @@ object InlineClassDeclarationChecker : DeclarationChecker {
                     continue
                 }
 
-                if (baseParameterType.isRecursiveInlineClassType()) { // todo check work for MF VC
+                if (baseParameterType.isRecursiveInlineOrValueClassType()) {
                     trace.report(Errors.VALUE_CLASS_CANNOT_BE_RECURSIVE.on(baseParameterTypeReference))
                     baseParametersOk = false
                     continue
@@ -176,7 +174,7 @@ class PropertiesWithBackingFieldsInsideInlineClass : DeclarationChecker {
         if (declaration !is KtProperty) return
         if (descriptor !is PropertyDescriptor) return
 
-        if (!descriptor.containingDeclaration.isInlineClass()) return
+        if (!descriptor.containingDeclaration.isInlineOrValueClass()) return
 
         if (context.trace.get(BindingContext.BACKING_FIELD_REQUIRED, descriptor) == true) {
             context.trace.report(Errors.PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS.on(declaration))
@@ -194,7 +192,7 @@ class InnerClassInsideInlineClass : DeclarationChecker {
         if (descriptor !is ClassDescriptor) return
         if (!descriptor.isInner) return
 
-        if (!descriptor.containingDeclaration.isInlineClass()) return
+        if (!descriptor.containingDeclaration.isInlineOrValueClass()) return
 
         context.trace.report(Errors.INNER_CLASS_INSIDE_VALUE_CLASS.on(declaration.modifierList!!.getModifier(KtTokens.INNER_KEYWORD)!!))
     }
@@ -208,7 +206,7 @@ class ReservedMembersAndConstructsForInlineClass : DeclarationChecker {
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         val containingDeclaration = descriptor.containingDeclaration ?: return
-        if (!containingDeclaration.isInlineClass()) return
+        if (!containingDeclaration.isInlineOrValueClass()) return
 
         if (descriptor !is FunctionDescriptor) return
 
