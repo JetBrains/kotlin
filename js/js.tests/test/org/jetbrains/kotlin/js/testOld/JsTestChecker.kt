@@ -22,6 +22,10 @@ fun ScriptEngine.overrideAsserter() {
     eval("this['kotlin-test'].kotlin.test.overrideAsserter_wbnzx$(this['kotlin-test'].kotlin.test.DefaultAsserter);")
 }
 
+fun ScriptEngine.setLegacyBackendFlag() {
+    eval("this.__legacyBackend__ = true")
+}
+
 fun ScriptEngine.runTestFunction(
     testModuleName: String?,
     testPackageName: String?,
@@ -174,6 +178,7 @@ object V8JsTestChecker : AbstractJsTestChecker() {
                 loadFiles(preloadedScripts)
 
                 overrideAsserter()
+                setLegacyBackendFlag()
             }
 
         override fun remove() {

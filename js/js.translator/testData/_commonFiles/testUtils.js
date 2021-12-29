@@ -1,3 +1,3 @@
 function isLegacyBackend() {
-   return typeof Kotlin !== "undefined" && typeof Kotlin.kotlin !== "undefined"
+   return Boolean(this.__legacyBackend__)
 }
