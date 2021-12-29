@@ -162,6 +162,7 @@ TEST(ExceptionDeathTest, TerminateHandler_WithHook) {
                             konan::consoleErrorf("Unknown Exception\n");
                         }
                     }
+                    std::abort();
                 });
                 // The termination handler will check the initialization of the whole runtime, so we cannot use RunInNewThread here.
                 // This call also sets the K/N termination handler.
@@ -203,6 +204,7 @@ TEST(ExceptionDeathTest, TerminateHandler_NoHook) {
                             konan::consoleErrorf("Unknown Exception\n");
                         }
                     }
+                    std::abort();
                 });
                 // The termination handler will check the initialization of the whole runtime, so we cannot use RunInNewThread here.
                 // This call also sets the K/N termination handler.
@@ -246,6 +248,7 @@ TEST(ExceptionDeathTest, TerminateHandler_WithFailingHook) {
                             konan::consoleErrorf("Unknown Exception\n");
                         }
                     }
+                    std::abort();
                 });
                 // The termination handler will check the initialization of the whole runtime, so we cannot use RunInNewThread here.
                 // This call also sets the K/N termination handler.
@@ -283,6 +286,7 @@ TEST(ExceptionDeathTest, TerminateHandler_IgnoreHooks) {
                                 konan::consoleErrorf("Unknown Exception\n");
                             }
                         }
+                        std::abort();
                     });
                     SetKonanTerminateHandler();
                     try {
