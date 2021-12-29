@@ -211,6 +211,7 @@ class IncrementalFirJvmCompilerRunner(
                             compilerEnvironment,
                             emptyList(),
                             incrementalExcludesScope,
+                            diagnosticsReporter
                         )
 
                     // TODO: consider what to do if many compilations find a main class

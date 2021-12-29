@@ -10,8 +10,13 @@ import com.intellij.lang.impl.PsiBuilderFactoryImpl
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.diagnostics.DiagnosticContext
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lightTree.converter.DeclarationsConverter
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.lexer.KotlinLexer
@@ -22,7 +27,8 @@ import java.nio.file.Path
 
 class LightTree2Fir(
     val session: FirSession,
-    private val scopeProvider: FirScopeProvider
+    private val scopeProvider: FirScopeProvider,
+    private val diagnosticsReporter: DiagnosticReporter? = null
 ) {
     companion object {
         private val parserDefinition = KotlinParserDefinition()
@@ -66,9 +72,18 @@ class LightTree2Fir(
     fun buildFirFile(code: String, fileName: String, path: String?): FirFile {
         val lightTree = buildLightTree(code)
 
-        return DeclarationsConverter(session, scopeProvider, lightTree)
-            .convertFile(lightTree.root, fileName, path)
+        return DeclarationsConverter(
+            session, scopeProvider, lightTree, diagnosticsReporter = diagnosticsReporter,
+            diagnosticContext = makeDiagnosticContext(path)
+        ).convertFile(lightTree.root, fileName, path)
     }
+
+    private fun makeDiagnosticContext(path: String?) =
+        if (diagnosticsReporter == null) null else object : DiagnosticContext {
+            override val containingFilePath = path
+            override val languageVersionSettings: LanguageVersionSettings get() = session.languageVersionSettings
+            override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean = false
+        }
 }
 
 data class LightTreeFile(

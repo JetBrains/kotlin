@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -90,7 +91,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                     )
                 ) return@flatMap emptyList()
                 // SYNTAX errors will be reported later
-                if (diagnostic.factory == FirErrors.SYNTAX) return@flatMap emptyList()
+                if (diagnostic.factory == FirSyntaxErrors.SYNTAX) return@flatMap emptyList()
                 if (!diagnostic.isValid) return@flatMap emptyList()
                 diagnostic.toMetaInfos(
                     file,
@@ -114,7 +115,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     ) {
         val metaInfos = if (firFile.psi != null) {
             AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).flatMap {
-                FirErrors.SYNTAX.on(KtRealPsiSourceElement(it), positioningStrategy = null)
+                FirSyntaxErrors.SYNTAX.on(KtRealPsiSourceElement(it), positioningStrategy = null)
                     .toMetaInfos(
                         testFile,
                         globalMetadataInfoHandler1 = globalMetadataInfoHandler,
@@ -124,7 +125,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             }
         } else {
             collectLightTreeSyntaxErrors(firFile).flatMap { sourceElement ->
-                FirErrors.SYNTAX.on(sourceElement, positioningStrategy = null)
+                FirSyntaxErrors.SYNTAX.on(sourceElement, positioningStrategy = null)
                     .toMetaInfos(
                         testFile,
                         globalMetadataInfoHandler1 = globalMetadataInfoHandler,

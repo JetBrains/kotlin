@@ -102,10 +102,6 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val error: String
     }
 
-    abstract class Syntax : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = Syntax::class
-    }
-
     abstract class OtherError : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = OtherError::class
     }
