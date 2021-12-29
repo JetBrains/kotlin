@@ -57,7 +57,9 @@ internal val typeOperatorLowering = makeIrFilePhase(
     description = "Lower IrTypeOperatorCalls to (implicit) casts and instanceof checks"
 )
 
-private class TypeOperatorLowering(private val context: JvmBackendContext) : FileLoweringPass, IrBuildingTransformer(context) {
+private class TypeOperatorLowering(private val backendContext: JvmBackendContext) :
+    FileLoweringPass, IrBuildingTransformer(backendContext) {
+
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     private fun IrExpression.transformVoid() = transform(this@TypeOperatorLowering, null)
@@ -80,28 +82,44 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
         }
     }
 
-    private fun lowerCast(argument: IrExpression, type: IrType): IrExpression = when {
-        type.isReifiedTypeParameter ->
-            builder.irAs(argument, type)
-        argument.type.isInlineClassType() && argument.type.isSubtypeOfClass(type.erasedUpperBound.symbol) ->
-            argument
-        type.isNullable() || argument.isDefinitelyNotNull() ->
-            builder.irAs(argument, type)
-        else -> {
-            with(builder) {
-                irLetS(argument, irType = context.irBuiltIns.anyNType) { valueSymbol ->
-                    irIfNull(
-                        type,
-                        irGet(valueSymbol.owner),
-                        irCall(throwTypeCastException).apply {
-                            putValueArgument(0, irString("null cannot be cast to non-null type ${type.render()}"))
-                        },
-                        builder.irAs(irGet(valueSymbol.owner), type.makeNullable())
-                    )
+    private fun lowerCast(argument: IrExpression, type: IrType): IrExpression =
+        when {
+            type.isReifiedTypeParameter ->
+                builder.irAs(argument, type)
+            argument.type.isInlineClassType() && argument.type.isSubtypeOfClass(type.erasedUpperBound.symbol) ->
+                argument
+            type.isNullable() || argument.isDefinitelyNotNull() ->
+                builder.irAs(argument, type)
+            else -> {
+                with(builder) {
+                    irLetS(argument, irType = context.irBuiltIns.anyNType) { tmp ->
+                        val message = irString("null cannot be cast to non-null type ${type.render()}")
+                        if (backendContext.state.unifiedNullChecks) {
+                            // Avoid branching to improve code coverage (KT-27427).
+                            // We have to generate a null check here, because even if argument is of non-null type,
+                            // it can be uninitialized value, which is 'null' for reference types in JMM.
+                            // Most of such null checks will never actually throw, but we can't do anything about it.
+                            irBlock {
+                                +irCall(backendContext.ir.symbols.checkNotNullWithMessage).apply {
+                                    putValueArgument(0, irGet(tmp.owner))
+                                    putValueArgument(1, message)
+                                }
+                                +irAs(irGet(tmp.owner), type.makeNullable())
+                            }
+                        } else {
+                            irIfNull(
+                                type,
+                                irGet(tmp.owner),
+                                irCall(throwTypeCastException).apply {
+                                    putValueArgument(0, message)
+                                },
+                                irAs(irGet(tmp.owner), type.makeNullable())
+                            )
+                        }
+                    }
                 }
             }
         }
-    }
 
     // TODO extract null check elimination on IR somewhere?
     private fun IrExpression.isDefinitelyNotNull(): Boolean =
@@ -112,7 +130,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
             is IrConstructorCall ->
                 true
             is IrCall ->
-                this.symbol == context.irBuiltIns.checkNotNullSymbol
+                this.symbol == backendContext.irBuiltIns.checkNotNullSymbol
             else ->
                 false
         }
@@ -122,7 +140,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
         return !irVariable.isVar && irVariable.initializer?.isDefinitelyNotNull() == true
     }
 
-    private val jvmIndyLambdaMetafactoryIntrinsic = context.ir.symbols.indyLambdaMetafactoryIntrinsic
+    private val jvmIndyLambdaMetafactoryIntrinsic = backendContext.ir.symbols.indyLambdaMetafactoryIntrinsic
 
     private fun JvmIrBuilder.jvmMethodHandle(handle: Handle) =
         irCall(backendContext.ir.symbols.jvmMethodHandle).apply {
@@ -278,15 +296,15 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
             byDeserializedLambdaInfo[deserializedLambdaInfo] = serializableMethodRefInfo
         }
 
-        val deserializeLambdaFun = context.irFactory.buildFun {
+        val deserializeLambdaFun = backendContext.irFactory.buildFun {
             name = Name.identifier("\$deserializeLambda\$")
             visibility = DescriptorVisibilities.PRIVATE
             origin = JvmLoweredDeclarationOrigin.DESERIALIZE_LAMBDA_FUN
         }
         deserializeLambdaFun.parent = irClass
-        val lambdaParameter = deserializeLambdaFun.addValueParameter("lambda", context.ir.symbols.serializedLambda.irType)
-        deserializeLambdaFun.returnType = context.irBuiltIns.anyType
-        deserializeLambdaFun.body = context.createJvmIrBuilder(deserializeLambdaFun.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET).run {
+        val lambdaParameter = deserializeLambdaFun.addValueParameter("lambda", backendContext.ir.symbols.serializedLambda.irType)
+        deserializeLambdaFun.returnType = backendContext.irBuiltIns.anyType
+        deserializeLambdaFun.body = backendContext.createJvmIrBuilder(deserializeLambdaFun.symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET).run {
             irBlockBody {
                 val tmp = irTemporary(
                     irCall(backendContext.ir.symbols.serializedLambda.getImplMethodName).apply {
@@ -332,9 +350,9 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
 
     private fun mapDeserializedLambda(info: SerializableMethodRefInfo) =
         DeserializedLambdaInfo(
-            functionalInterfaceClass = context.typeMapper.mapType(info.samType).internalName,
-            implMethodHandle = context.methodSignatureMapper.mapToMethodHandle(info.implFunSymbol.owner),
-            functionalInterfaceMethod = context.methodSignatureMapper.mapAsmMethod(info.samMethodSymbol.owner)
+            functionalInterfaceClass = backendContext.typeMapper.mapType(info.samType).internalName,
+            implMethodHandle = backendContext.methodSignatureMapper.mapToMethodHandle(info.implFunSymbol.owner),
+            functionalInterfaceMethod = backendContext.methodSignatureMapper.mapAsmMethod(info.samMethodSymbol.owner)
         )
 
     private fun JvmIrBuilder.generateSerializedLambdaEquals(
@@ -376,7 +394,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
         )
     }
 
-    private val equalsAny = context.irBuiltIns.anyClass.getSimpleFunction("equals")!!
+    private val equalsAny = backendContext.irBuiltIns.anyClass.getSimpleFunction("equals")!!
 
     private fun JvmIrBuilder.irObjectEquals(receiver: IrExpression, arg: IrExpression) =
         irCall(equalsAny).apply {
@@ -478,7 +496,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
             )
         }
 
-        return context.createJvmIrBuilder(implFunSymbol, startOffset, endOffset)
+        return backendContext.createJvmIrBuilder(implFunSymbol, startOffset, endOffset)
             .createLambdaMetafactoryCall(
                 samMethod.symbol, implFunSymbol, instanceMethodRef.symbol, shouldBeSerializable, requiredBridges, dynamicCall
             )
@@ -551,12 +569,12 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
         samMethod: IrSimpleFunction,
         extraOverriddenMethods: List<IrSimpleFunction>
     ): Collection<IrSimpleFunction> {
-        val jvmInstanceMethod = context.methodSignatureMapper.mapAsmMethod(instanceMethod)
-        val jvmSamMethod = context.methodSignatureMapper.mapAsmMethod(samMethod)
+        val jvmInstanceMethod = backendContext.methodSignatureMapper.mapAsmMethod(instanceMethod)
+        val jvmSamMethod = backendContext.methodSignatureMapper.mapAsmMethod(samMethod)
 
         val signatureToNonFakeOverride = LinkedHashMap<Method, IrSimpleFunction>()
         for (overridden in extraOverriddenMethods) {
-            val jvmOverriddenMethod = context.methodSignatureMapper.mapAsmMethod(overridden)
+            val jvmOverriddenMethod = backendContext.methodSignatureMapper.mapAsmMethod(overridden)
             if (jvmOverriddenMethod != jvmInstanceMethod && jvmOverriddenMethod != jvmSamMethod) {
                 signatureToNonFakeOverride[jvmOverriddenMethod] = overridden
             }
@@ -574,12 +592,12 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
 
         val dynamicCallArguments = ArrayList<IrExpression>()
 
-        val irDynamicCallTarget = context.irFactory.buildFun {
+        val irDynamicCallTarget = backendContext.irFactory.buildFun {
             origin = JvmLoweredDeclarationOrigin.INVOKEDYNAMIC_CALL_TARGET
             name = samMethod.name
             returnType = erasedSamType
         }.apply {
-            parent = context.ir.symbols.kotlinJvmInternalInvokeDynamicPackage
+            parent = backendContext.ir.symbols.kotlinJvmInternalInvokeDynamicPackage
 
             val targetFun = targetRef.symbol.owner
             val refDispatchReceiver = targetRef.dispatchReceiver
@@ -640,7 +658,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
             )
         }
 
-        return context.createJvmIrBuilder(irDynamicCallTarget.symbol)
+        return backendContext.createJvmIrBuilder(irDynamicCallTarget.symbol)
             .irCall(irDynamicCallTarget.symbol)
             .apply {
                 for (i in dynamicCallArguments.indices) {
@@ -656,11 +674,7 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
                 irComposite(resultType = expression.type) {
                     +expression.argument.transformVoid()
                     // TODO: Don't generate these casts in the first place
-                    if (!expression.argument.type.isSubtypeOf(
-                            expression.type.makeNullable(),
-                            this@TypeOperatorLowering.context.typeSystem
-                        )
-                    ) {
+                    if (!expression.argument.type.isSubtypeOf(expression.type.makeNullable(), backendContext.typeSystem)) {
                         +IrCompositeImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, expression.type)
                     }
                 }
@@ -762,14 +776,11 @@ private class TypeOperatorLowering(private val context: JvmBackendContext) : Fil
         declaration.fileParent.getKtFile()!!.viewProvider.contents
 
     private val throwTypeCastException: IrSimpleFunctionSymbol =
-        if (context.state.unifiedNullChecks)
-            context.ir.symbols.throwNullPointerException
-        else
-            context.ir.symbols.throwTypeCastException
+        backendContext.ir.symbols.throwTypeCastException
 
     private val checkExpressionValueIsNotNull: IrSimpleFunctionSymbol =
-        if (context.state.unifiedNullChecks)
-            context.ir.symbols.checkNotNullExpressionValue
+        if (backendContext.state.unifiedNullChecks)
+            backendContext.ir.symbols.checkNotNullExpressionValue
         else
-            context.ir.symbols.checkExpressionValueIsNotNull
+            backendContext.ir.symbols.checkExpressionValueIsNotNull
 }

@@ -5507,6 +5507,12 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("noTemporaryInCheckedCast.kt")
+        public void testNoTemporaryInCheckedCast() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/temporaryVals/noTemporaryInCheckedCast.kt");
+        }
+
+        @Test
         @TestMetadata("notNullReceiversInChain.kt")
         public void testNotNullReceiversInChain() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/temporaryVals/notNullReceiversInChain.kt");

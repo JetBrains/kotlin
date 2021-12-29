@@ -26,4 +26,8 @@ fun test3() {
 
 fun getB(): B = B()
 
+// JVM_TEMPLATES
 // 1 IFNONNULL
+// JVM_IR_TEMPLATES
+// 0 IFNONNULL
+// 1 INVOKESTATIC kotlin/jvm/internal/Intrinsics.checkNotNull \(Ljava/lang/Object;Ljava/lang/String;\)V

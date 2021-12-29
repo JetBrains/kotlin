@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.codegen.optimization.common.InsnSequence
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.removeUnusedLocalVariables
 import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckExpressionValueIsNotNull
+import org.jetbrains.kotlin.codegen.optimization.nullCheck.isCheckNotNullWithMessage
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.utils.SmartList
@@ -288,7 +289,7 @@ class TemporaryVariablesEliminationTransformer(private val state: GenerationStat
 
                     if ((aLoad1Insn as VarInsnNode).`var` == tmp.index &&
                         (ldcInsn as LdcInsnNode).cst is String &&
-                        invokeStaticInsn.isCheckExpressionValueIsNotNull() &&
+                        (invokeStaticInsn.isCheckExpressionValueIsNotNull() || invokeStaticInsn.isCheckNotNullWithMessage()) &&
                         (aLoad2Insn as VarInsnNode).`var` == tmp.index
                     ) {
                         // Replace instruction sequence:

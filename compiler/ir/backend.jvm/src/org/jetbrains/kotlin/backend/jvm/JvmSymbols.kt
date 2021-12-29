@@ -145,6 +145,10 @@ class JvmSymbols(
         klass.addFunction("checkNotNull", irBuiltIns.unitType, isStatic = true).apply {
             addValueParameter("object", irBuiltIns.anyNType)
         }
+        klass.addFunction("checkNotNull", irBuiltIns.unitType, isStatic = true).apply {
+            addValueParameter("object", irBuiltIns.anyNType)
+            addValueParameter("message", irBuiltIns.stringType)
+        }
         klass.addFunction("throwNpe", irBuiltIns.unitType, isStatic = true)
 
         klass.declarations.add(irFactory.buildClass {
@@ -162,7 +166,10 @@ class JvmSymbols(
         intrinsicsClass.functions.single { it.owner.name.asString() == "checkNotNullExpressionValue" }
 
     val checkNotNull: IrSimpleFunctionSymbol =
-        intrinsicsClass.functions.single { it.owner.name.asString() == "checkNotNull" }
+        intrinsicsClass.owner.functions.single { it.name.asString() == "checkNotNull" && it.valueParameters.size == 1 }.symbol
+
+    val checkNotNullWithMessage: IrSimpleFunctionSymbol =
+        intrinsicsClass.owner.functions.single { it.name.asString() == "checkNotNull" && it.valueParameters.size == 2 }.symbol
 
     val throwNpe: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "throwNpe" }

@@ -10,8 +10,12 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.util.isImmutable
+import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 
 val IrBuilderWithScope.parent get() = scope.getLocalDeclarationParent()
@@ -23,20 +27,25 @@ inline fun IrBuilderWithScope.irLetS(
     irType: IrType? = null,
     body: (IrValueSymbol) -> IrExpression
 ): IrExpression {
-    val (valueSymbol, irTemporary) = if (value is IrGetValue && value.symbol.owner.isImmutable) {
-        value.symbol to null
+    val irTemporary: IrVariable?
+    val valueSymbol: IrValueSymbol
+    if (value is IrGetValue && value.symbol.owner.isImmutable) {
+        irTemporary = null
+        valueSymbol = value.symbol
     } else {
-        scope.createTemporaryVariable(value, nameHint, irType = irType).let { it.symbol to it }
+        irTemporary = scope.createTemporaryVariable(value, nameHint, irType = irType)
+        valueSymbol = irTemporary.symbol
     }
     val irResult = body(valueSymbol)
-    return if (irTemporary == null) {
-        irResult
+    if (irTemporary == null) return irResult
+    val irBlock = IrBlockImpl(startOffset, endOffset, irResult.type, origin)
+    irBlock.statements.add(irTemporary)
+    if (irResult is IrStatementContainer) {
+        irBlock.statements.addAll(irResult.statements)
     } else {
-        val irBlock = IrBlockImpl(startOffset, endOffset, irResult.type, origin)
-        irBlock.statements.add(irTemporary)
         irBlock.statements.add(irResult)
-        irBlock
     }
+    return irBlock
 }
 
 fun <T : IrElement> IrStatementsBuilder<T>.irTemporary(

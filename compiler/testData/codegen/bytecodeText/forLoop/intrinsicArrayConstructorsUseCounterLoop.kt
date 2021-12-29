@@ -31,7 +31,7 @@ fun testDoubleArray(n: Int) =
         DoubleArray(n) { it.toDouble() }
 
 fun testObjectArray(n: Int) =
-        Array(n) { it as Any }
+        Array(n) { it.toString() }
 
 // 0 IF_ICMPGT
 // 0 IF_CMPEQ
