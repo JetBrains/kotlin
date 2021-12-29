@@ -103,6 +103,7 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
         defaultDecompilerRendererOptions()
         withDefinedIn = true
         renderUnabbreviatedType = false
+        defaultParameterValueRenderer = null
     }
 
     private val LOG = Logger.getInstance(this::class.java)
