@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
+import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -89,12 +90,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.NEW_INFERENCE_ERROR) { firDiagnostic ->
         NewInferenceErrorImpl(
             firDiagnostic.a,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.SYNTAX) { firDiagnostic ->
-        SyntaxImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

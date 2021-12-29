@@ -8,11 +8,8 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
-import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.KtLightSourceElement
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
@@ -22,7 +19,9 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
-import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.diagnostics.DiagnosticContext
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -63,7 +62,9 @@ class DeclarationsConverter(
     private val baseScopeProvider: FirScopeProvider,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     @set:PrivateForInline override var offset: Int = 0,
-    context: Context<LighterASTNode> = Context()
+    context: Context<LighterASTNode> = Context(),
+    private val diagnosticsReporter: DiagnosticReporter? = null,
+    private val diagnosticContext: DiagnosticContext? = null
 ) : BaseConverter(session, tree, context) {
 
     @OptIn(PrivateForInline::class)
@@ -78,6 +79,10 @@ class DeclarationsConverter(
     }
 
     private val expressionConverter = ExpressionsConverter(session, tree, this, context)
+
+    override fun reportSyntaxError(node: LighterASTNode) {
+        diagnosticsReporter?.reportOn(node.toFirSourceElement(), FirSyntaxErrors.SYNTAX, diagnosticContext!!)
+    }
 
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]
@@ -1694,7 +1699,8 @@ class DeclarationsConverter(
 
         val blockTree = LightTree2Fir.buildLightTreeBlockExpression(block.asText)
         return DeclarationsConverter(
-            baseSession, baseScopeProvider, blockTree, offset = offset + tree.getStartOffset(block), context
+            baseSession, baseScopeProvider, blockTree, offset = offset + tree.getStartOffset(block), context,
+            diagnosticsReporter, diagnosticContext
         ).convertBlockExpression(blockTree.root)
     }
 

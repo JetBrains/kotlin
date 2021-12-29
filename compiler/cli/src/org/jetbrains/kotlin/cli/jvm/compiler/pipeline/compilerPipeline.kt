@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
@@ -121,6 +122,7 @@ fun compileModulesUsingFrontendIrAndLightTree(
             compilerEnvironment,
             emptyList(),
             null,
+            diagnosticsReporter
         )
         // TODO: consider what to do if many modules has main classes
         if (mainClassFqName == null && moduleConfiguration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
@@ -222,6 +224,7 @@ fun compileModuleToAnalyzedFir(
     environment: ModuleCompilerEnvironment,
     previousStepsSymbolProviders: List<FirSymbolProvider>,
     incrementalExcludesScope: AbstractProjectFileSearchScope?,
+    diagnosticsReporter: DiagnosticReporter
 ): ModuleCompilerAnalyzedOutput {
     var sourcesScope = environment.projectEnvironment.getSearchScopeByIoFiles(input.platformSources) //!!
     val sessionProvider = FirProjectSessionProvider()
@@ -266,8 +269,8 @@ fun compileModuleToAnalyzedFir(
     }
 
     // raw fir
-    val commonRawFir = commonSession?.buildFirViaLightTree(input.commonSources)
-    val rawFir = session.buildFirViaLightTree(input.platformSources)
+    val commonRawFir = commonSession?.buildFirViaLightTree(input.commonSources, diagnosticsReporter)
+    val rawFir = session.buildFirViaLightTree(input.platformSources, diagnosticsReporter)
 
     // resolution
     commonSession?.apply {

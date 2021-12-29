@@ -52,7 +52,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     }
 
     val Miscellaneous by object : DiagnosticGroup("Miscellaneous") {
-        val SYNTAX by error<PsiElement>()
         val OTHER_ERROR by error<PsiElement>()
     }
 

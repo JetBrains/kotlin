@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
@@ -16,10 +17,10 @@ import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
-fun FirSession.buildFirViaLightTree(files: Collection<File>): List<FirFile> {
+fun FirSession.buildFirViaLightTree(files: Collection<File>, diagnosticsReporter: DiagnosticReporter? = null): List<FirFile> {
     val firProvider = (firProvider as FirProviderImpl)
     val sourcesToPathsMapper = sourcesToPathsMapper
-    val builder = LightTree2Fir(this, firProvider.kotlinScopeProvider)
+    val builder = LightTree2Fir(this, firProvider.kotlinScopeProvider, diagnosticsReporter)
     return files.map {
         builder.buildFirFile(it).also { firFile ->
             firProvider.recordFile(firFile)

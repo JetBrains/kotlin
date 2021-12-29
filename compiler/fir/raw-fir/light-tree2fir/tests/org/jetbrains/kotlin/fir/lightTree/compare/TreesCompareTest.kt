@@ -57,7 +57,8 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     private fun compareAll() {
         val lightTreeConverter = LightTree2Fir(
             session = FirSessionFactory.createEmptySession(),
-            scopeProvider = StubFirScopeProvider
+            scopeProvider = StubFirScopeProvider,
+            diagnosticsReporter = null
         )
         compareBase(System.getProperty("user.dir"), withTestData = false) { file ->
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
@@ -78,7 +79,8 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     fun testCompareDiagnostics() {
         val lightTreeConverter = LightTree2Fir(
             session = FirSessionFactory.createEmptySession(),
-            scopeProvider = StubFirScopeProvider
+            scopeProvider = StubFirScopeProvider,
+            diagnosticsReporter = null
         )
         compareBase("compiler/testData/diagnostics/tests", withTestData = true) { file ->
             if (file.name.endsWith(".fir.kt")) {

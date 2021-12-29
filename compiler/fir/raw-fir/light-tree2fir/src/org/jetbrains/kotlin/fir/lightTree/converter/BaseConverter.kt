@@ -10,9 +10,8 @@ import com.intellij.openapi.util.Ref
 import com.intellij.psi.TokenType
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
-import org.jetbrains.kotlin.ElementTypeUtils.isExpression
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.BaseFirBuilder
 import org.jetbrains.kotlin.fir.builder.Context
@@ -31,6 +30,8 @@ abstract class BaseConverter(
     abstract val offset: Int
 
     protected val implicitType = buildImplicitTypeRef()
+
+    protected open fun reportSyntaxError(node: LighterASTNode) {}
 
     override fun LighterASTNode.toFirSourceElement(kind: KtFakeSourceElementKind?): KtLightSourceElement {
         val startOffset = offset + tree.getStartOffset(this)
@@ -183,6 +184,10 @@ abstract class BaseConverter(
             if (kid == null) break
             val tokenType = kid.tokenType
             if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON || tokenType in skipTokens) continue
+            if (tokenType == TokenType.ERROR_ELEMENT) {
+                reportSyntaxError(kid)
+                continue
+            }
             f(kid)
         }
     }
@@ -195,6 +200,10 @@ abstract class BaseConverter(
             if (kid == null) break
             val tokenType = kid.tokenType
             if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON) continue
+            if (tokenType == TokenType.ERROR_ELEMENT) {
+                reportSyntaxError(kid)
+                continue
+            }
             f(kid, container)
         }
 
