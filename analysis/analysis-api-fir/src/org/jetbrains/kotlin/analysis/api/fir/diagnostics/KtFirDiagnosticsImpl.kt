@@ -105,11 +105,6 @@ internal class NewInferenceErrorImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.NewInferenceError(), KtAbstractFirDiagnostic<PsiElement>
 
-internal class SyntaxImpl(
-    override val firDiagnostic: KtPsiDiagnostic,
-    override val token: ValidityToken,
-) : KtFirDiagnostic.Syntax(), KtAbstractFirDiagnostic<PsiElement>
-
 internal class OtherErrorImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,

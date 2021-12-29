@@ -111,7 +111,6 @@ object FirErrors {
     val NEW_INFERENCE_ERROR by error1<PsiElement, String>()
 
     // Miscellaneous
-    val SYNTAX by error0<PsiElement>()
     val OTHER_ERROR by error0<PsiElement>()
 
     // General syntax

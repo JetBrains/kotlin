@@ -20,7 +20,8 @@ abstract class AbstractLightTree2FirConverterTestCase : AbstractRawFirBuilderTes
     fun doTest(filePath: String) {
         val firFile = LightTree2Fir(
             session = FirSessionFactory.createEmptySession(),
-            scopeProvider = StubFirScopeProvider
+            scopeProvider = StubFirScopeProvider,
+            diagnosticsReporter = null
         ).buildFirFile(Paths.get(filePath))
         val firDump = firFile.render(mode = FirRenderer.RenderMode.WithDeclarationAttributes)
 

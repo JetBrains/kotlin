@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -149,7 +149,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         val firProvider = session.firProvider as FirProviderImpl
 
         val firFiles = if (USE_LIGHT_TREE) {
-            val lightTree2Fir = LightTree2Fir(session, firProvider.kotlinScopeProvider)
+            val lightTree2Fir = LightTree2Fir(session, firProvider.kotlinScopeProvider, diagnosticsReporter = null)
 
             val allSourceFiles = moduleData.sources.flatMap {
                 if (it.isDirectory) {
