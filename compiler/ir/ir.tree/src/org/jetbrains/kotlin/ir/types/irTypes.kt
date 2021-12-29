@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.impl.*
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.isAnonymousObject
-import org.jetbrains.kotlin.ir.util.isPropertyAccessor
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -212,6 +209,9 @@ val IrClass.typeConstructorParameters: Sequence<IrTypeParameter>
                     null
                 }
                 parent is IrClass && current is IrClass && !current.isInner ->
+                    null
+                // Inline class constructor inherits the same type parameters as the inline class itself
+                current.isJvmInlineClassConstructor ->
                     null
                 else ->
                     parent

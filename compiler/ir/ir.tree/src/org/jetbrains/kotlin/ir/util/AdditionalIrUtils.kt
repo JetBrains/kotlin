@@ -129,6 +129,9 @@ val IrDeclaration.isPropertyAccessor get() =
 val IrDeclaration.isPropertyField get() =
     this is IrField && this.correspondingPropertySymbol != null
 
+val IrDeclaration.isJvmInlineClassConstructor get() =
+    this is IrSimpleFunction && name.asString() == "constructor-impl"
+
 val IrDeclaration.isTopLevelDeclaration get() =
     parent !is IrDeclaration && !this.isPropertyAccessor && !this.isPropertyField
 
