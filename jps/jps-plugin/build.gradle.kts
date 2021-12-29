@@ -13,51 +13,58 @@ val generateTests by generator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsK
     )
 }
 
+repositories {
+    // For rd-core, rd-framework and rd-swing
+    maven("https://cache-redirector.jetbrains.com/www.myget.org/F/rd-snapshots/maven")
+    maven("https://cache-redirector.jetbrains.com/www.myget.org/F/rd-model-snapshots/maven")
+}
+
 dependencies {
-    compile(project(":kotlin-build-common"))
-    compile(project(":core:descriptors"))
-    compile(project(":core:descriptors.jvm"))
-    compile(project(":kotlin-compiler-runner"))
-    compile(project(":daemon-common"))
-    compile(project(":daemon-common-new"))
-    compile(projectRuntimeJar(":kotlin-daemon-client"))
-    compile(projectRuntimeJar(":kotlin-daemon"))
+    api(project(":kotlin-build-common"))
+    api(project(":core:descriptors"))
+    api(project(":core:descriptors.jvm"))
+    api(project(":kotlin-compiler-runner-unshaded"))
+    api(project(":kotlin-compiler-runner"))
+    api(project(":daemon-common"))
+    api(project(":daemon-common-new"))
+    api(project(":kotlin-daemon-client"))
+    api(project(":kotlin-daemon"))
     testImplementation(projectTests(":generators:test-generator")) // TODO FIX ME
-    testCompile(projectTests(":generators:test-generator"))
-    compile(project(":compiler:frontend.java"))
-    compile(project(":js:js.frontend"))
-    compile(projectRuntimeJar(":kotlin-preloader"))
-    compile(project(":jps:jps-common"))
+    testApi(projectTests(":generators:test-generator"))
+    api(project(":compiler:frontend.java"))
+    api(project(":js:js.frontend"))
+    api(project(":kotlin-preloader"))
+    api(project(":jps:jps-common"))
     compileOnly("org.jetbrains.intellij.deps:asm-all:9.1")
-    compileOnly(intellijDep()) {
-        includeJars("jdom", "trove4j", "jps-model", "platform-api", "util", rootProject = rootProject)
-    }
-    compileOnly(jpsStandalone()) { includeJars("jps-builders", "jps-builders-6") }
+    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    compileOnly(intellijCore())
+    compileOnly(jpsModel())
+    compileOnly(jpsModelImpl())
+    compileOnly(jpsBuild())
+    compileOnly(jpsModelSerialization())
+    testApi(jpsModel())
+    testApi(testFramework())
     testCompileOnly(project(":kotlin-reflect-api"))
-    testCompile(project(":compiler:incremental-compilation-impl"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(projectTests(":compiler:incremental-compilation-impl"))
-    testCompile(commonDep("junit:junit"))
-    testCompile(project(":kotlin-test:kotlin-test-jvm"))
-    testCompile(projectTests(":kotlin-build-common"))
+    testApi(project(":compiler:incremental-compilation-impl"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:incremental-compilation-impl"))
+    testApi(commonDependency("junit:junit"))
+    testApi(project(":kotlin-test:kotlin-test-jvm"))
+    testApi(projectTests(":kotlin-build-common"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testCompileOnly(jpsStandalone()) { includeJars("jps-builders", "jps-builders-6") }
-    Ide.IJ {
-        testCompile(intellijDep("devkit"))
-    }
+    testCompileOnly(jpsBuild())
+    testApi(devKitJps())
 
-    testCompile(intellijDep())
+    testApi(intellijCore())
 
-    testCompile(jpsBuildTest())
+    testApi(jpsBuildTest())
     compilerModules.forEach {
-        testRuntime(project(it))
+        testRuntimeOnly(project(it))
     }
-
-    testRuntimeOnly(intellijPluginDep("java"))
 
     testRuntimeOnly(toolsJar())
-    testRuntime(project(":kotlin-reflect"))
-    testRuntime(project(":kotlin-script-runtime"))
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":kotlin-script-runtime"))
 }
 
 sourceSets {
