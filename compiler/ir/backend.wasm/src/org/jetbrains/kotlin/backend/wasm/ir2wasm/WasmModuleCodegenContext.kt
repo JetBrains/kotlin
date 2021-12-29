@@ -35,7 +35,7 @@ interface WasmModuleCodegenContext : WasmBaseCodegenContext {
 
     fun registerInterfaceImplementationMethod(
         interfaceImplementation: InterfaceImplementation,
-        table: Map<IrFunctionSymbol, WasmSymbol<WasmFunction>>,
+        table: Map<IrFunctionSymbol, WasmSymbol<WasmFunction>?>,
     )
 
     fun referenceInterfaceImplementationId(interfaceImplementation: InterfaceImplementation): WasmSymbol<Int>

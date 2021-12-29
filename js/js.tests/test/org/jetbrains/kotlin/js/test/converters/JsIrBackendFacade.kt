@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.backend.js.codegen.CompilerOutputSink
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationOptions
 import org.jetbrains.kotlin.ir.backend.js.codegen.generateEsModules
+import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformerTmp

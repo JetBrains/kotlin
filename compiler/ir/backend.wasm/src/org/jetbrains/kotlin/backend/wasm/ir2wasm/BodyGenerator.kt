@@ -271,7 +271,6 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             }
         }
 
-
         if (tryToGenerateIntrinsicCall(call, function)) {
             if (function.returnType == irBuiltIns.unitType)
                 body.buildGetUnit()
@@ -284,7 +283,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
             val klass = function.parentAsClass
             if (!klass.isInterface) {
                 val classMetadata = context.getClassMetadata(klass.symbol)
-                val vfSlot = classMetadata.virtualMethods.map { it.function }.indexOf(function)
+                val vfSlot = classMetadata.virtualMethods.indexOfFirst { it.function == function }
                 // Dispatch receiver should be simple and without side effects at this point
                 // TODO: Verify
                 generateExpression(call.dispatchReceiver!!)

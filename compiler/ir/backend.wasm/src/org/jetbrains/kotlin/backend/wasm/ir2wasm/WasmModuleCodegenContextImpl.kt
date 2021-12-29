@@ -126,7 +126,7 @@ class WasmModuleCodegenContextImpl(
 
     override fun registerInterfaceImplementationMethod(
         interfaceImplementation: InterfaceImplementation,
-        table: Map<IrFunctionSymbol, WasmSymbol<WasmFunction>>
+        table: Map<IrFunctionSymbol, WasmSymbol<WasmFunction>?>
     ) {
         wasmFragment.interfaceImplementationsMethods[interfaceImplementation] = table
     }

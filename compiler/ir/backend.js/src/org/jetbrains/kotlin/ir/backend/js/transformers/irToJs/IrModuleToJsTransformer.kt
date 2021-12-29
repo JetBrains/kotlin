@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.ir.backend.js.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.CompilerResult
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.eliminateDeadDeclarations
+import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.export.ExportModelGenerator
 import org.jetbrains.kotlin.ir.backend.js.export.ExportModelToJsStatements
 import org.jetbrains.kotlin.ir.backend.js.export.ExportedModule

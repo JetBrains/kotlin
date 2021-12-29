@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
+import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
@@ -31,6 +32,7 @@ fun compileWasm(
     exportedDeclarations: Set<FqName> = emptySet(),
     propertyLazyInitialization: Boolean,
     emitNameSection: Boolean = false,
+    dceEnabled: Boolean = false,
 ): WasmCompilerResult {
     val mainModule = depsDescriptors.mainModule
     val configuration = depsDescriptors.compilerConfiguration
@@ -69,8 +71,12 @@ fun compileWasm(
 
     wasmPhases.invokeToplevel(phaseConfig, context, moduleFragment)
 
+    if (dceEnabled) {
+        eliminateDeadDeclarations(listOf(moduleFragment), context)
+    }
+
     val compiledWasmModule = WasmCompiledModuleFragment(context.irBuiltIns)
-    val codeGenerator = WasmModuleFragmentGenerator(context, compiledWasmModule)
+    val codeGenerator = WasmModuleFragmentGenerator(context, compiledWasmModule, allowIncompleteImplementations = dceEnabled)
     codeGenerator.generateModule(moduleFragment)
 
     val linkedModule = compiledWasmModule.linkWasmCompiledFragments()

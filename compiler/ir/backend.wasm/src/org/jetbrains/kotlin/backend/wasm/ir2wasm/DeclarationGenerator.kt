@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.wasm.ir.*
 
-class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVisitorVoid {
+class DeclarationGenerator(val context: WasmModuleCodegenContext, private val allowIncompleteImplementations: Boolean) : IrElementVisitorVoid {
 
     // Shortcuts
     private val backendContext: WasmBackendContext = context.backendContext
@@ -238,7 +238,6 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
                 wasmExpressionGenerator.buildRttCanon(wasmGcType)
             }
 
-
             val rtt = WasmGlobal(
                 name = "rtt_of_$nameStr",
                 isMutable = false,
@@ -258,13 +257,16 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
                     // TODO: Cache it
                     val interfaceMetadata = InterfaceMetadata(i, irBuiltIns)
                     val table = interfaceMetadata.methods.associate { method ->
-                        val classMethod: VirtualMethodMetadata =
-                            metadata.virtualMethods
-                                .find { it.signature == method.signature }  // TODO: Use map
-                                ?: error("Cannot find class implementation of method ${method.signature} in class ${declaration.fqNameWhenAvailable}")
+                        val classMethod: VirtualMethodMetadata? = metadata.virtualMethods
+                            .find { it.signature == method.signature && it.function.modality != Modality.ABSTRACT }  // TODO: Use map
 
-                        method.function.symbol as IrFunctionSymbol to context.referenceFunction(classMethod.function.symbol)
+                        if (classMethod == null && !allowIncompleteImplementations) {
+                            error("Cannot find class implementation of method ${method.signature} in class ${declaration.fqNameWhenAvailable}")
+                        }
+                        val matchedMethod = classMethod?.let { context.referenceFunction(it.function.symbol) }
+                        method.function.symbol as IrFunctionSymbol to matchedMethod
                     }
+
                     context.registerInterfaceImplementationMethod(
                         interfaceImplementation,
                         table

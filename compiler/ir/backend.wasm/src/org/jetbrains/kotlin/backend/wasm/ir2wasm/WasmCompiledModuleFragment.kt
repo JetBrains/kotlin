@@ -74,7 +74,7 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
         ReferencableElements<InterfaceImplementation, Int>()
 
     val interfaceImplementationsMethods =
-        LinkedHashMap<InterfaceImplementation, Map<IrFunctionSymbol, WasmSymbol<WasmFunction>>>()
+        LinkedHashMap<InterfaceImplementation, Map<IrFunctionSymbol, WasmSymbol<WasmFunction>?>>()
 
     val exports = mutableListOf<WasmExport<*>>()
 
@@ -83,6 +83,7 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
     val jsFuns = mutableListOf<JsCodeSnippet>()
 
     class FunWithPriority(val function: WasmFunction, val priority: String)
+
     val initFunctions = mutableListOf<FunWithPriority>()
 
     val scratchMemAddr = WasmSymbol<Int>()
@@ -229,28 +230,34 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
         )
 
         val interfaceTableElementsLists = interfaceMethodTables.defined.keys.associateWith {
-            mutableMapOf<Int, WasmSymbol<WasmFunction>>()
+            mutableMapOf<Int, WasmSymbol<WasmFunction>?>()
         }
 
-        interfaceImplementationIds.forEach { ii: InterfaceImplementation, implId: Int ->
-            for ((interfaceFunction: IrFunctionSymbol, wasmFunction: WasmSymbol<WasmFunction>) in interfaceImplementationsMethods[ii]!!) {
+        for ((ii: InterfaceImplementation, implId: Int) in interfaceImplementationIds) {
+            for ((interfaceFunction: IrFunctionSymbol, wasmFunction: WasmSymbol<WasmFunction>?) in interfaceImplementationsMethods[ii]!!) {
                 interfaceTableElementsLists[interfaceFunction]!![implId] = wasmFunction
             }
         }
 
         val interfaceTableElements = interfaceTableElementsLists.map { (interfaceFunction, methods) ->
-            val type = interfaceMethodTables.defined[interfaceFunction]!!.elementType
+            val methodTable = interfaceMethodTables.defined[interfaceFunction]!!
+            val type = methodTable.elementType
             val functions = MutableList(methods.size) { idx ->
-                val wasmFunc = methods[idx]!!
+                val wasmFunc = methods[idx]
                 val expression = buildWasmExpression {
-                    buildInstr(WasmOp.REF_FUNC, WasmImmediate.FuncIdx(wasmFunc))
+                    if (wasmFunc != null) {
+                        buildInstr(WasmOp.REF_FUNC, WasmImmediate.FuncIdx(wasmFunc))
+                    } else {
+                        //DCE could remove implementation from class, so we should to put a stub into method implementations table
+                        buildRefNull(type.getHeapType())
+                    }
                 }
                 WasmTable.Value.Expression(expression)
             }
             WasmElement(
                 type,
                 values = functions,
-                WasmElement.Mode.Active(interfaceMethodTables.defined[interfaceFunction]!!, offsetExpr)
+                WasmElement.Mode.Active(methodTable, offsetExpr)
             )
         }
 
