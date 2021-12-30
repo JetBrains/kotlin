@@ -13,21 +13,19 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltinOperatorDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.defaultOrNullableType
-import org.jetbrains.kotlin.ir.util.isNullConst
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 /**
@@ -125,7 +123,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
     }
 
     private fun inlinedClassHasDefaultEquals(irClass: IrClass): Boolean {
-        if (!irClass.isInline) {
+        if (!irClass.isSingleFieldValueClass) {
             // Implicitly-inlined class, e.g. primitive one.
             return true
         }
@@ -133,7 +131,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
         val equals = irClass.simpleFunctions()
                 .single { it.name.asString() == "equals" && it.valueParameters.size == 1 && it.overrides(anyEquals) }
 
-        return equals.origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER
+        return equals.origin == IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER
     }
 
     fun IrBuilderWithScope.genInlineClassEquals(

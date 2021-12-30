@@ -491,7 +491,7 @@ internal class TestProcessor (val context: Context) {
                 isInner = false,
                 isData = false,
                 isExternal = false,
-                isInline = false,
+                isValue = false,
                 isExpect = false,
                 isFun = false
         ).apply {

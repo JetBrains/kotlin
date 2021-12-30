@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.isSuspend
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Type
@@ -125,7 +127,7 @@ private fun IrSimpleFunction.overridesReturningDifferentType(returnType: IrType)
             val owner = overridden.owner
             val overriddenReturnType = owner.returnType
 
-            if (!overriddenReturnType.erasedUpperBound.isInline) return true
+            if (!overriddenReturnType.erasedUpperBound.isSingleFieldValueClass) return true
 
             if (overriddenReturnType.isNullable() &&
                 overriddenReturnType.makeNotNull().unboxInlineClass().isNullable()

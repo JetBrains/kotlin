@@ -194,7 +194,8 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                 isVararg = INAPPLICABLE,
                 isSuspend = INAPPLICABLE,
                 isInner,
-                isInline,
+                isInline = false,
+                isValue,
                 isData,
                 isCompanion,
                 isFun,
@@ -254,6 +255,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     enum / annotation / fun // as a modifier in `fun interface`
     companion
     inline
+    value
     infix
     operator
     data
@@ -271,6 +273,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         isSuspend: Boolean,
         isInner: Boolean,
         isInline: Boolean,
+        isValue: Boolean,
         isData: Boolean,
         isCompanion: Boolean,
         isFunInterface: Boolean,
@@ -305,6 +308,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p(isSuspend, "suspend")
         p(isInner, "inner")
         p(isInline, "inline")
+        p(isValue, "value")
         p(isData, "data")
         p(isCompanion, "companion")
         p(isFunInterface, "fun")
@@ -542,6 +546,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                 isSuspend = INAPPLICABLE,
                 isInner = INAPPLICABLE,
                 isInline,
+                isValue = INAPPLICABLE,
                 isData = INAPPLICABLE,
                 isCompanion = INAPPLICABLE,
                 isFunInterface = INAPPLICABLE,
@@ -597,6 +602,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                 isSuspend,
                 isInner = INAPPLICABLE,
                 isInline,
+                isValue = INAPPLICABLE,
                 isData = INAPPLICABLE,
                 isCompanion = INAPPLICABLE,
                 isFunInterface = INAPPLICABLE,
@@ -707,8 +713,9 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                 isVararg = INAPPLICABLE,
                 isSuspend = getter?.isSuspend == true,
                 isInner = INAPPLICABLE,
-                // could be used on property if all all accessors have same state, otherwise must be defined on each accessor
+                // could be used on property if all accessors have same state, otherwise must be defined on each accessor
                 isInline = false,
+                isValue = INAPPLICABLE,
                 isData = INAPPLICABLE,
                 isCompanion = INAPPLICABLE,
                 isFunInterface = INAPPLICABLE,
@@ -797,6 +804,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
                 isSuspend = INAPPLICABLE,
                 isInner = INAPPLICABLE,
                 isInline = INAPPLICABLE,
+                isValue = INAPPLICABLE,
                 isData = INAPPLICABLE,
                 isCompanion = INAPPLICABLE,
                 isFunInterface = INAPPLICABLE,

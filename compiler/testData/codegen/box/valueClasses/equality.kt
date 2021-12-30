@@ -49,7 +49,7 @@ fun box(): String {
     val f5 = F5(UInt.MAX_VALUE.dec())
     val f6 = F6("678")
     val a1 = A(f1, f2, f3, f4, f5, f6, 9, UInt.MAX_VALUE - 2U, "0")
-    val a2 = a1
+    val a2 = A(f1, f2, f3, f4, f5, f6, 9, UInt.MAX_VALUE - 2U, "0")
     val b = B(a1, a2)
 
     assert(f1.x == 1)
@@ -181,17 +181,17 @@ fun box(): String {
     assert(b.toString() == b.toString())
     assert(b.hashCode() == b.hashCode())
 
-    fun String.assertGoodBasicToString(expected: String) = assert(matches(Regex("^([_a-zA-Z]+[.])*$expected@[0-9a-f]+$"))) { this }
 
     assert(f1.toString() == "F1(x=1)") { f1.toString() }
     assert(f2.toString() == "F2(x=4294967295)") { f2.toString() }
-    f3.toString().assertGoodBasicToString("F3") // not data class yet
+    assert(f3.toString() == "F3(x=F1(x=1), y=F2(x=4294967295))") { f3.toString() }
     assert(f4.toString() == "F4(x=5)") { f4.toString() }
     assert(f5.toString() == "F5(x=4294967294)") { f5.toString() }
     assert(f6.toString() == "F6(x=678)") { f6.toString() }
-    a1.toString().assertGoodBasicToString("A") // not data class yet
-    a2.toString().assertGoodBasicToString("A") // not data class yet
-    assert(b.toString() == "OverridenBToString(a1 = $a1, a2 = $a2)") { b.toString() }
+    val aStr = "A(f1=F1(x=1), f2=F2(x=4294967295), f3=F3(x=F1(x=1), y=F2(x=4294967295)), f4=F4(x=5), f5=F5(x=4294967294), f6=F6(x=678), f7=9, f8=4294967293, f9=0)"
+    assert(a1.toString() == aStr) { a1.toString() }
+    assert(a2.toString() == aStr) { a2.toString() }
+    assert(b.toString() == "OverridenBToString(a1 = $aStr, a2 = $aStr)") { b.toString() }
 
     return "OK"
 }

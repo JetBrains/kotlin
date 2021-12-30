@@ -139,62 +139,62 @@ internal class EnumSpecialDeclarationsFactory(val context: Context) {
         val endOffset = enumClass.endOffset
 
         val implObject =
-            IrClassImpl(
-                    startOffset, endOffset,
-                    DECLARATION_ORIGIN_ENUM,
-                    IrClassSymbolImpl(),
-                    "OBJECT".synthesizedName,
-                    ClassKind.OBJECT,
-                    DescriptorVisibilities.PUBLIC,
-                    Modality.FINAL,
-                    isCompanion = false,
-                    isInner = false,
-                    isData = false,
-                    isExternal = false,
-                    isInline = false,
-                    isExpect = false,
-                    isFun = false
-            ).apply {
-                parent = enumClass
-                createParameterDeclarations()
-            }
+                IrClassImpl(
+                        startOffset, endOffset,
+                        DECLARATION_ORIGIN_ENUM,
+                        IrClassSymbolImpl(),
+                        "OBJECT".synthesizedName,
+                        ClassKind.OBJECT,
+                        DescriptorVisibilities.PUBLIC,
+                        Modality.FINAL,
+                        isCompanion = false,
+                        isInner = false,
+                        isData = false,
+                        isExternal = false,
+                        isValue = false,
+                        isExpect = false,
+                        isFun = false
+                ).apply {
+                    parent = enumClass
+                    createParameterDeclarations()
+                }
 
         val valuesType = valuesArrayType(enumClass)
         val valuesField =
-            IrFieldImpl(
-                    startOffset, endOffset,
-                    DECLARATION_ORIGIN_ENUM,
-                    IrFieldSymbolImpl(),
-                    "VALUES".synthesizedName,
-                    valuesType,
-                    DescriptorVisibilities.PRIVATE,
-                    isFinal = true,
-                    isExternal = false,
-                    isStatic = false,
-            ).apply {
-                parent = implObject
-            }
+                IrFieldImpl(
+                        startOffset, endOffset,
+                        DECLARATION_ORIGIN_ENUM,
+                        IrFieldSymbolImpl(),
+                        "VALUES".synthesizedName,
+                        valuesType,
+                        DescriptorVisibilities.PRIVATE,
+                        isFinal = true,
+                        isExternal = false,
+                        isStatic = false,
+                ).apply {
+                    parent = implObject
+                }
 
         val valuesGetter =
-            IrFunctionImpl(
-                    startOffset, endOffset,
-                    DECLARATION_ORIGIN_ENUM,
-                    IrSimpleFunctionSymbolImpl(),
-                    "get-VALUES".synthesizedName,
-                    DescriptorVisibilities.PUBLIC,
-                    Modality.FINAL,
-                    valuesType,
-                    isInline = false,
-                    isExternal = false,
-                    isTailrec = false,
-                    isSuspend = false,
-                    isExpect = false,
-                    isFakeOverride = false,
-                    isOperator = false,
-                    isInfix = false
-            ).apply {
-                parent = implObject
-            }
+                IrFunctionImpl(
+                        startOffset, endOffset,
+                        DECLARATION_ORIGIN_ENUM,
+                        IrSimpleFunctionSymbolImpl(),
+                        "get-VALUES".synthesizedName,
+                        DescriptorVisibilities.PUBLIC,
+                        Modality.FINAL,
+                        valuesType,
+                        isInline = false,
+                        isExternal = false,
+                        isTailrec = false,
+                        isSuspend = false,
+                        isExpect = false,
+                        isFakeOverride = false,
+                        isOperator = false,
+                        isInfix = false
+                ).apply {
+                    parent = implObject
+                }
 
         val constructorOfAny = context.irBuiltIns.anyClass.owner.constructors.first()
         implObject.addSimpleDelegatingConstructor(

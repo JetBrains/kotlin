@@ -211,7 +211,7 @@ class ExportModelGenerator(
             }
         }
 
-        if (klass.isInline)
+        if (klass.isSingleFieldValueClass)
             return Exportability.Prohibited("Inline class ${klass.fqNameWhenAvailable}")
 
         return Exportability.Allowed

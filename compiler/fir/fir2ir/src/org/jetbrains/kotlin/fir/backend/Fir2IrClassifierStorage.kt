@@ -287,7 +287,7 @@ class Fir2IrClassifierStorage(
                     isInner = regularClass.isInner,
                     isData = regularClass.isData,
                     isExternal = regularClass.isExternal,
-                    isInline = regularClass.isInline && regularClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.size == 1,
+                    isValue = regularClass.isInline,
                     isExpect = regularClass.isExpect,
                     isFun = regularClass.isFun
                 ).apply {

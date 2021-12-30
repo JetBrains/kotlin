@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.backend.common.serialization.encodings
 import org.jetbrains.kotlin.backend.common.serialization.IrFlags
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
@@ -27,7 +27,7 @@ value class ClassFlags(val flags: Long) {
     val isCompanion: Boolean get() = IrFlags.CLASS_KIND.get(flags.toInt()) == ProtoBuf.Class.Kind.COMPANION_OBJECT
     val isInner: Boolean get() = IrFlags.IS_INNER.get(flags.toInt())
     val isData: Boolean get() = IrFlags.IS_DATA.get(flags.toInt())
-    val isInline: Boolean get() = IrFlags.IS_INLINE_CLASS.get(flags.toInt())
+    val isValue: Boolean get() = IrFlags.IS_VALUE_CLASS.get(flags.toInt())
     val isExpect: Boolean get() = IrFlags.IS_EXPECT_CLASS.get(flags.toInt())
     val isExternal: Boolean get() = IrFlags.IS_EXTERNAL_CLASS.get(flags.toInt())
     val isFun: Boolean get() = IrFlags.IS_FUN_INTERFACE.get(flags.toInt())
@@ -40,8 +40,9 @@ value class ClassFlags(val flags: Long) {
                 val modality = ProtoEnumFlags.modality(modality)
                 val kind = ProtoEnumFlags.classKind(kind, isCompanion)
 
-                val flags =
-                    IrFlags.getClassFlags(hasAnnotation, visibility, modality, kind, isInner, isData, isExternal, isExpect, isInline, isFun)
+                val flags = IrFlags.getClassFlags(
+                    hasAnnotation, visibility, modality, kind, isInner, isData, isExternal, isExpect, isValue, isFun
+                )
 
                 flags.toLong()
             }

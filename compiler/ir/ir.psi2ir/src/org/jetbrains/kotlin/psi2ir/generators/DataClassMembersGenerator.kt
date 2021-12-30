@@ -45,8 +45,12 @@ class DataClassMembersGenerator(
     declarationGenerator: DeclarationGenerator
 ) : DeclarationGeneratorExtension(declarationGenerator) {
 
-    fun generateInlineClassMembers(ktClassOrObject: KtClassOrObject, irClass: IrClass) {
-        MyDataClassMethodGenerator(ktClassOrObject, irClass, IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER).generate()
+    fun generateSingleFieldValueClassMembers(ktClassOrObject: KtClassOrObject, irClass: IrClass) {
+        MyDataClassMethodGenerator(ktClassOrObject, irClass, IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER).generate()
+    }
+
+    fun generateMultiFieldValueClassMembers(ktClassOrObject: KtClassOrObject, irClass: IrClass) {
+        MyDataClassMethodGenerator(ktClassOrObject, irClass, IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER).generate()
     }
 
     fun generateDataClassMembers(ktClassOrObject: KtClassOrObject, irClass: IrClass) {

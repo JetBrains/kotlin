@@ -457,7 +457,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         this as? IrTypeParameterSymbol
 
     override fun TypeConstructorMarker.isInlineClass(): Boolean =
-        (this as? IrClassSymbol)?.owner?.isInline == true
+        (this as? IrClassSymbol)?.owner?.isSingleFieldValueClass == true
 
     override fun TypeConstructorMarker.isInnerClass(): Boolean =
         (this as? IrClassSymbol)?.owner?.isInner == true

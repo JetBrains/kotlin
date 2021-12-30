@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.codegen.DescriptorAsmUtil.genAreEqualCall
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -70,7 +71,7 @@ class Equals(val operator: IElementType) : IntrinsicMethod() {
         if (a.isNullConst() || b.isNullConst()) {
             val irValue = if (a.isNullConst()) b else a
             val value = irValue.accept(codegen, data)
-            return if (!isPrimitive(value.type) && (irValue.type.classOrNull?.owner?.isInline != true || irValue.type.isNullable()))
+            return if (!isPrimitive(value.type) && (irValue.type.classOrNull?.owner?.isSingleFieldValueClass != true || irValue.type.isNullable()))
                 BooleanNullCheck(value)
             else {
                 value.discard()

@@ -44,7 +44,7 @@ data class TestData {
 
 }
 
-inline class TestInline {
+value class TestInline {
   constructor(nn: Nothing?) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -78,3 +78,4 @@ inline class TestInline {
   }
 
 }
+

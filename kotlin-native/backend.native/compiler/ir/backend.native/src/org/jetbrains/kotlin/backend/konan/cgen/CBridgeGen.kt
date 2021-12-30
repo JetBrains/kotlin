@@ -9,7 +9,10 @@ import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.getObjCMethodInfo
-import org.jetbrains.kotlin.backend.konan.ir.*
+import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
+import org.jetbrains.kotlin.backend.konan.ir.getAnnotationArgumentValue
+import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.isObjCMetaClass
 import org.jetbrains.kotlin.backend.konan.lower.FunctionReferenceLowering
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -1106,7 +1109,7 @@ private class ObjCBlockPointerValuePassing(
                 Name.identifier(stubs.getUniqueKotlinFunctionReferenceClassName("BlockFunctionImpl")),
                 ClassKind.CLASS, DescriptorVisibilities.PRIVATE, Modality.FINAL,
                 isCompanion = false, isInner = false, isData = false, isExternal = false,
-                isInline = false, isExpect = false, isFun = false
+                isValue = false, isExpect = false, isFun = false
         )
         irClass.createParameterDeclarations()
 

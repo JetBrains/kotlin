@@ -22,7 +22,7 @@ val JVM_INLINE_ANNOTATION_CLASS_ID = ClassId.topLevel(JVM_INLINE_ANNOTATION_FQ_N
 fun DeclarationDescriptor.isInlineClass(): Boolean = when {
     this !is ClassDescriptor -> false
     isInline -> true
-    else -> isValue && (unsubstitutedPrimaryConstructor?.valueParameters?.size?.let { it == 1 } ?: true)
+    else -> isValue && unsubstitutedPrimaryConstructor?.valueParameters?.size == 1
 }
 
 fun DeclarationDescriptor.isValueClass(): Boolean =

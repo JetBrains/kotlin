@@ -604,12 +604,11 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
 
     override fun isData() = owner.isData
 
-    override fun isInline() = owner.isInline
+    override fun isInline() = owner.isSingleFieldValueClass
 
     override fun isFun() = owner.isFun
 
-    // In IR, inline and value are synonyms
-    override fun isValue() = owner.isInline
+    override fun isValue() = owner.isValue
 
     override fun getThisAsReceiverParameter() = owner.thisReceiver?.toIrBasedDescriptor() as ReceiverParameterDescriptor
 

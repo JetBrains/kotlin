@@ -84,14 +84,14 @@ class JvmSymbols(
         fqName: FqName,
         classKind: ClassKind = ClassKind.CLASS,
         classModality: Modality = Modality.FINAL,
-        classIsInline: Boolean = false,
+        classIsValue: Boolean = false,
         block: (IrClass) -> Unit = {}
     ): IrClassSymbol =
         irFactory.buildClass {
             name = fqName.shortName()
             kind = classKind
             modality = classModality
-            isInline = classIsInline
+            isValue = classIsValue
         }.apply {
             parent = when (fqName.parent().asString()) {
                 "kotlin" -> kotlinPackage
@@ -271,7 +271,7 @@ class JvmSymbols(
         }
 
     private val resultClassStub: IrClassSymbol =
-        createClass(StandardNames.RESULT_FQ_NAME, classIsInline = true) { klass ->
+        createClass(StandardNames.RESULT_FQ_NAME, classIsValue = true) { klass ->
             klass.addTypeParameter("T", irBuiltIns.anyNType, Variance.OUT_VARIANCE)
             klass.inlineClassRepresentation = InlineClassRepresentation(Name.identifier("value"), irBuiltIns.anyNType as IrSimpleType)
         }

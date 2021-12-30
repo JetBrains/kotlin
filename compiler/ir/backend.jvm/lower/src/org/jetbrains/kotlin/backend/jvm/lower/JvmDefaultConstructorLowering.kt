@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
 
@@ -37,7 +38,7 @@ internal val jvmDefaultConstructorPhase = makeIrFilePhase(
 private class JvmDefaultConstructorLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {
-        if (irClass.kind != ClassKind.CLASS || irClass.visibility == DescriptorVisibilities.LOCAL || irClass.isInline || irClass.isInner ||
+        if (irClass.kind != ClassKind.CLASS || irClass.visibility == DescriptorVisibilities.LOCAL || irClass.isSingleFieldValueClass || irClass.isInner ||
             irClass.modality == Modality.SEALED
         )
             return

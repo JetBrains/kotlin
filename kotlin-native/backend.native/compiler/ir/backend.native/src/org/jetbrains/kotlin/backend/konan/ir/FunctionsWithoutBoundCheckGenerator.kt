@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
-import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.BinaryType
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
+import org.jetbrains.kotlin.backend.konan.KonanFqNames
+import org.jetbrains.kotlin.backend.konan.computeBinaryType
 import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -16,10 +18,13 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.addMember
+import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.isAnnotationWithEqualFqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -64,7 +69,7 @@ internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendCont
     fun generate() {
         symbols.arrays.forEach { classSymbol ->
             val underlyingClass = (classSymbol.defaultType.computeBinaryType() as BinaryType.Reference)
-                    .types.single().takeIf { classSymbol.owner.isInline }
+                    .types.single().takeIf { classSymbol.owner.isSingleFieldValueClass }
             val setFunction = classSymbol.owner.functions.single { it.name == OperatorNameConventions.SET }
             val setDelegatingToFunction = underlyingClass?.functions?.single { it.name == OperatorNameConventions.SET }
             classSymbol.owner.addMember(generateFunction(setFunction, setDelegatingToFunction, KonanNameConventions.setWithoutBoundCheck))

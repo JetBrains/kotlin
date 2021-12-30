@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.ir
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrScript
-import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
-import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -106,7 +103,7 @@ fun IrType.defaultValue(startOffset: Int, endOffset: Int, context: JvmBackendCon
         return classifier.owner.representativeUpperBound.defaultValue(startOffset, endOffset, context)
     }
 
-    if (this !is IrSimpleType || hasQuestionMark || classOrNull?.owner?.isInline != true)
+    if (this !is IrSimpleType || hasQuestionMark || classOrNull?.owner?.isSingleFieldValueClass != true)
         return IrConstImpl.defaultValueForType(startOffset, endOffset, this)
 
     val underlyingType = unboxInlineClass()
@@ -119,7 +116,7 @@ fun IrType.defaultValue(startOffset: Int, endOffset: Int, context: JvmBackendCon
 }
 
 fun IrType.isInlineClassType(): Boolean =
-    erasedUpperBound.isInline
+    erasedUpperBound.isSingleFieldValueClass
 
 val IrType.upperBound: IrType
     get() = erasedUpperBound.symbol.starProjectedType

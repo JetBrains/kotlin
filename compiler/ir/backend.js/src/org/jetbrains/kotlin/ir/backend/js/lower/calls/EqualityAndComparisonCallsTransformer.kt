@@ -186,7 +186,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
         isBuiltin() && this != PrimitiveType.FLOATING_POINT_NUMBER
 
     private fun IrType.isDefaultEqualsMethod() =
-        findEqualsMethod()?.origin === IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER
+        findEqualsMethod()?.origin === IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER
 
     private fun IrExpression.isBoxIntrinsic() =
         this is IrCall && symbol == icUtils.boxIntrinsic

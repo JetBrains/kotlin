@@ -1473,7 +1473,7 @@ class ExpressionCodegen(
     companion object {
         internal fun generateClassInstance(v: InstructionAdapter, classType: IrType, typeMapper: IrTypeMapper) {
             val asmType = typeMapper.mapType(classType)
-            if (classType.getClass()?.isInline == true || !isPrimitive(asmType)) {
+            if (classType.getClass()?.isSingleFieldValueClass == true || !isPrimitive(asmType)) {
                 v.aconst(typeMapper.boxType(classType))
             } else {
                 v.getstatic(boxType(asmType).internalName, "TYPE", "Ljava/lang/Class;")

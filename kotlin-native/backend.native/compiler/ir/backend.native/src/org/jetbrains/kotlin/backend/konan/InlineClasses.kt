@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -293,7 +294,7 @@ internal object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrTyp
         }
     }
 
-    override fun hasInlineModifier(clazz: IrClass): Boolean = clazz.isInline
+    override fun hasInlineModifier(clazz: IrClass): Boolean = clazz.isSingleFieldValueClass
 
     override fun getNativePointedSuperclass(clazz: IrClass): IrClass? {
         var superClass: IrClass? = clazz

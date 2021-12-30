@@ -666,7 +666,7 @@ class IrBuiltInsOverFir(
                         build()
                         irFactory.createClass(
                             startOffset, endOffset, origin, symbol, name, kind, visibility, modality,
-                            isCompanion, isInner, isData, isExternal, isInline, isExpect, isFun
+                            isCompanion, isInner, isData, isExternal, isValue, isExpect, isFun
                         )
                     }.also {
                         it.parent = parent
@@ -701,7 +701,7 @@ class IrBuiltInsOverFir(
         vararg supertypes: IrType,
         classKind: ClassKind = ClassKind.CLASS,
         classModality: Modality = Modality.OPEN,
-        classIsInline: Boolean = false,
+        classIsValue: Boolean = false,
         builderBlock: IrClassBuilder.() -> Unit = {},
         block: IrClass.() -> Unit = {}
     ): IrClassSymbol {
@@ -709,7 +709,7 @@ class IrBuiltInsOverFir(
 
         return this.createClass(
             signature, *supertypes,
-            classKind = classKind, classModality = classModality, classIsInline = classIsInline, builderBlock = builderBlock, block = block
+            classKind = classKind, classModality = classModality, classIsValue = classIsValue, builderBlock = builderBlock, block = block
         )
     }
 
@@ -718,7 +718,7 @@ class IrBuiltInsOverFir(
         vararg supertypes: IrType,
         classKind: ClassKind = ClassKind.CLASS,
         classModality: Modality = Modality.OPEN,
-        classIsInline: Boolean = false,
+        classIsValue: Boolean = false,
         builderBlock: IrClassBuilder.() -> Unit = {},
         block: IrClass.() -> Unit = {}
     ): IrClassSymbol = components.symbolTable.declareClass(
@@ -729,12 +729,12 @@ class IrBuiltInsOverFir(
                 name = Name.identifier(signature.shortName)
                 kind = classKind
                 modality = classModality
-                isInline = classIsInline
+                isValue = classIsValue
                 origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
                 builderBlock()
                 irFactory.createClass(
                     startOffset, endOffset, origin, symbol, name, kind, visibility, modality,
-                    isCompanion, isInner, isData, isExternal, isInline, isExpect, isFun
+                    isCompanion, isInner, isData, isExternal, isValue, isExpect, isFun
                 )
             }.also {
                 it.parent = this

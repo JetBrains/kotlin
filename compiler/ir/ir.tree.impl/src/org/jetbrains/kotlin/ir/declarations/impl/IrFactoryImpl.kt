@@ -47,14 +47,14 @@ abstract class AbstractIrFactoryImpl : IrFactory {
         isInner: Boolean,
         isData: Boolean,
         isExternal: Boolean,
-        isInline: Boolean,
+        isValue: Boolean,
         isExpect: Boolean,
         isFun: Boolean,
         source: SourceElement,
     ): IrClass =
         IrClassImpl(
             startOffset, endOffset, origin, symbol, name, kind, visibility, modality,
-            isCompanion, isInner, isData, isExternal, isInline, isExpect, isFun, source,
+            isCompanion, isInner, isData, isExternal, isValue, isExpect, isFun, source,
             factory = this
         )
 

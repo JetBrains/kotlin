@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.parcelize.ParcelizeNames
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATE_FROM_PARCEL_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.NEW_ARRAY_NAME
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_TO_PARCEL_NAME
@@ -521,12 +520,12 @@ class AndroidSymbols(
         shortName: String,
         classKind: ClassKind,
         classModality: Modality,
-        isInlineClass: Boolean = false
+        isValueClass: Boolean = false,
     ): IrClassSymbol = irFactory.buildClass {
         name = Name.identifier(shortName)
         kind = classKind
         modality = classModality
-        isInline = isInlineClass
+        isValue = isValueClass
     }.apply {
         parent = irPackage
         createImplicitParameterDeclarationWithWrappedDescriptor()

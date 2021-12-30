@@ -45,17 +45,17 @@ package kotlin {
             public constructor A5(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
             public final val x: kotlin.Int
             public final val y: kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
         }
 
         @kotlin.jvm.JvmInline public final value class A6 {
             public constructor A6(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
             public final val y: kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+            public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
         }
 
         @kotlin.jvm.JvmInline public final value class A7 {

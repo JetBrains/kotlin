@@ -318,7 +318,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
                 JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
                 IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER,
-                IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER,
+                IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER,
                 IrDeclarationOrigin.BRIDGE,
                 IrDeclarationOrigin.BRIDGE_SPECIAL,
                 JvmLoweredDeclarationOrigin.ABSTRACT_BRIDGE_STUB,

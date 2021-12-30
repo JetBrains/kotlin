@@ -85,7 +85,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             }
         }
 
-        if (declaration.isInline) {
+        if (declaration.isSingleFieldValueClass) {
             val irConstructor = declaration.primaryConstructor!!
             // The field getter is used by reflection and cannot be removed here unless it is internal.
             declaration.declarations.removeIf {
@@ -111,7 +111,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
     }
 
     private fun transformFunctionFlat(function: IrFunction): List<IrDeclaration>? {
-        if (function is IrConstructor && function.isPrimary && function.constructedClass.isInline)
+        if (function is IrConstructor && function.isPrimary && function.constructedClass.isSingleFieldValueClass)
             return null
 
         val replacement = context.inlineClassReplacements.getReplacementFunction(function)
@@ -166,7 +166,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         bridgeFunction.overriddenSymbols = replacement.overriddenSymbols
 
         // Replace the function body with a wrapper
-        if (!bridgeFunction.isFakeOverride || !bridgeFunction.parentAsClass.isInline) {
+        if (!bridgeFunction.isFakeOverride || !bridgeFunction.parentAsClass.isSingleFieldValueClass) {
             createBridgeBody(bridgeFunction, replacement)
         } else {
             // Fake overrides redirect from the replacement to the original function, which is in turn replaced during interfacePhase.
@@ -417,7 +417,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             if (symbol != context.irBuiltIns.eqeqSymbol)
                 return false
 
-            val leftClass = getValueArgument(0)?.type?.classOrNull?.owner?.takeIf { it.isInline }
+            val leftClass = getValueArgument(0)?.type?.classOrNull?.owner?.takeIf { it.isSingleFieldValueClass }
                 ?: return false
 
             // Before version 1.4, we cannot rely on the Result.equals-impl0 method
@@ -430,7 +430,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         val parent = field.parent
         if (field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD &&
             parent is IrClass &&
-            parent.isInline &&
+            parent.isSingleFieldValueClass &&
             field.name == parent.inlineClassFieldName) {
             val receiver = expression.receiver!!.transform(this, null)
             return coerceInlineClasses(receiver, receiver.type, field.type)
@@ -492,7 +492,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
 
     // Anonymous initializers in inline classes are processed when building the primary constructor.
     override fun visitAnonymousInitializerNew(declaration: IrAnonymousInitializer): IrStatement {
-        if (declaration.parent.safeAs<IrClass>()?.isInline == true)
+        if (declaration.parent.safeAs<IrClass>()?.isSingleFieldValueClass == true)
             return declaration
         return super.visitAnonymousInitializerNew(declaration)
     }

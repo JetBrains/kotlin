@@ -577,7 +577,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         // All Kotlin inline classes are final,
         // and their supertypes are trivially mapped to reference types.
         val erasedAdapteeClass = getErasedClassForSignatureAdaptation(adapteeType)
-        if (erasedAdapteeClass.isInline) {
+        if (erasedAdapteeClass.isSingleFieldValueClass) {
             // Inline classes mapped to non-null reference types are a special case because they can't be boxed trivially.
             // TODO consider adding a special type annotation to force boxing on an inline class type regardless of its underlying type.
             val underlyingAdapteeType = getInlineClassUnderlyingType(erasedAdapteeClass)
@@ -586,7 +586,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
             }
 
             val erasedExpectedClass = getErasedClassForSignatureAdaptation(expectedType)
-            return if (erasedExpectedClass.isInline) {
+            return if (erasedExpectedClass.isSingleFieldValueClass) {
                 // LambdaMetafactory doesn't know about method mangling.
                 TypeAdaptationConstraint.CONFLICT
             } else {
