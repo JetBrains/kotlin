@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineScopeResolver
 import org.jetbrains.kotlin.backend.jvm.ir.findInlineCallSites
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irGetField
 import org.jetbrains.kotlin.ir.builders.irSetField
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -72,10 +75,14 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
         }
 
     override fun lower(irFile: IrFile) {
-        irFile.transformChildren(Transformer(irFile.findInlineCallSites(context)), null)
+        irFile.transformChildren(Transformer(irFile.fileEntry, irFile.findInlineCallSites(context)), null)
     }
 
-    private inner class Transformer(private val inlineScopeResolver: IrInlineScopeResolver) : IrElementTransformer<IrDeclaration?> {
+    private inner class Transformer(
+        private val fileEntry: IrFileEntry,
+        private val inlineScopeResolver: IrInlineScopeResolver
+    ) : IrElementTransformer<IrDeclaration?> {
+
         private val dontTouchTemporaryVals = HashSet<IrVariable>()
 
         override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclaration?): IrStatement =
@@ -368,39 +375,36 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                 }
             }
         }
-        
+
         private fun IrStatement.isLoopVariable() =
             this is IrVariable && origin == IrDeclarationOrigin.FOR_LOOP_VARIABLE
 
         private fun IrContainerExpression.rewritePostfixIncrDecr(): IrCall? {
-            return when (origin) {
-                IrStatementOrigin.POSTFIX_INCR, IrStatementOrigin.POSTFIX_DECR -> {
-                    val tmpVar = this.statements[0] as? IrVariable ?: return null
-                    val getIncrVar = tmpVar.initializer as? IrGetValue ?: return null
-                    if (!getIncrVar.type.isInt()) return null
+            if (origin != IrStatementOrigin.POSTFIX_INCR && origin != IrStatementOrigin.POSTFIX_DECR) return null
 
-                    val setVar = this.statements[1] as? IrSetValue ?: return null
-                    if (setVar.symbol != getIncrVar.symbol) return null
-                    val setVarValue = setVar.value as? IrCall ?: return null
-                    val calleeName = setVarValue.symbol.owner.name
-                    if (calleeName != OperatorNameConventions.INC && calleeName != OperatorNameConventions.DEC) return null
-                    val calleeArg = setVarValue.dispatchReceiver as? IrGetValue ?: return null
-                    if (calleeArg.symbol != tmpVar.symbol) return null
+            val tmpVar = this.statements[0] as? IrVariable ?: return null
+            val getIncrVar = tmpVar.initializer as? IrGetValue ?: return null
+            if (!getIncrVar.type.isInt()) return null
 
-                    val getTmpVar = this.statements[2] as? IrGetValue ?: return null
-                    if (getTmpVar.symbol != tmpVar.symbol) return null
+            val setVar = this.statements[1] as? IrSetValue ?: return null
+            if (setVar.symbol != getIncrVar.symbol) return null
+            val setVarValue = setVar.value as? IrCall ?: return null
+            val calleeName = setVarValue.symbol.owner.name
+            if (calleeName != OperatorNameConventions.INC && calleeName != OperatorNameConventions.DEC) return null
+            val calleeArg = setVarValue.dispatchReceiver as? IrGetValue ?: return null
+            if (calleeArg.symbol != tmpVar.symbol) return null
 
-                    val intrinsicSymbol =
-                        if (calleeName == OperatorNameConventions.INC)
-                            context.ir.symbols.intPostfixIncr
-                        else
-                            context.ir.symbols.intPostfixDecr
+            val getTmpVar = this.statements[2] as? IrGetValue ?: return null
+            if (getTmpVar.symbol != tmpVar.symbol) return null
 
-                    return IrCallImpl.fromSymbolOwner(this.startOffset, this.endOffset, intrinsicSymbol)
-                        .apply { putValueArgument(0, getIncrVar) }
-                }
-                else ->
-                    null
+            val delta = if (calleeName == OperatorNameConventions.INC)
+                IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, 1)
+            else
+                IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, -1)
+
+            return IrCallImpl.fromSymbolOwner(this.startOffset, this.endOffset, context.ir.symbols.intPostfixIncrDecr).apply {
+                putValueArgument(0, getIncrVar)
+                putValueArgument(1, delta)
             }
         }
 
@@ -417,6 +421,81 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                     expression
             }
         }
+
+        override fun visitSetValue(expression: IrSetValue, data: IrDeclaration?): IrExpression {
+            expression.transformChildren(this, data)
+            return rewritePrefixIncrDecr(expression) ?: expression
+        }
+
+        private fun rewritePrefixIncrDecr(expression: IrSetValue): IrExpression? {
+            if (!expression.symbol.owner.type.isInt())
+                return null
+            when (expression.origin) {
+                IrStatementOrigin.PREFIX_INCR, IrStatementOrigin.PREFIX_DECR -> {
+                    return prefixIncr(expression, if (expression.origin == IrStatementOrigin.PREFIX_INCR) 1 else -1)
+                }
+                IrStatementOrigin.PLUSEQ, IrStatementOrigin.MINUSEQ -> {
+                    val argument = (expression.value as IrCall).getValueArgument(0)!!
+                    if (!hasSameLineNumber(argument, expression)) {
+                        return null
+                    }
+                    return rewriteCompoundAssignmentAsPrefixIncrDecr(expression, argument, expression.origin is IrStatementOrigin.MINUSEQ)
+                }
+                IrStatementOrigin.EQ -> {
+                    val value = expression.value
+                    if (!hasSameLineNumber(value, expression)) {
+                        return null
+                    }
+                    if (value is IrCall) {
+                        val receiver = value.dispatchReceiver
+                            ?: return null
+                        val symbol = expression.symbol
+                        if (!hasSameLineNumber(receiver, expression)) {
+                            return null
+                        }
+                        if (value.origin == IrStatementOrigin.PLUS || value.origin == IrStatementOrigin.MINUS) {
+                            val argument = value.getValueArgument(0)!!
+                            if (receiver is IrGetValue && receiver.symbol == symbol && hasSameLineNumber(argument, expression)) {
+                                return rewriteCompoundAssignmentAsPrefixIncrDecr(
+                                    expression, argument, value.origin == IrStatementOrigin.MINUS
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            return null
+        }
+
+        private fun rewriteCompoundAssignmentAsPrefixIncrDecr(
+            expression: IrSetValue,
+            value: IrExpression?,
+            isMinus: Boolean
+        ): IrExpression? {
+            if (value is IrConst<*> && value.kind == IrConstKind.Int) {
+                val delta = IrConstKind.Int.valueOf(value)
+                val upperBound = Byte.MAX_VALUE.toInt() + (if (isMinus) 1 else 0)
+                val lowerBound = Byte.MIN_VALUE.toInt() + (if (isMinus) 1 else 0)
+                if (delta in lowerBound..upperBound) {
+                    return prefixIncr(expression, if (isMinus) -delta else delta)
+                }
+            }
+            return null
+        }
+
+        private fun prefixIncr(expression: IrSetValue, delta: Int): IrExpression {
+            val startOffset = expression.startOffset
+            val endOffset = expression.endOffset
+            return IrCallImpl.fromSymbolOwner(startOffset, endOffset, context.ir.symbols.intPrefixIncrDecr).apply {
+                putValueArgument(0, IrGetValueImpl(startOffset, endOffset, expression.symbol))
+                putValueArgument(1, IrConstImpl.int(startOffset, endOffset, context.irBuiltIns.intType, delta))
+            }
+        }
+
+        private fun hasSameLineNumber(e1: IrElement, e2: IrElement) =
+            getLineNumberForOffset(e1.startOffset) == getLineNumberForOffset(e2.startOffset)
+
+        private fun getLineNumberForOffset(offset: Int): Int =
+            fileEntry.getLineNumber(offset) + 1
     }
 }
-

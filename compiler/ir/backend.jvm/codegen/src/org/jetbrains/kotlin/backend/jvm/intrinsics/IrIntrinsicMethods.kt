@@ -90,8 +90,8 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 symbols.throwKotlinNothingValueException.toKey()!! to ThrowKotlinNothingValueException,
                 symbols.jvmIndyIntrinsic.toKey()!! to JvmInvokeDynamic,
                 symbols.jvmDebuggerInvokeSpecialIntrinsic.toKey()!! to JvmDebuggerInvokeSpecial,
-                symbols.intPostfixIncr.toKey()!! to PostfixIinc(1),
-                symbols.intPostfixDecr.toKey()!! to PostfixIinc(-1)
+                symbols.intPostfixIncrDecr.toKey()!! to IntIncr(isPrefix = false),
+                symbols.intPrefixIncrDecr.toKey()!! to IntIncr(isPrefix = true)
             ) +
                     numberConversionMethods() +
                     unaryFunForPrimitives("plus", UnaryPlus) +

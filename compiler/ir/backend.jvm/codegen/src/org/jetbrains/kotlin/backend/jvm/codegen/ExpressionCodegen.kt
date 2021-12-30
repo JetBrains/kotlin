@@ -780,80 +780,17 @@ class ExpressionCodegen(
         throw AssertionError("Non-mapped local declaration: ${irSymbol.owner.dump()}\n in ${irFunction.dump()}")
     }
 
-    private fun handlePlusMinus(expression: IrSetValue, value: IrExpression?, isMinus: Boolean): Boolean {
-        if (value is IrConst<*> && value.kind == IrConstKind.Int) {
-            @Suppress("UNCHECKED_CAST")
-            val delta = (value as IrConst<Int>).value
-            val upperBound = Byte.MAX_VALUE.toInt() + (if (isMinus) 1 else 0)
-            val lowerBound = Byte.MIN_VALUE.toInt() + (if (isMinus) 1 else 0)
-            if (delta in lowerBound..upperBound) {
-                expression.markLineNumber(startOffset = true)
-                mv.iinc(findLocalIndex(expression.symbol), if (isMinus) -delta else delta)
-                return true
-            }
-        }
-        return false
-    }
-
-    private fun hasSameLineNumber(element0: IrElement, element1: IrElement): Boolean =
-        getLineNumberForOffset(element0.startOffset) == getLineNumberForOffset(element1.startOffset)
-
-    // Use iinc for all for the set var int special cases where we can.
-    // Be careful to make sure that debugging behavior does not change and
-    // only perform the optimization if that can be done without losing
-    // line number information.
-    private fun handleIntVariableSpecialCases(expression: IrSetValue): Boolean {
-        if (expression.symbol.owner.type.isInt()) {
-            when (expression.origin) {
-                IrStatementOrigin.PREFIX_INCR, IrStatementOrigin.PREFIX_DECR -> {
-                    expression.markLineNumber(startOffset = true)
-                    mv.iinc(findLocalIndex(expression.symbol), if (expression.origin == IrStatementOrigin.PREFIX_INCR) 1 else -1)
-                    return true
-                }
-                IrStatementOrigin.PLUSEQ, IrStatementOrigin.MINUSEQ -> {
-                    val argument = (expression.value as IrCall).getValueArgument(0)!!
-                    if (!hasSameLineNumber(argument, expression)) {
-                        return false
-                    }
-                    return handlePlusMinus(expression, argument, expression.origin is IrStatementOrigin.MINUSEQ)
-                }
-                IrStatementOrigin.EQ -> {
-                    val value = expression.value
-                    if (!hasSameLineNumber(value, expression)) {
-                        return false
-                    }
-                    if (value is IrCall) {
-                        val receiver = value.dispatchReceiver ?: return false
-                        val symbol = expression.symbol
-                        if (!hasSameLineNumber(receiver, expression)) {
-                            return false
-                        }
-                        if (value.origin == IrStatementOrigin.PLUS || value.origin == IrStatementOrigin.MINUS) {
-                            val argument = value.getValueArgument(0)!!
-                            if (receiver is IrGetValue && receiver.symbol == symbol && hasSameLineNumber(argument, expression)) {
-                                return handlePlusMinus(expression, argument, value.origin == IrStatementOrigin.MINUS)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return false
-    }
-
     override fun visitSetValue(expression: IrSetValue, data: BlockInfo): PromisedValue {
-        if (!handleIntVariableSpecialCases(expression)) {
-            expression.value.markLineNumber(startOffset = true)
-            expression.value.accept(this, data).materializeAt(expression.symbol.owner.type)
-            // We set the value of parameters only for default values. The inliner accepts only
-            // a very specific bytecode pattern for default arguments and does not tolerate a
-            // line number on the store. Therefore, if we are storing to a parameter, we do not
-            // output a line number for the store.
-            if (expression.symbol !is IrValueParameterSymbol) {
-                expression.markLineNumber(startOffset = true)
-            }
-            mv.store(findLocalIndex(expression.symbol), expression.symbol.owner.asmType)
+        expression.value.markLineNumber(startOffset = true)
+        expression.value.accept(this, data).materializeAt(expression.symbol.owner.type)
+        // We set the value of parameters only for default values. The inliner accepts only
+        // a very specific bytecode pattern for default arguments and does not tolerate a
+        // line number on the store. Therefore, if we are storing to a parameter, we do not
+        // output a line number for the store.
+        if (expression.symbol !is IrValueParameterSymbol) {
+            expression.markLineNumber(startOffset = true)
         }
+        mv.store(findLocalIndex(expression.symbol), expression.symbol.owner.asmType)
         return unitValue
     }
 
@@ -1414,22 +1351,26 @@ class ExpressionCodegen(
         wrapIntoKClass: Boolean,
         data: BlockInfo
     ): PromisedValue {
-        if (classReference is IrGetClass) {
-            // TODO transform one sort of access into the other?
-            JavaClassProperty.invokeWith(classReference.argument.accept(this, data))
-        } else if (classReference is IrClassReference) {
-            val classType = classReference.classType
-            val classifier = classType.classifierOrNull
-            if (classifier is IrTypeParameterSymbol) {
-                val success = putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS)
-                assert(success) {
-                    "Non-reified type parameter under ::class should be rejected by type checker: ${classType.render()}"
-                }
+        when (classReference) {
+            is IrGetClass -> {
+                // TODO transform one sort of access into the other?
+                JavaClassProperty.invokeWith(classReference.argument.accept(this, data))
             }
+            is IrClassReference -> {
+                val classType = classReference.classType
+                val classifier = classType.classifierOrNull
+                if (classifier is IrTypeParameterSymbol) {
+                    val success = putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS)
+                    assert(success) {
+                        "Non-reified type parameter under ::class should be rejected by type checker: ${classType.render()}"
+                    }
+                }
 
-            generateClassInstance(mv, classType, typeMapper)
-        } else {
-            throw AssertionError("not an IrGetClass or IrClassReference: ${classReference.dump()}")
+                generateClassInstance(mv, classType, typeMapper)
+            }
+            else -> {
+                throw AssertionError("not an IrGetClass or IrClassReference: ${classReference.dump()}")
+            }
         }
 
         if (wrapIntoKClass) {
