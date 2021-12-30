@@ -82,7 +82,12 @@ object AbstractTypeMapper {
         return when {
             typeConstructor.isTypeParameter() -> {
                 val typeParameter = typeConstructor.asTypeParameter()
-                val asmType = mapType(context, typeParameter.representativeUpperBound(), mode, null)
+                val upperBound = typeParameter.representativeUpperBound()
+                val newType = if (upperBound.typeConstructor().isInlineClass() && type.isNullableType())
+                    upperBound.makeNullable()
+                else upperBound
+
+                val asmType = mapType(context, newType, mode, null)
                 sw?.writeTypeVariable(typeParameter.getName(), asmType)
                 asmType
             }
