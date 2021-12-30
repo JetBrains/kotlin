@@ -53,7 +53,13 @@ private fun IrDeclaration.addRootsTo(to: MutableCollection<IrDeclaration>, conte
             setter?.addRootsTo(to, context)
         }
         isEffectivelyExternal() -> {
-            if (!hasJsNativeImplementation()) {
+            val correspondingProperty = when (this) {
+                is IrField -> correspondingPropertySymbol?.owner
+                is IrSimpleFunction -> correspondingPropertySymbol?.owner
+                else -> null
+            }
+
+            if (!hasJsNativeImplementation() && correspondingProperty?.hasJsNativeImplementation() != true) {
                 to += this
             }
         }
@@ -301,15 +307,8 @@ fun usefulDeclarations(
                     // Skip
                 }
 
-                override fun visitField(declaration: IrField) {
-                    val correspondingPropertySymbol = declaration.correspondingPropertySymbol ?: return super.visitField(declaration)
-                    if (declaration.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && correspondingPropertySymbol.owner.hasJsNativeImplementation()) {
-                        declaration.correspondingPropertySymbol!!.owner.enqueue(declaration, "property backing field")
-                    }
-                    super.visitField(declaration)
-                }
-
                 override fun visitDeclaration(declaration: IrDeclarationBase) {
+                    if (declaration.hasJsNativeImplementation()) return
                     if (declaration !== it) declaration.enqueue(it, "roots' nested declaration")
                     super.visitDeclaration(declaration)
                 }
@@ -396,7 +395,21 @@ fun usefulDeclarations(
                 override fun visitFieldAccess(expression: IrFieldAccessExpression) {
                     super.visitFieldAccess(expression)
 
-                    expression.symbol.owner.enqueue("field access")
+                    val field = expression.symbol.owner.apply { enqueue("field access") }
+                    val correspondingProperty = field.correspondingPropertySymbol?.owner ?: return
+
+                    if (
+                        field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD &&
+                        correspondingProperty.hasJsNativeImplementation()
+                    ) {
+                        correspondingProperty.enqueue(field, "property backing field")
+                    }
+                }
+
+                override fun visitBlock(expression: IrBlock) {
+                    super.visitBlock(expression)
+                    if (expression !is IrReturnableBlock) return
+                    expression.inlineFunctionSymbol?.owner?.enqueue("inline function usage")
                 }
 
                 override fun visitCall(expression: IrCall) {

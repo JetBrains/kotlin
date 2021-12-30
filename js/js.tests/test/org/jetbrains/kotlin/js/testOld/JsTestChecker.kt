@@ -23,7 +23,7 @@ fun ScriptEngine.overrideAsserter() {
 }
 
 fun ScriptEngine.setLegacyBackendFlag() {
-    eval("(this || global).__legacyBackend__ = true")
+    eval("Object.__legacyBackend__ = true")
 }
 
 fun ScriptEngine.runTestFunction(
