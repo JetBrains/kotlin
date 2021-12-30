@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNull
+import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNothing
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.types.SmartcastStability
 
-class FirExpressionWithSmartcastToNullImpl(
+class FirExpressionWithSmartcastToNothingImpl(
     override var originalExpression: FirQualifiedAccessExpression,
     override val smartcastType: FirTypeRef,
     override val typesFromSmartCast: Collection<ConeKotlinType>,
     override val smartcastStability: SmartcastStability,
     override val smartcastTypeWithoutNullableNothing: FirTypeRef
-) : FirExpressionWithSmartcastToNull() {
+) : FirExpressionWithSmartcastToNothing() {
     init {
         assert(originalExpression.typeRef is FirResolvedTypeRef)
     }
@@ -48,7 +48,7 @@ class FirExpressionWithSmartcastToNullImpl(
     // purpose only.
     override val typeRef: FirTypeRef get() = if (isStable) smartcastType else originalType
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNull {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNothing {
         originalExpression = originalExpression.transformSingle(transformer, data)
         return this
     }
@@ -57,27 +57,27 @@ class FirExpressionWithSmartcastToNullImpl(
         originalExpression.accept(visitor, data)
     }
 
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNull {
+    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNothing {
         throw IllegalStateException()
     }
 
-    override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNull {
+    override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNothing {
         throw IllegalStateException()
     }
 
-    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNull {
+    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNothing {
         throw IllegalStateException()
     }
 
-    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNull {
+    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNothing {
         throw IllegalStateException()
     }
 
-    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNull {
+    override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNothing {
         throw IllegalStateException()
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNull {
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNothing {
         throw IllegalStateException()
     }
 

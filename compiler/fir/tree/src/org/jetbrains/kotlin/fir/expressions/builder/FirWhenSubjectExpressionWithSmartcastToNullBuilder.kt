@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.fir.expressions.builder
 
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
-import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpressionWithSmartcastToNull
-import org.jetbrains.kotlin.fir.expressions.impl.FirWhenSubjectExpressionWithSmartcastToNullImpl
+import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpressionWithSmartcastToNothing
+import org.jetbrains.kotlin.fir.expressions.impl.FirWhenSubjectExpressionWithSmartcastToNothingImpl
 
-class FirWhenSubjectExpressionWithSmartcastToNullBuilder : FirWrappedExpressionWithSmartcastToNullBuilder<FirWhenSubjectExpression>() {
-    override fun build(): FirWhenSubjectExpressionWithSmartcastToNull {
-        return FirWhenSubjectExpressionWithSmartcastToNullImpl(
+class FirWhenSubjectExpressionWithSmartcastToNothingBuilder : FirWrappedExpressionWithSmartcastToNothingBuilder<FirWhenSubjectExpression>() {
+    override fun build(): FirWhenSubjectExpressionWithSmartcastToNothing {
+        return FirWhenSubjectExpressionWithSmartcastToNothingImpl(
             originalExpression,
             smartcastType,
             typesFromSmartCast,
@@ -21,6 +21,6 @@ class FirWhenSubjectExpressionWithSmartcastToNullBuilder : FirWrappedExpressionW
     }
 }
 
-fun buildWhenSubjectExpressionWithSmartcastToNull(init: FirWhenSubjectExpressionWithSmartcastToNullBuilder.() -> Unit): FirWhenSubjectExpressionWithSmartcastToNull {
-    return FirWhenSubjectExpressionWithSmartcastToNullBuilder().apply(init).build()
+fun buildWhenSubjectExpressionWithSmartcastToNothing(init: FirWhenSubjectExpressionWithSmartcastToNothingBuilder.() -> Unit): FirWhenSubjectExpressionWithSmartcastToNothing {
+    return FirWhenSubjectExpressionWithSmartcastToNothingBuilder().apply(init).build()
 }

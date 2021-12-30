@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.fir.expressions.builder
 
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNull
+import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNothing
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionWithSmartcastToNullImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionWithSmartcastToNothingImpl
 
-class FirExpressionWithSmartcastToNullBuilder : FirWrappedExpressionWithSmartcastToNullBuilder<FirQualifiedAccessExpression>() {
-    override fun build(): FirExpressionWithSmartcastToNull {
-        return FirExpressionWithSmartcastToNullImpl(
+class FirExpressionWithSmartcastToNothingBuilder : FirWrappedExpressionWithSmartcastToNothingBuilder<FirQualifiedAccessExpression>() {
+    override fun build(): FirExpressionWithSmartcastToNothing {
+        return FirExpressionWithSmartcastToNothingImpl(
             originalExpression,
             smartcastType,
             typesFromSmartCast,
@@ -21,6 +21,6 @@ class FirExpressionWithSmartcastToNullBuilder : FirWrappedExpressionWithSmartcas
     }
 }
 
-inline fun buildExpressionWithSmartcastToNull(init: FirExpressionWithSmartcastToNullBuilder.() -> Unit): FirExpressionWithSmartcastToNull {
-    return FirExpressionWithSmartcastToNullBuilder().apply(init).build()
+inline fun buildExpressionWithSmartcastToNothing(init: FirExpressionWithSmartcastToNothingBuilder.() -> Unit): FirExpressionWithSmartcastToNothing {
+    return FirExpressionWithSmartcastToNothingBuilder().apply(init).build()
 }
