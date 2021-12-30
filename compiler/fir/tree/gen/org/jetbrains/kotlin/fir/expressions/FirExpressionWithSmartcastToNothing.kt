@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirExpressionWithSmartcastToNull : FirExpressionWithSmartcast(), FirWrappedExpressionWithSmartcastToNull<FirQualifiedAccessExpression> {
+abstract class FirExpressionWithSmartcastToNothing : FirExpressionWithSmartcast(), FirWrappedExpressionWithSmartcastToNothing<FirQualifiedAccessExpression> {
     abstract override val source: KtSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotation>
@@ -38,11 +38,11 @@ abstract class FirExpressionWithSmartcastToNull : FirExpressionWithSmartcast(), 
     abstract override val smartcastStability: SmartcastStability
     abstract override val smartcastTypeWithoutNullableNothing: FirTypeRef
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitExpressionWithSmartcastToNull(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitExpressionWithSmartcastToNothing(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformExpressionWithSmartcastToNull(this, data) as E
+        transformer.transformExpressionWithSmartcastToNothing(this, data) as E
 
     @FirImplementationDetail
     abstract override fun replaceSource(newSource: KtSourceElement?)
@@ -57,15 +57,15 @@ abstract class FirExpressionWithSmartcastToNull : FirExpressionWithSmartcast(), 
 
     abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNull
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNothing
 
-    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNull
+    abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNothing
 
-    abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNull
+    abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNothing
 
-    abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNull
+    abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNothing
 
-    abstract override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNull
+    abstract override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNothing
 
-    abstract override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNull
+    abstract override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirExpressionWithSmartcastToNothing
 }
