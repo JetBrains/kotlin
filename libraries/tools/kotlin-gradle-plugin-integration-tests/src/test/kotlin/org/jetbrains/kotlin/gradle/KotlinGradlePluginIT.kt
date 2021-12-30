@@ -1035,6 +1035,14 @@ class KotlinGradleIT : BaseGradleIT() {
         }
 
         build("publish", "-PmppProjectDependency=true") {
+            assertFailed()
+            assertContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
+        }
+
+        //https://youtrack.jetbrains.com/issue/KT-50598
+        val withoutDaemon= defaultBuildOptions().copy(withDaemon = false)
+
+        build("-PmppProjectDependency=true", options = withoutDaemon) {
             assertSuccessful()
             assertContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
 
@@ -1045,7 +1053,7 @@ class KotlinGradleIT : BaseGradleIT() {
         }
 
         // Test the flag that turns off the warnings
-        build("publish", "-PmppProjectDependency=true", "-Pkotlin.pluginLoadedInMultipleProjects.ignore=true") {
+        build("-PmppProjectDependency=true", "-Pkotlin.pluginLoadedInMultipleProjects.ignore=true", options = withoutDaemon) {
             assertSuccessful()
             assertNotContains(MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING)
             assertNotContains(MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING)

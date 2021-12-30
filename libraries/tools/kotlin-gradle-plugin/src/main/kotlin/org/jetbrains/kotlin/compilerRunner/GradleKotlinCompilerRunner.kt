@@ -273,6 +273,7 @@ internal open class GradleCompilerRunner(
 
             gradle.taskGraph.allTasks.forEach { task ->
                 val project = task.project
+                // TODO REVIEW: Should this fail or be lenient on isolated classpaths (and therefore failing cast)?
                 if (project.multiplatformExtensionOrNull != null) {
                     // Just record this, we'll process them later
                     val tasksInProject = multiplatformProjectTasks[project] ?: mutableSetOf()
