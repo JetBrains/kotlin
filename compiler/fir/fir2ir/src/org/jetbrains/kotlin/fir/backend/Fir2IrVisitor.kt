@@ -511,12 +511,12 @@ class Fir2IrVisitor(
         return implicitCastInserter.visitExpressionWithSmartcast(expressionWithSmartcast, value)
     }
 
-    override fun visitExpressionWithSmartcastToNull(
-        expressionWithSmartcastToNull: FirExpressionWithSmartcastToNull,
+    override fun visitExpressionWithSmartcastToNothing(
+        expressionWithSmartcastToNothing: FirExpressionWithSmartcastToNothing,
         data: Any?
     ): IrElement {
         // This should not be materialized. Generate the expression with the original expression.
-        return convertToIrExpression(expressionWithSmartcastToNull.originalExpression)
+        return convertToIrExpression(expressionWithSmartcastToNothing.originalExpression)
     }
 
     override fun visitWhenSubjectExpressionWithSmartcast(
@@ -527,12 +527,12 @@ class Fir2IrVisitor(
         return implicitCastInserter.visitWhenSubjectExpressionWithSmartcast(whenSubjectExpressionWithSmartcast, value)
     }
 
-    override fun visitWhenSubjectExpressionWithSmartcastToNull(
-        whenSubjectExpressionWithSmartcastToNull: FirWhenSubjectExpressionWithSmartcastToNull,
+    override fun visitWhenSubjectExpressionWithSmartcastToNothing(
+        whenSubjectExpressionWithSmartcastToNothing: FirWhenSubjectExpressionWithSmartcastToNothing,
         data: Any?
     ): IrElement {
         // This should not be materialized. Generate the expression with the original expression.
-        return visitWhenSubjectExpression(whenSubjectExpressionWithSmartcastToNull.originalExpression, data)
+        return visitWhenSubjectExpression(whenSubjectExpressionWithSmartcastToNothing.originalExpression, data)
     }
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Any?): IrElement {

@@ -212,8 +212,12 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
     explicitReceiver: FirExpression? = null,
     isDelegate: Boolean = false
 ): IrSymbol? {
-    val dispatchReceiverLookupTag = when (dispatchReceiver) {
-        is FirNoReceiverExpression -> {
+    val dispatchReceiverLookupTag = when {
+        dispatchReceiver is FirExpressionWithSmartcastToNothing && dispatchReceiver.smartcastType.coneType is ConeDynamicType -> {
+            val coneType = dispatchReceiver.smartcastTypeWithoutNullableNothing.coneType
+            coneType.findClassRepresentation(coneType, declarationStorage.session)
+        }
+        dispatchReceiver is FirNoReceiverExpression -> {
             val containingClass = containingClass()
             if (containingClass != null && containingClass.classId != StandardClassIds.Any) {
                 // Make sure that symbol is not extension and is not from inline class

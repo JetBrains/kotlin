@@ -190,10 +190,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         noImpl(expressionWithSmartcast)
-        noImpl(expressionWithSmartcastToNull)
+        noImpl(expressionWithSmartcastToNothing)
 
         noImpl(whenSubjectExpressionWithSmartcast)
-        noImpl(whenSubjectExpressionWithSmartcastToNull)
+        noImpl(whenSubjectExpressionWithSmartcastToNothing)
 
         impl(getClassCall) {
             default("argument") {
