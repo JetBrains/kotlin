@@ -44,15 +44,16 @@ internal fun FirOverrideChecker.similarFunctionsOrBothProperties(
     overrideCandidate: FirCallableDeclaration,
     baseDeclaration: FirCallableDeclaration
 ): Boolean {
-    return when (overrideCandidate) {
-        is FirSimpleFunction -> when (baseDeclaration) {
+    return when {
+        overrideCandidate.origin == FirDeclarationOrigin.DynamicScope -> false
+        overrideCandidate is FirSimpleFunction -> when (baseDeclaration) {
             is FirSimpleFunction -> isOverriddenFunction(overrideCandidate, baseDeclaration)
             is FirProperty -> isOverriddenProperty(overrideCandidate, baseDeclaration)
             else -> false
         }
-        is FirConstructor -> false
-        is FirProperty -> baseDeclaration is FirProperty && isOverriddenProperty(overrideCandidate, baseDeclaration)
-        is FirField -> baseDeclaration is FirField
+        overrideCandidate is FirConstructor -> false
+        overrideCandidate is FirProperty -> baseDeclaration is FirProperty && isOverriddenProperty(overrideCandidate, baseDeclaration)
+        overrideCandidate is FirField -> baseDeclaration is FirField
         else -> error("Unknown fir callable type: $overrideCandidate, $baseDeclaration")
     }
 }

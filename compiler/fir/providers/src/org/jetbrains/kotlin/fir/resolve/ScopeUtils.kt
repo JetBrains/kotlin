@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNull
+import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcastToNothing
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -33,7 +33,7 @@ fun FirExpressionWithSmartcast.smartcastScope(
     scopeSession: ScopeSession
 ): FirTypeScope? {
     val smartcastType =
-        if (this is FirExpressionWithSmartcastToNull) smartcastTypeWithoutNullableNothing.coneType else smartcastType.coneType
+        if (this is FirExpressionWithSmartcastToNothing) smartcastTypeWithoutNullableNothing.coneType else smartcastType.coneType
     val smartcastScope = smartcastType.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing)
     if (isStable) {
         return smartcastScope
