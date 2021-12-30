@@ -31,7 +31,6 @@ import java.io.File
  * To test this, we compile a Kotlin+Java module (in two modes: CLI and module-based) where a runtime Java class was replaced
  * with a "newer" version in sources, and check that this class resolves to the one from sources by calling a method absent in the runtime
  */
-@Ignore("has to be deleted as it seems a compiler test")
 class ClasspathOrderTest : TestCaseWithTmpdir() {
     companion object {
         private val sourceDir = File(KtTestUtil.getTestDataPathBase() + "/classpathOrder").absoluteFile
