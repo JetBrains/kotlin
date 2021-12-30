@@ -261,6 +261,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
         }
 
         @Test
+        @TestMetadata("implicitTypeWithTypeBound.kt")
+        public void testImplicitTypeWithTypeBound() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/implicitTypeWithTypeBound.kt");
+        }
+
+        @Test
         @TestMetadata("incorrectDataClass.kt")
         public void testIncorrectDataClass() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/incorrectDataClass.kt");

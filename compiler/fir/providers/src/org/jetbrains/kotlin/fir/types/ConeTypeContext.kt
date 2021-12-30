@@ -274,7 +274,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return when (this) {
             is ConeStubTypeConstructor -> listOf(session.builtinTypes.nullableAnyType.type)
             is ConeTypeVariableTypeConstructor -> emptyList()
-            is ConeTypeParameterLookupTag -> symbol.fir.bounds.map { it.coneType }
+            is ConeTypeParameterLookupTag -> symbol.resolvedBounds.map { it.coneType }
             is ConeClassLikeLookupTag -> {
                 when (val symbol = toClassLikeSymbol().also { it?.ensureResolved(FirResolvePhase.TYPES) }) {
                     is FirClassSymbol<*> -> symbol.fir.superConeTypes
@@ -308,17 +308,17 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeParameterMarker.upperBoundCount(): Int {
         require(this is ConeTypeParameterLookupTag)
-        return this.symbol.fir.bounds.size
+        return this.symbol.resolvedBounds.size
     }
 
     override fun TypeParameterMarker.getUpperBound(index: Int): KotlinTypeMarker {
         require(this is ConeTypeParameterLookupTag)
-        return this.symbol.fir.bounds[index].coneType
+        return this.symbol.resolvedBounds[index].coneType
     }
 
     override fun TypeParameterMarker.getUpperBounds(): List<KotlinTypeMarker> {
         require(this is ConeTypeParameterLookupTag)
-        return this.symbol.fir.bounds.map { it.coneType }
+        return this.symbol.resolvedBounds.map { it.coneType }
     }
 
     override fun TypeParameterMarker.getTypeConstructor(): TypeConstructorMarker {
@@ -328,7 +328,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker?): Boolean {
         require(this is ConeTypeParameterLookupTag)
-        return this.typeParameterSymbol.fir.bounds.any { typeRef ->
+        return this.typeParameterSymbol.resolvedBounds.any { typeRef ->
             typeRef.coneType.contains { it.typeConstructor() == this.getTypeConstructor() }
                     && (selfConstructor == null || typeRef.coneType.typeConstructor() == selfConstructor)
         }
@@ -484,7 +484,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     private fun FirTypeParameterSymbol.allBoundsAreNullable(): Boolean {
-        return fir.bounds.all { it.coneType.isNullableType() }
+        return resolvedBounds.all { it.coneType.isNullableType() }
     }
 
     private fun TypeConstructorMarker.toFirRegularClass(): FirRegularClass? {
@@ -553,7 +553,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker {
         require(this is ConeTypeParameterLookupTag)
-        return this.symbol.fir.bounds.getOrNull(0)?.coneType
+        return this.symbol.resolvedBounds.getOrNull(0)?.coneType
             ?: session.builtinTypes.nullableAnyType.type
     }
 

@@ -1,0 +1,18 @@
+FILE: main.kt
+    public final fun <T> myRun(action: R|() -> T|): R|T| {
+        ^myRun R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
+    }
+    public final fun test(other: R|TypeWithBoundedGeneric<*>|): R|TypeWithBoundedGeneric<*>| {
+        ^test R|/myRun|<R|TypeWithBoundedGeneric<*>|>(<L> = myRun@fun <anonymous>(): R|TypeWithBoundedGeneric<*>| <inline=NoInline>  {
+            ^ R|<local>/other|
+        }
+        )
+    }
+    public abstract interface SomeType : R|kotlin/Any| {
+    }
+    public abstract class TypeWithBoundedGeneric<T : R|SomeType|> : R|kotlin/Any| {
+        public constructor<T : R|SomeType|>(): R|TypeWithBoundedGeneric<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
