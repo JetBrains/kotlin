@@ -177,6 +177,12 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             }
         }
 
+        // A bit of a hack. Inliner tends to insert null casts from nothing to any. It's hard to express in wasm, so we simply replace
+        // them with single const null.
+        if (toType == builtIns.anyNType && fromType == builtIns.nothingNType && value is IrConst<*> && value.kind == IrConstKind.Null) {
+            return builder.irNull(builtIns.nothingNType)
+        }
+
         // Handled by autoboxing transformer
         if (toType.isInlined() && !fromType.isInlined()) {
             return builder.irCall(
