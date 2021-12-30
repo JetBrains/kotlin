@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
+import org.jetbrains.kotlin.types.computeExpandedTypeForInlineClass
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -330,7 +331,11 @@ class ExpressionCodegen(
         )
             return
         val asmType = param.type.asmType
-        if (!param.type.unboxInlineClass().isNullable() && !isPrimitive(asmType)) {
+        val expandedType =
+            if (param.type.isInlineClassType())
+                context.typeSystem.computeExpandedTypeForInlineClass(param.type) as? IrType ?: param.type
+            else param.type
+        if (!expandedType.isNullable() && !isPrimitive(asmType)) {
             mv.load(findLocalIndex(param.symbol), asmType)
             mv.aconst(param.name.asString())
             val methodName = if (state.unifiedNullChecks) "checkNotNullParameter" else "checkParameterIsNotNull"
