@@ -211,7 +211,7 @@ class FunctionInlining(
                         expression.transformChildrenVoid(this)
 
                         if (expression.returnTargetSymbol == copiedCallee.symbol)
-                            return irBuilder.at(expression).irReturn(expression.value)
+                            return irBuilder.at(expression).irReturn(expression.value.implicitCastIfNeededTo(callSite.type))
                         return expression
                     }
                 })
@@ -229,9 +229,9 @@ class FunctionInlining(
 
                 argument.transformChildrenVoid(this) // Default argument can contain subjects for substitution.
 
-                return if (argument is IrGetValueWithoutLocation)
-                    argument.withLocation(newExpression.startOffset, newExpression.endOffset)
-                else (copyIrElement.copy(argument) as IrExpression)
+                return (if (argument is IrGetValueWithoutLocation)
+                    argument.withLocation(newExpression.startOffset, newExpression.endOffset).implicitCastIfNeededTo(newExpression.type)
+                else (copyIrElement.copy(argument) as IrExpression)).implicitCastIfNeededTo(newExpression.type)
             }
 
             override fun visitCall(expression: IrCall): IrExpression {
@@ -388,7 +388,8 @@ class FunctionInlining(
         }
 
         private fun IrExpression.implicitCastIfNeededTo(type: IrType) =
-            if (type == this.type)
+            // No need to cast expressions of type nothing
+            if (type == this.type || this.type == context.irBuiltIns.nothingType)
                 this
             else
                 IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, this)
