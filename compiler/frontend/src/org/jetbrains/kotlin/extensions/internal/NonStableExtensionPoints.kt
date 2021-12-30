@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 internal annotation class InternalNonStableExtensionPoints
 
 @InternalNonStableExtensionPoints
-@JvmDefaultWithCompatibility
 interface TypeResolutionInterceptorExtension {
     fun interceptFunctionLiteralDescriptor(
         expression: KtLambdaExpression,
@@ -55,7 +54,6 @@ interface TypeResolutionInterceptorExtension {
 }
 
 @InternalNonStableExtensionPoints
-@JvmDefaultWithCompatibility
 interface CallResolutionInterceptorExtension {
     fun interceptResolvedCallAtomCandidate(
         candidateDescriptor: CallableDescriptor,
