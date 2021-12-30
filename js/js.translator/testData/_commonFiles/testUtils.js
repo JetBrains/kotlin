@@ -1,3 +1,4 @@
 function isLegacyBackend() {
-   return Boolean(this.__legacyBackend__)
+   var self = this || global
+   return Boolean(self.__legacyBackend__)
 }

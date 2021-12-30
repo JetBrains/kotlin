@@ -8,7 +8,8 @@ package kotlin.js
 import kotlin.js.arrays.defineSortPolyfillForTypedArrays
 
 @PublishedApi
+@Suppress("NOTHING_TO_INLINE")
 @JsNativeImplementation(defineSortPolyfillForTypedArrays)
-internal fun <T> Any.nativeSortWith(comparison: (a: T, b: T) -> Int): Unit {
+internal inline fun <T> Any.nativeSortWith(noinline comparison: (a: T, b: T) -> Int): Unit {
     asDynamic().sort(comparison)
 }

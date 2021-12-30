@@ -6,6 +6,7 @@
 package kotlin.js
 
 @PublishedApi
+@Suppress("NOTHING_TO_INLINE")
 @JsNativeImplementation("""
 if (typeof Array.prototype.fill === "undefined") {
     // Polyfill from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/fill#Polyfill
@@ -60,6 +61,6 @@ if (typeof Array.prototype.fill === "undefined") {
     }
 })
 """)
-internal fun <T> Any.nativeFill(element: T, fromIndex: Int, toIndex: Int): Unit {
-    asDynamic().fill(element, fromIndex, toIndex);
+internal inline fun Any.nativeFill(element: Any?, fromIndex: Int, toIndex: Int): Unit {
+    asDynamic().fill(element, fromIndex, toIndex)
 }
