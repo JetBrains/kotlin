@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.tasks.CompileUsingKotlinDaemon
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
+import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
@@ -39,27 +40,27 @@ internal fun Project.createKotlinExtension(extensionClass: KClass<out KotlinTopL
 }
 
 internal val Project.topLevelExtension: KotlinTopLevelExtension
-    get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinTopLevelExtension
+    get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
 internal val Project.topLevelExtensionOrNull: KotlinTopLevelExtension?
-    get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinTopLevelExtension?
+    get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME)?.castIsolatedKotlinPluginClassLoaderAware<KotlinTopLevelExtension>()
 
 internal val Project.kotlinExtensionOrNull: KotlinProjectExtension?
-    get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME) as? KotlinProjectExtension
+    get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME)?.castIsolatedKotlinPluginClassLoaderAware()
 
 val Project.kotlinExtension: KotlinProjectExtension
-    get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinProjectExtension
+    get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
 internal val Project.multiplatformExtensionOrNull: KotlinMultiplatformExtension?
-    get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME) as? KotlinMultiplatformExtension
+    get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME)?.castIsolatedKotlinPluginClassLoaderAware()
 
 internal val Project.multiplatformExtension: KotlinMultiplatformExtension
-    get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinMultiplatformExtension
+    get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
 internal val Project.pm20Extension: KotlinPm20ProjectExtension
-    get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME) as KotlinPm20ProjectExtension
+    get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
-open class KotlinTopLevelExtension (internal val project: Project) {
+open class KotlinTopLevelExtension(internal val project: Project) {
     val experimental: ExperimentalExtension
         get() = DslObject(this).extensions.getByType(ExperimentalExtension::class.java)
 
