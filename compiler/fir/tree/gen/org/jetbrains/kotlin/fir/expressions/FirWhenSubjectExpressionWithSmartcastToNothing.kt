@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirWhenSubjectExpressionWithSmartcastToNull : FirWhenSubjectExpression(), FirWrappedExpressionWithSmartcastToNull<FirWhenSubjectExpression> {
+abstract class FirWhenSubjectExpressionWithSmartcastToNothing : FirWhenSubjectExpression(), FirWrappedExpressionWithSmartcastToNothing<FirWhenSubjectExpression> {
     abstract override val source: KtSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotation>
@@ -31,13 +31,13 @@ abstract class FirWhenSubjectExpressionWithSmartcastToNull : FirWhenSubjectExpre
     abstract override val smartcastStability: SmartcastStability
     abstract override val smartcastTypeWithoutNullableNothing: FirTypeRef
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenSubjectExpressionWithSmartcastToNull(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWhenSubjectExpressionWithSmartcastToNothing(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformWhenSubjectExpressionWithSmartcastToNull(this, data) as E
+        transformer.transformWhenSubjectExpressionWithSmartcastToNothing(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpressionWithSmartcastToNull
+    abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpressionWithSmartcastToNothing
 }

@@ -260,8 +260,8 @@ class Fir2IrImplicitCastInserter(
         }
     }
 
-    override fun visitExpressionWithSmartcastToNull(
-        expressionWithSmartcastToNull: FirExpressionWithSmartcastToNull,
+    override fun visitExpressionWithSmartcastToNothing(
+        expressionWithSmartcastToNothing: FirExpressionWithSmartcastToNothing,
         data: IrElement
     ): IrElement {
         // We don't want an implicit cast to Nothing?. This expression just encompasses nullability after null check.
@@ -279,8 +279,8 @@ class Fir2IrImplicitCastInserter(
         }
     }
 
-    override fun visitWhenSubjectExpressionWithSmartcastToNull(
-        whenSubjectExpressionWithSmartcastToNull: FirWhenSubjectExpressionWithSmartcastToNull,
+    override fun visitWhenSubjectExpressionWithSmartcastToNothing(
+        whenSubjectExpressionWithSmartcastToNothing: FirWhenSubjectExpressionWithSmartcastToNothing,
         data: IrElement
     ): IrElement {
         // We don't want an implicit cast to Nothing?. This expression just encompasses nullability after null check.

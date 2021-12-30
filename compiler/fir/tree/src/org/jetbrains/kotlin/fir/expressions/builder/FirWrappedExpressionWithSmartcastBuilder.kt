@@ -19,6 +19,6 @@ abstract class FirWrappedExpressionWithSmartcastBuilder<E : FirExpression> {
     abstract fun build(): E
 }
 
-abstract class FirWrappedExpressionWithSmartcastToNullBuilder<E : FirExpression> : FirWrappedExpressionWithSmartcastBuilder<E>() {
+abstract class FirWrappedExpressionWithSmartcastToNothingBuilder<E : FirExpression> : FirWrappedExpressionWithSmartcastBuilder<E>() {
     lateinit var smartcastTypeWithoutNullableNothing: FirTypeRef
 }
