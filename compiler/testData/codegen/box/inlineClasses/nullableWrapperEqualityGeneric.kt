@@ -9,7 +9,7 @@ OPTIONAL_JVM_INLINE_ANNOTATION
 value class ZN<T: Z1<String>?>(val z: T)
 
 OPTIONAL_JVM_INLINE_ANNOTATION
-value class ZN2<T: ZN<Z1<String>?>>(val z: T)
+value class ZN2<TN: ZN<Z1<String>?>>(val z: TN)
 
 fun zap(b: Boolean): ZN2<ZN<Z1<String>?>>? = if (b) null else ZN2(ZN(null))
 
