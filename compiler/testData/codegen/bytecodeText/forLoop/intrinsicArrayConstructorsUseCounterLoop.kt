@@ -38,8 +38,8 @@ fun testObjectArray(n: Int) =
 // 8 IF_ICMPGE
 
 // JVM_IR_TEMPLATES
-// 56 ILOAD
-// 24 ISTORE
-// 8 IADD
+// 48 ILOAD
+// 16 ISTORE
+// 0 IADD
 // 0 ISUB
-// 0 IINC
+// 8 IINC

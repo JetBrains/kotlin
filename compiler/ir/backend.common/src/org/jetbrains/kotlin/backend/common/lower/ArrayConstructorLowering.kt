@@ -96,7 +96,11 @@ private class ArrayConstructorTransformer(
                         putValueArgument(1, inlined)
                     }
                     val inc = index.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INC }
-                    +irSet(index.symbol, irCallOp(inc.symbol, index.type, irGet(index)))
+                    +irSet(
+                        index.symbol,
+                        irCallOp(inc.symbol, index.type, irGet(index)),
+                        origin = IrStatementOrigin.PREFIX_INCR
+                    )
                 }
             }
             +irGet(result)
@@ -112,7 +116,11 @@ class ArrayConstructorReferenceLowering(val context: CommonBackendContext) : Bod
         irBody.transformChildrenVoid(ArrayConstructorReferenceTransformer(context, container as IrSymbolOwner))
     }
 
-    private class ArrayConstructorReferenceTransformer(val context: CommonBackendContext, val container: IrSymbolOwner) : IrElementTransformerVoid() {
+    private class ArrayConstructorReferenceTransformer(
+        val context: CommonBackendContext,
+        val container: IrSymbolOwner
+    ) : IrElementTransformerVoid() {
+
         override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
             expression.transformChildrenVoid()
             val target = expression.symbol.owner
@@ -127,14 +135,12 @@ class ArrayConstructorReferenceLowering(val context: CommonBackendContext) : Bod
                     statements.add(wrapper)
                     statements.add(
                         IrFunctionReferenceImpl(
-                            startOffset,
-                            endOffset,
-                            type,
-                            wrapper.symbol,
-                            0,
-                            valueArgumentsCount,
-                            target.symbol,
-                            origin
+                            startOffset, endOffset, type,
+                            symbol = wrapper.symbol,
+                            typeArgumentsCount = 0,
+                            valueArgumentsCount = valueArgumentsCount,
+                            reflectionTarget = target.symbol,
+                            origin = origin
                         )
                     )
                 }

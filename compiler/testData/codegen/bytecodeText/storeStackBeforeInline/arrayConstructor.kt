@@ -11,5 +11,5 @@ fun test(): Int = "123".indexOfAny(CharArray(1000) { '1' })
 // JVM_IR_TEMPLATES:
 // 3 ALOAD
 // 3 ASTORE
-// 4 ILOAD
-// 3 ISTORE
+// 3 ILOAD
+// 2 ISTORE
