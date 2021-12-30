@@ -30,6 +30,8 @@
 
 #define NO_EXTERNAL_CALLS_CHECK __attribute__((annotate("no_external_calls_check")))
 
+#define OPTNONE __attribute__((optnone))
+
 #if KONAN_NO_THREADS
 #define THREAD_LOCAL_VARIABLE
 #else
