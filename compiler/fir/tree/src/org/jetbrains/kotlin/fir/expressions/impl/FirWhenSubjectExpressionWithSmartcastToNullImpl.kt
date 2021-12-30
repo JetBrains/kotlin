@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.types.SmartcastStability
 
-class FirWhenSubjectExpressionWithSmartcastToNullImpl(
+class FirWhenSubjectExpressionWithSmartcastToNothingImpl(
     override var originalExpression: FirWhenSubjectExpression,
     override val smartcastType: FirTypeRef,
     override val typesFromSmartCast: Collection<ConeKotlinType>,
     override val smartcastStability: SmartcastStability,
     override val smartcastTypeWithoutNullableNothing: FirTypeRef
-) : FirWhenSubjectExpressionWithSmartcastToNull() {
+) : FirWhenSubjectExpressionWithSmartcastToNothing() {
     init {
         assert(originalExpression.typeRef is FirResolvedTypeRef)
     }
@@ -37,7 +37,7 @@ class FirWhenSubjectExpressionWithSmartcastToNullImpl(
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpressionWithSmartcastToNullImpl {
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpressionWithSmartcastToNothingImpl {
         throw IllegalStateException()
     }
 
@@ -45,7 +45,7 @@ class FirWhenSubjectExpressionWithSmartcastToNullImpl(
         originalExpression.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpressionWithSmartcastToNullImpl {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirWhenSubjectExpressionWithSmartcastToNothingImpl {
         originalExpression = originalExpression.transform(transformer, data)
         return this
     }

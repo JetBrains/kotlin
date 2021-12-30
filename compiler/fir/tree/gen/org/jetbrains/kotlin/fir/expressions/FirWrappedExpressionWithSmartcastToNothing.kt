@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-interface FirWrappedExpressionWithSmartcastToNull<E : FirExpression> : FirWrappedExpressionWithSmartcast<E> {
+interface FirWrappedExpressionWithSmartcastToNothing<E : FirExpression> : FirWrappedExpressionWithSmartcast<E> {
     override val source: KtSourceElement?
     override val typeRef: FirTypeRef
     override val originalExpression: E
@@ -28,11 +28,11 @@ interface FirWrappedExpressionWithSmartcastToNull<E : FirExpression> : FirWrappe
     override val smartcastStability: SmartcastStability
     val smartcastTypeWithoutNullableNothing: FirTypeRef
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWrappedExpressionWithSmartcastToNull(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWrappedExpressionWithSmartcastToNothing(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
-        transformer.transformWrappedExpressionWithSmartcastToNull(this, data) as E
+        transformer.transformWrappedExpressionWithSmartcastToNothing(this, data) as E
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef)
 }
