@@ -504,6 +504,7 @@ allprojects {
                 !project.path.startsWith(":binary-compatibility-validator") &&
                 //Blocker in IDEA build
                 !project.path.startsWith(":compiler:frontend.common") &&
+                !project.path.startsWith(":compiler:frontend") &&
                 //HACK: filter modules with JVM target 1.6
                 //TODO: remove after removing 1.6 target
                 !project.path.startsWith(":core") &&
