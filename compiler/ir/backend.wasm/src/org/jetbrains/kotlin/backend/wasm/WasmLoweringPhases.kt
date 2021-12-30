@@ -98,7 +98,7 @@ private val wrapInlineDeclarationsWithReifiedTypeParametersPhase = makeWasmModul
 
 private val functionInliningPhase = makeCustomWasmModulePhase(
     { context, module ->
-        FunctionInlining(context).inline(module)
+        FunctionInlining(context, null, true).inline(module)
         module.patchDeclarationParents()
     },
     name = "FunctionInliningPhase",
