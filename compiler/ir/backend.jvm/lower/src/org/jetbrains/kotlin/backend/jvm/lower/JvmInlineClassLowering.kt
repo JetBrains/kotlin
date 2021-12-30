@@ -304,7 +304,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
 
         return IrFunctionReferenceImpl(
             expression.startOffset, expression.endOffset, expression.type,
-            replacement.symbol, replacement.typeParameters.size,
+            replacement.symbol, function.typeParameters.size,
             replacement.valueParameters.size, expression.reflectionTarget, expression.origin
         ).apply {
             buildReplacement(function, expression, replacement)
