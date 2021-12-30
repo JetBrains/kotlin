@@ -294,7 +294,7 @@ abstract class BaseGradleIT {
         open val resourcesRoot = File(resourcesRootFile, "testProject/$resourceDirName")
         val projectDir = File(workingDir.canonicalFile, projectName)
 
-        open fun setupWorkingDir(enableCacheRedirector: Boolean = true) {
+        open fun setupWorkingDir(enableCacheRedirector: Boolean = true, applyAndroidTestFixes: Boolean = true) {
             if (!projectDir.isDirectory || projectDir.listFiles().isEmpty()) {
                 copyRecursively(this.resourcesRoot, workingDir)
                 if (addHeapDumpOptions) {
@@ -304,7 +304,7 @@ abstract class BaseGradleIT {
                 projectDir.toPath().apply {
                     addPluginManagementToSettings()
                     if (enableCacheRedirector) enableCacheRedirector()
-                    applyAndroidTestFixes()
+                    if (applyAndroidTestFixes) applyAndroidTestFixes()
                 }
             }
         }

@@ -132,6 +132,17 @@ class CommonizerHierarchicalIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `test KT-50592 - isolated jvm subproject - should not fail commonization`() {
+        with(Project("commonize-kt-50592-withIsolatedJvmSubproject")) {
+            setupWorkingDir(applyAndroidTestFixes = false) // Necessary to ensure separated classpath
+            build("commonize") {
+                assertSuccessful()
+                assertTasksExecuted(":commonizeNativeDistribution")
+            }
+        }
+    }
+
     private object Os {
         private val os = OperatingSystem.current()
         val canCompileApple get() = os.isMacOsX
