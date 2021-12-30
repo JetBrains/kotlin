@@ -7,18 +7,15 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.tasks.Classpath
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
-import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.resolveCommonizedDirectory
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.compilerRunner.GradleCliCommonizer
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCommonizerToolRunner
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.compilerRunner.registerCommonizerClasspathConfigurationIfNecessary
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_COMMONIZED_LIBS_DIR
 import org.jetbrains.kotlin.konan.library.KONAN_DISTRIBUTION_KLIB_DIR
@@ -31,7 +28,7 @@ internal open class NativeDistributionCommonizerTask : DefaultTask() {
 
     @get:Input
     internal val commonizerTargets: Set<SharedCommonizerTarget>
-        get() = project.getAllCommonizerTargets()
+        get() = project.collectAllSharedCommonizerTargetsFromBuild()
 
     @get:Internal
     internal val commonizerRunner = KotlinNativeCommonizerToolRunner(project)
@@ -56,7 +53,7 @@ internal open class NativeDistributionCommonizerTask : DefaultTask() {
         NativeDistributionCommonizationCache(project, GradleCliCommonizer(commonizerRunner)).commonizeNativeDistribution(
             konanHome = konanHome,
             outputDirectory = getRootOutputDirectory(),
-            outputTargets = project.getAllCommonizerTargets(),
+            outputTargets = project.collectAllSharedCommonizerTargetsFromBuild(),
             logLevel = project.commonizerLogLevel
         )
     }
@@ -66,18 +63,15 @@ internal open class NativeDistributionCommonizerTask : DefaultTask() {
     }
 }
 
-private fun Project.getAllCommonizerTargets(): Set<SharedCommonizerTarget> {
-    return allprojects.flatMapTo(mutableSetOf<SharedCommonizerTarget>()) { project ->
-        val kotlin = project.extensions.findByName("kotlin")
-            ?.let { it as KotlinProjectExtension }
-            ?.let { it as? KotlinMultiplatformExtension }
-            ?: return@flatMapTo emptySet()
-
-        kotlin.sourceSets
-            .mapNotNull { sourceSet -> project.getCommonizerTarget(sourceSet) }
-            .filterIsInstance<SharedCommonizerTarget>()
-    }
+private fun Project.collectAllSharedCommonizerTargetsFromBuild(): Set<SharedCommonizerTarget> {
+    return allprojects.flatMap { project -> project.collectAllSharedCommonizerTargetsFromProject() }.toSet()
 }
 
+private fun Project.collectAllSharedCommonizerTargetsFromProject(): Set<SharedCommonizerTarget> {
+    return (project.multiplatformExtensionOrNull ?: return emptySet()).sourceSets
+        .mapNotNull { sourceSet -> project.getCommonizerTarget(sourceSet) }
+        .filterIsInstance<SharedCommonizerTarget>()
+        .toSet()
+}
 
 private fun urlEncode(value: String): String = URLEncoder.encode(value, Charsets.UTF_8.name())
