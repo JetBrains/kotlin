@@ -1,3 +1,11 @@
+plugins {
+    // Ensure non-separated kotlin and android classpath for all projects
+    id 'org.jetbrains.kotlin.multiplatform' apply false
+    id 'org.jetbrains.kotlin.jvm' apply false
+    id 'com.android.library' apply false
+    id 'com.android.application' apply false
+}
+
 allprojects {
     repositories {
         mavenLocal()
