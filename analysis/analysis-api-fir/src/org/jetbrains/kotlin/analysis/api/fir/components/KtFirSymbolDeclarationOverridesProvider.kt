@@ -154,15 +154,15 @@ internal class KtFirSymbolDeclarationOverridesProvider(
 
         if (subClass == superClass) return false
         return subClass.firRef.withFirByType(ResolveType.ClassSuperTypes) { subClassFir ->
-            check(subClassFir is FirRegularClass)
+            check(subClassFir is FirClass)
             superClass.firRef.withFir { superClassFir ->
-                check(superClassFir is FirRegularClass)
+                check(superClassFir is FirClass)
                 isSubClassOf(subClassFir, superClassFir, checkDeep)
             }
         }
     }
 
-    private fun isSubClassOf(subClass: FirRegularClass, superClass: FirRegularClass, checkDeep: Boolean): Boolean {
+    private fun isSubClassOf(subClass: FirClass, superClass: FirClass, checkDeep: Boolean): Boolean {
         if (subClass.superConeTypes.any { it.toRegularClassSymbol(rootModuleSession) == superClass.symbol }) return true
         if (!checkDeep) return false
         subClass.superConeTypes.forEach { superType ->
