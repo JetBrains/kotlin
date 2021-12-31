@@ -39,6 +39,10 @@ internal class KtFirExpressionTypeProvider(
 
     override fun getKtExpressionType(expression: KtExpression): KtType? = withValidityAssertion {
         when (val fir = expression.unwrap().getOrBuildFir(firResolveState)) {
+            is FirFunctionCall -> {
+                getReturnTypeForArrayStyleAssignmentTarget(expression, fir)
+                    ?: fir.typeRef.coneType.asKtType()
+            }
             is FirPropertyAccessExpression -> {
                 // For unresolved `super`, we manually create an intersection type so that IDE features like completion can work correctly.
                 val containingClass =
@@ -76,6 +80,18 @@ internal class KtFirExpressionTypeProvider(
             is FirWhenBranch -> null
             else -> error("Unexpected ${fir?.let { it::class }} for ${expression::class} with text `${expression.text}`")
         }
+    }
+
+    private fun getReturnTypeForArrayStyleAssignmentTarget(
+        expression: KtExpression,
+        fir: FirFunctionCall
+    ): KtType? {
+        if (fir.calleeReference !is FirResolvedNamedReference) return null
+        if (expression !is KtArrayAccessExpression) return null
+        val assignment = expression.parent as? KtBinaryExpression ?: return null
+        if (assignment.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
+        val setTargetArgumentParameter = fir.argumentMapping?.entries?.last()?.value ?: return null
+        return setTargetArgumentParameter.returnTypeRef.coneType.asKtType()
     }
 
     override fun getReturnTypeForKtDeclaration(declaration: KtDeclaration): KtType = withValidityAssertion {

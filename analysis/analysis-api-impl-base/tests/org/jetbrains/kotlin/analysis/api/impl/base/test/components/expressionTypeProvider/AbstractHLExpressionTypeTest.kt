@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.components.expressionTypeProvider
 
+import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleFileTest
@@ -24,12 +25,16 @@ abstract class AbstractHLExpressionTypeTest(configurator: FrontendApiTestConfigu
             else -> null
         } ?: error("expect an expression but got ${selected.text}")
         val type = executeOnPooledThreadInReadAction {
-            analyseForTest(expression) { expression.getKtType()?.render() }
+            analyseForTest(expression) { expression.getKtType()?.render(TYPE_RENDERING_OPTIONS) }
         }
         val actual = buildString {
             appendLine("expression: ${expression.text}")
             appendLine("type: $type")
         }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+    }
+
+    companion object {
+        private val TYPE_RENDERING_OPTIONS = KtTypeRendererOptions.DEFAULT.copy(renderUnresolvedTypeAsResolved = false)
     }
 }

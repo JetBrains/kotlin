@@ -209,4 +209,32 @@ public class KtFe10HLExpressionTypeTestGenerated extends AbstractKtFe10HLExpress
     public void testWhileExpression() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/whileExpression.kt");
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Assignment {
+        @Test
+        public void testAllFilesPresentInAssignment() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("arrayAssignementTarget.kt")
+        public void testArrayAssignementTarget() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/arrayAssignementTarget.kt");
+        }
+
+        @Test
+        @TestMetadata("arrayAssignmentTargetUnresovledSet.kt")
+        public void testArrayAssignmentTargetUnresovledSet() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/arrayAssignmentTargetUnresovledSet.kt");
+        }
+
+        @Test
+        @TestMetadata("arrayCompoundAssignementTarget.kt")
+        public void testArrayCompoundAssignementTarget() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/arrayCompoundAssignementTarget.kt");
+        }
+    }
 }
