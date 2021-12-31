@@ -29,7 +29,10 @@ private val METHOD_GENERATORS = listOf(
     TransformingTestMethodGenerator,
 )
 
-object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
+class NewTestGeneratorImpl(
+    additionalMethodGenerators: List<MethodGenerator<Nothing>>
+) : TestGenerator(METHOD_GENERATORS + additionalMethodGenerators) {
+
     private val GENERATED_FILES = HashSet<String>()
 
     private fun Printer.generateMetadata(testDataSource: TestEntityModel) {
@@ -84,7 +87,7 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
         return generatorInstance.generateAndSave(dryRun)
     }
 
-    private class TestGeneratorInstance(
+    private inner class TestGeneratorInstance(
         baseDir: String,
         suiteTestClassFqName: String,
         baseTestClassFqName: String,
@@ -95,7 +98,8 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
         private val baseTestClassName: String = baseTestClassFqName.substringAfterLast('.', baseTestClassFqName)
         private val suiteClassPackage: String = suiteTestClassFqName.substringBeforeLast('.', baseTestClassPackage)
         private val suiteClassName: String = suiteTestClassFqName.substringAfterLast('.', suiteTestClassFqName)
-        private val testSourceFilePath: String = baseDir + "/" + this.suiteClassPackage.replace(".", "/") + "/" + this.suiteClassName + ".java"
+        private val testSourceFilePath: String =
+            baseDir + "/" + this.suiteClassPackage.replace(".", "/") + "/" + this.suiteClassName + ".java"
 
         init {
             if (!GENERATED_FILES.add(testSourceFilePath)) {
@@ -256,9 +260,11 @@ object NewTestGeneratorImpl : TestGenerator(METHOD_GENERATORS) {
         private fun generateTestMethod(p: Printer, methodModel: MethodModel) {
             val generator = methodGenerators.getValue(methodModel.kind)
 
-            p.generateTestAnnotation()
-            p.generateTags(methodModel)
-            p.generateMetadata(methodModel)
+            if (methodModel.isTestMethod()) {
+                p.generateTestAnnotation()
+                p.generateTags(methodModel)
+                p.generateMetadata(methodModel)
+            }
             generator.hackyGenerateSignature(methodModel, p)
             p.printWithNoIndent(" {")
             p.println()
