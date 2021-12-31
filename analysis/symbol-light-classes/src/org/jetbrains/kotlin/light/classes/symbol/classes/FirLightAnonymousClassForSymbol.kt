@@ -98,8 +98,6 @@ internal class FirLightAnonymousClassForSymbol(
     override fun getSuperClass(): PsiClass? = PsiClassImplUtil.getSuperClass(this)
     override fun getSupers(): Array<PsiClass> = PsiClassImplUtil.getSupers(this)
     override fun getSuperTypes(): Array<PsiClassType> = PsiClassImplUtil.getSuperTypes(this)
-    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean =
-        InheritanceImplUtil.isInheritor(this, baseClass, checkDeep)
 
     override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean =
         baseClass?.let { InheritanceImplUtil.isInheritorDeep(this, it, classToByPass) } ?: false
