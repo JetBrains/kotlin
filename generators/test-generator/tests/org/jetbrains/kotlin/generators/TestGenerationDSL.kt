@@ -86,6 +86,11 @@ class TestGroup(
             get() = this@TestGroup.testsRoot
 
         val testModels = ArrayList<TestClassModel>()
+        private val methodModels = mutableListOf<MethodModel>()
+
+        fun method(method: MethodModel) {
+            methodModels += method
+        }
 
         fun model(
             relativeRootPath: String,
@@ -117,14 +122,14 @@ class TestGroup(
                     SingleClassTestModel(
                         rootFile, compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
                         realTargetBackend, skipIgnored, testRunnerMethodName, additionalRunnerArguments, annotations,
-                        extractTagsFromDirectory(rootFile)
+                        extractTagsFromDirectory(rootFile), methodModels
                     )
                 } else {
                     SimpleTestClassModel(
                         rootFile, recursive, excludeParentDirs,
                         compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
                         realTargetBackend, excludeDirs, skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep, annotations,
-                        extractTagsFromDirectory(rootFile)
+                        extractTagsFromDirectory(rootFile), methodModels
                     )
                 }
             )

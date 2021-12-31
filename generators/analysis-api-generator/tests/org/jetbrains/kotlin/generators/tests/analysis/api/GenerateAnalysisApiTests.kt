@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.FrontendConfiguratorTestGenerator
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
-    generateTestGroupSuiteWithJUnit5(args) {
+    generateTestGroupSuiteWithJUnit5(args, additionalMethodGenerators = listOf(FrontendConfiguratorTestGenerator)) {
         generateTests()
     }
 }

@@ -30,7 +30,8 @@ class SimpleTestClassModel(
     private val additionalRunnerArguments: List<String>,
     private val deep: Int?,
     override val annotations: Collection<AnnotationModel>,
-    override val tags: List<String>
+    override val tags: List<String>,
+    private val additionalMethods: Collection<MethodModel>,
 ) : TestClassModel() {
     override val name: String
         get() = testClassName
@@ -63,7 +64,8 @@ class SimpleTestClassModel(
                         additionalRunnerArguments,
                         if (deep != null) deep - 1 else null,
                         annotations,
-                        extractTagsFromDirectory(file)
+                        extractTagsFromDirectory(file),
+                        additionalMethods.filter { it.shouldBeGeneratedForInnerTestClass() },
                     )
                 )
             }
@@ -100,6 +102,7 @@ class SimpleTestClassModel(
         val result = mutableListOf<MethodModel>()
         result.add(RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments))
         result.add(TestAllFilesPresentMethodModel())
+        result.addAll(additionalMethods)
         val listFiles = rootFile.listFiles()
         if (listFiles != null && (deep == null || deep == 0)) {
             for (file in listFiles) {

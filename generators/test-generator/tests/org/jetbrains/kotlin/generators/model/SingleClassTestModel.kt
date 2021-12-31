@@ -23,7 +23,8 @@ class SingleClassTestModel(
     private val testRunnerMethodName: String,
     private val additionalRunnerArguments: List<String>,
     override val annotations: List<AnnotationModel>,
-    override val tags: List<String>
+    override val tags: List<String>,
+    private val additionalMethods: Collection<MethodModel>,
 ) : TestClassModel() {
     override val name: String
         get() = testClassName
@@ -32,6 +33,7 @@ class SingleClassTestModel(
         val result: MutableList<MethodModel> = ArrayList()
         result.add(RunTestMethodModel(targetBackend, doTestMethodName, testRunnerMethodName, additionalRunnerArguments))
         result.add(TestAllFilesPresentMethodModel())
+        result.addAll(additionalMethods)
         FileUtil.processFilesRecursively(rootFile) { file: File ->
             if (!file.isDirectory && filenamePattern.matcher(file.name).matches()) {
                 result.addAll(getTestMethodsFromFile(file))
