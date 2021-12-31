@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import kotlin.test.assertEquals
 
-abstract class AbstractCollectDiagnosticsTest(
-    configurator: FrontendApiTestConfiguratorService
-) : AbstractHLApiSingleFileTest(configurator) {
+abstract class AbstractCollectDiagnosticsTest : AbstractHLApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         fun TextRange.asLineColumnRange(): String {
             return getLineAndColumnRangeInPsiFile(ktFile, this).toString()

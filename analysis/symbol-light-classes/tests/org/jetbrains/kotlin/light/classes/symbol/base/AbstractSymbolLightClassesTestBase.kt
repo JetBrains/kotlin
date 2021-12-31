@@ -28,8 +28,8 @@ import kotlin.io.path.exists
 import kotlin.io.path.nameWithoutExtension
 
 abstract class AbstractSymbolLightClassesTestBase(
-    configurator: FrontendApiTestConfiguratorService
-) : AbstractHLApiSingleModuleTest(configurator) {
+    override val configurator: FrontendApiTestConfiguratorService
+) : AbstractHLApiSingleModuleTest() {
 
     override val enableTestInDependedMode: Boolean get() = false
 

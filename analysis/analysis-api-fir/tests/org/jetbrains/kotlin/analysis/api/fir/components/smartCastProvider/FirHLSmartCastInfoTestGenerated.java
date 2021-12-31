@@ -7,6 +7,10 @@ package org.jetbrains.kotlin.analysis.api.fir.components.smartCastProvider;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService;
+import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService;
+import org.jetbrains.kotlin.analysis.api.impl.base.test.components.smartCastProvider.AbstractHLSmartCastInfoTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,7 +22,13 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/components/smartCastProvider/smartCastInfo")
 @TestDataPath("$PROJECT_ROOT")
-public class FirHLSmartCastInfoTestGenerated extends AbstractFirHLSmartCastInfoTest {
+public class FirHLSmartCastInfoTestGenerated extends AbstractHLSmartCastInfoTest {
+    @NotNull
+    @Override
+    public FrontendApiTestConfiguratorService getConfigurator() {
+        return FirFrontendApiTestConfiguratorService.INSTANCE;
+    }
+
     @Test
     public void testAllFilesPresentInSmartCastInfo() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/smartCastProvider/smartCastInfo"), Pattern.compile("^(.+)\\.kt$"), null, true);

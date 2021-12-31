@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import java.io.File
 
-abstract class AbstractIsDenotableTest(configurator: FrontendApiTestConfiguratorService) : AbstractHLApiSingleFileTest(configurator) {
+abstract class AbstractIsDenotableTest : AbstractHLApiSingleFileTest() {
     val denotableName = Name.identifier("Denotable")
     val undenotableName = Name.identifier("Nondenotable")
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {

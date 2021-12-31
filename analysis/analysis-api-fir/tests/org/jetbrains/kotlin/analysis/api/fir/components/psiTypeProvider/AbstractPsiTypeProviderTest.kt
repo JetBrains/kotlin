@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-abstract class AbstractPsiTypeProviderTest : AbstractHLApiSingleFileTest(FirFrontendApiTestConfiguratorService) {
+abstract class AbstractPsiTypeProviderTest : AbstractHLApiSingleFileTest(){
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val declaration = testServices.expressionMarkerProvider.getElementOfTypAtCaret<KtDeclaration>(ktFile)
         val containingClass =

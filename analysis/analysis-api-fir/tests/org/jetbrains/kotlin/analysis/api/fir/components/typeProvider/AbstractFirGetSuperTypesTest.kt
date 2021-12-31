@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractFirGetSuperTypesTest : AbstractHLApiSingleFileTest(FirFrontendApiTestConfiguratorService) {
+abstract class AbstractFirGetSuperTypesTest : AbstractHLApiSingleFileTest(){
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
 

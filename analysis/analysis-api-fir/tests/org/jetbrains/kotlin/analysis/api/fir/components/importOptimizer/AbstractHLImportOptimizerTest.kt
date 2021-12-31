@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractHLImportOptimizerTest : AbstractHLApiSingleModuleTest(FirFrontendApiTestConfiguratorService) {
+abstract class AbstractHLImportOptimizerTest : AbstractHLApiSingleModuleTest(){
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val mainKtFile = ktFiles.singleOrNull() ?: ktFiles.first { it.name == "main.kt" }
         val unusedImports = analyseForTest(mainKtFile) { analyseImports(mainKtFile).unusedImports }
