@@ -20,6 +20,7 @@ import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiCachedValueImpl
 import com.intellij.psi.impl.PsiClassImplUtil
@@ -159,6 +160,8 @@ abstract class FirLightClassBase protected constructor(manager: PsiManager) : Li
     override fun getVisibleSignatures(): MutableCollection<HierarchicalMethodSignature> = PsiSuperMethodImplUtil.getVisibleSignatures(this)
 
     override fun setName(name: String): PsiElement? = cannotModify()
+
+    override fun getTextRange(): TextRange? = kotlinOrigin?.textRange ?: TextRange.EMPTY_RANGE
 
     abstract override fun copy(): PsiElement
 
