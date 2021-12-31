@@ -435,8 +435,8 @@ internal fun KtSymbolWithMembers.createInnerClasses(
 
 internal fun KtClassOrObject.checkIsInheritor(baseClassOrigin: KtClassOrObject, checkDeep: Boolean): Boolean {
     return analyseForLightClasses(this) {
-        val subClassSymbol = this@checkIsInheritor.getNamedClassOrObjectSymbol() ?: return false
-        val superClassSymbol = baseClassOrigin.getNamedClassOrObjectSymbol() ?: return false
+        val subClassSymbol = this@checkIsInheritor.getClassOrObjectSymbol()
+        val superClassSymbol = baseClassOrigin.getClassOrObjectSymbol()
 
         if (subClassSymbol == superClassSymbol) return@analyseForLightClasses false
 

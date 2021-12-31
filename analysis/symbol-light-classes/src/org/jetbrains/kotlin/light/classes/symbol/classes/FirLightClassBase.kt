@@ -22,10 +22,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Pair
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
-import com.intellij.psi.impl.PsiCachedValueImpl
-import com.intellij.psi.impl.PsiClassImplUtil
-import com.intellij.psi.impl.PsiImplUtil
-import com.intellij.psi.impl.PsiSuperMethodImplUtil
+import com.intellij.psi.impl.*
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.psi.impl.source.PsiExtensibleClass
 import com.intellij.psi.javadoc.PsiDocComment
@@ -34,14 +31,12 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
-import org.jetbrains.kotlin.asJava.classes.KotlinClassInnerStuffCache
 import org.jetbrains.kotlin.asJava.classes.KotlinClassInnerStuffCache.Companion.processDeclarationsInEnum
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.cannotModify
-import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.analysis.api.tokens.HackToForceAllowRunningAnalyzeOnEDT
 import org.jetbrains.kotlin.analysis.api.tokens.hackyAllowRunningOnEdt
+import org.jetbrains.kotlin.asJava.classes.*
+import org.jetbrains.kotlin.light.classes.symbol.classes.checkIsInheritor
 import javax.swing.Icon
 
 abstract class FirLightClassBase protected constructor(manager: PsiManager) : LightElement(manager, KotlinLanguage.INSTANCE), PsiClass,
@@ -104,6 +99,20 @@ abstract class FirLightClassBase protected constructor(manager: PsiManager) : Li
             PsiUtil.getLanguageLevel(place),
             false
         )
+    }
+
+    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
+        if (manager.areElementsEquivalent(baseClass, this)) return false
+        LightClassInheritanceHelper.getService(project).isInheritor(this, baseClass, checkDeep).ifSure { return it }
+
+        val thisClassOrigin = kotlinOrigin
+        val baseClassOrigin = (baseClass as? KtLightClass)?.kotlinOrigin
+
+        return if (baseClassOrigin != null && thisClassOrigin != null) {
+            thisClassOrigin.checkIsInheritor(baseClassOrigin, checkDeep)
+        } else {
+            InheritanceImplUtil.isInheritor(this, baseClass, checkDeep)
+        }
     }
 
     override fun getText(): String = kotlinOrigin?.text ?: ""
