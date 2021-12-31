@@ -1,0 +1,2 @@
+IS_SUBCLASS: true
+IS_DIRECT_SUBCLASS: true

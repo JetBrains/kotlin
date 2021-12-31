@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.components.expressionTyp
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.expressionTypeProvider.AbstractExpectedExpressionTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.expressionTypeProvider.AbstractHLExpressionTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.smartCastProvider.AbstractHLSmartCastInfoTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.components.symbolDeclarationOverridesProvider.AbstractIsSubclassOfTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.symbolDeclarationOverridesProvider.AbstractOverriddenDeclarationProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.symbolDeclarationRenderer.AbstractRendererTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.typeCreator.AbstractTypeParameterTypeTest
@@ -194,6 +195,10 @@ private fun TestGroupSuite.generateAnalysisApiComponentsTests() {
     component("symbolDeclarationOverridesProvider") {
         test(AbstractOverriddenDeclarationProviderTest::class) {
             model("overriddenSymbols")
+        }
+
+        test(AbstractIsSubclassOfTest::class) {
+            model("isSubclassOf")
         }
     }
 
