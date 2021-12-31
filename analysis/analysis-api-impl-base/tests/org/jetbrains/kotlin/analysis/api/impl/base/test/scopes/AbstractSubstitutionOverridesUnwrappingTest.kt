@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AbstractSubstitutionOverridesUnwrappingTest(
-    configurator: FrontendApiTestConfiguratorService
-) : AbstractSymbolTest(configurator) {
+abstract class AbstractSubstitutionOverridesUnwrappingTest : AbstractSymbolTest() {
 
     override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
         val declarationUnderCaret = testServices.expressionMarkerProvider.getElementOfTypAtCaret<KtClassLikeDeclaration>(ktFile)

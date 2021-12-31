@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractSymbolTest(configurator: FrontendApiTestConfiguratorService) : AbstractHLApiSingleFileTest(configurator) {
+abstract class AbstractSymbolTest : AbstractHLApiSingleFileTest() {
     private val renderingOptions = KtDeclarationRendererOptions.DEFAULT
 
     open val prettyRenderMode: PrettyRenderingMode = PrettyRenderingMode.RENDER_SYMBOLS_LINE_BY_LINE

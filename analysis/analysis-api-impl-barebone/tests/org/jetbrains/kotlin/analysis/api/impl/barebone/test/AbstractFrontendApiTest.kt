@@ -59,7 +59,9 @@ interface FrontendApiTestConfiguratorService {
     fun preprocessTestDataPath(path: Path): Path = path
 }
 
-abstract class AbstractFrontendApiTest(val configurator: FrontendApiTestConfiguratorService) : TestWithDisposable() {
+abstract class AbstractFrontendApiTest : TestWithDisposable() {
+    abstract val configurator: FrontendApiTestConfiguratorService
+
     protected open val enableTestInDependedMode: Boolean
         get() = configurator.allowDependedAnalysisSession
 

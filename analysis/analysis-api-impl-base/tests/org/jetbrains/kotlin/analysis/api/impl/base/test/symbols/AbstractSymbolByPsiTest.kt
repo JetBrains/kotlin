@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AbstractSymbolByPsiTest(configurator: FrontendApiTestConfiguratorService) : AbstractSymbolTest(configurator) {
+abstract class AbstractSymbolByPsiTest : AbstractSymbolTest() {
     override val prettyRenderMode: PrettyRenderingMode get() = PrettyRenderingMode.RENDER_SYMBOLS_NESTED
 
     override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {

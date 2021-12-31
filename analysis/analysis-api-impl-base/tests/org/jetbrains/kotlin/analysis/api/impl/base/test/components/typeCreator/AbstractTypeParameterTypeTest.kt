@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractTypeParameterTypeTest(
-    configurator: FrontendApiTestConfiguratorService
-) : AbstractHLApiSingleFileTest(configurator) {
+abstract class AbstractTypeParameterTypeTest : AbstractHLApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val expressionAtCaret = testServices.expressionMarkerProvider.getElementOfTypAtCaret(ktFile) as KtTypeParameter
 

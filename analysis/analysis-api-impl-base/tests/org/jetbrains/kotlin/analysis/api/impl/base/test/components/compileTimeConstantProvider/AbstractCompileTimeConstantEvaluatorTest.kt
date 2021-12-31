@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractCompileTimeConstantEvaluatorTest(
-    configurator: FrontendApiTestConfiguratorService
-) : AbstractHLApiSingleFileTest(configurator) {
+abstract class AbstractCompileTimeConstantEvaluatorTest : AbstractHLApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val element = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
         val expression = when (element) {

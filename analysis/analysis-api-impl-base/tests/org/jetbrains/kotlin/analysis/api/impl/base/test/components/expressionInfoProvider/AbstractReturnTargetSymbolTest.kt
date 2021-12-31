@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractReturnTargetSymbolTest(
-    configurator: FrontendApiTestConfiguratorService
-) : AbstractHLApiSingleFileTest(configurator) {
+abstract class AbstractReturnTargetSymbolTest : AbstractHLApiSingleFileTest() {
     val commentRegex = Regex("""/\* (.+@\(.+\)|null) \*/""")
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val original = ktFile.text

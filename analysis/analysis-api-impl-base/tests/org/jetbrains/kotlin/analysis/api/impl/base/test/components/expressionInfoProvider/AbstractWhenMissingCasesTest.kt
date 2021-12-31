@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractWhenMissingCasesTest(
-    configurator: FrontendApiTestConfiguratorService
-) : AbstractHLApiSingleFileTest(configurator) {
+abstract class AbstractWhenMissingCasesTest : AbstractHLApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val whenExpression = testServices.expressionMarkerProvider.getElementOfTypAtCaret<KtWhenExpression>(ktFile)
 

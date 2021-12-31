@@ -29,8 +29,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractReferenceResolveTest(configurator: FrontendApiTestConfiguratorService) :
-    AbstractHLApiSingleModuleTest(configurator) {
+abstract class AbstractReferenceResolveTest : AbstractHLApiSingleModuleTest() {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {

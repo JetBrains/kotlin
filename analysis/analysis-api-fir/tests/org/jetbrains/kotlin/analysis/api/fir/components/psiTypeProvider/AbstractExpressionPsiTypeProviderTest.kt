@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractExpressionPsiTypeProviderTest : AbstractHLApiSingleFileTest(FirFrontendApiTestConfiguratorService) {
+abstract class AbstractExpressionPsiTypeProviderTest : AbstractHLApiSingleFileTest(){
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val declarationAtCaret = testServices.expressionMarkerProvider.getSelectedElement(ktFile) as KtExpression
         val actual = analyse(ktFile) {

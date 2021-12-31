@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractHLExpressionTypeTest(configurator: FrontendApiTestConfiguratorService) : AbstractHLApiSingleFileTest(configurator) {
+abstract class AbstractHLExpressionTypeTest : AbstractHLApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val selected = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
         val expression = when (selected) {

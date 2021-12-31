@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AbstractHLApiSingleModuleTest(configurator: FrontendApiTestConfiguratorService) : AbstractFrontendApiTest(configurator) {
+abstract class AbstractHLApiSingleModuleTest : AbstractFrontendApiTest() {
     final override fun doTestByFileStructure(ktFiles: List<KtFile>, moduleStructure: TestModuleStructure, testServices: TestServices) {
         val singleModule = moduleStructure.modules.single()
         doTestByFileStructure(ktFiles, singleModule, testServices)

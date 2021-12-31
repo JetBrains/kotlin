@@ -25,7 +25,7 @@ import kotlin.reflect.KProperty1
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.memberProperties
 
-abstract class AbstractResolveCallTest(configurator: FrontendApiTestConfiguratorService) : AbstractHLApiSingleModuleTest(configurator) {
+abstract class AbstractResolveCallTest : AbstractHLApiSingleModuleTest() {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val ktFile = ktFiles.first()
         val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile)

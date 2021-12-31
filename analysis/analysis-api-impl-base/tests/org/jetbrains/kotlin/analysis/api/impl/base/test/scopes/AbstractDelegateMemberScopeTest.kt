@@ -15,9 +15,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AbstractDelegateMemberScopeTest(
-    configurator: FrontendApiTestConfiguratorService
-) : AbstractSymbolByFqNameTest(configurator) {
+abstract class AbstractDelegateMemberScopeTest : AbstractSymbolByFqNameTest() {
 
     override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
         val symbolData = SymbolByFqName.getSymbolDataFromFile(testDataPath)

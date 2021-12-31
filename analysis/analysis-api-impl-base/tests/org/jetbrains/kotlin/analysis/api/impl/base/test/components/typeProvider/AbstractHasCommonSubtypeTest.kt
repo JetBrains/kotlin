@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import java.io.File
 
-abstract class AbstractHasCommonSubtypeTest(configurator: FrontendApiTestConfiguratorService) : AbstractHLApiSingleFileTest(configurator) {
+abstract class AbstractHasCommonSubtypeTest : AbstractHLApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val errors = mutableListOf<String>()
         val originalText = ktFile.text

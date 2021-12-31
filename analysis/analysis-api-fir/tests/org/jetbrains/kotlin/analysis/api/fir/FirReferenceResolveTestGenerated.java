@@ -7,6 +7,10 @@ package org.jetbrains.kotlin.analysis.api.fir;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService;
+import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService;
+import org.jetbrains.kotlin.analysis.api.impl.base.test.AbstractReferenceResolveTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,7 +22,13 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/referenceResolve")
 @TestDataPath("$PROJECT_ROOT")
-public class FirReferenceResolveTestGenerated extends AbstractFirReferenceResolveTest {
+public class FirReferenceResolveTestGenerated extends AbstractReferenceResolveTest {
+    @NotNull
+    @Override
+    public FrontendApiTestConfiguratorService getConfigurator() {
+        return FirFrontendApiTestConfiguratorService.INSTANCE;
+    }
+
     @Test
     public void testAllFilesPresentInReferenceResolve() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true);

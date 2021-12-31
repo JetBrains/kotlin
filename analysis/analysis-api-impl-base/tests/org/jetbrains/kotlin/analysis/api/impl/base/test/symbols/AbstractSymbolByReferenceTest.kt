@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.test.services.TestServices
 
-abstract class AbstractSymbolByReferenceTest(configurator: FrontendApiTestConfiguratorService) : AbstractSymbolTest(configurator) {
+abstract class AbstractSymbolByReferenceTest : AbstractSymbolTest() {
     override fun KtAnalysisSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData {
         val referenceExpression = testServices.expressionMarkerProvider.getElementOfTypAtCaret<KtNameReferenceExpression>(ktFile)
         return SymbolsData(
