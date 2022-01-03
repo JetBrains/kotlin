@@ -83,7 +83,9 @@ object AbstractTypeMapper {
             typeConstructor.isTypeParameter() -> {
                 val typeParameter = typeConstructor.asTypeParameter()
                 val upperBound = typeParameter.representativeUpperBound()
-                val newType = if (upperBound.typeConstructor().isInlineClass() && type.isNullableType())
+                val upperBoundIsPrimitiveOrInlineClass =
+                    upperBound.typeConstructor().isInlineClass() || upperBound is SimpleTypeMarker && upperBound.isPrimitiveType()
+                val newType = if (upperBoundIsPrimitiveOrInlineClass && type.isNullableType())
                     upperBound.makeNullable()
                 else upperBound
 

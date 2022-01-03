@@ -9,7 +9,7 @@ class BoxFoo(val boxed: IFoo?)
 interface IFoo
 
 OPTIONAL_JVM_INLINE_ANNOTATION
-value class I32<T: Int>(val value: T) : IFoo
+value class I32<T: Int>(val value: T?) : IFoo
 
 fun <T: Int> boxToTypeParameter(x: I32<T>?) = BoxT(x)
 fun <T: Int> boxToNullableAny(x: I32<T>?) = BoxAny(x)

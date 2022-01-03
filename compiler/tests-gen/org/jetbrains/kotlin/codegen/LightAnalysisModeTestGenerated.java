@@ -16003,6 +16003,26 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/toStringOfUnboxedNullableGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
+        @TestMetadata("unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface.kt")
+        public void ignoreUnboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @TestMetadata("unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface2.kt")
+        public void ignoreUnboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface2() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullableInlineClassUnderlyingTypeGenericWithInterface2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @TestMetadata("unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface.kt")
+        public void ignoreUnboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @TestMetadata("unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface2.kt")
+        public void ignoreUnboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface2() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGenericWithInterface2.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
         private void runTest(String testDataFilePath) throws Exception {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
         }
@@ -17583,6 +17603,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestMetadata("unboxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt")
         public void testUnboxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNonNullUnderlyingTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @TestMetadata("unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingType.kt")
+        public void testUnboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingType() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingType.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
+        @TestMetadata("unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGeneric.kt")
+        public void testUnboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGeneric() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/unboxNullableValueOfInlineClassWithNullablePrimitiveUnderlyingTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @TestMetadata("unboxNullableValueOfInlineClassWithPrimitiveUnderlyingType.kt")
