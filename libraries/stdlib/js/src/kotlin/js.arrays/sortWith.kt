@@ -5,7 +5,7 @@
 
 package kotlin.js
 
-import kotlin.js.arrays.defineSortPolyfillForTypedArrays
+import kotlin.js.defineSortPolyfillForTypedArrays
 
 @PublishedApi
 @Suppress("NOTHING_TO_INLINE")
