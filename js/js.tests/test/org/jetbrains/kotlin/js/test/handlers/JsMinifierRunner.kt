@@ -147,6 +147,7 @@ class JsMinifierRunner(testServices: TestServices) : AbstractJsArtifactsCollecto
             loadFiles(runList)
             overrideAsserter()
             eval(SETUP_KOTLIN_OUTPUT)
+            eval(SETUP_CLASSICAL_BACKEND_FLAG)
             runTestFunction(testModuleName, testPackage, testFunction, withModuleSystem)
         }
         engineForMinifier.release()
