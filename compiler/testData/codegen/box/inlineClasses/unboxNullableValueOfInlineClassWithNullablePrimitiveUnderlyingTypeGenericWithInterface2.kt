@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
+// IGNORE_BACKEND: JVM
 // LANGUAGE: +ValueClasses, +GenericInlineClassParameter
 
 class BoxT<T>(val boxed: T)
@@ -9,13 +10,13 @@ class BoxFoo(val boxed: IFoo?)
 interface IFoo
 
 OPTIONAL_JVM_INLINE_ANNOTATION
-value class I32<T: Int>(val value: T) : IFoo
+value class I32<T: Comparable<Int>>(val value: T?) : IFoo where T: Int
 
-fun <T: Int> boxToTypeParameter(x: I32<T>?) = BoxT(x)
-fun <T: Int> boxToNullableAny(x: I32<T>?) = BoxAny(x)
-fun <T: Int> boxToNullableInterface(x: I32<T>?) = BoxFoo(x)
+fun <T: Comparable<Int>> boxToTypeParameter(x: I32<T>?) where T: Int = BoxT(x)
+fun <T: Comparable<Int>> boxToNullableAny(x: I32<T>?) where T: Int = BoxAny(x)
+fun <T: Comparable<Int>> boxToNullableInterface(x: I32<T>?) where T: Int = BoxFoo(x)
 
-fun <T: Int> useNullableI32(x: I32<T>?) {
+fun <T: Comparable<Int>> useNullableI32(x: I32<T>?) where T: Int {
     if (x != null) throw AssertionError()
 }
 
