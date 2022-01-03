@@ -25,9 +25,11 @@ private fun TypeSystemCommonBackendContext.computeExpandedTypeInner(
             val upperBound = typeParameter.getRepresentativeUpperBound()
             computeExpandedTypeInner(upperBound, visitedClassifiers)
                 ?.let { expandedUpperBound ->
+                    val upperBoundIsPrimitiveOrInlineClass =
+                        upperBound.typeConstructor().isInlineClass() || upperBound is SimpleTypeMarker && upperBound.isPrimitiveType()
                     when {
                         expandedUpperBound is SimpleTypeMarker && expandedUpperBound.isPrimitiveType() &&
-                                kotlinType.isNullableType() && upperBound.typeConstructor().isInlineClass() -> upperBound.makeNullable()
+                                kotlinType.isNullableType() && upperBoundIsPrimitiveOrInlineClass -> upperBound.makeNullable()
                         expandedUpperBound.isNullableType() || !kotlinType.isMarkedNullable() -> expandedUpperBound
                         else -> expandedUpperBound.makeNullable()
                     }
