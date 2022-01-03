@@ -17,6 +17,12 @@ var fs = require('fs');
     };
 })();
 
+var jsBoxFlag = process.env.BOX_FLAG_LOCATION
+
+if (jsBoxFlag) {
+    require(jsBoxFlag)
+}
+
 var kotlinJsTestLocation = process.env.KOTLIN_JS_TEST_LOCATION || path.resolve(__dirname, "../../../dist/js/kotlin-test.js");
 
 var kotlin = require("kotlin");

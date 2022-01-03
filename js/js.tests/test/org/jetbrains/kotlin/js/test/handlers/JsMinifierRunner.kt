@@ -23,6 +23,7 @@ import java.io.File
 
 class JsMinifierRunner(testServices: TestServices) : AbstractJsArtifactsCollector(testServices) {
     private val distDirJsPath = "dist/js/"
+    private val testDataJsPath = BasicWasmBoxTest.TEST_DATA_DIR_PATH
     private val overwriteReachableNodesProperty = "kotlin.js.overwriteReachableNodes"
     private val overwriteReachableNodes = java.lang.Boolean.getBoolean(overwriteReachableNodesProperty)
 
@@ -112,12 +113,15 @@ class JsMinifierRunner(testServices: TestServices) : AbstractJsArtifactsCollecto
         withModuleSystem: Boolean
     ) {
         val kotlinJsLib = distDirJsPath + "kotlin.js"
+        val kotlinBackendFlag = testDataJsPath + "jsBoxFlag.js"
         val kotlinTestJsLib = distDirJsPath + "kotlin-test.js"
         val kotlinJsLibOutput = File(workDir, "kotlin.min.js").path
         val kotlinTestJsLibOutput = File(workDir, "kotlin-test.min.js").path
+        val kotlinBackendFlagOutput = File(workDir, "jsBoxFlag.js").path
 
         val kotlinJsInputFile = InputFile(InputResource.file(kotlinJsLib), null, kotlinJsLibOutput, "kotlin")
         val kotlinTestJsInputFile = InputFile(InputResource.file(kotlinTestJsLib), null, kotlinTestJsLibOutput, "kotlin-test")
+        val kotlinBackendFlagFile = InputFile(InputResource.file(kotlinBackendFlag), null, kotlinBackendFlagOutput, "backend-flag")
 
         val filesToMinify = generatedJsFiles.associate { (fileName, moduleName) ->
             val inputFileName = File(fileName).nameWithoutExtension
@@ -130,7 +134,7 @@ class JsMinifierRunner(testServices: TestServices) : AbstractJsArtifactsCollecto
             "kotlin.kotlin.io.output.buffer", "kotlin-test.kotlin.test.overrideAsserter_wbnzx$",
             "kotlin-test.kotlin.test.DefaultAsserter"
         )
-        val allFilesToMinify = filesToMinify.values + kotlinJsInputFile + kotlinTestJsInputFile
+        val allFilesToMinify = filesToMinify.values + kotlinJsInputFile + kotlinTestJsInputFile + kotlinBackendFlagFile
         val dceResult = DeadCodeElimination.run(allFilesToMinify, additionalReachableNodes, true) { _, _ -> }
 
         val reachableNodes = dceResult.reachableNodes
@@ -139,6 +143,7 @@ class JsMinifierRunner(testServices: TestServices) : AbstractJsArtifactsCollecto
         val runList = mutableListOf<String>()
         runList += kotlinJsLibOutput
         runList += kotlinTestJsLibOutput
+        runList += kotlinBackendFlagOutput
         runList += "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/nashorn-polyfills.js"
         runList += allJsFiles.map { filesToMinify[it]?.outputPath ?: it }
 
@@ -147,7 +152,6 @@ class JsMinifierRunner(testServices: TestServices) : AbstractJsArtifactsCollecto
             loadFiles(runList)
             overrideAsserter()
             eval(SETUP_KOTLIN_OUTPUT)
-            eval(SETUP_CLASSICAL_BACKEND_FLAG)
             runTestFunction(testModuleName, testPackage, testFunction, withModuleSystem)
         }
         engineForMinifier.release()

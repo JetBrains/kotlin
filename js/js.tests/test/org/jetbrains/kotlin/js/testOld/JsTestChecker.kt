@@ -133,18 +133,17 @@ abstract class AbstractNashornJsTestChecker : AbstractJsTestChecker() {
 }
 
 const val SETUP_KOTLIN_OUTPUT = "kotlin.kotlin.io.output = new kotlin.kotlin.io.BufferedOutput();"
-const val SETUP_CLASSICAL_BACKEND_FLAG = "Object.__legacyBackend__ = true"
 const val GET_KOTLIN_OUTPUT = "kotlin.kotlin.io.output.buffer;"
 
 object NashornJsTestChecker : AbstractNashornJsTestChecker() {
 
     override fun beforeRun() {
         engine.eval(SETUP_KOTLIN_OUTPUT)
-        engine.eval(SETUP_CLASSICAL_BACKEND_FLAG)
     }
 
     override val preloadedScripts = listOf(
         BasicWasmBoxTest.TEST_DATA_DIR_PATH + "nashorn-polyfills.js",
+        BasicWasmBoxTest.TEST_DATA_DIR_PATH + "jsBoxFlag.js",
         DIST_DIR_JS_PATH + "kotlin.js",
         DIST_DIR_JS_PATH + "kotlin-test.js"
     )
@@ -170,6 +169,7 @@ object V8JsTestChecker : AbstractJsTestChecker() {
         override fun initialValue() =
             ScriptEngineV8().apply {
                 val preloadedScripts = listOf(
+                    BasicWasmBoxTest.TEST_DATA_DIR_PATH + "jsBoxFlag.js",
                     DIST_DIR_JS_PATH + "kotlin.js",
                     DIST_DIR_JS_PATH + "kotlin-test.js"
                 )
@@ -187,7 +187,6 @@ object V8JsTestChecker : AbstractJsTestChecker() {
 
     override fun run(files: List<String>, f: ScriptEngine.() -> String): String {
         engine.eval(SETUP_KOTLIN_OUTPUT)
-        engine.eval(SETUP_CLASSICAL_BACKEND_FLAG)
         return engine.runAndRestoreContext {
             loadFiles(files)
             f()
