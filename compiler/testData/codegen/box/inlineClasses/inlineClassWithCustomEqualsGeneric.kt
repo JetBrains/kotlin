@@ -11,7 +11,7 @@
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Z<T: Int>(val data: T) {
     override fun equals(other: Any?): Boolean =
-        other is Z<T> `&&`
+        other is Z<*> &&
                 data % 256 == other.data % 256
 }
 
