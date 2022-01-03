@@ -12,15 +12,15 @@ object Test {
 
 // method: Test::nonNullTypeArgument-GWb7d6U
 // jvm signature: (Ljava/util/List;)V
-// generic signature: (Ljava/util/List<Ljava/lang/Integer;>;)V
+// generic signature: (Ljava/util/List<+TT;>;)V
 
 // method: Test::nullableTypeArgument-GWb7d6U
 // jvm signature: (Ljava/util/List;)V
-// generic signature: (Ljava/util/List<Ljava/lang/String;>;)V
+// generic signature: (Ljava/util/List<+TT;>;)V
 
 // method: Test::nullableValue-N3I3QIo
 // jvm signature: (Ljava/util/List;)V
-// generic signature: (Ljava/util/List<Ljava/lang/Long;>;)V
+// generic signature: (Ljava/util/List<+TT;>;)V
 
 // method: Foo::box-impl
 // jvm signature: (Ljava/util/List;)LFoo;

@@ -18,24 +18,24 @@ object Test {
 
 // method: Test::withInlineClassArgumentOut-bGQ91Ds
 // jvm signature: (Ljava/util/List;)V
-// generic signature: (Ljava/util/List<LUInt;>;)V
+// generic signature: (Ljava/util/List<+TT;>;)V
 
 // method: Test::withInlineClassArgumentIn-1sHIm6c
 // jvm signature: (Ljava/lang/Comparable;)V
-// generic signature: (Ljava/lang/Comparable<-LUInt;>;)V
+// generic signature: (Ljava/lang/Comparable<-TT;>;)V
 
 // method: Test::withListOfInlineClassArgument-bGQ91Ds
 // jvm signature: (Ljava/util/List;)V
-// generic signature: (Ljava/util/List<+Ljava/util/List<LUInt;>;>;)V
+// generic signature: (Ljava/util/List<+TT;>;)V
 
 // method: Test::withComparableOfInlineClassArgument-1sHIm6c
 // jvm signature: (Ljava/lang/Comparable;)V
-// generic signature: (Ljava/lang/Comparable<-Ljava/lang/Comparable<-LUInt;>;>;)V
+// generic signature: (Ljava/lang/Comparable<-TT;>;)V
 
 // method: Test::withInnerGenericInlineClassOut-bGQ91Ds
 // jvm signature: (Ljava/util/List;)V
-// generic signature: (Ljava/util/List<LAsList<Ljava/util/List<LUInt;>;>;>;)V
+// generic signature: (Ljava/util/List<+TT;>;)V
 
 // method: Test::withInnerGenericInlineClassIn-1sHIm6c
 // jvm signature: (Ljava/lang/Comparable;)V
-// generic signature: (Ljava/lang/Comparable<-LAsCmp<Ljava/lang/Comparable<LUInt;>;>;>;)V
+// generic signature: (Ljava/lang/Comparable<-TT;>;)V

@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
+// IGNORE_BACKEND: JVM
 // LANGUAGE: +ValueClasses, +GenericInlineClassParameter
 
 fun <T: Any> underlying(a: IC<T>): T = bar(a, object : IFace<IC<T>, T> {
