@@ -27,6 +27,12 @@ expect fun function5(): Planet
 expect fun function6(): Planet
 expect fun function7(): C
 
+// Optimistic Number Commonization: KT-48455, KT-48568
+expect val propertyWithMismatchedType1: Int
+expect val propertyWithMismatchedType2: Short
+expect fun functionWithMismatchedType1(): Int
+expect fun functionWithMismatchedType2(): Short
+
 expect class Box<T>(value: T) {
     val value: T
 }
