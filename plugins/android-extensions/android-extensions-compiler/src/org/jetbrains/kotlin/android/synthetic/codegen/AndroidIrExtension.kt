@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
+import org.jetbrains.kotlin.backend.common.lower.callsSuper
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -25,10 +26,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -128,20 +126,15 @@ private class AndroidIrTransformer(val extension: AndroidIrExtension, val plugin
     private val mapClear = pluginContext.irBuiltIns.mutableMapClass.owner.functions
         .single { it.name.asString() == "clear" && it.valueParameters.isEmpty() }
 
+    private val nullableViewType = createClass(FqName(AndroidConst.VIEW_FQNAME)).defaultType.makeNullable()
+
     private fun IrClass.getCacheField(): IrField =
         cachedCacheFields.getOrPut(this) {
-            val viewType = createClass(FqName(AndroidConst.VIEW_FQNAME)).defaultType.makeNullable()
             irFactory.buildField {
                 name = Name.identifier(AbstractAndroidExtensionsExpressionCodegenExtension.PROPERTY_NAME)
-                type = pluginContext.irBuiltIns.mutableMapClass.typeWith(pluginContext.irBuiltIns.intType, viewType)
+                type = pluginContext.irBuiltIns.mutableMapClass.typeWith(pluginContext.irBuiltIns.intType, nullableViewType)
             }.apply {
                 parent = this@getCacheField
-                initializer = irBuilder(symbol, this).run {
-                    irExprBody(irCall(mapFactory, type, valueArgumentsCount = 0, typeArgumentsCount = 2).apply {
-                        putTypeArgument(0, context.irBuiltIns.intType)
-                        putTypeArgument(1, viewType)
-                    })
-                }
             }
         }
 
@@ -163,11 +156,10 @@ private class AndroidIrTransformer(val extension: AndroidIrExtension, val plugin
     private fun IrClass.getCachedFindViewByIdFun(): IrSimpleFunction =
         cachedCacheLookupFuns.getOrPut(this) {
             val containerType = ContainerOptionsProxy.create(descriptor).containerType
-            val viewType = createClass(FqName(AndroidConst.VIEW_FQNAME)).defaultType.makeNullable()
             irFactory.buildFun {
                 name = Name.identifier(AbstractAndroidExtensionsExpressionCodegenExtension.CACHED_FIND_VIEW_BY_ID_METHOD_NAME)
                 modality = Modality.OPEN
-                returnType = viewType
+                returnType = nullableViewType
             }.apply {
                 val self = addDispatchReceiver { type = defaultType }
                 val resourceId = addValueParameter("id", pluginContext.irBuiltIns.intType)
@@ -175,8 +167,8 @@ private class AndroidIrTransformer(val extension: AndroidIrExtension, val plugin
                 body = irBuilder(symbol, this).irBlockBody {
                     val cache = irTemporary(irGetField(irGet(self), getCacheField()))
                     // cache[resourceId] ?: findViewById(resourceId)?.also { cache[resourceId] = it }
-                    +irReturn(irElvis(viewType, irCallOp(mapGet.symbol, viewType, irGet(cache), irGet(resourceId))) {
-                        irSafeLet(viewType, irFindViewById(irGet(self), irGet(resourceId), containerType)) { foundView ->
+                    +irReturn(irElvis(returnType, irCallOp(mapGet.symbol, returnType, irGet(cache), irGet(resourceId))) {
+                        irSafeLet(returnType, irFindViewById(irGet(self), irGet(resourceId), containerType)) { foundView ->
                             irBlock {
                                 +irCall(mapSet.symbol).apply {
                                     dispatchReceiver = irGet(cache)
@@ -201,10 +193,25 @@ private class AndroidIrTransformer(val extension: AndroidIrExtension, val plugin
             return super.visitClassNew(declaration)
 
         if ((containerOptions.cache ?: extension.getGlobalCacheImpl(declaration)).hasCache) {
-            // Place the field first so that it is initialized before any init blocks.
-            declaration.declarations.add(0, declaration.getCacheField())
+            val cacheField = declaration.getCacheField()
+            declaration.declarations += cacheField
             declaration.declarations += declaration.getClearCacheFun()
             declaration.declarations += declaration.getCachedFindViewByIdFun()
+
+            for (constructor in declaration.constructors) {
+                if (!constructor.callsSuper(pluginContext.irBuiltIns)) continue
+                // Initialize the cache as the first thing, even before the super constructor is called. This ensures
+                // that if the super constructor calls an override declared in this class, the cache already exists.
+                val body = constructor.body as? IrBlockBody ?: continue
+                val setCache = irBuilder(constructor.symbol, constructor).run {
+                    val newCache = irCall(mapFactory, cacheField.type, valueArgumentsCount = 0, typeArgumentsCount = 2).apply {
+                        putTypeArgument(0, context.irBuiltIns.intType)
+                        putTypeArgument(1, nullableViewType)
+                    }
+                    irSetField(irGet(declaration.thisReceiver!!), cacheField, newCache)
+                }
+                body.statements.add(0, setCache)
+            }
         }
         return super.visitClassNew(declaration)
     }
@@ -280,18 +287,15 @@ private class AndroidIrTransformer(val extension: AndroidIrExtension, val plugin
         receiver: IrExpression, id: IrExpression, container: AndroidContainerType
     ): IrExpression {
         // this[.getView()?|.getContainerView()?].findViewById(R$id.<name>)
-        val viewClass = createClass(FqName(AndroidConst.VIEW_FQNAME))
         val getView = when (container) {
             AndroidContainerType.FRAGMENT,
             AndroidContainerType.ANDROIDX_SUPPORT_FRAGMENT,
-            AndroidContainerType.SUPPORT_FRAGMENT ->
-                createMethod(container.fqName.child("getView"), viewClass.defaultType.makeNullable())
-            AndroidContainerType.LAYOUT_CONTAINER ->
-                createMethod(container.fqName.child("getContainerView"), viewClass.defaultType.makeNullable(), true)
+            AndroidContainerType.SUPPORT_FRAGMENT -> createMethod(container.fqName.child("getView"), nullableViewType)
+            AndroidContainerType.LAYOUT_CONTAINER -> createMethod(container.fqName.child("getContainerView"), nullableViewType, true)
             else -> null
         }
         val findViewByIdParent = if (getView == null) container.fqName else FqName(AndroidConst.VIEW_FQNAME)
-        val findViewById = createMethod(findViewByIdParent.child("findViewById"), viewClass.defaultType.makeNullable()) {
+        val findViewById = createMethod(findViewByIdParent.child("findViewById"), nullableViewType) {
             addValueParameter("id", pluginContext.irBuiltIns.intType)
         }
         val findViewCall = irCall(findViewById).apply { putValueArgument(0, id) }
