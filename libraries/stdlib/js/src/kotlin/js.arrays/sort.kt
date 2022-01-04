@@ -28,9 +28,6 @@ package kotlin.js
     }
 })
 """)
-internal inline fun Any.nativeSort(noinline comparison: SortComparator = js("undefined")): Unit {
+internal inline fun Any.nativeSort(noinline comparison: (a: dynamic, b: dynamic) -> Int = js("undefined")): Unit {
     asDynamic().sort(comparison)
 }
-
-typealias SortComparator = (a: dynamic, b: dynamic) -> Int
-
