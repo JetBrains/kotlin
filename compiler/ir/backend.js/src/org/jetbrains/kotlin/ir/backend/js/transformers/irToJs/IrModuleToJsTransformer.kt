@@ -148,6 +148,7 @@ class IrModuleToJsTransformer(
             globalNameScope = namer.globalNames
         )
 
+        val polyfillStatements = generatePolyfillStatements(modules)
         val (importStatements, importedJsModules) =
             generateImportStatements(
                 getNameForExternalDeclaration = { staticContext.getNameForStaticDeclaration(it) },
@@ -167,6 +168,7 @@ class IrModuleToJsTransformer(
 
         if (generateScriptModule) {
             with(program.globalBlock) {
+                statements.addWithComment("block: polyfills", polyfillStatements)
                 statements.addWithComment("block: imports", importStatements + crossModuleImports)
                 statements += moduleBody
                 statements.addWithComment("block: exports", exportStatements + crossModuleExports)
@@ -187,6 +189,7 @@ class IrModuleToJsTransformer(
                 }
             }
 
+            program.globalBlock.statements.addWithComment("block: polyfills", polyfillStatements)
             program.globalBlock.statements += ModuleWrapperTranslation.wrap(
                 exportedModule.name,
                 rootFunction,
@@ -291,7 +294,6 @@ class IrModuleToJsTransformer(
         val statements = mutableListOf<JsStatement>()
 
         val preDeclarationBlock = JsGlobalBlock()
-
         val postDeclarationBlock = JsGlobalBlock()
 
         statements.addWithComment("block: pre-declaration", preDeclarationBlock)
@@ -393,6 +395,13 @@ class IrModuleToJsTransformer(
             val generateContinuation = it.isLoweredSuspendFunction(backendContext)
             listOf(JsInvocation(jsName.makeRef(), generateMainArguments(generateArgv, generateContinuation, staticContext)).makeStmt())
         } ?: emptyList()
+    }
+
+    private fun generatePolyfillStatements(modules: Iterable<IrModuleFragment>): List<JsStatement> {
+        return modules.asSequence()
+            .flatMap { it.files }
+            .flatMap { backendContext.polyfills.getAllPolyfillsFor(it) }
+            .toList()
     }
 
     private fun generateImportStatements(

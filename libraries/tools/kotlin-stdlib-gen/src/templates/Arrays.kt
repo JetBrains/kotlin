@@ -1223,7 +1223,7 @@ object ArrayOps : TemplateGroupBase() {
                             if (primitive == PrimitiveType.Char) {
                                 // Requires comparator because default comparator of 'Array.prototype.sort' compares
                                 // string representation of values
-                                body { "nativeSortWith(::primitiveCompareTo)" }
+                                body { "nativeSort(::primitiveCompareTo)" }
                             } else {
                                 body { "nativeSort()" }
                             }
@@ -1292,7 +1292,7 @@ object ArrayOps : TemplateGroupBase() {
             deprecate(Deprecation("Use other sorting functions from the Standard Library", warningSince = "1.6"))
             inlineOnly()
             signature("sort(noinline comparison: (a: T, b: T) -> Int)")
-            body { "nativeSortWith(comparison)" }
+            body { "nativeSort(comparison)" }
         }
         specialFor(ArraysOfObjects) {
             deprecate(

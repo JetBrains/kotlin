@@ -5,11 +5,32 @@
 
 package kotlin.js
 
-import kotlin.js.defineSortPolyfillForTypedArrays
-
 @PublishedApi
 @Suppress("NOTHING_TO_INLINE")
-@JsNativeImplementation(defineSortPolyfillForTypedArrays)
-internal inline fun Any.nativeSort(): Unit {
-    asDynamic().sort()
+@JsNativeImplementation("""
+[Int8Array, Int16Array, Uint16Array, Int32Array, Float32Array, Float64Array].forEach(function (TypedArray) {
+    if (typeof TypedArray.prototype.sort === "undefined") {
+        Object.defineProperty(TypedArray.prototype, 'sort', {
+            value: function(compareFunction) {
+                compareFunction = compareFunction || function (a, b) {
+                    if (a < b) return -1;
+                    if (a > b) return 1;
+                    if (a === b) {
+                        if (a !== 0) return 0;
+                        var ia = 1 / a;
+                        return ia === 1 / b ? 0 : (ia < 0 ? -1 : 1);
+                    }
+                    return a !== a ? (b !== b ? 0 : 1) : -1
+                }
+                return Array.prototype.sort.call(this, compareFunction || totalOrderComparator);
+            }
+        });
+    }
+})
+""")
+internal inline fun Any.nativeSort(noinline comparison: SortComparator = js("undefined")): Unit {
+    asDynamic().sort(comparison)
 }
+
+typealias SortComparator = (a: dynamic, b: dynamic) -> Int
+

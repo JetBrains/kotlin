@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -1860,7 +1860,7 @@ public actual fun FloatArray.sort(): Unit {
  * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun CharArray.sort(): Unit {
-    nativeSortWith(::primitiveCompareTo)
+    nativeSort(::primitiveCompareTo)
 }
 
 /**
@@ -2043,7 +2043,7 @@ public actual fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit 
 @DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.sort(noinline comparison: (a: Byte, b: Byte) -> Int): Unit {
-    nativeSortWith(comparison)
+    nativeSort(comparison)
 }
 
 /**
@@ -2053,7 +2053,7 @@ public inline fun ByteArray.sort(noinline comparison: (a: Byte, b: Byte) -> Int)
 @DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.sort(noinline comparison: (a: Short, b: Short) -> Int): Unit {
-    nativeSortWith(comparison)
+    nativeSort(comparison)
 }
 
 /**
@@ -2063,7 +2063,7 @@ public inline fun ShortArray.sort(noinline comparison: (a: Short, b: Short) -> I
 @DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun IntArray.sort(noinline comparison: (a: Int, b: Int) -> Int): Unit {
-    nativeSortWith(comparison)
+    nativeSort(comparison)
 }
 
 /**
@@ -2073,7 +2073,7 @@ public inline fun IntArray.sort(noinline comparison: (a: Int, b: Int) -> Int): U
 @DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun LongArray.sort(noinline comparison: (a: Long, b: Long) -> Int): Unit {
-    nativeSortWith(comparison)
+    nativeSort(comparison)
 }
 
 /**
@@ -2083,7 +2083,7 @@ public inline fun LongArray.sort(noinline comparison: (a: Long, b: Long) -> Int)
 @DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.sort(noinline comparison: (a: Float, b: Float) -> Int): Unit {
-    nativeSortWith(comparison)
+    nativeSort(comparison)
 }
 
 /**
@@ -2093,7 +2093,7 @@ public inline fun FloatArray.sort(noinline comparison: (a: Float, b: Float) -> I
 @DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.sort(noinline comparison: (a: Double, b: Double) -> Int): Unit {
-    nativeSortWith(comparison)
+    nativeSort(comparison)
 }
 
 /**
@@ -2103,7 +2103,7 @@ public inline fun DoubleArray.sort(noinline comparison: (a: Double, b: Double) -
 @DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun CharArray.sort(noinline comparison: (a: Char, b: Char) -> Int): Unit {
-    nativeSortWith(comparison)
+    nativeSort(comparison)
 }
 
 /**

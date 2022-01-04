@@ -29,9 +29,6 @@ class JsPolyfills {
     fun getAllPolyfillsFor(file: IrFile): List<JsStatement> =
         polyfillsPerFile[file].orEmpty().asImplementationList()
 
-    private fun Iterable<Iterable<IrDeclaration>>.asFlatJsCodeList() =
-        asSequence().flatten().asImplementationList()
-
     private fun Iterable<IrDeclaration>.asImplementationList() =
         asSequence().asImplementationList()
 
