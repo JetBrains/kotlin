@@ -85,7 +85,6 @@ class FirLightClassForFacade(
     private val _ownMethods: List<KtLightMethod> by lazyPub {
         val result = mutableListOf<KtLightMethod>()
 
-
         val methodsAndProperties = sequence<KtCallableSymbol> {
             for (fileSymbol in fileSymbols) {
                 analyzeWithSymbolAsContext(fileSymbol) {
@@ -118,7 +117,8 @@ class FirLightClassForFacade(
 
             if (propertySymbol !is KtKotlinPropertySymbol) continue
 
-            if (propertySymbol.isConst && multiFileClass) continue
+            // If this facade represents multiple files, only `const` properties need to be generated.
+            if (multiFileClass && !propertySymbol.isConst) continue
 
             val isLateInitWithPublicAccessors = if (propertySymbol.isLateInit) {
                 val getterIsPublic = propertySymbol.getter?.toPsiVisibilityForMember(isTopLevel = true)
