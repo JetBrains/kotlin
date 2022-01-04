@@ -678,12 +678,7 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
             simpleSingleSourceTarget("b", "val x: ULong = null!!")
         }
 
-        /*
-        Only commonize return types that were specified using a type-alias.
-        As with function value parameters, this is not a hard requirement.
-        It would also be reasonable to support this case.
-         */
-        result.assertCommonized("(a, b)", "")
+        result.assertCommonized("(a, b)", "expect val x: kotlin.UInt")
     }
 
     fun `test property with aliased number return type`() {

@@ -34,7 +34,7 @@ class TypeCommonizer(
     }
 
     data class Options(
-        val enableOptimisticNumberTypeCommonization: Boolean = false,
+        val enableOptimisticNumberTypeCommonization: Boolean = true,
         val enableCovariantNullabilityCommonization: Boolean = false,
         val enableForwardTypeAliasSubstitution: Boolean = true,
         val enableBackwardsTypeAliasSubstitution: Boolean = true,
