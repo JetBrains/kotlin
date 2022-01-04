@@ -19,7 +19,7 @@ class R {
     }
 }
 
-class MyActivity(): Activity() {
+open class MyActivity(): Activity() {
     val textViewWidget = TextView(this)
     val editTextWidget = EditText(this)
     val buttonWidget = Button(this)
@@ -33,20 +33,23 @@ class MyActivity(): Activity() {
         } as T?
     }
 
-    private val textViewString = textView1.toString()
+    open fun findPasswordWidget(): View = null!!
 
-    public fun box(): String {
-        val result = when {
-            textViewString == "TextView" && password.toString() == "EditText" && login.toString() == "Button" -> "OK"
-            else -> ""
-        }
+    private val textViewReadInInit = textView1
+    private val passwordReadThroughOverride = findPasswordWidget()
 
-        clearFindViewByIdCache()
+    private fun check(expect: String, actual: String) =
+        if (expect != actual) "'$actual' != '$expect'" else null
 
-        return result
-    }
+    public fun box(): String =
+        check("Button", login.toString())
+            ?: check("TextView", textViewReadInInit.toString())
+            ?: check("EditText", passwordReadThroughOverride.toString())
+            ?: "OK".also { clearFindViewByIdCache() }
 }
 
-fun box(): String {
-    return MyActivity().box()
+class MyActivity2 : MyActivity() {
+    override fun findPasswordWidget() = password
 }
+
+fun box(): String = MyActivity2().box()
