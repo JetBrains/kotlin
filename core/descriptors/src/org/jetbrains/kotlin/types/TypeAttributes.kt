@@ -70,8 +70,6 @@ class TypeAttributes private constructor(attributes: List<TypeAttribute<*>>) : A
         }
     }
 
-    val size: Int get() = arrayMap.size
-
     fun union(other: TypeAttributes): TypeAttributes {
         return perform(other) { this.union(it) }
     }
