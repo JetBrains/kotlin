@@ -12,14 +12,11 @@ import com.intellij.psi.search.SearchScope
 import com.intellij.psi.stubs.IStubElementType
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
-import org.jetbrains.kotlin.light.classes.symbol.classes.checkIsInheritor
 import org.jetbrains.kotlin.light.classes.symbol.classes.createInnerClasses
 import org.jetbrains.kotlin.light.classes.symbol.classes.getOrCreateFirLightClass
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
@@ -59,14 +56,9 @@ internal abstract class FirLightClassForClassOrObjectSymbol(
 
     private val _typeParameterList: PsiTypeParameterList? by lazyPub {
         hasTypeParameters().ifTrue {
-            val shiftCount = classOrObjectSymbol.isInner.ifTrue {
-                (parent as? FirLightClassForClassOrObjectSymbol)?.classOrObjectSymbol?.typeParameters?.count()
-            } ?: 0
-
             FirLightTypeParameterListForSymbol(
                 owner = this,
                 symbolWithTypeParameterList = classOrObjectSymbol,
-                innerShiftCount = shiftCount
             )
         }
     }

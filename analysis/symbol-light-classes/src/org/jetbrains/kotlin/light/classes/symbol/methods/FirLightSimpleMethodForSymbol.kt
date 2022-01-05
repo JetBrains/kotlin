@@ -44,7 +44,6 @@ internal class FirLightSimpleMethodForSymbol(
             FirLightTypeParameterListForSymbol(
                 owner = this,
                 symbolWithTypeParameterList = functionSymbol,
-                innerShiftCount = 0
             )
         }
     }
