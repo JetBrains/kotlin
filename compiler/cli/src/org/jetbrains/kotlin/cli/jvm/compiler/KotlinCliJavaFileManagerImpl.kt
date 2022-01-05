@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.getOrPutNullable
 import java.util.*
 
 // TODO: do not inherit from CoreJavaFileManager to avoid accidental usage of its methods which do not use caches/indices
@@ -72,7 +73,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
     private fun findVirtualFileForTopLevelClass(classId: ClassId, searchScope: GlobalSearchScope): VirtualFile? {
         val relativeClassName = classId.relativeClassName.asString()
-        return topLevelClassesCache.getOrPut(classId.packageFqName.child(classId.relativeClassName.pathSegments().first())) {
+        return topLevelClassesCache.getOrPutNullable(classId.packageFqName.child(classId.relativeClassName.pathSegments().first())) {
             index.findClass(classId) { dir, type ->
                 findVirtualFileGivenPackage(dir, relativeClassName, type)
             } ?: singleJavaFileRootsIndex.findJavaSourceClass(classId)
