@@ -13,11 +13,9 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
 import org.jetbrains.kotlin.light.classes.symbol.elements.FirLightTypeParameter
 
-
 internal class FirLightTypeParameterListForSymbol(
     internal val owner: PsiTypeParameterListOwner,
     private val symbolWithTypeParameterList: KtSymbolWithTypeParameters,
-    private val innerShiftCount: Int
 ) : LightElement(owner.manager, KotlinLanguage.INSTANCE), PsiTypeParameterList {
 
     override fun accept(visitor: PsiElementVisitor) {
@@ -38,16 +36,13 @@ internal class FirLightTypeParameterListForSymbol(
     }
 
     private val _typeParameters: Array<PsiTypeParameter> by lazyPub {
-        symbolWithTypeParameterList.typeParameters.let { list ->
-            list.take(list.count() - innerShiftCount).mapIndexed { index, parameter ->
-                FirLightTypeParameter(
-                    parent = this@FirLightTypeParameterListForSymbol,
-                    index = index,
-                    typeParameterSymbol = parameter
-                )
-            }.toTypedArray()
-
-        }
+        symbolWithTypeParameterList.typeParameters.mapIndexed { index, parameter ->
+            FirLightTypeParameter(
+                parent = this@FirLightTypeParameterListForSymbol,
+                index = index,
+                typeParameterSymbol = parameter
+            )
+        }.toTypedArray()
     }
 
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameters
