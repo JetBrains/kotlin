@@ -201,7 +201,9 @@ class ComposeIrGenerationExtension(
         }
 
         if (generateFunctionKeyMetaClasses) {
-            functionKeyTransformer.includeFunctionKeyMetaClasses()
+            functionKeyTransformer.realizeKeyMetaAnnotations(moduleFragment)
+        } else {
+            functionKeyTransformer.removeKeyMetaClasses(moduleFragment)
         }
 
         if (metricsDestination != null) {
