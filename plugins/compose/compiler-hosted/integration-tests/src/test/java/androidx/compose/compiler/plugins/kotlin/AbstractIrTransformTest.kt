@@ -160,6 +160,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         extra: String = "",
         validator: (element: IrElement) -> Unit = { },
         dumpTree: Boolean = false,
+        truncateTracingInfoMode: TruncateTracingInfoMode = TruncateTracingInfoMode.ALL,
         compilation: Compilation = JvmCompilation()
     ) {
         if (!compilation.enabled) {
@@ -201,6 +202,18 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
                 Regex("(sourceInformationMarkerStart\\(%composer, )([-\\d]+)")
             ) {
                 "${it.groupValues[1]}<>"
+            }
+            // replace traceEventStart values with a token
+            // TODO(174715171): capture actual values for testing
+            .replace(
+                Regex("traceEventStart\\(-?\\d+, (.*)")
+            ) {
+                when (truncateTracingInfoMode) {
+                    TruncateTracingInfoMode.ALL ->
+                        "traceEventStart(<>)"
+                    TruncateTracingInfoMode.GROUP_KEY_ONLY ->
+                        "traceEventStart(<>, ${it.groupValues[1]}"
+                }
             }
             // replace source information with source it references
             .replace(
@@ -494,5 +507,10 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
     interface Compilation {
         val enabled: Boolean
         fun compile(files: List<KtFile>): IrModuleFragment
+    }
+
+    enum class TruncateTracingInfoMode {
+        ALL, // truncates all trace information replacing it with a token
+        GROUP_KEY_ONLY, // truncates just the group key
     }
 }
