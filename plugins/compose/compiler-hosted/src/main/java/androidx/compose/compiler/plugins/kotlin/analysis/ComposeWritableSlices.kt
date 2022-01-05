@@ -29,4 +29,6 @@ object ComposeWritableSlices {
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val DURABLE_FUNCTION_KEY: WritableSlice<IrAttributeContainer, KeyInfo> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
+    val DURABLE_FUNCTION_KEYS: WritableSlice<IrAttributeContainer, List<KeyInfo>> =
+        BasicWritableSlice(RewritePolicy.DO_NOTHING)
 }
