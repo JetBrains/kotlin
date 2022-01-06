@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: Test.java
 public class Test {
     interface MyRunnable extends Runnable {}

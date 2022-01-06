@@ -58,7 +58,7 @@ public class A {
 // FILE: main.kt
 fun main(a: A) {
     a.foo("").length
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
+    a.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)<!UNNECESSARY_SAFE_CALL!>?.<!>length
 
     a.bar("")<!UNSAFE_CALL!>.<!>length
     a.bar(null)?.length
@@ -73,5 +73,5 @@ fun main(a: A) {
 
     a.baz3()<!UNSAFE_CALL!>.<!>get(0).length
     a.baz3()!!.get(0).length
-    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a.baz3()!!.get(0)<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
+    a.baz3()!!.get(0)<!UNNECESSARY_SAFE_CALL!>?.<!>length
 }

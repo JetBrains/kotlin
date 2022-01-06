@@ -64,7 +64,7 @@ fun safeCalls() {
     val a = jsr.string<!UNNECESSARY_SAFE_CALL!>?.<!>length
     val b = jsrNullable?.string?.length
 
-    val c = <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>jb.string<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
+    val c = jb.string<!UNNECESSARY_SAFE_CALL!>?.<!>length
     val d = jbNullable?.string?.length
 
     val e = platform.string?.length

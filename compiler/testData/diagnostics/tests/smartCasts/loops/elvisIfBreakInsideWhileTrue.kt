@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 public fun foo(x: String?, y: String?): Int {
     while (true) {
         x ?: <!INVALID_IF_AS_EXPRESSION!>if<!> (y == null) break
