@@ -1,4 +1,6 @@
 // LANGUAGE: +InlineClasses, -JvmInlineValueClasses, +SealedInlineClasses
 // SKIP_TXT
 
-sealed inline class Result(val value: Any)
+sealed inline class IC
+
+object O: IC()

@@ -28555,6 +28555,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("object.kt")
+            public void testObject() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/object.kt");
+            }
+
+            @Test
             @TestMetadata("result.kt")
             public void testResult() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/sealed/result.kt");

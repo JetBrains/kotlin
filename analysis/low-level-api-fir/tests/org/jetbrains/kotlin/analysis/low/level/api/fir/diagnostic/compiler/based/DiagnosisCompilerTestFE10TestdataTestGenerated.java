@@ -16996,20 +16996,28 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inlineClasses/sealed"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
                 }
 
-                @Nested
-                @TestMetadata("compiler/testData/diagnostics/tests/inlineClasses/sealed/without-value")
-                @TestDataPath("$PROJECT_ROOT")
-                public class Without_value {
-                    @Test
-                    public void testAllFilesPresentInWithout_value() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/inlineClasses/sealed/without-value"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-                    }
+                @Test
+                @TestMetadata("child-object.kt")
+                public void testChild_object() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/child-object.kt");
+                }
 
-                    @Test
-                    @TestMetadata("nested.kt")
-                    public void testNested() throws Exception {
-                        runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/without-value/nested.kt");
-                    }
+                @Test
+                @TestMetadata("flat.kt")
+                public void testFlat() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/flat.kt");
+                }
+
+                @Test
+                @TestMetadata("nested.kt")
+                public void testNested() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/nested.kt");
+                }
+
+                @Test
+                @TestMetadata("with-value.kt")
+                public void testWith_value() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/with-value.kt");
                 }
             }
         }

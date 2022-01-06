@@ -91,12 +91,12 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         }
 
         if (declaration.isInline) {
-            val irConstructor = declaration.primaryConstructor!!
-            // The field getter is used by reflection and cannot be removed here unless it is internal.
-            declaration.declarations.removeIf {
-                it == irConstructor || (it is IrFunction && it.isInlineClassFieldGetter && !it.visibility.isPublicAPI)
-            }
             if (declaration.modality != Modality.SEALED) {
+                val irConstructor = declaration.primaryConstructor!!
+                // The field getter is used by reflection and cannot be removed here unless it is internal.
+                declaration.declarations.removeIf {
+                    it == irConstructor || (it is IrFunction && it.isInlineClassFieldGetter && !it.visibility.isPublicAPI)
+                }
                 buildPrimaryInlineClassConstructor(declaration, irConstructor)
                 buildBoxFunction(declaration)
                 buildUnboxFunction(declaration)
@@ -105,7 +105,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                 val inlineSubclasses = declaration.sealedSubclasses.filter { it.owner.isInline }
                 val noinlineSubclasses = declaration.sealedSubclasses.filterNot { it.owner.isInline }
                 buildBoxFunctionForSealed(declaration, inlineSubclasses, noinlineSubclasses)
-                buildUnboxFunctionForSealed(declaration, inlineSubclasses, noinlineSubclasses)
+                buildUnboxFunctionForSealed(declaration)
                 buildSpecializedEqualsMethodForSealed(declaration, inlineSubclasses, noinlineSubclasses)
             }
             addJvmInlineAnnotation(declaration)
@@ -536,9 +536,13 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             copyParameterDeclarationsFrom(irConstructor)
             annotations = irConstructor.annotations
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
-                +irDelegatingConstructorCall(irClass.superTypes.single {
-                    it.asClass().kind == ClassKind.CLASS
-                }.asClass().constructors.single())
+                val superClass = irClass.superTypes.singleOrNull { it.asClass().kind == ClassKind.CLASS }?.asClass()
+                    ?: context.irBuiltIns.anyClass.owner
+                val constructors = superClass.constructors.toList()
+                require(constructors.size == 1) {
+                    "BOOYA"
+                }
+                +irDelegatingConstructorCall(constructors.single())
                 +irSetField(
                     irGet(irClass.thisReceiver!!),
                     getInlineClassBackingField(irClass),
@@ -595,18 +599,21 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             val branches = noinlineSubclasses.map {
                 irBranch(
                     irIs(irGet(function.valueParameters[0]), it.owner.defaultType),
-                    irGet(function.valueParameters[0])
+                    irReturn(irGet(function.valueParameters[0]))
                 )
             } + inlineSubclasses.map {
+                val type = getInlineClassUnderlyingType(it.owner)
                 irBranch(
-                    irIs(irGet(function.valueParameters[0]), getInlineClassUnderlyingType(it.owner)),
-                    irCall(this@JvmInlineClassLowering.context.inlineClassReplacements.getBoxFunction(it.owner)).apply {
+                    irIs(irGet(function.valueParameters[0]), type),
+                    irReturn(irCall(this@JvmInlineClassLowering.context.inlineClassReplacements.getBoxFunction(it.owner)).apply {
                         passTypeArgumentsFrom(function)
-                        putValueArgument(0, irGet(function.valueParameters[0]))
-                    }
+                        putValueArgument(0, irImplicitCast(irGet(function.valueParameters[0]), type))
+                    })
                 )
             } + irBranch(irTrue(), irGet(function.valueParameters[0]))
-            function.body = irExprBody(irWhen(irClass.defaultType, branches))
+            function.body = irBlockBody {
+                +irReturn(irWhen(irClass.defaultType, branches))
+            }
         }
         irClass.declarations += function
     }
@@ -623,28 +630,13 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         irClass.declarations += function
     }
 
-    private fun buildUnboxFunctionForSealed(
-        irClass: IrClass,
-        inlineSubclasses: List<IrClassSymbol>,
-        noinlineSubclasses: List<IrClassSymbol>
-    ) {
+    // unbox-impl is virtual, so, if the child is inline, its unbox-impl is called
+    // otherwise, just return this.
+    private fun buildUnboxFunctionForSealed(irClass: IrClass) {
         val function = context.inlineClassReplacements.getUnboxFunction(irClass)
 
         with(context.createIrBuilder(function.symbol)) {
-            val branches = noinlineSubclasses.map {
-                irBranch(
-                    irIs(irGet(function.dispatchReceiverParameter!!), it.owner.defaultType),
-                    irGet(function.dispatchReceiverParameter!!)
-                )
-            } + inlineSubclasses.map {
-                irBranch(
-                    irIs(irGet(function.dispatchReceiverParameter!!), it.owner.defaultType),
-                    irCall(this@JvmInlineClassLowering.context.inlineClassReplacements.getUnboxFunction(it.owner)).apply {
-                        dispatchReceiver = irGet(function.dispatchReceiverParameter!!)
-                    }
-                )
-            } + irBranch(irTrue(), irGet(function.dispatchReceiverParameter!!))
-            function.body = irExprBody(irWhen(this@JvmInlineClassLowering.context.irBuiltIns.anyNType, branches))
+            function.body = irExprBody(irGet(function.dispatchReceiverParameter!!))
         }
 
         irClass.declarations += function

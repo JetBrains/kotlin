@@ -20003,17 +20003,22 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Sealed extends AbstractLightAnalysisModeTest {
+            @TestMetadata("object.kt")
+            public void ignoreObject() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/object.kt");
+            }
+
+            @TestMetadata("result.kt")
+            public void ignoreResult() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/result.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
 
             public void testAllFilesPresentInSealed() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
-            }
-
-            @TestMetadata("result.kt")
-            public void testResult() throws Exception {
-                runTest("compiler/testData/codegen/box/inlineClasses/sealed/result.kt");
             }
         }
 

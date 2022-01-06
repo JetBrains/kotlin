@@ -1,5 +1,4 @@
 // LANGUAGE: +InlineClasses, -JvmInlineValueClasses, +SealedInlineClasses
-// IGNORE_BACKED: JVM
 
 sealed inline class Result
 
