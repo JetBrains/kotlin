@@ -1,6 +1,6 @@
 // CHECK_BYTECODE_LISTING
 // LANGUAGE: -JvmInlineValueClasses, +GenericInlineClassParameter, +SealedInlineClasses
-// IGNORE_BACKED: JVM
+// IGNORE_BACKEND: JVM
 
 sealed inline class Result<out T> {
     inline class Ok<T>(val value: T): Result<T>()
