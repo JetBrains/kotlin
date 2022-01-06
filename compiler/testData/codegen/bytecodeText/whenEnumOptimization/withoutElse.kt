@@ -12,8 +12,8 @@ fun bar1(x : Season) : String {
         Season.WINTER, Season.SPRING -> return "winter_spring"
         Season.SPRING -> return "spring"
         Season.SUMMER -> return "summer"
+        else -> return "autumn"
     }
-    return "autumn"
 }
 
 fun bar2(x : Season) : String {
@@ -22,9 +22,8 @@ fun bar2(x : Season) : String {
         Season.SPRING -> return "spring"
         Season.SUMMER -> return "summer"
         Season.AUTUMN -> return "autumn"
+        else -> return "fail unknown"
     }
-
-    return "fail unknown"
 }
 
 // 2 TABLESWITCH

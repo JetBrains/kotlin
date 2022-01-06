@@ -51,21 +51,21 @@ fun case_5(value_1: Int, value_2: Int, value_3: Boolean?) {
             <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 100<!> -> "2"
             else -> "3"
         }
-        2 -> <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_3) {
+        2 -> <!NO_ELSE_IN_WHEN!>when<!> (value_3) {
             <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 1000<!> -> "1"
             <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 100<!> -> "2"
         }
-        3 -> <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_3) {}
+        3 -> <!NO_ELSE_IN_WHEN!>when<!> (value_3) {}
         4 -> when (value_3) {
             true -> "1"
             false -> "2"
             null -> "3"
         }
-        5 -> <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_3) {
+        5 -> <!NO_ELSE_IN_WHEN!>when<!> (value_3) {
             true -> "1"
             false -> "2"
         }
-        6 -> <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_3) {}
+        6 -> <!NO_ELSE_IN_WHEN!>when<!> (value_3) {}
     }
 }
 
