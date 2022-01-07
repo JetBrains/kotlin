@@ -19075,6 +19075,18 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             public void testResult() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/sealed/result.kt");
             }
+
+            @Test
+            @TestMetadata("returnFromFunction.kt")
+            public void testReturnFromFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/returnFromFunction.kt");
+            }
+
+            @Test
+            @TestMetadata("toString.kt")
+            public void testToString() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/toString.kt");
+            }
         }
 
         @Nested

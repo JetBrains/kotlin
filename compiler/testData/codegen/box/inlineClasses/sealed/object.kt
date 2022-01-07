@@ -1,5 +1,5 @@
 // CHECK_BYTECODE_LISTING
-// LANGUAGE: -JvmInlineValueClasses, +GenericInlineClassParameter, +SealedInlineClasses
+// LANGUAGE: -JvmInlineValueClasses, +SealedInlineClasses
 // IGNORE_BACKEND: JVM
 
 sealed inline class IC

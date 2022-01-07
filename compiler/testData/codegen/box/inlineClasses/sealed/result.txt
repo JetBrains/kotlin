@@ -31,6 +31,8 @@ public final class Result$Throwable {
 @kotlin.Metadata
 public abstract class Result {
     // source: 'result.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic final static method box-impl(p0: java.lang.Object): Result
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: java.lang.Object, p1: java.lang.Object): boolean

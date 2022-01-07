@@ -52,6 +52,9 @@ class MemoizedInlineClassReplacements(
     val getReplacementFunction: (IrFunction) -> IrSimpleFunction? =
         storageManager.createMemoizedFunctionWithNullableValues {
             when {
+                // Do not generate constructor-impl for sealed inline classes
+                it is IrConstructor && it.parentAsClass.modality == Modality.SEALED -> null
+
                 // Don't mangle anonymous or synthetic functions, except for generated SAM wrapper methods
                 (it.isLocal && it is IrSimpleFunction && it.overriddenSymbols.isEmpty()) ||
                         (it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && it.visibility == DescriptorVisibilities.LOCAL) ||

@@ -20013,6 +20013,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/inlineClasses/sealed/result.kt");
             }
 
+            @TestMetadata("returnFromFunction.kt")
+            public void ignoreReturnFromFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/returnFromFunction.kt");
+            }
+
+            @TestMetadata("toString.kt")
+            public void ignoreToString() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/toString.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }

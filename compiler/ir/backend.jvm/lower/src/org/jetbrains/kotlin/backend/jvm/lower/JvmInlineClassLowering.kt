@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
+import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
@@ -107,6 +108,12 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                 buildBoxFunctionForSealed(declaration, inlineSubclasses, noinlineSubclasses)
                 buildUnboxFunctionForSealed(declaration)
                 buildSpecializedEqualsMethodForSealed(declaration, inlineSubclasses, noinlineSubclasses)
+
+                // TODO: Generate during Psi2Ir/Fir2Ir
+                rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "hashCode") { irInt(0) }
+                rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "toString") {
+                    irString(declaration.name.asString())
+                }
             }
             addJvmInlineAnnotation(declaration)
         }
@@ -538,11 +545,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
                 val superClass = irClass.superTypes.singleOrNull { it.asClass().kind == ClassKind.CLASS }?.asClass()
                     ?: context.irBuiltIns.anyClass.owner
-                val constructors = superClass.constructors.toList()
-                require(constructors.size == 1) {
-                    "BOOYA"
-                }
-                +irDelegatingConstructorCall(constructors.single())
+                +irDelegatingConstructorCall(superClass.constructors.single())
                 +irSetField(
                     irGet(irClass.thisReceiver!!),
                     getInlineClassBackingField(irClass),
@@ -616,6 +619,59 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             }
         }
         irClass.declarations += function
+    }
+
+    private fun rewriteFunctionFromAnyForSealed(
+        irClass: IrClass,
+        inlineSubclasses: List<IrClassSymbol>,
+        noinlineSubclasses: List<IrClassSymbol>,
+        name: String,
+        default: DeclarationIrBuilder.() -> IrConst<*>
+    ) {
+        val replacements = context.inlineClassReplacements
+        val function = irClass.declarations.single { it is IrSimpleFunction && it.name.asString() == "$name-impl" } as IrFunction
+        with(context.createIrBuilder(function.symbol)) {
+            function.body = irBlockBody {
+                val tmp = irTemporary(
+                    coerceInlineClasses(
+                        irGet(function.valueParameters[0]),
+                        function.valueParameters[0].type,
+                        context.irBuiltIns.anyType
+                    )
+                )
+
+                val funFromObject = context.irBuiltIns.anyClass.owner.declarations
+                    .single { it is IrSimpleFunction && it.name.asString() == name } as IrFunction
+                val branches = noinlineSubclasses.map {
+                    irBranch(
+                        irIs(irGet(tmp), it.owner.defaultType),
+                        irReturn(irCall(funFromObject.symbol).apply {
+                            dispatchReceiver = irGet(tmp)
+                        })
+                    )
+                } + inlineSubclasses.map {
+                    val delegate = replacements.getReplacementFunction(
+                        it.owner.declarations
+                            .single { f -> f is IrSimpleFunction && f.name.asString() == name } as IrFunction
+                    )!!
+                    val underlyingType = getInlineClassUnderlyingType(it.owner)
+
+                    irBranch(
+                        irIs(irGet(tmp), underlyingType),
+                        irReturn(irCall(delegate.symbol).apply {
+                            putValueArgument(
+                                0, coerceInlineClasses(
+                                    irImplicitCast(irGet(tmp), underlyingType),
+                                    underlyingType,
+                                    it.owner.defaultType
+                                )
+                            )
+                        })
+                    )
+                } + irBranch(irTrue(), default())
+                +irReturn(irWhen(function.returnType, branches))
+            }
+        }
     }
 
     private fun buildUnboxFunction(irClass: IrClass) {
