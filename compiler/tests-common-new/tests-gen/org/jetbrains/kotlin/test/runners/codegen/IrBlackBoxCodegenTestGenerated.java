@@ -1235,6 +1235,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("reversedArray.kt")
+            public void testReversedArray() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/forInReversed/reversedArray.kt");
+            }
+
+            @Test
             @TestMetadata("reversedArrayOriginalUpdatedInLoopBody.kt")
             public void testReversedArrayOriginalUpdatedInLoopBody() throws Exception {
                 runTest("compiler/testData/codegen/box/arrays/forInReversed/reversedArrayOriginalUpdatedInLoopBody.kt");
