@@ -10,12 +10,15 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.loops.ExpressionHandler
 import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfo
 import org.jetbrains.kotlin.backend.common.lower.loops.IndexedGetHeaderInfo
+import org.jetbrains.kotlin.backend.common.lower.matchers.Quantifier
 import org.jetbrains.kotlin.backend.common.lower.matchers.SimpleCalleeMatcher
+import org.jetbrains.kotlin.backend.common.lower.matchers.createIrCallMatcher
 import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -75,7 +78,21 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
     private val supportsUnsignedArrays = context.optimizeLoopsOverUnsignedArrays
 
     override fun matchIterable(expression: IrExpression) =
-        expression.type.run { isArray() || isPrimitiveArray() || (supportsUnsignedArrays && isUnsignedArray()) }
+        expression.type.run { isArray() || isPrimitiveArray() || (supportsUnsignedArrays && isUnsignedArray()) } ||
+                expression.run {
+                    this is IrCall && reversedArrayMatcher(this)
+                }
+
+    private val reversedArrayMatcher =
+        createIrCallMatcher(Quantifier.ANY) {
+            callee {
+                fqName { it == FqName("kotlin.collections.reversed") }
+                extensionReceiver {
+                    it != null && it.type.run { isArray() || isPrimitiveArray() }
+                }
+                parameterCount { it == 0 }
+            }
+        }
 
     override val IrType.sizePropertyGetter
         get() = getClass()!!.getPropertyGetter("size")!!.owner
