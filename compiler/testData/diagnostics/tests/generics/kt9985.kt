@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !CHECK_TYPE
 // Incorrect "type mismatch" error for generic extension safe call (required not-null, found nullable)
 
@@ -27,15 +28,15 @@ fun foo(l: A<String>?) {
     foo(l?.bar()) checkType { _<String?>() }
     foo(l?.gav()) checkType { _<String?>() }
     if (l != null) {
-        foo(l<!UNNECESSARY_SAFE_CALL!>?.<!>bar()) checkType { _<String>() }
-        foo(l<!UNNECESSARY_SAFE_CALL!>?.<!>gav()) checkType { _<String>() }
+        foo(l<!UNNECESSARY_SAFE_CALL!>?.<!>bar()) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
+        foo(l<!UNNECESSARY_SAFE_CALL!>?.<!>gav()) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
     }
 }
 
 fun fooNotNull(l: A<String>) {
     // No errors should be here
-    foo(l<!UNNECESSARY_SAFE_CALL!>?.<!>bar()) checkType { _<String>() }
-    foo(l<!UNNECESSARY_SAFE_CALL!>?.<!>gav()) checkType { _<String>() }
+    foo(l<!UNNECESSARY_SAFE_CALL!>?.<!>bar()) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
+    foo(l<!UNNECESSARY_SAFE_CALL!>?.<!>gav()) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><String>() }
 }
 
 fun bar() {
@@ -43,4 +44,3 @@ fun bar() {
     foo(l?.bar()) checkType { _<String?>() }
     foo(l?.gav()) checkType { _<String?>() }
 }
-
