@@ -17,6 +17,7 @@ public final class Example : java.security.Provider {
     invisible_fake final override /*1*/ /*fake_override*/ var loadFactor: kotlin.Float
     invisible_fake final override /*1*/ /*fake_override*/ var modCount: kotlin.Int
     invisible_fake final override /*1*/ /*fake_override*/ var name: kotlin.String!
+    invisible_fake final override /*1*/ /*fake_override*/ var prngAlgos: kotlin.collections.(Mutable)Set<kotlin.String!>!
     invisible_fake final override /*1*/ /*fake_override*/ var serviceMap: kotlin.collections.(Mutable)Map<java.security.Provider.ServiceKey!, java.security.Provider.Service!>!
     invisible_fake final override /*1*/ /*fake_override*/ var serviceSet: kotlin.collections.(Mutable)Set<java.security.Provider.Service!>!
     invisible_fake final override /*1*/ /*fake_override*/ var servicesChanged: kotlin.Boolean
@@ -45,6 +46,7 @@ public final class Example : java.security.Provider {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in kotlin.Any!, in kotlin.Any!>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.Any!): kotlin.Any?
+    invisible_fake open override /*1*/ /*fake_override*/ fun getDefaultSecureRandomService(): java.security.Provider.Service!
     invisible_fake open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> getEnumeration(/*0*/ p0: kotlin.Int): java.util.Enumeration<T!>!
     public open override /*1*/ /*fake_override*/ fun getInfo(): kotlin.String!
     invisible_fake open override /*1*/ /*fake_override*/ fun </*0*/ T : kotlin.Any!> getIterator(/*0*/ p0: kotlin.Int): kotlin.collections.(Mutable)Iterator<T!>!
@@ -54,7 +56,6 @@ public final class Example : java.security.Provider {
     public open override /*1*/ /*fake_override*/ fun getProperty(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.String!): kotlin.String!
     public open override /*1*/ /*fake_override*/ fun getService(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.String!): java.security.Provider.Service!
     public open override /*1*/ /*fake_override*/ fun getServices(): kotlin.collections.(Mutable)Set<java.security.Provider.Service!>!
-    invisible_fake open override /*1*/ /*fake_override*/ fun getTypeAndAlgorithm(/*0*/ p0: kotlin.String!): kotlin.Array<(out) kotlin.String!>!
     public open override /*1*/ /*fake_override*/ fun getVersion(): kotlin.Double
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     invisible_fake open override /*1*/ /*fake_override*/ fun implClear(): kotlin.Unit
@@ -94,7 +95,6 @@ public final class Example : java.security.Provider {
     protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun rehash(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.Any!): kotlin.Any?
     public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.Any!, /*1*/ value: kotlin.Any!): kotlin.Boolean
-    invisible_fake open override /*1*/ /*fake_override*/ fun removeInvalidServices(/*0*/ p0: kotlin.collections.(Mutable)Map<java.security.Provider.ServiceKey!, java.security.Provider.Service!>!): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun removePropertyStrings(/*0*/ p0: java.security.Provider.Service!): kotlin.Unit
     protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun removeService(/*0*/ p0: java.security.Provider.Service!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Any!): kotlin.Any?
@@ -110,5 +110,7 @@ public final class Example : java.security.Provider {
     public open override /*1*/ /*fake_override*/ fun storeToXML(/*0*/ p0: java.io.OutputStream!, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.String!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun stringPropertyNames(): kotlin.collections.(Mutable)Set<kotlin.String!>!
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    invisible_fake open override /*1*/ /*fake_override*/ fun updateSecureRandomEntries(/*0*/ p0: kotlin.Boolean, /*1*/ p1: kotlin.String!): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun writeObject(/*0*/ p0: java.io.ObjectOutputStream!): kotlin.Unit
 }
+
