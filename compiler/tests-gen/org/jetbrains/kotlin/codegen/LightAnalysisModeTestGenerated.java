@@ -20008,6 +20008,66 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/inlineClasses/sealed/object.kt");
             }
 
+            @TestMetadata("openMethod.kt")
+            public void ignoreOpenMethod() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/openMethod.kt");
+            }
+
+            @TestMetadata("openMethodNoOverrideDeepNonInline.kt")
+            public void ignoreOpenMethodNoOverrideDeepNonInline() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/openMethodNoOverrideDeepNonInline.kt");
+            }
+
+            @TestMetadata("openMethodNoOverrideDeepNonInline2.kt")
+            public void ignoreOpenMethodNoOverrideDeepNonInline2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/openMethodNoOverrideDeepNonInline2.kt");
+            }
+
+            @TestMetadata("openMethodNoOverrideDeepNonInline3.kt")
+            public void ignoreOpenMethodNoOverrideDeepNonInline3() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/openMethodNoOverrideDeepNonInline3.kt");
+            }
+
+            @TestMetadata("openMethodNoOverrideDeepNonInline4.kt")
+            public void ignoreOpenMethodNoOverrideDeepNonInline4() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/openMethodNoOverrideDeepNonInline4.kt");
+            }
+
+            @TestMetadata("openMethodNoOverrideInNonInline.kt")
+            public void ignoreOpenMethodNoOverrideInNonInline() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/openMethodNoOverrideInNonInline.kt");
+            }
+
+            @TestMetadata("openVal.kt")
+            public void ignoreOpenVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/openVal.kt");
+            }
+
+            @TestMetadata("openValNoOverrideDeepNonInline.kt")
+            public void ignoreOpenValNoOverrideDeepNonInline() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/openValNoOverrideDeepNonInline.kt");
+            }
+
+            @TestMetadata("openValNoOverrideDeepNonInline2.kt")
+            public void ignoreOpenValNoOverrideDeepNonInline2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/openValNoOverrideDeepNonInline2.kt");
+            }
+
+            @TestMetadata("openValNoOverrideDeepNonInline3.kt")
+            public void ignoreOpenValNoOverrideDeepNonInline3() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/openValNoOverrideDeepNonInline3.kt");
+            }
+
+            @TestMetadata("openValNoOverrideDeepNonInline4.kt")
+            public void ignoreOpenValNoOverrideDeepNonInline4() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/openValNoOverrideDeepNonInline4.kt");
+            }
+
+            @TestMetadata("openValNoOverrideInNonInline.kt")
+            public void ignoreOpenValNoOverrideInNonInline() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/openValNoOverrideInNonInline.kt");
+            }
+
             @TestMetadata("result.kt")
             public void ignoreResult() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/sealed/result.kt");
@@ -20021,6 +20081,31 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("toString.kt")
             public void ignoreToString() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/sealed/toString.kt");
+            }
+
+            @TestMetadata("toStringNoOverrideDeepNonInline.kt")
+            public void ignoreToStringNoOverrideDeepNonInline() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/toStringNoOverrideDeepNonInline.kt");
+            }
+
+            @TestMetadata("toStringNoOverrideDeepNonInline2.kt")
+            public void ignoreToStringNoOverrideDeepNonInline2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/toStringNoOverrideDeepNonInline2.kt");
+            }
+
+            @TestMetadata("toStringNoOverrideDeepNonInline3.kt")
+            public void ignoreToStringNoOverrideDeepNonInline3() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/toStringNoOverrideDeepNonInline3.kt");
+            }
+
+            @TestMetadata("toStringNoOverrideDeepNonInline4.kt")
+            public void ignoreToStringNoOverrideDeepNonInline4() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/toStringNoOverrideDeepNonInline4.kt");
+            }
+
+            @TestMetadata("toStringNoOverrideInNonInline.kt")
+            public void ignoreToStringNoOverrideInNonInline() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/toStringNoOverrideInNonInline.kt");
             }
 
             private void runTest(String testDataFilePath) throws Exception {
