@@ -74,10 +74,8 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         buildSpecializedEqualsMethodForSealed(declaration, inlineSubclasses, noinlineSubclasses)
 
         // TODO: Generate during Psi2Ir/Fir2Ir
-        rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "hashCode") { irInt(0) }
-        rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "toString") {
-            irString(declaration.name.asString())
-        }
+        rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "hashCode")
+        rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "toString")
     }
 
     override fun addJvmInlineAnnotation(valueClass: IrClass) {
@@ -535,11 +533,13 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         irClass: IrClass,
         inlineSubclasses: List<IrClassSymbol>,
         noinlineSubclasses: List<IrClassSymbol>,
-        name: String,
-        default: DeclarationIrBuilder.() -> IrConst<*>
+        name: String
     ) {
         val replacements = context.inlineClassReplacements
         val function = irClass.declarations.single { it is IrSimpleFunction && it.name.asString() == "$name-impl" } as IrFunction
+
+        val oldBody = function.body
+
         with(context.createIrBuilder(function.symbol)) {
             function.body = irBlockBody {
                 val tmp = irTemporary(
@@ -552,13 +552,16 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
                 val funFromObject = context.irBuiltIns.anyClass.owner.declarations
                     .single { it is IrSimpleFunction && it.name.asString() == name } as IrFunction
-                val branches = noinlineSubclasses.map {
-                    irBranch(
-                        irIs(irGet(tmp), it.owner.defaultType),
-                        irReturn(irCall(funFromObject.symbol).apply {
-                            dispatchReceiver = irGet(tmp)
-                        })
-                    )
+                val branches = noinlineSubclasses
+                    .filter { subclass ->subclass.owner.declarations
+                        .any { it is IrSimpleFunction && it.name.asString() == name && !it.isFakeOverride }
+                    }.map {
+                        irBranch(
+                            irIs(irGet(tmp), it.owner.defaultType),
+                            irReturn(irCall(funFromObject.symbol).apply {
+                                dispatchReceiver = irGet(tmp)
+                            })
+                        )
                 } + inlineSubclasses.map {
                     val delegate = replacements.getReplacementFunction(
                         it.owner.declarations
@@ -578,7 +581,15 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                             )
                         })
                     )
-                } + irBranch(irTrue(), default())
+                } + irBranch(irTrue(), when (oldBody) {
+                    is IrExpressionBody -> oldBody.expression
+                    is IrBlockBody -> irComposite {
+                        for (stmt in oldBody.statements) {
+                            +stmt
+                        }
+                    }
+                    else -> error("Expected either expression or block body")
+                })
                 +irReturn(irWhen(function.returnType, branches))
             }
         }
