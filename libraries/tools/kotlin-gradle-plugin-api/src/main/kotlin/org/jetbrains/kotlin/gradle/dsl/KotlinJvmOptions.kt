@@ -38,6 +38,18 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      var noJdk: kotlin.Boolean
 
     /**
+     * Compile using Front-end IR internal incremental compilation cycle. Warning: this feature is far from being production-ready
+     * Default value: false
+     */
+     var useFirIC: kotlin.Boolean
+
+    /**
+     * Compile using LightTree parser with Front-end IR. Warning: this feature is far from being production-ready
+     * Default value: false
+     */
+     var useFirLT: kotlin.Boolean
+
+    /**
      * Use the old JVM backend
      * Default value: false
      */

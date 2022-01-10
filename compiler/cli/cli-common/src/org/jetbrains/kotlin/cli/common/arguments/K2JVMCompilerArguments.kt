@@ -516,6 +516,20 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
     )
     var linkViaSignatures: Boolean by FreezableVar(false)
 
+    @GradleOption(DefaultValues.BooleanFalseDefault::class)
+    @Argument(
+        value = "-Xuse-fir-ic",
+        description = "Compile using Front-end IR internal incremental compilation cycle. Warning: this feature is far from being production-ready"
+    )
+    var useFirIC: Boolean by FreezableVar(false)
+
+    @GradleOption(DefaultValues.BooleanFalseDefault::class)
+    @Argument(
+        value = "-Xuse-fir-lt",
+        description = "Compile using LightTree parser with Front-end IR. Warning: this feature is far from being production-ready"
+    )
+    var useFirLT: Boolean by FreezableVar(false)
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector, languageVersion)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics

@@ -58,6 +58,20 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
             noJdkField = value
         }
 
+    private var useFirICField: kotlin.Boolean? = null
+    override var useFirIC: kotlin.Boolean
+        get() = useFirICField ?: false
+        set(value) {
+            useFirICField = value
+        }
+
+    private var useFirLTField: kotlin.Boolean? = null
+    override var useFirLT: kotlin.Boolean
+        get() = useFirLTField ?: false
+        set(value) {
+            useFirLTField = value
+        }
+
     private var useOldBackendField: kotlin.Boolean? = null
     override var useOldBackend: kotlin.Boolean
         get() = useOldBackendField ?: false
@@ -77,6 +91,8 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         jvmTarget?.let { args.jvmTarget = it }
         moduleName?.let { args.moduleName = it }
         noJdkField?.let { args.noJdk = it }
+        useFirICField?.let { args.useFirIC = it }
+        useFirLTField?.let { args.useFirLT = it }
         useOldBackendField?.let { args.useOldBackend = it }
     }
 }
@@ -93,6 +109,8 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fi
     jvmTarget = null
     moduleName = null
     noJdk = false
+    useFirIC = false
+    useFirLT = false
     useOldBackend = false
     noStdlib = true
     noReflect = true
