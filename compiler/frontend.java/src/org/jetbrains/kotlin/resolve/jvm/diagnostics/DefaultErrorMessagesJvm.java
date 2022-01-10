@@ -82,9 +82,9 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(REPEATABLE_CONTAINER_TARGET_SET_NOT_A_SUBSET, "Target set of container annotation ''{0}'' must be a subset of the target set of contained annotation ''{1}''. This code will be prohibited in Kotlin 1.6", TO_STRING, TO_STRING);
         MAP.put(REPEATABLE_ANNOTATION_HAS_NESTED_CLASS_NAMED_CONTAINER, "Repeatable annotation cannot have a nested class named 'Container'. This name is reserved for auto-generated container class");
 
-        MAP.put(JVM_PACKAGE_NAME_CANNOT_BE_EMPTY, "''@JvmPackageName'' annotation value cannot be empty");
-        MAP.put(JVM_PACKAGE_NAME_MUST_BE_VALID_NAME, "''@JvmPackageName'' annotation value must be a valid dot-qualified name of a package");
-        MAP.put(JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES, "''@JvmPackageName'' annotation is not supported for files with class declarations");
+        MAP.put(JVM_PACKAGE_NAME_CANNOT_BE_EMPTY, "'@JvmPackageName' annotation value cannot be empty");
+        MAP.put(JVM_PACKAGE_NAME_MUST_BE_VALID_NAME, "'@JvmPackageName' annotation value must be a valid dot-qualified name of a package");
+        MAP.put(JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES, "'@JvmPackageName' annotation is not supported for files with class declarations");
 
         MAP.put(STATE_IN_MULTIFILE_CLASS, "Non-const property with backing field or delegate is not allowed in a multi-file class if -Xmultifile-parts-inherit is enabled");
         MAP.put(NOT_ALL_MULTIFILE_CLASS_PARTS_ARE_JVM_SYNTHETIC, "All of multi-file class parts should be annotated with @JvmSynthetic if at least one of them is");

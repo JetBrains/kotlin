@@ -73,7 +73,7 @@ public class DefaultErrorMessages {
         MAP.put(INVISIBLE_REFERENCE, "Cannot access ''{0}'': it is {1} in {2}", NAME, VISIBILITY, NAME_OF_CONTAINING_DECLARATION_OR_FILE);
         MAP.put(INVISIBLE_MEMBER, "Cannot access ''{0}'': it is {1} in {2}", NAME, VISIBILITY, NAME_OF_CONTAINING_DECLARATION_OR_FILE);
         MAP.put(DEPRECATED_ACCESS_BY_SHORT_NAME, "Access to this type by short name is deprecated, and soon is going to be removed. Please, add explicit qualifier or import", NAME);
-        MAP.put(DEPRECATED_ACCESS_TO_ENUM_COMPANION_PROPERTY, "Ambiguous access to companion's property ''{0}'' in enum is deprecated. Please, add explicit Companion qualifier to the class name", NAME);
+        MAP.put(DEPRECATED_ACCESS_TO_ENUM_COMPANION_PROPERTY, "Ambiguous access to companion''s property ''{0}'' in enum is deprecated. Please, add explicit Companion qualifier to the class name", NAME);
 
         MAP.put(PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL, "Protected constructor ''{0}'' from other classes can only be used in super-call", Renderers.SHORT_NAMES_IN_TYPES);
 
@@ -447,7 +447,7 @@ public class DefaultErrorMessages {
         MAP.put(UNSIGNED_LITERAL_WITHOUT_DECLARATIONS_ON_CLASSPATH, "Type of the constant expression cannot be resolved. Please make sure you have the required dependencies for unsigned types in the classpath");
         MAP.put(SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED, "Conversion of signed constants to unsigned ones is prohibited");
         MAP.put(INTEGER_OPERATOR_RESOLVE_WILL_CHANGE, "This expression will be resolved to {0} in future releases. Please add explicit conversion call", RENDER_TYPE);
-        MAP.put(NON_TRIVIAL_BOOLEAN_CONSTANT, "Compiler won't reduce this expression to {0} in future. Please replace it with boolean literal", TO_STRING);
+        MAP.put(NON_TRIVIAL_BOOLEAN_CONSTANT, "Compiler won''t reduce this expression to {0} in future. Please replace it with boolean literal", TO_STRING);
 
         MAP.put(RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS, "Left-hand side of callable reference matches expression syntax reserved for future releases");
 
@@ -503,7 +503,7 @@ public class DefaultErrorMessages {
         MAP.put(USELESS_NULLABLE_CHECK, "Non-null type is checked for instance of nullable type");
         MAP.put(USELESS_IS_CHECK, "Check for instance is always ''{0}''", TO_STRING);
         MAP.put(WRONG_SETTER_PARAMETER_TYPE, "Setter parameter type must be equal to the type of the property, i.e. ''{0}''", RENDER_TYPE, RENDER_TYPE);
-        MAP.put(DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER, "It's forbidden using extension property type parameter ''{0}'' in delegate", TO_STRING);
+        MAP.put(DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER, "It''s forbidden using extension property type parameter ''{0}'' in delegate", TO_STRING);
         MAP.put(WRONG_GETTER_RETURN_TYPE, "Getter return type must be equal to the type of the property, i.e. ''{0}''", RENDER_TYPE, RENDER_TYPE);
         MAP.put(WRONG_SETTER_RETURN_TYPE, "Setter return type must be Unit");
         MAP.put(NO_COMPANION_OBJECT, "Classifier ''{0}'' does not have a companion object, and thus must be initialized here", NAME);
@@ -611,7 +611,7 @@ public class DefaultErrorMessages {
         MAP.put(UNUSED_TYPEALIAS_PARAMETER, "Type alias parameter {0} is not used in the expanded type {1} and does not affect type checking", NAME, RENDER_TYPE);
         MAP.put(EXPANDED_TYPE_CANNOT_BE_CONSTRUCTED, "Expanded type {0} contains non-invariant projections in top-level arguments and cannot be constructed", RENDER_TYPE);
         MAP.put(EXPANDED_TYPE_CANNOT_BE_INHERITED, "Expanded type {0} contains non-invariant projections in top-level arguments and cannot be inherited from", RENDER_TYPE);
-        MAP.put(DEPRECATED_SYNTAX_WITH_DEFINITELY_NOT_NULL, "Applying ''!!'' to the whole as/is expression without parentheses is deprecated. Please, put parentheses explicitly");
+        MAP.put(DEPRECATED_SYNTAX_WITH_DEFINITELY_NOT_NULL, "Applying '!!' to the whole as/is expression without parentheses is deprecated. Please, put parentheses explicitly");
 
         MAP.put(MODIFIER_LIST_NOT_ALLOWED, "Modifiers and annotations are not allowed here, because there are other modifiers or annotations outside of parenthesis");
         MAP.put(PROGRESSIONS_CHANGING_RESOLVE, "Progressions and ranges types will start implementing Collection interface soon. " +
@@ -641,14 +641,14 @@ public class DefaultErrorMessages {
         MAP.put(REDUNDANT_ELSE_IN_WHEN, "'when' is exhaustive so 'else' is redundant here");
         MAP.put(COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT, "Deprecated syntax. Use '||' instead of commas in when-condition for 'when' without argument");
         MAP.put(DUPLICATE_LABEL_IN_WHEN, "Duplicate label in when");
-        MAP.put(ILLEGAL_DECLARATION_IN_WHEN_SUBJECT, "Illegal variable declaration in 'when' subject: {0}. Should be a simple val with an initializer", STRING);
+        MAP.put(ILLEGAL_DECLARATION_IN_WHEN_SUBJECT, "Illegal variable declaration in ''when'' subject: {0}. Should be a simple val with an initializer", STRING);
 
         MAP.put(NO_ELSE_IN_WHEN, "''when'' expression must be exhaustive, add necessary {0}", RENDER_WHEN_MISSING_CASES);
         MAP.put(NO_ELSE_IN_WHEN_WARNING, "''when'' expression must be exhaustive, add necessary {0}", RENDER_WHEN_MISSING_CASES);
         MAP.put(NON_EXHAUSTIVE_WHEN, "''when'' expression on enum is recommended to be exhaustive, add {0}", RENDER_WHEN_MISSING_CASES);
         MAP.put(NON_EXHAUSTIVE_WHEN_STATEMENT, "Non exhaustive ''when'' statements on {0} will be prohibited in 1.7, add {1}", STRING, RENDER_WHEN_MISSING_CASES);
         MAP.put(NON_EXHAUSTIVE_WHEN_ON_SEALED_CLASS, "''when'' expression on sealed classes is recommended to be exhaustive, add {0}", RENDER_WHEN_MISSING_CASES);
-        MAP.put(EXPECT_TYPE_IN_WHEN_WITHOUT_ELSE, "'when' with expect {0} as subject can not be exhaustive without else branch", STRING);
+        MAP.put(EXPECT_TYPE_IN_WHEN_WITHOUT_ELSE, "''when'' with expect {0} as subject can not be exhaustive without else branch", STRING);
 
         MAP.put(TYPE_MISMATCH_IN_RANGE, "Type mismatch: incompatible types of range and element checked in it");
         MAP.put(CYCLIC_INHERITANCE_HIERARCHY, "There's a cycle in the inheritance hierarchy for this type");
@@ -704,7 +704,7 @@ public class DefaultErrorMessages {
         MAP.put(NOT_A_FUNCTION_LABEL, "Target label does not denote a function");
         MAP.put(NOT_A_FUNCTION_LABEL_WARNING, "Target label does not denote a function");
 
-        MAP.put(REDUNDANT_LABEL_WARNING, "Label is redundant, because it can not be referenced in either ''break'', ''continue'', or ''return'' expression");
+        MAP.put(REDUNDANT_LABEL_WARNING, "Label is redundant, because it can not be referenced in either 'break', 'continue', or 'return' expression");
 
         MAP.put(ANONYMOUS_INITIALIZER_IN_INTERFACE, "Anonymous initializers are not allowed in interfaces");
         MAP.put(NULLABLE_SUPERTYPE, "A supertype cannot be nullable");
@@ -773,7 +773,7 @@ public class DefaultErrorMessages {
         MAP.put(INLINE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS, "Inline classes cannot have context receivers");
 
         MAP.put(RESULT_CLASS_IN_RETURN_TYPE, "'kotlin.Result' cannot be used as a return type");
-        MAP.put(RESULT_CLASS_WITH_NULLABLE_OPERATOR, "Expression of type 'kotlin.Result' cannot be used as a left operand of ''{0}''", STRING);
+        MAP.put(RESULT_CLASS_WITH_NULLABLE_OPERATOR, "Expression of type ''kotlin.Result'' cannot be used as a left operand of ''{0}''", STRING);
 
         MAP.put(FUN_INTERFACE_WRONG_COUNT_OF_ABSTRACT_MEMBERS, "Fun interfaces must have exactly one abstract method");
         MAP.put(FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES, "Fun interfaces cannot have abstract properties");
@@ -946,7 +946,7 @@ public class DefaultErrorMessages {
         MAP.put(TYPE_INFERENCE_CANNOT_CAPTURE_TYPES, "Type inference failed: {0}", TYPE_INFERENCE_CANNOT_CAPTURE_TYPES_RENDERER);
         MAP.put(TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER, "Type inference failed: {0}", TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER_RENDERER);
         MAP.put(NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, "Not enough information to infer type variable {0}", STRING);
-        MAP.put(COULD_BE_INFERRED_ONLY_WITH_UNRESTRICTED_BUILDER_INFERENCE, "Builder inference lambda contains inapplicable calls so {0} can't be inferred. It could be resolved only with unrestricted builder inference. Please use -Xunrestricted-builder-inference compiler flag to enable it.", STRING);
+        MAP.put(COULD_BE_INFERRED_ONLY_WITH_UNRESTRICTED_BUILDER_INFERENCE, "Builder inference lambda contains inapplicable calls so {0} can''t be inferred. It could be resolved only with unrestricted builder inference. Please use -Xunrestricted-builder-inference compiler flag to enable it.", STRING);
 
         MAP.put(TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR, "Type inference failed: {0}", TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR_RENDERER);
         MAP.put(TYPE_INFERENCE_INCORPORATION_ERROR, "Type inference failed. Please try to specify type arguments explicitly.");

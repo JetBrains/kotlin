@@ -1713,7 +1713,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(DUPLICATE_LABEL_IN_WHEN, "Duplicate label in when")
         map.put(
             ILLEGAL_DECLARATION_IN_WHEN_SUBJECT,
-            "Illegal variable declaration in 'when' subject: {0}. Should be a simple val with an initializer",
+            "Illegal variable declaration in ''when'' subject: {0}. Should be a simple val with an initializer",
             STRING
         )
         map.put(
@@ -1957,7 +1957,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         // Label
         map.put(
             REDUNDANT_LABEL_WARNING,
-            "Label is redundant, because it can not be referenced in either ''break'', ''continue'', or ''return'' expression"
+            "Label is redundant, because it can not be referenced in either 'break', 'continue', or 'return' expression"
         )
 
         // Extended checkers group

@@ -110,14 +110,14 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(DEPRECATED_JAVA_ANNOTATION, "This annotation is deprecated in Kotlin. Use ''@{0}'' instead", TO_STRING)
         map.put(POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION, "Only named arguments are available for Java annotations")
-        map.put(JVM_PACKAGE_NAME_CANNOT_BE_EMPTY, "''@JvmPackageName'' annotation value cannot be empty")
+        map.put(JVM_PACKAGE_NAME_CANNOT_BE_EMPTY, "'@JvmPackageName' annotation value cannot be empty")
         map.put(
             JVM_PACKAGE_NAME_MUST_BE_VALID_NAME,
-            "''@JvmPackageName'' annotation value must be a valid dot-qualified name of a package"
+            "'@JvmPackageName' annotation value must be a valid dot-qualified name of a package"
         )
         map.put(
             JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES,
-            "''@JvmPackageName'' annotation is not supported for files with class declarations"
+            "'@JvmPackageName' annotation is not supported for files with class declarations"
         )
         map.put(
             SUPER_CALL_WITH_DEFAULT_PARAMETERS,
