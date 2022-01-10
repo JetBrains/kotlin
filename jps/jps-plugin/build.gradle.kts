@@ -13,12 +13,6 @@ val generateTests by generator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsK
     )
 }
 
-repositories {
-    // For rd-core, rd-framework and rd-swing
-    maven("https://www.myget.org/F/rd-snapshots/maven")
-    maven("https://www.myget.org/F/rd-model-snapshots/maven")
-}
-
 dependencies {
     api(project(":kotlin-build-common"))
     api(project(":core:descriptors"))
@@ -42,7 +36,11 @@ dependencies {
     compileOnly(jpsBuild())
     compileOnly(jpsModelSerialization())
     testApi(jpsModel())
-    testApi(testFramework())
+    testApi(testFramework()) {
+        exclude("com.jetbrains.rd", "rd-core")
+        exclude("com.jetbrains.rd", "rd-framework")
+        exclude("com.jetbrains.rd", "rd-swing")
+    }
     testCompileOnly(project(":kotlin-reflect-api"))
     testApi(project(":compiler:incremental-compilation-impl"))
     testApi(projectTests(":compiler:tests-common"))
