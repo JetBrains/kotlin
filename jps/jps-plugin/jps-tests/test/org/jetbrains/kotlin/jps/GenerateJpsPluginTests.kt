@@ -32,8 +32,6 @@ fun main(args: Array<String>) {
                 )
             }
 
-            //actualizeMppJpsIncTestCaseDirs(testDataRoot, "incremental/multiModule/multiplatform/withGeneratedContent")
-
             testClass<AbstractIncrementalJsJpsTest> {
                 model("incremental/multiModule/common", extension = null, excludeParentDirs = true)
             }
