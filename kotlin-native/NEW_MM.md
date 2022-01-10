@@ -58,7 +58,7 @@ If `kotlin.native.isExperimentalMM()` returns `true`, you've successfully enable
 ### Update the libraries
 
 To take full advantage of the new MM, we released new versions of the following libraries:
-* `kotlinx.coroutines`: `1.6.0` will automatically detect when running with the new memory model.
+* `kotlinx.coroutines`: `1.6.0` (will automatically detect when running with the new memory model).
     * No freezing. Every common primitive (Channels, Flows, coroutines) works through `Worker` boundaries.
     * Unlike the `native-mt` version, library objects are transparent for `freeze`. For example, if you freeze a channel, all of its internals will get frozen, so it won't work as expected. In particular, this can happen when freezing something that captures a channel.
     * `Dispatchers.Default` is backed by a pool of `Worker`s on Linux and Windows and by a global queue on Apple targets.
