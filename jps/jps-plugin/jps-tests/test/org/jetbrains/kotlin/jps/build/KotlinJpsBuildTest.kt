@@ -931,11 +931,11 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         KotlinTestUtils.assertEqualsToFile(expectedFile, actual.toString())
     }
 
-    fun testJre9() {
-        val jdk9Path = KtTestUtil.getJdk9Home().absolutePath
+    fun testJre11() {
+        val jdk11Path = KtTestUtil.getJdk11Home().absolutePath
 
-        val jdk = myModel.global.addSdk(JDK_NAME, jdk9Path, "9", JpsJavaSdkType.INSTANCE)
-        jdk.addRoot(StandardFileSystems.JRT_PROTOCOL_PREFIX + jdk9Path + URLUtil.JAR_SEPARATOR + "java.base", JpsOrderRootType.COMPILED)
+        val jdk = myModel.global.addSdk(JDK_NAME, jdk11Path, "11", JpsJavaSdkType.INSTANCE)
+        jdk.addRoot(StandardFileSystems.JRT_PROTOCOL_PREFIX + jdk11Path + URLUtil.JAR_SEPARATOR + "java.base", JpsOrderRootType.COMPILED)
 
         loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")
         addKotlinStdlibDependency()
