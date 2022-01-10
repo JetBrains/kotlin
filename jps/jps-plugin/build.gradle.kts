@@ -29,8 +29,7 @@ dependencies {
     api(project(":daemon-common-new"))
     api(project(":kotlin-daemon-client"))
     api(project(":kotlin-daemon"))
-    testImplementation(projectTests(":generators:test-generator")) // TODO FIX ME
-    testApi(projectTests(":generators:test-generator"))
+    testImplementation(projectTests(":generators:test-generator"))
     api(project(":compiler:frontend.java"))
     api(project(":js:js.frontend"))
     api(project(":kotlin-preloader"))
