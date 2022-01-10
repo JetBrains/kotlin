@@ -8,27 +8,6 @@ package org.jetbrains.kotlin.jps.build.dependeciestxt
 import java.io.File
 import java.util.*
 
-/**
- * Utility for generating common/platform module stub contents based on it's dependencies.
- */
-fun actualizeMppJpsIncTestCaseDirs(rootDir: String, dir: String) {
-    val rootDirFile = File("$rootDir/$dir")
-    check(rootDirFile.isDirectory) { "`$rootDirFile` is not a directory" }
-
-    rootDirFile.listFiles { it: File -> it.isDirectory }.forEach { dirFile ->
-        val dependenciesTxtFile = File(dirFile, "dependencies.txt")
-        if (dependenciesTxtFile.exists()) {
-            val fileTitle = "$dir/${dirFile.name}/dependencies.txt"
-            val dependenciesTxt = ModulesTxtBuilder().readFile(dependenciesTxtFile, fileTitle)
-
-            MppJpsIncTestsGenerator(dependenciesTxt) { File(dirFile, it.name) }
-                .actualizeTestCasesDirs(dirFile)
-        }
-    }
-
-    return
-}
-
 class MppJpsIncTestsGenerator(val txt: ModulesTxt, val testCaseDirProvider: (TestCase) -> File) {
     val ModulesTxt.Module.capitalName get() = name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
 
