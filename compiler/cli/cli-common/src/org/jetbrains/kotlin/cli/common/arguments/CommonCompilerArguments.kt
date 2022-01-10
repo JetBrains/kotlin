@@ -306,6 +306,18 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var useFirExtendedCheckers: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xuse-fir-ic",
+        description = "Compile using Front-end IR internal incremental compilation cycle. Warning: this feature is far from being production-ready"
+    )
+    var useFirIC: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xuse-fir-lt",
+        description = "Compile using LightTree parser with Front-end IR. Warning: this feature is far from being production-ready"
+    )
+    var useFirLT: Boolean by FreezableVar(false)
+
+    @Argument(
         value = "-Xdisable-ultra-light-classes",
         description = "Do not use the ultra light classes implementation"
     )
