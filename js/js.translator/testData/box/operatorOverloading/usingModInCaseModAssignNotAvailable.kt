@@ -1,4 +1,6 @@
 // !LANGUAGE: -ProhibitOperatorMod
+// TARGET_FRONTEND: ClassicFrontend
+// FIR status: don't support legacy feature
 // EXPECTED_REACHABLE_NODES: 1284
 package foo
 
