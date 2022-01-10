@@ -574,6 +574,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             checkLanguageVersionIsStable(languageVersion, collector)
             checkOutdatedVersions(languageVersion, apiVersion, collector)
             checkProgressiveMode(languageVersion, collector)
+
+            checkIrSupport(languageVersionSettings, collector)
         }
 
         checkPlatformSpecificSettings(languageVersionSettings, collector)
@@ -650,6 +652,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         LanguageVersion.LATEST_STABLE
 
     protected open fun checkPlatformSpecificSettings(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
+    }
+
+    protected open fun checkIrSupport(languageVersionSettings: LanguageVersionSettings, collector: MessageCollector) {
+        // backend-specific
     }
 
     private enum class VersionKind(val text: String) {
