@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.ir.Ir
+import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentsHelper
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.caches.BridgeLoweringCache
 import org.jetbrains.kotlin.backend.jvm.caches.CollectionStubComputer
@@ -224,6 +225,9 @@ class JvmBackendContext(
 
     override val optimizeNullChecksUsingKotlinNullability: Boolean
         get() = false
+
+    override val defaultArgumentsHelper =
+        DefaultArgumentsHelper(skipInlineMethods = false, skipExternalMethods = false, forceSetOverrideSymbols = true)
 
     inner class JvmIr(
         irModuleFragment: IrModuleFragment,

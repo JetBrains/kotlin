@@ -555,7 +555,7 @@ private val defaultArgumentPatchOverridesPhase = makeDeclarationTransformerPhase
 )
 
 private val defaultParameterInjectorPhase = makeBodyLoweringPhase(
-    { context -> DefaultParameterInjector(context, skipExternalMethods = true, forceSetOverrideSymbols = false) },
+    { context -> DefaultParameterInjector(context) },
     name = "DefaultParameterInjector",
     description = "Replace callsite with default parameters with corresponding stub function",
     prerequisite = setOf(interopCallableReferenceLoweringPhase, innerClassesLoweringPhase)
