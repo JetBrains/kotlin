@@ -52,7 +52,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitSuspensionPoint(expression: IrSuspensionPoint, data: D) = visitExpression(expression, data)
 
     fun visitExpression(expression: IrExpression, data: D) = visitElement(expression, data)
-    fun <T> visitConst(expression: IrConst<T>, data: D) = visitExpression(expression, data)
+    fun visitConst(expression: IrConst<*>, data: D) = visitExpression(expression, data)
     fun visitConstantValue(expression: IrConstantValue, data: D) = visitExpression(expression, data)
     fun visitConstantObject(expression: IrConstantObject, data: D) = visitConstantValue(expression, data)
     fun visitConstantPrimitive(expression: IrConstantPrimitive, data: D) = visitConstantValue(expression, data)

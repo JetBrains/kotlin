@@ -79,9 +79,9 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
         return expression
     }
 
-    override fun <T> visitConst(expression: IrConst<T>, data: D) = visitExpression(expression, data)
+    override fun visitConst(expression: IrConst<*>, data: D) = visitExpression(expression, data)
     override fun visitVararg(expression: IrVararg, data: D) = visitExpression(expression, data)
-    override fun visitConstantValue(expression: IrConstantValue, data: D) : IrConstantValue {
+    override fun visitConstantValue(expression: IrConstantValue, data: D): IrConstantValue {
         expression.transformChildren(this, data)
         return expression
     }

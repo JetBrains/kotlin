@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.backend.common.ir.isOverridable
 import org.jetbrains.kotlin.backend.common.ir.returnType
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.WasmSymbols
-import org.jetbrains.kotlin.backend.wasm.utils.*
+import org.jetbrains.kotlin.backend.wasm.utils.getWasmArrayAnnotation
+import org.jetbrains.kotlin.backend.wasm.utils.getWasmOpAnnotation
+import org.jetbrains.kotlin.backend.wasm.utils.hasWasmNoOpCastAnnotation
+import org.jetbrains.kotlin.backend.wasm.utils.isCanonical
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
@@ -21,7 +24,10 @@ import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
+import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.wasm.ir.*
@@ -99,7 +105,7 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         }
     }
 
-    override fun <T> visitConst(expression: IrConst<T>) {
+    override fun visitConst(expression: IrConst<*>) {
         when (val kind = expression.kind) {
             is IrConstKind.Null -> generateDefaultInitializerForType(context.transformType(expression.type), body)
             is IrConstKind.Boolean -> body.buildConstI32(if (kind.valueOf(expression)) 1 else 0)
