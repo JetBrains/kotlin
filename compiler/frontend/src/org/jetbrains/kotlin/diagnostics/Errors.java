@@ -27,8 +27,10 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.VarianceConflictDiagnosticData;
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData;
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.tower.WrongResolutionToClassifier;
+import org.jetbrains.kotlin.resolve.calls.util.BuilderLambdaLabelingInfo;
 import org.jetbrains.kotlin.resolve.deprecation.DescriptorBasedDeprecationInfo;
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible;
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData;
@@ -839,6 +841,9 @@ public interface Errors {
     DiagnosticFactory0<KtExpression> NOT_A_CLASS = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> OVERLOAD_RESOLUTION_AMBIGUITY = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory3<PsiElement, String, String, String> OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES = DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory3<PsiElement, KotlinType, String, String> STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY = DiagnosticFactory3.create(ERROR);
+    DiagnosticFactory4<PsiElement, KotlinType, String, String, BuilderLambdaLabelingInfo> STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY = DiagnosticFactory4.create(ERROR);
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> NONE_APPLICABLE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> CANNOT_COMPLETE_RESOLVE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<PsiElement, Collection<? extends ResolvedCall<?>>> UNRESOLVED_REFERENCE_WRONG_RECEIVER =

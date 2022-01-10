@@ -208,12 +208,10 @@ class KotlinResolutionCallbacksImpl(
                     kotlinToResolvedCallTransformer, expressionTypingServices, argumentTypeResolver,
                     doubleColonExpressionResolver, deprecationResolver, moduleDescriptor, typeApproximator,
                     missingSupertypesResolver, lambdaArgument
-                )
+                ).apply { lambdaArgument.builderInferenceSession = this }
             } else {
                 null
             }
-
-        lambdaArgument.builderInferenceSession = builderInferenceSession
 
         val temporaryTrace = if (builderInferenceSession != null)
             TemporaryBindingTrace.create(trace, "Trace to resolve builder inference lambda: $lambdaArgument")

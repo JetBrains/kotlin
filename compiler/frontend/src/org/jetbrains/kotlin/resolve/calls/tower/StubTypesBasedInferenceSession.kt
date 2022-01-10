@@ -29,7 +29,7 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
     val builtIns: KotlinBuiltIns
 ) : InferenceSession {
     protected val partiallyResolvedCallsInfo = arrayListOf<PSIPartialCallInfo>()
-    private val errorCallsInfo = arrayListOf<PSIErrorCallInfo<D>>()
+    val errorCallsInfo = arrayListOf<PSIErrorCallInfo<D>>()
     private val completedCalls = hashSetOf<ResolvedAtom>()
     protected val nestedInferenceSessions = hashSetOf<StubTypesBasedInferenceSession<*>>()
 

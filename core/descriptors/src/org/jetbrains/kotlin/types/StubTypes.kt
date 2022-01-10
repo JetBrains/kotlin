@@ -7,10 +7,11 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor
 import org.jetbrains.kotlin.types.model.StubTypeMarker
 
 class StubTypeForBuilderInference(
-    originalTypeVariable: TypeConstructor,
+    originalTypeVariable: NewTypeVariableConstructor,
     isMarkedNullable: Boolean,
     override val constructor: TypeConstructor = createConstructor(originalTypeVariable)
 ) : AbstractStubType(originalTypeVariable, isMarkedNullable), StubTypeMarker {
@@ -26,7 +27,7 @@ class StubTypeForBuilderInference(
 }
 
 class StubTypeForTypeVariablesInSubtyping(
-    originalTypeVariable: TypeConstructor,
+    originalTypeVariable: NewTypeVariableConstructor,
     isMarkedNullable: Boolean,
     override val constructor: TypeConstructor = createConstructor(originalTypeVariable)
 ) : AbstractStubType(originalTypeVariable, isMarkedNullable), StubTypeMarker {
@@ -40,7 +41,7 @@ class StubTypeForTypeVariablesInSubtyping(
 
 // This type is used as a replacement of type variables for provideDelegate resolve
 class StubTypeForProvideDelegateReceiver(
-    originalTypeVariable: TypeConstructor,
+    originalTypeVariable: NewTypeVariableConstructor,
     isMarkedNullable: Boolean,
     override val constructor: TypeConstructor = createConstructor(originalTypeVariable)
 ) : AbstractStubType(originalTypeVariable, isMarkedNullable) {
@@ -52,7 +53,7 @@ class StubTypeForProvideDelegateReceiver(
     }
 }
 
-abstract class AbstractStubType(val originalTypeVariable: TypeConstructor, override val isMarkedNullable: Boolean) : SimpleType() {
+abstract class AbstractStubType(val originalTypeVariable: NewTypeVariableConstructor, override val isMarkedNullable: Boolean) : SimpleType() {
     override val memberScope = ErrorUtils.createErrorScope("Scope for stub type: $originalTypeVariable")
 
     override val arguments: List<TypeProjection>
@@ -73,7 +74,7 @@ abstract class AbstractStubType(val originalTypeVariable: TypeConstructor, overr
     abstract fun materialize(newNullability: Boolean): AbstractStubType
 
     companion object {
-        fun createConstructor(originalTypeVariable: TypeConstructor) =
+        fun createConstructor(originalTypeVariable: NewTypeVariableConstructor) =
             ErrorUtils.createErrorTypeConstructor("Constructor for stub type: $originalTypeVariable")
     }
 }

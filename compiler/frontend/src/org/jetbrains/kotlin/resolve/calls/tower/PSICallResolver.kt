@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.checkers.PassingProgressionAsCollectionCallChecker
+import org.jetbrains.kotlin.resolve.checkers.ResolutionWithStubTypesChecker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -78,7 +79,10 @@ class PSICallResolver(
     private val missingSupertypesResolver: MissingSupertypesResolver,
     private val resultTypeResolver: ResultTypeResolver,
 ) {
-    private val callCheckersWithAdditionalResolve = listOf(PassingProgressionAsCollectionCallChecker(kotlinCallResolver))
+    private val callCheckersWithAdditionalResolve = listOf(
+        PassingProgressionAsCollectionCallChecker(kotlinCallResolver),
+        ResolutionWithStubTypesChecker(kotlinCallResolver)
+    )
 
     private val givenCandidatesName = Name.special("<given candidates>")
 

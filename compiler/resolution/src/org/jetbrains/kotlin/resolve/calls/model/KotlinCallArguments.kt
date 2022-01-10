@@ -59,11 +59,11 @@ interface LambdaKotlinCallArgument : PostponableKotlinCallArgument {
      */
     var hasBuilderInferenceAnnotation: Boolean
         get() = false
-        set(@Suppress("UNUSED_PARAMETER") value) {}
+        set(_) {}
 
     var builderInferenceSession: InferenceSession?
         get() = null
-        set(@Suppress("UNUSED_PARAMETER") value) {}
+        set(_) {}
 
     /**
      * parametersTypes == null means, that there is no declared arguments

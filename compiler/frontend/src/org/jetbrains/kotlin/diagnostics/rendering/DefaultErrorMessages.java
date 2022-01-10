@@ -917,6 +917,11 @@ public class DefaultErrorMessages {
                 ELEMENT_TEXT, STRING, ELEMENT_TEXT);
 
         MAP.put(OVERLOAD_RESOLUTION_AMBIGUITY, "Overload resolution ambiguity: {0}", AMBIGUOUS_CALLS);
+        MAP.put(OVERLOAD_RESOLUTION_AMBIGUITY_BECAUSE_OF_STUB_TYPES, "The builder `{0}` you are using has a type argument for type parameter(s) `{1}` that was not explicitly specified. " +
+                                                                     "Without knowing the type of `{1}` compiler cannot choose which overloaded function `{2}` to call here. " +
+                                                                     "Please, either specify the type `{1}` explicitly in `{0}` builder or use explicit cast to a specific type for parameter or receiver (see specific errors on them).", STRING, STRING, STRING);
+        MAP.put(STUB_TYPE_IN_ARGUMENT_CAUSES_AMBIGUITY, "Type of an argument hasn't inferred yet. To disambiguate this call, please use explicit cast for the parameter to {1} if you rely a type argument for type parameter(s) {2} to be inferred to {3}", RENDER_TYPE, STRING, STRING);
+        MAP.put(STUB_TYPE_IN_RECEIVER_CAUSES_AMBIGUITY, "Type of a receiver hasn't inferred yet. To disambiguate this call, please use explicit cast for the receiver to {1} if you rely a type argument for type parameter(s) {2} to be inferred to {3}", RENDER_TYPE, STRING, STRING, null);
         MAP.put(NONE_APPLICABLE, "None of the following functions can be called with the arguments supplied: {0}", AMBIGUOUS_CALLS);
         MAP.put(CANNOT_COMPLETE_RESOLVE, "Cannot choose among the following candidates without completing type inference: {0}", AMBIGUOUS_CALLS);
         MAP.put(UNRESOLVED_REFERENCE_WRONG_RECEIVER, "Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: {0}", AMBIGUOUS_CALLS);
