@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import java.util.*
 
 inline fun <reified T : IrElement> T.deepCopyWithSymbols(
     initialParent: IrDeclarationParent? = null,
@@ -408,7 +407,7 @@ open class DeepCopyIrTreeWithSymbols(
     override fun visitExpression(expression: IrExpression): IrExpression =
         throw IllegalArgumentException("Unsupported expression type: $expression")
 
-    override fun <T> visitConst(expression: IrConst<T>): IrConst<T> =
+    override fun visitConst(expression: IrConst<*>): IrConst<*> =
         expression.shallowCopy().copyAttributes(expression)
 
     override fun visitConstantObject(expression: IrConstantObject): IrConstantValue =

@@ -89,7 +89,7 @@ fun foldString(expression: IrExpression, context: JsIrBackendContext): String? {
             expression.acceptChildrenVoid(this)
         }
 
-        override fun <T> visitConst(expression: IrConst<T>) {
+        override fun visitConst(expression: IrConst<*>) {
             builder.append(expression.kind.valueOf(expression))
         }
 
