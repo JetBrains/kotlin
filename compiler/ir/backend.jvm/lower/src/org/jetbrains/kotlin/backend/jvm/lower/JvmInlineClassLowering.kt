@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -67,15 +68,43 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     override fun IrFunction.isSpecificFieldGetter(): Boolean = isInlineClassFieldGetter
 
     override fun buildAdditionalMethodsForSealedInlineClass(declaration: IrClass) {
-        val inlineSubclasses = declaration.sealedSubclasses.filter { it.owner.isInline }
-        val noinlineSubclasses = declaration.sealedSubclasses.filterNot { it.owner.isInline }
-        buildBoxFunctionForSealed(declaration, inlineSubclasses, noinlineSubclasses)
+        val inlineDirectSubclasses = declaration.sealedSubclasses.filter { it.owner.isInline }
+        val inlineSubclasses = collectSubclasses(declaration) { it.owner.isInline }
+        val noinlineDirectSubclasses = declaration.sealedSubclasses.filterNot { it.owner.isInline }
+        val noinlineSubclasses = collectSubclasses(declaration) { !it.owner.isInline }
+        buildBoxFunctionForSealed(declaration, inlineDirectSubclasses, noinlineDirectSubclasses)
         buildUnboxFunctionForSealed(declaration)
-        buildSpecializedEqualsMethodForSealed(declaration, inlineSubclasses, noinlineSubclasses)
+        buildSpecializedEqualsMethodForSealed(declaration, inlineDirectSubclasses, noinlineDirectSubclasses)
 
         // TODO: Generate during Psi2Ir/Fir2Ir
         rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "hashCode")
         rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "toString")
+    }
+
+    private fun collectSubclasses(irClass: IrClass, predicate: (IrClassSymbol) -> Boolean): List<SubclassInfo> {
+        fun collectBottoms(irClass: IrClass): List<IrClassSymbol> =
+            irClass.sealedSubclasses.flatMap {
+                when {
+                    it.owner.modality == Modality.SEALED -> collectBottoms(it.owner)
+                    predicate(it) -> listOf(it)
+                    else -> emptyList()
+                }
+            }
+
+        fun collectSealedBetweenTopAndBottom(bottom: IrClassSymbol): List<IrClassSymbol> {
+            fun superClass(symbol: IrClassSymbol): IrClassSymbol =
+                symbol.owner.superTypes.single { it.classOrNull?.owner?.kind == ClassKind.CLASS }.classOrNull!!
+
+            val result = mutableListOf<IrClassSymbol>()
+            var cursor = superClass(bottom)
+            while (cursor != irClass.symbol) {
+                result += cursor
+                cursor = superClass(cursor)
+            }
+            return result
+        }
+
+        return collectBottoms(irClass).map { SubclassInfo(it.owner, collectSealedBetweenTopAndBottom(it)) }
     }
 
     override fun addJvmInlineAnnotation(valueClass: IrClass) {
@@ -531,8 +560,8 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
     private fun rewriteFunctionFromAnyForSealed(
         irClass: IrClass,
-        inlineSubclasses: List<IrClassSymbol>,
-        noinlineSubclasses: List<IrClassSymbol>,
+        inlineSubclasses: List<SubclassInfo>,
+        noinlineSubclasses: List<SubclassInfo>,
         name: String
     ) {
         val replacements = context.inlineClassReplacements
@@ -553,21 +582,21 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                 val funFromObject = context.irBuiltIns.anyClass.owner.declarations
                     .single { it is IrSimpleFunction && it.name.asString() == name } as IrFunction
                 val branches = noinlineSubclasses
-                    .filter { subclass ->subclass.owner.declarations
-                        .any { it is IrSimpleFunction && it.name.asString() == name && !it.isFakeOverride }
+                    .filter { info ->
+                        info.bottom.declarations.any { it is IrSimpleFunction && it.name.asString() == name && !it.isFakeOverride }
                     }.map {
                         irBranch(
-                            irIs(irGet(tmp), it.owner.defaultType),
+                            irIs(irGet(tmp), it.bottom.defaultType),
                             irReturn(irCall(funFromObject.symbol).apply {
                                 dispatchReceiver = irGet(tmp)
                             })
                         )
                 } + inlineSubclasses.map {
                     val delegate = replacements.getReplacementFunction(
-                        it.owner.declarations
+                        it.bottom.declarations
                             .single { f -> f is IrSimpleFunction && f.name.asString() == name } as IrFunction
                     )!!
-                    val underlyingType = getInlineClassUnderlyingType(it.owner)
+                    val underlyingType = getInlineClassUnderlyingType(it.bottom)
 
                     irBranch(
                         irIs(irGet(tmp), underlyingType),
@@ -576,7 +605,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                                 0, coerceInlineClasses(
                                     irImplicitCast(irGet(tmp), underlyingType),
                                     underlyingType,
-                                    it.owner.defaultType
+                                    it.bottom.defaultType
                                 )
                             )
                         })
@@ -684,3 +713,10 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         irClass.declarations += function
     }
 }
+
+private class SubclassInfo(
+    // The bottom class
+    val bottom: IrClass,
+    // Sealed subclasses from top to the bottom
+    val sealedSubclasses: List<IrClassSymbol>
+)
