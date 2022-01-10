@@ -59,6 +59,7 @@ fun addBenchmarkTask(
 
         dependsOn(":kotlin-gradle-plugin:install")
 
+        outputs.upToDateWhen { false }
         javaLauncher.set(service.launcherFor {
             languageVersion.set(jdkVersion)
         })
@@ -130,3 +131,8 @@ addBenchmarkTask(
 ) {
     usesAndroidSdk()
 }
+
+addBenchmarkTask(
+    taskName = "benchmarkRegressionGraphql",
+    script = "graphql-kotlin.benchmark.kts"
+)
