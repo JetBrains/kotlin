@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import java.io.File
 
 internal val fileClassPhase = makeIrModulePhase(
     ::FileClassLowering,
@@ -151,7 +152,7 @@ fun IrFile.getFileClassInfo(): JvmFileClassInfo =
         is PsiIrFileEntry ->
             JvmFileClassUtil.getFileClassInfoNoResolve(fileEntry.psiFile as KtFile)
         is NaiveSourceBasedFileEntryImpl ->
-            JvmSimpleFileClassInfo(PackagePartClassUtils.getPackagePartFqName(fqName, fileEntry.name), false)
+            JvmSimpleFileClassInfo(PackagePartClassUtils.getPackagePartFqName(fqName, File(fileEntry.name).name), false)
         else ->
             error("unknown kind of file entry: $fileEntry")
     }
