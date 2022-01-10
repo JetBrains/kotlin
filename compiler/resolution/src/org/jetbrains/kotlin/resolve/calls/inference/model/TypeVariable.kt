@@ -38,8 +38,7 @@ class TypeVariableTypeConstructor(
     private val builtIns: KotlinBuiltIns,
     val debugName: String,
     override val originalTypeParameter: TypeParameterDescriptor?
-) : TypeConstructor,
-    NewTypeVariableConstructor, TypeVariableTypeConstructorMarker {
+) : NewTypeVariableConstructor, TypeVariableTypeConstructorMarker {
     override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
     override fun getSupertypes(): Collection<KotlinType> = emptyList()
     override fun isFinal(): Boolean = false

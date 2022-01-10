@@ -9,31 +9,30 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Errors.PROGRESSIONS_CHANGING_RESOLVE
-import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
+import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerWithAdditionalResolve
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
-import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
-import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tower.*
+import org.jetbrains.kotlin.resolve.calls.util.replaceArguments
+import org.jetbrains.kotlin.resolve.calls.util.replaceTypes
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
-import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerState
 import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerStateInternals
 import org.jetbrains.kotlin.types.checker.intersectTypes
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import sun.reflect.annotation.TypeAnnotation
 
 /*
  NB: this checker is exceptionally temporary added for stdlib migration purposes (see KT-49276).
  Please don't use similar logic for other checkers
  */
 @OptIn(ClassicTypeCheckerStateInternals::class)
-class PassingProgressionAsCollectionCallChecker(private val kotlinCallResolver: KotlinCallResolver) {
+class PassingProgressionAsCollectionCallChecker(private val kotlinCallResolver: KotlinCallResolver) : CallCheckerWithAdditionalResolve {
     private val typeCheckerState = ClassicTypeCheckerState(isErrorTypeEqualsToAnything = false)
 
     private val iterableProgressions = listOf(
@@ -67,14 +66,21 @@ class PassingProgressionAsCollectionCallChecker(private val kotlinCallResolver: 
         if (progressionOrRangeArgumentTypes.all { it == null }) return
 
         val builtIns = resolvedCall.candidateDescriptor.builtIns
-        val newArguments = replaceArgumentsWithCollectionIfNeeded(valueArguments, progressionOrRangeArgumentTypes, context.trace, builtIns)
 
-        val newCall = PSIKotlinCallImpl(
-            kotlinCall.callKind, kotlinCall.psiCall, kotlinCall.tracingStrategy, kotlinCall.explicitReceiver,
-            kotlinCall.dispatchReceiverForInvokeExtension, kotlinCall.name, kotlinCall.typeArguments, newArguments,
-            kotlinCall.externalArgument, kotlinCall.startingDataFlowInfo, kotlinCall.resultDataFlowInfo,
-            kotlinCall.dataFlowInfoForArguments, kotlinCall.isForImplicitInvoke
-        )
+        val newArguments = valueArguments.replaceTypes(context, resolutionCallbacks) { i, type ->
+            val progressionOrRangeElementType = progressionOrRangeArgumentTypes[i] ?: return@replaceTypes null
+            intersectTypes(
+                listOf(
+                    KotlinTypeFactory.simpleNotNullType(
+                        Annotations.EMPTY,
+                        builtIns.collection,
+                        listOf(TypeProjectionImpl(progressionOrRangeElementType))
+                    ),
+                    type
+                )
+            )
+        }
+        val newCall = kotlinCall.replaceArguments(newArguments)
 
         val candidateForCollectionReplacedArgument = kotlinCallResolver.resolveCall(
             scopeTower, resolutionCallbacks, newCall, expectedType, context.collectAllCandidates
@@ -129,7 +135,7 @@ class PassingProgressionAsCollectionCallChecker(private val kotlinCallResolver: 
         }
     }
 
-    fun check(
+    override fun check(
         overloadResolutionResults: OverloadResolutionResults<*>,
         scopeTower: ImplicitScopeTower,
         resolutionCallbacks: KotlinResolutionCallbacks,
@@ -149,36 +155,4 @@ class PassingProgressionAsCollectionCallChecker(private val kotlinCallResolver: 
             builtIns.collection,
             listOf(TypeProjectionImpl(builtIns.nullableAnyType))
         )
-
-    private fun replaceArgumentsWithCollectionIfNeeded(
-        valueArguments: List<KotlinCallArgument>,
-        progressionOrRangeArgumentTypes: List<KotlinType?>,
-        trace: BindingTrace,
-        builtIns: KotlinBuiltIns
-    ): List<KotlinCallArgument> = valueArguments.mapIndexed { i, argument ->
-        if (argument !is ExpressionKotlinCallArgumentImpl) return@mapIndexed argument
-        val progressionOrRangeElementType = progressionOrRangeArgumentTypes[i] ?: return@mapIndexed argument
-        val psiExpression = argument.psiExpression ?: return@mapIndexed argument
-        val newType = intersectTypes(
-            listOf(
-                KotlinTypeFactory.simpleNotNullType(
-                    Annotations.EMPTY,
-                    builtIns.collection,
-                    listOf(TypeProjectionImpl(progressionOrRangeElementType))
-                ),
-                argument.receiver.receiverValue.type.unwrap()
-            )
-        )
-
-        ExpressionKotlinCallArgumentImpl(
-            argument.psiCallArgument.valueArgument,
-            DataFlowInfo.EMPTY,
-            DataFlowInfo.EMPTY,
-            ReceiverValueWithSmartCastInfo(
-                ExpressionReceiver.create(psiExpression, newType, trace.bindingContext),
-                emptySet(),
-                true
-            )
-        )
-    }
 }
