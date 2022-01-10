@@ -124,7 +124,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             val chunk = moduleChunk.modules
             configuration.configureSourceRoots(chunk, buildFile)
 
-            if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
+            if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR) && arguments.useFirLT /* TODO: consider storing in the configuration instead of using args here directly */) {
                 val projectEnvironment =
                     createProjectEnvironment(configuration, rootDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
 
