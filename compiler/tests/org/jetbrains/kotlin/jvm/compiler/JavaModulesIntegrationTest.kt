@@ -160,6 +160,10 @@ abstract class JavaModulesIntegrationTest(private val jdkVersion: Int, private v
         }
     }
 
+    fun testAutomaticModuleInternalJdkPackageUsage() {
+        module("jvmStatUsage")
+    }
+
     fun testReleaseFlag() {
         module("module")
         module("module9", additionalKotlinArguments = listOf("-Xjdk-release=9"))

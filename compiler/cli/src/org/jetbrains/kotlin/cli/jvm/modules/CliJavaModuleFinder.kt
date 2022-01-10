@@ -127,7 +127,7 @@ class CliJavaModuleFinder(
                     useSig -> createModuleFromSignature(moduleInfo)
                     else -> error("Can't find ${moduleRoot.path} module")
                 },
-                file, true
+                file, !useLastJdkApi && useSig
             )
         }
 
