@@ -17,9 +17,12 @@
 package org.jetbrains.kotlin.resolve;
 
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.config.LanguageFeature;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationWithTarget;
@@ -168,12 +171,18 @@ public class AnnotationResolverImpl extends AnnotationResolver {
         );
     }
 
-    public static void reportUnsupportedAnnotationForTypeParameter(@NotNull KtTypeParameter jetTypeParameter, @NotNull BindingTrace trace) {
+    public static void reportUnsupportedAnnotationForTypeParameter(
+            @NotNull KtTypeParameter jetTypeParameter,
+            @NotNull BindingTrace trace,
+            @NotNull LanguageVersionSettings languageVersionSettings
+    ) {
         KtModifierList modifierList = jetTypeParameter.getModifierList();
         if (modifierList == null) return;
 
         for (KtAnnotationEntry annotationEntry : modifierList.getAnnotationEntries()) {
-            trace.report(Errors.UNSUPPORTED.on(annotationEntry, "Annotations for type parameters are not supported yet"));
+            trace.report(Errors.UNSUPPORTED_FEATURE.on(
+                    annotationEntry, new Pair<>(LanguageFeature.ClassTypeParameterAnnotations, languageVersionSettings)
+            ));
         }
     }
 

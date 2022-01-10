@@ -517,7 +517,7 @@ class DeclarationsChecker(
     private fun checkTypeParameters(typeParameterListOwner: KtTypeParameterListOwner) {
         for (jetTypeParameter in typeParameterListOwner.typeParameters) {
             if (!languageVersionSettings.supportsFeature(LanguageFeature.ClassTypeParameterAnnotations)) {
-                AnnotationResolverImpl.reportUnsupportedAnnotationForTypeParameter(jetTypeParameter, trace)
+                AnnotationResolverImpl.reportUnsupportedAnnotationForTypeParameter(jetTypeParameter, trace, languageVersionSettings)
             }
 
             trace.get(TYPE_PARAMETER, jetTypeParameter)?.let { DescriptorResolver.checkConflictingUpperBounds(trace, it, jetTypeParameter) }
