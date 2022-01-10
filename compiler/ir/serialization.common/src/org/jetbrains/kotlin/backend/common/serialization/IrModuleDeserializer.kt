@@ -51,6 +51,10 @@ class CompatibilityMode(val abiVersion: KotlinAbiVersion) {
     }
 }
 
+enum class IrModuleOrigin {
+    CURRENT, DESERIALIZED, SYNTHETIC
+}
+
 abstract class IrModuleDeserializer(private val _moduleDescriptor: ModuleDescriptor?, val libraryAbiVersion: KotlinAbiVersion) {
     abstract operator fun contains(idSig: IdSignature): Boolean
     abstract fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol
@@ -90,7 +94,7 @@ abstract class IrModuleDeserializer(private val _moduleDescriptor: ModuleDescrip
 
     open val strategyResolver: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_DECLARATION_HEADERS }
 
-    open val isCurrent = false
+    abstract val origin: IrModuleOrigin
 
     open fun fileDeserializers(): Collection<IrFileDeserializer> = error("Unsupported")
 
@@ -227,7 +231,7 @@ class IrModuleDeserializerWithBuiltIns(
 
     override val moduleFragment: IrModuleFragment get() = delegate.moduleFragment
     override val moduleDependencies: Collection<IrModuleDeserializer> get() = delegate.moduleDependencies
-    override val isCurrent get() = delegate.isCurrent
+    override val origin get() = delegate.origin
 
     override fun fileDeserializers(): Collection<IrFileDeserializer> {
         return delegate.fileDeserializers()
@@ -254,5 +258,5 @@ open class CurrentModuleDeserializer(
 
     override fun declareIrSymbol(symbol: IrSymbol) {}
 
-    override val isCurrent = true
+    override val origin get() = IrModuleOrigin.CURRENT
 }
