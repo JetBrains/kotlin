@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.wasm
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.addChild
+import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentsHelper
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSharedVariablesManager
 import org.jetbrains.kotlin.backend.wasm.utils.WasmInlineClassesUtils
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -57,13 +58,14 @@ class WasmBackendContext(
     override val mapping = JsMapping()
 
     override val coroutineSymbols =
-        JsCommonCoroutineSymbols(symbolTable, module,this)
+        JsCommonCoroutineSymbols(symbolTable, module, this)
 
     val innerClassesSupport = JsInnerClassesSupport(mapping, irFactory)
 
     override val internalPackageFqn = FqName("kotlin.wasm")
 
     private val internalPackageFragmentDescriptor = EmptyPackageFragmentDescriptor(builtIns.builtInsModule, FqName("kotlin.wasm.internal"))
+
     // TODO: Merge with JS IR Backend context lazy file
     val internalPackageFragment by lazy {
         IrFileImpl(object : IrFileEntry {
@@ -175,4 +177,7 @@ class WasmBackendContext(
             }
         }
     }
+
+    override val defaultArgumentsHelper =
+        DefaultArgumentsHelper(skipInlineMethods = true, skipExternalMethods = true, forceSetOverrideSymbols = false)
 }

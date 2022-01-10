@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentsHelper
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -358,4 +359,7 @@ class JsIrBackendContext(
         /*TODO*/
         print(message)
     }
+
+    override val defaultArgumentsHelper =
+        DefaultArgumentsHelper(skipInlineMethods = true, skipExternalMethods = true, forceSetOverrideSymbols = false)
 }

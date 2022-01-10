@@ -29,7 +29,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) : DefaultArgumentStubGenerator(context, true, true, false) {
+class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
+    DefaultArgumentStubGenerator(context) {
 
     override fun needSpecialDispatch(irFunction: IrSimpleFunction) = irFunction.isOverridableOrOverrides
 
@@ -68,7 +69,7 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
     }
 }
 
-class JsDefaultCallbackGenerator(val context: JsIrBackendContext): BodyLoweringPass {
+class JsDefaultCallbackGenerator(val context: JsIrBackendContext) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
