@@ -1,5 +1,7 @@
 // EXPECTED_REACHABLE_NODES: 1697
 // !LANGUAGE: +MultiPlatformProjects
+// TARGET_FRONTEND: ClassicFrontend
+// FIR status: expect/actual in one module
 // KJS_WITH_FULL_RUNTIME
 // SKIP_DCE_DRIVEN
 
