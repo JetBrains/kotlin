@@ -14,7 +14,7 @@ val generateTests by generator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsK
 }
 
 repositories {
-    // For rd-core, rd-framework and rd-swing
+    // For rd-core, rd-framework and rd-swing (which are dependencies of "com.jetbrains.intellij.platform:test-framework:203.8084.24")
     maven("https://www.myget.org/F/rd-snapshots/maven")
     maven("https://www.myget.org/F/rd-model-snapshots/maven")
 }
