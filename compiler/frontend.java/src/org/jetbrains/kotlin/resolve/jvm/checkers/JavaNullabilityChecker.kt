@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -54,9 +55,10 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
             c.dataFlowValueFactory.createDataFlowValue(expression, expressionType, c)
         }
 
-        if (isWrongTypeParameterNullabilityForSubtyping(expressionType, c) { dataFlowValue }) {
-            c.trace.report(ErrorsJvm.NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER.on(expression, expressionType))
+        findTypeParameterWithWrongBoundsNullability(expressionType, c) { dataFlowValue }?.let { typeParameterDescriptor ->
+            c.trace.report(ErrorsJvm.NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER.on(expression, typeParameterDescriptor))
         }
+
         doCheckType(
             expressionType,
             c.expectedType,
@@ -154,15 +156,15 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
         }
     }
 
-    private fun isWrongTypeParameterNullabilityForSubtyping(
+    private fun findTypeParameterWithWrongBoundsNullability(
         expressionType: KotlinType,
         c: ResolutionContext<*>,
         dataFlowValueForWholeExpression: () -> DataFlowValue
-    ): Boolean {
-        if (c.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated)) return false
-        if (TypeUtils.noExpectedType(c.expectedType)) return false
+    ): TypeParameterDescriptor? {
+        if (c.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated)) return null
+        if (TypeUtils.noExpectedType(c.expectedType)) return null
 
-        var metWrongNullabilityInsideArguments = false
+        var foundSubtypeTypeParameter: TypeParameterDescriptor? = null
 
         @OptIn(ClassicTypeCheckerStateInternals::class)
         val typeState: TypeCheckerState = object : ClassicTypeCheckerState(isErrorTypeEqualsToAnything = true) {
@@ -172,7 +174,7 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
                 if (isNullableTypeAgainstNotNullTypeParameter(subType as KotlinType, superType as KotlinType)) {
                     // data flow value is only checked for top-level types
                     if (expectsTypeArgument || c.dataFlowInfo.getStableNullability(dataFlowValueForWholeExpression()) != Nullability.NOT_NULL) {
-                        metWrongNullabilityInsideArguments = true
+                        foundSubtypeTypeParameter = subType.constructor.declarationDescriptor as? TypeParameterDescriptor
                         return false
                     }
                 }
@@ -186,7 +188,7 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
 
         AbstractTypeChecker.isSubtypeOf(typeState, expressionType, c.expectedType)
 
-        return metWrongNullabilityInsideArguments
+        return foundSubtypeTypeParameter
     }
 
     override fun checkReceiver(
@@ -268,10 +270,6 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
     }
 
     companion object {
-        val typePreparatorUnwrappingEnhancement: KotlinTypePreparator = object : KotlinTypePreparator() {
-            override fun prepareType(type: KotlinTypeMarker): UnwrappedType =
-                super.prepareType(type).let { it.getEnhancementDeeply() ?: it }.unwrap()
-        }
         val typeCheckerForEnhancedTypes = NewKotlinTypeCheckerImpl(
             kotlinTypeRefiner = KotlinTypeRefiner.Default,
             kotlinTypePreparator = object : KotlinTypePreparator() {

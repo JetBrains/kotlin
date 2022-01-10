@@ -102,10 +102,10 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                 "should be subtype of ''{0}'', substituted type is ''{1}''",
                 RENDER_TYPE, RENDER_TYPE, NAME);
         MAP.put(NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER,
-                "Type mismatch: value of a nullable type {0} is used where non-nullable type is expected. " +
+                "Type parameter ''{0}'' has nullable upper bounds while non-nullable version is expected. " +
                 "This warning will become an error soon. " +
                 "See https://youtrack.jetbrains.com/issue/KT-36770 for details",
-                RENDER_TYPE
+                NAME
         );
         MAP.put(RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS,
                 "Unsafe use of a nullable receiver of type {0}", RENDER_TYPE);
@@ -113,6 +113,10 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(WRONG_NULLABILITY_FOR_JAVA_OVERRIDE,
                 "Override ''{0}'' has incorrect nullability in its signature comparing with overridden ''{1}''", COMPACT, COMPACT);
 
+        MAP.put(WRONG_TYPE_PARAMETER_NULLABILITY_FOR_JAVA_OVERRIDE,
+                "Type parameter ''{0}'' has nullable upper bound, so override has incorrect signature comparing with a base member with NotNull annotation. " +
+                "Please add a non-nullable upper bound (e.g. Any) to the type parameter. See https://kotlinlang.org/docs/generics.html#upper-bounds for more details",
+                NAME);
 
         MAP.put(ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR,
                 "An accessor will not be generated for ''{0}'', so the annotation will not be written to the class file", STRING);
