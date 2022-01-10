@@ -162,8 +162,8 @@ class CurrentModuleWithICDeserializer(
         get() = delegate.moduleFragment
     override val moduleDependencies: Collection<IrModuleDeserializer>
         get() = delegate.moduleDependencies
-    override val isCurrent: Boolean
-        get() = delegate.isCurrent
+    override val origin: IrModuleOrigin
+        get() = delegate.origin
 
     override fun fileDeserializers(): Collection<IrFileDeserializer> {
         return delegate.fileDeserializers()
