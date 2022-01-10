@@ -792,7 +792,7 @@ class ExpressionCodegen(
         return unitValue
     }
 
-    override fun <T> visitConst(expression: IrConst<T>, data: BlockInfo): PromisedValue {
+    override fun visitConst(expression: IrConst<*>, data: BlockInfo): PromisedValue {
         expression.markLineNumber(startOffset = true)
         when (val value = expression.value) {
             is Boolean -> {

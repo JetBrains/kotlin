@@ -17,9 +17,6 @@ import org.jetbrains.kotlin.backend.konan.ir.isUnconditional
 import org.jetbrains.kotlin.backend.konan.ir.isVirtualCall
 import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.backend.konan.lower.*
-import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_FILE_GLOBAL_INITIALIZER
-import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_FILE_STANDALONE_THREAD_LOCAL_INITIALIZER
-import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_FILE_THREAD_LOCAL_INITIALIZER
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
@@ -29,7 +26,10 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import java.util.*
 
 /*
@@ -310,7 +310,7 @@ internal object FileInitializersOptimization {
                 override fun visitDeclaration(declaration: IrDeclarationBase, data: BitSet): BitSet = TODO(declaration.render())
 
                 override fun visitTypeOperator(expression: IrTypeOperatorCall, data: BitSet) = expression.argument.accept(this, data)
-                override fun <T> visitConst(expression: IrConst<T>, data: BitSet) = data
+                override fun visitConst(expression: IrConst<*>, data: BitSet) = data
                 override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: BitSet) = data
 
                 override fun visitGetValue(expression: IrGetValue, data: BitSet) = data
