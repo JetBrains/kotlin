@@ -151,6 +151,8 @@ abstract class BasicIrModuleDeserializer(
 
         return fileDeserializer.symbolDeserializer.signatureDeserializer
     }
+
+    override val origin get() = IrModuleOrigin.DESERIALIZED
 }
 
 private class ModuleDeserializationState(val linker: KotlinIrLinker, val moduleDeserializer: BasicIrModuleDeserializer) {
