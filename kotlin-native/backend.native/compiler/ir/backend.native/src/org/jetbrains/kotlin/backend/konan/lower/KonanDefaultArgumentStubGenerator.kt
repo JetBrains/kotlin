@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 
 internal class KonanDefaultArgumentStubGenerator(override val context: Context)
-    : DefaultArgumentStubGenerator(context, skipInlineMethods = false)
+    : DefaultArgumentStubGenerator(context)
 {
     override fun IrBlockBodyBuilder.selectArgumentOrDefault(
             defaultFlag: IrExpression,
