@@ -65,7 +65,8 @@ internal class KtFirSimpleNameReference(
     }
 
     override fun getImportAlias(): KtImportAlias? {
-        TODO("Not yet implemented")
+        // TODO: Implement.
+        return null
     }
 
     override val resolver get() = KtFirReferenceResolver
