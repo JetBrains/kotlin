@@ -1012,7 +1012,7 @@ public class DefaultErrorMessages {
 
         MAP.put(ANNOTATION_ON_SUPERCLASS, "Annotations on superclass are meaningless");
 
-        MAP.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' are only allowed on top level or in objects");
+        MAP.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' are only allowed on top level, in named objects, or in companion objects");
         MAP.put(CONST_VAL_WITH_DELEGATE, "Const 'val' should not have a delegate");
         MAP.put(CONST_VAL_WITH_GETTER, "Const 'val' should not have a getter");
         MAP.put(TYPE_CANT_BE_USED_FOR_CONST_VAL, "Const ''val'' has type ''{0}''. Only primitives and String are allowed", RENDER_TYPE);
