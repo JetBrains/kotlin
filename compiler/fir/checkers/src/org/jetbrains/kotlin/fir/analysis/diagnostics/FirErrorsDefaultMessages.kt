@@ -890,10 +890,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(DEPRECATED_MODIFIER_PAIR, "Modifier ''{0}'' is deprecated in presence of ''{1}''", TO_STRING, TO_STRING)
         map.put(DEPRECATED_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is deprecated for ''{1}''", TO_STRING, STRING)
         map.put(REDUNDANT_MODIFIER_FOR_TARGET, "Modifier ''{0}'' is redundant for ''{1}''", TO_STRING, STRING)
-        map.put(NO_EXPLICIT_VISIBILITY_IN_API_MODE, "Visibility must be specified in explicit API mode");
-        map.put(NO_EXPLICIT_RETURN_TYPE_IN_API_MODE, "Return type must be specified in explicit API mode");
-        map.put(NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING, "Visibility must be specified in explicit API mode");
-        map.put(NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING, "Return type must be specified in explicit API mode");
+        map.put(NO_EXPLICIT_VISIBILITY_IN_API_MODE, "Visibility must be specified in explicit API mode")
+        map.put(NO_EXPLICIT_RETURN_TYPE_IN_API_MODE, "Return type must be specified in explicit API mode")
+        map.put(NO_EXPLICIT_VISIBILITY_IN_API_MODE_WARNING, "Visibility must be specified in explicit API mode")
+        map.put(NO_EXPLICIT_RETURN_TYPE_IN_API_MODE_WARNING, "Return type must be specified in explicit API mode")
 
         map.put(INCOMPATIBLE_MODIFIERS, "Modifier ''{0}'' is incompatible with ''{1}''", TO_STRING, TO_STRING)
         map.put(REDUNDANT_OPEN_IN_INTERFACE, "Modifier 'open' is redundant for abstract interface members")
@@ -1450,7 +1450,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER,
-            "It's forbidden using extension property type parameter in delegate"
+            "It''s forbidden using extension property type parameter ''{0}'' in delegate",
+            SYMBOL
         )
         map.put(INITIALIZER_TYPE_MISMATCH, "Initializer type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
         map.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility")

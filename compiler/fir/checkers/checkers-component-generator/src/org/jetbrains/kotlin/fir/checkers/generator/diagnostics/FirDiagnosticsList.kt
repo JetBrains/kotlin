@@ -927,7 +927,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER by deprecationError<KtProperty>(
             LanguageFeature.ForbidUsingExtensionPropertyTypeParameterInDelegate,
             PositioningStrategy.PROPERTY_DELEGATE
-        )
+        ) {
+            parameter<FirTypeParameterSymbol>("usedTypeParameter")
+        }
         val INITIALIZER_TYPE_MISMATCH by error<KtProperty>(PositioningStrategy.PROPERTY_INITIALIZER) {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")

@@ -2188,11 +2188,13 @@ internal class WrongSetterParameterTypeImpl(
 ) : KtFirDiagnostic.WrongSetterParameterType(), KtAbstractFirDiagnostic<KtTypeReference>
 
 internal class DelegateUsesExtensionPropertyTypeParameterErrorImpl(
+    override val usedTypeParameter: KtTypeParameterSymbol,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.DelegateUsesExtensionPropertyTypeParameterError(), KtAbstractFirDiagnostic<KtProperty>
 
 internal class DelegateUsesExtensionPropertyTypeParameterWarningImpl(
+    override val usedTypeParameter: KtTypeParameterSymbol,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.DelegateUsesExtensionPropertyTypeParameterWarning(), KtAbstractFirDiagnostic<KtProperty>

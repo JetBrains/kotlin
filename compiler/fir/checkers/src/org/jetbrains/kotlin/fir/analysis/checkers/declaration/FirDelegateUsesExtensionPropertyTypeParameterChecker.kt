@@ -23,31 +23,29 @@ object FirDelegateUsesExtensionPropertyTypeParameterChecker : FirPropertyChecker
         val delegate = declaration.delegate.safeAs<FirFunctionCall>() ?: return
         val parameters = declaration.typeParameters.mapTo(hashSetOf()) { it.symbol }
 
-        val shouldReportError = delegate.typeRef.coneType.containsTypeParameterFrom(parameters, delegate, context, reporter)
+        val usedTypeParameterSymbol = delegate.typeRef.coneType.findUsedTypeParameterSymbol(parameters, delegate, context, reporter)
+            ?: return
 
-        if (shouldReportError) {
-            reporter.reportOn(declaration.source, FirErrors.DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER, context)
-        }
+        reporter.reportOn(declaration.source, FirErrors.DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER, usedTypeParameterSymbol, context)
     }
 
-    private fun ConeKotlinType.containsTypeParameterFrom(
+    private fun ConeKotlinType.findUsedTypeParameterSymbol(
         parameters: HashSet<FirTypeParameterSymbol>,
         delegate: FirFunctionCall,
         context: CheckerContext,
         reporter: DiagnosticReporter,
-    ): Boolean {
+    ): FirTypeParameterSymbol? {
         for (it in typeArguments) {
             val theType = it.type ?: continue
-            val symbol = theType.toSymbol(context.session)
+            val symbol = theType.toSymbol(context.session) as? FirTypeParameterSymbol
 
-            if (
-                symbol in parameters ||
-                theType.containsTypeParameterFrom(parameters, delegate, context, reporter)
-            ) {
-                return true
+            if (symbol in parameters) return symbol
+            val usedTypeParameterSymbol = theType.findUsedTypeParameterSymbol(parameters, delegate, context, reporter)
+            if (usedTypeParameterSymbol != null) {
+                return usedTypeParameterSymbol
             }
         }
 
-        return false
+        return null
     }
 }

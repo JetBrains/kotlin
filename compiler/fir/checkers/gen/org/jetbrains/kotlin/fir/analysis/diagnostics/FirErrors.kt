@@ -508,7 +508,7 @@ object FirErrors {
     val CONST_VAL_WITHOUT_INITIALIZER by error0<KtProperty>(SourceElementPositioningStrategies.CONST_MODIFIER)
     val CONST_VAL_WITH_NON_CONST_INITIALIZER by error0<KtExpression>()
     val WRONG_SETTER_PARAMETER_TYPE by error2<KtTypeReference, ConeKotlinType, ConeKotlinType>()
-    val DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER by deprecationError0<KtProperty>(ForbidUsingExtensionPropertyTypeParameterInDelegate, SourceElementPositioningStrategies.PROPERTY_DELEGATE)
+    val DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER by deprecationError1<KtProperty, FirTypeParameterSymbol>(ForbidUsingExtensionPropertyTypeParameterInDelegate, SourceElementPositioningStrategies.PROPERTY_DELEGATE)
     val INITIALIZER_TYPE_MISMATCH by error3<KtProperty, ConeKotlinType, ConeKotlinType, Boolean>(SourceElementPositioningStrategies.PROPERTY_INITIALIZER)
     val GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY by error0<KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
     val SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY by error0<KtModifierListOwner>(SourceElementPositioningStrategies.VISIBILITY_MODIFIER)
