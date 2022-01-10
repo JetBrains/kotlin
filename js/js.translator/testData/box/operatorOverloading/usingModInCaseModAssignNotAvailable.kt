@@ -1,4 +1,5 @@
-// !LANGUAGE: -ProhibitOperatorMod
+// LANGUAGE: -ProhibitOperatorMod
+// TARGET_FRONTEND: ClassicFrontend
 // EXPECTED_REACHABLE_NODES: 1284
 package foo
 
