@@ -41,6 +41,7 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyToWithoutSuperTypes
+import org.jetbrains.kotlin.backend.common.lower.DefaultArgumentsHelper
 import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
@@ -234,6 +235,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     override val internalPackageFqn: FqName = RuntimeNames.kotlinNativeInternalPackageName
 
     override val optimizeLoopsOverUnsignedArrays = true
+
+    override val defaultArgumentsHelper = DefaultArgumentsHelper(skipInlineMethods = false)
 
     val phaseConfig = config.phaseConfig
 
