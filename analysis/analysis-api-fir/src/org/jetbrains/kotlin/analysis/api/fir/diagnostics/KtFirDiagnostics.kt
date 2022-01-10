@@ -307,6 +307,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = AbstractSuperCall::class
     }
 
+    abstract class AbstractSuperCallWarning : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = AbstractSuperCallWarning::class
+    }
+
     abstract class InstanceAccessBeforeSuperCall : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = InstanceAccessBeforeSuperCall::class
         abstract val target: String

@@ -143,6 +143,11 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
+    public void abstractFakeOverrideSuperCall(@NotNull BindingTrace trace) {
+        trace.report(ABSTRACT_SUPER_CALL_WARNING.on(reference));
+    }
+
+    @Override
     public void nestedClassAccessViaInstanceReference(
             @NotNull BindingTrace trace,
             @NotNull ClassDescriptor classDescriptor,

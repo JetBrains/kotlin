@@ -208,6 +208,12 @@ object AbstractSuperCall : KotlinCallDiagnostic(RUNTIME_ERROR) {
     }
 }
 
+object AbstractFakeOverrideSuperCall : KotlinCallDiagnostic(RUNTIME_ERROR) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCall(this)
+    }
+}
+
 class SuperAsExtensionReceiver(val receiver: SimpleKotlinCallArgument) : KotlinCallDiagnostic(RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCallReceiver(receiver, this)

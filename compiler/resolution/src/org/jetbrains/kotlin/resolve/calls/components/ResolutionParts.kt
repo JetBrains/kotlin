@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.ContextReceiverAmbiguity
 import org.jetbrains.kotlin.resolve.calls.tower.InfixCallNoInfixModifier
 import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorModifier
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
+import org.jetbrains.kotlin.resolve.descriptorUtil.isInsideInterface
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
@@ -809,8 +810,17 @@ internal object CheckSuperExpressionCallPart : ResolutionPart() {
         val candidateDescriptor = resolvedCall.candidateDescriptor
 
         if (callComponents.statelessCallbacks.isSuperExpression(resolvedCall.dispatchReceiverArgument)) {
-            if (candidateDescriptor is MemberDescriptor && candidateDescriptor.modality == Modality.ABSTRACT) {
-                addDiagnostic(AbstractSuperCall)
+            if (candidateDescriptor is CallableMemberDescriptor) {
+                if (candidateDescriptor.modality == Modality.ABSTRACT) {
+                    addDiagnostic(AbstractSuperCall)
+                }
+                if (candidateDescriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
+                    candidateDescriptor.overriddenDescriptors.size > 1
+                ) {
+                    if (candidateDescriptor.overriddenDescriptors.firstOrNull { !it.isInsideInterface }?.modality == Modality.ABSTRACT) {
+                        addDiagnostic(AbstractFakeOverrideSuperCall)
+                    }
+                }
             }
         }
 

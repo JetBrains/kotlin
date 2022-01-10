@@ -148,6 +148,10 @@ public interface TracingStrategy {
 
     void abstractSuperCall(@NotNull BindingTrace trace);
 
+    default void abstractFakeOverrideSuperCall(@NotNull BindingTrace trace) {
+        abstractSuperCall(trace);
+    }
+
     void nestedClassAccessViaInstanceReference(
             @NotNull BindingTrace trace,
             @NotNull ClassDescriptor classDescriptor,

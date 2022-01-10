@@ -77,6 +77,13 @@ class DiagnosticReporterByTrackingStrategy(
             )
             InstantiationOfAbstractClass::class.java -> tracingStrategy.instantiationOfAbstractClass(trace)
             AbstractSuperCall::class.java -> tracingStrategy.abstractSuperCall(trace)
+            AbstractFakeOverrideSuperCall::class.java -> {
+                if (context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidSuperDelegationToAbstractFakeOverride)) {
+                    tracingStrategy.abstractSuperCall(trace)
+                } else {
+                    tracingStrategy.abstractFakeOverrideSuperCall(trace)
+                }
+            }
             NonApplicableCallForBuilderInferenceDiagnostic::class.java -> {
                 val reportOn = (diagnostic as NonApplicableCallForBuilderInferenceDiagnostic).kotlinCall
                 trace.reportDiagnosticOnce(NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE.on(reportOn.psiKotlinCall.psiCall.callElement))

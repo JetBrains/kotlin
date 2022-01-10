@@ -18588,6 +18588,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("abstractFakeOverrideSuperCall.kt")
+            public void testAbstractFakeOverrideSuperCall() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/java8Overrides/abstractFakeOverrideSuperCall.kt");
+            }
+
+            @Test
+            @TestMetadata("abstractFakeOverrideSuperCallForbidden.kt")
+            public void testAbstractFakeOverrideSuperCallForbidden() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/java8Overrides/abstractFakeOverrideSuperCallForbidden.kt");
+            }
+
+            @Test
             @TestMetadata("abstractVsAbstract.kt")
             public void testAbstractVsAbstract() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/java8Overrides/abstractVsAbstract.kt");

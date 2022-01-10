@@ -933,6 +933,7 @@ public interface Errors {
     DiagnosticFactory0<KtSuperExpression> SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtSuperExpression> AMBIGUOUS_SUPER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtExpression> ABSTRACT_SUPER_CALL = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtExpression> ABSTRACT_SUPER_CALL_WARNING = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtTypeReference> NOT_A_SUPERTYPE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory1<KtTypeReference, KotlinType> QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE = DiagnosticFactory1.create(ERROR);
