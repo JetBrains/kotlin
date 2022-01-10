@@ -68,7 +68,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     fun testLanguageVersion(gradleVersion: GradleVersion) {
         project("languageVersion", gradleVersion) {
             buildAndFail("build") {
-                assertOutputContains("Suspend function type is not allowed as supertypes")
+                assertOutputContains("Suspend function type is allowed as a supertype only since version 1.6")
             }
         }
     }
