@@ -75,7 +75,7 @@ class CheckIrElementVisitor(
         }
     }
 
-    override fun <T> visitConst(expression: IrConst<T>) {
+    override fun visitConst(expression: IrConst<*>) {
         super.visitConst(expression)
 
         @Suppress("UNUSED_VARIABLE")

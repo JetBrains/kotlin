@@ -1172,7 +1172,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
     }
 
-    override fun <T> visitConst(expression: IrConst<T>, data: IrDeclaration?) {
+    override fun visitConst(expression: IrConst<*>, data: IrDeclaration?) {
         val kind = expression.kind
 
         val (prefix, postfix) = when (kind) {

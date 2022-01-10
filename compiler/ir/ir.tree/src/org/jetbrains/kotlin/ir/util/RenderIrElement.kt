@@ -560,7 +560,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
     override fun visitExpression(expression: IrExpression, data: Nothing?): String =
         "? ${expression::class.java.simpleName} type=${expression.type.render()}"
 
-    override fun <T> visitConst(expression: IrConst<T>, data: Nothing?): String =
+    override fun visitConst(expression: IrConst<*>, data: Nothing?): String =
         "CONST ${expression.kind} type=${expression.type.render()} value=${expression.value?.escapeIfRequired()}"
 
     private fun Any.escapeIfRequired() =

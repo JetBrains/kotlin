@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.ir.interpreter.accessesTopLevelOrObjectField
 import org.jetbrains.kotlin.ir.interpreter.fqName
 import org.jetbrains.kotlin.ir.interpreter.isAccessToObject
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrCompileTimeChecker(
@@ -84,7 +85,7 @@ class IrCompileTimeChecker(
         return body.kind == IrSyntheticBodyKind.ENUM_VALUES || body.kind == IrSyntheticBodyKind.ENUM_VALUEOF
     }
 
-    override fun <T> visitConst(expression: IrConst<T>, data: Nothing?): Boolean {
+    override fun visitConst(expression: IrConst<*>, data: Nothing?): Boolean {
         if (expression.type.getUnsignedType() != null) {
             val constructor = expression.type.classOrNull?.owner?.constructors?.singleOrNull() ?: return false
             return mode.canEvaluateFunction(constructor)
