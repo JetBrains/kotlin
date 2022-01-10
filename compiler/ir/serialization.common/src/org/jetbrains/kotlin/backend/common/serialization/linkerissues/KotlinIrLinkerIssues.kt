@@ -19,21 +19,37 @@ import org.jetbrains.kotlin.utils.ResolvedDependencyVersion
 import kotlin.Comparator
 
 abstract class KotlinIrLinkerIssue {
-    protected abstract val message: String
+    protected abstract val errorMessage: String
 
     fun raiseIssue(messageLogger: IrMessageLogger): KotlinIrLinkerInternalException {
-        messageLogger.report(IrMessageLogger.Severity.ERROR, message, null)
+        messageLogger.report(IrMessageLogger.Severity.ERROR, errorMessage, null)
         throw KotlinIrLinkerInternalException()
     }
 }
 
 class SignatureIdNotFoundInModuleWithDependencies(
-    idSignature: IdSignature,
-    problemModuleDeserializer: IrModuleDeserializer,
-    allModuleDeserializers: Collection<IrModuleDeserializer>,
-    userVisibleIrModulesSupport: UserVisibleIrModulesSupport
+    private val idSignature: IdSignature,
+    private val problemModuleDeserializer: IrModuleDeserializer,
+    private val allModuleDeserializers: Collection<IrModuleDeserializer>,
+    private val userVisibleIrModulesSupport: UserVisibleIrModulesSupport
 ) : KotlinIrLinkerIssue() {
-    override val message = buildString {
+    override val errorMessage = try {
+        computeErrorMessage()
+    } catch (e: Throwable) {
+        // Don't suppress the real cause if computation of error message failed.
+        throw RuntimeException(
+            buildString {
+                appendLine("Failed to compute the detailed error message. See the root cause exception.")
+                appendLine()
+                append("Shortly: The required symbol ${idSignature.render()} is missing in the module or module dependencies.")
+                append(" This could happen if the required dependency is missing in the project.")
+                append(" Or if there is a dependency that has a different version (without the required symbol) in the project")
+                append(" than the version (with the required symbol) that the module was initially compiled with.")
+            }
+        )
+    }
+
+    private fun computeErrorMessage() = buildString {
         val allModules = userVisibleIrModulesSupport.getUserVisibleModules(allModuleDeserializers)
 
         val problemModuleId = userVisibleIrModulesSupport.getProblemModuleId(problemModuleDeserializer, allModules)
@@ -74,18 +90,25 @@ class SignatureIdNotFoundInModuleWithDependencies(
 }
 
 class NoDeserializerForModule(moduleName: Name, idSignature: IdSignature?) : KotlinIrLinkerIssue() {
-    override val message = buildString {
+    override val errorMessage = buildString {
         append("Could not load module ${moduleName.asString()}")
         if (idSignature != null) append(" in an attempt to find deserializer for symbol ${idSignature.render()}.")
     }
 }
 
 class SymbolTypeMismatch(
-    cause: IrSymbolTypeMismatchException,
-    allModuleDeserializers: Collection<IrModuleDeserializer>,
-    userVisibleIrModulesSupport: UserVisibleIrModulesSupport
+    private val cause: IrSymbolTypeMismatchException,
+    private val allModuleDeserializers: Collection<IrModuleDeserializer>,
+    private val userVisibleIrModulesSupport: UserVisibleIrModulesSupport
 ) : KotlinIrLinkerIssue() {
-    override val message: String = buildString {
+    override val errorMessage = try {
+        computeErrorMessage()
+    } catch (e: Throwable) {
+        // Don't suppress the real cause if computation of error message failed.
+        throw if (e === cause) e else e.apply { addSuppressed(cause) }
+    }
+
+    private fun computeErrorMessage() = buildString {
         val allModules = userVisibleIrModulesSupport.getUserVisibleModules(allModuleDeserializers)
 
         val idSignature = cause.actual.signature
