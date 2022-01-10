@@ -1,0 +1,53 @@
+package
+
+public fun foo(/*0*/ x: Inv<kotlin.Int>): kotlin.Unit
+@kotlin.jvm.JvmName(name = "foo1") public fun foo(/*0*/ x: Inv<kotlin.String>): kotlin.Unit
+public fun foo0(/*0*/ x: kotlin.String, /*1*/ y: kotlin.Float, /*2*/ z: kotlin.Int = ...): kotlin.Unit
+public fun foo0(/*0*/ x: kotlin.String, /*1*/ y: kotlin.Float, /*2*/ z: kotlin.String = ...): kotlin.Unit
+public fun foo00(/*0*/ x: kotlin.CharSequence, /*1*/ y: kotlin.Float): kotlin.Unit
+public fun foo00(/*0*/ x: kotlin.String, /*1*/ y: kotlin.Number): kotlin.Unit
+public fun foo000(/*0*/ x: kotlin.CharSequence, /*1*/ y: kotlin.Float, /*2*/ z: kotlin.Int): kotlin.Unit
+public fun foo000(/*0*/ x: kotlin.String, /*1*/ y: kotlin.Number, /*2*/ z: kotlin.String): kotlin.Unit
+public fun foo0000(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Float, /*2*/ z: kotlin.Int): kotlin.Unit
+public fun foo0000(/*0*/ x: kotlin.String, /*1*/ y: kotlin.Number, /*2*/ z: kotlin.String): kotlin.Unit
+public fun foo0001(/*0*/ x: kotlin.String, /*1*/ y: kotlin.Float, /*2*/ z: kotlin.Int): kotlin.Unit
+public fun foo0001(/*0*/ x: kotlin.collections.List<kotlin.Int>, /*1*/ y: kotlin.Number, /*2*/ z: kotlin.String): kotlin.Unit
+public fun foo0002(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Number, /*2*/ z: kotlin.String): kotlin.Unit
+public fun foo0002(/*0*/ x: kotlin.String, /*1*/ y: kotlin.Float, /*2*/ z: kotlin.Int): kotlin.Unit
+public fun foo11(/*0*/ x: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Int, kotlin.Int>>): kotlin.Unit
+@kotlin.jvm.JvmName(name = "foo112") public fun foo11(/*0*/ x: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.Int, kotlin.String>>): kotlin.Unit
+@kotlin.jvm.JvmName(name = "foo111") public fun foo11(/*0*/ x: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.String, kotlin.Int>>): kotlin.Unit
+public fun main(): kotlin.Unit
+public fun test(): kotlin.Unit
+public fun </*0*/ L, /*1*/ K, /*2*/ V> twoBuilderLambdas(/*0*/ @kotlin.BuilderInference block: Foo<L>.() -> kotlin.Unit, /*1*/ @kotlin.BuilderInference block2: Foo2<K, V>.() -> kotlin.Unit): kotlin.Unit
+public fun kotlin.Int.bar(): kotlin.Unit
+@kotlin.jvm.JvmName(name = "bar1") public fun kotlin.String.bar(): kotlin.Unit
+public fun kotlin.Int.foo0003(/*0*/ y: kotlin.Number, /*1*/ z: kotlin.String): kotlin.Unit
+public fun kotlin.String.foo0003(/*0*/ y: kotlin.Float, /*1*/ z: kotlin.Int): kotlin.Unit
+public fun Inv<kotlin.Int>.foo2(): kotlin.Unit
+@kotlin.jvm.JvmName(name = "foo21") public fun Inv<kotlin.String>.foo2(): kotlin.Unit
+
+public interface Foo</*0*/ K> {
+    public abstract fun add(/*0*/ x: K): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun get(): K
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Foo2</*0*/ K, /*1*/ V> {
+    public abstract fun entries(): kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun get(): kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>>
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun put(/*0*/ x: K, /*1*/ y: V): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv</*0*/ K> {
+    public constructor Inv</*0*/ K>(/*0*/ x: K)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

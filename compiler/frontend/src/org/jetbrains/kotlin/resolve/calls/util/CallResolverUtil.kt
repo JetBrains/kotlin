@@ -19,26 +19,34 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
+import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
+import org.jetbrains.kotlin.resolve.calls.inference.ComposedSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.components.EmptySubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.EXPECTED_TYPE_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.getNestedTypeVariables
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
+import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isParameterOfAnnotation
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
 import org.jetbrains.kotlin.resolve.scopes.collectSyntheticConstructors
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
+import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.util.buildNotFixedVariablesToPossibleResultType
 import org.jetbrains.kotlin.utils.SmartList
 
 enum class ResolveArgumentsMode {
@@ -328,3 +336,43 @@ internal fun PsiElement.reportOnElement() =
         ?.takeIf { isImplicit }
         ?.let { getStrictParentOfType<KtSecondaryConstructor>()!! }
         ?: this
+
+internal fun List<KotlinCallArgument>.replaceTypes(
+    context: BasicCallResolutionContext,
+    resolutionCallbacks: KotlinResolutionCallbacks,
+    replace: (Int, UnwrappedType) -> UnwrappedType?,
+): List<KotlinCallArgument> = mapIndexed { i, argument ->
+    if (argument !is SimpleKotlinCallArgument) return@mapIndexed argument
+
+    val psiExpression = argument.psiExpression ?: return@mapIndexed argument
+    val argumentSubstitutor = if (argument is SubKotlinCallArgument) {
+        val notFixedVariablesSubstitutor =
+            argument.callResult.constraintSystem.buildNotFixedVariablesToPossibleResultType(resolutionCallbacks) as NewTypeSubstitutor
+        val fixedVariablesSubstitutor =
+            argument.callResult.constraintSystem.getBuilder().buildCurrentSubstitutor() as NewTypeSubstitutor
+
+        ComposedSubstitutor(notFixedVariablesSubstitutor, fixedVariablesSubstitutor)
+    } else EmptySubstitutor
+
+    val newType = replace(i, argumentSubstitutor.safeSubstitute(argument.receiver.receiverValue.type.unwrap()))
+        ?: return@mapIndexed argument
+
+    ExpressionKotlinCallArgumentImpl(
+        argument.psiCallArgument.valueArgument,
+        argument.psiCallArgument.dataFlowInfoBeforeThisArgument,
+        argument.psiCallArgument.dataFlowInfoAfterThisArgument,
+        ReceiverValueWithSmartCastInfo(
+            ExpressionReceiver.create(psiExpression, newType, context.trace.bindingContext),
+            typesFromSmartCasts = emptySet(),
+            isStable = true
+        )
+    )
+}
+
+internal fun PSIKotlinCall.replaceArguments(
+    newArguments: List<KotlinCallArgument>,
+    newReceiverArgument: ReceiverExpressionKotlinCallArgument? = null,
+): PSIKotlinCall = PSIKotlinCallImpl(
+    callKind, psiCall, tracingStrategy, newReceiverArgument, dispatchReceiverForInvokeExtension, name, typeArguments, newArguments,
+    externalArgument, startingDataFlowInfo, resultDataFlowInfo, dataFlowInfoForArguments, isForImplicitInvoke
+)
