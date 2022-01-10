@@ -22,47 +22,38 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.isExternalOrInheritedFromExternal
 import org.jetbrains.kotlin.name.Name
-import java.util.concurrent.ConcurrentHashMap
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class DefaultArgumentsHelper(
-    val skipInlineMethods: Boolean = true,
-    val skipExternalMethods: Boolean = false,
-    val forceSetOverrideSymbols: Boolean = true
+    private val skipInlineMethods: Boolean = true,
+    private val skipExternalMethods: Boolean = false,
+    private val forceSetOverrideSymbols: Boolean = true
 ) {
-    private val baseFunctionCache = ConcurrentHashMap<IrFunction, IrFunction>()
+    private val storageManager = LockBasedStorageManager("default-arguments-helper")
 
-    fun findBaseFunctionWithDefaultArguments(irFunction: IrFunction): IrFunction? {
-        val visited = HashSet<IrFunction>()
+    val findBaseFunctionWithDefaultArguments =
+        storageManager.createMemoizedFunctionWithNullableValues(::findBaseFunctionInternal)
 
-        fun dfsImpl(irFunction: IrFunction): IrFunction? {
-            baseFunctionCache[irFunction]?.let { return it }
+    private fun findBaseFunctionInternal(irFunction: IrFunction): IrFunction? {
+        if (skipInlineMethods && irFunction.isInline) return null
+        if (skipExternalMethods && irFunction.isExternalOrInheritedFromExternal()) return null
 
-            visited += irFunction
-            if (irFunction.isInline && skipInlineMethods) return null
-            if (skipExternalMethods && irFunction.isExternalOrInheritedFromExternal()) return null
-
-            if (irFunction is IrSimpleFunction) {
-                for (overriddenSymbol in irFunction.overriddenSymbols) {
-                    val overridden = overriddenSymbol.owner
-                    if (overridden !in visited) {
-                        val functionWithDefaultArguments = dfsImpl(overridden)
-                        if (functionWithDefaultArguments != null) {
-                            baseFunctionCache[irFunction] = functionWithDefaultArguments
-                            return functionWithDefaultArguments
-                        }
-                    }
+        if (irFunction is IrSimpleFunction) {
+            for (overriddenSymbol in irFunction.overriddenSymbols) {
+                val overridden = overriddenSymbol.owner
+                // 'findBaseFunctionWithDefaultArguments' is memoized,
+                // so repeated call on the same override would just return previously computed result.
+                findBaseFunctionWithDefaultArguments(overridden)?.let {
+                    return it
                 }
             }
-
-            if (irFunction.valueParameters.any { it.defaultValue != null }) {
-                baseFunctionCache[irFunction] = irFunction
-                return irFunction
-            }
-
-            return null
         }
 
-        return dfsImpl(irFunction)
+        if (irFunction.valueParameters.any { it.defaultValue != null }) {
+            return irFunction
+        }
+
+        return null
     }
 
     fun generateDefaultsFunction(
