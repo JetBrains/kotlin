@@ -99,6 +99,23 @@ private class LlvmPipelineConfiguration(context: Context) {
         DEFAULT(1),
         AGGRESSIVE(2)
     }
+
+    companion object {
+        @Volatile
+        @JvmStatic
+        private var isInitialized: Boolean = false
+
+        @Synchronized
+        @JvmStatic
+        fun initLLVMTargets() {
+            if (!isInitialized) {
+                memScoped {
+                    LLVMKotlinInitializeTargets()
+                }
+                isInitialized = true
+            }
+        }
+    }
 }
 
 internal fun runLlvmOptimizationPipeline(context: Context) {
@@ -115,9 +132,10 @@ internal fun runLlvmOptimizationPipeline(context: Context) {
             inline_threshold: ${config.customInlineThreshold ?: "default"}
         """.trimIndent()
     }
-    memScoped {
-        LLVMKotlinInitializeTargets()
 
+    LlvmPipelineConfiguration.initLLVMTargets()
+
+    memScoped {
         initializeLlvmGlobalPassRegistry()
         val passBuilder = LLVMPassManagerBuilderCreate()
         val modulePasses = LLVMCreatePassManager()
