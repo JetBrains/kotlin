@@ -26,6 +26,8 @@ The new MM also brings another set of changes:
   As a workaround, properties that must be initialized at the program start can be marked with `@EagerInitialization`. Before using, consult the [`@EagerInitialization`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.native/-eager-initialization/) documentation.
 * `by lazy {}` properties support thread-safety modes and do not handle unbounded recursion. This is in line with Kotlin/JVM.
 * Exceptions that escape `operation` in `Worker.executeAfter` are processed like in other parts of the runtime: by trying to execute a user-defined unhandled exception hook or terminating the program if the hook was not found or failed with an exception itself.
+* In the new MM, freezing is deprecated and will be removed in one of the future releases.
+  Don't use freezing if you don't need your code to work with the old MM.
 
 ## Enable the new MM
 
