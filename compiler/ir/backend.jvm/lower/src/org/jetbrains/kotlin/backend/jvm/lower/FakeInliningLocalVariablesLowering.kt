@@ -34,13 +34,21 @@ internal class FakeInliningLocalVariablesLowering(val context: JvmBackendContext
         irFile.accept(this, null)
     }
 
-    override fun visitFunction(declaration: IrFunction, data: IrDeclaration?) {
-        super.visitFunction(declaration, data)
+    private fun visitFunction(declaration: IrFunction, data: IrDeclaration?) {
+        visitElement(declaration, data)
         if (declaration.isInline && !declaration.origin.isSynthetic && declaration.body != null && !declaration.isInlineOnly()) {
             val currentFunctionName = context.methodSignatureMapper.mapFunctionName(declaration)
             val localName = "${JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION}$currentFunctionName"
             declaration.addFakeLocalVariable(localName)
         }
+    }
+
+    override fun visitSimpleFunction(declaration: IrSimpleFunction, data: IrDeclaration?) {
+        visitFunction(declaration, data)
+    }
+
+    override fun visitConstructor(declaration: IrConstructor, data: IrDeclaration?) {
+        visitFunction(declaration, data)
     }
 
     override fun visitInlineLambda(argument: IrFunctionReference, callee: IrFunction, parameter: IrValueParameter, scope: IrDeclaration) {
