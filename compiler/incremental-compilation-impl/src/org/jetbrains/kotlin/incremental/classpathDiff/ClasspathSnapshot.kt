@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
-import org.jetbrains.kotlin.incremental.SerializedJavaClass
 import org.jetbrains.kotlin.incremental.md5
 import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.kotlin.name.ClassId
@@ -72,10 +71,7 @@ class KotlinClassSnapshot(
 }
 
 /** [ClassSnapshot] of a Java class. */
-sealed class JavaClassSnapshot : ClassSnapshot()
-
-/** [JavaClassSnapshot] of a typical Java class. */
-class RegularJavaClassSnapshot(
+class JavaClassSnapshot(
 
     /** [ClassId] of the class. It is part of the class's ABI ([classAbiExcludingMembers]). */
     val classId: ClassId,
@@ -92,7 +88,7 @@ class RegularJavaClassSnapshot(
     /** [AbiSnapshot]s of the class's methods. */
     val methodsAbi: List<AbiSnapshot>
 
-) : JavaClassSnapshot() {
+) : ClassSnapshot() {
 
     val className by lazy {
         JvmClassName.byClassId(classId).also {
@@ -123,9 +119,6 @@ class AbiSnapshotForTests(
 
 ) : AbiSnapshot(name, abiHash)
 
-/** [JavaClassSnapshot] of a typical Java class which uses protos internally. */
-class ProtoBasedJavaClassSnapshot(val serializedJavaClass: SerializedJavaClass) : JavaClassSnapshot()
-
 /**
  * [ClassSnapshot] of an inaccessible class.
  *
@@ -133,10 +126,3 @@ class ProtoBasedJavaClassSnapshot(val serializedJavaClass: SerializedJavaClass) 
  * will not require recompilation of other source files.
  */
 object InaccessibleClassSnapshot : ClassSnapshot()
-
-/**
- * [JavaClassSnapshot] of a Java class where a proper snapshot can't be created for some reason, so we use the hash of the class contents as
- * the snapshot instead, so that at least it's still correct when used as an input of the `KotlinCompile` task (when the class contents have
- * changed, this snapshot will also change).
- */
-class ContentHashJavaClassSnapshot(val contentHash: Long) : JavaClassSnapshot()

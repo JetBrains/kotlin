@@ -164,11 +164,11 @@ abstract class ClasspathSnapshotTestCommon {
 
         fun ClassFile.readBytes() = asFile().readBytes()
 
-        fun ClassFile.snapshot(protoBased: Boolean? = null): ClassSnapshot = listOf(this).snapshot(protoBased).single()
+        fun ClassFile.snapshot(): ClassSnapshot = listOf(this).snapshot().single()
 
-        fun List<ClassFile>.snapshot(protoBased: Boolean? = null): List<ClassSnapshot> {
+        fun List<ClassFile>.snapshot(): List<ClassSnapshot> {
             val classFilesWithContents = this.map { ClassFileWithContents(it, it.readBytes()) }
-            return ClassSnapshotter.snapshot(classFilesWithContents, protoBased)
+            return ClassSnapshotter.snapshot(classFilesWithContents)
         }
     }
 }

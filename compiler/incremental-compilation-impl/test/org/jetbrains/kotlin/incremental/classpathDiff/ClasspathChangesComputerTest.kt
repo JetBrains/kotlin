@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommo
 import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 import java.io.File
 import kotlin.test.fail
 
@@ -185,18 +183,11 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
     }
 }
 
-@RunWith(Parameterized::class)
-class JavaOnlyClasspathChangesComputerTest(private val protoBased: Boolean) : ClasspathChangesComputerTest() {
-
-    companion object {
-        @Parameterized.Parameters(name = "protoBased={0}")
-        @JvmStatic
-        fun parameters() = listOf(true, false)
-    }
+class JavaOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
 
     @Test
     override fun testAbiVersusNonAbiChanges() {
-        val changes = computeClasspathChanges(File(testDataDir, "testAbiVersusNonAbiChanges/src/java"), tmpDir, protoBased)
+        val changes = computeClasspathChanges(File(testDataDir, "testAbiVersusNonAbiChanges/src/java"), tmpDir)
         Changes(
             lookupSymbols = setOf(
                 LookupSymbol(name = "publicFieldChangedType", scope = "com.example.SomeClass"),
@@ -209,7 +200,7 @@ class JavaOnlyClasspathChangesComputerTest(private val protoBased: Boolean) : Cl
 
     @Test
     override fun testModifiedAddedRemovedElements() {
-        val changes = computeClasspathChanges(File(testDataDir, "testModifiedAddedRemovedElements/src/java"), tmpDir, protoBased)
+        val changes = computeClasspathChanges(File(testDataDir, "testModifiedAddedRemovedElements/src/java"), tmpDir)
         Changes(
             lookupSymbols = setOf(
                 // ModifiedClassUnchangedMembers
@@ -241,7 +232,7 @@ class JavaOnlyClasspathChangesComputerTest(private val protoBased: Boolean) : Cl
 
     @Test
     override fun testImpactAnalysis() {
-        val changes = computeClasspathChanges(File(testDataDir, "testImpactAnalysis_JavaOnly/src"), tmpDir, protoBased)
+        val changes = computeClasspathChanges(File(testDataDir, "testImpactAnalysis_JavaOnly/src"), tmpDir)
         Changes(
             lookupSymbols = setOf(
                 LookupSymbol(name = "changedField", scope = "com.example.ChangedSuperClass"),
@@ -305,20 +296,20 @@ class KotlinAndJavaClasspathChangesComputerTest : ClasspathSnapshotTestCommon() 
     }
 }
 
-private fun computeClasspathChanges(classpathSourceDir: File, tmpDir: TemporaryFolder, protoBased: Boolean = false): Changes {
-    val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir, protoBased)
-    val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir, protoBased)
+private fun computeClasspathChanges(classpathSourceDir: File, tmpDir: TemporaryFolder): Changes {
+    val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir)
+    val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir)
     return computeClasspathChanges(currentSnapshot, previousSnapshot)
 }
 
-private fun snapshotClasspath(classpathSourceDir: File, tmpDir: TemporaryFolder, protoBased: Boolean): ClasspathSnapshot {
+private fun snapshotClasspath(classpathSourceDir: File, tmpDir: TemporaryFolder): ClasspathSnapshot {
     val classpath = mutableListOf<File>()
     val classpathEntrySnapshots = classpathSourceDir.listFiles()!!.sortedBy { it.name }.map { classpathEntrySourceDir ->
         val classFiles = compileAll(classpathEntrySourceDir, classpath, tmpDir)
         classpath.addAll(listOfNotNull(classFiles.firstOrNull()?.classRoot))
 
         val relativePaths = classFiles.map { it.unixStyleRelativePath }
-        val classSnapshots = classFiles.snapshot(protoBased).map { it.withHash }
+        val classSnapshots = classFiles.snapshot().map { it.withHash }
         ClasspathEntrySnapshot(
             classSnapshots = relativePaths.zip(classSnapshots).toMap(LinkedHashMap())
         )

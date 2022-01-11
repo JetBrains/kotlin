@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import com.intellij.util.io.DataExternalizer
-import org.jetbrains.kotlin.incremental.JavaClassProtoMapValueExternalizer
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -166,27 +165,6 @@ object PackageMemberExternalizer : DataExternalizer<PackageMember> {
 object JavaClassSnapshotExternalizer : DataExternalizer<JavaClassSnapshot> {
 
     override fun save(output: DataOutput, snapshot: JavaClassSnapshot) {
-        output.writeString(snapshot.javaClass.name)
-        when (snapshot) {
-            is RegularJavaClassSnapshot -> RegularJavaClassSnapshotExternalizer.save(output, snapshot)
-            is ProtoBasedJavaClassSnapshot -> ProtoBasedJavaClassSnapshotExternalizer.save(output, snapshot)
-            is ContentHashJavaClassSnapshot -> ContentHashJavaClassSnapshotExternalizer.save(output, snapshot)
-        }
-    }
-
-    override fun read(input: DataInput): JavaClassSnapshot {
-        return when (val className = input.readString()) {
-            RegularJavaClassSnapshot::class.java.name -> RegularJavaClassSnapshotExternalizer.read(input)
-            ProtoBasedJavaClassSnapshot::class.java.name -> ProtoBasedJavaClassSnapshotExternalizer.read(input)
-            ContentHashJavaClassSnapshot::class.java.name -> ContentHashJavaClassSnapshotExternalizer.read(input)
-            else -> error("Unrecognized class name: $className")
-        }
-    }
-}
-
-object RegularJavaClassSnapshotExternalizer : DataExternalizer<RegularJavaClassSnapshot> {
-
-    override fun save(output: DataOutput, snapshot: RegularJavaClassSnapshot) {
         ClassIdExternalizer.save(output, snapshot.classId)
         ListExternalizer(JvmClassNameExternalizer).save(output, snapshot.supertypes)
         AbiSnapshotExternalizer.save(output, snapshot.classAbiExcludingMembers)
@@ -194,8 +172,8 @@ object RegularJavaClassSnapshotExternalizer : DataExternalizer<RegularJavaClassS
         ListExternalizer(AbiSnapshotExternalizer).save(output, snapshot.methodsAbi)
     }
 
-    override fun read(input: DataInput): RegularJavaClassSnapshot {
-        return RegularJavaClassSnapshot(
+    override fun read(input: DataInput): JavaClassSnapshot {
+        return JavaClassSnapshot(
             classId = ClassIdExternalizer.read(input),
             supertypes = ListExternalizer(JvmClassNameExternalizer).read(input),
             classAbiExcludingMembers = AbiSnapshotExternalizer.read(input),
@@ -217,17 +195,6 @@ object AbiSnapshotExternalizer : DataExternalizer<AbiSnapshot> {
     }
 }
 
-object ProtoBasedJavaClassSnapshotExternalizer : DataExternalizer<ProtoBasedJavaClassSnapshot> {
-
-    override fun save(output: DataOutput, snapshot: ProtoBasedJavaClassSnapshot) {
-        JavaClassProtoMapValueExternalizer.save(output, snapshot.serializedJavaClass)
-    }
-
-    override fun read(input: DataInput): ProtoBasedJavaClassSnapshot {
-        return ProtoBasedJavaClassSnapshot(serializedJavaClass = JavaClassProtoMapValueExternalizer.read(input))
-    }
-}
-
 object InaccessibleClassSnapshotExternalizer : DataExternalizer<InaccessibleClassSnapshot> {
 
     override fun save(output: DataOutput, snapshot: InaccessibleClassSnapshot) {
@@ -236,16 +203,5 @@ object InaccessibleClassSnapshotExternalizer : DataExternalizer<InaccessibleClas
 
     override fun read(input: DataInput): InaccessibleClassSnapshot {
         return InaccessibleClassSnapshot
-    }
-}
-
-object ContentHashJavaClassSnapshotExternalizer : DataExternalizer<ContentHashJavaClassSnapshot> {
-
-    override fun save(output: DataOutput, snapshot: ContentHashJavaClassSnapshot) {
-        LongExternalizer.save(output, snapshot.contentHash)
-    }
-
-    override fun read(input: DataInput): ContentHashJavaClassSnapshot {
-        return ContentHashJavaClassSnapshot(contentHash = LongExternalizer.read(input))
     }
 }
