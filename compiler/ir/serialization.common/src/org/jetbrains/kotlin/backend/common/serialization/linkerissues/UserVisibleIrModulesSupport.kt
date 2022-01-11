@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization.linkerissues
 
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
-import org.jetbrains.kotlin.backend.common.serialization.IrModuleOrigin
+import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializerKind
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
@@ -59,7 +59,7 @@ open class UserVisibleIrModulesSupport(externalDependenciesLoader: ExternalDepen
 
     fun getUserVisibleModuleId(deserializer: IrModuleDeserializer): ResolvedDependencyId {
         val nameFromMetadataModuleHeader: String = deserializer.moduleFragment.name.asStringStripSpecialMarkers()
-        val nameFromKlibManifest: String? = deserializer.kotlinLibrary?.uniqueName
+        val nameFromKlibManifest: String? = deserializer.asDeserializedKotlinLibrary?.uniqueName
 
         return ResolvedDependencyId(listOfNotNull(nameFromMetadataModuleHeader, nameFromKlibManifest))
     }
@@ -199,8 +199,8 @@ open class UserVisibleIrModulesSupport(externalDependenciesLoader: ExternalDepen
         }
     }
 
-    protected val IrModuleDeserializer.kotlinLibrary: KotlinLibrary?
-        get() = if (origin == IrModuleOrigin.DESERIALIZED) klib as? KotlinLibrary else null
+    protected val IrModuleDeserializer.asDeserializedKotlinLibrary: KotlinLibrary?
+        get() = if (kind == IrModuleDeserializerKind.DESERIALIZED) klib as? KotlinLibrary else null
 
     val moduleIdComparator: Comparator<ResolvedDependencyId> = Comparator { a, b ->
         when {
