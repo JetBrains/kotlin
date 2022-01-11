@@ -440,6 +440,7 @@ public class DefaultErrorMessages {
         MAP.put(DELEGATION_NOT_TO_INTERFACE, "Only interfaces can be delegated to");
         MAP.put(DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE, "Delegated member ''{0}'' hides supertype override: {1}. Please specify proper override explicitly", COMPACT, commaSeparated(SHORT_NAMES_IN_TYPES));
         MAP.put(NO_CONSTRUCTOR, "This class does not have a constructor");
+        MAP.put(NO_CONSTRUCTOR_WARNING, "This class does not have a constructor. This warning will be an error in future releases");
         MAP.put(RESOLUTION_TO_CLASSIFIER, "{2}", NAME, TO_STRING, STRING);
         MAP.put(NOT_A_CLASS, "Not a class");
         MAP.put(ILLEGAL_ESCAPE_SEQUENCE, "Illegal escape sequence");

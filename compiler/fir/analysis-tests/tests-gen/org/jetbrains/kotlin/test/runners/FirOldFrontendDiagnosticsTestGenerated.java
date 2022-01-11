@@ -4722,6 +4722,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("classWithFunctionSupertype_after.kt")
+            public void testClassWithFunctionSupertype_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/classObjects/classWithFunctionSupertype_after.kt");
+            }
+
+            @Test
+            @TestMetadata("classWithFunctionSupertype_before.kt")
+            public void testClassWithFunctionSupertype_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/classObjects/classWithFunctionSupertype_before.kt");
+            }
+
+            @Test
             @TestMetadata("companionObjectOfPrivateClassVisibility.kt")
             public void testCompanionObjectOfPrivateClassVisibility() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/classObjects/companionObjectOfPrivateClassVisibility.kt");

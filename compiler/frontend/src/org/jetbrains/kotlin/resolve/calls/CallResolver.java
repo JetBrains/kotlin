@@ -382,6 +382,7 @@ public class CallResolver {
         KtReferenceExpression functionReference = expression.getConstructorReferenceExpression();
         KtTypeReference typeReference = expression.getTypeReference();
         if (functionReference == null || typeReference == null) {
+            CallResolverUtilKt.checkForConstructorCallOnFunctionalType(typeReference, context);
             return checkArgumentTypesAndFail(context); // No type there
         }
         KotlinType constructedType = typeResolver.resolveType(context.scope, typeReference, context.trace, true);
