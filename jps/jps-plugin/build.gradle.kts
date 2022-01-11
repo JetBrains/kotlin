@@ -37,7 +37,7 @@ dependencies {
     compileOnly(jpsModelSerialization())
     testApi(jpsModel())
 
-    // testFramework includes too many unnecessary dependencies. Here we manually list all we needed to successfully run JPS tests
+    // testFramework includes too many unnecessary dependencies. Here we manually list all we need to successfully run JPS tests
     testApi(testFramework()) { isTransitive = false }
     testApi("com.jetbrains.intellij.platform:test-framework-core:$intellijVersion") { isTransitive = false }
     testRuntimeOnly("com.jetbrains.intellij.platform:analysis-impl:$intellijVersion") { isTransitive = false }
