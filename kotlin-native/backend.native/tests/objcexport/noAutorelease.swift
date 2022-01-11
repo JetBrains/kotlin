@@ -98,6 +98,14 @@ private class NoAutoreleaseSwiftHelper : NoAutoreleaseSendHelper, NoAutoreleaseR
 private struct TestFlags {
     var trackSwiftLifetime: Bool = true
     var checkAutorelease: Bool = true
+
+    // When Kotlin refers to a Swift object which refers to a Kotlin object, to reclaim the latter
+    // we have to run the GC twice if experimental MM is enabled:
+    // first GC finds the Kotlin wrapper of the Swift object and releases it during the sweep phase.
+    // The second GC is then able to reclaim the Kotlin object.
+    // This behaviour is different from the legacy MM, which calls objc_release right in the middle of the GC,
+    // so is able to process its outcome during the same GC.
+    var runGCTwice: Bool = false
 }
 
 private func testOnce(flags: TestFlags, block: (KotlinLivenessTracker, SwiftLivenessTracker) throws -> Void) throws {
@@ -111,6 +119,9 @@ private func testOnce(flags: TestFlags, block: (KotlinLivenessTracker, SwiftLive
         try block(kotlinLivenessTracker, swiftLivenessTracker)
 
         NoAutoreleaseKt.gc()
+        if (flags.runGCTwice) {
+            NoAutoreleaseKt.gc()
+        }
 
         try assertFalse(kotlinLivenessTracker.isEmpty())
         if flags.trackSwiftLifetime {
@@ -351,7 +362,7 @@ private func testSendBlockToSwift() throws {
 }
 
 private func testReceiveKotlinObjectFromSwift() throws {
-    try testCallToSwift {
+    try testCallToSwift(flags: TestFlags(runGCTwice: true)) {
         NoAutoreleaseKt.callReceiveKotlinObject(helper: $0, tracker: $1)
     }
 }
@@ -387,7 +398,7 @@ private func testReceiveBlockFromSwift() throws {
 }
 
 private func testReceiveBlockFromSwiftAndCall() throws {
-    try testCallToSwift {
+    try testCallToSwift(flags: TestFlags(runGCTwice: true)) {
         NoAutoreleaseKt.callReceiveBlockAndCall(helper: $0, tracker: $1)
     }
 }
