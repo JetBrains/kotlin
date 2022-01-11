@@ -223,7 +223,6 @@ enum class LanguageFeature(
     UseBuilderInferenceWithoutAnnotation(KOTLIN_1_7),
     ProhibitSmartcastsOnPropertyFromAlienBaseClass(KOTLIN_1_7, kind = BUG_FIX),
     ProhibitInvalidCharsInNativeIdentifiers(KOTLIN_1_7, kind = BUG_FIX),
-    DefinitelyNotNullTypeParameters(KOTLIN_1_7),
     DefinitelyNonNullableTypes(KOTLIN_1_7),
     ReportNonVarargSpreadOnGenericCalls(KOTLIN_1_7, kind = BUG_FIX),
     ProhibitSimplificationOfNonTrivialConstBooleanExpressions(KOTLIN_1_7),
