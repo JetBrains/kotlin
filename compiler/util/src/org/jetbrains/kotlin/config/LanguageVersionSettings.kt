@@ -217,7 +217,6 @@ enum class LanguageFeature(
      *      (if @NotNull has TYPE_USE and METHOD target, then `@NotNull Integer []` -> `Array<Int>..Array<out Int>?` instead of `Array<Int>..Array<out Int>`)
      */
     TypeEnhancementImprovementsInStrictMode(KOTLIN_1_7),
-    ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(KOTLIN_1_7, kind = BUG_FIX),
     OptInRelease(KOTLIN_1_7),
     ProhibitNonExhaustiveWhenOnAlgebraicTypes(KOTLIN_1_7, kind = BUG_FIX),
     UseBuilderInferenceWithoutAnnotation(KOTLIN_1_7),
@@ -250,6 +249,7 @@ enum class LanguageFeature(
     // 1.8
 
     DontLoseDiagnosticsDuringOverloadResolutionByReturnType(KOTLIN_1_8),
+    ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(KOTLIN_1_8, kind = BUG_FIX), // KT-36770
     ProhibitConfusingSyntaxInWhenBranches(KOTLIN_1_8, kind = BUG_FIX), // KT-48385
     UseConsistentRulesForPrivateConstructorsOfSealedClasses(sinceVersion = KOTLIN_1_8, kind = BUG_FIX), // KT-44866
     ProgressionsChangingResolve(KOTLIN_1_8), // KT-49276
