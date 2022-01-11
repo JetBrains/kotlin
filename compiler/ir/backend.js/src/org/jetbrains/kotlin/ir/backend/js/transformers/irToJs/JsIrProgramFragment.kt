@@ -26,11 +26,14 @@ class JsIrProgramFragment(val packageFqn: String) {
 class JsIrModule(val moduleName: String, val externalModuleName: String, val fragments: List<JsIrProgramFragment>)
 
 class JsIrProgram(val modules: List<JsIrModule>) {
+    val mainModule = modules.last()
+    val otherModules = modules.dropLast(1)
 
     fun crossModuleDependencies(relativeRequirePath: Boolean): Map<JsIrModule, CrossModuleReferences> {
         val moduleToBuilder = modules.associateWith { JsIrModuleCrossModuleReferecenceBuilder(it, relativeRequirePath) }
         val definitionModule = mutableMapOf<String, JsIrModuleCrossModuleReferecenceBuilder>()
 
+        moduleToBuilder[mainModule]!!.transitiveJsExportFrom = otherModules
         for (module in modules) {
             val moduleBuilder = moduleToBuilder[module]!!
             for (fragment in module.fragments) {
@@ -65,6 +68,7 @@ private class CrossModuleRef(val module: JsIrModuleCrossModuleReferecenceBuilder
 private class JsIrModuleCrossModuleReferecenceBuilder(val module: JsIrModule, val relativeRequirePath: Boolean) {
     val imports = mutableListOf<CrossModuleRef>()
     val exports = mutableSetOf<String>()
+    var transitiveJsExportFrom = emptyList<JsIrModule>()
 
     private lateinit var exportNames: Map<String, String> // tag -> name
 
@@ -105,12 +109,15 @@ private class JsIrModuleCrossModuleReferecenceBuilder(val module: JsIrModule, va
             val importedAs = tagToName[tag]!!
             val moduleName = it.module.module.import()
 
-            val importStatement = JsVars.JsVar(importedAs, JsNameRef(exportedAs, JsNameRef("\$crossModule\$", moduleName.makeRef())))
+            val importStatement = JsVars.JsVar(importedAs, JsNameRef(exportedAs, ReservedJsNames.makeCrossModuleNameRef(moduleName)))
 
             tag to importStatement
         }
 
-        return CrossModuleReferences(importedModules.values.toList(), resultImports, exportNames)
+        val transitiveExport = transitiveJsExportFrom.mapNotNull {
+            it.fragments.find { f -> !f.exports.isEmpty }?.run { it.import() }
+        }
+        return CrossModuleReferences(importedModules.values.toList(), resultImports, exportNames, transitiveExport)
     }
 }
 
@@ -118,8 +125,9 @@ class CrossModuleReferences(
     val importedModules: List<JsImportedModule>, // additional Kotlin imported modules
     val imports: Map<String, JsVars.JsVar>, // tag -> import statement
     val exports: Map<String, String>, // tag -> name
+    val transitiveJsExportFrom: List<JsName> // the list of modules which provide their js exports for transitive export
 ) {
     companion object {
-        val Empty = CrossModuleReferences(listOf(), emptyMap(), emptyMap())
+        val Empty = CrossModuleReferences(listOf(), emptyMap(), emptyMap(), emptyList())
     }
 }

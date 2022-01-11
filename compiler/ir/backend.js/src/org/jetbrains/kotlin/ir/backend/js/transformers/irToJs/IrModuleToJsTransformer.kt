@@ -154,7 +154,7 @@ class IrModuleToJsTransformer(
             )
 
         val moduleBody = generateModuleBody(modules, staticContext)
-        val internalModuleName = JsName("_", false)
+        val internalModuleName = ReservedJsNames.makeInternalModuleName()
         val globalNames = NameTable<String>(namer.globalNames)
         val exportStatements = ExportModelToJsStatements(nameGenerator) { globalNames.declareFreshName(it, it) }
             .generateModuleExport(exportedModule, internalModuleName)
@@ -256,7 +256,7 @@ class IrModuleToJsTransformer(
             modules += JsImportedModule(module.externalModuleName(), moduleName, null, relativeRequirePath)
 
             names.forEach {
-                imports += JsVars(JsVars.JsVar(JsName(it, false), JsNameRef(it, JsNameRef("\$crossModule\$", moduleName.makeRef()))))
+                imports += JsVars(JsVars.JsVar(JsName(it, false), JsNameRef(it, ReservedJsNames.makeCrossModuleNameRef(moduleName))))
             }
         }
 
@@ -271,15 +271,15 @@ class IrModuleToJsTransformer(
         return modules.flatMap {
             refInfo.exports(it).map {
                 jsAssignment(
-                    JsNameRef(it, JsNameRef("\$crossModule\$", internalModuleName.makeRef())),
+                    JsNameRef(it, ReservedJsNames.makeCrossModuleNameRef(internalModuleName)),
                     JsNameRef(it)
                 ).makeStmt()
             }
         }.let {
             if (!it.isEmpty()) {
                 val createExportBlock = jsAssignment(
-                    JsNameRef("\$crossModule\$", internalModuleName.makeRef()),
-                    JsAstUtils.or(JsNameRef("\$crossModule\$", internalModuleName.makeRef()), JsObjectLiteral())
+                    ReservedJsNames.makeCrossModuleNameRef(internalModuleName),
+                    JsAstUtils.or(ReservedJsNames.makeCrossModuleNameRef(internalModuleName), JsObjectLiteral())
                 ).makeStmt()
                 return listOf(createExportBlock) + it
             } else it
