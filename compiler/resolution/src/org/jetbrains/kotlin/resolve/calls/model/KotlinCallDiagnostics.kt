@@ -23,11 +23,17 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintError
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintWarning
+import org.jetbrains.kotlin.resolve.calls.inference.model.transformToWarning
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability.*
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.UnwrappedType
+
+interface TransformableToWarning<T : KotlinCallDiagnostic> {
+    fun transformToWarning(): T?
+}
 
 abstract class InapplicableArgumentDiagnostic : KotlinCallDiagnostic(INAPPLICABLE) {
     abstract val argument: KotlinCallArgument
@@ -227,11 +233,29 @@ class NonApplicableCallForBuilderInferenceDiagnostic(val kotlinCall: KotlinCall)
     }
 }
 
-class ArgumentNullabilityMismatchDiagnostic(
-    val expectedType: UnwrappedType,
-    val actualType: UnwrappedType,
+sealed interface ArgumentNullabilityMismatchDiagnostic {
+    val expectedType: UnwrappedType
+    val actualType: UnwrappedType
     val expressionArgument: ExpressionKotlinCallArgument
-) : KotlinCallDiagnostic(UNSAFE_CALL) {
+}
+
+class ArgumentNullabilityErrorDiagnostic(
+    override val expectedType: UnwrappedType,
+    override val actualType: UnwrappedType,
+    override val expressionArgument: ExpressionKotlinCallArgument
+) : KotlinCallDiagnostic(UNSAFE_CALL), TransformableToWarning<ArgumentNullabilityWarningDiagnostic>, ArgumentNullabilityMismatchDiagnostic {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCallArgument(expressionArgument, this)
+    }
+
+    override fun transformToWarning() = ArgumentNullabilityWarningDiagnostic(expectedType, actualType, expressionArgument)
+}
+
+class ArgumentNullabilityWarningDiagnostic(
+    override val expectedType: UnwrappedType,
+    override val actualType: UnwrappedType,
+    override val expressionArgument: ExpressionKotlinCallArgument
+) : KotlinCallDiagnostic(RESOLVED), ArgumentNullabilityMismatchDiagnostic {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCallArgument(expressionArgument, this)
     }
@@ -287,8 +311,11 @@ class MultipleArgumentsApplicableForContextReceiver(val receiverDescriptor: Rece
 
 class KotlinConstraintSystemDiagnostic(
     val error: ConstraintSystemError
-) : KotlinCallDiagnostic(error.applicability) {
+) : KotlinCallDiagnostic(error.applicability), TransformableToWarning<KotlinConstraintSystemDiagnostic> {
     override fun report(reporter: DiagnosticReporter) = reporter.constraintError(error)
+
+    override fun transformToWarning(): KotlinConstraintSystemDiagnostic? =
+        if (error is NewConstraintError) KotlinConstraintSystemDiagnostic(error.transformToWarning()) else null
 }
 
 val KotlinCallDiagnostic.constraintSystemError: ConstraintSystemError?

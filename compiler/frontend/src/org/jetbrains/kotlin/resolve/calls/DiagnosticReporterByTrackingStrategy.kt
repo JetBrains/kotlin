@@ -215,18 +215,14 @@ class DiagnosticReporterByTrackingStrategy(
                 }
             }
 
-            ArgumentNullabilityMismatchDiagnostic::class.java -> {
-                require(diagnostic is ArgumentNullabilityMismatchDiagnostic)
-                val expression = callArgument.safeAs<PSIKotlinCallArgument>()?.valueArgument?.getArgumentExpression()?.let {
-                    KtPsiUtil.deparenthesize(it) ?: it
-                }
-                if (expression != null) {
-                    if (expression.isNull() && expression is KtConstantExpression) {
-                        trace.reportDiagnosticOnce(NULL_FOR_NONNULL_TYPE.on(expression, diagnostic.expectedType))
-                    } else {
-                        trace.report(TYPE_MISMATCH.on(expression, diagnostic.expectedType, diagnostic.actualType))
-                    }
-                }
+            ArgumentNullabilityErrorDiagnostic::class.java -> {
+                require(diagnostic is ArgumentNullabilityErrorDiagnostic)
+                reportNullabilityMismatchDiagnostic(callArgument, diagnostic)
+            }
+
+            ArgumentNullabilityWarningDiagnostic::class.java -> {
+                require(diagnostic is ArgumentNullabilityWarningDiagnostic)
+                reportNullabilityMismatchDiagnostic(callArgument, diagnostic)
             }
 
             CallableReferencesDefaultArgumentUsed::class.java -> {
@@ -582,6 +578,27 @@ class DiagnosticReporterByTrackingStrategy(
         }
     }
 
+    private fun reportNullabilityMismatchDiagnostic(callArgument: KotlinCallArgument, diagnostic: ArgumentNullabilityMismatchDiagnostic) {
+        val expression = callArgument.safeAs<PSIKotlinCallArgument>()?.valueArgument?.getArgumentExpression()?.let {
+            KtPsiUtil.deparenthesize(it) ?: it
+        }
+        if (expression != null) {
+            if (expression.isNull() && expression is KtConstantExpression) {
+                val factory = when (diagnostic) {
+                    is ArgumentNullabilityErrorDiagnostic -> NULL_FOR_NONNULL_TYPE
+                    is ArgumentNullabilityWarningDiagnostic -> NULL_FOR_NONNULL_TYPE_WARNING
+                }
+                trace.reportDiagnosticOnce(factory.on(expression, diagnostic.expectedType))
+            } else {
+                val factory = when (diagnostic) {
+                    is ArgumentNullabilityErrorDiagnostic -> TYPE_MISMATCH
+                    is ArgumentNullabilityWarningDiagnostic -> TYPE_MISMATCH_WARNING
+                }
+                trace.report(factory.on(expression, diagnostic.expectedType, diagnostic.actualType))
+            }
+        }
+    }
+
     private fun reportNotEnoughInformationForTypeParameterForSpecialCall(
         resolvedAtom: ResolvedCallAtom,
         error: NotEnoughInformationForTypeParameterImpl
@@ -622,7 +639,6 @@ class DiagnosticReporterByTrackingStrategy(
                 || it.constructor == uninferredTypeVariable.freshTypeConstructor(typeSystemContext)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun getSubResolvedAtomsOfSpecialCallToReportUninferredTypeParameter(
         resolvedAtom: ResolvedAtom,
         uninferredTypeVariable: TypeVariableMarker
