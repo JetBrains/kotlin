@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
 import org.jetbrains.kotlin.name.Name
 
 internal val inlineCallableReferenceToLambdaPhase = makeIrFilePhase(
@@ -51,11 +51,11 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
 
 const val STUB_FOR_INLINING = "stub_for_inlining"
 
-private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendContext) : IrElementVisitor<Unit, IrDeclaration?> {
+private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendContext) : IrThinVisitor<Unit, IrDeclaration?>() {
     override fun visitElement(element: IrElement, data: IrDeclaration?) =
         element.acceptChildren(this, element as? IrDeclaration ?: data)
 
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration?) {
+    private fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration?) {
         expression.acceptChildren(this, data)
         val function = expression.symbol.owner
         if (function.isInlineFunctionCall(context)) {
@@ -65,6 +65,22 @@ private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendCont
                 }
             }
         }
+    }
+
+    override fun visitCall(expression: IrCall, data: IrDeclaration?) {
+        visitFunctionAccess(expression, data)
+    }
+
+    override fun visitConstructorCall(expression: IrConstructorCall, data: IrDeclaration?) {
+        visitFunctionAccess(expression, data)
+    }
+
+    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: IrDeclaration?) {
+        visitFunctionAccess(expression, data)
+    }
+
+    override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: IrDeclaration?) {
+        visitFunctionAccess(expression, data)
     }
 
     private fun IrExpression.transform(scope: IrDeclaration?) = when {
