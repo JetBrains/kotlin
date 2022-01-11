@@ -104,8 +104,6 @@ org.jetbrains.kotlin.idea.spring.tests.rename.SpringRenameTestGenerated.testPara
 org.jetbrains.kotlin.idea.spring.tests.rename.SpringRenameTestGenerated.testParameterWithXmlRefsBySpelRef_ParameterWithXmlRefBySpelRef, Rename failed in Spring,,
 org.jetbrains.kotlin.idea.spring.tests.rename.SpringRenameTestGenerated.testPropertyWithXmlRefsBySpelRef_PropertyWithXmlRefBySpelRef, Rename failed in Spring,,
 org.jetbrains.kotlin.idea.spring.tests.rename.SpringRenameTestGenerated.testPropertyWithXmlRefsBySpelRef_PropertyWithXmlRefBySpelRef, Rename failed in Spring,,
-org.jetbrains.kotlin.jps.build.IncrementalConstantSearchTest.testJavaConstantChangedUsedInKotlin, Incremental compilation in 201,,
-org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.testConstantChanged, Incremental compilation in 201,,
 org.jetbrains.kotlin.idea.codeInsight.surroundWith.SurroundWithTestGenerated.If.MoveDeclarationsOut.Var.testVarWithTypeWoInitializer, Unprocessed,, FLAKY
 org.jetbrains.kotlin.idea.refactoring.pullUp.PullUpTestGenerated.K2K.testAccidentalOverrides, Unprocessed,, FLAKY
 org.jetbrains.kotlin.idea.refactoring.move.MoveTestGenerated.testKotlin_moveTopLevelDeclarations_moveFunctionToPackage_MoveFunctionToPackage, fail on TeamCity but works well locally,, FLAKY

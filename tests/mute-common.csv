@@ -41,7 +41,6 @@ org.jetbrains.kotlin.idea.spring.tests.references.SpringReferenceNavigationTestG
 org.jetbrains.kotlin.idea.stubs.MultiFileHighlightingTestGenerated.testTopLevelMembersReference, Always red,,
 org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.AnonymousClass.testKt_13146,,,
 org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.Issues.testKt_807,,,
-org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.testMixedInheritance, Different clean up,,
 org.jetbrains.kotlin.psi.injection.StringInterpolationInjectionTest.testInterpolationSimpleName, Stable failure during run may work in debug,,
 org.jetbrains.kotlin.shortenRefs.ShortenRefsTestGenerated.testExtensionForObject2, Always red,,
 org.jetbrains.kotlin.util.KotlinVersionsTest.testVersionsAreConsistent, KT-35567,,
