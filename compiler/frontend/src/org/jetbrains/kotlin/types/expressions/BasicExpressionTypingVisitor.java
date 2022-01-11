@@ -22,6 +22,7 @@ import com.intellij.psi.StubBasedPsiElement;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
+import kotlin.Pair;
 import kotlin.TuplesKt;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +47,6 @@ import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.bindingContextUtil.BindingContextUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
-import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.checkers.*;
 import org.jetbrains.kotlin.resolve.calls.model.DataFlowInfoForArgumentsImpl;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
@@ -62,13 +62,13 @@ import org.jetbrains.kotlin.resolve.calls.tasks.OldResolutionCandidate;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
 import org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker;
+import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.checkers.UnderscoreChecker;
 import org.jetbrains.kotlin.resolve.constants.*;
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
 import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ContextReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver;
-import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.resolve.scopes.utils.ScopeUtilsKt;
 import org.jetbrains.kotlin.types.*;
@@ -512,9 +512,13 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         }
         else {
             if (UnqualifiedSuperKt.isPossiblyAmbiguousUnqualifiedSuper(expression, supertypes)) {
-                Collection<KotlinType> supertypesResolvedFromContext =
+                Pair<Collection<KotlinType>, Boolean> supertypesResolvedFromContextWithEqualsMigration =
                         UnqualifiedSuperKt.resolveUnqualifiedSuperFromExpressionContext(
                                 expression, supertypes, components.builtIns.getAnyType());
+                Collection<KotlinType> supertypesResolvedFromContext = supertypesResolvedFromContextWithEqualsMigration.getFirst();
+                if (supertypesResolvedFromContextWithEqualsMigration.getSecond()) {
+                    context.trace.record(SUPER_EXPRESSION_FROM_ANY_MIGRATION, expression, true);
+                }
                 if (supertypesResolvedFromContext.size() == 1) {
                     KotlinType singleResolvedType = supertypesResolvedFromContext.iterator().next();
                     result = substitutor.substitute(singleResolvedType, Variance.INVARIANT);

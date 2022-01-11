@@ -148,7 +148,7 @@ public interface TracingStrategy {
 
     void abstractSuperCall(@NotNull BindingTrace trace);
 
-    default void abstractFakeOverrideSuperCall(@NotNull BindingTrace trace) {
+    default void abstractSuperCallWarning(@NotNull BindingTrace trace) {
         abstractSuperCall(trace);
     }
 

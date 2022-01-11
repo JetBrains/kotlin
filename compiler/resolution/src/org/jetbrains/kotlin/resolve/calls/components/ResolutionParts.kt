@@ -812,9 +812,8 @@ internal object CheckSuperExpressionCallPart : ResolutionPart() {
         if (callComponents.statelessCallbacks.isSuperExpression(resolvedCall.dispatchReceiverArgument)) {
             if (candidateDescriptor is CallableMemberDescriptor) {
                 if (candidateDescriptor.modality == Modality.ABSTRACT) {
-                    addDiagnostic(AbstractSuperCall)
-                }
-                if (candidateDescriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
+                    addDiagnostic(AbstractSuperCall(resolvedCall.dispatchReceiverArgument!!))
+                } else if (candidateDescriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE &&
                     candidateDescriptor.overriddenDescriptors.size > 1
                 ) {
                     if (candidateDescriptor.overriddenDescriptors.firstOrNull { !it.isInsideInterface }?.modality == Modality.ABSTRACT) {

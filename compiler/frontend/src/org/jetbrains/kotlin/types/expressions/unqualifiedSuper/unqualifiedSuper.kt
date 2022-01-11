@@ -37,7 +37,7 @@ fun resolveUnqualifiedSuperFromExpressionContext(
     superExpression: KtSuperExpression,
     supertypes: Collection<KotlinType>,
     anyType: KotlinType
-): Collection<KotlinType> {
+): Pair<Collection<KotlinType>, Boolean> {
     val parentElement = superExpression.parent
 
     if (parentElement is KtDotQualifiedExpression) {
@@ -50,19 +50,19 @@ fun resolveUnqualifiedSuperFromExpressionContext(
                     return if (isCallingMethodOfAny(selectorExpression, calleeName)) {
                         resolveSupertypesForMethodOfAny(supertypes, calleeName, anyType)
                     } else {
-                        resolveSupertypesByCalleeName(supertypes, calleeName)
+                        resolveSupertypesByCalleeName(supertypes, calleeName) to false
                     }
                 }
             }
             is KtSimpleNameExpression -> {
                 // super.x: x can be a property only
                 // NB there are no properties in kotlin.Any
-                return resolveSupertypesByPropertyName(supertypes, selectorExpression.getReferencedNameAsName())
+                return resolveSupertypesByPropertyName(supertypes, selectorExpression.getReferencedNameAsName()) to false
             }
         }
     }
 
-    return emptyList()
+    return emptyList<KotlinType>() to false
 }
 
 private val ARITY_OF_METHODS_OF_ANY = hashMapOf("hashCode" to 0, "equals" to 1, "toString" to 0)
@@ -99,29 +99,29 @@ private fun resolveSupertypesForMethodOfAny(
     supertypes: Collection<KotlinType>,
     calleeName: Name,
     anyType: KotlinType
-): Collection<KotlinType> {
-    val typesWithConcreteOverride = resolveSupertypesByMembers(supertypes, allowNonConcreteInterfaceMembers = false) {
+): Pair<Collection<KotlinType>, Boolean> {
+    val (typesWithConcreteOverride, isEqualsMigration) = resolveSupertypesByMembers(supertypes, allowNonConcreteInterfaceMembers = false) {
         getFunctionMembers(it, calleeName)
     }
-    return typesWithConcreteOverride.ifEmpty { listOf(anyType) }
+    return typesWithConcreteOverride.ifEmpty { listOf(anyType) } to isEqualsMigration
 }
 
 private fun resolveSupertypesByCalleeName(supertypes: Collection<KotlinType>, calleeName: Name): Collection<KotlinType> =
     resolveSupertypesByMembers(supertypes, allowNonConcreteInterfaceMembers = true) {
         getFunctionMembers(it, calleeName) +
                 getPropertyMembers(it, calleeName)
-    }
+    }.first
 
 private fun resolveSupertypesByPropertyName(supertypes: Collection<KotlinType>, propertyName: Name): Collection<KotlinType> =
     resolveSupertypesByMembers(supertypes, allowNonConcreteInterfaceMembers = true) {
         getPropertyMembers(it, propertyName)
-    }
+    }.first
 
 private inline fun resolveSupertypesByMembers(
     supertypes: Collection<KotlinType>,
     allowNonConcreteInterfaceMembers: Boolean,
     getMembers: (KotlinType) -> Collection<CallableMemberDescriptor>
-): Collection<KotlinType> {
+): Pair<Collection<KotlinType>, Boolean> {
     val typesWithConcreteMembers = SmartList<KotlinType>()
     val typesWithNonConcreteMembers = SmartList<KotlinType>()
 
@@ -143,13 +143,13 @@ private inline fun resolveSupertypesByMembers(
 
     return when {
         typesWithConcreteMembers.isNotEmpty() ->
-            typesWithConcreteMembers
+            typesWithConcreteMembers to false
         allowNonConcreteInterfaceMembers ->
-            typesWithNonConcreteMembers
+            typesWithNonConcreteMembers to false
         else ->
             typesWithNonConcreteMembers.filter {
                 TypeUtils.getClassDescriptor(it)?.kind == ClassKind.CLASS
-            }
+            } to true
     }
 }
 
