@@ -1,6 +1,6 @@
 ## Description
 
-Contains build regression benchmark scripts for different user projects. 
+Contains build regression benchmark scripts for different Kotlin projects.  
 
 Such benchmarks comparing different build scenarios between last stable Kotlin release and current-in-progress release helping 
 to identify build speed regressions with minimal user-project modifications.
@@ -8,6 +8,9 @@ to identify build speed regressions with minimal user-project modifications.
 All scripts should run via related Gradle task which could be found in "Gradle Regression Benchmark tasks" task group.
 
 ### Adding benchmark for new user-project
+
+_**Before adding a new project, consider checking existing one** - they possibly may cover the case you want to check. New project
+should provide unique build setup/codebase that is not covered by existing projects._
 
 All scripts are using infrastructure provided by [template](../regression-benchmark-templates/Readme.md).
 
