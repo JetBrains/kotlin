@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
@@ -136,7 +136,7 @@ class ExpressionCodegen(
     val inlinedInto: ExpressionCodegen?,
     val smap: SourceMapper,
     val reifiedTypeParametersUsages: ReifiedTypeParametersUsages,
-) : IrElementVisitor<PromisedValue, BlockInfo>, BaseExpressionCodegen {
+) : IrThinVisitor<PromisedValue, BlockInfo>(), BaseExpressionCodegen {
 
     override fun toString(): String = signature.toString()
 
@@ -380,10 +380,10 @@ class ExpressionCodegen(
             mv.nop()
         }
         if (expression.isTransparentScope)
-            return super.visitBlock(expression, data)
+            return visitContainerExpression(expression, data)
         val info = BlockInfo(data)
         // Force materialization to avoid reading from out-of-scope variables.
-        val value = super.visitBlock(expression, info).materialized().also {
+        val value = visitContainerExpression(expression, info).materialized().also {
             if (info.variables.isNotEmpty()) {
                 writeLocalVariablesInTable(info, markNewLabel())
             }
@@ -449,13 +449,16 @@ class ExpressionCodegen(
         return unitValue
     }
 
-    override fun visitContainerExpression(expression: IrContainerExpression, data: BlockInfo) =
+    private fun visitContainerExpression(expression: IrContainerExpression, data: BlockInfo) =
         if (expression.origin == JvmLoweredStatementOrigin.FAKE_CONTINUATION) {
             addFakeContinuationMarker(mv)
             expression.onStack
         } else {
             visitStatementContainer(expression, data)
         }
+
+    override fun visitComposite(expression: IrComposite, data: BlockInfo): PromisedValue =
+        visitContainerExpression(expression, data)
 
     override fun visitCall(expression: IrCall, data: BlockInfo): PromisedValue {
         val intrinsic = classCodegen.context.getIntrinsic(expression.symbol) as IntrinsicMethod?
@@ -702,7 +705,7 @@ class ExpressionCodegen(
                 }
     }
 
-    override fun visitFieldAccess(expression: IrFieldAccessExpression, data: BlockInfo): PromisedValue {
+    private fun visitFieldAccess(expression: IrFieldAccessExpression, data: BlockInfo): PromisedValue {
         val callee = expression.symbol.owner
         if (context.state.shouldInlineConstVals) {
             // Const fields should only have reads, and those should have been transformed by ConstLowering.
@@ -746,6 +749,9 @@ class ExpressionCodegen(
         }
     }
 
+    override fun visitGetField(expression: IrGetField, data: BlockInfo): PromisedValue =
+        visitFieldAccess(expression, data)
+
     override fun visitSetField(expression: IrSetField, data: BlockInfo): PromisedValue {
         val expressionValue = expression.value
         // Do not add redundant field initializers that initialize to default values.
@@ -753,7 +759,7 @@ class ExpressionCodegen(
         val isFieldInitializer = expression.origin == IrStatementOrigin.INITIALIZE_FIELD
         val skip = (irFunction is IrConstructor || inClassInit) && isFieldInitializer && expressionValue is IrConst<*> &&
                 isDefaultValueForType(expression.symbol.owner.type.asmType, expressionValue.value)
-        return if (skip) unitValue else super.visitSetField(expression, data)
+        return if (skip) unitValue else visitFieldAccess(expression, data)
     }
 
     /**
@@ -1108,7 +1114,7 @@ class ExpressionCodegen(
         }
     }
 
-    override fun visitBreakContinue(jump: IrBreakContinue, data: BlockInfo): PromisedValue {
+    private fun visitBreakContinue(jump: IrBreakContinue, data: BlockInfo): PromisedValue {
         jump.markLineNumber(startOffset = true)
         // Make sure that the line number has an instruction so that the debugger can always
         // break on the break/continue. As an example, unwindBlockStack could otherwise
@@ -1127,12 +1133,17 @@ class ExpressionCodegen(
         return unitValue
     }
 
+    override fun visitBreak(jump: IrBreak, data: BlockInfo): PromisedValue =
+        visitBreakContinue(jump, data)
+
+    override fun visitContinue(jump: IrContinue, data: BlockInfo): PromisedValue =
+        visitBreakContinue(jump, data)
+
     override fun visitTry(aTry: IrTry, data: BlockInfo): PromisedValue {
         aTry.markLineNumber(startOffset = true)
         return data.withBlock(if (aTry.finallyExpression != null) TryWithFinallyInfo(aTry.finallyExpression!!) else TryInfo()) {
             visitTryWithInfo(aTry, data, it)
         }
-
     }
 
     private fun visitTryWithInfo(aTry: IrTry, data: BlockInfo, tryInfo: TryInfo): PromisedValue {
