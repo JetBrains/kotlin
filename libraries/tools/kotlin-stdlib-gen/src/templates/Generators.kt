@@ -1278,6 +1278,38 @@ object Generators : TemplateGroupBase() {
         }
     }
 
+    val f_zipAll_transform = fn("zipAll(other: Iterable<R>, thisDefault: T, otherDefault: R, transform: (a: T, b: R) -> V)") {
+        include(Iterables)
+    } builder {
+        inline()
+        doc {
+            """
+            Returns a list of values built from the elements of `this` ${f.collection} and the [other] collection with the same index
+            using the provided [transform] function applied to each pair of elements. This function can operation collections of differing 
+            sizes using the provide defaults to fill in missing values.
+            The returned list has length of the longest collection.
+            """
+        }
+        sample("samples.collections.Iterables.Operations.zipAllIterableWithTransform")
+        typeParam("T")
+        typeParam("R")
+        typeParam("V")
+        returns("List<V>")
+        body {
+            """
+            val first = iterator()
+            val second = other.iterator()
+            val list = ArrayList<V>(maxOf(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
+            while (first.hasNext() || second.hasNext()) {
+                val thisValue = if (first.hasNext()) first.next() else thisDefault
+                val otherValue = if (second.hasNext()) second.next() else otherDefault
+                list.add(transform(thisValue, otherValue))
+            }
+            return list
+            """
+        }
+    }
+
     // documentation helpers
 
     private val Family.snapshotResult: String

@@ -292,6 +292,33 @@ class CollectionTest {
         }
     }
 
+    @Test
+    fun zipAllTransform() {
+        expect(listOf("ab", "bc", "cd")) {
+            listOf("a", "b", "c").zipAll(listOf("b", "c", "d"), "X", "Y") { a, b -> a + b }
+        }
+
+        expect(listOf("ab", "bc", "cY")) {
+            listOf("a", "b", "c").zipAll(listOf("b", "c"), "X", "Y") { a, b -> a + b }
+        }
+
+        expect(listOf("ab", "bc", "Xd")) {
+            listOf("a", "b").zipAll(listOf("b", "c", "d"), "X", "Y") { a, b -> a + b }
+        }
+
+        expect(listOf("Xb", "Xc", "Xd")) {
+            listOf<String>().zipAll(listOf("b", "c", "d"), "X", "Y") { a, b -> a + b }
+        }
+
+        expect(listOf("aY", "bY", "cY")) {
+            listOf("a", "b", "c").zipAll(listOf(), "X", "Y") { a, b -> a + b }
+        }
+
+        expect(listOf()) {
+            listOf<String>().zipAll(listOf(), "X", "Y") { a, b -> a + b }
+        }
+    }
+
     @Test fun partition() {
         val data = listOf("foo", "bar", "something", "xyz")
         val pair = data.partition { it.length == 3 }

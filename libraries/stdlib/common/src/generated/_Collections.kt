@@ -3297,6 +3297,26 @@ public inline fun <T, R, V> Iterable<T>.zip(other: Iterable<R>, transform: (a: T
 }
 
 /**
+ * Returns a list of values built from the elements of `this` collection and the [other] collection with the same index
+ * using the provided [transform] function applied to each pair of elements. This function can operation collections of differing
+ * sizes using the provide defaults to fill in missing values.
+ * The returned list has length of the longest collection.
+ * 
+ * @sample samples.collections.Iterables.Operations.zipAllIterableWithTransform
+ */
+public inline fun <T, R, V> Iterable<T>.zipAll(other: Iterable<R>, thisDefault: T, otherDefault: R, transform: (a: T, b: R) -> V): List<V> {
+    val first = iterator()
+    val second = other.iterator()
+    val list = ArrayList<V>(maxOf(collectionSizeOrDefault(10), other.collectionSizeOrDefault(10)))
+    while (first.hasNext() || second.hasNext()) {
+        val thisValue = if (first.hasNext()) first.next() else thisDefault
+        val otherValue = if (second.hasNext()) second.next() else otherDefault
+        list.add(transform(thisValue, otherValue))
+    }
+    return list
+}
+
+/**
  * Returns a list of pairs of each two adjacent elements in this collection.
  * 
  * The returned list is empty if this collection contains less than two elements.
