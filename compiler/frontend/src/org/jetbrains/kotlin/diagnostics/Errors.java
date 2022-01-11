@@ -1032,6 +1032,7 @@ public interface Errors {
 
     DiagnosticFactory1<KtSimpleNameExpression, VariableDescriptor> UNINITIALIZED_VARIABLE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtSimpleNameExpression, ValueParameterDescriptor> UNINITIALIZED_PARAMETER = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<KtSimpleNameExpression, ValueParameterDescriptor> UNINITIALIZED_PARAMETER_WARNING = DiagnosticFactory1.create(WARNING);
     DiagnosticFactory1<KtSimpleNameExpression, ClassDescriptor> UNINITIALIZED_ENUM_ENTRY = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtExpression, ClassDescriptor> UNINITIALIZED_ENUM_COMPANION = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtExpression, ClassDescriptor> UNINITIALIZED_ENUM_COMPANION_WARNING = DiagnosticFactory1.create(WARNING);

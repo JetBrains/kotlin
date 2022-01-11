@@ -5297,6 +5297,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @TestDataPath("$PROJECT_ROOT")
         public class ControlFlowAnalysis {
             @Test
+            @TestMetadata("accessValueParameterInDefaultValue_after.kt")
+            public void testAccessValueParameterInDefaultValue_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/accessValueParameterInDefaultValue_after.kt");
+            }
+
+            @Test
+            @TestMetadata("accessValueParameterInDefaultValue_before.kt")
+            public void testAccessValueParameterInDefaultValue_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/accessValueParameterInDefaultValue_before.kt");
+            }
+
+            @Test
             public void testAllFilesPresentInControlFlowAnalysis() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/controlFlowAnalysis"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
             }

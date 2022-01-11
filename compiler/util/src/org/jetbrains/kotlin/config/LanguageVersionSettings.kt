@@ -257,6 +257,7 @@ enum class LanguageFeature(
     // 1.9
 
     DisableCheckingChangedProgressionsResolve(KOTLIN_1_9), // KT-49276
+    ProhibitIllegalValueParameterUsageInDefaultArguments(KOTLIN_1_9, kind = BUG_FIX), // KT-25694
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),
