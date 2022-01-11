@@ -22,16 +22,16 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
 import org.jetbrains.kotlin.name.Name
 
 internal val renameFieldsPhase = makeIrFilePhase(
-    ::RenameFieldsLowering,
+    { _: CommonBackendContext -> RenameFieldsLowering() },
     name = "RenameFields",
     description = "Rename private fields (including fields copied from companion object) to avoid JVM declaration clash"
 )
 
-private class RenameFieldsLowering(val context: CommonBackendContext) : FileLoweringPass {
+private class RenameFieldsLowering : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         val fields = mutableListOf<IrField>()
         irFile.accept(FieldCollector, fields)
@@ -68,7 +68,7 @@ private class RenameFieldsLowering(val context: CommonBackendContext) : FileLowe
     }
 }
 
-private object FieldCollector : IrElementVisitor<Unit, MutableList<IrField>> {
+private object FieldCollector : IrThinVisitor<Unit, MutableList<IrField>>() {
     override fun visitElement(element: IrElement, data: MutableList<IrField>) {
         element.acceptChildren(this, data)
     }
