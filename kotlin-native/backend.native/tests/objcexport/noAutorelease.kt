@@ -54,7 +54,7 @@ class NoAutoreleaseKotlinReceiveHelper(val kotlinLivenessTracker: KotlinLiveness
     private val list = listOf(Any())
     private val string = Any().toString()
     private val number = createKotlinNumber()
-    private val block = createLambda()
+    private val block = createLambda(kotlinLivenessTracker)
 
     override fun receiveKotlinObject(): KotlinObject = kotlinObject.also { kotlinLivenessTracker.add(it) }
     override fun receiveSwiftObject(): Any = swiftObject.also { kotlinLivenessTracker.add(it) }
@@ -156,6 +156,15 @@ fun useIntArray(array: IntArray) {} // Just to make IntArray available from Swif
 private fun createLambda(): () -> KotlinObject {
     val lambdaResult = KotlinObject()
     return { lambdaResult } // make it capturing thus dynamic.
+}
+
+private fun createLambda(kotlinLivenessTracker: KotlinLivenessTracker): () -> KotlinObject {
+    val lambdaResult = KotlinObject()
+    return {
+        val result = lambdaResult // make it capturing thus dynamic.
+        kotlinLivenessTracker.add(result)
+        result
+    }
 }
 
 private fun createKotlinNumber(): Any = (0.5 + Any().hashCode().toDouble()) // to make it dynamic.

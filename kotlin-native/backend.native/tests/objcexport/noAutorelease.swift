@@ -62,7 +62,7 @@ private class NoAutoreleaseSwiftHelper : NoAutoreleaseSendHelper, NoAutoreleaseR
     let list = createList()
     let string = createString()
     let number = createNumber()
-    let block = createBlock()
+    lazy var block = createBlock(swiftLivenessTracker: swiftLivenessTracker)
 
     func receiveKotlinObject() -> KotlinObject {
         let result = kotlinObject
@@ -399,6 +399,15 @@ private func createList() -> [Any] {
 private func createBlock() -> () -> KotlinObject {
     let blockResult = KotlinObject()
     return { return blockResult } // Make capturing thus dynamic.
+}
+
+private func createBlock(swiftLivenessTracker: SwiftLivenessTracker) -> () -> KotlinObject {
+    let blockResult = KotlinObject()
+    return {
+        let result = blockResult // Make capturing thus dynamic.
+        swiftLivenessTracker.add(result)
+        return result
+    }
 }
 
 private func createString() -> String {
