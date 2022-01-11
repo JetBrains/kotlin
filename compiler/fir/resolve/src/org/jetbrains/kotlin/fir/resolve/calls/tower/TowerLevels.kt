@@ -262,7 +262,7 @@ class ScopeTowerLevel(
         if (scope is FirDefaultStarImportingScope && extensionReceiver != null) {
             val extensionReceiverType = extensionReceiver.type
             if (extensionReceiverType is ConeClassLikeType) {
-                val declarationReceiverType = candidate.fir.receiverTypeRef?.coneType
+                val declarationReceiverType = candidate.resolvedReceiverTypeRef?.coneType
                 if (declarationReceiverType is ConeClassLikeType) {
                     if (!AbstractTypeChecker.isSubtypeOf(
                             session.typeContext,

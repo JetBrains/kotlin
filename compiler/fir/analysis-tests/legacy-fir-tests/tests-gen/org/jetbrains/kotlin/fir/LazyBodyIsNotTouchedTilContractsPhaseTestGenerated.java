@@ -3644,4 +3644,22 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/visibility/visibilityWithOverrides.kt");
         }
     }
+
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/withAllowedKotlinPackage")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class WithAllowedKotlinPackage extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInWithAllowedKotlinPackage() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/withAllowedKotlinPackage"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("extensionFunctionAddedToStdlib.kt")
+        public void testExtensionFunctionAddedToStdlib() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/withAllowedKotlinPackage/extensionFunctionAddedToStdlib.kt");
+        }
+    }
 }

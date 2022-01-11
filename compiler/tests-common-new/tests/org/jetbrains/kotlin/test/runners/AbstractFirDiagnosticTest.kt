@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_REFLECT
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
@@ -97,6 +98,12 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
     forTestsMatching("compiler/fir/analysis-tests/testData/*") {
         defaultDirectives {
             +FIR_DUMP
+        }
+    }
+
+    forTestsMatching("compiler/fir/analysis-tests/testData/resolve/withAllowedKotlinPackage/*") {
+        defaultDirectives {
+            +ALLOW_KOTLIN_PACKAGE
         }
     }
 
