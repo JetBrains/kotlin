@@ -1,0 +1,4 @@
+package
+
+public fun doTheMapThing1(/*0*/ elements: kotlin.collections.List<kotlin.CharSequence>): kotlin.collections.List<kotlin.String>
+public fun doTheMapThing2(/*0*/ elements: kotlin.collections.List<kotlin.CharSequence>): kotlin.collections.List<kotlin.String>

@@ -247,6 +247,7 @@ enum class LanguageFeature(
 
     // 1.8
 
+    DontLoseDiagnosticsDuringOverloadResolutionByReturnType(KOTLIN_1_8),
     ProhibitConfusingSyntaxInWhenBranches(KOTLIN_1_8, kind = BUG_FIX), // KT-48385
     UseConsistentRulesForPrivateConstructorsOfSealedClasses(sinceVersion = KOTLIN_1_8, kind = BUG_FIX), // KT-44866
     ProgressionsChangingResolve(KOTLIN_1_8), // KT-49276

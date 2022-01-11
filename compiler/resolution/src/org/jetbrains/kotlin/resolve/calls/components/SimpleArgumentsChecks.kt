@@ -85,7 +85,7 @@ private fun checkExpressionArgument(
         if (argumentType.isMarkedNullable) {
             if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, actualExpectedType, position)) return null
             if (csBuilder.addSubtypeConstraintIfCompatible(argumentType.makeNotNullable(), actualExpectedType, position)) {
-                return ArgumentNullabilityMismatchDiagnostic(actualExpectedType, argumentType, expressionArgument)
+                return ArgumentNullabilityErrorDiagnostic(actualExpectedType, argumentType, expressionArgument)
             }
         }
 
@@ -97,7 +97,7 @@ private fun checkExpressionArgument(
 
     // Used only for arguments with @NotNull annotation
     if (expectedType is NotNullTypeParameter && argumentType.isMarkedNullable) {
-        diagnosticsHolder.addDiagnostic(ArgumentNullabilityMismatchDiagnostic(expectedType, argumentType, expressionArgument))
+        diagnosticsHolder.addDiagnostic(ArgumentNullabilityErrorDiagnostic(expectedType, argumentType, expressionArgument))
     }
 
     if (expressionArgument.isSafeCall) {
