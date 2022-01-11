@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.deepCopyWithVariables
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -33,7 +32,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -321,9 +320,8 @@ fun IrType.remapTypeParameters(
 ): IrType =
     when (this) {
         is IrSimpleType -> {
-            val classifier = classifier.owner
-            when {
-                classifier is IrTypeParameter -> {
+            when (val classifier = classifier.owner) {
+                is IrTypeParameter -> {
                     val newClassifier =
                         srcToDstParameterMap?.get(classifier) ?: if (classifier.parent == source)
                             target.typeParameters[classifier.index]
@@ -331,23 +329,20 @@ fun IrType.remapTypeParameters(
                             classifier
                     IrSimpleTypeImpl(newClassifier.symbol, hasQuestionMark, arguments, annotations)
                 }
-
-                classifier is IrClass ->
-                    IrSimpleTypeImpl(
-                        classifier.symbol,
-                        hasQuestionMark,
-                        arguments.map {
-                            when (it) {
-                                is IrTypeProjection -> makeTypeProjection(
-                                    it.type.remapTypeParameters(source, target, srcToDstParameterMap),
-                                    it.variance
-                                )
-                                else -> it
-                            }
-                        },
-                        annotations
-                    )
-
+                is IrClass -> IrSimpleTypeImpl(
+                    classifier.symbol,
+                    hasQuestionMark,
+                    arguments.map {
+                        when (it) {
+                            is IrTypeProjection -> makeTypeProjection(
+                                it.type.remapTypeParameters(source, target, srcToDstParameterMap),
+                                it.variance
+                            )
+                            else -> it
+                        }
+                    },
+                    annotations
+                )
                 else -> this
             }
         }
@@ -365,16 +360,68 @@ fun <T : IrElement> T.setDeclarationsParent(parent: IrDeclarationParent): T {
     return this
 }
 
-object SetDeclarationsParentVisitor : IrElementVisitor<Unit, IrDeclarationParent> {
+object SetDeclarationsParentVisitor : IrThinVisitor<Unit, IrDeclarationParent>() {
     override fun visitElement(element: IrElement, data: IrDeclarationParent) {
         if (element !is IrDeclarationParent) {
             element.acceptChildren(this, data)
         }
     }
 
-    override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent) {
+    private fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent) {
         declaration.parent = data
-        super.visitDeclaration(declaration, data)
+        visitElement(declaration, data)
+    }
+
+    override fun visitScript(declaration: IrScript, data: IrDeclarationParent) {
+        visitDeclaration(declaration, data)
+    }
+
+    override fun visitClass(declaration: IrClass, data: IrDeclarationParent) {
+        visitDeclaration(declaration, data)
+    }
+
+    override fun visitSimpleFunction(declaration: IrSimpleFunction, data: IrDeclarationParent) {
+        visitDeclaration(declaration, data)
+    }
+
+    override fun visitConstructor(declaration: IrConstructor, data: IrDeclarationParent) {
+        visitDeclaration(declaration, data)
+    }
+
+    override fun visitProperty(declaration: IrProperty, data: IrDeclarationParent) {
+        visitDeclaration(declaration, data)
+    }
+
+    override fun visitField(declaration: IrField, data: IrDeclarationParent) {
+        visitDeclaration(declaration, data)
+    }
+
+    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: IrDeclarationParent) {
+        visitDeclaration(declaration, data)
+    }
+
+    override fun visitVariable(declaration: IrVariable, data: IrDeclarationParent) {
+        visitDeclaration(declaration, data)
+    }
+
+    override fun visitEnumEntry(declaration: IrEnumEntry, data: IrDeclarationParent) {
+        visitDeclaration(declaration, data)
+    }
+
+    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: IrDeclarationParent) {
+        visitDeclaration(declaration, data)
+    }
+
+    override fun visitTypeParameter(declaration: IrTypeParameter, data: IrDeclarationParent) {
+        visitDeclaration(declaration, data)
+    }
+
+    override fun visitValueParameter(declaration: IrValueParameter, data: IrDeclarationParent) {
+        visitDeclaration(declaration, data)
+    }
+
+    override fun visitTypeAlias(declaration: IrTypeAlias, data: IrDeclarationParent) {
+        visitDeclaration(declaration, data)
     }
 }
 
