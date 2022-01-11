@@ -7259,6 +7259,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("exportFromModules.kt")
+        public void testExportFromModules() throws Exception {
+            runTest("js/js.translator/testData/box/multiModule/exportFromModules.kt");
+        }
+
+        @Test
         @TestMetadata("interfaceMethodWithDefaultParameter.kt")
         public void testInterfaceMethodWithDefaultParameter() throws Exception {
             runTest("js/js.translator/testData/box/multiModule/interfaceMethodWithDefaultParameter.kt");

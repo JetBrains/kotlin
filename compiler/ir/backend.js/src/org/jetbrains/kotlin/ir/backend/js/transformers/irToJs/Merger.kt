@@ -63,20 +63,18 @@ class Merger(
         }
 
         if (crossModuleReferences.exports.isNotEmpty()) {
-            val internalModuleName = JsName("_", false)
+            val internalModuleName = ReservedJsNames.makeInternalModuleName()
 
             val createExportBlock = jsAssignment(
-                JsNameRef("\$crossModule\$", internalModuleName.makeRef()),
-                JsAstUtils.or(JsNameRef("\$crossModule\$", internalModuleName.makeRef()), JsObjectLiteral())
+                ReservedJsNames.makeCrossModuleNameRef(internalModuleName),
+                JsAstUtils.or(ReservedJsNames.makeCrossModuleNameRef(internalModuleName), JsObjectLiteral())
             ).makeStmt()
             additionalExports += createExportBlock
 
             crossModuleReferences.exports.entries.forEach { (tag, name) ->
                 val internalName = nameMap[tag] ?: error("Missing name for declaration '$tag'")
-                additionalExports += jsAssignment(
-                    JsNameRef(name, JsNameRef("\$crossModule\$", JsName("_", false).makeRef())),
-                    JsNameRef(internalName)
-                ).makeStmt()
+                val crossModuleRef = ReservedJsNames.makeCrossModuleNameRef(ReservedJsNames.makeInternalModuleName())
+                additionalExports += jsAssignment(JsNameRef(name, crossModuleRef), JsNameRef(internalName)).makeStmt()
             }
         }
     }
@@ -123,6 +121,36 @@ class Merger(
                     error("Clashing definitions with tag '$it'")
                 }
             }
+        }
+    }
+
+    private fun declareAndCallJsExporter(): List<JsStatement> {
+        val exportBody = JsBlock(fragments.flatMap { it.exports.statements })
+        if (exportBody.isEmpty) {
+            return emptyList()
+        }
+
+        val internalModuleName = ReservedJsNames.makeInternalModuleName()
+        val exporterName = ReservedJsNames.makeJsExporterName()
+        val jsExporterFunction = JsFunction(emptyScope, "js exporter function").apply {
+            body = exportBody
+            name = exporterName
+            parameters.add(JsParameter(internalModuleName))
+        }
+        val jsExporterCall = JsInvocation(exporterName.makeRef(), internalModuleName.makeRef())
+        val result = mutableListOf(jsExporterFunction.makeStmt(), jsExporterCall.makeStmt())
+        if (!generateCallToMain) {
+            val exportExporter = jsAssignment(JsNameRef(exporterName, internalModuleName.makeRef()), exporterName.makeRef())
+            result += exportExporter.makeStmt()
+        }
+        return result
+    }
+
+    private fun transitiveJsExport(): List<JsStatement> {
+        val internalModuleName = ReservedJsNames.makeInternalModuleName()
+        val exporterName = ReservedJsNames.makeJsExporterName()
+        return crossModuleReferences.transitiveJsExportFrom.map {
+            JsInvocation(JsNameRef(exporterName, it.makeRef()), internalModuleName.makeRef()).makeStmt()
         }
     }
 
@@ -176,12 +204,10 @@ class Merger(
 
         val callToMain = fragments.sortedBy { it.packageFqn }.firstNotNullOfOrNull { it.mainFunction }
 
-        val exportStatements = fragments.flatMap { it.exports.statements } + additionalExports
+        val exportStatements = declareAndCallJsExporter() + additionalExports + transitiveJsExport()
 
         val importedJsModules = this.importedModulesMap.values.toList() + this.crossModuleReferences.importedModules
         val importStatements = this.importStatements.values.toList()
-
-        val internalModuleName = JsName("_", false)
 
         val program = JsProgram()
 
@@ -192,6 +218,7 @@ class Merger(
                 this.statements.addWithComment("block: exports", exportStatements)
             }
         } else {
+            val internalModuleName = ReservedJsNames.makeInternalModuleName()
             val rootFunction = JsFunction(program.rootScope, JsBlock(), "root function").apply {
                 parameters += JsParameter(internalModuleName)
                 parameters += (importedJsModules).map { JsParameter(it.internalName) }
