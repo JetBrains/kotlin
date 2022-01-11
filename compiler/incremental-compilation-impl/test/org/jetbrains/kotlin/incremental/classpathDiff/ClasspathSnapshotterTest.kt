@@ -34,7 +34,7 @@ abstract class ClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
     @Test
     fun `test ClassSnapshotter's result against expected snapshot`() {
         val classSnapshot = sourceFile.compileSingle().let {
-            ClassSnapshotter.snapshot(listOf(ClassFileWithContents(it, it.readBytes())), includeDebugInfoInSnapshot = true)
+            ClassSnapshotter.snapshot(listOf(ClassFileWithContents(it, it.readBytes())), includeDebugInfoInJavaSnapshot = true)
         }.single()
 
         assertEquals(expectedSnapshotFile.readText(), classSnapshot.toGson())

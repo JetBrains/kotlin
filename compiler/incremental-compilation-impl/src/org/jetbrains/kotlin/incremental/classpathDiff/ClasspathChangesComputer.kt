@@ -14,12 +14,9 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ImpactAnalysis.computeImpa
 import org.jetbrains.kotlin.incremental.storage.FileToCanonicalPathConverter
 import org.jetbrains.kotlin.incremental.storage.ListExternalizer
 import org.jetbrains.kotlin.incremental.storage.loadFromFile
-import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.metadata.deserialization.supertypes
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import java.io.File
 import java.util.*
 
@@ -92,34 +89,38 @@ object ClasspathChangesComputer {
         previousClassSnapshots: List<ClassSnapshot>,
         metrics: BuildMetricsReporter
     ): ChangeSet {
-        val asmBasedSnapshotPredicate: (ClassSnapshot) -> Boolean = {
+        val isKotlinClass: (ClassSnapshot) -> Boolean = {
             when (it) {
-                is RegularJavaClassSnapshot -> true
-                is KotlinClassSnapshot, is ProtoBasedJavaClassSnapshot -> false
-                else -> error("Unexpected type (it should have been handled earlier): ${it.javaClass.name}")
+                is KotlinClassSnapshot -> true
+                is JavaClassSnapshot -> false
+                is InaccessibleClassSnapshot -> error("Unexpected type (it should have been handled earlier): ${it.javaClass.name}")
             }
         }
-        val (currentAsmBasedSnapshots, currentProtoBasedSnapshots) = currentClassSnapshots.partition(asmBasedSnapshotPredicate)
-        val (previousAsmBasedSnapshots, previousProtoBasedSnapshots) = previousClassSnapshots.partition(asmBasedSnapshotPredicate)
+        val (currentKotlinClassSnapshots, currentJavaClassSnapshots) = currentClassSnapshots.partition(isKotlinClass)
+        val (previousKotlinClassSnapshots, previousJavaClassSnapshots) = previousClassSnapshots.partition(isKotlinClass)
 
+        @Suppress("UNCHECKED_CAST")
         val kotlinClassChanges = metrics.measure(BuildTime.COMPUTE_KOTLIN_CLASS_CHANGES) {
-            computeChangesForProtoBasedSnapshots(currentProtoBasedSnapshots, previousProtoBasedSnapshots)
+            computeKotlinClassChanges(
+                currentKotlinClassSnapshots as List<KotlinClassSnapshot>,
+                previousKotlinClassSnapshots as List<KotlinClassSnapshot>
+            )
         }
 
         @Suppress("UNCHECKED_CAST")
         val javaClassChanges = metrics.measure(BuildTime.COMPUTE_JAVA_CLASS_CHANGES) {
             JavaClassChangesComputer.compute(
-                currentAsmBasedSnapshots as List<RegularJavaClassSnapshot>,
-                previousAsmBasedSnapshots as List<RegularJavaClassSnapshot>
+                currentJavaClassSnapshots as List<JavaClassSnapshot>,
+                previousJavaClassSnapshots as List<JavaClassSnapshot>
             )
         }
 
         return kotlinClassChanges + javaClassChanges
     }
 
-    private fun computeChangesForProtoBasedSnapshots(
-        currentClassSnapshots: List<ClassSnapshot>,
-        previousClassSnapshots: List<ClassSnapshot>
+    private fun computeKotlinClassChanges(
+        currentClassSnapshots: List<KotlinClassSnapshot>,
+        previousClassSnapshots: List<KotlinClassSnapshot>
     ): ChangeSet {
         val workingDir =
             FileUtil.createTempDirectory(this::class.java.simpleName, "_WorkingDir_${UUID.randomUUID()}", /* deleteOnExit */ true)
@@ -132,28 +133,13 @@ object ClasspathChangesComputer {
         //   - The ChangesCollector result will contain symbols in the previous classes (we actually don't need them, but it's part of the
         //     API's effects).
         val unusedChangesCollector = ChangesCollector()
-        for (previousSnapshot in previousClassSnapshots) {
-            when (previousSnapshot) {
-                is KotlinClassSnapshot -> {
-                    incrementalJvmCache.saveClassToCache(
-                        kotlinClassInfo = previousSnapshot.classInfo,
-                        sourceFiles = null,
-                        changesCollector = unusedChangesCollector
-                    )
-                    incrementalJvmCache.markDirty(previousSnapshot.classInfo.className)
-                }
-                is ProtoBasedJavaClassSnapshot -> {
-                    incrementalJvmCache.saveJavaClassProto(
-                        source = null,
-                        serializedJavaClass = previousSnapshot.serializedJavaClass,
-                        collector = unusedChangesCollector
-                    )
-                    incrementalJvmCache.markDirty(JvmClassName.byClassId(previousSnapshot.serializedJavaClass.classId))
-                }
-                is RegularJavaClassSnapshot, is InaccessibleClassSnapshot, is ContentHashJavaClassSnapshot -> {
-                    error("Unexpected type (it should have been handled earlier): ${previousSnapshot.javaClass.name}")
-                }
-            }
+        previousClassSnapshots.forEach {
+            incrementalJvmCache.saveClassToCache(
+                kotlinClassInfo = it.classInfo,
+                sourceFiles = null,
+                changesCollector = unusedChangesCollector
+            )
+            incrementalJvmCache.markDirty(it.classInfo.className)
         }
 
         // Step 2:
@@ -164,26 +150,12 @@ object ClasspathChangesComputer {
         //   - The intermediate ChangesCollector result will contain symbols in added classes and changed (added/modified/removed) symbols
         //     in modified classes. We will collect symbols in removed classes in step 3.
         val changesCollector = ChangesCollector()
-        for (currentSnapshot in currentClassSnapshots) {
-            when (currentSnapshot) {
-                is KotlinClassSnapshot -> {
-                    incrementalJvmCache.saveClassToCache(
-                        kotlinClassInfo = currentSnapshot.classInfo,
-                        sourceFiles = null,
-                        changesCollector = changesCollector
-                    )
-                }
-                is ProtoBasedJavaClassSnapshot -> {
-                    incrementalJvmCache.saveJavaClassProto(
-                        source = null,
-                        serializedJavaClass = currentSnapshot.serializedJavaClass,
-                        collector = changesCollector
-                    )
-                }
-                is RegularJavaClassSnapshot, is InaccessibleClassSnapshot, is ContentHashJavaClassSnapshot -> {
-                    error("Unexpected type (it should have been handled earlier): ${currentSnapshot.javaClass.name}")
-                }
-            }
+        currentClassSnapshots.forEach {
+            incrementalJvmCache.saveClassToCache(
+                kotlinClassInfo = it.classInfo,
+                sourceFiles = null,
+                changesCollector = changesCollector
+            )
         }
 
         // Step 3:
@@ -303,11 +275,8 @@ internal object ImpactAnalysis {
 internal fun ClassSnapshot.getClassId(): ClassId {
     return when (this) {
         is KotlinClassSnapshot -> classInfo.classId
-        is RegularJavaClassSnapshot -> classId
-        is ProtoBasedJavaClassSnapshot -> serializedJavaClass.classId
-        is InaccessibleClassSnapshot, is ContentHashJavaClassSnapshot -> {
-            error("Unexpected type (it should have been handled earlier): ${javaClass.name}")
-        }
+        is JavaClassSnapshot -> classId
+        is InaccessibleClassSnapshot -> error("Unexpected type (it should have been handled earlier): ${javaClass.name}")
     }
 }
 
@@ -320,13 +289,7 @@ internal fun ClassSnapshot.getClassId(): ClassId {
 internal fun ClassSnapshot.getSupertypes(classIdResolver: (JvmClassName) -> ClassId?): List<ClassId> {
     return when (this) {
         is KotlinClassSnapshot -> supertypes.mapNotNull { classIdResolver.invoke(it) }
-        is RegularJavaClassSnapshot -> supertypes.mapNotNull { classIdResolver.invoke(it) }
-        is ProtoBasedJavaClassSnapshot -> {
-            val (proto, nameResolver) = serializedJavaClass.toProtoData()
-            proto.supertypes(TypeTable(proto.typeTable)).map { nameResolver.getClassId(it.className) }
-        }
-        is InaccessibleClassSnapshot, is ContentHashJavaClassSnapshot -> {
-            error("Unexpected type (it should have been handled earlier): ${javaClass.name}")
-        }
+        is JavaClassSnapshot -> supertypes.mapNotNull { classIdResolver.invoke(it) }
+        is InaccessibleClassSnapshot -> error("Unexpected type (it should have been handled earlier): ${javaClass.name}")
     }
 }

@@ -52,7 +52,7 @@ object JavaClassSnapshotter {
         abiClass.methods.clear()
         val classAbiExcludingMembers = abiClass.let { snapshotJavaElement(it, it.name, includeDebugInfoInSnapshot) }
 
-        return RegularJavaClassSnapshot(
+        return JavaClassSnapshot(
             classFile.classInfo.classId, classFile.classInfo.supertypes,
             classAbiExcludingMembers, fieldsAbi, methodsAbi
         )

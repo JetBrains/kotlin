@@ -18,11 +18,11 @@ object JavaClassChangesComputer {
      * Each list must not contain duplicate classes (having the same [JvmClassName]/[ClassId]).
      */
     fun compute(
-        currentJavaClassSnapshots: List<RegularJavaClassSnapshot>,
-        previousJavaClassSnapshots: List<RegularJavaClassSnapshot>
+        currentJavaClassSnapshots: List<JavaClassSnapshot>,
+        previousJavaClassSnapshots: List<JavaClassSnapshot>
     ): ChangeSet {
-        val currentClasses: Map<ClassId, RegularJavaClassSnapshot> = currentJavaClassSnapshots.associateBy { it.classId }
-        val previousClasses: Map<ClassId, RegularJavaClassSnapshot> = previousJavaClassSnapshots.associateBy { it.classId }
+        val currentClasses: Map<ClassId, JavaClassSnapshot> = currentJavaClassSnapshots.associateBy { it.classId }
+        val previousClasses: Map<ClassId, JavaClassSnapshot> = previousJavaClassSnapshots.associateBy { it.classId }
 
         // Note: Added classes can also impact recompilation.
         // For example, suppose a source file uses `SomeClass` through `*` imports:
@@ -50,8 +50,8 @@ object JavaClassChangesComputer {
      * The two classes must have the same [ClassId].
      */
     private fun collectClassChanges(
-        currentClassSnapshot: RegularJavaClassSnapshot,
-        previousClassSnapshot: RegularJavaClassSnapshot,
+        currentClassSnapshot: JavaClassSnapshot,
+        previousClassSnapshot: JavaClassSnapshot,
         changes: ChangeSet.Collector
     ) {
         val classId = currentClassSnapshot.classId.also { check(it == previousClassSnapshot.classId) }
