@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
-import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.name.ClassId
@@ -37,7 +35,8 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     override var origin: IrDeclarationOrigin,
     override val symbol: Fir2IrSimpleFunctionSymbol,
     override val isFakeOverride: Boolean
-) : IrSimpleFunction(), AbstractFir2IrLazyDeclaration<F, IrSimpleFunction>, IrLazyFunctionBase, Fir2IrComponents by components {
+) : IrSimpleFunction(), AbstractFir2IrLazyDeclaration<F, IrSimpleFunction>, Fir2IrTypeParametersContainer, IrLazyFunctionBase,
+    Fir2IrComponents by components {
 
     override lateinit var typeParameters: List<IrTypeParameter>
     override lateinit var parent: IrDeclarationParent

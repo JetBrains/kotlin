@@ -35,7 +35,8 @@ class Fir2IrLazyConstructor(
     override var origin: IrDeclarationOrigin,
     override val fir: FirConstructor,
     override val symbol: Fir2IrConstructorSymbol,
-) : IrConstructor(), AbstractFir2IrLazyDeclaration<FirConstructor, IrConstructor>, Fir2IrComponents by components {
+) : IrConstructor(), AbstractFir2IrLazyDeclaration<FirConstructor, IrConstructor>, Fir2IrTypeParametersContainer,
+    Fir2IrComponents by components {
     init {
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)

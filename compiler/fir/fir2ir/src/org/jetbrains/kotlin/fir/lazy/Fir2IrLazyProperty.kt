@@ -49,7 +49,6 @@ class Fir2IrLazyProperty(
     }
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
-    override var typeParameters: List<IrTypeParameter> = emptyList()
     override lateinit var parent: IrDeclarationParent
 
     @ObsoleteDescriptorBasedAPI

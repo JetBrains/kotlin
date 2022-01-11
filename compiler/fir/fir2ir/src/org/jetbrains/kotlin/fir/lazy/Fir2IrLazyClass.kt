@@ -41,7 +41,7 @@ class Fir2IrLazyClass(
     override var origin: IrDeclarationOrigin,
     override val fir: FirRegularClass,
     override val symbol: Fir2IrClassSymbol,
-) : IrClass(), AbstractFir2IrLazyDeclaration<FirRegularClass, IrClass>,
+) : IrClass(), AbstractFir2IrLazyDeclaration<FirRegularClass, IrClass>, Fir2IrTypeParametersContainer,
     IrMaybeDeserializedClass, DeserializableClass, Fir2IrComponents by components {
     init {
         symbol.bind(this)
