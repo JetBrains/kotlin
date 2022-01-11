@@ -51,7 +51,7 @@ class CompatibilityMode(val abiVersion: KotlinAbiVersion) {
     }
 }
 
-enum class IrModuleOrigin {
+enum class IrModuleDeserializerKind {
     CURRENT, DESERIALIZED, SYNTHETIC
 }
 
@@ -94,7 +94,7 @@ abstract class IrModuleDeserializer(private val _moduleDescriptor: ModuleDescrip
 
     open val strategyResolver: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_DECLARATION_HEADERS }
 
-    abstract val origin: IrModuleOrigin
+    abstract val kind: IrModuleDeserializerKind
 
     open fun fileDeserializers(): Collection<IrFileDeserializer> = error("Unsupported")
 
@@ -231,7 +231,7 @@ class IrModuleDeserializerWithBuiltIns(
 
     override val moduleFragment: IrModuleFragment get() = delegate.moduleFragment
     override val moduleDependencies: Collection<IrModuleDeserializer> get() = delegate.moduleDependencies
-    override val origin get() = delegate.origin
+    override val kind get() = delegate.kind
 
     override fun fileDeserializers(): Collection<IrFileDeserializer> {
         return delegate.fileDeserializers()
@@ -258,5 +258,5 @@ open class CurrentModuleDeserializer(
 
     override fun declareIrSymbol(symbol: IrSymbol) {}
 
-    override val origin get() = IrModuleOrigin.CURRENT
+    override val kind get() = IrModuleDeserializerKind.CURRENT
 }

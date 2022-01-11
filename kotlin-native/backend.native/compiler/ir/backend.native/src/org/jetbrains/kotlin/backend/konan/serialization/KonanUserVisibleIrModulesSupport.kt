@@ -35,7 +35,7 @@ class KonanUserVisibleIrModulesSupport(
 
         // Transform deserializers to [ModuleWithUninitializedDependencies]s.
         val modules: Map<ResolvedDependencyId, ModuleWithUninitializedDependencies> = deserializers.mapNotNull { deserializer ->
-            val library: KotlinLibrary = deserializer.kotlinLibrary ?: return@mapNotNull null
+            val library: KotlinLibrary = deserializer.asDeserializedKotlinLibrary ?: return@mapNotNull null
 
             val moduleId = getUserVisibleModuleId(deserializer)
             if (moduleId in excludedModuleIds) return@mapNotNull null
