@@ -611,7 +611,7 @@ internal class KonanIrLinker(
         override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns)
         override val moduleDependencies: Collection<IrModuleDeserializer> = listOfNotNull(forwardDeclarationDeserializer)
 
-        override val origin get() = IrModuleOrigin.DESERIALIZED
+        override val kind get() = IrModuleDeserializerKind.DESERIALIZED
     }
 
     inner class KonanCachedLibraryModuleDeserializer(
@@ -845,7 +845,7 @@ internal class KonanIrLinker(
             }
         }
 
-        override val origin get() = IrModuleOrigin.DESERIALIZED
+        override val kind get() = IrModuleDeserializerKind.DESERIALIZED
     }
 
     private inner class KonanForwardDeclarationModuleDeserializer(moduleDescriptor: ModuleDescriptor) : IrModuleDeserializer(moduleDescriptor, KotlinAbiVersion.CURRENT) {
@@ -897,7 +897,7 @@ internal class KonanIrLinker(
         override val moduleFragment: IrModuleFragment = KonanIrModuleFragmentImpl(moduleDescriptor, builtIns)
         override val moduleDependencies: Collection<IrModuleDeserializer> = emptyList()
 
-        override val origin get() = IrModuleOrigin.SYNTHETIC
+        override val kind get() = IrModuleDeserializerKind.SYNTHETIC
     }
 
     private val String.isForwardDeclarationModuleName: Boolean get() = this == "<forward declarations>"
