@@ -75,7 +75,6 @@ public:
 
     SameThreadMarkAndSweep(mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory, GCScheduler& gcScheduler) noexcept;
     ~SameThreadMarkAndSweep() = default;
-    void StopFinalizerThreadForTests() noexcept {}
 
 private:
     // Returns `true` if GC has happened, and `false` if not (because someone else has suspended the threads).

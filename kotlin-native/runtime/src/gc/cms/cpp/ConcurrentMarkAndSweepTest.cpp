@@ -340,7 +340,6 @@ TEST_F(ConcurrentMarkAndSweepTest, FreeObjectsWithFinalizers) {
         EXPECT_CALL(finalizerHook(), Call(object1.header()));
         EXPECT_CALL(finalizerHook(), Call(object2.header()));
         threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
-        threadData.gc().impl().gc().StopFinalizerThreadForTests();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre());
     });
@@ -360,7 +359,6 @@ TEST_F(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeak) {
         ASSERT_THAT(weak1->referred, object1.header());
 
         threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
-        threadData.gc().impl().gc().StopFinalizerThreadForTests();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre());
     });
@@ -511,7 +509,6 @@ TEST_F(ConcurrentMarkAndSweepTest, ObjectsWithCyclesAndFinalizers) {
         EXPECT_CALL(finalizerHook(), Call(object5.header()));
         EXPECT_CALL(finalizerHook(), Call(object6.header()));
         threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
-        threadData.gc().impl().gc().StopFinalizerThreadForTests();
 
         EXPECT_THAT(
                 Alive(threadData),

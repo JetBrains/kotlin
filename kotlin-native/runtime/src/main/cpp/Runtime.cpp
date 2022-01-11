@@ -243,6 +243,10 @@ void Kotlin_shutdownRuntime() {
         return;
     }
 
+    // If we're going to need finalizers for the full shutdown, we need to start the thread before
+    // new runtimes are disallowed.
+    kotlin::StartFinalizerThreadIfNeeded();
+
     if (Kotlin_cleanersLeakCheckerEnabled()) {
         // Make sure to collect any lingering cleaners.
         PerformFullGC(runtime->memoryState);
@@ -262,8 +266,14 @@ void Kotlin_shutdownRuntime() {
         // First make sure workers are gone.
         WaitNativeWorkersTermination();
 
+        // Allow the current runtime.
+        int knownRuntimes = 1;
+        if (kotlin::FinalizersThreadIsRunning()) {
+            ++knownRuntimes;
+        }
+
         // Now check for existence of any other runtimes.
-        auto otherRuntimesCount = atomicGet(&aliveRuntimesCount) - 1;
+        auto otherRuntimesCount = atomicGet(&aliveRuntimesCount) - knownRuntimes;
         RuntimeAssert(otherRuntimesCount >= 0, "Cannot be negative");
         if (Kotlin_forceCheckedShutdown()) {
             if (otherRuntimesCount > 0) {
