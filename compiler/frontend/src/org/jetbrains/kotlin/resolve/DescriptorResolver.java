@@ -668,6 +668,9 @@ public class DescriptorResolver {
         if (FunctionTypesKt.isExtensionFunctionType(upperBoundType)) {
             trace.report(UPPER_BOUND_IS_EXTENSION_FUNCTION_TYPE.on(upperBound));
         }
+        if (DefinitelyNonNullableTypesKt.containsIncorrectExplicitDefinitelyNonNullableType(upperBoundType)) {
+            trace.report(INCORRECT_LEFT_COMPONENT_OF_INTERSECTION.on(upperBound));
+        }
     }
 
     @NotNull

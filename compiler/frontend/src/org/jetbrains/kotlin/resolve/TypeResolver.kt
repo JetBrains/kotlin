@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
+import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.VariableDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.*
+import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.math.min
@@ -325,7 +326,7 @@ class TypeResolver(
                     return
                 }
 
-                if (!leftType.isTypeParameter() || leftType.isMarkedNullable || !TypeUtils.isNullableType(leftType)) {
+                if (!leftType.isTypeParameter() || leftType.isMarkedNullable || !leftType.isNullableOrUninitializedTypeParameter()) {
                     c.trace.report(INCORRECT_LEFT_COMPONENT_OF_INTERSECTION.on(intersectionType.getLeftTypeRef()!!))
                     return
                 }
@@ -346,6 +347,14 @@ class TypeResolver(
                         )
 
                 result = type(definitelyNotNullType)
+            }
+
+            private fun KotlinType.isNullableOrUninitializedTypeParameter(): Boolean {
+                if ((constructor.declarationDescriptor as? TypeParameterDescriptorImpl)?.isInitialized == false) {
+                    return true
+                }
+
+                return isNullable()
             }
 
             override fun visitFunctionType(type: KtFunctionType) {
