@@ -278,6 +278,7 @@ public interface Errors {
     DiagnosticFactory0<KtAnnotationEntry> REPEATED_ANNOTATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotationEntry> REPEATED_ANNOTATION_WARNING = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtAnnotationEntry> NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<KtAnnotationEntry> WRONG_EXTENSION_FUNCTION_TYPE = DiagnosticFactory0.create(ERROR);
 
     // Annotations
 

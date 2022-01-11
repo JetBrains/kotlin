@@ -287,6 +287,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val REPEATED_ANNOTATION by error<KtAnnotationEntry>()
         val REPEATED_ANNOTATION_WARNING by warning<KtAnnotationEntry>()
         val NOT_A_CLASS by error<PsiElement>()
+        val WRONG_EXTENSION_FUNCTION_TYPE by error<KtAnnotationEntry>()
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {

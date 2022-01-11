@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.isFunctionOrKFunctionTypeWithAnySuspendability
 import org.jetbrains.kotlin.config.LanguageFeature.*
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -19,11 +20,13 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getAnnotationEntries
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotatedWithKotlinRepeatable
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
@@ -163,9 +166,9 @@ class AnnotationChecker(
         checkWithoutLanguageFeature: Boolean = false
     ) {
         val shouldRunCheck = isSuperType || shouldCheckReferenceItself
-        if (shouldRunCheck) {
-            for (entry in reference.annotationEntries) {
-                val descriptor = trace.get(BindingContext.ANNOTATION, entry)
+        for (entry in reference.annotationEntries) {
+            val descriptor = trace.get(BindingContext.ANNOTATION, entry)
+            if (shouldRunCheck) {
                 if (descriptor is LazyAnnotationDescriptor) {
                     /*
                      * There are no users of type annotations until backend, so if there are errors
@@ -179,6 +182,12 @@ class AnnotationChecker(
                     trace.report(Errors.ANNOTATION_ON_SUPERCLASS.on(languageVersionSettings, entry))
                 } else if (shouldRunCheck && (languageVersionSettings.supportsFeature(ProperCheckAnnotationsTargetInTypeUsePositions) || checkWithoutLanguageFeature)) {
                     checkAnnotationEntry(entry, actualTargets, trace)
+                }
+            }
+            if (descriptor?.annotationClass?.classId == StandardClassIds.Annotations.ExtensionFunctionType) {
+                val type = trace[BindingContext.TYPE, reference]
+                if (type != null && type.isFunctionOrKFunctionTypeWithAnySuspendability && type.arguments.size <= 1) {
+                    trace.report(Errors.WRONG_EXTENSION_FUNCTION_TYPE.on(entry))
                 }
             }
         }

@@ -680,6 +680,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NotAClass::class
     }
 
+    abstract class WrongExtensionFunctionType : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = WrongExtensionFunctionType::class
+    }
+
     abstract class OptInUsage : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = OptInUsage::class
         abstract val optInMarkerFqName: FqName

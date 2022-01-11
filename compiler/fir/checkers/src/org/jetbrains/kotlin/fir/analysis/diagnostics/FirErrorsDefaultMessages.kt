@@ -561,6 +561,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VIRTUAL_MEMBER_HIDDEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_EXTENSION_FUNCTION_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_GETTER_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_INVOCATION_KIND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_LONG_SUFFIX
@@ -853,6 +854,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Opt-in requirement marker annotation on override makes no sense without the same marker on base declaration"
         )
         map.put(NOT_A_CLASS, "Not a class")
+        map.put(WRONG_EXTENSION_FUNCTION_TYPE, "ExtensionFunctionType is forbidden on a function type without parameters")
 
         // Exposed visibility group // #
         map.put(

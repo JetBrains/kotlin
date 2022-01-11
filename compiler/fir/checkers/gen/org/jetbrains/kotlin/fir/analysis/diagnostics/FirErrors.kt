@@ -253,6 +253,7 @@ object FirErrors {
     val REPEATED_ANNOTATION by error0<KtAnnotationEntry>()
     val REPEATED_ANNOTATION_WARNING by warning0<KtAnnotationEntry>()
     val NOT_A_CLASS by error0<PsiElement>()
+    val WRONG_EXTENSION_FUNCTION_TYPE by error0<KtAnnotationEntry>()
 
     // OptIn
     val OPT_IN_USAGE by warning2<PsiElement, FqName, String>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

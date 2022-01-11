@@ -816,6 +816,11 @@ internal class NotAClassImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.NotAClass(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class WrongExtensionFunctionTypeImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.WrongExtensionFunctionType(), KtAbstractFirDiagnostic<KtAnnotationEntry>
+
 internal class OptInUsageImpl(
     override val optInMarkerFqName: FqName,
     override val message: String,
