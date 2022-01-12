@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-
 enum class IrTypeOperator {
     /** Explicit cast: `e as Type` */
     CAST,
@@ -64,11 +61,4 @@ enum class IrTypeOperator {
      * On JVM, tells back-end to treat argument as a value of a given type (even though exact JVM types might differ).
      */
     REINTERPRET_CAST;
-}
-
-abstract class IrTypeOperatorCall : IrExpression() {
-    abstract val operator: IrTypeOperator
-    abstract var argument: IrExpression
-    abstract var typeOperand: IrType
-    abstract val typeOperandClassifier: IrClassifierSymbol
 }

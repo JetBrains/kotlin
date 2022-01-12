@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -68,18 +67,4 @@ abstract class IrClass :
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
         declarations.transformInPlace(transformer, data)
     }
-}
-
-val IrClass.isSingleFieldValueClass
-    get() = this.isValue && (this.inlineClassRepresentation != null || this.primaryConstructor?.valueParameters?.size == 1)
-
-val IrClass.isMultiFieldValueClass
-    get() = this.isValue && !isSingleFieldValueClass
-
-fun IrClass.addMember(member: IrDeclaration) {
-    declarations.add(member)
-}
-
-fun IrClass.addAll(members: List<IrDeclaration>) {
-    declarations.addAll(members)
 }

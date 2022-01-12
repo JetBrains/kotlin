@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -51,6 +50,3 @@ abstract class IrFunctionAccessExpression(
         }
     }
 }
-
-fun IrFunctionAccessExpression.putArgument(parameter: IrValueParameter, argument: IrExpression) =
-    putArgument(symbol.owner, parameter, argument)

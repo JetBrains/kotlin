@@ -23,7 +23,3 @@ abstract class IrLoop : IrExpression() {
     lateinit var condition: IrExpression
     var label: String? = null
 }
-
-abstract class IrWhileLoop : IrLoop()
-
-abstract class IrDoWhileLoop : IrLoop()

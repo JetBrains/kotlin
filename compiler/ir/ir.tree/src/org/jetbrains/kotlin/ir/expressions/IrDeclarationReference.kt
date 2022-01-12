@@ -16,31 +16,8 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 abstract class IrDeclarationReference : IrExpression() {
     abstract val symbol: IrSymbol
-}
-
-abstract class IrGetSingletonValue : IrDeclarationReference()
-
-abstract class IrGetObjectValue : IrGetSingletonValue() {
-    abstract override val symbol: IrClassSymbol
-}
-
-abstract class IrGetEnumValue : IrGetSingletonValue() {
-    abstract override val symbol: IrEnumEntrySymbol
-}
-
-/**
- * Platform-specific low-level reference to function.
- *
- * On JS platform it represents a plain reference to JavaScript function.
- * On JVM platform it represents a MethodHandle constant.
- */
-abstract class IrRawFunctionReference : IrDeclarationReference() {
-    abstract override val symbol: IrFunctionSymbol
 }

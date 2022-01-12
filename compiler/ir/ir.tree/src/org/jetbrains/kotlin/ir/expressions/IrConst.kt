@@ -22,22 +22,3 @@ abstract class IrConst<T> : IrExpression() {
 
     abstract fun copyWithOffsets(startOffset: Int, endOffset: Int): IrConst<T>
 }
-
-sealed class IrConstKind<T>(val asString: kotlin.String) {
-    @Suppress("UNCHECKED_CAST")
-    fun valueOf(aConst: IrConst<*>) =
-        (aConst as IrConst<T>).value
-
-    object Null : IrConstKind<Nothing?>("Null")
-    object Boolean : IrConstKind<kotlin.Boolean>("Boolean")
-    object Char : IrConstKind<kotlin.Char>("Char")
-    object Byte : IrConstKind<kotlin.Byte>("Byte")
-    object Short : IrConstKind<kotlin.Short>("Short")
-    object Int : IrConstKind<kotlin.Int>("Int")
-    object Long : IrConstKind<kotlin.Long>("Long")
-    object String : IrConstKind<kotlin.String>("String")
-    object Float : IrConstKind<kotlin.Float>("Float")
-    object Double : IrConstKind<kotlin.Double>("Double")
-
-    override fun toString() = asString
-}

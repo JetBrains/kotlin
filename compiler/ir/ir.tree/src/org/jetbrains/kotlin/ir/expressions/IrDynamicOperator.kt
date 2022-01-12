@@ -5,37 +5,6 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-abstract class IrDynamicExpression : IrExpression()
-
-abstract class IrDynamicOperatorExpression : IrDynamicExpression() {
-    abstract val operator: IrDynamicOperator
-
-    abstract var receiver: IrExpression
-
-    abstract val arguments: MutableList<IrExpression>
-}
-
-var IrDynamicOperatorExpression.left: IrExpression
-    get() = receiver
-    set(value) {
-        receiver = value
-    }
-
-var IrDynamicOperatorExpression.right: IrExpression
-    get() = arguments[0]
-    set(value) {
-        if (arguments.isEmpty())
-            arguments.add(value)
-        else
-            arguments[0] = value
-    }
-
-abstract class IrDynamicMemberExpression : IrDynamicExpression() {
-    abstract val memberName: String
-
-    abstract var receiver: IrExpression
-}
-
 enum class IrDynamicOperator(val image: String, val isAssignmentOperator: Boolean = false) {
     UNARY_PLUS("+"),
     UNARY_MINUS("-"),
