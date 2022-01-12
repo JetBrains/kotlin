@@ -17,59 +17,58 @@ import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.util.createLookupLocation
 import org.jetbrains.kotlin.resolve.calls.util.getValueArgumentForExpression
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.IDEAPlatforms
+import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 
-@Deprecated(
-    "Use org.jetbrains.kotlin.resolve.calls.util.getResolvedCall instead.",
-    ReplaceWith("getResolvedCall", "org.jetbrains.kotlin.resolve.calls.util.getResolvedCall"),
-    level = DeprecationLevel.ERROR
+@IDEAPluginsCompatibilityAPI(
+    IDEAPlatforms._213, // I'm not sure about 212 and 211 AS -- didn't check them
+    message = "Use org.jetbrains.kotlin.resolve.calls.util.getResolvedCall instead.",
+    plugins = "Android in IDEA"
 )
 fun Call?.getResolvedCall(context: BindingContext): ResolvedCall<out CallableDescriptor>? = getResolvedCall(context)
 
-@Deprecated(
-    "Use org.jetbrains.kotlin.resolve.calls.util.getResolvedCall instead.",
-    ReplaceWith("getResolvedCall", "org.jetbrains.kotlin.resolve.calls.util.getResolvedCall"),
-    level = DeprecationLevel.ERROR
+@IDEAPluginsCompatibilityAPI(
+    IDEAPlatforms._213, // I'm not sure about 212 and 211 AS -- didn't check them
+    message = "Use org.jetbrains.kotlin.resolve.calls.util.getResolvedCall instead.",
+    plugins = "Android in IDEA"
 )
 fun KtElement?.getResolvedCall(context: BindingContext): ResolvedCall<out CallableDescriptor>? = getResolvedCall(context)
 
-@Deprecated(
-    "Use org.jetbrains.kotlin.resolve.calls.util.getType instead.",
-    ReplaceWith("getType", "org.jetbrains.kotlin.resolve.calls.util.getType"),
-    level = DeprecationLevel.ERROR
+
+// TODO: find what IDEA's used it
+@IDEAPluginsCompatibilityAPI(
+    message = "Use org.jetbrains.kotlin.resolve.calls.util.getType instead."
 )
 fun KtExpression.getType(context: BindingContext): KotlinType? = getType(context)
 
-@Deprecated(
-    "Use org.jetbrains.kotlin.resolve.calls.util.getCall instead.",
-    ReplaceWith("getType", "org.jetbrains.kotlin.resolve.calls.util.getCall"),
-    level = DeprecationLevel.ERROR
+@IDEAPluginsCompatibilityAPI(
+    IDEAPlatforms._213, // I'm not sure about 212 and 211 AS -- didn't check them
+    message = "Use org.jetbrains.kotlin.resolve.calls.util.getCall instead.",
+    plugins = "Android in IDEA"
 )
 fun KtElement.getCall(context: BindingContext): Call? = getCall(context)
 
-@Deprecated(
-    "Use org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny instead.",
-    ReplaceWith("getCalleeExpressionIfAny", "org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny"),
-    level = DeprecationLevel.ERROR
+// TODO: find what IDEA's used it
+@IDEAPluginsCompatibilityAPI(
+    message = "Use org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny instead."
 )
 fun KtElement?.getCalleeExpressionIfAny(): KtExpression? = getCalleeExpressionIfAny()
 
-@Deprecated(
-    "Use org.jetbrains.kotlin.resolve.calls.util.createLookupLocation instead.",
-    ReplaceWith("createLookupLocation", "org.jetbrains.kotlin.resolve.calls.util.createLookupLocation"),
-    level = DeprecationLevel.ERROR
+// TODO: find what IDEA's used it
+@IDEAPluginsCompatibilityAPI(
+    message = "Use org.jetbrains.kotlin.resolve.calls.util.createLookupLocation instead."
 )
 fun Call.createLookupLocation(): KotlinLookupLocation = createLookupLocation()
 
-@Deprecated(
-    "Use org.jetbrains.kotlin.resolve.calls.util.createLookupLocation instead.",
-    ReplaceWith("createLookupLocation", "org.jetbrains.kotlin.resolve.calls.util.createLookupLocation"),
-    level = DeprecationLevel.ERROR
+// TODO: find what IDEA's used it
+@IDEAPluginsCompatibilityAPI(
+    message = "Use org.jetbrains.kotlin.resolve.calls.util.createLookupLocation instead."
 )
 fun KtExpression.createLookupLocation(): KotlinLookupLocation? = createLookupLocation()
 
-@Deprecated(
-    "Use org.jetbrains.kotlin.resolve.calls.util.getValueArgumentForExpression instead.",
-    ReplaceWith("getValueArgumentForExpression", "org.jetbrains.kotlin.resolve.calls.util.getValueArgumentForExpression"),
-    level = DeprecationLevel.ERROR
+@IDEAPluginsCompatibilityAPI(
+    IDEAPlatforms._213, // I'm not sure about 212 and 211 AS -- didn't check them
+    message = "Use org.jetbrains.kotlin.resolve.calls.util.getValueArgumentForExpression instead.",
+    plugins = "Android in IDEA"
 )
 fun Call.getValueArgumentForExpression(expression: KtExpression): ValueArgument? = getValueArgumentForExpression(expression)
