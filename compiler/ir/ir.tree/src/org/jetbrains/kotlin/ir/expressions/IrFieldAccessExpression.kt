@@ -27,9 +27,3 @@ abstract class IrFieldAccessExpression : IrDeclarationReference() {
     var receiver: IrExpression? = null
     abstract val origin: IrStatementOrigin?
 }
-
-abstract class IrGetField : IrFieldAccessExpression()
-
-abstract class IrSetField : IrFieldAccessExpression() {
-    abstract var value: IrExpression
-}

@@ -12,8 +12,3 @@ abstract class IrSuspensionPoint : IrExpression() {
     abstract var result: IrExpression
     abstract var resumeResult: IrExpression
 }
-
-abstract class IrSuspendableExpression : IrExpression() {
-    abstract var suspensionPointId: IrExpression
-    abstract var result: IrExpression
-}

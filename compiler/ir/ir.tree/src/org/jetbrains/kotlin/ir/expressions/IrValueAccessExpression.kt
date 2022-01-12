@@ -22,12 +22,3 @@ abstract class IrValueAccessExpression : IrDeclarationReference() {
     abstract override val symbol: IrValueSymbol
     abstract val origin: IrStatementOrigin?
 }
-
-abstract class IrGetValue : IrValueAccessExpression() {
-    abstract fun copyWithOffsets(newStartOffset: Int, newEndOffset: Int): IrGetValue
-}
-
-abstract class IrSetValue : IrValueAccessExpression() {
-    abstract override val symbol: IrValueSymbol
-    abstract var value: IrExpression
-}

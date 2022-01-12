@@ -17,23 +17,8 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-
-interface IrSymbolOwner : IrElement {
-    val symbol: IrSymbol
-}
-
-interface IrMetadataSourceOwner : IrElement {
-    var metadata: MetadataSource?
-}
 
 interface IrDeclaration : IrStatement, IrSymbolOwner, IrMutableAnnotationContainer {
     @ObsoleteDescriptorBasedAPI
@@ -44,32 +29,4 @@ interface IrDeclaration : IrStatement, IrSymbolOwner, IrMutableAnnotationContain
     var parent: IrDeclarationParent
 
     val factory: IrFactory
-}
-
-abstract class IrDeclarationBase : IrElementBase(), IrDeclaration
-
-interface IrOverridableDeclaration<S : IrSymbol> : IrOverridableMember {
-    override val symbol: S
-    val isFakeOverride: Boolean
-    var overriddenSymbols: List<S>
-}
-
-interface IrDeclarationWithVisibility : IrDeclaration {
-    var visibility: DescriptorVisibility
-}
-
-interface IrDeclarationWithName : IrDeclaration {
-    val name: Name
-}
-
-interface IrPossiblyExternalDeclaration : IrDeclarationWithName {
-    val isExternal: Boolean
-}
-
-interface IrOverridableMember : IrDeclarationWithVisibility, IrDeclarationWithName, IrSymbolOwner {
-    val modality: Modality
-}
-
-interface IrMemberWithContainerSource : IrDeclarationWithName {
-    val containerSource: DeserializedContainerSource?
 }
