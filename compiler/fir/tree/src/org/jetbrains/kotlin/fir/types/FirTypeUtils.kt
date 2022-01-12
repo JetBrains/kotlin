@@ -153,7 +153,7 @@ fun FirTypeProjection.toConeTypeProjection(): ConeTypeProjection =
     }
 
 private fun ConeTypeParameterType.hasNotNullUpperBound(): Boolean {
-    return lookupTag.typeParameterSymbol.fir.bounds.any {
+    return lookupTag.typeParameterSymbol.resolvedBounds.any {
         val boundType = it.coneType
         if (boundType is ConeTypeParameterType) {
             boundType.hasNotNullUpperBound()
@@ -175,7 +175,7 @@ val ConeKotlinType.canBeNull: Boolean
         return when (this) {
             is ConeFlexibleType -> upperBound.canBeNull
             is ConeDefinitelyNotNullType -> false
-            is ConeTypeParameterType -> this.lookupTag.typeParameterSymbol.fir.bounds.all { it.coneType.canBeNull }
+            is ConeTypeParameterType -> this.lookupTag.typeParameterSymbol.resolvedBounds.all { it.coneType.canBeNull }
             is ConeIntersectionType -> intersectedTypes.all { it.canBeNull }
             else -> isNullable
         }

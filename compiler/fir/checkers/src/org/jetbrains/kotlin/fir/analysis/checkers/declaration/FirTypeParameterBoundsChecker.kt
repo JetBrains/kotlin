@@ -84,7 +84,7 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
     }
 
     private fun checkOnlyOneTypeParameterBound(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
-        val bounds = declaration.bounds.distinctBy { it.coneType }
+        val bounds = declaration.symbol.resolvedBounds.distinctBy { it.coneType }
         val (boundWithParam, otherBounds) = bounds.partition { it.coneType is ConeTypeParameterType }
         if (boundWithParam.size > 1 || (boundWithParam.size == 1 && otherBounds.isNotEmpty())) {
             // If there's only one problematic bound (either 2 type parameter bounds, or 1 type parameter bound + 1 other bound),
@@ -108,7 +108,7 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
 
     private fun checkBoundUniqueness(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
         val seenClasses = mutableSetOf<FirRegularClassSymbol>()
-        val allNonErrorBounds = declaration.bounds.filter { it !is FirErrorTypeRef }
+        val allNonErrorBounds = declaration.symbol.resolvedBounds.filter { it !is FirErrorTypeRef }
         val uniqueBounds = allNonErrorBounds.distinctBy { it.coneType.classId ?: it.coneType }
 
         uniqueBounds.forEach { bound ->
@@ -140,7 +140,7 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
             return false
         }
 
-        if (anyConflictingTypes(declaration.bounds.map { it.coneType })) {
+        if (anyConflictingTypes(declaration.symbol.resolvedBounds.map { it.coneType })) {
             reporter.reportOn(declaration.source, FirErrors.CONFLICTING_UPPER_BOUNDS, declaration.symbol, context)
         }
     }
@@ -166,7 +166,7 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
         val firTypeRefClasses = mutableListOf<Pair<FirTypeRef, FirRegularClassSymbol>>()
         val firRegularClassesSet = mutableSetOf<FirRegularClassSymbol>()
 
-        for (bound in declaration.bounds) {
+        for (bound in declaration.symbol.resolvedBounds) {
             val classSymbol = bound.toRegularClassSymbol(context.session)
             if (firRegularClassesSet.contains(classSymbol)) {
                 // no need to throw INCONSISTENT_TYPE_PARAMETER_BOUNDS diagnostics here because REPEATED_BOUNDS diagnostic is already exist

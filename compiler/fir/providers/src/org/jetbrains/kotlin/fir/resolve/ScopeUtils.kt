@@ -74,7 +74,7 @@ private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: Scope
             scopeSession.getOrBuild(symbol, TYPE_PARAMETER_SCOPE_KEY) {
                 val intersectionType = ConeTypeIntersector.intersectTypes(
                     useSiteSession.typeContext,
-                    symbol.fir.bounds.map { it.coneType }
+                    symbol.resolvedBounds.map { it.coneType }
                 )
                 intersectionType.scope(useSiteSession, scopeSession, requiredPhase) ?: FirTypeScope.Empty
             }

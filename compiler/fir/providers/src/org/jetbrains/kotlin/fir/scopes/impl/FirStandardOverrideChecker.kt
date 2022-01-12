@@ -82,8 +82,8 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
 
         if (isEqualTypes(substitutedOverrideType, substitutedBaseType)) return true
 
-        return overrideTypeParameter.bounds.any { bound -> isEqualTypes(bound.coneType, substitutedBaseType, substitutor) } &&
-                baseTypeParameter.bounds.any { bound -> isEqualTypes(bound.coneType, substitutedOverrideType, substitutor) }
+        return overrideTypeParameter.symbol.resolvedBounds.any { bound -> isEqualTypes(bound.coneType, substitutedBaseType, substitutor) } &&
+                baseTypeParameter.symbol.resolvedBounds.any { bound -> isEqualTypes(bound.coneType, substitutedOverrideType, substitutor) }
     }
 
     private fun isCompatibleTypeParameters(
@@ -94,7 +94,7 @@ class FirStandardOverrideChecker(private val session: FirSession) : FirAbstractO
         if (overrideCandidate.symbol == baseDeclaration.symbol) return true
         if (overrideCandidate !is FirTypeParameter || baseDeclaration !is FirTypeParameter) return false
         if (overrideCandidate.bounds.size != baseDeclaration.bounds.size) return false
-        return overrideCandidate.bounds.zip(baseDeclaration.bounds)
+        return overrideCandidate.symbol.resolvedBounds.zip(baseDeclaration.symbol.resolvedBounds)
             .all { (aBound, bBound) -> isEqualBound(aBound, bBound, overrideCandidate, baseDeclaration, substitutor) }
     }
 

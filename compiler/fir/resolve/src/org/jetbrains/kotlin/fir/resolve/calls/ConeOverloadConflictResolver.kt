@@ -208,7 +208,7 @@ class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl, val se
         val substitutor = substitutorByMap(substitutionMap, session)
         for (typeParameter in typeParameters) {
             require(typeParameter is ConeTypeParameterLookupTag)
-            for (upperBound in typeParameter.symbol.fir.bounds) {
+            for (upperBound in typeParameter.symbol.resolvedBounds) {
                 addSubtypeConstraint(
                     substitutionMap[typeParameter.typeParameterSymbol]
                         ?: error("No ${typeParameter.symbol.fir.render()} in substitution map"),
