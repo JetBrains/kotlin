@@ -38,7 +38,7 @@ class KotlinJvmVariantInstantiator(
     private val runtimeDependenciesConfigurationInstantiator: KotlinRuntimeDependenciesConfigurationInstantiator =
         DefaultKotlinRuntimeDependenciesConfigurationInstantiator,
 
-    private val runtimeElementsConfigurationInstantiator: KotlinRuntimeElementsConfigurationFactory =
+    private val runtimeElementsConfigurationInstantiator: KotlinRuntimeElementsConfigurationInstantiator =
         DefaultKotlinRuntimeElementsConfigurationInstantiator,
 
     ) : KotlinGradleFragmentFactory.FragmentInstantiator<KotlinJvmVariant> {
