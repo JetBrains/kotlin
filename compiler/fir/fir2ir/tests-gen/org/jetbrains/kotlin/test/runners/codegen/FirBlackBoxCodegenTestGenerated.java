@@ -28555,6 +28555,36 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("equals.kt")
+            public void testEquals() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/equals.kt");
+            }
+
+            @Test
+            @TestMetadata("equalsDeep.kt")
+            public void testEqualsDeep() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/equalsDeep.kt");
+            }
+
+            @Test
+            @TestMetadata("equalsDeep2.kt")
+            public void testEqualsDeep2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/equalsDeep2.kt");
+            }
+
+            @Test
+            @TestMetadata("equalsDeep3.kt")
+            public void testEqualsDeep3() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/equalsDeep3.kt");
+            }
+
+            @Test
+            @TestMetadata("equalsDeep4.kt")
+            public void testEqualsDeep4() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/equalsDeep4.kt");
+            }
+
+            @Test
             @TestMetadata("object.kt")
             public void testObject() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/sealed/object.kt");

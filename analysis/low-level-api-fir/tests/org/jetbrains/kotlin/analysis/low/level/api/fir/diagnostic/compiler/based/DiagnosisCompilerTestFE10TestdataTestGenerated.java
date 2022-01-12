@@ -17003,6 +17003,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("doubleSealedChild.kt")
+                public void testDoubleSealedChild() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/doubleSealedChild.kt");
+                }
+
+                @Test
                 @TestMetadata("flat.kt")
                 public void testFlat() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/flat.kt");
@@ -17012,6 +17018,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 @TestMetadata("nested.kt")
                 public void testNested() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/nested.kt");
+                }
+
+                @Test
+                @TestMetadata("sealedChild.kt")
+                public void testSealedChild() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inlineClasses/sealed/sealedChild.kt");
                 }
 
                 @Test

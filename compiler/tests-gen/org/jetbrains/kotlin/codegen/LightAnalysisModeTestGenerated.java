@@ -20003,6 +20003,31 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Sealed extends AbstractLightAnalysisModeTest {
+            @TestMetadata("equals.kt")
+            public void ignoreEquals() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/equals.kt");
+            }
+
+            @TestMetadata("equalsDeep.kt")
+            public void ignoreEqualsDeep() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/equalsDeep.kt");
+            }
+
+            @TestMetadata("equalsDeep2.kt")
+            public void ignoreEqualsDeep2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/equalsDeep2.kt");
+            }
+
+            @TestMetadata("equalsDeep3.kt")
+            public void ignoreEqualsDeep3() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/equalsDeep3.kt");
+            }
+
+            @TestMetadata("equalsDeep4.kt")
+            public void ignoreEqualsDeep4() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/equalsDeep4.kt");
+            }
+
             @TestMetadata("object.kt")
             public void ignoreObject() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/sealed/object.kt");
