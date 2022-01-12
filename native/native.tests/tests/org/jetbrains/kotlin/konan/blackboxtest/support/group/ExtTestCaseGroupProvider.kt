@@ -150,7 +150,7 @@ private class ExtTestDataFile(
     private fun assembleFreeCompilerArgs(): TestCompilerArgs {
         val args = mutableListOf<String>()
         testDataFileSettings.languageSettings.sorted().mapTo(args) { "-XXLanguage:$it" }
-        testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-Xopt-in=$it" }
+        testDataFileSettings.optInsForCompiler.sorted().mapTo(args) { "-opt-in=$it" }
         if (testDataFileSettings.expectActualLinker) args += "-Xexpect-actual-linker"
         return TestCompilerArgs(args)
     }
