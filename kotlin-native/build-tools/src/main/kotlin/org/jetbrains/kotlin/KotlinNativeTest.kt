@@ -164,6 +164,9 @@ open class KonanGTest : KonanTest() {
     @TaskAction
     override fun run() {
         doBeforeRun?.execute(this)
+        if (project.compileOnlyTests) {
+            return
+        }
         runProcess(
                 executor = { project.executor.execute(it) },
                 executable = executable,
@@ -302,6 +305,9 @@ open class KonanLocalTest : KonanTest() {
     @TaskAction
     override fun run() {
         doBeforeRun?.execute(this)
+        if (project.compileOnlyTests) {
+            return
+        }
         val times = if (multiRuns && multiArguments != null) multiArguments!!.size else 1
         var output = ProcessOutput("", "", 0)
         for (i in 1..times) {
