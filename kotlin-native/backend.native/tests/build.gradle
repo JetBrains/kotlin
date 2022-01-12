@@ -207,6 +207,12 @@ run {
 }
 
 task sanity {
+    def isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild
+    if (isTeamcityBuild && !project.hasProperty("versions.kotlin-native")) {
+        println("DEBBUG: sanity task run on TC, doesn't have -Pversions.kotlin-native")
+        throw GradleException("Property versions.kotlin-native is not defined")
+    }
+
     def platformLibsTasks =":distPlatformLibs" + ":kotlin-native:platformLibs"
     dependsOn(tasksOf(KonanTest) { task ->
         !UtilsKt.isDependsOnPlatformLibs(task) &&

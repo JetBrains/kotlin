@@ -125,7 +125,7 @@ if (!isTeamcityBuild) {
 
 if (isTeamcityBuild && !project.hasProperty("versions.kotlin-native")) {
     println("DEBBUG: run on TC, doesn't have -Pversions.kotlin-native")
-    throw GradleException("Property versions.kotlin-native is not defined")
+    //throw GradleException("Property versions.kotlin-native is not defined")
 }
 
 if (!isTeamcityBuild && !project.hasProperty("versions.kotlin-native")) {
