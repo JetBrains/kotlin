@@ -40,6 +40,12 @@ private class NoAutoreleaseSwiftHelper : NoAutoreleaseSendHelper, NoAutoreleaseR
         swiftLivenessTracker.add(kotlinObject)
     }
 
+    func blockReceivingKotlinObject() -> (KotlinObject) -> Void {
+        return {
+            self.swiftLivenessTracker.add($0)
+        }
+    }
+
     func sendSwiftObject(swiftObject: Any) {
         swiftLivenessTracker.add(swiftObject as AnyObject)
     }
@@ -55,6 +61,10 @@ private class NoAutoreleaseSwiftHelper : NoAutoreleaseSendHelper, NoAutoreleaseR
     }
 
     func sendBlock(block: @escaping () -> KotlinObject) {
+    }
+
+    func sendCompletion(completionHandler: @escaping (Any?, Error?) -> Void) {
+        completionHandler(nil, nil)
     }
 
     let kotlinObject = KotlinObject()
@@ -220,6 +230,12 @@ private func testSendKotlinObjectToKotlin() throws {
     }
 }
 
+private func testSendKotlinObjectToKotlinBlock() throws {
+    try testSendToKotlin({ KotlinObject() }) {
+        $0.blockReceivingKotlinObject()($1)
+    }
+}
+
 private func testSendSwiftObjectToKotlin() throws {
     try testSendToKotlin({ SwiftObject1() }) {
         $0.sendSwiftObject(swiftObject: $1)
@@ -247,6 +263,12 @@ private func testSendNumberToKotlin() throws {
 private func testSendBlockToKotlin() throws {
     try testSendToKotlin({ createBlock() }, flags: TestFlags(trackSwiftLifetime: false)) {
         $0.sendBlock(block: $1)
+    }
+}
+
+private func testSendCompletionToKotlin() throws {
+    try testSendToKotlin({ createCompletion() }, flags: TestFlags(trackSwiftLifetime: false)) {
+        $0.sendCompletion(completionHandler: $1)
     }
 }
 
@@ -328,6 +350,15 @@ private func testSendKotlinObjectToSwift() throws {
     }
 }
 
+private func testSendKotlinObjectToSwiftBlock() throws {
+    // Getting Swift block in Kotlin still adds it to the autoreleasepool.
+    // The block is not our target, so just use `checkAutorelease: false` flag
+    // to disable the relevant check for now.
+    try testCallToSwift(flags: TestFlags(checkAutorelease: false)) {
+        NoAutoreleaseKt.sendKotlinObjectToBlock(helper: $0, tracker: $1)
+    }
+}
+
 private func testSendSwiftObjectToSwift() throws {
     try testCallToSwift {
         NoAutoreleaseKt.callSendSwiftObject(helper: $0, tracker: $1, swiftObject: SwiftObject4())
@@ -358,6 +389,12 @@ private func testSendNumberToSwift() throws {
 private func testSendBlockToSwift() throws {
     try testCallToSwift(flags: TestFlags(trackSwiftLifetime: false)) {
         NoAutoreleaseKt.callSendBlock(helper: $0, tracker: $1)
+    }
+}
+
+private func testSendCompletionToSwift() throws {
+    try testCallToSwift(flags: TestFlags(trackSwiftLifetime: false)) {
+        NoAutoreleaseKt.callSendCompletion(helper: $0, tracker: $1)
     }
 }
 
@@ -421,6 +458,10 @@ private func createBlock(swiftLivenessTracker: SwiftLivenessTracker) -> () -> Ko
     }
 }
 
+private func createCompletion() -> (Any?, Error?) -> Void {
+    return { _, _ in }
+}
+
 private func createString() -> String {
     return NSObject().description // Make it dynamic.
 }
@@ -434,11 +475,13 @@ class NoAutoreleaseTests : SimpleTestProvider {
         super.init()
 
         test("testSendKotlinObjectToKotlin", testSendKotlinObjectToKotlin)
+        test("testSendKotlinObjectToKotlinBlock", testSendKotlinObjectToKotlinBlock)
         test("testSendSwiftObjectToKotlin", testSendSwiftObjectToKotlin)
         test("testSendListToKotlin", testSendListToKotlin)
         test("testSendStringToKotlin", testSendStringToKotlin)
         test("testSendNumberToKotlin", testSendNumberToKotlin)
         test("testSendBlockToKotlin", testSendBlockToKotlin)
+        test("testSendCompletionToKotlin", testSendCompletionToKotlin)
 
         test("testReceiveKotlinObjectFromKotlin", testReceiveKotlinObjectFromKotlin)
         test("testReceiveSwiftObjectFromKotlin", testReceiveSwiftObjectFromKotlin)
@@ -454,18 +497,16 @@ class NoAutoreleaseTests : SimpleTestProvider {
         test("testGetKotlinSingleton", testGetKotlinSingleton)
         test("testGetKotlinEnumEntry", testGetKotlinEnumEntry)
 
-#if false
         test("testSendKotlinObjectToSwift", testSendKotlinObjectToSwift)
-#endif
-
+        test("testSendKotlinObjectToSwiftBlock", testSendKotlinObjectToSwiftBlock)
         test("testSendSwiftObjectToSwift", testSendSwiftObjectToSwift)
-
-#if false
         test("testSendListToSwift", testSendListToSwift)
         test("testSendStringToSwift", testSendStringToSwift)
         test("testSendNumberToSwift", testSendNumberToSwift)
         test("testSendBlockToSwift", testSendBlockToSwift)
+        test("testSendCompletionToSwift", testSendCompletionToSwift)
 
+#if false
         test("testReceiveKotlinObjectFromSwift", testReceiveKotlinObjectFromSwift)
         test("testReceiveSwiftObjectFromSwift", testReceiveSwiftObjectFromSwift)
         test("testReceiveListFromSwift", testReceiveListFromSwift)

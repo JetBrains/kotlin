@@ -48,14 +48,6 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
             origin = context.stdlibModule.llvmSymbolOrigin
     ))
 
-    val objcAutorelease = context.llvm.externalFunction(LlvmFunctionProto(
-            "llvm.objc.autorelease",
-            LlvmRetType(int8TypePtr),
-            listOf(LlvmParamType(int8TypePtr)),
-            listOf(LlvmFunctionAttribute.NoUnwind),
-            origin = context.stdlibModule.llvmSymbolOrigin
-    ))
-
     val objcAutoreleaseReturnValue = context.llvm.externalFunction(LlvmFunctionProto(
             "llvm.objc.autoreleaseReturnValue",
             LlvmRetType(int8TypePtr),

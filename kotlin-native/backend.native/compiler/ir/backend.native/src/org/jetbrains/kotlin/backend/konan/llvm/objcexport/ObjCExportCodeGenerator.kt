@@ -87,9 +87,13 @@ internal class ObjCExportFunctionGenerationContext(
 
     fun objcReleaseFromRunnableThreadState(objCReference: LLVMValueRef) {
         switchThreadStateIfExperimentalMM(ThreadState.Native)
+        objcReleaseFromNativeThreadState(objCReference)
+        switchThreadStateIfExperimentalMM(ThreadState.Runnable)
+    }
+
+    fun objcReleaseFromNativeThreadState(objCReference: LLVMValueRef) {
         // It is nounwind, so no exception handler is required.
         call(objCExportCodegen.objcRelease, listOf(objCReference), exceptionHandler = ExceptionHandler.None)
-        switchThreadStateIfExperimentalMM(ThreadState.Runnable)
     }
 
     override fun processReturns() {
@@ -300,28 +304,10 @@ internal class ObjCExportCodeGenerator(
             resultLifetime
     )
 
-    private fun ObjCExportFunctionGenerationContext.kotlinFunctionToObjCBlockPointer(
-            typeBridge: BlockPointerBridge,
-            value: LLVMValueRef
-    ) = callFromBridge(objcAutorelease, listOf(kotlinFunctionToRetainedObjCBlockPointer(typeBridge, value)))
-
     internal fun ObjCExportFunctionGenerationContext.kotlinFunctionToRetainedObjCBlockPointer(
             typeBridge: BlockPointerBridge,
             value: LLVMValueRef
     ) = callFromBridge(kotlinFunctionToRetainedBlockConverter(typeBridge), listOf(value))
-
-    fun ObjCExportFunctionGenerationContext.kotlinToLocalObjC(
-            value: LLVMValueRef,
-            typeBridge: TypeBridge
-    ): LLVMValueRef = if (LLVMTypeOf(value) == voidType) {
-        typeBridge.makeNothing()
-    } else {
-        when (typeBridge) {
-            is ReferenceBridge -> kotlinReferenceToLocalObjC(value)
-            is BlockPointerBridge -> kotlinFunctionToObjCBlockPointer(typeBridge, value) // TODO: use stack-allocated block here.
-            is ValueTypeBridge -> kotlinToObjC(value, typeBridge.objCValueType)
-        }
-    }
 
     fun ObjCExportFunctionGenerationContext.objCToKotlin(
             value: LLVMValueRef,
@@ -1184,6 +1170,8 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
             parameterDescriptor to param(index)
         }.toMap()
 
+        val objCReferenceArgsToRelease = mutableListOf<LLVMValueRef>()
+
         val objCArgs = methodBridge.parametersAssociated(irFunction).map { (bridge, parameter) ->
             when (bridge) {
                 is MethodBridgeValueParameter.Mapped -> {
@@ -1194,10 +1182,26 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                             expectedType = parameterToBase[parameter]!!.type,
                             resultLifetime = Lifetime.ARGUMENT
                     )
-                    kotlinToLocalObjC(kotlinValue, bridge.bridge)
+                    if (LLVMTypeOf(kotlinValue) == voidType) {
+                        bridge.bridge.makeNothing()
+                    } else {
+                        when (bridge.bridge) {
+                            is ReferenceBridge -> kotlinReferenceToRetainedObjC(kotlinValue).also { objCReferenceArgsToRelease += it }
+                            is BlockPointerBridge -> kotlinFunctionToRetainedObjCBlockPointer(bridge.bridge, kotlinValue) // TODO: use stack-allocated block here.
+                                    .also { objCReferenceArgsToRelease += it }
+                            is ValueTypeBridge -> kotlinToObjC(kotlinValue, bridge.bridge.objCValueType)
+                        }
+                    }
                 }
 
-                MethodBridgeReceiver.Instance -> kotlinReferenceToLocalObjC(parameters[parameter]!!)
+                MethodBridgeReceiver.Instance -> {
+                    // `kotlinReferenceToLocalObjC` can add the result to autoreleasepool in some cases. But not here.
+                    // Because this `parameter` is the receiver of a bridge in an Obj-C/Swift class extending
+                    // Kotlin class or interface.
+                    // So `kotlinReferenceToLocalObjC` here just unwraps the Obj-C reference
+                    // without using autoreleasepool or any other reference counting operations.
+                    kotlinReferenceToLocalObjC(parameters[parameter]!!)
+                }
                 MethodBridgeSelector -> {
                     val selector = baseMethod.selector
                     // Selector is referenced thus should be defined to avoid false positive non-public API rejection:
@@ -1224,13 +1228,14 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
                             Lifetime.ARGUMENT
                     )
 
+                    // TODO: use stack-allocated block here instead.
                     val converter = if (bridge.useUnitCompletion) {
                         unitContinuationToRetainedCompletionConverter
                     } else {
                         continuationToRetainedCompletionConverter
                     }
-                    val retainedCompletion = callFromBridge(converter, listOf(intercepted))
-                    callFromBridge(objcAutorelease, listOf(retainedCompletion)) // TODO: use stack-allocated block here instead.
+                    callFromBridge(converter, listOf(intercepted))
+                            .also { objCReferenceArgsToRelease += it }
                 }
             }
         }
@@ -1239,6 +1244,11 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
         // Using terminatingExceptionHandler, so any exception thrown by the method will lead to the termination,
         // and switching the thread state back to `Runnable` on exceptional path is not required.
         val targetResult = call(objcMsgSend, objCArgs, exceptionHandler = terminatingExceptionHandler)
+
+        objCReferenceArgsToRelease.forEach {
+            objcReleaseFromNativeThreadState(it)
+        }
+
         switchThreadStateIfExperimentalMM(ThreadState.Runnable)
 
         assert(baseMethod.symbol !is IrConstructorSymbol)
