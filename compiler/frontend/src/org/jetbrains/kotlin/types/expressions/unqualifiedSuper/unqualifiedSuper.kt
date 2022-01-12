@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.isClass
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -148,7 +149,9 @@ private inline fun resolveSupertypesByMembers(
             typesWithNonConcreteMembers to false
         else ->
             typesWithNonConcreteMembers.filter {
-                TypeUtils.getClassDescriptor(it)?.kind == ClassKind.CLASS
+                // We aren't interested in objects or enum classes here
+                // (objects can't be inherited, enum classes cannot have specific equals/hashCode)
+                TypeUtils.getClassDescriptor(it)?.kind?.isClass == true
             } to true
     }
 }

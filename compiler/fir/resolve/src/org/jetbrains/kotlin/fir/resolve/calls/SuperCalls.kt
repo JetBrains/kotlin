@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.isClass
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.utils.modality
@@ -118,7 +119,9 @@ private inline fun BodyResolveComponents.resolveSupertypesByMembers(
             typesWithNonConcreteMembers
         else ->
             typesWithNonConcreteMembers.filter {
-                it is ConeClassLikeType && (it.lookupTag.toSymbol(session) as? FirRegularClassSymbol)?.classKind == ClassKind.CLASS
+                // We aren't interested in objects or enum classes here
+                // (objects can't be inherited, enum classes cannot have specific equals/hashCode)
+                it is ConeClassLikeType && (it.lookupTag.toSymbol(session) as? FirRegularClassSymbol)?.classKind?.isClass == true
             }
     }
 }
