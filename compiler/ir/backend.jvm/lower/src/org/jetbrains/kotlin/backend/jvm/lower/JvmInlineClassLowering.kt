@@ -767,35 +767,64 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         )
 
         val function = context.inlineClassReplacements.getSpecializedEqualsMethod(irClass, context.irBuiltIns)
-        val left = function.valueParameters[0]
-        val right = function.valueParameters[1]
 
-        function.body = context.createIrBuilder(irClass.symbol).run {
-            val branches = noinlineSubclasses.map {
-                irBranch(
-                    irCallOp(
-                        boolAnd, context.irBuiltIns.booleanType,
-                        irIs(irGet(left), it.owner.defaultType),
-                        irIs(irGet(right), it.owner.defaultType),
-                    ),
-                    irCallOp(equals, context.irBuiltIns.booleanType, irGet(left), irGet(right))
+        with(context.createIrBuilder(function.symbol)) {
+            function.body = irBlockBody {
+                val left = irTemporary(
+                    coerceInlineClasses(
+                        irGet(function.valueParameters[0]),
+                        function.valueParameters[0].type,
+                        context.irBuiltIns.anyType
+                    )
                 )
-            } + inlineSubclasses.map {
-                val eq = this@JvmInlineClassLowering.context.inlineClassReplacements
-                    .getSpecializedEqualsMethod(it.owner, context.irBuiltIns)
-                irBranch(
-                    irCallOp(
-                        boolAnd, context.irBuiltIns.booleanType,
-                        irIs(irGet(left), getInlineClassUnderlyingType(it.owner)),
-                        irIs(irGet(right), getInlineClassUnderlyingType(it.owner)),
-                    ),
-                    irCall(eq).apply {
-                        putValueArgument(0, irGet(left))
-                        putValueArgument(1, irGet(right))
-                    }
+                val right = irTemporary(
+                    coerceInlineClasses(
+                        irGet(function.valueParameters[1]),
+                        function.valueParameters[1].type,
+                        context.irBuiltIns.anyType
+                    )
                 )
-            } + irBranch(irTrue(), irFalse())
-            irExprBody(irWhen(context.irBuiltIns.booleanType, branches))
+                val branches = noinlineSubclasses.map {
+                    irBranch(
+                        irCallOp(
+                            boolAnd, context.irBuiltIns.booleanType,
+                            irIs(irGet(left), it.owner.defaultType),
+                            irIs(irGet(right), it.owner.defaultType),
+                        ),
+                        irReturn(irCallOp(equals, context.irBuiltIns.booleanType, irGet(left), irGet(right)))
+                    )
+                } + inlineSubclasses.map {
+                    val eq = this@JvmInlineClassLowering.context.inlineClassReplacements
+                        .getSpecializedEqualsMethod(it.owner, context.irBuiltIns)
+                    val underlyingType = getInlineClassUnderlyingType(it.owner)
+                    irBranch(
+                        irCallOp(
+                            boolAnd, context.irBuiltIns.booleanType,
+                            irIs(irGet(left), underlyingType),
+                            irIs(irGet(right), underlyingType),
+                        ),
+                        irReturn(
+                            irCall(eq).apply {
+                                putValueArgument(
+                                    0, coerceInlineClasses(
+                                        irImplicitCast(irGet(left), underlyingType),
+                                        underlyingType,
+                                        it.owner.defaultType
+                                    )
+                                )
+                                putValueArgument(
+                                    1, coerceInlineClasses(
+                                        irImplicitCast(irGet(right), underlyingType),
+                                        underlyingType,
+                                        it.owner.defaultType
+                                    )
+                                )
+                            }
+                        )
+                    )
+                } + irBranch(irTrue(), irReturn(irFalse()))
+                +irReturn(irWhen(context.irBuiltIns.booleanType, branches))
+            }
         }
 
         irClass.declarations += function

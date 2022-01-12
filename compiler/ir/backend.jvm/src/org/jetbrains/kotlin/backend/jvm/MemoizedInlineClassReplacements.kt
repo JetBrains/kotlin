@@ -171,8 +171,7 @@ class MemoizedInlineClassReplacements(
                 parent = irClass
                 // We ignore type arguments here, since there is no good way to go from type arguments to types in the IR anyway.
                 val typeArgument =
-                    if (irClass.modality == Modality.SEALED) context.irBuiltIns.anyNType
-                    else IrSimpleTypeImpl(
+                    IrSimpleTypeImpl(
                         null, irClass.symbol, false, List(irClass.typeParameters.size) { IrStarProjectionImpl }, listOf()
                     )
                 addValueParameter {
