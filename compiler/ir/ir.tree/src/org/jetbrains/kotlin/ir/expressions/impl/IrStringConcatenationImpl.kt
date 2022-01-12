@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import java.util.*
 
 class IrStringConcatenationImpl(
     override val startOffset: Int,
@@ -38,10 +37,6 @@ class IrStringConcatenationImpl(
     }
 
     override val arguments: MutableList<IrExpression> = ArrayList()
-
-    override fun addArgument(argument: IrExpression) {
-        arguments.add(argument)
-    }
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitStringConcatenation(this, data)

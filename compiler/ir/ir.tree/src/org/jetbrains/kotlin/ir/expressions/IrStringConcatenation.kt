@@ -6,7 +6,5 @@
 package org.jetbrains.kotlin.ir.expressions
 
 abstract class IrStringConcatenation : IrExpression() {
-    abstract val arguments: List<IrExpression>
-
-    abstract fun addArgument(argument: IrExpression)
+    abstract val arguments: MutableList<IrExpression>
 }

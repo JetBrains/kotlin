@@ -41,14 +41,6 @@ class IrVarargImpl(
 
     override val elements: MutableList<IrVarargElement> = SmartList()
 
-    fun addElement(varargElement: IrVarargElement) {
-        elements.add(varargElement)
-    }
-
-    override fun putElement(i: Int, element: IrVarargElement) {
-        elements[i] = element
-    }
-
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitVararg(this, data)
     }
