@@ -1,0 +1,59 @@
+package
+
+public final annotation class A : kotlin.Annotation {
+    public constructor A(/*0*/ x: kotlin.reflect.KClass<A>)
+    public final val x: kotlin.reflect.KClass<A>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class B : kotlin.Annotation {
+    public constructor B(/*0*/ x: kotlin.reflect.KClass<B>)
+    public final val x: kotlin.reflect.KClass<B>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class C : kotlin.Annotation {
+    public constructor C(/*0*/ b: B)
+    public final val b: B
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class X : kotlin.Annotation {
+    public constructor X(/*0*/ value: X)
+    public final val value: X
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Y : kotlin.Annotation {
+    public constructor Y(/*0*/ value: kotlin.Array<Y>)
+    public final val value: kotlin.Array<Y>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Z1 : kotlin.Annotation {
+    public constructor Z1(/*0*/ a: Z2, /*1*/ b: Z2)
+    public final val a: Z2
+    public final val b: Z2
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class Z2 : kotlin.Annotation {
+    public constructor Z2(/*0*/ value: Z1)
+    public final val value: Z1
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

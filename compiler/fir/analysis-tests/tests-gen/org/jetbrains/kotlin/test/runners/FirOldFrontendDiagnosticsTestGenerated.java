@@ -1170,6 +1170,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("cycleInParameters_after.kt")
+            public void testCycleInParameters_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleInParameters_after.kt");
+            }
+
+            @Test
+            @TestMetadata("cycleInParameters_before.kt")
+            public void testCycleInParameters_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleInParameters_before.kt");
+            }
+
+            @Test
             @TestMetadata("DanglingMixed.kt")
             public void testDanglingMixed() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/DanglingMixed.kt");

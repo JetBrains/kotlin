@@ -300,6 +300,7 @@ public interface Errors {
     DiagnosticFactory0<KtAnnotatedExpression> ANNOTATIONS_ON_BLOCK_LEVEL_EXPRESSION_ON_THE_SAME_LINE = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtAnnotationEntry> ANNOTATION_USED_AS_ANNOTATION_ARGUMENT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtExpression> ANNOTATION_ARGUMENT_IS_NON_CONST = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactoryForDeprecation0<KtParameter> CYCLE_IN_ANNOTATION_PARAMETER = DiagnosticFactoryForDeprecation0.create(LanguageFeature.ProhibitCyclesInAnnotations);
 
     DiagnosticFactoryForDeprecation0<PsiElement> RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION =
             DiagnosticFactoryForDeprecation0.create(LanguageFeature.RestrictRetentionForExpressionAnnotations);

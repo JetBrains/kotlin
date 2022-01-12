@@ -1170,6 +1170,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("cycleInParameters_after.kt")
+            public void testCycleInParameters_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleInParameters_after.kt");
+            }
+
+            @Test
+            @TestMetadata("cycleInParameters_before.kt")
+            public void testCycleInParameters_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/cycleInParameters_before.kt");
+            }
+
+            @Test
             @TestMetadata("DanglingInScript.kts")
             public void testDanglingInScript() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/DanglingInScript.kts");

@@ -49,6 +49,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     EnumCompanionInEnumConstructorCallChecker,
     ContextualDeclarationChecker,
     ValueParameterUsageInDefaultArgumentChecker,
+    CyclicAnnotationsChecker,
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
