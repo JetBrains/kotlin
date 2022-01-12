@@ -42,8 +42,6 @@ class CollectionLiteralResolver(
             context.trace.report(UNSUPPORTED.on(collectionLiteralExpression, "Collection literals outside of annotations"))
         }
 
-        checkSupportsArrayLiterals(collectionLiteralExpression, context)
-
         return resolveCollectionLiteralSpecialMethod(collectionLiteralExpression, context)
     }
 
@@ -79,13 +77,6 @@ class CollectionLiteralResolver(
     ): Collection<SimpleFunctionDescriptor> {
         val memberScopeOfKotlinPackage = module.getPackage(StandardNames.BUILT_INS_PACKAGE_FQ_NAME).memberScope
         return memberScopeOfKotlinPackage.getContributedFunctions(callName, KotlinLookupLocation(expression))
-    }
-
-    private fun checkSupportsArrayLiterals(expression: KtCollectionLiteralExpression, context: ExpressionTypingContext) {
-        if (isInsideAnnotationEntryOrClass(expression) &&
-            !languageVersionSettings.supportsFeature(LanguageFeature.ArrayLiteralsInAnnotations)) {
-            context.trace.report(UNSUPPORTED_FEATURE.on(expression, LanguageFeature.ArrayLiteralsInAnnotations to languageVersionSettings))
-        }
     }
 
     private fun isInsideAnnotationEntryOrClass(expression: KtCollectionLiteralExpression): Boolean {
