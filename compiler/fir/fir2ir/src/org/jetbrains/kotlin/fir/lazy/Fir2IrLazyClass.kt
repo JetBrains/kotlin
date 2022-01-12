@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.isNewPlaceForBodyGeneration
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.isNullableAny
@@ -40,7 +39,7 @@ class Fir2IrLazyClass(
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val fir: FirRegularClass,
-    override val symbol: Fir2IrClassSymbol,
+    override val symbol: IrClassSymbol,
 ) : IrClass(), AbstractFir2IrLazyDeclaration<FirRegularClass>, Fir2IrTypeParametersContainer,
     IrMaybeDeserializedClass, DeserializableClass, Fir2IrComponents by components {
     init {
