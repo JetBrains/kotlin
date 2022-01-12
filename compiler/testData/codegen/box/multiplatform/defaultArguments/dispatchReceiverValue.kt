@@ -1,6 +1,4 @@
-// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: JS_IR
-// WASM_MUTE_REASON: EXPECT_DEFAULT_PARAMETERS
 // IGNORE_BACKEND_FIR: JVM_IR
 // FIR status: default argument mapping in MPP isn't designed yet
 // !LANGUAGE: +MultiPlatformProjects
