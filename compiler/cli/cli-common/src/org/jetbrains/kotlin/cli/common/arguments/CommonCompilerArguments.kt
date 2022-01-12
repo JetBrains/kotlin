@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.utils.IDEAPlatforms
+import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 
 @SuppressWarnings("WeakerAccess")
 abstract class CommonCompilerArguments : CommonToolArguments() {
@@ -148,6 +150,14 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         description = "Enable reading of contracts from metadata"
     )
     var readDeserializedContracts: Boolean by FreezableVar(false)
+
+    @IDEAPluginsCompatibilityAPI(
+        IDEAPlatforms._212, // maybe 211 AS used it too
+        IDEAPlatforms._213,
+        message = "Please migrate to -Xuse-experimental or/and -Xopt-in",
+        plugins = "Android"
+    )
+    var experimental: Array<String>? = null
 
     @Argument(
         value = "-Xuse-experimental",
