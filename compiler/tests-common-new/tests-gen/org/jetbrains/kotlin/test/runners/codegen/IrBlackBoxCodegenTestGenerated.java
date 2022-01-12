@@ -44498,6 +44498,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt50477Enabled.kt")
+        public void testKt50477Enabled() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/kt50477Enabled.kt");
+        }
+
+        @Test
         @TestMetadata("nonInlinedSamWrapper.kt")
         public void testNonInlinedSamWrapper() throws Exception {
             runTest("compiler/testData/codegen/box/sam/nonInlinedSamWrapper.kt");

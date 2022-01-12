@@ -26029,6 +26029,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("kt50477.kt")
+            public void testKt50477() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/samConversions/kt50477.kt");
+            }
+
+            @Test
             @TestMetadata("OverloadPriority.kt")
             public void testOverloadPriority() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/samConversions/OverloadPriority.kt");

@@ -242,6 +242,7 @@ enum class LanguageFeature(
     ProhibitQualifiedAccessToUninitializedEnumEntry(KOTLIN_1_7, kind = BUG_FIX), // KT-41124
     ForbidRecursiveDelegateExpressions(KOTLIN_1_7, kind = BUG_FIX),
     KotlinFunInterfaceConstructorReference(KOTLIN_1_7),
+    SuspendOnlySamConversions(KOTLIN_1_7),
 
     // 1.8
 
