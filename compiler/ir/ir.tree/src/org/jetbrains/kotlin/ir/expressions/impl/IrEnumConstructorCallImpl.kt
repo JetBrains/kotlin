@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrEnumConstructorCallImpl(
     override val startOffset: Int,
@@ -33,10 +32,6 @@ class IrEnumConstructorCallImpl(
 ) : IrEnumConstructorCall(typeArgumentsCount, valueArgumentsCount) {
     override val origin: IrStatementOrigin?
         get() = null
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitEnumConstructorCall(this, data)
-    }
 
     companion object {
         @ObsoleteDescriptorBasedAPI

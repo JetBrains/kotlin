@@ -19,15 +19,10 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrGetEnumValueImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
     override val symbol: IrEnumEntrySymbol,
-) : IrGetEnumValue() {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitGetEnumValue(this, data)
-    }
-}
+) : IrGetEnumValue()

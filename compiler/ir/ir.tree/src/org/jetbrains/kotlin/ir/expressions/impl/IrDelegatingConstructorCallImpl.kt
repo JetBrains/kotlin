@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.allTypeParameters
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrDelegatingConstructorCallImpl(
     override val startOffset: Int,
@@ -35,10 +34,6 @@ class IrDelegatingConstructorCallImpl(
 ) : IrDelegatingConstructorCall(typeArgumentsCount, valueArgumentsCount) {
     override val origin: IrStatementOrigin?
         get() = null
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitDelegatingConstructorCall(this, data)
-    }
 
     companion object {
         @ObsoleteDescriptorBasedAPI

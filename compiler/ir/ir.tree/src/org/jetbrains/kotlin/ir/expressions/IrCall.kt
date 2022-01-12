@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 abstract class IrCall(
     typeArgumentsCount: Int,
@@ -14,4 +15,7 @@ abstract class IrCall(
 ) : IrFunctionAccessExpression(typeArgumentsCount, valueArgumentsCount) {
     override abstract val symbol: IrSimpleFunctionSymbol
     abstract val superQualifierSymbol: IrClassSymbol?
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitCall(this, data)
 }

@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 //TODO: make IrScript as IrPackageFragment, because script is used as a file, not as a class
 //NOTE: declarations and statements stored separately
@@ -40,4 +43,25 @@ abstract class IrScript :
     abstract var targetClass: IrClassSymbol?
 
     abstract var constructor: IrConstructor?
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitScript(this, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        statements.forEach { it.accept(visitor, data) }
+        thisReceiver.accept(visitor, data)
+        explicitCallParameters.forEach { it.accept(visitor, data) }
+        implicitReceiversParameters.forEach { it.accept(visitor, data) }
+        providedProperties.forEach { it.first.accept(visitor, data) }
+        earlierScriptsParameter?.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        statements.transformInPlace(transformer, data)
+        thisReceiver = thisReceiver.transform(transformer, data)
+        explicitCallParameters = explicitCallParameters.map { it.transform(transformer, data) }
+        implicitReceiversParameters = implicitReceiversParameters.map { it.transform(transformer, data) }
+        providedProperties = providedProperties.map { it.first.transform(transformer, data) to it.second }
+        earlierScriptsParameter = earlierScriptsParameter?.transform(transformer, data)
+    }
 }

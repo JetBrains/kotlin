@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 abstract class IrLocalDelegatedPropertyReference : IrCallableReference<IrLocalDelegatedPropertySymbol>(0) {
     abstract val delegate: IrVariableSymbol
@@ -16,4 +17,7 @@ abstract class IrLocalDelegatedPropertyReference : IrCallableReference<IrLocalDe
 
     override val valueArgumentsCount: Int
         get() = 0
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitLocalDelegatedPropertyReference(this, data)
 }
