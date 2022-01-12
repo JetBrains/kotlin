@@ -36,3 +36,15 @@ var IrDynamicOperatorExpression.right: IrExpression
 
 fun IrFunctionAccessExpression.putArgument(parameter: IrValueParameter, argument: IrExpression): Unit =
     putArgument(symbol.owner, parameter, argument)
+
+fun IrVararg.putElement(i: Int, element: IrVarargElement) {
+    elements[i] = element
+}
+
+fun IrVararg.addElement(varargElement: IrVarargElement) {
+    elements.add(varargElement)
+}
+
+fun IrStringConcatenation.addArgument(argument: IrExpression) {
+    arguments.add(argument)
+}
