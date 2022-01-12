@@ -21,7 +21,3 @@ abstract class IrBreakContinue : IrExpression() {
 
     var label: String? = null
 }
-
-abstract class IrBreak : IrBreakContinue()
-
-abstract class IrContinue : IrBreakContinue()

@@ -8,21 +8,8 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
-abstract class IrConstantValue : IrExpression() {
-    abstract fun contentEquals(other: IrConstantValue) : Boolean
-    abstract fun contentHashCode(): Int
-}
-
-abstract class IrConstantPrimitive : IrConstantValue() {
-    abstract var value: IrConst<*>
-}
-
 abstract class IrConstantObject : IrConstantValue() {
     abstract val constructor: IrConstructorSymbol
     abstract val valueArguments: MutableList<IrConstantValue>
     abstract val typeArguments: List<IrType>
-}
-
-abstract class IrConstantArray : IrConstantValue() {
-    abstract val elements: MutableList<IrConstantValue>
 }
