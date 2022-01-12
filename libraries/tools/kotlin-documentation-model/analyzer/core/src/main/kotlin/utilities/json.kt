@@ -34,7 +34,6 @@ internal fun toJsonString(value: Any): String = objectMapper.writeValueAsString(
 @PublishedApi
 internal inline fun <reified T : Any> parseJson(json: String): T = parseJson(json, TypeReference())
 
-
 @PublishedApi
 internal fun <T : Any> parseJson(json: String, typeReference: TypeReference<T>): T =
     objectMapper.readValue(json, typeReference.jackson)
