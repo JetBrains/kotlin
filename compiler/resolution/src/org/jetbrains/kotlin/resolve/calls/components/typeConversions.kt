@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
@@ -17,7 +18,7 @@ interface ParameterTypeConversion {
         expectedParameterType: UnwrappedType
     ): Boolean
 
-    fun conversionIsNeededBeforeSubtypingCheck(argument: KotlinCallArgument): Boolean
+    fun conversionIsNeededBeforeSubtypingCheck(argument: KotlinCallArgument, areSuspendOnlySamConversionsSupported: Boolean): Boolean
     fun conversionIsNeededAfterSubtypingCheck(argument: KotlinCallArgument): Boolean
 
     fun convertParameterType(
@@ -110,7 +111,12 @@ object TypeConversions {
         conversion: ParameterTypeConversion
     ): ConversionData {
         val conversionDefinitelyNotNeeded = conversion.conversionDefinitelyNotNeeded(candidate, argument, candidateExpectedType)
-        return if (!conversionDefinitelyNotNeeded && conversion.conversionIsNeededBeforeSubtypingCheck(argument)) {
+        val areSuspendOnlySamConversionsSupported =
+            candidate.callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SuspendOnlySamConversions)
+        return if (
+            !conversionDefinitelyNotNeeded &&
+            conversion.conversionIsNeededBeforeSubtypingCheck(argument, areSuspendOnlySamConversionsSupported)
+        ) {
             ConversionData(
                 conversion.convertParameterType(candidate, argument, candidateParameter, candidateExpectedType),
                 wasConversion = true,
