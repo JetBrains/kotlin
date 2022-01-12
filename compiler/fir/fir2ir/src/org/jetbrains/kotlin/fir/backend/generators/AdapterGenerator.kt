@@ -447,10 +447,9 @@ internal class AdapterGenerator(
         if (argument !is FirVarargArgumentsExpression || argument.arguments.size != elements.size) {
             return this
         }
-        val argumentMapping = this.elements.zip(argument.arguments).toMap()
+        val argumentMapping = elements.zip(argument.arguments).toMap()
         // [IrElementTransformer] is not preferred, since it's hard to visit vararg elements only.
-        val irVarargElements = elements as MutableList<IrVarargElement>
-        irVarargElements.replaceAll { irVarargElement ->
+        elements.replaceAll { irVarargElement ->
             if (irVarargElement is IrExpression) {
                 val firVarargArgument =
                     argumentMapping[irVarargElement] ?: error("Can't find the original FirExpression for ${irVarargElement.render()}")
