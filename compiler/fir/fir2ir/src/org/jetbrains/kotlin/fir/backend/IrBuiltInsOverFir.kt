@@ -701,7 +701,6 @@ class IrBuiltInsOverFir(
         vararg supertypes: IrType,
         classKind: ClassKind = ClassKind.CLASS,
         classModality: Modality = Modality.OPEN,
-        classIsValue: Boolean = false,
         builderBlock: IrClassBuilder.() -> Unit = {},
         block: IrClass.() -> Unit = {}
     ): IrClassSymbol {
@@ -709,7 +708,7 @@ class IrBuiltInsOverFir(
 
         return this.createClass(
             signature, *supertypes,
-            classKind = classKind, classModality = classModality, classIsValue = classIsValue, builderBlock = builderBlock, block = block
+            classKind = classKind, classModality = classModality, builderBlock = builderBlock, block = block
         )
     }
 
@@ -718,7 +717,6 @@ class IrBuiltInsOverFir(
         vararg supertypes: IrType,
         classKind: ClassKind = ClassKind.CLASS,
         classModality: Modality = Modality.OPEN,
-        classIsValue: Boolean = false,
         builderBlock: IrClassBuilder.() -> Unit = {},
         block: IrClass.() -> Unit = {}
     ): IrClassSymbol = components.symbolTable.declareClass(
@@ -729,7 +727,6 @@ class IrBuiltInsOverFir(
                 name = Name.identifier(signature.shortName)
                 kind = classKind
                 modality = classModality
-                isValue = classIsValue
                 origin = IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
                 builderBlock()
                 irFactory.createClass(

@@ -130,14 +130,12 @@ class JvmReflectSymbols(val context: JvmBackendContext) {
         fqName: FqName,
         classKind: ClassKind = ClassKind.CLASS,
         classModality: Modality = Modality.FINAL,
-        classIsValue: Boolean = false,
         block: (IrClass) -> Unit = {}
     ): IrClassSymbol =
         context.irFactory.buildClass {
             name = fqName.shortName()
             kind = classKind
             modality = classModality
-            isValue = classIsValue
         }.apply {
             parent = javaLangReflectPackage
             createImplicitParameterDeclarationWithWrappedDescriptor()
