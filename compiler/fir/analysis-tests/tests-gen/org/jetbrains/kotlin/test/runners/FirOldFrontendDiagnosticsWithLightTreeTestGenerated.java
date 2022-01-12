@@ -1128,6 +1128,18 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("arrayLiteralInAnnotationCompanion_after.kt")
+            public void testArrayLiteralInAnnotationCompanion_after() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/arrayLiteralInAnnotationCompanion_after.kt");
+            }
+
+            @Test
+            @TestMetadata("arrayLiteralInAnnotationCompanion_before.kt")
+            public void testArrayLiteralInAnnotationCompanion_before() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/arrayLiteralInAnnotationCompanion_before.kt");
+            }
+
+            @Test
             @TestMetadata("atAnnotationResolve.kt")
             public void testAtAnnotationResolve() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/atAnnotationResolve.kt");
