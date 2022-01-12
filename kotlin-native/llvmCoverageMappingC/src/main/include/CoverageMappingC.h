@@ -78,6 +78,8 @@ void LLVMAddObjCARCContractPass(LLVMPassManagerRef passManagerRef);
 
 void LLVMKotlinInitializeTargets();
 
+void LLVMSetNoTailCall(LLVMValueRef Call);
+
 # ifdef __cplusplus
 }
 # endif

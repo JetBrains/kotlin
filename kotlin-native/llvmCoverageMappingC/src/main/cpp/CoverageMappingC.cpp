@@ -16,6 +16,7 @@
 #include <llvm/IR/DerivedTypes.h>
 #include <llvm/IR/Constants.h>
 #include <llvm/IR/Intrinsics.h>
+#include <llvm/IR/Instructions.h>
 #include <llvm/IR/LegacyPassManager.h>
 #include <llvm/Analysis/TargetLibraryInfo.h>
 #include <llvm/Transforms/Instrumentation.h>
@@ -262,4 +263,8 @@ void LLVMKotlinInitializeTargets() {
 #endif
 
 #undef INIT_LLVM_TARGET
+}
+
+void LLVMSetNoTailCall(LLVMValueRef Call) {
+  unwrap<CallInst>(Call)->setTailCallKind(CallInst::TCK_NoTail);
 }
