@@ -199,8 +199,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
                     project.plugins.any { it is KotlinPlatformPluginBase || it is KotlinMultiplatformPluginWrapper || it is KotlinPm20PluginWrapper }
                 }
             ).disallowChanges()
-            task.taskBuildDirectory.value(getKotlinBuildDir(task)).disallowChanges()
-            task.localStateDirectories.from(task.taskBuildDirectory).disallowChanges()
+            task.taskBuildCacheableOutputDirectory.value(getKotlinBuildDir(task).map { it.dir("cacheable") }).disallowChanges()
+            task.taskBuildLocalStateDirectory.value(getKotlinBuildDir(task).map { it.dir("localstate") }).disallowChanges()
+
+            task.localStateDirectories.from(task.taskBuildLocalStateDirectory, task.taskBuildCacheableOutputDirectory).disallowChanges()
 
             PropertiesProvider(task.project).mapKotlinDaemonProperties(task)
         }
@@ -225,12 +227,16 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
     protected val objects: ObjectFactory = project.objects
 
     // avoid creating directory in getter: this can lead to failure in parallel build
+    @get:OutputDirectory
+    internal val taskBuildCacheableOutputDirectory: DirectoryProperty = objects.directoryProperty()
+
+    // avoid creating directory in getter: this can lead to failure in parallel build
     @get:LocalState
-    internal val taskBuildDirectory: DirectoryProperty = objects.directoryProperty()
+    internal val taskBuildLocalStateDirectory: DirectoryProperty = objects.directoryProperty()
 
     @get:Internal
     internal val buildHistoryFile
-        get() = taskBuildDirectory.file("build-history.bin")
+        get() = taskBuildLocalStateDirectory.file("build-history.bin")
 
     // indicates that task should compile kotlin incrementally if possible
     // it's not possible when IncrementalTaskInputs#isIncremental returns false (i.e first build)
@@ -300,7 +306,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
     @get:Internal
     val abiSnapshotFile
-        get() = taskBuildDirectory.file(IncrementalCompilerRunner.ABI_SNAPSHOT_FILE_NAME)
+        get() = taskBuildCacheableOutputDirectory.file(IncrementalCompilerRunner.ABI_SNAPSHOT_FILE_NAME)
 
     @get:Input
     val abiSnapshotRelativePath: Property<String> = objects.property(String::class.java).value(
@@ -419,7 +425,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
 
         sourceRoots.log(this.name, logger)
         val args = prepareCompilerArguments()
-        taskBuildDirectory.get().asFile.mkdirs()
+        taskBuildCacheableOutputDirectory.get().asFile.mkdirs()
+        taskBuildLocalStateDirectory.get().asFile.mkdirs()
         callCompilerAsync(
             args,
             sourceRoots,
@@ -758,7 +765,7 @@ abstract class KotlinCompile @Inject constructor(
             IncrementalCompilationEnvironment(
                 changedFiles = getChangedFiles(inputChanges, incrementalProps),
                 classpathChanges = getClasspathChanges(inputChanges),
-                workingDir = taskBuildDirectory.get().asFile,
+                workingDir = taskBuildCacheableOutputDirectory.get().asFile,
                 usePreciseJavaTracking = usePreciseJavaTracking,
                 disableMultiModuleIC = disableMultiModuleIC,
                 multiModuleICSettings = multiModuleICSettings
@@ -1129,7 +1136,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
             IncrementalCompilationEnvironment(
                 getChangedFiles(inputChanges, incrementalProps),
                 ClasspathChanges.NotAvailableForJSCompiler,
-                taskBuildDirectory.get().asFile,
+                taskBuildCacheableOutputDirectory.get().asFile,
                 multiModuleICSettings = multiModuleICSettings
             )
         } else null
