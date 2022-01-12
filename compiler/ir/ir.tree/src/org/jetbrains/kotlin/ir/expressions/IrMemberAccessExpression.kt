@@ -20,22 +20,33 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-abstract class IrMemberAccessExpression<S : IrSymbol>(typeArgumentsCount: Int) : IrDeclarationReference() {
+abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference() {
     var dispatchReceiver: IrExpression? = null
     var extensionReceiver: IrExpression? = null
 
     abstract override val symbol: S
 
     abstract val origin: IrStatementOrigin?
-    abstract val valueArgumentsCount: Int
 
-    abstract fun getValueArgument(index: Int): IrExpression?
-    abstract fun putValueArgument(index: Int, valueArgument: IrExpression?)
-    abstract fun removeValueArgument(index: Int)
-
-    private val typeArgumentsByIndex = arrayOfNulls<IrType>(typeArgumentsCount)
-
+    protected abstract val typeArgumentsByIndex: Array<IrType?>
     val typeArgumentsCount: Int get() = typeArgumentsByIndex.size
+
+    protected abstract val argumentsByParameterIndex: Array<IrExpression?>
+    open val valueArgumentsCount: Int get() = argumentsByParameterIndex.size
+
+    fun getValueArgument(index: Int): IrExpression? {
+        if (index >= valueArgumentsCount) {
+            throw AssertionError("$this: No such value argument slot: $index")
+        }
+        return argumentsByParameterIndex[index]
+    }
+
+    fun putValueArgument(index: Int, valueArgument: IrExpression?) {
+        if (index >= valueArgumentsCount) {
+            throw AssertionError("$this: No such value argument slot: $index")
+        }
+        argumentsByParameterIndex[index] = valueArgument
+    }
 
     fun getTypeArgument(index: Int): IrType? {
         if (index >= typeArgumentsCount) {
@@ -54,11 +65,19 @@ abstract class IrMemberAccessExpression<S : IrSymbol>(typeArgumentsCount: Int) :
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         dispatchReceiver?.accept(visitor, data)
         extensionReceiver?.accept(visitor, data)
+        if (valueArgumentsCount > 0) {
+            argumentsByParameterIndex.forEach { it?.accept(visitor, data) }
+        }
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         dispatchReceiver = dispatchReceiver?.transform(transformer, data)
         extensionReceiver = extensionReceiver?.transform(transformer, data)
+        if (valueArgumentsCount > 0) {
+            argumentsByParameterIndex.forEachIndexed { i, irExpression ->
+                argumentsByParameterIndex[i] = irExpression?.transform(transformer, data)
+            }
+        }
     }
 }
 
@@ -106,10 +125,6 @@ fun IrMemberAccessExpression<*>.getValueArgument(valueParameterDescriptor: Value
 
 fun IrMemberAccessExpression<*>.putValueArgument(valueParameterDescriptor: ValueParameterDescriptor, valueArgument: IrExpression?) {
     putValueArgument(valueParameterDescriptor.index, valueArgument)
-}
-
-fun IrMemberAccessExpression<*>.removeValueArgument(valueParameterDescriptor: ValueParameterDescriptor) {
-    removeValueArgument(valueParameterDescriptor.index)
 }
 
 @ObsoleteDescriptorBasedAPI
