@@ -25,13 +25,14 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.incremental.ClasspathChanges
+import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled
 import org.jetbrains.kotlin.incremental.EmptyICReporter
 import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.withIC
 import java.io.File
 import java.nio.file.Files
+import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 
 internal fun parseArgs(
     args: Array<String>,
@@ -100,7 +101,9 @@ object IncrementalDaemonCompiler : DaemonCompiler {
         buildHistoryFile = Files.createTempFile("build-history", ".bin").toFile(),
         modulesApiHistory = EmptyModulesApiHistory,
         kotlinSourceFilesExtensions = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
-        classpathChanges = ClasspathChanges.NotAvailable.UnableToCompute
+        classpathChanges = ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot(
+            ClasspathSnapshotFiles(emptyList(), Files.createTempDirectory("snapshots").toFile())
+        )
     )
 
     override fun compile(

@@ -40,16 +40,6 @@ shadowJar {
     archiveBaseName = 'kotlin-compiler-daemon'
 }
 
-tasks.withType(KotlinCompile).configureEach {
-    kotlinOptions {
-        freeCompilerArgs = [
-                // Disable the warning "Some JAR files in the classpath have the [...]".
-                // We include the runtime intentionally as part of the jar.
-                "-Xskip-runtime-version-check",
-        ]
-    }
-}
-
 androidx {
     name = "Compose Compiler Daemon"
     type = LibraryType.COMPILER_DAEMON

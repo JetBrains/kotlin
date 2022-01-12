@@ -16,6 +16,12 @@
 
 // see ../playground-common/README.md for details on how this works
 pluginManagement {
+    repositories {
+        maven {
+            url "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev/"
+        }
+        gradlePluginPortal()
+    }
     includeBuild "../../playground-common/playground-plugin"
 }
 plugins {
