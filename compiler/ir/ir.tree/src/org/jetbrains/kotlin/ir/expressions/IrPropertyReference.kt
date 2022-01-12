@@ -10,13 +10,10 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-abstract class IrPropertyReference(typeArgumentsCount: Int) : IrCallableReference<IrPropertySymbol>(typeArgumentsCount) {
+abstract class IrPropertyReference : IrCallableReference<IrPropertySymbol>() {
     abstract val field: IrFieldSymbol?
     abstract val getter: IrSimpleFunctionSymbol?
     abstract val setter: IrSimpleFunctionSymbol?
-
-    override val valueArgumentsCount: Int
-        get() = 0
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitPropertyReference(this, data)

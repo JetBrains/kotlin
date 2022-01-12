@@ -18,11 +18,17 @@ class IrConstructorCallImpl(
     override val endOffset: Int,
     override var type: IrType,
     override val symbol: IrConstructorSymbol,
-    typeArgumentsCount: Int,
+    override val typeArgumentsCount: Int,
     override val constructorTypeArgumentsCount: Int,
-    valueArgumentsCount: Int,
+    override val valueArgumentsCount: Int,
     override val origin: IrStatementOrigin? = null,
-) : IrConstructorCall(typeArgumentsCount, valueArgumentsCount) {
+) : IrConstructorCall() {
+    override val typeArgumentsByIndex = initializeTypeArguments(typeArgumentsCount)
+
+    override val argumentsByParameterIndex = initializeValueArguments(valueArgumentsCount)
+
+    override var contextReceiversCount = 0
+
     companion object {
         @ObsoleteDescriptorBasedAPI
         fun fromSymbolDescriptor(

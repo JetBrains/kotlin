@@ -20,22 +20,47 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
-abstract class IrMemberAccessExpression<S : IrSymbol>(typeArgumentsCount: Int) : IrDeclarationReference() {
+abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference() {
     var dispatchReceiver: IrExpression? = null
     var extensionReceiver: IrExpression? = null
 
     abstract override val symbol: S
 
     abstract val origin: IrStatementOrigin?
+
+    abstract val typeArgumentsCount: Int
+    protected abstract val typeArgumentsByIndex: Array<IrType?>
+
     abstract val valueArgumentsCount: Int
+    protected open val argumentsByParameterIndex: Array<IrExpression?>?
+        get() = null
 
-    abstract fun getValueArgument(index: Int): IrExpression?
-    abstract fun putValueArgument(index: Int, valueArgument: IrExpression?)
-    abstract fun removeValueArgument(index: Int)
+    private fun accessValueArguments(): Array<IrExpression?> =
+        argumentsByParameterIndex ?: throw UnsupportedOperationException("This type of element ($symbol) has no value arguments")
 
-    private val typeArgumentsByIndex = arrayOfNulls<IrType>(typeArgumentsCount)
+    fun getValueArgument(index: Int): IrExpression? {
+        accessValueArguments().let { args ->
+            if (index >= valueArgumentsCount) {
+                throw AssertionError("$this: No such value argument slot: $index")
+            }
+            return args[index]
+        }
+    }
 
-    val typeArgumentsCount: Int get() = typeArgumentsByIndex.size
+    fun putValueArgument(index: Int, valueArgument: IrExpression?) {
+        accessValueArguments().let { args ->
+            if (index >= valueArgumentsCount) {
+                throw AssertionError("$this: No such value argument slot: $index")
+            }
+            args[index] = valueArgument
+        }
+    }
+
+    fun removeValueArgument(index: Int) {
+        accessValueArguments().let { args ->
+            args[index] = null
+        }
+    }
 
     fun getTypeArgument(index: Int): IrType? {
         if (index >= typeArgumentsCount) {
@@ -54,11 +79,27 @@ abstract class IrMemberAccessExpression<S : IrSymbol>(typeArgumentsCount: Int) :
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         dispatchReceiver?.accept(visitor, data)
         extensionReceiver?.accept(visitor, data)
+        argumentsByParameterIndex?.forEach { it?.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         dispatchReceiver = dispatchReceiver?.transform(transformer, data)
         extensionReceiver = extensionReceiver?.transform(transformer, data)
+        argumentsByParameterIndex?.let { argumentsByParameterIndex ->
+            argumentsByParameterIndex.forEachIndexed { i, irExpression ->
+                argumentsByParameterIndex[i] = irExpression?.transform(transformer, data)
+            }
+        }
+    }
+
+    companion object {
+        @JvmStatic
+        protected fun initializeTypeArguments(typeArgumentsCount: Int): Array<IrType?> =
+            arrayOfNulls<IrType?>(typeArgumentsCount)
+
+        @JvmStatic
+        protected fun initializeValueArguments(typeArgumentsCount: Int): Array<IrExpression?> =
+            arrayOfNulls<IrExpression?>(typeArgumentsCount)
     }
 }
 

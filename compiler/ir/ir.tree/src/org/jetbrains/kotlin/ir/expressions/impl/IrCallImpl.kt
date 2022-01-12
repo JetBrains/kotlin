@@ -31,11 +31,18 @@ class IrCallImpl(
     override val endOffset: Int,
     override var type: IrType,
     override val symbol: IrSimpleFunctionSymbol,
-    typeArgumentsCount: Int,
-    valueArgumentsCount: Int,
+    override val typeArgumentsCount: Int,
+    override val valueArgumentsCount: Int,
     override val origin: IrStatementOrigin? = null,
     override val superQualifierSymbol: IrClassSymbol? = null
-) : IrCall(typeArgumentsCount, valueArgumentsCount) {
+) : IrCall() {
+
+    override val typeArgumentsByIndex = initializeTypeArguments(typeArgumentsCount)
+
+    override val argumentsByParameterIndex = initializeValueArguments(valueArgumentsCount)
+
+    override var contextReceiversCount = 0
+
     init {
         if (symbol is IrConstructorSymbol) {
             throw AssertionError("Should be IrConstructorCall: ${this.render()}")

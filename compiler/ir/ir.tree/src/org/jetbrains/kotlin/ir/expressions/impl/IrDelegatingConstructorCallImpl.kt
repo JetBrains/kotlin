@@ -29,11 +29,17 @@ class IrDelegatingConstructorCallImpl(
     override val endOffset: Int,
     override var type: IrType,
     override val symbol: IrConstructorSymbol,
-    typeArgumentsCount: Int,
-    valueArgumentsCount: Int
-) : IrDelegatingConstructorCall(typeArgumentsCount, valueArgumentsCount) {
+    override val typeArgumentsCount: Int,
+    override val valueArgumentsCount: Int,
+) : IrDelegatingConstructorCall() {
     override val origin: IrStatementOrigin?
         get() = null
+
+    override val typeArgumentsByIndex = initializeTypeArguments(typeArgumentsCount)
+
+    override val argumentsByParameterIndex = initializeValueArguments(valueArgumentsCount)
+
+    override var contextReceiversCount = 0
 
     companion object {
         @ObsoleteDescriptorBasedAPI

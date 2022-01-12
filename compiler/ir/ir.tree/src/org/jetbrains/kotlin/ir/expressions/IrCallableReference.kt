@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
-abstract class IrCallableReference<S : IrSymbol>(typeArgumentsCount: Int) : IrMemberAccessExpression<S>(typeArgumentsCount) {
+abstract class IrCallableReference<S : IrSymbol> : IrMemberAccessExpression<S>() {
     abstract val referencedName: Name
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
