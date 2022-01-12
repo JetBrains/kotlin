@@ -10,7 +10,5 @@ import org.jetbrains.kotlin.ir.types.IrType
 abstract class IrVararg : IrExpression() {
     abstract var varargElementType: IrType
 
-    abstract val elements: List<IrVarargElement>
-
-    abstract fun putElement(i: Int, element: IrVarargElement)
+    abstract val elements: MutableList<IrVarargElement>
 }
