@@ -9,6 +9,7 @@ public interface Some {
     public abstract fun f5(): kotlin.Int.(???) -> kotlin.Int
     public open fun f6(/*0*/ x: kotlin.Int.(???) -> kotlin.Int): kotlin.Unit
     public abstract fun f7(/*0*/ x: kotlin.Int.(???) -> kotlin.Int): kotlin.Unit
+    public abstract fun f8(/*0*/ x: @kotlin.ExtensionFunctionType kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

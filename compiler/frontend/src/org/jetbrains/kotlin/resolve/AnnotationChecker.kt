@@ -185,9 +185,17 @@ class AnnotationChecker(
                 }
             }
             if (descriptor?.annotationClass?.classId == StandardClassIds.Annotations.ExtensionFunctionType) {
-                val type = trace[BindingContext.TYPE, reference]
-                if (type != null && type.isFunctionOrKFunctionTypeWithAnySuspendability && type.arguments.size <= 1) {
-                    trace.report(Errors.WRONG_EXTENSION_FUNCTION_TYPE.on(entry))
+                val type = trace[BindingContext.TYPE, reference] ?: trace[BindingContext.ABBREVIATED_TYPE, reference]
+                if (type != null) {
+                    if (!type.isFunctionOrKFunctionTypeWithAnySuspendability) {
+                        if (languageVersionSettings.supportsFeature(ForbidExtensionFunctionTypeOnNonFunctionTypes)) {
+                            trace.report(Errors.WRONG_EXTENSION_FUNCTION_TYPE.on(entry))
+                        } else {
+                            trace.report(Errors.WRONG_EXTENSION_FUNCTION_TYPE_WARNING.on(entry))
+                        }
+                    } else if (type.arguments.size <= 1) {
+                        trace.report(Errors.WRONG_EXTENSION_FUNCTION_TYPE.on(entry))
+                    }
                 }
             }
         }

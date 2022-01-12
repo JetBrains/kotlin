@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// !LANGUAGE: +ForbidExtensionFunctionTypeOnNonFunctionTypes
 // This test checks that annotations on extension function types are preserved. See the corresponding .txt file
 
 @Target(AnnotationTarget.TYPE)
@@ -17,4 +18,6 @@ interface Some {
     }
 
     fun f7(x: <!WRONG_EXTENSION_FUNCTION_TYPE!>@ExtensionFunctionType<!> Function0<Int>)
+
+    fun f8(x: <!WRONG_EXTENSION_FUNCTION_TYPE!>@ExtensionFunctionType<!> Int)
 }
