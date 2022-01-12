@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
+import java.util.*
 import javax.inject.Inject
 
 fun VariantPublishingConfigurator.configureNativeVariantPublication(variant: KotlinNativeVariantInternal) {
@@ -126,7 +127,9 @@ open class VariantPublishingConfigurator @Inject constructor(
                         (this as DefaultMavenPublication).isAlias = true
                         from(platformComponent)
                         publishedModuleHolder.assignMavenPublication(this)
-                        artifactId = dashSeparatedName(project.name, publishedModuleHolder.defaultPublishedModuleSuffix)
+                        artifactId = dashSeparatedName(
+                            project.name, publishedModuleHolder.defaultPublishedModuleSuffix
+                        ).toLowerCase(Locale.ENGLISH)
                     }
                 }
             }
