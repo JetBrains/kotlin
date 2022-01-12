@@ -376,6 +376,57 @@ abstract class Kapt3AndroidIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun generateStubsTaskShouldRunIncrementallyOnChangesInAndroidVariantJavaSources() {
+        with(Project("android-dagger", directoryPrefix = "kapt2")) {
+            setupWorkingDir()
+
+            val javaFile = projectDir.resolve("app/src/main/java/com/example/dagger/kotlin/Utils.java")
+            javaFile.writeText(
+                //language=Java
+                """
+                package com.example.dagger.kotlin;
+
+                class Utils {
+                    public String oneMethod() {
+                        return "fake!";
+                    }
+                }
+                """.trimIndent()
+            )
+
+            build(":app:kaptDebugKotlin") {
+                assertSuccessful()
+                assertTasksExecuted(":app:kaptGenerateStubsDebugKotlin")
+            }
+
+            javaFile.writeText(
+                //language=Java
+                """
+                package com.example.dagger.kotlin;
+
+                class Utils {
+                    public String oneMethod() {
+                        return "fake!";
+                    }
+                    
+                    public void anotherMethod() {
+                        int one = 1;
+                    }
+                }
+                """.trimIndent()
+            )
+
+            build(":app:kaptDebugKotlin") {
+                assertSuccessful()
+                assertTasksExecuted(":app:kaptGenerateStubsDebugKotlin")
+                assertNotContains(
+                    "The input changes require a full rebuild for incremental task ':app:kaptGenerateStubsDebugKotlin'."
+                )
+            }
+        }
+    }
+
     private fun setupDataBinding(project: Project) {
         project.setupWorkingDir()
 
