@@ -59,7 +59,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
               static <clinit>()V
               public final static LComposableSingletons%TestKt%lambda-1%1; INSTANCE
-              OUTERCLASS ComposableSingletons%TestKt <clinit> ()V
+              OUTERCLASS ComposableSingletons%TestKt null
               final static INNERCLASS ComposableSingletons%TestKt%lambda-1%1 null null
             }
             public final class TestKt {
@@ -489,7 +489,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               public synthetic bridge invoke()Ljava/lang/Object;
               static <clinit>()V
               public final static LTestKt%a%1; INSTANCE
-              OUTERCLASS TestKt <clinit> ()V
+              OUTERCLASS TestKt null
               final static INNERCLASS TestKt%a%1 null null
             }
         """
@@ -825,7 +825,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
               static <clinit>()V
               public final static LComposableSingletons%TestKt%lambda-1%1; INSTANCE
-              OUTERCLASS ComposableSingletons%TestKt <clinit> ()V
+              OUTERCLASS ComposableSingletons%TestKt null
               final static INNERCLASS ComposableSingletons%TestKt%lambda-1%1 null null
             }
             public final class TestKt {
@@ -870,7 +870,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
               public synthetic bridge invoke(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
               static <clinit>()V
               public final static LComposableSingletons%TestKt%lambda-1%1; INSTANCE
-              OUTERCLASS ComposableSingletons%TestKt <clinit> ()V
+              OUTERCLASS ComposableSingletons%TestKt null
               final static INNERCLASS ComposableSingletons%TestKt%lambda-1%1 null null
             }
             public final class TestKt {

@@ -204,7 +204,7 @@ class ComposeComponentRegistrar : ComponentRegistrar {
             project: Project,
             configuration: CompilerConfiguration
         ) {
-            val KOTLIN_VERSION_EXPECTATION = "1.6.10"
+            val KOTLIN_VERSION_EXPECTATION = "1.6.20"
             KotlinCompilerVersion.getVersion()?.let { version ->
                 val suppressKotlinVersionCheck = configuration.get(
                     ComposeConfiguration.SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK,
@@ -282,7 +282,7 @@ class ComposeComponentRegistrar : ComponentRegistrar {
                 project,
                 ComposeDiagnosticSuppressor()
             )
-            @Suppress("EXPERIMENTAL_API_USAGE_ERROR")
+            @Suppress("OPT_IN_USAGE_ERROR")
             TypeResolutionInterceptor.registerExtension(
                 project,
                 @Suppress("IllegalExperimentalApiUsage")

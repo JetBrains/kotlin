@@ -24,8 +24,6 @@ import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1
-import org.jetbrains.kotlin.diagnostics.RenderedDiagnostic
 import java.io.File
 
 abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {
@@ -137,23 +135,6 @@ fun assertExists(file: File): File {
     }
     return file
 }
-
-// Normalize the factory's name to find the name supplied by a plugin
-@Suppress("UNCHECKED_CAST")
-val Diagnostic.factoryName: String
-    inline get() {
-        if (factory.name == "PLUGIN_ERROR")
-            return (
-                this as
-                    DiagnosticWithParameters1<*, RenderedDiagnostic<*>>
-                ).a.diagnostic.factory.name
-        if (factory.name == "PLUGIN_WARNING")
-            return (
-                this as
-                    DiagnosticWithParameters1<*, RenderedDiagnostic<*>>
-                ).a.diagnostic.factory.name
-        return factory.name
-    }
 
 fun String.lineStart(offset: Int): Int {
     return this.lastIndexOf('\n', offset) + 1

@@ -90,7 +90,7 @@ import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver.findCompatibleExpectedForActual
+import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleExpectsForActual
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.math.min
 
@@ -669,7 +669,9 @@ class ComposerParamTransformer(
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun IrFunction.expectDescriptor(): CallableDescriptor? =
         if (descriptor !is IrBasedDeclarationDescriptor<*>) {
-            descriptor.findCompatibleExpectedForActual(module).singleOrNull() as? CallableDescriptor
+            descriptor.findCompatibleExpectsForActual {
+                it == module
+            }.singleOrNull() as? CallableDescriptor
         } else {
             null
         }
