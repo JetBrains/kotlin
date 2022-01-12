@@ -501,22 +501,22 @@ class Fir2IrClassifierStorage(
             return createLocalIrClassOnTheFly(firClass).symbol
         }
         val signature = signatureComposer.composeSignature(firClass)!!
-        symbolTable.referenceClassIfAny(signature)?.takeIf { it.isBound }?.let { irClassSymbol ->
-            val irClass = irClassSymbol.owner
+        val symbol = symbolTable.referenceClass(signature)
+        if (symbol.isBound) {
+            val irClass = symbol.owner
             classCache[firClass as FirRegularClass] = irClass
             val mappedTypeParameters = firClass.typeParameters.filterIsInstance<FirTypeParameter>().zip(irClass.typeParameters)
             for ((firTypeParameter, irTypeParameter) in mappedTypeParameters) {
                 typeParameterCache[firTypeParameter] = irTypeParameter
             }
             declarationStorage.preCacheBuiltinClassMembers(firClass, irClass)
-            return irClassSymbol
+            return symbol
         }
         firClass as FirRegularClass
         val classId = firClassSymbol.classId
         val parentId = classId.outerClassId
         val parentClass = parentId?.let { session.symbolProvider.getClassLikeSymbolByClassId(it) }
         val irParent = declarationStorage.findIrParent(classId.packageFqName, parentClass?.toLookupTag(), firClassSymbol, firClass.origin)!!
-        val symbol = Fir2IrClassSymbol(signature)
         val irClass = firClass.convertWithOffsets { startOffset, endOffset ->
             symbolTable.declareClass(signature, { symbol }) {
                 Fir2IrLazyClass(components, startOffset, endOffset, firClass.irOrigin(firProvider), firClass, symbol).apply {
