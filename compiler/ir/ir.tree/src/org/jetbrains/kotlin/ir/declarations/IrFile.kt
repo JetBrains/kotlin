@@ -16,30 +16,9 @@
 
 package org.jetbrains.kotlin.ir.declarations
 
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
-import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.IrFileEntry
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import java.io.File
-
-abstract class IrPackageFragment : IrElementBase(), IrDeclarationContainer, IrSymbolOwner {
-    @ObsoleteDescriptorBasedAPI
-    abstract val packageFragmentDescriptor: PackageFragmentDescriptor
-    abstract override val symbol: IrPackageFragmentSymbol
-
-    abstract val fqName: FqName
-}
-
-abstract class IrExternalPackageFragment : IrPackageFragment() {
-    abstract override val symbol: IrExternalPackageFragmentSymbol
-    abstract val containerSource: DeserializedContainerSource?
-}
 
 abstract class IrFile : IrPackageFragment(), IrMutableAnnotationContainer, IrMetadataSourceOwner {
     abstract override val symbol: IrFileSymbol
@@ -51,6 +30,3 @@ abstract class IrFile : IrPackageFragment(), IrMutableAnnotationContainer, IrMet
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrFile =
         accept(transformer, data) as IrFile
 }
-
-val IrFile.path: String get() = fileEntry.name
-val IrFile.name: String get() = File(path).name

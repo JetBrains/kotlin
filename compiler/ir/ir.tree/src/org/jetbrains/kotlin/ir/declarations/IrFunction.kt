@@ -17,10 +17,8 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
@@ -73,21 +71,3 @@ abstract class IrFunction :
         body = body?.transform(transformer, data)
     }
 }
-
-@ObsoleteDescriptorBasedAPI
-fun IrFunction.getIrValueParameter(parameter: ValueParameterDescriptor): IrValueParameter =
-    valueParameters.getOrElse(parameter.index) {
-        throw AssertionError("No IrValueParameter for $parameter")
-    }.also { found ->
-        assert(found.descriptor == parameter) {
-            "Parameter indices mismatch at $descriptor: $parameter != ${found.descriptor}"
-        }
-    }
-
-@ObsoleteDescriptorBasedAPI
-fun IrFunction.putDefault(parameter: ValueParameterDescriptor, expressionBody: IrExpressionBody) {
-    getIrValueParameter(parameter).defaultValue = expressionBody
-}
-
-val IrFunction.isStaticMethodOfClass: Boolean
-    get() = this is IrSimpleFunction && parent is IrClass && dispatchReceiverParameter == null

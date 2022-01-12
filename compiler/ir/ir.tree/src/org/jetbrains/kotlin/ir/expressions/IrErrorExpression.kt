@@ -19,8 +19,3 @@ package org.jetbrains.kotlin.ir.expressions
 abstract class IrErrorExpression : IrExpression() {
     abstract val description: String
 }
-
-abstract class IrErrorCallExpression : IrErrorExpression() {
-    abstract var explicitReceiver: IrExpression?
-    abstract val arguments: MutableList<IrExpression>
-}

@@ -278,11 +278,3 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitErrorCallExpression(expression: IrErrorCallExpression) = visitErrorExpression(expression)
     override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: Nothing?) = visitErrorCallExpression(expression)
 }
-
-fun IrElement.acceptVoid(visitor: IrElementVisitorVoid) {
-    accept(visitor, null)
-}
-
-fun IrElement.acceptChildrenVoid(visitor: IrElementVisitorVoid) {
-    acceptChildren(visitor, null)
-}

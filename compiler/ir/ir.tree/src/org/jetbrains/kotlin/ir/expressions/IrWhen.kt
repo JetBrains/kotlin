@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -38,22 +37,3 @@ abstract class IrWhen : IrExpression() {
         }
     }
 }
-
-abstract class IrBranch : IrElementBase() {
-    abstract var condition: IrExpression
-    abstract var result: IrExpression
-
-    abstract override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBranch
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        condition.accept(visitor, data)
-        result.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        condition = condition.transform(transformer, data)
-        result = result.transform(transformer, data)
-    }
-}
-
-abstract class IrElseBranch : IrBranch()
