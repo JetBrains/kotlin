@@ -108,7 +108,6 @@ interface FirDeclarationPresenter {
     fun StringBuilder.appendRepresentation(it: FirTypeRef) {
         when (it) {
             is FirResolvedTypeRef -> appendRepresentation(it.type)
-            is FirErrorTypeRef -> append("ERROR")
             else -> append("?")
         }
     }
