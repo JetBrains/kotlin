@@ -42,7 +42,7 @@ class Fir2IrLazyProperty(
     internal val containingClass: FirRegularClass?,
     override val symbol: Fir2IrPropertySymbol,
     override val isFakeOverride: Boolean
-) : IrProperty(), AbstractFir2IrLazyDeclaration<FirProperty, IrProperty>, Fir2IrComponents by components {
+) : IrProperty(), AbstractFir2IrLazyDeclaration<FirProperty>, Fir2IrComponents by components {
     init {
         symbol.bind(this)
         classifierStorage.preCacheTypeParameters(fir)
@@ -160,20 +160,19 @@ class Fir2IrLazyProperty(
 
     override var getter: IrSimpleFunction? by lazyVar(lock) {
         if (fir.isConst) return@lazyVar null
-        Fir2IrLazyPropertyAccessor(
-            components, startOffset, endOffset,
-            when {
-                origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
-                fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
-                fir.getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-                else -> origin
-            },
-            fir.getter, isSetter = false, fir, containingClass,
-            Fir2IrSimpleFunctionSymbol(
-                signatureComposer.composeAccessorSignature(fir, isSetter = false, containingClass?.symbol?.toLookupTag())!!
-            ),
-            isFakeOverride
-        ).apply {
+        val signature = signatureComposer.composeAccessorSignature(fir, isSetter = false, containingClass?.symbol?.toLookupTag())!!
+        symbolTable.declareSimpleFunction(signature, symbolFactory = { Fir2IrSimpleFunctionSymbol(signature) }) { symbol ->
+            Fir2IrLazyPropertyAccessor(
+                components, startOffset, endOffset,
+                when {
+                    origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
+                    fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                    fir.getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                    else -> origin
+                },
+                fir.getter, isSetter = false, fir, containingClass, symbol, isFakeOverride
+            )
+        }.apply {
             parent = this@Fir2IrLazyProperty.parent
             correspondingPropertySymbol = this@Fir2IrLazyProperty.symbol
             with(classifierStorage) {
@@ -188,29 +187,31 @@ class Fir2IrLazyProperty(
     }
 
     override var setter: IrSimpleFunction? by lazyVar(lock) {
-        if (!fir.isVar) null else Fir2IrLazyPropertyAccessor(
-            components, startOffset, endOffset,
-            when {
-                origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
-                fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
-                fir.setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
-                else -> origin
-            },
-            fir.setter, isSetter = true, fir, containingClass,
-            Fir2IrSimpleFunctionSymbol(
-                signatureComposer.composeAccessorSignature(fir, isSetter = true, containingClass?.symbol?.toLookupTag())!!
-            ),
-            isFakeOverride
-        ).apply {
-            parent = this@Fir2IrLazyProperty.parent
-            correspondingPropertySymbol = this@Fir2IrLazyProperty.symbol
-            with(classifierStorage) {
-                setTypeParameters(
-                    this@Fir2IrLazyProperty.fir, ConversionTypeContext(
-                        definitelyNotNull = false,
-                        origin = ConversionTypeOrigin.SETTER
-                    )
-                )
+        if (!fir.isVar) null
+        else {
+            val signature = signatureComposer.composeAccessorSignature(fir, isSetter = true, containingClass?.symbol?.toLookupTag())!!
+            symbolTable.declareSimpleFunction(signature, symbolFactory = { Fir2IrSimpleFunctionSymbol(signature) }) { symbol ->
+                Fir2IrLazyPropertyAccessor(
+                    components, startOffset, endOffset,
+                    when {
+                        origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
+                        fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                        fir.setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+                        else -> origin
+                    },
+                    fir.setter, isSetter = true, fir, containingClass, symbol, isFakeOverride
+                ).apply {
+                    parent = this@Fir2IrLazyProperty.parent
+                    correspondingPropertySymbol = this@Fir2IrLazyProperty.symbol
+                    with(classifierStorage) {
+                        setTypeParameters(
+                            this@Fir2IrLazyProperty.fir, ConversionTypeContext(
+                                definitelyNotNull = false,
+                                origin = ConversionTypeOrigin.SETTER
+                            )
+                        )
+                    }
+                }
             }
         }
     }
