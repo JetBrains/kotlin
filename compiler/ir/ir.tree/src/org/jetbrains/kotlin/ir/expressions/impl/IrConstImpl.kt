@@ -19,8 +19,9 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.getPrimitiveType
+import org.jetbrains.kotlin.ir.types.isMarkedNullable
 
 class IrConstImpl<T>(
     override val startOffset: Int,
@@ -29,9 +30,6 @@ class IrConstImpl<T>(
     override val kind: IrConstKind<T>,
     override val value: T
 ) : IrConst<T>() {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitConst(this, data)
-
     override fun copyWithOffsets(startOffset: Int, endOffset: Int) =
         IrConstImpl(startOffset, endOffset, type, kind, value)
 

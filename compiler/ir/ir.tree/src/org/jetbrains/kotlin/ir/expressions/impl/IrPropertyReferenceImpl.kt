@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
 class IrPropertyReferenceImpl(
@@ -51,7 +50,4 @@ class IrPropertyReferenceImpl(
     override fun putValueArgument(index: Int, valueArgument: IrExpression?): Unit = throwNoValueArguments()
 
     override fun removeValueArgument(index: Int): Unit = throwNoValueArguments()
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitPropertyReference(this, data)
 }

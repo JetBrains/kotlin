@@ -10,8 +10,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.transformIfNeeded
-import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -47,13 +45,13 @@ abstract class IrClass :
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         thisReceiver?.accept(visitor, data)
-        typeParameters.forEach { it.accept(visitor, data) }
-        declarations.forEach { it.accept(visitor, data) }
+        super<IrTypeParametersContainer>.acceptChildren(visitor, data)
+        super<IrDeclarationContainer>.acceptChildren(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         thisReceiver = thisReceiver?.transform(transformer, data)
-        typeParameters = typeParameters.transformIfNeeded(transformer, data)
-        declarations.transformInPlace(transformer, data)
+        super<IrTypeParametersContainer>.transformChildren(transformer, data)
+        super<IrDeclarationContainer>.transformChildren(transformer, data)
     }
 }

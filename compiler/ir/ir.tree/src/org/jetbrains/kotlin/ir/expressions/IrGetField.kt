@@ -5,4 +5,9 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-abstract class IrGetField : IrFieldAccessExpression()
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+
+abstract class IrGetField : IrFieldAccessExpression() {
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitGetField(this, data)
+}

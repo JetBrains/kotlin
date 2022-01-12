@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 abstract class IrConstructorCall(
     typeArgumentsCount: Int,
@@ -14,4 +15,7 @@ abstract class IrConstructorCall(
     abstract override val symbol: IrConstructorSymbol
 
     abstract val constructorTypeArgumentsCount: Int
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitConstructorCall(this, data)
 }

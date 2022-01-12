@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrConstructorCallImpl(
     override val startOffset: Int,
@@ -24,11 +23,7 @@ class IrConstructorCallImpl(
     valueArgumentsCount: Int,
     override val origin: IrStatementOrigin? = null,
 ) : IrConstructorCall(typeArgumentsCount, valueArgumentsCount) {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitConstructorCall(this, data)
-
     companion object {
-
         @ObsoleteDescriptorBasedAPI
         fun fromSymbolDescriptor(
             startOffset: Int,

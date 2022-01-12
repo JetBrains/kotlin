@@ -5,8 +5,20 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrStatementContainer {
+interface IrStatementContainer : IrElement {
     val statements: MutableList<IrStatement>
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        statements.forEach { it.accept(visitor, data) }
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        statements.transformInPlace(transformer, data)
+    }
 }

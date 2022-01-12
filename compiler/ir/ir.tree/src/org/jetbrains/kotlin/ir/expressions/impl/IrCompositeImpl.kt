@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.expressions.IrComposite
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrCompositeImpl(
     override val startOffset: Int,
@@ -37,7 +36,4 @@ class IrCompositeImpl(
     ) : this(startOffset, endOffset, type, origin) {
         this.statements.addAll(statements)
     }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitComposite(this, data)
 }

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
 class IrLocalDelegatedPropertyReferenceImpl(
@@ -50,7 +49,4 @@ class IrLocalDelegatedPropertyReferenceImpl(
     override fun putValueArgument(index: Int, valueArgument: IrExpression?): Unit = throwNoValueArguments()
 
     override fun removeValueArgument(index: Int): Unit = throwNoValueArguments()
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitLocalDelegatedPropertyReference(this, data)
 }

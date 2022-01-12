@@ -19,15 +19,10 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.expressions.IrRawFunctionReference
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrRawFunctionReferenceImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
     override val symbol: IrFunctionSymbol,
-) : IrRawFunctionReference() {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitRawFunctionReference(this, data)
-    }
-}
+) : IrRawFunctionReference()

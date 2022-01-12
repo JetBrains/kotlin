@@ -41,7 +41,7 @@ abstract class IrFunction :
     abstract var body: IrBody?
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        typeParameters.forEach { it.accept(visitor, data) }
+        super<IrTypeParametersContainer>.acceptChildren(visitor, data)
 
         dispatchReceiverParameter?.accept(visitor, data)
         extensionReceiverParameter?.accept(visitor, data)
@@ -51,7 +51,7 @@ abstract class IrFunction :
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        typeParameters = typeParameters.transformIfNeeded(transformer, data)
+        super<IrTypeParametersContainer>.transformChildren(transformer, data)
 
         dispatchReceiverParameter = dispatchReceiverParameter?.transform(transformer, data)
         extensionReceiverParameter = extensionReceiverParameter?.transform(transformer, data)

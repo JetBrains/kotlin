@@ -5,4 +5,9 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-abstract class IrBreak : IrBreakContinue()
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+
+abstract class IrBreak : IrBreakContinue() {
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitBreak(this, data)
+}

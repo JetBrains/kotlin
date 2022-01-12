@@ -5,4 +5,9 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-abstract class IrWhileLoop : IrLoop()
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+
+abstract class IrWhileLoop : IrLoop() {
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitWhileLoop(this, data)
+}
