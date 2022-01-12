@@ -770,6 +770,60 @@ abstract class KotlinAndroid3GradleIT : AbstractKotlinAndroidGradleTests() {
             assertTasksExecuted(*kotlinTaskNames.toTypedArray())
         }
     }
+
+    @Test
+    fun testAfterEvaluateOrdering() = with(Project("AndroidProject")) {
+        setupWorkingDir()
+
+        gradleBuildScript("Lib").writeText(
+            """
+            buildscript {
+                repositories {
+                    mavenLocal()
+                    google()
+                    gradlePluginPortal()
+                }
+                dependencies {
+                    classpath "com.android.tools.build:gradle:${'$'}android_tools_version"
+                    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}kotlin_version"
+                }
+            }
+            
+            plugins {
+                id 'org.jetbrains.kotlin.multiplatform'
+            }
+            
+            class MyAction implements kotlin.jvm.functions.Function1<Project, Void> {
+                Void invoke(Project p) {
+                    println("compilations: " + p.kotlin.targets.getByName("android").compilations.names)
+                }
+            }
+            
+            org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginKt.whenEvaluated(project, new MyAction())
+            
+            apply plugin: "android-library"
+            
+            android {
+                compileSdkVersion 22
+            }
+            
+            kotlin { android("android") { } }
+        """.trimIndent())
+
+        build("help") {
+            assertSuccessful()
+            val reportedCompilations = output.lines()
+                .single { it.contains("compilations: ") }
+                .substringAfter("compilations: ")
+                .removeSurrounding("[", "]")
+                .split(", ")
+                .toSet()
+            assertEquals(
+                setOf("debug", "debugAndroidTest", "debugUnitTest", "release", "releaseUnitTest"),
+                reportedCompilations
+            )
+        }
+    }
 }
 
 abstract class AbstractKotlinAndroidGradleTests : BaseGradleIT() {
