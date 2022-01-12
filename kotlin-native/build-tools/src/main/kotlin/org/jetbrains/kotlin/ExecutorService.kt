@@ -50,12 +50,26 @@ fun create(project: Project): ExecutorService {
     val configurables = project.testTargetConfigurables
 
     return when {
+        project.compileOnlyTests -> noopExecutor(project)
         project.hasProperty("remote") -> sshExecutor(project, testTarget)
         configurables is WasmConfigurables -> wasmExecutor(project)
         configurables is ConfigurablesWithEmulator && testTarget != HostManager.host -> emulatorExecutor(project, testTarget)
         configurables.targetTriple.isSimulator -> simulator(project)
         supportsRunningTestsOnDevice(testTarget) -> deviceLauncher(project)
         else -> localExecutorService(project)
+    }
+}
+
+private fun noopExecutor(project: Project) = object : ExecutorService {
+    override val project: Project
+        get() = project
+
+    override fun execute(action: Action<in ExecSpec>): ExecResult? = object : ExecResult {
+        override fun getExitValue(): Int = 0
+
+        override fun assertNormalExitValue(): ExecResult = this
+
+        override fun rethrowFailure(): ExecResult = this
     }
 }
 

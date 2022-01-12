@@ -186,6 +186,9 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
         // Build test executable as a first action of the task before executing the test
         buildTestExecutable()
         doBeforeRun?.execute(this)
+        if (project.compileOnlyTests) {
+            return
+        }
         runTest(executorService = project.executor, testExecutable = Paths.get(executable))
     }
 

@@ -86,6 +86,9 @@ val Project.testOutputExternal
 val Project.cacheRedirectorEnabled
     get() = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false
 
+val Project.compileOnlyTests: Boolean
+    get() = hasProperty("compile-only-tests")
+
 fun Project.redirectIfEnabled(url: String):String = if (cacheRedirectorEnabled) {
     val base = URL(url)
     "https://cache-redirector.jetbrains.com/${base.host}/${base.path}"
