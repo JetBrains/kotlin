@@ -3,6 +3,7 @@
 package org.jetbrains.dokka
 
 import org.jetbrains.dokka.plugability.ConfigurableBlock
+import org.jetbrains.dokka.utilities.cast
 import org.jetbrains.dokka.utilities.parseJson
 import org.jetbrains.dokka.utilities.toJsonString
 import java.io.File
@@ -85,6 +86,34 @@ data class DokkaSourceSetID(
 }
 
 fun DokkaConfigurationImpl(json: String): DokkaConfigurationImpl = parseJson(json)
+
+/**
+ * Global options are applied to all packages and modules and overwrite package configuration.
+ *
+ * These are handy if we have multiple sourcesets sharing the same global options as it reduces the size of the boilerplate.
+ * Otherwise, the user would be enforced to repeat all these options per each sourceset.
+ */
+data class GlobalDokkaConfiguration(
+    val perPackageOptions: List<PackageOptionsImpl>?,
+    val externalDocumentationLinks: List<ExternalDocumentationLinkImpl>?,
+    val sourceLinks: List<SourceLinkDefinitionImpl>?
+)
+
+fun GlobalDokkaConfiguration(json: String): GlobalDokkaConfiguration = parseJson(json)
+
+fun DokkaConfiguration.apply(globals: GlobalDokkaConfiguration): DokkaConfiguration = this.apply {
+    sourceSets.forEach {
+        it.perPackageOptions.cast<MutableList<DokkaConfiguration.PackageOptions>>().addAll(globals.perPackageOptions ?: emptyList())
+    }
+
+    sourceSets.forEach {
+        it.externalDocumentationLinks.cast<MutableSet<DokkaConfiguration.ExternalDocumentationLink>>().addAll(globals.externalDocumentationLinks ?: emptyList())
+    }
+
+    sourceSets.forEach {
+        it.sourceLinks.cast<MutableSet<SourceLinkDefinitionImpl>>().addAll(globals.sourceLinks ?: emptyList())
+    }
+}
 
 fun DokkaConfiguration.toJsonString(): String = toJsonString(this)
 fun <T : ConfigurableBlock> T.toJsonString(): String = toJsonString(this)
