@@ -119,11 +119,11 @@ rootProject.apply {
 
 IdeVersionConfigurator.setCurrentIde(project)
 
-if (!project.hasProperty("teamcity")) {
+if (!isTeamcityBuild) {
     println("DEBBUG: desnt have TC prop")
 }
 
-if (project.hasProperty("teamcity")) {
+if (isTeamcityBuild) {
     println("DEBBUG: has TC prop")
 }
 
