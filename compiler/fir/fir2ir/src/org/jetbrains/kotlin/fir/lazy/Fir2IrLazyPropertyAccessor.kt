@@ -34,7 +34,7 @@ class Fir2IrLazyPropertyAccessor(
     private val isSetter: Boolean,
     private val firParentProperty: FirProperty,
     firParentClass: FirRegularClass?,
-    symbol: Fir2IrSimpleFunctionSymbol,
+    symbol: IrSimpleFunctionSymbol,
     isFakeOverride: Boolean
 ) : AbstractFir2IrLazyFunction<FirCallableDeclaration>(components, startOffset, endOffset, origin, symbol, isFakeOverride) {
     init {
