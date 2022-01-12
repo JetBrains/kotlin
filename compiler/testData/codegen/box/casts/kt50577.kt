@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: NATIVE
+
 abstract class A {
     abstract val x: Any
 
