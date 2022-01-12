@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.utils.addToStdlib
 
+import org.jetbrains.kotlin.utils.IDEAPlatforms
+import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 import java.lang.reflect.Modifier
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -99,12 +101,29 @@ fun String.indexOfOrNull(char: Char, startIndex: Int = 0, ignoreCase: Boolean = 
 fun String.lastIndexOfOrNull(char: Char, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int? =
     lastIndexOf(char, startIndex, ignoreCase).takeIf { it >= 0 }
 
-@Deprecated(
+@IDEAPluginsCompatibilityAPI(
+    IDEAPlatforms._211,
+    IDEAPlatforms._212,
+    IDEAPlatforms._213,
     message = "Use firstNotNullOfOrNull from stdlib instead",
-    replaceWith = ReplaceWith("firstNotNullOfOrNull(transform)"),
-    level = DeprecationLevel.ERROR
+    plugins = "Android plugin in the IDEA, kotlin-ultimate.kotlin-ocswift"
 )
 inline fun <T, R : Any> Iterable<T>.firstNotNullResult(transform: (T) -> R?): R? {
+    for (element in this) {
+        val result = transform(element)
+        if (result != null) return result
+    }
+    return null
+}
+
+@IDEAPluginsCompatibilityAPI(
+    IDEAPlatforms._211,
+    IDEAPlatforms._212,
+    IDEAPlatforms._213,
+    message = "Use firstNotNullOfOrNull from stdlib instead",
+    plugins = "Android plugin in the IDEA"
+)
+inline fun <T, R : Any> Array<T>.firstNotNullResult(transform: (T) -> R?): R? {
     for (element in this) {
         val result = transform(element)
         if (result != null) return result
