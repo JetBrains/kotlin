@@ -16,6 +16,9 @@ abstract class IrContainerExpression : IrExpression(), IrStatementContainer {
 
     override val statements: MutableList<IrStatement> = ArrayList(2)
 
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitContainerExpression(this, data)
+
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         statements.forEach { it.accept(visitor, data) }
     }

@@ -15,6 +15,9 @@ abstract class IrLoop : IrExpression() {
     lateinit var condition: IrExpression
     var label: String? = null
 
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitLoop(this, data)
+
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         body?.accept(visitor, data)
         condition.accept(visitor, data)

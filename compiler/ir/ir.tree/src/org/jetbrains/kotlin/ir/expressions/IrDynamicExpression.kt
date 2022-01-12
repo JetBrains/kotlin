@@ -5,4 +5,9 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-abstract class IrDynamicExpression : IrExpression()
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+
+abstract class IrDynamicExpression : IrExpression() {
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitDynamicExpression(this, data)
+}

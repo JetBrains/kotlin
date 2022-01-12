@@ -7,8 +7,12 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 abstract class IrBody : IrElementBase() {
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitBody(this, data)
+
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBody =
         accept(transformer, data) as IrBody
 }

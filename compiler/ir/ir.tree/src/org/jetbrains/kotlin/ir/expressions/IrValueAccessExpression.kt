@@ -6,8 +6,12 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 abstract class IrValueAccessExpression : IrDeclarationReference() {
     abstract override val symbol: IrValueSymbol
     abstract val origin: IrStatementOrigin?
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitValueAccess(this, data)
 }

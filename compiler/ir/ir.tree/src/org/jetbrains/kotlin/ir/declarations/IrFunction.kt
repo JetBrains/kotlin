@@ -40,6 +40,9 @@ abstract class IrFunction :
 
     abstract var body: IrBody?
 
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitFunction(this, data)
+
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         super<IrTypeParametersContainer>.acceptChildren(visitor, data)
 

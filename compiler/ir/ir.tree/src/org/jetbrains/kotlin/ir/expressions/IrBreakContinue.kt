@@ -5,8 +5,13 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+
 abstract class IrBreakContinue : IrExpression() {
     abstract var loop: IrLoop
 
     var label: String? = null
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitBreakContinue(this, data)
 }
