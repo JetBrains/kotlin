@@ -163,13 +163,26 @@ object InlineClassDeclarationChecker : DeclarationChecker {
                     val children = (typeDescriptor as ClassDescriptor).sealedSubclasses.filter { it.isInlineClass() }
                     for (child in children) {
                         if (child == descriptor) continue
-                        val anotherType = child.defaultType.substitutedUnderlyingType() ?: continue
+                        val anotherType =
+                            if (child.modality == Modality.SEALED) context.moduleDescriptor.builtIns.nullableAnyType
+                            else child.defaultType.substitutedUnderlyingType()
+                        if (anotherType == null) continue
                         if (baseParameterType.isSubtypeOf(anotherType)) {
                             trace.report(
                                 Errors.INLINE_CLASS_UNDERLYING_VALUE_IS_SUBCLASS_OF_ANOTHER_UNDERLYING_VALUE.on(baseParameterTypeReference)
                             )
                             break
                         }
+                    }
+                } else if (isSealed && parentIsSealed) {
+                    if ((typeDescriptor as ClassDescriptor).sealedSubclasses.any {
+                            it.isInlineClass() && it.modality == Modality.SEALED && it != descriptor
+                        }
+                    ) {
+                        val sealedKeyword = declaration.modifierList?.getModifier(KtTokens.SEALED_KEYWORD) ?: declaration
+                        trace.report(
+                            Errors.INLINE_CLASS_UNDERLYING_VALUE_IS_SUBCLASS_OF_ANOTHER_UNDERLYING_VALUE.on(sealedKeyword)
+                        )
                     }
                 }
             }
