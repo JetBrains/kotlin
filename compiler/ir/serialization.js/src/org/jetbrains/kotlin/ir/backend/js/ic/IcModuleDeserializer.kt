@@ -266,4 +266,6 @@ class IcModuleDeserializer(
             }
         }
     }
+
+    override val kind get() = IrModuleDeserializerKind.DESERIALIZED
 }
