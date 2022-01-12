@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.constructedClassType
 import org.jetbrains.kotlin.ir.util.transformInPlace
@@ -58,10 +57,6 @@ class IrConstantObjectImpl constructor(
         return visitor.visitConstantObject(this, data)
     }
 
-    override fun putArgument(index: Int, value: IrConstantValue) {
-        valueArguments[index] = value
-    }
-
     override fun contentEquals(other: IrConstantValue): Boolean =
         other is IrConstantObject &&
                 other.type == type &&
@@ -99,9 +94,6 @@ class IrConstantArrayImpl(
     initElements: List<IrConstantValue>,
 ) : IrConstantArray() {
     override val elements = SmartList(initElements)
-    override fun putElement(index: Int, value: IrConstantValue) {
-        elements[index] = value
-    }
 
     override fun contentEquals(other: IrConstantValue): Boolean =
         other is IrConstantArray &&
