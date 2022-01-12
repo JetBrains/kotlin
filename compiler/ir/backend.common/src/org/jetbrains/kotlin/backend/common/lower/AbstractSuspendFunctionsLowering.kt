@@ -71,8 +71,14 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 declaration.acceptChildrenVoid(this)
             }
 
+
             private fun addMissingSupertypes(clazz: IrClass) {
-                val suspendFunctionTypes = getAllSubstitutedSupertypes(clazz).filter { it.isSuspendFunction() }.toSet()
+                val suspendFunctionTypes = getAllSubstitutedSupertypes(clazz).filter {
+                    // SuspendFunction class is some hack in old Kotlin/Native compiler versions.
+                    // It's not used now, but is considered as SuspendFunction-like class in isSuspendFunction util,
+                    // if found in old klib. We need just to ignore it.
+                    it.isSuspendFunction() && it.classOrNull?.owner?.name?.toString() != "SuspendFunction"
+                }.toSet()
 
                 for (suspendFunctionType in suspendFunctionTypes) {
                     val suspendFunctionClassSymbol = suspendFunctionType.classOrNull ?: continue

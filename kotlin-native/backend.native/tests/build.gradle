@@ -2204,6 +2204,11 @@ task coroutines_kt41394(type: KonanLocalTest) {
     source = "codegen/coroutines/kt41394.kt"
 }
 
+task coroutines_inheritance(type: KonanLocalTest) {
+    useGoldenData = true
+    source = "codegen/coroutines/inheritance.kt"
+}
+
 standaloneTest('coroutines_suspendConversion') {
     useGoldenData = true
     source = "codegen/coroutines/suspendConversion.kt"
