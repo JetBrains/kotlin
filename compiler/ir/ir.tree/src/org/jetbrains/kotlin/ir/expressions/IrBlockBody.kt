@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -21,8 +21,6 @@ abstract class IrBlockBody : IrBody(), IrStatementContainer {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        statements.forEachIndexed { i, irStatement ->
-            statements[i] = irStatement.transform(transformer, data) as IrStatement
-        }
+        statements.transformInPlace(transformer, data)
     }
 }

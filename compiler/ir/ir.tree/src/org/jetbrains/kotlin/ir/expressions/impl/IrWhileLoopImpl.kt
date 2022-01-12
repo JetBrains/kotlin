@@ -19,26 +19,10 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrWhileLoopImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
     override val origin: IrStatementOrigin?,
-) : IrWhileLoop() {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitWhileLoop(this, data)
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        condition.accept(visitor, data)
-        body?.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        condition = condition.transform(transformer, data)
-        body = body?.transform(transformer, data)
-    }
-}
+) : IrWhileLoop()

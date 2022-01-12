@@ -5,7 +5,12 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+
 abstract class IrComposite : IrContainerExpression() {
     override val isTransparentScope: Boolean
         get() = true
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitComposite(this, data)
 }

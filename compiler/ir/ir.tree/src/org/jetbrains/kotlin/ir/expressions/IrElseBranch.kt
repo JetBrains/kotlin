@@ -5,4 +5,13 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-abstract class IrElseBranch : IrBranch()
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+
+abstract class IrElseBranch : IrBranch() {
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitElseBranch(this, data)
+
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElseBranch =
+        transformer.visitElseBranch(this, data)
+}

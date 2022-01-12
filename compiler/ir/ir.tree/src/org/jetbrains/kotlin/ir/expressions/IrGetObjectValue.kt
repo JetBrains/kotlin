@@ -6,7 +6,11 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 abstract class IrGetObjectValue : IrGetSingletonValue() {
     abstract override val symbol: IrClassSymbol
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitGetObjectValue(this, data)
 }

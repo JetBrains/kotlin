@@ -5,4 +5,20 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-abstract class IrWhileLoop : IrLoop()
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+
+abstract class IrWhileLoop : IrLoop() {
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitWhileLoop(this, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        condition.accept(visitor, data)
+        body?.accept(visitor, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        condition = condition.transform(transformer, data)
+        body = body?.transform(transformer, data)
+    }
+}

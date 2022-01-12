@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrTypeOperatorCallImpl(
     override val startOffset: Int,
@@ -35,15 +33,4 @@ class IrTypeOperatorCallImpl(
 ) : IrTypeOperatorCall() {
     override val typeOperandClassifier: IrClassifierSymbol
         get() = typeOperand.classifierOrFail
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitTypeOperator(this, data)
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        argument.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        argument = argument.transform(transformer, data)
-    }
 }

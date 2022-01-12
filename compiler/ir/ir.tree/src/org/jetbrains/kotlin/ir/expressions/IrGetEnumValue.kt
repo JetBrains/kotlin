@@ -6,7 +6,11 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 abstract class IrGetEnumValue : IrGetSingletonValue() {
     abstract override val symbol: IrEnumEntrySymbol
+
+    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitGetEnumValue(this, data)
 }

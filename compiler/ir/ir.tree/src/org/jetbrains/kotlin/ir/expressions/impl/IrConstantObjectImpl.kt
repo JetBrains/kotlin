@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.constructedClassType
-import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.utils.SmartList
 
@@ -29,18 +27,6 @@ class IrConstantPrimitiveImpl(
         (value.type.hashCode() * 31 + value.kind.hashCode()) * 31 + value.value.hashCode()
 
     override var type = value.type
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        value.accept(visitor, data)
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        value = value.transform(transformer, data) as IrConst<*>
-    }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitConstantPrimitive(this, data)
-    }
 }
 
 class IrConstantObjectImpl constructor(
@@ -77,14 +63,6 @@ class IrConstantObjectImpl constructor(
         }
         return res
     }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        valueArguments.forEach { value -> value.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        valueArguments.transformInPlace { it.transform(transformer, data) }
-    }
 }
 
 class IrConstantArrayImpl(
@@ -107,17 +85,5 @@ class IrConstantArrayImpl(
             res = res * 31 + value.contentHashCode()
         }
         return res
-    }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitConstantArray(this, data)
-    }
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        elements.forEach { value -> value.accept(visitor, data) }
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        elements.transformInPlace { value -> value.transform(transformer, data) }
     }
 }

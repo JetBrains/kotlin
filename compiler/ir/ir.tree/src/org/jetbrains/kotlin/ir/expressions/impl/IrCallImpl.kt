@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrCallImpl(
     override val startOffset: Int,
@@ -42,9 +41,6 @@ class IrCallImpl(
             throw AssertionError("Should be IrConstructorCall: ${this.render()}")
         }
     }
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitCall(this, data)
 
     companion object {
         @ObsoleteDescriptorBasedAPI
