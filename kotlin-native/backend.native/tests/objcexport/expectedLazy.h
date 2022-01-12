@@ -1020,11 +1020,18 @@ __attribute__((swift_name("NoAutoreleaseSendHelper")))
 @protocol KtNoAutoreleaseSendHelper
 @required
 - (void)sendKotlinObjectKotlinObject:(KtKotlinObject *)kotlinObject __attribute__((swift_name("sendKotlinObject(kotlinObject:)")));
+- (void (^)(KtKotlinObject *))blockReceivingKotlinObject __attribute__((swift_name("blockReceivingKotlinObject()")));
 - (void)sendSwiftObjectSwiftObject:(id)swiftObject __attribute__((swift_name("sendSwiftObject(swiftObject:)")));
 - (void)sendListList:(NSArray<id> *)list __attribute__((swift_name("sendList(list:)")));
 - (void)sendStringString:(NSString *)string __attribute__((swift_name("sendString(string:)")));
 - (void)sendNumberNumber:(id)number __attribute__((swift_name("sendNumber(number:)")));
 - (void)sendBlockBlock:(KtKotlinObject *(^)(void))block __attribute__((swift_name("sendBlock(block:)")));
+
+/**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
+- (void)sendCompletionWithCompletionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("sendCompletion(completionHandler:)")));
 @end;
 
 __attribute__((swift_name("NoAutoreleaseReceiveHelper")))
@@ -1043,11 +1050,18 @@ __attribute__((swift_name("NoAutoreleaseKotlinSendHelper")))
 @interface KtNoAutoreleaseKotlinSendHelper : KtBase <KtNoAutoreleaseSendHelper>
 - (instancetype)initWithKotlinLivenessTracker:(KtKotlinLivenessTracker *)kotlinLivenessTracker __attribute__((swift_name("init(kotlinLivenessTracker:)"))) __attribute__((objc_designated_initializer));
 - (void)sendKotlinObjectKotlinObject:(KtKotlinObject *)kotlinObject __attribute__((swift_name("sendKotlinObject(kotlinObject:)")));
+- (void (^)(KtKotlinObject *))blockReceivingKotlinObject __attribute__((swift_name("blockReceivingKotlinObject()")));
 - (void)sendSwiftObjectSwiftObject:(id)swiftObject __attribute__((swift_name("sendSwiftObject(swiftObject:)")));
 - (void)sendListList:(NSArray<id> *)list __attribute__((swift_name("sendList(list:)")));
 - (void)sendStringString:(NSString *)string __attribute__((swift_name("sendString(string:)")));
 - (void)sendNumberNumber:(id)number __attribute__((swift_name("sendNumber(number:)")));
 - (void)sendBlockBlock:(KtKotlinObject *(^)(void))block __attribute__((swift_name("sendBlock(block:)")));
+
+/**
+ @note This method converts instances of CancellationException to errors.
+ Other uncaught Kotlin exceptions are fatal.
+*/
+- (void)sendCompletionWithCompletionHandler:(void (^)(id _Nullable_result, NSError * _Nullable))completionHandler __attribute__((swift_name("sendCompletion(completionHandler:)")));
 @property (readonly) KtKotlinLivenessTracker *kotlinLivenessTracker __attribute__((swift_name("kotlinLivenessTracker")));
 @end;
 
@@ -1091,11 +1105,13 @@ __attribute__((swift_name("NoAutoreleaseKt")))
 @interface KtNoAutoreleaseKt : KtBase
 + (void)gc __attribute__((swift_name("gc()")));
 + (void)callSendKotlinObjectHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callSendKotlinObject(helper:tracker:)")));
++ (void)sendKotlinObjectToBlockHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("sendKotlinObjectToBlock(helper:tracker:)")));
 + (void)callSendSwiftObjectHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker swiftObject:(id)swiftObject __attribute__((swift_name("callSendSwiftObject(helper:tracker:swiftObject:)")));
 + (void)callSendListHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callSendList(helper:tracker:)")));
 + (void)callSendStringHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callSendString(helper:tracker:)")));
 + (void)callSendNumberHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callSendNumber(helper:tracker:)")));
 + (void)callSendBlockHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callSendBlock(helper:tracker:)")));
++ (void)callSendCompletionHelper:(id<KtNoAutoreleaseSendHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callSendCompletion(helper:tracker:)")));
 + (void)callReceiveKotlinObjectHelper:(id<KtNoAutoreleaseReceiveHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callReceiveKotlinObject(helper:tracker:)")));
 + (void)callReceiveSwiftObjectHelper:(id<KtNoAutoreleaseReceiveHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callReceiveSwiftObject(helper:tracker:)")));
 + (void)callReceiveListHelper:(id<KtNoAutoreleaseReceiveHelper>)helper tracker:(KtKotlinLivenessTracker *)tracker __attribute__((swift_name("callReceiveList(helper:tracker:)")));

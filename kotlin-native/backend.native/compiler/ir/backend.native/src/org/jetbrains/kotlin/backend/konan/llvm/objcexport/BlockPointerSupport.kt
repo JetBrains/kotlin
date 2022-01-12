@@ -34,10 +34,6 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
             LlvmFunctionSignature(invokeMethod, codegen),
             "invokeFunction${bridge.nameSuffix}"
     ).generate {
-        val args = (0 until bridge.numberOfParameters).map { index ->
-            kotlinReferenceToLocalObjC(param(index + 1))
-        }
-
         val thisRef = param(0)
         val associatedObjectHolder = if (useSeparateHolder) {
             val bodyPtr = bitcast(pointerType(bodyType), thisRef)
@@ -51,10 +47,20 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
         )
 
         val invoke = loadBlockInvoke(blockPtr, bridge)
+
+        val args = (0 until bridge.numberOfParameters).map { index ->
+            kotlinReferenceToRetainedObjC(param(index + 1))
+        }
+
         switchThreadStateIfExperimentalMM(ThreadState.Native)
         // Using terminatingExceptionHandler, so any exception thrown by `invoke` will lead to the termination,
         // and switching the thread state back to `Runnable` on exceptional path is not required.
         val result = call(invoke, listOf(blockPtr) + args, exceptionHandler = terminatingExceptionHandler)
+
+        args.forEach {
+            objcReleaseFromNativeThreadState(it)
+        }
+
         switchThreadStateIfExperimentalMM(ThreadState.Runnable)
 
         val kotlinResult = if (bridge.returnsVoid) {
