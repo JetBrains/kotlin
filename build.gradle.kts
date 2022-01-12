@@ -123,11 +123,12 @@ if (!isTeamcityBuild) {
     println("DEBBUG: desnt have TC prop")
 }
 
-if (isTeamcityBuild) {
-    println("DEBBUG: has TC prop")
+if (isTeamcityBuild && !project.hasProperty("versions.kotlin-native")) {
+    println("DEBBUG: run on TC, doesn't have -Pversions.kotlin-native")
+    throw GradleException("Property versions.kotlin-native is not defined")
 }
 
-if (!project.hasProperty("versions.kotlin-native")) {
+if (!isTeamcityBuild && !project.hasProperty("versions.kotlin-native")) {
     extra["versions.kotlin-native"] = "1.6.20-dev-5356"
 }
 
