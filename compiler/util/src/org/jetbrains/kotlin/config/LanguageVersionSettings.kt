@@ -244,6 +244,7 @@ enum class LanguageFeature(
     QualifiedSupertypeMayBeExtendedByOtherSupertype(KOTLIN_1_7),
     YieldIsNoMoreReserved(KOTLIN_1_7),
     NoDeprecationOnDeprecatedEnumEntries(KOTLIN_1_7), // KT-37975
+    ProhibitQualifiedAccessToUninitializedEnumEntry(KOTLIN_1_7, kind = BUG_FIX), // KT-41124
 
     // 1.8
 

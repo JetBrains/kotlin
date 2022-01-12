@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessTarget
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.InstructionWithValue
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageFeature.ProhibitQualifiedAccessToUninitializedEnumEntry
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
@@ -283,7 +284,12 @@ class ControlFlowProcessor(
                 generateCall(resolvedCall.variableCall)
             } else {
                 if (resolvedCall == null) {
-                    val qualifier = trace.bindingContext[BindingContext.QUALIFIER, expression]
+                    val qualifierExpression =
+                        when (languageVersionSettings.supportsFeature(ProhibitQualifiedAccessToUninitializedEnumEntry)) {
+                            true -> expression.getTopmostParentQualifiedExpressionForSelector() ?: expression
+                            false -> expression
+                        }
+                    val qualifier = trace.bindingContext[BindingContext.QUALIFIER, qualifierExpression]
                     if (qualifier != null && generateQualifier(expression, qualifier)) return
                 }
                 if (!generateCall(expression) && expression.parent !is KtCallExpression) {

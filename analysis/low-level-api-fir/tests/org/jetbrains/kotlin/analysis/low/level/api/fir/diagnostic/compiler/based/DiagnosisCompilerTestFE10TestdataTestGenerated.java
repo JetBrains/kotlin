@@ -5860,6 +5860,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("uninitializedQualifiedEnumEntry.kt")
+            public void testUninitializedQualifiedEnumEntry() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/uninitializedQualifiedEnumEntry.kt");
+            }
+
+            @Test
             @TestMetadata("unmappedArgs.kt")
             public void testUnmappedArgs() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/unmappedArgs.kt");
