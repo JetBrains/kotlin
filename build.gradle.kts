@@ -119,6 +119,14 @@ rootProject.apply {
 
 IdeVersionConfigurator.setCurrentIde(project)
 
+if (!project.hasProperty("teamcity")) {
+    println("DEBBUG: desnt have TC prop")
+}
+
+if (project.hasProperty("teamcity")) {
+    println("DEBBUG: has TC prop")
+}
+
 if (!project.hasProperty("versions.kotlin-native")) {
     extra["versions.kotlin-native"] = "1.6.20-dev-5356"
 }
