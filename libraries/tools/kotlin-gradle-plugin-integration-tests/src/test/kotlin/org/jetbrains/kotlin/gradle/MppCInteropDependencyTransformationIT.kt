@@ -6,12 +6,16 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.gradle.testbase.GradleMacLinuxTest
+import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
 import org.jetbrains.kotlin.gradle.util.WithSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 
 /**
  * Runs Tests on a Gradle project with three subprojects
@@ -24,14 +28,16 @@ import org.junit.Test
  * - dependency-mode=project: In this case p2 will just declare a regular project dependency on p1
  * - dependency-mode=repository: In this case p2 will rely on a previously published version of p1
  */
-abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
+@MppGradlePluginTests
+class MppCInteropDependencyTransformationIT : BaseGradleIT() {
 
     override fun defaultBuildOptions(): BuildOptions = super.defaultBuildOptions().run {
         copy(
             forceOutputToStdout = true,
             warningMode = WarningMode.Fail,
             parallelTasksInProject = true,
-            freeCommandLineArgs = freeCommandLineArgs + "-s"
+            freeCommandLineArgs = freeCommandLineArgs + "-s",
+            stopDaemons = false
         )
     }
 
@@ -47,25 +53,37 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
 
     class ComplexProject : MppCInteropDependencyTransformationIT() {
 
-        private val project by lazy { Project("cinterop-MetadataDependencyTransformation") }
+        private fun getProject(gradleVersion: GradleVersion) = Project("cinterop-MetadataDependencyTransformation", gradleVersion)
 
-        @Test
-        fun `test - compile project - dependencyMode=project`() {
-            testCompileProject(projectDependencyOptions) {
+//    private val project by lazy { Project("cinterop-MetadataDependencyTransformation") }
+
+        @BeforeEach
+        fun before() {
+            super.setUp()
+        }
+
+        @AfterEach
+        fun after() {
+            super.tearDown()
+        }
+
+        @GradleMacLinuxTest
+        fun `test - compile project - dependencyMode=project`(gradleVersion: GradleVersion) {
+            testCompileProject(getProject(gradleVersion), projectDependencyOptions) {
                 assertProjectDependencyMode()
                 assertTasksExecuted(":p1:commonizeCInterop")
             }
         }
 
-        @Test
-        fun `test - compile project - dependencyMode=repository`() {
-            publishP1ToBuildRepository()
-            testCompileProject(repositoryDependencyOptions) {
+        @GradleMacLinuxTest
+        fun `test - compile project - dependencyMode=repository`(gradleVersion: GradleVersion) {
+            publishP1ToBuildRepository(getProject(gradleVersion))
+            testCompileProject(getProject(gradleVersion), repositoryDependencyOptions) {
                 assertRepositoryDependencyMode()
             }
         }
 
-        private fun testCompileProject(options: BuildOptions, check: CompiledProject.() -> Unit = {}) {
+        private fun testCompileProject(project: Project, options: BuildOptions, check: CompiledProject.() -> Unit = {}) {
             project.build("compileAll", options = options) {
                 check()
                 assertSuccessful()
@@ -97,16 +115,16 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
             }
         }
 
-        @Test
-        fun `test - source set dependencies - dependencyMode=project`() {
-            reportSourceSetCommonizerDependencies(project, "p2", projectDependencyOptions) {
+        @GradleMacLinuxTest
+        fun `test - source set dependencies - dependencyMode=project`(gradleVersion: GradleVersion) {
+            reportSourceSetCommonizerDependencies(getProject(gradleVersion), "p2", projectDependencyOptions) {
                 it.assertProjectDependencyMode()
                 it.assertTasksExecuted(":p2:transformNativeMainCInteropDependenciesMetadataForIde")
                 it.assertTasksNotExecuted(".*[cC]ompile.*")
                 assertP2SourceSetDependencies()
             }
 
-            reportSourceSetCommonizerDependencies(project, "p3", projectDependencyOptions) {
+            reportSourceSetCommonizerDependencies(getProject(gradleVersion), "p3", projectDependencyOptions) {
                 it.assertProjectDependencyMode()
                 it.assertTasksExecuted(":p3:transformNativeMainCInteropDependenciesMetadataForIde")
                 it.assertTasksNotExecuted(".*[cC]ompile.*")
@@ -114,18 +132,18 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
             }
         }
 
-        @Test
-        fun `test - source set dependencies - dependencyMode=repository`() {
-            publishP1ToBuildRepository()
+        @GradleMacLinuxTest
+        fun `test - source set dependencies - dependencyMode=repository`(gradleVersion: GradleVersion) {
+            publishP1ToBuildRepository(getProject(gradleVersion))
 
-            reportSourceSetCommonizerDependencies(project, "p2", repositoryDependencyOptions) {
+            reportSourceSetCommonizerDependencies(getProject(gradleVersion), "p2", repositoryDependencyOptions) {
                 it.assertRepositoryDependencyMode()
                 it.assertTasksExecuted(":p2:transformNativeMainCInteropDependenciesMetadataForIde")
                 it.assertTasksNotExecuted(".*[cC]ompile.*")
                 assertP2SourceSetDependencies()
             }
 
-            reportSourceSetCommonizerDependencies(project, "p3", repositoryDependencyOptions) {
+            reportSourceSetCommonizerDependencies(getProject(gradleVersion), "p3", repositoryDependencyOptions) {
                 it.assertRepositoryDependencyMode()
                 it.assertTasksExecuted(":p3:transformNativeMainCInteropDependenciesMetadataForIde")
                 it.assertTasksNotExecuted(".*[cC]ompile.*")
@@ -213,9 +231,10 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
             }
         }
 
-        @Test
-        fun `test - transformation - UP-TO-DATE behaviour - on p3`() {
-            publishP1ToBuildRepository()
+        @GradleMacLinuxTest
+        fun `test - transformation - UP-TO-DATE behaviour - on p3`(gradleVersion: GradleVersion) {
+            val project = getProject(gradleVersion)
+            project.publishP1ToBuildRepository()
             project.build(":p3:transformNativeMainCInteropDependenciesMetadata", options = repositoryDependencyOptions) {
                 assertSuccessful()
                 assertTasksExecuted(":p3:transformNativeMainCInteropDependenciesMetadata")
@@ -260,13 +279,13 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
         }
 
 
-        @Test
-        fun `test - transformation - UP-TO-DATE behaviour - on removing and adding targets - on p2 - dependencyMode=repository`() {
-            publishP1ToBuildRepository()
+        @GradleMacLinuxTest
+        fun `test - transformation - UP-TO-DATE behaviour - on removing and adding targets - on p2 - dependencyMode=repository`(gradleVersion: GradleVersion) {
+            publishP1ToBuildRepository(gradleVersion)
             `test - transformation - UP-TO-DATE behaviour - on removing and adding targets - on p2`(repositoryDependencyOptions)
         }
 
-        @Test
+        @GradleMacLinuxTest
         fun `test - transformation - UP-TO-DATE behaviour - on removing and adding targets - on p2 - dependencyMode=project`() {
             `test - transformation - UP-TO-DATE behaviour - on removing and adding targets - on p2`(projectDependencyOptions)
         }
@@ -281,24 +300,25 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
             }
         }
 
-        private fun publishP1ToBuildRepository() = project.publishP1ToBuildRepository()
+        private fun publishP1ToBuildRepository(gradleVersion: GradleVersion) = getProject(gradleVersion).publishP1ToBuildRepository()
     }
 
     class KT50952 : MppCInteropDependencyTransformationIT() {
-        private val project by lazy { Project("cinterop-MetadataDependencyTransformation-kt-50952") }
+        private fun getProject(gradleVersion: GradleVersion) = Project("cinterop-MetadataDependencyTransformation-kt-50952", gradleVersion)
 
-        @Test
-        fun `test UP-TO-DATE - when changing consumer targets - dependencyMode=repository`() {
+        @GradleMacLinuxTest
+        fun `test UP-TO-DATE - when changing consumer targets - dependencyMode=repository`(gradleVersion: GradleVersion) {
+            val project = getProject(gradleVersion)
             project.publishP1ToBuildRepository()
-            `test UP-TO-DATE - when changing consumer targets`(repositoryDependencyOptions)
+            `test UP-TO-DATE - when changing consumer targets`(project, repositoryDependencyOptions)
         }
 
-        @Test
-        fun `test UP-TO-DATE - when changing consumer targets - dependencyMode=project`() {
-            `test UP-TO-DATE - when changing consumer targets`(projectDependencyOptions)
+        @GradleMacLinuxTest
+        fun `test UP-TO-DATE - when changing consumer targets - dependencyMode=project`(gradleVersion: GradleVersion) {
+            `test UP-TO-DATE - when changing consumer targets`(getProject(gradleVersion), projectDependencyOptions)
         }
 
-        private fun `test UP-TO-DATE - when changing consumer targets`(options: BuildOptions) {
+        private fun `test UP-TO-DATE - when changing consumer targets`(project: Project, options: BuildOptions) {
             project.build(":p2:transformCommonMainCInteropDependenciesMetadata", options = options) {
                 assertSuccessful()
             }

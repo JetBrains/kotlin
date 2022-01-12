@@ -82,6 +82,20 @@ fun Test.includeMppAndAndroid(include: Boolean) = includeTestsWithPattern(includ
     addAll(listOf("*Multiplatform*", "*Mpp*", "*Android*"))
 }
 
+fun Test.excludeMppAndAndroidJunit5() = includeTestsWithPattern(false) {
+    addAll(
+        listOf(
+            "*MultiplatformGradleIT*",
+            "*KotlinAndroid*GradleIT*",
+            "*HierarchicalMpp*",
+            "*NewMultiplatform*",
+            "*KlibBasedMppIT*",
+            "*MppCInteropDependencyTransformationIT*",
+            "*MppHighlightingTestDataWithGradleIT*"
+        )
+    )
+}
+
 fun Test.includeNative(include: Boolean) = includeTestsWithPattern(include) {
     addAll(listOf("org.jetbrains.kotlin.gradle.native.*", "*Commonizer*"))
 }
@@ -150,6 +164,7 @@ if (isTeamcityBuild) {
         jUnitMode = JUnitMode.JUnit5
     ) {
         includeMppAndAndroid(true)
+        excludeMppAndAndroidJunit5()
         finalizedBy(cleanTestKitCacheTask)
     }
 
@@ -160,6 +175,7 @@ if (isTeamcityBuild) {
     ) {
         advanceGradleVersion()
         includeMppAndAndroid(true)
+        excludeMppAndAndroidJunit5()
         finalizedBy(cleanTestKitCacheTask)
     }
 }

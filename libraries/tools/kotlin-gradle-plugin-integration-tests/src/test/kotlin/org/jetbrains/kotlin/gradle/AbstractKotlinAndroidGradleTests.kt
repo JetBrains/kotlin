@@ -4,11 +4,13 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.junit.Assume
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
 import java.io.File
 import java.util.zip.ZipFile
 import kotlin.test.assertEquals
@@ -16,13 +18,14 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
+@GradleTestVersions(minVersion = TestVersions.Gradle.G_6_8, maxVersion = TestVersions.Gradle.G_6_8)
 open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_6_0
 
-    @Test
-    fun testAndroidMppSourceSets(): Unit = with(
-        Project("new-mpp-android-source-sets")
+    @GradleMacLinuxTest
+    fun testAndroidMppSourceSets(gradleVersion: GradleVersion): Unit = with(
+        Project("new-mpp-android-source-sets", gradleVersion)
     ) {
         // AbstractReportTask#generate() task action was removed in Gradle 6.8+,
         // that SourceSetTask is using: https://github.com/gradle/gradle/commit/4dac91ab87ea33ee8689d2a62b691b119198e7c7
@@ -80,8 +83,8 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
          */
     }
 
-    @Test
-    fun testAndroidWithNewMppApp() = with(Project("new-mpp-android")) {
+    @GradleLinuxTest
+    fun testAndroidWithNewMppApp(gradleVersion: GradleVersion) = with(Project("new-mpp-android", gradleVersion)) {
         build("assemble", "compileDebugUnitTestJavaWithJavac", "printCompilerPluginOptions") {
             assertSuccessful()
 
@@ -267,8 +270,8 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
         }
     }
 
-    @Test
-    fun testAndroidMppProductionDependenciesInTests() = with(Project("new-mpp-android")) {
+    @GradleLinuxTest
+    fun testAndroidMppProductionDependenciesInTests(gradleVersion: GradleVersion) = with(Project("new-mpp-android", gradleVersion)) {
         // Test the fix for KT-29343
         setupWorkingDir()
 
@@ -314,8 +317,8 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
         }
     }
 
-    @Test
-    fun testCustomAttributesInAndroidTargets() = with(Project("new-mpp-android")) {
+    @GradleLinuxTest
+    fun testCustomAttributesInAndroidTargets(gradleVersion: GradleVersion) = with(Project("new-mpp-android", gradleVersion)) {
         // Test the fix for KT-27714
 
         setupWorkingDir()
@@ -407,21 +410,22 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
         }
     }
 
-    @Test
-    fun testLintInAndroidProjectsDependingOnMppWithoutAndroid() = with(Project("AndroidProject")) {
-        embedProject(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app"))
-        gradleBuildScript("Lib").appendText(
-            "\ndependencies { implementation(project(':sample-lib')) }"
-        )
-        val lintTask = ":Lib:lintFlavor1Debug"
-        build(lintTask) {
-            assertSuccessful()
-            assertTasksExecuted(lintTask) // Check that the lint task ran successfully, KT-27170
+    @GradleMacLinuxTest
+    fun testLintInAndroidProjectsDependingOnMppWithoutAndroid(gradleVersion: GradleVersion) =
+        with(Project("AndroidProject", gradleVersion)) {
+            embedProject(Project("sample-lib", gradleVersion, directoryPrefix = "new-mpp-lib-and-app"))
+            gradleBuildScript("Lib").appendText(
+                "\ndependencies { implementation(project(':sample-lib')) }"
+            )
+            val lintTask = ":Lib:lintFlavor1Debug"
+            build(lintTask) {
+                assertSuccessful()
+                assertTasksExecuted(lintTask) // Check that the lint task ran successfully, KT-27170
+            }
         }
-    }
 
-    @Test
-    fun testJvmWithJava() = with(Project("mppJvmWithJava")) {
+    @GradleLinuxTest
+    fun testJvmWithJava(gradleVersion: GradleVersion) = with(Project("mppJvmWithJava", gradleVersion)) {
         setupWorkingDir()
 
         build("build") {
@@ -433,23 +437,24 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
         }
     }
 
-    @Test
-    fun `test KotlinToolingMetadataArtifact is bundled into apk`(): Unit = with(Project("kotlinToolingMetadataAndroid")) {
-        build("assembleDebug") {
-            assertSuccessful()
-            assertTasksNotExecuted(":${BuildKotlinToolingMetadataTask.defaultTaskName}")
+    @GradleLinuxTest
+    fun `test KotlinToolingMetadataArtifact is bundled into apk`(gradleVersion: GradleVersion): Unit =
+        with(Project("kotlinToolingMetadataAndroid", gradleVersion)) {
+            build("assembleDebug") {
+                assertSuccessful()
+                assertTasksNotExecuted(":${BuildKotlinToolingMetadataTask.defaultTaskName}")
 
-            val debugApk = project.projectDir.resolve("build/outputs/apk/debug/project-debug.apk")
-            assertTrue(debugApk.exists(), "Missing debug apk ${debugApk.path}")
-            ZipFile(debugApk).use { zip ->
-                assertNull(zip.getEntry("kotlin-tooling-metadata.json"), "Expected metadata *not* being packaged into debug apk")
+                val debugApk = project.projectDir.resolve("build/outputs/apk/debug/project-debug.apk")
+                assertTrue(debugApk.exists(), "Missing debug apk ${debugApk.path}")
+                ZipFile(debugApk).use { zip ->
+                    assertNull(zip.getEntry("kotlin-tooling-metadata.json"), "Expected metadata *not* being packaged into debug apk")
+                }
             }
-        }
 
-        build("assembleRelease") {
-            assertSuccessful()
-            assertTasksExecuted(":${BuildKotlinToolingMetadataTask.defaultTaskName}")
-            val releaseApk = project.projectDir.resolve("build/outputs/apk/release/project-release-unsigned.apk")
+            build("assembleRelease") {
+                assertSuccessful()
+                assertTasksExecuted(":${BuildKotlinToolingMetadataTask.defaultTaskName}")
+                val releaseApk = project.projectDir.resolve("build/outputs/apk/release/project-release-unsigned.apk")
 
             assertTrue(releaseApk.exists(), "Missing release apk ${releaseApk.path}")
             ZipFile(releaseApk).use { zip ->
@@ -458,8 +463,8 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
         }
     }
 
-    @Test
-    fun `test MPP allTests task depending on Android unit tests`(): Unit = with(Project("new-mpp-android")) {
+    @GradleTest
+    fun `test MPP allTests task depending on Android unit tests`(gradleVersion: GradleVersion): Unit = with(Project("new-mpp-android", gradleVersion)) {
         build(":lib:allTests", "--dry-run") {
             assertSuccessful()
             assertContains(":lib:testDebugUnitTest SKIPPED")
@@ -468,16 +473,14 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
     }
 }
 
+@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
 open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v7_0_0
 
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("7.0")
-
     override fun defaultBuildOptions(): BuildOptions {
         val javaHome = File(System.getProperty("jdk11Home") ?: error("jdk11Home not specified"))
-        Assume.assumeTrue("JDK 11 should be available", javaHome.isDirectory)
+        Assumptions.assumeTrue(javaHome.isDirectory, "JDK 11 should be available")
         return super.defaultBuildOptions().copy(javaHome = javaHome, warningMode = WarningMode.Summary)
     }
 
@@ -485,9 +488,9 @@ open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
      * Regression test for KT-49066. It is not really AGP 7.0 specific, but it is not added to the base class to avoid
      * running it multiple times.
      */
-    @Test
-    fun testCustomModuleName() {
-        val project = Project("AndroidIncrementalMultiModule")
+    @GradleLinuxTest
+    fun testCustomModuleName(gradleVersion: GradleVersion) {
+        val project = Project("AndroidIncrementalMultiModule", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = true, kotlinDaemonDebugPort = null)
 
         project.setupWorkingDir().also {
@@ -527,19 +530,17 @@ open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
     }
 }
 
+@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2)
 open class KotlinAndroid71GradleIT : KotlinAndroid70GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v7_1_0
-
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("7.2")
 
     /**
      * Starting from AGP version 7.1.0-alpha13, a new attribute com.android.build.api.attributes.AgpVersionAttr was added.
      * This attribute is *not intended* to be published.
      */
-    @Test
-    fun testKT49798AgpVersionAttrNotPublished() = with(Project("new-mpp-android")) {
+    @GradleLinuxTest
+    fun testKT49798AgpVersionAttrNotPublished(gradleVersion: GradleVersion) = with(Project("new-mpp-android", gradleVersion)) {
         build("publish") {
             val debugPublicationDirectory = projectDir.resolve("lib/build/repo/com/example/lib-androidlib-debug")
             val releasePublicationDirectory = projectDir.resolve("lib/build/repo/com/example/lib-androidlib")
@@ -557,62 +558,63 @@ open class KotlinAndroid71GradleIT : KotlinAndroid70GradleIT() {
         }
     }
 
-    @Test
-    fun testAndroidMultiplatformPublicationAGPCompatibility() = with(Project("new-mpp-android-agp-compatibility")) {
-        /* Publish producer library with current version of AGP */
-        build(":producer:publishAllPublicationsToBuildDirRepository") {
-            assertSuccessful()
+    @GradleLinuxTest
+    fun testAndroidMultiplatformPublicationAGPCompatibility(gradleVersion: GradleVersion) =
+        with(Project("new-mpp-android-agp-compatibility", gradleVersion)) {
+            /* Publish producer library with current version of AGP */
+            build(":producer:publishAllPublicationsToBuildDirRepository") {
+                assertSuccessful()
 
-            /* Check expected publication layout */
-            assertFileExists("build/repo/com/example/producer-android")
-            assertFileExists("build/repo/com/example/producer-android-debug")
-            assertFileExists("build/repo/com/example/producer-jvm")
-        }
-
-        val checkedConsumerAGPVersions = AGPVersion.testedVersions
-            // Special version added for testing KT-49798
-            .plus(AGPVersion.fromString("7.1.0-beta02"))
-            .filter { version -> version >= AGPVersion.v4_2_0 }
-
-        checkedConsumerAGPVersions.forEach { agpVersion ->
-
-            this.setupWorkingDir()
-            println("Testing compatibility for AGP consumer version $agpVersion")
-            val buildOptions = defaultBuildOptions().copy(androidGradlePluginVersion = agpVersion)
-
-            /*
-            Project: multiplatformAndroidConsumer is a mpp project with jvm and android targets.
-            This project depends on the previous publication as 'commonMainImplementation' dependency
-            */
-            build(":multiplatformAndroidConsumer:assemble", options = buildOptions) {
-                assertSuccessful(
-                    "multiplatformAndroidConsumer build failed with consumer agpVersion $agpVersion (Producer: $androidGradlePluginVersion)"
-                )
+                /* Check expected publication layout */
+                assertFileExists("build/repo/com/example/producer-android")
+                assertFileExists("build/repo/com/example/producer-android-debug")
+                assertFileExists("build/repo/com/example/producer-jvm")
             }
 
-            /*
-            Project: plainAndroidConsumer only uses the 'kotlin("android")' plugin
-            This project depends on the previous publication as 'implementation' dependency
-             */
-            build(":plainAndroidConsumer:assemble", options = buildOptions) {
-                assertSuccessful(
-                    "plainAndroidConsumer build failed with consumer agpVersion $agpVersion (Producer: $androidGradlePluginVersion)"
-                )
+            val checkedConsumerAGPVersions = AGPVersion.testedVersions
+                // Special version added for testing KT-49798
+                .plus(AGPVersion.fromString("7.1.0-beta02"))
+                .filter { version -> version >= AGPVersion.v4_2_0 }
+
+            checkedConsumerAGPVersions.forEach { agpVersion ->
+
+                this.setupWorkingDir()
+                println("Testing compatibility for AGP consumer version $agpVersion")
+                val buildOptions = defaultBuildOptions().copy(androidGradlePluginVersion = agpVersion)
+
+                /*
+                Project: multiplatformAndroidConsumer is a mpp project with jvm and android targets.
+                This project depends on the previous publication as 'commonMainImplementation' dependency
+                */
+                build(":multiplatformAndroidConsumer:assemble", options = buildOptions) {
+                    assertSuccessful(
+                        "multiplatformAndroidConsumer build failed with consumer agpVersion $agpVersion (Producer: $androidGradlePluginVersion)"
+                    )
+                }
+
+                /*
+                Project: plainAndroidConsumer only uses the 'kotlin("android")' plugin
+                This project depends on the previous publication as 'implementation' dependency
+                 */
+                build(":plainAndroidConsumer:assemble", options = buildOptions) {
+                    assertSuccessful(
+                        "plainAndroidConsumer build failed with consumer agpVersion $agpVersion (Producer: $androidGradlePluginVersion)"
+                    )
+                }
             }
         }
-    }
 }
 
+@GradleTestVersions(
+    minVersion = TestVersions.Gradle.G_6_8,
+    maxVersion = TestVersions.Gradle.G_6_8
+) // AGP 3.4.1 is not working with Gradle 7+
 open class KotlinAndroid34GradleIT : KotlinAndroid3GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_4_1
 
-    // AGP 3.4.1 is not working with Gradle 7+
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.Until("6.8.4")
-
-    @Test
-    fun testKaptUsingApOptionProvidersAsNestedInputOutput() = with(Project("AndroidProject")) {
+    @GradleLinuxTest
+    fun testKaptUsingApOptionProvidersAsNestedInputOutput(gradleVersion: GradleVersion) = with(Project("AndroidProject", gradleVersion)) {
         setupWorkingDir()
 
         gradleBuildScript(subproject = "Android").appendText(
@@ -673,8 +675,8 @@ open class KotlinAndroid34GradleIT : KotlinAndroid3GradleIT() {
         }
     }
 
-    @Test
-    fun testAgpNestedArgsNotEvaluatedDuringConfiguration() = with(Project("AndroidProject")) {
+    @GradleLinuxTest
+    fun testAgpNestedArgsNotEvaluatedDuringConfiguration(gradleVersion: GradleVersion) = with(Project("AndroidProject", gradleVersion)) {
         setupWorkingDir()
 
         gradleBuildScript(subproject = "Android").appendText(
@@ -709,8 +711,8 @@ open class KotlinAndroid34GradleIT : KotlinAndroid3GradleIT() {
         }
     }
 
-    @Test
-    fun testOmittedStdlibVersion() = Project("AndroidProject").run {
+    @GradleLinuxTest
+    fun testOmittedStdlibVersion(gradleVersion: GradleVersion) = Project("AndroidProject", gradleVersion).run {
         setupWorkingDir()
 
         gradleBuildScript("Lib").modify {
@@ -759,14 +761,14 @@ open class KotlinAndroid34GradleIT : KotlinAndroid3GradleIT() {
 }
 
 abstract class KotlinAndroid3GradleIT : AbstractKotlinAndroidGradleTests() {
-    @Test
-    fun testApplyWithFeaturePlugin() {
-        Assume.assumeTrue(
-            "The com.android.feature plugin has been deprecated and removed in newer versions",
-            androidGradlePluginVersion < AGPVersion.v3_6_0
+    @GradleLinuxTest
+    fun testApplyWithFeaturePlugin(gradleVersion: GradleVersion) {
+        Assumptions.assumeTrue(
+            androidGradlePluginVersion < AGPVersion.v3_6_0,
+            "The com.android.feature plugin has been deprecated and removed in newer versions"
         )
 
-        val project = Project("AndroidProject")
+        val project = Project("AndroidProject", gradleVersion)
 
         project.setupWorkingDir()
         File(project.projectDir, "Lib/build.gradle").modify { text ->
@@ -791,8 +793,8 @@ abstract class KotlinAndroid3GradleIT : AbstractKotlinAndroidGradleTests() {
         }
     }
 
-    @Test
-    fun testAfterEvaluateOrdering() = with(Project("AndroidProject")) {
+    @GradleTest
+    fun testAfterEvaluateOrdering(gradleVersion: GradleVersion) = with(Project("AndroidProject", gradleVersion)) {
         setupWorkingDir()
 
         gradleBuildScript("Lib").writeText(
@@ -846,19 +848,31 @@ abstract class KotlinAndroid3GradleIT : AbstractKotlinAndroidGradleTests() {
     }
 }
 
+@AndroidGradlePluginTests
 abstract class AbstractKotlinAndroidGradleTests : BaseGradleIT() {
 
     abstract val androidGradlePluginVersion: AGPVersion
 
+    @BeforeEach
+    fun before() {
+        super.setUp()
+    }
+
+    @AfterEach
+    fun after() {
+        super.tearDown()
+    }
+
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
             androidHome = KtTestUtil.findAndroidSdk(),
-            androidGradlePluginVersion = androidGradlePluginVersion
+            androidGradlePluginVersion = androidGradlePluginVersion,
+            stopDaemons = false
         )
 
-    @Test
-    fun testSimpleCompile() {
-        val project = Project("AndroidProject")
+    @GradleLinuxTest
+    fun testSimpleCompile(gradleVersion: GradleVersion) {
+        val project = Project("AndroidProject", gradleVersion)
 
         val modules = listOf("Android", "Lib")
         val flavors = listOf("Flavor1", "Flavor2")
@@ -899,9 +913,9 @@ abstract class AbstractKotlinAndroidGradleTests : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testAssembleAndroidTestFirst() {
-        val project = Project("AndroidProject", minLogLevel = LogLevel.INFO)
+    @GradleLinuxTest
+    fun testAssembleAndroidTestFirst(gradleVersion: GradleVersion) {
+        val project = Project("AndroidProject", gradleVersion, minLogLevel = LogLevel.INFO)
 
         // Execute 'assembleAndroidTest' first, without 'build' side effects
         project.build("assembleAndroidTest") {
@@ -909,9 +923,9 @@ abstract class AbstractKotlinAndroidGradleTests : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testIncrementalCompile() {
-        val project = Project("AndroidIncrementalSingleModuleProject")
+    @GradleLinuxTest
+    fun testIncrementalCompile(gradleVersion: GradleVersion) {
+        val project = Project("AndroidIncrementalSingleModuleProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = true)
 
         project.build("assembleDebug", options = options) {
@@ -938,9 +952,9 @@ fun getSomething() = 10
         }
     }
 
-    @Test
-    fun testMultiModuleIC() {
-        val project = Project("AndroidIncrementalMultiModule")
+    @GradleLinuxTest
+    fun testMultiModuleIC(gradleVersion: GradleVersion) {
+        val project = Project("AndroidIncrementalMultiModule", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = true, kotlinDaemonDebugPort = null)
 
         project.build("assembleDebug", options = options) {
@@ -977,9 +991,9 @@ fun getSomething() = 10
         }
     }
 
-    @Test
-    fun testIncrementalBuildWithNoChanges() {
-        val project = Project("AndroidIncrementalSingleModuleProject")
+    @GradleLinuxTest
+    fun testIncrementalBuildWithNoChanges(gradleVersion: GradleVersion) {
+        val project = Project("AndroidIncrementalSingleModuleProject", gradleVersion)
         val tasksToExecute = listOf(
             ":app:compileDebugKotlin",
             ":app:compileDebugJavaWithJavac"
@@ -996,9 +1010,9 @@ fun getSomething() = 10
         }
     }
 
-    @Test
-    fun testAndroidDaggerIC() {
-        val project = Project("AndroidDaggerProject")
+    @GradleLinuxTest
+    fun testAndroidDaggerIC(gradleVersion: GradleVersion) {
+        val project = Project("AndroidDaggerProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = true)
 
         project.build("assembleDebug", options = options) {
@@ -1035,9 +1049,9 @@ fun getSomething() = 10
         }
     }
 
-    @Test
-    fun testAndroidIcepickProject() {
-        val project = Project("AndroidIcepickProject")
+    @GradleLinuxTest
+    fun testAndroidIcepickProject(gradleVersion: GradleVersion) {
+        val project = Project("AndroidIcepickProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
 
         project.build("assembleDebug", options = options) {
@@ -1045,9 +1059,9 @@ fun getSomething() = 10
         }
     }
 
-    @Test
-    fun testAndroidExtensions() {
-        val project = Project("AndroidExtensionsProject")
+    @GradleLinuxTest
+    fun testAndroidExtensions(gradleVersion: GradleVersion) {
+        val project = Project("AndroidExtensionsProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
 
         project.build("assembleDebug", options = options) {
@@ -1056,9 +1070,9 @@ fun getSomething() = 10
         }
     }
 
-    @Test
-    fun testParcelize() {
-        val project = Project("AndroidParcelizeProject")
+    @GradleLinuxTest
+    fun testParcelize(gradleVersion: GradleVersion) {
+        val project = Project("AndroidParcelizeProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
 
         project.build("assembleDebug", options = options) {
@@ -1066,14 +1080,11 @@ fun getSomething() = 10
         }
     }
 
-    @Test
-    fun testAndroidExtensionsIncremental() {
-        Assume.assumeTrue(
-            "Ignored for newer AGP versions because of KT-38622",
-            androidGradlePluginVersion < AGPVersion.v3_6_0
-        )
+    @GradleLinuxTest
+    fun testAndroidExtensionsIncremental(gradleVersion: GradleVersion) {
+        Assumptions.assumeTrue(androidGradlePluginVersion < AGPVersion.v3_6_0, "Ignored for newer AGP versions because of KT-38622")
 
-        val project = Project("AndroidExtensionsProject")
+        val project = Project("AndroidExtensionsProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = true)
 
         project.build("assembleDebug", options = options) {
@@ -1097,9 +1108,9 @@ fun getSomething() = 10
     }
 
 
-    @Test
-    fun testAndroidExtensionsManyVariants() {
-        val project = Project("AndroidExtensionsManyVariants")
+    @GradleLinuxTest
+    fun testAndroidExtensionsManyVariants(gradleVersion: GradleVersion) {
+        val project = Project("AndroidExtensionsManyVariants", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
 
         project.build("assemble", options = options) {
@@ -1107,9 +1118,9 @@ fun getSomething() = 10
         }
     }
 
-    @Test
-    fun testAndroidExtensionsSpecificFeatures() {
-        val project = Project("AndroidExtensionsSpecificFeatures")
+    @GradleLinuxTest
+    fun testAndroidExtensionsSpecificFeatures(gradleVersion: GradleVersion) {
+        val project = Project("AndroidExtensionsSpecificFeatures", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
 
         project.build("assemble", options = options) {
@@ -1131,8 +1142,8 @@ fun getSomething() = 10
         }
     }
 
-    @Test
-    fun testDetectAndroidJava8() = with(Project("AndroidProject")) {
+    @GradleLinuxTest
+    fun testDetectAndroidJava8(gradleVersion: GradleVersion) = with(Project("AndroidProject", gradleVersion)) {
         setupWorkingDir()
 
         val kotlinJvmTarget16Regex = Regex("Kotlin compiler args: .* -jvm-target 1.6")
@@ -1171,9 +1182,9 @@ fun getSomething() = 10
         }
     }
 
-    @Test
-    fun shouldAllowToApplyPluginWhenAndroidPluginIsMissing() {
-        with(Project("simpleProject", minLogLevel = LogLevel.WARN)) {
+    @GradleLinuxTest
+    fun shouldAllowToApplyPluginWhenAndroidPluginIsMissing(gradleVersion: GradleVersion) {
+        with(Project("simpleProject", gradleVersion, minLogLevel = LogLevel.WARN)) {
             setupWorkingDir()
 
             gradleBuildScript().modify {
@@ -1196,8 +1207,8 @@ fun getSomething() = 10
         }
     }
 
-    @Test
-    fun testLintDependencyResolutionKt49483() = with(Project("AndroidProject")) {
+    @GradleLinuxTest
+    fun testLintDependencyResolutionKt49483(gradleVersion: GradleVersion) = with(Project("AndroidProject", gradleVersion)) {
         setupWorkingDir()
 
         gradleBuildScript().modify {

@@ -41,6 +41,7 @@ open class GradleArgumentsProvider : ArgumentsProvider {
         }
 
         return setOf(minGradleVersion, *additionalGradleVersions.toTypedArray(), maxGradleVersion)
+            .filter { it >= minGradleVersion }
             .asSequence()
             .map { Arguments.of(it) }
             .asStream()

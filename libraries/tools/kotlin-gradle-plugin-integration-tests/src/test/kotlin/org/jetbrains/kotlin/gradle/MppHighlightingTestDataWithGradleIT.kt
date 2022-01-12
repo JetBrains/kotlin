@@ -5,25 +5,67 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.GradleArgumentsProvider
+import org.jetbrains.kotlin.gradle.testbase.GradleTestVersions
+import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.enableCacheRedirector
 import org.jetbrains.kotlin.gradle.util.modify
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.condition.EnabledOnOs
+import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.ArgumentsSource
 import java.io.File
+import java.util.stream.Stream
+import kotlin.streams.asStream
+import kotlin.streams.toList
 
-@RunWith(Parameterized::class)
+const val testSourceRootSuffix = "tests"
+
+@MppGradlePluginTests
+@EnabledOnOs(OS.LINUX)
 class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
 
-    @Test
-    fun runTestK2NativeCli() = doTest(CliCompiler.NATIVE)
+    private val buildScriptCustomizationMarker = "// customized content below"
 
-    @Test
-    fun runTestK2MetadataCli() = doTest(CliCompiler.K2METADATA)
+    @BeforeEach
+    fun before() {
+        super.setUp()
+    }
 
-    @Before
-    fun cleanup() {
+    @AfterEach
+    fun after() {
+        super.tearDown()
+    }
+
+    @GradleTestVersions
+    @ParameterizedTest(name = "{3}: {0}")
+    @ArgumentsSource(ArgumentsProvider::class)
+    fun runTestK2NativeCli(
+        @Suppress("UNUSED_PARAMETER") // used for parameter string representation in test output
+        testCaseName: String,
+        testDataDir: File,
+        sourceRoots: List<TestCaseSourceRoot>,
+        gradleVersion: GradleVersion
+    ) = doTest(CliCompiler.NATIVE, prepareProject(gradleVersion), testDataDir, sourceRoots)
+
+    @GradleTestVersions
+    @ParameterizedTest(name = "{3}: {0}")
+    @ArgumentsSource(ArgumentsProvider::class)
+    fun runTestK2MetadataCli(
+        @Suppress("UNUSED_PARAMETER") // used for parameter string representation in test output
+        testCaseName: String,
+        testDataDir: File,
+        sourceRoots: List<TestCaseSourceRoot>,
+        gradleVersion: GradleVersion
+    ) = doTest(CliCompiler.K2METADATA, prepareProject(gradleVersion), testDataDir, sourceRoots)
+
+    private fun prepareProject(gradleVersion: GradleVersion): Project {
+        val project = Project("mpp-source-set-hierarchy-analysis", gradleVersion)
         project.setupWorkingDir(false)
         project.gradleSettingsScript().modify { it.lines().filter { !it.startsWith("include") }.joinToString("\n") }
         project.projectDir.resolve("src").deleteRecursively()
@@ -32,35 +74,36 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
         }
 
         project.projectDir.toPath().enableCacheRedirector()
+
+        return project
     }
 
-    private val project by lazy { Project("mpp-source-set-hierarchy-analysis") }
-
-    private fun doTest(cliCompiler: CliCompiler) = with(project) {
-        val expectedErrorsPerSourceSetName = sourceRoots.associate { sourceRoot ->
-            sourceRoot.kotlinSourceSetName to testDataDir.resolve(sourceRoot.directoryName).walkTopDown()
-                .filter { it.extension == "kt" }
-                .map { CodeWithErrorInfo.parse(it.readText()) }.toList()
-                .flatMap { it.errorInfo }
-        }
-
-        // put sources into project dir:
-        sourceRoots.forEach { sourceRoot ->
-            val sourceSetDir = projectDir.resolve(sourceRoot.gradleSrcDir)
-            testDataDir.resolve(sourceRoot.directoryName).copyRecursively(sourceSetDir)
-            sourceSetDir.walkTopDown().filter { it.isFile }.forEach { file ->
-                file.modify { CodeWithErrorInfo.parse(file.readText()).code }
+    private fun doTest(cliCompiler: CliCompiler, project: Project, testDataDir: File, sourceRoots: List<TestCaseSourceRoot>) =
+        with(project) {
+            val expectedErrorsPerSourceSetName = sourceRoots.associate { sourceRoot ->
+                sourceRoot.kotlinSourceSetName to testDataDir.resolve(sourceRoot.directoryName).walkTopDown()
+                    .filter { it.extension == "kt" }
+                    .map { CodeWithErrorInfo.parse(it.readText()) }.toList()
+                    .flatMap { it.errorInfo }
             }
-        }
 
-        // create Gradle Kotlin source sets for project roots:
-        val scriptCustomization = buildString {
-            appendLine()
-            appendLine("kotlin {\n    sourceSets {")
+            // put sources into project dir:
             sourceRoots.forEach { sourceRoot ->
-                if (sourceRoot.kotlinSourceSetName != "commonMain") {
-                    appendLine(
-                        """        create("${sourceRoot.kotlinSourceSetName}") {
+                val sourceSetDir = projectDir.resolve(sourceRoot.gradleSrcDir)
+                testDataDir.resolve(sourceRoot.directoryName).copyRecursively(sourceSetDir)
+                sourceSetDir.walkTopDown().filter { it.isFile }.forEach { file ->
+                    file.modify { CodeWithErrorInfo.parse(file.readText()).code }
+                }
+            }
+
+            // create Gradle Kotlin source sets for project roots:
+            val scriptCustomization = buildString {
+                appendLine()
+                appendLine("kotlin {\n    sourceSets {")
+                sourceRoots.forEach { sourceRoot ->
+                    if (sourceRoot.kotlinSourceSetName != "commonMain") {
+                        appendLine(
+                            """        create("${sourceRoot.kotlinSourceSetName}") {
                           |            dependsOn(getByName("commonMain"))
                           |            listOf(${cliCompiler.targets.joinToString { "$it()" }}).forEach { 
                           |                it.compilations["main"].defaultSourceSet.dependsOn(this@create) 
@@ -68,59 +111,71 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
                           |        }
                           |    
                         """.trimMargin()
-                    )
-                } else {
-                    appendLine("    // commonMain source set used for common module")
-                }
-            }
-
-            // Add dependencies using dependsOn:
-            sourceRoots.forEach { sourceRoot ->
-                sourceRoot.dependencies.forEach { dependency ->
-                    sourceRoots.find { it.qualifiedName == dependency }?.let { depSourceRoot ->
-                        val depSourceSet = depSourceRoot.kotlinSourceSetName
-                        appendLine("""        getByName("${sourceRoot.kotlinSourceSetName}").dependsOn(getByName("$depSourceSet"))""")
+                        )
+                    } else {
+                        appendLine("    // commonMain source set used for common module")
                     }
                 }
+
+                // Add dependencies using dependsOn:
+                sourceRoots.forEach { sourceRoot ->
+                    sourceRoot.dependencies.forEach { dependency ->
+                        sourceRoots.find { it.qualifiedName == dependency }?.let { depSourceRoot ->
+                            val depSourceSet = depSourceRoot.kotlinSourceSetName
+                            appendLine("""        getByName("${sourceRoot.kotlinSourceSetName}").dependsOn(getByName("$depSourceSet"))""")
+                        }
+                    }
+                }
+                appendLine("    }\n}")
             }
-            appendLine("    }\n}")
+
+            gradleBuildScript().appendText("\n" + scriptCustomization)
+
+            val tasks = sourceRoots.map { "compile" + it.kotlinSourceSetName.capitalize() + "KotlinMetadata" }
+
+            build(*tasks.toTypedArray()) {
+                if (expectedErrorsPerSourceSetName.values.all { it.all(ErrorInfo::isAllowedInCli) }) {
+                    assertSuccessful()
+                } else {
+                    assertFailed() // TODO: check the exact error message in the output, not just that the build failed
+                }
+            }
         }
 
-        gradleBuildScript().appendText("\n" + scriptCustomization)
-
-        val tasks = sourceRoots.map { "compile" + it.kotlinSourceSetName.capitalize() + "KotlinMetadata" }
-
-        build(*tasks.toTypedArray()) {
-            if (expectedErrorsPerSourceSetName.values.all { it.all(ErrorInfo::isAllowedInCli) }) {
-                assertSuccessful()
-            } else {
-                assertFailed() // TODO: check the exact error message in the output, not just that the build failed
-            }
-        }
-    }
-
-    companion object {
+    class ArgumentsProvider : GradleArgumentsProvider() {
         private val testDataRoot =
             File("../../../idea/testData/multiModuleHighlighting/multiplatform")
 
-        @JvmStatic
-        @Parameterized.Parameters(name = "{0}")
-        fun testData() = testDataRoot.listFiles()!!.filter { it.isDirectory }.mapNotNull { testDataDir ->
-            val testDataSourceRoots = checkNotNull(testDataDir.listFiles())
-            val sourceRoots = testDataSourceRoots.map { TestCaseSourceRoot.parse(it.name) }
+        override fun provideArguments(
+            context: ExtensionContext
+        ): Stream<out Arguments> {
+            val gradleVersions = super.provideArguments(context).map { it.get().first() as GradleVersion }.toList()
 
-            arrayOf(testDataDir.name, testDataDir, sourceRoots).takeIf { isTestSuiteValidForCommonCode(testDataDir, sourceRoots) }
+            val result = gradleVersions
+                .flatMap { gradleVersion ->
+                    testDataRoot.listFiles()!!
+                        .filter { it.isDirectory }
+                        .mapNotNull { testDataDir ->
+                            val testDataSourceRoots = checkNotNull(testDataDir.listFiles())
+                            val sourceRoots = testDataSourceRoots.map { TestCaseSourceRoot.parse(it.name) }
+                            arrayOf(testDataDir.name, testDataDir, sourceRoots)
+                                .takeIf { isTestSuiteValidForCommonCode(testDataDir, sourceRoots) }
+                        }.map { arrayOf(*it, gradleVersion) }
+                }
+                .asSequence()
+                .map {
+                    Arguments.of(*it)
+                }
+                .asStream()
+
+            return result
         }
 
         private val bannedDependencies = setOf("fulljdk", "stdlib", "coroutines")
 
-        const val testSourceRootSuffix = "tests"
-
-        private const val buildScriptCustomizationMarker = "// customized content below"
-
         private fun isTestSuiteValidForCommonCode(testDataDir: File, sourceRoots: List<TestCaseSourceRoot>): Boolean {
             sourceRoots.forEach {
-                val bannedDepsFound = bannedDependencies.intersect(it.dependencies)
+                val bannedDepsFound = bannedDependencies.intersect(it.dependencies.toSet())
                 if (bannedDepsFound.isNotEmpty())
                     return false
             }
@@ -216,14 +271,4 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
     private enum class CliCompiler(val targets: List<String>) {
         K2METADATA(listOf("jvm", "js")), NATIVE(listOf("linuxX64", "linuxArm64"))
     }
-
-    @Suppress("unused") // used for parameter string representation in test output
-    @Parameterized.Parameter(0)
-    lateinit var testCaseName: String
-
-    @Parameterized.Parameter(1)
-    lateinit var testDataDir: File
-
-    @Parameterized.Parameter(2)
-    lateinit var sourceRoots: List<TestCaseSourceRoot>
 }

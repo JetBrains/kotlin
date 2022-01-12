@@ -19,22 +19,41 @@ package org.jetbrains.kotlin.gradle
 import com.intellij.testFramework.TestDataPath
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.KOTLIN_12X_MPP_DEPRECATION_WARNING
 import org.jetbrains.kotlin.gradle.plugin.EXPECTED_BY_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_DEPRECATION_WARNING
+import org.jetbrains.kotlin.gradle.testbase.GradleLinuxTest
+import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import java.io.File
 import kotlin.test.assertTrue
 
 @TestDataPath("\$CONTENT_ROOT/resources")
+@MppGradlePluginTests
 class MultiplatformGradleIT : BaseGradleIT() {
 
-    @Test
-    fun testMultiplatformCompile() {
-        val project = Project("multiplatformProject")
+    override fun defaultBuildOptions(): BuildOptions {
+        return super.defaultBuildOptions().copy(stopDaemons = false)
+    }
+
+    @BeforeEach
+    fun before() {
+        super.setUp()
+    }
+
+    @AfterEach
+    fun after() {
+        super.tearDown()
+    }
+
+    @GradleLinuxTest
+    fun testMultiplatformCompile(gradleVersion: GradleVersion) {
+        val project = Project("multiplatformProject", gradleVersion)
 
         project.build("build") {
             assertSuccessful()
@@ -65,9 +84,9 @@ class MultiplatformGradleIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testDeprecatedImplementWarning() {
-        val project = Project("multiplatformProject")
+    @GradleLinuxTest
+    fun testDeprecatedImplementWarning(gradleVersion: GradleVersion) {
+        val project = Project("multiplatformProject", gradleVersion)
 
         project.build("build") {
             assertSuccessful()
@@ -84,9 +103,9 @@ class MultiplatformGradleIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testCommonKotlinOptions() {
-        with(Project("multiplatformProject")) {
+    @GradleLinuxTest
+    fun testCommonKotlinOptions(gradleVersion: GradleVersion) {
+        with(Project("multiplatformProject", gradleVersion)) {
             setupWorkingDir()
 
             File(projectDir, "lib/build.gradle").appendText(
@@ -102,9 +121,9 @@ class MultiplatformGradleIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testSubprojectWithAnotherClassLoader() {
-        with(Project("multiplatformProject")) {
+    @GradleLinuxTest
+    fun testSubprojectWithAnotherClassLoader(gradleVersion: GradleVersion) {
+        with(Project("multiplatformProject", gradleVersion)) {
             setupWorkingDir()
 
             // Make sure there is a plugin applied with the plugins DSL, so that Gradle loads the
@@ -143,8 +162,8 @@ class MultiplatformGradleIT : BaseGradleIT() {
     }
 
     // todo: also make incremental compilation test
-    @Test
-    fun testIncrementalBuild(): Unit = Project("multiplatformProject").run {
+    @GradleLinuxTest
+    fun testIncrementalBuild(gradleVersion: GradleVersion): Unit = Project("multiplatformProject", gradleVersion).run {
         val compileCommonTask = ":lib:compileKotlinCommon"
         val compileJsTask = ":libJs:compileKotlin2Js"
         val compileJvmTask = ":libJvm:compileKotlin"
@@ -178,8 +197,8 @@ class MultiplatformGradleIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testMultipleCommonModules(): Unit = with(Project("multiplatformMultipleCommonModules")) {
+    @GradleLinuxTest
+    fun testMultipleCommonModules(gradleVersion: GradleVersion): Unit = with(Project("multiplatformMultipleCommonModules", gradleVersion)) {
         build("build", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
             assertSuccessful()
 
@@ -207,8 +226,8 @@ class MultiplatformGradleIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testFreeCompilerArgsAssignment(): Unit = with(Project("multiplatformProject")) {
+    @GradleLinuxTest
+    fun testFreeCompilerArgsAssignment(gradleVersion: GradleVersion): Unit = with(Project("multiplatformProject", gradleVersion)) {
         setupWorkingDir()
 
         val overrideCompilerArgs = "kotlinOptions.freeCompilerArgs = ['-verbose']"
@@ -223,8 +242,8 @@ class MultiplatformGradleIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testCommonModuleAsTransitiveDependency() = with(Project("multiplatformProject")) {
+    @GradleLinuxTest
+    fun testCommonModuleAsTransitiveDependency(gradleVersion: GradleVersion) = with(Project("multiplatformProject", gradleVersion)) {
         setupWorkingDir()
         gradleBuildScript("libJvm").appendText(
             """
@@ -246,8 +265,8 @@ class MultiplatformGradleIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testArchivesBaseNameAsCommonModuleName() = with(Project("multiplatformProject")) {
+    @GradleLinuxTest
+    fun testArchivesBaseNameAsCommonModuleName(gradleVersion: GradleVersion) = with(Project("multiplatformProject", gradleVersion)) {
         setupWorkingDir()
 
         val moduleName = "my_module_name"
@@ -260,8 +279,8 @@ class MultiplatformGradleIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testKt23092() = with(Project("multiplatformProject")) {
+    @GradleLinuxTest
+    fun testKt23092(gradleVersion: GradleVersion) = with(Project("multiplatformProject", gradleVersion)) {
         setupWorkingDir()
         val successMarker = "Found JavaCompile task:"
 
@@ -281,8 +300,8 @@ class MultiplatformGradleIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testCustomSourceSets() = with(Project("multiplatformProject")) {
+    @GradleLinuxTest
+    fun testCustomSourceSets(gradleVersion: GradleVersion) = with(Project("multiplatformProject", gradleVersion)) {
         setupWorkingDir()
 
         val sourceSetName = "foo"
@@ -312,11 +331,11 @@ class MultiplatformGradleIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testWithJavaDuplicatedResourcesFail() = with(
+    @GradleLinuxTest
+    fun testWithJavaDuplicatedResourcesFail(gradleVersion: GradleVersion) = with(
         Project(
             projectName = "mpp-single-jvm-target",
-            gradleVersionRequirement = GradleVersionRequired.AtLeast("7.0"),
+            gradleVersion = gradleVersion,
             minLogLevel = LogLevel.WARN
         )
     ) {

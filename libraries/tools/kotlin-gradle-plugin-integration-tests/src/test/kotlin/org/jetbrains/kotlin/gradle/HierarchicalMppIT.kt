@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 import org.jetbrains.kotlin.gradle.internals.parseKotlinSourceSetMetadataFromJson
 import org.jetbrains.kotlin.gradle.native.transformNativeTestProjectWithPluginDsl
@@ -14,26 +15,216 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.ModuleDependencyIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetMetadataLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.testbase.GradleLinuxTest
+import org.jetbrains.kotlin.gradle.testbase.GradleMacLinuxTest
+import org.jetbrains.kotlin.gradle.testbase.GradleTestVersions
+import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.gradle.utils.minSupportedGradleVersion
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 import java.io.File
 import java.util.zip.ZipFile
-import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-class HierarchicalMppIT : BaseGradleIT() {
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = gradleVersion
+@MppGradlePluginTests
+@GradleTestVersions(minVersion = minSupportedGradleVersion)
+abstract class BaseHierarchicalMppIT : BaseGradleIT() {
 
-    companion object {
-        private val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
+    override fun defaultBuildOptions(): BuildOptions {
+        return super.defaultBuildOptions().copy(stopDaemons = false)
     }
 
-    @Test
-    fun testPublishedModules() {
-        publishThirdPartyLib(withGranularMetadata = false)
+    @BeforeEach
+    fun before() {
+        super.setUp()
+    }
+
+    @AfterEach
+    fun after() {
+        super.tearDown()
+    }
+
+    internal fun Project.testDependencyTransformations(
+        subproject: String? = null,
+        check: CompiledProject.(reports: Iterable<DependencyTransformationReport>) -> Unit
+    ) {
+        setupWorkingDir()
+        val buildGradleKts = gradleBuildScript(subproject)
+        assert(buildGradleKts.extension == "kts") { "Only Kotlin scripts are supported." }
+
+        val testTaskName = "reportDependencyTransformationsForTest"
+
+        if (testTaskName !in buildGradleKts.readText()) {
+            buildGradleKts.modify {
+                "import ${DefaultKotlinSourceSet::class.qualifiedName}\n" + it + "\n" + """
+                val $testTaskName by tasks.creating {
+                    doFirst {
+                        for (scope in listOf("api", "implementation", "compileOnly", "runtimeOnly")) {
+                            println("========\n${'$'}scope\n")
+                            
+                            kotlin.sourceSets.withType<DefaultKotlinSourceSet>().forEach { sourceSet ->
+                                println("--------\n${'$'}{sourceSet.name}")
+                                
+                                sourceSet
+                                    .getDependenciesTransformation(
+                                        "${'$'}{sourceSet.name}${'$'}{scope.capitalize()}DependenciesMetadata"
+                                    ).forEach {
+                                        val line = listOf(
+                                                "${DependencyTransformationReport.TEST_OUTPUT_MARKER}",
+                                                sourceSet.name,
+                                                scope,
+                                                it.groupId + ":" + it.moduleName,
+                                                it.allVisibleSourceSets.joinToString(","),
+                                                it.useFilesForSourceSets.keys.joinToString(","),
+                                                it.useFilesForSourceSets.values.flatten().joinToString(",")
+                                        )
+                    
+                                        println("        " + line.joinToString(" :: "))
+                                    }
+                                println()
+                            }
+                            println()
+                        }
+                    }
+                }
+                """.trimIndent()
+            }
+        }
+
+        build(":${subproject?.plus(":").orEmpty()}$testTaskName") {
+            assertSuccessful()
+
+            val reports = output.lines()
+                .filter { DependencyTransformationReport.TEST_OUTPUT_MARKER in it }
+                .map { DependencyTransformationReport.parseTestOutputLine(it) }
+
+            check(this, reports)
+        }
+    }
+
+    internal data class DependencyTransformationReport(
+        val sourceSetName: String,
+        val scope: String,
+        val groupAndModule: String,
+        val allVisibleSourceSets: Set<String>,
+        val newVisibleSourceSets: Set<String>, // those which the dependsOn parents don't see
+        val useFiles: List<File>
+    ) {
+        val isExcluded: Boolean get() = allVisibleSourceSets.isEmpty()
+
+        companion object {
+            const val TEST_OUTPUT_MARKER = "###transformation"
+            const val TEST_OUTPUT_COMPONENT_SEPARATOR = " :: "
+            const val TEST_OUTPUT_ITEMS_SEPARATOR = ","
+
+            private operator fun <T> List<T>.component6() = this[5]
+
+            fun parseTestOutputLine(line: String): DependencyTransformationReport {
+                val tail = line.substringAfter(TEST_OUTPUT_MARKER + TEST_OUTPUT_COMPONENT_SEPARATOR)
+                val (sourceSetName, scope, groupAndModule, allVisibleSourceSets, newVisibleSourceSets, useFiles) =
+                    tail.split(TEST_OUTPUT_COMPONENT_SEPARATOR)
+                return DependencyTransformationReport(
+                    sourceSetName, scope, groupAndModule,
+                    allVisibleSourceSets.split(TEST_OUTPUT_ITEMS_SEPARATOR).filter { it.isNotEmpty() }.toSet(),
+                    newVisibleSourceSets.split(TEST_OUTPUT_ITEMS_SEPARATOR).filter { it.isNotEmpty() }.toSet(),
+                    useFiles.split(TEST_OUTPUT_ITEMS_SEPARATOR).map { File(it) }
+                )
+            }
+        }
+    }
+
+    internal fun CompiledProject.checkNamesOnCompileClasspath(
+        taskPath: String,
+        shouldInclude: Iterable<Pair<String, String>> = emptyList(),
+        shouldNotInclude: Iterable<Pair<String, String>> = emptyList()
+    ) {
+        val compilerArgsLine = output.lines().single { "$taskPath Kotlin compiler args:" in it }
+        val classpathItems = compilerArgsLine.substringAfter("-classpath").substringBefore(" -").split(File.pathSeparator)
+
+        val actualClasspath = classpathItems.joinToString("\n")
+
+        shouldInclude.forEach { (module, sourceSet) ->
+            assertTrue(
+                "expected module '$module' source set '$sourceSet' on the classpath of task $taskPath. Actual classpath:\n$actualClasspath"
+            ) {
+                classpathItems.any { module in it && it.contains(sourceSet, ignoreCase = true) }
+            }
+        }
+
+        shouldNotInclude.forEach { (module, sourceSet) ->
+            assertTrue(
+                "not expected module '$module' source set '$sourceSet' on the compile classpath of task $taskPath. " +
+                        "Actual classpath:\n$actualClasspath"
+            ) {
+                classpathItems.none { module in it && it.contains(sourceSet, ignoreCase = true) }
+            }
+        }
+    }
+
+    internal fun expectedTasks(subprojectPrefix: String?) = listOf(
+        "generateProjectStructureMetadata",
+        "transformCommonMainDependenciesMetadata",
+        "transformJvmAndJsMainDependenciesMetadata",
+        "transformLinuxAndJsMainDependenciesMetadata",
+        "compileKotlinMetadata",
+        "compileJvmAndJsMainKotlinMetadata",
+        "compileLinuxAndJsMainKotlinMetadata"
+    ).map { task -> subprojectPrefix?.let { ":$it" }.orEmpty() + ":" + task }
+
+    // the projects used in these tests are similar and only the dependencies differ:
+    internal fun expectedProjectStructureMetadata(
+        sourceSetModuleDependencies: Map<String, Set<Pair<String, String>>>
+    ): KotlinProjectStructureMetadata {
+
+        val jvmSourceSets = setOf("commonMain", "jvmAndJsMain")
+        val jsSourceSets = setOf("commonMain", "jvmAndJsMain", "linuxAndJsMain")
+        return KotlinProjectStructureMetadata(
+            sourceSetNamesByVariantName = mapOf(
+                "jsApiElements" to jsSourceSets,
+                "jsRuntimeElements" to jsSourceSets,
+                "jvmApiElements" to jvmSourceSets,
+                "jvmRuntimeElements" to jvmSourceSets,
+                "linuxX64ApiElements" to setOf("commonMain", "linuxAndJsMain")
+            ),
+            sourceSetsDependsOnRelation = mapOf(
+                "jvmAndJsMain" to setOf("commonMain"),
+                "linuxAndJsMain" to setOf("commonMain"),
+                "commonMain" to emptySet()
+            ),
+            sourceSetModuleDependencies = sourceSetModuleDependencies.mapValues { (_, pairs) ->
+                pairs.map {
+                    ModuleDependencyIdentifier(it.first, it.second)
+                }.toSet()
+            },
+            sourceSetCInteropMetadataDirectory = mapOf(),
+            hostSpecificSourceSets = emptySet(),
+            sourceSetBinaryLayout = sourceSetModuleDependencies.mapValues { SourceSetMetadataLayout.KLIB },
+            isPublishedAsRoot = true
+        )
+    }
+
+    internal fun ZipFile.checkAllEntryNamesArePresent(vararg expectedEntryNames: String) {
+        val entryNames = entries().asSequence().map { it.name }.toSet()
+        val entryNamesString = entryNames.joinToString()
+        expectedEntryNames.forEach {
+            assertTrue("expecting entry $it in entry names $entryNamesString") { it in entryNames }
+        }
+    }
+
+    internal fun ZipFile.getProjectStructureMetadata(): KotlinProjectStructureMetadata {
+        val json = getInputStream(getEntry("META-INF/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME")).reader().readText()
+        return checkNotNull(parseKotlinSourceSetMetadataFromJson(json))
+    }
+}
+
+class HierarchicalMppPublishedThirdPartyLibIT : BaseHierarchicalMppIT() {
+    @GradleLinuxTest
+    fun testPublishedModules(gradleVersion: GradleVersion) {
+        publishThirdPartyLib(withGranularMetadata = false, gradleVersion = gradleVersion)
 
         transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
             build("publish") {
@@ -54,9 +245,9 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testNoSourceSetsVisibleIfNoVariantMatched() {
-        publishThirdPartyLib(withGranularMetadata = true)
+    @GradleLinuxTest
+    fun testNoSourceSetsVisibleIfNoVariantMatched(gradleVersion: GradleVersion) {
+        publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion)
 
         transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
             // --- Move the dependency from jvmAndJsMain to commonMain, where there's a linuxX64 target missing in the lib
@@ -81,9 +272,9 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testDependenciesInTests() {
-        publishThirdPartyLib(withGranularMetadata = true) {
+    @GradleLinuxTest
+    fun testDependenciesInTests(gradleVersion: GradleVersion) {
+        publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion) {
             projectDir.resolve("src/jvmMain").copyRecursively(projectDir.resolve("src/linuxX64Main"))
             gradleBuildScript().appendText("\nkotlin.linuxX64()")
         }
@@ -166,9 +357,9 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testProjectDependencies() {
-        publishThirdPartyLib(withGranularMetadata = false)
+    @GradleLinuxTest
+    fun testProjectDependencies(gradleVersion: GradleVersion) {
+        publishThirdPartyLib(withGranularMetadata = false, gradleVersion = gradleVersion)
 
         with(transformNativeTestProjectWithPluginDsl("hierarchical-mpp-project-dependency", gradleVersion)) {
             build("publish", "assemble") {
@@ -179,14 +370,15 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testHmppWithPublishedJsBothDependency() {
+    @GradleLinuxTest
+    fun testHmppWithPublishedJsBothDependency(gradleVersion: GradleVersion) {
         val directoryPrefix = "hierarchical-mpp-with-js-published-modules"
         publishThirdPartyLib(
             projectName = "third-party-lib",
             directoryPrefix = directoryPrefix,
             withGranularMetadata = true,
-            jsCompilerType = KotlinJsCompilerType.BOTH
+            jsCompilerType = KotlinJsCompilerType.BOTH,
+            gradleVersion = gradleVersion
         )
 
         with(transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion, directoryPrefix)) {
@@ -200,27 +392,109 @@ class HierarchicalMppIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun testHmppWithProjectJsIrDependency() {
-        with(transformNativeTestProjectWithPluginDsl("hierarchical-mpp-with-js-project-dependency", gradleVersion)) {
-            build(
-                "assemble",
-                options = defaultBuildOptions().copy(jsCompilerType = KotlinJsCompilerType.IR)
-            ) {
+    @GradleLinuxTest
+    fun testCompileOnlyDependencyProcessingForMetadataCompilations(gradleVersion: GradleVersion) =
+        with(transformNativeTestProjectWithPluginDsl("hierarchical-mpp-project-dependency", gradleVersion)) {
+            publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion)
+
+            gradleBuildScript("my-lib-foo").appendText("\ndependencies { \"jvmAndJsMainCompileOnly\"(kotlin(\"test-annotations-common\")) }")
+            projectDir.resolve("my-lib-foo/src/jvmAndJsMain/kotlin/UseCompileOnlyDependency.kt").writeText(
+                """
+            import kotlin.test.Test
+                
+            class UseCompileOnlyDependency {
+                @Test
+                fun myTest() = Unit
+            }
+            """.trimIndent()
+            )
+
+            build(":my-lib-foo:compileJvmAndJsMainKotlinMetadata") {
                 assertSuccessful()
+            }
+        }
+
+    @GradleLinuxTest
+    fun testHmppDependenciesInJsTests(gradleVersion: GradleVersion) {
+        val thirdPartyRepo =
+            publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion).projectDir.parentFile.resolve("repo")
+        with(Project("hierarchical-mpp-js-test", gradleVersion = gradleVersion)) {
+            val taskToExecute = ":jsNodeTest"
+            build(taskToExecute, "-PthirdPartyRepo=$thirdPartyRepo") {
+                assertSuccessful()
+                assertTasksExecuted(taskToExecute)
             }
         }
     }
 
-    @Test
-    fun testMultiModulesHmppKt48370() = with(Project("hierarchical-mpp-multi-modules", GradleVersionRequired.FOR_MPP_SUPPORT)) {
-        build(
-            "assemble", options = defaultBuildOptions().copy(
-                parallelTasksInProject = true,
-                warningMode = WarningMode.Summary
+    @GradleLinuxTest
+    fun testProcessingDependencyDeclaredInNonRootSourceSet(gradleVersion: GradleVersion) {
+        publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion)
+
+        transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
+            val intermediateMetadataCompileTask = ":compileJvmAndJsMainKotlinMetadata"
+
+            build(intermediateMetadataCompileTask) {
+                assertSuccessful()
+
+                checkNamesOnCompileClasspath(
+                    intermediateMetadataCompileTask,
+                    shouldInclude = listOf(
+                        "third-party-lib" to "commonMain"
+                    )
+                )
+            }
+        }
+    }
+
+    @GradleLinuxTest
+    fun testDependenciesInNonPublishedSourceSets(gradleVersion: GradleVersion) {
+        publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion)
+
+        transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
+            testDependencyTransformations { reports ->
+                reports.single {
+                    it.sourceSetName == "jvmAndJsMain" && it.scope == "api" && it.groupAndModule.startsWith("com.example")
+                }.let {
+                    assertEquals(setOf("commonMain"), it.allVisibleSourceSets)
+                    assertEquals(setOf("commonMain"), it.newVisibleSourceSets)
+                }
+            }
+        }
+    }
+
+    @GradleLinuxTest
+    fun testMixedScopesFilesExistKt44845(gradleVersion: GradleVersion) {
+        publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion)
+
+        transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
+            gradleBuildScript().appendText(
+                """
+                ${"\n"}
+                dependencies {
+                    "jvmAndJsMainImplementation"("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
+                    "jvmAndJsMainCompileOnly"("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+                }
+            """.trimIndent()
             )
-        ) {
-            assertSuccessful()
+
+            testDependencyTransformations { reports ->
+                val reportsForJvmAndJsMain = reports.filter { it.sourceSetName == "jvmAndJsMain" }
+                val thirdPartyLib = reportsForJvmAndJsMain.single {
+                    it.scope == "api" && it.groupAndModule.startsWith("com.example")
+                }
+                val coroutinesCore = reportsForJvmAndJsMain.single {
+                    it.scope == "implementation" && it.groupAndModule.contains("kotlinx-coroutines-core")
+                }
+                val serialization = reportsForJvmAndJsMain.single {
+                    it.scope == "compileOnly" && it.groupAndModule.contains("kotlinx-serialization-json")
+                }
+                listOf(thirdPartyLib, coroutinesCore, serialization).forEach { report ->
+                    assertTrue(report.newVisibleSourceSets.isNotEmpty(), "Expected visible source sets for $report")
+                    assertTrue(report.useFiles.isNotEmpty(), "Expected non-empty useFiles for $report")
+                    report.useFiles.forEach { assertTrue(it.isFile, "Expected $it to exist for $report") }
+                }
+            }
         }
     }
 
@@ -229,6 +503,7 @@ class HierarchicalMppIT : BaseGradleIT() {
         directoryPrefix: String = "hierarchical-mpp-published-modules",
         withGranularMetadata: Boolean,
         jsCompilerType: KotlinJsCompilerType = KotlinJsCompilerType.LEGACY,
+        gradleVersion: GradleVersion,
         beforePublishing: Project.() -> Unit = { }
     ): Project =
         transformNativeTestProjectWithPluginDsl(projectName, gradleVersion, directoryPrefix).apply {
@@ -435,303 +710,55 @@ class HierarchicalMppIT : BaseGradleIT() {
 
         checkNamesOnCompileClasspath("$taskPrefix:compileLinuxAndJsMainKotlinMetadata")
     }
+}
 
-    private fun CompiledProject.checkNamesOnCompileClasspath(
-        taskPath: String,
-        shouldInclude: Iterable<Pair<String, String>> = emptyList(),
-        shouldNotInclude: Iterable<Pair<String, String>> = emptyList()
-    ) {
-        val compilerArgsLine = output.lines().single { "$taskPath Kotlin compiler args:" in it }
-        val classpathItems = compilerArgsLine.substringAfter("-classpath").substringBefore(" -").split(File.pathSeparator)
+class HierarchicalMppIT : BaseHierarchicalMppIT() {
 
-        val actualClasspath = classpathItems.joinToString("\n")
-
-        shouldInclude.forEach { (module, sourceSet) ->
-            assertTrue(
-                "expected module '$module' source set '$sourceSet' on the classpath of task $taskPath. Actual classpath:\n$actualClasspath"
+    @GradleLinuxTest
+    fun testHmppWithProjectJsIrDependency(gradleVersion: GradleVersion) {
+        with(transformNativeTestProjectWithPluginDsl("hierarchical-mpp-with-js-project-dependency", gradleVersion)) {
+            build(
+                "assemble",
+                options = defaultBuildOptions().copy(jsCompilerType = KotlinJsCompilerType.IR)
             ) {
-                classpathItems.any { module in it && it.contains(sourceSet, ignoreCase = true) }
-            }
-        }
-
-        shouldNotInclude.forEach { (module, sourceSet) ->
-            assertTrue(
-                "not expected module '$module' source set '$sourceSet' on the compile classpath of task $taskPath. " +
-                        "Actual classpath:\n$actualClasspath"
-            ) {
-                classpathItems.none { module in it && it.contains(sourceSet, ignoreCase = true) }
-            }
-        }
-    }
-
-    private fun expectedTasks(subprojectPrefix: String?) = listOf(
-        "generateProjectStructureMetadata",
-        "transformCommonMainDependenciesMetadata",
-        "transformJvmAndJsMainDependenciesMetadata",
-        "transformLinuxAndJsMainDependenciesMetadata",
-        "compileKotlinMetadata",
-        "compileJvmAndJsMainKotlinMetadata",
-        "compileLinuxAndJsMainKotlinMetadata"
-    ).map { task -> subprojectPrefix?.let { ":$it" }.orEmpty() + ":" + task }
-
-    // the projects used in these tests are similar and only the dependencies differ:
-    private fun expectedProjectStructureMetadata(
-        sourceSetModuleDependencies: Map<String, Set<Pair<String, String>>>
-    ): KotlinProjectStructureMetadata {
-
-        val jvmSourceSets = setOf("commonMain", "jvmAndJsMain")
-        val jsSourceSets = setOf("commonMain", "jvmAndJsMain", "linuxAndJsMain")
-        return KotlinProjectStructureMetadata(
-            sourceSetNamesByVariantName = mapOf(
-                "jsApiElements" to jsSourceSets,
-                "jsRuntimeElements" to jsSourceSets,
-                "jvmApiElements" to jvmSourceSets,
-                "jvmRuntimeElements" to jvmSourceSets,
-                "linuxX64ApiElements" to setOf("commonMain", "linuxAndJsMain")
-            ),
-            sourceSetsDependsOnRelation = mapOf(
-                "jvmAndJsMain" to setOf("commonMain"),
-                "linuxAndJsMain" to setOf("commonMain"),
-                "commonMain" to emptySet()
-            ),
-            sourceSetModuleDependencies = sourceSetModuleDependencies.mapValues { (_, pairs) ->
-                pairs.map {
-                    ModuleDependencyIdentifier(it.first, it.second)
-                }.toSet()
-            },
-            sourceSetCInteropMetadataDirectory = mapOf(),
-            hostSpecificSourceSets = emptySet(),
-            sourceSetBinaryLayout = sourceSetModuleDependencies.mapValues { SourceSetMetadataLayout.KLIB },
-            isPublishedAsRoot = true
-        )
-    }
-
-    private fun ZipFile.checkAllEntryNamesArePresent(vararg expectedEntryNames: String) {
-        val entryNames = entries().asSequence().map { it.name }.toSet()
-        val entryNamesString = entryNames.joinToString()
-        expectedEntryNames.forEach {
-            assertTrue("expecting entry $it in entry names $entryNamesString") { it in entryNames }
-        }
-    }
-
-    private fun ZipFile.getProjectStructureMetadata(): KotlinProjectStructureMetadata {
-        val json = getInputStream(getEntry("META-INF/$MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME")).reader().readText()
-        return checkNotNull(parseKotlinSourceSetMetadataFromJson(json))
-    }
-
-    @Test
-    fun testCompileOnlyDependencyProcessingForMetadataCompilations() =
-        with(transformNativeTestProjectWithPluginDsl("hierarchical-mpp-project-dependency")) {
-            publishThirdPartyLib(withGranularMetadata = true)
-
-            gradleBuildScript("my-lib-foo").appendText("\ndependencies { \"jvmAndJsMainCompileOnly\"(kotlin(\"test-annotations-common\")) }")
-            projectDir.resolve("my-lib-foo/src/jvmAndJsMain/kotlin/UseCompileOnlyDependency.kt").writeText(
-                """
-            import kotlin.test.Test
-                
-            class UseCompileOnlyDependency {
-                @Test
-                fun myTest() = Unit
-            }
-            """.trimIndent()
-            )
-
-            build(":my-lib-foo:compileJvmAndJsMainKotlinMetadata") {
                 assertSuccessful()
             }
         }
-
-    @Test
-    fun testHmppDependenciesInJsTests() {
-        val thirdPartyRepo = publishThirdPartyLib(withGranularMetadata = true).projectDir.parentFile.resolve("repo")
-        with(Project("hierarchical-mpp-js-test")) {
-            val taskToExecute = ":jsNodeTest"
-            build(taskToExecute, "-PthirdPartyRepo=$thirdPartyRepo") {
-                assertSuccessful()
-                assertTasksExecuted(taskToExecute)
-            }
-        }
     }
 
-    @Test
-    fun testProcessingDependencyDeclaredInNonRootSourceSet() {
-        publishThirdPartyLib(withGranularMetadata = true)
-
-        transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
-            val intermediateMetadataCompileTask = ":compileJvmAndJsMainKotlinMetadata"
-
-            build(intermediateMetadataCompileTask) {
-                assertSuccessful()
-
-                checkNamesOnCompileClasspath(
-                    intermediateMetadataCompileTask,
-                    shouldInclude = listOf(
-                        "third-party-lib" to "commonMain"
-                    )
+    @GradleLinuxTest
+    fun testMultiModulesHmppKt48370(gradleVersion: GradleVersion) =
+        with(Project("hierarchical-mpp-multi-modules", gradleVersion = gradleVersion)) {
+            build(
+                "assemble", options = defaultBuildOptions().copy(
+                    parallelTasksInProject = true,
+                    warningMode = WarningMode.Summary
                 )
+            ) {
+                assertSuccessful()
             }
         }
-    }
 
-    @Test
-    fun testDependenciesInNonPublishedSourceSets() {
-        publishThirdPartyLib(withGranularMetadata = true)
-
-        transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
-            testDependencyTransformations { reports ->
+    @GradleLinuxTest
+    fun testTransitiveDependencyOnSelf(gradleVersion: GradleVersion) =
+        with(Project("transitive-dep-on-self-hmpp", gradleVersion = gradleVersion)) {
+            testDependencyTransformations(subproject = "lib") { reports ->
                 reports.single {
-                    it.sourceSetName == "jvmAndJsMain" && it.scope == "api" && it.groupAndModule.startsWith("com.example")
+                    it.sourceSetName == "commonTest" && it.scope == "implementation" && "libtests" in it.groupAndModule
                 }.let {
-                    assertEquals(setOf("commonMain"), it.allVisibleSourceSets)
-                    assertEquals(setOf("commonMain"), it.newVisibleSourceSets)
+                    assertEquals(setOf("commonMain", "jvmAndJsMain"), it.allVisibleSourceSets)
                 }
             }
         }
-    }
 
-    @Test
-    fun testTransitiveDependencyOnSelf() = with(Project("transitive-dep-on-self-hmpp")) {
-        testDependencyTransformations(subproject = "lib") { reports ->
-            reports.single {
-                it.sourceSetName == "commonTest" && it.scope == "implementation" && "libtests" in it.groupAndModule
-            }.let {
-                assertEquals(setOf("commonMain", "jvmAndJsMain"), it.allVisibleSourceSets)
-            }
-        }
-    }
-
-    @Test
-    fun testMixedScopesFilesExistKt44845() {
-        publishThirdPartyLib(withGranularMetadata = true)
-
-        transformNativeTestProjectWithPluginDsl("my-lib-foo", gradleVersion, "hierarchical-mpp-published-modules").run {
-            gradleBuildScript().appendText(
-                """
-                ${"\n"}
-                dependencies {
-                    "jvmAndJsMainImplementation"("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
-                    "jvmAndJsMainCompileOnly"("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
-                }
-            """.trimIndent()
-            )
-
-            testDependencyTransformations { reports ->
-                val reportsForJvmAndJsMain = reports.filter { it.sourceSetName == "jvmAndJsMain" }
-                val thirdPartyLib = reportsForJvmAndJsMain.single {
-                    it.scope == "api" && it.groupAndModule.startsWith("com.example")
-                }
-                val coroutinesCore = reportsForJvmAndJsMain.single {
-                    it.scope == "implementation" && it.groupAndModule.contains("kotlinx-coroutines-core")
-                }
-                val serialization = reportsForJvmAndJsMain.single {
-                    it.scope == "compileOnly" && it.groupAndModule.contains("kotlinx-serialization-json")
-                }
-                listOf(thirdPartyLib, coroutinesCore, serialization).forEach { report ->
-                    assertTrue(report.newVisibleSourceSets.isNotEmpty(), "Expected visible source sets for $report")
-                    assertTrue(report.useFiles.isNotEmpty(), "Expected non-empty useFiles for $report")
-                    report.useFiles.forEach { assertTrue(it.isFile, "Expected $it to exist for $report") }
-                }
-            }
-        }
-    }
-
-    @Test
-    fun testNativeLeafTestSourceSetsKt46417() {
-        with(Project("kt-46417-ios-test-source-sets")) {
+    @GradleMacLinuxTest
+    fun testNativeLeafTestSourceSetsKt46417(gradleVersion: GradleVersion) {
+        with(Project("kt-46417-ios-test-source-sets", gradleVersion = gradleVersion)) {
             testDependencyTransformations("p2") { reports ->
                 val report = reports.singleOrNull { it.sourceSetName == "iosArm64Test" && it.scope == "implementation" }
                 assertNotNull(report, "No single report for 'iosArm64' and implementation scope")
                 assertEquals(setOf("commonMain", "iosMain"), report.allVisibleSourceSets)
                 assertTrue(report.groupAndModule.endsWith(":p1"))
-            }
-        }
-    }
-
-    private fun Project.testDependencyTransformations(
-        subproject: String? = null,
-        check: CompiledProject.(reports: Iterable<DependencyTransformationReport>) -> Unit
-    ) {
-        setupWorkingDir()
-        val buildGradleKts = gradleBuildScript(subproject)
-        assert(buildGradleKts.extension == "kts") { "Only Kotlin scripts are supported." }
-
-        val testTaskName = "reportDependencyTransformationsForTest"
-
-        if (testTaskName !in buildGradleKts.readText()) {
-            buildGradleKts.modify {
-                "import ${DefaultKotlinSourceSet::class.qualifiedName}\n" + it + "\n" + """
-                val $testTaskName by tasks.creating {
-                    doFirst {
-                        for (scope in listOf("api", "implementation", "compileOnly", "runtimeOnly")) {
-                            println("========\n${'$'}scope\n")
-                            
-                            kotlin.sourceSets.withType<DefaultKotlinSourceSet>().forEach { sourceSet ->
-                                println("--------\n${'$'}{sourceSet.name}")
-                                
-                                sourceSet
-                                    .getDependenciesTransformation(
-                                        "${'$'}{sourceSet.name}${'$'}{scope.capitalize()}DependenciesMetadata"
-                                    ).forEach {
-                                        val line = listOf(
-                                                "${DependencyTransformationReport.TEST_OUTPUT_MARKER}",
-                                                sourceSet.name,
-                                                scope,
-                                                it.groupId + ":" + it.moduleName,
-                                                it.allVisibleSourceSets.joinToString(","),
-                                                it.useFilesForSourceSets.keys.joinToString(","),
-                                                it.useFilesForSourceSets.values.flatten().joinToString(",")
-                                        )
-                    
-                                        println("        " + line.joinToString(" :: "))
-                                    }
-                                println()
-                            }
-                            println()
-                        }
-                    }
-                }
-                """.trimIndent()
-            }
-        }
-
-        build(":${subproject?.plus(":").orEmpty()}$testTaskName") {
-            assertSuccessful()
-
-            val reports = output.lines()
-                .filter { DependencyTransformationReport.TEST_OUTPUT_MARKER in it }
-                .map { DependencyTransformationReport.parseTestOutputLine(it) }
-
-            check(this, reports)
-        }
-    }
-
-    private data class DependencyTransformationReport(
-        val sourceSetName: String,
-        val scope: String,
-        val groupAndModule: String,
-        val allVisibleSourceSets: Set<String>,
-        val newVisibleSourceSets: Set<String>, // those which the dependsOn parents don't see
-        val useFiles: List<File>
-    ) {
-        val isExcluded: Boolean get() = allVisibleSourceSets.isEmpty()
-
-        companion object {
-            const val TEST_OUTPUT_MARKER = "###transformation"
-            const val TEST_OUTPUT_COMPONENT_SEPARATOR = " :: "
-            const val TEST_OUTPUT_ITEMS_SEPARATOR = ","
-
-            private operator fun <T> List<T>.component6() = this[5]
-
-            fun parseTestOutputLine(line: String): DependencyTransformationReport {
-                val tail = line.substringAfter(TEST_OUTPUT_MARKER + TEST_OUTPUT_COMPONENT_SEPARATOR)
-                val (sourceSetName, scope, groupAndModule, allVisibleSourceSets, newVisibleSourceSets, useFiles) =
-                    tail.split(TEST_OUTPUT_COMPONENT_SEPARATOR)
-                return DependencyTransformationReport(
-                    sourceSetName, scope, groupAndModule,
-                    allVisibleSourceSets.split(TEST_OUTPUT_ITEMS_SEPARATOR).filter { it.isNotEmpty() }.toSet(),
-                    newVisibleSourceSets.split(TEST_OUTPUT_ITEMS_SEPARATOR).filter { it.isNotEmpty() }.toSet(),
-                    useFiles.split(TEST_OUTPUT_ITEMS_SEPARATOR).map { File(it) }
-                )
             }
         }
     }

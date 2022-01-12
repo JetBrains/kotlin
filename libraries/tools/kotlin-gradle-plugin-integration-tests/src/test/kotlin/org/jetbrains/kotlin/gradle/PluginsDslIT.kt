@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Assert
 import org.junit.Test
@@ -63,6 +64,15 @@ class PluginsDslIT : BaseGradleIT() {
 
 private const val MAVEN_LOCAL_URL_PLACEHOLDER = "<mavenLocalUrl>"
 internal const val PLUGIN_MARKER_VERSION_PLACEHOLDER = "<pluginMarkerVersion>"
+
+internal fun BaseGradleIT.transformProjectWithPluginsDsl(
+    projectName: String,
+    wrapperVersion: GradleVersion,
+    directoryPrefix: String? = null,
+    minLogLevel: LogLevel = LogLevel.DEBUG
+): BaseGradleIT.Project {
+    return transformProjectWithPluginsDsl(projectName, GradleVersionRequired.Exact(wrapperVersion.version), directoryPrefix, minLogLevel)
+}
 
 internal fun BaseGradleIT.transformProjectWithPluginsDsl(
     projectName: String,
