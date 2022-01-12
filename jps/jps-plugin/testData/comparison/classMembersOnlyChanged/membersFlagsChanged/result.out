@@ -1,0 +1,6 @@
+PROTO DIFFERENCE in test/A: FUNCTION_LIST, PROPERTY_LIST
+CHANGES in test/A: MEMBERS
+    [abstractFlagAddedFun, abstractFlagAddedVal, abstractFlagRemovedFun, abstractFlagRemovedVal, infixFlagAddedFun, infixFlagRemovedFun, inlineFlagAddedFun, inlineFlagRemovedFun, internalFlagAddedFun, internalFlagAddedVal, internalFlagRemovedFun, internalFlagRemovedVal, lateinitFlagAddedVal, lateinitFlagRemovedVal, openFlagAddedFun, openFlagAddedVal, openFlagRemovedFun, openFlagRemovedVal, operatorFlagAddedFun, operatorFlagRemovedFun, privateFlagAddedFun, privateFlagAddedVal, privateFlagRemovedFun, privateFlagRemovedVal, protectedFlagAddedFun, protectedFlagAddedVal, protectedFlagRemovedFun, protectedFlagRemovedVal, tailrecFlagAddedFun, tailrecFlagRemovedFun]
+PROTO DIFFERENCE in test/O: PROPERTY_LIST
+CHANGES in test/O: MEMBERS
+    [constFlagAddedVal, constFlagRemovedVal]
