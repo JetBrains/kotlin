@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-abstract class IrConstructorCall(
-    typeArgumentsCount: Int,
-    valueArgumentsCount: Int,
-) : IrFunctionAccessExpression(typeArgumentsCount, valueArgumentsCount) {
+abstract class IrConstructorCall : IrFunctionAccessExpression() {
     abstract override val symbol: IrConstructorSymbol
 
     abstract val constructorTypeArgumentsCount: Int

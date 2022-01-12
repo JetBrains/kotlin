@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -35,7 +36,14 @@ class IrCallImpl(
     valueArgumentsCount: Int,
     override val origin: IrStatementOrigin? = null,
     override val superQualifierSymbol: IrClassSymbol? = null
-) : IrCall(typeArgumentsCount, valueArgumentsCount) {
+) : IrCall() {
+
+    override val typeArgumentsByIndex: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
+
+    override val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
+
+    override var contextReceiversCount = 0
+
     init {
         if (symbol is IrConstructorSymbol) {
             throw AssertionError("Should be IrConstructorCall: ${this.render()}")
