@@ -50,10 +50,6 @@ class Fir2IrLazySimpleFunction(
         fir.returnTypeRef.toIrType(typeConverter)
     }
 
-    override var body: IrBody? by lazyVar(lock) {
-        if (tryLoadIr()) body else null
-    }
-
     override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {
         val containingClass = parent as? IrClass
         if (containingClass != null && shouldHaveDispatchReceiver(containingClass, fir)) {
@@ -100,19 +96,4 @@ class Fir2IrLazySimpleFunction(
 
     override val containerSource: DeserializedContainerSource?
         get() = fir.containerSource
-
-    private fun tryLoadIr(): Boolean {
-        if (!isInline || isFakeOverride) return false
-        if (!extensions.irNeedsDeserialization) return false
-        val toplevel = getToplevel()
-        return (toplevel as? DeserializableClass)?.loadIr() ?: false
-    }
-
-    private fun getToplevel(): IrDeclaration {
-        var current: IrDeclaration = this
-        while (current.parent !is IrPackageFragment) {
-            current = current.parent as IrDeclaration
-        }
-        return current
-    }
 }
