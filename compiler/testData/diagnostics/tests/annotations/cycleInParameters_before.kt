@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_REFLECT
 // LANGUAGE: -ProhibitCyclesInAnnotations
 // ISSUE: KT-47932

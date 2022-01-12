@@ -641,6 +641,16 @@ internal class NonConstValUsedInConstantExpressionImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.NonConstValUsedInConstantExpression(), KtAbstractFirDiagnostic<KtExpression>
 
+internal class CycleInAnnotationParameterErrorImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.CycleInAnnotationParameterError(), KtAbstractFirDiagnostic<KtParameter>
+
+internal class CycleInAnnotationParameterWarningImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.CycleInAnnotationParameterWarning(), KtAbstractFirDiagnostic<KtParameter>
+
 internal class AnnotationClassConstructorCallImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,

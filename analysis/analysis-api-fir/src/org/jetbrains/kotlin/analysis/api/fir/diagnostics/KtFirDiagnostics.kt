@@ -538,6 +538,14 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NonConstValUsedInConstantExpression::class
     }
 
+    abstract class CycleInAnnotationParameterError : KtFirDiagnostic<KtParameter>() {
+        override val diagnosticClass get() = CycleInAnnotationParameterError::class
+    }
+
+    abstract class CycleInAnnotationParameterWarning : KtFirDiagnostic<KtParameter>() {
+        override val diagnosticClass get() = CycleInAnnotationParameterWarning::class
+    }
+
     abstract class AnnotationClassConstructorCall : KtFirDiagnostic<KtCallExpression>() {
         override val diagnosticClass get() = AnnotationClassConstructorCall::class
     }

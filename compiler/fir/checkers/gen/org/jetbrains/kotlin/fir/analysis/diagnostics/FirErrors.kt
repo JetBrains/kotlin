@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.LanguageFeature.ForbidExposingTypesInPrimaryC
 import org.jetbrains.kotlin.config.LanguageFeature.ForbidUsingExtensionPropertyTypeParameterInDelegate
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitAssigningSingleElementsToVarargsInNamedForm
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitConfusingSyntaxInWhenBranches
+import org.jetbrains.kotlin.config.LanguageFeature.ProhibitCyclesInAnnotations
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitInvisibleAbstractMethodsInSuperclasses
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitNonReifiedArraysAsReifiedTypeArguments
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitUseSiteTargetAnnotationsOnSuperTypes
@@ -222,6 +223,7 @@ object FirErrors {
     val LOCAL_ANNOTATION_CLASS_ERROR by error0<KtClassOrObject>()
     val MISSING_VAL_ON_ANNOTATION_PARAMETER by error0<KtParameter>()
     val NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION by error0<KtExpression>()
+    val CYCLE_IN_ANNOTATION_PARAMETER by deprecationError0<KtParameter>(ProhibitCyclesInAnnotations)
     val ANNOTATION_CLASS_CONSTRUCTOR_CALL by error0<KtCallExpression>()
     val NOT_AN_ANNOTATION_CLASS by error1<PsiElement, String>()
     val NULLABLE_TYPE_OF_ANNOTATION_MEMBER by error0<KtTypeReference>()
