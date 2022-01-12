@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import java.lang.IllegalStateException
-
 
 /**
  * Transforms expressions depending on the context they are used in.
@@ -281,7 +279,7 @@ internal abstract class AbstractValueUsageTransformer(
                     ?: throw IllegalStateException("Unexpected array type ${expression.type.render()}")
 
         expression.elements.forEachIndexed { index, it ->
-            expression.putElement(index, it.useAs(elementType) as IrConstantValue)
+            expression.elements[index] = it.useAs(elementType) as IrConstantValue
         }
         return expression
     }
@@ -290,7 +288,7 @@ internal abstract class AbstractValueUsageTransformer(
         expression.transformChildrenVoid(this)
 
         expression.valueArguments.forEachIndexed { index, arg ->
-            expression.putArgument(index, arg.useAsArgument(expression.constructor.owner.valueParameters[index]) as IrConstantValue)
+            expression.valueArguments[index] = arg.useAsArgument(expression.constructor.owner.valueParameters[index]) as IrConstantValue
         }
         return expression
     }
@@ -298,4 +296,3 @@ internal abstract class AbstractValueUsageTransformer(
     // TODO: IrStringConcatenation, IrEnumEntry?
 
 }
-
