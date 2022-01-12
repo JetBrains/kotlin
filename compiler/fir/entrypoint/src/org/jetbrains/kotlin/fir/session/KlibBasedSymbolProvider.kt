@@ -33,6 +33,9 @@ class KlibBasedSymbolProvider(
         library.loadModuleHeader(library.library).packageFragmentNameList.toSet()
     }
 
+    private val annotationDeserializer = KlibBasedAnnotationDeserializer(session)
+    private val constDeserializer = FirConstDeserializer(session)
+
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
         val packageStringName = packageFqName.asString()
 
@@ -56,8 +59,8 @@ class KlibBasedSymbolProvider(
                 packageProto,
                 FirDeserializationContext.createForPackage(
                     packageFqName, packageProto, nameResolver, moduleData,
-                    FirBuiltinAnnotationDeserializer(session),
-                    FirConstDeserializer(session),
+                    annotationDeserializer,
+                    constDeserializer,
                     null,
                 ),
             )
@@ -80,7 +83,6 @@ class KlibBasedSymbolProvider(
                 fragment.qualifiedNames,
             )
 
-            val annotationDeserializer = FirBuiltinAnnotationDeserializer(session)
             val finder = KlibMetadataClassDataFinder(fragment, nameResolver)
 
             val a = finder.findClassData(classId)?.classProto ?: return@forEach
