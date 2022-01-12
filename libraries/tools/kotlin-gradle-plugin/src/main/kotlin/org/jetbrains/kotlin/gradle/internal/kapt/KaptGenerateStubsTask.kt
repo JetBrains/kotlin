@@ -22,6 +22,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
+import org.gradle.work.Incremental
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
@@ -115,6 +116,7 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     @get:InputFiles
     @get:IgnoreEmptyDirectories
     @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Incremental
     abstract val additionalSources: ConfigurableFileCollection
 
     override fun source(vararg sources: Any): SourceTask {
