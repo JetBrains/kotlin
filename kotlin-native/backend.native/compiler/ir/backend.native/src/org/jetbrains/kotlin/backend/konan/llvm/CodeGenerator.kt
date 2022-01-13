@@ -432,7 +432,7 @@ internal abstract class FunctionGenerationContext(
         val function: LLVMValueRef,
         val codegen: CodeGenerator,
         private val startLocation: LocationInfo?,
-        private val endLocation: LocationInfo?,
+        protected val endLocation: LocationInfo?,
         switchToRunnable: Boolean,
         internal val irFunction: IrFunction? = null
 ) : ContextUtils {
@@ -980,9 +980,7 @@ internal abstract class FunctionGenerationContext(
             }
 
             appendingTo(fatalForeignExceptionBlock) {
-                val exceptionRecord = extractValue(landingpad, 0)
-                call(context.llvm.cxaBeginCatchFunction, listOf(exceptionRecord))
-                terminate()
+                terminateWithCurrentException(landingpad)
             }
 
         }
@@ -991,6 +989,13 @@ internal abstract class FunctionGenerationContext(
             override val unwind: LLVMBasicBlockRef
                 get() = lpBlock
         }
+    }
+
+    fun terminateWithCurrentException(landingpad: LLVMValueRef) {
+        val exceptionRecord = extractValue(landingpad, 0)
+        // So `std::terminate` is called from C++ catch block:
+        call(context.llvm.cxaBeginCatchFunction, listOf(exceptionRecord))
+        terminate()
     }
 
     fun terminate() {

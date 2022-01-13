@@ -96,6 +96,18 @@ internal class ObjCExportFunctionGenerationContext(
     override fun processReturns() {
         // Do nothing.
     }
+
+    val terminatingExceptionHandler = object : ExceptionHandler.Local() {
+        override val unwind: LLVMBasicBlockRef by lazy {
+            val result = basicBlockInFunction("fatal_landingpad", endLocation)
+            appendingTo(result) {
+                val landingpad = gxxLandingpad(0)
+                LLVMSetCleanup(landingpad, 1)
+                terminateWithCurrentException(landingpad)
+            }
+            result
+        }
+    }
 }
 
 internal class ObjCExportFunctionGenerationContextBuilder(
