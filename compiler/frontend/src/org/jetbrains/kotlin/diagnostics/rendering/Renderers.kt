@@ -46,6 +46,8 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.getValidi
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.utils.IDEAPlatforms
+import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -195,6 +197,15 @@ object Renderers {
                 FQ_NAMES_IN_TYPES.render(it, context)
             }
     }
+
+    @JvmStatic
+    @IDEAPluginsCompatibilityAPI(
+        IDEAPlatforms._213, // maybe 211 or 212 AS also used it
+        message = "Please use the CommonRenderers.commaSeparated instead",
+        plugins = "Android plugin in IDEA"
+    )
+    fun <T> commaSeparated(itemRenderer: DiagnosticParameterRenderer<T>): DiagnosticParameterRenderer<Collection<T>> =
+        CommonRenderers.commaSeparated(itemRenderer)
 
     @JvmField
     val TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS_RENDERER = Renderer<InferenceErrorData> {
