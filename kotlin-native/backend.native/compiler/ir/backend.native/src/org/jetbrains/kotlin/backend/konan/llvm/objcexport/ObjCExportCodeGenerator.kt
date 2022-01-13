@@ -169,19 +169,13 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
         return callFromBridge(llvmDeclarations, args, resultLifetime)
     }
 
-    // TODO: currently bridges don't have any custom `landingpad`s,
-    // so it is correct to use [callAtFunctionScope] here.
-    // However, exception handling probably should be refactored
-    // (e.g. moved from `IrToBitcode.kt` to [FunctionGenerationContext]).
     fun ObjCExportFunctionGenerationContext.callFromBridge(
             function: LlvmCallable,
             args: List<LLVMValueRef>,
             resultLifetime: Lifetime = Lifetime.IRRELEVANT,
     ): LLVMValueRef {
-
-        // TODO: it is required only for Kotlin-to-Objective-C bridges.
-        this.forwardingForeignExceptionsTerminatedWith = objcTerminate
-        val exceptionHandler = ExceptionHandler.Caller
+        // All calls that actually do need to forward exceptions to callers should express this explicitly.
+        val exceptionHandler = terminatingExceptionHandler
 
         return call(function, args, resultLifetime, exceptionHandler)
     }
@@ -1251,8 +1245,12 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
 
         fun rethrow() {
             val error = load(errorOutPtr!!)
-            callFromBridge(context.llvm.Kotlin_ObjCExport_RethrowNSErrorAsException, listOf(error))
-            unreachable()
+            val exception = callFromBridge(
+                    context.llvm.Kotlin_ObjCExport_NSErrorAsException,
+                    listOf(error),
+                    resultLifetime = Lifetime.THROW
+            )
+            ExceptionHandler.Caller.genThrow(this, exception)
         }
 
         fun genKotlinBaseMethodResult(
