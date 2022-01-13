@@ -678,6 +678,11 @@ tasks {
         dependsOn(":plugins:jvm-abi-gen:test")
     }
 
+    register("testsForBootstrapBuildTest") {
+        dependsOn("dist")
+        dependsOn(":compiler:tests-common-new:test")
+    }
+
     register("jvmCompilerIntegrationTest") {
         dependsOn(
             ":kotlin-compiler-embeddable:test",
