@@ -17918,6 +17918,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("anyCastToPrimitiveCompareTo1.kt")
+        public void testAnyCastToPrimitiveCompareTo1() throws Exception {
+            runTest("compiler/testData/codegen/box/ieee754/anyCastToPrimitiveCompareTo1.kt");
+        }
+
+        @Test
+        @TestMetadata("anyCastToPrimitiveCompareTo2.kt")
+        public void testAnyCastToPrimitiveCompareTo2() throws Exception {
+            runTest("compiler/testData/codegen/box/ieee754/anyCastToPrimitiveCompareTo2.kt");
+        }
+
+        @Test
         @TestMetadata("anyToReal.kt")
         public void testAnyToReal() throws Exception {
             runTest("compiler/testData/codegen/box/ieee754/anyToReal.kt");

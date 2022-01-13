@@ -99,7 +99,7 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
                             // We have to generate a null check here, because even if argument is of non-null type,
                             // it can be uninitialized value, which is 'null' for reference types in JMM.
                             // Most of such null checks will never actually throw, but we can't do anything about it.
-                            irBlock {
+                            irBlock(resultType = type) {
                                 +irCall(backendContext.ir.symbols.checkNotNullWithMessage).apply {
                                     putValueArgument(0, irGet(tmp.owner))
                                     putValueArgument(1, message)
