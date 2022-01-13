@@ -322,8 +322,8 @@ internal class KonanIrLinker(
         private val cachedLibraries: CachedLibraries,
         private val lazyIrForCaches: Boolean,
         override val userVisibleIrModulesSupport: UserVisibleIrModulesSupport,
-        allowUnboundSymbols: Boolean
-) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, exportedDependencies, allowUnboundSymbols) {
+        allowUnboundSymbols: Boolean // TODO
+) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, exportedDependencies) {
 
     companion object {
         private val C_NAMES_NAME = Name.identifier("cnames")

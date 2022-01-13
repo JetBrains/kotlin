@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
@@ -364,18 +361,18 @@ fun getIrModuleInfoForKlib(
     val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
     val allowUnboundSymbols = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+    val unlinkedDeclarationsSupport = JsUnlinkedDeclarationsSupport(allowUnboundSymbols)
 
-    val irLinker =
-        JsIrLinker(
-            null,
-            messageLogger,
-            irBuiltIns,
-            symbolTable,
-            null,
-            null,
-            friendModules,
-            allowUnboundSymbols
-        )
+    val irLinker = JsIrLinker(
+        currentModule = null,
+        messageLogger = messageLogger,
+        builtIns = irBuiltIns,
+        symbolTable = symbolTable,
+        translationPluginContext = null,
+        icData = null,
+        friendModules = friendModules,
+        unlinkedDeclarationsSupport = unlinkedDeclarationsSupport
+    )
 
     val deserializedModuleFragmentsToLib = deserializeDependencies(sortedDependencies, irLinker, mainModuleLib, filesToLoad, mapping)
     val deserializedModuleFragments = deserializedModuleFragmentsToLib.keys.toList()
@@ -416,18 +413,18 @@ fun getIrModuleInfoForSourceFiles(
     }
 
     val allowUnboundSymbols = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+    val unlinkedDeclarationsSupport = JsUnlinkedDeclarationsSupport(allowUnboundSymbols)
 
-    val irLinker =
-        JsIrLinker(
-            psi2IrContext.moduleDescriptor,
-            messageLogger,
-            irBuiltIns,
-            symbolTable,
-            feContext,
-            null,
-            friendModules,
-            allowUnboundSymbols
-        )
+    val irLinker = JsIrLinker(
+        currentModule = psi2IrContext.moduleDescriptor,
+        messageLogger = messageLogger,
+        builtIns = irBuiltIns,
+        symbolTable = symbolTable,
+        translationPluginContext = feContext,
+        icData = null,
+        friendModules = friendModules,
+        unlinkedDeclarationsSupport = unlinkedDeclarationsSupport
+    )
     val deserializedModuleFragmentsToLib = deserializeDependencies(allSortedDependencies, irLinker, null,null, mapping)
     val deserializedModuleFragments = deserializedModuleFragmentsToLib.keys.toList()
     (irBuiltIns as IrBuiltInsOverDescriptors).functionFactory =

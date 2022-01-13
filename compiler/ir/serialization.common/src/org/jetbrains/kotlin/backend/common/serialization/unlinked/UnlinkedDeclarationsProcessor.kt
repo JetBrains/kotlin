@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupport.UnlinkedMarkerTypeHandler
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -15,21 +16,19 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.types.Variance
 
 internal class UnlinkedDeclarationsProcessor(
     private val builtIns: IrBuiltIns,
     private val unlinkedClassifiers: Set<IrClassifierSymbol>,
+    private val unlinkedMarkerTypeHandler: UnlinkedMarkerTypeHandler,
     private val messageLogger: IrMessageLogger
 ) {
 
@@ -64,8 +63,6 @@ internal class UnlinkedDeclarationsProcessor(
         }
     }
 
-    private val errorType = IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT)
-
     private fun IrDeclaration.location(): IrMessageLogger.Location? = fileOrNull?.location(startOffset)
 
     private fun IrFile.location(offset: Int): IrMessageLogger.Location {
@@ -95,12 +92,12 @@ internal class UnlinkedDeclarationsProcessor(
             fun IrValueParameter.fixType() {
                 if (type.isUnlinked()) {
                     linked = false
-                    type = errorType
+                    type = unlinkedMarkerTypeHandler.unlinkedMarkerType
                     defaultValue = null
                 }
                 varargElementType?.let {
                     if (it.isUnlinked()) {
-                        varargElementType = errorType
+                        varargElementType = unlinkedMarkerTypeHandler.unlinkedMarkerType
                     }
                 }
             }
@@ -109,12 +106,12 @@ internal class UnlinkedDeclarationsProcessor(
             declaration.valueParameters.forEach { it.fixType() }
             if (declaration.returnType.isUnlinked()) {
                 linked = false
-                declaration.returnType = errorType
+                declaration.returnType = unlinkedMarkerTypeHandler.unlinkedMarkerType
             }
             declaration.typeParameters.forEach {
                 if (it.superTypes.any { s -> s.isUnlinked() }) {
                     linked = false
-                    it.superTypes = listOf(errorType)
+                    it.superTypes = listOf(unlinkedMarkerTypeHandler.unlinkedMarkerType)
                 }
             }
             if (linked) {
@@ -138,7 +135,7 @@ internal class UnlinkedDeclarationsProcessor(
                 val kind = if (declaration.correspondingPropertySymbol != null) "Property" else "Field"
                 declaration.reportWarning(kind, fqn.asString())
 
-                declaration.type = errorType
+                declaration.type = unlinkedMarkerTypeHandler.unlinkedMarkerType
                 declaration.initializer = null
             } else {
                 declaration.transformChildrenVoid()
@@ -172,17 +169,22 @@ internal class UnlinkedDeclarationsProcessor(
     }
 
     private fun IrFieldSymbol.isUnlinked(): Boolean {
-        return owner.type is IrErrorType
+        return owner.type.isUnlinkedMarkerType()
     }
 
     private fun IrFunctionSymbol.isUnlinked(): Boolean {
         val function = owner
-        if (function.returnType is IrErrorType) return true
-        if (function.dispatchReceiverParameter?.type is IrErrorType) return true
-        if (function.extensionReceiverParameter?.type is IrErrorType) return true
-        if (function.valueParameters.any { it.type is IrErrorType }) return true
-        if (function.typeParameters.any { tp -> tp.superTypes.any { st -> st is IrErrorType } }) return true
+        if (function.returnType.isUnlinkedMarkerType()) return true
+        if (function.dispatchReceiverParameter?.type?.isUnlinkedMarkerType() == true) return true
+        if (function.extensionReceiverParameter?.type?.isUnlinkedMarkerType() == true) return true
+        if (function.valueParameters.any { it.type.isUnlinkedMarkerType() }) return true
+        if (function.typeParameters.any { tp -> tp.superTypes.any { st -> st.isUnlinkedMarkerType() } }) return true
         return false
+    }
+
+    // That's not the same as IrType.isUnlinked()!
+    private fun IrType.isUnlinkedMarkerType(): Boolean {
+        return with(unlinkedMarkerTypeHandler) { isUnlinkedMarkerType() }
     }
 
     private fun IrElement.throwLinkageError(message: String?): IrCall {
@@ -224,7 +226,7 @@ internal class UnlinkedDeclarationsProcessor(
         }
 
         override fun visitExpression(expression: IrExpression): IrExpression {
-            if (expression.type.isUnlinked() || expression.type is IrErrorType) {
+            if (expression.type.isUnlinked() || expression.type.isUnlinkedMarkerType()) {
                 reportWarning("Expression type contains unlinked symbol", currentFile?.location(expression.startOffset))
                 return expression.throwLinkageError("Unlinked type of expression")
             }

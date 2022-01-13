@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.*
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsProcessor
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.UnlinkedDeclarationsSupport
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -37,7 +38,6 @@ abstract class KotlinIrLinker(
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     private val exportedDependencies: List<ModuleDescriptor>,
-    private val allowUnboundSymbols: Boolean = false,
     val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
 ) : IrDeserializer, FileLocalAwareLinker {
 
@@ -59,13 +59,14 @@ abstract class KotlinIrLinker(
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
+    protected open val unlinkedDeclarationsSupport: UnlinkedDeclarationsSupport = UnlinkedDeclarationsSupport.DISABLED
     protected open val userVisibleIrModulesSupport: UserVisibleIrModulesSupport = UserVisibleIrModulesSupport.DEFAULT
 
     fun handleSignatureIdNotFoundInModuleWithDependencies(
         idSignature: IdSignature,
         moduleDeserializer: IrModuleDeserializer
     ): IrModuleDeserializer {
-        if (allowUnboundSymbols) {
+        if (unlinkedDeclarationsSupport.allowUnboundSymbols) {
             return object : IrModuleDeserializer(null, KotlinAbiVersion.CURRENT) {
                 override fun contains(idSig: IdSignature): Boolean = false
 
@@ -169,7 +170,7 @@ abstract class KotlinIrLinker(
                     ?: tryResolveCustomDeclaration(symbol)
                     ?: return null
             } catch (e: IrSymbolTypeMismatchException) {
-                if (!allowUnboundSymbols) {
+                if (!unlinkedDeclarationsSupport.allowUnboundSymbols) {
                     throw SymbolTypeMismatch(e, deserializersForModules.values, userVisibleIrModulesSupport).raiseIssue(messageLogger)
                 }
             }
@@ -220,7 +221,7 @@ abstract class KotlinIrLinker(
 
 
     private fun markUnlinkedClassifiers(): Set<IrClassifierSymbol> {
-        if (!allowUnboundSymbols) return emptySet()
+        if (!unlinkedDeclarationsSupport.allowUnboundSymbols) return emptySet()
         val entries = fakeOverrideBuilder.fakeOverrideCandidates
         val result = mutableSetOf<IrClassifierSymbol>()
 
@@ -299,8 +300,8 @@ abstract class KotlinIrLinker(
         fakeOverrideBuilder.provideFakeOverrides()
         triedToDeserializeDeclarationForSymbol.clear()
 
-        if (allowUnboundSymbols) {
-            val t = UnlinkedDeclarationsProcessor(builtIns, unlinkedClassifiers, messageLogger)
+        unlinkedDeclarationsSupport.whenUnboundSymbolsAllowed { unlinkedMarkerTypeHandler ->
+            val t = UnlinkedDeclarationsProcessor(builtIns, unlinkedClassifiers, unlinkedMarkerTypeHandler, messageLogger)
             t.addLinkageErrorIntoUnlinkedClasses()
 
             applyToModules(t.signatureTransformer())
