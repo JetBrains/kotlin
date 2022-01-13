@@ -32,9 +32,10 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
 
     val objcRelease = run {
         val proto = LlvmFunctionProto(
-                "objc_release",
+                "llvm.objc.release",
                 LlvmRetType(voidType),
                 listOf(LlvmParamType(int8TypePtr)),
+                listOf(LlvmFunctionAttribute.NoUnwind),
                 origin = context.stdlibModule.llvmSymbolOrigin
         )
         context.llvm.externalFunction(proto)
