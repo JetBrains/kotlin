@@ -106,6 +106,8 @@ internal fun Context.psiToIr(
                         config.resolve.includedLibraries.map { it.uniqueName }
                 ).associateWith { friendModules }
 
+        val unlinkedDeclarationsSupport = KonanUnlinkedDeclarationsSupport(generatorContext.irBuiltIns, allowUnboundSymbols)
+
         KonanIrLinker(
                 currentModule = moduleDescriptor,
                 translationPluginContext = translationContext,
@@ -119,8 +121,8 @@ internal fun Context.psiToIr(
                 exportedDependencies = exportedDependencies,
                 cachedLibraries = config.cachedLibraries,
                 lazyIrForCaches = config.lazyIrForCaches,
-                userVisibleIrModulesSupport = config.userVisibleIrModulesSupport,
-                allowUnboundSymbols = allowUnboundSymbols
+                unlinkedDeclarationsSupport = unlinkedDeclarationsSupport,
+                userVisibleIrModulesSupport = config.userVisibleIrModulesSupport
         ).also { linker ->
 
             // context.config.librariesWithDependencies could change at each iteration.
