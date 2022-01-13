@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.target.AppleConfigurables
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.name.Name
@@ -160,15 +159,14 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
     fun FunctionGenerationContext.callFromBridge(
             llvmFunction: LLVMValueRef,
             args: List<LLVMValueRef>,
-            resultLifetime: Lifetime = Lifetime.IRRELEVANT,
-            toNative: Boolean = false,
+            resultLifetime: Lifetime = Lifetime.IRRELEVANT
     ): LLVMValueRef {
         val llvmDeclarations = LlvmCallable(
                 llvmFunction,
                 // llvmFunction could be a function pointer here, and we can't infer attributes from it.
                 LlvmFunctionAttributeProvider.makeEmpty()
         )
-        return callFromBridge(llvmDeclarations, args, resultLifetime, toNative)
+        return callFromBridge(llvmDeclarations, args, resultLifetime)
     }
 
     // TODO: currently bridges don't have any custom `landingpad`s,
@@ -179,30 +177,13 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
             function: LlvmCallable,
             args: List<LLVMValueRef>,
             resultLifetime: Lifetime = Lifetime.IRRELEVANT,
-            toNative: Boolean = false,
     ): LLVMValueRef {
 
         // TODO: it is required only for Kotlin-to-Objective-C bridges.
         this.forwardingForeignExceptionsTerminatedWith = objcTerminate
+        val exceptionHandler = ExceptionHandler.Caller
 
-        val switchStateToNative = toNative && context.config.memoryModel == MemoryModel.EXPERIMENTAL
-        val exceptionHandler: ExceptionHandler
-
-        if (switchStateToNative) {
-            switchThreadState(ThreadState.Native)
-            // Note: this is suboptimal. We should forbid Kotlin exceptions thrown from native code, and use simple fatal handler here.
-            exceptionHandler = filteringExceptionHandler(ExceptionHandler.Caller, ForeignExceptionMode.default, switchThreadState = true)
-        } else {
-            exceptionHandler = ExceptionHandler.Caller
-        }
-
-        val result = call(function, args, resultLifetime, exceptionHandler)
-
-        if (switchStateToNative) {
-            switchThreadState(ThreadState.Runnable)
-        }
-
-        return result
+        return call(function, args, resultLifetime, exceptionHandler)
     }
 
     fun FunctionGenerationContext.kotlinReferenceToLocalObjC(value: LLVMValueRef) =
@@ -273,12 +254,12 @@ internal class ObjCExportCodeGenerator(
         return irFunction?.name?.asString()
     }
 
+    // Caution! Arbitrary methods shouldn't be called from Runnable thread state.
     fun FunctionGenerationContext.genSendMessage(
             returnType: LlvmParamType,
             parameterTypes: List<LlvmParamType>,
             receiver: LLVMValueRef,
             selector: String,
-            switchToNative: Boolean,
             vararg args: LLVMValueRef,
     ): LLVMValueRef {
 
@@ -286,7 +267,7 @@ internal class ObjCExportCodeGenerator(
                 returnType,
                 listOf(LlvmParamType(int8TypePtr), LlvmParamType(int8TypePtr)) + parameterTypes
         )
-        return callFromBridge(msgSender(objcMsgSendType), listOf(receiver, genSelector(selector)) + args, toNative = switchToNative)
+        return callFromBridge(msgSender(objcMsgSendType), listOf(receiver, genSelector(selector)) + args)
     }
 
     fun FunctionGenerationContext.kotlinToObjC(
@@ -775,10 +756,11 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
                 LlvmParamType(value.type, objCValueType.defaultParameterAttributes)
         )
         val nsNumberSubclass = genGetLinkedClass(namer.numberBoxName(boxClass.classId!!).binaryName)
-        val switchToNative = false // We consider these methods fast enough.
-        val instance = callFromBridge(objcAlloc, listOf(nsNumberSubclass), toNative = switchToNative)
+        // We consider this function fast enough, so don't switch thread state to Native.
+        val instance = callFromBridge(objcAlloc, listOf(nsNumberSubclass))
         val returnType = LlvmRetType(int8TypePtr)
-        ret(genSendMessage(returnType, valueParameterTypes, instance, nsNumberInitSelector, switchToNative, value))
+        // We consider these methods fast enough, so don't switch thread state to Native.
+        ret(genSendMessage(returnType, valueParameterTypes, instance, nsNumberInitSelector, value))
     }
 
     LLVMSetLinkage(converter, LLVMLinkage.LLVMPrivateLinkage)
