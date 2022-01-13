@@ -14873,6 +14873,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/ieee754"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
+        @TestMetadata("anyCastToPrimitiveCompareTo1.kt")
+        public void testAnyCastToPrimitiveCompareTo1() throws Exception {
+            runTest("compiler/testData/codegen/box/ieee754/anyCastToPrimitiveCompareTo1.kt");
+        }
+
+        @TestMetadata("anyCastToPrimitiveCompareTo2.kt")
+        public void testAnyCastToPrimitiveCompareTo2() throws Exception {
+            runTest("compiler/testData/codegen/box/ieee754/anyCastToPrimitiveCompareTo2.kt");
+        }
+
         @TestMetadata("anyToReal.kt")
         public void testAnyToReal() throws Exception {
             runTest("compiler/testData/codegen/box/ieee754/anyToReal.kt");

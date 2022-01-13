@@ -10266,6 +10266,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("recursiveBounds.kt")
+            public void testRecursiveBounds() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/recursiveBounds.kt");
+            }
+
+            @Test
             @TestMetadata("reifiedArguments.kt")
             public void testReifiedArguments() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/explicitDefinitelyNotNullableViaIntersection/reifiedArguments.kt");

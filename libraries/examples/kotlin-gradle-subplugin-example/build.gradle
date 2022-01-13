@@ -1,6 +1,11 @@
-apply plugin: 'kotlin'
-apply plugin: 'maven-publish'
-apply plugin: 'jps-compatible'
+import plugins.KotlinBuildPublishingPlugin
+
+plugins {
+    id("java-gradle-plugin")
+    id("gradle-plugin-common-configuration")
+    id("com.gradle.plugin-publish")
+    id("jps-compatible")
+}
 
 repositories {
     mavenLocal()
@@ -16,7 +21,7 @@ dependencies {
     // Use this dependency instead when building apart from the other modules:
     // compile "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlin_version"
 
-    api project(':kotlin-test::kotlin-test-junit')
+    api project(':kotlin-test:kotlin-test-junit')
 
     compileOnly kotlinStdlib()
     compileOnly project(':compiler')
@@ -34,26 +39,40 @@ dependencies {
 ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDefaultJarDepsToShadedCompiler(project, {}), {})
 // In a standalone build, you can setup the relocation with the Shadow plugin.
 
-publishing {
-    publications {
-        main(MavenPublication) {
-            artifact tasks.named("embeddable")
+// You should configure your own Gradle plugin publication!
+extensions.configure(GradlePluginDevelopmentExtension) {
+    it.setAutomatedPublishing(false)
+}
+
+gradlePlugin {
+    plugins {
+        create("gradle-subplugin-example") {
+            id = "org.jetbrains.kotlin.gradle-subplugin-example"
+            implementationClass = "example.ExampleSubplugin"
         }
     }
 }
 
-tasks.register("install") {
-    dependsOn(tasks.named("publishToMavenLocal"))
+pluginBundle {
+    plugins {
+        named("gradle-subplugin-example") {
+            id = "org.jetbrains.kotlin.gradle-subplugin-example"
+            displayName = "Kotlin Gradle subplugin example"
+        }
+    }
 }
 
-// workaround for Gradle configuration cache
-// TODO: remove it when https://github.com/gradle/gradle/pull/16945 merged into used in build Gradle version
-tasks.withType(PublishToMavenLocal) {
-    def originalTask = it
-    def serializablePublishTask =
-            tasks.register(originalTask.name + "Serializable", PublishToMavenLocalSerializable) {
-                publication = originalTask.publication
+PluginMarkersKt.publishPluginMarkers(project, true)
+
+// Disable releasing for this plugin
+// It is not intended to be released publicly
+tasks.withType(PublishToMavenRepository)
+        .configureEach {
+            if (it.name.endsWith("PublicationTo${KotlinBuildPublishingPlugin.REPOSITORY_NAME}Repository")) {
+                setEnabled(false)
             }
-    originalTask.onlyIf { false }
-    originalTask.dependsOn(serializablePublishTask)
+        }
+
+tasks.named("publishPlugins") {
+    enabled = false
 }

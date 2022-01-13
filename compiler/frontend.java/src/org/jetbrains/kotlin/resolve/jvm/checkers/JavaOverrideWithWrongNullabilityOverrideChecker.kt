@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.OverridingUtil
@@ -15,13 +16,15 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.KotlinTypePreparator
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 object JavaOverrideWithWrongNullabilityOverrideChecker : DeclarationChecker {
-    private val overridingUtilWithEnhancementUnwrapped =
-        OverridingUtil
-            .createWithTypePreparatorAndCustomSubtype(JavaNullabilityChecker.typePreparatorUnwrappingEnhancement) { subtype, supertype ->
-            !JavaNullabilityChecker.isNullableTypeAgainstNotNullTypeParameter(subtype, supertype)
-        }
+    private val typePreparatorUnwrappingEnhancement: KotlinTypePreparator = object : KotlinTypePreparator() {
+        override fun prepareType(type: KotlinTypeMarker): UnwrappedType =
+            super.prepareType(type).let { it.getEnhancementDeeply() ?: it }.unwrap()
+    }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is CallableMemberDescriptor) return
@@ -31,6 +34,18 @@ object JavaOverrideWithWrongNullabilityOverrideChecker : DeclarationChecker {
 
         for (overriddenDescriptor in descriptor.overriddenDescriptors) {
             if (overriddenDescriptor !is JavaMethodDescriptor) continue
+
+            val relatedTypeParameters = mutableSetOf<TypeParameterDescriptor>()
+            val overridingUtilWithEnhancementUnwrapped =
+                OverridingUtil
+                    .createWithTypePreparatorAndCustomSubtype(typePreparatorUnwrappingEnhancement) { subtype, supertype ->
+                        !JavaNullabilityChecker.isNullableTypeAgainstNotNullTypeParameter(subtype, supertype).also {
+                            if (it) {
+                                relatedTypeParameters.addIfNotNull(subtype.constructor.declarationDescriptor as? TypeParameterDescriptor)
+                            }
+                        }
+                    }
+
             // Skip, if even with enhancement unwrapped, it's still a valid override
             if (overridingUtilWithEnhancementUnwrapped
                     .isOverridableBy(
@@ -50,7 +65,13 @@ object JavaOverrideWithWrongNullabilityOverrideChecker : DeclarationChecker {
                     topLevelType.getEnhancementDeeply() ?: topLevelType
             })) ?: overriddenDescriptor
 
-            context.trace.report(ErrorsJvm.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE.on(declaration, descriptor, unwrappedOverridden))
+            if (relatedTypeParameters.isNotEmpty()) {
+                context.trace.report(
+                    ErrorsJvm.WRONG_TYPE_PARAMETER_NULLABILITY_FOR_JAVA_OVERRIDE.on(declaration, relatedTypeParameters.first())
+                )
+            } else {
+                context.trace.report(ErrorsJvm.WRONG_NULLABILITY_FOR_JAVA_OVERRIDE.on(declaration, descriptor, unwrappedOverridden))
+            }
 
             break
         }

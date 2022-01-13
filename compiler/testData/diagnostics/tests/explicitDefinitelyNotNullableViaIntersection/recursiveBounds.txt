@@ -1,0 +1,20 @@
+package
+
+public fun </*0*/ R : T & Any, /*1*/ T> bar(): kotlin.Unit
+public fun </*0*/ E : [ERROR : Cyclic upper bounds]> baz(): kotlin.Unit
+public fun </*0*/ T : kotlin.Comparable<T & Any>> sort1(): kotlin.Unit
+public fun </*0*/ T : kotlin.Comparable<T & Any>?> sort2(): kotlin.Unit
+
+public final class A1</*0*/ K : kotlin.Comparable<K>> {
+    public constructor A1</*0*/ K : kotlin.Comparable<K>>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class A2</*0*/ K : kotlin.Comparable<K>?> {
+    public constructor A2</*0*/ K : kotlin.Comparable<K>?>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

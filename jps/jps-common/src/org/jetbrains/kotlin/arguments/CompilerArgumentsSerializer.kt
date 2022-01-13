@@ -19,7 +19,7 @@ class CompilerArgumentsSerializerV5<T : CommonToolArguments>(override val argume
         val newInstance = arguments::class.java.getConstructor().newInstance()
         val flagArgumentsByName = CompilerArgumentsContentProspector.getFlagCompilerArgumentProperties(arguments::class)
             .mapNotNull { prop ->
-                prop.safeAs<KProperty1<T, Boolean>>()
+                prop.safeAs<KProperty1<T, Boolean?>>()
                     ?.takeIf { it.get(arguments) != it.get(newInstance) }
                     ?.get(arguments)
                     ?.let { prop.name to it }

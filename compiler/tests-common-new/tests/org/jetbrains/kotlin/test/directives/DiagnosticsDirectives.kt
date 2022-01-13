@@ -84,4 +84,8 @@ object DiagnosticsDirectives : SimpleDirectivesContainer() {
             Value determines which context slice should be checked
         """.trimIndent()
     )
+
+    val RENDER_DIAGNOSTICS_FULL_TEXT by directive(
+        description = "Render diagnostic texts to .diag.txt"
+    )
 }

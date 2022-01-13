@@ -318,7 +318,7 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
                 val name = ((functionReferenceTarget as? IrSimpleFunction)?.attributeOwnerId as? IrSimpleFunction)?.name
                         ?: functionReferenceTarget.name
                 addOverride("computeName") { irString(name.asString()) }
-                addOverride("computeFqName") { irString(functionReferenceTarget.computeFullName()) }
+                addOverride("computeFqName") { irString(getFqName()) }
 
 
                 listOfNotNull(
@@ -390,22 +390,27 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
             return BuiltFunctionReference(clazz, expression)
         }
 
+        // this value is used only for hashCode and equals, to distinguish different wrappers on same functions
         private fun getFlags() =
-                (if (referencedFunction.isSuspend) 1 else 0) + getAdaptedCallableReferenceFlags() shl 1
+                listOfNotNull(
+                        (1 shl 0).takeIf { referencedFunction.isSuspend },
+                        (1 shl 1).takeIf { hasVarargMappedToElement() },
+                        (1 shl 2).takeIf { adaptedReferenceOriginalTarget?.isSuspend == false && referencedFunction.isSuspend },
+                        (1 shl 3).takeIf { isCoercedToUnit() },
+                        (1 shl 4).takeIf { isFunInterfaceConstructorAdapter() }
+                ).sum()
 
-        private fun getAdaptedCallableReferenceFlags(): Int {
-            if (adaptedReferenceOriginalTarget == null) return 0
+        private fun getFqName() =
+                if (isFunInterfaceConstructorAdapter())
+                    referencedFunction.returnType.getClass()!!.fqNameForIrSerialization.toString()
+                else
+                    functionReferenceTarget.computeFullName()
 
-            val isVarargMappedToElementBit = if (hasVarargMappedToElement()) 1 else 0
-            val isSuspendConvertedBit =
-                    if (!adaptedReferenceOriginalTarget.isSuspend && referencedFunction.isSuspend) 1 else 0
-            val isCoercedToUnitBit =
-                    if (!adaptedReferenceOriginalTarget.returnType.isUnit() && referencedFunction.returnType.isUnit()) 1 else 0
+        private fun isFunInterfaceConstructorAdapter() =
+                referencedFunction.origin == IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR
 
-            return isVarargMappedToElementBit +
-                    (isSuspendConvertedBit shl 1) +
-                    (isCoercedToUnitBit shl 2)
-        }
+        private fun isCoercedToUnit() =
+                adaptedReferenceOriginalTarget?.returnType?.isUnit() == true && referencedFunction.returnType.isUnit()
 
         private fun hasVarargMappedToElement(): Boolean {
             if (adaptedReferenceOriginalTarget == null) return false

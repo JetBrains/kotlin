@@ -176,7 +176,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testBuildReportSmokeTestForConfigurationCache(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
-            val buildOptions = defaultBuildOptions.copy(buidReport = true)
+            val buildOptions = defaultBuildOptions.copy(buildReport = true)
             build("assemble", buildOptions = buildOptions) {
                 assertOutputContains("Kotlin build report is written to")
             }
