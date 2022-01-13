@@ -154,6 +154,7 @@ FILE fqName:<root> fileName:/ImplicitReceiverStack.kt
     FUN name:iterator visibility:public modality:FINAL <> ($this:<root>.PersistentImplicitReceiverStack) returnType:kotlin.collections.Iterator<<root>.ImplicitReceiverValue<*>> [operator]
       overridden:
         public abstract fun iterator (): kotlin.collections.Iterator<<root>.ImplicitReceiverValue<*>> [fake_override,operator] declared in <root>.ImplicitReceiverStack
+        public abstract fun iterator (): kotlin.collections.Iterator<T of kotlin.collections.Iterable> [operator] declared in kotlin.collections.Iterable
       $this: VALUE_PARAMETER name:<this> type:<root>.PersistentImplicitReceiverStack
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun iterator (): kotlin.collections.Iterator<<root>.ImplicitReceiverValue<*>> [operator] declared in <root>.PersistentImplicitReceiverStack'

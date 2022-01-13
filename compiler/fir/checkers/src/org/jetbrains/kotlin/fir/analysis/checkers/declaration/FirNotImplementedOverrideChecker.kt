@@ -24,12 +24,10 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembers
-import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
-import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembersWithBaseScope
+import org.jetbrains.kotlin.fir.scopes.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.util.ImplementationStatus
 
@@ -58,10 +56,16 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         fun collectSymbol(symbol: FirCallableSymbol<*>) {
             val delegatedWrapperData = symbol.delegatedWrapperData
             if (delegatedWrapperData != null) {
-                val directOverriddenMembers = classScope.getDirectOverriddenMembers(
-                    symbol,
-                    unwrapIntersectionAndSubstitutionOverride = true
+                val directOverriddenMembersWithBaseScope = classScope.getDirectOverriddenMembersWithBaseScope(
+                    symbol
                 )
+
+                @Suppress("UNCHECKED_CAST")
+                val filteredOverriddenMembers = when (symbol) {
+                    is FirNamedFunctionSymbol -> filterOutOverriddenFunctions(directOverriddenMembersWithBaseScope as List<MemberWithBaseScope<FirNamedFunctionSymbol>>)
+                    is FirPropertySymbol -> filterOutOverriddenProperties(directOverriddenMembersWithBaseScope as List<MemberWithBaseScope<FirPropertySymbol>>)
+                    else -> directOverriddenMembersWithBaseScope
+                }.map { it.member }
 
                 val delegatedTo = delegatedWrapperData.wrapped.unwrapFakeOverrides().symbol
 
@@ -69,8 +73,8 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
                     manyImplementationsDelegationSymbols.add(symbol)
                 }
 
-                val firstFinal = directOverriddenMembers.firstOrNull { it.isFinal }
-                val firstOpen = directOverriddenMembers.firstOrNull { it.isOpen && delegatedTo != it.unwrapFakeOverrides() }
+                val firstFinal = filteredOverriddenMembers.firstOrNull { it.isFinal }
+                val firstOpen = filteredOverriddenMembers.firstOrNull { it.isOpen && delegatedTo != it.unwrapFakeOverrides() }
 
                 when {
                     firstFinal != null ->

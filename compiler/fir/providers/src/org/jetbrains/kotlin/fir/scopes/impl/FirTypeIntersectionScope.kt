@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
-import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.name.Name
@@ -58,9 +55,10 @@ class FirTypeIntersectionScope private constructor(
             return
         }
 
-        for ((chosenSymbol, overriddenMembers) in callablesWithOverridden) {
-            overriddenSymbols[chosenSymbol] = overriddenMembers
-            processor(chosenSymbol)
+        for (resultOfIntersection in callablesWithOverridden) {
+            val symbol = resultOfIntersection.chosenSymbol
+            overriddenSymbols[symbol] = resultOfIntersection.overriddenMembers
+            processor(symbol)
         }
     }
 

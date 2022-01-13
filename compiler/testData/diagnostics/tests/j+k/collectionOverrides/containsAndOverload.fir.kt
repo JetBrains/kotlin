@@ -12,10 +12,10 @@ abstract class KA : A() {
 }
 
 fun foo(a: A, ka: KA) {
-    a.<!OVERLOAD_RESOLUTION_AMBIGUITY!>contains<!>("")
-    a.<!NONE_APPLICABLE!>contains<!>(1)
-    "" <!OVERLOAD_RESOLUTION_AMBIGUITY!>in<!> a
-    1 <!NONE_APPLICABLE!>in<!> a
+    a.contains("")
+    a.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
+    "" in a
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in a
 
     ka.contains("")
     ka.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)

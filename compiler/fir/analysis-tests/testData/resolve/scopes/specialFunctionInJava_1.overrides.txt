@@ -1,0 +1,18 @@
+Some:
+  [Enhancement]: public abstract operator fun toByte(): R|kotlin/Byte| from Java enhancement scope for /Some [id: 0]
+    [Library]: public abstract fun toByte(): R|kotlin/Byte| from Use site scope of kotlin/Number [id: 1]
+    [RenamedForOverride]: public abstract fun toByte(): R|kotlin/Byte| from Java enhancement scope for /MyNumber [id: 2]
+      [Enhancement]: public abstract fun byteValue(): R|kotlin/Byte| from Java enhancement scope for /MyBaseNumber [id: 3]
+  [IntersectionOverride]: public abstract fun toShort(): R|kotlin/Short| from Java enhancement scope for /Some [id: 0]
+    [Library]: public abstract fun toShort(): R|kotlin/Short| from Use site scope of kotlin/Number [id: 1]
+    [RenamedForOverride]: public abstract fun toShort(): R|kotlin/Short| from Java enhancement scope for /MyNumber [id: 2]
+      [Enhancement]: public abstract fun shortValue(): R|kotlin/Short| from Java enhancement scope for /MyBaseNumber [id: 3]
+  [IntersectionOverride]: public abstract fun toInt(): R|kotlin/Int| from Java enhancement scope for /Some [id: 0]
+    [Library]: public abstract fun toInt(): R|kotlin/Int| from Use site scope of kotlin/Number [id: 1]
+    [RenamedForOverride]: public abstract fun toInt(): R|kotlin/Int| from Java enhancement scope for /MyNumber [id: 2]
+  [Library]: public abstract fun toLong(): R|kotlin/Long| from Java enhancement scope for /Some [id: 0]
+
+MyNumber:
+  [Enhancement]: public abstract fun byteValue(): R|kotlin/Byte| from Java enhancement scope for /MyNumber [id: 0]
+    [Enhancement]: public abstract fun byteValue(): R|kotlin/Byte| from Java enhancement scope for /MyBaseNumber [id: 1]
+

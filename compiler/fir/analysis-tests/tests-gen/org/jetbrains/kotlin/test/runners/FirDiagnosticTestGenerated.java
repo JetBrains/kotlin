@@ -3483,6 +3483,100 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
         }
 
         @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/scopes")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Scopes {
+            @Test
+            public void testAllFilesPresentInScopes() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/scopes"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("explicitOverrideOfTwoMembers.kt")
+            public void testExplicitOverrideOfTwoMembers() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/scopes/explicitOverrideOfTwoMembers.kt");
+            }
+
+            @Test
+            @TestMetadata("explicitOverrideOfTwoMembers_java.kt")
+            public void testExplicitOverrideOfTwoMembers_java() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/scopes/explicitOverrideOfTwoMembers_java.kt");
+            }
+
+            @Test
+            @TestMetadata("getterOverrideAndKotlinProperty.kt")
+            public void testGetterOverrideAndKotlinProperty() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/scopes/getterOverrideAndKotlinProperty.kt");
+            }
+
+            @Test
+            @TestMetadata("intersectionOverrideOfTwoMembers.kt")
+            public void testIntersectionOverrideOfTwoMembers() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/scopes/intersectionOverrideOfTwoMembers.kt");
+            }
+
+            @Test
+            @TestMetadata("intersectionOverrideOfTwoMembers_java.kt")
+            public void testIntersectionOverrideOfTwoMembers_java() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/scopes/intersectionOverrideOfTwoMembers_java.kt");
+            }
+
+            @Test
+            @TestMetadata("javaFunctionAndKotlinPropertyFromDifferentSupertypes.kt")
+            public void testJavaFunctionAndKotlinPropertyFromDifferentSupertypes() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/scopes/javaFunctionAndKotlinPropertyFromDifferentSupertypes.kt");
+            }
+
+            @Test
+            @TestMetadata("kotlinAccessorsLikeFunctionsThrowJavaClass.kt")
+            public void testKotlinAccessorsLikeFunctionsThrowJavaClass() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/scopes/kotlinAccessorsLikeFunctionsThrowJavaClass.kt");
+            }
+
+            @Test
+            @TestMetadata("noIntersectionOverrideOfTwoMembers.kt")
+            public void testNoIntersectionOverrideOfTwoMembers() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/scopes/noIntersectionOverrideOfTwoMembers.kt");
+            }
+
+            @Test
+            @TestMetadata("noIntersectionOverrideOfTwoMembers_java.kt")
+            public void testNoIntersectionOverrideOfTwoMembers_java() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/scopes/noIntersectionOverrideOfTwoMembers_java.kt");
+            }
+
+            @Test
+            @TestMetadata("publicJavaAndPrivateKotlinVar.kt")
+            public void testPublicJavaAndPrivateKotlinVar() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/scopes/publicJavaAndPrivateKotlinVar.kt");
+            }
+
+            @Test
+            @TestMetadata("specialFunctionInJava_1.kt")
+            public void testSpecialFunctionInJava_1() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/scopes/specialFunctionInJava_1.kt");
+            }
+
+            @Test
+            @TestMetadata("specialFunctionInJava_2.kt")
+            public void testSpecialFunctionInJava_2() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/scopes/specialFunctionInJava_2.kt");
+            }
+
+            @Test
+            @TestMetadata("specialFunctionInJava_3.kt")
+            public void testSpecialFunctionInJava_3() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/scopes/specialFunctionInJava_3.kt");
+            }
+
+            @Test
+            @TestMetadata("specialFunctionInJava_4.kt")
+            public void testSpecialFunctionInJava_4() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/scopes/specialFunctionInJava_4.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts")
         @TestDataPath("$PROJECT_ROOT")
         public class Smartcasts {

@@ -1,0 +1,21 @@
+C:
+  [Java]: public open field x: R|kotlin/Int| from Java enhancement scope for /C [id: 0]
+  [Java]: private open field y: R|kotlin/Int| from Java enhancement scope for /C [id: 0]
+
+D:
+  [Java]: public open field x: R|kotlin/Int| from Java enhancement scope for /D [id: 0]
+  [IntersectionOverride]: public abstract val x: R|kotlin/Int| from Java enhancement scope for /D [id: 0]
+    [Source]: public abstract val x: R|kotlin/Int| from Use site scope of /A [id: 1]
+    [Source]: public abstract val x: R|kotlin/String| from Use site scope of /B [id: 2]
+  [Java]: private open field y: R|kotlin/Int| from Java enhancement scope for /D [id: 0]
+  [Synthetic]: public abstract val y: R|kotlin/Int| from Java enhancement scope for /D [id: 0]
+    [Source]: public abstract val y: R|kotlin/Int| from Use site scope of /A [id: 1]
+    [Source]: public abstract val y: R|kotlin/Int| from Use site scope of /B [id: 2]
+  [Enhancement]: public abstract fun getX(): R|ft<kotlin/Any, kotlin/Any?>| from Java enhancement scope for /D [id: 0]
+
+E:
+  [IntersectionOverride]: public abstract val x: R|kotlin/Int| from Java enhancement scope for /E [id: 0]
+    [Source]: public abstract val x: R|kotlin/Int| from Use site scope of /A [id: 1]
+    [Source]: public abstract val x: R|kotlin/String| from Use site scope of /B [id: 2]
+  [Enhancement]: public abstract fun getX(): R|ft<kotlin/Any, kotlin/Any?>| from Java enhancement scope for /E [id: 0]
+

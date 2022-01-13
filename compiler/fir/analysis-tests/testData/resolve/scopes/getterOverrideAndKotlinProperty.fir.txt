@@ -1,0 +1,24 @@
+FILE: B.kt
+    public abstract class B : R|A| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val foo: R|kotlin/Int| = Int(1)
+            private get(): R|kotlin/Int|
+
+        public open override fun getFoo(): R|kotlin/String| {
+            ^getFoo String(foo)
+        }
+
+    }
+FILE: main.kt
+    public final class D : R|C| {
+        public constructor(): R|D| {
+            super<R|C|>()
+        }
+
+    }
+    public final fun test(d: R|D|): R|kotlin/Unit| {
+        R|<local>/d|.R|/B.foo|.R|kotlin/String.length|
+    }

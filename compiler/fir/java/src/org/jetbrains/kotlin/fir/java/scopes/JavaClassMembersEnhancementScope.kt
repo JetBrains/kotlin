@@ -7,13 +7,15 @@ package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.initialSignatureAttr
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembers
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
@@ -22,24 +24,18 @@ class JavaClassMembersEnhancementScope(
     private val owner: FirRegularClassSymbol,
     private val useSiteMemberScope: JavaClassUseSiteMemberScope,
 ) : FirTypeScope() {
-    private val overriddenFunctions = mutableMapOf<FirNamedFunctionSymbol, Collection<FirNamedFunctionSymbol>>()
-    private val overriddenProperties = mutableMapOf<FirPropertySymbol, Collection<FirPropertySymbol>>()
+    private val enhancedToOriginalFunctions = mutableMapOf<FirNamedFunctionSymbol, FirNamedFunctionSymbol>()
+    private val enhancedToOriginalProperties = mutableMapOf<FirPropertySymbol, FirPropertySymbol>()
 
-    private val overrideBindCache = mutableMapOf<Name, Map<FirCallableSymbol<*>?, List<FirCallableDeclaration>>>()
     private val signatureEnhancement = FirSignatureEnhancement(owner.fir, session) {
-        overriddenMembersForEnhancement(name)
+        overriddenMembers()
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         useSiteMemberScope.processPropertiesByName(name) process@{ original ->
             val enhancedPropertySymbol = signatureEnhancement.enhancedProperty(original, name)
-            val originalFir = original.fir
-            if (originalFir is FirProperty && enhancedPropertySymbol is FirPropertySymbol) {
-                val enhancedProperty = enhancedPropertySymbol.fir
-                overriddenProperties[enhancedPropertySymbol] =
-                    originalFir
-                        .overriddenMembers(enhancedProperty.name)
-                        .mapNotNull { it.symbol as? FirPropertySymbol }
+            if (original is FirPropertySymbol && enhancedPropertySymbol is FirPropertySymbol) {
+                enhancedToOriginalProperties[enhancedPropertySymbol] = original
             }
 
             processor(enhancedPropertySymbol)
@@ -55,9 +51,7 @@ class JavaClassMembersEnhancementScope(
             val enhancedFunctionSymbol = enhancedFunction?.symbol ?: symbol
 
             if (enhancedFunctionSymbol is FirNamedFunctionSymbol) {
-                overriddenFunctions[enhancedFunctionSymbol] = original.fir
-                    .overriddenMembers(enhancedFunctionSymbol.fir.name)
-                    .mapNotNull { it.symbol as? FirNamedFunctionSymbol }
+                enhancedToOriginalFunctions[enhancedFunctionSymbol] = original
                 processor(enhancedFunctionSymbol)
             }
         }
@@ -65,33 +59,12 @@ class JavaClassMembersEnhancementScope(
         return super.processFunctionsByName(name, processor)
     }
 
-    private fun FirCallableDeclaration.overriddenMembersForEnhancement(name: Name): List<FirCallableDeclaration> {
-        val directlyOverriddensFromScopeFir = overriddenMembers(name)
-        val superTypesScope = useSiteMemberScope.superTypesScope as? FirTypeIntersectionScope ?: return directlyOverriddensFromScopeFir
-
-        val directlyOverriddensFromScope = directlyOverriddensFromScopeFir.map { it.symbol }
-        val result = mutableSetOf<FirCallableSymbol<*>>()
-        for (intersectedOverriddenSymbol in directlyOverriddensFromScope) {
-            val newOverriddens = superTypesScope.getDirectOverriddenSymbols(intersectedOverriddenSymbol).map { it.member }
-            if (newOverriddens.isNotEmpty()) {
-                result += newOverriddens
-            } else {
-                result += intersectedOverriddenSymbol
-            }
-        }
-        return result.map { it.fir }
-    }
-
-    private fun FirCallableDeclaration.overriddenMembers(name: Name): List<FirCallableDeclaration> {
-        val backMap = overrideBindCache.getOrPut(name) {
-            val result = mutableMapOf<FirCallableSymbol<*>?, MutableList<FirCallableDeclaration>>()
-            for ((key, value) in useSiteMemberScope.overrideByBase) {
-                val resultItem = result.getOrPut(value) { mutableListOf() }
-                resultItem.add(key.fir)
-            }
-            result
-        }
-        return backMap[this.symbol] ?: emptyList()
+    private fun FirCallableDeclaration.overriddenMembers(): List<FirCallableDeclaration> {
+        return when (val symbol = this.symbol) {
+            is FirNamedFunctionSymbol -> useSiteMemberScope.getDirectOverriddenMembers(symbol)
+            is FirPropertySymbol -> useSiteMemberScope.getDirectOverriddenProperties(symbol)
+            else -> emptyList()
+        }.map { it.fir }
     }
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
@@ -110,17 +83,31 @@ class JavaClassMembersEnhancementScope(
         processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction =
         doProcessDirectOverriddenCallables(
-            functionSymbol, processor, overriddenFunctions, useSiteMemberScope,
-            FirTypeScope::processDirectOverriddenFunctionsWithBaseScope
+            functionSymbol, processor, enhancedToOriginalFunctions, FirTypeScope::processDirectOverriddenFunctionsWithBaseScope
         )
 
     override fun processDirectOverriddenPropertiesWithBaseScope(
         propertySymbol: FirPropertySymbol,
         processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction = doProcessDirectOverriddenCallables(
-        propertySymbol, processor, overriddenProperties, useSiteMemberScope,
-        FirTypeScope::processDirectOverriddenPropertiesWithBaseScope
+        propertySymbol, processor, enhancedToOriginalProperties, FirTypeScope::processDirectOverriddenPropertiesWithBaseScope
     )
+
+    private fun <S : FirCallableSymbol<*>> doProcessDirectOverriddenCallables(
+        callableSymbol: S,
+        processor: (S, FirTypeScope) -> ProcessorAction,
+        enhancedToOriginalMap: Map<S, S>,
+        processDirectOverriddenCallables: FirTypeScope.(S, (S, FirTypeScope) -> ProcessorAction) -> ProcessorAction
+    ): ProcessorAction {
+        val unwrappedSymbol = if (callableSymbol.origin == FirDeclarationOrigin.RenamedForOverride) {
+            @Suppress("UNCHECKED_CAST")
+            callableSymbol.fir.initialSignatureAttr?.symbol as? S ?: callableSymbol
+        } else {
+            callableSymbol
+        }
+        val original = enhancedToOriginalMap[unwrappedSymbol] ?: return ProcessorAction.NONE
+        return useSiteMemberScope.processDirectOverriddenCallables(original, processor)
+    }
 
     override fun getCallableNames(): Set<Name> {
         return useSiteMemberScope.getCallableNames()

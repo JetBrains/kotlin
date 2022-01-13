@@ -1,0 +1,11 @@
+FILE: main.kt
+    public final fun test(map: R|SomeMap<kotlin/Int, kotlin/String>|): R|kotlin/Unit| {
+        R|<local>/map|.R|SubstitutionOverride</SomeMap.containsKey: R|kotlin/Boolean|>|(Int(1))
+        R|<local>/map|.<Inapplicable(INAPPLICABLE): /SomeMap.containsKey>#(String())
+        R|<local>/map|.R|SubstitutionOverride</SomeMap.containsValue: R|kotlin/Boolean|>|(String())
+        R|<local>/map|.<Inapplicable(INAPPLICABLE): /SomeMap.containsValue>#(Int(1))
+        R|<local>/map|.R|SubstitutionOverride</SomeMap.get: R|kotlin/String?|>|(Int(1))
+        R|<local>/map|.<Inapplicable(INAPPLICABLE): /SomeMap.get>#(String())
+        R|<local>/map|.R|SubstitutionOverride</SomeMap.remove: R|kotlin/String?|>|(Int(1))
+        R|<local>/map|.<Inapplicable(INAPPLICABLE): /SomeMap.remove>#(String())
+    }

@@ -1,0 +1,23 @@
+FILE: main.kt
+    public abstract class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open val x: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(1)
+            }
+
+        public open val y: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(2)
+            }
+
+    }
+    public final class DImpl : R|D| {
+        public constructor(): R|DImpl| {
+            super<R|D|>()
+        }
+
+    }

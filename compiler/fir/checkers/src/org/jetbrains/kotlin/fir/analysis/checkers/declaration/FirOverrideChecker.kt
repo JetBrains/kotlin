@@ -333,7 +333,14 @@ object FirOverrideChecker : FirClassChecker() {
         with(FirOptInUsageBaseChecker) {
             val overriddenExperimentalities = mutableSetOf<Experimentality>()
             val session = context.session
-            for (overriddenMemberSymbol in overriddenMemberSymbols) {
+            val overriddenSymbolsWithUnwrappedIntersectionOverrides = overriddenMemberSymbols.flatMap {
+                when (it) {
+                    is FirIntersectionOverridePropertySymbol -> it.intersections
+                    is FirIntersectionOverrideFunctionSymbol -> it.intersections
+                    else -> listOf(it)
+                }
+            }
+            for (overriddenMemberSymbol in overriddenSymbolsWithUnwrappedIntersectionOverrides) {
                 overriddenMemberSymbol.loadExperimentalitiesFromAnnotationTo(session, overriddenExperimentalities)
             }
             reportNotAcceptedOverrideExperimentalities(

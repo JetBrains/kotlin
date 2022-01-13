@@ -55,12 +55,9 @@ class FirKotlinScopeProvider(
                 useSiteSuperType.scopeForSupertype(useSiteSession, scopeSession, klass)
             }
             FirClassUseSiteMemberScope(
-                klass.classId,
+                klass,
                 useSiteSession,
-                FirTypeIntersectionScope.prepareIntersectionScope(
-                    useSiteSession, FirStandardOverrideChecker(useSiteSession), scopes,
-                    klass.defaultType(),
-                ),
+                scopes,
                 decoratedDeclaredMemberScope,
             )
         }

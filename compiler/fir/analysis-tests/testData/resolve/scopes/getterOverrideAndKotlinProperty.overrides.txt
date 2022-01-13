@@ -1,0 +1,15 @@
+A:
+  [Enhancement]: public abstract fun getFoo(): R|ft<kotlin/String, kotlin/String?>| from Java enhancement scope for /A [id: 0]
+
+B:
+  [Source]: public open override fun getFoo(): R|kotlin/String| from Use site scope of /B [id: 0]
+    [Enhancement]: public abstract fun getFoo(): R|ft<kotlin/String, kotlin/String?>| from Java enhancement scope for /A [id: 1]
+
+C:
+  [Source]: public open override fun getFoo(): R|kotlin/String| from Java enhancement scope for /C [id: 0]
+    [Enhancement]: public abstract fun getFoo(): R|ft<kotlin/String, kotlin/String?>| from Java enhancement scope for /A [id: 1]
+
+D:
+  [Source]: public open override fun getFoo(): R|kotlin/String| from Use site scope of /D [id: 0]
+    [Enhancement]: public abstract fun getFoo(): R|ft<kotlin/String, kotlin/String?>| from Java enhancement scope for /A [id: 1]
+

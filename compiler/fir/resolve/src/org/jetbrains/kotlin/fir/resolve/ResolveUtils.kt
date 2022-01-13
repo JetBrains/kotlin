@@ -487,6 +487,7 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(session: FirSession): Forbidd
             }
         }
         FirDeclarationOrigin.Synthetic -> null
+        FirDeclarationOrigin.RenamedForOverride -> null
         is FirDeclarationOrigin.Plugin -> null // TODO: figure out what to do with plugin generated functions
     }
 }

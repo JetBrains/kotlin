@@ -7,53 +7,86 @@ package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.isStatic
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 class FirClassUseSiteMemberScope(
-    classId: ClassId,
+    klass: FirClass,
     session: FirSession,
-    superTypesScope: FirTypeScope,
+    superTypeScopes: List<FirTypeScope>,
     declaredMemberScope: FirContainingNamesAwareScope
-) : AbstractFirUseSiteMemberScope(classId, session, FirStandardOverrideChecker(session), superTypesScope, declaredMemberScope) {
-
-    override fun doProcessProperties(name: Name): Collection<FirVariableSymbol<*>> {
-        val seen = mutableSetOf<FirVariableSymbol<*>>()
-        val result = mutableSetOf<FirVariableSymbol<*>>()
-        declaredMemberScope.processPropertiesByName(name) l@{
-            if (it.isStatic) return@l
-            if (it is FirPropertySymbol) {
-                val directOverridden = computeDirectOverridden(it.fir)
-                this@FirClassUseSiteMemberScope.directOverriddenProperties[it] = directOverridden
+) : AbstractFirUseSiteMemberScope(
+    klass.classId,
+    session,
+    FirStandardOverrideChecker(session),
+    superTypeScopes,
+    klass.defaultType(),
+    declaredMemberScope
+) {
+    override fun collectProperties(name: Name): Collection<FirVariableSymbol<*>> {
+        return buildList {
+            val explicitlyDeclaredProperties = mutableSetOf<FirVariableSymbol<*>>()
+            declaredMemberScope.processPropertiesByName(name) { symbol ->
+                if (symbol.isStatic) return@processPropertiesByName
+                if (symbol is FirPropertySymbol) {
+                    val directOverridden = computeDirectOverriddenForDeclaredProperty(symbol)
+                    directOverriddenProperties[symbol] = directOverridden
+                }
+                explicitlyDeclaredProperties += symbol
+                add(symbol)
             }
-            seen += it
-            result += it
-        }
 
-        superTypesScope.processPropertiesByName(name) {
-            val overriddenBy = it.getOverridden(seen)
-            if (overriddenBy == null) {
-                result += it
+
+            val (properties, fields) = getPropertiesAndFieldsFromSupertypesByName(name)
+            for (propertyFromSupertype in properties) {
+                val superSymbol = propertyFromSupertype.extractSomeSymbolFromSuperType()
+                val overriddenBy = superSymbol.getOverridden(explicitlyDeclaredProperties)
+                if (overriddenBy == null) {
+                    add(propertyFromSupertype.chosenSymbol)
+                }
+            }
+            addAll(fields)
+        }
+    }
+
+    private fun computeDirectOverriddenForDeclaredProperty(declaredPropertySymbol: FirPropertySymbol): List<FirTypeIntersectionScopeContext.ResultOfIntersection<FirPropertySymbol>> {
+        val result = mutableListOf<FirTypeIntersectionScopeContext.ResultOfIntersection<FirPropertySymbol>>()
+        val declaredProperty = declaredPropertySymbol.fir
+        for (resultOfIntersection in getPropertiesAndFieldsFromSupertypesByName(declaredPropertySymbol.name).first) {
+            val symbolFromSupertype = resultOfIntersection.extractSomeSymbolFromSuperType()
+            if (overrideChecker.isOverriddenProperty(declaredProperty, symbolFromSupertype.fir)) {
+                result.add(resultOfIntersection)
             }
         }
         return result
     }
 
-    private fun computeDirectOverridden(property: FirProperty): MutableList<FirPropertySymbol> {
-        val result = mutableListOf<FirPropertySymbol>()
-        superTypesScope.processPropertiesByName(property.name) l@{ superSymbol ->
-            if (superSymbol !is FirPropertySymbol) return@l
-            if (overrideChecker.isOverriddenProperty(property, superSymbol.fir)) {
-                result.add(superSymbol)
+    private fun getPropertiesAndFieldsFromSupertypesByName(name: Name): Pair<List<FirTypeIntersectionScopeContext.ResultOfIntersection<FirPropertySymbol>>, List<FirFieldSymbol>> {
+        propertiesFromSupertypes[name]?.let {
+            return it to fieldsFromSupertypes.getValue(name)
+        }
+
+        val fields = mutableListOf<FirFieldSymbol>()
+        val properties = supertypeScopeContext.collectCallables<FirPropertySymbol>(name) { propertyName, processor ->
+            processPropertiesByName(propertyName) {
+                when (it) {
+                    is FirPropertySymbol -> processor(it)
+                    is FirFieldSymbol -> fields += it
+                    else -> {}
+                }
             }
         }
-        return result
+        propertiesFromSupertypes[name] = properties
+        fieldsFromSupertypes[name] = fields
+        return properties to fields
+    }
+
+    override fun FirNamedFunctionSymbol.isVisibleInCurrentClass(): Boolean {
+        return true
     }
 
     override fun toString(): String {

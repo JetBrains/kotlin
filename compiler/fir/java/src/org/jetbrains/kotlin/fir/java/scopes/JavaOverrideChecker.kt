@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 class JavaOverrideChecker internal constructor(
     private val session: FirSession,
     private val javaTypeParameterStack: JavaTypeParameterStack,
-    private val baseScope: FirTypeScope?,
+    private val baseScopes: List<FirTypeScope>?,
     private val considerReturnTypeKinds: Boolean,
 ) : FirAbstractOverrideChecker() {
     private val context: ConeTypeContext = session.typeContext
@@ -121,7 +121,7 @@ class JavaOverrideChecker internal constructor(
 
         var foundNonPrimitiveOverridden = false
 
-        baseScope?.processOverriddenFunctions(symbol) {
+        baseScopes?.processOverriddenFunctions(symbol) {
             val type = it.fir.returnTypeRef.toConeKotlinTypeProbablyFlexible(session, javaTypeParameterStack)
             if (!type.isPrimitiveInJava(isReturnType = true)) {
                 foundNonPrimitiveOverridden = true

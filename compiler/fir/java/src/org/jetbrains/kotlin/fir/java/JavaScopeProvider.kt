@@ -97,18 +97,10 @@ object JavaScopeProvider : FirScopeProvider() {
             }
 
             JavaClassUseSiteMemberScope(
-                regularClass, useSiteSession,
-                FirTypeIntersectionScope.prepareIntersectionScope(
-                    useSiteSession,
-                    JavaOverrideChecker(
-                        useSiteSession,
-                        regularClass.javaTypeParameterStack,
-                        baseScope = null,
-                        considerReturnTypeKinds = false,
-                    ),
-                    superTypeScopes,
-                    regularClass.defaultType(),
-                ), declaredScope
+                regularClass,
+                useSiteSession,
+                superTypeScopes,
+                declaredScope
             )
         }
     }

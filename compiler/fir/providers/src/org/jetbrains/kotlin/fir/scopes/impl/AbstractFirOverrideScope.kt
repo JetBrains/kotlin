@@ -56,3 +56,10 @@ internal fun FirOverrideChecker.similarFunctionsOrBothProperties(
         else -> error("Unknown fir callable type: $overrideCandidate, $baseDeclaration")
     }
 }
+
+fun FirOverrideChecker.similarFunctionsOrBothProperties(
+    overrideCandidate: FirCallableSymbol<*>,
+    baseDeclaration: FirCallableSymbol<*>
+): Boolean {
+    return similarFunctionsOrBothProperties(overrideCandidate.fir, baseDeclaration.fir)
+}

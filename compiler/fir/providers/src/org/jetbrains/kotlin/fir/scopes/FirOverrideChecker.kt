@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.scopes
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 
 interface FirOverrideChecker {
     fun isOverriddenFunction(
@@ -20,3 +21,8 @@ interface FirOverrideChecker {
         baseDeclaration: FirProperty
     ): Boolean
 }
+
+fun FirOverrideChecker.isOverriddenFunction(
+    overrideCandidate: FirNamedFunctionSymbol,
+    baseDeclaration: FirNamedFunctionSymbol
+): Boolean = isOverriddenFunction(overrideCandidate.fir, baseDeclaration.fir)
