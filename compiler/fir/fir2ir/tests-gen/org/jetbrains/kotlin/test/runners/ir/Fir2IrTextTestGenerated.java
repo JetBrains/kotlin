@@ -2543,6 +2543,12 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
         }
 
         @Test
+        @TestMetadata("lambdaInEnumEntryConstructorCall.kt")
+        public void testLambdaInEnumEntryConstructorCall() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/lambdaInEnumEntryConstructorCall.kt");
+        }
+
+        @Test
         @TestMetadata("localClassUsedBeforeDeclaration.kt")
         public void testLocalClassUsedBeforeDeclaration() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/localClassUsedBeforeDeclaration.kt");

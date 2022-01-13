@@ -336,7 +336,10 @@ internal class ClassMemberGenerator(
                     it.dispatchReceiver = visitor.convertToIrExpression(firDispatchReceiver)
                 }
                 with(callGenerator) {
-                    it.applyCallArguments(this@toIrDelegatingConstructorCall, annotationMode = false)
+                    declarationStorage.enterScope(irConstructorSymbol.owner)
+                    val result = it.applyCallArguments(this@toIrDelegatingConstructorCall, annotationMode = false)
+                    declarationStorage.leaveScope(irConstructorSymbol.owner)
+                    result
                 }
             }
         }
