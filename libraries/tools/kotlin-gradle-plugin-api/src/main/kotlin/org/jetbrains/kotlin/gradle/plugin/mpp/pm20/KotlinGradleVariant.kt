@@ -56,6 +56,7 @@ interface KotlinNativeVariant : KotlinGradleVariant {
 
 interface SingleMavenPublishedModuleHolder {
     fun assignMavenPublication(publication: MavenPublication)
+    fun whenPublicationAssigned(handlePublication: (MavenPublication) -> Unit)
     val defaultPublishedModuleSuffix: String?
     val publishedMavenModuleCoordinates: PublishedModuleCoordinatesProvider
 }

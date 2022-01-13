@@ -16,7 +16,9 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
@@ -27,7 +29,7 @@ import org.jetbrains.kotlin.project.model.KotlinModuleDependency
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 
 internal open class LegacyMappedVariant(
-    private val compilation: KotlinCompilation<*>,
+    internal val compilation: KotlinCompilation<*>,
 ) : KotlinGradleVariant {
     private val fragmentForDefaultSourceSet =
         (compilation.defaultSourceSet as FragmentMappedKotlinSourceSet).underlyingFragment
@@ -149,7 +151,11 @@ internal class LegacyMappedVariantWithRuntime(private val compilationWithRuntime
         else project.configurations.maybeCreate(disambiguateName("runtimeElements"))
 }
 
-internal fun mapTargetCompilationsToKpmVariants(target: KotlinTarget) {
+internal enum class PublicationRegistrationMode {
+    IMMEDIATE, AFTER_EVALUATE
+}
+
+internal fun mapTargetCompilationsToKpmVariants(target: AbstractKotlinTarget, publicationRegistration: PublicationRegistrationMode) {
     target.compilations.all { compilation ->
         val variant = if (compilation is KotlinCompilationToRunnableFiles)
             LegacyMappedVariantWithRuntime(compilation)
@@ -160,17 +166,39 @@ internal fun mapTargetCompilationsToKpmVariants(target: KotlinTarget) {
 
         val module = defaultSourceSetFragment.containingModule
         module.fragments.add(variant)
+    }
 
-        if (compilation.isMain()) {
-            val moduleHolder = DefaultSingleMavenPublishedModuleHolder(module, target.name)
+    val whenPublicationShouldRegister: (() -> Unit) -> Unit = when (publicationRegistration) {
+        PublicationRegistrationMode.IMMEDIATE -> ::run
+        PublicationRegistrationMode.AFTER_EVALUATE -> {
+            { target.project.whenEvaluated { it() } }
+        }
+    }
+
+    whenPublicationShouldRegister {
+        val mainModule = target.project.kpmModules.getByName(KotlinGradleModule.MAIN_MODULE_NAME)
+        target.kotlinComponents.forEach { kotlinComponent ->
+            val moduleHolder = DefaultSingleMavenPublishedModuleHolder(
+                mainModule,
+                kotlinComponent.defaultArtifactId.removePrefix(target.project.name.toLowerCase() + "-")
+            )
+            val variant = mainModule.variants.withType<LegacyMappedVariant>().single {
+                it.compilation == target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+            }
+            val usages = when (kotlinComponent) { // unfortunately, there's no common supertype with `usages`
+                is KotlinVariant -> kotlinComponent.usages
+                is JointAndroidKotlinTargetComponent -> kotlinComponent.usages
+                else -> error("unexpected type of kotlinComponent in legacy variant mapping: ${kotlinComponent.javaClass}")
+            }
+            val configurationNames = usages.map { it.dependencyConfigurationName }
+
+            // FIXME: apply overrides for attributes and artifacts from the DefaultKotlinUsageContext!
+            // FIXME: include additional variants into project structure metadata?
+
             VariantPublishingConfigurator.get(target.project).configurePublishing(
                 variant,
                 moduleHolder,
-                listOfNotNull(
-                    // FIXME: use the target's kotlinComponents to build the configurations
-                    variant.apiElementsConfiguration.name,
-                    if (variant is KotlinGradleVariantWithRuntime) variant.runtimeElementsConfiguration.name else null
-                )
+                configurationNames
             )
         }
     }

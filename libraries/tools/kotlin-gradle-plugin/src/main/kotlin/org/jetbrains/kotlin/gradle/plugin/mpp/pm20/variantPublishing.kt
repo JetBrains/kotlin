@@ -9,6 +9,7 @@ import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
+import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.attributes.*
 import org.gradle.api.capabilities.Capability
 import org.gradle.api.component.AdhocComponentWithVariants
@@ -51,13 +52,11 @@ open class VariantPublishingConfigurator @Inject constructor(
 
     open fun platformComponentName(variant: KotlinGradleVariant) = variant.disambiguateName("")
 
-    open fun inferMavenScopes(variant: KotlinGradleVariant, configurationNames: Iterable<String>): Map<String, String?> =
-        configurationNames.associateWith { configurationName ->
-            when {
-                configurationName == variant.apiElementsConfiguration.name -> "compile"
-                variant is KotlinGradleVariantWithRuntime && configurationName == variant.runtimeElementsConfiguration.name -> "runtime"
-                else -> null
-            }
+    open fun inferMavenScope(variant: KotlinGradleVariant, configurationName: String): String? =
+        when {
+            configurationName == variant.apiElementsConfiguration.name -> "compile"
+            variant is KotlinGradleVariantWithRuntime && configurationName == variant.runtimeElementsConfiguration.name -> "runtime"
+            else -> null
         }
 
     open fun configurePublishing(
@@ -66,7 +65,7 @@ open class VariantPublishingConfigurator @Inject constructor(
         publishConfigurations: Iterable<String>
     ) {
         val componentName = platformComponentName(variant)
-        val configurationsMap = inferMavenScopes(variant, publishConfigurations)
+        val configurationsMap = publishConfigurations.associateWith { inferMavenScope(variant, it) }
 
         registerPlatformModulePublication(
             componentName,
