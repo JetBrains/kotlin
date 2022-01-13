@@ -45,6 +45,7 @@ import java.io.File
 import java.lang.IllegalArgumentException
 import java.nio.file.*
 import java.util.*
+import kotlin.io.path.absolutePathString
 
 data class InternalInteropOptions(val generated: String, val natives: String, val manifest: String? = null,
                                   val cstubsName: String? = null)
@@ -235,7 +236,12 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
     val excludedFunctions = def.config.excludedFunctions.toSet()
     val excludedMacros = def.config.excludedMacros.toSet()
     val staticLibraries = def.config.staticLibraries + cinteropArguments.staticLibrary.toTypedArray()
-    val libraryPaths = def.config.libraryPaths + cinteropArguments.libraryPath.toTypedArray()
+    val projectDir = cinteropArguments.projectDir
+    val libraryPaths = (def.config.libraryPaths + cinteropArguments.libraryPath).map {
+        if (projectDir == null || Paths.get(it).isAbsolute)
+            it
+        else Paths.get(projectDir, it).absolutePathString()
+    }
     val fqParts = (cinteropArguments.pkg ?: def.config.packageName)?.split('.')
             ?: defFile!!.name.split('.').reversed().drop(1)
 
