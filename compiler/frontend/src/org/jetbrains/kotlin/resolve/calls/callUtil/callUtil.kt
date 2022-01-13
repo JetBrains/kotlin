@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.callUtil
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.resolve.calls.util.getType
 import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.util.createLookupLocation
 import org.jetbrains.kotlin.resolve.calls.util.getValueArgumentForExpression
+import org.jetbrains.kotlin.resolve.calls.util.getParameterForArgument
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.IDEAPlatforms
 import org.jetbrains.kotlin.utils.IDEAPluginsCompatibilityAPI
@@ -72,3 +74,11 @@ fun KtExpression.createLookupLocation(): KotlinLookupLocation? = createLookupLoc
     plugins = "Android in IDEA"
 )
 fun Call.getValueArgumentForExpression(expression: KtExpression): ValueArgument? = getValueArgumentForExpression(expression)
+
+@IDEAPluginsCompatibilityAPI(
+    IDEAPlatforms._213, // I'm not sure about 212 and 211 AS -- didn't check them
+    message = "Use org.jetbrains.kotlin.resolve.calls.util.getValueArgumentForExpression instead.",
+    plugins = "Android in IDEA"
+)
+fun <D : CallableDescriptor> ResolvedCall<D>.getParameterForArgument(valueArgument: ValueArgument?): ValueParameterDescriptor? =
+    getParameterForArgument(valueArgument)
