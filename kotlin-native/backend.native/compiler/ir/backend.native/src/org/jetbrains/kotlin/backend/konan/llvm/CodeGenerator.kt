@@ -1510,7 +1510,10 @@ internal abstract class FunctionGenerationContext(
 
         processReturns()
 
-        if (!needCleanupLandingpadAndLeaveFrame) {
+        // If cleanup landingpad is trivial or unused, remove it.
+        // It would be great not to generate it in the first place in this case,
+        // but this would be complicated without a major refactoring.
+        if (!needCleanupLandingpadAndLeaveFrame || invokeInstructions.isEmpty()) {
             // Replace invokes with calls and branches.
             invokeInstructions.forEach { functionInvokeInfo ->
                 positionBefore(functionInvokeInfo.invokeInstruction)
