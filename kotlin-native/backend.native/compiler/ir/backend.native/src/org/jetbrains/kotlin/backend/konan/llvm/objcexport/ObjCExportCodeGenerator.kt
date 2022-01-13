@@ -156,7 +156,7 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
         rttiGenerator.dispose()
     }
 
-    fun FunctionGenerationContext.callFromBridge(
+    fun ObjCExportFunctionGenerationContext.callFromBridge(
             llvmFunction: LLVMValueRef,
             args: List<LLVMValueRef>,
             resultLifetime: Lifetime = Lifetime.IRRELEVANT
@@ -173,7 +173,7 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
     // so it is correct to use [callAtFunctionScope] here.
     // However, exception handling probably should be refactored
     // (e.g. moved from `IrToBitcode.kt` to [FunctionGenerationContext]).
-    fun FunctionGenerationContext.callFromBridge(
+    fun ObjCExportFunctionGenerationContext.callFromBridge(
             function: LlvmCallable,
             args: List<LLVMValueRef>,
             resultLifetime: Lifetime = Lifetime.IRRELEVANT,
@@ -186,13 +186,13 @@ internal open class ObjCExportCodeGeneratorBase(codegen: CodeGenerator) : ObjCCo
         return call(function, args, resultLifetime, exceptionHandler)
     }
 
-    fun FunctionGenerationContext.kotlinReferenceToLocalObjC(value: LLVMValueRef) =
+    fun ObjCExportFunctionGenerationContext.kotlinReferenceToLocalObjC(value: LLVMValueRef) =
             callFromBridge(context.llvm.Kotlin_ObjCExport_refToLocalObjC, listOf(value))
 
-    fun FunctionGenerationContext.kotlinReferenceToRetainedObjC(value: LLVMValueRef) =
+    fun ObjCExportFunctionGenerationContext.kotlinReferenceToRetainedObjC(value: LLVMValueRef) =
             callFromBridge(context.llvm.Kotlin_ObjCExport_refToRetainedObjC, listOf(value))
 
-    fun FunctionGenerationContext.objCReferenceToKotlin(value: LLVMValueRef, resultLifetime: Lifetime) =
+    fun ObjCExportFunctionGenerationContext.objCReferenceToKotlin(value: LLVMValueRef, resultLifetime: Lifetime) =
             callFromBridge(context.llvm.Kotlin_ObjCExport_refFromObjC, listOf(value), resultLifetime)
 
     private val blockToKotlinFunctionConverterCache = mutableMapOf<BlockPointerBridge, LLVMValueRef>()
@@ -255,7 +255,7 @@ internal class ObjCExportCodeGenerator(
     }
 
     // Caution! Arbitrary methods shouldn't be called from Runnable thread state.
-    fun FunctionGenerationContext.genSendMessage(
+    fun ObjCExportFunctionGenerationContext.genSendMessage(
             returnType: LlvmParamType,
             parameterTypes: List<LlvmParamType>,
             receiver: LLVMValueRef,
@@ -296,7 +296,7 @@ internal class ObjCExportCodeGenerator(
         ObjCValueType.FLOAT, ObjCValueType.DOUBLE, ObjCValueType.POINTER -> value
     }
 
-    private fun FunctionGenerationContext.objCBlockPointerToKotlin(
+    private fun ObjCExportFunctionGenerationContext.objCBlockPointerToKotlin(
             value: LLVMValueRef,
             typeBridge: BlockPointerBridge,
             resultLifetime: Lifetime
@@ -306,17 +306,17 @@ internal class ObjCExportCodeGenerator(
             resultLifetime
     )
 
-    private fun FunctionGenerationContext.kotlinFunctionToObjCBlockPointer(
+    private fun ObjCExportFunctionGenerationContext.kotlinFunctionToObjCBlockPointer(
             typeBridge: BlockPointerBridge,
             value: LLVMValueRef
     ) = callFromBridge(objcAutorelease, listOf(kotlinFunctionToRetainedObjCBlockPointer(typeBridge, value)))
 
-    internal fun FunctionGenerationContext.kotlinFunctionToRetainedObjCBlockPointer(
+    internal fun ObjCExportFunctionGenerationContext.kotlinFunctionToRetainedObjCBlockPointer(
             typeBridge: BlockPointerBridge,
             value: LLVMValueRef
     ) = callFromBridge(kotlinFunctionToRetainedBlockConverter(typeBridge), listOf(value))
 
-    fun FunctionGenerationContext.kotlinToLocalObjC(
+    fun ObjCExportFunctionGenerationContext.kotlinToLocalObjC(
             value: LLVMValueRef,
             typeBridge: TypeBridge
     ): LLVMValueRef = if (LLVMTypeOf(value) == voidType) {
@@ -329,7 +329,7 @@ internal class ObjCExportCodeGenerator(
         }
     }
 
-    fun FunctionGenerationContext.objCToKotlin(
+    fun ObjCExportFunctionGenerationContext.objCToKotlin(
             value: LLVMValueRef,
             typeBridge: TypeBridge,
             resultLifetime: Lifetime
@@ -343,7 +343,7 @@ internal class ObjCExportCodeGenerator(
         this.needsRuntimeInit = true
     }
 
-    inline fun FunctionGenerationContext.convertKotlin(
+    inline fun ObjCExportFunctionGenerationContext.convertKotlin(
             genValue: (Lifetime) -> LLVMValueRef,
             actualType: IrType,
             expectedType: IrType,
@@ -964,7 +964,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
         methodBridge: MethodBridge,
         isDirect: Boolean,
         baseMethod: IrFunction? = null,
-        callKotlin: FunctionGenerationContext.(
+        callKotlin: ObjCExportFunctionGenerationContext.(
                 args: List<LLVMValueRef>,
                 resultLifetime: Lifetime,
                 exceptionHandler: ExceptionHandler
