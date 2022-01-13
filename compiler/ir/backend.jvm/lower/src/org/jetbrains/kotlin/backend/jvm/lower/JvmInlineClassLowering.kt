@@ -657,6 +657,9 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
 
         val oldBody = function.body
 
+        fun IrClass.isFunctionDeclared(): Boolean =
+            declarations.any { it is IrSimpleFunction && it.name.asString() == name && !it.isFakeOverride }
+
         with(context.createIrBuilder(function.symbol)) {
             function.body = irBlockBody {
                 val tmp = irTemporary(
@@ -671,7 +674,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                     .single { it is IrSimpleFunction && it.name.asString() == name } as IrFunction
                 val branches = noinlineSubclasses
                     .filter { info ->
-                        info.bottom.declarations.any { it is IrSimpleFunction && it.name.asString() == name && !it.isFakeOverride }
+                        info.bottom.isFunctionDeclared() || info.sealedParents.any { it.owner.isFunctionDeclared() }
                     }.map {
                         irBranch(
                             irIs(irGet(tmp), it.bottom.defaultType),
@@ -835,5 +838,5 @@ private class SubclassInfo(
     // The bottom class
     val bottom: IrClass,
     // Sealed subclasses from top to the bottom
-    val sealedSubclasses: List<IrClassSymbol>
+    val sealedParents: List<IrClassSymbol>
 )
