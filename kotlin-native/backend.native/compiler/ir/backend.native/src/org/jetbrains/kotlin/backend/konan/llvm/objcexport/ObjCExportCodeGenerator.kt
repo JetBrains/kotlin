@@ -86,6 +86,13 @@ internal class ObjCExportFunctionGenerationContext(
         rawRet(result)
     }
 
+    fun objcReleaseFromRunnableThreadState(objCReference: LLVMValueRef) {
+        switchThreadStateIfExperimentalMM(ThreadState.Native)
+        // It is nounwind, so no exception handler is required.
+        call(objCExportCodegen.objcRelease, listOf(objCReference), exceptionHandler = ExceptionHandler.None)
+        switchThreadStateIfExperimentalMM(ThreadState.Runnable)
+    }
+
     override fun processReturns() {
         // Do nothing.
     }
@@ -1041,7 +1048,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
                 is MethodBridge.ReturnValue.WithError.ZeroForError -> {
                     if (returnType.successBridge == MethodBridge.ReturnValue.Instance.InitResult) {
                         // Release init receiver, as required by convention.
-                        callFromBridge(objcRelease, listOf(param(0)), toNative = true)
+                        objcReleaseFromRunnableThreadState(param(0))
                     }
                     Zero(returnType.toLlvmRetType(context).llvmType).llvm
                 }

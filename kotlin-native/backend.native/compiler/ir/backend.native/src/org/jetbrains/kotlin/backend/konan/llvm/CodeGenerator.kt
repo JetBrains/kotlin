@@ -661,6 +661,12 @@ internal abstract class FunctionGenerationContext(
         }.let {} // Force exhaustive.
     }
 
+    fun switchThreadStateIfExperimentalMM(state: ThreadState) {
+        if (context.memoryModel == MemoryModel.EXPERIMENTAL) {
+            switchThreadState(state)
+        }
+    }
+
     fun memset(pointer: LLVMValueRef, value: Byte, size: Int, isVolatile: Boolean = false) =
             call(context.llvm.memsetFunction,
                     listOf(pointer,
