@@ -9,6 +9,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
+import org.gradle.api.attributes.java.TargetJvmEnvironment
+import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
@@ -38,6 +40,13 @@ fun <T : KotlinGradleFragment> KotlinConfigurationsConfigurator(
 
 object KotlinFragmentPlatformAttributesConfigurator : KotlinFragmentConfigurationsConfigurator<KotlinGradleVariant> {
     override fun configure(fragment: KotlinGradleVariant, configuration: Configuration) {
+        // TODO NOW! Maybe we want to provide API for Android target to hook into this?
+        if (fragment.platformType == KotlinPlatformType.jvm) {
+            configuration.attributes.attribute(
+                TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
+                fragment.project.objects.named(TargetJvmEnvironment.STANDARD_JVM)
+            )
+        }
         configuration.attributes.attribute(KotlinPlatformType.attribute, fragment.platformType)
     }
 }

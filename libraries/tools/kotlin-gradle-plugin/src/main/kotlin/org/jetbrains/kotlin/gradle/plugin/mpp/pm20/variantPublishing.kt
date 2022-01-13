@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
+import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
@@ -44,7 +45,8 @@ open class VariantPublishingConfigurator @Inject constructor(
     private val softwareComponentFactory: SoftwareComponentFactory
 ) {
     companion object {
-        fun get(project: Project): VariantPublishingConfigurator = project.objects.newInstance(VariantPublishingConfigurator::class.java, project)
+        fun get(project: Project): VariantPublishingConfigurator =
+            project.objects.newInstance(VariantPublishingConfigurator::class.java, project)
     }
 
     open fun platformComponentName(variant: KotlinGradleVariant) = variant.disambiguateName("")
@@ -105,7 +107,14 @@ open class VariantPublishingConfigurator @Inject constructor(
         val platformComponent = softwareComponentFactory.adhoc(componentName)
         project.components.add(platformComponent)
         publishConfigurationsWithMavenScopes.forEach { (configurationName, mavenScopeOrNull) ->
-            platformComponent.addVariantsFromConfiguration(project.configurations.getByName(configurationName)) { variantDetails ->
+            platformComponent.addVariantsFromConfiguration(project.configurations.getByName(configurationName)) details@{ variantDetails ->
+                // TMP for Android! Make sure to only publish AAR
+                if (componentName.contains("android", ignoreCase = true)) {
+                    variantDetails.configurationVariant.attributes.getAttribute(AndroidArtifacts.ARTIFACT_TYPE).let { type ->
+                        if (type != AndroidArtifacts.ArtifactType.AAR.type) return@details variantDetails.skip()
+                    }
+                }
+
                 mavenScopeOrNull?.let { variantDetails.mapToMavenScope(it) }
             }
         }

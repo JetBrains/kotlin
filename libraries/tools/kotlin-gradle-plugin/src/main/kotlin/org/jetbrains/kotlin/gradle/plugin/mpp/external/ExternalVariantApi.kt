@@ -26,3 +26,6 @@ fun KotlinGradleModule.createExternalJvmVariant(
     fragments.add(variant)
     return variant
 }
+
+@ExternalVariantApi
+val KotlinGradleVariantInternal.compilationData get() = this.compilationData

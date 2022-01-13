@@ -8,9 +8,14 @@
 
 package org.jetbrains.kotlin.gradle.android
 
+import com.android.build.api.attributes.BuildTypeAttr
 import com.android.build.gradle.api.BaseVariant
 import com.android.build.gradle.api.LibraryVariant
+import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.attributes.java.TargetJvmEnvironment
+import org.gradle.api.attributes.java.TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE
+import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createExternalJvmVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
@@ -21,6 +26,28 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.configuration.KotlinRuntimeDe
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.KotlinNameDisambiguation
 
 fun KotlinGradleModule.createKotlinAndroidVariant(androidVariant: BaseVariant) {
+    val androidElementsConfigurator = KotlinFragmentConfigurationsConfigurator<KotlinJvmVariant> { fragment, configuration ->
+        // TODO NOW: Avoid this in publication -> we have to use a different `-published` configuration?
+        configuration.attributes.attribute(BuildTypeAttr.ATTRIBUTE, project.objects.named(androidVariant.buildType.name))
+        configuration.attributes.attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, project.objects.named(TargetJvmEnvironment.ANDROID))
+
+        configuration.outgoing.variants { variants ->
+            if (androidVariant is LibraryVariant) {
+                variants.create("aar") { variant ->
+                    variant.attributes.attribute(AndroidArtifacts.ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.AAR.type)
+                    variant.artifact(androidVariant.packageLibraryProvider)
+                }
+            }
+
+            variants.create("classes") { variant ->
+                variant.attributes.attribute(AndroidArtifacts.ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
+                variant.artifact(project.provider { fragment.compilationOutputs.classesDirs.singleFile }) {
+                    it.builtBy(fragment.compilationOutputs.classesDirs)
+                }
+            }
+        }
+    }
+
     val kotlinVariant = createExternalJvmVariant(
         "android${androidVariant.buildType.name.capitalize()}",
         instantiator = KotlinJvmVariantInstantiator(
@@ -68,30 +95,12 @@ fun KotlinGradleModule.createKotlinAndroidVariant(androidVariant: BaseVariant) {
                 KotlinPublicationConfigurator.SingleVariantPublication,
 
             // TODO NOW: Thought: Maybe configuration and instantiation of such elements should be somehow done together?
-            apiElementsConfigurator = DefaultKotlinApiElementsConfigurator + { _, configuration ->
-                /*configuration.attributes.attribute(
-                    BuildTypeAttr.ATTRIBUTE, project.objects.named(BuildTypeAttr::class.java, androidVariant.buildType.name)
-                )
-                 */
-
-                if (androidVariant is LibraryVariant) {
-                    configuration.outgoing.artifact(androidVariant.packageLibraryProvider)
-                }
-            },
+            apiElementsConfigurator = DefaultKotlinApiElementsConfigurator + androidElementsConfigurator,
             /*{ fragment, configuration ->
                 KotlinFragmentPlatformAttributesConfigurator.configure(fragment, configuration)
                 KotlinFragmentProducerApiUsageAttributesConfigurator.configure(fragment, configuration)
             }*/
-            runtimeElementsConfigurator = DefaultKotlinRuntimeElementsConfigurator + { _, configuration ->
-                /*configuration.attributes.attribute(
-                    BuildTypeAttr.ATTRIBUTE, project.objects.named(BuildTypeAttr::class.java, androidVariant.buildType.name)
-                )
-                 */
-
-                if (androidVariant is LibraryVariant) {
-                    configuration.outgoing.artifact(androidVariant.packageLibraryProvider)
-                }
-            }, /*{ fragment, configuration ->
+            runtimeElementsConfigurator = DefaultKotlinRuntimeElementsConfigurator + androidElementsConfigurator, /*{ fragment, configuration ->
                 KotlinFragmentPlatformAttributesConfigurator.configure(fragment, configuration)
                 KotlinFragmentProducerRuntimeUsageAttributesConfigurator.configure(fragment, configuration)
             } */
@@ -100,7 +109,7 @@ fun KotlinGradleModule.createKotlinAndroidVariant(androidVariant: BaseVariant) {
 
     // "Disable" configurations from plain Android plugin
     project.configurations.findByName("${androidVariant.name}ApiElements")?.isCanBeConsumed = false
-    project.configurations.findByName("${androidVariant.name}ReleaseElements")?.isCanBeConsumed = false
+    project.configurations.findByName("${androidVariant.name}RuntimeElements")?.isCanBeConsumed = false
 
     // TODO: Move this into configurator!
     kotlinVariant.refines(androidCommon)
