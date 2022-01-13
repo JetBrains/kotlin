@@ -40,9 +40,38 @@ fun CompileToBitcode.includeRuntime() {
 val hostName: String by project
 val targetList: List<String> by project
 
+tasks.register("dtraceHeaderGeneration") {
+    val dtraceSourceDirectory = "src/dtrace"
+    val dtraceOutputDirectory = "$buildDir/dtrace"
+    val probesFile = "$dtraceSourceDirectory/probes.d"
+    inputs.file(probesFile)
+    outputs.dir(dtraceOutputDirectory)
+    // Check dtrace exists on OS.
+    val result = project.exec {
+        isIgnoreExitValue = true
+        executable = "dtrace"
+    }
+
+    mkdir(dtraceOutputDirectory)
+    if (result.exitValue == 2) {
+        project.exec {
+            executable = "dtrace"
+            args("-C", "-s", probesFile, "-h", "-o", "$dtraceOutputDirectory/probes.h")
+        }
+    } else {
+        // Copy predefined header file with placeholders.
+        copy {
+            from(dtraceSourceDirectory)
+            into(dtraceOutputDirectory)
+            include("probes.h")
+        }
+    }
+}
+
 bitcode {
     create("runtime", file("src/main")) {
         dependsOn(
+            "dtraceHeaderGeneration",
             ":kotlin-native:dependencies:update",
             "${target}StdAlloc",
             "${target}OptAlloc",
