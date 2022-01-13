@@ -62,7 +62,10 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
                     .parseCompilerArgs(settings) { "Failed to parse free compiler arguments for test case $testCaseId" },
                 nominalPackageName = PackageName(testCaseId.uniqueName),
                 expectedOutputDataFile = null,
-                extras = WithTestRunnerExtras(runnerType = predefinedTestCase.runnerType)
+                extras = WithTestRunnerExtras(
+                    runnerType = predefinedTestCase.runnerType,
+                    ignoredTests = predefinedTestCase.ignoredTests.toSet()
+                )
             )
             testCase.initialize(null)
 

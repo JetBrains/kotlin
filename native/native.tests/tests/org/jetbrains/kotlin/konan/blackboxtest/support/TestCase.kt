@@ -178,7 +178,7 @@ internal class TestCase(
 ) {
     sealed interface Extras
     class NoTestRunnerExtras(val entryPoint: String, val inputDataFile: File?) : Extras
-    class WithTestRunnerExtras(val runnerType: TestRunnerType) : Extras
+    class WithTestRunnerExtras(val runnerType: TestRunnerType, val ignoredTests: Set<String> = emptySet()) : Extras
 
     init {
         when (kind) {
