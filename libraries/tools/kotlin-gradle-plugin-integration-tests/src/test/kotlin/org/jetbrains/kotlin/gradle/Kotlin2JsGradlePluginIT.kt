@@ -124,6 +124,51 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             build("assemble")
         }
     }
+
+    @DisplayName("Check IR incremental cache invalidation by compiler args")
+    @GradleTest
+    fun testJsIrIncrementalCacheInvalidationByArgs(gradleVersion: GradleVersion) {
+        project("kotlin2JsIrICProject", gradleVersion) {
+            val buildConfig = buildGradleKts.readText()
+
+            fun setLazyInitializationArg(value: Boolean) {
+                buildGradleKts.writeText(buildConfig)
+                buildGradleKts.appendText(
+                    """
+                    |
+                    |tasks.named<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>("compileDevelopmentExecutableKotlinJs") {
+                    |    kotlinOptions {
+                    |        freeCompilerArgs += "-Xir-property-lazy-initialization=$value"
+                    |   }
+                    |}
+                    """.trimMargin()
+                )
+            }
+
+            fun String.testScriptOutLines() = this.lines().mapNotNull {
+                val trimmed = it.removePrefix(">>> TEST OUT: ")
+                if (trimmed == it) null else trimmed
+            }
+
+            // -Xir-property-lazy-initialization default is true
+            build("nodeRun") {
+                assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
+                assertEquals(listOf("Hello, Gradle."), output.testScriptOutLines())
+            }
+
+            setLazyInitializationArg(false)
+            build("nodeRun") {
+                assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
+                assertEquals(listOf("TOP LEVEL!", "Hello, Gradle."), output.testScriptOutLines())
+            }
+
+            setLazyInitializationArg(true)
+            build("nodeRun") {
+                assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
+                assertEquals(listOf("Hello, Gradle."), output.testScriptOutLines())
+            }
+        }
+    }
 }
 
 @JsGradlePluginTests

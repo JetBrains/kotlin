@@ -215,7 +215,7 @@ interface PersistentCacheConsumer {
     fun commitSourceMap(path: String, mapData: ByteArray)
     fun invalidateForFile(path: String)
 
-    fun commitLibraryInfo(libraryPath: String, flatHash: ULong, transHash: ULong, moduleName: String)
+    fun commitLibraryInfo(libraryPath: String, flatHash: ULong, transHash: ULong, configHash: ULong, moduleName: String)
 
     companion object {
         val EMPTY = object : PersistentCacheConsumer {
@@ -246,7 +246,7 @@ interface PersistentCacheConsumer {
 
             }
 
-            override fun commitLibraryInfo(libraryPath: String, flatHash: ULong, transHash: ULong, moduleName: String) {
+            override fun commitLibraryInfo(libraryPath: String, flatHash: ULong, transHash: ULong, configHash: ULong, moduleName: String) {
 
             }
 
@@ -345,7 +345,7 @@ class PersistentCacheConsumerImpl(private val cachePath: String) : PersistentCac
         commitByteArrayToCacheFile(path, fileSourceMap, mapData)
     }
 
-    override fun commitLibraryInfo(libraryPath: String, flatHash: ULong, transHash: ULong, moduleName: String) {
+    override fun commitLibraryInfo(libraryPath: String, flatHash: ULong, transHash: ULong, configHash: ULong, moduleName: String) {
         val infoFile = File(File(cachePath), "info")
         if (infoFile.exists()) {
             infoFile.delete()
@@ -356,6 +356,7 @@ class PersistentCacheConsumerImpl(private val cachePath: String) : PersistentCac
             it.println(libraryPath)
             it.println(flatHash.toString(16))
             it.println(transHash.toString(16))
+            it.println(configHash.toString(16))
             it.println(moduleName)
         }
     }

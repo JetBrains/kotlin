@@ -54,7 +54,6 @@ class JsIrBackendContext(
     override val scriptMode: Boolean = false,
     override val es6mode: Boolean = false,
     val dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
-    val propertyLazyInitialization: Boolean = false,
     val baseClassIntoMetadata: Boolean = false,
     val safeExternalBoolean: Boolean = false,
     val safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
@@ -139,6 +138,8 @@ class JsIrBackendContext(
     val dynamicType: IrDynamicType = IrDynamicTypeImpl(null, emptyList(), Variance.INVARIANT)
     val intrinsics: JsIntrinsics = JsIntrinsics(irBuiltIns, this)
     override val reflectionSymbols: ReflectionSymbols get() = intrinsics.reflectionSymbols
+
+    val propertyLazyInitialization = configuration.getBoolean(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION)
 
     override val catchAllThrowableType: IrType
         get() = dynamicType

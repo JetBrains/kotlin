@@ -118,7 +118,6 @@ class JsIrBackendFacade(
             dceDriven = false,
             dceRuntimeDiagnostic = null,
             es6mode = false,
-            propertyLazyInitialization = JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION in module.directives,
             baseClassIntoMetadata = false,
             lowerPerModule = lowerPerModule,
             safeExternalBoolean = JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN in module.directives,

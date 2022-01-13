@@ -5,95 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
-import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.ir.backend.js.MainModule
-import org.jetbrains.kotlin.ir.backend.js.toByteArray
-import org.jetbrains.kotlin.name.FqName
 import java.io.File
 import java.io.PrintWriter
-import java.security.MessageDigest
-import kotlin.random.Random
-import kotlin.random.nextULong
-
-// TODO: Proper version of the compiler (should take changes to lowerings into account)
-private val compilerVersion = Random.nextULong()
-
-private fun IcCacheInfo.toICCacheMap(): Map<String, ICCache> {
-    return data.map { it.key to ICCache(PersistentCacheProvider.EMPTY, PersistentCacheConsumer.EMPTY, it.value) }.toMap()
-}
-
-// TODO more parameters for lowerings
-// Returns true if caches were built. False if caches were up-to-date.
-fun buildCache(
-    cachePath: String,
-    project: Project,
-    mainModule: MainModule.Klib,
-    configuration: CompilerConfiguration,
-    dependencies: Collection<String>,
-    friendDependencies: Collection<String>,
-    exportedDeclarations: Set<FqName> = emptySet(),
-    forceClean: Boolean = false,
-    icCache: IcCacheInfo = IcCacheInfo.EMPTY,
-): Boolean {
-    val dependencyHashes = dependencies.mapNotNull {
-        val path = File(it).canonicalPath
-        icCache.md5[path]
-    } + compilerVersion
-
-    val md5 = File(mainModule.libPath).md5(dependencyHashes)
-
-    if (!forceClean) {
-        val oldCacheInfo = CacheInfo.load(cachePath)
-        if (oldCacheInfo != null && md5 == oldCacheInfo.flatHash) return false
-    }
-
-    val icDir = File(cachePath)
-    icDir.listFiles { file: File -> file.name.startsWith("ic-") }!!.forEach { it.deleteRecursively() }
-    File(icDir, "info").delete()
-    icDir.mkdirs()
-
-    val icData = prepareSingleLibraryIcCache(project, configuration, mainModule.libPath, dependencies, friendDependencies, exportedDeclarations, icCache.toICCacheMap())
-
-    icData.serializedIcData.writeTo(File(cachePath))
-
-    CacheInfo(cachePath, mainModule.libPath, md5, 0UL).save()
-
-    return true
-}
-
-private fun File.md5(additional: Iterable<ULong> = emptyList()): ULong {
-    val md5 = MessageDigest.getInstance("MD5")
-
-    for (ul in additional) {
-        md5.update(ul.toLong().toByteArray())
-    }
-
-    fun File.process(prefix: String = "") {
-        if (isDirectory) {
-            this.listFiles()!!.sortedBy { it.name }.forEach {
-                md5.update((prefix + it.name).toByteArray())
-                it.process(prefix + it.name + "/")
-            }
-        } else {
-            md5.update(readBytes())
-        }
-    }
-
-    this.process()
-
-    val d = md5.digest()
-
-    return ((d[0].toULong() and 0xFFUL)
-            or ((d[1].toULong() and 0xFFUL) shl 8)
-            or ((d[2].toULong() and 0xFFUL) shl 16)
-            or ((d[3].toULong() and 0xFFUL) shl 24)
-            or ((d[4].toULong() and 0xFFUL) shl 32)
-            or ((d[5].toULong() and 0xFFUL) shl 40)
-            or ((d[6].toULong() and 0xFFUL) shl 48)
-            or ((d[7].toULong() and 0xFFUL) shl 56)
-            )
-}
 
 fun checkCaches(
     dependencies: Collection<String>,
@@ -124,12 +37,13 @@ fun checkCaches(
 }
 
 // TODO md5 hash
-data class CacheInfo(val path: String, val libPath: String, var flatHash: ULong, var transHash: ULong) {
+data class CacheInfo(val path: String, val libPath: String, var flatHash: ULong, var transHash: ULong, var configHash: ULong) {
     fun save() {
         PrintWriter(File(File(path), "info")).use {
             it.println(libPath)
             it.println(flatHash.toString(16))
             it.println(transHash.toString(16))
+            it.println(configHash.toString(16))
         }
     }
 
@@ -139,9 +53,11 @@ data class CacheInfo(val path: String, val libPath: String, var flatHash: ULong,
 
             if (!info.exists()) return null
 
-            val (libPath, flatHash, transHash) = info.readLines()
+            val (libPath, flatHash, transHash, configHash) = info.readLines()
 
-            return CacheInfo(path, libPath, flatHash.toULong(16), transHash.toULong(16))
+            // safe cast for the backward compatibility with the cache from the previous compiler versions
+            val configHashULong = configHash.toULongOrNull(16) ?: 0UL
+            return CacheInfo(path, libPath, flatHash.toULong(16), transHash.toULong(16), configHashULong)
         }
     }
 }

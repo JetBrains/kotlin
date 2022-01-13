@@ -29,6 +29,7 @@ abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
     override fun compileBinaryAndRun(project: Project, configuration: CompilerConfiguration, libraries: Collection<String>, mainModulePath: String, buildDir: File) {
         configuration.put(JSConfigurationKeys.PARTIAL_LINKAGE, true)
         configuration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
+        configuration.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
         configuration.put(CommonConfigurationKeys.MODULE_NAME, MAIN_MODULE_NAME)
         val kLib = MainModule.Klib(mainModulePath)
         val moduleStructure = ModulesStructure(project, kLib, configuration, libraries, emptyList(), false, false, emptyMap())
@@ -37,7 +38,6 @@ abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
             moduleStructure,
             PhaseConfig(jsPhases),
             IrFactoryImplForJsIC(WholeWorldStageController()),
-            propertyLazyInitialization = true,
             granularity = JsGenerationGranularity.PER_MODULE,
             exportedDeclarations = setOf(FqName("box")),
             icCompatibleIr2Js = true
