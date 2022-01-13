@@ -499,11 +499,6 @@ internal abstract class FunctionGenerationContext(
 
     private val invokeInstructions = mutableListOf<FunctionInvokeInformation>()
 
-    /**
-     * TODO: consider merging this with [ExceptionHandler].
-     */
-    var forwardingForeignExceptionsTerminatedWith: LlvmCallable? = null
-
     // Whether the generating function needs to initialize Kotlin runtime before execution. Useful for interop bridges,
     // for example.
     var needsRuntimeInit = false
@@ -1480,34 +1475,6 @@ internal abstract class FunctionGenerationContext(
             appendingTo(cleanupLandingpad) {
                 val landingpad = gxxLandingpad(numClauses = 0)
                 LLVMSetCleanup(landingpad, 1)
-
-                forwardingForeignExceptionsTerminatedWith?.let { terminator ->
-                    // Catch all but Kotlin exceptions.
-                    val clause = ConstArray(int8TypePtr, listOf(kotlinExceptionRtti))
-                    LLVMAddClause(landingpad, clause.llvm)
-
-                    val bbCleanup = basicBlock("forwardException", position()?.end)
-                    val bbUnexpected = basicBlock("unexpectedException", position()?.end)
-
-                    val selector = extractValue(landingpad, 1)
-                    condBr(
-                            icmpLt(selector, Int32(0).llvm),
-                            bbUnexpected,
-                            bbCleanup
-                    )
-
-                    appendingTo(bbUnexpected) {
-                        val exceptionRecord = extractValue(landingpad, 0)
-
-                        val beginCatch = context.llvm.cxaBeginCatchFunction
-                        // So `terminator` is called from C++ catch block:
-                        call(beginCatch, listOf(exceptionRecord))
-                        call(terminator, emptyList())
-                        unreachable()
-                    }
-
-                    positionAtEnd(bbCleanup)
-                }
 
                 releaseVars()
                 handleEpilogueExperimentalMM()
