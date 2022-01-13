@@ -435,8 +435,8 @@ func testLambda() throws {
     try assertTrue(unitBlock() == Void())
     try assertEquals(actual: blockRuns, expected: 2)
 
-    let nothingBlock: () -> Void = ValuesKt.asNothingBlock { blockRuns += 1 }
-    try assertTrue(ValuesKt.runNothingBlock(block: nothingBlock))
+    let nothingBlock: () -> Void = { blockRuns += 1 }
+    ValuesKt.runNothingBlock(block: nothingBlock)
     try assertEquals(actual: blockRuns, expected: 3)
 
     try assertTrue(ValuesKt.getNullBlock() == nil)

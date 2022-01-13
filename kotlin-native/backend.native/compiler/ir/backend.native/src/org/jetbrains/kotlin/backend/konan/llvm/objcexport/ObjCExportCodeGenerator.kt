@@ -1259,7 +1259,11 @@ private fun ObjCExportCodeGenerator.generateKotlinToObjCBridge(
             }
         }
 
-        val targetResult = callFromBridge(objcMsgSend, objCArgs, toNative = true)
+        switchThreadStateIfExperimentalMM(ThreadState.Native)
+        // Using terminatingExceptionHandler, so any exception thrown by the method will lead to the termination,
+        // and switching the thread state back to `Runnable` on exceptional path is not required.
+        val targetResult = call(objcMsgSend, objCArgs, exceptionHandler = terminatingExceptionHandler)
+        switchThreadStateIfExperimentalMM(ThreadState.Runnable)
 
         assert(baseMethod.symbol !is IrConstructorSymbol)
 

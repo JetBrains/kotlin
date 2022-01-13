@@ -51,7 +51,11 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
         )
 
         val invoke = loadBlockInvoke(blockPtr, bridge)
-        val result = callFromBridge(invoke, listOf(blockPtr) + args, toNative = true)
+        switchThreadStateIfExperimentalMM(ThreadState.Native)
+        // Using terminatingExceptionHandler, so any exception thrown by `invoke` will lead to the termination,
+        // and switching the thread state back to `Runnable` on exceptional path is not required.
+        val result = call(invoke, listOf(blockPtr) + args, exceptionHandler = terminatingExceptionHandler)
+        switchThreadStateIfExperimentalMM(ThreadState.Runnable)
 
         val kotlinResult = if (bridge.returnsVoid) {
             theUnitInstanceRef.llvm
