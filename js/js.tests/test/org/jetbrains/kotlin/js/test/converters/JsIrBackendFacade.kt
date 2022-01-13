@@ -58,6 +58,7 @@ class JsIrBackendFacade(
 
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): BinaryArtifacts.Js? {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+
         val isMainModule = JsEnvironmentConfigurator.isMainModule(module, testServices)
         if (!isMainModule) return null
 
@@ -133,7 +134,6 @@ class JsIrBackendFacade(
             exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, TEST_FUNCTION))),
             dceRuntimeDiagnostic = null,
             es6mode = false,
-            propertyLazyInitialization = JsEnvironmentConfigurationDirectives.PROPERTY_LAZY_INITIALIZATION in module.directives,
             baseClassIntoMetadata = false,
             safeExternalBoolean = JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN in module.directives,
             safeExternalBooleanDiagnostic = module.directives[JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC].singleOrNull(),

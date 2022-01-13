@@ -51,7 +51,8 @@ private fun invalidateCacheForModule(
     cacheProvider: PersistentCacheProvider,
     cacheConsumer: PersistentCacheConsumer,
     signatureResolver: (String, Int) -> IdSignature,
-    fileFingerPrints: MutableMap<String, Hash>
+    fileFingerPrints: MutableMap<String, Hash>,
+    configUpdated: Boolean
 ): Pair<Set<String>, Collection<String>> {
 
     val dirtyFiles = mutableSetOf<String>()
@@ -64,7 +65,7 @@ private fun invalidateCacheForModule(
         // 2. calculate new fingerprints
         val fileNewFingerprint = library.fingerprint(index)
 
-        if (fileOldFingerprint != fileNewFingerprint) {
+        if (fileOldFingerprint != fileNewFingerprint || configUpdated) {
             fileFingerPrints[file] = fileNewFingerprint
             cachedInlineHashesForFile.remove(file)
 
@@ -203,9 +204,25 @@ private fun buildCacheForModule(
 
     // TODO: actual way of building a cache could change in future
 
-    cacheExecutor.execute(irModule, dependencies, deserializer, configuration, dirtyFiles, deletedFiles, cacheConsumer, emptySet(), mainArguments)
+    cacheExecutor.execute(
+        irModule,
+        dependencies,
+        deserializer,
+        configuration,
+        dirtyFiles,
+        deletedFiles,
+        cacheConsumer,
+        emptySet(),
+        mainArguments
+    )
 
-    cacheConsumer.commitLibraryInfo(libraryInfo.libPath.toCanonicalPath(), libraryInfo.flatHash, libraryInfo.transHash, irModule.name.asString())
+    cacheConsumer.commitLibraryInfo(
+        libraryInfo.libPath.toCanonicalPath(),
+        libraryInfo.flatHash,
+        libraryInfo.transHash,
+        libraryInfo.configHash,
+        irModule.name.asString()
+    )
 }
 
 private fun loadModules(
@@ -315,24 +332,11 @@ fun interface CacheExecutor {
     )
 }
 
-private fun File.md5(): ULong {
+private fun calcMD5(feeder: (MessageDigest) -> Unit): ULong {
     val md5 = MessageDigest.getInstance("MD5")
-
-    fun File.process(prefix: String = "") {
-        if (isDirectory) {
-            this.listFiles()!!.sortedBy { it.name }.forEach {
-                md5.update((prefix + it.name).toByteArray())
-                it.process(prefix + it.name + "/")
-            }
-        } else {
-            md5.update(readBytes())
-        }
-    }
-
-    this.process()
+    feeder(md5)
 
     val d = md5.digest()
-
     return ((d[0].toULong() and 0xFFUL)
             or ((d[1].toULong() and 0xFFUL) shl 8)
             or ((d[2].toULong() and 0xFFUL) shl 16)
@@ -342,6 +346,30 @@ private fun File.md5(): ULong {
             or ((d[6].toULong() and 0xFFUL) shl 48)
             or ((d[7].toULong() and 0xFFUL) shl 56)
             )
+}
+
+private fun File.md5(): ULong {
+    fun File.process(md5: MessageDigest, prefix: String = "") {
+        if (isDirectory) {
+            this.listFiles()!!.sortedBy { it.name }.forEach {
+                md5.update((prefix + it.name).toByteArray())
+                it.process(md5, prefix + it.name + "/")
+            }
+        } else {
+            md5.update(readBytes())
+        }
+    }
+    return calcMD5 { this.process(it) }
+}
+
+private fun CompilerConfiguration.calcMD5(): ULong {
+    val importantBooleanSettingKeys = listOf(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION)
+    return calcMD5 {
+        for (key in importantBooleanSettingKeys) {
+            it.update(key.toString().toByteArray())
+            it.update(getBoolean(key).toString().toByteArray())
+        }
+    }
 }
 
 private fun checkLibrariesHash(
@@ -391,8 +419,9 @@ fun actualizeCacheForModule(
     mainArguments: List<String>?,
     executor: CacheExecutor
 ): CacheUpdateStatus {
+    val configMD5 = compilerConfiguration.calcMD5()
     val modulePath = moduleName.toCanonicalPath()
-    val cacheInfo = CacheInfo.load(cachePath) ?: CacheInfo(cachePath, modulePath, 0UL, 0UL)
+    val cacheInfo = CacheInfo.load(cachePath) ?: CacheInfo(cachePath, modulePath, 0UL, 0UL, configMD5)
     val icCacheMap: Map<ModulePath, CacheInfo> = loadCacheInfo(icCachePaths).also {
         it[modulePath] = cacheInfo
     }
@@ -405,7 +434,9 @@ fun actualizeCacheForModule(
         }
     }
 
-    if (checkLibrariesHash(libraries, dependencyGraph, icCacheMap, modulePath)) {
+    val configUpdated = configMD5 != cacheInfo.configHash
+    cacheInfo.configHash = configMD5
+    if (checkLibrariesHash(libraries, dependencyGraph, icCacheMap, modulePath) && !configUpdated) {
         return CacheUpdateStatus.FAST_PATH // up-to-date
     }
 
@@ -425,7 +456,8 @@ fun actualizeCacheForModule(
         persistentCacheConsumer,
         irFactory,
         mainArguments,
-        executor
+        executor,
+        configUpdated
     )
 }
 
@@ -439,7 +471,8 @@ private fun actualizeCacheForModule(
     persistentCacheConsumer: PersistentCacheConsumer,
     irFactory: IrFactory,
     mainArguments: List<String>?,
-    cacheExecutor: CacheExecutor
+    cacheExecutor: CacheExecutor,
+    configUpdated: Boolean
 ): CacheUpdateStatus {
     // 1. Invalidate
     val dependencies = dependencyGraph[library]!!
@@ -486,7 +519,8 @@ private fun actualizeCacheForModule(
         currentLibraryCacheProvider,
         persistentCacheConsumer,
         signatureResolver,
-        fileFingerPrints
+        fileFingerPrints,
+        configUpdated
     )
 
     if (dirtySet.isEmpty()) return CacheUpdateStatus.NO_DIRTY_FILES // up-to-date
@@ -582,7 +616,7 @@ fun rebuildCacheForDirtyFiles(
 
     val currentIrModule = irModules.find { it.second == library }?.first!!
 
-    cacheConsumer.commitLibraryInfo(library.libraryFile.path.toCanonicalPath(), 0UL, 0UL, currentIrModule.name.asString())
+    cacheConsumer.commitLibraryInfo(library.libraryFile.path.toCanonicalPath(), 0UL, 0UL, 0UL, currentIrModule.name.asString())
 
     buildCacheForModuleFiles(
         currentIrModule,

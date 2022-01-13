@@ -153,6 +153,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         val sourcesFiles = environmentForJS.getSourceFiles()
 
         configurationJs.put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.allowKotlinPackage)
+        configurationJs.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, arguments.irPropertyLazyInitialization)
 
         if (!checkKotlinPackageUsage(environmentForJS.configuration, sourcesFiles)) return ExitCode.COMPILATION_ERROR
 
@@ -388,7 +389,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                         arguments.irDceRuntimeDiagnostic,
                         messageCollector
                     ),
-                    propertyLazyInitialization = arguments.irPropertyLazyInitialization,
                     baseClassIntoMetadata = arguments.irBaseClassInMetadata,
                     safeExternalBoolean = arguments.irSafeExternalBoolean,
                     safeExternalBooleanDiagnostic = RuntimeDiagnostic.resolve(

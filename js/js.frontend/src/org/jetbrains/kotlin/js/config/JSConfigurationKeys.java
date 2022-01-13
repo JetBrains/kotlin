@@ -96,4 +96,7 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> PARTIAL_LINKAGE =
             CompilerConfigurationKey.create("allows some symbols in klibs be missed");
+
+    public static final CompilerConfigurationKey<Boolean> PROPERTY_LAZY_INITIALIZATION =
+            CompilerConfigurationKey.create("perform lazy initialization for properties");
 }

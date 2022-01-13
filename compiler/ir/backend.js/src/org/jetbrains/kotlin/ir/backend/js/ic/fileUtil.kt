@@ -9,12 +9,13 @@ import java.io.File
 import java.io.PrintWriter
 
 // TODO md5 hash
-data class CacheInfo(val path: String, val libPath: String, var flatHash: ULong, var transHash: ULong) {
+data class CacheInfo(val path: String, val libPath: String, var flatHash: ULong, var transHash: ULong, var configHash: ULong) {
     fun save() {
         PrintWriter(File(File(path), "info")).use {
             it.println(libPath)
             it.println(flatHash.toString(16))
             it.println(transHash.toString(16))
+            it.println(configHash.toString(16))
         }
     }
 
@@ -24,9 +25,11 @@ data class CacheInfo(val path: String, val libPath: String, var flatHash: ULong,
 
             if (!info.exists()) return null
 
-            val (libPath, flatHash, transHash) = info.readLines()
+            val (libPath, flatHash, transHash, configHash) = info.readLines()
 
-            return CacheInfo(path, libPath, flatHash.toULong(16), transHash.toULong(16))
+            // safe cast for the backward compatibility with the cache from the previous compiler versions
+            val configHashULong = configHash.toULongOrNull(16) ?: 0UL
+            return CacheInfo(path, libPath, flatHash.toULong(16), transHash.toULong(16), configHashULong)
         }
     }
 }

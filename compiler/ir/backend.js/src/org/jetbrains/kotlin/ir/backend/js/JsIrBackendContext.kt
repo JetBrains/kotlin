@@ -56,7 +56,6 @@ class JsIrBackendContext(
     override val scriptMode: Boolean = false,
     override val es6mode: Boolean = false,
     val dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
-    propertyLazyInitialization: Boolean = false,
     val baseClassIntoMetadata: Boolean = false,
     val safeExternalBoolean: Boolean = false,
     val safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
@@ -141,7 +140,7 @@ class JsIrBackendContext(
     override val reflectionSymbols: ReflectionSymbols get() = intrinsics.reflectionSymbols
 
     override val propertyLazyInitialization: PropertyLazyInitialization = PropertyLazyInitialization(
-        enabled = propertyLazyInitialization,
+        enabled = configuration.getBoolean(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION),
         eagerInitialization = symbolTable.referenceClass(getJsInternalClass("EagerInitialization"))
     )
 
