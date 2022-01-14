@@ -10,7 +10,6 @@ import kotlin.Pair;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.config.LanguageVersion;
 import org.jetbrains.kotlin.descriptors.MemberDescriptor;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory;
 import org.jetbrains.kotlin.diagnostics.Errors;
@@ -606,6 +605,10 @@ public class DefaultErrorMessages {
         MAP.put(UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION,
                 "Type argument resulting from type alias expansion is not within required bounds for ''{2}'': " +
                 "should be subtype of ''{0}'', substituted type is ''{1}''",
+                RENDER_TYPE, RENDER_TYPE, NAME);
+        MAP.put(UPPER_BOUND_VIOLATED_IN_TYPEALIAS_EXPANSION_WARNING,
+                "Type argument resulting from type alias expansion is not within required bounds for ''{2}'': " +
+                "should be subtype of ''{0}'', substituted type is ''{1}''. This warning will become an error since 1.8",
                 RENDER_TYPE, RENDER_TYPE, NAME);
         MAP.put(CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION, "Conflicting projection in type alias expansion in intermediate type ''{0}''", RENDER_TYPE);
         MAP.put(TYPEALIAS_SHOULD_EXPAND_TO_CLASS, "Type alias expands to {0}, which is not a class, an interface, or an object", RENDER_TYPE);

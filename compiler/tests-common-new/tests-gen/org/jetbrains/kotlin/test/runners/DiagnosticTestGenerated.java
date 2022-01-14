@@ -31336,6 +31336,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         @TestDataPath("$PROJECT_ROOT")
         public class Typealias {
             @Test
+            @TestMetadata("abbreviatedSupertypes.kt")
+            public void testAbbreviatedSupertypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typealias/abbreviatedSupertypes.kt");
+            }
+
+            @Test
+            @TestMetadata("abbreviatedSupertypesErrors.kt")
+            public void testAbbreviatedSupertypesErrors() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typealias/abbreviatedSupertypesErrors.kt");
+            }
+
+            @Test
             @TestMetadata("aliasesOnly.kt")
             public void testAliasesOnly() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typealias/aliasesOnly.kt");

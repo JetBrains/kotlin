@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
@@ -45,9 +44,11 @@ import org.jetbrains.kotlin.resolve.inline.isInlineOnly
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.types.typeUtil.constituentTypes
+import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.isArrayOfNothing
+import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.util.*
 
 internal class DeclarationsCheckerBuilder(
     private val descriptorResolver: DescriptorResolver,
@@ -357,7 +358,7 @@ class DeclarationsChecker(
 
         for (delegationSpecifier in classOrObject.superTypeListEntries) {
             val typeReference = delegationSpecifier.typeReference ?: continue
-            typeReference.type()?.let { upperBoundChecker.checkBounds(typeReference, it, trace) }
+            typeReference.type()?.let { upperBoundChecker.checkBoundsInSupertype(typeReference, it, trace, languageVersionSettings) }
         }
 
         if (classOrObject !is KtClass) return
@@ -380,7 +381,7 @@ class DeclarationsChecker(
         DescriptorResolver.checkUpperBoundTypes(trace, upperBoundCheckRequests, false)
 
         for (request in upperBoundCheckRequests) {
-            upperBoundChecker.checkBounds(request.upperBound, request.upperBoundType, trace)
+            upperBoundChecker.checkBoundsInSupertype(request.upperBound, request.upperBoundType, trace, languageVersionSettings)
         }
     }
 

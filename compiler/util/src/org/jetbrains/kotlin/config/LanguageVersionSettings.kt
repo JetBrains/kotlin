@@ -257,6 +257,7 @@ enum class LanguageFeature(
     StopPropagatingDeprecationThroughOverrides(KOTLIN_1_8), // KT-47902
     ProhibitNonExhaustiveIfInRhsOfElvis(KOTLIN_1_8, kind = BUG_FIX), // KT-44705
     ProhibitAccessToEnumCompanionMembersInEnumConstructorCall(KOTLIN_1_8, kind = BUG_FIX), // KT-49110
+    ReportMissingUpperBoundsViolatedErrorOnAbbreviationAtSupertypes(KOTLIN_1_8, kind = BUG_FIX), // KT-29168
 
     // 1.9
 
