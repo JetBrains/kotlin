@@ -112,6 +112,13 @@ internal fun ThrowFileFailedToInitializeException() {
     throw FileFailedToInitializeException("There was an error during file initialization")
 }
 
+internal class IrLinkageError(message: String?) : Error(message)
+
+@PublishedApi
+internal fun ThrowIrLinkageError(message: String?): Nothing {
+    throw IrLinkageError(message)
+}
+
 @ExportForCppRuntime
 internal fun PrintThrowable(throwable: Throwable) {
     println(throwable)
