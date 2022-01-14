@@ -73,7 +73,7 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
     // generate jvm interface
     val jvmInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions")
     val jvmOptions = gradleOptions<K2JVMCompilerArguments>()
-    withPrinterToFile(file(srcDir, jvmInterfaceFqName)) {
+    withPrinterToFile(file(apiSrcDir, jvmInterfaceFqName)) {
         generateInterface(
             jvmInterfaceFqName,
             jvmOptions,
@@ -99,7 +99,7 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
     // generate js interface
     val jsInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions")
     val jsOptions = gradleOptions<K2JSCompilerArguments>()
-    withPrinterToFile(file(srcDir, jsInterfaceFqName)) {
+    withPrinterToFile(file(apiSrcDir, jsInterfaceFqName)) {
         generateInterface(
             jsInterfaceFqName,
             jsOptions,
@@ -124,7 +124,7 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
     // generate JS DCE interface and implementation
     val jsDceInterfaceFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinJsDceOptions")
     val jsDceOptions = gradleOptions<K2JSDceArguments>()
-    withPrinterToFile(file(srcDir, jsDceInterfaceFqName)) {
+    withPrinterToFile(file(apiSrcDir, jsDceInterfaceFqName)) {
         generateInterface(
             jsDceInterfaceFqName,
             jsDceOptions,
