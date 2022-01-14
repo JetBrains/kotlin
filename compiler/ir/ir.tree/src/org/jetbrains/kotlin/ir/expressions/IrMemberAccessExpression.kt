@@ -28,38 +28,24 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
 
     abstract val origin: IrStatementOrigin?
 
-    abstract val typeArgumentsCount: Int
     protected abstract val typeArgumentsByIndex: Array<IrType?>
+    val typeArgumentsCount: Int get() = typeArgumentsByIndex.size
 
-    abstract val valueArgumentsCount: Int
-    protected open val argumentsByParameterIndex: Array<IrExpression?>?
-        get() = null
-
-    private fun accessValueArguments(): Array<IrExpression?> =
-        argumentsByParameterIndex ?: throw UnsupportedOperationException("This type of element ($symbol) has no value arguments")
+    protected abstract val argumentsByParameterIndex: Array<IrExpression?>
+    open val valueArgumentsCount: Int get() = argumentsByParameterIndex.size
 
     fun getValueArgument(index: Int): IrExpression? {
-        accessValueArguments().let { args ->
-            if (index >= valueArgumentsCount) {
-                throw AssertionError("$this: No such value argument slot: $index")
-            }
-            return args[index]
+        if (index >= valueArgumentsCount) {
+            throw AssertionError("$this: No such value argument slot: $index")
         }
+        return argumentsByParameterIndex[index]
     }
 
     fun putValueArgument(index: Int, valueArgument: IrExpression?) {
-        accessValueArguments().let { args ->
-            if (index >= valueArgumentsCount) {
-                throw AssertionError("$this: No such value argument slot: $index")
-            }
-            args[index] = valueArgument
+        if (index >= valueArgumentsCount) {
+            throw AssertionError("$this: No such value argument slot: $index")
         }
-    }
-
-    fun removeValueArgument(index: Int) {
-        accessValueArguments().let { args ->
-            args[index] = null
-        }
+        argumentsByParameterIndex[index] = valueArgument
     }
 
     fun getTypeArgument(index: Int): IrType? {
@@ -79,27 +65,19 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         dispatchReceiver?.accept(visitor, data)
         extensionReceiver?.accept(visitor, data)
-        argumentsByParameterIndex?.forEach { it?.accept(visitor, data) }
+        if (valueArgumentsCount > 0) {
+            argumentsByParameterIndex.forEach { it?.accept(visitor, data) }
+        }
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         dispatchReceiver = dispatchReceiver?.transform(transformer, data)
         extensionReceiver = extensionReceiver?.transform(transformer, data)
-        argumentsByParameterIndex?.let { argumentsByParameterIndex ->
+        if (valueArgumentsCount > 0) {
             argumentsByParameterIndex.forEachIndexed { i, irExpression ->
                 argumentsByParameterIndex[i] = irExpression?.transform(transformer, data)
             }
         }
-    }
-
-    companion object {
-        @JvmStatic
-        protected fun initializeTypeArguments(typeArgumentsCount: Int): Array<IrType?> =
-            arrayOfNulls<IrType?>(typeArgumentsCount)
-
-        @JvmStatic
-        protected fun initializeValueArguments(typeArgumentsCount: Int): Array<IrExpression?> =
-            arrayOfNulls<IrExpression?>(typeArgumentsCount)
     }
 }
 
@@ -147,10 +125,6 @@ fun IrMemberAccessExpression<*>.getValueArgument(valueParameterDescriptor: Value
 
 fun IrMemberAccessExpression<*>.putValueArgument(valueParameterDescriptor: ValueParameterDescriptor, valueArgument: IrExpression?) {
     putValueArgument(valueParameterDescriptor.index, valueArgument)
-}
-
-fun IrMemberAccessExpression<*>.removeValueArgument(valueParameterDescriptor: ValueParameterDescriptor) {
-    removeValueArgument(valueParameterDescriptor.index)
 }
 
 @ObsoleteDescriptorBasedAPI

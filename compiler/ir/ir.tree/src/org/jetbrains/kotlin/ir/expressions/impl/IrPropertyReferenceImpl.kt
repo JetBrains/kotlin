@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
@@ -29,17 +30,20 @@ class IrPropertyReferenceImpl(
     override val endOffset: Int,
     override var type: IrType,
     override val symbol: IrPropertySymbol,
-    override val typeArgumentsCount: Int,
+    typeArgumentsCount: Int,
     override val field: IrFieldSymbol?,
     override val getter: IrSimpleFunctionSymbol?,
     override val setter: IrSimpleFunctionSymbol?,
     override val origin: IrStatementOrigin? = null,
 ) : IrPropertyReference() {
+    override val typeArgumentsByIndex: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
+
+    override val argumentsByParameterIndex: Array<IrExpression?>
+        get() = throw UnsupportedOperationException("Property reference $symbol has no value arguments")
+
     override val valueArgumentsCount: Int
         get() = 0
 
     override val referencedName: Name
         get() = symbol.owner.name
-
-    override val typeArgumentsByIndex = initializeTypeArguments(typeArgumentsCount)
 }

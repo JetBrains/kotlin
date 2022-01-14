@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
@@ -29,15 +30,15 @@ class IrDelegatingConstructorCallImpl(
     override val endOffset: Int,
     override var type: IrType,
     override val symbol: IrConstructorSymbol,
-    override val typeArgumentsCount: Int,
-    override val valueArgumentsCount: Int,
+    typeArgumentsCount: Int,
+    valueArgumentsCount: Int,
 ) : IrDelegatingConstructorCall() {
     override val origin: IrStatementOrigin?
         get() = null
 
-    override val typeArgumentsByIndex = initializeTypeArguments(typeArgumentsCount)
+    override val typeArgumentsByIndex: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
 
-    override val argumentsByParameterIndex = initializeValueArguments(valueArgumentsCount)
+    override val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
 
     override var contextReceiversCount = 0
 
