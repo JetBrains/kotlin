@@ -245,6 +245,9 @@ void Kotlin_shutdownRuntime() {
     if (!needsFullShutdown) {
         auto lastStatus = compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
         RuntimeAssert(lastStatus == kGlobalRuntimeRunning, "Invalid runtime status for shutdown");
+        // The main thread is not doing anything Kotlin anymore, but will stick around to cleanup C++ globals and the like.
+        // Mark the thread native, and don't make the GC thread wait on it.
+        kotlin::SwitchThreadState(runtime->memoryState, kotlin::ThreadState::kNative);
         return;
     }
 
