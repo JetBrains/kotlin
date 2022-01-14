@@ -9,11 +9,14 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.getRuntimeClass
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -45,6 +48,8 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
 
                 if (!declaration.isStatic) return
                 val initValue: IrExpression = declaration.initializer?.expression ?: return
+                // Constant primitive initializers without implicit casting can be processed by native wasm initializers
+                if (initValue.type == declaration.type && initValue is IrConst<*> && initValue.kind !is IrConstKind.String && initValue.kind !is IrConstKind.Null) return
 
                 startFunctionBody.statements.add(
                     builder.at(initValue).irSetField(null, declaration, initValue)

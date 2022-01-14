@@ -105,25 +105,8 @@ class BodyGenerator(val context: WasmFunctionCodegenContext) : IrElementVisitorV
         }
     }
 
-    override fun visitConst(expression: IrConst<*>) {
-        when (val kind = expression.kind) {
-            is IrConstKind.Null -> generateDefaultInitializerForType(context.transformType(expression.type), body)
-            is IrConstKind.Boolean -> body.buildConstI32(if (kind.valueOf(expression)) 1 else 0)
-            is IrConstKind.Byte -> body.buildConstI32(kind.valueOf(expression).toInt())
-            is IrConstKind.Short -> body.buildConstI32(kind.valueOf(expression).toInt())
-            is IrConstKind.Int -> body.buildConstI32(kind.valueOf(expression))
-            is IrConstKind.Long -> body.buildConstI64(kind.valueOf(expression))
-            is IrConstKind.Char -> body.buildConstI32(kind.valueOf(expression).code)
-            is IrConstKind.Float -> body.buildConstF32(kind.valueOf(expression))
-            is IrConstKind.Double -> body.buildConstF64(kind.valueOf(expression))
-            is IrConstKind.String -> {
-                body.buildConstI32Symbol(context.referenceStringLiteral(kind.valueOf(expression)))
-                body.buildConstI32(kind.valueOf(expression).length)
-                body.buildCall(context.referenceFunction(wasmSymbols.stringGetLiteral))
-            }
-            else -> error("Unknown constant kind")
-        }
-    }
+    override fun visitConst(expression: IrConst<*>): Unit =
+        generateConstExpression(expression, body, context)
 
     override fun visitGetField(expression: IrGetField) {
         val field: IrField = expression.symbol.owner

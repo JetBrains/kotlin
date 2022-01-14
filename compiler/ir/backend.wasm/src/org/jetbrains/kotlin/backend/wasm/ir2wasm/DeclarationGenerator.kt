@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -364,13 +367,21 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
 
         val initBody = mutableListOf<WasmInstr>()
         val wasmExpressionGenerator = WasmIrExpressionBuilder(initBody)
-        generateDefaultInitializerForType(wasmType, wasmExpressionGenerator)
+
+        val initValue: IrExpression? = declaration.initializer?.expression
+        if (initValue != null) {
+            check(initValue is IrConst<*> && initValue.kind !is IrConstKind.String && initValue.kind !is IrConstKind.Null) {
+                "Static field initializer should be non-string const or null"
+            }
+            generateConstExpression(initValue, wasmExpressionGenerator, context)
+        } else {
+            generateDefaultInitializerForType(wasmType, wasmExpressionGenerator)
+        }
 
         val global = WasmGlobal(
             name = declaration.fqNameWhenAvailable.toString(),
             type = wasmType,
             isMutable = true,
-            // All globals are currently initialized in start function
             init = initBody
         )
 
@@ -397,3 +408,24 @@ fun IrFunction.getEffectiveValueParameters(): List<IrValueParameter> {
 
 fun IrFunction.isExported(): Boolean =
     isJsExport()
+
+
+fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder, context: WasmBaseCodegenContext) {
+    when (val kind = expression.kind) {
+        is IrConstKind.Null -> generateDefaultInitializerForType(context.transformType(expression.type), body)
+        is IrConstKind.Boolean -> body.buildConstI32(if (kind.valueOf(expression)) 1 else 0)
+        is IrConstKind.Byte -> body.buildConstI32(kind.valueOf(expression).toInt())
+        is IrConstKind.Short -> body.buildConstI32(kind.valueOf(expression).toInt())
+        is IrConstKind.Int -> body.buildConstI32(kind.valueOf(expression))
+        is IrConstKind.Long -> body.buildConstI64(kind.valueOf(expression))
+        is IrConstKind.Char -> body.buildConstI32(kind.valueOf(expression).code)
+        is IrConstKind.Float -> body.buildConstF32(kind.valueOf(expression))
+        is IrConstKind.Double -> body.buildConstF64(kind.valueOf(expression))
+        is IrConstKind.String -> {
+            body.buildConstI32Symbol(context.referenceStringLiteral(kind.valueOf(expression)))
+            body.buildConstI32(kind.valueOf(expression).length)
+            body.buildCall(context.referenceFunction(context.backendContext.wasmSymbols.stringGetLiteral))
+        }
+        else -> error("Unknown constant kind")
+    }
+}
