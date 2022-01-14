@@ -20,7 +20,9 @@ import java.io.File
 
 private lateinit var intellijModuleNameToGradleDependencyNotationsMapping: Map<String, List<GradleDependencyNotation>>
 private val KOTLIN_REPO_ROOT = File(".").canonicalFile
-val DEFAULT_KOTLIN_SNAPSHOT_VERSION = KOTLIN_REPO_ROOT.resolve("gradle.properties").readProperty("defaultSnapshotVersion")
+val DEFAULT_KOTLIN_SNAPSHOT_VERSION = KOTLIN_REPO_ROOT.resolve("gradle.properties")
+    .readProperty("defaultSnapshotVersion")
+    .removeSuffix("-SNAPSHOT")
 private val INTELLIJ_REPO_ROOT = KOTLIN_REPO_ROOT.resolve("intellij").resolve("community").takeIf { it.exists() }
     ?: KOTLIN_REPO_ROOT.resolve("intellij")
 
@@ -112,7 +114,31 @@ fun convertJpsLibrary(lib: JpsLibrary, scope: JpsJavaDependencyScope, exported: 
     val mavenRepositoryLibraryDescriptor = lib.properties
         .safeAs<JpsSimpleElement<*>>()?.data?.safeAs<JpsMavenRepositoryLibraryDescriptor>()
 
+    val kotlincArtifactId = lib.getRootUrls(JpsOrderRootType.COMPILED).asSequence()
+        .mapNotNull { url ->
+            url.removeSuffix(".jar!/")
+                .takeIf { it.endsWith(DEFAULT_KOTLIN_SNAPSHOT_VERSION) }
+                ?.removeSuffix("-$DEFAULT_KOTLIN_SNAPSHOT_VERSION")
+                ?.substringAfterLast("/")
+        }
+        .firstOrNull()
+
     return when {
+        lib.name == "kotlin-stdlib-jdk8" || lib.name == "kotlinc.kotlin-stdlib" -> {
+            listOf(
+                JpsLikeJarDependency("kotlinStdlib()", scope, dependencyConfiguration = null, exported = exported),
+                // TODO remove hack (for some reason we have to specify :kotlin-stdlib-jdk7 explicitly, otherwise compilation doesn't pass)
+                JpsLikeJarDependency("project(\":kotlin-stdlib-jdk7\")", scope, dependencyConfiguration = null, exported = exported)
+            )
+        }
+        kotlincArtifactId != null -> {
+            val dependencyNotation =
+                if (KOTLIN_REPO_ROOT.resolve("prepare/ide-plugin-dependencies/$kotlincArtifactId").exists())
+                    "project(\":prepare:ide-plugin-dependencies:$kotlincArtifactId\")"
+                else
+                    "project(\":$kotlincArtifactId\")"
+            listOf(JpsLikeJarDependency(dependencyNotation, scope, dependencyConfiguration = null, exported = exported))
+        }
         mavenRepositoryLibraryDescriptor == null -> {
             lib.getRootUrls(JpsOrderRootType.COMPILED)
                 .map {
@@ -129,22 +155,6 @@ fun convertJpsLibrary(lib: JpsLibrary, scope: JpsJavaDependencyScope, exported: 
                         exported = exported
                     )
                 }
-        }
-        lib.name == "kotlin-stdlib-jdk8" -> {
-            listOf(
-                JpsLikeJarDependency("kotlinStdlib()", scope, dependencyConfiguration = null, exported = exported),
-                // TODO remove hack (for some reason we have to specify :kotlin-stdlib-jdk7 explicitly, otherwise compilation doesn't pass)
-                JpsLikeJarDependency("project(\":kotlin-stdlib-jdk7\")", scope, dependencyConfiguration = null, exported = exported)
-            )
-        }
-        lib.name.startsWith("kotlinc.") || mavenRepositoryLibraryDescriptor.version == DEFAULT_KOTLIN_SNAPSHOT_VERSION -> {
-            val artifactId = mavenRepositoryLibraryDescriptor.artifactId
-            val dependencyNotation =
-                if (KOTLIN_REPO_ROOT.resolve("prepare/ide-plugin-dependencies/$artifactId").exists())
-                    "project(\":prepare:ide-plugin-dependencies:$artifactId\")"
-                else
-                    "project(\":${mavenRepositoryLibraryDescriptor.artifactId}\")"
-            listOf(JpsLikeJarDependency(dependencyNotation, scope, dependencyConfiguration = null, exported = exported))
         }
         else -> {
             val dependencyNotation = "\"${mavenRepositoryLibraryDescriptor.mavenId}\""
