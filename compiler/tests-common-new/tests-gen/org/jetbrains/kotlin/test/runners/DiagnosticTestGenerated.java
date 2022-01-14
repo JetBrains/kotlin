@@ -25734,6 +25734,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("memberWithHidesMemberAnnotationVsMemberWithout.kt")
+                public void testMemberWithHidesMemberAnnotationVsMemberWithout() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/priority/memberWithHidesMemberAnnotationVsMemberWithout.kt");
+                }
+
+                @Test
                 @TestMetadata("staticVsImplicitReceiverMember.kt")
                 public void testStaticVsImplicitReceiverMember() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/priority/staticVsImplicitReceiverMember.kt");

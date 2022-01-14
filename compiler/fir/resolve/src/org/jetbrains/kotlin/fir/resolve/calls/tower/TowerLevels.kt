@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.HidesMembers
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.SmartList
@@ -220,7 +222,7 @@ class ScopeTowerLevel(
     private val bodyResolveComponents: BodyResolveComponents,
     val scope: FirScope,
     val extensionReceiver: ReceiverValue?,
-    private val extensionsOnly: Boolean,
+    private val withHideMembersOnly: Boolean,
     private val includeInnerConstructors: Boolean
 ) : SessionBasedTowerLevel(session) {
 
@@ -286,7 +288,10 @@ class ScopeTowerLevel(
         processor: TowerScopeLevelProcessor<T>
     ) {
         val candidateReceiverTypeRef = candidate.fir.receiverTypeRef
-        val receiverExpected = extensionsOnly || extensionReceiver != null
+        if (withHideMembersOnly && candidate.getAnnotationByClassId(HidesMembers) == null) {
+            return
+        }
+        val receiverExpected = withHideMembersOnly || extensionReceiver != null
         if (candidateReceiverTypeRef == null == receiverExpected) return
         val dispatchReceiverValue = dispatchReceiverValue(candidate)
         if (dispatchReceiverValue == null && shouldSkipCandidateWithInconsistentExtensionReceiver(candidate)) {

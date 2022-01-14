@@ -78,11 +78,11 @@ internal abstract class FirBaseTowerResolveTask(
 
     protected fun FirScope.toScopeTowerLevel(
         extensionReceiver: ReceiverValue? = null,
-        extensionsOnly: Boolean = false,
+        withHideMembersOnly: Boolean = false,
         includeInnerConstructors: Boolean = extensionReceiver != null,
     ): ScopeTowerLevel = ScopeTowerLevel(
         session, components, this,
-        extensionReceiver, extensionsOnly, includeInnerConstructors
+        extensionReceiver, withHideMembersOnly, includeInnerConstructors
     )
 
     protected fun ReceiverValue.toMemberScopeTowerLevel(
@@ -386,12 +386,14 @@ internal open class FirTowerResolveTask(
         depth: Int?,
         explicitReceiverKind: ExplicitReceiverKind,
         parentGroup: TowerGroup
-    ) = processLevel(
-        topLevelScope.toScopeTowerLevel(
-            extensionReceiver = receiverValue, extensionsOnly = true
-        ),
-        info,
-        parentGroup.TopPrioritized(index).let { if (depth != null) it.Implicit(depth) else it },
-        explicitReceiverKind,
-    )
+    ) {
+        processLevel(
+            topLevelScope.toScopeTowerLevel(
+                extensionReceiver = receiverValue, withHideMembersOnly = true
+            ),
+            info,
+            parentGroup.TopPrioritized(index).let { if (depth != null) it.Implicit(depth) else it },
+            explicitReceiverKind,
+        )
+    }
 }

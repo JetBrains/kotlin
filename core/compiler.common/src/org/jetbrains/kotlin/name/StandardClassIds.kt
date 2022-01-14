@@ -142,6 +142,8 @@ object StandardClassIds {
         val Deprecated = "Deprecated".baseId()
         val DeprecatedSinceKotlin = "DeprecatedSinceKotlin".baseId()
 
+        val HidesMembers = "HidesMembers".internalId()
+
         val Retention = "Retention".annotationId()
         val Target = "Target".annotationId()
         val Repeatable = "Repeatable".annotationId()
