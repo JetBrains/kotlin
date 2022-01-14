@@ -18,9 +18,6 @@ abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement, IrA
 
     abstract var type: IrType
 
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitExpression(this, data)
-
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrExpression =
         accept(transformer, data) as IrExpression
 

@@ -6,9 +6,5 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.ir.IrElementBase
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-abstract class IrDeclarationBase : IrElementBase(), IrDeclaration {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitDeclaration(this, data)
-}
+abstract class IrDeclarationBase : IrElementBase(), IrDeclaration
