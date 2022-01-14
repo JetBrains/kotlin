@@ -12,10 +12,13 @@
 
 class GCStateHolder {
 public:
-    int64_t schedule() {
+    int64_t schedule(bool triggeredByOOM = false) {
         std::unique_lock lock(mutex_);
         if (scheduledEpoch <= startedEpoch) {
             scheduledEpoch = startedEpoch + 1;
+            if (triggeredByOOM) {
+                scheduledByOOMEpoch = scheduledEpoch;
+            }
             cond_.notify_all();
         }
         return scheduledEpoch;
@@ -62,6 +65,10 @@ public:
         return scheduledEpoch;
     }
 
+    bool isScheduledByOOM(int64_t epoch) {
+        return scheduledByOOMEpoch == epoch;
+    }
+
 private:
     std::mutex mutex_;
     std::condition_variable cond_;
@@ -69,5 +76,6 @@ private:
     int64_t finishedEpoch = 0;
     int64_t scheduledEpoch = 0;
     int64_t finalizedEpoch = 0;
+    int64_t scheduledByOOMEpoch = 0;
     bool shutdownFlag_ = false;
 };

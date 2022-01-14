@@ -70,5 +70,13 @@ private:
 
 inline constexpr bool kSupportsMultipleMutators = true;
 
+enum GCReason{
+    SMALL_OBJECT_ALLOCATION = 0,
+    INDUCED = 1,
+    LOW_MEMORY = 2,
+    EMPTY = 3,
+    LARGE_OBJECT_ALLOCATION = 4
+};
+
 } // namespace gc
 } // namespace kotlin

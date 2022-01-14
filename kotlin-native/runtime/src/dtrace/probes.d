@@ -5,6 +5,10 @@
 
  // DTrace probes for K/N runtime
 
+// Values of reasons and description is taken from https://docs.microsoft.com/en-us/dotnet/framework/performance/garbage-collection-etw-events
  provider kotlin_native_runtime {
-    probe GCStart(uint32_t, uint32_t); // (count, reason)
+    probe GCStart_V1(uint32_t, uint32_t, uint32_t, uint32_t, uint16_t); // (count, depth, reason, type, clrInstance)
+    probe GCSuspendEE_V1(uint16_t); // (reason)
+    probe GCSuspendEEEnd_V1();
+    probe GCEnd_V1(uint32_t, uint32_t, uint16_t); // (count, depth, clrInstance)
  };

@@ -12,6 +12,7 @@
 #include "Logging.hpp"
 #include "MarkAndSweepUtils.hpp"
 #include "Memory.h"
+#include "probes.h"
 #include "RootSet.hpp"
 #include "Runtime.h"
 #include "ThreadData.hpp"
@@ -63,10 +64,12 @@ void gc::ConcurrentMarkAndSweep::ThreadData::SafePointAllocation(size_t size) no
     gcScheduler_.OnSafePointAllocation(size);
     mm::SuspendIfRequested();
 }
-void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGC() noexcept {
+void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGC(bool triggeredByOOM) noexcept {
+    KOTLIN_NATIVE_RUNTIME_GCSUSPENDEE_V1(1);
     ThreadStateGuard guard(ThreadState::kNative);
-    auto scheduled_epoch = gc_.state_.schedule();
+    auto scheduled_epoch = gc_.state_.schedule(triggeredByOOM);
     gc_.state_.waitEpochFinished(scheduled_epoch);
+    KOTLIN_NATIVE_RUNTIME_GCSUSPENDEEEND_V1();
 }
 
 void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGCWithFinalizers() noexcept {
@@ -77,7 +80,7 @@ void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGCWithFinalizers
 
 void gc::ConcurrentMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
     RuntimeLogDebug({kTagGC}, "Attempt to GC on OOM at size=%zu", size);
-    ScheduleAndWaitFullGC();
+    ScheduleAndWaitFullGC(true);
 }
 
 gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
@@ -125,6 +128,9 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     RuntimeLogDebug({kTagGC}, "Attempt to suspend threads by thread %d", konan::currentThreadId());
     auto timeStartUs = konan::getTimeMicros();
     bool didSuspend = mm::RequestThreadsSuspension();
+    KOTLIN_NATIVE_RUNTIME_GCSTART_V1(static_cast<uint32_t>(epoch),
+            0,
+            state_.isScheduledByOOM(epoch) ? LOW_MEMORY : INDUCED, CMS_DTRACE_TYPE, 0);
     RuntimeAssert(didSuspend, "Only GC thread can request suspension");
     RuntimeLogDebug({kTagGC}, "Requested thread suspension by thread %d", konan::currentThreadId());
 
@@ -184,6 +190,7 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
             "Finished GC epoch %" PRId64 ". Collected %zu objects, to be finalized %zu objects, %zu objects and %zd extra data objects remain. Total pause time %" PRIu64
             " microseconds",
             epoch, collectedCount, finalizersCount, objectsCountAfter, extraObjectsCountAfter, timeSweepUs - timeStartUs);
+    KOTLIN_NATIVE_RUNTIME_GCEND_V1(static_cast<uint32_t>(epoch), 0, 0);
     lastGCTimestampUs_ = timeResumeUs;
     return true;
 }

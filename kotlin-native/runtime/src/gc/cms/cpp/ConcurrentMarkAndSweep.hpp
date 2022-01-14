@@ -55,7 +55,7 @@ public:
 
         void SafePointAllocation(size_t size) noexcept;
 
-        void ScheduleAndWaitFullGC() noexcept;
+        void ScheduleAndWaitFullGC(bool triggeredByOOM = false) noexcept;
         void ScheduleAndWaitFullGCWithFinalizers() noexcept;
 
         void OnOOM(size_t size) noexcept;
@@ -87,6 +87,8 @@ private:
     GCStateHolder state_;
     std::thread gcThread_;
     KStdUniquePtr<FinalizerProcessor> finalizerProcessor_;
+
+    static const uint32_t CMS_DTRACE_TYPE = 1;
 };
 
 } // namespace gc

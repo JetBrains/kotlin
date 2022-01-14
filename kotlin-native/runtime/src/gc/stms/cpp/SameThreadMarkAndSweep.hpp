@@ -7,6 +7,7 @@
 #define RUNTIME_GC_STMS_SAME_THREAD_MARK_AND_SWEEP_H
 
 #include <cstddef>
+#include <GC.hpp>
 
 #include "Allocator.hpp"
 #include "GCScheduler.hpp"
@@ -58,7 +59,7 @@ public:
         void SafePointSlowPath(SafepointFlag flag) noexcept;
         void SafePointAllocation(size_t size) noexcept;
 
-        void ScheduleAndWaitFullGC() noexcept;
+        void ScheduleAndWaitFullGC(GCReason gcReason = INDUCED) noexcept;
         void ScheduleAndWaitFullGCWithFinalizers() noexcept { ScheduleAndWaitFullGC(); }
 
         void OnOOM(size_t size) noexcept;
@@ -78,13 +79,15 @@ public:
 
 private:
     // Returns `true` if GC has happened, and `false` if not (because someone else has suspended the threads).
-    bool PerformFullGC() noexcept;
+    bool PerformFullGC(GCReason gcReason = INDUCED) noexcept;
 
     size_t epoch_ = 0;
     uint64_t lastGCTimestampUs_ = 0;
 
     mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory_;
     GCScheduler& gcScheduler_;
+
+    static const uint32_t STMS_DTRACE_TYPE = 0;
 };
 
 namespace internal {

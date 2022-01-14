@@ -34,7 +34,7 @@ googletest {
 }
 
 fun CompileToBitcode.includeRuntime() {
-    headersDirs += files("src/main/cpp")
+    headersDirs += files("src/main/cpp") + files("$buildDir/dtrace")
 }
 
 val hostName: String by project
@@ -43,8 +43,8 @@ val targetList: List<String> by project
 tasks.register("dtraceHeaderGeneration") {
     val dtraceSourceDirectory = "src/dtrace"
     val dtraceOutputDirectory = "$buildDir/dtrace"
-    val probesFile = "$dtraceSourceDirectory/probes.d"
-    inputs.file(probesFile)
+
+    inputs.dir(dtraceSourceDirectory)
     outputs.dir(dtraceOutputDirectory)
     // Check dtrace exists on OS.
     val result = project.exec {
@@ -56,7 +56,7 @@ tasks.register("dtraceHeaderGeneration") {
     if (result.exitValue == 2) {
         project.exec {
             executable = "dtrace"
-            args("-C", "-s", probesFile, "-h", "-o", "$dtraceOutputDirectory/probes.h")
+            args("-C", "-s", "$dtraceSourceDirectory/probes.d", "-h", "-o", "$dtraceOutputDirectory/probes.h")
         }
     } else {
         // Copy predefined header file with placeholders.

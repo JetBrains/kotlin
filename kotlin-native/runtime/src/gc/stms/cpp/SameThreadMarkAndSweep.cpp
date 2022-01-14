@@ -12,6 +12,7 @@
 #include "Logging.hpp"
 #include "MarkAndSweepUtils.hpp"
 #include "Memory.h"
+#include "probes.h"
 #include "RootSet.hpp"
 #include "Runtime.h"
 #include "ThreadData.hpp"
@@ -72,18 +73,20 @@ void gc::SameThreadMarkAndSweep::ThreadData::SafePointAllocation(size_t size) no
     }
 }
 
-void gc::SameThreadMarkAndSweep::ThreadData::ScheduleAndWaitFullGC() noexcept {
-    auto didGC = gc_.PerformFullGC();
+void gc::SameThreadMarkAndSweep::ThreadData::ScheduleAndWaitFullGC(GCReason gcReason) noexcept {
+    KOTLIN_NATIVE_RUNTIME_GCSUSPENDEE_V1(1);
+    auto didGC = gc_.PerformFullGC(gcReason);
 
     if (!didGC) {
         // If we failed to suspend threads, someone else might be asking to suspend them.
         mm::SuspendIfRequested();
     }
+    KOTLIN_NATIVE_RUNTIME_GCSUSPENDEEEND_V1();
 }
 
 void gc::SameThreadMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
     RuntimeLogDebug({kTagGC}, "Attempt to GC on OOM at size=%zu", size);
-    ScheduleAndWaitFullGC();
+    ScheduleAndWaitFullGC(LOW_MEMORY);
 }
 
 NO_INLINE void gc::SameThreadMarkAndSweep::ThreadData::SafePointSlowPath(SafepointFlag flag) noexcept {
@@ -114,7 +117,7 @@ gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep(
     });
 }
 
-bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
+bool gc::SameThreadMarkAndSweep::PerformFullGC(GCReason gcReason) noexcept {
     RuntimeLogDebug({kTagGC}, "Attempt to suspend threads by thread %d", konan::currentThreadId());
     auto timeStartUs = konan::getTimeMicros();
     bool didSuspend = mm::RequestThreadsSuspension();
@@ -124,6 +127,9 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
         // TODO: This breaks if suspension is used by something apart from GC.
         return false;
     }
+    KOTLIN_NATIVE_RUNTIME_GCSTART_V1(static_cast<uint32_t>(epoch_),
+                                     0,
+                                     gcReason, STMS_DTRACE_TYPE, 0);
     RuntimeLogDebug({kTagGC}, "Requested thread suspension by thread %d", konan::currentThreadId());
     gSafepointFlag = SafepointFlag::kNeedsSuspend;
 
@@ -192,6 +198,7 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
     auto timeBeforeUs = konan::getTimeMicros();
     finalizerQueue.Finalize();
     auto timeAfterUs = konan::getTimeMicros();
+    KOTLIN_NATIVE_RUNTIME_GCEND_V1(static_cast<uint32_t>(epoch_ - 1), 0, 0);
     RuntimeLogInfo({kTagGC}, "Finished running finalizers in %" PRIu64 " microseconds", timeAfterUs - timeBeforeUs);
 
     return true;
