@@ -1,3 +1,5 @@
-idePluginDependency {
-    publishProjectJars(listOf(":jps:jps-common"))
+plugins {
+    kotlin("jvm")
 }
+
+publishJarsForIde(listOf(":jps:jps-common"))
