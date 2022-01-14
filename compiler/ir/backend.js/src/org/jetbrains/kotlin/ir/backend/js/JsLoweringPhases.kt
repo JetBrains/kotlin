@@ -167,6 +167,12 @@ private val expectDeclarationsRemovingPhase = makeDeclarationTransformerPhase(
     description = "Remove expect declaration from module fragment"
 )
 
+private val stringConcatenationLoweringPhase = makeJsModulePhase(
+    ::JsStringConcatenationLowering,
+    name = "JsStringConcatenationLowering",
+    description = "Call toString() for values of some types when concatenating strings"
+).toModuleLowering()
+
 private val lateinitNullableFieldsPhase = makeDeclarationTransformerPhase(
     ::NullableFieldsForLateinitCreationLowering,
     name = "LateinitNullableFields",
@@ -835,6 +841,7 @@ val loweringList = listOf<Lowering>(
     copyInlineFunctionBodyLoweringPhase,
     removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
     createScriptFunctionsPhase,
+    stringConcatenationLoweringPhase,
     callableReferenceLowering,
     singleAbstractMethodPhase,
     tailrecLoweringPhase,

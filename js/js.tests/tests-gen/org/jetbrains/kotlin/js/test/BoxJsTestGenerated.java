@@ -7409,6 +7409,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("long.kt")
+        public void testLong() throws Exception {
+            runTest("js/js.translator/testData/box/native/long.kt");
+        }
+
+        @Test
         @TestMetadata("nativeClassAsReifiedTypeArgument.kt")
         public void testNativeClassAsReifiedTypeArgument() throws Exception {
             runTest("js/js.translator/testData/box/native/nativeClassAsReifiedTypeArgument.kt");

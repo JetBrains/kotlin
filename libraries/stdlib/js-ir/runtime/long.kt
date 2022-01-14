@@ -279,6 +279,15 @@ public class Long internal constructor(
     public override fun toFloat(): Float = toDouble().toFloat()
     public override fun toDouble(): Double = toNumber()
 
+    // This method is used by JavaScript to convert objects of type Long to primitives.
+    // This is essential for the JavaScript interop.
+    // JavaScript functions that expect `number` are imported in Kotlin as expecting `kotlin.Number`
+    // (in our standard library, and also in user projects if they use Dukat for generating external declarations).
+    // Because `kotlin.Number` is a supertype of `Long` too, there has to be a way for JS to know how to handle Longs.
+    // See KT-50202
+    @JsName("valueOf")
+    internal fun valueOf() = toDouble()
+
     override fun equals(other: Any?): Boolean = other is Long && equalsLong(other)
 
     override fun hashCode(): Int = hashCode(this)
