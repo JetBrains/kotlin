@@ -395,6 +395,18 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     }
 
     @Test
+    @TestMetadata("SuperTypePrimaryConstructor.kt")
+    public void testSuperTypePrimaryConstructor() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/SuperTypePrimaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("SuperTypeSecondaryConstructor.kt")
+    public void testSuperTypeSecondaryConstructor() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/SuperTypeSecondaryConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("superWithLabel_caretAtLabel.kt")
     public void testSuperWithLabel_caretAtLabel() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/superWithLabel_caretAtLabel.kt");

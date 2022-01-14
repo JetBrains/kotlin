@@ -1,2 +1,2 @@
 Resolved to:
-0: (in ROOT) open class Test
+0: (in Test) constructor()
