@@ -577,6 +577,11 @@ public class IncrementalFirICLightTreeJvmCompilerRunnerTestGenerated extends Abs
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/renameClass/");
         }
 
+        @TestMetadata("renameFileWithClassesOnly")
+        public void testRenameFileWithClassesOnly() throws Exception {
+            runTest("jps/jps-plugin/testData/incremental/pureKotlin/renameFileWithClassesOnly/");
+        }
+
         @TestMetadata("renameFileWithFunctionOverload")
         public void testRenameFileWithFunctionOverload() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/renameFileWithFunctionOverload/");

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
 
@@ -113,10 +112,11 @@ internal fun collectNewDirtySources(
                 withMetadataSerializer(metadata, data) { serializer ->
                     klass.acceptChildren(this, data)
                     serializer.serialize(metadata)?.let { (classProto, nameTable) ->
-                        caches.platformCache.collectClassChangesByFeMetadata(
-                            JvmClassName.byClassId(klass.classId),
+                        caches.platformCache.saveFrontendClassToCache(
+                            klass.classId,
                             classProto as ProtoBuf.Class,
                             nameTable,
+                            null, // TODO: !!
                             changesCollector
                         )
                     }
