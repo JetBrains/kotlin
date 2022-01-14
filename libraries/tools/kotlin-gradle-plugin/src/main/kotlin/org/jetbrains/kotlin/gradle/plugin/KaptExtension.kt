@@ -18,84 +18,78 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import groovy.lang.Closure
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.KaptArguments
+import org.jetbrains.kotlin.gradle.dsl.KaptExtensionConfig
+import org.jetbrains.kotlin.gradle.dsl.KaptJavacOption
 import java.util.*
 
-open class KaptExtension {
+open class KaptExtension: KaptExtensionConfig {
     open var generateStubs: Boolean = false
 
     open var inheritedAnnotations: Boolean = true
 
-    open var useLightAnalysis: Boolean = true
+    override var useLightAnalysis: Boolean = true
 
-    open var correctErrorTypes: Boolean = false
+    override var correctErrorTypes: Boolean = false
 
-    open var dumpDefaultParameterValues: Boolean = false
+    override var dumpDefaultParameterValues: Boolean = false
 
-    open var mapDiagnosticLocations: Boolean = false
+    override var mapDiagnosticLocations: Boolean = false
 
-    open var strictMode: Boolean = false
+    override var strictMode: Boolean = false
 
-    open var stripMetadata: Boolean = false
+    override var stripMetadata: Boolean = false
     
-    open var showProcessorTimings: Boolean = false
+    override var showProcessorTimings: Boolean = false
 
-    open var detectMemoryLeaks: String = "default"
+    override var detectMemoryLeaks: String = "default"
 
-    open var includeCompileClasspath: Boolean? = null
+    override var includeCompileClasspath: Boolean? = null
 
     @Deprecated("Use `annotationProcessor()` and `annotationProcessors()` instead")
     open var processors: String = ""
 
-    /**
-     * If true keeps annotation processors added via `annotationProcessor(..)` configuration for javac java-files compilation
-     */
-    open var keepJavacAnnotationProcessors: Boolean = false
+    override var keepJavacAnnotationProcessors: Boolean = false
 
-    /** Opt-out switch for Kapt caching. Should be used when annotation processors used by this project are suspected of
-     * using anything aside from the task inputs in their logic and are not guaranteed to produce the same
-     * output on subsequent runs without input changes. */
-    var useBuildCache: Boolean = true
+    override var useBuildCache: Boolean = true
 
     private val apOptionsActions =
-        mutableListOf<(KaptAnnotationProcessorOptions) -> Unit>()
+        mutableListOf<(KaptArguments) -> Unit>()
 
     private val javacOptionsActions =
-        mutableListOf<(KaptJavacOptionsDelegate) -> Unit>()
-
-    private var apOptionsClosure: Closure<*>? = null
-    private var javacOptionsClosure: Closure<*>? = null
+        mutableListOf<(KaptJavacOption) -> Unit>()
 
     @Suppress("DEPRECATION")
-    open fun annotationProcessor(fqName: String) {
+    override fun annotationProcessor(fqName: String) {
         val oldProcessors = this.processors
         this.processors = if (oldProcessors.isEmpty()) fqName else "$oldProcessors,$fqName"
     }
 
-    open fun annotationProcessors(vararg fqName: String) {
+    override fun annotationProcessors(vararg fqName: String) {
         fqName.forEach(this::annotationProcessor)
     }
 
-    open fun arguments(closure: Closure<*>) {
+    fun arguments(closure: Closure<*>) {
         apOptionsActions += { apOptions ->
-            apOptions.execute(closure)
+            apOptions.executeClosure(closure)
         }
     }
 
-    open fun arguments(action: KaptAnnotationProcessorOptions.() -> Unit) {
+    override fun arguments(action: KaptArguments.() -> Unit) {
         apOptionsActions += action
     }
 
     open fun javacOptions(closure: Closure<*>) {
-        this.javacOptionsActions += { javacOptions ->
-            javacOptions.execute(closure)
+        javacOptionsActions += { javacOptions ->
+            javacOptions.executeClosure(closure)
         }
     }
 
-    open fun javacOptions(action: KaptJavacOptionsDelegate.() -> Unit) {
+    override fun javacOptions(action: KaptJavacOption.() -> Unit) {
         javacOptionsActions += action
     }
 
-    fun getJavacOptions(): Map<String, String> {
+    override fun getJavacOptions(): Map<String, String> {
         val result = KaptJavacOptionsDelegate()
         javacOptionsActions.forEach { it(result) }
         return result.options
@@ -123,25 +117,25 @@ open class KaptAnnotationProcessorOptions(
     @Suppress("unused") open val project: Project,
     @Suppress("unused") open val variant: Any?,
     @Suppress("unused") open val android: Any?
-) {
+): KaptArguments {
     internal val options = LinkedHashMap<String, String>()
 
     @Suppress("unused")
-    open fun arg(name: Any, vararg values: Any) {
+    override fun arg(name: Any, vararg values: Any) {
         options.put(name.toString(), values.joinToString(" "))
     }
 
     fun execute(closure: Closure<*>) = executeClosure(closure)
 }
 
-open class KaptJavacOptionsDelegate {
+open class KaptJavacOptionsDelegate: KaptJavacOption {
     internal val options = LinkedHashMap<String, String>()
 
-    open fun option(name: Any, value: Any) {
+    override fun option(name: Any, value: Any) {
         options.put(name.toString(), value.toString())
     }
 
-    open fun option(name: Any) {
+    override fun option(name: Any) {
         options.put(name.toString(), "")
     }
 
