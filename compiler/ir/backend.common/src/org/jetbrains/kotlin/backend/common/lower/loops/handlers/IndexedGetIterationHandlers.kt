@@ -78,7 +78,7 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
     private val supportsUnsignedArrays = context.optimizeLoopsOverUnsignedArrays
 
     override fun matchIterable(expression: IrExpression) =
-        expression.type.run { isArray() || isPrimitiveArray() || (supportsUnsignedArrays && isUnsignedArray()) } ||
+        expression.type.run { isArrayType() } ||
                 expression.run {
                     this is IrCall && reversedArrayMatcher(this)
                 }
@@ -97,8 +97,17 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
     override val IrType.sizePropertyGetter
         get() = getClass()!!.getPropertyGetter("size")!!.owner
 
-    private val getFunctionName: Name
-        get() = context.ir.symbols.getWithoutBoundCheckName ?: OperatorNameConventions.GET
+    private fun IrType.isArrayType() =
+        isArray() || isPrimitiveArray() || (supportsUnsignedArrays && isUnsignedArray())
+
+    private val IrType.getFunctionName: Name
+        get() = context.ir.symbols.getWithoutBoundCheckName.let {
+            if (isArrayType() && it != null) {
+                it
+            } else {
+                OperatorNameConventions.GET
+            }
+        }
 
     override val IrType.getFunction
         get() = getClass()!!.functions.single {
