@@ -20,6 +20,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosticTest {
     @Test
+    @TestMetadata("A.kt")
+    public void testA() throws Exception {
+        runTest("plugins/kotlin-dataframe/testData/A.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInTestData() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-dataframe/testData"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
@@ -28,5 +34,11 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
     @TestMetadata("helloWorld.kt")
     public void testHelloWorld() throws Exception {
         runTest("plugins/kotlin-dataframe/testData/helloWorld.kt");
+    }
+
+    @Test
+    @TestMetadata("OuterClass.kt")
+    public void testOuterClass() throws Exception {
+        runTest("plugins/kotlin-dataframe/testData/OuterClass.kt");
     }
 }

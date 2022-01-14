@@ -1,0 +1,22 @@
+FILE: A.kt
+    package foo
+
+    @R|org/jetbrains/dataframe/annotations/DataSchema|() public abstract interface Schema : R|kotlin/Any| {
+        public abstract val a: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public abstract val b: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+    }
+FILE: __GENERATED DECLARATIONS__.kt
+    package foo
+
+    public final val R|org/jetbrains/dataframe/DataRowBase<foo/Schema>|.a: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+    public final val R|org/jetbrains/dataframe/DataFrameBase<foo/Schema>|.a: R|org/jetbrains/dataframe/columns/DataColumn<kotlin/Int>|
+        public get(): R|org/jetbrains/dataframe/columns/DataColumn<kotlin/Int>|
+    public final val R|org/jetbrains/dataframe/DataRowBase<foo/Schema>|.b: R|kotlin/String|
+        public get(): R|kotlin/String|
+    public final val R|org/jetbrains/dataframe/DataFrameBase<foo/Schema>|.b: R|org/jetbrains/dataframe/columns/DataColumn<kotlin/String>|
+        public get(): R|org/jetbrains/dataframe/columns/DataColumn<kotlin/String>|
