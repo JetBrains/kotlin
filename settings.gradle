@@ -425,8 +425,6 @@ if (attachedIntellijVersion == "212") { // Latest available platform in scope of
     intellij "git/kotlin.git.iml"
     intellij "idea/tests/kotlin.idea.tests.iml"
     intellij "idea/kotlin.idea.iml"
-    intellij "jps/jps-plugin/kotlin.jps-plugin.iml"
-    intellij "jps/jps-common/kotlin.jps-common.iml"
     intellij "project-wizard/core/kotlin.project-wizard.core.iml"
     intellij "project-wizard/idea/kotlin.project-wizard.idea.iml"
     intellij "project-wizard/cli/kotlin.project-wizard.cli.iml"
