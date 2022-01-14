@@ -1,6 +1,5 @@
 @0:0..4:1 FILE fqName:<root> fileName:/synthesizedDataClassMembers.kt
   @0:0..4:1 CLASS CLASS name:C modality:FINAL visibility:public [data] superTypes:[kotlin.Any]
-    @0:0..4:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
     @0:5..4:1 CONSTRUCTOR visibility:public <> (x:kotlin.Int, y:kotlin.String, z:kotlin.Any) returnType:<root>.C [primary]
       @1:8..18 VALUE_PARAMETER name:x index:0 type:kotlin.Int
       @2:8..21 VALUE_PARAMETER name:y index:1 type:kotlin.String
@@ -171,3 +170,4 @@
               @-1:-1..-1 CONST Boolean type=kotlin.Boolean value=false
         @-1:-1..-1 RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.C'
           @-1:-1..-1 CONST Boolean type=kotlin.Boolean value=true
+    @0:0..4:1 VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
