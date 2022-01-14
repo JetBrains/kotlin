@@ -24,7 +24,8 @@ data class BuildLogFinder(
     private val isJsEnabled: Boolean = false,
     private val isScopeExpansionEnabled: Boolean = false,
     private val isKlibEnabled: Boolean = false,
-    private val isFirEnabled: Boolean = false
+    private val isFirEnabled: Boolean = false,
+    private val isJpsBuild: Boolean = false,
 ) {
     companion object {
         private const val JS_LOG = "js-build.log"
@@ -35,6 +36,7 @@ data class BuildLogFinder(
         const val JS_JPS_LOG = "js-jps-build.log"
         private const val FIR_LOG = "fir-build.log"
         private const val GRADLE_FIR_LOG = "gradle-fir-build.log"
+        const val JPS_LOG = "jps-build.log"
         private const val SIMPLE_LOG = "build.log"
 
         fun isJpsLogFile(file: File): Boolean =
@@ -45,6 +47,7 @@ data class BuildLogFinder(
         val names = dir.list() ?: arrayOf()
         val files = names.filter { File(dir, it).isFile }.toSet()
         val matchedName = when {
+            isJpsBuild && JPS_LOG in files -> JPS_LOG
             isScopeExpansionEnabled && SCOPE_EXPANDING_LOG in files -> SCOPE_EXPANDING_LOG
             isKlibEnabled && KLIB_LOG in files -> KLIB_LOG
             isJsEnabled && JS_LOG in files -> JS_LOG

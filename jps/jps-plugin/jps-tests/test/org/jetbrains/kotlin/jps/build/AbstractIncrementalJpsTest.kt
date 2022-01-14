@@ -113,7 +113,7 @@ abstract class AbstractIncrementalJpsTest(
     lateinit var kotlinCompileContext: KotlinCompileContext
 
     protected open val buildLogFinder: BuildLogFinder
-        get() = BuildLogFinder()
+        get() = BuildLogFinder(isJpsBuild = true)
 
     private fun enableDebugLogging() {
         com.intellij.openapi.diagnostic.Logger.setFactory(TestLoggerFactory::class.java)
