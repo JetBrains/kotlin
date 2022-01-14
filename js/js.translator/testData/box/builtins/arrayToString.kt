@@ -27,7 +27,7 @@ fun testKt14013() {
     if (testUtils.isLegacyBackend()) {
         assertEquals(",1;[...];,1;", pullLog(), "testKt14013")
     } else {
-        assertEquals(",1;[...];[...];", pullLog(), "testKt14013")
+        assertEquals("[...];[...];[...];", pullLog(), "testKt14013")
     }
 }
 
@@ -74,7 +74,7 @@ fun box(): String {
     if (testUtils.isLegacyBackend()) {
         assertEquals("1,2,3;1,2,3;[...];", pullLog(), "anyValueToString")
     } else {
-        assertEquals("[...];1,2,3;1,2,3;", pullLog(), "anyValueToString")
+        assertEquals("[...];[...];[...];", pullLog(), "anyValueToString")
     }
 
     return "OK"
