@@ -44,14 +44,14 @@ abstract class IrClass :
         visitor.visitClass(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        thisReceiver?.accept(visitor, data)
         super<IrTypeParametersContainer>.acceptChildren(visitor, data)
         super<IrDeclarationContainer>.acceptChildren(visitor, data)
+        thisReceiver?.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        thisReceiver = thisReceiver?.transform(transformer, data)
         super<IrTypeParametersContainer>.transformChildren(transformer, data)
         super<IrDeclarationContainer>.transformChildren(transformer, data)
+        thisReceiver = thisReceiver?.transform(transformer, data)
     }
 }
