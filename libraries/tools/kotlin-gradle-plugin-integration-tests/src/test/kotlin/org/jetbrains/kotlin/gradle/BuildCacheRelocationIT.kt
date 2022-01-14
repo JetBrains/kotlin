@@ -20,8 +20,6 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.DisabledOnOs
-import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.createDirectory
 
 @DisplayName("Build cache relocation")
@@ -229,7 +227,6 @@ class BuildCacheRelocationIT : KGPBaseTest() {
 
     @DisplayName("with native project")
     @GradleTest
-    @DisabledOnOs(OS.WINDOWS, disabledReason = "remove after fix of KT-48283")
     fun testRelocationNative(gradleVersion: GradleVersion) {
         val (firstProject, secondProject) = prepareTestProjects(
             "native-build-cache",
