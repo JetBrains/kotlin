@@ -56,7 +56,7 @@ internal class UnlinkedDeclarationsProcessor(
 
                 klass.reportWarning("Class", klass.fqNameForIrSerialization.asString())
 
-                anonInitializer.body.statements.add(klass.throwLinkageError(klass.symbol.signature?.render()))
+                anonInitializer.body.statements.add(klass.throwLinkageError(klass.symbol))
 
                 klass.superTypes = klass.superTypes.filter { !it.isUnlinked() }
             }
@@ -122,7 +122,7 @@ internal class UnlinkedDeclarationsProcessor(
                 declaration.body?.let { body ->
                     val bb = (body as IrBlockBody)
                     bb.statements.clear()
-                    bb.statements.add(declaration.throwLinkageError("Unlinked type in function signature"))
+                    bb.statements.add(declaration.throwLinkageError(unlinkedSymbol = null, "Unlinked type in IR function signature"))
                 }
             }
             return declaration
@@ -187,11 +187,12 @@ internal class UnlinkedDeclarationsProcessor(
         return with(unlinkedMarkerTypeHandler) { isUnlinkedMarkerType() }
     }
 
-    private fun IrElement.throwLinkageError(message: String?): IrCall {
-        return IrCallImpl(startOffset, endOffset, builtIns.nothingType, builtIns.linkageErrorSymbol, 0, 1, errorOrigin).also { call ->
-            val messageLiteral = "Linkage error of symbol: ${message ?: ""}"
-            call.putValueArgument(0, IrConstImpl.string(startOffset, endOffset, builtIns.stringType, messageLiteral))
-        }
+    private fun IrElement.throwLinkageError(unlinkedSymbol: IrSymbol?, message: String = "Unlinked IR symbol"): IrCall {
+        val messageLiteral = message + unlinkedSymbol?.signature?.render()?.let { " $it" }.orEmpty()
+
+        val irCall = IrCallImpl(startOffset, endOffset, builtIns.nothingType, builtIns.linkageErrorSymbol, 0, 1, errorOrigin)
+        irCall.putValueArgument(0, IrConstImpl.string(startOffset, endOffset, builtIns.stringType, messageLiteral))
+        return irCall
     }
 
     fun usageTransformer(): IrElementTransformerVoid = UsageTransformer()
@@ -220,7 +221,7 @@ internal class UnlinkedDeclarationsProcessor(
             val composite = IrCompositeImpl(expression.startOffset, expression.endOffset, builtIns.nothingType)
 
             composite.statements.add(expression.argument)
-            composite.statements.add(expression.throwLinkageError(expression.typeOperandClassifier.signature?.render()))
+            composite.statements.add(expression.throwLinkageError(expression.typeOperandClassifier))
 
             return composite
         }
@@ -228,7 +229,7 @@ internal class UnlinkedDeclarationsProcessor(
         override fun visitExpression(expression: IrExpression): IrExpression {
             if (expression.type.isUnlinked() || expression.type.isUnlinkedMarkerType()) {
                 reportWarning("Expression type contains unlinked symbol", currentFile?.location(expression.startOffset))
-                return expression.throwLinkageError("Unlinked type of expression")
+                return expression.throwLinkageError(unlinkedSymbol = null, "Unlinked type of IR expression")
             }
             return super.visitExpression(expression)
         }
@@ -254,9 +255,12 @@ internal class UnlinkedDeclarationsProcessor(
                 arg?.let { composite.statements.add(it) }
             }
 
-            val message =
-                if (!symbol.isBound) "Unlinked symbol: ${symbol.signature?.render()}" else "Unlinked type in signature of ${symbol.signature?.render()}"
-            composite.statements.add(expression.throwLinkageError(message))
+            composite.statements.add(
+                if (!symbol.isBound)
+                    expression.throwLinkageError(symbol)
+                else
+                    expression.throwLinkageError(symbol, "Unlinked type in signature of IR symbol")
+            )
 
             return composite
         }
@@ -269,7 +273,7 @@ internal class UnlinkedDeclarationsProcessor(
             }
 
             reportWarning(
-                "Accessing field contains unlinked symbol ${symbol.signature?.render() ?: ""}",
+                "Accessing field contains unlinked symbol ${symbol.signature?.render()}",
                 currentFile?.location(expression.startOffset)
             )
 
@@ -278,19 +282,22 @@ internal class UnlinkedDeclarationsProcessor(
             if (expression is IrSetField) {
                 composite.statements.add(expression.value)
             }
-            val message = if (!symbol.isBound) "Unlinked symbol: ${symbol.signature?.render()}" else "Field type is unlinked"
-            composite.statements.add(expression.throwLinkageError(message))
+            composite.statements.add(
+                if (!symbol.isBound)
+                    expression.throwLinkageError(symbol)
+                else
+                    expression.throwLinkageError(symbol, "Field type is unlinked in IR symbol")
+            )
             return composite
         }
 
         override fun visitClassReference(expression: IrClassReference): IrExpression {
             if (expression.symbol.isUnlinked()) {
-                val signRender = expression.symbol.signature?.render()
                 reportWarning(
-                    "Accessing class contains unlinked symbol ${signRender ?: ""}",
+                    "Accessing class contains unlinked symbol ${expression.symbol.signature?.render()}",
                     currentFile?.location(expression.startOffset)
                 )
-                return expression.throwLinkageError(signRender)
+                return expression.throwLinkageError(expression.symbol)
             }
             return expression
         }
