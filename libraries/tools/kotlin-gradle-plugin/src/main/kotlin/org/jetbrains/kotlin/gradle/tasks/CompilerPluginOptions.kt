@@ -16,29 +16,35 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
+import org.jetbrains.kotlin.gradle.plugin.CompilerPluginConfig
 
-class CompilerPluginOptions {
-    internal val subpluginOptionsByPluginId =
-        mutableMapOf<String, MutableList<SubpluginOption>>()
+class CompilerPluginOptions() : CompilerPluginConfig() {
+
+    constructor(options: CompilerPluginConfig) : this() {
+        copyOptionsFrom(options)
+    }
+
+    val subpluginOptionsByPluginId = optionsByPluginId
 
     val arguments: List<String>
-        get() = subpluginOptionsByPluginId.flatMap { (pluginId, subplubinOptions) ->
+        get() = optionsByPluginId.flatMap { (pluginId, subplubinOptions) ->
             subplubinOptions.map { option ->
                 "plugin:$pluginId:${option.key}=${option.value}"
             }
         }
 
-    fun addPluginArgument(pluginId: String, option: SubpluginOption) {
-        subpluginOptionsByPluginId.getOrPut(pluginId) { mutableListOf() }.add(option)
-    }
-
-    operator fun plus(options: CompilerPluginOptions?): CompilerPluginOptions {
+    operator fun plus(options: CompilerPluginConfig?): CompilerPluginOptions {
         if (options == null) return this
         val newOptions = CompilerPluginOptions()
-        newOptions.subpluginOptionsByPluginId += subpluginOptionsByPluginId
-        newOptions.subpluginOptionsByPluginId += options.subpluginOptionsByPluginId
+        newOptions.optionsByPluginId += subpluginOptionsByPluginId
+        newOptions.copyOptionsFrom(options)
 
         return newOptions
+    }
+
+    private fun copyOptionsFrom(options: CompilerPluginConfig) {
+        options.allOptions().forEach { entry ->
+            optionsByPluginId[entry.key] = entry.value.toMutableList()
+        }
     }
 }

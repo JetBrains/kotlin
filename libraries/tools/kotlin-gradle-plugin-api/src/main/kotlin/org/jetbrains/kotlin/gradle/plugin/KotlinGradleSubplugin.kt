@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import java.io.File
@@ -64,6 +63,17 @@ enum class FilesOptionKind {
 
 /** Defines a subplugin option that should be excluded from Gradle input/output checks */
 open class InternalSubpluginOption(key: String, value: String) : SubpluginOption(key, value)
+
+/** Keeps one or more compiler options for one of more compiler plugins. */
+open class CompilerPluginConfig {
+    protected val optionsByPluginId = mutableMapOf<String, MutableList<SubpluginOption>>()
+
+    fun allOptions(): Map<String, List<SubpluginOption>> = optionsByPluginId
+
+    fun addPluginArgument(pluginId: String, option: SubpluginOption) {
+        optionsByPluginId.getOrPut(pluginId) { mutableListOf() }.add(option)
+    }
+}
 
 // Deprecated because most calls require the tasks to be instantiated, which is not compatible with Gradle task configuration avoidance.
 @Deprecated(
