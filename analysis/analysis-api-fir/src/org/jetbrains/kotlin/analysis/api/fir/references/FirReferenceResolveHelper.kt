@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.buildSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
@@ -174,6 +175,25 @@ internal object FirReferenceResolveHelper {
         return false
     }
 
+    internal fun adjustResolutionExpression(expression: KtElement): KtElement {
+        // If we are at a super-type constructor call, adjust the resolution expression so that we
+        // get the constructor instead of the class.
+        //
+        // For the example:
+        //
+        // class A {
+        //   constructor()
+        // }
+        // class B: <caret>A()
+        //
+        // We want to resolve to the secondary constructor in A. Therefore, we check that the caret is at a supertype
+        // call entry and if so we resolve the constructor callee expression.
+        val userType = expression.parent as? KtUserType ?: return expression
+        val typeReference = userType.parent as? KtTypeReference ?: return expression
+        val constructorCalleeExpression = typeReference.parent as? KtConstructorCalleeExpression ?: return expression
+        return if (constructorCalleeExpression.parent is KtSuperTypeCallEntry) constructorCalleeExpression else expression
+    }
+
 
     internal fun resolveSimpleNameReference(
         ref: KtFirSimpleNameReference,
@@ -182,7 +202,8 @@ internal object FirReferenceResolveHelper {
         val expression = ref.expression
         if (expression.isSyntheticOperatorReference()) return emptyList()
         val symbolBuilder = analysisSession.firSymbolBuilder
-        val fir = expression.getOrBuildFir(analysisSession.firResolveState)
+        val adjustedResolutionExpression = adjustResolutionExpression(expression)
+        val fir = adjustedResolutionExpression.getOrBuildFir(analysisSession.firResolveState)
         val session = analysisSession.firResolveState.rootModuleSession
         return when (fir) {
             is FirResolvedTypeRef -> getSymbolsForResolvedTypeRef(fir, expression, session, symbolBuilder)
@@ -200,10 +221,39 @@ internal object FirReferenceResolveHelper {
             is FirErrorNamedReference -> getSymbolsByErrorNamedReference(fir, symbolBuilder)
             is FirVariableAssignment -> getSymbolsByVariableAssignment(fir, session, symbolBuilder)
             is FirResolvedNamedReference -> getSymbolByResolvedNameReference(fir, expression, analysisSession, session, symbolBuilder)
+            is FirDelegatedConstructorCall ->
+                getSymbolByDelegatedConstructorCall(expression, adjustedResolutionExpression, fir, session, symbolBuilder)
             is FirResolvable -> getSymbolsByResolvable(fir, expression, session, symbolBuilder)
             is FirNamedArgumentExpression -> getSymbolsByNameArgumentExpression(expression, analysisSession, symbolBuilder)
             else -> handleUnknownFirElement(expression, analysisSession, session, symbolBuilder)
         }
+    }
+
+    private fun getSymbolByDelegatedConstructorCall(
+        expression: KtSimpleNameExpression,
+        adjustedResolutionExpression: KtElement,
+        fir: FirDelegatedConstructorCall,
+        session: FirSession,
+        symbolBuilder: KtSymbolByFirBuilder
+    ): Collection<KtSymbol> {
+        if (expression != adjustedResolutionExpression) {
+            // Type alias detection.
+            //
+            // If we adjusted resolution to get a constructor instead of a class, we need to undo that
+            // if the class is defined as a type alias. We can detect that situation when the constructed type
+            // is different from the return type of the constructor.
+            //
+            // TODO: This seems a little indirect. Is there a better way to do this? For FE1.0 there is
+            // a special `TypeAliasConstructorDescriptor` for this case. For FIR there is
+            // FirConstructor.originalConstructorIfTypeAlias but that doesn't seem to help here as it
+            // is null for the constructors we get.
+            val constructedType = fir.constructedTypeRef.coneType
+            val constructorReturnType = (fir.calleeReference.resolvedSymbol as? FirConstructorSymbol)?.resolvedReturnTypeRef?.type
+            if (constructedType.classId != constructorReturnType?.classId) {
+                return getSymbolsForResolvedTypeRef(fir.constructedTypeRef as FirResolvedTypeRef, expression, session, symbolBuilder)
+            }
+        }
+        return getSymbolsByResolvable(fir, expression, session, symbolBuilder)
     }
 
     private fun getSymbolsForPackageDirective(
