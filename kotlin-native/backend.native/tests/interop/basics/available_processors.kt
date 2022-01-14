@@ -10,10 +10,18 @@ import kotlinx.cinterop.*
 
 
 @OptIn(kotlin.ExperimentalStdlibApi::class)
-fun main() {
-    val x = Platform.getAvailableProcessors()
-    println(x)
+fun main(args: Array<String>) {
+    require(args.size == 1) {
+        "An expected anount of processors should be specified as program argument"
+    }
+    val x: Int = Platform.getAvailableProcessors()
+    println("Got available processors: $x")
     assertTrue(x > 0)
+    if (!(Platform.osFamily == OsFamily.LINUX && (Platform.cpuArchitecture == CpuArchitecture.ARM32 ||
+                    Platform.cpuArchitecture == CpuArchitecture.ARM64))) {
+        assertEquals(args[0].trim().toInt(), x)
+    }
+
     setenv("KOTLIN_NATIVE_AVAILABLE_PROCESSORS", "12345", 1)
     assertEquals(Platform.getAvailableProcessors(), 12345)
     setenv("KOTLIN_NATIVE_AVAILABLE_PROCESSORS", Long.MAX_VALUE.toString(), 1)

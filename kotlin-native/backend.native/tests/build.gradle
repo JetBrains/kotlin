@@ -4423,10 +4423,8 @@ standaloneTest("interop_objc_allocException") {
 interopTest("interop_available_processors") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = 'interop/basics/available_processors.kt'
+    arguments = [Runtime.getRuntime().availableProcessors().toString()]
     interop = 'cstdlib'
-    outputChecker = {
-        s -> Integer.parseInt(s.trim()) == Runtime.getRuntime().availableProcessors()
-    }
 }
 
 interopTest("interop0") {
