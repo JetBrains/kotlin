@@ -57,7 +57,7 @@ private fun ConeTypeContext.makesSenseToBeDefinitelyNotNull(type: ConeKotlinType
     is ConeTypeParameterType -> type.isNullableType()
     // Actually, this branch should work for type parameters as well, but it breaks some cases. See KT-40114.
     // Basically, if we have `T : X..X?`, then `T <: Any` but we still have `T` != `T & Any`.
-    is ConeTypeVariableType, is ConeCapturedType ->
+    is ConeTypeVariableType, is ConeCapturedType, is ConeFlexibleType ->
         !AbstractNullabilityChecker.isSubtypeOfAny(
             newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false), type
         )
@@ -73,7 +73,7 @@ fun ConeDefinitelyNotNullType.Companion.create(
 ): ConeDefinitelyNotNullType? {
     return when {
         original is ConeDefinitelyNotNullType -> original
-        typeContext.makesSenseToBeDefinitelyNotNull(original) -> ConeDefinitelyNotNullType(original)
+        typeContext.makesSenseToBeDefinitelyNotNull(original) -> ConeDefinitelyNotNullType(original.coneLowerBoundIfFlexible())
         else -> null
     }
 }
