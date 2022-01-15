@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMEN
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 
 data class BuildOptions(
     val logLevel: LogLevel = LogLevel.INFO,
@@ -30,7 +31,7 @@ data class BuildOptions(
     val kaptOptions: KaptOptions? = null,
     val androidVersion: String? = null,
     val jsOptions: JsOptions? = null,
-    val buidReport: Boolean = false,
+    val buildReport: List<BuildReportType> = emptyList(),
 ) {
     data class KaptOptions(
         val verbose: Boolean = false,
@@ -119,9 +120,8 @@ data class BuildOptions(
         }
         arguments.add("-Ptest_fixes_version=${TestVersions.Kotlin.CURRENT}")
 
-        if (buidReport) {
-            arguments.add("-Pkotlin.build.report.enable=true")
-            arguments.add("-Pkotlin.build.report.verbose=true")
+        if (buildReport.isNotEmpty()) {
+            arguments.add("-Pkotlin.build.report.output=${buildReport.joinToString()}")
         }
         return arguments.toList()
     }

@@ -11,32 +11,26 @@ import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.gradle.plugin.stat.ReportStatistics
 import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatData
+import org.jetbrains.kotlin.gradle.report.HttpReportSettings
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.*
 import kotlin.system.measureTimeMillis
 
-object ReportStatisticsToElasticSearch : ReportStatistics {
-    val url by lazy { CompilerSystemProperties.KOTLIN_STAT_ENDPOINT_PROPERTY.value }
-    val user by lazy { CompilerSystemProperties.KOTLIN_STAT_USER_PROPERTY.value }
-    val enable: Boolean by lazy { CompilerSystemProperties.KOTLIN_STAT_ENABLED_PROPERTY.value?.toBooleanLenient() ?: false }
+class ReportStatisticsByHttp(
+    private val httpProperties: HttpReportSettings
+) : ReportStatistics {
 
-    //TODO Do not store password as string
-    val password by lazy { CompilerSystemProperties.KOTLIN_STAT_PASSWORD_PROPERTY.value }
     private val log = Logging.getLogger(this.javaClass)
 
     override fun report(data: CompileStatData) {
         val elapsedTime = measureTimeMillis {
-            if (!enable) {
-                return;
-            }
-
-            val connection = URL(url).openConnection() as HttpURLConnection
+            val connection = URL(httpProperties.url).openConnection() as HttpURLConnection
 
             try {
-                if (user != null && password != null) {
+                if (httpProperties.user != null && httpProperties.password != null) {
                     val auth = Base64.getEncoder()
-                        .encode("$user:$password".toByteArray()).toString(Charsets.UTF_8)
+                        .encode("${httpProperties.user}:${httpProperties.password}".toByteArray()).toString(Charsets.UTF_8)
                     connection.addRequestProperty("Authorization", "Basic $auth")
                 }
                 connection.addRequestProperty("Content-Type", "application/json")

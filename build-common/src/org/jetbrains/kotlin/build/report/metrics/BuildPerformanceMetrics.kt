@@ -21,7 +21,7 @@ class BuildPerformanceMetrics : Serializable {
         }
     }
 
-    fun add(metric: BuildPerformanceMetric, value: Long) {
+    fun add(metric: BuildPerformanceMetric, value: Long = 1) {
         myBuildMetrics[metric] = myBuildMetrics.getOrDefault(metric, 0) + value
     }
 

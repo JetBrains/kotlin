@@ -108,11 +108,10 @@ abstract class BuildMetricsReporterService : BuildService<BuildMetricsReporterSe
             val rootProject = project.gradle.rootProject
             val reportingSettings = reportingSettings(rootProject)
 
-            if (reportingSettings.buildReportMode != BuildReportMode.NONE && reportingSettings.buildReportDir != null) {
+            reportingSettings.fileReportSettings?.let {
                 buildDataProcessors.add(
                     PlainTextBuildReportWriterDataProcessor(
-                        reportingSettings,
-                        reportingSettings.buildReportDir,
+                        it,
                         rootProject.name
                     )
                 )

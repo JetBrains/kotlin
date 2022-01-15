@@ -21,6 +21,7 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_LOADED_WARNING
 import org.jetbrains.kotlin.gradle.plugin.MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
@@ -35,6 +36,8 @@ import java.util.zip.ZipFile
 import kotlin.test.*
 
 class KotlinGradleIT : BaseGradleIT() {
+
+    private fun defaultOptionsWithReports() = defaultBuildOptions().copy(withReports = listOf(BuildReportType.FILE))
 
     @Test
     fun testCrossCompile() {
@@ -906,21 +909,30 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
-    fun testBuildReportSmokeTest() = with(Project("simpleProject")) {
-        build("assemble", "-Pkotlin.build.report.enable=true") {
+    fun testBuildReportSmokeTest() = with(Project("simpleProject"), ) {
+        build("assemble", options = defaultOptionsWithReports()) {
             assertSuccessful()
             assertContains("Kotlin build report is written to")
         }
 
-        build("clean", "assemble", "-Pkotlin.build.report.enable=true") {
+        build("clean", "assemble", options = defaultOptionsWithReports()) {
             assertSuccessful()
             assertContains("Kotlin build report is written to")
         }
     }
 
     @Test
+    fun testBuildReportOutputProperty() = with(Project("simpleProject"), ) {
+        build("assemble", "-Pkotlin.build.report.output=file,invalid") {
+            assertFailed()
+            assertContains("Unknown output type:")
+        }
+
+    }
+
+    @Test
     fun testBuildMetricsSmokeTest() = with(Project("simpleProject")) {
-        build("assemble", "-Pkotlin.build.report.enable=true", "-Pkotlin.build.report.verbose=true") {
+        build("assemble", options = defaultOptionsWithReports()) {
             assertSuccessful()
             assertContains("Kotlin build report is written to")
         }
@@ -939,25 +951,23 @@ class KotlinGradleIT : BaseGradleIT() {
         assertTrue { report.contains("SNAPSHOT_SIZE:") }
         assertTrue { report.contains("Build attributes:") }
         assertTrue { report.contains("REBUILD_REASON:") }
+        assertTrue { report.contains("COMPILE_ITERATION:") }
     }
 
     @Test
-    fun testCompilerBuildMetricsSmokeTest() {
-        val buildOptions = defaultBuildOptions().copy(customEnvironmentVariables = mapOf("KOTLIN_REPORT_PERF" to "true"))
-
-        return with(Project("simpleProject")) {
-            build("assemble", "-Pkotlin.build.report.enable=true", "-Pkotlin.build.report.verbose=true", options = buildOptions) {
-                assertSuccessful()
-                assertContains("Kotlin build report is written to")
-            }
-            val reportFolder = projectDir.resolve("build/reports/kotlin-build")
-            val reports = reportFolder.listFiles()
-            assertNotNull(reports)
-            assertEquals(1, reports.size)
-            val report = reports[0].readText()
-            assertTrue { report.contains("CODE_ANALYSIS:") }
-            assertTrue { report.contains("CODE_GENERATION:") }
+    fun testCompilerBuildMetricsSmokeTest() = with(Project("simpleProject")) {
+        build("assemble", options = defaultOptionsWithReports()) {
+            assertSuccessful()
+            assertContains("Kotlin build report is written to")
         }
+        val reportFolder = projectDir.resolve("build/reports/kotlin-build")
+        val reports = reportFolder.listFiles()
+        assertNotNull(reports)
+        assertEquals(1, reports.size)
+        val report = reports[0].readText()
+        assertTrue { report.contains("CODE_ANALYSIS:") }
+        assertTrue { report.contains("CODE_GENERATION:") }
+        assertTrue { report.contains("COMPILER_INITIALIZATION:") }
     }
 
     @Test //KT-51501

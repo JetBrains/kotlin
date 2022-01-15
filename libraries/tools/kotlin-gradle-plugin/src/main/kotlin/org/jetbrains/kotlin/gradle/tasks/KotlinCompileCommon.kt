@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.refinesClosure
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
+import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
 import java.io.File
 import javax.inject.Inject

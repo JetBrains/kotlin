@@ -2,6 +2,7 @@ package org.jetbrains.kotlin.compilerRunner
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.daemon.common.CompilationResultCategory
 import org.jetbrains.kotlin.daemon.common.CompilationResults
 import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
@@ -39,6 +40,7 @@ internal class GradleCompilationResults(
                     val sourceFiles = compileIterationResult.sourceFiles
                     if (sourceFiles.any()) {
                         log.kotlinDebug { "compile iteration: ${sourceFiles.pathsAsStringRelativeTo(projectRootFile)}" }
+                        buildMetrics.buildPerformanceMetrics.add(BuildPerformanceMetric.COMPILE_ITERATION)
                     }
                     val exitCode = compileIterationResult.exitCode
                     log.kotlinDebug { "compiler exit code: $exitCode" }

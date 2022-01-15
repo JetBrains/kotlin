@@ -19,6 +19,7 @@ class ReportStatisticsToBuildScan(
         const val kbSize = 1024
         const val mbSize = kbSize * kbSize
         const val gbSize = kbSize * mbSize
+        const val lengthLimit = 20
     }
 
     private val tags = LinkedHashSet<String>()
@@ -26,7 +27,8 @@ class ReportStatisticsToBuildScan(
 
     override fun report(data: CompileStatData) {
         val elapsedTime = measureTimeMillis {
-            buildScan.value(data.taskName, readableString(data))
+
+            readableString(data).forEach { buildScan.value(data.taskName, it) }
 
             data.tags
                 .filter { !tags.contains(it) }
@@ -38,7 +40,7 @@ class ReportStatisticsToBuildScan(
         log.debug("Report statistic to build scan takes $elapsedTime ms")
     }
 
-    private fun readableString(data: CompileStatData): String {
+    private fun readableString(data: CompileStatData): List<String> {
         val nonIncrementalReasons = data.nonIncrementalAttributes.filterValues { it > 0 }.keys
         val readableString = StringBuilder()
         if (nonIncrementalReasons.isEmpty()) {
@@ -51,9 +53,29 @@ class ReportStatisticsToBuildScan(
         val timeData = data.timeData.map { (key, value) -> "${key.readableString}: ${value}ms"} //sometimes it is better to have separate variable to be able debug
         val perfData = data.perfData.map { (key, value) -> "${key.readableString}: ${readableFileLength(value)}"}
         timeData.union(perfData).joinTo(readableString, ",", "Performance: [", "]")
-        return readableString.toString()
+
+        return splitStringIfNeed(readableString.toString(), lengthLimit)
     }
 
+    private fun splitStringIfNeed(str: String, lengthLimit: Int): List<String> {
+        val splattedString = ArrayList<String>()
+        var tempStr = str
+        while (tempStr.length > lengthLimit) {
+            val subSequence = tempStr.substring(lengthLimit)
+            var index = subSequence.lastIndexOf(';')
+            if (index == -1) {
+                index = subSequence.lastIndexOf(',')
+                if (index == -1) {
+                    index = lengthLimit
+                }
+            }
+            splattedString.add(tempStr.substring(index))
+            tempStr = tempStr.substring(index)
+
+        }
+        splattedString.add(tempStr)
+        return splattedString
+    }
 
     private fun readableFileLength(length: Long): String =
         when {
