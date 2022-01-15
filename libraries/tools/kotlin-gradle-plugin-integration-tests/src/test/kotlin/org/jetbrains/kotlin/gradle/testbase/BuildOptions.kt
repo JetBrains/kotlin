@@ -10,6 +10,7 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 
 data class BuildOptions(
     val logLevel: LogLevel = LogLevel.INFO,
@@ -26,7 +27,7 @@ data class BuildOptions(
     val kaptOptions: KaptOptions? = null,
     val androidVersion: String? = null,
     val jsOptions: JsOptions? = null,
-    val buildReport: Boolean = false,
+    val buildReport: List<BuildReportType> = emptyList(),
 ) {
     data class KaptOptions(
         val verbose: Boolean = false,
@@ -112,9 +113,8 @@ data class BuildOptions(
         }
         arguments.add("-Ptest_fixes_version=${TestVersions.Kotlin.CURRENT}")
 
-        if (buildReport) {
-            arguments.add("-Pkotlin.build.report.enable=true")
-            arguments.add("-Pkotlin.build.report.verbose=true")
+        if (buildReport.isNotEmpty()) {
+            arguments.add("-Pkotlin.build.report.output=${buildReport.joinToString()}")
         }
         return arguments.toList()
     }

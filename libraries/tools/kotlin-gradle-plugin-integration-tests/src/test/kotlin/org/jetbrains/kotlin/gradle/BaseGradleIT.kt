@@ -14,6 +14,7 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.applyAndroidTestFixes
 import org.jetbrains.kotlin.gradle.testbase.enableCacheRedirector
 import org.jetbrains.kotlin.gradle.testbase.extractJavaCompiledSources
@@ -267,6 +268,7 @@ abstract class BaseGradleIT {
         val abiSnapshot: Boolean = false,
         val hierarchicalMPPStructureSupport: Boolean? = null,
         val enableCompatibilityMetadataVariant: Boolean? = null,
+        val withReports: List<BuildReportType> = emptyList(),
     )
 
     enum class ConfigurationCacheProblems {
@@ -942,6 +944,10 @@ Finished executing task ':$taskName'|
 
             if (options.enableCompatibilityMetadataVariant != null) {
                 add("-Pkotlin.mpp.enableCompatibilityMetadataVariant=${options.enableCompatibilityMetadataVariant}")
+            }
+
+            if (options.withReports.isNotEmpty()) {
+                add("-Pkotlin.build.report.output=${options.withReports.joinToString { it.name }}")
             }
 
             add("-Dorg.gradle.unsafe.configuration-cache=${options.configurationCache}")

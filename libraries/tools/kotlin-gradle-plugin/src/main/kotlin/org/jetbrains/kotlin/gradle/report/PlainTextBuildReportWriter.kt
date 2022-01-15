@@ -20,13 +20,12 @@ import kotlin.collections.HashSet
 import kotlin.math.max
 
 internal class PlainTextBuildReportWriterDataProcessor(
-    val reportingSettings: ReportingSettings,
-    val reportDir: File, //from reportingSettings.buildReportDir to avoid null check
+    val reportingSettings: FileReportSettings,
     val rootProjectName: String
 ) : BuildExecutionDataProcessor, Serializable {
     override fun process(build: BuildExecutionData, log: Logger) {
         val ts = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Calendar.getInstance().time)
-        val reportFile = reportDir.resolve("${rootProjectName}-build-$ts.txt")
+        val reportFile = reportingSettings.buildReportDir.resolve("${rootProjectName}-build-$ts.txt")
 
         PlainTextBuildReportWriter(
             outputFile = reportFile,

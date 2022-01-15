@@ -103,7 +103,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val kotlinScriptExtensions = config.kotlinScriptExtensions
     private val allWarningsAsErrors = config.allWarningsAsErrors
     private val buildDir = config.projectFiles.buildDir
-    private val metrics = if (reportingSettings.reportMetrics) BuildMetricsReporterImpl() else DoNothingBuildMetricsReporter
+    private val metrics = if (reportingSettings.buildReportOutputs.isNotEmpty()) BuildMetricsReporterImpl() else DoNothingBuildMetricsReporter
     private var icLogLines: List<String> = emptyList()
     private val daemonJvmArgs = config.daemonJvmArgs
     private val compilerExecutionStrategy = config.compilerExecutionStrategy
@@ -386,7 +386,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             BuildReportMode.SIMPLE -> CompilationResultCategory.BUILD_REPORT_LINES
             BuildReportMode.VERBOSE -> CompilationResultCategory.VERBOSE_BUILD_REPORT_LINES
         }?.let { requestedCompilationResults.add(it) }
-        if (reportingSettings.reportMetrics) {
+        if (reportingSettings.buildReportOutputs.isNotEmpty()) {
             requestedCompilationResults.add(CompilationResultCategory.BUILD_METRICS)
         }
         return requestedCompilationResults

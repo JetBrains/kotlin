@@ -14,6 +14,8 @@ enum class BuildPerformanceMetric(val parent: BuildPerformanceMetric? = null, va
         LOOKUP_SIZE(CACHE_DIRECTORY_SIZE, "Lookups size"),
         SNAPSHOT_SIZE(CACHE_DIRECTORY_SIZE, "ABI snapshot size"),
 
+    COMPILE_ITERATION(parent = null, "Total compiler iteration"),
+
     // Metrics for the `kotlin.incremental.useClasspathSnapshot` feature
     ORIGINAL_CLASSPATH_SNAPSHOT_SIZE(parent = null, "Size of the original classpath snapshot (before shrinking)"),
     SHRUNK_CLASSPATH_SNAPSHOT_SIZE(parent = null, "Size of the shrunk classpath snapshot"),

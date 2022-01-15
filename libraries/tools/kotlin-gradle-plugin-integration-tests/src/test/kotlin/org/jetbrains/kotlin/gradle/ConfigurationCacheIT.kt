@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.targets.js.dukat.ExternalsOutputFormat
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
@@ -176,7 +177,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testBuildReportSmokeTestForConfigurationCache(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
-            val buildOptions = defaultBuildOptions.copy(buildReport = true)
+            val buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.FILE))
             build("assemble", buildOptions = buildOptions) {
                 assertOutputContains("Kotlin build report is written to")
             }

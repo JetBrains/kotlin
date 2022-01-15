@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsReporterService
+import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.targets.js.ir.isProduceUnzippedKlib
 import org.jetbrains.kotlin.gradle.utils.*
@@ -478,6 +479,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
             args,
             compilerArgumentsConfigurationFlags(defaultsOnly, ignoreClasspathResolutionErrors)
         )
+        if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
+            args.reportPerf = true
+        }
     }
 }
 
@@ -721,6 +725,10 @@ abstract class KotlinCompile @Inject constructor(
         // This method could be called on configuration phase to calculate `filteredArgumentsMap` property
         if (state.executing) {
             defaultKotlinJavaToolchain.get().updateJvmTarget(this, args)
+        }
+
+        if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
+            args.reportPerf = true
         }
     }
 
