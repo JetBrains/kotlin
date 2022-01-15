@@ -18196,6 +18196,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             public void testLambdaTakesResultThroughBridge() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/result/lambdaTakesResultThroughBridge.kt");
             }
+
+            @TestMetadata("returnGenericMultiModule.kt")
+            public void testReturnGenericMultiModule() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/result/returnGenericMultiModule.kt");
+            }
+
+            @TestMetadata("returnGenericSingleModule.kt")
+            public void testReturnGenericSingleModule() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/result/returnGenericSingleModule.kt");
+            }
         }
 
         @TestMetadata("compiler/testData/codegen/box/inlineClasses/returnResult")

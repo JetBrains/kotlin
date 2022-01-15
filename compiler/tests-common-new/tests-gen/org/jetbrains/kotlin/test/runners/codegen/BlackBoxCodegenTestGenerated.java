@@ -21689,6 +21689,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             public void testLambdaTakesResultThroughBridge() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/result/lambdaTakesResultThroughBridge.kt");
             }
+
+            @Test
+            @TestMetadata("returnGenericMultiModule.kt")
+            public void testReturnGenericMultiModule() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/result/returnGenericMultiModule.kt");
+            }
+
+            @Test
+            @TestMetadata("returnGenericSingleModule.kt")
+            public void testReturnGenericSingleModule() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/result/returnGenericSingleModule.kt");
+            }
         }
 
         @Nested
