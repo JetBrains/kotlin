@@ -207,11 +207,11 @@ fun TypeSystemInferenceExtensionContext.extractProjectionsForAllCapturedTypes(ba
 }
 
 fun TypeSystemInferenceExtensionContext.containsTypeVariable(type: KotlinTypeMarker, typeVariable: TypeConstructorMarker): Boolean {
-    if (type.contains { it.typeConstructor() == typeVariable }) return true
+    if (type.contains { it.typeConstructor().unwrapStubTypeVariableConstructor() == typeVariable }) return true
 
     val typeProjections = extractProjectionsForAllCapturedTypes(type)
 
     return typeProjections.any { typeProjectionsType ->
-        typeProjectionsType.contains { it.typeConstructor() == typeVariable }
+        typeProjectionsType.contains { it.typeConstructor().unwrapStubTypeVariableConstructor() == typeVariable }
     }
 }

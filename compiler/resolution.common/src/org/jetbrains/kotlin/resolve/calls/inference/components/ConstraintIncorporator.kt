@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 // todo problem: intersection types in constrains: A <: Number, B <: Inv<A & Any> =>? B <: Inv<out Number & Any>
@@ -53,7 +52,7 @@ class ConstraintIncorporator(
     }
 
     private fun Context.areThereRecursiveConstraints(typeVariable: TypeVariableMarker, constraint: Constraint) =
-        constraint.type.contains { it.typeConstructor() == typeVariable.freshTypeConstructor() }
+        constraint.type.contains { it.typeConstructor().unwrapStubTypeVariableConstructor() == typeVariable.freshTypeConstructor() }
 
     // A <:(=) \alpha <:(=) B => A <: B
     private fun Context.directWithVariable(
@@ -259,8 +258,9 @@ class ConstraintIncorporator(
     }
 
     private fun Context.getNestedTypeVariables(type: KotlinTypeMarker): List<TypeVariableMarker> =
-        getNestedArguments(type).mapNotNullTo(SmartList()) { getTypeVariable(it.getType().typeConstructor()) }
-
+        getNestedArguments(type).mapNotNullTo(SmartList()) {
+            getTypeVariable(it.getType().typeConstructor().unwrapStubTypeVariableConstructor())
+        }
 
     private fun KotlinTypeMarker.substitute(c: Context, typeVariable: TypeVariableMarker, value: KotlinTypeMarker): KotlinTypeMarker {
         val substitutor = c.typeSubstitutorByTypeConstructor(mapOf(typeVariable.freshTypeConstructor(c) to value))
