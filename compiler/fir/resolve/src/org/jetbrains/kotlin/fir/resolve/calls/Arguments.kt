@@ -608,7 +608,7 @@ internal fun captureFromTypeParameterUpperBoundIfNeeded(
 
     val context = session.typeContext
 
-    val chosenSupertype = typeParameter.bounds.map { it.coneType }
+    val chosenSupertype = typeParameter.symbol.resolvedBounds.map { it.coneType }
         .singleOrNull { it.hasSupertypeWithGivenClassId(expectedTypeClassId, context) } ?: return argumentType
 
     val capturedType = context.captureFromExpression(chosenSupertype) as ConeKotlinType? ?: return argumentType

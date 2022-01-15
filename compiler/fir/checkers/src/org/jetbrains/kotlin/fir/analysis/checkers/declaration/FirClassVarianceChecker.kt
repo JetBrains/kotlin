@@ -84,7 +84,7 @@ object FirClassVarianceChecker : FirClassChecker() {
     ) {
         for (typeParameter in typeParameters) {
             if (typeParameter is FirTypeParameter) {
-                for (bound in typeParameter.bounds) {
+                for (bound in typeParameter.symbol.resolvedBounds) {
                     checkVarianceConflict(bound, variance, context, reporter)
                 }
             }

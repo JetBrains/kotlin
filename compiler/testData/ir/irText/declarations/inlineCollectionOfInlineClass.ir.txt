@@ -1,11 +1,11 @@
 FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
-  CLASS CLASS name:IT modality:FINAL visibility:public [inline] superTypes:[kotlin.Any]
+  CLASS CLASS name:IT modality:FINAL visibility:public [value] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IT
     CONSTRUCTOR visibility:public <> (x:kotlin.Int) returnType:<root>.IT [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:IT modality:FINAL visibility:public [inline] superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:IT modality:FINAL visibility:public [value] superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.IT'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.IT declared in <root>.IT.<get-x>' type=<root>.IT origin=null
-    FUN GENERATED_INLINE_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.IT) returnType:kotlin.String
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.IT) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.IT
@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.IT declared in <root>.IT.toString' type=<root>.IT origin=null
             CONST String type=kotlin.String value=")"
-    FUN GENERATED_INLINE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.IT) returnType:kotlin.Int
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.IT) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.IT
@@ -38,7 +38,7 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
           CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Int' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.IT declared in <root>.IT.hashCode' type=<root>.IT origin=null
-    FUN GENERATED_INLINE_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.IT, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.IT, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.IT
@@ -65,13 +65,13 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.IT'
           CONST Boolean type=kotlin.Boolean value=true
-  CLASS CLASS name:InlineMutableSet modality:FINAL visibility:public [inline] superTypes:[kotlin.collections.MutableSet<<root>.IT>]
+  CLASS CLASS name:InlineMutableSet modality:FINAL visibility:public [value] superTypes:[kotlin.collections.MutableSet<<root>.IT>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.InlineMutableSet
     CONSTRUCTOR visibility:public <> (ms:kotlin.collections.MutableSet<<root>.IT>) returnType:<root>.InlineMutableSet [primary]
       VALUE_PARAMETER name:ms index:0 type:kotlin.collections.MutableSet<<root>.IT>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InlineMutableSet modality:FINAL visibility:public [inline] superTypes:[kotlin.collections.MutableSet<<root>.IT>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:InlineMutableSet modality:FINAL visibility:public [value] superTypes:[kotlin.collections.MutableSet<<root>.IT>]'
     PROPERTY name:ms visibility:private modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:ms type:kotlin.collections.MutableSet<<root>.IT> visibility:private [final]
         EXPRESSION_BODY
@@ -199,7 +199,7 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
             $this: CALL 'private final fun <get-ms> (): kotlin.collections.MutableSet<<root>.IT> declared in <root>.InlineMutableSet' type=kotlin.collections.MutableSet<<root>.IT> origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.retainAll' type=<root>.InlineMutableSet origin=null
             elements: GET_VAR 'elements: kotlin.collections.Collection<<root>.IT> declared in <root>.InlineMutableSet.retainAll' type=kotlin.collections.Collection<<root>.IT> origin=null
-    FUN GENERATED_INLINE_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet) returnType:kotlin.String
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String [fake_override] declared in kotlin.collections.MutableSet
       $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet
@@ -211,7 +211,7 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ms type:kotlin.collections.MutableSet<<root>.IT> visibility:private [final]' type=kotlin.collections.MutableSet<<root>.IT> origin=null
               receiver: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.toString' type=<root>.InlineMutableSet origin=null
             CONST String type=kotlin.String value=")"
-    FUN GENERATED_INLINE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet) returnType:kotlin.Int
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.collections.MutableSet
       $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet
@@ -220,7 +220,7 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
           CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.collections.MutableSet' type=kotlin.Int origin=null
             $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ms type:kotlin.collections.MutableSet<<root>.IT> visibility:private [final]' type=kotlin.collections.MutableSet<<root>.IT> origin=null
               receiver: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.hashCode' type=<root>.InlineMutableSet origin=null
-    FUN GENERATED_INLINE_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.MutableSet
       $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet

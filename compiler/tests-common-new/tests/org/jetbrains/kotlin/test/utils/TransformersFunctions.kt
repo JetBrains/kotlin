@@ -12,6 +12,9 @@ object TransformersFunctions {
     val replaceOptionalJvmInlineAnnotationWithReal = ReplacingSourceTransformer("OPTIONAL_JVM_INLINE_ANNOTATION", "@JvmInline")
 
     @JvmStatic
+    val replaceOptionalJvmInlineAnnotationWithUniversal = ReplacingSourceTransformer("OPTIONAL_JVM_INLINE_ANNOTATION", "@Suppress(\"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE\") @kotlin.jvm.JvmInline")
+
+    @JvmStatic
     val removeOptionalJvmInlineAnnotation = ReplacingSourceTransformer("OPTIONAL_JVM_INLINE_ANNOTATION", "")
 
     object Android {

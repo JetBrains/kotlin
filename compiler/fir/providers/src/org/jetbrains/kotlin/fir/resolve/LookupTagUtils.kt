@@ -136,7 +136,7 @@ private fun ConeTypeParameterLookupTag.findClassRepresentationThatIsSubtypeOf(
     supertype: ConeKotlinType,
     session: FirSession
 ): ConeClassLikeLookupTag? =
-    typeParameterSymbol.fir.bounds.map { it.coneType }.findClassRepresentationThatIsSubtypeOf(supertype, session)
+    typeParameterSymbol.resolvedBounds.map { it.coneType }.findClassRepresentationThatIsSubtypeOf(supertype, session)
 
 private fun Collection<ConeKotlinType>.findClassRepresentationThatIsSubtypeOf(
     supertype: ConeKotlinType,

@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -97,6 +99,11 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
         fun isReflectionClass(descriptor: ClassDescriptor): Boolean {
             val containingPackage = DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor::class.java)
             return containingPackage != null && containingPackage.fqName == KOTLIN_REFLECT_FQ_NAME
+        }
+
+        fun isKClassType(type: KotlinType): Boolean {
+            val descriptor = type.unwrap().constructor.declarationDescriptor ?: return false
+            return descriptor.classId == StandardClassIds.KClass
         }
 
         fun isCallableType(type: KotlinType): Boolean =

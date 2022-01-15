@@ -475,7 +475,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
             "inner".takeIf { isInner },
             "data".takeIf { isData },
             "external".takeIf { isExternal },
-            "inline".takeIf { isInline },
+            "value".takeIf { isValue },
             "expect".takeIf { isExpect },
             "fun".takeIf { isFun }
         )

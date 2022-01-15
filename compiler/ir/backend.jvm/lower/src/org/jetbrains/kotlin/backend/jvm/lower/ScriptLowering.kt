@@ -256,7 +256,6 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
             name = Name.identifier("RunnerKt")
             kind = ClassKind.CLASS
             modality = Modality.FINAL
-            isInline = false
         }.apply {
             parent = scriptingJvmPackage
             createImplicitParameterDeclarationWithWrappedDescriptor()

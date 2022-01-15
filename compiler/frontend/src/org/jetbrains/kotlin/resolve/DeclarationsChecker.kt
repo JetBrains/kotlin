@@ -270,7 +270,7 @@ class DeclarationsChecker(
 
         if (declaration is KtPrimaryConstructor &&
             !DescriptorUtils.isAnnotationClass(constructorDescriptor.constructedClass) &&
-            !constructorDescriptor.constructedClass.isInlineClass()
+            !constructorDescriptor.constructedClass.isInlineOrValueClass()
         ) {
             for (parameter in declaration.valueParameters) {
                 if (parameter.hasValOrVar()) {
@@ -517,7 +517,7 @@ class DeclarationsChecker(
     private fun checkTypeParameters(typeParameterListOwner: KtTypeParameterListOwner) {
         for (jetTypeParameter in typeParameterListOwner.typeParameters) {
             if (!languageVersionSettings.supportsFeature(LanguageFeature.ClassTypeParameterAnnotations)) {
-                AnnotationResolverImpl.reportUnsupportedAnnotationForTypeParameter(jetTypeParameter, trace)
+                AnnotationResolverImpl.reportUnsupportedAnnotationForTypeParameter(jetTypeParameter, trace, languageVersionSettings)
             }
 
             trace.get(TYPE_PARAMETER, jetTypeParameter)?.let { DescriptorResolver.checkConflictingUpperBounds(trace, it, jetTypeParameter) }

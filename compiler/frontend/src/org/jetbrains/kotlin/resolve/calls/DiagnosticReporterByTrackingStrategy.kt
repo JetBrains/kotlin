@@ -76,7 +76,24 @@ class DiagnosticReporterByTrackingStrategy(
                 (diagnostic as NoValueForParameter).parameterDescriptor
             )
             InstantiationOfAbstractClass::class.java -> tracingStrategy.instantiationOfAbstractClass(trace)
-            AbstractSuperCall::class.java -> tracingStrategy.abstractSuperCall(trace)
+            AbstractSuperCall::class.java -> {
+                val superExpression = (diagnostic as AbstractSuperCall).receiver.psiExpression as? KtSuperExpression
+                if (context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidSuperDelegationToAbstractAnyMethod) ||
+                    superExpression == null ||
+                    trace[BindingContext.SUPER_EXPRESSION_FROM_ANY_MIGRATION, superExpression] != true
+                ) {
+                    tracingStrategy.abstractSuperCall(trace)
+                } else {
+                    tracingStrategy.abstractSuperCallWarning(trace)
+                }
+            }
+            AbstractFakeOverrideSuperCall::class.java -> {
+                if (context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidSuperDelegationToAbstractFakeOverride)) {
+                    tracingStrategy.abstractSuperCall(trace)
+                } else {
+                    tracingStrategy.abstractSuperCallWarning(trace)
+                }
+            }
             NonApplicableCallForBuilderInferenceDiagnostic::class.java -> {
                 val reportOn = (diagnostic as NonApplicableCallForBuilderInferenceDiagnostic).kotlinCall
                 trace.reportDiagnosticOnce(NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE.on(reportOn.psiKotlinCall.psiCall.callElement))

@@ -256,7 +256,7 @@ internal class FirIdeRenderer private constructor(
 
         for (typeParameter in declaration.typeParameters) {
             if (typeParameter !is FirTypeParameter) continue
-            typeParameter.bounds
+            typeParameter.symbol.resolvedBounds
                 .drop(1) // first parameter is rendered by renderTypeParameter
                 .mapTo(upperBoundStrings) { typeParameter.name.render() + " : " + renderTypeToString(it.coneType) }
         }

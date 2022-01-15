@@ -232,7 +232,7 @@ private fun FirTypeParameter.eraseToUpperBound(session: FirSession, cache: Mutab
         // Mark to avoid loops.
         cache[this] = ConeKotlinErrorType(ConeIntermediateDiagnostic("self-recursive type parameter $name"))
         // We can assume that Java type parameter bounds are already converted.
-        bounds.first().coneType.eraseAsUpperBound(session, cache)
+        symbol.resolvedBounds.first().coneType.eraseAsUpperBound(session, cache)
     }
 }
 

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -24,9 +23,7 @@ object FirJvmInlineApplicabilityChecker : FirRegularClassChecker() {
         val annotation = declaration.getAnnotationByClassId(JVM_INLINE_ANNOTATION_CLASS_ID)
         if (annotation != null && !declaration.isInline) {
             reporter.reportOn(annotation.source, FirJvmErrors.JVM_INLINE_WITHOUT_VALUE_CLASS, context)
-        } else if (annotation == null && declaration.isInline && !declaration.isExpect &&
-            !context.languageVersionSettings.supportsFeature(LanguageFeature.ValueClasses)
-        ) {
+        } else if (annotation == null && declaration.isInline && !declaration.isExpect) {
             reporter.reportOn(
                 declaration.getModifier(KtTokens.VALUE_KEYWORD)?.source,
                 FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION,

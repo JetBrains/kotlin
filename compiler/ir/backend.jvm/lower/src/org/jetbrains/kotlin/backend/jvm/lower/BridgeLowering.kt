@@ -142,7 +142,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
 
         bridgeTargets.forEach { createBridges(declaration, it) }
 
-        if (declaration.isInline) {
+        if (declaration.isSingleFieldValueClass) {
             // Inline class (implementing 'MutableCollection<T>', where T is Int or an inline class mapped to Int)
             // can contain a static replacement for a function 'remove', which forces value parameter boxing
             // in order to avoid signature clash with 'remove(int)' method in 'java.util.List'.

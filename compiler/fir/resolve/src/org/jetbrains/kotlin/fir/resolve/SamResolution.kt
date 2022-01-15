@@ -158,7 +158,7 @@ class FirSamResolverImpl(
 
         for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(firRegularClass.typeParameters)) {
             val declared = oldTypeParameter.symbol.fir // TODO: or really declared?
-            newTypeParameter.bounds += declared.bounds.map { typeRef ->
+            newTypeParameter.bounds += declared.symbol.resolvedBounds.map { typeRef ->
                 buildResolvedTypeRef {
                     source = typeRef.source
                     type = substitutor.substituteOrSelf(typeRef.coneType)

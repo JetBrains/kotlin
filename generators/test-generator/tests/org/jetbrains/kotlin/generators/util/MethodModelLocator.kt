@@ -42,9 +42,9 @@ fun methodModelLocator(
 ).let { methodModel ->
     if (methodModel.containsWithoutJvmInline()) {
         val isWithAnnotationAndIsWithPostfix = when {
-            !targetBackend.isRecursivelyCompatibleWith(TargetBackend.JVM) -> listOf(false to false)
-            targetBackend.isIR -> listOf(true to false, false to true)
-            else -> listOf(true to false)
+            targetBackend.isRecursivelyCompatibleWith(TargetBackend.JVM) -> listOf(true to false)
+            targetBackend == TargetBackend.ANY -> listOf(null to false)
+            else -> listOf(false to false)
         }
         isWithAnnotationAndIsWithPostfix.map { (ann, post) -> WithoutJvmInlineTestMethodModel(methodModel, ann, post) }
     } else listOf(methodModel)

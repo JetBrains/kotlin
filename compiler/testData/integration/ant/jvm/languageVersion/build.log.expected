@@ -3,7 +3,7 @@ Buildfile: [TestData]/build.xml
 
 build:
   [kotlinc] Compiling [[TestData]/main.kt] => [[Temp]/hello.jar]
-  [kotlinc] [TestData]/main.kt:1:15: error: suspend function type is not allowed as supertypes
+  [kotlinc] [TestData]/main.kt:1:15: error: suspend function type is allowed as a supertype only since version 1.6
   [kotlinc] interface A : suspend () -> Unit
   [kotlinc]               ^
 

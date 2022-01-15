@@ -38,7 +38,7 @@ open class IrClassImpl(
     override var isInner: Boolean = false,
     override val isData: Boolean = false,
     override val isExternal: Boolean = false,
-    override val isInline: Boolean = false,
+    override val isValue: Boolean = false,
     override val isExpect: Boolean = false,
     override val isFun: Boolean = false,
     override val source: SourceElement = SourceElement.NO_SOURCE,

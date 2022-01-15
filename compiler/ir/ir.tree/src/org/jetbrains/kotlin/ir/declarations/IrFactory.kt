@@ -40,7 +40,7 @@ interface IrFactory {
         isInner: Boolean = false,
         isData: Boolean = false,
         isExternal: Boolean = false,
-        isInline: Boolean = false,
+        isValue: Boolean = false,
         isExpect: Boolean = false,
         isFun: Boolean = false,
         source: SourceElement = SourceElement.NO_SOURCE,

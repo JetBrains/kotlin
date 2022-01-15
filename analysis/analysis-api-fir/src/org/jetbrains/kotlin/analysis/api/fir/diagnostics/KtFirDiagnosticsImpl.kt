@@ -356,6 +356,11 @@ internal class AbstractSuperCallImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.AbstractSuperCall(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class AbstractSuperCallWarningImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.AbstractSuperCallWarning(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class InstanceAccessBeforeSuperCallImpl(
     override val target: String,
     override val firDiagnostic: KtPsiDiagnostic,
@@ -641,6 +646,16 @@ internal class NonConstValUsedInConstantExpressionImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.NonConstValUsedInConstantExpression(), KtAbstractFirDiagnostic<KtExpression>
 
+internal class CycleInAnnotationParameterErrorImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.CycleInAnnotationParameterError(), KtAbstractFirDiagnostic<KtParameter>
+
+internal class CycleInAnnotationParameterWarningImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.CycleInAnnotationParameterWarning(), KtAbstractFirDiagnostic<KtParameter>
+
 internal class AnnotationClassConstructorCallImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
@@ -800,6 +815,16 @@ internal class NotAClassImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.NotAClass(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class WrongExtensionFunctionTypeImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.WrongExtensionFunctionType(), KtAbstractFirDiagnostic<KtAnnotationEntry>
+
+internal class WrongExtensionFunctionTypeWarningImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.WrongExtensionFunctionTypeWarning(), KtAbstractFirDiagnostic<KtAnnotationEntry>
 
 internal class OptInUsageImpl(
     override val optInMarkerFqName: FqName,
@@ -1099,6 +1124,11 @@ internal class InlineClassConstructorWrongParametersSizeImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.InlineClassConstructorWrongParametersSize(), KtAbstractFirDiagnostic<KtElement>
+
+internal class ValueClassEmptyConstructorImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.ValueClassEmptyConstructor(), KtAbstractFirDiagnostic<KtElement>
 
 internal class ValueClassConstructorNotFinalReadOnlyParameterImpl(
     override val firDiagnostic: KtPsiDiagnostic,
@@ -2168,11 +2198,13 @@ internal class WrongSetterParameterTypeImpl(
 ) : KtFirDiagnostic.WrongSetterParameterType(), KtAbstractFirDiagnostic<KtTypeReference>
 
 internal class DelegateUsesExtensionPropertyTypeParameterErrorImpl(
+    override val usedTypeParameter: KtTypeParameterSymbol,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.DelegateUsesExtensionPropertyTypeParameterError(), KtAbstractFirDiagnostic<KtProperty>
 
 internal class DelegateUsesExtensionPropertyTypeParameterWarningImpl(
+    override val usedTypeParameter: KtTypeParameterSymbol,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,
 ) : KtFirDiagnostic.DelegateUsesExtensionPropertyTypeParameterWarning(), KtAbstractFirDiagnostic<KtProperty>

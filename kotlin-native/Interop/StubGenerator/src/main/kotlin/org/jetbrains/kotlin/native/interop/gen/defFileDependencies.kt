@@ -11,7 +11,7 @@ import java.io.File
 import java.util.stream.Collectors
 import kotlin.streams.toList
 
-fun defFileDependencies(args: Array<String>) {
+fun defFileDependencies(args: Array<String>, runFromDaemon: Boolean) {
     val defFiles = mutableListOf<File>()
     val targets = mutableListOf<String>()
 
@@ -32,14 +32,14 @@ fun defFileDependencies(args: Array<String>) {
         }
     }
 
-    defFileDependencies(makeDependencyAssigner(targets, defFiles))
+    defFileDependencies(makeDependencyAssigner(targets, defFiles, runFromDaemon))
 }
 
-private fun makeDependencyAssigner(targets: List<String>, defFiles: List<File>) =
-        CompositeDependencyAssigner(targets.map { makeDependencyAssignerForTarget(it, defFiles) })
+private fun makeDependencyAssigner(targets: List<String>, defFiles: List<File>, runFromDaemon: Boolean) =
+        CompositeDependencyAssigner(targets.map { makeDependencyAssignerForTarget(it, defFiles, runFromDaemon) })
 
-private fun makeDependencyAssignerForTarget(target: String, defFiles: List<File>): SingleTargetDependencyAssigner {
-    val tool = prepareTool(target, KotlinPlatform.NATIVE)
+private fun makeDependencyAssignerForTarget(target: String, defFiles: List<File>, runFromDaemon: Boolean): SingleTargetDependencyAssigner {
+    val tool = prepareTool(target, KotlinPlatform.NATIVE, runFromDaemon)
     val cinteropArguments = CInteropArguments()
     cinteropArguments.argParser.parse(arrayOf())
     val libraries = defFiles.parallelStream().map {

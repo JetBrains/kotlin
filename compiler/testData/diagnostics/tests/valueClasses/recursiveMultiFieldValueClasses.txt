@@ -1,0 +1,224 @@
+package
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class A</*0*/ T : I1, /*1*/ G : C?> where T : B?, T : I2 {
+    public constructor A</*0*/ T : I1, /*1*/ G : C?>(/*0*/ t1: kotlin.collections.List<T>, /*1*/ t2: kotlin.UInt, /*2*/ t3: kotlin.collections.List<G?>, /*3*/ t4: kotlin.UInt, /*4*/ t5: C, /*5*/ t6: kotlin.Int, /*6*/ t7: B, /*7*/ t8: kotlin.String, /*8*/ t9: T, /*9*/ t10: kotlin.Char, /*10*/ t11: T?) where T : B?, T : I2
+    public final val t1: kotlin.collections.List<T>
+    public final val t10: kotlin.Char
+    public final val t11: T?
+    public final val t2: kotlin.UInt
+    public final val t3: kotlin.collections.List<G?>
+    public final val t4: kotlin.UInt
+    public final val t5: C
+    public final val t6: kotlin.Int
+    public final val t7: B
+    public final val t8: kotlin.String
+    public final val t9: T
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class A1 {
+    public constructor A1(/*0*/ x: A1)
+    public final val x: A1
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class A2 {
+    public constructor A2(/*0*/ x: B2)
+    public final val x: B2
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class A3 {
+    public constructor A3(/*0*/ x: B3)
+    public final val x: B3
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class A4 {
+    public constructor A4(/*0*/ x: B4, /*1*/ y: B4)
+    public final val x: B4
+    public final val y: B4
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class A5</*0*/ T : A5<T>> {
+    public constructor A5</*0*/ T : A5<T>>(/*0*/ x: T)
+    public final val x: T
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class A6</*0*/ T : B6<T>> {
+    public constructor A6</*0*/ T : B6<T>>(/*0*/ x: T, /*1*/ y: T)
+    public final val x: T
+    public final val y: T
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class A7</*0*/ T : B7<T>> {
+    public constructor A7</*0*/ T : B7<T>>(/*0*/ x: T, /*1*/ y: T)
+    public final val x: T
+    public final val y: T
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class A8</*0*/ T : B8<T>> {
+    public constructor A8</*0*/ T : B8<T>>(/*0*/ x: T?, /*1*/ y: T?)
+    public final val x: T?
+    public final val y: T?
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class B : I1, I2 {
+    public constructor B(/*0*/ x: kotlin.UInt, /*1*/ a: A<B, kotlin.Nothing>)
+    public final val a: A<B, kotlin.Nothing>
+    public final val x: kotlin.UInt
+    public open override /*2*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class B1 {
+    public constructor B1(/*0*/ x: B1, /*1*/ y: B1)
+    public final val x: B1
+    public final val y: B1
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class B2 {
+    public constructor B2(/*0*/ x: A2, /*1*/ y: A2)
+    public final val x: A2
+    public final val y: A2
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class B3 {
+    public constructor B3(/*0*/ x: A3)
+    public final val x: A3
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class B4 {
+    public constructor B4(/*0*/ x: A4, /*1*/ y: A4)
+    public final val x: A4
+    public final val y: A4
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class B5</*0*/ T : B5<T>> {
+    public constructor B5</*0*/ T : B5<T>>(/*0*/ x: T, /*1*/ y: T)
+    public final val x: T
+    public final val y: T
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class B6</*0*/ T : A6<T>> {
+    public constructor B6</*0*/ T : A6<T>>(/*0*/ x: T)
+    public final val x: T
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class B7</*0*/ T : A7<T>> {
+    public constructor B7</*0*/ T : A7<T>>(/*0*/ x: T, /*1*/ y: T)
+    public final val x: T
+    public final val y: T
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class B8</*0*/ T : A8<T>> {
+    public constructor B8</*0*/ T : A8<T>>(/*0*/ x: T?, /*1*/ y: T?)
+    public final val x: T?
+    public final val y: T?
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class C {
+    public constructor C(/*0*/ x: kotlin.UInt, /*1*/ a: A<B, kotlin.Nothing>)
+    public final val a: A<B, kotlin.Nothing>
+    public final val x: kotlin.UInt
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class C4 {
+    public constructor C4(/*0*/ x: D4?, /*1*/ y: D4?)
+    public final val x: D4?
+    public final val y: D4?
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class D4 {
+    public constructor D4(/*0*/ x: D4?, /*1*/ y: C4?)
+    public final val x: D4?
+    public final val y: C4?
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class E4 {
+    public constructor E4(/*0*/ x: E4?, /*1*/ y: kotlin.Int)
+    public final val x: E4?
+    public final val y: kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+@kotlin.Suppress(names = {"OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE"}) @kotlin.jvm.JvmInline public final value class F4 {
+    public constructor F4(/*0*/ x: kotlin.Int, /*1*/ y: F4?)
+    public final val x: kotlin.Int
+    public final val y: F4?
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public interface I1 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface I2 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

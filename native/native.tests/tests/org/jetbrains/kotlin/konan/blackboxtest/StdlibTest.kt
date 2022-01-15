@@ -27,7 +27,8 @@ import org.junit.jupiter.api.TestFactory
             "kotlin-native/backend.native/tests/stdlib_external/text/**.kt",
             "kotlin-native/backend.native/tests/stdlib_external/utils.kt",
             "kotlin-native/backend.native/tests/stdlib_external/jsCollectionFactoriesActuals.kt"
-        ]
+        ],
+        ignoredTests = [DISABLED_STDLIB_TEST]
     ),
     TC(
         name = "nativeStdlibInWorker",
@@ -39,7 +40,8 @@ import org.junit.jupiter.api.TestFactory
             "kotlin-native/backend.native/tests/stdlib_external/text/**.kt",
             "kotlin-native/backend.native/tests/stdlib_external/utils.kt",
             "kotlin-native/backend.native/tests/stdlib_external/jsCollectionFactoriesActuals.kt"
-        ]
+        ],
+        ignoredTests = [DISABLED_STDLIB_TEST]
     ),
     TC(
         name = "kotlinTest",
@@ -71,3 +73,4 @@ class StdlibTest : AbstractNativeBlackBoxTest() {
 private const val ENABLE_MPP = "-Xmulti-platform"
 private const val STDLIB_IS_A_FRIEND = "-friend-modules=$KOTLIN_NATIVE_DISTRIBUTION/klib/common/stdlib"
 private const val ENABLE_X_STDLIB_API = "-opt-in=kotlin.RequiresOptIn,kotlin.ExperimentalStdlibApi"
+private const val DISABLED_STDLIB_TEST = "test.collections.CollectionTest.abstractCollectionToArray"

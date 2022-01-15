@@ -18,10 +18,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLE_IN_ANNOTATION_PARAMETER
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -47,6 +51,8 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
             val target = declaration.getRetentionAnnotation() ?: declaration.getTargetAnnotation() ?: declaration
             reporter.reportOn(target.source, FirErrors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION, context)
         }
+
+        checkCyclesInParameters(declaration.symbol, context, reporter)
     }
 
     private fun checkAnnotationClassMember(member: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -159,5 +165,71 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
         }
 
         return false
+    }
+
+    private fun checkCyclesInParameters(annotation: FirRegularClassSymbol, context: CheckerContext, reporter: DiagnosticReporter) {
+        val primaryConstructor = annotation.primaryConstructorSymbol() ?: return
+        val checker = CycleChecker(annotation, context.session)
+        for (valueParameter in primaryConstructor.valueParameterSymbols) {
+            if (checker.parameterHasCycle(annotation, valueParameter)) {
+                reporter.reportOn(valueParameter.source, CYCLE_IN_ANNOTATION_PARAMETER, context)
+            }
+        }
+    }
+
+    private class CycleChecker(val targetAnnotation: FirRegularClassSymbol, val session: FirSession) {
+        private val visitedAnnotations = mutableSetOf(targetAnnotation)
+        private val annotationsWithCycle = mutableSetOf(targetAnnotation)
+
+        fun annotationHasCycle(annotation: FirRegularClassSymbol): Boolean {
+            val primaryConstructor = annotation.primaryConstructorSymbol() ?: return false
+            for (valueParameter in primaryConstructor.valueParameterSymbols) {
+                if (parameterHasCycle(annotation, valueParameter)) return true
+            }
+            return false
+        }
+
+        fun parameterHasCycle(ownedAnnotation: FirRegularClassSymbol, parameter: FirValueParameterSymbol): Boolean {
+            val returnType = parameter.resolvedReturnTypeRef.coneType
+            return when {
+                returnType.typeArguments.isNotEmpty() -> {
+                    if (returnType.classId == StandardClassIds.KClass) return false
+                    for (argument in returnType.typeArguments) {
+                        if (typeHasCycle(ownedAnnotation, argument.type ?: continue)) return true
+                    }
+                    false
+                }
+                else -> typeHasCycle(ownedAnnotation, returnType)
+            }
+        }
+
+        fun typeHasCycle(ownedAnnotation: FirRegularClassSymbol, type: ConeKotlinType): Boolean {
+            val referencedAnnotation = type.fullyExpandedType(session)
+                .toRegularClassSymbol(session)
+                ?.takeIf { it.classKind == ANNOTATION_CLASS }
+                ?: return false
+            if (!visitedAnnotations.add(referencedAnnotation)) {
+                return (referencedAnnotation in annotationsWithCycle).also {
+                    if (it) {
+                        annotationsWithCycle += ownedAnnotation
+                    }
+                }
+            }
+            if (referencedAnnotation == targetAnnotation) {
+                annotationsWithCycle += ownedAnnotation
+                return true
+            }
+            return annotationHasCycle(referencedAnnotation)
+        }
+    }
+
+
+    private fun FirRegularClassSymbol.primaryConstructorSymbol(): FirConstructorSymbol? {
+        for (declarationSymbol in this.declarationSymbols) {
+            if (declarationSymbol is FirConstructorSymbol && declarationSymbol.isPrimary) {
+                return declarationSymbol
+            }
+        }
+        return null
     }
 }

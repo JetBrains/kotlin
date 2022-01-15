@@ -1,4 +1,4 @@
-// !LANGUAGE: +ArrayLiteralsInAnnotations, +AssigningArraysToVarargsInNamedFormInAnnotations
+// !LANGUAGE: +AssigningArraysToVarargsInNamedFormInAnnotations
 
 // FILE: JavaAnn.java
 

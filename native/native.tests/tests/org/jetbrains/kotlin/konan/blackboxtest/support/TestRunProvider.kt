@@ -210,6 +210,8 @@ internal class TestRunProvider(
     private fun Collection<TestName>.filterIrrelevant(testCase: TestCase) =
         if (testCase.kind == TestKind.REGULAR)
             filter { testName -> testName.packageName.startsWith(testCase.nominalPackageName) }
+        else if (testCase.extras is WithTestRunnerExtras)
+            filterNot { testName -> testCase.extras<WithTestRunnerExtras>().ignoredTests.contains(testName.toString()) }
         else
             this
 

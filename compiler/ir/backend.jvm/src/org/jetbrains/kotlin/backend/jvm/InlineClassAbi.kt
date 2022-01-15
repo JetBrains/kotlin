@@ -57,7 +57,7 @@ object InlineClassAbi {
     fun mangledNameFor(irFunction: IrFunction, mangleReturnTypes: Boolean, useOldMangleRules: Boolean): Name {
         if (irFunction is IrConstructor) {
             // Note that we might drop this convention and use standard mangling for constructors too, see KT-37186.
-            assert(irFunction.constructedClass.isInline) {
+            assert(irFunction.constructedClass.isSingleFieldValueClass) {
                 "Should not mangle names of non-inline class constructors: ${irFunction.render()}"
             }
             return Name.identifier("constructor-impl")
@@ -69,7 +69,7 @@ object InlineClassAbi {
             irFunction.returnType.takeIf { mangleReturnTypes && irFunction.hasMangledReturnType },
             irFunction.isSuspend
         )
-        if (suffix == null && ((irFunction.parent as? IrClass)?.isInline != true || irFunction.origin == IrDeclarationOrigin.IR_BUILTINS_STUB)) {
+        if (suffix == null && ((irFunction.parent as? IrClass)?.isSingleFieldValueClass != true || irFunction.origin == IrDeclarationOrigin.IR_BUILTINS_STUB)) {
             return irFunction.name
         }
 
@@ -121,16 +121,16 @@ object InlineClassAbi {
 val IrType.requiresMangling: Boolean
     get() {
         val irClass = erasedUpperBound
-        return irClass.isInline && irClass.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME
+        return irClass.isSingleFieldValueClass && irClass.fqNameWhenAvailable != StandardNames.RESULT_FQ_NAME
     }
 
 val IrFunction.fullValueParameterList: List<IrValueParameter>
     get() = listOfNotNull(extensionReceiverParameter) + valueParameters
 
 val IrFunction.hasMangledParameters: Boolean
-    get() = dispatchReceiverParameter != null && parentAsClass.isInline ||
+    get() = dispatchReceiverParameter != null && parentAsClass.isSingleFieldValueClass ||
             fullValueParameterList.any { it.type.requiresMangling } ||
-            (this is IrConstructor && constructedClass.isInline)
+            (this is IrConstructor && constructedClass.isSingleFieldValueClass)
 
 val IrFunction.hasMangledReturnType: Boolean
     get() = returnType.isInlineClassType() && parentClassOrNull?.isFileClass != true
@@ -139,5 +139,5 @@ val IrClass.inlineClassFieldName: Name
     get() = (inlineClassRepresentation ?: error("Not an inline class: ${render()}")).underlyingPropertyName
 
 val IrFunction.isInlineClassFieldGetter: Boolean
-    get() = (parent as? IrClass)?.isInline == true && this is IrSimpleFunction && extensionReceiverParameter == null &&
+    get() = (parent as? IrClass)?.isSingleFieldValueClass == true && this is IrSimpleFunction && extensionReceiverParameter == null &&
             correspondingPropertySymbol?.let { it.owner.getter == this && it.owner.name == parentAsClass.inlineClassFieldName } == true

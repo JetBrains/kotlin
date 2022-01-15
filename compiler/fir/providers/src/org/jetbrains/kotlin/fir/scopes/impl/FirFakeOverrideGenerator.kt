@@ -503,7 +503,7 @@ object FirFakeOverrideGenerator {
         var wereChangesInTypeParameters = forceTypeParametersRecreation
         for ((newTypeParameter, oldTypeParameter) in newTypeParameters.zip(member.typeParameters)) {
             val original = oldTypeParameter.symbol.fir
-            for (boundTypeRef in original.bounds) {
+            for (boundTypeRef in original.symbol.resolvedBounds) {
                 val typeForBound = boundTypeRef.coneType
                 val substitutedBound = substitutor.substituteOrNull(typeForBound)
                 if (substitutedBound != null) {

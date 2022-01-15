@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -35,7 +37,7 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-internal class FunctionReferenceLowering(val context: Context): FileLoweringPass {
+internal class FunctionReferenceLowering(val context: Context) : FileLoweringPass {
 
     private object DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
 
@@ -46,7 +48,7 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
 
     override fun lower(irFile: IrFile) {
         var generatedClasses = mutableListOf<IrClass>()
-        irFile.transform(object: IrElementTransformerVoidWithContext() {
+        irFile.transform(object : IrElementTransformerVoidWithContext() {
 
             private val stack = mutableListOf<IrElement>()
 
@@ -167,6 +169,7 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
             val samSuperType: IrType? = null,
     ) {
         data class BuiltFunctionReference(val functionReferenceClass: IrClass, val functionReferenceExpression: IrExpression)
+
         private val irBuiltIns = context.irBuiltIns
         private val symbols = context.ir.symbols
         private val getContinuationSymbol = symbols.getContinuation
@@ -193,28 +196,28 @@ internal class FunctionReferenceLowering(val context: Context): FileLoweringPass
         private val functionReferenceTarget = adaptedReferenceOriginalTarget ?: referencedFunction
 
         private val functionReferenceClass: IrClass =
-            IrClassImpl(
-                    startOffset,endOffset,
-                    DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
-                    IrClassSymbolImpl(),
-                    "${functionReferenceTarget.name}\$FUNCTION_REFERENCE\$${context.functionReferenceCount++}".synthesizedName,
-                    ClassKind.CLASS,
-                    DescriptorVisibilities.PRIVATE,
-                    Modality.FINAL,
-                    isCompanion = false,
-                    isInner = false,
-                    isData = false,
-                    isExternal = false,
-                    isInline = false,
-                    isExpect = false,
-                    isFun = false
-            ).apply {
-                parent = this@FunctionReferenceBuilder.parent
-                createParameterDeclarations()
+                IrClassImpl(
+                        startOffset, endOffset,
+                        DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
+                        IrClassSymbolImpl(),
+                        "${functionReferenceTarget.name}\$FUNCTION_REFERENCE\$${context.functionReferenceCount++}".synthesizedName,
+                        ClassKind.CLASS,
+                        DescriptorVisibilities.PRIVATE,
+                        Modality.FINAL,
+                        isCompanion = false,
+                        isInner = false,
+                        isData = false,
+                        isExternal = false,
+                        isValue = false,
+                        isExpect = false,
+                        isFun = false
+                ).apply {
+                    parent = this@FunctionReferenceBuilder.parent
+                    createParameterDeclarations()
 
-                // copy the generated name for IrClass, partially solves KT-47194
-                context.copyLocalClassName(functionReference, this)
-            }
+                    // copy the generated name for IrClass, partially solves KT-47194
+                    context.copyLocalClassName(functionReference, this)
+                }
 
         private val functionReferenceThis = functionReferenceClass.thisReceiver!!
 

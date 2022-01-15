@@ -99,7 +99,7 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsJs.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION, "This property can only be used from external declarations")
 
         put(ErrorsJs.WRONG_MULTIPLE_INHERITANCE,
-            "Can't apply multiple inheritance here, since it's impossible to generate bridge for system function {0}",
+            "Can''t apply multiple inheritance here, since it''s impossible to generate bridge for system function {0}",
             Renderers.DECLARATION_NAME_WITH_KIND)
 
         put(ErrorsJs.NESTED_JS_EXPORT, "@JsExport is only allowed on files and top-level declarations")

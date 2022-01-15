@@ -373,17 +373,21 @@ internal class DescriptorRendererImpl(
 
         append("(")
 
-        val parameterTypes = type.getValueParameterTypesFromFunctionType()
-        for ((index, typeProjection) in parameterTypes.withIndex()) {
-            if (index > 0) append(", ")
+        if (type.isBuiltinExtensionFunctionalType && type.arguments.size <= 1) {
+            append("???")
+        } else {
+            val parameterTypes = type.getValueParameterTypesFromFunctionType()
+            for ((index, typeProjection) in parameterTypes.withIndex()) {
+                if (index > 0) append(", ")
 
-            val name = if (parameterNamesInFunctionalTypes) typeProjection.type.extractParameterNameFromFunctionTypeArgument() else null
-            if (name != null) {
-                append(renderName(name, false))
-                append(": ")
+                val name = if (parameterNamesInFunctionalTypes) typeProjection.type.extractParameterNameFromFunctionTypeArgument() else null
+                if (name != null) {
+                    append(renderName(name, false))
+                    append(": ")
+                }
+
+                append(renderTypeProjection(typeProjection))
             }
-
-            append(renderTypeProjection(typeProjection))
         }
 
         append(") ").append(arrow()).append(" ")

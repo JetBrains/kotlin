@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
+import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -376,3 +377,16 @@ internal fun PSIKotlinCall.replaceArguments(
     callKind, psiCall, tracingStrategy, newReceiverArgument, dispatchReceiverForInvokeExtension, name, typeArguments, newArguments,
     externalArgument, startingDataFlowInfo, resultDataFlowInfo, dataFlowInfoForArguments, isForImplicitInvoke
 )
+
+fun checkForConstructorCallOnFunctionalType(
+    typeReference: KtTypeReference?,
+    context: BasicCallResolutionContext
+) {
+    if (typeReference?.typeElement is KtFunctionType) {
+        val factory = when (context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitConstructorCallOnFunctionalSupertype)) {
+            true -> Errors.NO_CONSTRUCTOR
+            false -> Errors.NO_CONSTRUCTOR_WARNING
+        }
+        context.trace.report(factory.on(context.call.getValueArgumentListOrElement()))
+    }
+}

@@ -311,7 +311,7 @@ class IrDeclarationDeserializer(
                     flags.isInner,
                     flags.isData,
                     flags.isExternal || isEffectivelyExternal,
-                    flags.isInline,
+                    flags.isValue,
                     flags.isExpect,
                     flags.isFun,
                 )
@@ -331,10 +331,12 @@ class IrDeclarationDeserializer(
                 thisReceiver = deserializeIrValueParameter(proto.thisReceiver, -1)
 
                 inlineClassRepresentation = when {
-                    !flags.isInline -> null
+                    !(flags.isValue && primaryConstructor?.valueParameters?.size == 1) -> null
                     proto.hasInlineClassRepresentation() -> deserializeInlineClassRepresentation(proto.inlineClassRepresentation)
                     else -> computeMissingInlineClassRepresentationForCompatibility(this)
                 }
+
+                // todo something when value classes
 
                 sealedSubclasses = proto.sealedSubclassList.map { deserializeIrSymbol(it) as IrClassSymbol }
 

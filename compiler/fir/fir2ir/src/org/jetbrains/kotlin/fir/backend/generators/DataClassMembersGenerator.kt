@@ -59,8 +59,13 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
  */
 class DataClassMembersGenerator(val components: Fir2IrComponents) {
 
-    fun generateInlineClassMembers(klass: FirClass, irClass: IrClass): List<FirDeclaration> =
-        MyDataClassMethodsGenerator(irClass, klass.symbol.toLookupTag(), IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER).generate(klass)
+    fun generateSingleFieldValueClassMembers(klass: FirClass, irClass: IrClass): List<FirDeclaration> =
+        MyDataClassMethodsGenerator(irClass, klass.symbol.toLookupTag(), IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER)
+            .generate(klass)
+
+    fun generateMultiFieldValueClassMembers(klass: FirClass, irClass: IrClass): List<FirDeclaration> =
+        MyDataClassMethodsGenerator(irClass, klass.symbol.toLookupTag(), IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER)
+            .generate(klass)
 
     fun generateDataClassMembers(klass: FirClass, irClass: IrClass): List<FirDeclaration> =
         MyDataClassMethodsGenerator(irClass, klass.symbol.toLookupTag(), IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER).generate(klass)

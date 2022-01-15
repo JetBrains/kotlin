@@ -1,4 +1,4 @@
-inline class IT {
+value class IT {
   constructor(x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -30,7 +30,7 @@ inline class IT {
 
 }
 
-inline class InlineMutableSet : MutableSet<IT> {
+value class InlineMutableSet : MutableSet<IT> {
   constructor(ms: MutableSet<IT>) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -106,3 +106,4 @@ inline class InlineMutableSet : MutableSet<IT> {
   }
 
 }
+

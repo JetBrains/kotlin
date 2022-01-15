@@ -16,172 +16,157 @@
 
 package org.jetbrains.kotlin.gradle.plugin.konan
 
-import org.gradle.api.Named
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
-import org.gradle.api.Action
-import org.gradle.api.GradleException
-import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
-import org.gradle.jvm.toolchain.JavaLanguageVersion
-import org.gradle.jvm.toolchain.JavaLauncher
-import org.gradle.jvm.toolchain.JavaToolchainService
-import org.gradle.jvm.toolchain.JavaToolchainSpec
-import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin.ProjectProperty.KONAN_HOME
-import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.util.DependencyProcessor
 import java.nio.file.Files
 import org.jetbrains.kotlin.*
-import java.io.ByteArrayOutputStream
+import org.jetbrains.kotlin.konan.properties.resolvablePropertyString
+import org.jetbrains.kotlin.konan.util.DependencyDirectories
+import java.io.File
+import java.util.Properties
+import org.jetbrains.kotlin.compilerRunner.KotlinToolRunner
+import org.jetbrains.kotlin.konan.target.AbstractToolConfig
+import java.net.URLClassLoader
+import java.util.concurrent.ConcurrentHashMap
 
-internal interface KonanToolRunner : Named {
-    val mainClass: String
-    val classpath: FileCollection
-    val jvmArgs: List<String>
-    val environment: Map<String, Any>
-
+internal interface KonanToolRunner {
     fun run(args: List<String>)
-    fun run(vararg args: String) = run(args.toList())
 }
+
+internal fun KonanToolRunner.run(vararg args: String) = run(args.toList())
+
+private const val runFromDaemonPropertyName = "kotlin.native.tool.runFromDaemon"
 
 internal abstract class KonanCliRunner(
-        val toolName: String,
-        val fullName: String,
-        val project: Project,
-        private val additionalJvmArgs: List<String>,
-        private val konanHome: String
-) : KonanToolRunner {
-    override val mainClass = "org.jetbrains.kotlin.cli.utilities.MainKt"
+        protected val toolName: String,
+        project: Project,
+        val additionalJvmArgs: List<String> = emptyList(),
+        val konanHome: String = project.konanHome
+) : KotlinToolRunner(project), KonanToolRunner {
+    final override val displayName get() = toolName
 
-    override fun getName() = toolName
+    final override val mainClass get() = "org.jetbrains.kotlin.cli.utilities.MainKt"
+    final override val daemonEntryPoint get() = "daemonMain"
+
+    final override val mustRunViaExec get() = false.also { System.setProperty(runFromDaemonPropertyName, "true") }
+
+    final override val execSystemPropertiesBlacklist: Set<String>
+        get() = super.execSystemPropertiesBlacklist + runFromDaemonPropertyName
 
     // We need to unset some environment variables which are set by XCode and may potentially affect the tool executed.
-    protected val blacklistEnvironment: List<String> by lazy {
-        KonanPlugin::class.java.getResourceAsStream("/env_blacklist")?.let { stream ->
-            stream.reader().use { it.readLines() }
-        } ?: emptyList<String>()
+    final override val execEnvironmentBlacklist: Set<String> by lazy {
+        HashSet<String>().also { collector ->
+            KonanPlugin::class.java.getResourceAsStream("/env_blacklist")?.let { stream ->
+                stream.reader().use { r -> r.forEachLine { collector.add(it) } }
+            }
+        }
     }
 
-    protected val blacklistProperties: Set<String> =
-            setOf(
-                    "java.endorsed.dirs", // Fix for KT-25887
-                    "user.dir"            // Don't propagate the working dir of the current Gradle process
-            )
+    final override val execSystemProperties by lazy { mapOf("konan.home" to konanHome) }
 
-    override val classpath: FileCollection =
-            project.fileTree("$konanHome/konan/lib/")
-                    .apply { include("*.jar") }
+    final override val classpath by lazy { project.fileTree("$konanHome/konan/lib/").apply { include("*.jar") }.files }
 
-    override val jvmArgs = HostManager.defaultJvmArgs.toMutableList().apply {
-        if (additionalJvmArgs.none { it.startsWith("-Xmx") } &&
-                project.jvmArgs.none { it.startsWith("-Xmx") }) {
-            add("-Xmx3G")
-        }
-        addAll(additionalJvmArgs)
-        addAll(project.jvmArgs)
-    }
-
-    override val environment = mutableMapOf("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")
-
-    private fun String.escapeQuotes() = replace("\"", "\\\"")
-
-    private fun Sequence<Pair<String, String>>.escapeQuotesForWindows() =
-            if (HostManager.hostIsMingw) {
-                map { (key, value) -> key.escapeQuotes() to value.escapeQuotes() }
-            } else {
-                this
-            }
-
-    open protected fun transformArgs(args: List<String>): List<String> = args
-
-    override fun run(args: List<String>) {
-        project.logger.info("Run tool: $toolName with args: ${args.joinToString(separator = " ")}")
-        if (classpath.isEmpty) {
-            throw IllegalStateException("Classpath of the tool is empty: $toolName\n" +
-                    "Probably the '${KONAN_HOME.propertyName}' project property contains an incorrect path.\n" +
-                    "Please change it to the compiler root directory and rerun the build.")
-        }
-
-        @Suppress("UNCHECKED_CAST")
-        val launcher = project.getProperty(KonanPlugin.ProjectProperty.KONAN_JVM_LAUNCHER) as? Provider<JavaLauncher>
-                ?: throw IllegalStateException("Missing property: ${KonanPlugin.ProjectProperty.KONAN_JVM_LAUNCHER}")
-
-        val out = ByteArrayOutputStream()
-        val err = ByteArrayOutputStream()
-
-        val execResult = project.exec(object : Action<ExecSpec> {
-            override fun execute(exec: ExecSpec) {
-                exec.executable = launcher.get().executablePath.toString()
-                val properties = System.getProperties().asSequence()
-                        .map { (k, v) -> k.toString() to v.toString() }
-                        .filter { (k, _) -> k !in this@KonanCliRunner.blacklistProperties }
-                        .filter { (k, _) -> !k.startsWith("sun") && !k.startsWith("java") }
-                        .escapeQuotesForWindows()
-                        .toMap()
-                        .toMutableMap()
-                properties.put("konan.home", project.kotlinNativeDist.absolutePath)
-
-                exec.args(mutableListOf<String>().apply {
-                    addAll(jvmArgs)
-                    addAll(properties.entries.map { "-D${it.key}=${it.value}" })
-                    add("-cp")
-                    add(classpath.joinToString(separator = System.getProperty("path.separator")))
-                    add(mainClass)
-                    addAll(listOf(toolName) + transformArgs(args))
-                })
-                blacklistEnvironment.forEach { environment.remove(it) }
-                exec.environment(environment)
-                exec.errorOutput = err
-                exec.standardOutput = out
-                exec.isIgnoreExitValue = true
-            }
-        })
-
-        check(execResult.exitValue == 0) {
-            """
-                stdout:$out
-                stderr:$err
+    final override fun checkClasspath() =
+            check(classpath.isNotEmpty()) {
+                """
+                Classpath of the tool is empty: $toolName
+                Probably the '${KONAN_HOME.propertyName}' project property contains an incorrect path.
+                Please change it to the compiler root directory and rerun the build.
             """.trimIndent()
-        }
-    }
+            }
+
+    data class IsolatedClassLoaderCacheKey(val classpath: Set<File>)
+
+    // TODO: can't we use this for other implementations too?
+    final override val isolatedClassLoaderCacheKey get() = IsolatedClassLoaderCacheKey(classpath)
+
+    // A separate map for each build for automatic cleaning the daemon after the build have finished.
+    @Suppress("UNCHECKED_CAST")
+    final override val isolatedClassLoaders get() =
+        project.project(":kotlin-native").ext["toolClassLoadersMap"] as ConcurrentHashMap<Any, URLClassLoader>
+
+    override fun transformArgs(args: List<String>) = listOf(toolName) + args
+
+    final override fun getCustomJvmArgs() = additionalJvmArgs
 }
 
-internal class KonanInteropRunner(
-        project: Project,
-        additionalJvmArgs: List<String> = emptyList(),
-        konanHome: String = project.konanHome
-) : KonanCliRunner("cinterop", "Kotlin/Native cinterop tool", project, additionalJvmArgs, konanHome) {
-    init {
-        if (HostManager.host == KonanTarget.MINGW_X64) {
-            //TODO: Oh-ho-ho fix it in more convinient way.
-            environment.put("PATH", DependencyProcessor.defaultDependenciesRoot.absolutePath +
-                    "\\llvm-11.1.0-windows-x64" +
-                    "\\bin;${environment.get("PATH")}")
-        }
-    }
-}
-
-internal class KonanCompilerRunner(
+/** Kotlin/Native compiler runner */
+internal class KonanCliCompilerRunner(
         project: Project,
         additionalJvmArgs: List<String> = emptyList(),
         val useArgFile: Boolean = true,
         konanHome: String = project.konanHome
-) : KonanCliRunner("konanc", "Kotlin/Native compiler", project, additionalJvmArgs, konanHome) {
+) : KonanCliRunner("konanc", project, additionalJvmArgs, konanHome) {
     override fun transformArgs(args: List<String>): List<String> {
-        if (!useArgFile) {
-            return args
+        if (!useArgFile) return super.transformArgs(args)
+
+        val argFile = Files.createTempFile(/* prefix = */ "konancArgs", /* suffix = */ ".lst").toFile().apply { deleteOnExit() }
+        argFile.printWriter().use { w ->
+            for (arg in args) {
+                val escapedArg = arg
+                        .replace("\\", "\\\\")
+                        .replace("\"", "\\\"")
+                w.println("\"$escapedArg\"")
+            }
         }
 
-        val argFile = Files.createTempFile("konancArgs", ".lst").toAbsolutePath().apply {
-            toFile().deleteOnExit()
-        }
-        Files.write(argFile, args)
+        return listOf(toolName, "@${argFile.absolutePath}")
+    }
+}
 
-        return listOf("@${argFile}")
+private val load0 = Runtime::class.java.getDeclaredMethod("load0", Class::class.java, String::class.java).also {
+    it.isAccessible = true
+}
+
+internal class CliToolConfig(konanHome: String, target: String) : AbstractToolConfig(konanHome, target, emptyMap()) {
+    override fun loadLibclang() {
+        // Load libclang into the system class loader. This is needed to allow developers to make changes
+        // in the tooling infrastructure without having to stop the daemon (otherwise libclang might end up
+        // loaded in two different class loaders which is not allowed by the JVM).
+        load0.invoke(Runtime.getRuntime(), String::class.java, libclang)
+    }
+}
+
+/** Kotlin/Native C-interop tool runner */
+internal class KonanCliInteropRunner(
+        project: Project,
+        additionalJvmArgs: List<String> = emptyList(),
+        konanHome: String = project.konanHome
+) : KonanCliRunner("cinterop", project, additionalJvmArgs, konanHome) {
+    override fun transformArgs(args: List<String>): List<String> {
+        return super.transformArgs(args) + listOf("-Xproject-dir", project.projectDir.toString())
+    }
+
+    override val execEnvironment by lazy {
+        val result = mutableMapOf<String, String>()
+        result.putAll(super.execEnvironment)
+        result["LIBCLANG_DISABLE_CRASH_RECOVERY"] = "1"
+        llvmExecutablesPath?.let {
+            result["PATH"] = "$it;${System.getenv("PATH")}"
+        }
+        result
+    }
+
+    fun init(target: String) {
+        CliToolConfig(konanHome, target).prepare()
+    }
+
+    private val llvmExecutablesPath: String? by lazy {
+        if (HostManager.host == KonanTarget.MINGW_X64) {
+            // TODO: Read it from Platform properties when it is accessible.
+            val konanProperties = Properties().apply {
+                project.file("$konanHome/konan/konan.properties").inputStream().use(::load)
+            }
+
+            konanProperties.resolvablePropertyString("llvmHome.mingw_x64")?.let { toolchainDir ->
+                DependencyDirectories.defaultDependenciesRoot
+                        .resolve("$toolchainDir/bin")
+                        .absolutePath
+            }
+        } else
+            null
     }
 }
 
@@ -189,4 +174,4 @@ internal class KonanKlibRunner(
         project: Project,
         additionalJvmArgs: List<String> = emptyList(),
         konanHome: String = project.konanHome
-) : KonanCliRunner("klib", "Klib management tool", project, additionalJvmArgs, konanHome)
+) : KonanCliRunner("klib", project, additionalJvmArgs, konanHome)

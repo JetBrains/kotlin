@@ -59,7 +59,7 @@ object DebugInfoUtil {
                 markedWithErrorElements[superExpression.instanceReference] = factory
             } else if (factory === Errors.EXPRESSION_EXPECTED_PACKAGE_FOUND) {
                 markedWithErrorElements[diagnostic.psiElement as KtSimpleNameExpression] = factory
-            } else if (factory === Errors.UNSUPPORTED) {
+            } else if (factory === Errors.UNSUPPORTED || factory === Errors.UNSUPPORTED_FEATURE) {
                 for (reference in PsiTreeUtil.findChildrenOfType(
                     diagnostic.psiElement,
                     KtReferenceExpression::class.java

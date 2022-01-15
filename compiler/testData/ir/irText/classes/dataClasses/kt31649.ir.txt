@@ -97,13 +97,13 @@ FILE fqName:<root> fileName:/kt31649.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.TestData'
           CONST Boolean type=kotlin.Boolean value=true
-  CLASS CLASS name:TestInline modality:FINAL visibility:public [inline] superTypes:[kotlin.Any]
+  CLASS CLASS name:TestInline modality:FINAL visibility:public [value] superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestInline
     CONSTRUCTOR visibility:public <> (nn:kotlin.Nothing?) returnType:<root>.TestInline [primary]
       VALUE_PARAMETER name:nn index:0 type:kotlin.Nothing?
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInline modality:FINAL visibility:public [inline] superTypes:[kotlin.Any]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInline modality:FINAL visibility:public [value] superTypes:[kotlin.Any]'
     PROPERTY name:nn visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]
         EXPRESSION_BODY
@@ -115,7 +115,7 @@ FILE fqName:<root> fileName:/kt31649.kt
           RETURN type=kotlin.Nothing from='public final fun <get-nn> (): kotlin.Nothing? declared in <root>.TestInline'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
               receiver: GET_VAR '<this>: <root>.TestInline declared in <root>.TestInline.<get-nn>' type=<root>.TestInline origin=null
-    FUN GENERATED_INLINE_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.TestInline) returnType:kotlin.String
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.TestInline) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.TestInline
@@ -127,7 +127,7 @@ FILE fqName:<root> fileName:/kt31649.kt
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
               receiver: GET_VAR '<this>: <root>.TestInline declared in <root>.TestInline.toString' type=<root>.TestInline origin=null
             CONST String type=kotlin.String value=")"
-    FUN GENERATED_INLINE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.TestInline) returnType:kotlin.Int
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.TestInline) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.TestInline
@@ -145,7 +145,7 @@ FILE fqName:<root> fileName:/kt31649.kt
               then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
                 $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
                   receiver: GET_VAR '<this>: <root>.TestInline declared in <root>.TestInline.hashCode' type=<root>.TestInline origin=null
-    FUN GENERATED_INLINE_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.TestInline, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.TestInline, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.TestInline

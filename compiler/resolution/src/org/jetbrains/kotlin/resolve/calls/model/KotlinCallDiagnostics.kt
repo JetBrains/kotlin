@@ -202,7 +202,13 @@ object InstantiationOfAbstractClass : KotlinCallDiagnostic(RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCall(this)
 }
 
-object AbstractSuperCall : KotlinCallDiagnostic(RUNTIME_ERROR) {
+class AbstractSuperCall(val receiver: SimpleKotlinCallArgument) : KotlinCallDiagnostic(RUNTIME_ERROR) {
+    override fun report(reporter: DiagnosticReporter) {
+        reporter.onCall(this)
+    }
+}
+
+object AbstractFakeOverrideSuperCall : KotlinCallDiagnostic(RUNTIME_ERROR) {
     override fun report(reporter: DiagnosticReporter) {
         reporter.onCall(this)
     }

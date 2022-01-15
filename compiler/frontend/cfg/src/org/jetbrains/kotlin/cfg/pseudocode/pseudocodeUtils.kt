@@ -287,7 +287,7 @@ fun KtDeclaration.getContainingPseudocode(context: BindingContext): Pseudocode? 
         it.parents.firstOrNull { it is KtDeclaration && it !is KtFunctionLiteral } as? KtDeclaration
     } ?: this
 
-    val enclosingPseudocode = PseudocodeUtil.generatePseudocode(enclosingPseudocodeDeclaration, context)
+    val enclosingPseudocode = PseudocodeUtil.generatePseudocode(enclosingPseudocodeDeclaration, context, LanguageVersionSettingsImpl.DEFAULT)
     return enclosingPseudocode.getPseudocodeByElement(this)
 }
 

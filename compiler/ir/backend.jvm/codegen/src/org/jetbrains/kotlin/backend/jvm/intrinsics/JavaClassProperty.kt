@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.boxType
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
+import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -33,7 +34,7 @@ object JavaClassProperty : IntrinsicMethod() {
         when {
             value.type == Type.VOID_TYPE ->
                 invokeGetClass(value.materializedAt(AsmTypes.UNIT_TYPE, value.codegen.context.irBuiltIns.unitType))
-            value.irType.classOrNull?.owner?.isInline == true ->
+            value.irType.classOrNull?.owner?.isSingleFieldValueClass == true ->
                 invokeGetClass(value.materializedAtBoxed(value.irType))
             isPrimitive(value.type) -> {
                 value.discard()

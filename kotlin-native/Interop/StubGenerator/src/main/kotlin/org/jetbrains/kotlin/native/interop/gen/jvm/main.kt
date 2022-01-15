@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
+import kotlinx.cinterop.usingJvmCInteropCallbacks
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.util.DefFile
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
+import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.packageFqName
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
@@ -45,6 +47,7 @@ import java.io.File
 import java.lang.IllegalArgumentException
 import java.nio.file.*
 import java.util.*
+import kotlin.io.path.absolutePathString
 
 data class InternalInteropOptions(val generated: String, val natives: String, val manifest: String? = null,
                                   val cstubsName: String? = null)
@@ -62,22 +65,23 @@ fun main(args: Array<String>) {
     val arguments = FullCInteropArguments()
     arguments.argParser.parse(args)
     val flavorName = arguments.flavor
-    processCLib(flavorName, arguments, InternalInteropOptions(arguments.generated, arguments.natives))
+    processCLibSafe(flavorName, arguments, InternalInteropOptions(arguments.generated, arguments.natives), runFromDaemon = false)
 }
 
 fun interop(
         flavor: String, args: Array<String>,
-        additionalArgs: InternalInteropOptions
-): Array<String>? = when(flavor) {
-            "jvm", "native" -> {
-                val cinteropArguments = CInteropArguments()
-                cinteropArguments.argParser.parse(args)
-                val platform = KotlinPlatform.values().single { it.name.equals(flavor, ignoreCase = true) }
-                processCLib(platform, cinteropArguments, additionalArgs)
-            }
-            "wasm" -> processIdlLib(args, additionalArgs)
-            else -> error("Unexpected flavor")
-        }
+        additionalArgs: InternalInteropOptions,
+        runFromDaemon: Boolean
+): Array<String>? = when (flavor) {
+    "jvm", "native" -> {
+        val cinteropArguments = CInteropArguments()
+        cinteropArguments.argParser.parse(args)
+        val platform = KotlinPlatform.values().single { it.name.equals(flavor, ignoreCase = true) }
+        processCLibSafe(platform, cinteropArguments, additionalArgs, runFromDaemon)
+    }
+    "wasm" -> processIdlLib(args, additionalArgs)
+    else -> error("Unexpected flavor")
+}
 
 // Options, whose values are space-separated and can be escaped.
 val escapedOptions = setOf("-compilerOpts", "-linkerOpts", "-compiler-options", "-linker-options")
@@ -203,8 +207,16 @@ private fun findFilesByGlobs(roots: List<Path>, globs: List<String>): Map<Path, 
     return relativeToRoot
 }
 
+private fun processCLibSafe(flavor: KotlinPlatform, cinteropArguments: CInteropArguments,
+                            additionalArgs: InternalInteropOptions, runFromDaemon: Boolean) =
+        usingNativeMemoryAllocator {
+            usingJvmCInteropCallbacks {
+                processCLib(flavor, cinteropArguments, additionalArgs, runFromDaemon)
+            }
+        }
+
 private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArguments,
-                        additionalArgs: InternalInteropOptions): Array<String>? {
+                        additionalArgs: InternalInteropOptions, runFromDaemon: Boolean): Array<String>? {
     val ktGenRoot = additionalArgs.generated
     val nativeLibsDir = additionalArgs.natives
     val defFile = cinteropArguments.def?.let { File(it) }
@@ -214,7 +226,7 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
         cinteropArguments.argParser.printError("-def or -pkg should be provided!")
     }
 
-    val tool = prepareTool(cinteropArguments.target, flavor, parseKeyValuePairs(cinteropArguments.overrideKonanProperties))
+    val tool = prepareTool(cinteropArguments.target, flavor, runFromDaemon, parseKeyValuePairs(cinteropArguments.overrideKonanProperties))
 
     val def = DefFile(defFile, tool.substitutions)
     val isLinkerOptsSetByUser = (cinteropArguments.linkerOpts.valueOrigin == ArgParser.ValueOrigin.SET_BY_USER) ||
@@ -235,7 +247,12 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
     val excludedFunctions = def.config.excludedFunctions.toSet()
     val excludedMacros = def.config.excludedMacros.toSet()
     val staticLibraries = def.config.staticLibraries + cinteropArguments.staticLibrary.toTypedArray()
-    val libraryPaths = def.config.libraryPaths + cinteropArguments.libraryPath.toTypedArray()
+    val projectDir = cinteropArguments.projectDir
+    val libraryPaths = (def.config.libraryPaths + cinteropArguments.libraryPath).map {
+        if (projectDir == null || Paths.get(it).isAbsolute)
+            it
+        else Paths.get(projectDir, it).absolutePathString()
+    }
     val fqParts = (cinteropArguments.pkg ?: def.config.packageName)?.split('.')
             ?: defFile!!.name.split('.').reversed().drop(1)
 
@@ -453,14 +470,10 @@ private fun resolveDependencies(
     ).getFullList(TopologicalLibraryOrder)
 }
 
-internal fun prepareTool(target: String?, flavor: KotlinPlatform, propertyOverrides: Map<String, String> = emptyMap()): ToolConfig {
-    val tool = ToolConfig(target, flavor, propertyOverrides)
-    tool.downloadDependencies()
-
-    System.load(tool.libclang)
-
-    return tool
-}
+internal fun prepareTool(target: String?, flavor: KotlinPlatform, runFromDaemon: Boolean, propertyOverrides: Map<String, String> = emptyMap()) =
+        ToolConfig(target, flavor, propertyOverrides).also {
+            if (!runFromDaemon) it.prepare() // Daemon prepares the tool himself. (See KonanToolRunner.kt)
+        }
 
 internal fun buildNativeLibrary(
         tool: ToolConfig,

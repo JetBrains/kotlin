@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction;
 import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettingsKt;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
+import org.jetbrains.kotlin.config.CommonConfigurationKeys;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.test.ConfigurationKind;
@@ -66,14 +68,15 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironmentMa
         AnalysisResult analysisResult = KotlinTestUtils.analyzeFile(ktFile, environment);
         List<KtDeclaration> declarations = ktFile.getDeclarations();
         BindingContext bindingContext = analysisResult.getBindingContext();
+        final LanguageVersionSettings languageVersionSettings = environment.getConfiguration().get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS);
         for (KtDeclaration declaration : declarations) {
-            addDeclaration(data, bindingContext, declaration);
+            addDeclaration(data, bindingContext, declaration, languageVersionSettings);
 
             if (declaration instanceof KtDeclarationContainer) {
                 for (KtDeclaration member : ((KtDeclarationContainer) declaration).getDeclarations()) {
                     // Properties and initializers are processed elsewhere
                     if (member instanceof KtNamedFunction || member instanceof KtSecondaryConstructor) {
-                        addDeclaration(data, bindingContext, member);
+                        addDeclaration(data, bindingContext, member, languageVersionSettings);
                     }
                 }
             }
@@ -92,8 +95,8 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironmentMa
         }
     }
 
-    private static void addDeclaration(SetMultimap<KtElement, Pseudocode> data, BindingContext bindingContext, KtDeclaration declaration) {
-        Pseudocode pseudocode = PseudocodeUtil.generatePseudocode(declaration, bindingContext);
+    private static void addDeclaration(SetMultimap<KtElement, Pseudocode> data, BindingContext bindingContext, KtDeclaration declaration, LanguageVersionSettings languageVersionSettings) {
+        Pseudocode pseudocode = PseudocodeUtil.generatePseudocode(declaration, bindingContext, languageVersionSettings);
         data.put(declaration, pseudocode);
         for (LocalFunctionDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
             Pseudocode localPseudocode = instruction.getBody();

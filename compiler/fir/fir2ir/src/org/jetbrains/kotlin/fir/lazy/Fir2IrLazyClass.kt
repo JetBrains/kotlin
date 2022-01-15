@@ -93,7 +93,7 @@ class Fir2IrLazyClass(
     override val isExternal: Boolean
         get() = fir.isExternal
 
-    override val isInline: Boolean
+    override val isValue: Boolean
         get() = fir.isInline
 
     override val isExpect: Boolean

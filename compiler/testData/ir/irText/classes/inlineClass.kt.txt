@@ -1,4 +1,4 @@
-inline class Test {
+value class Test {
   constructor(x: Int) /* primary */ {
     super/*Any*/()
     /* <init>() */
@@ -29,3 +29,4 @@ inline class Test {
   }
 
 }
+

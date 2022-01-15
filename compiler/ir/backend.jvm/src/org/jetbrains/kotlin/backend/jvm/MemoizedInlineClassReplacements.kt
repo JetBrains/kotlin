@@ -63,7 +63,7 @@ class MemoizedInlineClassReplacements(
                         null
 
                 // Mangle all functions in the body of an inline class
-                it.parent.safeAs<IrClass>()?.isInline == true ->
+                it.parent.safeAs<IrClass>()?.isSingleFieldValueClass == true ->
                     when {
                         it.isRemoveAtSpecialBuiltinStub() ->
                             null
@@ -93,7 +93,7 @@ class MemoizedInlineClassReplacements(
         if (this !is IrSimpleFunction) return false
         if (!this.isFakeOverride) return false
         val parentClass = parentClassOrNull ?: return false
-        if (!parentClass.isInline) return false
+        if (!parentClass.isSingleFieldValueClass) return false
 
         val overridden = resolveFakeOverride() ?: return false
         if (!overridden.parentAsClass.isJvmInterface) return false
@@ -113,7 +113,7 @@ class MemoizedInlineClassReplacements(
      */
     val getBoxFunction: (IrClass) -> IrSimpleFunction =
         storageManager.createMemoizedFunction { irClass ->
-            require(irClass.isInline)
+            require(irClass.isSingleFieldValueClass)
             irFactory.buildFun {
                 name = Name.identifier(KotlinTypeMapper.BOX_JVM_METHOD_NAME)
                 origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
@@ -134,7 +134,7 @@ class MemoizedInlineClassReplacements(
      */
     val getUnboxFunction: (IrClass) -> IrSimpleFunction =
         storageManager.createMemoizedFunction { irClass ->
-            require(irClass.isInline)
+            require(irClass.isSingleFieldValueClass)
             irFactory.buildFun {
                 name = Name.identifier(KotlinTypeMapper.UNBOX_JVM_METHOD_NAME)
                 origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
@@ -147,7 +147,7 @@ class MemoizedInlineClassReplacements(
 
     private val specializedEqualsCache = storageManager.createCacheWithNotNullValues<IrClass, IrSimpleFunction>()
     fun getSpecializedEqualsMethod(irClass: IrClass, irBuiltIns: IrBuiltIns): IrSimpleFunction {
-        require(irClass.isInline)
+        require(irClass.isSingleFieldValueClass)
         return specializedEqualsCache.computeIfAbsent(irClass) {
             irFactory.buildFun {
                 name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
@@ -257,9 +257,9 @@ class MemoizedInlineClassReplacements(
             modality = Modality.OPEN
         }
         origin = when {
-            function.origin == IrDeclarationOrigin.GENERATED_INLINE_CLASS_MEMBER ->
+            function.origin == IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER ->
                 JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD
-            function is IrConstructor && function.constructedClass.isInline ->
+            function is IrConstructor && function.constructedClass.isSingleFieldValueClass ->
                 JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_CONSTRUCTOR
             else ->
                 replacementOrigin

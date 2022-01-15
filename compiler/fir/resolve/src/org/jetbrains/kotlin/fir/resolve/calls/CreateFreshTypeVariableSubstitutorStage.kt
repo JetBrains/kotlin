@@ -75,7 +75,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
                 )
                 is FirStarProjection -> csBuilder.addEqualityConstraint(
                     freshVariable.defaultType,
-                    typeParameter.symbol.fir.bounds.firstOrNull()?.coneType
+                    typeParameter.symbol.resolvedBounds.firstOrNull()?.coneType
                         ?: context.session.builtinTypes.nullableAnyType.type,
                     SimpleConstraintSystemConstraintPosition
                 )
@@ -100,7 +100,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     }
 
     private fun FirTypeParameterRef.shouldBeFlexible(context: ConeTypeContext): Boolean {
-        return symbol.fir.bounds.any {
+        return symbol.resolvedBounds.any {
             val type = it.coneType
             type is ConeFlexibleType || with(context) {
                 (type.typeConstructor() as? ConeTypeParameterLookupTag)?.symbol?.fir?.shouldBeFlexible(context) ?: false
@@ -149,7 +149,7 @@ private fun createToFreshVariableSubstitutorAndAddInitialConstraints(
 
         val parameterSymbolFromExpandedClass = typeParameter.symbol.fir.getTypeParameterFromExpandedClass(index, session)
 
-        for (upperBound in parameterSymbolFromExpandedClass.bounds) {
+        for (upperBound in parameterSymbolFromExpandedClass.symbol.resolvedBounds) {
             freshVariable.addSubtypeConstraint(upperBound.coneType/*, position*/)
         }
     }

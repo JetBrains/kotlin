@@ -45,7 +45,6 @@ enum class LanguageFeature(
 
     // 1.2
 
-    ArrayLiteralsInAnnotations(KOTLIN_1_2),
     InlineDefaultFunctionalParameters(KOTLIN_1_2),
     SoundSmartCastsAfterTry(KOTLIN_1_2),
     DeprecatedFieldForInvisibleCompanionObject(KOTLIN_1_2),
@@ -245,6 +244,7 @@ enum class LanguageFeature(
     QualifiedSupertypeMayBeExtendedByOtherSupertype(KOTLIN_1_7),
     YieldIsNoMoreReserved(KOTLIN_1_7),
     NoDeprecationOnDeprecatedEnumEntries(KOTLIN_1_7), // KT-37975
+    ProhibitQualifiedAccessToUninitializedEnumEntry(KOTLIN_1_7, kind = BUG_FIX), // KT-41124
 
     // 1.8
 
@@ -253,10 +253,17 @@ enum class LanguageFeature(
     ProhibitConfusingSyntaxInWhenBranches(KOTLIN_1_8, kind = BUG_FIX), // KT-48385
     UseConsistentRulesForPrivateConstructorsOfSealedClasses(sinceVersion = KOTLIN_1_8, kind = BUG_FIX), // KT-44866
     ProgressionsChangingResolve(KOTLIN_1_8), // KT-49276
+    ForbidSuperDelegationToAbstractFakeOverride(KOTLIN_1_8), // KT-49017
+    ForbidSuperDelegationToAbstractAnyMethod(KOTLIN_1_8), // KT-38078
 
     // 1.9
 
     DisableCheckingChangedProgressionsResolve(KOTLIN_1_9), // KT-49276
+    ProhibitIllegalValueParameterUsageInDefaultArguments(KOTLIN_1_9, kind = BUG_FIX), // KT-25694
+    ProhibitConstructorCallOnFunctionalSupertype(KOTLIN_1_9, kind = BUG_FIX), // KT-46344
+    ProhibitArrayLiteralsInCompanionOfAnnotation(KOTLIN_1_9, kind = BUG_FIX), // KT-39041
+    ProhibitCyclesInAnnotations(KOTLIN_1_9, kind = BUG_FIX), // KT-49110
+    ForbidExtensionFunctionTypeOnNonFunctionTypes(KOTLIN_1_9), // related to KT-43527
 
     // Temporarily disabled, see KT-27084/KT-22379
     SoundSmartcastFromLoopConditionForLoopAssignedVariables(sinceVersion = null, kind = BUG_FIX),

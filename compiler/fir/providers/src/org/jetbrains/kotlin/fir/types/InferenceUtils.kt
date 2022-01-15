@@ -140,7 +140,7 @@ fun ConeKotlinType.findSubtypeOfNonSuspendFunctionalType(session: FirSession, ex
                 intersectedTypes.find { it.findSubtypeOfNonSuspendFunctionalType(session, expectedFunctionalType) != null }
         }
         is ConeTypeParameterType -> {
-            val bounds = lookupTag.typeParameterSymbol.fir.bounds.map { it.coneType }
+            val bounds = lookupTag.typeParameterSymbol.resolvedBounds.map { it.coneType }
             if (bounds.any { it.isSuspendFunctionType(session) })
                 null
             else
