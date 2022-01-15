@@ -694,13 +694,11 @@ class ExpressionCodegen(
         // Otherwise, we need to treat `Result` as boxed if it overrides a non-`Result` or boxed `Result` type.
         // TODO: if results of `needsResultArgumentUnboxing` for `overriddenSymbols` are inconsistent, the boxedness
         //       of the `Result` depends on which overridden function is called. This is probably unfixable.
+        val signature = methodSignatureMapper.mapAsmMethod(this)
         val parent = this.parent
         return parent is IrClass &&
-                parent.functions.none {
-                    it != this && it.origin == IrDeclarationOrigin.BRIDGE && it.attributeOwnerId == attributeOwnerId
-                } &&
                 overriddenSymbols.any {
-                    it.owner.resultIsActuallyAny(index) != false
+                    methodSignatureMapper.mapAsmMethod(it.owner) == signature && it.owner.resultIsActuallyAny(index) != false
                 }
     }
 
