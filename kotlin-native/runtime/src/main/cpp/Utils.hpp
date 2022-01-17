@@ -76,6 +76,8 @@ private:
     T2 oldValue_;
 };
 
+size_t CombineHash(size_t seed, size_t value);
+
 } // namespace kotlin
 
 #endif // RUNTIME_UTILS_H
