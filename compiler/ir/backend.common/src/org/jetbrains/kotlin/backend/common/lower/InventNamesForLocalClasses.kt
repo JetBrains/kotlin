@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
@@ -36,7 +37,7 @@ abstract class InventNamesForLocalClasses(private val allowTopLevelCallables: Bo
         fun makeLocal(): Data = if (isLocal) this else copy(isLocal = true)
     }
 
-    private inner class NameInventor : IrElementVisitor<Unit, Data> {
+    private inner class NameInventor : IrAbstractVisitor<Unit, Data>() {
         private val anonymousClassesCount = mutableMapOf<String, Int>()
         private val localFunctionNames = mutableMapOf<IrFunctionSymbol, String>()
 
