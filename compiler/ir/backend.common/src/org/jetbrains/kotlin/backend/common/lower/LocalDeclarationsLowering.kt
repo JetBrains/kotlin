@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.inline.isInlineParameter
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -25,10 +27,12 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.transformStatement
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -921,7 +925,7 @@ class LocalDeclarationsLowering(
         private inner class CollectLocalDeclarationsVisitor(
             private val enclosingClass: IrClass?,
             private val enclosingFile: IrFile
-        ) : IrElementVisitor<Unit, LocalDeclarationScope> {
+        ) : IrAbstractVisitor<Unit, LocalDeclarationScope>() {
             override fun visitElement(element: IrElement, data: LocalDeclarationScope) {
                 element.acceptChildren(this, data)
             }
@@ -947,6 +951,11 @@ class LocalDeclarationsLowering(
                         if (declaration.name.isSpecial || declaration.name in enclosingScope.usedLocalFunctionNames)
                             enclosingScope.counter++
                         else -1
+                    if (container is IrDeclarationWithName &&
+                        container.name.asString() == "test"
+                    ) {
+                        println("++++++ +localFunction: ${declaration.render()}")
+                    }
                     localFunctions[declaration] =
                         LocalFunctionContext(declaration, index, enclosingScope.irElement as IrDeclarationContainer)
                     enclosingScope.usedLocalFunctionNames.add(declaration.name)
