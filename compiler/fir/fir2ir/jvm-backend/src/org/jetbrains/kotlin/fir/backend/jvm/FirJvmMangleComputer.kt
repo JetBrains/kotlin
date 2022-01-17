@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComp
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
 import org.jetbrains.kotlin.backend.common.serialization.mangle.collectForMangler
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
@@ -21,15 +20,11 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.signaturer.irName
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.types.RawType
-import org.jetbrains.kotlin.types.replace
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
@@ -141,10 +136,10 @@ open class FirJvmMangleComputer(
             builder.append(it)
         }
 
-        mangleSignature(isCtor, isStatic)
+        mangleSignature(isCtor, isStatic, container)
     }
 
-    private fun FirFunction.mangleSignature(isCtor: Boolean, isStatic: Boolean) {
+    private fun FirFunction.mangleSignature(isCtor: Boolean, isStatic: Boolean, container: FirDeclaration) {
         if (!mode.signature) {
             return
         }
@@ -168,7 +163,7 @@ open class FirJvmMangleComputer(
             appendSignature(specialValueParamPrefix(it))
             mangleValueParameter(this, it)
         }
-        typeParameters.filterIsInstance<FirTypeParameter>().withIndex().toList()
+        (container as? FirTypeParametersOwner)?.typeParameters?.withIndex()?.toList().orEmpty()
             .collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { (index, typeParameter) ->
                 mangleTypeParameter(this, typeParameter, index)
             }
