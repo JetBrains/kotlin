@@ -25,13 +25,14 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 open class DeepCopySymbolRemapper(
     private val descriptorsRemapper: DescriptorsRemapper = NullDescriptorsRemapper
-) : IrElementVisitorVoid, SymbolRemapper {
+) : IrAbstractVisitorVoid(), SymbolRemapper {
 
     protected val classes = hashMapOf<IrClassSymbol, IrClassSymbol>()
     protected val scripts = hashMapOf<IrScriptSymbol, IrScriptSymbol>()
