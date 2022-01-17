@@ -164,7 +164,7 @@ class NumberOperatorCallsTransformer(context: JsIrBackendContext) : CallsTransfo
         irBinaryOp(call, intrinsics.jsDiv, toInt32 = BinaryOp(call).result.isInt())
 
     private fun transformRem(call: IrFunctionAccessExpression) =
-        irBinaryOp(call, intrinsics.jsMod)
+        irBinaryOp(call, intrinsics.jsMod, toInt32 = BinaryOp(call).result.isInt())
 
     private fun transformIncrement(call: IrFunctionAccessExpression) =
         transformCrement(call, intrinsics.jsPlus)
