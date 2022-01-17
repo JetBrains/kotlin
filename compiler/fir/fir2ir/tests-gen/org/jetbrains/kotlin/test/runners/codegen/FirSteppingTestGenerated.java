@@ -248,6 +248,18 @@ public class FirSteppingTestGenerated extends AbstractFirSteppingTest {
     }
 
     @Test
+    @TestMetadata("kt15259.kt")
+    public void testKt15259() throws Exception {
+        runTest("compiler/testData/debug/stepping/kt15259.kt");
+    }
+
+    @Test
+    @TestMetadata("kt29179.kt")
+    public void testKt29179() throws Exception {
+        runTest("compiler/testData/debug/stepping/kt29179.kt");
+    }
+
+    @Test
     @TestMetadata("kt42208.kt")
     public void testKt42208() throws Exception {
         runTest("compiler/testData/debug/stepping/kt42208.kt");
@@ -335,6 +347,12 @@ public class FirSteppingTestGenerated extends AbstractFirSteppingTest {
     @TestMetadata("noParametersArgumentCallInExpression.kt")
     public void testNoParametersArgumentCallInExpression() throws Exception {
         runTest("compiler/testData/debug/stepping/noParametersArgumentCallInExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("nullcheck.kt")
+    public void testNullcheck() throws Exception {
+        runTest("compiler/testData/debug/stepping/nullcheck.kt");
     }
 
     @Test

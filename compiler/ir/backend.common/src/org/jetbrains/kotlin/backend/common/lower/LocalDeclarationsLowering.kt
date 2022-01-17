@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.inline.isInlineParameter
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -80,7 +80,8 @@ class LocalDeclarationsLowering(
     val localNameProvider: LocalNameProvider = LocalNameProvider.DEFAULT,
     val visibilityPolicy: VisibilityPolicy = VisibilityPolicy.DEFAULT,
     val suggestUniqueNames: Boolean = true, // When `true` appends a `-#index` suffix to lifted declaration names
-    val forceFieldsForInlineCaptures: Boolean = false // See `LocalClassContext`
+    val forceFieldsForInlineCaptures: Boolean = false, // See `LocalClassContext`
+    private val postLocalDeclarationLoweringCallback: ((IntermediateDatastructures) -> Unit)? = null
 ) :
     BodyLoweringPass {
 
@@ -118,7 +119,7 @@ class LocalDeclarationsLowering(
             ScopeWithCounter(this)
         }
 
-    private abstract class LocalContext {
+    abstract class LocalContext {
         val capturedTypeParameterToTypeParameter: MutableMap<IrTypeParameter, IrTypeParameter> = mutableMapOf()
 
         // By the time typeRemapper is used, the map will be already filled
@@ -130,7 +131,7 @@ class LocalDeclarationsLowering(
         abstract fun irGet(startOffset: Int, endOffset: Int, valueDeclaration: IrValueDeclaration): IrExpression?
     }
 
-    private abstract class LocalContextWithClosureAsParameters : LocalContext() {
+    abstract class LocalContextWithClosureAsParameters : LocalContext() {
 
         abstract val declaration: IrFunction
         abstract val transformedDeclaration: IrFunction
@@ -144,7 +145,7 @@ class LocalDeclarationsLowering(
         }
     }
 
-    private class LocalFunctionContext(
+    class LocalFunctionContext(
         override val declaration: IrSimpleFunction,
         val index: Int,
         val ownerForLoweredDeclaration: IrDeclarationContainer
@@ -255,6 +256,10 @@ class LocalDeclarationsLowering(
             rewriteDeclarations()
 
             insertLoweredDeclarationForLocalFunctions()
+
+            postLocalDeclarationLoweringCallback?.invoke(
+                IntermediateDatastructures(localFunctions, newParameterToOld, newParameterToCaptured)
+            )
         }
 
         private fun insertLoweredDeclarationForLocalFunctions() {
@@ -975,6 +980,12 @@ class LocalDeclarationsLowering(
             }, Data(null, false))
         }
     }
+
+    data class IntermediateDatastructures(
+        val localFunctions: Map<IrFunction, LocalFunctionContext>,
+        val newParameterToOld: Map<IrValueParameter, IrValueParameter>,
+        val newParameterToCaptured: Map<IrValueParameter, IrValueSymbol>
+    )
 }
 
 // Local inner classes capture anything through outer

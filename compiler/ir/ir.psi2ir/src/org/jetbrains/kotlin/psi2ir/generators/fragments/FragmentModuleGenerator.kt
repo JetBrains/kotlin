@@ -38,11 +38,25 @@ class FragmentModuleGenerator(
                             patchDeclarationParents()
                         }
                     } else {
-                        val fileContext = context.createFileScopeContext(ktFile)
-                        generateSingleFile(DeclarationGenerator(fileContext), ktFile, irModule)
+                        generateInContextWithoutFragmentInfo(ktFile) {
+                            generateSingleFile(DeclarationGenerator(it), ktFile, irModule)
+                        }
                     }
                 )
             }
+        }
+    }
+
+    private fun <T> generateInContextWithoutFragmentInfo(ktFile: KtFile, block: (GeneratorContext) -> T): T {
+        val symbolTableDecorator = context.symbolTable as FragmentCompilerSymbolTableDecorator
+        val fragmentInfo = symbolTableDecorator.fragmentInfo
+        symbolTableDecorator.fragmentInfo = null
+
+        val fileContext = context.createFileScopeContext(ktFile)
+        fileContext.fragmentContext = null
+
+        return block(fileContext).also {
+            symbolTableDecorator.fragmentInfo = fragmentInfo
         }
     }
 

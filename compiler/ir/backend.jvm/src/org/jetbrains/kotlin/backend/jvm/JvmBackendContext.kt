@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.Mapping
 import org.jetbrains.kotlin.backend.common.ir.Ir
+import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.caches.BridgeLoweringCache
 import org.jetbrains.kotlin.backend.jvm.caches.CollectionStubComputer
@@ -47,6 +48,18 @@ class JvmBackendContext(
     val backendExtension: JvmBackendExtension,
     val irSerializer: JvmIrSerializer?,
 ) : CommonBackendContext {
+
+    data class LocalFunctionData(
+        val localContext: LocalDeclarationsLowering.LocalFunctionContext,
+        val newParameterToOld: Map<IrValueParameter, IrValueParameter>,
+        val newParameterToCaptured: Map<IrValueParameter, IrValueSymbol>
+    )
+
+    // If not-null, this is populated by LocalDeclarationsLowering with the intermediate data
+    // allowing mapping from local function captures to parameters and accurate transformation
+    // of calls to local functions from code fragments (i.e. the expression evaluator).
+    var localDeclarationsLoweringData: MutableMap<IrFunction, LocalFunctionData>? = null
+
     // If the JVM fqname of a class differs from what is implied by its parent, e.g. if it's a file class
     // annotated with @JvmPackageName, the correct name is recorded here.
     val classNameOverride: MutableMap<IrClass, JvmClassName>

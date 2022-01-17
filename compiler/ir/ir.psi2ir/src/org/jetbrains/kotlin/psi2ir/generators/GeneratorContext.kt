@@ -36,7 +36,7 @@ class GeneratorContext private constructor(
     val typeTranslator: TypeTranslator,
     override val irBuiltIns: IrBuiltIns,
     internal val callToSubstitutedDescriptorMap: MutableMap<IrDeclarationReference, CallableDescriptor>,
-    internal val fragmentContext: FragmentContext?,
+    internal var fragmentContext: FragmentContext?,
 ) : IrGeneratorContext {
 
     constructor(
