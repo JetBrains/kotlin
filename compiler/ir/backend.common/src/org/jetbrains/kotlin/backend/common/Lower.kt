@@ -18,14 +18,10 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBody
-import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.util.transformSubsetFlat
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.ir.visitors.*
 
 interface FileLoweringPass {
     fun lower(irFile: IrFile)
@@ -167,13 +163,57 @@ fun BodyAndScriptBodyLoweringPass.runOnFilePostfix(irFile: IrFile) {
 private open class BodyLoweringVisitor(
     private val loweringPass: BodyLoweringPass,
     private val withLocalDeclarations: Boolean,
-) : IrElementVisitor<Unit, IrDeclaration?> {
+) : IrThinVisitor<Unit, IrDeclaration?>() {
     override fun visitElement(element: IrElement, data: IrDeclaration?) {
         element.acceptChildren(this, data)
     }
 
-    override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclaration?) {
+    private fun visitDeclaration(declaration: IrDeclarationBase) {
         declaration.acceptChildren(this, declaration)
+    }
+
+    override fun visitSimpleFunction(declaration: IrSimpleFunction, data: IrDeclaration?) {
+        visitDeclaration(declaration)
+    }
+
+    override fun visitConstructor(declaration: IrConstructor, data: IrDeclaration?) {
+        visitDeclaration(declaration)
+    }
+
+    override fun visitProperty(declaration: IrProperty, data: IrDeclaration?) {
+        visitDeclaration(declaration)
+    }
+
+    override fun visitField(declaration: IrField, data: IrDeclaration?) {
+        visitDeclaration(declaration)
+    }
+
+    override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: IrDeclaration?) {
+        visitDeclaration(declaration)
+    }
+
+    override fun visitVariable(declaration: IrVariable, data: IrDeclaration?) {
+        visitDeclaration(declaration)
+    }
+
+    override fun visitEnumEntry(declaration: IrEnumEntry, data: IrDeclaration?) {
+        visitDeclaration(declaration)
+    }
+
+    override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: IrDeclaration?) {
+        visitDeclaration(declaration)
+    }
+
+    override fun visitTypeParameter(declaration: IrTypeParameter, data: IrDeclaration?) {
+        visitDeclaration(declaration)
+    }
+
+    override fun visitValueParameter(declaration: IrValueParameter, data: IrDeclaration?) {
+        visitDeclaration(declaration)
+    }
+
+    override fun visitTypeAlias(declaration: IrTypeAlias, data: IrDeclaration?) {
+        visitDeclaration(declaration)
     }
 
     override fun visitClass(declaration: IrClass, data: IrDeclaration?) {
@@ -182,12 +222,24 @@ private open class BodyLoweringVisitor(
         ArrayList(declaration.declarations).forEach { it.accept(this, declaration) }
     }
 
-    override fun visitBody(body: IrBody, data: IrDeclaration?) {
+    private fun visitBody(body: IrBody, data: IrDeclaration?) {
         if (withLocalDeclarations) body.acceptChildren(this, null)
         val stageController = data!!.factory.stageController
         stageController.restrictTo(data) {
             loweringPass.lower(body, data)
         }
+    }
+
+    override fun visitExpressionBody(body: IrExpressionBody, data: IrDeclaration?) {
+        visitBody(body, data)
+    }
+
+    override fun visitBlockBody(body: IrBlockBody, data: IrDeclaration?) {
+        visitBody(body, data)
+    }
+
+    override fun visitSyntheticBody(body: IrSyntheticBody, data: IrDeclaration?) {
+        visitBody(body, data)
     }
 
     override fun visitScript(declaration: IrScript, data: IrDeclaration?) {
