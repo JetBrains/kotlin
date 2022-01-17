@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 import org.jetbrains.kotlin.name.Name
 
 internal val inlineCallableReferenceToLambdaPhase = makeIrFilePhase(
@@ -51,7 +51,7 @@ internal class InlineCallableReferenceToLambdaPhase(val context: JvmBackendConte
 
 const val STUB_FOR_INLINING = "stub_for_inlining"
 
-private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendContext) : IrElementVisitor<Unit, IrDeclaration?> {
+private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendContext) : IrAbstractVisitor<Unit, IrDeclaration?>() {
     override fun visitElement(element: IrElement, data: IrDeclaration?) =
         element.acceptChildren(this, element as? IrDeclaration ?: data)
 
