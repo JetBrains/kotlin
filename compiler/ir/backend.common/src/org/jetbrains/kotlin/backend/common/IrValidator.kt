@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
@@ -58,7 +58,7 @@ data class IrValidatorConfig(
     val checkScopes: Boolean = false,
 )
 
-class IrValidator(val context: CommonBackendContext, val config: IrValidatorConfig) : IrElementVisitorVoid {
+class IrValidator(val context: CommonBackendContext, val config: IrValidatorConfig) : IrAbstractVisitorVoid() {
 
     val irBuiltIns = context.irBuiltIns
     var currentFile: IrFile? = null
