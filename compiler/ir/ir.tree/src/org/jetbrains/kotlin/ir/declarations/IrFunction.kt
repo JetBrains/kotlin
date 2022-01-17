@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
 
 abstract class IrFunction :
     IrDeclarationBase(),
@@ -40,7 +41,19 @@ abstract class IrFunction :
 
     abstract var body: IrBody?
 
+    @Suppress("DuplicatedCode")
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        typeParameters.forEach { it.accept(visitor, data) }
+
+        dispatchReceiverParameter?.accept(visitor, data)
+        extensionReceiverParameter?.accept(visitor, data)
+        valueParameters.forEach { it.accept(visitor, data) }
+
+        body?.accept(visitor, data)
+    }
+
+    @Suppress("DuplicatedCode")
+    override fun <D> acceptChildren(visitor: IrThinVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
 
         dispatchReceiverParameter?.accept(visitor, data)

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.symbols.IrAnonymousInitializerSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
 
 abstract class IrAnonymousInitializer : IrDeclarationBase() {
     @ObsoleteDescriptorBasedAPI
@@ -24,7 +25,14 @@ abstract class IrAnonymousInitializer : IrDeclarationBase() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitAnonymousInitializer(this, data)
 
+    override fun <R, D> accept(visitor: IrThinVisitor<R, D>, data: D): R =
+        visitor.visitAnonymousInitializer(this, data)
+
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        body.accept(visitor, data)
+    }
+
+    override fun <D> acceptChildren(visitor: IrThinVisitor<Unit, D>, data: D) {
         body.accept(visitor, data)
     }
 
