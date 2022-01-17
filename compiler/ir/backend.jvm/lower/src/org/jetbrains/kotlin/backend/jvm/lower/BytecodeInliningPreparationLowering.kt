@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrLoop
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 
 internal val prepareForBytecodeInlining = makeIrModulePhase(
     ::BytecodeInliningPreparationLowering,
@@ -22,7 +22,7 @@ internal val prepareForBytecodeInlining = makeIrModulePhase(
 
 private class BytecodeInliningPreparationLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.accept(object : IrElementVisitor<Unit, String> {
+        irFile.accept(object : IrAbstractVisitor<Unit, String>() {
             // This counter is intentionally not local to every declaration because their names might clash.
             private var counter = 0
 
