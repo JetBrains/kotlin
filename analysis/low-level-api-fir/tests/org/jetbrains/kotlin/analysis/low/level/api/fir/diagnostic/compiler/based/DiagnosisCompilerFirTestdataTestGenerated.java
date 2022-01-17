@@ -5884,6 +5884,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             public void testWeakHashMap() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/weakHashMap.kt");
             }
+
+            @Test
+            @TestMetadata("WithValidityAssertion.kt")
+            public void testWithValidityAssertion() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/WithValidityAssertion.kt");
+            }
         }
 
         @Nested

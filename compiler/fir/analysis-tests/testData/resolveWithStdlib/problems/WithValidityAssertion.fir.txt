@@ -1,0 +1,84 @@
+FILE: WithValidityAssertion.kt
+    public abstract interface ValidityToken : R|kotlin/Any| {
+        public abstract fun assertIsValid(): R|kotlin/Unit|
+
+    }
+    public abstract interface ValidityTokenOwner : R|kotlin/Any| {
+        public abstract val token: R|ValidityToken|
+            public get(): R|ValidityToken|
+
+    }
+    public final inline fun R|ValidityTokenOwner|.assertIsValid(): R|kotlin/Unit| {
+        this@R|/assertIsValid|.R|/ValidityTokenOwner.token|.R|/ValidityToken.assertIsValid|()
+    }
+    public final inline fun <R> R|ValidityTokenOwner|.withValidityAssertion(action: R|() -> R|): R|R| {
+        this@R|/withValidityAssertion|.R|/assertIsValid|()
+        ^withValidityAssertion R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()
+    }
+    public final class ValidityAwareCachedValue<T> : R|kotlin/properties/ReadOnlyProperty<kotlin/Any, T>| {
+        public constructor<T>(token: R|ValidityToken|, init: R|() -> T|): R|ValidityAwareCachedValue<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val token: R|ValidityToken| = R|<local>/token|
+            private get(): R|ValidityToken|
+
+        private final val lazyValue: R|kotlin/Lazy<T>| = R|kotlin/lazy|<R|T|>(Q|kotlin/LazyThreadSafetyMode|.R|kotlin/LazyThreadSafetyMode.PUBLICATION|, R|<local>/init|)
+            private get(): R|kotlin/Lazy<T>|
+
+        @R|kotlin/Suppress|(names = vararg(String(UNCHECKED_CAST))) public final override operator fun getValue(thisRef: R|kotlin/Any|, property: R|kotlin/reflect/KProperty<*>|): R|T| {
+            this@R|/ValidityAwareCachedValue|.R|/ValidityAwareCachedValue.token|.R|/ValidityToken.assertIsValid|()
+            ^getValue this@R|/ValidityAwareCachedValue|.R|/ValidityAwareCachedValue.lazyValue|.R|SubstitutionOverride<kotlin/Lazy.value: R|T|>|
+        }
+
+    }
+    internal final fun <T> R|ValidityTokenOwner|.cached(init: R|() -> T|): R|ValidityAwareCachedValue<T>| {
+        ^cached R|/ValidityAwareCachedValue.ValidityAwareCachedValue|<R|T|>(this@R|/cached|.R|/ValidityTokenOwner.token|, R|<local>/init|)
+    }
+    public final typealias KtScopeNameFilter = R|(kotlin/String) -> kotlin/Boolean|
+    public abstract class KtFirNonStarImportingScope : R|ValidityTokenOwner| {
+        public constructor(firScope: R|FirScope|, builder: R|KtSymbolByFirBuilder|, token: R|ValidityToken|): R|KtFirNonStarImportingScope| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final val firScope: R|FirScope| = R|<local>/firScope|
+            private get(): R|FirScope|
+
+        private final val builder: R|KtSymbolByFirBuilder| = R|<local>/builder|
+            private get(): R|KtSymbolByFirBuilder|
+
+        public open override val token: R|ValidityToken| = R|<local>/token|
+            public get(): R|ValidityToken|
+
+        private final val imports: R|kotlin/collections/List<kotlin/String>|by this@R|/KtFirNonStarImportingScope|.R|/cached|<R|kotlin/collections/List<kotlin/String>|>(<L> = cached@fun <anonymous>(): R|kotlin/collections/List<kotlin/String>| <inline=NoInline>  {
+            ^ R|kotlin/collections/buildList|<R|kotlin/String|>(<L> = buildList@fun R|kotlin/collections/MutableList<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                this@R|/KtFirNonStarImportingScope|.R|/KtFirNonStarImportingScope.getCallableNames|().R|kotlin/collections/forEach|<R|kotlin/String|>(<L> = forEach@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                    this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(R|<local>/it|)
+                }
+                )
+            }
+            )
+        }
+        )
+            private get(): R|kotlin/collections/List<kotlin/String>| {
+                ^ this@R|/KtFirNonStarImportingScope|.D|/KtFirNonStarImportingScope.imports|.R|SubstitutionOverride</ValidityAwareCachedValue.getValue: R|Stub (chain inference): TypeVariable(_T)|>|(this@R|/KtFirNonStarImportingScope|, ::R|/KtFirNonStarImportingScope.imports|)
+            }
+
+        public final fun getCallableSymbols(nameFilter: R|KtScopeNameFilter|): R|kotlin/sequences/Sequence<KtCallableSymbol>| {
+            ^getCallableSymbols this@R|/KtFirNonStarImportingScope|.R|/withValidityAssertion|<R|kotlin/sequences/Sequence<KtCallableSymbol>|>(<L> = withValidityAssertion@fun <anonymous>(): R|kotlin/sequences/Sequence<KtCallableSymbol>| <inline=Inline, kind=UNKNOWN>  {
+                ^ this@R|/KtFirNonStarImportingScope|.R|/KtFirNonStarImportingScope.firScope|.R|/FirScope.getCallableSymbols|(this@R|/KtFirNonStarImportingScope|.R|/KtFirNonStarImportingScope.getCallableNames|().R|kotlin/collections/filter|<R|kotlin/String|>(R|<local>/nameFilter|), this@R|/KtFirNonStarImportingScope|.R|/KtFirNonStarImportingScope.builder|)
+            }
+            )
+        }
+
+        public abstract fun getCallableNames(): R|kotlin/collections/Set<kotlin/String>|
+
+    }
+    public abstract interface FirScope : R|kotlin/Any| {
+        public abstract fun getCallableSymbols(callableNames: R|kotlin/collections/Collection<kotlin/String>|, builder: R|KtSymbolByFirBuilder|): R|kotlin/sequences/Sequence<KtCallableSymbol>|
+
+    }
+    public abstract interface KtCallableSymbol : R|kotlin/Any| {
+    }
+    public abstract interface KtSymbolByFirBuilder : R|kotlin/Any| {
+    }

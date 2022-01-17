@@ -276,6 +276,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
             property.transformAccessors()
             val completedCalls = completeCandidates()
+            dataFlowAnalyzer.exitDelegateExpression()
+
             val finalSubstitutor = createFinalSubstitutor()
 
             // Replace stub types with corresponding type variable types
@@ -301,62 +303,58 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         data: ResolutionMode,
     ): FirStatement {
         dataFlowAnalyzer.enterDelegateExpression()
-        try {
-            // First, resolve delegate expression in dependent context
-            val delegateExpression =
-                wrappedDelegateExpression.expression.transformSingle(transformer, ResolutionMode.ContextDependent)
+        // First, resolve delegate expression in dependent context
+        val delegateExpression =
+            wrappedDelegateExpression.expression.transformSingle(transformer, ResolutionMode.ContextDependent)
 
-            // Second, replace result type of delegate expression with stub type if delegate not yet resolved
-            if (delegateExpression is FirQualifiedAccess) {
-                val calleeReference = delegateExpression.calleeReference
-                if (calleeReference is FirNamedReferenceWithCandidate) {
-                    val system = calleeReference.candidate.system
-                    system.notFixedTypeVariables.forEach {
-                        system.markPostponedVariable(it.value.typeVariable)
-                    }
-                    val typeVariableTypeToStubType = context.inferenceSession.createSyntheticStubTypes(system)
-
-                    val substitutor = createTypeSubstitutorByTypeConstructor(typeVariableTypeToStubType, session.typeContext)
-                    val delegateExpressionTypeRef = delegateExpression.typeRef
-                    val stubTypeSubstituted = substitutor.substituteOrNull(delegateExpressionTypeRef.coneType)
-                    delegateExpression.replaceTypeRef(delegateExpressionTypeRef.withReplacedConeType(stubTypeSubstituted))
-                }
-            }
-
-            val provideDelegateCall = wrappedDelegateExpression.delegateProvider as FirFunctionCall
-
-            // Resolve call for provideDelegate, without completion
-            provideDelegateCall.transformSingle(this, ResolutionMode.ContextIndependent)
-
-            // If we got successful candidate for provideDelegate, let's select it
-            val provideDelegateCandidate = provideDelegateCall.candidate()
-            if (provideDelegateCandidate != null && provideDelegateCandidate.isSuccessful) {
-                val system = provideDelegateCandidate.system
+        // Second, replace result type of delegate expression with stub type if delegate not yet resolved
+        if (delegateExpression is FirQualifiedAccess) {
+            val calleeReference = delegateExpression.calleeReference
+            if (calleeReference is FirNamedReferenceWithCandidate) {
+                val system = calleeReference.candidate.system
                 system.notFixedTypeVariables.forEach {
                     system.markPostponedVariable(it.value.typeVariable)
                 }
                 val typeVariableTypeToStubType = context.inferenceSession.createSyntheticStubTypes(system)
+
                 val substitutor = createTypeSubstitutorByTypeConstructor(typeVariableTypeToStubType, session.typeContext)
-
-                val stubTypeSubstituted = substitutor.substituteOrSelf(provideDelegateCandidate.substitutor.substituteOrSelf(components.typeFromCallee(provideDelegateCall).type))
-
-                provideDelegateCall.replaceTypeRef(provideDelegateCall.typeRef.resolvedTypeFromPrototype(stubTypeSubstituted))
-                return provideDelegateCall
+                val delegateExpressionTypeRef = delegateExpression.typeRef
+                val stubTypeSubstituted = substitutor.substituteOrNull(delegateExpressionTypeRef.coneType)
+                delegateExpression.replaceTypeRef(delegateExpressionTypeRef.withReplacedConeType(stubTypeSubstituted))
             }
-
-            if (provideDelegateCall.calleeReference is FirResolvedNamedReference) {
-                return provideDelegateCall
-            }
-
-            // Otherwise, rollback
-            (provideDelegateCall as? FirFunctionCall)?.let { dataFlowAnalyzer.dropSubgraphFromCall(it) }
-
-            // Select delegate expression otherwise
-            return delegateExpression
-                .approximateIfIsIntegerConst()
-        } finally {
-            dataFlowAnalyzer.exitDelegateExpression()
         }
+
+        val provideDelegateCall = wrappedDelegateExpression.delegateProvider as FirFunctionCall
+
+        // Resolve call for provideDelegate, without completion
+        provideDelegateCall.transformSingle(this, ResolutionMode.ContextIndependent)
+
+        // If we got successful candidate for provideDelegate, let's select it
+        val provideDelegateCandidate = provideDelegateCall.candidate()
+        if (provideDelegateCandidate != null && provideDelegateCandidate.isSuccessful) {
+            val system = provideDelegateCandidate.system
+            system.notFixedTypeVariables.forEach {
+                system.markPostponedVariable(it.value.typeVariable)
+            }
+            val typeVariableTypeToStubType = context.inferenceSession.createSyntheticStubTypes(system)
+            val substitutor = createTypeSubstitutorByTypeConstructor(typeVariableTypeToStubType, session.typeContext)
+
+            val stubTypeSubstituted = substitutor.substituteOrSelf(provideDelegateCandidate.substitutor.substituteOrSelf(components.typeFromCallee(provideDelegateCall).type))
+
+            provideDelegateCall.replaceTypeRef(provideDelegateCall.typeRef.resolvedTypeFromPrototype(stubTypeSubstituted))
+            return provideDelegateCall
+        }
+
+        if (provideDelegateCall.calleeReference is FirResolvedNamedReference) {
+            return provideDelegateCall
+        }
+
+        // Otherwise, rollback
+        (provideDelegateCall as? FirFunctionCall)?.let { dataFlowAnalyzer.dropSubgraphFromCall(it) }
+
+        // Select delegate expression otherwise
+        return delegateExpression
+            .approximateIfIsIntegerConst()
     }
 
     private fun transformLocalVariable(variable: FirProperty): FirProperty {
