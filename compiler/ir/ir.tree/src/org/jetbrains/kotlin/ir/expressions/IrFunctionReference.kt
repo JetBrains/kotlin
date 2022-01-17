@@ -7,10 +7,14 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
 
 abstract class IrFunctionReference : IrCallableReference<IrFunctionSymbol>() {
     abstract val reflectionTarget: IrFunctionSymbol?
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitFunctionReference(this, data)
+
+    override fun <R, D> accept(visitor: IrThinVisitor<R, D>, data: D): R =
         visitor.visitFunctionReference(this, data)
 }
