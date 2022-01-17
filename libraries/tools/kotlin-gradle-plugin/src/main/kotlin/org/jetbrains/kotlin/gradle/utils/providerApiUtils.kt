@@ -97,3 +97,6 @@ internal fun Project.filesProvider(
 internal fun <T : Task> T.outputFilesProvider(provider: T.() -> Any): ConfigurableFileCollection {
     return project.filesProvider(this) { provider() }
 }
+
+internal inline fun <reified T> Project.listProperty(noinline itemsProvider: () -> Iterable<T>) =
+    objects.listProperty(T::class.java).apply { set(provider(itemsProvider)) }

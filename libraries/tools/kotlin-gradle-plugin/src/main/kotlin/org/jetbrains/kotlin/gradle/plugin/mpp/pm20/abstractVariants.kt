@@ -56,9 +56,16 @@ class DefaultSingleMavenPublishedModuleHolder(
 
     private var assignedMavenPublication: MavenPublication? = null
 
+    private val publicationAssignedHandlers = mutableListOf<(MavenPublication) -> Unit>()
+
     override fun assignMavenPublication(publication: MavenPublication) {
         if (assignedMavenPublication != null) error("already assigned publication $publication")
         assignedMavenPublication = publication
+        publicationAssignedHandlers.forEach { it(publication) }
+    }
+
+    override fun whenPublicationAssigned(handlePublication: (MavenPublication) -> Unit) {
+        assignedMavenPublication?.let(handlePublication) ?: publicationAssignedHandlers.add(handlePublication)
     }
 
     override val publishedMavenModuleCoordinates: PublishedModuleCoordinatesProvider = MavenPublicationCoordinatesProvider(
