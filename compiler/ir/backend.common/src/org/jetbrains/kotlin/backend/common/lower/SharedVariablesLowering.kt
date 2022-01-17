@@ -47,87 +47,85 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
         private val sharedVariables = HashSet<IrVariable>()
 
         fun lowerSharedVariables() {
-            collectSharedVariables()
+            irBody.accept(CollectSharedVariablesVisitor(), irDeclaration as? IrDeclarationParent ?: irDeclaration.parent)
             if (sharedVariables.isEmpty()) return
 
             rewriteSharedVariables()
         }
 
-        private fun collectSharedVariables() {
-            val skippedFunctionsParents = mutableMapOf<IrFunction, IrDeclarationParent>()
-            irBody.accept(object : IrElementVisitor<Unit, IrDeclarationParent?> {
-                val relevantVars = HashSet<IrVariable>()
-                val relevantVals = HashSet<IrVariable>()
+        private inner class CollectSharedVariablesVisitor : IrElementVisitor<Unit, IrDeclarationParent?> {
+            private val skippedFunctionsParents = mutableMapOf<IrFunction, IrDeclarationParent>()
+            private val relevantVars = HashSet<IrVariable>()
+            private val relevantVals = HashSet<IrVariable>()
 
-                override fun visitElement(element: IrElement, data: IrDeclarationParent?) {
-                    element.acceptChildren(this, data)
+            override fun visitElement(element: IrElement, data: IrDeclarationParent?) {
+                element.acceptChildren(this, data)
+            }
+
+            override fun visitCall(expression: IrCall, data: IrDeclarationParent?) {
+                val callee = expression.symbol.owner
+                if (!callee.isInline) {
+                    super.visitCall(expression, data)
+                    return
                 }
-
-                override fun visitCall(expression: IrCall, data: IrDeclarationParent?) {
-                    val callee = expression.symbol.owner
-                    if (!callee.isInline) {
-                        super.visitCall(expression, data)
-                        return
-                    }
-                    expression.dispatchReceiver?.accept(this, data)
-                    expression.extensionReceiver?.accept(this, data)
-                    for (param in callee.valueParameters) {
-                        val arg = expression.getValueArgument(param.index) ?: continue
-                        if (param.isInlineParameter()
-                            // This is somewhat conservative but simple.
-                            // If a user put redundant <crossinline> modifier on a parameter,
-                            // may be it's their fault?
-                            && !param.isCrossinline
-                            && arg is IrFunctionExpression
-                        ) {
-                            skippedFunctionsParents[arg.function] = data!!
-                            arg.function.acceptChildren(this, data)
-                            skippedFunctionsParents.remove(arg.function)
-                        } else
-                            arg.accept(this, data)
-                    }
+                expression.dispatchReceiver?.accept(this, data)
+                expression.extensionReceiver?.accept(this, data)
+                for (param in callee.valueParameters) {
+                    val arg = expression.getValueArgument(param.index) ?: continue
+                    if (param.isInlineParameter()
+                        // This is somewhat conservative but simple.
+                        // If a user put redundant <crossinline> modifier on a parameter,
+                        // may be it's their fault?
+                        && !param.isCrossinline
+                        && arg is IrFunctionExpression
+                    ) {
+                        skippedFunctionsParents[arg.function] = data!!
+                        arg.function.acceptChildren(this, data)
+                        skippedFunctionsParents.remove(arg.function)
+                    } else
+                        arg.accept(this, data)
                 }
+            }
 
-                override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) {
-                    super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
+            override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) {
+                super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
+            }
+
+            override fun visitVariable(declaration: IrVariable, data: IrDeclarationParent?) {
+                declaration.acceptChildren(this, data)
+
+                if (declaration.isVar) {
+                    relevantVars.add(declaration)
+                } else if (declaration.initializer == null) {
+                    // A val-variable can be initialized from another container (and thus can require shared variable transformation)
+                    // in case that container is a lambda with a corresponding contract, e.g. with invocation kind EXACTLY_ONCE.
+                    // Here, we collect all val-variables without immediate initializer to relevantVals, and later we copy only those
+                    // variables which are initialized in a foreign container, to sharedVariables.
+                    relevantVals.add(declaration)
                 }
+            }
 
-                override fun visitVariable(declaration: IrVariable, data: IrDeclarationParent?) {
-                    declaration.acceptChildren(this, data)
+            override fun visitValueAccess(expression: IrValueAccessExpression, data: IrDeclarationParent?) {
+                expression.acceptChildren(this, data)
 
-                    if (declaration.isVar) {
-                        relevantVars.add(declaration)
-                    } else if (declaration.initializer == null) {
-                        // A val-variable can be initialized from another container (and thus can require shared variable transformation)
-                        // in case that container is a lambda with a corresponding contract, e.g. with invocation kind EXACTLY_ONCE.
-                        // Here, we collect all val-variables without immediate initializer to relevantVals, and later we copy only those
-                        // variables which are initialized in a foreign container, to sharedVariables.
-                        relevantVals.add(declaration)
-                    }
+                val value = expression.symbol.owner
+                if (value in relevantVars && getRealParent(value as IrVariable) != data) {
+                    sharedVariables.add(value)
                 }
+            }
 
-                override fun visitValueAccess(expression: IrValueAccessExpression, data: IrDeclarationParent?) {
-                    expression.acceptChildren(this, data)
+            override fun visitSetValue(expression: IrSetValue, data: IrDeclarationParent?) {
+                super.visitSetValue(expression, data)
 
-                    val value = expression.symbol.owner
-                    if (value in relevantVars && getRealParent(value as IrVariable) != data) {
-                        sharedVariables.add(value)
-                    }
+                val variable = expression.symbol.owner
+                if (variable is IrVariable && variable.initializer == null && getRealParent(variable) != data && variable in relevantVals) {
+                    sharedVariables.add(variable)
                 }
+            }
 
-                override fun visitSetValue(expression: IrSetValue, data: IrDeclarationParent?) {
-                    super.visitSetValue(expression, data)
+            private fun getRealParent(variable: IrVariable) =
+                variable.parent.let { skippedFunctionsParents[it] ?: it }
 
-                    val variable = expression.symbol.owner
-                    if (variable is IrVariable && variable.initializer == null && getRealParent(variable) != data && variable in relevantVals) {
-                        sharedVariables.add(variable)
-                    }
-                }
-
-                private fun getRealParent(variable: IrVariable) =
-                    variable.parent.let { skippedFunctionsParents[it] ?: it }
-
-            }, irDeclaration as? IrDeclarationParent ?: irDeclaration.parent)
         }
 
         private fun rewriteSharedVariables() {
