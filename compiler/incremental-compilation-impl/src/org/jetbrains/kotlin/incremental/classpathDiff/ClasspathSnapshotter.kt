@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.ChangesCollector.Companion.getNonPrivateMemberNames
+import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.*
+import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
 import org.jetbrains.kotlin.name.ClassId
 import java.io.File
@@ -29,7 +31,7 @@ object ClasspathEntrySnapshotter {
                 ClassFileWithContents(ClassFile(classpathEntry, unixStyleRelativePath), contents)
             }
 
-        val snapshots = ClassSnapshotter.snapshot(classes).map { it.withHash }
+        val snapshots = ClassSnapshotter.snapshot(classes)
 
         val relativePathsToSnapshotsMap = classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap())
         return ClasspathEntrySnapshot(relativePathsToSnapshotsMap)
@@ -40,7 +42,11 @@ object ClasspathEntrySnapshotter {
 object ClassSnapshotter {
 
     /** Creates [ClassSnapshot]s of the given classes. */
-    fun snapshot(classes: List<ClassFileWithContents>, includeDebugInfoInJavaSnapshot: Boolean? = null): List<ClassSnapshot> {
+    fun snapshot(
+        classes: List<ClassFileWithContents>,
+        granularity: ClassSnapshotGranularity = CLASS_MEMBER_LEVEL,
+        includeDebugInfoInJavaSnapshot: Boolean = false
+    ): List<ClassSnapshot> {
         // Find inaccessible classes first
         val classesInfo: List<BasicClassInfo> = classes.map { it.classInfo }
         val inaccessibleClassesInfo: Set<BasicClassInfo> = getInaccessibleClasses(classesInfo).toSet()
@@ -48,23 +54,35 @@ object ClassSnapshotter {
         return classes.map {
             when {
                 it.classInfo in inaccessibleClassesInfo -> InaccessibleClassSnapshot
-                it.classInfo.isKotlinClass -> snapshotKotlinClass(it)
-                else -> JavaClassSnapshotter.snapshot(it, includeDebugInfoInJavaSnapshot)
+                it.classInfo.isKotlinClass -> snapshotKotlinClass(it, granularity)
+                else -> JavaClassSnapshotter.snapshot(it, granularity, includeDebugInfoInJavaSnapshot)
             }
         }
     }
 
     /** Creates [KotlinClassSnapshot] of the given Kotlin class (the caller must ensure that the given class is a Kotlin class). */
-    private fun snapshotKotlinClass(classFile: ClassFileWithContents): KotlinClassSnapshot {
+    private fun snapshotKotlinClass(classFile: ClassFileWithContents, granularity: ClassSnapshotGranularity): KotlinClassSnapshot {
         val kotlinClassInfo =
             KotlinClassInfo.createFrom(classFile.classInfo.classId, classFile.classInfo.kotlinClassHeader!!, classFile.contents)
-        val packageMembers = when (kotlinClassInfo.classKind) {
-            CLASS, MULTIFILE_CLASS -> null // See `KotlinClassSnapshot.packageMembers`'s kdoc
-            else -> (kotlinClassInfo.protoData as PackagePartProtoData).getNonPrivateMemberNames().map {
-                PackageMember(kotlinClassInfo.classId.packageFqName, it)
-            }
+        val classId = kotlinClassInfo.classId
+        val classAbiHash = KotlinClassInfoExternalizer.toByteArray(kotlinClassInfo).md5()
+        val classMemberLevelSnapshot = kotlinClassInfo.takeIf { granularity == CLASS_MEMBER_LEVEL }
+
+        return when (kotlinClassInfo.classKind) {
+            CLASS -> RegularKotlinClassSnapshot(classId, classAbiHash, classMemberLevelSnapshot, classFile.classInfo.supertypes)
+            FILE_FACADE, MULTIFILE_CLASS_PART -> PackageFacadeKotlinClassSnapshot(
+                classId, classAbiHash, classMemberLevelSnapshot,
+                packageMembers = PackageMemberSet(
+                    mapOf(classId.packageFqName to (kotlinClassInfo.protoData as PackagePartProtoData).getNonPrivateMemberNames())
+                )
+            )
+            MULTIFILE_CLASS -> MultifileClassKotlinClassSnapshot(
+                classId, classAbiHash, classMemberLevelSnapshot,
+                constants = PackageMemberSet(mapOf(classId.packageFqName to kotlinClassInfo.constantsMap.keys))
+            )
+            SYNTHETIC_CLASS -> error("Unexpected class $classId with class kind ${SYNTHETIC_CLASS.name} (synthetic classes should have been removed earlier)")
+            UNKNOWN -> error("Can't handle class $classId with class kind ${UNKNOWN.name}")
         }
-        return KotlinClassSnapshot(kotlinClassInfo, classFile.classInfo.supertypes, packageMembers)
     }
 
     /**

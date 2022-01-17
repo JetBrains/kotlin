@@ -375,12 +375,13 @@ class ListExternalizer<T>(elementExternalizer: DataExternalizer<T>) :
 class SetExternalizer<T>(elementExternalizer: DataExternalizer<T>) :
     GenericCollectionExternalizer<T, Set<T>>(elementExternalizer, { size -> LinkedHashSet(size) })
 
-class LinkedHashMapExternalizer<K, V>(
+open class MapExternalizer<K, V, M : Map<K, V>>(
     private val keyExternalizer: DataExternalizer<K>,
-    private val valueExternalizer: DataExternalizer<V>
-) : DataExternalizer<LinkedHashMap<K, V>> {
+    private val valueExternalizer: DataExternalizer<V>,
+    private val newMap: (size: Int) -> MutableMap<K, V> = { size -> LinkedHashMap(size) }
+) : DataExternalizer<M> {
 
-    override fun save(output: DataOutput, map: LinkedHashMap<K, V>) {
+    override fun save(output: DataOutput, map: M) {
         output.writeInt(map.size)
         for ((key, value) in map) {
             keyExternalizer.save(output, key)
@@ -388,14 +389,20 @@ class LinkedHashMapExternalizer<K, V>(
         }
     }
 
-    override fun read(input: DataInput): LinkedHashMap<K, V> {
+    override fun read(input: DataInput): M {
         val size = input.readInt()
-        val map = LinkedHashMap<K, V>(size)
+        val map = newMap(size)
         repeat(size) {
             val key = keyExternalizer.read(input)
             val value = valueExternalizer.read(input)
             map[key] = value
         }
-        return map
+        @Suppress("UNCHECKED_CAST")
+        return map as M
     }
 }
+
+class LinkedHashMapExternalizer<K, V>(
+    keyExternalizer: DataExternalizer<K>,
+    valueExternalizer: DataExternalizer<V>
+) : MapExternalizer<K, V, LinkedHashMap<K, V>>(keyExternalizer, valueExternalizer, { size -> LinkedHashMap(size) })

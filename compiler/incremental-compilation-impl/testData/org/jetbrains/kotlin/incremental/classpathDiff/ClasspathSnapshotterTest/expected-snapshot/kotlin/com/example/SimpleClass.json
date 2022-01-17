@@ -1,5 +1,19 @@
 {
-  "classInfo": {
+  "classId": {
+    "packageFqName": {
+      "fqName": {
+        "fqName": "com.example"
+      }
+    },
+    "relativeClassName": {
+      "fqName": {
+        "fqName": "SimpleClass"
+      }
+    },
+    "local": false
+  },
+  "classAbiHash": 7944967275548001128,
+  "classMemberLevelSnapshot": {
     "classId": {
       "packageFqName": {
         "fqName": {
@@ -48,9 +62,5 @@
     {
       "internalName": "java/lang/Object"
     }
-  ],
-  "withHash$delegate": {
-    "initializer": {},
-    "_value": {}
-  }
+  ]
 }

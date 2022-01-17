@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
-import org.jetbrains.kotlin.incremental.md5
-import org.jetbrains.kotlin.incremental.storage.toByteArray
+import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
+import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
@@ -26,7 +26,7 @@ class ClasspathEntrySnapshot(
      * Maps (Unix-style) relative paths of classes to their snapshots. The paths are relative to the containing classpath entry (directory
      * or jar).
      */
-    val classSnapshots: LinkedHashMap<String, ClassSnapshotWithHash>
+    val classSnapshots: LinkedHashMap<String, ClassSnapshot>
 )
 
 /**
@@ -37,70 +37,83 @@ class ClasspathEntrySnapshot(
  * `KotlinCompile` task and the task needs to support compile avoidance. For example, this class should contain public method signatures,
  * and should not contain private method signatures, or method implementations.
  */
-sealed class ClassSnapshot {
+sealed class ClassSnapshot
 
-    /** Computes the hash of this [ClassSnapshot] and returns a [ClassSnapshotWithHash]. */
-    val withHash: ClassSnapshotWithHash by lazy {
-        ClassSnapshotWithHash(this, ClassSnapshotExternalizer.toByteArray(this).md5())
-    }
-}
+/** [ClassSnapshot] of an accessible class. See [InaccessibleClassSnapshot] for info on the accessibility of a class. */
+sealed class AccessibleClassSnapshot : ClassSnapshot() {
+    abstract val classId: ClassId
 
-/** Contains a [ClassSnapshot] and its hash. */
-class ClassSnapshotWithHash(val classSnapshot: ClassSnapshot, val hash: Long) {
-
-    override fun toString() = classSnapshot.toString()
-}
-
-/** [ClassSnapshot] of a Kotlin class. */
-class KotlinClassSnapshot(
-    val classInfo: KotlinClassInfo,
-    val supertypes: List<JvmClassName>,
-
-    /**
-     * Package-level members if this class is a package facade (classInfo.classKind != KotlinClassHeader.Kind.CLASS).
-     *
-     * Note that MULTIFILE_CLASS classes do not have proto data, so we can't extract their package-level members even though they are
-     * package facades.
-     *
-     * Therefore, the [packageMembers] property below is not null iff classInfo.classKind !in setOf(CLASS, MULTIFILE_CLASS)
-     */
-    val packageMembers: List<PackageMember>?
-) : ClassSnapshot() {
-
-    override fun toString() = classInfo.classId.toString()
-}
-
-/** [ClassSnapshot] of a Java class. */
-class JavaClassSnapshot(
-
-    /** [ClassId] of the class. It is part of the class's ABI ([classAbiExcludingMembers]). */
-    val classId: ClassId,
-
-    /** The superclass and interfaces of the class. It is part of the class's ABI ([classAbiExcludingMembers]). */
-    val supertypes: List<JvmClassName>,
-
-    /** [AbiSnapshot] of the class excluding its fields and methods. */
-    val classAbiExcludingMembers: AbiSnapshot,
-
-    /** [AbiSnapshot]s of the class's fields. */
-    val fieldsAbi: List<AbiSnapshot>,
-
-    /** [AbiSnapshot]s of the class's methods. */
-    val methodsAbi: List<AbiSnapshot>
-
-) : ClassSnapshot() {
-
-    val className by lazy {
-        JvmClassName.byClassId(classId).also {
-            check(it == JvmClassName.byInternalName(classAbiExcludingMembers.name))
-        }
-    }
+    /** The hash of the class's ABI. */
+    abstract val classAbiHash: Long
 
     override fun toString() = classId.toString()
 }
 
-/** The ABI snapshot of a Java element (e.g., class, field, or method). */
-open class AbiSnapshot(
+/** [ClassSnapshot] of a Kotlin class. */
+sealed class KotlinClassSnapshot : AccessibleClassSnapshot() {
+
+    /** Snapshot of this class when [ClassSnapshotGranularity] == [CLASS_MEMBER_LEVEL], null otherwise. */
+    abstract val classMemberLevelSnapshot: KotlinClassInfo?
+}
+
+/** [KotlinClassSnapshot] where class kind == [CLASS]. */
+class RegularKotlinClassSnapshot(
+    override val classId: ClassId,
+    override val classAbiHash: Long,
+    override val classMemberLevelSnapshot: KotlinClassInfo?,
+    val supertypes: List<JvmClassName>
+) : KotlinClassSnapshot()
+
+/** [KotlinClassSnapshot] where class kind == [FILE_FACADE] or [MULTIFILE_CLASS_PART]. */
+class PackageFacadeKotlinClassSnapshot(
+    override val classId: ClassId,
+    override val classAbiHash: Long,
+    override val classMemberLevelSnapshot: KotlinClassInfo?,
+    val packageMembers: PackageMemberSet
+) : KotlinClassSnapshot()
+
+/**
+ * [KotlinClassSnapshot] where class kind == [MULTIFILE_CLASS].
+ *
+ * NOTE: We have to handle [MULTIFILE_CLASS] differently from [FILE_FACADE] and [MULTIFILE_CLASS_PART] because [MULTIFILE_CLASS] classes
+ * don't contain proto data. Except for constants (see below), it is actually okay to ignore [MULTIFILE_CLASS] because any change in a
+ * [MULTIFILE_CLASS] will have an associated change in one of its [MULTIFILE_CLASS_PART]s, so the change will be detected when we analyze
+ * the [MULTIFILE_CLASS_PART]s.
+ *
+ * However, if there is a constant is defined in a [MULTIFILE_CLASS], that constant will have a declared value in the [MULTIFILE_CLASS] but
+ * not in its [MULTIFILE_CLASS_PART]s. Therefore, we'll need to track constants for [MULTIFILE_CLASS]. (We don't have to do this for inline
+ * functions or other package members as those are defined in [MULTIFILE_CLASS_PART]s.)
+ */
+class MultifileClassKotlinClassSnapshot(
+    override val classId: ClassId,
+    override val classAbiHash: Long,
+    override val classMemberLevelSnapshot: KotlinClassInfo?,
+    val constants: PackageMemberSet
+) : KotlinClassSnapshot()
+
+/** [ClassSnapshot] of a Java class. */
+class JavaClassSnapshot(
+    override val classId: ClassId,
+    override val classAbiHash: Long,
+    /** Snapshot of this class when [ClassSnapshotGranularity] == [CLASS_MEMBER_LEVEL], null otherwise. */
+    val classMemberLevelSnapshot: JavaClassMemberLevelSnapshot?,
+    val supertypes: List<JvmClassName>
+) : AccessibleClassSnapshot()
+
+/** Snapshot of a Java class when [ClassSnapshotGranularity] == [CLASS_MEMBER_LEVEL]. */
+class JavaClassMemberLevelSnapshot(
+    /** [JavaElementSnapshot] of the class excluding its fields and methods. */
+    val classAbiExcludingMembers: JavaElementSnapshot,
+
+    /** [JavaElementSnapshot]s of the class's fields. */
+    val fieldsAbi: List<JavaElementSnapshot>,
+
+    /** [JavaElementSnapshot]s of the class's methods. */
+    val methodsAbi: List<JavaElementSnapshot>
+)
+
+/** Snapshot of a Java class or a Java class member (field or method). */
+open class JavaElementSnapshot(
 
     /** The name of the Java element. It is part of the Java element's ABI. */
     val name: String,
@@ -109,15 +122,16 @@ open class AbiSnapshot(
     val abiHash: Long
 )
 
-/** TEST-ONLY: An [AbiSnapshot] that is used for testing only and must not be used in production code. */
-class AbiSnapshotForTests(
+/** TEST-ONLY: A [JavaElementSnapshot] that is used for testing only and must not be used in production code. */
+class JavaElementSnapshotForTests(
     name: String,
     abiHash: Long,
 
     /** The Java element's ABI, captured in a [String]. */
-    @Suppress("unused") val abiValue: String
+    @Suppress("unused") // Used by Gson reflection
+    val abiValue: String
 
-) : AbiSnapshot(name, abiHash)
+) : JavaElementSnapshot(name, abiHash)
 
 /**
  * [ClassSnapshot] of an inaccessible class.
@@ -126,3 +140,19 @@ class AbiSnapshotForTests(
  * will not require recompilation of other source files.
  */
 object InaccessibleClassSnapshot : ClassSnapshot()
+
+/** The granularity of a [ClassSnapshot]. */
+enum class ClassSnapshotGranularity {
+
+    /**
+     * Snapshotting level that allows tracking whether a .class file has changed without tracking what specific parts of the .class file
+     * (e.g., fields or methods) have changed.
+     */
+    CLASS_LEVEL,
+
+    /**
+     * Snapshotting level that allows tracking not only whether a .class file has changed but also what specific parts of the .class file
+     * (e.g., fields or methods) have changed.
+     */
+    CLASS_MEMBER_LEVEL
+}

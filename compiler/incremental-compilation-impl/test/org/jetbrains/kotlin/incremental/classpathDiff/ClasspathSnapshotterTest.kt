@@ -65,7 +65,7 @@ class KotlinOnlyClasspathSnapshotterTest : ClasspathSnapshotterTest() {
     override val sourceFileWithAbiChange = TestSourceFile(
         KotlinSourceFile(
             baseDir = File(testDataDir, "src-changed/kotlin/abi-change"), relativePath = "com/example/SimpleClass.kt",
-            preCompiledClassFile = ClassFile(File(testDataDir, "classes-changed/kotllin/abi-change"), "com/example/SimpleClass.class")
+            preCompiledClassFile = ClassFile(File(testDataDir, "classes-changed/kotlin/abi-change"), "com/example/SimpleClass.class")
         ), tmpDir
     )
 
