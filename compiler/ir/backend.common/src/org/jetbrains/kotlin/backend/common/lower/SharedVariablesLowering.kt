@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 val sharedVariablesPhase = makeIrFilePhase(
@@ -53,7 +53,7 @@ class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
             rewriteSharedVariables()
         }
 
-        private inner class CollectSharedVariablesVisitor : IrElementVisitor<Unit, IrDeclarationParent?> {
+        private inner class CollectSharedVariablesVisitor : IrAbstractVisitor<Unit, IrDeclarationParent?>() {
             private val skippedFunctionsParents = mutableMapOf<IrFunction, IrDeclarationParent>()
             private val relevantVars = HashSet<IrVariable>()
             private val relevantVals = HashSet<IrVariable>()
