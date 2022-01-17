@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
@@ -38,6 +39,9 @@ class JvmFir2IrExtensions(configuration: CompilerConfiguration) : Fir2IrExtensio
     private val kotlinIrInternalPackage =
         IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), IrBuiltIns.KOTLIN_INTERNAL_IR_FQN)
 
+    private val kotlinJvmInternalPackage =
+        IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), JvmAnnotationNames.KOTLIN_JVM_INTERNAL)
+
     private val specialAnnotationConstructors = mutableListOf<IrConstructor>()
 
     private val rawTypeAnnotationClass =
@@ -45,6 +49,12 @@ class JvmFir2IrExtensions(configuration: CompilerConfiguration) : Fir2IrExtensio
 
     override val rawTypeAnnotationConstructor: IrConstructor =
         rawTypeAnnotationClass.constructors.single()
+
+    init {
+        createSpecialAnnotationClass(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION, kotlinJvmInternalPackage)
+        createSpecialAnnotationClass(JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME, kotlinIrInternalPackage)
+        createSpecialAnnotationClass(JvmSymbols.FLEXIBLE_MUTABILITY_ANNOTATION_FQ_NAME, kotlinIrInternalPackage)
+    }
 
     private fun createSpecialAnnotationClass(fqn: FqName, parent: IrPackageFragment) =
         IrFactoryImpl.createSpecialAnnotationClass(fqn, parent).apply {
