@@ -192,6 +192,13 @@ internal fun mapTargetCompilationsToKpmVariants(target: AbstractKotlinTarget, pu
             }
             val configurationNames = usages.map { it.dependencyConfigurationName }
 
+            // Include Sources
+            moduleHolder.whenPublicationAssigned { publication ->
+                kotlinComponent.sourcesArtifacts.forEach {
+                    publication.artifact(it)
+                }
+            }
+
             // FIXME: apply overrides for attributes and artifacts from the DefaultKotlinUsageContext!
             // FIXME: include additional variants into project structure metadata?
 
