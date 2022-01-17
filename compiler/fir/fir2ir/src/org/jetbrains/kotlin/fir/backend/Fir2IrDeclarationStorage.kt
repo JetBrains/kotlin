@@ -1260,7 +1260,7 @@ class Fir2IrDeclarationStorage(
         lazyParent: IrDeclarationParent,
         declarationOrigin: IrDeclarationOrigin
     ): IrSimpleFunction {
-        val symbol = Fir2IrSimpleFunctionSymbol(signature, fir.containerSource)
+        val symbol = symbolTable.referenceSimpleFunction(signature)
         val firFunctionSymbol = fir.symbol
         val irFunction = fir.convertWithOffsets { startOffset, endOffset ->
             symbolTable.declareSimpleFunction(signature, { symbol }) {

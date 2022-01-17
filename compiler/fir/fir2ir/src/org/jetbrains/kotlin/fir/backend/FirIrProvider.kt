@@ -7,10 +7,14 @@ package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.kind
+import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
@@ -27,6 +31,7 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
     private val symbolProvider = fir2IrComponents.session.symbolProvider
     private val declarationStorage = fir2IrComponents.declarationStorage
     private val classifierStorage = fir2IrComponents.classifierStorage
+    private val fakeOverrideGenerator = FakeOverrideGenerator(fir2IrComponents, Fir2IrConversionScope())
 
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
         val signature = symbol.signature ?: return null
@@ -78,6 +83,7 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
                 firClass = firClass.declarations.singleOrNull { (it as? FirRegularClass)?.name?.asString() == midName } as? FirRegularClass
                     ?: return null
             }
+            val classId = firClass.classId
             val scope =
                 firClass.unsubstitutedScope(fir2IrComponents.session, fir2IrComponents.scopeSession, withForcedTypeCalculator = true)
             when (kind) {
@@ -92,18 +98,31 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
                     parent = classifierStorage.getIrClassSymbol(firClass.symbol).owner
                 }
                 SymbolKind.FUNCTION_SYMBOL -> {
+                    parent = classifierStorage.getIrClassSymbol(firClass.symbol).owner
                     val lastName = Name.guessByFirstCharacter(nameSegments.last())
                     val functions = mutableListOf<FirSimpleFunction>()
-                    scope.processFunctionsByName(lastName) { functions.add(it.fir) }
+                    scope.processFunctionsByName(lastName) { functionSymbol ->
+                        val dispatchReceiverClassId = (functionSymbol.fir.dispatchReceiverType as? ConeClassLikeType)?.lookupTag?.classId
+                        val function = if (dispatchReceiverClassId != null && dispatchReceiverClassId != classId) {
+                            fakeOverrideGenerator.createFirFunctionFakeOverride(firClass, parent, functionSymbol, scope)!!.first
+                        } else functionSymbol.fir
+                        functions.add(function)
+                    }
                     firCandidates = functions
-                    parent = classifierStorage.getIrClassSymbol(firClass.symbol).owner
                 }
                 SymbolKind.PROPERTY_SYMBOL -> {
+                    parent = classifierStorage.getIrClassSymbol(firClass.symbol).owner
                     val lastName = Name.guessByFirstCharacter(nameSegments.last())
                     val properties = mutableListOf<FirVariable>()
-                    scope.processPropertiesByName(lastName) { properties.add(it.fir) }
+                    scope.processPropertiesByName(lastName) { propertySymbol ->
+                        propertySymbol as FirPropertySymbol
+                        val dispatchReceiverClassId = (propertySymbol.fir.dispatchReceiverType as? ConeClassLikeType)?.lookupTag?.classId
+                        val property = if (dispatchReceiverClassId != null && dispatchReceiverClassId != classId) {
+                            fakeOverrideGenerator.createFirPropertyFakeOverride(firClass, parent, propertySymbol, scope)!!.first
+                        } else propertySymbol.fir
+                        properties.add(property)
+                    }
                     firCandidates = properties
-                    parent = classifierStorage.getIrClassSymbol(firClass.symbol).owner
                 }
                 else -> {
                     val lastName = nameSegments.last()
