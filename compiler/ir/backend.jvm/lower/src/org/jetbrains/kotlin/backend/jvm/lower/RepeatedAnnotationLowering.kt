@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -33,7 +33,10 @@ internal val repeatedAnnotationPhase = makeIrModulePhase(
     description = "Enclose repeated annotations in a container annotation, generating a container class if needed"
 )
 
-class RepeatedAnnotationLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementVisitorVoid {
+class RepeatedAnnotationLowering(private val context: JvmBackendContext) :
+    IrAbstractVisitorVoid(),
+    FileLoweringPass {
+
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(this)
     }
