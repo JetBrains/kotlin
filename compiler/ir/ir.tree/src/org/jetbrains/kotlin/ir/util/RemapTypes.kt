@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -17,7 +18,7 @@ fun IrElement.remapTypes(typeRemapper: TypeRemapper) {
     acceptVoid(RemapTypesHelper(typeRemapper))
 }
 
-private class RemapTypesHelper(private val typeRemapper: TypeRemapper) : IrElementVisitorVoid {
+private class RemapTypesHelper(private val typeRemapper: TypeRemapper) : IrAbstractVisitorVoid() {
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
