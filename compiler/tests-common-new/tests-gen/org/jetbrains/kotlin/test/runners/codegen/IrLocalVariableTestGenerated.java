@@ -194,6 +194,28 @@ public class IrLocalVariableTestGenerated extends AbstractIrLocalVariableTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/debug/localVariables/constructors")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Constructors {
+        @Test
+        public void testAllFilesPresentInConstructors() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables/constructors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("multipleConstructors.kt")
+        public void testMultipleConstructors() throws Exception {
+            runTest("compiler/testData/debug/localVariables/constructors/multipleConstructors.kt");
+        }
+
+        @Test
+        @TestMetadata("property.kt")
+        public void testProperty() throws Exception {
+            runTest("compiler/testData/debug/localVariables/constructors/property.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/debug/localVariables/receiverMangling")
     @TestDataPath("$PROJECT_ROOT")
     public class ReceiverMangling {

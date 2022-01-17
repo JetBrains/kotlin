@@ -56,7 +56,6 @@ open class JvmIrCodegenFactory(
     private val externalMangler: JvmDescriptorMangler? = null,
     private val externalSymbolTable: SymbolTable? = null,
     private val jvmGeneratorExtensions: JvmGeneratorExtensionsImpl = JvmGeneratorExtensionsImpl(configuration),
-    private val prefixPhases: CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment>? = null,
     private val evaluatorFragmentInfoForPsi2Ir: EvaluatorFragmentInfo? = null,
     private val shouldStubAndNotLinkUnboundSymbols: Boolean = false,
 ) : CodegenFactory {
@@ -258,11 +257,14 @@ open class JvmIrCodegenFactory(
         )
             JvmIrSerializerImpl(state.configuration)
         else null
-        val phases = prefixPhases?.then(jvmLoweringPhases) ?: jvmLoweringPhases
+        val phases = if (evaluatorFragmentInfoForPsi2Ir != null) jvmFragmentLoweringPhases else jvmLoweringPhases
         val phaseConfig = customPhaseConfig ?: PhaseConfig(phases)
         val context = JvmBackendContext(
             state, irModuleFragment.irBuiltins, irModuleFragment, symbolTable, phaseConfig, extensions, backendExtension, irSerializer,
         )
+        if (evaluatorFragmentInfoForPsi2Ir != null) {
+            context.localDeclarationsLoweringData = mutableMapOf()
+        }
         val intrinsics by lazy { IrIntrinsicMethods(irModuleFragment.irBuiltins, context.ir.symbols) }
         context.getIntrinsic = { symbol: IrFunctionSymbol -> intrinsics.getIntrinsic(symbol) }
         /* JvmBackendContext creates new unbound symbols, have to resolve them. */

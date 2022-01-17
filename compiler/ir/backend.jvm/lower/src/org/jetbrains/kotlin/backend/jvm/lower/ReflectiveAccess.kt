@@ -5,32 +5,35 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.ir.IrInlineScopeResolver
-import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
-import org.jetbrains.kotlin.backend.jvm.ir.findInlineCallSites
-import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.SyntheticAccessorLowering.Companion.isAccessible
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.defaultType
-import org.jetbrains.kotlin.ir.types.starProjectedType
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 // Used from CodeFragmentCompiler for IDE Debugger Plug-In
 @Suppress("unused")
-val reflectiveAccessLowering = makeIrModulePhase(
+val reflectiveAccessLowering = makeIrFilePhase(
     ::ReflectiveAccessLowering,
     name = "ReflectiveCalls",
     description = "Avoid the need for accessors by replacing direct access to inaccessible members with accesses via reflection",
@@ -80,14 +83,18 @@ internal class ReflectiveAccessLowering(
     // Fragments are transformed in a post-order traversal: children first,
     // then parent. This obscures, in particular, dispatch receivers, that go
     // from `IrGetObjectValue` calls to blocks implementing the corresponding
-    // reflective access . We record these _before_ transformation, in order to
+    // reflective access. We record these _before_ transformation, in order to
     // later predict the compilation strategy for fields. See the uses of
     // `fieldLocationAndReceiver`.
     val callsOnCompanionObjects: MutableMap<IrCall, IrClassSymbol> = mutableMapOf()
 
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun recordCompanionObjectAsDispatchReceiver(expression: IrCall) {
-        if ((expression.dispatchReceiver as? IrGetObjectValue)?.symbol?.owner?.isCompanion == true) {
-            callsOnCompanionObjects[expression] = (expression.dispatchReceiver!! as IrGetObjectValue).symbol
+        val dispatchReceiver = expression.dispatchReceiver as? IrGetField ?: return
+        val dispatchReceiverType = dispatchReceiver.symbol.owner.type as? IrSimpleType ?: return
+        val klass = dispatchReceiverType.classOrNull
+        if (klass != null && klass.owner.isCompanion) {
+            callsOnCompanionObjects[expression] = klass
         }
     }
 
@@ -207,6 +214,20 @@ internal class ReflectiveAccessLowering(
             putValueArgument(0, receiver)
         }
 
+    private fun createBuilder(startOffset: Int = UNDEFINED_OFFSET, endOffset: Int = UNDEFINED_OFFSET) =
+        context.createJvmIrBuilder(currentScope!!, startOffset, endOffset)
+
+    private fun IrBuilderWithScope.irVararg(
+        elementType: IrType,
+        values: List<IrExpression>
+    ): IrExpression {
+        return IrArrayBuilder(createBuilder(), context.irBuiltIns.arrayClass.typeWith(elementType)).apply {
+            for (value in values) {
+                +value
+            }
+        }.build()
+    }
+
     private fun IrBuilderWithScope.getDeclaredMethod(
         declaringClass: IrExpression,
         methodName: String,
@@ -293,13 +314,13 @@ internal class ReflectiveAccessLowering(
 
     private fun generateReflectiveMethodInvocation(call: IrCall): IrExpression =
         generateReflectiveMethodInvocation(
-            call.superQualifierSymbol?.defaultType ?: call.dispatchReceiver!!.type,
+            call.superQualifierSymbol?.defaultType ?: call.dispatchReceiver?.type ?: call.symbol.owner.parentAsClass.defaultType,
             call.symbol.owner.name.asString(),
             mutableListOf<IrType>().apply {
                 call.symbol.owner.extensionReceiverParameter?.let { add(it.type) }
                 addAll(call.valueParameterTypes())
             },
-            call.dispatchReceiver!!,
+            call.dispatchReceiver,
             mutableListOf<IrExpression>().apply {
                 call.extensionReceiver?.let { add(it) }
                 addAll(call.getValueArguments())
