@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 
 abstract class IrValueParameter : IrValueDeclaration() {
     @ObsoleteDescriptorBasedAPI
@@ -34,10 +35,17 @@ abstract class IrValueParameter : IrValueDeclaration() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitValueParameter(this, data)
 
+    override fun <R, D> accept(visitor: IrAbstractVisitor<R, D>, data: D): R =
+        visitor.visitValueParameter(this, data)
+
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrValueParameter =
         transformer.visitValueParameter(this, data) as IrValueParameter
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        defaultValue?.accept(visitor, data)
+    }
+
+    override fun <D> acceptChildren(visitor: IrAbstractVisitor<Unit, D>, data: D) {
         defaultValue?.accept(visitor, data)
     }
 

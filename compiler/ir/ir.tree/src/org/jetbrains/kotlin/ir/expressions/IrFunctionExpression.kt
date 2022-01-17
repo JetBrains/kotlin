@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 
 abstract class IrFunctionExpression : IrExpression() {
     abstract val origin: IrStatementOrigin
@@ -17,7 +18,14 @@ abstract class IrFunctionExpression : IrExpression() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitFunctionExpression(this, data)
 
+    override fun <R, D> accept(visitor: IrAbstractVisitor<R, D>, data: D): R =
+        visitor.visitFunctionExpression(this, data)
+
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        function.accept(visitor, data)
+    }
+
+    override fun <D> acceptChildren(visitor: IrAbstractVisitor<Unit, D>, data: D) {
         function.accept(visitor, data)
     }
 

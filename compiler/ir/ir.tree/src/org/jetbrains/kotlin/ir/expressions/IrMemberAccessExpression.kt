@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 import org.jetbrains.kotlin.types.KotlinType
 
 abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference() {
@@ -63,6 +64,14 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
     }
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        dispatchReceiver?.accept(visitor, data)
+        extensionReceiver?.accept(visitor, data)
+        if (valueArgumentsCount > 0) {
+            argumentsByParameterIndex.forEach { it?.accept(visitor, data) }
+        }
+    }
+
+    override fun <D> acceptChildren(visitor: IrAbstractVisitor<Unit, D>, data: D) {
         dispatchReceiver?.accept(visitor, data)
         extensionReceiver?.accept(visitor, data)
         if (valueArgumentsCount > 0) {

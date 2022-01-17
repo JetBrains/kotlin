@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 import org.jetbrains.kotlin.name.Name
 
 abstract class IrModuleFragment : IrElementBase() {
@@ -29,12 +30,19 @@ abstract class IrModuleFragment : IrElementBase() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitModuleFragment(this, data)
 
-    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrModuleFragment =
-        accept(transformer, data) as IrModuleFragment
+    override fun <R, D> accept(visitor: IrAbstractVisitor<R, D>, data: D): R =
+        visitor.visitModuleFragment(this, data)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         files.forEach { it.accept(visitor, data) }
     }
+
+    override fun <D> acceptChildren(visitor: IrAbstractVisitor<Unit, D>, data: D) {
+        files.forEach { it.accept(visitor, data) }
+    }
+
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrModuleFragment =
+        accept(transformer, data) as IrModuleFragment
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         files.transformInPlace(transformer, data)

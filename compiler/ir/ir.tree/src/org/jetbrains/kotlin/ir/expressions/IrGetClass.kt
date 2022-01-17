@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 
 abstract class IrGetClass : IrExpression() {
     abstract var argument: IrExpression
@@ -14,7 +15,14 @@ abstract class IrGetClass : IrExpression() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitGetClass(this, data)
 
+    override fun <R, D> accept(visitor: IrAbstractVisitor<R, D>, data: D): R =
+        visitor.visitGetClass(this, data)
+
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        argument.accept(visitor, data)
+    }
+
+    override fun <D> acceptChildren(visitor: IrAbstractVisitor<Unit, D>, data: D) {
         argument.accept(visitor, data)
     }
 

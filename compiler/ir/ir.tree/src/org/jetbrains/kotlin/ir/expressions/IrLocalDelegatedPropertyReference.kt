@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 
 abstract class IrLocalDelegatedPropertyReference : IrCallableReference<IrLocalDelegatedPropertySymbol>() {
     abstract val delegate: IrVariableSymbol
@@ -16,5 +17,8 @@ abstract class IrLocalDelegatedPropertyReference : IrCallableReference<IrLocalDe
     abstract val setter: IrSimpleFunctionSymbol?
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitLocalDelegatedPropertyReference(this, data)
+
+    override fun <R, D> accept(visitor: IrAbstractVisitor<R, D>, data: D): R =
         visitor.visitLocalDelegatedPropertyReference(this, data)
 }

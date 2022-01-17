@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 
 abstract class IrTypeOperatorCall : IrExpression() {
     abstract val operator: IrTypeOperator
@@ -19,7 +20,14 @@ abstract class IrTypeOperatorCall : IrExpression() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitTypeOperator(this, data)
 
+    override fun <R, D> accept(visitor: IrAbstractVisitor<R, D>, data: D): R =
+        visitor.visitTypeOperator(this, data)
+
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        argument.accept(visitor, data)
+    }
+
+    override fun <D> acceptChildren(visitor: IrAbstractVisitor<Unit, D>, data: D) {
         argument.accept(visitor, data)
     }
 

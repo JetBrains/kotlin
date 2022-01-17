@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 
 abstract class IrFunction :
     IrDeclarationBase(),
@@ -42,6 +43,16 @@ abstract class IrFunction :
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
+
+        dispatchReceiverParameter?.accept(visitor, data)
+        extensionReceiverParameter?.accept(visitor, data)
+        valueParameters.forEach { it.accept(visitor, data) }
+
+        body?.accept(visitor, data)
+    }
+
+    override fun <D> acceptChildren(visitor: IrAbstractVisitor<Unit, D>, data: D) {
+        super<IrTypeParametersContainer>.acceptChildren(visitor, data)
 
         dispatchReceiverParameter?.accept(visitor, data)
         extensionReceiverParameter?.accept(visitor, data)

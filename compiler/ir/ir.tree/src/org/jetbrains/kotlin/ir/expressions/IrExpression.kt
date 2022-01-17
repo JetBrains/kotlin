@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 
 abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement, IrAttributeContainer {
     @Suppress("LeakingThis")
@@ -22,6 +23,10 @@ abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement, IrA
         accept(transformer, data) as IrExpression
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        // No children by default
+    }
+
+    override fun <D> acceptChildren(visitor: IrAbstractVisitor<Unit, D>, data: D) {
         // No children by default
     }
 

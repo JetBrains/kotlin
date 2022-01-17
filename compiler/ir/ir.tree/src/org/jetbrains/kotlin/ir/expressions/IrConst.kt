@@ -6,11 +6,15 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 
 abstract class IrConst<T> : IrExpression() {
     abstract val kind: IrConstKind<T>
     abstract val value: T
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitConst(this, data)
+
+    override fun <R, D> accept(visitor: IrAbstractVisitor<R, D>, data: D): R =
         visitor.visitConst(this, data)
 }

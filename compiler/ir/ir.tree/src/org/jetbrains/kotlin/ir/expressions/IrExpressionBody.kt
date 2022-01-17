@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 
 abstract class IrExpressionBody : IrBody() {
     abstract val factory: IrFactory
@@ -17,10 +18,17 @@ abstract class IrExpressionBody : IrBody() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitExpressionBody(this, data)
 
+    override fun <R, D> accept(visitor: IrAbstractVisitor<R, D>, data: D): R =
+        visitor.visitExpressionBody(this, data)
+
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrExpressionBody =
         accept(transformer, data) as IrExpressionBody
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        expression.accept(visitor, data)
+    }
+
+    override fun <D> acceptChildren(visitor: IrAbstractVisitor<Unit, D>, data: D) {
         expression.accept(visitor, data)
     }
 

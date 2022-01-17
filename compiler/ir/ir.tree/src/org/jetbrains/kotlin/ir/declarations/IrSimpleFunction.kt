@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 
 abstract class IrSimpleFunction :
     IrFunction(),
@@ -25,5 +26,8 @@ abstract class IrSimpleFunction :
     abstract var correspondingPropertySymbol: IrPropertySymbol?
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitSimpleFunction(this, data)
+
+    override fun <R, D> accept(visitor: IrAbstractVisitor<R, D>, data: D): R =
         visitor.visitSimpleFunction(this, data)
 }

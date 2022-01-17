@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 
 abstract class IrPropertyReference : IrCallableReference<IrPropertySymbol>() {
     abstract val field: IrFieldSymbol?
@@ -16,5 +17,8 @@ abstract class IrPropertyReference : IrCallableReference<IrPropertySymbol>() {
     abstract val setter: IrSimpleFunctionSymbol?
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitPropertyReference(this, data)
+
+    override fun <R, D> accept(visitor: IrAbstractVisitor<R, D>, data: D): R =
         visitor.visitPropertyReference(this, data)
 }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 
 /**
  * Platform-specific low-level reference to function.
@@ -18,5 +19,8 @@ abstract class IrRawFunctionReference : IrDeclarationReference() {
     abstract override val symbol: IrFunctionSymbol
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitRawFunctionReference(this, data)
+
+    override fun <R, D> accept(visitor: IrAbstractVisitor<R, D>, data: D): R =
         visitor.visitRawFunctionReference(this, data)
 }
