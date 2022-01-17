@@ -19,6 +19,7 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.model.builder.KotlinAndroidExtensionModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -200,7 +201,16 @@ class AndroidSubplugin :
             )
 
             kotlinCompile.configure {
-                it.inputs.files(getLayoutDirectories(project, resDirectories)).withPathSensitivity(PathSensitivity.RELATIVE)
+                it.inputs.files(getLayoutDirectories(project, resDirectories))
+                    .withPathSensitivity(PathSensitivity.RELATIVE)
+                    .withPropertyName("androidExtensionLayoutsFrom$name")
+                    .run {
+                        if (GradleVersion.current() >= GradleVersion.version("6.8")) {
+                            ignoreEmptyDirectories()
+                        } else {
+                            this!!
+                        }
+                    }
             }
         }
 
