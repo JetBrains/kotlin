@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
 
 //TODO: make IrScript as IrPackageFragment, because script is used as a file, not as a class
 //NOTE: declarations and statements stored separately
@@ -46,7 +47,21 @@ abstract class IrScript :
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitScript(this, data)
 
+    override fun <R, D> accept(visitor: IrThinVisitor<R, D>, data: D): R =
+        visitor.visitScript(this, data)
+
+    @Suppress("DuplicatedCode")
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        super<IrStatementContainer>.acceptChildren(visitor, data)
+        thisReceiver.accept(visitor, data)
+        explicitCallParameters.forEach { it.accept(visitor, data) }
+        implicitReceiversParameters.forEach { it.accept(visitor, data) }
+        providedProperties.forEach { it.first.accept(visitor, data) }
+        earlierScriptsParameter?.accept(visitor, data)
+    }
+
+    @Suppress("DuplicatedCode")
+    override fun <D> acceptChildren(visitor: IrThinVisitor<Unit, D>, data: D) {
         super<IrStatementContainer>.acceptChildren(visitor, data)
         thisReceiver.accept(visitor, data)
         explicitCallParameters.forEach { it.accept(visitor, data) }

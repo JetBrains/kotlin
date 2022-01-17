@@ -8,11 +8,16 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
 
 interface IrDeclarationContainer : IrDeclarationParent {
     val declarations: MutableList<IrDeclaration>
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        declarations.forEach { it.accept(visitor, data) }
+    }
+
+    override fun <D> acceptChildren(visitor: IrThinVisitor<Unit, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }
     }
 

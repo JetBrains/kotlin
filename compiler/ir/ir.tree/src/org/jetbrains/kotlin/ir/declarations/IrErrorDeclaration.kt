@@ -8,12 +8,20 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
 
 abstract class IrErrorDeclaration : IrDeclarationBase() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitErrorDeclaration(this, data)
 
+    override fun <R, D> accept(visitor: IrThinVisitor<R, D>, data: D): R =
+        visitor.visitErrorDeclaration(this, data)
+
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        // no children
+    }
+
+    override fun <D> acceptChildren(visitor: IrThinVisitor<Unit, D>, data: D) {
         // no children
     }
 

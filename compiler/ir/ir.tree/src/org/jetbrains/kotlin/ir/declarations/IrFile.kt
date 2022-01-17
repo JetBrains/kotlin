@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
 
 abstract class IrFile : IrPackageFragment(), IrMutableAnnotationContainer, IrMetadataSourceOwner {
     abstract override val symbol: IrFileSymbol
@@ -18,6 +19,9 @@ abstract class IrFile : IrPackageFragment(), IrMutableAnnotationContainer, IrMet
     abstract val fileEntry: IrFileEntry
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitFile(this, data)
+
+    override fun <R, D> accept(visitor: IrThinVisitor<R, D>, data: D): R =
         visitor.visitFile(this, data)
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrFile =

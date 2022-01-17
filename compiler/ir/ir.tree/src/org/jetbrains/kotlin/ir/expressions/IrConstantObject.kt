@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformInPlace
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
 
 abstract class IrConstantObject : IrConstantValue() {
     abstract val constructor: IrConstructorSymbol
@@ -19,7 +20,14 @@ abstract class IrConstantObject : IrConstantValue() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitConstantObject(this, data)
 
+    override fun <R, D> accept(visitor: IrThinVisitor<R, D>, data: D): R =
+        visitor.visitConstantObject(this, data)
+
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        valueArguments.forEach { value -> value.accept(visitor, data) }
+    }
+
+    override fun <D> acceptChildren(visitor: IrThinVisitor<Unit, D>, data: D) {
         valueArguments.forEach { value -> value.accept(visitor, data) }
     }
 

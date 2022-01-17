@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 abstract class IrExternalPackageFragment : IrPackageFragment() {
@@ -14,5 +15,8 @@ abstract class IrExternalPackageFragment : IrPackageFragment() {
     abstract val containerSource: DeserializedContainerSource?
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
+        visitor.visitExternalPackageFragment(this, data)
+
+    override fun <R, D> accept(visitor: IrThinVisitor<R, D>, data: D): R =
         visitor.visitExternalPackageFragment(this, data)
 }
