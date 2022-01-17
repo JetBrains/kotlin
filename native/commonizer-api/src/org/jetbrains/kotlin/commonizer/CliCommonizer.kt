@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer
 
+import org.jetbrains.kotlin.commonizer.cli.*
 import java.io.File
 import java.net.URLClassLoader
 
@@ -27,19 +28,23 @@ public class CliCommonizer(private val executor: Executor) : NativeDistributionC
         dependencyLibraries: Set<CommonizerDependency>,
         outputTargets: Set<SharedCommonizerTarget>,
         outputDirectory: File,
-        logLevel: CommonizerLogLevel
+        logLevel: CommonizerLogLevel,
+        additionalSettings: List<AdditionalCommonizerSetting>,
     ) {
         if (inputLibraries.isEmpty()) return
         val arguments = mutableListOf<String>().apply {
             add("native-klib-commonize")
-            add("-distribution-path"); add(konanHome.absolutePath)
-            add("-input-libraries"); add(inputLibraries.joinToString(";") { it.absolutePath })
-            add("-output-targets"); add(outputTargets.joinToString(";") { it.identityString })
-            add("-output-path"); add(outputDirectory.absolutePath)
+            add(NATIVE_DISTRIBUTION_OPTION_ALIAS.argumentString); add(konanHome.absolutePath)
+            add(INPUT_LIBRARIES_OPTION_ALIAS.argumentString); add(inputLibraries.joinToString(";") { it.absolutePath })
+            add(OUTPUT_COMMONIZER_TARGET_OPTION_ALIAS.argumentString); add(outputTargets.joinToString(";") { it.identityString })
+            add(OUTPUT_OPTION_ALIAS.argumentString); add(outputDirectory.absolutePath)
             if (dependencyLibraries.isNotEmpty()) {
-                add("-dependency-libraries"); add(dependencyLibraries.joinToString(";"))
+                add(DEPENDENCY_LIBRARIES_OPTION_ALIAS.argumentString); add(dependencyLibraries.joinToString(";"))
             }
-            add("-log-level"); add(logLevel.name.lowercase())
+            add(LOG_LEVEL_OPTION_ALIAS.argumentString); add(logLevel.name.lowercase())
+            for ((settingArgument, settingValue) in additionalSettings) {
+                add(settingArgument); add(settingValue.toString())
+            }
         }
         executor(arguments)
     }
@@ -48,14 +53,18 @@ public class CliCommonizer(private val executor: Executor) : NativeDistributionC
         konanHome: File,
         outputDirectory: File,
         outputTargets: Set<SharedCommonizerTarget>,
-        logLevel: CommonizerLogLevel
+        logLevel: CommonizerLogLevel,
+        additionalSettings: List<AdditionalCommonizerSetting>,
     ) {
         val arguments = mutableListOf<String>().apply {
             add("native-dist-commonize")
-            add("-distribution-path"); add(konanHome.absolutePath)
-            add("-output-path"); add(outputDirectory.absolutePath)
-            add("-output-targets"); add(outputTargets.joinToString(";") { it.identityString })
-            add("-log-level"); add(logLevel.name.lowercase())
+            add(NATIVE_DISTRIBUTION_OPTION_ALIAS.argumentString); add(konanHome.absolutePath)
+            add(OUTPUT_OPTION_ALIAS.argumentString); add(outputDirectory.absolutePath)
+            add(OUTPUT_COMMONIZER_TARGET_OPTION_ALIAS.argumentString); add(outputTargets.joinToString(";") { it.identityString })
+            add(LOG_LEVEL_OPTION_ALIAS.argumentString); add(logLevel.name.lowercase())
+            for ((settingArgument, settingValue) in additionalSettings) {
+                add(settingArgument); add(settingValue.toString())
+            }
         }
 
         executor(arguments)

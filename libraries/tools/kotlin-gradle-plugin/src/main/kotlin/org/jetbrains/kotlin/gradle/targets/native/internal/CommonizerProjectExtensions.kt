@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.commonizer.AdditionalCommonizerSetting
 import org.jetbrains.kotlin.commonizer.CommonizerLogLevel
+import org.jetbrains.kotlin.commonizer.cli.OPTIMISTIC_NUMBER_COMMONIZATION_ENABLED_OPTION_ALIAS
+import org.jetbrains.kotlin.commonizer.setTo
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 
 internal val Project.commonizerLogLevel: CommonizerLogLevel
@@ -18,3 +21,8 @@ internal val Project.commonizerLogLevel: CommonizerLogLevel
 
         return if (logger.isInfoEnabled) CommonizerLogLevel.Info else CommonizerLogLevel.Quiet
     }
+
+internal val Project.additionalCommonizerSettings: List<AdditionalCommonizerSetting>
+    get() = listOf(
+        OPTIMISTIC_NUMBER_COMMONIZATION_ENABLED_OPTION_ALIAS setTo isOptimisticNumberCommonizationEnabled
+    )

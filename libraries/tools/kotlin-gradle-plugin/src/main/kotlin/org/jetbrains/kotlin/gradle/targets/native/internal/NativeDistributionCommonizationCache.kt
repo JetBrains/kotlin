@@ -22,12 +22,12 @@ internal class NativeDistributionCommonizationCache(
     private val commonizer: NativeDistributionCommonizer
 ) : NativeDistributionCommonizer {
 
-
     override fun commonizeNativeDistribution(
         konanHome: File,
         outputDirectory: File,
         outputTargets: Set<SharedCommonizerTarget>,
-        logLevel: CommonizerLogLevel
+        logLevel: CommonizerLogLevel,
+        additionalSettings: List<AdditionalCommonizerSetting>,
     ) {
         if (!project.isNativeDistributionCommonizationCacheEnabled) {
             logInfo("Cache disabled")
@@ -52,7 +52,7 @@ internal class NativeDistributionCommonizationCache(
                 .forEach { commonizedDirectory -> if (commonizedDirectory.exists()) commonizedDirectory.deleteRecursively() }
 
             commonizer.commonizeNativeDistribution(
-                konanHome, outputDirectory, enqueuedOutputTargets, logLevel
+                konanHome, outputDirectory, enqueuedOutputTargets, logLevel, additionalSettings
             )
 
             enqueuedOutputTargets

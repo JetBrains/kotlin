@@ -5,16 +5,18 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
+import org.jetbrains.kotlin.commonizer.CommonizerSettings
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.commonizer.utils.safeCastValues
 
 class TypeCommonizer(
     private val classifiers: CirKnownClassifiers,
-    val options: Options = Options.default
+    private val settings: CommonizerSettings,
+    val options: Options = Options.default,
 ) : NullableSingleInvocationCommonizer<CirType> {
 
-    private val classOrTypeAliasTypeCommonizer = ClassOrTypeAliasTypeCommonizer(this, classifiers)
+    private val classOrTypeAliasTypeCommonizer = ClassOrTypeAliasTypeCommonizer(this, classifiers, settings)
     private val flexibleTypeCommonizer = FlexibleTypeAssociativeCommonizer(this)
 
     override fun invoke(values: List<CirType>): CirType? {
@@ -34,16 +36,10 @@ class TypeCommonizer(
     }
 
     data class Options(
-        val enableOptimisticNumberTypeCommonization: Boolean = true,
         val enableCovariantNullabilityCommonization: Boolean = false,
         val enableForwardTypeAliasSubstitution: Boolean = true,
         val enableBackwardsTypeAliasSubstitution: Boolean = true,
     ) {
-
-        fun withOptimisticNumberTypeCommonizationEnabled(enabled: Boolean = true): Options {
-            return if (enableOptimisticNumberTypeCommonization == enabled) this
-            else copy(enableOptimisticNumberTypeCommonization = enabled)
-        }
 
         fun withCovariantNullabilityCommonizationEnabled(enabled: Boolean = true): Options {
             return if (enableCovariantNullabilityCommonization == enabled) this
@@ -71,7 +67,7 @@ class TypeCommonizer(
 
     fun withOptions(options: Options): TypeCommonizer {
         return if (this.options == options) this
-        else TypeCommonizer(classifiers, options)
+        else TypeCommonizer(classifiers, settings, options)
     }
 
     inline fun withOptions(createNewOptions: Options.() -> Options): TypeCommonizer {
