@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.IdSignatureValues
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.usesDefaultArguments
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 
 /**
  * Collects calls to be treated as tail recursion.
@@ -44,7 +44,7 @@ fun collectTailRecursionCalls(irFunction: IrFunction, followFunctionReference: (
     val isUnitReturn = irFunction.returnType.isUnit()
 
     val result = mutableSetOf<IrCall>()
-    val visitor = object : IrElementVisitor<Unit, ElementKind> {
+    val visitor = object : IrAbstractVisitor<Unit, ElementKind>() {
 
         override fun visitElement(element: IrElement, data: ElementKind) {
             val childKind = ElementKind.NOT_SURE // Not sure by default.
