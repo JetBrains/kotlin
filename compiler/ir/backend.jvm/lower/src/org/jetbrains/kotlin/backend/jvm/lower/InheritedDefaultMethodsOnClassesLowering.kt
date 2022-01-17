@@ -127,7 +127,11 @@ internal val replaceDefaultImplsOverriddenSymbolsPhase = makeIrFilePhase(
     description = "Replace overridden symbols for methods inherited from interfaces to classes"
 )
 
-private class ReplaceDefaultImplsOverriddenSymbols(private val context: JvmBackendContext) : FileLoweringPass, IrElementVisitorVoid {
+private class ReplaceDefaultImplsOverriddenSymbols(
+    private val context: JvmBackendContext
+) : IrAbstractVisitorVoid(),
+    FileLoweringPass {
+
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(this)
     }
