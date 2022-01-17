@@ -229,7 +229,9 @@ class LocalDeclarationsLowering(
     }
 
     private inner class LocalDeclarationsTransformer(
-        val irElement: IrElement, val container: IrDeclaration, val classesToLower: Set<IrClass>?
+        val irElement: IrElement,
+        val container: IrDeclaration,
+        val classesToLower: Set<IrClass>?
     ) {
         val localFunctions: MutableMap<IrFunction, LocalFunctionContext> = LinkedHashMap()
         val localClasses: MutableMap<IrClass, LocalClassContext> = LinkedHashMap()
@@ -799,7 +801,11 @@ class LocalDeclarationsLowering(
             }
         }
 
-        private fun suggestNameForCapturedValue(declaration: IrValueDeclaration, usedNames: MutableSet<String>, isExplicitLocalFunction: Boolean = false): Name {
+        private fun suggestNameForCapturedValue(
+            declaration: IrValueDeclaration,
+            usedNames: MutableSet<String>,
+            isExplicitLocalFunction: Boolean = false
+        ): Name {
             if (declaration is IrValueParameter) {
                 if (declaration.name.asString() == "<this>" && declaration.isDispatchReceiver()) {
                     return findFirstUnusedName("this\$0", usedNames) {
@@ -889,6 +895,15 @@ class LocalDeclarationsLowering(
             }
         }
 
+        private inner class LocalDeclarationScope(val currentClass: ScopeWithCounter?, val isInInlineFunction: Boolean) {
+            fun withCurrentClass(currentClass: IrClass): LocalDeclarationScope =
+                // Don't cache local declarations
+                LocalDeclarationScope(ScopeWithCounter(currentClass), isInInlineFunction)
+
+            fun withInline(isInline: Boolean): LocalDeclarationScope =
+                if (isInline && !isInInlineFunction) LocalDeclarationScope(currentClass, true) else this
+        }
+
         private fun collectLocalDeclarations() {
             val enclosingFile = container.file
             val enclosingClass = run {
@@ -900,79 +915,75 @@ class LocalDeclarationsLowering(
                 currentParent as? IrClass
             }
 
-            class Data(val currentClass: ScopeWithCounter?, val isInInlineFunction: Boolean) {
-                fun withCurrentClass(currentClass: IrClass): Data =
-                    // Don't cache local declarations
-                    Data(ScopeWithCounter(currentClass), isInInlineFunction)
+            irElement.accept(CollectLocalDeclarationsVisitor(enclosingClass, enclosingFile), LocalDeclarationScope(null, false))
+        }
 
-                fun withInline(isInline: Boolean): Data =
-                    if (isInline && !isInInlineFunction) Data(currentClass, true) else this
+        private inner class CollectLocalDeclarationsVisitor(
+            private val enclosingClass: IrClass?,
+            private val enclosingFile: IrFile
+        ) : IrElementVisitor<Unit, LocalDeclarationScope> {
+            override fun visitElement(element: IrElement, data: LocalDeclarationScope) {
+                element.acceptChildren(this, data)
             }
 
-            irElement.accept(object : IrElementVisitor<Unit, Data> {
-                override fun visitElement(element: IrElement, data: Data) {
-                    element.acceptChildren(this, data)
+            override fun visitFunctionExpression(expression: IrFunctionExpression, data: LocalDeclarationScope) {
+                // TODO: For now IrFunctionExpression can only be encountered here if this was called from the inliner,
+                // then all IrFunctionExpression will be replaced by IrFunctionReferenceExpression.
+                // Don't forget to fix this when that replacement has been dropped.
+                // Also, a note: even if a lambda is not an inline one, there still cannot be a reference to it
+                // from an outside declaration, so it is safe to skip them here and correctly handle later, after the above conversion.
+                expression.function.acceptChildren(this, data)
+            }
+
+            override fun visitSimpleFunction(declaration: IrSimpleFunction, data: LocalDeclarationScope) {
+                super.visitSimpleFunction(declaration, data.withInline(declaration.isInline))
+
+                if (declaration.visibility == DescriptorVisibilities.LOCAL) {
+                    val enclosingScope = data.currentClass
+                        ?: enclosingClass?.scopeWithCounter
+                        // File is required for K/N because file declarations are not split by classes.
+                        ?: enclosingFile.scopeWithCounter
+                    val index =
+                        if (declaration.name.isSpecial || declaration.name in enclosingScope.usedLocalFunctionNames)
+                            enclosingScope.counter++
+                        else -1
+                    localFunctions[declaration] =
+                        LocalFunctionContext(declaration, index, enclosingScope.irElement as IrDeclarationContainer)
+                    enclosingScope.usedLocalFunctionNames.add(declaration.name)
                 }
+            }
 
-                override fun visitFunctionExpression(expression: IrFunctionExpression, data: Data) {
-                    // TODO: For now IrFunctionExpression can only be encountered here if this was called from the inliner,
-                    // then all IrFunctionExpression will be replaced by IrFunctionReferenceExpression.
-                    // Don't forget to fix this when that replacement has been dropped.
-                    // Also, a note: even if a lambda is not an inline one, there still cannot be a reference to it
-                    // from an outside declaration, so it is safe to skip them here and correctly handle later, after the above conversion.
-                    expression.function.acceptChildren(this, data)
-                }
+            override fun visitConstructor(declaration: IrConstructor, data: LocalDeclarationScope) {
+                super.visitConstructor(declaration, data)
 
-                override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Data) {
-                    super.visitSimpleFunction(declaration, data.withInline(declaration.isInline))
+                if (!declaration.constructedClass.isLocalNotInner()) return
 
-                    if (declaration.visibility == DescriptorVisibilities.LOCAL) {
-                        val enclosingScope = data.currentClass
-                            ?: enclosingClass?.scopeWithCounter
-                            // File is required for K/N because file declarations are not split by classes.
-                            ?: enclosingFile.scopeWithCounter
-                        val index =
-                            if (declaration.name.isSpecial || declaration.name in enclosingScope.usedLocalFunctionNames)
-                                enclosingScope.counter++
-                            else -1
-                        localFunctions[declaration] =
-                            LocalFunctionContext(declaration, index, enclosingScope.irElement as IrDeclarationContainer)
-                        enclosingScope.usedLocalFunctionNames.add(declaration.name)
-                    }
-                }
+                localClassConstructors[declaration] = LocalClassConstructorContext(declaration, data.inInlineFunctionScope)
+            }
 
-                override fun visitConstructor(declaration: IrConstructor, data: Data) {
-                    super.visitConstructor(declaration, data)
+            override fun visitClass(declaration: IrClass, data: LocalDeclarationScope) {
+                if (classesToLower?.contains(declaration) == false) return
+                super.visitClass(declaration, data.withCurrentClass(declaration))
 
-                    if (!declaration.constructedClass.isLocalNotInner()) return
+                if (!declaration.isLocalNotInner()) return
 
-                    localClassConstructors[declaration] = LocalClassConstructorContext(declaration, data.inInlineFunctionScope)
-                }
+                // If there are many non-delegating constructors, each copy of the initializer requires different remapping:
+                //   class C {
+                //     constructor() {}
+                //     constructor(x: Int) {}
+                //     val x = y // which constructor's parameter?
+                //   }
+                // TODO: this should ideally run after initializers are added to constructors, but that'd place
+                //   other restrictions on IR (e.g. after the initializers are moved you can no longer create fields
+                //   with initializers) which makes that hard to implement.
+                val constructorContext = declaration.constructors.mapNotNull { localClassConstructors[it] }
+                    .singleOrNull { it.declaration.callsSuper(context.irBuiltIns) }
+                localClasses[declaration] = LocalClassContext(declaration, data.inInlineFunctionScope, constructorContext)
+            }
 
-                override fun visitClass(declaration: IrClass, data: Data) {
-                    if (classesToLower?.contains(declaration) == false) return
-                    super.visitClass(declaration, data.withCurrentClass(declaration))
-
-                    if (!declaration.isLocalNotInner()) return
-
-                    // If there are many non-delegating constructors, each copy of the initializer requires different remapping:
-                    //   class C {
-                    //     constructor() {}
-                    //     constructor(x: Int) {}
-                    //     val x = y // which constructor's parameter?
-                    //   }
-                    // TODO: this should ideally run after initializers are added to constructors, but that'd place
-                    //   other restrictions on IR (e.g. after the initializers are moved you can no longer create fields
-                    //   with initializers) which makes that hard to implement.
-                    val constructorContext = declaration.constructors.mapNotNull { localClassConstructors[it] }
-                        .singleOrNull { it.declaration.callsSuper(context.irBuiltIns) }
-                    localClasses[declaration] = LocalClassContext(declaration, data.inInlineFunctionScope, constructorContext)
-                }
-
-                private val Data.inInlineFunctionScope: Boolean
-                    get() = isInInlineFunction ||
-                            generateSequence(container) { it.parent as? IrDeclaration }.any { it is IrFunction && it.isInline }
-            }, Data(null, false))
+            private val LocalDeclarationScope.inInlineFunctionScope: Boolean
+                get() = isInInlineFunction ||
+                        generateSequence(container) { it.parent as? IrDeclaration }.any { it is IrFunction && it.isInline }
         }
     }
 }
