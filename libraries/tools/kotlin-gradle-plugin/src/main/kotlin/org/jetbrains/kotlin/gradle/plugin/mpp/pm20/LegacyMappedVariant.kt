@@ -190,7 +190,7 @@ internal fun mapTargetCompilationsToKpmVariants(target: AbstractKotlinTarget, pu
                 is JointAndroidKotlinTargetComponent -> kotlinComponent.usages
                 else -> error("unexpected type of kotlinComponent in legacy variant mapping: ${kotlinComponent.javaClass}")
             }
-            val configurationNames = usages.map { target.project.configurations.getByName(it.dependencyConfigurationName) }
+            val configurations = usages.map { target.project.configurations.getByName(it.dependencyConfigurationName) }
 
             // Include Sources
             moduleHolder.whenPublicationAssigned { publication ->
@@ -205,7 +205,7 @@ internal fun mapTargetCompilationsToKpmVariants(target: AbstractKotlinTarget, pu
             VariantPublishingConfigurator.get(target.project).configureSingleVariantPublishing(
                 variant,
                 moduleHolder,
-                configurationNames
+                configurations
             )
         }
     }
