@@ -450,13 +450,13 @@ public class DefaultErrorMessages {
         MAP.put(SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED, "Conversion of signed constants to unsigned ones is prohibited");
         MAP.put(INTEGER_OPERATOR_RESOLVE_WILL_CHANGE, "This expression will be resolved to {0} in future releases. Please add explicit conversion call", RENDER_TYPE);
 
-        MAP.put(NON_TRIVIAL_BOOLEAN_CONSTANT, "Compiler won''t reduce this expression to {0} in future. Please replace it with boolean literal. See https://youtrack.jetbrains.com/issue/KT-39883 for details", TO_STRING);
+        MAP.put(NON_TRIVIAL_BOOLEAN_CONSTANT, "Compiler won''t reduce this expression to {0} in future. Please replace it with a boolean literal. See https://youtrack.jetbrains.com/issue/KT-39883 for details", TO_STRING);
         MAP.put(RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS, "Left-hand side of callable reference matches expression syntax reserved for future releases");
 
         MAP.put(PARENTHESIZED_COMPANION_LHS_DEPRECATION, "Access to companion object through parenthesized class name is deprecated. Please, add explicit Companion qualifier.");
 
 
-        MAP.put(RESOLUTION_TO_PRIVATE_CONSTRUCTOR_OF_SEALED_CLASS, "Resolution to private constructor of sealed class. In future it will be allowed to use this constructor only inside declaring sealed class. See https://youtrack.jetbrains.com/issue/KT-44866 for details");
+        MAP.put(RESOLUTION_TO_PRIVATE_CONSTRUCTOR_OF_SEALED_CLASS, "The private constructor of a sealed class will become inaccessible here in future. See https://youtrack.jetbrains.com/issue/KT-44866 for details");
         MAP.put(LOCAL_EXTENSION_PROPERTY, "Local extension properties are not allowed");
         MAP.put(LOCAL_VARIABLE_WITH_GETTER, "Local variables are not allowed to have getters");
         MAP.put(LOCAL_VARIABLE_WITH_SETTER, "Local variables are not allowed to have setters");
