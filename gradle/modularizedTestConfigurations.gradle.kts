@@ -154,9 +154,7 @@ val testDataPathList = listOfNotNull(
 
 val additionalConfigurationsWithFilter = mapOf(
     "Kotlin" to listOf(
-        "Kotlin. All main modules" to ".*/main",
         "Kotlin. idea.main module" to ".*/idea/build/.*/main",
-        "Kotlin. idea.test module" to ".*/idea/build/.*/test"
     )
 )
 
