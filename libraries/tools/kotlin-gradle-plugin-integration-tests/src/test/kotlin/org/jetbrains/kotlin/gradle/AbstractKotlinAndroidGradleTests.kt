@@ -456,21 +456,22 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
                 assertTasksExecuted(":${BuildKotlinToolingMetadataTask.defaultTaskName}")
                 val releaseApk = project.projectDir.resolve("build/outputs/apk/release/project-release-unsigned.apk")
 
-            assertTrue(releaseApk.exists(), "Missing release apk ${releaseApk.path}")
-            ZipFile(releaseApk).use { zip ->
-                assertNotNull(zip.getEntry("kotlin-tooling-metadata.json"), "Expected metadata being packaged into release apk")
+                assertTrue(releaseApk.exists(), "Missing release apk ${releaseApk.path}")
+                ZipFile(releaseApk).use { zip ->
+                    assertNotNull(zip.getEntry("kotlin-tooling-metadata.json"), "Expected metadata being packaged into release apk")
+                }
             }
         }
-    }
 
-    @GradleTest
-    fun `test MPP allTests task depending on Android unit tests`(gradleVersion: GradleVersion): Unit = with(Project("new-mpp-android", gradleVersion)) {
-        build(":lib:allTests", "--dry-run") {
-            assertSuccessful()
-            assertContains(":lib:testDebugUnitTest SKIPPED")
-            assertContains(":lib:testReleaseUnitTest SKIPPED")
+    @GradleLinuxTest
+    fun `test MPP allTests task depending on Android unit tests`(gradleVersion: GradleVersion): Unit =
+        with(Project("new-mpp-android", gradleVersion)) {
+            build(":lib:allTests", "--dry-run") {
+                assertSuccessful()
+                assertContains(":lib:testDebugUnitTest SKIPPED")
+                assertContains(":lib:testReleaseUnitTest SKIPPED")
+            }
         }
-    }
 }
 
 @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
@@ -793,7 +794,7 @@ abstract class KotlinAndroid3GradleIT : AbstractKotlinAndroidGradleTests() {
         }
     }
 
-    @GradleTest
+    @GradleLinuxTest
     fun testAfterEvaluateOrdering(gradleVersion: GradleVersion) = with(Project("AndroidProject", gradleVersion)) {
         setupWorkingDir()
 
@@ -830,7 +831,8 @@ abstract class KotlinAndroid3GradleIT : AbstractKotlinAndroidGradleTests() {
             }
             
             kotlin { android("android") { } }
-        """.trimIndent())
+        """.trimIndent()
+        )
 
         build("help") {
             assertSuccessful()

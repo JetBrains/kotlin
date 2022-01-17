@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.testbase;
 
-import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
@@ -22,6 +22,7 @@ import java.lang.annotation.Target;
 @GradleTestVersions
 @ParameterizedTest(name = "{0}: {displayName}")
 @ArgumentsSource(GradleArgumentsProvider.class)
-@EnabledOnOs(OS.LINUX)
+@ExtendWith(ExecutionOnOsCondition.class)
+@GradleTestOsCondition(enabledOn = {OS.LINUX})
 public @interface GradleLinuxTest {
 }
