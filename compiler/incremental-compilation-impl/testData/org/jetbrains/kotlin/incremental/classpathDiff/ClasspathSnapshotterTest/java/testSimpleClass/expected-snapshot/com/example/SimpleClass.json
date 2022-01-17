@@ -1,0 +1,47 @@
+{
+  "classId": {
+    "packageFqName": {
+      "fqName": {
+        "fqName": "com.example"
+      }
+    },
+    "relativeClassName": {
+      "fqName": {
+        "fqName": "SimpleClass"
+      }
+    },
+    "local": false
+  },
+  "classAbiHash": 7253633932031152470,
+  "classMemberLevelSnapshot": {
+    "classAbiExcludingMembers": {
+      "abiValue": "{\n  \"version\": 52,\n  \"access\": 33,\n  \"name\": \"com/example/SimpleClass\",\n  \"superName\": \"java/lang/Object\",\n  \"interfaces\": [],\n  \"sourceFile\": \"SimpleClass.java\",\n  \"innerClasses\": [],\n  \"fields\": [],\n  \"methods\": [],\n  \"api\": 589824\n}",
+      "name": "com/example/SimpleClass",
+      "abiHash": -1986494095366785349
+    },
+    "fieldsAbi": [
+      {
+        "abiValue": "{\n  \"access\": 1,\n  \"name\": \"publicField\",\n  \"desc\": \"Ljava/lang/String;\",\n  \"api\": 589824\n}",
+        "name": "publicField",
+        "abiHash": 1021768301411937004
+      }
+    ],
+    "methodsAbi": [
+      {
+        "abiValue": "{\n  \"access\": 1,\n  \"name\": \"\\u003cinit\\u003e\",\n  \"desc\": \"()V\",\n  \"exceptions\": [],\n  \"visibleAnnotableParameterCount\": 0,\n  \"invisibleAnnotableParameterCount\": 0,\n  \"instructions\": {\n    \"size\": 0\n  },\n  \"tryCatchBlocks\": [],\n  \"maxStack\": 0,\n  \"maxLocals\": 0,\n  \"localVariables\": [],\n  \"visited\": false,\n  \"api\": 589824\n}",
+        "name": "\u003cinit\u003e",
+        "abiHash": 5725188035643409224
+      },
+      {
+        "abiValue": "{\n  \"access\": 1,\n  \"name\": \"publicMethod\",\n  \"desc\": \"()Ljava/lang/String;\",\n  \"exceptions\": [],\n  \"visibleAnnotableParameterCount\": 0,\n  \"invisibleAnnotableParameterCount\": 0,\n  \"instructions\": {\n    \"size\": 0\n  },\n  \"tryCatchBlocks\": [],\n  \"maxStack\": 0,\n  \"maxLocals\": 0,\n  \"localVariables\": [],\n  \"visited\": false,\n  \"api\": 589824\n}",
+        "name": "publicMethod",
+        "abiHash": 8210873051092995586
+      }
+    ]
+  },
+  "supertypes": [
+    {
+      "internalName": "java/lang/Object"
+    }
+  ]
+}

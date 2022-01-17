@@ -35,33 +35,33 @@ fun File.isClassFile(): Boolean =
  */
 fun File.cleanDirectoryContents() {
     when {
-        isDirectory -> listFiles()!!.forEach { it.forceDeleteRecursively() }
+        isDirectory -> listFiles()!!.forEach { it.deleteRecursivelyOrThrow() }
         isFile -> error("File.cleanDirectoryContents does not accept a regular file: $path")
-        else -> forceMkdirs()
+        else -> mkdirsOrThrow()
     }
 }
 
-/** Deletes this file or directory recursively (if it exists). */
-fun File.forceDeleteRecursively() {
+/** Deletes this file or directory recursively (if it exists), throwing an exception if the deletion failed. */
+fun File.deleteRecursivelyOrThrow() {
     if (!deleteRecursively()) {
         throw IOException("Could not delete '$path'")
     }
 }
 
 /**
- * Creates this directory (if it does not yet exist).
- *
- * If this is a regular file, this method will throw an exception.
+ * Creates this directory (if it does not yet exist), throwing an exception if the directiory creation failed or if a regular file already
+ * exists at this path.
  */
 @Suppress("SpellCheckingInspection")
-fun File.forceMkdirs() {
+fun File.mkdirsOrThrow() {
     when {
-        this.isDirectory -> { /* Do nothing */ }
-        this.isFile -> error("File.forceMkdirs does not accept a regular file: $path")
+        isDirectory -> Unit
+        isFile -> error("A regular file already exists at this path: $path")
         else -> {
-            // Note that if the directory already exists, mkdirs() will return `false`, but here we ensure that the directory does not exist
-            // before calling mkdirs(), so it's safe to check the returned result of mkdirs() below.
-            if (!mkdirs()) {
+            // Note that `mkdirs()` returns `false` if the directory already exists (even though we have checked that the directory did not
+            // exist earlier, it might just have been created by some other thread). Therefore, we need to check if the directory exists
+            // again when `mkdirs()` returns `false`.
+            if (!mkdirs() && !isDirectory) {
                 throw IOException("Could not create directory '$path'")
             }
         }

@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import com.google.gson.GsonBuilder
+import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
 import org.jetbrains.kotlin.incremental.md5
+import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
@@ -14,7 +16,11 @@ import org.jetbrains.org.objectweb.asm.tree.ClassNode
 /** Computes a [JavaClassSnapshot] of a Java class. */
 object JavaClassSnapshotter {
 
-    fun snapshot(classFile: ClassFileWithContents, includeDebugInfoInSnapshot: Boolean? = null): JavaClassSnapshot {
+    fun snapshot(
+        classFile: ClassFileWithContents,
+        granularity: ClassSnapshotGranularity,
+        includeDebugInfoInSnapshot: Boolean
+    ): JavaClassSnapshot {
         // We will extract ABI information from the given class and store it into the `abiClass` variable.
         // It is acceptable to collect more info than required, but it is incorrect to collect less info than required.
         // There are 2 approaches:
@@ -52,9 +58,12 @@ object JavaClassSnapshotter {
         abiClass.methods.clear()
         val classAbiExcludingMembers = abiClass.let { snapshotJavaElement(it, it.name, includeDebugInfoInSnapshot) }
 
+        val detailedSnapshot = JavaClassMemberLevelSnapshot(classAbiExcludingMembers, fieldsAbi, methodsAbi)
         return JavaClassSnapshot(
-            classFile.classInfo.classId, classFile.classInfo.supertypes,
-            classAbiExcludingMembers, fieldsAbi, methodsAbi
+            classId = classFile.classInfo.classId,
+            classAbiHash = JavaClassMemberLevelSnapshotExternalizer.toByteArray(detailedSnapshot).md5(),
+            classMemberLevelSnapshot = detailedSnapshot.takeIf { granularity == CLASS_MEMBER_LEVEL },
+            supertypes = classFile.classInfo.supertypes
         )
     }
 
@@ -73,15 +82,19 @@ object JavaClassSnapshotter {
             .create()
     }
 
-    private fun snapshotJavaElement(javaElement: Any, javaElementName: String, includeDebugInfoInSnapshot: Boolean? = null): AbiSnapshot {
-        return if (includeDebugInfoInSnapshot == true) {
+    private fun snapshotJavaElement(
+        javaElement: Any,
+        javaElementName: String,
+        includeDebugInfoInSnapshot: Boolean
+    ): JavaElementSnapshot {
+        return if (includeDebugInfoInSnapshot) {
             val abiValue = gsonForDebug.toJson(javaElement)
             val abiHash = abiValue.toByteArray().md5()
-            AbiSnapshotForTests(javaElementName, abiHash, abiValue)
+            JavaElementSnapshotForTests(javaElementName, abiHash, abiValue)
         } else {
             val abiValue = gson.toJson(javaElement)
             val abiHash = abiValue.toByteArray().md5()
-            AbiSnapshot(javaElementName, abiHash)
+            JavaElementSnapshot(javaElementName, abiHash)
         }
     }
 }

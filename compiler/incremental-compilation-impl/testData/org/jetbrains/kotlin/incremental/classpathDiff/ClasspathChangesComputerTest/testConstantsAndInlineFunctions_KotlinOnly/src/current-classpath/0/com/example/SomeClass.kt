@@ -1,5 +1,6 @@
 package com.example
 
+@Suppress("NOTHING_TO_INLINE")
 class SomeClass {
 
     // Constants are not allowed in a class, only allowed at the top level or in an object.

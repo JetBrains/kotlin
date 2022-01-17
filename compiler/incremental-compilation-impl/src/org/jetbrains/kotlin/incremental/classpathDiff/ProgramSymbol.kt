@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import org.jetbrains.kotlin.incremental.LookupSymbol
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
@@ -21,6 +20,39 @@ data class ClassMember(val classId: ClassId, val memberName: String) : ProgramSy
 
 data class PackageMember(val packageFqName: FqName, val memberName: String) : ProgramSymbol()
 
+/** Compact representation for a set of [PackageMember]s. */
+class PackageMemberSet(val packageToMembersMap: Map<FqName, Set<String>>) {
+
+    operator fun contains(other: PackageMember): Boolean {
+        return packageToMembersMap[other.packageFqName]?.let { other.memberName in it } ?: false
+    }
+
+    fun containsElementsIn(other: PackageMemberSet): Boolean {
+        return this.packageToMembersMap.keys.intersect(other.packageToMembersMap.keys).any { commonPackage ->
+            val otherMembers = other.packageToMembersMap[commonPackage]!!
+            this.packageToMembersMap[commonPackage]!!.any { it in otherMembers }
+        }
+    }
+}
+
+fun Set<PackageMember>.compact(): PackageMemberSet {
+    val map = mutableMapOf<FqName, MutableSet<String>>()
+    forEach {
+        map.getOrPut(it.packageFqName) { mutableSetOf() }.add(it.memberName)
+    }
+    return PackageMemberSet(map)
+}
+
+fun List<PackageMemberSet>.combine(): PackageMemberSet {
+    val combinedMap = mutableMapOf<FqName, MutableSet<String>>()
+    forEach {
+        it.packageToMembersMap.forEach { (packageFqName, memberNames) ->
+            combinedMap.getOrPut(packageFqName) { mutableSetOf() }.addAll(memberNames)
+        }
+    }
+    return PackageMemberSet(combinedMap)
+}
+
 /**
  * Finds [LookupSymbol]s that potentially refer to classes on the given classpath, and returns the [ProgramSymbol]s corresponding to those
  * [LookupSymbol]s.
@@ -30,24 +62,23 @@ data class PackageMember(val packageFqName: FqName, val memberName: String) : Pr
  *
  * The given classpath must not contain duplicate classes.
  *
- * It's okay if the returned result is an over-approximation.
+ * It's okay to over-approximate the result.
  */
-internal fun Collection<LookupSymbol>.filterLookupSymbols(classpath: List<ClassSnapshot>): List<ProgramSymbol> {
-    val (packageFacades, regularClasses) = classpath.partition {
-        it is KotlinClassSnapshot && it.classInfo.classKind != KotlinClassHeader.Kind.CLASS
+internal fun Collection<LookupSymbol>.filterLookupSymbols(classpath: List<AccessibleClassSnapshot>): List<ProgramSymbol> {
+    val regularClassesOnClasspath: List<ClassId> = classpath.mapNotNull {
+        when (it) {
+            is RegularKotlinClassSnapshot -> it.classId
+            is JavaClassSnapshot -> it.classId
+            is PackageFacadeKotlinClassSnapshot, is MultifileClassKotlinClassSnapshot -> null
+        }
     }
-    val regularClassesOnClasspath: List<ClassId> = regularClasses.map { it.getClassId() }
-    val packageMembersOnClasspath: Set<PackageMember> =
-        packageFacades.flatMap {
-            if ((it as KotlinClassSnapshot).classInfo.classKind == KotlinClassHeader.Kind.MULTIFILE_CLASS) {
-                // If classKind == MULTIFILE_CLASS, we don't have the information about its package members (see
-                // `KotlinClassSnapshot.packageMembers`'s kdoc). However, package members in a MULTIFILE_CLASS should be found in
-                // MULTIFILE_CLASS_PART classes, so it's okay to ignore MULTIFILE_CLASS here.
-                emptyList()
-            } else {
-                it.packageMembers!!
-            }
-        }.toSet() // Use Set for presence check
+    val packageMembersOnClasspath: PackageMemberSet = classpath.mapNotNull {
+        when (it) {
+            is RegularKotlinClassSnapshot, is JavaClassSnapshot -> null
+            is PackageFacadeKotlinClassSnapshot -> it.packageMembers
+            is MultifileClassKotlinClassSnapshot -> it.constants
+        }
+    }.combine()
 
     // It's rare but possible for 2 ClassIds to have the same FqName (e.g., ClassId `com/example/Foo` and ClassId `com/example.Foo` both
     // have FqName `com.example.Foo`. ClassId `com/example/Foo` indicates class `Foo` in package `com/example', whereas ClassId

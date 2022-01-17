@@ -1,0 +1,21 @@
+{
+  "classId": {
+    "packageFqName": {
+      "fqName": {
+        "fqName": "com.example"
+      }
+    },
+    "relativeClassName": {
+      "fqName": {
+        "fqName": "SimpleClass"
+      }
+    },
+    "local": false
+  },
+  "classAbiHash": 2419143040117344894,
+  "supertypes": [
+    {
+      "internalName": "java/lang/Object"
+    }
+  ]
+}

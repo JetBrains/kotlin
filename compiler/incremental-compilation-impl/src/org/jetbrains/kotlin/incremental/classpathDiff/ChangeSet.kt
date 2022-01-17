@@ -49,6 +49,12 @@ class ChangeSet(
 
         fun addChangedClassMember(className: ClassId, memberName: String) = addChangedClassMembers(className, listOf(memberName))
 
+        fun addChangedTopLevelMembers(packageMemberSet: PackageMemberSet) {
+            packageMemberSet.packageToMembersMap.forEach { (packageName, memberNames) ->
+                changedTopLevelMembers.computeIfAbsent(packageName) { mutableSetOf() }.addAll(memberNames)
+            }
+        }
+
         fun addChangedTopLevelMembers(packageName: FqName, topLevelMembers: Collection<String>) {
             if (topLevelMembers.isNotEmpty()) {
                 changedTopLevelMembers.computeIfAbsent(packageName) { mutableSetOf() }.addAll(topLevelMembers)
