@@ -18,7 +18,8 @@ internal class LibraryCommonizer internal constructor(
     private val dependencies: Repository,
     private val resultsConsumer: ResultsConsumer,
     private val statsCollector: StatsCollector?,
-    private val logger: Logger
+    private val logger: Logger,
+    private val settings: CommonizerSettings,
 ) {
 
     fun run() {
@@ -54,7 +55,8 @@ internal class LibraryCommonizer internal constructor(
                 dependenciesProvider = createDependenciesProvider(),
                 resultsConsumer = resultsConsumer,
                 statsCollector = statsCollector,
-                logger = logger
+                logger = logger,
+                settings = settings,
             )
         )
     }

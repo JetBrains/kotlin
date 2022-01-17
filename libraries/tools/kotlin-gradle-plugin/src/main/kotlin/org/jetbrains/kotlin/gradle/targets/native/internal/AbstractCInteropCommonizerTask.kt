@@ -6,13 +6,16 @@
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.OutputDirectory
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.base64Hash
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.ensureMaxFileNameLength
+import org.jetbrains.kotlin.commonizer.AdditionalCommonizerSetting
+import org.jetbrains.kotlin.commonizer.cli.OPTIMISTIC_NUMBER_COMMONIZATION_ENABLED_OPTION_ALIAS
 import org.jetbrains.kotlin.commonizer.identityString
-import org.jetbrains.kotlin.gradle.utils.filesProvider
+import org.jetbrains.kotlin.commonizer.setTo
 import org.jetbrains.kotlin.gradle.utils.outputFilesProvider
 import java.io.File
 

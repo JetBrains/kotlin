@@ -27,7 +27,8 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
     data class Parameters(
         val outputTargets: Set<SharedCommonizerTarget>,
         val dependencies: TargetDependent<List<InlineSourceBuilder.Module>>,
-        val targets: List<Target>
+        val targets: List<Target>,
+        val settings: CommonizerSettings,
     )
 
     data class Target(
@@ -105,10 +106,24 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
             simpleSingleSourceTarget(parseCommonizerTarget(target), sourceCode)
         }
 
+        @InlineSourcesCommonizationTestDsl
+        fun <T : Any> setting(type: CommonizerSettings.Key<T>, value: T) {
+            val setting = MapBasedCommonizerSettings.Setting(type, value)
+            check(setting.key !in settings.map { it.key }) {
+                "An attempt to add the same setting '${type::class.java.simpleName}' multiple times. " +
+                        "Current value: '$value'; Previous value: '${settings.find { it.key == setting.key }!!.settingValue}'"
+            }
+
+            settings.add(setting)
+        }
+
+        private val settings: MutableSet<MapBasedCommonizerSettings.Setting<*>> = LinkedHashSet()
+
         fun build(): Parameters = Parameters(
             outputTargets = outputTargets ?: setOf(SharedCommonizerTarget(targets.map { it.target }.allLeaves())),
             dependencies = dependencies.toTargetDependent(),
-            targets = targets.toList()
+            targets = targets.toList(),
+            settings = MapBasedCommonizerSettings(*settings.toTypedArray()),
         )
     }
 
@@ -162,7 +177,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
 
     private fun Parameters.toCommonizerParameters(
         resultsConsumer: ResultsConsumer,
-        manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) }
+        manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) },
     ): CommonizerParameters {
         return CommonizerParameters(
             outputTargets = outputTargets,
@@ -181,7 +196,8 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
                     modulesProvider = MockModulesProvider.create(target.modules.map { createModuleDescriptor(it) })
                 )
             },
-            resultsConsumer = resultsConsumer
+            resultsConsumer = resultsConsumer,
+            settings = settings,
         )
     }
 }

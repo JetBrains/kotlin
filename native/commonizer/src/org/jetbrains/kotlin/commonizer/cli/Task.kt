@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.commonizer.cli
 
+import org.jetbrains.kotlin.commonizer.*
+import org.jetbrains.kotlin.commonizer.MapBasedCommonizerSettings
 import java.util.concurrent.atomic.AtomicInteger
 
 internal abstract class Task(private val options: Collection<Option<*>>) : Comparable<Task> {
@@ -28,7 +30,7 @@ internal abstract class Task(private val options: Collection<Option<*>>) : Compa
     abstract fun execute(logPrefix: String = "")
 
     protected inline fun <reified T, reified O : OptionType<T>> getMandatory(nameFilter: (String) -> Boolean = { true }): T {
-        val option = options.filter { it.type is O }.single { nameFilter(it.type.alias) }
+        val option = options.filter { it.type is O }.single { nameFilter(it.type.alias.aliasString) }
         check(option.type.mandatory)
 
         @Suppress("UNCHECKED_CAST")
@@ -36,11 +38,28 @@ internal abstract class Task(private val options: Collection<Option<*>>) : Compa
     }
 
     internal inline fun <reified T, reified O : OptionType<T>> getOptional(nameFilter: (String) -> Boolean = { true }): T? {
-        val option = options.filter { it.type is O }.singleOrNull { nameFilter(it.type.alias) }
+        val option = options.filter { it.type is O }.singleOrNull { nameFilter(it.type.alias.aliasString) }
         if (option != null) check(!option.type.mandatory)
 
         @Suppress("UNCHECKED_CAST")
         return option?.value as T?
+    }
+
+    protected fun getSettings(): CommonizerSettings {
+        val passedSettings = ADDITIONAL_COMMONIZER_SETTINGS.map { settingOptionType ->
+            settingOptionType.toCommonizerSetting()
+        }
+
+        return MapBasedCommonizerSettings(*passedSettings.toTypedArray())
+    }
+
+    private fun <T : Any> CommonizerSettingOptionType<T>.toCommonizerSetting(): MapBasedCommonizerSettings.Setting<T> {
+        val key = commonizerSettingKey
+
+        @Suppress("UNCHECKED_CAST")
+        val settingValue = options.singleOrNull { option -> option.type == this }?.value as? T ?: key.defaultValue
+
+        return MapBasedCommonizerSettings.Setting(key, settingValue)
     }
 
     override fun compareTo(other: Task): Int {

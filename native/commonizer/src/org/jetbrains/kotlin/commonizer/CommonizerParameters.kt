@@ -23,6 +23,7 @@ data class CommonizerParameters(
     val storageManager: StorageManager = LockBasedStorageManager.NO_LOCKS,
     val statsCollector: StatsCollector? = null,
     val logger: Logger? = null,
+    val settings: CommonizerSettings,
 )
 
 internal fun CommonizerParameters.dependencyClassifiers(target: CommonizerTarget): CirProvidedClassifiers {

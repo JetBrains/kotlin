@@ -46,7 +46,7 @@ private fun parseTask(
     tasks: MutableList<Task>
 ): String? {
     val taskType = TaskType.getByAlias(taskAlias) ?: printUsageAndExit("Unknown task $taskAlias")
-    val optionTypes = taskType.optionTypes.associateBy { it.alias }
+    val optionTypes = taskType.optionTypes.associateBy { it.alias.aliasString }
     val options = mutableMapOf<String, Option<*>>()
 
     fun buildOngoingTask() {
@@ -117,7 +117,7 @@ private fun printUsageAndExit(errorMessage: String? = null): Nothing {
         println(formatLeft(1, if (taskType.optionTypes.isNotEmpty()) "Options:" else "No options."))
         for (optionType in taskType.optionTypes) {
             val lines = optionType.description.split('\n')
-            println(formatBoth(2, "-${optionType.alias}", lines.first()))
+            println(formatBoth(2, "-${optionType.alias.aliasString}", lines.first()))
             lines.drop(1).forEach { println(StringBuilder().formatRight(it)) }
         }
         println()

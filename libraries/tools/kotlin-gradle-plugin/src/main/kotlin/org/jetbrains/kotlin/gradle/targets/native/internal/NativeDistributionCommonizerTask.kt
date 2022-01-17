@@ -54,7 +54,8 @@ internal open class NativeDistributionCommonizerTask : DefaultTask() {
             konanHome = konanHome,
             outputDirectory = getRootOutputDirectory(),
             outputTargets = project.collectAllSharedCommonizerTargetsFromBuild(),
-            logLevel = project.commonizerLogLevel
+            logLevel = project.commonizerLogLevel,
+            additionalSettings = project.additionalCommonizerSettings,
         )
     }
 
