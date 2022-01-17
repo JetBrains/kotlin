@@ -14,3 +14,11 @@ fun IrElement.acceptVoid(visitor: IrElementVisitorVoid) {
 fun IrElement.acceptChildrenVoid(visitor: IrElementVisitorVoid) {
     acceptChildren(visitor, null)
 }
+
+fun IrElement.acceptVoid(visitor: IrAbstractVisitorVoid) {
+    accept(visitor, null)
+}
+
+fun IrElement.acceptChildrenVoid(visitor: IrAbstractVisitorVoid) {
+    acceptChildren(visitor, null)
+}
