@@ -54,24 +54,42 @@ object JavaClassChangesComputer {
         previousClassSnapshot: JavaClassSnapshot,
         changes: ChangeSet.Collector
     ) {
+        if (currentClassSnapshot.classAbiHash == previousClassSnapshot.classAbiHash) return
+
         val classId = currentClassSnapshot.classId.also { check(it == previousClassSnapshot.classId) }
-        if (currentClassSnapshot.classAbiExcludingMembers.abiHash != previousClassSnapshot.classAbiExcludingMembers.abiHash) {
-            changes.addChangedClass(classId)
+        if (currentClassSnapshot.classMemberLevelSnapshot != null && previousClassSnapshot.classMemberLevelSnapshot != null) {
+            if (currentClassSnapshot.classMemberLevelSnapshot.classAbiExcludingMembers.abiHash
+                != previousClassSnapshot.classMemberLevelSnapshot.classAbiExcludingMembers.abiHash
+            ) {
+                changes.addChangedClass(classId)
+            } else {
+                collectClassMemberChanges(
+                    classId,
+                    currentClassSnapshot.classMemberLevelSnapshot.fieldsAbi,
+                    previousClassSnapshot.classMemberLevelSnapshot.fieldsAbi,
+                    changes
+                )
+                collectClassMemberChanges(
+                    classId,
+                    currentClassSnapshot.classMemberLevelSnapshot.methodsAbi,
+                    previousClassSnapshot.classMemberLevelSnapshot.methodsAbi,
+                    changes
+                )
+            }
         } else {
-            collectClassMemberChanges(classId, currentClassSnapshot.fieldsAbi, previousClassSnapshot.fieldsAbi, changes)
-            collectClassMemberChanges(classId, currentClassSnapshot.methodsAbi, previousClassSnapshot.methodsAbi, changes)
+            changes.addChangedClass(classId)
         }
     }
 
     /** Collects changes between two lists of fields/methods within a class. */
     private fun collectClassMemberChanges(
         classId: ClassId,
-        currentMemberSnapshots: List<AbiSnapshot>,
-        previousMemberSnapshots: List<AbiSnapshot>,
+        currentMemberSnapshots: List<JavaElementSnapshot>,
+        previousMemberSnapshots: List<JavaElementSnapshot>,
         changes: ChangeSet.Collector
     ) {
-        val currentMemberHashes: Map<Long, AbiSnapshot> = currentMemberSnapshots.associateBy { it.abiHash }
-        val previousMemberHashes: Map<Long, AbiSnapshot> = previousMemberSnapshots.associateBy { it.abiHash }
+        val currentMemberHashes: Map<Long, JavaElementSnapshot> = currentMemberSnapshots.associateBy { it.abiHash }
+        val previousMemberHashes: Map<Long, JavaElementSnapshot> = previousMemberSnapshots.associateBy { it.abiHash }
 
         val addedMembers = currentMemberHashes.keys - previousMemberHashes.keys
         val removedMembers = previousMemberHashes.keys - currentMemberHashes.keys

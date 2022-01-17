@@ -36,8 +36,8 @@ class KotlinClassesClasspathSnapshotSerializerTest : ClasspathSnapshotSerializer
 
     override val sourceFile = TestSourceFile(
         KotlinSourceFile(
-            baseDir = File(testDataDir, "src/kotlin"), relativePath = "com/example/SimpleClass.kt",
-            preCompiledClassFile = ClassFile(File(testDataDir, "classes/kotlin"), "com/example/SimpleClass.class")
+            baseDir = File(testDataDir, "kotlin/testSimpleClass/src"), relativePath = "com/example/SimpleClass.kt",
+            preCompiledClassFile = ClassFile(File(testDataDir, "kotlin/testSimpleClass/classes"), "com/example/SimpleClass.class")
         ), tmpDir
     )
 }
@@ -46,7 +46,7 @@ class JavaClassesClasspathSnapshotSerializerTest : ClasspathSnapshotSerializerTe
 
     override val sourceFile = TestSourceFile(
         JavaSourceFile(
-            baseDir = File(testDataDir, "src/java"), relativePath = "com/example/SimpleClass.java",
+            baseDir = File(testDataDir, "java/testSimpleClass/src"), relativePath = "com/example/SimpleClass.java",
         ), tmpDir
     )
 }
