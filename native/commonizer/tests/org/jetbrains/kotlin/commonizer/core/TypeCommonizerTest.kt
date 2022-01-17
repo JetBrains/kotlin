@@ -5,11 +5,8 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
-import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
-import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
-import org.jetbrains.kotlin.commonizer.TargetDependent
+import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.cir.CirType
-import org.jetbrains.kotlin.commonizer.mapValue
 import org.jetbrains.kotlin.commonizer.mergedtree.CirClassifierIndex
 import org.jetbrains.kotlin.commonizer.mergedtree.CirCommonizedClassifierNodes
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
@@ -107,7 +104,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
             commonizedNodes = CirCommonizedClassifierNodes.default(),
             commonDependencies = commonDependencies
         ).also { classifiers ->
-            mergeCirTree(LockBasedStorageManager.NO_LOCKS, classifiers, roots)
+            mergeCirTree(LockBasedStorageManager.NO_LOCKS, classifiers, roots, settings = DefaultCommonizerSettings)
         }
 
         return TypeCommonizer(classifiers)

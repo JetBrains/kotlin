@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.commonizer.cir.CirDeclaration
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirTypeAliasRecursionMarker
 import org.jetbrains.kotlin.commonizer.core.*
+import org.jetbrains.kotlin.commonizer.CommonizerSettings
 import org.jetbrains.kotlin.commonizer.utils.CommonizedGroup
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.StorageManager
@@ -117,12 +118,13 @@ internal fun buildTypeAliasNode(
     storageManager: StorageManager,
     size: Int,
     classifiers: CirKnownClassifiers,
-    typeAliasId: CirEntityId
+    typeAliasId: CirEntityId,
+    settings: CommonizerSettings,
 ): CirTypeAliasNode = buildNode(
     storageManager = storageManager,
     size = size,
     nodeRelationship = null,
-    commonizerProducer = { TypeAliasCommonizer(TypeCommonizer(classifiers), classifiers).asCommonizer() },
+    commonizerProducer = { TypeAliasCommonizer(TypeCommonizer(classifiers), classifiers, settings = settings).asCommonizer() },
     recursionMarker = CirTypeAliasRecursionMarker,
     nodeProducer = { targetDeclarations, commonDeclaration ->
         CirTypeAliasNode(typeAliasId, targetDeclarations, commonDeclaration).also {

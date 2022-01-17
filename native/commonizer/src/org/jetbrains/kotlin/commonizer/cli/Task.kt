@@ -28,7 +28,7 @@ internal abstract class Task(private val options: Collection<Option<*>>) : Compa
     abstract fun execute(logPrefix: String = "")
 
     protected inline fun <reified T, reified O : OptionType<T>> getMandatory(nameFilter: (String) -> Boolean = { true }): T {
-        val option = options.filter { it.type is O }.single { nameFilter(it.type.alias) }
+        val option = options.filter { it.type is O }.single { nameFilter(it.type.alias.aliasString) }
         check(option.type.mandatory)
 
         @Suppress("UNCHECKED_CAST")
@@ -36,11 +36,20 @@ internal abstract class Task(private val options: Collection<Option<*>>) : Compa
     }
 
     internal inline fun <reified T, reified O : OptionType<T>> getOptional(nameFilter: (String) -> Boolean = { true }): T? {
-        val option = options.filter { it.type is O }.singleOrNull { nameFilter(it.type.alias) }
+        val option = options.filter { it.type is O }.singleOrNull { nameFilter(it.type.alias.aliasString) }
         if (option != null) check(!option.type.mandatory)
 
         @Suppress("UNCHECKED_CAST")
         return option?.value as T?
+    }
+
+    internal fun <T : Any, O : CommonizerSettingOptionType<T>> getCommonizerSetting(setting: O): T {
+        val s = options.singleOrNull { option ->
+            option.type == setting
+        }?.value ?: setting.defaultValue
+
+        @Suppress("UNCHECKED_CAST")
+        return s as T
     }
 
     override fun compareTo(other: Task): Int {

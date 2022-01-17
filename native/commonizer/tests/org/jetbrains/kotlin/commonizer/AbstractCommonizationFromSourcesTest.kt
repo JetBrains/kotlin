@@ -194,7 +194,8 @@ private class AnalyzedModules(
 
     fun toCommonizerParameters(
         resultsConsumer: ResultsConsumer,
-        manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) }
+        manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) },
+        commonizerSettings: CommonizerSettings = DefaultCommonizerSettings,
     ) = CommonizerParameters(
         outputTargets = setOf(SharedCommonizerTarget(leafTargets.toSet())),
         manifestProvider = TargetDependent(sharedTarget.withAllLeaves(), manifestDataProvider),
@@ -211,6 +212,7 @@ private class AnalyzedModules(
             )
         },
         resultsConsumer = resultsConsumer,
+        settings = commonizerSettings,
     )
 
     companion object {

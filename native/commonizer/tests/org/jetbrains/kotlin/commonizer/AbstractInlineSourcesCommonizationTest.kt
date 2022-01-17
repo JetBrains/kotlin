@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.DependencyAwareInlineSourceTestFactory
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.Parameters
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult.Commonized
+import org.jetbrains.kotlin.commonizer.cli.CommonizerSettingOptionType
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.utils.*
 import kotlin.test.assertIs
@@ -27,7 +28,8 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
     data class Parameters(
         val outputTargets: Set<SharedCommonizerTarget>,
         val dependencies: TargetDependent<List<InlineSourceBuilder.Module>>,
-        val targets: List<Target>
+        val targets: List<Target>,
+        val settings: CommonizerSettings,
     )
 
     data class Target(
@@ -105,10 +107,41 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
             simpleSingleSourceTarget(parseCommonizerTarget(target), sourceCode)
         }
 
+        @InlineSourcesCommonizationTestDsl
+        fun <T : Any> setting(type: CommonizerSettingOptionType<T>, value: T) {
+            val setting = Setting(type, value)
+            check(setting !in settings) {
+                "An attempt to add the same setting '${type::class.java.simpleName}' multiple times. " +
+                        "Current value: '$value'; Previous value: '${settings.find { it == setting }!!.value}'"
+            }
+
+            settings.add(setting)
+        }
+
+        // Comparison only by setting type is intentional
+        private class Setting<T : Any>(
+            val type: CommonizerSettingOptionType<T>,
+            val value: T,
+        ) {
+            override fun equals(other: Any?): Boolean =
+                other is Setting<*> && type == other.type
+
+            override fun hashCode(): Int {
+                return type.hashCode()
+            }
+
+            fun toCommonizerSetting(): CommonizerSetting<T> {
+                return CommonizerSetting(type, value)
+            }
+        }
+
+        private val settings: MutableSet<Setting<*>> = LinkedHashSet()
+
         fun build(): Parameters = Parameters(
             outputTargets = outputTargets ?: setOf(SharedCommonizerTarget(targets.map { it.target }.allLeaves())),
             dependencies = dependencies.toTargetDependent(),
-            targets = targets.toList()
+            targets = targets.toList(),
+            settings = MapBasedCommonizerSettings(*settings.map { it.toCommonizerSetting() }.toTypedArray()),
         )
     }
 
@@ -162,7 +195,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
 
     private fun Parameters.toCommonizerParameters(
         resultsConsumer: ResultsConsumer,
-        manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) }
+        manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) },
     ): CommonizerParameters {
         return CommonizerParameters(
             outputTargets = outputTargets,
@@ -181,7 +214,8 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
                     modulesProvider = MockModulesProvider.create(target.modules.map { createModuleDescriptor(it) })
                 )
             },
-            resultsConsumer = resultsConsumer
+            resultsConsumer = resultsConsumer,
+            settings = settings,
         )
     }
 }

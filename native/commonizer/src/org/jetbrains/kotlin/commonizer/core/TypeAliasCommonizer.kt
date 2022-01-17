@@ -5,15 +5,18 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
+import org.jetbrains.kotlin.commonizer.CommonizerSettings
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.allLeaves
 import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.cli.PlatformIntegers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class TypeAliasCommonizer(
     typeCommonizer: TypeCommonizer,
     private val classifiers: CirKnownClassifiers,
+    private val settings: CommonizerSettings,
 ) : NullableSingleInvocationCommonizer<CirTypeAlias> {
 
     private val typeCommonizer = typeCommonizer.withOptions {

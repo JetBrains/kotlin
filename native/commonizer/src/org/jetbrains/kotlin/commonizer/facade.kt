@@ -61,7 +61,7 @@ internal fun commonizeTarget(
 
         )
 
-        val mergedTree = mergeCirTree(parameters.storageManager, classifiers, availableTrees)
+        val mergedTree = mergeCirTree(parameters.storageManager, classifiers, availableTrees, parameters.settings)
 
         InlineTypeAliasCirNodeTransformer(parameters.storageManager, classifiers).invoke(mergedTree)
 

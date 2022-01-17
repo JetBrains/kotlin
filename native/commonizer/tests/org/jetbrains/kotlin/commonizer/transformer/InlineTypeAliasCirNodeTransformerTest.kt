@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.commonizer.transformer
 
+import org.jetbrains.kotlin.commonizer.DefaultCommonizerSettings
 import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.commonizer.TargetDependent
 import org.jetbrains.kotlin.commonizer.cir.*
@@ -92,7 +93,7 @@ class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase()
             )
         )
 
-        val mergedTree = mergeCirTree(LockBasedStorageManager.NO_LOCKS, classifiers, roots)
+        val mergedTree = mergeCirTree(LockBasedStorageManager.NO_LOCKS, classifiers, roots, DefaultCommonizerSettings)
         InlineTypeAliasCirNodeTransformer(LockBasedStorageManager.NO_LOCKS, classifiers).invoke(mergedTree)
 
         val pkg = mergedTree.modules.values.single().packages.getValue(CirPackageName.create("pkg"))
@@ -183,7 +184,7 @@ class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase()
             commonDependencies = CirProvidedClassifiers.EMPTY
         )
 
-        val mergedTree = mergeCirTree(LockBasedStorageManager.NO_LOCKS, classifiers, roots)
+        val mergedTree = mergeCirTree(LockBasedStorageManager.NO_LOCKS, classifiers, roots, DefaultCommonizerSettings)
         InlineTypeAliasCirNodeTransformer(LockBasedStorageManager.NO_LOCKS, classifiers).invoke(mergedTree)
 
         val pkg = mergedTree.modules.values.single().packages.getValue(CirPackageName.create("pkg"))

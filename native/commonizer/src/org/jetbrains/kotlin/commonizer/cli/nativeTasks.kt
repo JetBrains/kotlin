@@ -56,6 +56,7 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
 
         val konanTargets = outputTargets.konanTargets
         val commonizerTargets = konanTargets.map(::CommonizerTarget)
+        val settings = TaskBasedCommonizerSettings(this)
 
         val logger = CliLoggerAdapter(logLevel, 2)
         val libraryLoader = DefaultNativeLibraryLoader(logger)
@@ -73,7 +74,8 @@ internal class NativeKlibCommonize(options: Collection<Option<*>>) : Task(option
                     CommonizerDependencyRepository(dependencyLibraries.toSet(), libraryLoader),
             resultsConsumer = resultsConsumer,
             statsCollector = statsCollector,
-            logger = logger
+            logger = logger,
+            settings = settings,
         ).run()
 
         statsCollector?.writeTo(FileStatsOutput(destination, statsType.name.lowercase()))
@@ -96,6 +98,7 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
         val libraryLoader = DefaultNativeLibraryLoader(logger)
         val repository = KonanDistributionRepository(distribution, outputTargets.konanTargets, libraryLoader)
         val statsCollector = StatsCollector(statsType, outputTargets.allLeaves().toList())
+        val settings = TaskBasedCommonizerSettings(this)
 
         val resultsConsumer = buildResultsConsumer {
             this add ModuleSerializer(destination)
@@ -110,7 +113,8 @@ internal class NativeDistributionCommonize(options: Collection<Option<*>>) : Tas
             dependencies = StdlibRepository(distribution, libraryLoader),
             resultsConsumer = resultsConsumer,
             statsCollector = statsCollector,
-            logger = logger
+            logger = logger,
+            settings = settings,
         ).run()
 
         statsCollector?.writeTo(FileStatsOutput(destination, statsType.name.lowercase()))

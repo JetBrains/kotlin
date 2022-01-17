@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer
 
+import org.jetbrains.kotlin.commonizer.cli.PlatformIntegers
 import kotlin.test.assertFails
 
 class InlineSourceCommonizationHealthCheckTest : AbstractInlineSourcesCommonizationTest() {
@@ -17,6 +18,18 @@ class InlineSourceCommonizationHealthCheckTest : AbstractInlineSourcesCommonizat
 
         assertFails("Test should fail when source code of reference module contains errors") {
             result.assertCommonized("(a, b)", "expect class X() : kotlin.MissingSupertype")
+        }
+    }
+
+    fun `test duplicated settings are forbidden`() {
+        assertFails("Defining a setting multiple times should be forbidden") {
+            commonize {
+                outputTarget("(a, b)")
+                setting(PlatformIntegers, true)
+                setting(PlatformIntegers, false)
+                "a" withSource "class X"
+                "b" withSource "class X"
+            }
         }
     }
 }

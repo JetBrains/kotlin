@@ -84,7 +84,8 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
             inputLibraries = cinteropsForTarget.map { it.libraryFile.get() }.filter { it.exists() }.toSet(),
             dependencyLibraries = getNativeDistributionDependencies(group),
             outputDirectory = outputDirectory(group),
-            logLevel = project.commonizerLogLevel
+            logLevel = project.commonizerLogLevel,
+            additionalSettings = additionalCommonizerSettings(),
         )
     }
 
