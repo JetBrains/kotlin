@@ -1260,12 +1260,11 @@ class Fir2IrDeclarationStorage(
         lazyParent: Fir2IrLazyClass,
         declarationOrigin: IrDeclarationOrigin
     ): IrSimpleFunction {
-        val symbol = Fir2IrSimpleFunctionSymbol(signature, fir.containerSource)
+        val symbol = symbolTable.referenceSimpleFunction(signature)
         val firFunctionSymbol = fir.symbol
         val irFunction = fir.convertWithOffsets { startOffset, endOffset ->
             symbolTable.declareSimpleFunction(signature, { symbol }) {
-                val isFakeOverride = firFunctionSymbol is FirNamedFunctionSymbol &&
-                        fir.isSubstitutionOrIntersectionOverride &&
+                val isFakeOverride = fir.isSubstitutionOrIntersectionOverride &&
                         firFunctionSymbol.dispatchReceiverClassOrNull() !=
                         firFunctionSymbol.originalForSubstitutionOverride?.dispatchReceiverClassOrNull()
                 Fir2IrLazySimpleFunction(
