@@ -149,8 +149,9 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
                 continue
 
             // Stage 7: try to complete call with the builder inference if there are uninferred type variables
+            val allTypeVariables = getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms)
             val areThereAppearedProperConstraintsForSomeVariable = tryToCompleteWithBuilderInference(
-                completionMode, topLevelAtoms, topLevelType, postponedArguments, collectVariablesFromContext, analyze
+                completionMode, topLevelType, postponedArguments, allTypeVariables, analyze
             )
 
             if (areThereAppearedProperConstraintsForSomeVariable)
@@ -158,7 +159,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
 
             // Stage 8: report "not enough information" for uninferred type variables
             reportNotEnoughTypeInformation(
-                completionMode, topLevelAtoms, topLevelType, collectVariablesFromContext, postponedArguments
+                completionMode, topLevelAtoms, topLevelType, allTypeVariables, postponedArguments
             )
 
             // Stage 9: force analysis of remaining not analyzed postponed arguments and rerun stages if there are
@@ -173,10 +174,9 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
 
     private fun ConstraintSystemCompletionContext.tryToCompleteWithBuilderInference(
         completionMode: ConstraintSystemCompletionMode,
-        topLevelAtoms: List<FirStatement>,
         topLevelType: ConeKotlinType,
         postponedArguments: List<PostponedResolvedAtom>,
-        collectVariablesFromContext: Boolean,
+        allTypeVariables: List<TypeConstructorMarker>,
         analyze: (PostponedResolvedAtom) -> Unit
     ): Boolean {
         if (completionMode == ConstraintSystemCompletionMode.PARTIAL) return false
@@ -202,7 +202,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         }
 
         val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-            this, getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms), postponedArguments, completionMode, topLevelType
+            this, allTypeVariables, postponedArguments, completionMode, topLevelType
         )
 
         // continue completion (rerun stages) only if ready for fixation variables with proper constraints have appeared
@@ -267,13 +267,12 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         completionMode: ConstraintSystemCompletionMode,
         topLevelAtoms: List<FirStatement>,
         topLevelType: ConeKotlinType,
-        collectVariablesFromContext: Boolean,
+        allTypeVariables: List<TypeConstructorMarker>,
         postponedArguments: List<PostponedResolvedAtom>,
     ) {
         while (true) {
             val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-                this, getOrderedAllTypeVariables(collectVariablesFromContext, topLevelAtoms),
-                postponedArguments, completionMode, topLevelType,
+                this, allTypeVariables, postponedArguments, completionMode, topLevelType,
             ) ?: break
 
             assert(!variableForFixation.hasProperConstraint) {
