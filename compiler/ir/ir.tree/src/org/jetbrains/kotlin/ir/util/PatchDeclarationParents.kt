@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -21,7 +22,7 @@ fun <T : IrElement> T.patchDeclarationParents(initialParent: IrDeclarationParent
         acceptVoid(visitor)
     }
 
-class PatchDeclarationParentsVisitor() : IrElementVisitorVoid {
+class PatchDeclarationParentsVisitor() : IrAbstractVisitorVoid() {
 
     constructor(containingDeclaration: IrDeclarationParent) : this() {
         declarationParentsStack.push(containingDeclaration)
