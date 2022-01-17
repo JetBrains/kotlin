@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
@@ -136,7 +136,9 @@ class ExpressionCodegen(
     val inlinedInto: ExpressionCodegen?,
     val smap: SourceMapper,
     val reifiedTypeParametersUsages: ReifiedTypeParametersUsages,
-) : IrElementVisitor<PromisedValue, BlockInfo>, BaseExpressionCodegen {
+) :
+    IrAbstractVisitor<PromisedValue, BlockInfo>(),
+    BaseExpressionCodegen {
 
     override fun toString(): String = signature.toString()
 
