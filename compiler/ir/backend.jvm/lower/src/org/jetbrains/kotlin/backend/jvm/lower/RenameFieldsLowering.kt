@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
 internal val renameFieldsPhase = makeIrFilePhase(
@@ -68,7 +68,7 @@ private class RenameFieldsLowering(val context: CommonBackendContext) : FileLowe
     }
 }
 
-private object FieldCollector : IrElementVisitor<Unit, MutableList<IrField>> {
+private object FieldCollector : IrAbstractVisitor<Unit, MutableList<IrField>>() {
     override fun visitElement(element: IrElement, data: MutableList<IrField>) {
         element.acceptChildren(this, data)
     }
