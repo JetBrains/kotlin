@@ -232,7 +232,6 @@ enum class LanguageFeature(
     IgnoreNullabilityForErasedValueParameters(KOTLIN_1_7, kind = BUG_FIX),
     ProperTypeInferenceConstraintsProcessing(KOTLIN_1_7, kind = BUG_FIX),
     ForbidExposingTypesInPrimaryConstructorProperties(KOTLIN_1_7, kind = BUG_FIX),
-    ProhibitAccessToEnumCompanionMembersInEnumConstructorCall(KOTLIN_1_7, kind = BUG_FIX),
     PartiallySpecifiedTypeArguments(KOTLIN_1_7),
     EliminateAmbiguitiesWithExternalTypeParameters(KOTLIN_1_7),
     EliminateAmbiguitiesOnInheritedSamInterfaces(KOTLIN_1_7),
@@ -257,6 +256,7 @@ enum class LanguageFeature(
     ProperEqualityChecksInBuilderInferenceCalls(KOTLIN_1_8, kind = BUG_FIX),
     StopPropagatingDeprecationThroughOverrides(KOTLIN_1_8), // KT-47902
     ProhibitNonExhaustiveIfInRhsOfElvis(KOTLIN_1_8, kind = BUG_FIX), // KT-44705
+    ProhibitAccessToEnumCompanionMembersInEnumConstructorCall(KOTLIN_1_8, kind = BUG_FIX), // KT-49110
 
     // 1.9
 
@@ -264,7 +264,7 @@ enum class LanguageFeature(
     ProhibitIllegalValueParameterUsageInDefaultArguments(KOTLIN_1_9, kind = BUG_FIX), // KT-25694
     ProhibitConstructorCallOnFunctionalSupertype(KOTLIN_1_9, kind = BUG_FIX), // KT-46344
     ProhibitArrayLiteralsInCompanionOfAnnotation(KOTLIN_1_9, kind = BUG_FIX), // KT-39041
-    ProhibitCyclesInAnnotations(KOTLIN_1_9, kind = BUG_FIX), // KT-49110
+    ProhibitCyclesInAnnotations(KOTLIN_1_9, kind = BUG_FIX), // KT-47932
     ForbidExtensionFunctionTypeOnNonFunctionTypes(KOTLIN_1_9), // related to KT-43527
 
     // Temporarily disabled, see KT-27084/KT-22379
