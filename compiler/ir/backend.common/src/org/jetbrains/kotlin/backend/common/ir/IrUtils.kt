@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -365,7 +366,7 @@ fun <T : IrElement> T.setDeclarationsParent(parent: IrDeclarationParent): T {
     return this
 }
 
-object SetDeclarationsParentVisitor : IrElementVisitor<Unit, IrDeclarationParent> {
+object SetDeclarationsParentVisitor : IrAbstractVisitor<Unit, IrDeclarationParent>() {
     override fun visitElement(element: IrElement, data: IrDeclarationParent) {
         if (element !is IrDeclarationParent) {
             element.acceptChildren(this, data)
