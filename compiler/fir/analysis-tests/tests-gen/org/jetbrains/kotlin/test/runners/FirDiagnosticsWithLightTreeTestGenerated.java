@@ -3540,6 +3540,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("literalInWhenSubject.kt")
+            public void testLiteralInWhenSubject() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/literalInWhenSubject.kt");
+            }
+
+            @Test
             @TestMetadata("multipleCasts.kt")
             public void testMultipleCasts() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/multipleCasts.kt");

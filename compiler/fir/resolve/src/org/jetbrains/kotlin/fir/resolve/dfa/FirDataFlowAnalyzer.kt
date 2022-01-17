@@ -478,7 +478,20 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         val leftOperand = equalityOperatorCall.arguments[0]
         val rightOperand = equalityOperatorCall.arguments[1]
 
-        val leftConst = leftOperand as? FirConstExpression<*>
+        /*
+         * This unwrapping is needed for cases like
+         * when (true) {
+         *     s != null -> s.length
+         * }
+         *
+         * FirWhenSubjectExpression may be only in the lhs of equality operator call
+         *   by how is FIR for when branches is built, so there is no need to unwrap
+         *   right argument
+         */
+        val leftConst = when (leftOperand) {
+            is FirWhenSubjectExpression -> leftOperand.whenRef.value.subject
+            else -> leftOperand
+        } as? FirConstExpression<*>
         val rightConst = rightOperand as? FirConstExpression<*>
         val leftIsNullConst = leftConst?.kind == ConstantValueKind.Null
         val rightIsNullConst = rightConst?.kind == ConstantValueKind.Null
