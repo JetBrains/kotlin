@@ -295,7 +295,7 @@ private class RangeLoopTransformer(
         val loopVariableComponentIndices: List<Int>
     )
 
-    private class FindInitializerCallVisitor(private val mainLoopVariable: IrVariable?) : IrElementVisitorVoid {
+    private class FindInitializerCallVisitor(private val mainLoopVariable: IrVariable?) : IrAbstractVisitorVoid() {
         var initializerCall: IrCall? = null
 
         override fun visitElement(element: IrElement) {
