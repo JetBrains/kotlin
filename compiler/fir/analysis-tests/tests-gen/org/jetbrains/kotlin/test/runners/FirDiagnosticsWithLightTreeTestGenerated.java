@@ -2800,6 +2800,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("dnnThrowJavaCall.kt")
+            public void testDnnThrowJavaCall() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/inference/dnnThrowJavaCall.kt");
+            }
+
+            @Test
             @TestMetadata("elvisAndUnit.kt")
             public void testElvisAndUnit() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/inference/elvisAndUnit.kt");

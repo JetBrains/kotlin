@@ -2461,6 +2461,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/definitelyNotNullIntersectionType.kt");
         }
 
+        @TestMetadata("dnnThrowJavaCall.kt")
+        public void testDnnThrowJavaCall() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inference/dnnThrowJavaCall.kt");
+        }
+
         @TestMetadata("elvisAndUnit.kt")
         public void testElvisAndUnit() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/elvisAndUnit.kt");
