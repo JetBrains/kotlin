@@ -5,7 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm.objc
 
+import kotlinx.cinterop.signExtend
+import kotlinx.cinterop.toCValues
+import llvm.LLVMGetInlineAsm
+import llvm.LLVMInlineAsmDialect
 import llvm.LLVMValueRef
+import org.jetbrains.kotlin.backend.konan.getARCRetainAutoreleasedReturnValueMarker
 import org.jetbrains.kotlin.backend.konan.llvm.*
 
 internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
@@ -55,6 +60,30 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
             listOf(LlvmFunctionAttribute.NoUnwind),
             origin = context.stdlibModule.llvmSymbolOrigin
     ))
+
+    val objcRetainAutoreleasedReturnValue = context.llvm.externalFunction(LlvmFunctionProto(
+            "llvm.objc.retainAutoreleasedReturnValue",
+            LlvmRetType(int8TypePtr),
+            listOf(LlvmParamType(int8TypePtr)),
+            listOf(LlvmFunctionAttribute.NoUnwind),
+            origin = context.stdlibModule.llvmSymbolOrigin
+    ))
+
+    val objcRetainAutoreleasedReturnValueMarker: LLVMValueRef? by lazy {
+        // See emitAutoreleasedReturnValueMarker in Clang.
+        val asmString = codegen.context.config.target.getARCRetainAutoreleasedReturnValueMarker() ?: return@lazy null
+        val asmStringBytes = asmString.toByteArray()
+        LLVMGetInlineAsm(
+                Ty = functionType(voidType, false),
+                AsmString = asmStringBytes.toCValues(),
+                AsmStringSize = asmStringBytes.size.signExtend(),
+                Constraints = null,
+                ConstraintsSize = 0,
+                HasSideEffects = 1,
+                IsAlignStack = 0,
+                Dialect = LLVMInlineAsmDialect.LLVMInlineAsmDialectATT
+        )
+    }
 
     // TODO: this doesn't support stret.
     fun msgSender(functionType: LlvmFunctionSignature): LlvmCallable =
