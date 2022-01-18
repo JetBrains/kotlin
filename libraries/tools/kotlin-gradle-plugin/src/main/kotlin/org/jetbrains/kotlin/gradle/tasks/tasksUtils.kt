@@ -14,13 +14,26 @@ import org.jetbrains.kotlin.incremental.cleanDirectoryContents
 import org.jetbrains.kotlin.incremental.forceDeleteRecursively
 import java.io.File
 
-fun throwGradleExceptionIfError(exitCode: ExitCode) {
+fun throwGradleExceptionIfError(
+    exitCode: ExitCode,
+    executionStrategy: KotlinCompilerExecutionStrategy
+) {
     when (exitCode) {
         ExitCode.COMPILATION_ERROR -> throw GradleException("Compilation error. See log for more details")
         ExitCode.INTERNAL_ERROR -> throw GradleException("Internal compiler error. See log for more details")
         ExitCode.SCRIPT_EXECUTION_ERROR -> throw GradleException("Script execution error. See log for more details")
-        ExitCode.OK -> {
+        ExitCode.OOM_ERROR -> {
+            var exceptionMessage = "Not enough memory to run compilation."
+            when (executionStrategy) {
+                KotlinCompilerExecutionStrategy.DAEMON ->
+                    exceptionMessage += " Try to increase it via 'gradle.properties':\nkotlin.daemon.jvmargs=-Xmx<size>"
+                KotlinCompilerExecutionStrategy.IN_PROCESS ->
+                    exceptionMessage += " Try to increase it via 'gradle.properties':\norg.gradle.jvmargs=-Xmx<size>"
+                KotlinCompilerExecutionStrategy.OUT_OF_PROCESS -> Unit
+            }
+            throw GradleException(exceptionMessage)
         }
+        ExitCode.OK -> Unit
         else -> throw IllegalStateException("Unexpected exit code: $exitCode")
     }
 }

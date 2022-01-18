@@ -100,6 +100,25 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @DisplayName("On Kotlin daemon OOM helpful message is displayed")
+    @GradleTest
+    fun displaySpecialMessageOnOOM(gradleVersion: GradleVersion) {
+        project(
+            "kotlinProject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.INFO)
+        ) {
+            gradleProperties.append(
+                "\nkotlin.daemon.jvmargs=-Xmx16m"
+            )
+
+            buildAndFail("assemble") {
+                assertOutputContains("Not enough memory to run compilation. Try to increase it via 'gradle.properties':")
+                assertOutputContains("kotlin.daemon.jvmargs=-Xmx<size>")
+            }
+        }
+    }
+
     private fun BuildResult.assertGradleClasspathNotLeaked() {
         assertOutputContains("Kotlin compiler classpath:")
         val daemonClasspath = output

@@ -20,8 +20,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY
-import org.jetbrains.kotlin.cli.common.ExitCode.COMPILATION_ERROR
-import org.jetbrains.kotlin.cli.common.ExitCode.INTERNAL_ERROR
+import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.cli.common.messages.*
@@ -122,7 +121,7 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
             return COMPILATION_ERROR
         } catch (t: Throwable) {
             MessageCollectorUtil.reportException(collector, t)
-            return INTERNAL_ERROR
+            return if (t is OutOfMemoryError) OOM_ERROR else INTERNAL_ERROR
         } finally {
             collector.flush()
         }
