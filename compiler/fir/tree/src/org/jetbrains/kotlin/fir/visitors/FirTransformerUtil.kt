@@ -17,7 +17,9 @@ fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransfor
     while (iterator.hasNext()) {
         val next = iterator.next() as FirPureAbstractElement
         val result = next.transform<T, D>(transformer, data)
-        iterator.set(result)
+        if (result !== next) {
+            iterator.set(result)
+        }
     }
 }
 
@@ -36,7 +38,9 @@ inline fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirT
             TransformData.Nothing -> continue
         }
         val result = next.transform<T, D>(transformer, data)
-        iterator.set(result)
+        if (result !== next) {
+            iterator.set(result)
+        }
     }
 }
 
