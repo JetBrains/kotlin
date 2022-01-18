@@ -40,10 +40,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
@@ -162,7 +159,7 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
 
             // marking the parameters referenced in the function
             function.acceptChildrenVoid(
-                object : IrElementVisitorVoid {
+                object : IrAbstractVisitorVoid() {
                     override fun visitElement(element: IrElement) = element.acceptChildrenVoid(this)
 
                     override fun visitGetValue(expression: IrGetValue) {
