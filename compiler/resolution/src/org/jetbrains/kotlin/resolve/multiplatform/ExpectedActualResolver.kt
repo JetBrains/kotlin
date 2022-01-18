@@ -360,11 +360,16 @@ object ExpectedActualResolver {
         return Compatible
     }
 
-    private fun areCompatibleProperties(a: PropertyDescriptor, b: PropertyDescriptor): ExpectActualCompatibility<MemberDescriptor> {
-        if (!equalBy(a, b) { p -> p.isVar }) return Incompatible.PropertyKind
-        if (!equalBy(a, b) { p -> listOf(p.isConst, p.isLateInit) }) return Incompatible.PropertyModifiers
-
-        return Compatible
+    private fun areCompatibleProperties(
+        expected: PropertyDescriptor,
+        actual: PropertyDescriptor,
+    ): ExpectActualCompatibility<MemberDescriptor> {
+        return when {
+            !equalBy(expected, actual) { p -> p.isVar } -> Incompatible.PropertyKind
+            !equalBy(expected, actual) { p -> p.isLateInit } -> Incompatible.PropertyLateinitModifier
+            expected.isConst && !actual.isConst -> Incompatible.PropertyConstModifier
+            else -> Compatible
+        }
     }
 
     private fun areCompatibleClassifiers(a: ClassDescriptor, other: ClassifierDescriptor): ExpectActualCompatibility<MemberDescriptor> {

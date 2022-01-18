@@ -536,14 +536,16 @@ object FirExpectActualResolver {
         return ExpectActualCompatibility.Compatible
     }
 
-    private fun areCompatibleProperties(a: FirPropertySymbol, b: FirPropertySymbol): ExpectActualCompatibility<FirBasedSymbol<*>> {
-        if (!equalBy(a, b) { p -> p.isVar }) {
-            return ExpectActualCompatibility.Incompatible.PropertyKind
+    private fun areCompatibleProperties(
+        expected: FirPropertySymbol,
+        actual: FirPropertySymbol,
+    ): ExpectActualCompatibility<FirBasedSymbol<*>> {
+        return when {
+            !equalBy(expected, actual) { p -> p.isVar } -> ExpectActualCompatibility.Incompatible.PropertyKind
+            !equalBy(expected, actual) { p -> p.isLateInit } -> ExpectActualCompatibility.Incompatible.PropertyLateinitModifier
+            expected.isConst && !actual.isConst -> ExpectActualCompatibility.Incompatible.PropertyConstModifier
+            else -> ExpectActualCompatibility.Compatible
         }
-        if (!equalBy(a, b) { p -> listOf(p.isConst, p.isLateInit) }) {
-            return ExpectActualCompatibility.Incompatible.PropertyModifiers
-        }
-        return ExpectActualCompatibility.Compatible
     }
 
     // ---------------------------------------- Utils ----------------------------------------

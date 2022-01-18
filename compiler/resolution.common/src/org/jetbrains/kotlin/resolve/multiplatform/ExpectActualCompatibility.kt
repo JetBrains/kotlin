@@ -56,7 +56,8 @@ sealed class ExpectActualCompatibility<out D> {
         // Properties
 
         object PropertyKind : Incompatible<Nothing>("property kinds are different (val vs var)")
-        object PropertyModifiers : Incompatible<Nothing>("modifiers are different (const, lateinit)")
+        object PropertyLateinitModifier : Incompatible<Nothing>("modifiers are different (lateinit)")
+        object PropertyConstModifier : Incompatible<Nothing>("modifiers are different (const)")
 
         // Classifiers
 
