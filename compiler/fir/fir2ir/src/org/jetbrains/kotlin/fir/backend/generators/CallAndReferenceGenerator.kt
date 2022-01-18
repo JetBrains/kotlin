@@ -7,21 +7,19 @@ package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirReferencePlaceholderForResolvedAnnotations
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -30,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
@@ -43,6 +42,7 @@ import org.jetbrains.kotlin.ir.util.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.psi2ir.generators.isUnchanging
+import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class CallAndReferenceGenerator(
@@ -63,7 +63,8 @@ class CallAndReferenceGenerator(
         callableReferenceAccess: FirCallableReferenceAccess,
         explicitReceiverExpression: IrExpression?
     ): IrExpression {
-        val type = callableReferenceAccess.typeRef.toIrType()
+        val type = approximateFunctionReferenceType(callableReferenceAccess.typeRef.coneType).toIrType()
+
         val callableSymbol = callableReferenceAccess.calleeReference.toResolvedCallableSymbol()
         if (callableSymbol?.origin == FirDeclarationOrigin.SamConstructor) {
             assert(explicitReceiverExpression == null) {
@@ -169,6 +170,40 @@ class CallAndReferenceGenerator(
                 }
             }
         }
+    }
+
+    private fun approximateFunctionReferenceType(kotlinType: ConeKotlinType): ConeKotlinType {
+        // This is a hack to support intersection types in function references on JVM.
+        // Function reference type KFunctionN<T1, ..., TN, R> might contain intersection types in its top-level arguments.
+        // Intersection types in expressions and local variable declarations usually don't bother us.
+        // However, in case of function references type mapping affects behavior:
+        // resulting function reference class will have a bridge method, which will downcast its arguments to the expected types.
+        // This would cause ClassCastException in case of usual type approximation,
+        // because '{ X1 & ... & Xm }' would be approximated to 'Nothing'.
+        // JVM_OLD just relies on type mapping for generic argument types in such case.
+        if (!kotlinType.isKFunctionType(session))
+            return kotlinType
+        if (kotlinType !is ConeSimpleKotlinType)
+            return kotlinType
+        if (kotlinType.typeArguments.none { it.type is ConeIntersectionType })
+            return kotlinType
+        val functionParameterTypes = kotlinType.typeArguments.take(kotlinType.typeArguments.size - 1)
+        val functionReturnType = kotlinType.typeArguments.last()
+        return ConeClassLikeTypeImpl(
+            (kotlinType as ConeClassLikeType).lookupTag,
+            (functionParameterTypes.map { approximateFunctionReferenceParameterType(it) } + functionReturnType).toTypedArray(),
+            kotlinType.isNullable,
+            kotlinType.attributes
+        )
+    }
+
+    private fun approximateFunctionReferenceParameterType(typeProjection: ConeTypeProjection): ConeTypeProjection {
+        if (typeProjection.isStarProjection) return typeProjection
+        val intersectionType = typeProjection as? ConeIntersectionType ?: return typeProjection
+        val newType = intersectionType.alternativeType
+            ?: session.typeContext.commonSuperType(intersectionType.intersectedTypes.toList()) as? ConeKotlinType
+            ?: return typeProjection
+        return newType.toTypeProjection(typeProjection.kind)
     }
 
     private fun computeFieldSymbolForCallableReference(
