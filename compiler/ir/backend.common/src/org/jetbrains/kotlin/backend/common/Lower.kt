@@ -86,7 +86,7 @@ fun ClassLoweringPass.runOnFilePostfix(irFile: IrFile) {
 
 private class ClassLoweringVisitor(
     private val loweringPass: ClassLoweringPass
-) : IrElementVisitorVoid {
+) : IrThinVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -103,7 +103,7 @@ fun ScriptLoweringPass.runOnFilePostfix(irFile: IrFile) {
 
 private class ScriptLoweringVisitor(
     private val loweringPass: ScriptLoweringPass
-) : IrElementVisitorVoid {
+) : IrThinVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -121,7 +121,7 @@ fun DeclarationContainerLoweringPass.runOnFilePostfix(irFile: IrFile) {
 
 private class DeclarationContainerLoweringVisitor(
     private val loweringPass: DeclarationContainerLoweringPass
-) : IrElementVisitorVoid {
+) : IrThinVisitorVoid() {
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
@@ -293,18 +293,26 @@ interface DeclarationTransformer : FileLoweringPass {
         }
     }
 
-    private class Visitor(private val transformer: DeclarationTransformer) : IrElementVisitorVoid {
+    private class Visitor(private val transformer: DeclarationTransformer) : IrThinVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
 
-        override fun visitFunction(declaration: IrFunction) {
+        private fun visitFunction(declaration: IrFunction) {
             declaration.acceptChildrenVoid(this)
 
             for (v in declaration.valueParameters) {
                 val result = transformer.transformFlatRestricted(v)
                 if (result != null) error("Don't know how to add value parameters")
             }
+        }
+
+        override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+            visitFunction(declaration)
+        }
+
+        override fun visitConstructor(declaration: IrConstructor) {
+            visitFunction(declaration)
         }
 
         override fun visitProperty(declaration: IrProperty) {
