@@ -51,8 +51,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -282,7 +282,7 @@ fun IrFile.getKtFile(): KtFile? =
 
 inline fun IrElement.hasChild(crossinline block: (IrElement) -> Boolean): Boolean {
     var result = false
-    acceptChildren(object : IrElementVisitorVoid {
+    acceptChildren(object : IrAbstractVisitorVoid() {
         override fun visitElement(element: IrElement) = when {
             result -> Unit
             block(element) -> result = true
