@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
@@ -42,6 +43,9 @@ import org.jetbrains.kotlin.gradle.utils.getAllDependencies
 import org.jetbrains.kotlin.gradle.utils.getCacheDirectory
 import org.jetbrains.kotlin.gradle.utils.getDependenciesCacheDirectories
 import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.library.resolveSingleFileKlib
+import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
@@ -260,10 +264,12 @@ internal class CacheBuilder(
                         .filter { it !in visitedDependenciesForCache }
                         .forEach { dependencyForCache ->
                             visitedDependenciesForCache.add(dependencyForCache)
-                            val cacheDirectory = getCacheDirectory(rootCacheDirectory, dependencyForCache)
-                            if (cacheDirectory.exists()) {
-                                allCacheDirectories.add(cacheDirectory)
-                            }
+                            dependencyForCache.moduleArtifacts
+                                .map {
+                                    getCacheDirectory(rootCacheDirectory, dependencyForCache, it, { libraryFilter(it.file) })
+                                }
+                                .filter { it.exists() }
+                                .forEach { allCacheDirectories.add(it) }
                         }
                 }
             }
@@ -301,20 +307,65 @@ internal class CacheBuilder(
 
         val dependenciesCacheDirectories = getDependenciesCacheDirectories(
             rootCacheDirectory,
-            dependency
+            dependency,
+            libraryFilter = { libraryFilter(it.file) }
         ) ?: return
 
-        val cacheDirectory = getCacheDirectory(rootCacheDirectory, dependency)
-        cacheDirectory.mkdirs()
+        val nameMap: MutableMap<String, ResolvedArtifact> = mutableMapOf()
+        val depsMap: MutableMap<ResolvedArtifact, MutableList<ResolvedArtifact>> = mutableMapOf()
+        val cacheMap: MutableMap<ResolvedArtifact, File> = mutableMapOf()
+        var newOrderArtifactsToAddToCache = mutableListOf<ResolvedArtifact>()
 
-        for (library in artifactsToAddToCache) {
+        if (artifactsToAddToCache.size > 1) {
+            artifactsToAddToCache.forEach {
+                val klib = resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(it.file.absolutePath))
+                nameMap[klib.uniqueName] = it
+            }
+            artifactsToAddToCache.forEach { artifact ->
+                val klib = resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(artifact.file.absolutePath))
+                klib.unresolvedDependencies
+                    .forEach { depLib ->
+                        val depName = depLib.path.substringAfterLast("/")
+                        nameMap[depName]?.let {
+                            val depsSet = depsMap.getOrPut(artifact) {
+                                mutableListOf()
+                            }
+                            depsSet.add(it)
+                        }
+                    }
+            }
+            fun traverseDependency(library: ResolvedArtifact) {
+                depsMap[library]?.let {
+                    it.forEach {
+                        traverseDependency(it)
+                    }
+                }
+                if (library !in newOrderArtifactsToAddToCache) {
+                    newOrderArtifactsToAddToCache.add(library)
+                }
+            }
+            depsMap.forEach { key, deps ->
+                traverseDependency(key)
+            }
+        } else {
+            newOrderArtifactsToAddToCache = artifactsToAddToCache.toMutableList()
+        }
+
+        for (library in newOrderArtifactsToAddToCache) {
+            val cacheDirectory = getCacheDirectory(rootCacheDirectory, dependency, library, { libraryFilter(it.file) })
+            cacheDirectory.mkdirs()
+            cacheMap[library] = cacheDirectory
+            val additionalDependencies = depsMap[library] ?: emptyList()
+            val additionalCacheDirectories = if (additionalDependencies.isNotEmpty()) {
+                additionalDependencies.map { cacheMap.getValue(it) }
+            } else emptyList()
             runCompiler(
                 library.file,
-                getAllDependencies(dependency)
-                    .flatMap { it.moduleArtifacts }
+                (getAllDependencies(dependency)
+                    .flatMap { it.moduleArtifacts } + additionalDependencies)
                     .map { it.file },
                 cacheDirectory,
-                dependenciesCacheDirectories
+                dependenciesCacheDirectories + additionalCacheDirectories
             )
         }
     }

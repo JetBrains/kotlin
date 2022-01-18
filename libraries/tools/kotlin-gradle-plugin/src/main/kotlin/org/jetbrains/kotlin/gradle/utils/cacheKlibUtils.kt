@@ -5,19 +5,42 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.logging.Logger
+import org.jetbrains.kotlin.library.resolveSingleFileKlib
+import org.jetbrains.kotlin.library.uniqueName
 import java.io.File
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 
 fun getCacheDirectory(
     rootCacheDirectory: File,
-    dependency: ResolvedDependency
+    dependency: ResolvedDependency,
+    artifact: ResolvedArtifact? = null,
+    libraryFilter: (ResolvedArtifact) -> Boolean = { it.file.absolutePath.endsWith(".klib") }
 ): File {
     val moduleCacheDirectory = File(rootCacheDirectory, dependency.moduleName)
     val versionCacheDirectory = File(moduleCacheDirectory, dependency.moduleVersion)
-    return File(versionCacheDirectory, computeDependenciesHash(dependency))
+    val uniqueName = artifact
+        ?.let {
+            if (libraryFilter(it))
+                it.file
+            else
+                null
+        }
+        ?.let {
+            resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(it.absolutePath))
+        }
+        ?.uniqueName
+
+    val cacheDirectory = if (uniqueName != null) {
+        val digest = MessageDigest.getInstance("SHA-256")
+        val hash = digest.digest(uniqueName.toByteArray(StandardCharsets.UTF_8)).toHexString()
+        versionCacheDirectory.resolve(hash)
+    } else versionCacheDirectory
+
+    return File(cacheDirectory, computeDependenciesHash(dependency))
 }
 
 private fun ByteArray.toHexString() = joinToString("") { (0xFF and it.toInt()).toString(16).padStart(2, '0') }
@@ -36,17 +59,22 @@ private fun computeDependenciesHash(dependency: ResolvedDependency): String {
 
 fun getDependenciesCacheDirectories(
     rootCacheDirectory: File,
-    dependency: ResolvedDependency
+    dependency: ResolvedDependency,
+    libraryFilter: (ResolvedArtifact) -> Boolean = { it.file.absolutePath.endsWith(".klib") }
 ): List<File>? {
     return getAllDependencies(dependency)
-        .map { childDependency ->
-            val hasKlibs = childDependency.moduleArtifacts.any { it.file.absolutePath.endsWith(".klib") }
-            val cacheDirectory = getCacheDirectory(rootCacheDirectory, childDependency)
-            // We can only compile klib to cache if all of its dependencies are also cached.
-            if (hasKlibs && !cacheDirectory.exists())
-                return null
-            cacheDirectory
+        .flatMap { childDependency ->
+            childDependency.moduleArtifacts.map {
+                if (libraryFilter(it)) {
+                    val cacheDirectory = getCacheDirectory(rootCacheDirectory, childDependency, it, libraryFilter)
+                    if (!cacheDirectory.exists()) return null
+                    cacheDirectory
+                } else {
+                    null
+                }
+            }
         }
+        .filterNotNull()
         .filter { it.exists() }
 }
 
