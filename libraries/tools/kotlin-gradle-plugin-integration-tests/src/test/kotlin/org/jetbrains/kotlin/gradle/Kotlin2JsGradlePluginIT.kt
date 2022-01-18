@@ -224,11 +224,21 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
         project("kotlinBuiltins", gradleVersion) {
             subProject("app").buildGradle.modify { originalScript ->
                 buildString {
-                    append(originalScript.replace("apply plugin: \"kotlin\"", "apply plugin: \"kotlin2js\""))
+                    append(
+                        originalScript.replace(
+                            "id \"org.jetbrains.kotlin.jvm\"",
+                            "id \"org.jetbrains.kotlin.js\""
+                        )
+                    )
                     append(
                         """
                         |
-                        |compileKotlin2Js.kotlinOptions.outputFile = "out/out.js"
+                        |afterEvaluate {
+                        |    tasks.named('compileKotlinJs') {
+                        |        kotlinOptions.outputFile = "${'$'}{project.projectDir}/out/out.js"
+                        |    }
+                        |}
+                        |
                         """.trimMargin()
                     )
                 }

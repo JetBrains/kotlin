@@ -190,3 +190,28 @@ fun BuildResult.assertIncrementalCompilation(
         """.trimMargin()
     }
 }
+
+/**
+ * Asserts compilation is running via Kotlin daemon with given jvm arguments.
+ */
+fun BuildResult.assertKotlinDaemonJvmOptions(
+    expectedJvmArgs: List<String>
+) {
+    val jvmArgsCommonMessage = "Kotlin compile daemon JVM options: "
+    assertOutputContains(jvmArgsCommonMessage)
+    val argsRegex = "\\[.+?]".toRegex()
+    val argsStrings = output.lineSequence()
+        .filter { it.contains(jvmArgsCommonMessage) }
+        .map {
+            argsRegex.findAll(it).last().value.removePrefix("[").removeSuffix("]").split(", ")
+        }
+    val containsArgs = argsStrings.any {
+        it.containsAll(expectedJvmArgs)
+    }
+
+    assert(containsArgs) {
+        printBuildOutput()
+
+        "${argsStrings.toList()} does not contain expected args: $expectedJvmArgs"
+    }
+}

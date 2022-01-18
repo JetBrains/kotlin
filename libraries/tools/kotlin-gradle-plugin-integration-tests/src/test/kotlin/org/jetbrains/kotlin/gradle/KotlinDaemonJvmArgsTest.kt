@@ -6,11 +6,8 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.gradle.testkit.runner.BuildResult
-import org.gradle.tooling.internal.consumer.ConnectorServices
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Kotlin daemon JVM args")
@@ -169,28 +166,6 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
                     listOf("-Xmx758m", "--Duser.country=US")
                 )
             }
-        }
-    }
-
-    private fun BuildResult.assertKotlinDaemonJvmOptions(
-        expectedOptions: List<String>
-    ) {
-        val jvmArgsCommonMessage = "Kotlin compile daemon JVM options: "
-        assertOutputContains(jvmArgsCommonMessage)
-        val argsRegex = "\\[.+?]".toRegex()
-        val argsStrings = output.lineSequence()
-            .filter { it.contains(jvmArgsCommonMessage) }
-            .map {
-                argsRegex.findAll(it).last().value.removePrefix("[").removeSuffix("]").split(", ")
-            }
-        val containsArgs = argsStrings.any {
-            it.containsAll(expectedOptions)
-        }
-
-        assert(containsArgs) {
-            printBuildOutput()
-
-            "${argsStrings.toList()} does not contain expected args: $expectedOptions"
         }
     }
 }

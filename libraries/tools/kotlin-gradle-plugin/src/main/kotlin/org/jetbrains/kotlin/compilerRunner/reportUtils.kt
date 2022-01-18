@@ -141,7 +141,6 @@ private fun writeArgumentsToFile(directory: File, argsArray: Array<String>): Fil
         Files.createTempFile(directory.toPath(), prefix, suffix).toFile()
     else
         Files.createTempFile(prefix, suffix).toFile()
-    compilerOptions.deleteOnExit()
     compilerOptions.writeText(argsArray.joinToString(" ") { "\"${StringEscapeUtils.escapeJava(it)}\"" })
     return compilerOptions
 }
