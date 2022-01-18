@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -100,7 +101,7 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
     private fun collectCapturingClasses(irScript: IrScript): Set<IrClassImpl> {
         val annotator = ClosureAnnotator(irScript, irScript)
         val capturingClasses = mutableSetOf<IrClassImpl>()
-        val collector = object : IrElementVisitorVoid {
+        val collector = object : IrAbstractVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
