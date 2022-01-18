@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.psi.PsiSourceManager
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
@@ -111,7 +112,9 @@ class JvmSignatureClashDetector(
                 }
 
                 else ->
-                    if (irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS) {
+                    if (irClass.origin != JvmLoweredDeclarationOrigin.DEFAULT_IMPLS &&
+                        !(irClass.isInline && irClass.modality == Modality.SEALED)
+                    ) {
                         reportJvmSignatureClash(
                             JvmBackendErrors.ACCIDENTAL_OVERRIDE,
                             methods.filter { !it.isFakeOverride && !it.isSpecialOverride() },

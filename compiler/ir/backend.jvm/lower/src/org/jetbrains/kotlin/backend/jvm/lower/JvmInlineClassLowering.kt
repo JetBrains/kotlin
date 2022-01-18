@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.*
@@ -101,6 +103,10 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                 buildBoxFunction(declaration)
                 buildUnboxFunction(declaration)
                 buildSpecializedEqualsMethod(declaration)
+
+                if (declaration.superTypes.any { it.isInlineClassType() }) {
+                    rewriteFakeOverrideOfSealedInline(declaration)
+                }
             } else {
                 val inlineDirectSubclasses = declaration.sealedSubclasses.filter { it.owner.isInline }
                 val inlineSubclasses = collectSubclasses(declaration) { it.owner.isInline }
@@ -111,8 +117,11 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                 buildSpecializedEqualsMethodForSealed(declaration, inlineDirectSubclasses, noinlineDirectSubclasses)
 
                 // TODO: Generate during Psi2Ir/Fir2Ir
+                // TODO: Merge with rewriteOpenMethodsForSealed
                 rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "hashCode")
                 rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "toString")
+
+                rewriteOpenMethodsForSealed(declaration, inlineDirectSubclasses, noinlineSubclasses)
             }
             addJvmInlineAnnotation(declaration)
         }
@@ -713,6 +722,164 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                 +irReturn(irWhen(function.returnType, branches))
             }
         }
+    }
+
+    private fun rewriteFakeOverrideOfSealedInline(irClass: IrClass) {
+        val fakeOverridesReplacements = irClass.functions.filter { method ->
+            method.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
+                    && (method.attributeOwnerId as? IrSimpleFunction)?.isFakeOverride == true
+        }.toList()
+
+        if (fakeOverridesReplacements.isEmpty()) return
+
+        val anyNType = context.irBuiltIns.anyNType
+        val underlyingType = irClass.inlineClassRepresentation!!.underlyingType
+
+        for (function in fakeOverridesReplacements) {
+            val toCall = function.overriddenSymbols.first()
+            val parentType = toCall.owner.parentAsClass.defaultType
+            with(context.createIrBuilder(function.symbol)) {
+                function.body = irExprBody(
+                    irCall(toCall).apply {
+                        for ((index, valueParameter) in function.valueParameters.withIndex()) {
+                            val childToUnderlying = coerceInlineClasses(irGet(valueParameter), irClass.defaultType, underlyingType)
+                            val underlyingToParent = coerceInlineClasses(irImplicitCast(childToUnderlying, anyNType), anyNType, parentType)
+                            putValueArgument(index, underlyingToParent)
+                        }
+                    }
+                )
+            }
+        }
+    }
+
+    private fun rewriteOpenMethodsForSealed(
+        irClass: IrClass,
+        inlineSubclasses: List<IrClassSymbol>,
+        noinlineSubclasses: List<SubclassInfo>
+    ) {
+        val openMethods = irClass.functions.filter {
+            it.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT && it.modality == Modality.OPEN
+        }.map { (it.attributeOwnerId as IrSimpleFunction).symbol }.toList()
+
+        if (openMethods.isEmpty()) return
+
+        val overridesInNoinline = mapOverriddenToOverrides(noinlineSubclasses, openMethods)
+        val overridesInInline = mapOverriddenToOverrides(inlineSubclasses.map { SubclassInfo(it.owner, emptyList()) }, openMethods)
+
+        for (function in openMethods) {
+            // TODO: Remove
+            if (function.owner.name.asString().let { it == "toString" || it == "hashCode" }) continue
+            if (function !in overridesInInline && function !in overridesInNoinline) continue
+
+            rewriteSingleMethod(
+                context.inlineClassReplacements.getReplacementFunction(function.owner)!!,
+                overridesInInline.getOrElse(function) { emptySet() }
+                    .filterNot { it.owner.isFakeOverride && it.owner.parentAsClass.modality != Modality.SEALED },
+                overridesInNoinline.getOrElse(function) { emptySet() }
+                    .filterNot { it.owner.isFakeOverride || it.owner.parentAsClass.isInline }
+            )
+        }
+    }
+
+    private fun rewriteSingleMethod(
+        function: IrSimpleFunction,
+        overridesInInline: Collection<IrSimpleFunctionSymbol>,
+        overridesInNoinline: Collection<IrSimpleFunctionSymbol>
+    ) {
+        val oldBody = function.body
+        val replacements = context.inlineClassReplacements
+
+        with(context.createIrBuilder(function.symbol)) {
+            function.body = irBlockBody {
+                val param = irTemporary(
+                    coerceInlineClasses(
+                        irGet(function.valueParameters[0]),
+                        function.valueParameters[0].type,
+                        context.irBuiltIns.anyType
+                    )
+                )
+
+                val branches = overridesInNoinline.map {
+                    irBranch(
+                        irIs(irGet(param), it.owner.parentAsClass.defaultType),
+                        irReturn(irCall(it).apply {
+                            dispatchReceiver = irImplicitCast(irGet(param), it.owner.parentAsClass.defaultType)
+                        })
+                    )
+                } + overridesInInline.map {
+                    val underlyingType = it.owner.parentAsClass.inlineClassRepresentation!!.underlyingType
+                    val toCall = replacements.getReplacementFunction(it.owner)!!
+                    irBranch(
+                        irIs(irGet(param), underlyingType),
+                        irReturn(irCall(toCall.symbol).apply {
+                            putValueArgument(
+                                0, coerceInlineClasses(
+                                    irImplicitCast(irGet(param), underlyingType),
+                                    underlyingType,
+                                    it.owner.parentAsClass.defaultType
+                                )
+                            )
+                        })
+                    )
+                } + irBranch(
+                    irTrue(),
+                    when {
+                        function.attributeOwnerId.let { it is IrSimpleFunction && it.isFakeOverride } -> {
+                            val overridden = function.overriddenSymbols.find { !it.owner.isFakeOverride }!!
+                            irCall(overridden).apply { putValueArgument(0, irGet(param)) }
+                        }
+                        oldBody is IrExpressionBody -> oldBody.expression
+                        oldBody is IrBlockBody -> irComposite {
+                            for (stmt in oldBody.statements) {
+                                +stmt
+                            }
+                        }
+                        else -> error("Expected either expression or block body")
+                    }
+                )
+
+                +irReturn(irWhen(function.returnType, branches))
+            }
+        }
+    }
+
+    private fun IrSimpleFunctionSymbol.overrides(openMethods: List<IrSimpleFunctionSymbol>): IrSimpleFunctionSymbol? {
+        for (symbol in owner.overriddenSymbols) {
+            if (symbol.owner.isFakeOverride) {
+                val overridden = symbol.overrides(openMethods)
+                if (overridden != null) return overridden
+            }
+            if (symbol in openMethods) return symbol
+        }
+        return null
+    }
+
+    private fun MutableMap<IrSimpleFunctionSymbol, MutableSet<IrSimpleFunctionSymbol>>.putOverriddenToOverridesFromSingleClass(
+        irClass: IrClass,
+        openMethods: List<IrSimpleFunctionSymbol>
+    ) {
+        val overridesToOverridden =
+            irClass.functions.mapNotNull { child -> child.symbol.overrides(openMethods)?.let { child.symbol to it } }.toList()
+
+        for ((override, overridden) in overridesToOverridden) {
+            getOrPut(overridden) { mutableSetOf() } += override
+        }
+    }
+
+    // Go from bottom to top and collect classes, in which a function is overridden, preserving order,
+    // since we need to check for INSTANCEOF, return map from overridden function to all overrides
+    private fun mapOverriddenToOverrides(
+        subclasses: List<SubclassInfo>,
+        openMethods: List<IrSimpleFunctionSymbol>
+    ): Map<IrSimpleFunctionSymbol, Set<IrSimpleFunctionSymbol>> {
+        val result = mutableMapOf<IrSimpleFunctionSymbol, MutableSet<IrSimpleFunctionSymbol>>()
+        for (info in subclasses) {
+            result.putOverriddenToOverridesFromSingleClass(info.bottom, openMethods)
+            for (sealedParent in info.sealedParents) {
+                result.putOverriddenToOverridesFromSingleClass(sealedParent.owner, openMethods)
+            }
+        }
+        return result
     }
 
     private fun buildUnboxFunction(irClass: IrClass) {

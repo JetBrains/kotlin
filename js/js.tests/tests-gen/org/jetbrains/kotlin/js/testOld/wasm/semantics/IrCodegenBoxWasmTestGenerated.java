@@ -16189,6 +16189,66 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
             }
 
+            @TestMetadata("abstractMethod.kt")
+            public void testAbstractMethod() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractMethod.kt");
+            }
+
+            @TestMetadata("abstractMethodNoOverrideDeepNonInline.kt")
+            public void testAbstractMethodNoOverrideDeepNonInline() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractMethodNoOverrideDeepNonInline.kt");
+            }
+
+            @TestMetadata("abstractMethodNoOverrideDeepNonInline2.kt")
+            public void testAbstractMethodNoOverrideDeepNonInline2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractMethodNoOverrideDeepNonInline2.kt");
+            }
+
+            @TestMetadata("abstractMethodNoOverrideDeepNonInline3.kt")
+            public void testAbstractMethodNoOverrideDeepNonInline3() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractMethodNoOverrideDeepNonInline3.kt");
+            }
+
+            @TestMetadata("abstractMethodNoOverrideDeepNonInline4.kt")
+            public void testAbstractMethodNoOverrideDeepNonInline4() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractMethodNoOverrideDeepNonInline4.kt");
+            }
+
+            @TestMetadata("abstractMethodNoOverrideInNonInline.kt")
+            public void testAbstractMethodNoOverrideInNonInline() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractMethodNoOverrideInNonInline.kt");
+            }
+
+            @TestMetadata("abstractVal.kt")
+            public void testAbstractVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractVal.kt");
+            }
+
+            @TestMetadata("abstractValNoOverrideDeepNonInline.kt")
+            public void testAbstractValNoOverrideDeepNonInline() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractValNoOverrideDeepNonInline.kt");
+            }
+
+            @TestMetadata("abstractValNoOverrideDeepNonInline2.kt")
+            public void testAbstractValNoOverrideDeepNonInline2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractValNoOverrideDeepNonInline2.kt");
+            }
+
+            @TestMetadata("abstractValNoOverrideDeepNonInline3.kt")
+            public void testAbstractValNoOverrideDeepNonInline3() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractValNoOverrideDeepNonInline3.kt");
+            }
+
+            @TestMetadata("abstractValNoOverrideDeepNonInline4.kt")
+            public void testAbstractValNoOverrideDeepNonInline4() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractValNoOverrideDeepNonInline4.kt");
+            }
+
+            @TestMetadata("abstractValNoOverrideInNonInline.kt")
+            public void testAbstractValNoOverrideInNonInline() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractValNoOverrideInNonInline.kt");
+            }
+
             public void testAllFilesPresentInSealed() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
@@ -16281,6 +16341,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             @TestMetadata("openValNoOverrideInNonInline.kt")
             public void testOpenValNoOverrideInNonInline() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/sealed/openValNoOverrideInNonInline.kt");
+            }
+
+            @TestMetadata("overrideDefaultMethod.kt")
+            public void testOverrideDefaultMethod() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/overrideDefaultMethod.kt");
             }
 
             @TestMetadata("result.kt")

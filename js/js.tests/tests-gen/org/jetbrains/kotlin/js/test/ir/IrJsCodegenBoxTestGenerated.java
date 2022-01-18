@@ -19060,6 +19060,78 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
         @TestDataPath("$PROJECT_ROOT")
         public class Sealed {
             @Test
+            @TestMetadata("abstractMethod.kt")
+            public void testAbstractMethod() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractMethod.kt");
+            }
+
+            @Test
+            @TestMetadata("abstractMethodNoOverrideDeepNonInline.kt")
+            public void testAbstractMethodNoOverrideDeepNonInline() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractMethodNoOverrideDeepNonInline.kt");
+            }
+
+            @Test
+            @TestMetadata("abstractMethodNoOverrideDeepNonInline2.kt")
+            public void testAbstractMethodNoOverrideDeepNonInline2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractMethodNoOverrideDeepNonInline2.kt");
+            }
+
+            @Test
+            @TestMetadata("abstractMethodNoOverrideDeepNonInline3.kt")
+            public void testAbstractMethodNoOverrideDeepNonInline3() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractMethodNoOverrideDeepNonInline3.kt");
+            }
+
+            @Test
+            @TestMetadata("abstractMethodNoOverrideDeepNonInline4.kt")
+            public void testAbstractMethodNoOverrideDeepNonInline4() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractMethodNoOverrideDeepNonInline4.kt");
+            }
+
+            @Test
+            @TestMetadata("abstractMethodNoOverrideInNonInline.kt")
+            public void testAbstractMethodNoOverrideInNonInline() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractMethodNoOverrideInNonInline.kt");
+            }
+
+            @Test
+            @TestMetadata("abstractVal.kt")
+            public void testAbstractVal() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractVal.kt");
+            }
+
+            @Test
+            @TestMetadata("abstractValNoOverrideDeepNonInline.kt")
+            public void testAbstractValNoOverrideDeepNonInline() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractValNoOverrideDeepNonInline.kt");
+            }
+
+            @Test
+            @TestMetadata("abstractValNoOverrideDeepNonInline2.kt")
+            public void testAbstractValNoOverrideDeepNonInline2() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractValNoOverrideDeepNonInline2.kt");
+            }
+
+            @Test
+            @TestMetadata("abstractValNoOverrideDeepNonInline3.kt")
+            public void testAbstractValNoOverrideDeepNonInline3() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractValNoOverrideDeepNonInline3.kt");
+            }
+
+            @Test
+            @TestMetadata("abstractValNoOverrideDeepNonInline4.kt")
+            public void testAbstractValNoOverrideDeepNonInline4() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractValNoOverrideDeepNonInline4.kt");
+            }
+
+            @Test
+            @TestMetadata("abstractValNoOverrideInNonInline.kt")
+            public void testAbstractValNoOverrideInNonInline() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/abstractValNoOverrideInNonInline.kt");
+            }
+
+            @Test
             public void testAllFilesPresentInSealed() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/sealed"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
@@ -19170,6 +19242,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             @TestMetadata("openValNoOverrideInNonInline.kt")
             public void testOpenValNoOverrideInNonInline() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/sealed/openValNoOverrideInNonInline.kt");
+            }
+
+            @Test
+            @TestMetadata("overrideDefaultMethod.kt")
+            public void testOverrideDefaultMethod() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/overrideDefaultMethod.kt");
             }
 
             @Test
