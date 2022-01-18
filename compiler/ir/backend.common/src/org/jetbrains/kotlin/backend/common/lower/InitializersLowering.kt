@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 class InitializersLowering(context: CommonBackendContext) : InitializersLoweringBase(context), BodyLoweringPass {
@@ -38,7 +38,7 @@ class InitializersLowering(context: CommonBackendContext) : InitializersLowering
         }
         val block = IrBlockImpl(irClass.startOffset, irClass.endOffset, context.irBuiltIns.unitType, null, instanceInitializerStatements)
         // Check that the initializers contain no local classes. Deep-copying them is a disaster for code size, and liable to break randomly.
-        block.accept(object : IrElementVisitorVoid {
+        block.accept(object : IrAbstractVisitorVoid() {
             override fun visitElement(element: IrElement) =
                 element.acceptChildren(this, null)
 
