@@ -26,7 +26,8 @@ class LowLevelFirAnalyzerFacade(
     val allFirFiles: Map<TestFile, FirFile>,
     private val diagnosticCheckerFilter: DiagnosticCheckerFilter,
 ) : AbstractFirAnalyzerFacade() {
-    override val scopeSession: ScopeSession get() = shouldNotBeCalled()
+    override val scopeSession: ScopeSession
+        get() = ScopeSession()
 
     override fun runCheckers(): Map<FirFile, List<KtDiagnostic>> {
         findSealedInheritors()
