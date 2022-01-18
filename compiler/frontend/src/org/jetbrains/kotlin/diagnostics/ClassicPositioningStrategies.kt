@@ -49,7 +49,8 @@ object ClassicPositioningStrategies {
                 val callableDeclaration = element as? KtCallableDeclaration
                 val incompatibility = diagnostic.firstIncompatibility
                 return when (incompatibility) {
-                    null, ExpectActualCompatibility.Incompatible.Unknown, is ExpectActualCompatibility.Incompatible.ClassScopes, ExpectActualCompatibility.Incompatible.EnumEntries -> null
+                    null, ExpectActualCompatibility.Incompatible.Unknown, is ExpectActualCompatibility.Incompatible.ClassScopes,
+                    ExpectActualCompatibility.Incompatible.EnumEntries -> null
                     ExpectActualCompatibility.Incompatible.ClassKind -> {
                         val startElement =
                             element.modifierList?.getModifier(KtTokens.ENUM_KEYWORD)
@@ -64,7 +65,9 @@ object ClassicPositioningStrategies {
                         }
                     }
                     ExpectActualCompatibility.Incompatible.TypeParameterNames, ExpectActualCompatibility.Incompatible.TypeParameterCount,
-                    ExpectActualCompatibility.Incompatible.TypeParameterUpperBounds, ExpectActualCompatibility.Incompatible.TypeParameterVariance, ExpectActualCompatibility.Incompatible.TypeParameterReified -> {
+                    ExpectActualCompatibility.Incompatible.TypeParameterUpperBounds,
+                    ExpectActualCompatibility.Incompatible.TypeParameterVariance,
+                    ExpectActualCompatibility.Incompatible.TypeParameterReified -> {
                         (element as? KtTypeParameterListOwner)?.typeParameterList
                     }
                     ExpectActualCompatibility.Incompatible.CallableKind -> {
@@ -74,14 +77,17 @@ object ClassicPositioningStrategies {
                     ExpectActualCompatibility.Incompatible.ParameterShape -> {
                         callableDeclaration?.let { it.receiverTypeReference ?: it.valueParameterList }
                     }
-                    ExpectActualCompatibility.Incompatible.ParameterCount, ExpectActualCompatibility.Incompatible.ParameterTypes, ExpectActualCompatibility.Incompatible.ParameterNames,
-                    ExpectActualCompatibility.Incompatible.ValueParameterVararg, ExpectActualCompatibility.Incompatible.ValueParameterNoinline, ExpectActualCompatibility.Incompatible.ValueParameterCrossinline -> {
+                    ExpectActualCompatibility.Incompatible.ParameterCount, ExpectActualCompatibility.Incompatible.ParameterTypes,
+                    ExpectActualCompatibility.Incompatible.ParameterNames, ExpectActualCompatibility.Incompatible.ValueParameterVararg,
+                    ExpectActualCompatibility.Incompatible.ValueParameterNoinline,
+                    ExpectActualCompatibility.Incompatible.ValueParameterCrossinline -> {
                         callableDeclaration?.valueParameterList
                     }
                     ExpectActualCompatibility.Incompatible.ReturnType -> {
                         callableDeclaration?.typeReference
                     }
-                    ExpectActualCompatibility.Incompatible.FunctionModifiersDifferent, ExpectActualCompatibility.Incompatible.FunctionModifiersNotSubset,
+                    ExpectActualCompatibility.Incompatible.FunctionModifiersDifferent,
+                    ExpectActualCompatibility.Incompatible.FunctionModifiersNotSubset,
                     ExpectActualCompatibility.Incompatible.PropertyModifiers, ExpectActualCompatibility.Incompatible.ClassModifiers -> {
                         element.modifierList
                     }
