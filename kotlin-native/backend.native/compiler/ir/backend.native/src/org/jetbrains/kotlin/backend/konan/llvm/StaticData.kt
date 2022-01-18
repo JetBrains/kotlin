@@ -74,6 +74,13 @@ internal class StaticData(override val context: Context): ContextUtils {
             LLVMSetGlobalConstant(llvmGlobal, if (value) 1 else 0)
         }
 
+        /**
+         * Globals that are marked with unnamed_addr might be merged by LLVM's ConstantMerge pass.
+         */
+        fun setUnnamedAddr(value: Boolean) {
+            LLVMSetUnnamedAddr(llvmGlobal, if (value) 1 else 0)
+        }
+
         fun setLinkage(value: LLVMLinkage) {
             LLVMSetLinkage(llvmGlobal, value)
         }
