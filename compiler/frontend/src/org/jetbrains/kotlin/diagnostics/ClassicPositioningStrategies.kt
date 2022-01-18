@@ -88,7 +88,9 @@ object ClassicPositioningStrategies {
                     }
                     ExpectActualCompatibility.Incompatible.FunctionModifiersDifferent,
                     ExpectActualCompatibility.Incompatible.FunctionModifiersNotSubset,
-                    ExpectActualCompatibility.Incompatible.PropertyModifiers, ExpectActualCompatibility.Incompatible.ClassModifiers -> {
+                    ExpectActualCompatibility.Incompatible.PropertyLateinitModifier,
+                    ExpectActualCompatibility.Incompatible.PropertyConstModifier,
+                    ExpectActualCompatibility.Incompatible.ClassModifiers -> {
                         element.modifierList
                     }
                     ExpectActualCompatibility.Incompatible.PropertyKind -> {

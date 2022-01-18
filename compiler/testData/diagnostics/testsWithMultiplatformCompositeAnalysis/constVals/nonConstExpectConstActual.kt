@@ -46,11 +46,11 @@ class ConstImpl {
 // actuals
 
 actual typealias NonConstNonConst = NonConstImpl
-actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>NonConstConst<!> = ConstImpl
+actual typealias NonConstConst = ConstImpl
 actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>ConstNonConst<!> = NonConstImpl
 actual typealias ConstConst = ConstImpl
 
 actual val NonConstNonConstTl: Int get() = 42
-<!ACTUAL_WITHOUT_EXPECT!>actual const<!> val NonConstConstTl: Int = 42
+actual const val NonConstConstTl: Int = 42
 <!ACTUAL_WITHOUT_EXPECT!>actual<!> val ConstNonConstTl: Int get() = 42
 actual const val ConstConstTl: Int = 42
