@@ -738,7 +738,7 @@ abstract class KotlinCompile @Inject constructor(
     ) {
         sourceRoots as SourceRoots.ForJvm
 
-        validateKotlinAndJavaHasSameTargetCompatibility(args)
+        validateKotlinAndJavaHasSameTargetCompatibility(args, sourceRoots)
 
         val messageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
         val outputItemCollector = OutputItemsCollectorImpl()
@@ -780,8 +780,9 @@ abstract class KotlinCompile @Inject constructor(
         )
     }
 
-    private fun validateKotlinAndJavaHasSameTargetCompatibility(args: K2JVMCompilerArguments) {
-        if (!associatedJavaCompileTaskSources.isEmpty) {
+    private fun validateKotlinAndJavaHasSameTargetCompatibility(args: K2JVMCompilerArguments, sourceRoots: SourceRoots.ForJvm) {
+        val mixedSourcesArePresent = !associatedJavaCompileTaskSources.isEmpty && !sourceRoots.kotlinSourceFiles.isEmpty
+        if (mixedSourcesArePresent) {
             associatedJavaCompileTaskTargetCompatibility.orNull?.let { targetCompatibility ->
                 val normalizedJavaTarget = when (targetCompatibility) {
                     "6" -> "1.6"
