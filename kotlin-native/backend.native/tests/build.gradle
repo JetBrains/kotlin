@@ -6121,6 +6121,9 @@ fileCheckTest("filecheck_function_attributes_at_callsite") {
     annotatedSource = project.file('filecheck/function_attributes_at_callsite.kt')
 }
 
+fileCheckTest("filecheck_constants_merge") {
+    annotatedSource = project.file('filecheck/constants_merge.kt')
+}
 
 dependencies {
     nopPluginApi project(kotlinCompilerModule)
