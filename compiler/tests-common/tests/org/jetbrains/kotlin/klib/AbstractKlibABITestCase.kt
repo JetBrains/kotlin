@@ -22,6 +22,16 @@ import java.io.File
 import kotlin.io.path.createTempDirectory
 
 abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
+    protected lateinit var buildDir: File
+
+    override fun setUp() {
+        super.setUp()
+        buildDir = createTempDirectory().toFile().also { it.mkdirs() }
+    }
+
+    override fun tearDown() {
+        buildDir.deleteRecursively()
+    }
 
     private fun parseProjectInfo(testName: String, infoFile: File): ProjectInfo {
         return ProjectInfoParser(infoFile).parse(testName)
@@ -36,7 +46,6 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
     abstract fun stdlibPath(): String
 
     fun doTest(testPath: String) {
-
         val testDir = File(testPath)
         val testName = testDir.name
         val projectInfoFile = File(testDir, PROJECT_INFO_FILE)
@@ -53,15 +62,37 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
         }
 
         val environment = createEnvironment()
-        val buildDir = createTempDirectory().toFile().also { it.mkdirs() }
+        val modulesBuildDirs = prepareBuildDirs(testDir, buildDir, projectInfo)
 
-        try {
-            doTestImpl(environment, testDir, buildDir, projectInfo, modulesMap)
-        } finally {
-            buildDir.deleteRecursively()
+        for (projectStep in projectInfo.steps) {
+            for (module in projectStep.order) {
+                val moduleTestDir = File(testDir, module)
+                val moduleBuildDir = modulesBuildDirs[module] ?: error("No module dir found for $module")
+                val moduleInfo = modulesMap[module] ?: error("No module $module found on step ${projectStep.id}")
+                val moduleStep = moduleInfo.steps[projectStep.id]
+                val moduleSourceDir = File(moduleBuildDir, SOURCE_DIR_NAME)
+                for (modification in moduleStep.modifications) {
+                    modification.execute(moduleTestDir, moduleSourceDir)
+                }
+
+                val klibFile = moduleBuildDir.toKlibFile(module)
+                if (klibFile.exists()) klibFile.delete()
+                val dependencies = collectDependenciesKlib(buildDir, moduleStep.dependencies)
+                buildKlib(environment, module, moduleSourceDir, dependencies, klibFile)
+            }
         }
-    }
 
+        val mainModuleDir = modulesBuildDirs[MAIN_MODULE_NAME] ?: error("No main module $MAIN_MODULE_NAME found")
+        val moduleKlibs = collectAllModulesKlibs(modulesBuildDirs)
+
+        compileBinaryAndRun(
+            environment.project,
+            environment.configuration,
+            moduleKlibs,
+            mainModuleDir.toKlibFile(MAIN_MODULE_NAME).canonicalPath,
+            buildDir
+        )
+    }
 
     private fun makeDirectoriesForModule(moduleName: String, buildDir: File): File {
         val moduleDir = File(buildDir, moduleName)
@@ -94,7 +125,6 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
     private fun collectDependenciesKlib(buildDir: File, dependencies: Collection<String>): List<String> {
         val result = ArrayList<String>(dependencies.size)
 
-
         return dependencies.mapTo(result) { dep ->
             if (dep == "stdlib") {
                 stdlibPath()
@@ -107,40 +137,6 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
 
     private fun File.toKlibFile(name: String): File {
         return File(File(this, KLIB_DIR_NAME), "$name.klib")
-    }
-
-    private fun doTestImpl(
-        environment: KotlinCoreEnvironment,
-        testDir: File,
-        buildDir: File,
-        projectInfo: ProjectInfo,
-        modulesInfo: Map<String, ModuleInfo>
-    ) {
-        val modulesBuildDirs = prepareBuildDirs(testDir, buildDir, projectInfo)
-
-        for (projectStep in projectInfo.steps) {
-            for (module in projectStep.order) {
-                val moduleTestDir = File(testDir, module)
-                val moduleBuildDir = modulesBuildDirs[module] ?: error("No module dir found for $module")
-                val moduleInfo = modulesInfo[module] ?: error("No module $module found on step ${projectStep.id}")
-                val moduleStep = moduleInfo.steps[projectStep.id]
-                val moduleSourceDir = File(moduleBuildDir, SOURCE_DIR_NAME)
-                for (modification in moduleStep.modifications) {
-                    modification.execute(moduleTestDir, moduleSourceDir)
-                }
-
-                val klibFile = moduleBuildDir.toKlibFile(module)
-                if (klibFile.exists()) klibFile.delete()
-                val dependencies = collectDependenciesKlib(buildDir, moduleStep.dependencies)
-                buildKlib(environment, module, moduleSourceDir, dependencies, klibFile)
-            }
-        }
-
-        val mainModuleDir = modulesBuildDirs[MAIN_MODULE_NAME] ?: error("No main module $MAIN_MODULE_NAME found")
-
-        val moduleKlibs = collectAllModulesKlibs(modulesBuildDirs)
-
-        compileBinaryAndRun(environment.project, environment.configuration, moduleKlibs, mainModuleDir.toKlibFile(MAIN_MODULE_NAME).canonicalPath, buildDir)
     }
 
     private fun collectAllModulesKlibs(modulesBuildDirs: Map<String, File>): Collection<String> {
