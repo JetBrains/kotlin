@@ -49,6 +49,9 @@ public open class Any {
     /**
      * Returns a string representation of the object.
      */
-    // TODO: Implement
-    public open fun toString(): String = "[Object object]"
+    public open fun toString(): String {
+        val typeData = getTypeInfoTypeDataByPtr(typeInfo)
+        val qualifiedName = if (typeData.packageName.isEmpty()) typeData.typeName else "${typeData.packageName}.${typeData.typeName}"
+        return "$qualifiedName@${hashCode()}"
+    }
 }
