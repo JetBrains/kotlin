@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
@@ -171,7 +171,7 @@ fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean {
         ?: irBuiltIns.anyType
     var callsSuper = false
     var numberOfCalls = 0
-    acceptChildrenVoid(object : IrElementVisitorVoid {
+    acceptChildrenVoid(object : IrAbstractVisitorVoid() {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
