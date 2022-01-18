@@ -56,6 +56,7 @@ internal fun StaticData.createConstKotlinArray(arrayClass: IrClass, elements: Li
 
     global.setInitializer(Struct(compositeType, arrayHeader, arrayBody))
     global.setConstant(true)
+    global.setUnnamedAddr(true)
 
     return createRef(objHeaderPtr)
 }
@@ -65,6 +66,7 @@ internal fun StaticData.createConstKotlinObject(type: IrClass, vararg fields: Co
     val objHeader = objHeader(typeInfo)
 
     val global = this.placeGlobal("", Struct(objHeader, *fields))
+    global.setUnnamedAddr(true)
     global.setConstant(true)
 
     val objHeaderPtr = global.pointer.getElementPtr(0)
