@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -583,7 +582,7 @@ fun FirQualifiedAccess.wrapWithSafeCall(receiver: FirExpression, source: KtSourc
         this.checkedSubjectRef = FirExpressionRef<FirCheckedSafeCallSubject>().apply {
             bind(checkedSafeCallSubject)
         }
-        this.regularQualifiedAccess = this@wrapWithSafeCall
+        this.selector = this@wrapWithSafeCall
         this.source = source
     }
 }

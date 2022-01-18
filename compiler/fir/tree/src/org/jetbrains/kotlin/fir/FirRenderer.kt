@@ -707,7 +707,7 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
     override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression) {
         safeCallExpression.receiver.accept(this)
         print("?.{ ")
-        safeCallExpression.regularQualifiedAccess.accept(this)
+        safeCallExpression.selector.accept(this)
         print(" }")
     }
 

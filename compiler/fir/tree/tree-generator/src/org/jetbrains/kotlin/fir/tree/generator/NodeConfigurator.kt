@@ -506,7 +506,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             // Special node that might be used as a reference to receiver of a safe call after null check
             +field("checkedSubjectRef", safeCallCheckedSubjectReferenceType)
             // One that uses checkedReceiver as a receiver
-            +field("regularQualifiedAccess", qualifiedAccess, withReplace = true).withTransform()
+            +field("selector", statement, withReplace = true).withTransform()
         }
 
         checkedSafeCallSubject.configure {

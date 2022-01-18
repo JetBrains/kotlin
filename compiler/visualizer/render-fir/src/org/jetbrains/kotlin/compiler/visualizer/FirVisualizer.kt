@@ -742,7 +742,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
         override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression, data: StringBuilder) {
             safeCallExpression.receiver.accept(this, data)
             data.append("?.{ ")
-            safeCallExpression.regularQualifiedAccess.accept(this, data)
+            safeCallExpression.selector.accept(this, data)
             data.append(" }")
         }
 

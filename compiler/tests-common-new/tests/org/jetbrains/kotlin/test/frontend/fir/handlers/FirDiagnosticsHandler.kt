@@ -12,14 +12,11 @@ import org.jetbrains.kotlin.checkers.utils.TypeOfCall
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.analysis.diagnostics.*
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpressionWithSmartcast
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -176,13 +173,16 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             }
 
             override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression) {
-                result.addIfNotNull(
-                    createCallDiagnosticIfExpected(
-                        safeCallExpression,
-                        safeCallExpression.regularQualifiedAccess.calleeReference as FirNamedReference,
-                        diagnosedRangesToDiagnosticNames
+                val selector = safeCallExpression.selector
+                if (selector is FirQualifiedAccess) {
+                    result.addIfNotNull(
+                        createCallDiagnosticIfExpected(
+                            safeCallExpression,
+                            selector.calleeReference as FirNamedReference,
+                            diagnosedRangesToDiagnosticNames
+                        )
                     )
-                )
+                }
 
                 super.visitSafeCallExpression(safeCallExpression)
             }

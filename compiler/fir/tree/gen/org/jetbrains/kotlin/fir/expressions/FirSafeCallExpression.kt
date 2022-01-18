@@ -22,7 +22,7 @@ abstract class FirSafeCallExpression : FirExpression() {
     abstract override val annotations: List<FirAnnotation>
     abstract val receiver: FirExpression
     abstract val checkedSubjectRef: FirExpressionRef<FirCheckedSafeCallSubject>
-    abstract val regularQualifiedAccess: FirQualifiedAccess
+    abstract val selector: FirStatement
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitSafeCallExpression(this, data)
 
@@ -32,11 +32,11 @@ abstract class FirSafeCallExpression : FirExpression() {
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
-    abstract fun replaceRegularQualifiedAccess(newRegularQualifiedAccess: FirQualifiedAccess)
+    abstract fun replaceSelector(newSelector: FirStatement)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSafeCallExpression
 
     abstract fun <D> transformReceiver(transformer: FirTransformer<D>, data: D): FirSafeCallExpression
 
-    abstract fun <D> transformRegularQualifiedAccess(transformer: FirTransformer<D>, data: D): FirSafeCallExpression
+    abstract fun <D> transformSelector(transformer: FirTransformer<D>, data: D): FirSafeCallExpression
 }

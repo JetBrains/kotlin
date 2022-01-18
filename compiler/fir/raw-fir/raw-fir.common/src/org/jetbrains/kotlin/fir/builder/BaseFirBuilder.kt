@@ -966,7 +966,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         value: FirExpression,
         annotations: List<FirAnnotation>
     ): FirSafeCallExpression {
-        val nestedAccess = safeCallNonAssignment.regularQualifiedAccess
+        val nestedAccess = safeCallNonAssignment.selector as FirQualifiedAccess
 
         val assignment = buildVariableAssignment {
             source = baseSource
@@ -976,7 +976,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             this.annotations += annotations
         }
 
-        safeCallNonAssignment.replaceRegularQualifiedAccess(
+        safeCallNonAssignment.replaceSelector(
             assignment
         )
 

@@ -155,7 +155,7 @@ internal class KtFirCallResolver(
             )
             // FIR does not resolve to a symbol for equality calls.
             is FirEqualityOperatorCall -> toKtCallInfo(psi)
-            is FirSafeCallExpression -> regularQualifiedAccess.toKtCallInfo(
+            is FirSafeCallExpression -> selector.toKtCallInfo(
                 psi,
                 resolveCalleeExpressionOfFunctionCall,
                 resolveFragmentOfCall

@@ -30,11 +30,9 @@ import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirPropertyWithExplicitBackingFieldResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
-import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.dfa.PropertyStability
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
@@ -50,7 +48,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.types.SmartcastStability
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
@@ -395,7 +392,7 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
     session: FirSession,
 ) {
     val receiverType = nullableReceiverExpression.typeRef.coneTypeSafe<ConeKotlinType>()
-    val typeAfterNullCheck = regularQualifiedAccess.expressionTypeOrUnitForAssignment() ?: return
+    val typeAfterNullCheck = (selector as? FirQualifiedAccess)?.expressionTypeOrUnitForAssignment() ?: return
     val isReceiverActuallyNullable = if (session.languageVersionSettings.supportsFeature(LanguageFeature.SafeCallsAreAlwaysNullable)) {
         true
     } else {

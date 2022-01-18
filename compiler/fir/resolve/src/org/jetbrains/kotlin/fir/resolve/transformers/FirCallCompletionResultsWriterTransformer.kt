@@ -354,7 +354,7 @@ class FirCallCompletionResultsWriterTransformer(
         safeCallExpression: FirSafeCallExpression,
         data: ExpectedArgumentType?
     ): FirStatement {
-        safeCallExpression.transformRegularQualifiedAccess(
+        safeCallExpression.transformSelector(
             this,
             data?.getExpectedType(
                 safeCallExpression

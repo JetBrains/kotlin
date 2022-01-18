@@ -391,7 +391,7 @@ class Fir2IrVisitor(
         )
 
         return conversionScope.withSafeCallSubject(receiverVariable) {
-            val afterNotNullCheck = safeCallExpression.regularQualifiedAccess.accept(this, data) as IrExpression
+            val afterNotNullCheck = safeCallExpression.selector.accept(this, data) as IrExpression
             components.createSafeCallConstruction(receiverVariable, variableSymbol, afterNotNullCheck)
         }
     }

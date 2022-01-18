@@ -464,7 +464,7 @@ fun FirStatement.processAllContainingCallCandidates(processBlocks: Boolean, proc
         }
 
         is FirSafeCallExpression -> {
-            this.regularQualifiedAccess.processAllContainingCallCandidates(processBlocks, processor)
+            this.selector.processAllContainingCallCandidates(processBlocks, processor)
         }
 
         is FirWhenExpression -> {

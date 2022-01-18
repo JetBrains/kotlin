@@ -119,7 +119,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 transformSuperReceiver(
                     callee,
                     qualifiedAccessExpression,
-                    containingSafeCallExpression?.takeIf { qualifiedAccessExpression == it.receiver }?.regularQualifiedAccess
+                    containingSafeCallExpression?.takeIf { qualifiedAccessExpression == it.receiver }?.selector as? FirQualifiedAccess
                 )
             }
             is FirDelegateFieldReference -> {
@@ -312,7 +312,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
             safeCallExpression.apply {
                 checkedSubjectRef.value.propagateTypeFromOriginalReceiver(receiver, components.session)
-                transformRegularQualifiedAccess(this@FirExpressionsResolveTransformer, data)
+                transformSelector(this@FirExpressionsResolveTransformer, data)
                 propagateTypeFromQualifiedAccessAfterNullCheck(receiver, session)
             }
 
@@ -685,7 +685,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             // AS operator doesn't add expected type to any other expressions
             // See https://kotlinlang.org/docs/whatsnew12.html#support-for-foo-as-a-shorthand-for-this-foo
             // And limitations at org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleterKt.isFunctionForExpectTypeFromCastFeature(org.jetbrains.kotlin.fir.declarations.FirFunction<?>)
-            if (argument is FirFunctionCall || (argument is FirSafeCallExpression && argument.regularQualifiedAccess is FirFunctionCall)) {
+            if (argument is FirFunctionCall || (argument is FirSafeCallExpression && argument.selector is FirFunctionCall)) {
                 val expectedType = conversionTypeRef.coneTypeSafe<ConeKotlinType>()?.takeIf {
                     // is not bare type
                     it !is ConeClassLikeType ||
