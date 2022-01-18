@@ -52,15 +52,13 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
             modulesMap[module] = parseModuleInfo(module, moduleInfoFile)
         }
 
-        val disposable = TestDisposable()
-        val environment = createEnvironment(disposable)
+        val environment = createEnvironment()
         val buildDir = createTempDirectory().toFile().also { it.mkdirs() }
 
         try {
             doTestImpl(environment, testDir, buildDir, projectInfo, modulesMap)
         } finally {
             buildDir.deleteRecursively()
-            disposable.dispose()
         }
     }
 
@@ -89,8 +87,8 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
         return modulesBuildDirs
     }
 
-    private fun createEnvironment(disposable: TestDisposable): KotlinCoreEnvironment {
-        return KotlinCoreEnvironment.createForTests(disposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+    private fun createEnvironment(): KotlinCoreEnvironment {
+        return KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
     }
 
     private fun collectDependenciesKlib(buildDir: File, dependencies: Collection<String>): List<String> {
