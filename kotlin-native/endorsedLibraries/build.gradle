@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.UtilsKt
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.EndorsedLibraryInfo
 import org.jetbrains.kotlin.UtilsKt
+import org.jetbrains.kotlin.konan.target.HostManager
 
 apply plugin: 'konan'
 
@@ -12,6 +13,10 @@ buildscript {
         else
             jcenter()
     }
+}
+
+if (HostManager.host.name == "macos_arm64") {
+    JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_17)
 }
 
 ext {
