@@ -28669,6 +28669,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("openMethodDefault.kt")
+            public void testOpenMethodDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/openMethodDefault.kt");
+            }
+
+            @Test
             @TestMetadata("openMethodNoOverrideDeepNonInline.kt")
             public void testOpenMethodNoOverrideDeepNonInline() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/sealed/openMethodNoOverrideDeepNonInline.kt");
@@ -28696,6 +28702,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("openMethodNoOverrideInNonInline.kt")
             public void testOpenMethodNoOverrideInNonInline() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/sealed/openMethodNoOverrideInNonInline.kt");
+            }
+
+            @Test
+            @TestMetadata("openMethodParam.kt")
+            public void testOpenMethodParam() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/openMethodParam.kt");
             }
 
             @Test
@@ -28738,6 +28750,18 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("overrideDefaultMethod.kt")
             public void testOverrideDefaultMethod() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/sealed/overrideDefaultMethod.kt");
+            }
+
+            @Test
+            @TestMetadata("overrideDefaultMethodDefault.kt")
+            public void testOverrideDefaultMethodDefault() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/overrideDefaultMethodDefault.kt");
+            }
+
+            @Test
+            @TestMetadata("overrideDefaultMethodParam.kt")
+            public void testOverrideDefaultMethodParam() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/sealed/overrideDefaultMethodParam.kt");
             }
 
             @Test
