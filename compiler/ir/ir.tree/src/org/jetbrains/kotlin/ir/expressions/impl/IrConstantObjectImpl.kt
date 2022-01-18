@@ -19,12 +19,18 @@ class IrConstantPrimitiveImpl(
 ) : IrConstantPrimitive() {
     override fun contentEquals(other: IrConstantValue) =
         other is IrConstantPrimitive &&
+                type == other.type &&
                 value.type == other.value.type &&
                 value.kind == other.value.kind &&
-                value.value == other.value
+                value.value == other.value.value
 
-    override fun contentHashCode() =
-        (value.type.hashCode() * 31 + value.kind.hashCode()) * 31 + value.value.hashCode()
+    override fun contentHashCode(): Int {
+        var result = type.hashCode()
+        result = result * 31 + value.type.hashCode()
+        result = result * 31 + value.kind.hashCode()
+        result = result * 31 + value.value.hashCode()
+        return result
+    }
 
     override var type = value.type
 }
