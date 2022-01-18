@@ -24,21 +24,20 @@ class InstrumentJava(@Transient val javaInstrumentator: Configuration, @Transien
     override fun execute(task: Task) {
         require(task is JavaCompile) { "$task is not of type JavaCompile!" }
         task.doLast {
-            task.ant.withGroovyBuilder {
-                "taskdef"(
-                    "name" to "instrumentIdeaExtensions",
-                    "classpath" to instrumentatorClasspath,
-                    "loaderref" to "java2.loader",
-                    "classname" to "com.intellij.ant.InstrumentIdeaExtensions"
-                )
-            }
+            val anySrcDir = srcDirs.filter { it.exists() }.firstOrNull()
+            if (anySrcDir != null) {
+                task.ant.withGroovyBuilder {
+                    "taskdef"(
+                        "name" to "instrumentIdeaExtensions",
+                        "classpath" to instrumentatorClasspath,
+                        "loaderref" to "java2.loader",
+                        "classname" to "com.intellij.ant.Javac2"
+                    )
+                }
 
-            val javaSourceDirectories = srcDirs.filter { it.exists() }
-
-            task.ant.withGroovyBuilder {
-                javaSourceDirectories.forEach { directory ->
+                task.ant.withGroovyBuilder {
                     "instrumentIdeaExtensions"(
-                        "srcdir" to directory,
+                        "srcdir" to anySrcDir, // No code should actually be compiled because of areJavaClassesCompiled==true in Javac2 - so any src folder will do.
                         "destdir" to task.destinationDirectory.asFile.get(),
                         "classpath" to task.classpath.asPath,
                         "includeantruntime" to false,
