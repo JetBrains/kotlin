@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -65,16 +65,17 @@ class FakeOverrideChecker(
         // Also there can be members inherited from internal interfaces of other modules.
         require(irSignatures.containsAll(descriptorSignatures)) {
             "[IR VALIDATION] Internal fake override mismatch for ${clazz.fqNameWhenAvailable!!}\n" +
-            "\tDescriptor based: $descriptorSignatures\n" +
-            "\tIR based        : $irSignatures"
+                    "\tDescriptor based: $descriptorSignatures\n" +
+                    "\tIR based        : $irSignatures"
         }
     }
 
     fun check(module: IrModuleFragment) {
-        module.acceptVoid(object : IrElementVisitorVoid {
+        module.acceptVoid(object : IrAbstractVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
             }
+
             override fun visitClass(declaration: IrClass) {
                 validateFakeOverrides(declaration)
                 super.visitClass(declaration)
