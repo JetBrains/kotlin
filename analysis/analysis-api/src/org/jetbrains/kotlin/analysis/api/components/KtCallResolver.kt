@@ -18,7 +18,8 @@ public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
         analysisSession.callResolver.resolveCall(this)
 
     public fun KtCallElement.resolveCall(): KtCallInfo =
-        analysisSession.callResolver.resolveCall(this) ?: error("KtCallElement should always resolve to a KtCallInfo")
+        analysisSession.callResolver.resolveCall(this)
+            ?: error("KtCallElement should always resolve to a KtCallInfo")
 
     public fun KtUnaryExpression.resolveCall(): KtCallInfo =
         analysisSession.callResolver.resolveCall(this) ?: error("KtUnaryExpression should always resolve to a KtCallInfo")
