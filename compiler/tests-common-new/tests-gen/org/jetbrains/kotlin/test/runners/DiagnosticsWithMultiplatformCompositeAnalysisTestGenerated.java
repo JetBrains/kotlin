@@ -25,6 +25,22 @@ public class DiagnosticsWithMultiplatformCompositeAnalysisTestGenerated extends 
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/constVals")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ConstVals {
+        @Test
+        public void testAllFilesPresentInConstVals() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/constVals"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("nonConstExpectConstActual.kt")
+        public void testNonConstExpectConstActual() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/constVals/nonConstExpectConstActual.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/defaultArguments")
     @TestDataPath("$PROJECT_ROOT")
     public class DefaultArguments {
