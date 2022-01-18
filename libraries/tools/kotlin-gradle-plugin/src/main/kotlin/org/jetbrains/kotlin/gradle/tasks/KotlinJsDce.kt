@@ -132,7 +132,7 @@ abstract class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), Kotl
             buildDir,
             jvmArgs
         )
-        throwGradleExceptionIfError(exitCode)
+        throwGradleExceptionIfError(exitCode, KotlinCompilerExecutionStrategy.OUT_OF_PROCESS)
     }
 
     private fun isDceCandidate(file: File): Boolean {
