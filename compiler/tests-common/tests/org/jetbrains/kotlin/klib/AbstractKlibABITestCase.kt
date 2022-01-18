@@ -23,10 +23,17 @@ import kotlin.io.path.createTempDirectory
 
 abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
     protected lateinit var buildDir: File
+    protected lateinit var environment: KotlinCoreEnvironment
 
     override fun setUp() {
         super.setUp()
         buildDir = createTempDirectory().toFile().also { it.mkdirs() }
+
+        environment = KotlinCoreEnvironment.createForTests(
+            testRootDisposable,
+            CompilerConfiguration(),
+            EnvironmentConfigFiles.JS_CONFIG_FILES
+        )
     }
 
     override fun tearDown() {
@@ -61,7 +68,6 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
             modulesMap[module] = parseModuleInfo(module, moduleInfoFile)
         }
 
-        val environment = createEnvironment()
         val modulesBuildDirs = prepareBuildDirs(testDir, buildDir, projectInfo)
 
         for (projectStep in projectInfo.steps) {
@@ -78,7 +84,7 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
                 val klibFile = moduleBuildDir.toKlibFile(module)
                 if (klibFile.exists()) klibFile.delete()
                 val dependencies = collectDependenciesKlib(buildDir, moduleStep.dependencies)
-                buildKlib(environment, module, moduleSourceDir, dependencies, klibFile)
+                buildKlib(module, moduleSourceDir, dependencies, klibFile)
             }
         }
 
@@ -118,10 +124,6 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
         return modulesBuildDirs
     }
 
-    private fun createEnvironment(): KotlinCoreEnvironment {
-        return KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
-    }
-
     private fun collectDependenciesKlib(buildDir: File, dependencies: Collection<String>): List<String> {
         val result = ArrayList<String>(dependencies.size)
 
@@ -150,7 +152,6 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
         return result
     }
 
-
     private fun KotlinCoreEnvironment.createPsiFiles(sourceDir: File): Collection<KtFile> {
         val psiManager = PsiManager.getInstance(project)
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL) as CoreLocalFileSystem
@@ -173,7 +174,6 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
     )
 
     private fun buildKlib(
-        environment: KotlinCoreEnvironment,
         moduleName: String,
         sourceDir: File,
         dependencies: List<String>,
