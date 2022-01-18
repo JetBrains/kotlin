@@ -35,9 +35,8 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -118,7 +117,10 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
                             declaration.isEnumClass -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_ENUM)
                             declaration.isEnumEntry -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_ENUM_ENTRY)
                             // TODO: ClosureAnnotator is not catching companion's closures, so the following reporting never happens. Make it work or drop
-                            declaration.isCompanion -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_OBJECT, SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
+                            declaration.isCompanion -> reportError(
+                                JvmBackendErrors.SCRIPT_CAPTURING_OBJECT,
+                                SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
+                            )
                             declaration.kind.isSingleton -> reportError(JvmBackendErrors.SCRIPT_CAPTURING_OBJECT)
 
                             declaration.isClass ->
@@ -161,7 +163,7 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
         irScriptClass.thisReceiver = scriptTransformer.scriptClassReceiver
 
         val defaultContext = ScriptToClassTransformerContext(irScriptClass.thisReceiver?.symbol, null, null)
-        fun <E: IrElement> E.patchForClass(): IrElement {
+        fun <E : IrElement> E.patchForClass(): IrElement {
             return transform(scriptTransformer, defaultContext)
                 .transform(lambdaPatcher, ScriptFixLambdasTransformerContext())
         }
@@ -349,7 +351,7 @@ private class ScriptToClassTransformer(
     val context: JvmBackendContext,
     val capturingClasses: Set<IrClassImpl>,
     val innerClassesSupport: JvmInnerClassesSupport
-) : IrElementTransformer<ScriptToClassTransformerContext> {
+) : IrAbstractTransformer<ScriptToClassTransformerContext>() {
 
     private fun IrType.remapType() = typeRemapper.remapType(this)
 
@@ -406,16 +408,21 @@ private class ScriptToClassTransformer(
 
     override fun visitElement(element: IrElement, data: ScriptToClassTransformerContext): IrElement = unexpectedElement(element)
 
-    override fun visitModuleFragment(declaration: IrModuleFragment, data: ScriptToClassTransformerContext): IrModuleFragment = unexpectedElement(declaration)
-    override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: ScriptToClassTransformerContext) = unexpectedElement(declaration)
+    override fun visitModuleFragment(declaration: IrModuleFragment, data: ScriptToClassTransformerContext): IrModuleFragment =
+        unexpectedElement(declaration)
+
+    override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: ScriptToClassTransformerContext) =
+        unexpectedElement(declaration)
+
     override fun visitFile(declaration: IrFile, data: ScriptToClassTransformerContext): IrFile = unexpectedElement(declaration)
     override fun visitScript(declaration: IrScript, data: ScriptToClassTransformerContext): IrStatement = unexpectedElement(declaration)
 
-    override fun visitDeclaration(declaration: IrDeclarationBase, data: ScriptToClassTransformerContext): IrStatement = declaration.apply {
-        transformParent()
-        transformAnnotations(data)
-        transformChildren(this@ScriptToClassTransformer, data)
-    }
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: ScriptToClassTransformerContext): IrStatement =
+        declaration.apply {
+            transformParent()
+            transformAnnotations(data)
+            transformChildren(this@ScriptToClassTransformer, data)
+        }
 
     override fun visitClass(declaration: IrClass, data: ScriptToClassTransformerContext): IrClass = declaration.apply {
         superTypes = superTypes.map {
@@ -451,7 +458,7 @@ private class ScriptToClassTransformer(
     override fun visitConstructor(declaration: IrConstructor, data: ScriptToClassTransformerContext): IrConstructor = declaration.apply {
         if (declaration in capturingClassesConstructors) {
             declaration.dispatchReceiverParameter =
-                IrValueParameterBuilder().run<IrValueParameterBuilder, IrValueParameter> {
+                IrValueParameterBuilder().run {
                     name = SpecialNames.THIS
                     type = scriptClassReceiver.type
                     declaration.factory.createValueParameter(
@@ -528,7 +535,7 @@ private class ScriptToClassTransformer(
         }
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: ScriptToClassTransformerContext): IrExpression {
-        capturingClassesConstructors.keys.find {  it.symbol == expression.symbol }?.let {
+        capturingClassesConstructors.keys.find { it.symbol == expression.symbol }?.let {
             expression.dispatchReceiver =
                 getAccessCallForScriptInstance(data, expression.startOffset, expression.endOffset, expression.origin)
         }
@@ -631,7 +638,7 @@ private class ScriptFixLambdasTransformer(
     val irScript: IrScript,
     val irScriptClass: IrClass,
     val context: JvmBackendContext
-) : IrElementTransformer<ScriptFixLambdasTransformerContext> {
+) : IrAbstractTransformer<ScriptFixLambdasTransformerContext>() {
 
     private fun unexpectedElement(element: IrElement): Nothing =
         throw IllegalArgumentException("Unsupported element type: $element")

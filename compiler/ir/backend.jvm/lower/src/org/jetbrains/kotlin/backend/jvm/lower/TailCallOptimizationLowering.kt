@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -32,7 +32,7 @@ internal val tailCallOptimizationPhase = makeIrFilePhase(
 // code which is understandable by old BE's tail-call optimizer.
 private class TailCallOptimizationLowering(private val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.transformChildren(object : IrElementTransformer<TailCallOptimizationData?> {
+        irFile.transformChildren(object : IrAbstractTransformer<TailCallOptimizationData?>() {
             override fun visitSimpleFunction(declaration: IrSimpleFunction, data: TailCallOptimizationData?) =
                 super.visitSimpleFunction(declaration, if (declaration.isSuspend) TailCallOptimizationData(declaration) else null)
 

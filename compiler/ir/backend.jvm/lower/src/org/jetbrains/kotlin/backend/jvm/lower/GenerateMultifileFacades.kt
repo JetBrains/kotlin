@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -294,7 +295,7 @@ private class CorrespondingPropertyCache(private val context: JvmBackendContext,
 
 private class UpdateFunctionCallSites(
     private val functionDelegates: MutableMap<IrSimpleFunction, IrSimpleFunction>
-) : FileLoweringPass, IrElementTransformer<IrFunction?> {
+) : IrAbstractTransformer<IrFunction?>(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildren(this, null)
     }

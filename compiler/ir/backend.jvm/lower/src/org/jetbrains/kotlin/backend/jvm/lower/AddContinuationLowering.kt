@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
@@ -240,7 +240,8 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                     if (owner is IrValueParameter && isInstanceReceiverOfOuterClass(owner)) {
                         // If inner class has inner classes, we need to traverse this$0 chain to get to captured dispatch receivers
                         var cursor = irFunction.parentAsClass
-                        var value: IrExpression = IrGetValueImpl(expression.startOffset, expression.endOffset, movedDispatchParameter.symbol)
+                        var value: IrExpression =
+                            IrGetValueImpl(expression.startOffset, expression.endOffset, movedDispatchParameter.symbol)
                         while (cursor != owner.parent) {
                             val outerThisField = context.innerClassesSupport.getOuterThisField(cursor)
                             value = IrGetFieldImpl(
@@ -290,7 +291,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
 
     private fun addContinuationObjectAndContinuationParameterToSuspendFunctions(irFile: IrFile) {
         class MutableFlag(var capturesCrossinline: Boolean)
-        irFile.accept(object : IrElementTransformer<MutableFlag?> {
+        irFile.accept(object : IrAbstractTransformer<MutableFlag?>() {
             override fun visitClass(declaration: IrClass, data: MutableFlag?): IrStatement {
                 declaration.transformDeclarationsFlat {
                     if (it is IrSimpleFunction && it.isSuspend)

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 
 internal val assertionPhase = makeIrFilePhase(
     ::AssertionLowering,
@@ -38,8 +38,8 @@ internal val assertionPhase = makeIrFilePhase(
 )
 
 private class AssertionLowering(private val context: JvmBackendContext) :
-    FileLoweringPass,
-    IrElementTransformer<AssertionLowering.ClassInfo?>
+    IrAbstractTransformer<AssertionLowering.ClassInfo?>(),
+    FileLoweringPass
 {
     // Keeps track of the $assertionsDisabled field, which we generate lazily for classes containing
     // assertions when compiled with -Xassertions=jvm.

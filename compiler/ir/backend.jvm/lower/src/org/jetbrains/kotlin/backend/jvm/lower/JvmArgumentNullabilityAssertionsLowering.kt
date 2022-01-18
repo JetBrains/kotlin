@@ -12,11 +12,11 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.hasPlatformDependent
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val jvmArgumentNullabilityAssertions = makeIrFilePhase(
@@ -31,8 +31,9 @@ private enum class AssertionScope {
     Enabled, Disabled
 }
 
-private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContext) : FileLoweringPass,
-    IrElementTransformer<AssertionScope> {
+private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContext) :
+    IrAbstractTransformer<AssertionScope>(),
+    FileLoweringPass {
 
     private val isWithUnifiedNullChecks = context.state.unifiedNullChecks
     private val isCallAssertionsDisabled = context.state.isCallAssertionsDisabled

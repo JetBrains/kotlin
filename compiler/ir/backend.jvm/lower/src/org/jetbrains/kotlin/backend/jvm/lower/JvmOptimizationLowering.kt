@@ -24,16 +24,12 @@ import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.copyWithOffsets
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal val jvmOptimizationLoweringPhase = makeIrFilePhase(
@@ -82,7 +78,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
     private inner class Transformer(
         private val fileEntry: IrFileEntry,
         private val inlineScopeResolver: IrInlineScopeResolver
-    ) : IrElementTransformer<IrDeclaration?> {
+    ) : IrAbstractTransformer<IrDeclaration?>() {
 
         private val dontTouchTemporaryVals = HashSet<IrVariable>()
 
