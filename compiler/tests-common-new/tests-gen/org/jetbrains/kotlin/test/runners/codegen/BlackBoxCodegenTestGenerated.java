@@ -41500,6 +41500,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("differingNumberOfGenericTypeParameters.kt")
+        public void testDifferingNumberOfGenericTypeParameters() throws Exception {
+            runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/differingNumberOfGenericTypeParameters.kt");
+        }
+
+        @Test
         @TestMetadata("functionDeclaration.kt")
         public void testFunctionDeclaration() throws Exception {
             runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/functionDeclaration.kt");

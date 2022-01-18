@@ -25026,6 +25026,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/classDeclaration.kt");
         }
 
+        @TestMetadata("differingNumberOfGenericTypeParameters.kt")
+        public void testDifferingNumberOfGenericTypeParameters() throws Exception {
+            runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/differingNumberOfGenericTypeParameters.kt");
+        }
+
         @TestMetadata("functionDeclaration.kt")
         public void testFunctionDeclaration() throws Exception {
             runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/functionDeclaration.kt");

@@ -137,7 +137,7 @@ class IrInlineCodegen(
                     val argValue = if (irValueParameter.index >= 0)
                         codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo)
                     else
-                        codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
+                        codegen.genToStackValue(argumentExpression, parameterType, irValueParameter.type, blockInfo)
                     if (inlineArgumentsInPlace) {
                         codegen.visitor.addInplaceArgumentEndMarker()
                     }
