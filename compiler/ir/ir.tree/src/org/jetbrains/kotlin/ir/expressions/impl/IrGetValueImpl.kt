@@ -23,7 +23,7 @@ class IrGetValueImpl(
         symbol: IrValueSymbol,
         origin: IrStatementOrigin? = null
     ) : this(startOffset, endOffset, symbol.owner.type, symbol, origin)
-
-    override fun copyWithOffsets(newStartOffset: Int, newEndOffset: Int): IrGetValue =
-        IrGetValueImpl(newStartOffset, newEndOffset, type, symbol, origin)
 }
+
+fun IrGetValue.copyWithOffsets(newStartOffset: Int, newEndOffset: Int): IrGetValue =
+    IrGetValueImpl(newStartOffset, newEndOffset, type, symbol, origin)

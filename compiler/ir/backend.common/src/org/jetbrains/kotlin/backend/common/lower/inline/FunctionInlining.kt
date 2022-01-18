@@ -662,9 +662,6 @@ class FunctionInlining(
 
         fun withLocation(startOffset: Int, endOffset: Int) =
             IrGetValueImpl(startOffset, endOffset, type, symbol, origin)
-
-        override fun copyWithOffsets(newStartOffset: Int, newEndOffset: Int): IrGetValue =
-            withLocation(newStartOffset, newEndOffset)
     }
 }
 
