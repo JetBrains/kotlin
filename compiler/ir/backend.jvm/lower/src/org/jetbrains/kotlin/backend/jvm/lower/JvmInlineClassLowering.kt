@@ -700,7 +700,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
         with(context.createIrBuilder(function.symbol)) {
             function.body = irBlockBody {
-                val param = irTemporary(
+                val receiver = irTemporary(
                     coerceInlineClasses(
                         irGet(function.valueParameters[0]),
                         function.valueParameters[0].type,
@@ -710,24 +710,30 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
 
                 val branches = overridesInNoinline.map {
                     irBranch(
-                        irIs(irGet(param), it.owner.parentAsClass.defaultType),
+                        irIs(irGet(receiver), it.owner.parentAsClass.defaultType),
                         irReturn(irCall(it).apply {
-                            dispatchReceiver = irImplicitCast(irGet(param), it.owner.parentAsClass.defaultType)
+                            dispatchReceiver = irImplicitCast(irGet(receiver), it.owner.parentAsClass.defaultType)
+                            for ((index, param) in function.valueParameters.drop(1).withIndex()) {
+                                putValueArgument(index, irGet(param))
+                            }
                         })
                     )
                 } + overridesInInline.map {
                     val underlyingType = it.owner.parentAsClass.inlineClassRepresentation!!.underlyingType
                     val toCall = replacements.getReplacementFunction(it.owner)!!
                     irBranch(
-                        irIs(irGet(param), underlyingType),
+                        irIs(irGet(receiver), underlyingType),
                         irReturn(irCall(toCall.symbol).apply {
                             putValueArgument(
                                 0, coerceInlineClasses(
-                                    irImplicitCast(irGet(param), underlyingType),
+                                    irImplicitCast(irGet(receiver), underlyingType),
                                     underlyingType,
                                     it.owner.parentAsClass.defaultType
                                 )
                             )
+                            for ((index, param) in function.valueParameters.drop(1).withIndex()) {
+                                putValueArgument(index + 1, irGet(param))
+                            }
                         })
                     )
                 } + irBranch(
@@ -735,7 +741,18 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                     when {
                         function.attributeOwnerId.let { it is IrSimpleFunction && it.isFakeOverride } -> {
                             val overridden = function.overriddenSymbols.find { !it.owner.isFakeOverride }!!
-                            irCall(overridden).apply { putValueArgument(0, irGet(param)) }
+                            irCall(overridden).apply {
+                                var shift = 0
+                                if (overridden.owner.parentAsClass.isInline) {
+                                    putValueArgument(0, irGet(receiver))
+                                    shift++
+                                } else {
+                                    dispatchReceiver = irGet(receiver)
+                                }
+                                for ((index, param) in function.valueParameters.drop(1).withIndex()) {
+                                    putValueArgument(index + shift, irGet(param))
+                                }
+                            }
                         }
                         oldBody is IrExpressionBody -> oldBody.expression
                         oldBody is IrBlockBody -> irComposite {
