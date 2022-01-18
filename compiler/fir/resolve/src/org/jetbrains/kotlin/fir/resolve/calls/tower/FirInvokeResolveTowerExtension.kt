@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePropertyAsOperator
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
-import org.jetbrains.kotlin.fir.types.isExtensionFunctionType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -150,7 +148,10 @@ internal class FirInvokeResolveTowerExtension(
             val isExtensionFunctionType =
                 (symbol as? FirCallableSymbol<*>)?.fir?.returnTypeRef?.isExtensionFunctionType(components.session) == true
 
-            if (invokeBuiltinExtensionMode && !isExtensionFunctionType) {
+            val typeRef = (symbol as? FirCallableSymbol<*>)?.fir?.returnTypeRef
+            val isDynamicType = typeRef is FirResolvedTypeRef && typeRef.coneType is ConeDynamicType
+
+            if (invokeBuiltinExtensionMode && !isExtensionFunctionType || isDynamicType) {
                 continue
             }
 
