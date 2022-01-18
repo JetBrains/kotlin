@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.dataframe
 
 import com.intellij.mock.MockProject
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
@@ -19,6 +20,6 @@ class FirDataFrameExtensionRegistrar : FirExtensionRegistrar() {
 class FirDataFrameComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         FirExtensionRegistrar.registerExtension(project, FirDataFrameExtensionRegistrar())
-        //IrGenerationExtension.registerExtension(project, GeneratedDeclarationsIrBodyFiller())
+        IrGenerationExtension.registerExtension(project, DataFrameIrBodyFiller())
     }
 }

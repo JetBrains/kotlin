@@ -1,0 +1,92 @@
+FILE: OuterClass.kt
+    public final class OuterClass : R|kotlin/Any| {
+        public constructor(): R|OuterClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|org/jetbrains/dataframe/annotations/DataSchema|(isOpen = Boolean(false)) public abstract interface Hello : R|kotlin/Any| {
+        public abstract val name: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public abstract val test name: R|Hello.InnerClass|
+            public get(): R|Hello.InnerClass|
+
+        public abstract val nullableProperty: R|kotlin/Int?|
+            public get(): R|kotlin/Int?|
+
+        public abstract val a: R|() -> kotlin/Unit|
+            public get(): R|() -> kotlin/Unit|
+
+        public abstract val d: R|kotlin/collections/List<kotlin/collections/List<*>>|
+            public get(): R|kotlin/collections/List<kotlin/collections/List<*>>|
+
+        public final class InnerClass : R|kotlin/Any| {
+            public constructor(): R|Hello.InnerClass| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final val R|org/jetbrains/dataframe/DataFrameBase<Hello>|.col1: R|org/jetbrains/dataframe/columns/DataColumn<kotlin/String>|
+        public get(): R|org/jetbrains/dataframe/columns/DataColumn<kotlin/String>| {
+            ^ this@R|/col1|.R|/name|
+        }
+    public final val R|org/jetbrains/dataframe/DataFrameBase<Hello>|.col2: R|org/jetbrains/dataframe/columns/DataColumn<Hello.InnerClass>|
+        public get(): R|org/jetbrains/dataframe/columns/DataColumn<Hello.InnerClass>| {
+            ^ this@R|/col2|.R|/test name|
+        }
+    public final val R|org/jetbrains/dataframe/DataFrameBase<Hello>|.col3: R|org/jetbrains/dataframe/columns/DataColumn<kotlin/Int?>|
+        public get(): R|org/jetbrains/dataframe/columns/DataColumn<kotlin/Int?>| {
+            ^ this@R|/col3|.R|/nullableProperty|
+        }
+    public final val R|org/jetbrains/dataframe/DataFrameBase<Hello>|.col4: R|org/jetbrains/dataframe/columns/DataColumn<kotlin/Function0<kotlin/Unit>>|
+        public get(): R|org/jetbrains/dataframe/columns/DataColumn<kotlin/Function0<kotlin/Unit>>| {
+            ^ this@R|/col4|.R|/a|
+        }
+    public final val R|org/jetbrains/dataframe/DataFrameBase<Hello>|.col5: R|org/jetbrains/dataframe/columns/DataColumn<kotlin/collections/List<kotlin/collections/List<*>>>|
+        public get(): R|org/jetbrains/dataframe/columns/DataColumn<kotlin/collections/List<kotlin/collections/List<*>>>| {
+            ^ this@R|/col5|.R|/d|
+        }
+    public final val R|org/jetbrains/dataframe/DataRowBase<Hello>|.row1: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ this@R|/row1|.R|/name|
+        }
+    public final val R|org/jetbrains/dataframe/DataRowBase<Hello>|.row2: R|Hello.InnerClass|
+        public get(): R|Hello.InnerClass| {
+            ^ this@R|/row2|.R|/test name|
+        }
+    public final val R|org/jetbrains/dataframe/DataRowBase<Hello>|.row3: R|kotlin/Int?|
+        public get(): R|kotlin/Int?| {
+            ^ this@R|/row3|.R|/nullableProperty|
+        }
+    public final val R|org/jetbrains/dataframe/DataRowBase<Hello>|.row4: R|() -> kotlin/Unit|
+        public get(): R|() -> kotlin/Unit| {
+            ^ this@R|/row4|.R|/a|
+        }
+    public final val R|org/jetbrains/dataframe/DataRowBase<Hello>|.row5: R|kotlin/collections/List<kotlin/collections/List<*>>|
+        public get(): R|kotlin/collections/List<kotlin/collections/List<*>>| {
+            ^ this@R|/row5|.R|/d|
+        }
+FILE: __GENERATED DECLARATIONS__.kt
+    public final val R|org/jetbrains/dataframe/DataRowBase<Hello>|.name: R|kotlin/String|
+        public get(): R|kotlin/String|
+    public final val R|org/jetbrains/dataframe/DataFrameBase<Hello>|.name: R|org/jetbrains/dataframe/columns/DataColumn<kotlin/String>|
+        public get(): R|org/jetbrains/dataframe/columns/DataColumn<kotlin/String>|
+    public final val R|org/jetbrains/dataframe/DataRowBase<Hello>|.test name: R|Hello.InnerClass|
+        public get(): R|Hello.InnerClass|
+    public final val R|org/jetbrains/dataframe/DataFrameBase<Hello>|.test name: R|org/jetbrains/dataframe/columns/DataColumn<Hello.InnerClass>|
+        public get(): R|org/jetbrains/dataframe/columns/DataColumn<Hello.InnerClass>|
+    public final val R|org/jetbrains/dataframe/DataRowBase<Hello>|.nullableProperty: R|kotlin/Int?|
+        public get(): R|kotlin/Int?|
+    public final val R|org/jetbrains/dataframe/DataFrameBase<Hello>|.nullableProperty: R|org/jetbrains/dataframe/columns/DataColumn<kotlin/Int?>|
+        public get(): R|org/jetbrains/dataframe/columns/DataColumn<kotlin/Int?>|
+    public final val R|org/jetbrains/dataframe/DataRowBase<Hello>|.a: R|() -> kotlin/Unit|
+        public get(): R|() -> kotlin/Unit|
+    public final val R|org/jetbrains/dataframe/DataFrameBase<Hello>|.a: R|org/jetbrains/dataframe/columns/DataColumn<kotlin/Function0<kotlin/Unit>>|
+        public get(): R|org/jetbrains/dataframe/columns/DataColumn<kotlin/Function0<kotlin/Unit>>|
+    public final val R|org/jetbrains/dataframe/DataRowBase<Hello>|.d: R|kotlin/collections/List<kotlin/collections/List<*>>|
+        public get(): R|kotlin/collections/List<kotlin/collections/List<*>>|
+    public final val R|org/jetbrains/dataframe/DataFrameBase<Hello>|.d: R|org/jetbrains/dataframe/columns/DataColumn<kotlin/collections/List<kotlin/collections/List<*>>>|
+        public get(): R|org/jetbrains/dataframe/columns/DataColumn<kotlin/collections/List<kotlin/collections/List<*>>>|

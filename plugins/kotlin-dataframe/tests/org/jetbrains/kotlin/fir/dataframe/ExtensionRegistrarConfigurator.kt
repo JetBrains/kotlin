@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.dataframe
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -13,5 +14,6 @@ import org.jetbrains.kotlin.test.services.TestServices
 class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun registerCompilerExtensions(project: Project) {
         FirExtensionRegistrar.registerExtension(project, FirDataFrameExtensionRegistrar())
+        IrGenerationExtension.registerExtension(project, DataFrameIrBodyFiller())
     }
 }
