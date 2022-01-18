@@ -1,5 +1,3 @@
-import org.gradle.jvm.tasks.Jar
-
 plugins {
     kotlin("jvm")
 }
@@ -20,7 +18,12 @@ val generateAbstractBinaryContainer by generator(
     sourceSets["main"]
 )
 
-listOf(generateMppTargetContainerWithPresets, generateAbstractBinaryContainer).forEach {
+val generateKpmNativeVariants by generator(
+    "org.jetbrains.kotlin.generators.gradle.dsl.KpmNativeVariantCodegenKt",
+    sourceSets["main"]
+)
+
+listOf(generateMppTargetContainerWithPresets, generateAbstractBinaryContainer, generateKpmNativeVariants).forEach {
     it.systemProperty(
         "org.jetbrains.kotlin.generators.gradle.dsl.outputSourceRoot",
         project(":kotlin-gradle-plugin").projectDir.resolve("src/main/kotlin").absolutePath

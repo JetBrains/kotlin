@@ -22,13 +22,6 @@ internal fun registerDefaultVariantFactories(project: Project) {
             constructor.variantClass, KotlinNativeVariantFactory(module, constructor)
         )
 
-        listOf(
-            // FIXME codegen, add missing native targets
-            KotlinLinuxX64Variant.constructor,
-            KotlinMacosX64Variant.constructor,
-            KotlinMacosArm64Variant.constructor,
-            KotlinIosX64Variant.constructor,
-            KotlinIosArm64Variant.constructor
-        ).forEach { constructor -> registerNativeVariantFactory(constructor) }
+        allKpmNativeVariantConstructors.forEach { constructor -> registerNativeVariantFactory(constructor) }
     }
 }
