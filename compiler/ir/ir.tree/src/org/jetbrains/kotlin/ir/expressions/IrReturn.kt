@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
@@ -29,6 +30,10 @@ abstract class IrReturn : IrExpression() {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        value = value.transform(transformer, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrAbstractTransformer<D>, data: D) {
         value = value.transform(transformer, data)
     }
 }

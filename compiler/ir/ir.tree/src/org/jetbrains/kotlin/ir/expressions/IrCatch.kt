@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 
 abstract class IrCatch : IrElementBase() {
     abstract var catchParameter: IrVariable
@@ -34,7 +35,15 @@ abstract class IrCatch : IrElementBase() {
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrCatch =
         super.transform(transformer, data) as IrCatch
 
+    override fun <D> transform(transformer: IrAbstractTransformer<D>, data: D): IrCatch =
+        super.transform(transformer, data) as IrCatch
+
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        catchParameter = catchParameter.transform(transformer, data) as IrVariable
+        result = result.transform(transformer, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrAbstractTransformer<D>, data: D) {
         catchParameter = catchParameter.transform(transformer, data) as IrVariable
         result = result.transform(transformer, data)
     }

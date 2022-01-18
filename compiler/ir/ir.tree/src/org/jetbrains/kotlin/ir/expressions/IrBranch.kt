@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElementBase
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 
 abstract class IrBranch : IrElementBase() {
     abstract var condition: IrExpression
@@ -33,7 +34,15 @@ abstract class IrBranch : IrElementBase() {
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBranch =
         transformer.visitBranch(this, data)
 
+    override fun <D> transform(transformer: IrAbstractTransformer<D>, data: D): IrBranch =
+        transformer.visitBranch(this, data)
+
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        condition = condition.transform(transformer, data)
+        result = result.transform(transformer, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrAbstractTransformer<D>, data: D) {
         condition = condition.transform(transformer, data)
         result = result.transform(transformer, data)
     }

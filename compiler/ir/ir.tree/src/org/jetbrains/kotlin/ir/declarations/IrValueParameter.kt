@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
@@ -41,6 +43,9 @@ abstract class IrValueParameter : IrValueDeclaration() {
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrValueParameter =
         transformer.visitValueParameter(this, data) as IrValueParameter
 
+    override fun <D> transform(transformer: IrAbstractTransformer<D>, data: D): IrValueParameter =
+        transformer.visitValueParameter(this, data) as IrValueParameter
+
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         defaultValue?.accept(visitor, data)
     }
@@ -50,6 +55,10 @@ abstract class IrValueParameter : IrValueDeclaration() {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        defaultValue = defaultValue?.transform(transformer, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrAbstractTransformer<D>, data: D) {
         defaultValue = defaultValue?.transform(transformer, data)
     }
 }

@@ -5,10 +5,15 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 abstract class IrBody : IrElementBase() {
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrBody =
+        accept(transformer, data) as IrBody
+
+    override fun <D> transform(transformer: IrAbstractTransformer<D>, data: D): IrBody =
         accept(transformer, data) as IrBody
 }

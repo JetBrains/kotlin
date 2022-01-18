@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
@@ -63,7 +64,7 @@ abstract class IrScript :
 
     @Suppress("DuplicatedCode")
     override fun <D> acceptChildren(visitor: IrAbstractVisitor<Unit, D>, data: D) {
-        super<IrStatementContainer>.acceptChildren(visitor, data)
+        statements.forEach { it.accept(visitor, data) }
         thisReceiver.accept(visitor, data)
         explicitCallParameters.forEach { it.accept(visitor, data) }
         implicitReceiversParameters.forEach { it.accept(visitor, data) }
@@ -71,7 +72,18 @@ abstract class IrScript :
         earlierScriptsParameter?.accept(visitor, data)
     }
 
+    @Suppress("DuplicatedCode")
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        statements.transformInPlace(transformer, data)
+        thisReceiver = thisReceiver.transform(transformer, data)
+        explicitCallParameters = explicitCallParameters.map { it.transform(transformer, data) }
+        implicitReceiversParameters = implicitReceiversParameters.map { it.transform(transformer, data) }
+        providedProperties = providedProperties.map { it.first.transform(transformer, data) to it.second }
+        earlierScriptsParameter = earlierScriptsParameter?.transform(transformer, data)
+    }
+
+    @Suppress("DuplicatedCode")
+    override fun <D> transformChildren(transformer: IrAbstractTransformer<D>, data: D) {
         statements.transformInPlace(transformer, data)
         thisReceiver = thisReceiver.transform(transformer, data)
         explicitCallParameters = explicitCallParameters.map { it.transform(transformer, data) }

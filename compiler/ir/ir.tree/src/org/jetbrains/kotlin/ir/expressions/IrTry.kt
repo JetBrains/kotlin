@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
@@ -35,6 +36,14 @@ abstract class IrTry : IrExpression() {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        tryResult = tryResult.transform(transformer, data)
+        catches.forEachIndexed { i, irCatch ->
+            catches[i] = irCatch.transform(transformer, data)
+        }
+        finallyExpression = finallyExpression?.transform(transformer, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrAbstractTransformer<D>, data: D) {
         tryResult = tryResult.transform(transformer, data)
         catches.forEachIndexed { i, irCatch ->
             catches[i] = irCatch.transform(transformer, data)

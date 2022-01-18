@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
@@ -23,6 +24,9 @@ abstract class IrSpreadElement : IrElementBase(), IrVarargElement {
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement =
         accept(transformer, data) as IrSpreadElement
 
+    override fun <D> transform(transformer: IrAbstractTransformer<D>, data: D): IrElement =
+        accept(transformer, data) as IrSpreadElement
+
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         expression.accept(visitor, data)
     }
@@ -32,6 +36,10 @@ abstract class IrSpreadElement : IrElementBase(), IrVarargElement {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        expression = expression.transform(transformer, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrAbstractTransformer<D>, data: D) {
         expression = expression.transform(transformer, data)
     }
 }

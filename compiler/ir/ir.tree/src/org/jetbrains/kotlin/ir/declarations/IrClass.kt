@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
@@ -62,6 +63,12 @@ abstract class IrClass :
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        typeParameters = typeParameters.transformIfNeeded(transformer, data)
+        declarations.transformInPlace(transformer, data)
+        thisReceiver = thisReceiver?.transform(transformer, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrAbstractTransformer<D>, data: D) {
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
         declarations.transformInPlace(transformer, data)
         thisReceiver = thisReceiver?.transform(transformer, data)

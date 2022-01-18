@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
+import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
 
 abstract class IrElseBranch : IrBranch() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
@@ -17,5 +18,8 @@ abstract class IrElseBranch : IrBranch() {
         visitor.visitElseBranch(this, data)
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElseBranch =
+        transformer.visitElseBranch(this, data)
+
+    override fun <D> transform(transformer: IrAbstractTransformer<D>, data: D): IrElseBranch =
         transformer.visitElseBranch(this, data)
 }

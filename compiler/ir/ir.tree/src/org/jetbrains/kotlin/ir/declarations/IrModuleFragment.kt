@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.util.transformInPlace
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
@@ -44,7 +46,14 @@ abstract class IrModuleFragment : IrElementBase() {
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrModuleFragment =
         accept(transformer, data) as IrModuleFragment
 
+    override fun <D> transform(transformer: IrAbstractTransformer<D>, data: D): IrElement =
+        accept(transformer, data) as IrModuleFragment
+
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        files.transformInPlace(transformer, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrAbstractTransformer<D>, data: D) {
         files.transformInPlace(transformer, data)
     }
 }

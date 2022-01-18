@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.ir
 
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
+import org.jetbrains.kotlin.ir.visitors.*
 
 interface IrElement {
     val startOffset: Int
@@ -36,7 +33,12 @@ interface IrElement {
     fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement =
         accept(transformer, data)
 
+    fun <D> transform(transformer: IrAbstractTransformer<D>, data: D): IrElement =
+        accept(transformer, data)
+
     fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D)
+
+    fun <D> transformChildren(transformer: IrAbstractTransformer<D>, data: D)
 }
 
 interface IrStatement : IrElement

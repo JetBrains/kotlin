@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
@@ -80,6 +81,16 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        dispatchReceiver = dispatchReceiver?.transform(transformer, data)
+        extensionReceiver = extensionReceiver?.transform(transformer, data)
+        if (valueArgumentsCount > 0) {
+            argumentsByParameterIndex.forEachIndexed { i, irExpression ->
+                argumentsByParameterIndex[i] = irExpression?.transform(transformer, data)
+            }
+        }
+    }
+
+    override fun <D> transformChildren(transformer: IrAbstractTransformer<D>, data: D) {
         dispatchReceiver = dispatchReceiver?.transform(transformer, data)
         extensionReceiver = extensionReceiver?.transform(transformer, data)
         if (valueArgumentsCount > 0) {

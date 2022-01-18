@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
@@ -22,6 +24,9 @@ abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement, IrA
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrExpression =
         accept(transformer, data) as IrExpression
 
+    override fun <D> transform(transformer: IrAbstractTransformer<D>, data: D): IrExpression =
+        accept(transformer, data) as IrExpression
+
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
         // No children by default
     }
@@ -31,6 +36,10 @@ abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement, IrA
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        // No children by default
+    }
+
+    override fun <D> transformChildren(transformer: IrAbstractTransformer<D>, data: D) {
         // No children by default
     }
 }

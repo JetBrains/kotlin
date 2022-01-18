@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
@@ -22,6 +23,10 @@ interface IrTypeParametersContainer : IrDeclaration, IrDeclarationParent {
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        typeParameters = typeParameters.transformIfNeeded(transformer, data)
+    }
+
+    override fun <D> transformChildren(transformer: IrAbstractTransformer<D>, data: D) {
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
     }
 }

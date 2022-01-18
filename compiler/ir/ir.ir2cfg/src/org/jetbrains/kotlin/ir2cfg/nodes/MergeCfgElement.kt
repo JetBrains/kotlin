@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir2cfg.nodes
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.visitors.IrAbstractTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrAbstractVisitor
@@ -35,6 +36,8 @@ class MergeCfgElement(val from: IrElement, val name: String) : CfgIrElement {
     override fun <D> acceptChildren(visitor: IrAbstractVisitor<Unit, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {}
+
+    override fun <D> transformChildren(transformer: IrAbstractTransformer<D>, data: D) {}
 
     override fun toString() = "$name: ${from.dump()}"
 }
