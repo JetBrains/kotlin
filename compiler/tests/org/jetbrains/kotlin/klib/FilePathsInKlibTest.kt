@@ -114,26 +114,6 @@ class FilePathsInKlibTest : CodegenTestCase() {
         return artifact
     }
 
-//    @Ignore
-//    fun testAbsolutePaths() {
-//        // TODO: since the current behaviour is random (see PsiIrFileEntry::psiFileName and CoreLocalVirtualFile::getName/getPath)
-//        // this test currently disabled until normalization by default turn on
-//        val testFiles = createTestFiles()
-//        val workingPath = kotlin.io.path.createTempDirectory()
-//        val workingDirFile = workingPath.toFile().also { assert(it.isDirectory) }
-//
-//        try {
-//            val artifact = compileKlibs(testFiles, setupEnvironment(), workingDirFile)
-//            val modulePaths = artifact.loadKlibFilePaths(denormalize = false)
-//            val dirCanonicalPaths = workingDirFile.listFiles { _, name -> name.endsWith(".kt") }!!.map { it.canonicalPath }
-//
-//            assertSameElements(modulePaths, dirCanonicalPaths)
-//
-//        } finally {
-//            workingDirFile.deleteRecursively()
-//        }
-//    }
-
     fun testStableCompilation() {
         val testFiles = createTestFiles()
 
