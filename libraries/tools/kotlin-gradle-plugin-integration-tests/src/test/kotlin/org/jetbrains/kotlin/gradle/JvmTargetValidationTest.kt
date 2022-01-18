@@ -15,6 +15,7 @@ import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.createDirectories
+import kotlin.io.path.deleteExisting
 import kotlin.io.path.writeText
 
 @DisplayName("JVM tasks target validation")
@@ -191,10 +192,10 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Should fail the build if verification mode is 'error' and kotlin and java targets are different with no kotlin sources")
+    @DisplayName("Should skip JVM target validation if no Kotlin sources are available")
     @GradleTestVersions(minVersion = TestVersions.Gradle.G_6_7)
     @GradleTest
-    internal fun shouldFailBuildIfJavaAndKotlinJvmTargetsAreDifferentWithNoKotlinSources(gradleVersion: GradleVersion) {
+    internal fun shouldSkipJvmTargetValidationNoKotlinSources(gradleVersion: GradleVersion) {
         project(
             projectName = "kotlinJavaProject".fullProjectName,
             gradleVersion = gradleVersion
@@ -209,9 +210,21 @@ class JvmTargetValidationTest : KGPBaseTest() {
                 """.trimIndent()
             )
             kotlinSourcesDir().toFile().deleteRecursively()
+            javaSourcesDir().resolve("demo/HelloWorld.java").deleteExisting()
 
-            buildAndFail("assemble") {
-                assertOutputContains(
+            build("assemble") {
+                assertOutputDoesNotContain(
+                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
+                            "should be set to the same Java version."
+                )
+            }
+
+            javaSourcesDir().resolve("demo/Greeter.java").modify {
+                it.replace("myGreeting = greeting;", """myGreeting = greeting + "!";""")
+            }
+
+            build("assemble") {
+                assertOutputDoesNotContain(
                     "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
                             "should be set to the same Java version."
                 )
