@@ -53,7 +53,6 @@ private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
         "}"
     ).joinToString("\n\n")
 
-    val outputSourceRoot = System.getProperties()["org.jetbrains.kotlin.generators.gradle.dsl.outputSourceRoot"]
     val targetFile = File("$outputSourceRoot/${className.fqName.replace(".", "/")}.kt")
     targetFile.writeText(code)
 }

@@ -71,7 +71,7 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
 
     protected abstract fun instantiateTarget(name: String): T
 
-    private val kpmVariantClass = kpmVariantClass(konanTarget)
+    private val kpmVariantClass = kpmNativeVariantClass(konanTarget)
 
     protected val isKpm: Boolean
         get() = project.hasKpmModel && kpmVariantClass != null
@@ -120,16 +120,6 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
 
     companion object {
         private const val KOTLIN_NATIVE_HOME_PRIVATE_PROPERTY = "konanHome"
-
-        // FIXME: codegen
-        internal fun kpmVariantClass(konanTarget: KonanTarget): Class<out KotlinNativeVariantInternal>? = when (konanTarget) {
-            KonanTarget.IOS_ARM64 -> KotlinIosArm64Variant::class.java
-            KonanTarget.IOS_X64 -> KotlinIosX64Variant::class.java
-            KonanTarget.LINUX_X64 -> KotlinLinuxX64Variant::class.java
-            KonanTarget.MACOS_ARM64 -> KotlinMacosArm64Variant::class.java
-            KonanTarget.MACOS_X64 -> KotlinMacosX64Variant::class.java
-            else -> null
-        }
     }
 
 }
