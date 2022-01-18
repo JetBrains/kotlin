@@ -5,8 +5,8 @@
 
 package kotlin.js
 
-internal class LinkageError(message: String?) : Error(message)
+internal class IrLinkageError(message: String?) : Error(message)
 
 internal fun throwLinkageError(message: String?): Nothing {
-    throw LinkageError(message)
+    throw IrLinkageError(message)
 }
