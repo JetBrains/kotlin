@@ -63,17 +63,7 @@ class FirTypeIntersectionScope private constructor(
     }
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
-        if (name in absentClassifiers) {
-            return
-        }
-        val classifiersWithSubstitution = intersectionContext.collectClassifiers(name)
-        if (classifiersWithSubstitution.isEmpty()) {
-            absentClassifiers += name
-            return
-        }
-        for ((symbol, substitution) in classifiersWithSubstitution) {
-            processor(symbol, substitution)
-        }
+        intersectionContext.processClassifiersByNameWithSubstitution(name, absentClassifiers, processor)
     }
 
     @Suppress("UNCHECKED_CAST")

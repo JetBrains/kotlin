@@ -198,16 +198,7 @@ abstract class AbstractFirUseSiteMemberScope(
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         declaredMemberScope.processClassifiersByNameWithSubstitution(name, processor)
-
-        if (name in absentClassifiersFromSupertypes) return
-        val classifiers = supertypeScopeContext.collectClassifiers(name)
-        if (classifiers.isEmpty()) {
-            absentClassifiersFromSupertypes += name
-            return
-        }
-        for ((symbol, substitution) in classifiers) {
-            processor(symbol, substitution)
-        }
+        supertypeScopeContext.processClassifiersByNameWithSubstitution(name, absentClassifiersFromSupertypes, processor)
     }
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {

@@ -78,8 +78,23 @@ class FirTypeIntersectionScopeContext(
         }
     }
 
-    @OptIn(PrivateForInline::class)
-    fun collectClassifiers(name: Name): List<Pair<FirClassifierSymbol<*>, ConeSubstitutor>> {
+    fun processClassifiersByNameWithSubstitution(
+        name: Name,
+        absentClassifierNames: MutableSet<Name>,
+        processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
+    ) {
+        if (name in absentClassifierNames) return
+        val classifiers = collectClassifiers(name)
+        if (classifiers.isEmpty()) {
+            absentClassifierNames += name
+            return
+        }
+        for ((symbol, substitution) in classifiers) {
+            processor(symbol, substitution)
+        }
+    }
+
+    private fun collectClassifiers(name: Name): List<Pair<FirClassifierSymbol<*>, ConeSubstitutor>> {
         val accepted = HashSet<FirClassifierSymbol<*>>()
         val pending = mutableListOf<FirClassifierSymbol<*>>()
         val result = mutableListOf<Pair<FirClassifierSymbol<*>, ConeSubstitutor>>()
