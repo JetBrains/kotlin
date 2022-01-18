@@ -351,10 +351,7 @@ private func testSendKotlinObjectToSwift() throws {
 }
 
 private func testSendKotlinObjectToSwiftBlock() throws {
-    // Getting Swift block in Kotlin still adds it to the autoreleasepool.
-    // The block is not our target, so just use `checkAutorelease: false` flag
-    // to disable the relevant check for now.
-    try testCallToSwift(flags: TestFlags(checkAutorelease: false)) {
+    try testCallToSwift {
         NoAutoreleaseKt.sendKotlinObjectToBlock(helper: $0, tracker: $1)
     }
 }
@@ -506,7 +503,6 @@ class NoAutoreleaseTests : SimpleTestProvider {
         test("testSendBlockToSwift", testSendBlockToSwift)
         test("testSendCompletionToSwift", testSendCompletionToSwift)
 
-#if false
         test("testReceiveKotlinObjectFromSwift", testReceiveKotlinObjectFromSwift)
         test("testReceiveSwiftObjectFromSwift", testReceiveSwiftObjectFromSwift)
         test("testReceiveListFromSwift", testReceiveListFromSwift)
@@ -514,6 +510,5 @@ class NoAutoreleaseTests : SimpleTestProvider {
         test("testReceiveNumberFromSwift", testReceiveNumberFromSwift)
         test("testReceiveBlockFromSwift", testReceiveBlockFromSwift)
         test("testReceiveBlockFromSwiftAndCall", testReceiveBlockFromSwiftAndCall)
-#endif
     }
 }
