@@ -207,9 +207,13 @@ class ExpressionCodegen(
         noLineNumberScope = previousState
     }
 
-    // TODO remove
-    fun gen(expression: IrExpression, type: Type, irType: IrType, data: BlockInfo): StackValue {
+    fun gen(expression: IrExpression, type: Type, irType: IrType, data: BlockInfo) {
         expression.accept(this, data).materializeAt(type, irType)
+    }
+
+    // TODO remove
+    fun genToStackValue(expression: IrExpression, type: Type, irType: IrType, data: BlockInfo): StackValue {
+        gen(expression, type, irType, data)
         return StackValue.onStack(type, irType.toIrBasedKotlinType())
     }
 
@@ -665,7 +669,7 @@ class ExpressionCodegen(
                 expression.symbol.owner.realType.toIrBasedKotlinType()
             )
         else
-            gen(expression, type, parameterType, data)
+            genToStackValue(expression, type, parameterType, data)
 
     // We do not mangle functions if Result is the only parameter of the function. This means that if a function
     // taking `Result` as a parameter overrides a function taking `Any?`, there is no bridge unless needed for

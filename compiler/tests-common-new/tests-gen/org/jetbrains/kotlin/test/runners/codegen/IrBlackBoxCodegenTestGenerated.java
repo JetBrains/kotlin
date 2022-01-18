@@ -42058,6 +42058,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("differingNumberOfGenericTypeParameters.kt")
+        public void testDifferingNumberOfGenericTypeParameters() throws Exception {
+            runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/differingNumberOfGenericTypeParameters.kt");
+        }
+
+        @Test
         @TestMetadata("functionDeclaration.kt")
         public void testFunctionDeclaration() throws Exception {
             runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/functionDeclaration.kt");
