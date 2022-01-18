@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
+import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.pop
@@ -851,6 +852,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                                 +stmt
                             }
                         }
+                        oldBody == null -> irCall(this@JvmInlineClassLowering.context.ir.symbols.throwKotlinNothingValueException)
                         else -> error("Expected either expression or block body")
                     }
                 )
