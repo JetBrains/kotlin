@@ -2,15 +2,17 @@
 // IGNORE_BACKEND: JVM
 
 sealed inline class IC {
-    abstract val str: String
+    abstract fun str(i: Int): String
 }
 
 inline class ICString(val s: String): IC() {
-    override val str: String; get() = s
+    override fun str(i: Int): String = "O"
 }
 
-object ICO: IC()
+object ICO: IC() {
+    override fun str(i: Int): String = "K"
+}
 
-fun toString(ic: IC): String = ic.str
+fun toString(ic: IC): String = ic.str(0)
 
 fun box() = toString(ICString("O")) + toString(ICO)
