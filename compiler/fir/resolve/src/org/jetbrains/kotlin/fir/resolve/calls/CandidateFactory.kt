@@ -6,11 +6,18 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
 import org.jetbrains.kotlin.fir.declarations.builder.buildErrorFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildErrorProperty
+import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.moduleData
@@ -18,7 +25,13 @@ import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeDynamicType
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -51,8 +64,9 @@ class CandidateFactory private constructor(
         builtInExtensionFunctionReceiverValue: ReceiverValue? = null,
         objectsByName: Boolean = false
     ): Candidate {
+        val properSymbol = symbol.toProperSymbol(callInfo)
         val result = Candidate(
-            symbol, dispatchReceiverValue, extensionReceiverValue,
+            properSymbol, dispatchReceiverValue, extensionReceiverValue,
             explicitReceiverKind, context.inferenceComponents.constraintSystemFactory, baseSystem,
             builtInExtensionFunctionReceiverValue?.receiverExpression?.let {
                 callInfo.withReceiverAsArgument(it)
@@ -70,21 +84,76 @@ class CandidateFactory private constructor(
         // Here, we explicitly check if the referred declaration/symbol is value parameter, local variable, or backing field.
         val callSite = callInfo.callSite
         if (callSite is FirCallableReferenceAccess) {
-            if (symbol is FirValueParameterSymbol || symbol is FirPropertySymbol && symbol.isLocal || symbol is FirBackingFieldSymbol) {
+            if (properSymbol is FirValueParameterSymbol || properSymbol is FirPropertySymbol && properSymbol.isLocal || properSymbol is FirBackingFieldSymbol) {
                 result.addDiagnostic(Unsupported("References to variables aren't supported yet", callSite.calleeReference.source))
             }
         } else if (objectsByName &&
-            symbol is FirRegularClassSymbol &&
-            symbol.classKind != ClassKind.OBJECT &&
-            symbol.companionObjectSymbol == null
+            properSymbol is FirRegularClassSymbol &&
+            properSymbol.classKind != ClassKind.OBJECT &&
+            properSymbol.companionObjectSymbol == null
         ) {
             result.addDiagnostic(NoCompanionObject)
         }
-        if (callInfo.origin == FirFunctionCallOrigin.Operator && symbol is FirPropertySymbol) {
+        if (callInfo.origin == FirFunctionCallOrigin.Operator && properSymbol is FirPropertySymbol) {
             // Flag all property references that are resolved from an convention operator call.
             result.addDiagnostic(PropertyAsOperator)
         }
         return result
+    }
+
+    private fun FirBasedSymbol<*>.toProperSymbol(callInfo: CallInfo): FirBasedSymbol<*> {
+        val declaration = fir as? FirTypedDeclaration ?: return this
+
+        if (callInfo.callKind != CallKind.Function) {
+            return this
+        }
+
+        val typeRef = declaration.returnTypeRef
+
+        if (typeRef !is FirResolvedTypeRef || typeRef.coneType !is ConeDynamicType) {
+            return this
+        }
+
+        val name = Name.identifier("doThings")
+        val callableId = CallableId(name)
+        val symbol = FirNamedFunctionSymbol(callableId)
+
+        val pseudoFunction = buildSimpleFunction {
+            status = FirResolvedDeclarationStatusImpl(
+                Visibilities.Public,
+                Modality.FINAL,
+                EffectiveVisibility.Public,
+            )
+
+            this.name = name
+            this.symbol = symbol
+
+            moduleData = context.session.moduleData
+            origin = FirDeclarationOrigin.Synthetic
+            returnTypeRef = buildResolvedTypeRef {
+                type = ConeDynamicType(
+                    context.session.builtinTypes.nothingType.type,
+                    context.session.builtinTypes.nullableAnyType.type,
+                )
+            }
+
+            for (it in callInfo.arguments.indices) {
+                val parameter = buildValueParameter {
+                    moduleData = context.session.moduleData
+                    origin = FirDeclarationOrigin.Synthetic
+                    returnTypeRef = context.session.builtinTypes.nullableAnyType
+                    this.name = Name.identifier("arg${it}")
+                    this.symbol = FirValueParameterSymbol(this.name)
+                    isCrossinline = false
+                    isNoinline = false
+                    isVararg = false
+                }
+
+                valueParameters.add(parameter)
+            }
+        }
+
+        return pseudoFunction.symbol
     }
 
     private fun ReceiverValue?.isCandidateFromCompanionObjectTypeScope(): Boolean {
