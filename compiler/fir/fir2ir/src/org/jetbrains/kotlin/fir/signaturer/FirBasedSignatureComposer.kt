@@ -91,14 +91,12 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
                 )
             }
             is FirTypeAlias -> {
-                if (declaration.visibility == Visibilities.Private) return null
                 val classId = declaration.symbol.classId
                 IdSignature.CommonSignature(
                     classId.packageFqName.asString(), classId.relativeClassName.asString(), builder.hashId, builder.mask
                 )
             }
             is FirCallableDeclaration -> {
-                if (declaration.visibility == Visibilities.Private && !isTopLevelPrivate(declaration, containingClass)) return null
                 val containingClassId = containingClass?.classId
 
                 val classId = containingClassId ?: declaration.containingClass()?.classId
