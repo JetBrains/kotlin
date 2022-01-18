@@ -17763,6 +17763,18 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("orderOfSupertypesAndFakeOverrides_1.kt")
+            public void testOrderOfSupertypesAndFakeOverrides_1() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/orderOfSupertypesAndFakeOverrides_1.kt");
+            }
+
+            @Test
+            @TestMetadata("orderOfSupertypesAndFakeOverrides_2.kt")
+            public void testOrderOfSupertypesAndFakeOverrides_2() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/orderOfSupertypesAndFakeOverrides_2.kt");
+            }
+
+            @Test
             @TestMetadata("overrideRawType.kt")
             public void testOverrideRawType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/overrideRawType.kt");
