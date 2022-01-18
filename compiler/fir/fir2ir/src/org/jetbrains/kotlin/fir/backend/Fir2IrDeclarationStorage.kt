@@ -821,7 +821,7 @@ class Fir2IrDeclarationStorage(
         thisReceiverOwner: IrClass? = irParent as? IrClass,
         predefinedOrigin: IrDeclarationOrigin? = null,
         isLocal: Boolean = false,
-        containingClass: ConeClassLikeLookupTag? = null,
+        containingClass: ConeClassLikeLookupTag? = (irParent as? IrClass)?.classId?.let { ConeClassLikeLookupTagImpl(it) },
     ): IrProperty = convertCatching(property) {
         val origin = property.computeIrOrigin(predefinedOrigin)
         val signature = if (isLocal) null else signatureComposer.composeSignature(property, containingClass)
