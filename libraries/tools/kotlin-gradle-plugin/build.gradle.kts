@@ -103,7 +103,7 @@ dependencies {
     testImplementation(projectTests(":kotlin-build-common"))
     testImplementation(project(":kotlin-android-extensions"))
     testImplementation(project(":kotlin-compiler-runner"))
-    testImplementation(project(":kotlin-test::kotlin-test-junit"))
+    testImplementation(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(commonDependency("junit:junit"))
     testImplementation(project(":kotlin-gradle-statistics"))
     testCompileOnly(project(":kotlin-reflect-api"))
