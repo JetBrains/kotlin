@@ -28,6 +28,7 @@ sealed class FirDeclarationOrigin(private val displayName: String? = null, val f
     }
 }
 
+// todo: REQUIRES KDOC
 abstract class FirPluginKey {
     val origin: FirDeclarationOrigin = FirDeclarationOrigin.Plugin(this)
 }

@@ -18,6 +18,16 @@ dependencies {
     compileOnly(project(":js:js.translator"))
     compileOnly(project(":kotlin-util-klib-metadata"))
 
+    // FIR dependencies
+    compileOnly(project(":compiler:fir:cones"))
+    compileOnly(project(":compiler:fir:tree"))
+    compileOnly(project(":compiler:fir:resolve"))
+//    compileOnly(project(":compiler:fir:checkers"))
+//    compileOnly(project(":compiler:fir:checkers:checkers.jvm"))
+//    compileOnly(project(":compiler:fir:fir2ir"))
+//    compileOnly(project(":compiler:ir.tree.impl"))
+    compileOnly(project(":compiler:fir:entrypoint"))
+
     runtimeOnly(kotlinStdlib())
 
     testApi(projectTests(":compiler:tests-common"))

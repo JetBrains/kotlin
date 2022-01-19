@@ -1,0 +1,19 @@
+FILE: classWithCompanionObject.kt
+    @R|kotlinx/serialization/Serializable|() public final class SomeClass : R|kotlin/Any| {
+        public constructor(): R|SomeClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            public constructor(): R|SomeClass.Companion|
+
+        }
+
+        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<SomeClass>| {
+            public constructor(): R|SomeClass.$serializer|
+
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+    }

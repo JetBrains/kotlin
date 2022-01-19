@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
 
 // -------------------------------------------- Predicates --------------------------------------------
 
+// todo: Missing KDOC
 sealed class DeclarationPredicate {
     abstract val annotations: Set<AnnotationFqn>
     abstract val metaAnnotations: Set<AnnotationFqn>
