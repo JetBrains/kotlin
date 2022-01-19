@@ -51,8 +51,8 @@ internal typealias FragmentRelation = KotlinGradleFragmentConfigurationRelation
 fun interface KotlinGradleFragmentConfigurationRelation {
     fun KotlinGradleFragmentConfigurationContext.setupExtendsFromRelations(configuration: Configuration)
 
-    object None : KotlinGradleFragmentConfigurationRelation {
-        override fun KotlinGradleFragmentConfigurationContext.setupExtendsFromRelations(configuration: Configuration) = Unit
+    companion object {
+        val None = FragmentRelation {}
     }
 }
 
@@ -62,8 +62,8 @@ internal typealias FragmentAttributes<T> = KotlinGradleFragmentConfigurationAttr
 fun interface KotlinGradleFragmentConfigurationAttributes<in T : KotlinGradleFragment> {
     fun AttributeContainer.setAttributes(fragment: T)
 
-    object None : KotlinGradleFragmentConfigurationAttributes<KotlinGradleFragment> {
-        override fun AttributeContainer.setAttributes(fragment: KotlinGradleFragment) = Unit
+    companion object {
+        val None = FragmentAttributes<KotlinGradleFragment> {}
     }
 }
 /* Internal abbreviation */
@@ -84,9 +84,10 @@ fun interface KotlinGradleFragmentConfigurationCapabilities<in T : KotlinGradleF
 
     fun Context.setCapabilities(fragment: T)
 
-    object None : KotlinGradleFragmentConfigurationCapabilities<KotlinGradleFragment> {
-        override fun Context.setCapabilities(fragment: KotlinGradleFragment) = Unit
+    companion object {
+        val None = FragmentCapabilities<KotlinGradleFragment> {}
     }
+
 }
 
 /* Internal abbreviation */
@@ -95,8 +96,8 @@ internal typealias FragmentArtifacts<T> = KotlinGradleFragmentConfigurationArtif
 fun interface KotlinGradleFragmentConfigurationArtifacts<in T : KotlinGradleFragment> {
     fun ConfigurationPublications.addArtifacts(fragment: T)
 
-    object None : KotlinGradleFragmentConfigurationArtifacts<KotlinGradleFragment> {
-        override fun ConfigurationPublications.addArtifacts(fragment: KotlinGradleFragment) = Unit
+    companion object {
+        val None = FragmentArtifacts<KotlinGradleFragment> {}
     }
 }
 
