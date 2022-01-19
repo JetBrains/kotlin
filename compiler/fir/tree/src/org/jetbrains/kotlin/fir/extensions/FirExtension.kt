@@ -36,6 +36,7 @@ data class FirExtensionPointName(val name: Name) {
     constructor(name: String) : this(Name.identifier(name))
 }
 
+// todo: KDOC
 abstract class FirDeclarationPredicateRegistrar {
     abstract fun register(vararg predicates: DeclarationPredicate)
     abstract fun register(predicates: Collection<DeclarationPredicate>)

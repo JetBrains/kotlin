@@ -20,6 +20,14 @@ fun main(args: Array<String>) {
             testClass<AbstractSerializationIrBoxTest> {
                 model("boxIr")
             }
+
+            testClass<AbstractSerializationFirMembersTest> {
+                model("firMembers")
+            }
+
+            testClass<AbstractSerializationFirBlackBoxTest> {
+                model("firMembers")
+            }
         }
     }
 }
