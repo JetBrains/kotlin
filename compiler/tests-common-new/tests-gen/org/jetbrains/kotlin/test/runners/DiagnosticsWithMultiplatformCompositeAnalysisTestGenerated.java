@@ -45,4 +45,20 @@ public class DiagnosticsWithMultiplatformCompositeAnalysisTestGenerated extends 
             runTest("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/defaultArguments/function.kt");
         }
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/overloadResolution")
+    @TestDataPath("$PROJECT_ROOT")
+    public class OverloadResolution {
+        @Test
+        public void testAllFilesPresentInOverloadResolution() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/overloadResolution"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+        }
+
+        @Test
+        @TestMetadata("commonVsPlatformOverloads.kt")
+        public void testCommonVsPlatformOverloads() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/overloadResolution/commonVsPlatformOverloads.kt");
+        }
+    }
 }
