@@ -171,7 +171,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             return false
 
         // Methods in sealed inline classes are mangled, so bridges will have the same signature
-        if (parentAsClass.isInline)
+        if (parentAsClass.isInline && parentAsClass.superTypes.any { it.isInlineClassType() })
             return false
 
         // We don't produce bridges for abstract functions in interfaces.

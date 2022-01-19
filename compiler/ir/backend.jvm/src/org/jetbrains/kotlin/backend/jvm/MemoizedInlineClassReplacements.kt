@@ -271,7 +271,7 @@ class MemoizedInlineClassReplacements(
             // The [updateFrom] call will set the modality to FINAL for constructors, while the JVM backend would use OPEN here.
             modality = Modality.OPEN
         }
-        if (function is IrSimpleFunction && function.modality == Modality.ABSTRACT) {
+        if (function.parentAsClass.modality == Modality.SEALED && function is IrSimpleFunction && function.modality == Modality.ABSTRACT) {
             modality = Modality.OPEN
         }
         origin = when {
