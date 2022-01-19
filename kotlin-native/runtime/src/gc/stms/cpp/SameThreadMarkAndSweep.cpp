@@ -105,8 +105,12 @@ gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep(
         mm::ObjectFactory<SameThreadMarkAndSweep>& objectFactory, GCScheduler& gcScheduler) noexcept :
     objectFactory_(objectFactory), gcScheduler_(gcScheduler) {
     gcScheduler_.SetScheduleGC([]() {
-        RuntimeLogDebug({kTagGC}, "Scheduling GC by thread %d", konan::currentThreadId());
-        gSafepointFlag = SafepointFlag::kNeedsGC;
+        // TODO: CMS is also responsible for avoiding scheduling while GC hasn't started running.
+        //       Investigate, if it's possible to move this logic into the scheduler.
+        SafepointFlag expectedFlag = SafepointFlag::kNone;
+        if (gSafepointFlag.compare_exchange_strong(expectedFlag, SafepointFlag::kNeedsGC)) {
+            RuntimeLogDebug({kTagGC}, "Scheduling GC by thread %d", konan::currentThreadId());
+        }
     });
 }
 

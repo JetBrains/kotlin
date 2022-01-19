@@ -2635,10 +2635,8 @@ void startGC() {
 }
 
 void setGCThreshold(KInt value) {
+  RuntimeAssert(value > 0, "Must be handled by the caller");
   GC_LOG("setGCThreshold %d\n", value)
-  if (value <= 0) {
-    ThrowIllegalArgumentException();
-  }
   initGcThreshold(memoryState, value);
 }
 
@@ -2648,10 +2646,8 @@ KInt getGCThreshold() {
 }
 
 void setGCCollectCyclesThreshold(KLong value) {
+  RuntimeAssert(value > 0, "Must be handled by the caller");
   GC_LOG("setGCCollectCyclesThreshold %lld\n", value)
-  if (value <= 0) {
-    ThrowIllegalArgumentException();
-  }
   initGcCollectCyclesThreshold(memoryState, value);
 }
 
@@ -2661,10 +2657,8 @@ KInt getGCCollectCyclesThreshold() {
 }
 
 void setGCThresholdAllocations(KLong value) {
+  RuntimeAssert(value > 0, "Must be handled by the caller");
   GC_LOG("setGCThresholdAllocations %lld\n", value)
-  if (value <= 0) {
-    ThrowIllegalArgumentException();
-  }
 
   memoryState->allocSinceLastGcThreshold = value;
 }
@@ -3614,6 +3608,36 @@ OBJ_GETTER(Kotlin_native_internal_GC_findCycle, KRef, KRef root) {
   RETURN_OBJ(nullptr);
 #endif
 }
+
+KLong Kotlin_native_internal_GC_getRegularGCIntervalMicroseconds(KRef) {
+    return 0;
+}
+
+void Kotlin_native_internal_GC_setRegularGCIntervalMicroseconds(KRef, KLong) {}
+
+KLong Kotlin_native_internal_GC_getTargetHeapBytes(KRef) {
+    return 0;
+}
+
+void Kotlin_native_internal_GC_setTargetHeapBytes(KRef, KLong) {}
+
+KDouble Kotlin_native_internal_GC_getTargetHeapUtilization(KRef) {
+    return 1.0;
+}
+
+void Kotlin_native_internal_GC_setTargetHeapUtilization(KRef, KDouble) {}
+
+KLong Kotlin_native_internal_GC_getMaxHeapBytes(KRef) {
+    return -1;
+}
+
+void Kotlin_native_internal_GC_setMaxHeapBytes(KRef, KLong) {}
+
+KLong Kotlin_native_internal_GC_getMinHeapBytes(KRef) {
+    return 0;
+}
+
+void Kotlin_native_internal_GC_setMinHeapBytes(KRef, KLong) {}
 
 RUNTIME_NOTHROW KNativePtr CreateStablePointer(KRef any) {
   return createStablePointer(any);

@@ -7,6 +7,7 @@
 #define RUNTIME_GC_COMMON_GC_SCHEDULER_H
 
 #include <atomic>
+#include <chrono>
 #include <cinttypes>
 #include <cstddef>
 #include <functional>
@@ -22,13 +23,28 @@ namespace gc {
 
 using SchedulerType = compiler::GCSchedulerType;
 
-
+// NOTE: When changing default values, reflect them in GC.kt as well.
 struct GCSchedulerConfig {
-    std::atomic<size_t> threshold = 100000; // Roughly 1 safepoint per 10ms (on a subset of examples on one particular machine).
-    std::atomic<size_t> allocationThresholdBytes = 10 * 1024 * 1024; // 10MiB by default.
-    std::atomic<uint64_t> cooldownThresholdNs = 200 * 1000 * 1000; // 200 milliseconds by default.
-    std::atomic<bool> autoTune = false;
-    std::atomic<uint64_t> regularGcIntervalUs = 200 * 1000; // 200 milliseconds by default.
+    // Only used when useGCTimer() is false. How many regular safepoints will trigger slow path.
+    std::atomic<int32_t> threshold = 100000;
+    // How many object bytes a thread must allocate to trigger slow path.
+    std::atomic<int64_t> allocationThresholdBytes = 10 * 1024;
+    std::atomic<bool> autoTune = true;
+    // The target interval between collections when Kotlin code is idle. GC will be triggered
+    // by timer no sooner than this value and no later than twice this value since the previous collection.
+    std::atomic<int64_t> regularGcIntervalMicroseconds = 10 * 1000 * 1000;
+    // How many object bytes must be in the heap to trigger collection. Autotunes when autoTune is true.
+    std::atomic<int64_t> targetHeapBytes = 1024 * 1024;
+    // The rate at which targetHeapBytes changes when autoTune = true. Concretely: if after the collection
+    // N object bytes remain in the heap, the next targetHeapBytes will be N / targetHeapUtilization capped
+    // between minHeapBytes and maxHeapBytes.
+    std::atomic<double> targetHeapUtilization = 0.5;
+    // The minimum value of targetHeapBytes for autoTune = true
+    std::atomic<int64_t> minHeapBytes = 1024 * 1024;
+    // The maximum value of targetHeapBytes for autoTune = true
+    std::atomic<int64_t> maxHeapBytes = std::numeric_limits<int64_t>::max();
+
+    std::chrono::microseconds regularGcInterval() const { return std::chrono::microseconds(regularGcIntervalMicroseconds.load()); }
 };
 
 class GCSchedulerThreadData;
@@ -39,6 +55,10 @@ public:
 
     // Called by different mutator threads.
     virtual void UpdateFromThreadData(GCSchedulerThreadData& threadData) noexcept = 0;
+
+    // The protocol is: after the scheduler schedules the GC, the GC eventually calls `OnPerformFullGC`
+    // when the collection has started, followed by `UpdateAliveSetBytes` when the marking has finished.
+    // TODO: Consider returning a sort of future from the scheduleGC, and listen to it instead.
 
     // Always called by the GC thread.
     virtual void OnPerformFullGC() noexcept = 0;
@@ -63,11 +83,7 @@ public:
         switch (compiler::getGCSchedulerType()) {
             case compiler::GCSchedulerType::kOnSafepoints:
             case compiler::GCSchedulerType::kAggressive:
-                safePointsCounter_ += weight;
-                if (safePointsCounter_ < safePointsCounterThreshold_) {
-                    return;
-                }
-                OnSafePointSlowPath();
+                OnSafePointRegularImpl(weight);
                 return;
             default:
                 return;
@@ -91,6 +107,16 @@ public:
     size_t safePointsCounter() const noexcept { return safePointsCounter_; }
 
 private:
+    friend class GCSchedulerThreadDataTestApi;
+
+    void OnSafePointRegularImpl(size_t weight) noexcept {
+        safePointsCounter_ += weight;
+        if (safePointsCounter_ < safePointsCounterThreshold_) {
+            return;
+        }
+        OnSafePointSlowPath();
+    }
+
     void OnSafePointSlowPath() noexcept {
         slowPath_(*this);
         ClearCountersAndUpdateThresholds();
@@ -112,7 +138,6 @@ private:
     size_t safePointsCounter_ = 0;
     size_t safePointsCounterThreshold_ = 0;
 };
-
 
 class GCScheduler : private Pinned {
 public:
@@ -138,10 +163,15 @@ private:
     std::function<void()> scheduleGC_;
 };
 
+namespace internal {
+
 KStdUniquePtr<gc::GCSchedulerData> MakeGCSchedulerData(
         SchedulerType type,
         GCSchedulerConfig& config,
-        std::function<void()> scheduleGC) noexcept;
+        std::function<void()> scheduleGC,
+        std::function<std::chrono::time_point<std::chrono::steady_clock>()> currentTime) noexcept;
+
+}
 
 } // namespace gc
 } // namespace kotlin
