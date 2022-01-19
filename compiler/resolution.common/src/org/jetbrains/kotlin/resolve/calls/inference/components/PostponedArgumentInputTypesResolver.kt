@@ -41,7 +41,7 @@ class PostponedArgumentInputTypesResolver(
     private fun Context.findFunctionalTypesInConstraints(
         variable: VariableWithConstraints,
         variableDependencyProvider: TypeVariableDependencyInformationProvider
-    ): List<TypeWithKind>? {
+    ): List<TypeWithKind> {
         fun List<Constraint>.extractFunctionalTypes() = mapNotNull { constraint ->
             TypeWithKind(constraint.type.getFunctionalTypeFromSupertypes(), constraint.kind)
         }
@@ -67,22 +67,22 @@ class PostponedArgumentInputTypesResolver(
         val functionalTypesFromConstraints = findFunctionalTypesInConstraints(variableWithConstraints, variableDependencyProvider)
 
         // Don't create functional expected type for further error reporting about a different number of arguments
-        if (functionalTypesFromConstraints != null && functionalTypesFromConstraints.distinctBy { it.type.argumentsCount() }.size > 1)
+        if (functionalTypesFromConstraints.distinctBy { it.type.argumentsCount() }.size > 1)
             return null
 
         val parameterTypesFromDeclaration =
             if (argument is LambdaWithTypeVariableAsExpectedTypeMarker) argument.parameterTypesFromDeclaration else null
 
-        val parameterTypesFromConstraints = functionalTypesFromConstraints?.mapTo(SmartSet.create()) { typeWithKind ->
+        val parameterTypesFromConstraints = functionalTypesFromConstraints.mapTo(SmartSet.create()) { typeWithKind ->
             typeWithKind.type.extractArgumentsForFunctionalTypeOrSubtype().map {
                 // We should use opposite kind as lambda's parameters are contravariant
                 TypeWithKind(it, typeWithKind.direction.opposite())
             }
         }
 
-        val annotations = functionalTypesFromConstraints?.map { it.type.getAttributes() }?.flatten()?.distinct()
+        val annotations = functionalTypesFromConstraints.map { it.type.getAttributes() }.flatten().distinct()
 
-        val extensionFunctionTypePresentInConstraints = functionalTypesFromConstraints?.any { it.type.isExtensionFunctionType() } == true
+        val extensionFunctionTypePresentInConstraints = functionalTypesFromConstraints.any { it.type.isExtensionFunctionType() }
 
         // An extension function flag can only come from a declaration of anonymous function: `select({ this + it }, fun Int.(x: Int) = 10)`
         val (parameterTypesFromDeclarationOfRelatedLambdas, isThereExtensionFunctionAmongRelatedLambdas, maxParameterCount) =
