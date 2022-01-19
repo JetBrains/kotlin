@@ -32,7 +32,7 @@ interface KotlinGradleFragmentConfigurationContext : KotlinNameDisambiguation {
     val dependencies: KotlinFragmentDependencyConfigurations
 }
 
-internal class ConfigurationContextImpl(
+internal class KotlinGradleFragmentConfigurationContextImpl(
     override val module: KotlinGradleModule,
     override val dependencies: KotlinFragmentDependencyConfigurations,
     names: KotlinNameDisambiguation

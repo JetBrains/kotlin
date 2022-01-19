@@ -54,7 +54,7 @@ class KotlinJvmVariantInstantiator internal constructor(
 
     override fun create(name: String): KotlinJvmVariant {
         val names = FragmentNameDisambiguation(module, name)
-        val context = ConfigurationContextImpl(module, config.dependenciesConfigurationFactory.create(module, names), names)
+        val context = KotlinGradleFragmentConfigurationContextImpl(module, config.dependenciesConfigurationFactory.create(module, names), names)
 
         return KotlinJvmVariant(
             containingModule = module,

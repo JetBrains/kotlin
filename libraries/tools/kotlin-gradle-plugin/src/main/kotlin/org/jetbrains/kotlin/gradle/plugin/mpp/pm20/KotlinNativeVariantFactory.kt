@@ -54,7 +54,7 @@ class KotlinNativeVariantInstantiator<T : KotlinNativeVariantInternal>(
     override fun create(name: String): T {
         val names = FragmentNameDisambiguation(module, name)
         val dependencies = config.dependenciesConfigurationFactory.create(module, names)
-        val context = ConfigurationContextImpl(module, dependencies, names)
+        val context = KotlinGradleFragmentConfigurationContextImpl(module, dependencies, names)
 
         return kotlinNativeVariantConstructor.invoke(
             containingModule = module,
