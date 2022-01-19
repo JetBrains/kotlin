@@ -275,115 +275,127 @@ private val kotlinNothingValueExceptionPhase = makeIrFilePhase<CommonBackendCont
     description = "Throw proper exception for calls returning value of type 'kotlin.Nothing'"
 )
 
-private val jvmFilePhases = listOf(
-    typeAliasAnnotationMethodsPhase,
-    stripTypeAliasDeclarationsPhase,
-    provisionalFunctionExpressionPhase,
+private class JvmByFilePhase : AbstractByFilePhase<JvmBackendContext>(copyBeforeLowering = true) {
+    @Suppress("DuplicatedCode")
+    override fun lowerFile(phaseConfig: PhaseConfig, filePhaserState: PhaserState<IrFile>, context: JvmBackendContext, irFile: IrFile) {
+        typeAliasAnnotationMethodsPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        stripTypeAliasDeclarationsPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        provisionalFunctionExpressionPhase.invoke(phaseConfig, filePhaserState, context, irFile)
 
-    jvmOverloadsAnnotationPhase,
-    mainMethodGenerationPhase,
+        jvmOverloadsAnnotationPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        mainMethodGenerationPhase.invoke(phaseConfig, filePhaserState, context, irFile)
 
-    inventNamesForLocalClassesPhase,
-    kCallableNamePropertyPhase,
-    annotationPhase,
-    annotationImplementationPhase,
-    polymorphicSignaturePhase,
-    varargPhase,
+        inventNamesForLocalClassesPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        kCallableNamePropertyPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        annotationPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        annotationImplementationPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        polymorphicSignaturePhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        varargPhase.invoke(phaseConfig, filePhaserState, context, irFile)
 
-    lateinitNullableFieldsPhase,
-    lateinitDeclarationLoweringPhase,
-    lateinitUsageLoweringPhase,
+        lateinitNullableFieldsPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        lateinitDeclarationLoweringPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        lateinitUsageLoweringPhase.invoke(phaseConfig, filePhaserState, context, irFile)
 
-    inlineCallableReferenceToLambdaPhase,
-    functionReferencePhase,
-    suspendLambdaPhase,
-    propertyReferenceDelegationPhase,
-    propertyReferencePhase,
-    arrayConstructorPhase,
-    constPhase1,
+        inlineCallableReferenceToLambdaPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        functionReferencePhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        suspendLambdaPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        propertyReferenceDelegationPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        propertyReferencePhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        arrayConstructorPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        constPhase1.invoke(phaseConfig, filePhaserState, context, irFile)
 
-    // TODO: merge the next three phases together, as visitors behave incorrectly between them
-    //  (backing fields moved out of companion objects are reachable by two paths):
-    moveOrCopyCompanionObjectFieldsPhase,
-    propertiesPhase,
-    remapObjectFieldAccesses,
+        // TODO: merge the next three phases together, as visitors behave incorrectly between them
+        //  (backing fields moved out of companion objects are reachable by two paths):
+        moveOrCopyCompanionObjectFieldsPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        propertiesPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        remapObjectFieldAccesses.invoke(phaseConfig, filePhaserState, context, irFile)
 
-    anonymousObjectSuperConstructorPhase,
-    jvmBuiltInsPhase,
+        anonymousObjectSuperConstructorPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        jvmBuiltInsPhase.invoke(phaseConfig, filePhaserState, context, irFile)
 
-    rangeContainsLoweringPhase,
-    forLoopsPhase,
-    collectionStubMethodLowering,
-    singleAbstractMethodPhase,
-    jvmInlineClassPhase,
-    tailrecPhase,
-    makePatchParentsPhase(1),
+        rangeContainsLoweringPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        forLoopsPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        collectionStubMethodLowering.invoke(phaseConfig, filePhaserState, context, irFile)
+        singleAbstractMethodPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        jvmInlineClassPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        tailrecPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        makePatchParentsPhase(1).invoke(phaseConfig, filePhaserState, context, irFile)
 
-    enumWhenPhase,
-    singletonReferencesPhase,
+        enumWhenPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        singletonReferencesPhase.invoke(phaseConfig, filePhaserState, context, irFile)
 
-    assertionPhase,
-    returnableBlocksPhase,
-    sharedVariablesPhase,
-    localDeclarationsPhase,
-    makePatchParentsPhase(2),
+        assertionPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        returnableBlocksPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        sharedVariablesPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        localDeclarationsPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        makePatchParentsPhase(2).invoke(phaseConfig, filePhaserState, context, irFile)
 
-    jvmLocalClassExtractionPhase,
-    staticCallableReferencePhase,
+        jvmLocalClassExtractionPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        staticCallableReferencePhase.invoke(phaseConfig, filePhaserState, context, irFile)
 
-    jvmDefaultConstructorPhase,
+        jvmDefaultConstructorPhase.invoke(phaseConfig, filePhaserState, context, irFile)
 
-    flattenStringConcatenationPhase,
-    foldConstantLoweringPhase,
-    computeStringTrimPhase,
-    jvmStringConcatenationLowering,
+        flattenStringConcatenationPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        foldConstantLoweringPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        computeStringTrimPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        jvmStringConcatenationLowering.invoke(phaseConfig, filePhaserState, context, irFile)
 
-    defaultArgumentStubPhase,
-    defaultArgumentInjectorPhase,
-    defaultArgumentCleanerPhase,
+        defaultArgumentStubPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        defaultArgumentInjectorPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        defaultArgumentCleanerPhase.invoke(phaseConfig, filePhaserState, context, irFile)
 
-    interfacePhase,
-    inheritedDefaultMethodsOnClassesPhase,
-    replaceDefaultImplsOverriddenSymbolsPhase,
-    interfaceSuperCallsPhase,
-    interfaceDefaultCallsPhase,
-    interfaceObjectCallsPhase,
+        interfacePhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        inheritedDefaultMethodsOnClassesPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        replaceDefaultImplsOverriddenSymbolsPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        interfaceSuperCallsPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        interfaceDefaultCallsPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        interfaceObjectCallsPhase.invoke(phaseConfig, filePhaserState, context, irFile)
 
-    tailCallOptimizationPhase,
-    addContinuationPhase,
-    constPhase2, // handle const properties in default arguments of "original" suspend funs
+        tailCallOptimizationPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        addContinuationPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        // handle const properties in default arguments of "original" suspend funs
+        constPhase2.invoke(phaseConfig, filePhaserState, context, irFile)
 
-    innerClassesPhase,
-    innerClassesMemberBodyPhase,
-    innerClassConstructorCallsPhase,
+        innerClassesPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        innerClassesMemberBodyPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        innerClassConstructorCallsPhase.invoke(phaseConfig, filePhaserState, context, irFile)
 
-    makePatchParentsPhase(3),
+        makePatchParentsPhase(3).invoke(phaseConfig, filePhaserState, context, irFile)
 
-    enumClassPhase,
-    objectClassPhase,
-    staticInitializersPhase,
-    initializersPhase,
-    initializersCleanupPhase,
-    functionNVarargBridgePhase,
-    jvmStaticInCompanionPhase,
-    staticDefaultFunctionPhase,
-    bridgePhase,
-    syntheticAccessorPhase,
+        enumClassPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        objectClassPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        staticInitializersPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        initializersPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        initializersCleanupPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        functionNVarargBridgePhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        jvmStaticInCompanionPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        staticDefaultFunctionPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        bridgePhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        syntheticAccessorPhase.invoke(phaseConfig, filePhaserState, context, irFile)
 
-    jvmArgumentNullabilityAssertions,
-    toArrayPhase,
-    jvmSafeCallFoldingPhase,
-    jvmOptimizationLoweringPhase,
-    additionalClassAnnotationPhase,
-    typeOperatorLowering,
-    replaceKFunctionInvokeWithFunctionInvokePhase,
-    kotlinNothingValueExceptionPhase,
-    makePropertyDelegateMethodsStaticPhase,
+        jvmArgumentNullabilityAssertions.invoke(phaseConfig, filePhaserState, context, irFile)
+        toArrayPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        jvmSafeCallFoldingPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        jvmOptimizationLoweringPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        additionalClassAnnotationPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        typeOperatorLowering.invoke(phaseConfig, filePhaserState, context, irFile)
+        replaceKFunctionInvokeWithFunctionInvokePhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        kotlinNothingValueExceptionPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        makePropertyDelegateMethodsStaticPhase.invoke(phaseConfig, filePhaserState, context, irFile)
 
-    renameFieldsPhase,
-    fakeInliningLocalVariablesLowering,
+        renameFieldsPhase.invoke(phaseConfig, filePhaserState, context, irFile)
+        fakeInliningLocalVariablesLowering.invoke(phaseConfig, filePhaserState, context, irFile)
 
-    makePatchParentsPhase(4)
+        makePatchParentsPhase(4).invoke(phaseConfig, filePhaserState, context, irFile)
+    }
+}
+
+private val jvmByFilePhase = NamedCompilerPhase(
+    name = "PerformByIrFile", description = "Perform phases by IrFile",
+    prerequisite = emptySet(),
+    lower = JvmByFilePhase(),
+    preconditions = emptySet(), postconditions = emptySet(), stickyPostconditions = emptySet(),
+    actions = setOf(defaultDumper), nlevels = 1,
 )
 
 val jvmLoweringPhases = NamedCompilerPhase(
@@ -399,7 +411,7 @@ val jvmLoweringPhases = NamedCompilerPhase(
             fileClassPhase then
             jvmStaticInObjectPhase then
             repeatedAnnotationPhase then
-            performByIrFile(lower = jvmFilePhases) then
+            jvmByFilePhase then
             generateMultifileFacadesPhase then
             resolveInlineCallsPhase then
             // should be last transformation

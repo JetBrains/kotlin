@@ -34,14 +34,17 @@ fun <Context : CommonBackendContext> performByIrFile(
     lower: List<CompilerPhase<Context, IrFile, IrFile>>,
 ): NamedCompilerPhase<Context, IrModuleFragment> =
     NamedCompilerPhase(
-        name, description, emptySet(), PerformByIrFilePhase(lower, copyBeforeLowering), emptySet(), emptySet(), emptySet(),
-        setOf(defaultDumper), nlevels = 1,
+        name = name, description = description,
+        prerequisite = emptySet(),
+        lower = PerformByIrFilePhase(lower, copyBeforeLowering),
+        preconditions = emptySet(), postconditions = emptySet(), stickyPostconditions = emptySet(),
+        actions = setOf(defaultDumper), nlevels = 1,
     )
 
-private class PerformByIrFilePhase<Context : CommonBackendContext>(
-    private val lower: List<CompilerPhase<Context, IrFile, IrFile>>,
+abstract class AbstractByFilePhase<Context : CommonBackendContext>(
     private val copyBeforeLowering: Boolean,
 ) : SameTypeCompilerPhase<Context, IrModuleFragment> {
+
     override fun invoke(
         phaseConfig: PhaseConfig,
         phaserState: PhaserState<IrModuleFragment>,
@@ -61,9 +64,7 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
         for (irFile in input.files) {
             try {
                 val filePhaserState = phaserState.changeType<IrModuleFragment, IrFile>()
-                for (phase in lower) {
-                    phase.invoke(phaseConfig, filePhaserState, context, irFile)
-                }
+                lowerFile(phaseConfig, filePhaserState, context, irFile)
             } catch (e: Throwable) {
                 CodegenUtil.reportBackendException(e, "IR lowering", irFile.fileEntry.name)
             }
@@ -98,9 +99,7 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
             executor.execute {
                 try {
                     val filePhaserState = state.changeType<IrModuleFragment, IrFile>()
-                    for (phase in lower) {
-                        phase.invoke(phaseConfig, filePhaserState, context, irFile)
-                    }
+                    lowerFile(phaseConfig, filePhaserState, context, irFile)
                 } catch (e: Throwable) {
                     thrownFromThread.set(Pair(e, irFile))
                 }
@@ -132,6 +131,20 @@ private class PerformByIrFilePhase<Context : CommonBackendContext>(
 
         // TODO: no guarantee that module identity is preserved by `lower`
         return input
+    }
+
+    protected abstract fun lowerFile(phaseConfig: PhaseConfig, filePhaserState: PhaserState<IrFile>, context: Context, irFile: IrFile)
+}
+
+private class PerformByIrFilePhase<Context : CommonBackendContext>(
+    private val lower: List<CompilerPhase<Context, IrFile, IrFile>>,
+    copyBeforeLowering: Boolean,
+) : AbstractByFilePhase<Context>(copyBeforeLowering) {
+
+    override fun lowerFile(phaseConfig: PhaseConfig, filePhaserState: PhaserState<IrFile>, context: Context, irFile: IrFile) {
+        for (phase in lower) {
+            phase.invoke(phaseConfig, filePhaserState, context, irFile)
+        }
     }
 
     override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *>>> =
