@@ -86,11 +86,12 @@ class KotlinJvmVariantFactoryTest : AbstractKpmExtensionTest() {
     @Test
     fun `test custom configure compileDependenciesConfiguration`() {
         val variant = KotlinJvmVariantFactory(
-            KotlinJvmVariantInstantiator(kotlin.main),
-            KotlinJvmVariantConfigurator(compileDependenciesConfigurator = { fragment, configuration ->
-                assertSame(fragment.compileDependenciesConfiguration, configuration)
-                configuration.attributes.attribute(testAttribute, "compileDependencies")
-            })
+            kotlin.main, KotlinJvmVariantConfig(
+                compileDependencies = DefaultKotlinCompileDependenciesDefinition + FragmentAttributes { fragment ->
+                    assertSame(fragment.compileDependenciesConfiguration.attributes, this)
+                    attribute(testAttribute, "compileDependencies")
+                }
+            )
         ).create("jvm")
 
         assertEquals(
@@ -101,11 +102,12 @@ class KotlinJvmVariantFactoryTest : AbstractKpmExtensionTest() {
     @Test
     fun `test custom configure runtimeDependenciesConfiguration`() {
         val variant = KotlinJvmVariantFactory(
-            KotlinJvmVariantInstantiator(kotlin.main),
-            KotlinJvmVariantConfigurator(runtimeDependenciesConfigurator = { fragment, configuration ->
-                assertSame(fragment.runtimeDependenciesConfiguration, configuration)
-                configuration.attributes.attribute(testAttribute, "runtimeDependencies")
-            })
+            kotlin.main, KotlinJvmVariantConfig(
+                runtimeDependencies = DefaultKotlinRuntimeDependenciesDefinition + FragmentAttributes { fragment ->
+                    assertSame(fragment.runtimeDependenciesConfiguration.attributes, this)
+                    attribute(testAttribute, "runtimeDependencies")
+                }
+            )
         ).create("jvm")
 
         assertEquals(
@@ -116,10 +118,12 @@ class KotlinJvmVariantFactoryTest : AbstractKpmExtensionTest() {
     @Test
     fun `test custom configure apiElementsConfiguration`() {
         val variant = KotlinJvmVariantFactory(
-            KotlinJvmVariantInstantiator(kotlin.main), KotlinJvmVariantConfigurator(apiElementsConfigurator = { fragment, configuration ->
-                assertSame(fragment.apiElementsConfiguration, configuration)
-                configuration.attributes.attribute(testAttribute, "apiElements")
-            })
+            kotlin.main, KotlinJvmVariantConfig(
+                apiElements = DefaultKotlinApiElementsDefinition + FragmentAttributes { fragment ->
+                    assertSame(fragment.apiElementsConfiguration.attributes, this)
+                    attribute(testAttribute, "apiElements")
+                }
+            )
         ).create("jvm")
 
         assertEquals(
@@ -130,11 +134,12 @@ class KotlinJvmVariantFactoryTest : AbstractKpmExtensionTest() {
     @Test
     fun `test custom configure runtimeElementsConfiguration`() {
         val variant = KotlinJvmVariantFactory(
-            KotlinJvmVariantInstantiator(kotlin.main),
-            KotlinJvmVariantConfigurator(runtimeElementsConfigurator = { fragment, configuration ->
-                assertSame(fragment.runtimeElementsConfiguration, configuration)
-                configuration.attributes.attribute(testAttribute, "runtimeElements")
-            })
+            kotlin.main, KotlinJvmVariantConfig(
+                runtimeElements = DefaultKotlinRuntimeElementsDefinition + FragmentAttributes { fragment ->
+                    assertSame(fragment.runtimeElementsConfiguration.attributes, this)
+                    attribute(testAttribute, "runtimeElements")
+                }
+            )
         ).create("jvm")
 
         assertEquals(
@@ -145,12 +150,13 @@ class KotlinJvmVariantFactoryTest : AbstractKpmExtensionTest() {
     @Test
     fun `test custom sourceDirectories configuration`() {
         val variant = KotlinJvmVariantFactory(
-            KotlinJvmVariantInstantiator(kotlin.main),
-            KotlinJvmVariantConfigurator(sourceDirectoriesConfigurator = object : KotlinSourceDirectoriesConfigurator<KotlinJvmVariant> {
-                override fun configure(fragment: KotlinJvmVariant) {
-                    fragment.kotlinSourceRoots.setSrcDirs(listOf(project.file("src/abc/kotlin")))
+            kotlin.main, KotlinJvmVariantConfig(
+                sourceDirectoriesConfigurator = object : KotlinSourceDirectoriesConfigurator<KotlinJvmVariant> {
+                    override fun configure(fragment: KotlinJvmVariant) {
+                        fragment.kotlinSourceRoots.setSrcDirs(listOf(project.file("src/abc/kotlin")))
+                    }
                 }
-            })
+            )
         ).create("jvm")
 
         assertEquals(listOf(project.file("src/abc/kotlin")), variant.kotlinSourceRoots.srcDirs.toList())

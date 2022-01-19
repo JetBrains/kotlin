@@ -29,9 +29,7 @@ class KotlinNativeVariantFactoryTest(
 
     @BeforeTest
     fun createVariant() {
-        variant = KotlinNativeVariantFactory(
-            KotlinNativeVariantInstantiator(kotlin.main, variantConstructor)
-        ).create("native")
+        variant = KotlinNativeVariantFactory(kotlin.main, variantConstructor).create("native")
     }
 
     @Test

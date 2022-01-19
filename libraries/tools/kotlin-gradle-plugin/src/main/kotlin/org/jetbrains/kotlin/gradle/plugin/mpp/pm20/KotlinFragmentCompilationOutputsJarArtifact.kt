@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.gradle.api.artifacts.Configuration
 import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -14,12 +13,9 @@ import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 /**
  * Registers a [Jar] task with the variant's compilation outputs and attaches this artifact to the given configuration.
  */
-object KotlinCompilationOutputsJarArtifactConfigurator : KotlinFragmentConfigurationsConfigurator<KotlinGradleVariant> {
-    override fun configure(fragment: KotlinGradleVariant, configuration: Configuration) {
-        val jarTask = fragment.project.locateOrRegisterTask<Jar>(fragment.disambiguateName("jar")) {
-            it.from(fragment.compilationOutputs.allOutputs)
-            it.archiveClassifier.set(dashSeparatedName(fragment.name, fragment.containingModule.moduleClassifier))
-        }
-        fragment.project.artifacts.add(configuration.name, jarTask)
-    }
+val KotlinFragmentCompilationOutputsJarArtifact = FragmentArtifacts<KotlinGradleVariant> { fragment ->
+    artifact(fragment.project.locateOrRegisterTask<Jar>(fragment.disambiguateName("jar")) {
+        it.from(fragment.compilationOutputs.allOutputs)
+        it.archiveClassifier.set(dashSeparatedName(fragment.name, fragment.containingModule.moduleClassifier))
+    })
 }

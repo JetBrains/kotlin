@@ -6,4 +6,5 @@
 package org.jetbrains.kotlin.gradle.utils
 
 @RequiresOptIn("Unsafe API. Please use safe counterpart", level = RequiresOptIn.Level.ERROR)
-internal annotation class UnsafeApi
+@Retention(AnnotationRetention.BINARY)
+internal annotation class UnsafeApi(val message: String = "")
