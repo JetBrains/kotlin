@@ -1,72 +1,44 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.plugin.generators
+package org.jetbrains.kotlinx.serialization.compiler.fir
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.builder.FirSimpleFunctionBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.origin
+import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 
-@OptIn(SymbolInternals::class)
-fun FirDeclarationGenerationExtension.buildMaterializeFunction(
-    matchedClassSymbol: FirClassLikeSymbol<*>,
-    callableId: CallableId,
-    key: GeneratedDeclarationKey
-): FirSimpleFunction {
-    return buildSimpleFunction {
-        resolvePhase = FirResolvePhase.BODY_RESOLVE
-        moduleData = session.moduleData
-        origin = key.origin
-        status = FirResolvedDeclarationStatusImpl(
-            Visibilities.Public,
-            Modality.FINAL,
-            EffectiveVisibility.Public
-        )
-        returnTypeRef = buildResolvedTypeRef {
-            type = ConeClassLikeTypeImpl(
-                matchedClassSymbol.toLookupTag(),
-                emptyArray(),
-                isNullable = false
-            )
-        }
-        name = callableId.callableName
-        symbol = FirNamedFunctionSymbol(callableId)
-        dispatchReceiverType = callableId.classId?.let {
-            val firClass = session.symbolProvider.getClassLikeSymbolByClassId(it)?.fir as? FirClass
-            firClass?.defaultType()
-        }
-    }
-}
 
-// FIXME: this has to be shared
+// FIXME: this has to be shared (copied from plugin example)
 @OptIn(SymbolInternals::class)
 fun FirDeclarationGenerationExtension.buildConstructor(classId: ClassId, isInner: Boolean, key: GeneratedDeclarationKey): FirConstructor {
     val lookupTag = ConeClassLikeLookupTagImpl(classId)
     return buildPrimaryConstructor {
-        resolvePhase = FirResolvePhase.BODY_RESOLVE
         moduleData = session.moduleData
         origin = key.origin
         returnTypeRef = buildResolvedTypeRef {
@@ -93,11 +65,26 @@ fun FirDeclarationGenerationExtension.buildConstructor(classId: ClassId, isInner
     }
 }
 
-// FIXME: this has to be shared
-fun ClassId.toSimpleConeType(typeArguments: Array<ConeKotlinTypeProjection> = emptyArray()): ConeClassLikeType {
-    return ConeClassLikeTypeImpl(
-        ConeClassLikeLookupTagImpl(this),
-        typeArguments,
-        isNullable = false
-    )
+// FIXME: copied from Parcelize plugin
+inline fun FirSession.createFunction(
+    owner: FirRegularClassSymbol,
+    callableId: CallableId,
+    init: FirSimpleFunctionBuilder.() -> Unit
+): FirNamedFunctionSymbol {
+    val function = buildSimpleFunction {
+        moduleData = this@createFunction.moduleData
+        origin = SerializationPluginKey.origin
+        status = FirResolvedDeclarationStatusImpl(
+            Visibilities.Public,
+            if (owner.modality == Modality.FINAL) Modality.FINAL else Modality.OPEN,
+            EffectiveVisibility.Public
+        ).apply {
+            isOverride = true
+        }
+        name = callableId.callableName
+        symbol = FirNamedFunctionSymbol(callableId)
+        dispatchReceiverType = owner.defaultType()
+        init()
+    }
+    return function.symbol
 }

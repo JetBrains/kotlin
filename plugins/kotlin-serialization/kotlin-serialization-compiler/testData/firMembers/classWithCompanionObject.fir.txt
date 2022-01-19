@@ -1,0 +1,31 @@
+FILE: classWithCompanionObject.kt
+    @R|kotlinx/serialization/Serializable|() public final class SomeClass : R|kotlin/Any| {
+        public constructor(): R|SomeClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun serializer(): R|kotlinx/serialization/KSerializer<SomeClass>|
+
+            public constructor(): R|SomeClass.Companion|
+
+        }
+
+        public final object $serializer : R|kotlinx/serialization/internal/GeneratedSerializer<SomeClass>| {
+            public final fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|SomeClass|): R|kotlin/Unit|
+
+            public final fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|SomeClass|
+
+            public final val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor|
+                public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
+
+            public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
+
+            public constructor(): R|SomeClass.$serializer|
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }
