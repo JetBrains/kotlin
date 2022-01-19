@@ -99,34 +99,15 @@ class FirCallCompleter(
             session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, call.source, null)
         }
 
-        val expectedTypeConstraintPosition = ConeExpectedTypeConstraintPosition(expectedTypeMismatchIsReportedInChecker)
-
-        when {
-            expectedTypeRef !is FirResolvedTypeRef -> {
-                // nothing
-            }
-            !shouldEnforceExpectedType -> {
-                candidate.system.addSubtypeConstraintIfCompatible(
-                    initialType, expectedTypeRef.type, expectedTypeConstraintPosition
-                )
-            }
-            isFromCast -> when {
-                candidate.isFunctionForExpectTypeFromCastFeature() -> {
-                    candidate.system.addSubtypeConstraint(
-                        initialType, expectedTypeRef.type,
-                        ConeExpectedTypeConstraintPosition(expectedTypeMismatchIsReportedInChecker = false),
-                    )
-                }
-            }
-            !expectedTypeRef.coneType.isUnitOrFlexibleUnit || !mayBeCoercionToUnitApplied -> {
-                candidate.system.addSubtypeConstraint(initialType, expectedTypeRef.type, expectedTypeConstraintPosition)
-            }
-            candidate.system.notFixedTypeVariables.isNotEmpty() -> {
-                candidate.system.addSubtypeConstraintIfCompatible(
-                    initialType, expectedTypeRef.type, expectedTypeConstraintPosition
-                )
-            }
-        }
+        addConstraintFromExpectedType(
+            expectedTypeMismatchIsReportedInChecker,
+            expectedTypeRef,
+            shouldEnforceExpectedType,
+            candidate,
+            initialType,
+            isFromCast,
+            mayBeCoercionToUnitApplied
+        )
 
         val completionMode = candidate.computeCompletionMode(session.inferenceComponents, expectedTypeRef, initialType)
 
@@ -162,6 +143,41 @@ class FirCallCompleter(
             }
 
             ConstraintSystemCompletionMode.UNTIL_FIRST_LAMBDA -> throw IllegalStateException()
+        }
+    }
+
+    private fun addConstraintFromExpectedType(
+        expectedTypeMismatchIsReportedInChecker: Boolean,
+        expectedTypeRef: FirTypeRef?,
+        shouldEnforceExpectedType: Boolean,
+        candidate: Candidate,
+        initialType: ConeKotlinType,
+        isFromCast: Boolean,
+        mayBeCoercionToUnitApplied: Boolean
+    ) {
+        val expectedType = expectedTypeRef?.coneTypeSafe<ConeKotlinType>() ?: return
+        val expectedTypeConstraintPosition = ConeExpectedTypeConstraintPosition(expectedTypeMismatchIsReportedInChecker)
+
+        val system = candidate.system
+        when {
+            !shouldEnforceExpectedType -> {
+                system.addSubtypeConstraintIfCompatible(initialType, expectedType, expectedTypeConstraintPosition)
+            }
+            isFromCast -> {
+                if (candidate.isFunctionForExpectTypeFromCastFeature()) {
+                    system.addSubtypeConstraint(
+                        initialType, expectedType,
+                        ConeExpectedTypeConstraintPosition(expectedTypeMismatchIsReportedInChecker = false),
+                    )
+                }
+            }
+            !expectedType.isUnitOrFlexibleUnit || !mayBeCoercionToUnitApplied -> {
+                system.addSubtypeConstraint(initialType, expectedType, expectedTypeConstraintPosition)
+            }
+            system.notFixedTypeVariables.isEmpty() -> return
+            else -> {
+                system.addSubtypeConstraintIfCompatible(initialType, expectedType, expectedTypeConstraintPosition)
+            }
         }
     }
 
