@@ -452,22 +452,22 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
     /**
      * given:
-     * argument++
+     * receiver++
      *
      * result:
      * {
-     *     val <unary> = argument
-     *     argument = <unary>.inc()
+     *     val <unary> = receiver
+     *     receiver = <unary>.inc()
      *     ^<unary>
      * }
      *
      * given:
-     * ++argument
+     * ++receiver
      *
      * result:
      * {
-     *     val <unary-result> = argument.inc()
-     *     argument = <unary-result>
+     *     val <unary-result> = receiver.inc()
+     *     receiver = <unary-result>
      *     ^<unary-result>
      * }
      *
@@ -477,33 +477,34 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     // 1. Support receiver capturing for `a?.b++` (elementType == SAFE_ACCESS_EXPRESSION).
     // 2. Add box test cases for #1 where receiver expression has side effects.
     fun generateIncrementOrDecrementBlock(
-        baseExpression: T,
+        // Used to obtain source-element or text
+        wholeExpression: T,
         operationReference: T?,
-        argument: T?,
+        receiver: T?,
         callName: Name,
         prefix: Boolean,
         convert: T.() -> FirExpression
     ): FirExpression {
-        val unwrappedArgument = argument.unwrap() ?: return buildErrorExpression {
+        val unwrappedReceiver = receiver.unwrap() ?: return buildErrorExpression {
             diagnostic = ConeSimpleDiagnostic("Inc/dec without operand", DiagnosticKind.Syntax)
         }
 
-        if (unwrappedArgument.elementType == DOT_QUALIFIED_EXPRESSION) {
+        if (unwrappedReceiver.elementType == DOT_QUALIFIED_EXPRESSION) {
             return generateIncrementOrDecrementBlockForQualifiedAccess(
-                baseExpression,
+                wholeExpression,
                 operationReference,
-                unwrappedArgument,
+                unwrappedReceiver,
                 callName,
                 prefix,
                 convert
             )
         }
 
-        if (unwrappedArgument.elementType == ARRAY_ACCESS_EXPRESSION) {
+        if (unwrappedReceiver.elementType == ARRAY_ACCESS_EXPRESSION) {
             return generateIncrementOrDecrementBlockForArrayAccess(
-                baseExpression,
+                wholeExpression,
                 operationReference,
-                unwrappedArgument,
+                unwrappedReceiver,
                 callName,
                 prefix,
                 convert
@@ -511,7 +512,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
 
         return buildBlock {
-            val baseSource = baseExpression?.toFirSourceElement()
+            val baseSource = wholeExpression?.toFirSourceElement()
             val desugaredSource = baseSource?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
             source = desugaredSource
 
@@ -520,7 +521,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 baseModuleData,
                 desugaredSource,
                 SpecialNames.UNARY,
-                unwrappedArgument.convert()
+                unwrappedReceiver.convert()
             )
 
             // resultInitializer is the expression for `argument.inc()`
@@ -531,7 +532,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     name = callName
                 }
                 explicitReceiver = if (prefix) {
-                    unwrappedArgument.convert()
+                    unwrappedReceiver.convert()
                 } else {
                     generateResolvedAccessExpression(desugaredSource, initialValueVar)
                 }
@@ -546,10 +547,10 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 resultInitializer
             )
 
-            val assignment = unwrappedArgument.generateAssignment(
+            val assignment = unwrappedReceiver.generateAssignment(
                 desugaredSource,
                 null,
-                if (prefix && unwrappedArgument.elementType != REFERENCE_EXPRESSION)
+                if (prefix && unwrappedReceiver.elementType != REFERENCE_EXPRESSION)
                     generateResolvedAccessExpression(source, resultVar)
                 else
                     resultInitializer,
@@ -568,13 +569,13 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             }
 
             if (prefix) {
-                if (unwrappedArgument.elementType != REFERENCE_EXPRESSION) {
+                if (unwrappedReceiver.elementType != REFERENCE_EXPRESSION) {
                     statements += resultVar
                     appendAssignment()
                     statements += generateResolvedAccessExpression(desugaredSource, resultVar)
                 } else {
                     appendAssignment()
-                    statements += generateAccessExpression(desugaredSource, desugaredSource, unwrappedArgument.getReferencedNameAsName())
+                    statements += generateAccessExpression(desugaredSource, desugaredSource, unwrappedReceiver.getReferencedNameAsName())
                 }
             } else {
                 statements += initialValueVar
@@ -623,34 +624,34 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
      *
      */
     private fun generateIncrementOrDecrementBlockForQualifiedAccess(
-        baseExpression: T,
+        wholeExpression: T,
         operationReference: T?,
-        argument: T,
+        receiverForOperation: T,
         callName: Name,
         prefix: Boolean,
         convert: T.() -> FirExpression
     ): FirExpression {
         return buildBlock {
-            val baseSource = baseExpression?.toFirSourceElement()
+            val baseSource = wholeExpression?.toFirSourceElement()
             val desugaredSource = baseSource?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
             source = desugaredSource
 
-            val argumentReceiver = argument.receiverExpression
-            val argumentSelector = argument.selectorExpression
+            val argumentReceiver = receiverForOperation.receiverExpression
+            val argumentSelector = receiverForOperation.selectorExpression
 
             val argumentReceiverVariable = generateTemporaryVariable(
                 baseModuleData,
                 argumentReceiver?.toFirSourceElement(),
                 Name.special("<receiver>"),
                 argumentReceiver?.convert() ?: buildErrorExpression {
-                    source = argument.toFirSourceElement()
+                    source = receiverForOperation.toFirSourceElement()
                     diagnostic = ConeSimpleDiagnostic("Qualified expression without receiver", DiagnosticKind.Syntax)
                 }
             ).also { statements += it }
 
             val firArgument = generateResolvedAccessExpression(argumentReceiverVariable.source, argumentReceiverVariable).let { receiver ->
                 val firArgumentSelector = argumentSelector?.convert() ?: buildErrorExpression {
-                    source = argument.toFirSourceElement()
+                    source = receiverForOperation.toFirSourceElement()
                     diagnostic = ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)
                 }
                 firArgumentSelector.also { if (it is FirQualifiedAccessExpression) it.replaceExplicitReceiver(receiver) }
@@ -746,28 +747,28 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
      *
      */
     private fun generateIncrementOrDecrementBlockForArrayAccess(
-        baseExpression: T,
+        wholeExpression: T,
         operationReference: T?,
-        argument: T,
+        receiver: T,
         callName: Name,
         prefix: Boolean,
         convert: T.() -> FirExpression
     ): FirExpression {
         return buildBlock {
-            val baseSource = baseExpression?.toFirSourceElement()
+            val baseSource = wholeExpression?.toFirSourceElement()
             val desugaredSource = baseSource?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
             source = desugaredSource
 
-            val array = argument.arrayExpression
-            val indices = argument.indexExpressions
-            requireNotNull(indices) { "No indices in ${baseExpression.asText}" }
+            val array = receiver.arrayExpression
+            val indices = receiver.indexExpressions
+            requireNotNull(indices) { "No indices in ${wholeExpression.asText}" }
 
             val arrayVariable = generateTemporaryVariable(
                 baseModuleData,
                 array?.toFirSourceElement(),
                 Name.special("<array>"),
                 array?.convert() ?: buildErrorExpression {
-                    source = argument.toFirSourceElement()
+                    source = receiver.toFirSourceElement()
                     diagnostic = ConeSimpleDiagnostic("No array expression", DiagnosticKind.Syntax)
                 }
             ).also { statements += it }
@@ -784,7 +785,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             val firArgument = buildFunctionCall {
                 source = desugaredSource
                 calleeReference = buildSimpleNamedReference {
-                    source = argument?.toFirSourceElement()
+                    source = receiver?.toFirSourceElement()
                     name = OperatorNameConventions.GET
                 }
                 explicitReceiver = generateResolvedAccessExpression(arrayVariable.source, arrayVariable)
@@ -831,7 +832,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 statements += buildFunctionCall {
                     source = desugaredSource
                     calleeReference = buildSimpleNamedReference {
-                        source = argument.toFirSourceElement()
+                        source = receiver.toFirSourceElement()
                         name = OperatorNameConventions.SET
                     }
                     explicitReceiver = generateResolvedAccessExpression(arrayVariable.source, arrayVariable)
