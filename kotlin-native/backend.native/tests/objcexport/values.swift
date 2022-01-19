@@ -590,6 +590,9 @@ class TestSharedIImpl : NSObject, I {
 }
 
 func testShared() throws {
+    if !ValuesKt.isFreezingEnabled() {
+      return;
+    }
     func assertFrozen(_ obj: AnyObject) throws {
         try assertTrue(ValuesKt.isFrozen(obj: obj), "isFrozen(\(obj))")
     }

@@ -360,6 +360,10 @@ KBoolean Konan_Platform_isDebugBinary() {
   return kotlin::compiler::shouldContainDebugInfo();
 }
 
+KBoolean Konan_Platform_isFreezingEnabled() {
+  return kotlin::compiler::freezingChecksEnabled();
+}
+
 bool Kotlin_memoryLeakCheckerEnabled() {
   return g_checkLeaks;
 }

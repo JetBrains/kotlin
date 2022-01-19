@@ -88,6 +88,15 @@ public object Platform {
         get() = Platform_isDebugBinary()
 
     /**
+     * If freezing is enabled.
+     *
+     * This value would be false, only if binary option `freezing` is equal to `disabled`. This is default when
+     * [memoryModel] is equal to [MemoryModel.EXPERIMENTAL].
+     */
+    public val isFreezingEnabled: Boolean
+        get() = Platform_isFreezingEnabled()
+
+    /**
      * If the memory leak checker is activated, by default `true` in debug mode, `false` in release.
      * When memory leak checker is activated, and leak is detected during last Kotlin context
      * deinitialization process - error message with leak information is printed and application
@@ -121,6 +130,9 @@ private external fun Platform_getMemoryModel(): Int
 
 @GCUnsafeCall("Konan_Platform_isDebugBinary")
 private external fun Platform_isDebugBinary(): Boolean
+
+@GCUnsafeCall("Konan_Platform_isFreezingEnabled")
+private external fun Platform_isFreezingEnabled(): Boolean
 
 @GCUnsafeCall("Konan_Platform_getMemoryLeakChecker")
 private external fun Platform_getMemoryLeakChecker(): Boolean
