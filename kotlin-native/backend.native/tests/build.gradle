@@ -1152,52 +1152,68 @@ standaloneTest("worker_threadlocal_no_leak") {
     source = "runtime/workers/worker_threadlocal_no_leak.kt"
 }
 
-task freeze0(type: KonanLocalTest) {
+standaloneTest("freeze0") {
     enabled = (project.testTarget != 'wasm32') // No workers on WASM.
     useGoldenData = true
+    flags = ["-Xbinary=freezing=full", "-tr"]
     source = "runtime/workers/freeze0.kt"
+    testLogger = KonanTest.Logger.SILENT
 }
 
-task freeze1(type: KonanLocalTest) {
+standaloneTest("freeze1") {
     enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
     useGoldenData = true
+    flags = ["-Xbinary=freezing=full", "-tr"]
     source = "runtime/workers/freeze1.kt"
+    testLogger = KonanTest.Logger.SILENT
 }
 
-task freeze_stress(type: KonanLocalTest) {
+standaloneTest("freeze_stress") {
     enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
     useGoldenData = true
+    flags = ["-Xbinary=freezing=full", "-tr"]
     source = "runtime/workers/freeze_stress.kt"
+    testLogger = KonanTest.Logger.SILENT
 }
 
-task freeze2(type: KonanLocalTest) {
+standaloneTest("freeze2") {
     enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
     useGoldenData = true
+    flags = ["-Xbinary=freezing=full", "-tr"]
     source = "runtime/workers/freeze2.kt"
+    testLogger = KonanTest.Logger.SILENT
 }
 
-task freeze3(type: KonanLocalTest) {
+standaloneTest("freeze3") {
     enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
     useGoldenData = true
+    flags = ["-Xbinary=freezing=full", "-tr"]
     source = "runtime/workers/freeze3.kt"
+    testLogger = KonanTest.Logger.SILENT
 }
 
-task freeze4(type: KonanLocalTest) {
+standaloneTest("freeze4") {
     enabled = (project.testTarget != 'wasm32') // No exceptions on WASM.
     useGoldenData = true
+    flags = ["-Xbinary=freezing=full", "-tr"]
     source = "runtime/workers/freeze4.kt"
+    testLogger = KonanTest.Logger.SILENT
 }
 
-task freeze5(type: KonanLocalTest) {
+standaloneTest("freeze5") {
     useGoldenData = true
+    flags = ["-Xbinary=freezing=full", "-tr"]
     source = "runtime/workers/freeze5.kt"
+    testLogger = KonanTest.Logger.SILENT
 }
 
-task freeze6(type: KonanLocalTest) {
+standaloneTest("freeze6") {
     enabled = (project.testTarget != 'wasm32') && // No exceptions on WASM.
         !isNoopGC
     useGoldenData = true
+    flags = ["-Xbinary=freezing=full", "-tr"]
     source = "runtime/workers/freeze6.kt"
+    testLogger = KonanTest.Logger.SILENT
 }
 
 task atomic0(type: KonanLocalTest) {

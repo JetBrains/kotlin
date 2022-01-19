@@ -93,10 +93,12 @@ fun test4() {
         ref.compareAndSwap(null, Data(2))
         assertEquals(2, ref.value!!.value)
     }
-    run {
-        val ref = AtomicReference<Data?>(null).freeze()
-        assertFailsWith<InvalidMutabilityException> {
-            ref.compareAndSwap(null, Data(2))
+    if (Platform.isFreezingEnabled) {
+        run {
+            val ref = AtomicReference<Data?>(null).freeze()
+            assertFailsWith<InvalidMutabilityException> {
+                ref.compareAndSwap(null, Data(2))
+            }
         }
     }
 }
@@ -137,11 +139,13 @@ fun test7() {
     ref.value = Array(1) { "po" }
     assertEquals(ref.value[0], "po")
     ref.freeze()
-    assertFailsWith<InvalidMutabilityException> {
-        ref.value = Array(1) { "no" }
-    }
-    assertFailsWith<InvalidMutabilityException> {
-        ref.value[0] = "go"
+    if (Platform.isFreezingEnabled) {
+        assertFailsWith<InvalidMutabilityException> {
+            ref.value = Array(1) { "no" }
+        }
+        assertFailsWith<InvalidMutabilityException> {
+            ref.value[0] = "go"
+        }
     }
     ref.value = Array(1) { "so" }.freeze()
     assertEquals(ref.value[0], "so")

@@ -15,17 +15,18 @@ private class NSObjectImpl : NSObject() {
     assertFalse(obj.isFrozen)
 
     obj.x = 222
-    obj.freeze()
-    assertTrue(obj.isFrozen)
 
-    runInWorker {
-        val obj1 = array.objectAtIndex(0) as NSObjectImpl
-        assertFailsWith<InvalidMutabilityException> {
-            obj1.x = 333
+    if (Platform.isFreezingEnabled) {
+        obj.freeze()
+        assertTrue(obj.isFrozen)
+        runInWorker {
+            val obj1 = array.objectAtIndex(0) as NSObjectImpl
+            assertFailsWith<InvalidMutabilityException> {
+                obj1.x = 333
+            }
         }
+        assertEquals(222, obj.x)
     }
-
-    assertEquals(222, obj.x)
 
     // TODO: test [obj release] etc.
 }

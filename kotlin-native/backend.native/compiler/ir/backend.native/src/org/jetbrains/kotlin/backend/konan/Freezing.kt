@@ -11,22 +11,23 @@ package org.jetbrains.kotlin.backend.konan
  *
  * If [enableFreezeAtRuntime] is false then `Any.freeze()` and `checkIfFrozen(ref: Any?)` are no-op.
  * [freezeImplicit] enabled freezing for @Frozen types and @SharedImmutable globals (i.e. implicit calls to `Any.freeze()`).
+ * If [enableFreezeChecks] is false, than `Any.isFrozen() will always return false, and no [InvalidMutabilityException] can be thrown
  */
-enum class Freezing(val enableFreezeAtRuntime: Boolean, val freezeImplicit: Boolean) {
+enum class Freezing(val enableFreezeAtRuntime: Boolean, val freezeImplicit: Boolean, val enableFreezeChecks: Boolean) {
     /**
      * Enable freezing in `Any.freeze()` as well as for @Frozen types and @SharedImmutable globals.
      */
-    Full(true, true),
+    Full(true, true, true),
 
     /**
      * Enable freezing only in explicit calls to `Any.freeze()`.
      */
-    ExplicitOnly(true, false),
+    ExplicitOnly(true, false, true),
 
     /**
      * No freezing at all.
      */
-    Disabled(false, false);
+    Disabled(false, false, false);
 
     companion object {
         // Users might depend on runtime guarantees of freezing, so it should be enabled by default.
