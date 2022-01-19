@@ -1,4 +1,5 @@
 // !LANGUAGE: -ProhibitConcurrentHashMapContains
+// FIR_IDE_IGNORE
 // FULL_JDK
 
 class A : java.util.concurrent.ConcurrentHashMap<String, Int>() {
