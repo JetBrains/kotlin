@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
+import com.android.build.gradle.internal.publishing.AndroidArtifacts
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ModuleDependency
@@ -17,7 +18,6 @@ import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.internal.publication.DefaultMavenPublication
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinFragmentModuleCapabilityConfigurator.setModuleCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
@@ -44,7 +44,8 @@ open class VariantPublishingConfigurator @Inject constructor(
     private val softwareComponentFactory: SoftwareComponentFactory
 ) {
     companion object {
-        fun get(project: Project): VariantPublishingConfigurator = project.objects.newInstance(VariantPublishingConfigurator::class.java, project)
+        fun get(project: Project): VariantPublishingConfigurator =
+            project.objects.newInstance(VariantPublishingConfigurator::class.java, project)
     }
 
     open fun platformComponentName(variant: KotlinGradleVariant) = variant.disambiguateName("")
@@ -105,7 +106,13 @@ open class VariantPublishingConfigurator @Inject constructor(
         val platformComponent = softwareComponentFactory.adhoc(componentName)
         project.components.add(platformComponent)
         publishConfigurationsWithMavenScopes.forEach { (configurationName, mavenScopeOrNull) ->
-            platformComponent.addVariantsFromConfiguration(project.configurations.getByName(configurationName)) { variantDetails ->
+            platformComponent.addVariantsFromConfiguration(project.configurations.getByName(configurationName)) details@{ variantDetails ->
+                // TODO: This is temporary for Android! Make sure to only publish AAR
+                val androidArtifactType = variantDetails.configurationVariant.attributes.getAttribute(AndroidArtifacts.ARTIFACT_TYPE)
+                if (androidArtifactType != null && androidArtifactType != AndroidArtifacts.ArtifactType.AAR.type) {
+                    return@details variantDetails.skip()
+                }
+
                 mavenScopeOrNull?.let { variantDetails.mapToMavenScope(it) }
             }
         }
