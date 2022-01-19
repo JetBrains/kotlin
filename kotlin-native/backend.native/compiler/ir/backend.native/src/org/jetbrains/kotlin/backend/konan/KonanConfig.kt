@@ -86,7 +86,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         val (gcFallbackReason, realGc) = when {
             configGc == GC.CONCURRENT_MARK_AND_SWEEP && !target.supportsThreads() ->
                 "Concurrent mark and sweep gc is not supported for this target. Fallback to Same thread mark and sweep is done" to GC.SAME_THREAD_MARK_AND_SWEEP
-            configGc == null -> null to GC.SAME_THREAD_MARK_AND_SWEEP
+            configGc == null -> null to GC.CONCURRENT_MARK_AND_SWEEP
             else -> null to configGc
         }
         if (gcFallbackReason != null) {

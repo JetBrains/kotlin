@@ -99,6 +99,7 @@ gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
             }
         }
     });
+    RuntimeLogDebug({kTagGC}, "Concurrent Mark & Sweep GC initialized");
 }
 
 gc::ConcurrentMarkAndSweep::~ConcurrentMarkAndSweep() {
