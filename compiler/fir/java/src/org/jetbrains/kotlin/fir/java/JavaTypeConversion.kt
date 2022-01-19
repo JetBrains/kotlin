@@ -99,7 +99,7 @@ private fun JavaType?.toConeTypeProjection(
         is JavaClassifierType -> {
             val lowerBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes)
             if (mode == FirJavaTypeConversionMode.ANNOTATION_MEMBER) {
-                return lowerBound // TODO: `KClass<Any>` is wrong for raw `Class`
+                return lowerBound
             }
             val upperBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, lowerBound)
             if (isRaw) ConeRawType(lowerBound, upperBound) else ConeFlexibleType(lowerBound, upperBound)
@@ -171,8 +171,11 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                         lookupTag.takeIf { lowerBound == null && mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND }
                             ?.toFirRegularClassSymbol(session)?.typeParameterSymbols
                     // Given `C<T : X>`, `C` -> `C<X>..C<*>?`.
-                    typeParameterSymbols?.eraseToUpperBounds(session)
-                        ?: Array(classifier.typeParameters.size) { ConeStarProjection }
+                    when (mode) {
+                        FirJavaTypeConversionMode.ANNOTATION_MEMBER -> Array(classifier.typeParameters.size) { ConeStarProjection }
+                        else -> typeParameterSymbols?.eraseToUpperBounds(session)
+                            ?: Array(classifier.typeParameters.size) { ConeStarProjection }
+                    }
                 }
                 lookupTag != lowerBound?.lookupTag && typeArguments.isNotEmpty() -> {
                     val typeParameterSymbols =

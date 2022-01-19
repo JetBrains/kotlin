@@ -1267,6 +1267,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("javaAnnotationWithClassArray.kt")
+            public void testJavaAnnotationWithClassArray() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/javaAnnotationWithClassArray.kt");
+            }
+
+            @Test
             @TestMetadata("kt1860-negative.kt")
             public void testKt1860_negative() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/kt1860-negative.kt");
