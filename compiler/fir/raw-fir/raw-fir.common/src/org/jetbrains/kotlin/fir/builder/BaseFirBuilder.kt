@@ -547,20 +547,20 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 resultInitializer
             )
 
-            val assignment = unwrappedReceiver.generateAssignment(
-                desugaredSource,
-                null,
-                if (prefix && unwrappedReceiver.elementType != REFERENCE_EXPRESSION)
-                    generateResolvedAccessExpression(source, resultVar)
-                else
-                    resultInitializer,
-                FirOperation.ASSIGN,
-                resultInitializer.annotations,
-                null,
-                convert
-            )
-
             fun appendAssignment() {
+                val assignment = unwrappedReceiver.generateAssignment(
+                    desugaredSource,
+                    null,
+                    if (prefix && unwrappedReceiver.elementType != REFERENCE_EXPRESSION)
+                        generateResolvedAccessExpression(source, resultVar)
+                    else
+                        resultInitializer,
+                    FirOperation.ASSIGN,
+                    resultInitializer.annotations,
+                    null,
+                    convert
+                )
+
                 if (assignment is FirBlock) {
                     statements += assignment.statements
                 } else {
