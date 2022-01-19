@@ -60,13 +60,19 @@ private fun computeDependenciesHash(dependency: ResolvedDependency): String {
 fun getDependenciesCacheDirectories(
     rootCacheDirectory: File,
     dependency: ResolvedDependency,
-    libraryFilter: (ResolvedArtifact) -> Boolean = { it.file.absolutePath.endsWith(".klib") }
+    libraryFilter: (ResolvedArtifact) -> Boolean = { it.file.absolutePath.endsWith(".klib") },
+    considerArtifact: Boolean = false
 ): List<File>? {
     return getAllDependencies(dependency)
         .flatMap { childDependency ->
             childDependency.moduleArtifacts.map {
                 if (libraryFilter(it)) {
-                    val cacheDirectory = getCacheDirectory(rootCacheDirectory, childDependency, it, libraryFilter)
+                    val cacheDirectory = getCacheDirectory(
+                        rootCacheDirectory,
+                        childDependency,
+                        if (considerArtifact) it else null,
+                        libraryFilter
+                    )
                     if (!cacheDirectory.exists()) return null
                     cacheDirectory
                 } else {

@@ -308,7 +308,8 @@ internal class CacheBuilder(
         val dependenciesCacheDirectories = getDependenciesCacheDirectories(
             rootCacheDirectory,
             dependency,
-            libraryFilter = { libraryFilter(it.file) }
+            libraryFilter = { libraryFilter(it.file) },
+            considerArtifact = true
         ) ?: return
 
         val nameMap: MutableMap<String, ResolvedArtifact> = mutableMapOf()
