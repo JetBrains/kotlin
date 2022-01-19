@@ -6,7 +6,12 @@
 package org.jetbrains.kotlin.konan.blackboxtest
 
 import com.intellij.testFramework.TestDataFile
-import org.jetbrains.kotlin.konan.blackboxtest.support.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.NativeBlackBoxTestSupport
+import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseId
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRun
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunProvider
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunners.createProperTestRunner
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestRunSettings
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TreeNode
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
@@ -92,7 +97,7 @@ abstract class AbstractNativeBlackBoxTest {
         }
 
     private fun performTestRun(testRun: TestRun) {
-        val testRunner = testRunProvider.createRunner(testRun, testRunSettings)
+        val testRunner = createProperTestRunner(testRun, testRunSettings)
         testRunner.run()
     }
 }

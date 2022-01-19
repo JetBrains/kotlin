@@ -66,7 +66,7 @@ enum class TestProperty(shortName: String) {
     fun readGradleProperty(task: Test): String? = task.project.findProperty(propertyName)?.toString()
 }
 
-fun blackBoxTest(taskName: String, vararg tags: String) = projectTest(taskName, jUnitMode = JUnitMode.JUnit5) {
+fun nativeTest(taskName: String, vararg tags: String) = projectTest(taskName, jUnitMode = JUnitMode.JUnit5) {
     group = "verification"
 
     if (kotlinBuildProperties.isKotlinNativeEnabled) {
@@ -162,8 +162,9 @@ fun groupingTest(taskName: String, vararg dependencyTasks: Any) = getOrCreateTas
 }
 
 // Tasks that run different sorts of tests. Most frequent use case: running specific tests from the IDE.
-val infrastructureTest = blackBoxTest("infrastructureTest", "infrastructure")
-val externalTest = blackBoxTest("externalTest", "external")
+val infrastructureTest = nativeTest("infrastructureTest", "infrastructure")
+val externalTest = nativeTest("externalTest", "external")
+val klibAbiTest = nativeTest("klibAbiTest", "klib")
 
 // "test" task is created by convention. We can't just remove it. So, let it be just an alias for external test task.
 val test by groupingTest("test", externalTest)
@@ -187,7 +188,7 @@ gradle.taskGraph.whenReady {
     }
 }
 
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateNativeBlackboxTestsKt") {
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateNativeTestsKt") {
     javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11))
     dependsOn(":compiler:generateTestData")
 }

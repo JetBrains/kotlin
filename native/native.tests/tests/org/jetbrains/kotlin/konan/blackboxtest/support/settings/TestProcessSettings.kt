@@ -90,7 +90,7 @@ internal enum class GCType(val compilerFlag: String?) {
 /**
  * Current project's directories.
  */
-internal class BaseDirs(val buildDir: File)
+internal class BaseDirs(val testBuildDir: File)
 
 /**
  * Timeouts.

@@ -31,3 +31,13 @@ internal fun computeGeneratedSourcesDir(testDataBaseDir: File, testDataFile: Fil
         .resolve(testDataFileDir.relativeTo(testDataBaseDir))
         .resolve(testDataFile.nameWithoutExtension)
 }
+
+internal fun generateBoxFunctionLauncher(entryPointFunctionFQN: String): String =
+    """
+        @kotlin.test.Test
+        fun runTest() {
+            val result = $entryPointFunctionFQN()
+            kotlin.test.assertEquals("OK", result, "Test failed with: ${'$'}result")
+        }
+        
+    """.trimIndent()

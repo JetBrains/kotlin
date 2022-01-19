@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.RunResult
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunParameter
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.get
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.SafeEnvVars
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.SafeProperties
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs

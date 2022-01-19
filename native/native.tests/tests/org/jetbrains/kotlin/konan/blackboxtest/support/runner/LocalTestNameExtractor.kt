@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.LoggedData
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestExecutable
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestName
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestOutputFilter
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.parseGTestListing

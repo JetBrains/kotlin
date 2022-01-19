@@ -1,10 +1,14 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.blackboxtest.support
+package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
+import org.jetbrains.kotlin.konan.blackboxtest.support.LoggedData
+import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseId
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestName
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.startsWith
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull

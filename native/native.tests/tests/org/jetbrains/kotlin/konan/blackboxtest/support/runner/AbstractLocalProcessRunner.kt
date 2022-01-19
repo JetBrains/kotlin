@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
 import kotlinx.coroutines.*
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestExecutable
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.AbstractRunner.AbstractRun
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.UnfilteredProcessOutput.Companion.launchReader
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestOutputFilter

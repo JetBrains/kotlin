@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.expandGlobTo
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
-import org.junit.jupiter.api.fail
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
 
 internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) : TestCaseGroupProvider {

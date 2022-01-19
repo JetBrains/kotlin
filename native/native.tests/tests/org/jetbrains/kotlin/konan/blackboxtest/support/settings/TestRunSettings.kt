@@ -16,7 +16,7 @@ import java.io.File
  * [allInstances] - all test class instances ordered from innermost to outermost
  * [enclosingTestInstance] - the outermost test instance
  */
-internal class TestInstances(val allInstances: List<Any>) {
+internal class BlackBoxTestInstances(val allInstances: List<Any>) {
     val enclosingTestInstance: AbstractNativeBlackBoxTest
         get() = allInstances.firstOrNull().cast()
 }

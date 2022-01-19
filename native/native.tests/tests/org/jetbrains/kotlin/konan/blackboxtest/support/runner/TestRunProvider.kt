@@ -1,24 +1,21 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("KDocUnresolvedReference")
-
-package org.jetbrains.kotlin.konan.blackboxtest.support
+package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
+import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.NoTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilation
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationFactory
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccessfullyCompiled
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.AbstractRunner
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.LocalTestNameExtractor
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.LocalTestRunner
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeTargets
+import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunners.extractTestNames
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TreeNode
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.buildTree
@@ -28,9 +25,12 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.extension.ExtensionContext
 
+/**
+ * [TestRun] provider that is used in Kotlin/Native black box tests together with the corresponding [TestCaseGroupProvider].
+ */
 internal class TestRunProvider(
     private val testCaseGroupProvider: TestCaseGroupProvider
-) : ExtensionContext.Store.CloseableResource {
+) : BaseTestRunProvider(), ExtensionContext.Store.CloseableResource {
     private val compilationFactory = TestCompilationFactory()
     private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation>()
     private val cachedTestNames = ThreadSafeCache<TestCompilationCacheKey, Collection<TestName>>()
@@ -64,8 +64,7 @@ internal class TestRunProvider(
         testCaseId: TestCaseId,
         settings: Settings
     ): TestRun = withTestExecutable(testCaseId, settings) { testCase, executable, _ ->
-        val runParameters = getRunParameters(testCase, testName = null)
-        TestRun(displayName = /* Unimportant. Used only in dynamic tests. */ "", executable, runParameters, testCase.id)
+        createSingleTestRun(testCase, executable)
     }
 
     /**
@@ -102,10 +101,7 @@ internal class TestRunProvider(
         testCaseId: TestCaseId,
         settings: Settings
     ): Collection<TreeNode<TestRun>> = withTestExecutable(testCaseId, settings) { testCase, executable, cacheKey ->
-        fun createTestRun(testRunName: String, testName: TestName?): TestRun {
-            val runParameters = getRunParameters(testCase, testName)
-            return TestRun(testRunName, executable, runParameters, testCase.id)
-        }
+        fun createTestRun(testRunName: String, testName: TestName?) = createTestRun(testCase, executable, testRunName, testName)
 
         when (testCase.kind) {
             TestKind.STANDALONE_NO_TR -> {
@@ -159,52 +155,10 @@ internal class TestRunProvider(
             }
         }
 
-        val (executableFile, loggedCompilerCall) = testCompilation.result.assertSuccess() // <-- Compilation happens here.
+        val (executableFile, loggedCompilerCall) = testCompilation.result.assertSuccessfullyCompiled() // <-- Compilation happens here.
         val executable = TestExecutable(executableFile, loggedCompilerCall)
 
         return action(testCase, executable, cacheKey)
-    }
-
-    private fun getRunParameters(testCase: TestCase, testName: TestName?): List<TestRunParameter> = with(testCase) {
-        when (kind) {
-            TestKind.STANDALONE_NO_TR -> {
-                assertTrue(testName == null)
-                listOfNotNull(
-                    extras<NoTestRunnerExtras>().inputDataFile?.let(TestRunParameter::WithInputData),
-                    expectedOutputDataFile?.let(TestRunParameter::WithExpectedOutputData)
-                )
-            }
-            TestKind.STANDALONE -> listOfNotNull(
-                TestRunParameter.WithTCTestLogger,
-                testName?.let(TestRunParameter::WithTestFilter),
-                expectedOutputDataFile?.let(TestRunParameter::WithExpectedOutputData)
-            )
-            TestKind.REGULAR -> listOfNotNull(
-                TestRunParameter.WithTCTestLogger,
-                testName?.let(TestRunParameter::WithTestFilter) ?: TestRunParameter.WithPackageFilter(nominalPackageName),
-                expectedOutputDataFile?.let(TestRunParameter::WithExpectedOutputData)
-            )
-        }
-    }
-
-    // Currently, only local test runner is supported.
-    fun createRunner(testRun: TestRun, settings: Settings): AbstractRunner<*> = with(settings) {
-        with(get<KotlinNativeTargets>()) {
-            if (testTarget == hostTarget)
-                LocalTestRunner(testRun, get<Timeouts>().executionTimeout)
-            else
-                runningAtNonHostTarget()
-        }
-    }
-
-    // Currently, only local test name extractor is supported.
-    private fun extractTestNames(executable: TestExecutable, settings: Settings): Collection<TestName> = with(settings) {
-        with(get<KotlinNativeTargets>()) {
-            if (testTarget == hostTarget)
-                LocalTestNameExtractor(executable, get<Timeouts>().executionTimeout).run()
-            else
-                runningAtNonHostTarget()
-        }
     }
 
     private fun Collection<TestName>.filterIrrelevant(testCase: TestCase) =
@@ -214,14 +168,6 @@ internal class TestRunProvider(
             filterNot { testName -> testCase.extras<WithTestRunnerExtras>().ignoredTests.contains(testName.toString()) }
         else
             this
-
-    private fun KotlinNativeTargets.runningAtNonHostTarget(): Nothing = fail {
-        """
-            Running at non-host target is not supported yet.
-            Compilation target: $testTarget
-            Host target: $hostTarget
-        """.trimIndent()
-    }
 
     override fun close() {
         if (testCaseGroupProvider is Disposable) {
