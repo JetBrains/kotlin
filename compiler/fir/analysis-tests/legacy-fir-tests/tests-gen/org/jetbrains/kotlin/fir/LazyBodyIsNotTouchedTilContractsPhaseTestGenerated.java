@@ -3267,6 +3267,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/smartcastsFromEquals_sameModule.kt");
         }
 
+        @TestMetadata("unstableSmartcastAndAmbiguity.kt")
+        public void testUnstableSmartcastAndAmbiguity() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/unstableSmartcastAndAmbiguity.kt");
+        }
+
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/smartcasts/booleans")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
