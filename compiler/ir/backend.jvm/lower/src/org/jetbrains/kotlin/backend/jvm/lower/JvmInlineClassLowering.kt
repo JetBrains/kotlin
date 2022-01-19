@@ -748,7 +748,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                                     putValueArgument(0, irGet(receiver))
                                     shift++
                                 } else {
-                                    dispatchReceiver = irGet(receiver)
+                                    dispatchReceiver = irImplicitCast(irGet(receiver), overridden.owner.parentAsClass.defaultType)
                                 }
                                 for ((index, param) in function.valueParameters.drop(1).withIndex()) {
                                     putValueArgument(index + shift, irGet(param))
