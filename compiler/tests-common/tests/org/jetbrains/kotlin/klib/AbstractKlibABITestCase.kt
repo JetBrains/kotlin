@@ -5,19 +5,14 @@
 
 package org.jetbrains.kotlin.klib
 
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.openapi.vfs.local.CoreLocalFileSystem
-import com.intellij.psi.PsiManager
-import com.intellij.psi.SingleRootFileViewProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.klib.AbstractKlibABITestCase.Companion.ModuleBuildDirs.Companion.OUTPUT_DIR_NAME
+import org.jetbrains.kotlin.klib.AbstractKlibABITestCase.Companion.ModuleBuildDirs.Companion.SOURCE_DIR_NAME
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.junit.jupiter.api.fail
 import java.io.File
 import kotlin.io.path.createTempDirectory
 
@@ -40,157 +35,127 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
         buildDir.deleteRecursively()
     }
 
-    private fun parseProjectInfo(testName: String, infoFile: File): ProjectInfo {
-        return ProjectInfoParser(infoFile).parse(testName)
-    }
+    protected abstract fun stdlibFile(): File
 
-    private fun parseModuleInfo(moduleName: String, infoFile: File): ModuleInfo {
-        return ModuleInfoParser(infoFile).parse(moduleName)
-    }
-
-    abstract fun compileBinaryAndRun(project: Project, configuration: CompilerConfiguration, libraries: Collection<String>, mainModulePath: String, buildDir: File)
-
-    abstract fun stdlibPath(): String
-
-    fun doTest(testPath: String) {
-        val testDir = File(testPath)
-        val testName = testDir.name
-        val projectInfoFile = File(testDir, PROJECT_INFO_FILE)
-
-        val projectInfo = parseProjectInfo(testName, projectInfoFile)
-
-        val modulesMap = mutableMapOf<String, ModuleInfo>()
-
-        for (module in projectInfo.modules) {
-            val moduleDir = File(testDir, module)
-            assert(moduleDir.exists())
-            val moduleInfoFile = File(moduleDir, MODULE_INFO_FILE)
-            modulesMap[module] = parseModuleInfo(module, moduleInfoFile)
-        }
-
-        val modulesBuildDirs = prepareBuildDirs(testDir, buildDir, projectInfo)
-
-        for (projectStep in projectInfo.steps) {
-            for (module in projectStep.order) {
-                val moduleTestDir = File(testDir, module)
-                val moduleBuildDir = modulesBuildDirs[module] ?: error("No module dir found for $module")
-                val moduleInfo = modulesMap[module] ?: error("No module $module found on step ${projectStep.id}")
-                val moduleStep = moduleInfo.steps[projectStep.id]
-                val moduleSourceDir = File(moduleBuildDir, SOURCE_DIR_NAME)
-                for (modification in moduleStep.modifications) {
-                    modification.execute(moduleTestDir, moduleSourceDir)
-                }
-
-                val klibFile = moduleBuildDir.toKlibFile(module)
-                if (klibFile.exists()) klibFile.delete()
-                val dependencies = collectDependenciesKlib(buildDir, moduleStep.dependencies)
-                buildKlib(module, moduleSourceDir, dependencies, klibFile)
-            }
-        }
-
-        val mainModuleDir = modulesBuildDirs[MAIN_MODULE_NAME] ?: error("No main module $MAIN_MODULE_NAME found")
-        val moduleKlibs = collectAllModulesKlibs(modulesBuildDirs)
-
-        compileBinaryAndRun(
-            environment.project,
-            environment.configuration,
-            moduleKlibs,
-            mainModuleDir.toKlibFile(MAIN_MODULE_NAME).canonicalPath,
-            buildDir
-        )
-    }
-
-    private fun makeDirectoriesForModule(moduleName: String, buildDir: File): File {
-        val moduleDir = File(buildDir, moduleName)
-        File(moduleDir, SOURCE_DIR_NAME).mkdirs()
-        File(moduleDir, KLIB_DIR_NAME).mkdirs()
-        moduleDir.deleteOnExit()
-        return moduleDir
-    }
-
-    private fun prepareBuildDirs(testDir: File, buildDir: File, projectInfo: ProjectInfo): Map<String, File> {
-        val modulesBuildDirs = projectInfo.modules.associateWith { makeDirectoriesForModule(it, buildDir) }
-
-        for (module in projectInfo.modules) {
-            val moduleTestDir = File(testDir, module).also { assert(it.exists()) }
-            val moduleBuildDir = modulesBuildDirs[module] ?: error("No dir found for module $module")
-            val moduleSourceDir = File(moduleBuildDir, SOURCE_DIR_NAME)
-            moduleTestDir.listFiles { _, name -> name.endsWith(".kt") }!!.forEach {
-                val sourceFile = File(moduleSourceDir, it.name)
-                it.copyTo(sourceFile)
-            }
-        }
-
-        return modulesBuildDirs
-    }
-
-    private fun collectDependenciesKlib(buildDir: File, dependencies: Collection<String>): List<String> {
-        val result = ArrayList<String>(dependencies.size)
-
-        return dependencies.mapTo(result) { dep ->
-            if (dep == "stdlib") {
-                stdlibPath()
-            } else {
-                val depBuildDir = File(buildDir, dep)
-                depBuildDir.toKlibFile(dep).canonicalPath
-            }
-        }
-    }
-
-    private fun File.toKlibFile(name: String): File {
-        return File(File(this, KLIB_DIR_NAME), "$name.klib")
-    }
-
-    private fun collectAllModulesKlibs(modulesBuildDirs: Map<String, File>): Collection<String> {
-        val result = ArrayList<String>(modulesBuildDirs.size + 1)
-        result.add(stdlibPath())
-
-        for ((name, dir) in modulesBuildDirs) {
-            result.add(dir.toKlibFile(name).canonicalPath)
-        }
-
-        return result
-    }
-
-    private fun KotlinCoreEnvironment.createPsiFiles(sourceDir: File): Collection<KtFile> {
-        val psiManager = PsiManager.getInstance(project)
-        val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL) as CoreLocalFileSystem
-
-        val sourceFile = sourceDir.listFiles()!!.first()
-        val vFile = fileSystem.findFileByIoFile(sourceFile) ?: error("Virtual File for $sourceFile not found")
-
-        val provider = SingleRootFileViewProvider(psiManager, vFile)
-        val allfiles = provider.allFiles
-        return allfiles.mapNotNull { it as? KtFile }
-    }
-
-    abstract fun buildKlibImpl(
-        project: Project,
-        configuration: CompilerConfiguration,
+    protected abstract fun buildKlib(
         moduleName: String,
-        sources: Collection<KtFile>,
-        dependencies: Collection<String>,
-        outputFile: File
+        moduleSourceDir: File,
+        moduleDependencies: Collection<File>,
+        klibFile: File
     )
 
-    private fun buildKlib(
-        moduleName: String,
-        sourceDir: File,
-        dependencies: List<String>,
-        outputFile: File
-    ) {
-        val ktFiles = environment.createPsiFiles(sourceDir)
-        val config = environment.configuration.copy()
-        config.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
-        buildKlibImpl(environment.project, config, moduleName, ktFiles, dependencies, outputFile)
-    }
+    protected abstract fun buildBinaryAndRun(
+        mainModuleKlibFile: File,
+        libraries: Collection<File>
+    )
+
+    fun doTest(testPath: String) = Companion.doTest(
+        testDir = File(testPath).absoluteFile,
+        buildDir = buildDir,
+        stdlibFile = stdlibFile(),
+        buildKlib = ::buildKlib,
+        buildBinaryAndRun = ::buildBinaryAndRun
+    )
 
     companion object {
-        private const val SOURCE_DIR_NAME = "sources"
-        private const val KLIB_DIR_NAME = "klibs"
+        fun doTest(
+            testDir: File,
+            buildDir: File,
+            stdlibFile: File,
+            buildKlib: (moduleName: String, moduleSourceDir: File, moduleDependencies: Collection<File>, klibFile: File) -> Unit,
+            buildBinaryAndRun: (mainModuleKlibFile: File, allDependencies: Collection<File>) -> Unit
+        ) {
+            val projectName = testDir.name
+
+            val projectInfoFile = File(testDir, PROJECT_INFO_FILE)
+            val projectInfo: ProjectInfo = ProjectInfoParser(projectInfoFile).parse(projectName)
+
+            val modulesMap: Map<String, ModuleUnderTest> = buildMap {
+                projectInfo.modules.forEach { moduleName ->
+                    val moduleTestDir = File(testDir, moduleName)
+                    assertExists(moduleTestDir)
+
+                    val moduleInfoFile = File(moduleTestDir, MODULE_INFO_FILE)
+                    val moduleInfo = ModuleInfoParser(moduleInfoFile).parse(moduleName)
+
+                    val moduleBuildDirs = createModuleDirs(buildDir, moduleName)
+
+                    // Populate the source dir with *.kt files.
+                    val moduleSourceDir = moduleBuildDirs.sourceDir.apply { mkdirs() }
+                    moduleTestDir.walk().filter { it.isFile && it.extension == "kt" }.forEach { sourceFile ->
+                        val destFile = moduleSourceDir.resolve(sourceFile.relativeTo(moduleTestDir))
+                        destFile.parentFile.mkdirs()
+                        sourceFile.copyTo(destFile)
+                    }
+
+                    val moduleOutputDir = moduleBuildDirs.outputDir.apply { mkdirs() }
+                    val klibFile = moduleOutputDir.resolve("$moduleName.klib")
+
+                    this[moduleName] = ModuleUnderTest(
+                        info = moduleInfo,
+                        testDir = moduleTestDir,
+                        buildDirs = moduleBuildDirs,
+                        klibFile = klibFile
+                    )
+                }
+            }
+
+            projectInfo.steps.forEach { projectStep ->
+                projectStep.order.forEach { moduleName ->
+                    val (moduleInfo, moduleTestDir, moduleBuildDirs, klibFile) = modulesMap[moduleName]
+                        ?: fail { "No module $moduleName found on step ${projectStep.id}" }
+
+                    val moduleStep = moduleInfo.steps[projectStep.id]
+
+                    moduleStep.modifications.forEach { modification ->
+                        modification.execute(moduleTestDir, moduleBuildDirs.sourceDir)
+                    }
+
+                    if (klibFile.exists()) klibFile.delete() // TODO: maybe backup?
+
+                    val moduleDependencies = moduleStep.dependencies.map { dependencyName ->
+                        if (dependencyName == "stdlib")
+                            stdlibFile
+                        else
+                            modulesMap[dependencyName]?.klibFile ?: fail { "No module $dependencyName found on step ${projectStep.id}" }
+                    }
+
+                    buildKlib(moduleInfo.moduleName, moduleBuildDirs.sourceDir, moduleDependencies, klibFile)
+                }
+            }
+
+            val mainModuleKlibFile = modulesMap[MAIN_MODULE_NAME]?.klibFile ?: fail { "No main module $MAIN_MODULE_NAME found" }
+            val allKlibs = buildSet {
+                this += stdlibFile
+                modulesMap.mapTo(this) { (_, module) -> module.klibFile }
+            }
+
+            buildBinaryAndRun(mainModuleKlibFile, allKlibs)
+        }
+
+        fun createModuleDirs(buildDir: File, moduleName: String): ModuleBuildDirs {
+            val moduleBuildDir = buildDir.resolve(moduleName)
+
+            val moduleSourceDir = moduleBuildDir.resolve(SOURCE_DIR_NAME).apply { mkdirs() }
+            val moduleOutputDir = moduleBuildDir.resolve(OUTPUT_DIR_NAME).apply { mkdirs() }
+
+            return ModuleBuildDirs(moduleSourceDir, moduleOutputDir)
+        }
+
+        data class ModuleBuildDirs(val sourceDir: File, val outputDir: File) {
+            internal companion object {
+                const val SOURCE_DIR_NAME = "sources"
+                const val OUTPUT_DIR_NAME = "outputs"
+            }
+        }
+
+        private data class ModuleUnderTest(
+            val info: ModuleInfo,
+            val testDir: File,
+            val buildDirs: ModuleBuildDirs,
+            val klibFile: File
+        )
 
         const val MAIN_MODULE_NAME = "main"
     }
-
-
 }

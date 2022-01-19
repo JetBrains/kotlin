@@ -5,11 +5,15 @@
 
 package org.jetbrains.kotlin.js.test
 
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.local.CoreLocalFileSystem
+import com.intellij.psi.PsiManager
+import com.intellij.psi.SingleRootFileViewProvider
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformerTmp
@@ -25,14 +29,37 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.File
 
 abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
+    override fun stdlibFile(): File = File("libraries/stdlib/js-ir/build/classes/kotlin/js/main").absoluteFile
 
-    override fun compileBinaryAndRun(project: Project, configuration: CompilerConfiguration, libraries: Collection<String>, mainModulePath: String, buildDir: File) {
+    override fun buildKlib(moduleName: String, moduleSourceDir: File, moduleDependencies: Collection<File>, klibFile: File) {
+        val ktFiles = environment.createPsiFiles(moduleSourceDir)
+
+        val config = environment.configuration.copy()
+        config.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
+
+        val sourceModule = prepareAnalyzedSourceModule(
+            environment.project,
+            ktFiles,
+            config,
+            moduleDependencies.map { it.path },
+            emptyList(), // TODO
+            AnalyzerWithCompilerReport(config)
+        )
+
+        generateKLib(sourceModule, IrFactoryImpl, klibFile.path, nopack = false, jsOutputName = moduleName)
+    }
+
+    override fun buildBinaryAndRun(mainModuleKlibFile: File, libraries: Collection<File>) {
+        val project = environment.project
+        val configuration = environment.configuration
+
         configuration.put(JSConfigurationKeys.PARTIAL_LINKAGE, true)
         configuration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
         configuration.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
         configuration.put(CommonConfigurationKeys.MODULE_NAME, MAIN_MODULE_NAME)
-        val kLib = MainModule.Klib(mainModulePath)
-        val moduleStructure = ModulesStructure(project, kLib, configuration, libraries, emptyList())
+
+        val kLib = MainModule.Klib(mainModuleKlibFile.path)
+        val moduleStructure = ModulesStructure(project, kLib, configuration, libraries.map { it.path }, emptyList())
 
         val ir = compile(
             moduleStructure,
@@ -71,6 +98,18 @@ abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
         executeAndCheckBinaries(MAIN_MODULE_NAME, binaries)
     }
 
+    private fun KotlinCoreEnvironment.createPsiFiles(sourceDir: File): List<KtFile> {
+        val psiManager = PsiManager.getInstance(project)
+        val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL) as CoreLocalFileSystem
+
+        val sourceFile = sourceDir.listFiles()!!.first()
+        val vFile = fileSystem.findFileByIoFile(sourceFile) ?: error("Virtual File for $sourceFile not found")
+
+        val provider = SingleRootFileViewProvider(psiManager, vFile)
+        val allfiles = provider.allFiles
+        return allfiles.mapNotNull { it as? KtFile }
+    }
+
     private fun File.binJsFile(name: String): File = File(this, "$name.js")
 
     private fun executeAndCheckBinaries(mainModuleName: String, dependencies: Collection<File>) {
@@ -79,28 +118,6 @@ abstract class AbstractJsKLibABITestCase : AbstractKlibABITestCase() {
         val filePaths = dependencies.map { it.canonicalPath }
         checker.check(filePaths, mainModuleName, null, "box", "OK", withModuleSystem = false)
     }
-
-    override fun buildKlibImpl(
-        project: Project,
-        configuration: CompilerConfiguration,
-        moduleName: String,
-        sources: Collection<KtFile>,
-        dependencies: Collection<String>,
-        outputFile: File
-    ) {
-        val sourceModule = prepareAnalyzedSourceModule(
-            project,
-            sources.toList(),
-            configuration,
-            dependencies.toList(),
-            emptyList(), // TODO
-            AnalyzerWithCompilerReport(configuration)
-        )
-
-        generateKLib(sourceModule, IrFactoryImpl, outputFile.canonicalPath, nopack = false, jsOutputName = moduleName)
-    }
-
-    override fun stdlibPath(): String = "libraries/stdlib/js-ir/build/classes/kotlin/js/main"
 
     companion object {
         private const val BIN_DIR_NAME = "_bins_js"
