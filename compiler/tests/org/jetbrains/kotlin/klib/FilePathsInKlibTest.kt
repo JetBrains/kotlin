@@ -69,7 +69,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
 
     private fun File.md5(): Long = readBytes().md5()
 
-    private fun File.loadKlibFilePaths(denormalize: Boolean): List<String> {
+    private fun File.loadKlibFilePaths(): List<String> {
         val libs = jsResolveLibraries(listOf(runtimeKlibPath, canonicalPath), emptyList(), DummyLogger).getFullList()
         val lib = libs.last()
         val fileSize = lib.fileCount()
@@ -82,11 +82,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
             val fileProto = IrFile.parseFrom(fileStream, extReg)
             val fileName = fileProto.fileEntry.name
 
-            if (denormalize) {
-                result.add(fileName.replace("/", File.separator))
-            } else {
-                result.add(fileName)
-            }
+            result.add(fileName)
         }
 
         return result
@@ -149,7 +145,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
             configuration.put(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES, listOf(workingDirFile.canonicalPath))
 
             val artifact = compileKlibs(testFiles, configuration, workingDirFile)
-            val moduleAPaths = artifact.loadKlibFilePaths(denormalize = true)
+            val moduleAPaths = artifact.loadKlibFilePaths().map { it.replace("/", File.separator) }
             val dirAPaths = workingDirFile.listFiles { _, name -> name.endsWith(".kt") }!!.map { it.relativeTo(workingDirFile).path }
 
             assertSameElements(dirAPaths, moduleAPaths)
@@ -168,7 +164,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
             configuration.put(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, true)
 
             val artifact = compileKlibs(testFiles, configuration, workingDirFile)
-            val modulePaths = artifact.loadKlibFilePaths(denormalize = true)
+            val modulePaths = artifact.loadKlibFilePaths().map { it.replace("/", File.separator) }
             val dirCanonicalPaths = workingDirFile.listFiles { _, name -> name.endsWith(".kt") }!!.map { it.canonicalPath }
 
             assertSameElements(modulePaths, dirCanonicalPaths)
@@ -192,7 +188,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
             configuration.put(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES, listOf(dummyFile.canonicalPath))
 
             val artifact = compileKlibs(testFiles, configuration, workingDirFile)
-            val modulePaths = artifact.loadKlibFilePaths(denormalize = false)
+            val modulePaths = artifact.loadKlibFilePaths()
             val dirCanonicalPaths = workingDirFile.listFiles { _, name -> name.endsWith(".kt") }!!.map { it.canonicalPath }
 
             assertSameElements(modulePaths.map { it.normalizePath() }, dirCanonicalPaths.map { it.normalizePath() })
