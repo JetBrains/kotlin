@@ -54,9 +54,9 @@ internal fun <T : KotlinGradleFragment> Configuration.configure(
     definition: KotlinGradleFragmentConfigurationDefinition<T>,
     fragment: T
 ) {
-    attributes.attribute(definition.attributes, fragment)
-    outgoing.addArtifacts(definition.artifacts, fragment)
+    attributes.attributes(definition.attributes, fragment)
+    outgoing.artifacts(definition.artifacts, fragment)
 
     KotlinGradleFragmentConfigurationCapabilities.ContextImpl(this)
-        .setCapabilities(definition.capabilities, fragment)
+        .capabilities(definition.capabilities, fragment)
 }
