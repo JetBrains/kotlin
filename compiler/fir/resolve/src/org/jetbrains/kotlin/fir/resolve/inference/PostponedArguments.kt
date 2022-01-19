@@ -15,9 +15,12 @@ import org.jetbrains.kotlin.fir.resolve.calls.CheckerSink
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
+import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun Candidate.preprocessLambdaArgument(
@@ -31,7 +34,17 @@ fun Candidate.preprocessLambdaArgument(
     returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null
 ): PostponedResolvedAtom {
     if (expectedType != null && expectedTypeRef != null && !duringCompletion && csBuilder.isTypeVariable(expectedType)) {
-        return LambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType, expectedTypeRef, this)
+        val expectedTypeVariableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[expectedType.typeConstructor(context.typeContext)]
+
+        if (expectedTypeVariableWithConstraints != null) {
+            val explicitTypeArgument = expectedTypeVariableWithConstraints.constraints.find {
+                it.kind == ConstraintKind.EQUALITY && it.position.from is ConeExplicitTypeParameterConstraintPosition
+            }?.type as ConeKotlinType?
+
+            if (explicitTypeArgument == null || explicitTypeArgument.typeArguments.isNotEmpty()) {
+                return LambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType, expectedTypeRef, this)
+            }
+        }
     }
 
     val anonymousFunction = argument.anonymousFunction

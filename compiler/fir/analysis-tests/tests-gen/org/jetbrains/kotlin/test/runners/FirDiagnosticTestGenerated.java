@@ -2860,6 +2860,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("lambdaWithoutExpectedType.kt")
+            public void testLambdaWithoutExpectedType() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/inference/lambdaWithoutExpectedType.kt");
+            }
+
+            @Test
             @TestMetadata("lambdasReturns.kt")
             public void testLambdasReturns() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/inference/lambdasReturns.kt");
