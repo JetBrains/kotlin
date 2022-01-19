@@ -2627,6 +2627,7 @@ __attribute__((swift_name("ValuesKt")))
 + (KtTripleVals<id> * _Nullable)getValue3:(id _Nullable)receiver __attribute__((swift_name("getValue3(_:)")));
 + (KtTripleVals<id> * _Nullable)getValueOrNull3:(id _Nullable)receiver __attribute__((swift_name("getValueOrNull3(_:)")));
 + (BOOL)isFrozenObj:(id)obj __attribute__((swift_name("isFrozen(obj:)")));
++ (BOOL)isFreezingEnabled __attribute__((swift_name("isFreezingEnabled()")));
 + (id)kotlinLambdaBlock:(id (^)(id))block __attribute__((swift_name("kotlinLambda(block:)")));
 + (int64_t)multiplyInt:(int32_t)int_ long:(int64_t)long_ __attribute__((swift_name("multiply(int:long:)")));
 

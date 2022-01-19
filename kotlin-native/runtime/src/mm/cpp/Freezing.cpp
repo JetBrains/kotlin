@@ -15,6 +15,7 @@
 using namespace kotlin;
 
 bool mm::IsFrozen(const ObjHeader* object) noexcept {
+    if (!compiler::freezingChecksEnabled()) return false;
     if (object->permanent()) {
         return true;
     }

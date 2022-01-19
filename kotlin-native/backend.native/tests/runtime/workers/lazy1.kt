@@ -81,9 +81,11 @@ private val checkedLazyModes =
 
 
 @Test fun runTest3() {
-    for (mode in checkedLazyModes) {
-        assertFailsWith<InvalidMutabilityException> {
-            println(Lazy(mode).freezer)
+    if (Platform.isFreezingEnabled) {
+        for (mode in checkedLazyModes) {
+            assertFailsWith<InvalidMutabilityException> {
+                println(Lazy(mode).freezer)
+            }
         }
     }
 }

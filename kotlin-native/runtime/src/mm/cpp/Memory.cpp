@@ -91,6 +91,7 @@ void ObjHeader::destroyMetaObject(ObjHeader* object) {
 
 ALWAYS_INLINE bool isPermanentOrFrozen(const ObjHeader* obj) {
     // TODO: Freeze TF_IMMUTABLE objects upon creation.
+    if (!compiler::freezingChecksEnabled()) return false;
     return mm::IsFrozen(obj) || ((obj->type_info()->flags_ & TF_IMMUTABLE) != 0);
 }
 

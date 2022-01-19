@@ -9,6 +9,7 @@ import kotlin.test.*
 
 import kotlin.native.concurrent.*
 import kotlin.native.internal.GC
+import kotlin.native.*
 import kotlin.native.ref.WeakReference
 import kotlin.text.Regex
 
@@ -600,6 +601,7 @@ fun createCyclicGarbageFrozen(): Triple<AtomicReference<WorkerBoundReference<B1>
 
 @Test
 fun doesNotCollectCyclicGarbageFrozen() {
+    if (!Platform.isFreezingEnabled) return
     val (ref1Owner, ref1Weak, ref2Weak) = createCyclicGarbageFrozen()
 
     ref1Owner.value = null
@@ -630,6 +632,7 @@ fun createCrossThreadCyclicGarbageFrozen(
 
 @Test
 fun doesNotCollectCrossThreadCyclicGarbageFrozen() {
+    if (!Platform.isFreezingEnabled) return
     val worker = Worker.start()
 
     val (ref1Owner, ref1Weak, ref2Weak) = createCrossThreadCyclicGarbageFrozen(worker)
@@ -674,6 +677,7 @@ fun dispose(refOwner: AtomicReference<WorkerBoundReference<C1>?>) {
 
 @Test
 fun doesNotCollectCyclicGarbageWithAtomicsFrozen() {
+    if (!Platform.isFreezingEnabled) return
     val (ref1Owner, ref1Weak, ref2Weak) = createCyclicGarbageWithAtomicsFrozen()
 
     ref1Owner.value = null
@@ -723,6 +727,7 @@ fun createCrossThreadCyclicGarbageWithAtomicsFrozen(
 
 @Test
 fun doesNotCollectCrossThreadCyclicGarbageWithAtomicsFrozen() {
+    if (!Platform.isFreezingEnabled) return
     val worker = Worker.start()
 
     val (ref1Owner, ref1Weak, ref2Weak) = createCrossThreadCyclicGarbageWithAtomicsFrozen(worker)
@@ -835,6 +840,7 @@ fun testDoubleFreeze() {
 
 @Test
 fun testDoubleFreezeWithFreezeBlocker() {
+    if (!Platform.isFreezingEnabled) return
     val ref = WorkerBoundReference(A(3))
     val wrapper = Wrapper(ref)
     wrapper.ensureNeverFrozen()

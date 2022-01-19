@@ -50,24 +50,26 @@ import kotlin.native.concurrent.*
     }
     expect(0) { results.size }
 
-    array.freeze()
-    assertFailsWith<InvalidMutabilityException> {
-        array.setShortAt(0, 2.toShort())
-    }
-    assertFailsWith<InvalidMutabilityException> {
-        array.setCharAt(0, 'a')
-    }
-    assertFailsWith<InvalidMutabilityException> {
-        array.setIntAt(0, 2)
-    }
-    assertFailsWith<InvalidMutabilityException> {
-        array.setLongAt(0, 2)
-    }
-    assertFailsWith<InvalidMutabilityException> {
-        array.setFloatAt(0, 1.0f)
-    }
-    assertFailsWith<InvalidMutabilityException> {
-        array.setDoubleAt(0, 1.0)
+    if (Platform.isFreezingEnabled) {
+        array.freeze()
+        assertFailsWith<InvalidMutabilityException> {
+            array.setShortAt(0, 2.toShort())
+        }
+        assertFailsWith<InvalidMutabilityException> {
+            array.setCharAt(0, 'a')
+        }
+        assertFailsWith<InvalidMutabilityException> {
+            array.setIntAt(0, 2)
+        }
+        assertFailsWith<InvalidMutabilityException> {
+            array.setLongAt(0, 2)
+        }
+        assertFailsWith<InvalidMutabilityException> {
+            array.setFloatAt(0, 1.0f)
+        }
+        assertFailsWith<InvalidMutabilityException> {
+            array.setDoubleAt(0, 1.0)
+        }
     }
     println("OK")
 }
