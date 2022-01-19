@@ -65,9 +65,8 @@ object KotlinToJVMBytecodeCompiler {
         if (repeats != null && !repeat) {
             val performanceManager = environment.configuration[CLIConfigurationKeys.PERF_MANAGER]
             return (0 until repeats).map {
-                val result = compileModules(environment, buildFile, chunk, repeat = true)
                 performanceManager?.notifyRepeat(repeats, it)
-                result
+                compileModules(environment, buildFile, chunk, repeat = true)
             }.last()
         }
 

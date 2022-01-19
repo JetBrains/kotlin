@@ -22,7 +22,6 @@ class ProfilingCompilerPerformanceManager(
     private var active = false
 
     init {
-        startProfiling()
     }
 
     private fun startProfiling() {
@@ -48,8 +47,7 @@ class ProfilingCompilerPerformanceManager(
     }
 
     override fun notifyRepeat(total: Int, number: Int) {
-        dumpProfile("repeat$number")
-        restartProfiling()
+        if (number == total / 2) startProfiling()
     }
 
     override fun notifyCompilationFinished() {
