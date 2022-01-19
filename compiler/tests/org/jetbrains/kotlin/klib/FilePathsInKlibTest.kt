@@ -95,14 +95,14 @@ class FilePathsInKlibTest : CodegenTestCase() {
         return createTestFilesFromFile(file, expectedText)
     }
 
-    private fun compileKlibs(testFiles: List<TestFile>, configuration: CompilerConfiguration, workingDir: File): File {
+    private fun compileKlib(testFiles: List<TestFile>, configuration: CompilerConfiguration, workingDir: File): File {
         for (testFile in testFiles) {
-            val testFileA = File(workingDir, testFile.name).also { it.parentFile.let { p -> if (!p.exists()) p.mkdirs() } }
-            testFileA.writeText(testFile.content)
+            val file = File(workingDir, testFile.name).also { it.parentFile.let { p -> if (!p.exists()) p.mkdirs() } }
+            file.writeText(testFile.content)
         }
 
-        val ktFilesA = loadKtFiles(workingDir)
-        val module = analyseKtFiles(configuration, ktFilesA)
+        val ktFiles = loadKtFiles(workingDir)
+        val module = analyseKtFiles(configuration, ktFiles)
         val artifact = File(workingDir, "$MODULE_NAME.klib")
 
         produceKlib(module, artifact)
@@ -124,8 +124,8 @@ class FilePathsInKlibTest : CodegenTestCase() {
 
             configuration.put(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES, listOf(dirAFile.canonicalPath, dirBFile.canonicalPath))
 
-            val moduleA = compileKlibs(testFiles, configuration, dirAFile)
-            val moduleB = compileKlibs(testFiles, configuration, dirBFile)
+            val moduleA = compileKlib(testFiles, configuration, dirAFile)
+            val moduleB = compileKlib(testFiles, configuration, dirBFile)
 
             assertEquals(moduleA.md5(), moduleB.md5())
         } finally {
@@ -144,11 +144,11 @@ class FilePathsInKlibTest : CodegenTestCase() {
 
             configuration.put(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES, listOf(workingDirFile.canonicalPath))
 
-            val artifact = compileKlibs(testFiles, configuration, workingDirFile)
-            val moduleAPaths = artifact.loadKlibFilePaths().map { it.replace("/", File.separator) }
-            val dirAPaths = workingDirFile.listFiles { _, name -> name.endsWith(".kt") }!!.map { it.relativeTo(workingDirFile).path }
+            val artifact = compileKlib(testFiles, configuration, workingDirFile)
+            val modulePaths = artifact.loadKlibFilePaths().map { it.replace("/", File.separator) }
+            val dirPaths = workingDirFile.listFiles { _, name -> name.endsWith(".kt") }!!.map { it.relativeTo(workingDirFile).path }
 
-            assertSameElements(dirAPaths, moduleAPaths)
+            assertSameElements(modulePaths, dirPaths)
         } finally {
             workingDirFile.deleteRecursively()
         }
@@ -163,7 +163,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
             val configuration = setupEnvironment()
             configuration.put(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, true)
 
-            val artifact = compileKlibs(testFiles, configuration, workingDirFile)
+            val artifact = compileKlib(testFiles, configuration, workingDirFile)
             val modulePaths = artifact.loadKlibFilePaths().map { it.replace("/", File.separator) }
             val dirCanonicalPaths = workingDirFile.listFiles { _, name -> name.endsWith(".kt") }!!.map { it.canonicalPath }
 
@@ -187,7 +187,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
             val configuration = setupEnvironment()
             configuration.put(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES, listOf(dummyFile.canonicalPath))
 
-            val artifact = compileKlibs(testFiles, configuration, workingDirFile)
+            val artifact = compileKlib(testFiles, configuration, workingDirFile)
             val modulePaths = artifact.loadKlibFilePaths()
             val dirCanonicalPaths = workingDirFile.listFiles { _, name -> name.endsWith(".kt") }!!.map { it.canonicalPath }
 
