@@ -16,8 +16,11 @@
 
 package androidx.compose.compiler.daemon
 
+import java.io.File
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import java.io.PrintWriter
+import java.lang.IllegalArgumentException
+import java.net.URLDecoder
 import java.nio.charset.Charset
 
 private data class CliOptions(
@@ -49,8 +52,16 @@ fun main(args: Array<String>) {
     val jarPath = if (cliOptions.disableEmbeddedPlugin)
         null
     else
-        object {}.javaClass.protectionDomain.codeSource.location.path
-    println(jarPath?.let { "Using embedded plugin with path $it" } ?: "No embedded plugin")
+        URLDecoder.decode(
+            object {}.javaClass.protectionDomain.codeSource.location.path,
+            Charsets.UTF_8
+        )
+    jarPath?.let {
+        if (!File(it).exists()) {
+            throw IllegalArgumentException("Compose plugin not found at $it")
+        }
+        println("Using embedded plugin with path $it")
+    } ?: println("No embedded plugin")
 
     val compiler: DaemonCompiler = if (cliOptions.useIncrementalCompiler) {
         println("Using IncrementalDaemonCompiler")
