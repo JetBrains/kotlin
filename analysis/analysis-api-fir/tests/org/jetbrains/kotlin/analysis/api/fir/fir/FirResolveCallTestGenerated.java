@@ -771,4 +771,20 @@ public class FirResolveCallTestGenerated extends AbstractResolveCallTest {
     public void testVariableWithMemberInvoke() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/variableWithMemberInvoke.kt");
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/assignments")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Assignments {
+        @Test
+        public void testAllFilesPresentInAssignments() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/assignments"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("insidePlusAssignTarget.kt")
+        public void testInsidePlusAssignTarget() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/assignments/insidePlusAssignTarget.kt");
+        }
+    }
 }
