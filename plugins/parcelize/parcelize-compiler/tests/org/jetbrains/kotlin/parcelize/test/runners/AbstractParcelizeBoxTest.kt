@@ -110,25 +110,3 @@ open class AbstractParcelizeIrBoxTest : AbstractParcelizeBoxTestBase<ClassicFron
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
         get() = ::JvmIrBackendFacade
 }
-
-open class AbstractParcelizeFirBoxTest : AbstractParcelizeBoxTestBase<FirOutputArtifact, IrBackendInput>(
-    FrontendKinds.FIR,
-    TargetBackend.JVM_IR
-) {
-    override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirFrontendFacade
-
-    override val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
-        get() = ::Fir2IrResultsConverter
-    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
-        get() = ::JvmIrBackendFacade
-
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            defaultDirectives {
-                +ENABLE_PLUGIN_PHASES
-            }
-        }
-    }
-}

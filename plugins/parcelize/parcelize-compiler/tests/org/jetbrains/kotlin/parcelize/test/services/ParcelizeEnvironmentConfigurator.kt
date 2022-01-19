@@ -6,13 +6,9 @@
 package org.jetbrains.kotlin.parcelize.test.services
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.parcelize.ParcelizeComponentRegistrar
-import org.jetbrains.kotlin.parcelize.ParcelizeFirIrGeneratorExtension
-import org.jetbrains.kotlin.parcelize.fir.FirParcelizeExtensionRegistrar
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -33,8 +29,7 @@ class ParcelizeEnvironmentConfigurator(
 
     override fun registerCompilerExtensions(project: Project) {
         if (useFirExtension) {
-            FirExtensionRegistrar.registerExtension(project, FirParcelizeExtensionRegistrar())
-            IrGenerationExtension.registerExtension(project, ParcelizeFirIrGeneratorExtension())
+
         } else {
             ParcelizeComponentRegistrar.registerParcelizeComponents(project)
         }
