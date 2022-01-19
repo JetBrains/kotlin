@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
 import org.jetbrains.kotlin.fir.java.FirJavaVisibilityChecker
 import org.jetbrains.kotlin.fir.java.FirJvmDefaultModeComponent
 import org.jetbrains.kotlin.fir.java.enhancement.FirAnnotationTypeQualifierResolver
+import org.jetbrains.kotlin.fir.java.enhancement.FirEnhancedSymbolsStorage
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticNamesProvider
@@ -77,6 +78,7 @@ fun FirSession.registerCliCompilerOnlyComponents() {
 fun FirSession.registerCommonJavaComponents(javaModuleResolver: JavaModuleResolver) {
     val jsr305State = languageVersionSettings.getFlag(JvmAnalysisFlags.javaTypeEnhancementState)
     register(FirAnnotationTypeQualifierResolver::class, FirAnnotationTypeQualifierResolver(this, jsr305State, javaModuleResolver))
+    register(FirEnhancedSymbolsStorage::class, FirEnhancedSymbolsStorage(this))
     register(
         FirJvmDefaultModeComponent::class,
         FirJvmDefaultModeComponent(languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode))
