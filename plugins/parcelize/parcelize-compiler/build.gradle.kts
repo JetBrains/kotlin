@@ -26,6 +26,8 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 
+    compileOnly(project(":kotlin-reflect-api"))
+
     testApiJUnit5()
 
     testApi(project(":compiler:util"))
@@ -40,12 +42,6 @@ dependencies {
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:test-infrastructure"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
-
-    // FIR dependencies
-    testApi(project(":compiler:fir:checkers"))
-    testApi(project(":compiler:fir:checkers:checkers.jvm"))
-    testApi(project(":plugins:parcelize:parcelize-compiler:parcelize-fir"))
-    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntimeOnly(project(":kotlin-reflect"))

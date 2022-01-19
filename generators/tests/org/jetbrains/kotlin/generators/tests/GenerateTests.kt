@@ -369,10 +369,6 @@ fun main(args: Array<String>) {
                 model("box")
             }
 
-            testClass<AbstractParcelizeFirBoxTest> {
-                model("box")
-            }
-
             testClass<AbstractParcelizeBytecodeListingTest> {
                 model("codegen")
             }
@@ -382,10 +378,6 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractParcelizeDiagnosticTest> {
-                model("diagnostics", excludedPattern = excludedFirTestdataPattern)
-            }
-
-            testClass<AbstractFirParcelizeDiagnosticTest> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
         }

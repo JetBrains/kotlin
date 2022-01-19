@@ -17,4 +17,3 @@ class ParcelizeIrGeneratorExtension : IrGenerationExtension {
         ParcelizeIrTransformer(pluginContext, androidSymbols).transform(moduleFragment)
     }
 }
-
