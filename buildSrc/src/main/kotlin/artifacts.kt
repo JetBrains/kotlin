@@ -230,7 +230,10 @@ fun Project.publishJarsForIde(projects: List<String>, libraryDependencies: List<
 
 fun Project.publishTestJarsForIde(projectNames: List<String>) {
     idePluginDependency {
-        publishTestJar(projectNames)
+        // Compiler test infrastructure should not affect test running in IDE.
+        // If required, the components should be registered on the IDE plugin side.
+        val excludedPaths = listOf("junit-platform.properties", "META-INF/services")
+        publishTestJar(projectNames, excludedPaths)
     }
     configurations.all {
         // Don't allow `ideaIC` from compiler to leak into Kotlin plugin modules. Compiler and
@@ -282,7 +285,7 @@ fun Project.publishProjectJars(projects: List<String>, libraryDependencies: List
     javadocJar()
 }
 
-fun Project.publishTestJar(projects: List<String>) {
+fun Project.publishTestJar(projects: List<String>, excludedPaths: List<String>) {
     apply<JavaPlugin>()
 
     val fatJarContents by configurations.creating
@@ -303,6 +306,8 @@ fun Project.publishTestJar(projects: List<String>) {
         from {
             fatJarContents.map(::zipTree)
         }
+
+        exclude(excludedPaths)
     }
 
     sourcesJar {
