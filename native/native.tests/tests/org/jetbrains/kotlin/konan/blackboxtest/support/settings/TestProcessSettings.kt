@@ -82,7 +82,8 @@ internal enum class ThreadStateChecker(val compilerFlag: String?) {
 internal enum class GCType(val compilerFlag: String?) {
     UNSPECIFIED(null),
     NOOP("-Xgc=noop"),
-    STMS("-Xgc=stms");
+    STMS("-Xgc=stms"),
+    CMS("-Xgc=cms");
 
     override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
 }

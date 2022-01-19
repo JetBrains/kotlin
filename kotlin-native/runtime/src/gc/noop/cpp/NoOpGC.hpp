@@ -51,7 +51,9 @@ public:
     private:
     };
 
-    NoOpGC(mm::ObjectFactory<NoOpGC>&, GCScheduler&) noexcept {}
+    NoOpGC(mm::ObjectFactory<NoOpGC>&, GCScheduler&) noexcept {
+        RuntimeLogDebug({kTagGC}, "No-op GC initialized");
+    }
     ~NoOpGC() = default;
 
     GCScheduler& scheduler() noexcept { return scheduler_; }

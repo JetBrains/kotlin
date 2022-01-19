@@ -108,6 +108,7 @@ gc::SameThreadMarkAndSweep::SameThreadMarkAndSweep(
         RuntimeLogDebug({kTagGC}, "Scheduling GC by thread %d", konan::currentThreadId());
         gSafepointFlag = SafepointFlag::kNeedsGC;
     });
+    RuntimeLogDebug({kTagGC}, "Same thread Mark & Sweep GC initialized");
 }
 
 bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
