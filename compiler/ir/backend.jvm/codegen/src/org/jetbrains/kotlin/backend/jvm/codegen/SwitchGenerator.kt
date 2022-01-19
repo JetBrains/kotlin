@@ -65,7 +65,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         return when {
             subject is IrCall && subject.isCoerceFromUIntToInt() ->
                 generateUIntSwitch(subject.getValueArgument(0)!! as? IrGetValue, calls, callToLabels, expressionToLabels, elseExpression)
-            subject is IrGetValue ->
+            subject is IrGetValue || subject is IrConst<*> && subject.type.isString() -> // also generate tableswitch for literal string subject
                 generatePrimitiveSwitch(subject, calls, callToLabels, expressionToLabels, elseExpression)
             else ->
                 null
@@ -111,7 +111,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
     }
 
     private fun generatePrimitiveSwitch(
-        subject: IrGetValue,
+        subject: IrExpression,
         conditions: List<IrCall>,
         callToLabels: ArrayList<CallToLabel>,
         expressionToLabels: ArrayList<ExpressionToLabel>,
@@ -121,7 +121,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         if (!areConstantComparisons(conditions)) return null
 
         return when {
-            areConstIntComparisons(conditions) -> {
+            subject is IrGetValue && areConstIntComparisons(conditions) -> {
                 val cases = extractSwitchCasesAndFilterUnreachableLabels(callToLabels, expressionToLabels)
                 IntSwitch(
                     subject,
@@ -162,9 +162,23 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
     }
 
     private fun areConstantComparisons(conditions: List<IrCall>): Boolean {
+
+        fun isValidIrGetValueTypeLHS(): Boolean {
+            val lhs = conditions.map {
+                it.takeIf { it.symbol == codegen.context.irBuiltIns.eqeqSymbol }?.getValueArgument(0) as? IrGetValue
+            }
+            return lhs.all { it != null && it.symbol == lhs[0]!!.symbol }
+        }
+
+        fun isValidIrConstTypeLHS(): Boolean {
+            val lhs = conditions.map {
+                it.takeIf { it.symbol == codegen.context.irBuiltIns.eqeqSymbol }?.getValueArgument(0) as? IrConst<*>
+            }
+            return lhs.all { it != null && it.value == lhs[0]!!.value }
+        }
+
         // All conditions are equality checks && all LHS refer to the same tmp variable.
-        val lhs = conditions.map { it.takeIf { it.symbol == codegen.context.irBuiltIns.eqeqSymbol }?.getValueArgument(0) as? IrGetValue }
-        if (lhs.any { it == null || it.symbol != lhs[0]!!.symbol })
+        if (!isValidIrGetValueTypeLHS() && !isValidIrConstTypeLHS())
             return false
 
         // All RHS are constants
@@ -190,7 +204,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         subjectTypePredicate: (IrType) -> Boolean,
         irConstPredicate: (IrConst<*>) -> Boolean
     ): Boolean {
-        val lhs = conditions.map { it.getValueArgument(0) as IrGetValue }
+        val lhs = conditions.map { it.getValueArgument(0) as? IrGetValue ?: it.getValueArgument(0) as IrConst<*> }
         if (lhs.any { !subjectTypePredicate(it.type) })
             return false
 
@@ -286,7 +300,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
     }
 
     abstract inner class Switch(
-        val subject: IrGetValue,
+        val subject: IrExpression,
         val elseExpression: IrExpression?,
         val expressionToLabels: ArrayList<ExpressionToLabel>
     ) {
@@ -427,7 +441,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
     // A tableswitch or lookupswitch is then used for the hash code lookup.
 
     inner class StringSwitch(
-        subject: IrGetValue,
+        subject: IrExpression,
         elseExpression: IrExpression?,
         expressionToLabels: ArrayList<ExpressionToLabel>,
         private val cases: List<ValueToLabel>
@@ -457,8 +471,12 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
         // see:
         //  box/when/stringOptimization/enhancedNullability.kt
         //  box/when/stringOptimization/flexibleNullability.kt
+        //
+        // Generate "optimized" version for literal string subject to avoid performance regression
+        // see:
+        //  box/unit/nullableUnitInWhen3.kt
         override fun shouldOptimize() =
-            hashAndSwitchLabels.size > 2 ||
+            hashAndSwitchLabels.size > (if (subject is IrConst<*>) 0 else 2) ||
                     subject.type.hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION) && hashAndSwitchLabels.isNotEmpty()
 
         override fun genSwitch() {
