@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.scopes.impl.*
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
 
 private val ALL_IMPORTS = scopeSessionKey<FirFile, ListStorageFirScope>()
 private val INVISIBLE_DEFAULT_STAR_IMPORT = scopeSessionKey<DefaultImportPriority, FirDefaultStarImportingScope>()
@@ -35,6 +37,7 @@ private fun doCreateImportingScopes(
     session: FirSession,
     scopeSession: ScopeSession
 ): List<FirScope> {
+    file.ensureResolved(FirResolvePhase.IMPORTS)
     return listOf(
         // from low priority to high priority
         scopeSession.getOrBuild(DefaultImportPriority.LOW, INVISIBLE_DEFAULT_STAR_IMPORT) {
