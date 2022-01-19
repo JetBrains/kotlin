@@ -2178,10 +2178,10 @@ open class RawFirBuilder(
                     return expression.left.generateAssignment(
                         source,
                         expression.left?.toFirSourceElement(),
-                        expression.right,
                         rightArgument,
                         firOperation,
-                        leftArgument.annotations
+                        leftArgument.annotations,
+                        expression.right,
                     ) {
                         (this as KtExpression).toFirExpression("Incorrect expression in assignment: ${expression.text}")
                     }

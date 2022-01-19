@@ -549,13 +549,13 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             val assignment = unwrappedArgument.generateAssignment(
                 desugaredSource,
                 null,
-                null,
                 if (prefix && unwrappedArgument.elementType != REFERENCE_EXPRESSION)
                     generateResolvedAccessExpression(source, resultVar)
                 else
                     resultInitializer,
                 FirOperation.ASSIGN,
                 resultInitializer.annotations,
+                null,
                 convert
             )
 
@@ -900,13 +900,17 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
     }
 
+    // T is a PSI or a light-tree node
     fun T?.generateAssignment(
         baseSource: KtSourceElement?,
         arrayAccessSource: KtSourceElement?,
-        rhs: T?,
-        value: FirExpression, // value is FIR for rhs
+        rhsExpression: FirExpression,
         operation: FirOperation,
         annotations: List<FirAnnotation>,
+        // Effectively `value = rhs?.convert()`, but at generateAugmentedArraySetCall we need to recreate FIR for rhs
+        // since there should be different nodes for desugaring as `.set(.., get().plus($rhs1))` and `.get(...).plusAssign($rhs2)`
+        // Once KT-50861 is fixed, those two parameters shall be eliminated
+        rhsAST: T?,
         convert: T.() -> FirExpression
     ): FirStatement {
         val unwrappedLhs = this.unwrap() ?: return buildErrorExpression {
@@ -916,14 +920,14 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         val tokenType = unwrappedLhs.elementType
         if (tokenType == ARRAY_ACCESS_EXPRESSION) {
             if (operation == FirOperation.ASSIGN) {
-                context.arraySetArgument[unwrappedLhs] = value
+                context.arraySetArgument[unwrappedLhs] = rhsExpression
             }
             return if (operation == FirOperation.ASSIGN) {
                 val result = unwrappedLhs.convert()
                 (result.annotations as MutableList<FirAnnotation>) += annotations
                 result
             } else {
-                generateAugmentedArraySetCall(unwrappedLhs, baseSource, arrayAccessSource, operation, rhs, annotations, convert)
+                generateAugmentedArraySetCall(unwrappedLhs, baseSource, arrayAccessSource, operation, annotations, rhsAST, convert)
             }
         }
 
@@ -938,7 +942,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                             "Unsupported left value of assignment: ${baseSource?.psi?.text}", DiagnosticKind.ExpressionExpected
                         )
                     }
-                rightArgument = value
+                rightArgument = rhsExpression
                 this.annotations += annotations
             }
         }
@@ -947,13 +951,13 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         if (this?.elementType == SAFE_ACCESS_EXPRESSION && this != null) {
             val safeCallNonAssignment = convert() as? FirSafeCallExpression
             if (safeCallNonAssignment != null) {
-                return putAssignmentToSafeCall(safeCallNonAssignment, baseSource, value, annotations)
+                return putAssignmentToSafeCall(safeCallNonAssignment, baseSource, rhsExpression, annotations)
             }
         }
 
         return buildVariableAssignment {
             source = baseSource
-            rValue = value
+            rValue = rhsExpression
             calleeReference = initializeLValue(unwrappedLhs) { convert() as? FirQualifiedAccess }
             this.annotations += annotations
         }
@@ -963,14 +967,14 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     private fun putAssignmentToSafeCall(
         safeCallNonAssignment: FirSafeCallExpression,
         baseSource: KtSourceElement?,
-        value: FirExpression,
+        rhsExpression: FirExpression,
         annotations: List<FirAnnotation>
     ): FirSafeCallExpression {
         val nestedAccess = safeCallNonAssignment.selector as FirQualifiedAccess
 
         val assignment = buildVariableAssignment {
             source = baseSource
-            rValue = value
+            rValue = rhsExpression
             calleeReference = nestedAccess.calleeReference
             explicitReceiver = safeCallNonAssignment.checkedSubjectRef.value
             this.annotations += annotations
@@ -988,8 +992,8 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         baseSource: KtSourceElement?,
         arrayAccessSource: KtSourceElement?,
         operation: FirOperation,
-        rhs: T?,
         annotations: List<FirAnnotation>,
+        rhs: T?,
         convert: T.() -> FirExpression
     ): FirStatement {
         return buildAugmentedArraySetCall {
