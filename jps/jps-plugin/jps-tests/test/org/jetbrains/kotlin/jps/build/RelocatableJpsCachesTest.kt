@@ -55,20 +55,15 @@ class RelocatableJpsCachesTest : BaseKotlinJpsBuildTestCase() {
         assertEqualDirectories(test1KotlinCachesDir, test2KotlinCachesDir, forgiveExtraFiles = false)
     }
 
-    private class RelocatableCacheTestCaseIml(
-        private val testName: String,
-        projectWorkingDir: File,
-        dirToCopyKotlinCaches: File
-    ) : RelocatableCacheTestCase(projectWorkingDir, dirToCopyKotlinCaches) {
-        override fun getName() = testName
-    }
-
     private fun runTestAndCopyKotlinCaches(
         projectWorkingDir: File,
         dirToCopyKotlinCaches: File,
         testMethod: KFunction1<RelocatableCacheTestCase, Unit>
     ) {
-        val testCase = RelocatableCacheTestCaseIml(testMethod.name, projectWorkingDir, dirToCopyKotlinCaches)
+        val testCase = object : RelocatableCacheTestCase(projectWorkingDir, dirToCopyKotlinCaches) {
+            override fun getName() = testMethod.name
+        }
+
         testCase.exposedPrivateApi.setUp()
 
         try {
