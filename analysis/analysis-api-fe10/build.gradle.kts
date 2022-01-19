@@ -9,6 +9,7 @@ dependencies {
     implementation(project(":compiler:frontend.java"))
     implementation(project(":analysis:analysis-api-impl-base"))
     implementation(project(":analysis:analysis-internal-utils"))
+    implementation(project(":analysis:kt-reference"))
 
     implementation(project(":compiler:backend"))
     implementation(project(":compiler:backend.jvm"))
