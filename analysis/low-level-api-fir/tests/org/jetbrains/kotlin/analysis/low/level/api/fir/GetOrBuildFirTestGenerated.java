@@ -280,6 +280,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         }
 
         @Test
+        @TestMetadata("insidePlusAssignTarget.kt")
+        public void testInsidePlusAssignTarget() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/insidePlusAssignTarget.kt");
+        }
+
+        @Test
         @TestMetadata("intLiteral.kt")
         public void testIntLiteral() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/intLiteral.kt");

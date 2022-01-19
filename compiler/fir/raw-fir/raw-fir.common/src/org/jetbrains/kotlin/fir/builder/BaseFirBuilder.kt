@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.builder
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.KtNodeTypes.*
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
@@ -919,14 +918,13 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             return buildAssignmentOperatorStatement {
                 source = baseSource
                 this.operation = operation
-                leftArgument = withDefaultSourceElementKind(KtFakeSourceElementKind.DesugaredCompoundAssignment) {
-                    this@generateAssignment?.convert()
-                } ?: buildErrorExpression {
-                    source = null
-                    diagnostic = ConeSimpleDiagnostic(
-                        "Unsupported left value of assignment: ${baseSource?.psi?.text}", DiagnosticKind.ExpressionExpected
-                    )
-                }
+                leftArgument = this@generateAssignment?.convert()
+                    ?: buildErrorExpression {
+                        source = null
+                        diagnostic = ConeSimpleDiagnostic(
+                            "Unsupported left value of assignment: ${baseSource?.psi?.text}", DiagnosticKind.ExpressionExpected
+                        )
+                    }
                 rightArgument = value
                 this.annotations += annotations
             }
