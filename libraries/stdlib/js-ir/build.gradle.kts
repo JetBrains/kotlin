@@ -143,6 +143,12 @@ tasks.withType<KotlinCompile<*>>().configureEach {
         "-opt-in=kotlin.ExperimentalUnsignedTypes",
         "-opt-in=kotlin.ExperimentalStdlibApi"
     )
+
+    doFirst {
+        kotlinOptions.freeCompilerArgs += listOfNotNull(
+            "-Xklib-relative-path-base=$buildDir".takeIf { !kotlinBuildProperties.getBoolean("kotlin.build.use.absolute.paths.in.klib") }
+        )
+    }
 }
 
 val compileKotlinJs by tasks.existing(KotlinCompile::class) {
