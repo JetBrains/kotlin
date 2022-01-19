@@ -100,12 +100,15 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val freezing: Freezing by lazy {
         val freezingMode = configuration.get(BinaryOptions.freezing)
         when {
-            freezingMode == null -> Freezing.Default
-            memoryModel != MemoryModel.EXPERIMENTAL && freezingMode != Freezing.Default -> {
+            freezingMode == null -> when (memoryModel) {
+                MemoryModel.EXPERIMENTAL -> Freezing.Disabled
+                else -> Freezing.Full
+            }
+            memoryModel != MemoryModel.EXPERIMENTAL && freezingMode != Freezing.Full -> {
                 configuration.report(
                         CompilerMessageSeverity.ERROR,
                         "`freezing` can only be adjusted with experimental MM. Falling back to default behavior.")
-                Freezing.Default
+                Freezing.Full
             }
             else -> freezingMode
         }

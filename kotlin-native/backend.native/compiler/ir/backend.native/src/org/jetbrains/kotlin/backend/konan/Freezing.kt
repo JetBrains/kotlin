@@ -29,8 +29,4 @@ enum class Freezing(val enableFreezeAtRuntime: Boolean, val freezeImplicit: Bool
      */
     Disabled(false, false, false);
 
-    companion object {
-        // Users might depend on runtime guarantees of freezing, so it should be enabled by default.
-        val Default = Full
-    }
 }
