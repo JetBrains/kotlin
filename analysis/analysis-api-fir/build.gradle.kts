@@ -21,6 +21,7 @@ dependencies {
     api(intellijCore())
     implementation(project(":analysis:analysis-api-providers"))
     implementation(project(":analysis:analysis-internal-utils"))
+    implementation(project(":analysis:kt-reference"))
 
     testApi(projectTests(":analysis:low-level-api-fir"))
     testApi(projectTests(":compiler:tests-common"))
@@ -84,5 +85,3 @@ val generateCode by tasks.registering(NoDebugJavaExec::class) {
 val compileKotlin by tasks
 
 compileKotlin.dependsOn(generateCode)
-
-

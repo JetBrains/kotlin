@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
