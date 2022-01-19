@@ -13,11 +13,11 @@ repositories {
 
 plugins.apply(GradleKpmPluginWithTransientPluginOptions::class.java)
 
-configure<KotlinPm20ProjectExtension> {
-    main {
-        jvm
-    }
-}
+_.configure<KotlinPm20ProjectExtension>({
+                                            main {
+                                                jvm
+                                            }
+                                        }, this@Build_gradle)
 
 class KpmPluginWithTransientPluginOptions(
     private val regularOptionValue: String,

@@ -19,10 +19,9 @@ val KotlinTopLevelExtension.project: Project
 @ExternalVariantApi
 fun KotlinGradleModule.createExternalJvmVariant(
     name: String,
-    instantiator: KotlinJvmVariantInstantiator,
-    configurator: KotlinJvmVariantConfigurator
+    config: KotlinJvmVariantConfig
 ): KotlinJvmVariant {
-    val variant = KotlinJvmVariantFactory(instantiator, configurator).create(name)
+    val variant = KotlinJvmVariantFactory(this, config).create(name)
     fragments.add(variant)
     return variant
 }

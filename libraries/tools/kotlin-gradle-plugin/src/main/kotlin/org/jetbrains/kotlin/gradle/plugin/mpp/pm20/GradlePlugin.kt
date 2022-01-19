@@ -47,7 +47,7 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
             fun <T : KotlinNativeVariantInternal> registerNativeVariantFactory(
                 constructor: KotlinNativeVariantConstructor<T>
             ) = module.fragments.registerFactory(
-                constructor.variantClass, KotlinNativeVariantFactory(KotlinNativeVariantInstantiator(module, constructor))
+                constructor.variantClass, KotlinNativeVariantFactory(module, constructor)
             )
 
             listOf(

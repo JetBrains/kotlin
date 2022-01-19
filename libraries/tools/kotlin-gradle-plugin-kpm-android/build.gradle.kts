@@ -5,17 +5,20 @@ plugins {
 
 dependencies {
     implementation(gradleKotlinDsl())
-    implementation(project(":kotlin-gradle-plugin"))
+    compileOnly(project(":kotlin-gradle-plugin"))
     compileOnly("com.android.tools.build:gradle:7.0.0")
 }
 
 gradlePlugin {
     plugins {
         create("kotlinAndroidKpmPlugin") {
-            id ="kotlin-android-kpm"
+            id = "kotlin-kpm-android"
             implementationClass = "org.jetbrains.kotlin.gradle.android.KotlinAndroidKpmPlugin"
         }
     }
 }
 
-publish()
+/* This project is for local prototyping */
+if (!project.kotlinBuildProperties.isTeamcityBuild) {
+    publish()
+}
