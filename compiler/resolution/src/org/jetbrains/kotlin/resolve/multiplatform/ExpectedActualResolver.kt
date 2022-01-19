@@ -98,6 +98,13 @@ object ExpectedActualResolver {
         }
     }
 
+    fun areCompatibleCallables(expected: CallableDescriptor, actual: CallableDescriptor): Boolean {
+        if (expected !is CallableMemberDescriptor || actual !is CallableMemberDescriptor)
+            return false
+
+        return areCompatibleCallables(expected, actual) is Compatible
+    }
+
     private fun CallableMemberDescriptor.findNamesakesFromModule(
         module: ModuleDescriptor,
         moduleFilter: (ModuleDescriptor) -> Boolean

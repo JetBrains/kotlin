@@ -9,7 +9,7 @@ expect fun overloaded(arg: Int = 15)
 expect fun justExpectActual()
 
 fun common() {
-    overloaded()
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>overloaded<!>()
     justExpectActual()
 }
 

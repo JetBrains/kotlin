@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getKotlinTypeRefiner
 import org.jetbrains.kotlin.resolve.descriptorUtil.isTypeRefinementEnabled
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
@@ -307,8 +308,16 @@ open class OverloadingConflictResolver<C : Any>(
             if (isGeneric1 && isGeneric2) return false
         }
 
-        if (!call1.isExpect && call2.isExpect) return true
-        if (call1.isExpect && !call2.isExpect) return false
+        if (!call1.isExpect && call2.isExpect && ExpectedActualResolver.areCompatibleCallables(
+                expected = call2.candidateDescriptor(),
+                actual = call1.candidateDescriptor(),
+            )
+        ) return true
+        if (call1.isExpect && !call2.isExpect && ExpectedActualResolver.areCompatibleCallables(
+                expected = call1.candidateDescriptor(),
+                actual = call2.candidateDescriptor(),
+            )
+        ) return false
 
         if (call1.contextReceiverCount > call2.contextReceiverCount) return true
         if (call1.contextReceiverCount < call2.contextReceiverCount) return false
