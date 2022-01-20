@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
-import org.jetbrains.kotlin.resolve.calls.tower.ContextReceiverAmbiguity
-import org.jetbrains.kotlin.resolve.calls.tower.InfixCallNoInfixModifier
-import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorModifier
-import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
+import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.isInsideInterface
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
@@ -857,6 +854,10 @@ internal object ErrorDescriptorResolutionPart : ResolutionPart() {
 internal object CheckContextReceiversResolutionPart : ResolutionPart() {
     override fun ResolutionCandidate.process(workIndex: Int) {
         if (candidateDescriptor.contextReceiverParameters.isEmpty()) return
+        if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
+            addDiagnostic(UnsupportedContextualDeclarationCall())
+            return
+        }
         val parentLexicalScopes = scopeTower.lexicalScope.parentsWithSelf.filterIsInstance<LexicalScope>()
         val implicitReceiversGroups = mutableListOf<List<ReceiverValueWithSmartCastInfo>>()
         for (scope in parentLexicalScopes) {
