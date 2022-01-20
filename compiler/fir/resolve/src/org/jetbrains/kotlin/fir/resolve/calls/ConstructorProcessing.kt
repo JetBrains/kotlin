@@ -71,14 +71,6 @@ internal fun FirScope.processFunctionsAndConstructorsByName(
     )
 
     processFunctionsByName(name, processor)
-
-    processPropertiesByName(name) {
-        val typeRef = it.fir.returnTypeRef
-
-        if (typeRef is FirResolvedTypeRef && typeRef.coneType is ConeDynamicType) {
-            processor(it)
-        }
-    }
 }
 
 private fun FirScope.getFirstClassifierOrNull(name: Name): Pair<FirClassifierSymbol<*>, ConeSubstitutor>? {

@@ -64,9 +64,8 @@ class CandidateFactory private constructor(
         builtInExtensionFunctionReceiverValue: ReceiverValue? = null,
         objectsByName: Boolean = false
     ): Candidate {
-        val properSymbol = symbol.toProperSymbol(callInfo)
         val result = Candidate(
-            properSymbol, dispatchReceiverValue, extensionReceiverValue,
+            symbol, dispatchReceiverValue, extensionReceiverValue,
             explicitReceiverKind, context.inferenceComponents.constraintSystemFactory, baseSystem,
             builtInExtensionFunctionReceiverValue?.receiverExpression?.let {
                 callInfo.withReceiverAsArgument(it)
@@ -84,17 +83,17 @@ class CandidateFactory private constructor(
         // Here, we explicitly check if the referred declaration/symbol is value parameter, local variable, or backing field.
         val callSite = callInfo.callSite
         if (callSite is FirCallableReferenceAccess) {
-            if (properSymbol is FirValueParameterSymbol || properSymbol is FirPropertySymbol && properSymbol.isLocal || properSymbol is FirBackingFieldSymbol) {
+            if (symbol is FirValueParameterSymbol || symbol is FirPropertySymbol && symbol.isLocal || symbol is FirBackingFieldSymbol) {
                 result.addDiagnostic(Unsupported("References to variables aren't supported yet", callSite.calleeReference.source))
             }
         } else if (objectsByName &&
-            properSymbol is FirRegularClassSymbol &&
-            properSymbol.classKind != ClassKind.OBJECT &&
-            properSymbol.companionObjectSymbol == null
+            symbol is FirRegularClassSymbol &&
+            symbol.classKind != ClassKind.OBJECT &&
+            symbol.companionObjectSymbol == null
         ) {
             result.addDiagnostic(NoCompanionObject)
         }
-        if (callInfo.origin == FirFunctionCallOrigin.Operator && properSymbol is FirPropertySymbol) {
+        if (callInfo.origin == FirFunctionCallOrigin.Operator && symbol is FirPropertySymbol) {
             // Flag all property references that are resolved from an convention operator call.
             result.addDiagnostic(PropertyAsOperator)
         }

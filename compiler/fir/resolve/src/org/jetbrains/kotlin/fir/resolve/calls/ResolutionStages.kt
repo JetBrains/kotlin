@@ -527,3 +527,11 @@ internal object CheckDeprecatedSinceKotlin : ResolutionStage() {
         }
     }
 }
+
+internal object LowerPriorityIfDynamic : ResolutionStage() {
+    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+        if (candidate.symbol.origin is FirDeclarationOrigin.DynamicScope) {
+            candidate.addDiagnostic(LowerPriorityForDynamic)
+        }
+    }
+}

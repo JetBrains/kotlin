@@ -19,6 +19,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckDslScopeViolation,
         CheckLowPriorityInOverloadResolution,
         PostponedVariablesInitializerResolutionStage,
+        LowerPriorityIfDynamic,
     )
 
     object SyntheticSelect : CallKind(
@@ -47,6 +48,7 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         EagerResolveOfCallableReferences,
         CheckLowPriorityInOverloadResolution,
         PostponedVariablesInitializerResolutionStage,
+        LowerPriorityIfDynamic,
     )
 
     object DelegatingConstructorCall : CallKind(

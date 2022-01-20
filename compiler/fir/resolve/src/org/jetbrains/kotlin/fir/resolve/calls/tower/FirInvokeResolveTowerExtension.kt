@@ -148,14 +148,6 @@ internal class FirInvokeResolveTowerExtension(
             val isExtensionFunctionType =
                 (symbol as? FirCallableSymbol<*>)?.fir?.returnTypeRef?.isExtensionFunctionType(components.session) == true
 
-            val typeRef = (symbol as? FirCallableSymbol<*>)?.fir?.returnTypeRef
-            val isDynamicType = typeRef is FirResolvedTypeRef && typeRef.coneType is ConeDynamicType
-
-            if (invokeBuiltinExtensionMode && !isExtensionFunctionType || isDynamicType) {
-                continue
-            }
-
-
             val extensionReceiverExpression = invokeReceiverCandidate.extensionReceiverExpression()
             val useImplicitReceiverAsBuiltinInvokeArgument =
                 !invokeBuiltinExtensionMode && isExtensionFunctionType &&
