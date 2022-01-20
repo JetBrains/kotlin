@@ -55,24 +55,6 @@ public class FirLazyDeclarationResolveTestGenerated extends AbstractFirLazyDecla
     }
 
     @Test
-    @TestMetadata("localDeclaration.kt")
-    public void testLocalDeclaration() throws Exception {
-        runTest("analysis/low-level-api-fir/testdata/lazyResolve/localDeclaration.kt");
-    }
-
-    @Test
-    @TestMetadata("localFunction.kt")
-    public void testLocalFunction() throws Exception {
-        runTest("analysis/low-level-api-fir/testdata/lazyResolve/localFunction.kt");
-    }
-
-    @Test
-    @TestMetadata("parameterOfLocalSetter.kt")
-    public void testParameterOfLocalSetter() throws Exception {
-        runTest("analysis/low-level-api-fir/testdata/lazyResolve/parameterOfLocalSetter.kt");
-    }
-
-    @Test
     @TestMetadata("parameterOfNonLocalSetter.kt")
     public void testParameterOfNonLocalSetter() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/parameterOfNonLocalSetter.kt");
@@ -130,12 +112,6 @@ public class FirLazyDeclarationResolveTestGenerated extends AbstractFirLazyDecla
     @TestMetadata("topLevelFunctionsWithImplicitType.kt")
     public void testTopLevelFunctionsWithImplicitType() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/topLevelFunctionsWithImplicitType.kt");
-    }
-
-    @Test
-    @TestMetadata("typeParameterOfLocalFunction.kt")
-    public void testTypeParameterOfLocalFunction() throws Exception {
-        runTest("analysis/low-level-api-fir/testdata/lazyResolve/typeParameterOfLocalFunction.kt");
     }
 
     @Test

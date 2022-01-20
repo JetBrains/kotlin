@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
@@ -52,7 +51,7 @@ internal fun KtExpression.unwrap(): KtExpression {
     } ?: this
 }
 
-internal fun FirNamedReference.getReferencedElementType(resolveState: FirModuleResolveState): ConeKotlinType {
+internal fun FirNamedReference.getReferencedElementType(): ConeKotlinType {
     val symbols = when (this) {
         is FirResolvedNamedReference -> listOf(resolvedSymbol)
         is FirErrorNamedReference -> getCandidateSymbols()
@@ -61,9 +60,7 @@ internal fun FirNamedReference.getReferencedElementType(resolveState: FirModuleR
     val firCallableDeclaration = symbols.singleOrNull()?.fir as? FirCallableDeclaration
         ?: return ConeClassErrorType(ConeUnresolvedNameError(name))
 
-    return firCallableDeclaration.withFirDeclaration(ResolveType.CallableReturnType, resolveState) {
-        it.returnTypeRef.coneType
-    }
+    return firCallableDeclaration.symbol.resolvedReturnType
 }
 
 internal fun KtTypeNullability.toConeNullability() = when (this) {
