@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
@@ -13,17 +14,19 @@ import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 
 internal class RawFirNonLocalDeclarationBuilder private constructor(
     session: FirSession,
     baseScopeProvider: FirScopeProvider,
+    private val originalDeclaration: FirTypeParameterRefsOwner,
     private val declarationToBuild: KtDeclaration,
     private val functionsToRebind: Set<FirFunction>? = null,
     private val replacementApplier: RawFirReplacement.Applier? = null
@@ -41,6 +44,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             val builder = RawFirNonLocalDeclarationBuilder(
                 session = session,
                 baseScopeProvider = scopeProvider,
+                originalDeclaration = designation.declaration as FirTypeParameterRefsOwner,
                 declarationToBuild = rootNonLocalDeclaration,
                 replacementApplier = replacementApplier
             )
@@ -65,6 +69,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             val builder = RawFirNonLocalDeclarationBuilder(
                 session = session,
                 baseScopeProvider = scopeProvider,
+                originalDeclaration = designation.declaration as FirTypeParameterRefsOwner,
                 declarationToBuild = rootNonLocalDeclaration,
                 functionsToRebind = functionsToRebind,
             )
@@ -76,6 +81,18 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     override fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) {
         val rewrittenTarget = functionsToRebind?.firstOrNull { it.realPsi == function.realPsi } ?: function
         super.bindFunctionTarget(target, rewrittenTarget)
+    }
+
+    override fun addCapturedTypeParameters(
+        status: Boolean,
+        declarationSource: KtSourceElement?,
+        currentFirTypeParameters: List<FirTypeParameterRef>
+    ) {
+        if (declarationSource?.psi == originalDeclaration.psi) {
+            super.addCapturedTypeParameters(status, declarationSource, originalDeclaration.typeParameters)
+        } else {
+            super.addCapturedTypeParameters(status, declarationSource, currentFirTypeParameters)
+        }
     }
 
     private inner class VisitorWithReplacement : Visitor() {
@@ -133,7 +150,11 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         check(classOrObject is KtClassOrObject)
 
         withChildClassName(classOrObject.nameAsSafeName, isExpect = classOrObject.hasExpectModifier() || context.containerIsExpect) {
-            withCapturedTypeParameters(parent.isInner, parent.typeParameters.subList(0, classOrObject.typeParameters.size)) {
+            withCapturedTypeParameters(
+                parent.isInner,
+                declarationSource = null,
+                parent.typeParameters.subList(0, classOrObject.typeParameters.size)
+            ) {
                 registerSelfType(classOrObject.toDelegatedSelfType(parent))
                 return moveNext(iterator, parent)
             }

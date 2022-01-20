@@ -125,7 +125,6 @@ object LowLevelFirApiFacadeForResolveOnAir {
         val firFile = session.firFileBuilder.buildRawFirFileWithCaching(
             ktFile = file,
             cache = session.cache,
-            preferLazyBodies = true
         )
 
         state.firLazyDeclarationResolver.lazyResolveFileDeclaration(

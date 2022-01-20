@@ -453,7 +453,7 @@ class DeclarationsConverter(
 
             typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints, classSymbol) }
 
-            withCapturedTypeParameters(status.isInner || isLocal, firTypeParameters) {
+            withCapturedTypeParameters(status.isInner || isLocal, classNode.toFirSourceElement(), firTypeParameters) {
                 var delegatedFieldsMap: Map<Int, FirFieldSymbol>? = null
                 buildRegularClass {
                     source = classNode.toFirSourceElement()
@@ -1141,7 +1141,7 @@ class DeclarationsConverter(
                 this.isLocal = false
                 receiverTypeRef = receiverType
                 dispatchReceiverType = currentDispatchReceiverType()
-                withCapturedTypeParameters(true, firTypeParameters) {
+                withCapturedTypeParameters(true, propertySource, firTypeParameters) {
                     typeParameters += firTypeParameters
 
                     val delegateBuilder = delegateExpression?.let {
@@ -1619,7 +1619,7 @@ class DeclarationsConverter(
                 listOf()
             }
 
-            withCapturedTypeParameters(true, actualTypeParameters) {
+            withCapturedTypeParameters(true, functionSource, actualTypeParameters) {
                 valueParametersList?.let { list ->
                     valueParameters += convertValueParameters(
                         list,

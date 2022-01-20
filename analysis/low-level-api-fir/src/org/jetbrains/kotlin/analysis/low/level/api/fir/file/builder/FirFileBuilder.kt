@@ -30,13 +30,12 @@ internal class FirFileBuilder(
     fun buildRawFirFileWithCaching(
         ktFile: KtFile,
         cache: ModuleFileCache,
-        preferLazyBodies: Boolean
     ): FirFile = cache.fileCached(ktFile) {
         RawFirBuilder(
             cache.session,
             scopeProvider,
             psiMode = PsiHandlingMode.IDE,
-            bodyBuildingMode = BodyBuildingMode.lazyBodies(preferLazyBodies)
+            bodyBuildingMode = BodyBuildingMode.LAZY_BODIES
         ).buildFirFile(ktFile)
     }
 }
