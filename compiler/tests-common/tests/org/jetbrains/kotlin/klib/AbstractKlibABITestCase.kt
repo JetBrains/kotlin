@@ -54,7 +54,8 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
         buildDir = buildDir,
         stdlibFile = stdlibFile(),
         buildKlib = ::buildKlib,
-        buildBinaryAndRun = ::buildBinaryAndRun
+        buildBinaryAndRun = ::buildBinaryAndRun,
+        onNonEmptyBuildDirectory = { directory -> directory.listFiles()?.forEach(File::deleteRecursively) }
     )
 
     companion object {
@@ -63,7 +64,8 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
             buildDir: File,
             stdlibFile: File,
             buildKlib: (moduleName: String, moduleSourceDir: File, moduleDependencies: Collection<File>, klibFile: File) -> Unit,
-            buildBinaryAndRun: (mainModuleKlibFile: File, allDependencies: Collection<File>) -> Unit
+            buildBinaryAndRun: (mainModuleKlibFile: File, allDependencies: Collection<File>) -> Unit,
+            onNonEmptyBuildDirectory: (directory: File) -> Unit
         ) {
             val projectName = testDir.name
 
@@ -111,7 +113,8 @@ abstract class AbstractKlibABITestCase : KtUsefulTestCase() {
                         modification.execute(moduleTestDir, moduleBuildDirs.sourceDir)
                     }
 
-                    if (klibFile.exists()) klibFile.delete() // TODO: maybe backup?
+                    if (!moduleBuildDirs.outputDir.list().isNullOrEmpty())
+                        onNonEmptyBuildDirectory(moduleBuildDirs.outputDir)
 
                     val moduleDependencies = moduleStep.dependencies.map { dependencyName ->
                         if (dependencyName == "stdlib")

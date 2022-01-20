@@ -36,7 +36,8 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
         buildDir = buildDir,
         stdlibFile = stdlibFile,
         buildKlib = ::buildKlib,
-        buildBinaryAndRun = { _, allDependencies -> buildBinaryAndRun(allDependencies) }
+        buildBinaryAndRun = { _, allDependencies -> buildBinaryAndRun(allDependencies) },
+        onNonEmptyBuildDirectory = ::backupDirectoryContents
     )
 
     private fun buildKlib(moduleName: String, moduleSourceDir: File, moduleDependencies: Collection<File>, klibFile: File) {
@@ -122,5 +123,20 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
         )
 
         private val DEFAULT_EXTRAS = WithTestRunnerExtras(TestRunnerType.DEFAULT)
+
+        private const val BACKED_UP_DIRECTORY_PREFIX = "__backup-"
+
+        private fun backupDirectoryContents(directory: File) {
+            val filesToBackup = directory.listFiles()?.mapNotNull { file ->
+                if (file.isDirectory && file.name.startsWith(BACKED_UP_DIRECTORY_PREFIX)) null else file
+            }
+
+            if (!filesToBackup.isNullOrEmpty()) {
+                val backupDirectory = directory.resolve("$BACKED_UP_DIRECTORY_PREFIX${System.currentTimeMillis()}__")
+                backupDirectory.mkdirs()
+
+                filesToBackup.forEach { file -> file.renameTo(backupDirectory.resolve(file.name)) }
+            }
+        }
     }
 }
