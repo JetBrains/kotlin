@@ -69,7 +69,7 @@ class PackageFacadeKotlinClassSnapshot(
     override val classId: ClassId,
     override val classAbiHash: Long,
     override val classMemberLevelSnapshot: KotlinClassInfo?,
-    val packageMembers: PackageMemberSet
+    val packageMemberNames: Set<String>
 ) : KotlinClassSnapshot()
 
 /**
@@ -88,7 +88,7 @@ class MultifileClassKotlinClassSnapshot(
     override val classId: ClassId,
     override val classAbiHash: Long,
     override val classMemberLevelSnapshot: KotlinClassInfo?,
-    val constants: PackageMemberSet
+    val constantNames: Set<String>
 ) : KotlinClassSnapshot()
 
 /** [ClassSnapshot] of a Java class. */
