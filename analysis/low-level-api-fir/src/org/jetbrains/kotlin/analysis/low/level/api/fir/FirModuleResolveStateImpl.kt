@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuild
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.lazyResolveDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.firIdeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSourcesSession
@@ -28,9 +26,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -73,7 +71,7 @@ internal class FirModuleResolveStateImpl(
         )
 
     override fun getOrBuildFirFile(ktFile: KtFile): FirFile =
-        firFileBuilder.buildRawFirFileWithCaching(ktFile, rootModuleSession.cache, preferLazyBodies = false)
+        firFileBuilder.buildRawFirFileWithCaching(ktFile, rootModuleSession.cache)
 
     override fun tryGetCachedFirFile(declaration: FirDeclaration, cache: ModuleFileCache): FirFile? =
         cache.getContainerFirFile(declaration)
@@ -139,32 +137,17 @@ internal class FirModuleResolveStateImpl(
         }
     }
 
-    override fun <D : FirDeclaration> resolveFirToPhase(declaration: D, toPhase: FirResolvePhase): D {
-        if (toPhase == FirResolvePhase.RAW_FIR) return declaration
+    override fun resolveFirToPhase(declaration: FirDeclaration, toPhase: FirResolvePhase) {
+        if (toPhase == FirResolvePhase.RAW_FIR) return
         val fileCache = when (val session = declaration.moduleData.session) {
             is FirIdeSourcesSession -> session.cache
-            else -> return declaration
+            else -> return
         }
-        return firLazyDeclarationResolver.lazyResolveDeclaration(
+        firLazyDeclarationResolver. lazyResolveDeclaration(
             firDeclarationToResolve = declaration,
             moduleFileCache = fileCache,
             scopeSession = ScopeSession(),
             toPhase = toPhase,
-            checkPCE = true,
-        )
-    }
-
-    override fun <D : FirDeclaration> resolveFirToResolveType(declaration: D, type: ResolveType): D {
-        if (type == ResolveType.NoResolve) return declaration
-        val fileCache = when (val session = declaration.moduleData.session) {
-            is FirIdeSourcesSession -> session.cache
-            else -> return declaration
-        }
-        return firLazyDeclarationResolver.lazyResolveDeclaration(
-            firDeclaration = declaration,
-            moduleFileCache = fileCache,
-            scopeSession = ScopeSession(),
-            toResolveType = type,
             checkPCE = true,
         )
     }

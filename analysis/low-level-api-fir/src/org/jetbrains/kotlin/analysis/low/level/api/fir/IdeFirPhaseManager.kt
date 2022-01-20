@@ -33,7 +33,6 @@ internal class IdeFirPhaseManager(
                 scopeSession = ScopeSession(),
                 toPhase = requiredPhase,
                 checkPCE = true,
-                skipLocalDeclaration = true,
             )
         } catch (e: Throwable) {
             sessionInvalidator.invalidate(fir.moduleData.session)
