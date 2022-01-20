@@ -170,10 +170,6 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         if (isMethodOfAny())
             return false
 
-        // Methods in sealed inline classes are mangled, so bridges will have the same signature
-        if (parentAsClass.isInline && parentAsClass.superTypes.any { it.isInlineClassType() })
-            return false
-
         // We don't produce bridges for abstract functions in interfaces.
         if (isJvmAbstract(context.state.jvmDefaultMode)) {
             if (parentAsClass.isJvmInterface) {
@@ -346,7 +342,11 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         // Generate common bridges
         val generated = mutableMapOf<Method, Bridge>()
 
-        for (override in irFunction.allOverridden()) {
+        // Do not generate additional bridges for functions, inherited from sealed inline classes in addition to functions from interfaces
+        val trulyOverridden = irFunction.allOverridden().filterNot {
+            it.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
+        }
+        for (override in trulyOverridden) {
             if (override.isFakeOverride) continue
 
             val signature = override.jvmMethod
