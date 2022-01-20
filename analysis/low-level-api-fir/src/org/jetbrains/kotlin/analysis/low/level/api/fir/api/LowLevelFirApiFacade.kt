@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -43,10 +44,10 @@ fun KtModule.getResolveState(project: Project): FirModuleResolveState =
  * Otherwise, some threading problems may arise,
  */
 @OptIn(InternalForInline::class)
-inline fun <R> KtDeclaration.withFirDeclaration(
+inline fun <R> KtDeclaration.withFirSymbol(
     resolveState: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
-    action: (FirDeclaration) -> R
+    action: (FirBasedSymbol<*>) -> R
 ): R {
     val firDeclaration = if (getKtModule(project) !is KtSourceModule) {
         resolveState.findSourceFirCompiledDeclaration(this)
@@ -60,7 +61,7 @@ inline fun <R> KtDeclaration.withFirDeclaration(
         firDeclaration
     }
 
-    return action(resolvedDeclaration)
+    return action(resolvedDeclaration.symbol)
 }
 
 /**
@@ -71,14 +72,14 @@ inline fun <R> KtDeclaration.withFirDeclaration(
  * Otherwise, some threading problems may arise,
  */
 @OptIn(InternalForInline::class)
-inline fun <R> KtDeclaration.withFirDeclaration(
+inline fun <R> KtDeclaration.withFirSymbolDeclaration(
     resolveState: FirModuleResolveState,
     resolveType: ResolveType = ResolveType.NoResolve,
-    action: (FirDeclaration) -> R
+    action: (FirBasedSymbol<*>) -> R
 ): R {
     val firDeclaration = resolveState.findSourceFirDeclaration(this)
     val resolvedDeclaration = firDeclaration.resolvedFirToType(resolveType, resolveState)
-    return action(resolvedDeclaration)
+    return action(resolvedDeclaration.symbol)
 }
 
 /**
@@ -91,11 +92,11 @@ inline fun <R> KtDeclaration.withFirDeclaration(
  * Otherwise, some threading problems may arise,
  */
 @OptIn(InternalForInline::class)
-inline fun <reified F : FirDeclaration, R> KtDeclaration.withFirDeclarationOfType(
+inline fun <reified F : FirBasedSymbol<*>, R> KtDeclaration.withFirSymbolOfType(
     resolveState: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
     action: (F) -> R
-): R = withFirDeclaration(resolveState, phase) { firDeclaration ->
+): R = withFirSymbol(resolveState, phase) { firDeclaration ->
     if (firDeclaration !is F) throwUnexpectedFirElementError(firDeclaration, this, F::class)
     action(firDeclaration)
 }
@@ -164,7 +165,7 @@ fun KtFile.collectDiagnosticsForFile(
 /**
  * Resolves a given [FirDeclaration] to [phase] and returns resolved declaration
  *
- * Should not be called form [withFirDeclaration], [withFirDeclarationOfType] functions, as it it may cause deadlock
+ * Should not be called form [withFirSymbol], [withFirDeclarationOfType] functions, as it it may cause deadlock
  */
 fun <D : FirDeclaration> D.resolvedFirToPhase(
     phase: FirResolvePhase,
@@ -175,7 +176,7 @@ fun <D : FirDeclaration> D.resolvedFirToPhase(
 /**
  * Resolves a given [FirDeclaration] to [phase] and returns resolved declaration
  *
- * Should not be called form [withFirDeclaration], [withFirDeclarationOfType] functions, as it it may cause deadlock
+ * Should not be called form [withFirSymbol], [withFirDeclarationOfType] functions, as it it may cause deadlock
  */
 fun <D : FirDeclaration> D.resolvedFirToType(
     type: ResolveType,

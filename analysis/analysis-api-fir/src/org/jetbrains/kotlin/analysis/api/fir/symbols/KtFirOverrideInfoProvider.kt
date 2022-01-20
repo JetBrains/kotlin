@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.util.ImplementationStatus
 
 internal class KtFirOverrideInfoProvider(
@@ -36,15 +37,11 @@ internal class KtFirOverrideInfoProvider(
         require(classSymbol is KtFirSymbol<*>)
 
         // Inspecting visibility requires resolving to status
-        return memberSymbol.firRef.withFir(FirResolvePhase.STATUS) outer@{ memberFir ->
-            if (memberFir !is FirCallableDeclaration) return@outer false
+        classSymbol.firSymbol.ensureResolved(FirResolvePhase.STATUS)
+        val memberFir = memberSymbol.firSymbol.fir as? FirCallableDeclaration ?: return false
+        val parentClassFir = classSymbol.firSymbol.fir as? FirClass ?: return false
 
-            classSymbol.firRef.withFir inner@{ parentClassFir ->
-                if (parentClassFir !is FirClass) return@inner false
-
-                memberFir.isVisibleInClass(parentClassFir)
-            }
-        }
+        return memberFir.isVisibleInClass(parentClassFir)
     }
 
     override fun getImplementationStatus(memberSymbol: KtCallableSymbol, parentClassSymbol: KtClassOrObjectSymbol): ImplementationStatus? {
@@ -52,39 +49,32 @@ internal class KtFirOverrideInfoProvider(
         require(parentClassSymbol is KtFirSymbol<*>)
 
         // Inspecting implementation status requires resolving to status
-        return memberSymbol.firRef.withFir(FirResolvePhase.STATUS) outer@{ memberFir ->
-            if (memberFir !is FirCallableDeclaration) return@outer null
+        parentClassSymbol.firSymbol.ensureResolved(FirResolvePhase.STATUS)
+        val memberFir = memberSymbol.firSymbol.fir as? FirCallableDeclaration ?: return null
+        val parentClassFir = parentClassSymbol.firSymbol.fir as? FirClass ?: return null
 
-            parentClassSymbol.firRef.withFir inner@{ parentClassFir ->
-                if (parentClassFir !is FirClass) return@inner null
-
-                memberFir.symbol.getImplementationStatus(
-                    SessionHolderImpl(rootModuleSession, ScopeSession()),
-                    parentClassFir.symbol
-                )
-            }
-        }
+        return memberFir.symbol.getImplementationStatus(
+            SessionHolderImpl(rootModuleSession, ScopeSession()),
+            parentClassFir.symbol
+        )
     }
 
     override fun getOriginalContainingClassForOverride(symbol: KtCallableSymbol): KtClassOrObjectSymbol? {
         require(symbol is KtFirSymbol<*>)
-        return symbol.firRef.withFir(FirResolvePhase.STATUS) { firDeclaration ->
-            if (firDeclaration !is FirCallableDeclaration) return@withFir null
-            val containingClass =
-                getOriginalOverriddenSymbol(firDeclaration)?.containingClass()?.toSymbol(rootModuleSession) ?: return@withFir null
-            analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(containingClass.fir) as? KtClassOrObjectSymbol
-        }
+        symbol.firSymbol.ensureResolved(FirResolvePhase.STATUS)
+        val firDeclaration = symbol.firSymbol.fir as FirCallableDeclaration
+        val containingClass =
+            getOriginalOverriddenSymbol(firDeclaration)?.containingClass()?.toSymbol(rootModuleSession) ?: return null
+        return analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(containingClass.fir.symbol) as? KtClassOrObjectSymbol
+
     }
 
     override fun getOriginalOverriddenSymbol(symbol: KtCallableSymbol): KtCallableSymbol? {
         require(symbol is KtFirSymbol<*>)
-        return symbol.firRef.withFir(FirResolvePhase.STATUS) { firDeclaration ->
-            if (firDeclaration !is FirCallableDeclaration) return@withFir null
-            with(analysisSession) {
-                getOriginalOverriddenSymbol(firDeclaration)
-                    ?.buildSymbol((analysisSession as KtFirAnalysisSession).firSymbolBuilder) as KtCallableSymbol?
-            }
-        }
+        symbol.firSymbol.ensureResolved(FirResolvePhase.STATUS)
+        val firDeclaration = symbol.firSymbol.fir as FirCallableDeclaration
+        return getOriginalOverriddenSymbol(firDeclaration)
+            ?.buildSymbol(analysisSession.firSymbolBuilder) as KtCallableSymbol?
     }
 
     private fun getOriginalOverriddenSymbol(member: FirCallableDeclaration): FirCallableDeclaration? {

@@ -592,7 +592,7 @@ internal class KtFirCallResolver(
                 if (psi == null) {
                     val implicitPartiallyAppliedSymbol = when (val partiallyAppliedSymbol = calleeReference.boundSymbol) {
                         is FirClassSymbol<*> -> partiallyAppliedSymbol.toKtSymbol()
-                        is FirCallableSymbol<*> -> firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(partiallyAppliedSymbol.fir)
+                        is FirCallableSymbol<*> -> firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(partiallyAppliedSymbol)
                             ?: return null
                         else -> return null
                     }
@@ -611,22 +611,22 @@ internal class KtFirCallResolver(
 
     @OptIn(SymbolInternals::class)
     private fun FirCallableSymbol<*>.toKtSignature(): KtSignature<KtCallableSymbol> =
-        firSymbolBuilder.callableBuilder.buildCallableSignature(fir)
+        firSymbolBuilder.callableBuilder.buildCallableSignature(this)
 
     @OptIn(SymbolInternals::class)
-    private fun FirClassLikeSymbol<*>.toKtSymbol(): KtClassLikeSymbol = firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(fir)
+    private fun FirClassLikeSymbol<*>.toKtSymbol(): KtClassLikeSymbol = firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(this)
 
     @OptIn(SymbolInternals::class)
     private fun FirNamedFunctionSymbol.toKtSignature(): KtFunctionLikeSignature<KtFunctionSymbol> =
-        firSymbolBuilder.functionLikeBuilder.buildFunctionSignature(fir)
+        firSymbolBuilder.functionLikeBuilder.buildFunctionSignature(this)
 
     @OptIn(SymbolInternals::class)
     private fun FirVariableSymbol<*>.toKtSignature(): KtVariableLikeSignature<KtVariableLikeSymbol> =
-        firSymbolBuilder.variableLikeBuilder.buildVariableLikeSignature(fir)
+        firSymbolBuilder.variableLikeBuilder.buildVariableLikeSignature(this)
 
     @OptIn(SymbolInternals::class)
     private fun FirValueParameterSymbol.toKtSymbol(): KtValueParameterSymbol =
-        firSymbolBuilder.variableLikeBuilder.buildValueParameterSymbol(fir)
+        firSymbolBuilder.variableLikeBuilder.buildValueParameterSymbol(this)
 
     private fun FirArrayOfCall.toKtCallInfo(): KtCallInfo? {
         val arrayOfSymbol = with(analysisSession) {
@@ -668,14 +668,14 @@ internal class KtFirCallResolver(
     }
 
     private fun FirArrayOfCall.createSubstitutorFromTypeArguments(arrayOfSymbol: KtFirFunctionSymbol): KtSubstitutor {
-        return arrayOfSymbol.firRef.withFir {
-            // No type parameter means this is an arrayOf call of primitives, in which case there is no type arguments
-            val typeParameter = it.typeParameters.singleOrNull() ?: return@withFir null
-            val elementType = typeRef.coneTypeSafe<ConeClassLikeType>()?.arrayElementType() ?: return@withFir null
-            val coneSubstitutor = substitutorByMap(mapOf(typeParameter.symbol to elementType), rootModuleSession)
-            firSymbolBuilder.typeBuilder.buildSubstitutor(coneSubstitutor)
-        } ?: KtSubstitutor.Empty(token)
+        val firSymbol = arrayOfSymbol.firSymbol
+        // No type parameter means this is an arrayOf call of primitives, in which case there is no type arguments
+        val typeParameter = firSymbol.fir.typeParameters.singleOrNull() ?: return KtSubstitutor.Empty(token)
+        val elementType = typeRef.coneTypeSafe<ConeClassLikeType>()?.arrayElementType() ?: return KtSubstitutor.Empty(token)
+        val coneSubstitutor = substitutorByMap(mapOf(typeParameter.symbol to elementType), rootModuleSession)
+        return firSymbolBuilder.typeBuilder.buildSubstitutor(coneSubstitutor)
     }
+
 
     private fun FirEqualityOperatorCall.toKtCallInfo(psi: KtElement): KtCallInfo? {
         val binaryExpression = deparenthesize(psi as? KtExpression) as? KtBinaryExpression ?: return null
@@ -748,9 +748,8 @@ internal class KtFirCallResolver(
         substitutor: KtSubstitutor,
     ): LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>> {
         val ktArgumentMapping = LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>()
-        val parameterSymbol = arrayOfCallSymbol.firRef.withFir {
-            it.valueParameters.single().symbol.toKtSymbol()
-        }
+        val parameterSymbol = arrayOfCallSymbol.firSymbol.fir.valueParameters.single().symbol.toKtSymbol()
+
         for (firExpression in argumentList.arguments) {
             mapArgumentExpressionToParameter(firExpression, parameterSymbol.toSignature(substitutor), ktArgumentMapping)
         }

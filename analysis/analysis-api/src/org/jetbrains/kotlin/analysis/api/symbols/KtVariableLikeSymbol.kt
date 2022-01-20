@@ -54,6 +54,8 @@ public abstract class KtEnumEntrySymbol : KtVariableLikeSymbol(), KtSymbolWithMe
     final override val symbolKind: KtSymbolKind get() = KtSymbolKind.CLASS_MEMBER
     final override val isExtension: Boolean get() = false
     final override val receiverType: KtType? get() = null
+
+    //todo reduntant, remove
     public abstract val containingEnumClassIdIfNonLocal: ClassId?
 
     abstract override fun createPointer(): KtSymbolPointer<KtEnumEntrySymbol>

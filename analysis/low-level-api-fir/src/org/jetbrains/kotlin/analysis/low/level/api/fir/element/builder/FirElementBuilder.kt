@@ -129,7 +129,6 @@ internal inline fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate:
             && (container.isNonAnonymousClassOrObject() || container is KtDeclarationWithBody || container is KtProperty || container is KtTypeAlias)
             && container !is KtPrimaryConstructor
             && declarationCanBeLazilyResolved(container)
-            && container !is KtEnumEntry
             && container !is KtFunctionLiteral
             && container.containingClassOrObject !is KtEnumEntry
             && predicate(container)

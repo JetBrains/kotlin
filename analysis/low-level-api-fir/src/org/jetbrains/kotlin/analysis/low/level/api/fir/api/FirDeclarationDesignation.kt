@@ -61,7 +61,7 @@ private fun collectDesignationPath(declaration: FirDeclaration): List<FirDeclara
             if (declaration.symbol.callableId.isLocal) return null
             if ((declaration as? FirCallableDeclaration)?.status?.visibility == Visibilities.Local) return null
             when (declaration) {
-                is FirSimpleFunction, is FirProperty, is FirField, is FirConstructor -> {
+                is FirSimpleFunction, is FirProperty, is FirField, is FirConstructor, is FirEnumEntry -> {
                     val klass = declaration.containingClass() ?: return emptyList()
                     if (klass.classId.isLocal) return null
                     @OptIn(LookupTagInternals::class)
@@ -90,7 +90,8 @@ fun FirDeclaration.collectDesignation(): FirDeclarationDesignation =
     tryCollectDesignation() ?: error("No designation of local declaration ${this.render()}")
 
 fun FirDeclaration.collectDesignationWithFile(): FirDeclarationDesignationWithFile =
-    tryCollectDesignationWithFile() ?: error("No designation of local declaration ${this.render()}")
+    tryCollectDesignationWithFile()
+        ?: error("No designation of local declaration ${this.render()}")
 
 fun FirDeclaration.tryCollectDesignation(firFile: FirFile): FirDeclarationDesignationWithFile? =
     collectDesignationPath(this)?.let {

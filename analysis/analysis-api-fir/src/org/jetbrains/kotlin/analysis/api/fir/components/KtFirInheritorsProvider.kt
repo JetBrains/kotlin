@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
 import org.jetbrains.kotlin.analysis.api.components.KtInheritorsProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymbol
@@ -15,6 +13,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.declarations.getSealedClassInheritors
 
 internal class KtFirInheritorsProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -26,9 +26,7 @@ internal class KtFirInheritorsProvider(
         require(classSymbol.modality == Modality.SEALED)
         require(classSymbol is KtFirNamedClassOrObjectSymbol)
 
-        val inheritorClassIds = classSymbol.firRef.withFir { fir ->
-            fir.getSealedClassInheritors(analysisSession.rootModuleSession)
-        }
+        val inheritorClassIds = classSymbol.firSymbol.fir.getSealedClassInheritors(analysisSession.rootModuleSession)
 
         with(analysisSession) {
             inheritorClassIds.mapNotNull { it.getCorrespondingToplevelClassOrObjectSymbol() as? KtNamedClassOrObjectSymbol }

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirMemberFunctio
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirTopLevelFunctionSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.createSignature
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
-import org.jetbrains.kotlin.analysis.api.fir.utils.firRef
 import org.jetbrains.kotlin.analysis.api.impl.base.util.kotlinFunctionInvokeCallableIds
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
@@ -24,94 +23,82 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.WrongSymbolForSamConstructor
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.getHasStableParameterNames
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirFunctionSymbol(
-    fir: FirSimpleFunction,
-    resolveState: FirModuleResolveState,
+    override val firSymbol: FirNamedFunctionSymbol,
+    override val resolveState: FirModuleResolveState,
     override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder
-) : KtFunctionSymbol(), KtFirSymbol<FirSimpleFunction> {
-    override val firRef = firRef(fir, resolveState)
-    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.moduleData.session) }
-    override val name: Name get() = firRef.withFir { it.name }
-    override val returnType: KtType by cached {
-        firRef.returnType(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, builder)
-    }
-
-    override val valueParameters: List<KtValueParameterSymbol> by firRef.withFirAndCache { fir ->
-        fir.valueParameters.map { valueParameter ->
-            builder.variableLikeBuilder.buildValueParameterSymbol(valueParameter)
-        }
-    }
-
-    override val typeParameters by firRef.withFirAndCache { fir ->
-        fir.typeParameters.map { typeParameter ->
-            builder.classifierBuilder.buildTypeParameterSymbol(typeParameter.symbol.fir)
-        }
-    }
-
-    override val hasStableParameterNames: Boolean = firRef.withFir { it.getHasStableParameterNames(it.moduleData.session) }
-
-    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firRef, resolveState.rootModuleSession, token) }
-
-
-    override val isSuspend: Boolean get() = firRef.withFir { it.isSuspend }
-    override val isOverride: Boolean get() = firRef.withFir { it.isOverride }
-    override val isInfix: Boolean get() = firRef.withFir { it.isInfix }
-    override val isStatic: Boolean get() = firRef.withFir { it.isStatic }
+) : KtFunctionSymbol(), KtFirSymbol<FirNamedFunctionSymbol> {
+    override val psi: PsiElement? by cached { firSymbol.findPsi() }
+    override val name: Name get() = withValidityAssertion { firSymbol.name }
 
     override val isBuiltinFunctionInvoke: Boolean
-        get() = callableIdIfNonLocal in kotlinFunctionInvokeCallableIds
+        get() = withValidityAssertion { callableIdIfNonLocal in kotlinFunctionInvokeCallableIds }
 
-    override val receiverType: KtType? by cached {
-        firRef.receiverType(builder)
-    }
+    override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(builder) }
+    override val receiverType: KtType? get() = withValidityAssertion { firSymbol.receiverType(builder) }
+    
+    override val typeParameters by cached { firSymbol.createKtTypeParameters(builder) }
+    override val valueParameters: List<KtValueParameterSymbol> by cached { firSymbol.createKtValueParameters(builder) }
 
-    override val isOperator: Boolean get() = firRef.withFir { it.isOperator }
-    override val isExternal: Boolean get() = firRef.withFir { it.isExternal }
-    override val isInline: Boolean get() = firRef.withFir { it.isInline }
-    override val isExtension: Boolean get() = firRef.withFir { it.receiverTypeRef != null }
-    override val callableIdIfNonLocal: CallableId? get() = getCallableIdIfNonLocal()
+    override val hasStableParameterNames: Boolean
+        get() = withValidityAssertion { firSymbol.fir.getHasStableParameterNames(firSymbol.moduleData.session) }
+
+    override val annotationsList by cached { KtFirAnnotationListForDeclaration.create(firSymbol, resolveState.rootModuleSession, token) }
+
+    override val isSuspend: Boolean get() = withValidityAssertion { firSymbol.isSuspend }
+    override val isOverride: Boolean get() = withValidityAssertion { firSymbol.isOverride }
+    override val isInfix: Boolean get() = withValidityAssertion { firSymbol.isInfix }
+    override val isStatic: Boolean get() = withValidityAssertion { firSymbol.isStatic }
+
+
+    override val isOperator: Boolean get() = withValidityAssertion { firSymbol.isOperator }
+    override val isExternal: Boolean get() = withValidityAssertion { firSymbol.isExternal }
+    override val isInline: Boolean get() = withValidityAssertion { firSymbol.isInline }
+    override val isExtension: Boolean get() = withValidityAssertion { firSymbol.isExtension }
+    override val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { firSymbol.getCallableIdIfNonLocal() }
 
     override val symbolKind: KtSymbolKind
-        get() = firRef.withFir { fir ->
+        get() = withValidityAssertion {
             when {
-                fir.isLocal -> KtSymbolKind.LOCAL
-                fir.containingClass()?.classId == null -> KtSymbolKind.TOP_LEVEL
+                firSymbol.isLocal -> KtSymbolKind.LOCAL
+                firSymbol.containingClass()?.classId == null -> KtSymbolKind.TOP_LEVEL
                 else -> KtSymbolKind.CLASS_MEMBER
             }
         }
-    override val modality: Modality get() = getModality()
 
-    override val visibility: Visibility get() = getVisibility()
+    override val modality: Modality get() = withValidityAssertion { firSymbol.modalityOrFinal }
+    override val visibility: Visibility get() = withValidityAssertion { firSymbol.visibility }
 
     override fun createPointer(): KtSymbolPointer<KtFunctionSymbol> {
-        if (firRef.withFir { it.origin != FirDeclarationOrigin.SubstitutionOverride }) {
+        if (firSymbol.fir.origin != FirDeclarationOrigin.SubstitutionOverride) {
             KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
         }
 
         return when (symbolKind) {
-            KtSymbolKind.TOP_LEVEL -> firRef.withFir { fir ->
-                KtFirTopLevelFunctionSymbolPointer(fir.symbol.callableId, fir.createSignature())
-            }
-            KtSymbolKind.CLASS_MEMBER -> firRef.withFir { fir ->
+            KtSymbolKind.TOP_LEVEL ->
+                KtFirTopLevelFunctionSymbolPointer(firSymbol.callableId, firSymbol.createSignature())
+
+            KtSymbolKind.CLASS_MEMBER ->
                 KtFirMemberFunctionSymbolPointer(
-                    fir.containingClass()?.classId ?: error("ClassId should not be null for member function"),
-                    fir.name,
-                    fir.createSignature()
+                    firSymbol.containingClass()?.classId ?: error("ClassId should not be null for member function"),
+                    firSymbol.name,
+                    firSymbol.createSignature()
                 )
-            }
+
             KtSymbolKind.ACCESSOR -> TODO("Creating symbol for accessors fun is not supported yet")
             KtSymbolKind.LOCAL -> throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(
                 callableIdIfNonLocal?.toString() ?: name.asString()

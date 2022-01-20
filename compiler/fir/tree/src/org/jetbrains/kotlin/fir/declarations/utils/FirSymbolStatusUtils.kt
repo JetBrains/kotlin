@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 // ---------------------- callables with status ----------------------
 
 inline val FirCallableSymbol<*>.modality: Modality? get() = resolvedStatus.modality
+inline val FirCallableSymbol<*>.modalityOrFinal: Modality get() = modality ?: Modality.FINAL
 inline val FirCallableSymbol<*>.isAbstract: Boolean get() = resolvedStatus.modality == Modality.ABSTRACT
 inline val FirCallableSymbol<*>.isOpen: Boolean get() = resolvedStatus.modality == Modality.OPEN
 inline val FirCallableSymbol<*>.isFinal: Boolean

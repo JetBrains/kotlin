@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirTopLevelFunctionSymbolPointer(
     callableId: CallableId,
@@ -24,7 +22,7 @@ internal class KtFirTopLevelFunctionSymbolPointer(
         firSession: FirSession
     ): KtFunctionSymbol? {
         val firFunction = candidates.findDeclarationWithSignatureBySymbols<FirSimpleFunction>(signature, firSession) ?: return null
-        return firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(firFunction)
+        return firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(firFunction.symbol)
     }
 }
 

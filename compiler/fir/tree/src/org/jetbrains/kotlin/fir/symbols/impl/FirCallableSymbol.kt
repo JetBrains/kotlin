@@ -21,6 +21,10 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
             return fir.returnTypeRef as FirResolvedTypeRef
         }
 
+    val resolvedReturnType: ConeKotlinType
+        get() = resolvedReturnTypeRef.coneType
+
+
     val resolvedReceiverTypeRef: FirResolvedTypeRef?
         get() {
             ensureType(fir.receiverTypeRef)

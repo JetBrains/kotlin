@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
+import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -26,7 +26,7 @@ internal class KtFirMemberFunctionSymbolPointer(
         val firFunction = candidates.findDeclarationWithSignature<FirSimpleFunction>(signature, firSession) {
             processFunctionsByName(name, it)
         } ?: return null
-        return firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(firFunction)
+        return firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(firFunction.symbol)
     }
 }
 

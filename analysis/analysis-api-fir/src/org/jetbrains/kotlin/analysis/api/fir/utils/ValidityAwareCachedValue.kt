@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
+import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.tokens.assertIsValidAndAccessible
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty

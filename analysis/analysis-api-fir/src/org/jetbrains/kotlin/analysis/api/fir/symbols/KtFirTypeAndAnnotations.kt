@@ -6,27 +6,26 @@
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
-import org.jetbrains.kotlin.analysis.api.fir.utils.FirRefWithValidityCheck
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveSupertypesInTheAir
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 
-internal fun FirRefWithValidityCheck<FirClass>.superTypesList(builder: KtSymbolByFirBuilder): List<KtType> =
-    withFir(FirResolvePhase.SUPER_TYPES) { fir ->
-        fir.superTypeRefs.mapToKtType(builder)
+internal fun FirClassSymbol<*>.superTypesList(builder: KtSymbolByFirBuilder): List<KtType> =
+    resolvedSuperTypeRefs.mapToKtType(builder)
+
+internal fun FirRegularClassSymbol.superTypesAndAnnotationsListForRegularClass(builder: KtSymbolByFirBuilder): List<KtType> {
+    val fir = fir
+
+    if (fir.resolvePhase >= FirResolvePhase.SUPER_TYPES) {
+        return fir.superTypeRefs.mapToKtType(builder)
     }
 
-internal fun FirRefWithValidityCheck<FirRegularClass>.superTypesAndAnnotationsListForRegularClass(builder: KtSymbolByFirBuilder): List<KtType> {
-    return withFir { fir ->
-        if (fir.resolvePhase >= FirResolvePhase.SUPER_TYPES) {
-            fir.superTypeRefs.mapToKtType(builder)
-        } else null
-    } ?: withFirByType(ResolveType.NoResolve) { fir ->
-        fir.resolveSupertypesInTheAir(builder.rootSession).mapToKtType(builder)
-    }
+    return fir.resolveSupertypesInTheAir(builder.rootSession).mapToKtType(builder)
 }
 
 private fun List<FirTypeRef>.mapToKtType(
@@ -35,15 +34,11 @@ private fun List<FirTypeRef>.mapToKtType(
     builder.typeBuilder.buildKtType(typeRef)
 }
 
-internal fun FirRefWithValidityCheck<FirTypedDeclaration>.returnType(
-    typeResolvePhase: FirResolvePhase,
-    builder: KtSymbolByFirBuilder
-) = withFir(typeResolvePhase) { builder.typeBuilder.buildKtType(it.returnTypeRef) }
+internal fun FirCallableSymbol<*>.returnType(builder: KtSymbolByFirBuilder): KtType =
+    builder.typeBuilder.buildKtType(resolvedReturnType)
 
-internal fun FirRefWithValidityCheck<FirCallableDeclaration>.receiverType(
-    builder: KtSymbolByFirBuilder
-): KtType? = withFir(FirResolvePhase.TYPES) { fir ->
-    fir.receiverTypeRef?.let { receiver ->
+internal fun FirCallableSymbol<*>.receiverType(builder: KtSymbolByFirBuilder): KtType? =
+    resolvedReceiverTypeRef?.let { receiver ->
         builder.typeBuilder.buildKtType(receiver)
     }
-}
+

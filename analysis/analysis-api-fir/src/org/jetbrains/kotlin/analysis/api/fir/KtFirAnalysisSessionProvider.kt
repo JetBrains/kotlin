@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.CachingKtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
@@ -23,8 +24,11 @@ class KtFirAnalysisSessionProvider(project: Project) : CachingKtAnalysisSessionP
     }
 
     override fun getResolveState(contextSymbol: KtSymbol): FirModuleResolveState {
-        require(contextSymbol is KtFirSymbol<*>)
-        return contextSymbol.firRef.resolveState
+        return when (contextSymbol) {
+            is KtFirSymbol<*> -> contextSymbol.resolveState
+            is KtFirBackingFieldSymbol -> contextSymbol.resolveState
+            else -> error("Invalid symbol ${contextSymbol::class}")
+        }
     }
 
     override fun createAnalysisSession(

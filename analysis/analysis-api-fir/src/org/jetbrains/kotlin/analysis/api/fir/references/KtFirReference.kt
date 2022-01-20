@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.idea.references
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.api.fir.findReferencePsi
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtSymbolBasedReference
+import org.jetbrains.kotlin.analysis.api.fir.findReferencePsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
@@ -34,7 +34,7 @@ interface KtFirReference : KtReference, KtSymbolBasedReference {
 
     private fun KtSymbol.findPsiForReferenceResolve(): PsiElement? {
         require(this is KtFirSymbol<*>)
-        return firRef.withFir { it.findReferencePsi() }
+        return firSymbol.fir.findReferencePsi()
     }
 
     override val resolver get() = KtFirReferenceResolver

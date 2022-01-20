@@ -10,15 +10,16 @@ import org.jetbrains.kotlin.analysis.api.components.KtTypeCreator
 import org.jetbrains.kotlin.analysis.api.components.KtTypeParameterTypeBuilder
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtClassType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeParameterType
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
-import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassErrorType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.typeContext
@@ -38,7 +39,7 @@ internal class KtFirTypeCreator(
             is KtClassTypeBuilder.BySymbol -> {
                 val symbol = builder.symbol
                 check(symbol is KtFirSymbol<*>)
-                symbol.firRef.withFir { (it as FirClassLikeDeclaration).symbol.toLookupTag() }
+                (symbol.firSymbol as FirClassLikeSymbol<*>).toLookupTag()
             }
         }
 
@@ -56,8 +57,7 @@ internal class KtFirTypeCreator(
         val coneType = when (builder) {
             is KtTypeParameterTypeBuilder.BySymbol -> {
                 val symbol = builder.symbol
-                check(symbol is KtFirSymbol<*>)
-                symbol.firRef.withFir { (it as FirTypeParameter).toConeType() }
+                (symbol as KtFirTypeParameterSymbol).firSymbol.toConeType()
             }
         }
         return coneType.asKtType() as KtTypeParameterType
