@@ -9,7 +9,6 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptionsImpl
@@ -83,7 +82,7 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
 
     override val moduleName: String
         get() { // FIXME deduplicate with ownModuleName
-            val baseName = project.extensions.getByType(BasePluginExtension::class.java).archivesName.orNull
+            val baseName = project.archivesName
                 ?: project.name
             val suffix = if (module.moduleClassifier == null) "" else "_${module.moduleClassifier}"
             return filterModuleName("$baseName$suffix")

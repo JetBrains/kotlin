@@ -5,12 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import groovy.lang.Closure
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.plugins.BasePluginConvention
-import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
-import org.gradle.api.plugins.BasePluginExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -50,7 +45,7 @@ class KotlinJvmVariantCompilationData(val variant: KotlinJvmVariant) : KotlinVar
 
 internal fun KotlinGradleVariant.ownModuleName(): String {
     val project = containingModule.project
-    val baseName = project.extensions.getByType(BasePluginExtension::class.java).archivesName.orNull
+    val baseName = project.archivesName
         ?: project.name
     val suffix = if (containingModule.moduleClassifier == null) "" else "_${containingModule.moduleClassifier}"
     return filterModuleName("$baseName$suffix")
