@@ -8,12 +8,11 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.InternalForInline
 import org.jetbrains.kotlin.analysis.low.level.api.fir.FirIdeResolveStateService
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -55,31 +54,11 @@ inline fun <R> KtDeclaration.withFirSymbol(
         resolveState.findSourceFirDeclaration(this)
     }
 
-    val resolvedDeclaration = if (firDeclaration.resolvePhase < phase) {
+    if (firDeclaration.resolvePhase < phase) {
         firDeclaration.resolvedFirToPhase(phase, resolveState)
-    } else {
-        firDeclaration
     }
 
-    return action(resolvedDeclaration.symbol)
-}
-
-/**
- * Creates [FirDeclaration] by [KtDeclaration] and executes an [action] on it
- * [FirDeclaration] passed to [action] will be resolved at least to [resolveType] when executing [action] on it
- *
- * [FirDeclaration] passed to [action] should not be leaked outside [action] lambda
- * Otherwise, some threading problems may arise,
- */
-@OptIn(InternalForInline::class)
-inline fun <R> KtDeclaration.withFirSymbolDeclaration(
-    resolveState: FirModuleResolveState,
-    resolveType: ResolveType = ResolveType.NoResolve,
-    action: (FirBasedSymbol<*>) -> R
-): R {
-    val firDeclaration = resolveState.findSourceFirDeclaration(this)
-    val resolvedDeclaration = firDeclaration.resolvedFirToType(resolveType, resolveState)
-    return action(resolvedDeclaration.symbol)
+    return action(firDeclaration.symbol)
 }
 
 /**
@@ -128,22 +107,10 @@ fun <D : FirDeclaration, R> D.withFirDeclaration(
     phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
     action: (D) -> R,
 ): R {
-    val resolvedDeclaration = resolvedFirToPhase(phase, resolveState)
-    return action(resolvedDeclaration)
+    resolvedFirToPhase(phase, resolveState)
+    return action(this)
 }
 
-/**
- * Executes [action] with given [FirDeclaration] under read action, so resolve **is not possible** inside [action]
- * [FirDeclaration] passed to [action] will be resolved at least to [phase] when executing [action] on it
- */
-fun <D : FirDeclaration, R> D.withFirDeclaration(
-    type: ResolveType,
-    resolveState: FirModuleResolveState,
-    action: (D) -> R,
-): R {
-    val resolvedDeclaration = resolvedFirToType(type, resolveState)
-    return action(resolvedDeclaration)
-}
 
 /**
  * Returns a list of Diagnostics compiler finds for given [KtElement]
@@ -167,22 +134,12 @@ fun KtFile.collectDiagnosticsForFile(
  *
  * Should not be called form [withFirSymbol], [withFirDeclarationOfType] functions, as it it may cause deadlock
  */
-fun <D : FirDeclaration> D.resolvedFirToPhase(
+fun FirDeclaration.resolvedFirToPhase(
     phase: FirResolvePhase,
     resolveState: FirModuleResolveState
-): D =
+) {
     resolveState.resolveFirToPhase(this, phase)
-
-/**
- * Resolves a given [FirDeclaration] to [phase] and returns resolved declaration
- *
- * Should not be called form [withFirSymbol], [withFirDeclarationOfType] functions, as it it may cause deadlock
- */
-fun <D : FirDeclaration> D.resolvedFirToType(
-    type: ResolveType,
-    resolveState: FirModuleResolveState
-): D =
-    resolveState.resolveFirToResolveType(this, type)
+}
 
 
 /**

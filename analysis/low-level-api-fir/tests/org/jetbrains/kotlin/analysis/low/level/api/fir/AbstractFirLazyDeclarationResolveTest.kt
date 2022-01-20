@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDeclaration
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
@@ -16,6 +15,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -61,30 +61,6 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
                 declarationToResolve.withFirDeclaration(firModuleResolveState, currentPhase) {
                     val firFile = firModuleResolveState.getOrBuildFirFile(ktFile)
                     resultBuilder.append("\n${currentPhase.name}:\n")
-                    resultBuilder.append(firFile.render(rendererOption))
-                }
-            }
-        }
-
-        for (resolveType in ResolveType.values()) {
-            resolveWithClearCaches(ktFile) { firModuleResolveState ->
-                check(firModuleResolveState is FirModuleResolveStateImpl)
-                val declarationToResolve = firModuleResolveState
-                    .getOrBuildFirFile(ktFile)
-                    .findResolveMe()
-
-                when (resolveType) {
-                    ResolveType.CallableReturnType,
-                    ResolveType.CallableBodyResolve,
-                    ResolveType.CallableContracts -> if (declarationToResolve !is FirCallableDeclaration) return@resolveWithClearCaches
-                    ResolveType.ClassSuperTypes -> if (declarationToResolve !is FirClassLikeDeclaration) return@resolveWithClearCaches
-                    else -> {
-                    }
-                }
-
-                declarationToResolve.withFirDeclaration(resolveType, firModuleResolveState) {
-                    val firFile = firModuleResolveState.getOrBuildFirFile(ktFile)
-                    resultBuilder.append("\n${resolveType.name}:\n")
                     resultBuilder.append(firFile.render(rendererOption))
                 }
             }

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.InternalForInline
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
@@ -72,7 +71,5 @@ abstract class FirModuleResolveState {
     ): FirDeclaration
 
 
-    internal abstract fun <D : FirDeclaration> resolveFirToPhase(declaration: D, toPhase: FirResolvePhase): D
-
-    internal abstract fun <D : FirDeclaration> resolveFirToResolveType(declaration: D, type: ResolveType): D
+    internal abstract fun resolveFirToPhase(declaration: FirDeclaration, toPhase: FirResolvePhase)
 }
