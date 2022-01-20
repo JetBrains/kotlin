@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.api.Project
-import org.gradle.api.plugins.BasePluginExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.distsDirectory
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
@@ -20,7 +20,7 @@ class DefaultDistribution(
         project.buildDir
             .let { buildDir ->
                 name?.let { buildDir.resolve(it) }
-                    ?: project.extensions.getByType(BasePluginExtension::class.java).distsDirectory.asFile.get()
+                    ?: project.distsDirectory.asFile.get()
             }
     }
 }
