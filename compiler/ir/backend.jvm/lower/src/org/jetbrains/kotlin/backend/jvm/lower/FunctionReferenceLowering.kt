@@ -335,7 +335,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
         val proxyFun = context.irFactory.buildFun {
             name = Name.identifier("${targetFun.name.asString()}__proxy")
-            returnType = targetFun.returnType
+            returnType = targetFun.returnType.eraseTypeParameters()
             visibility = DescriptorVisibilities.LOCAL
             modality = Modality.FINAL
             isSuspend = false
@@ -372,6 +372,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     updateFrom(originalParameter)
                     name = Name.identifier("p$proxyParameterIndex\$${originalParameter.name.asString()}")
                     index = proxyParameterIndex
+                    type = originalParameter.type.eraseTypeParameters()
                     proxyParameterIndex++
                 }.apply {
                     parent = proxyFun
