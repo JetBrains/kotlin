@@ -332,6 +332,7 @@ include ":compiler:test-infrastructure",
         ":compiler:tests-common-new"
 
 include ":plugins:parcelize:parcelize-compiler",
+        ":plugins:parcelize:parcelize-compiler:parcelize-fir",
         ":plugins:parcelize:parcelize-runtime",
         ":kotlin-parcelize-compiler"
 
