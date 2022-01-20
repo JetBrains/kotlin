@@ -22599,6 +22599,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("kt50877.kt")
+            public void testKt50877() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/platformTypes/kt50877.kt");
+            }
+
+            @Test
             @TestMetadata("methodTypeParameterDefaultBound.kt")
             public void testMethodTypeParameterDefaultBound() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/platformTypes/methodTypeParameterDefaultBound.kt");
