@@ -1,5 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: JS
-
 fun testModNegativeInt() {
     // wrapper prevents the constants folding
     infix fun Int.myModInt(y: Int): Any = this % y

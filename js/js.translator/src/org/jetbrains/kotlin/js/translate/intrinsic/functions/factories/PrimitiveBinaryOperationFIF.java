@@ -83,6 +83,14 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
         }
     };
 
+    private static final BinaryOperationIntrinsicBase NUMBER_REM_INTRINSIC = new BinaryOperationIntrinsicBase() {
+        @NotNull
+        @Override
+        public JsExpression doApply(@NotNull JsExpression left, @NotNull JsExpression right, @NotNull TranslationContext context) {
+            return JsAstUtils.toInt32(JsAstUtils.mod(left, right));
+        }
+    };
+
     @NotNull
     private static final BinaryOperationIntrinsicBase BUILTINS_COMPARE_TO_INTRINSIC = new BinaryOperationIntrinsicBase() {
         @NotNull
@@ -120,6 +128,7 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
     private static final DescriptorPredicate BOOLEAN_OPERATIONS = pattern("Boolean.or|and|xor");
     private static final DescriptorPredicate STRING_PLUS = pattern("String.plus");
     private static final DescriptorPredicate INT_MULTIPLICATION = pattern("Int.times(Int)");
+    private static final DescriptorPredicate NUMBER_REM = pattern("Byte|Short|Int.rem(Byte|Short|Int)");
 
     private static final DescriptorPredicate CHAR_RANGE_TO = pattern("Char.rangeTo(Char)");
     private static final DescriptorPredicate NUMBER_RANGE_TO = pattern("Byte|Short|Int.rangeTo(Byte|Short|Int)");
@@ -160,6 +169,9 @@ public enum PrimitiveBinaryOperationFIF implements FunctionIntrinsicFactory {
 
         if (INT_MULTIPLICATION.test(descriptor)) {
             return INT_MULTIPLICATION_INTRINSIC;
+        }
+        if (NUMBER_REM.test(descriptor)) {
+            return NUMBER_REM_INTRINSIC;
         }
         if (NUMBER_RANGE_TO.test(descriptor)) {
             return new RangeToIntrinsic(descriptor);

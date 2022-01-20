@@ -7747,6 +7747,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("intMod.kt")
+        public void testIntMod() throws Exception {
+            runTest("js/js.translator/testData/box/number/intMod.kt");
+        }
+
+        @Test
         @TestMetadata("intOverflow.kt")
         public void testIntOverflow() throws Exception {
             runTest("js/js.translator/testData/box/number/intOverflow.kt");
