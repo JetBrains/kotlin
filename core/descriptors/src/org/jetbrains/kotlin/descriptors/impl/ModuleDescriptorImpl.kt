@@ -105,7 +105,7 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
         )
     }
 
-    private val isInitialized: Boolean
+    val isInitialized: Boolean
         get() = packageFragmentProviderForModuleContent != null
 
     fun setDependencies(dependencies: ModuleDependencies) {
