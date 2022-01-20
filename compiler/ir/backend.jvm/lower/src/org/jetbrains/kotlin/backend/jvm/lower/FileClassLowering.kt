@@ -28,17 +28,29 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fileClasses.JvmFileClassInfo
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+import org.jetbrains.kotlin.fileClasses.JvmMultifileClassPartInfo
 import org.jetbrains.kotlin.fileClasses.JvmSimpleFileClassInfo
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
+import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmNames.JVM_MULTIFILE_CLASS_SHORT
+import org.jetbrains.kotlin.name.JvmNames.JVM_NAME_SHORT
+import org.jetbrains.kotlin.name.JvmNames.JVM_PACKAGE_NAME_SHORT
+import org.jetbrains.kotlin.name.JvmNames.MULTIFILE_PART_NAME_DELIMITER
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 
 internal val fileClassPhase = makeIrModulePhase(
@@ -152,7 +164,61 @@ fun IrFile.getFileClassInfo(): JvmFileClassInfo =
         is PsiIrFileEntry ->
             JvmFileClassUtil.getFileClassInfoNoResolve(fileEntry.psiFile as KtFile)
         is NaiveSourceBasedFileEntryImpl ->
-            JvmSimpleFileClassInfo(PackagePartClassUtils.getPackagePartFqName(fqName, File(fileEntry.name).name), false)
+            getFileClassInfoFromIrFile(this, File(fileEntry.name).name)
         else ->
             error("unknown kind of file entry: $fileEntry")
     }
+
+
+fun getFileClassInfoFromIrFile(file: IrFile, fileName: String): JvmFileClassInfo {
+    val parsedAnnotations = parseJvmNameOnFileNoResolve(file)
+    val packageFqName = parsedAnnotations?.jvmPackageName ?: file.fqName
+    return when {
+        parsedAnnotations != null -> {
+            val simpleName = parsedAnnotations.jvmName ?: PackagePartClassUtils.getFilePartShortName(fileName)
+            val facadeClassFqName = packageFqName.child(Name.identifier(simpleName))
+            when {
+                parsedAnnotations.isMultifileClass -> JvmMultifileClassPartInfo(
+                    fileClassFqName = packageFqName.child(Name.identifier(manglePartName(simpleName, fileName))),
+                    facadeClassFqName = facadeClassFqName
+                )
+                else -> JvmSimpleFileClassInfo(facadeClassFqName, true)
+            }
+        }
+        else -> JvmSimpleFileClassInfo(PackagePartClassUtils.getPackagePartFqName(packageFqName, fileName), false)
+    }
+}
+
+private fun parseJvmNameOnFileNoResolve(file: IrFile): ParsedJvmFileClassAnnotations? {
+    val jvmNameAnnotation = findAnnotationEntryOnFileNoResolve(file, JVM_NAME_SHORT)
+    val jvmName = jvmNameAnnotation?.let(::getLiteralStringFromAnnotation)?.takeIf(Name::isValidIdentifier)
+
+    val jvmPackageNameAnnotation = findAnnotationEntryOnFileNoResolve(file, JVM_PACKAGE_NAME_SHORT)
+    val jvmPackageName = jvmPackageNameAnnotation?.let(::getLiteralStringFromAnnotation)?.let(::FqName)
+
+    if (jvmName == null && jvmPackageName == null) return null
+
+    val isMultifileClass = findAnnotationEntryOnFileNoResolve(file, JVM_MULTIFILE_CLASS_SHORT) != null
+
+    return ParsedJvmFileClassAnnotations(jvmName, jvmPackageName, isMultifileClass)
+}
+
+private fun findAnnotationEntryOnFileNoResolve(file: IrFile, shortName: String): IrConstructorCall? =
+    file.annotations.firstOrNull {
+        it.type.classFqName?.shortName()?.asString() == shortName
+    }
+
+private fun getLiteralStringFromAnnotation(annotationCall: IrConstructorCall): String? {
+    if (annotationCall.valueArgumentsCount < 1) return null
+    return annotationCall.getValueArgument(0)?.let {
+        when {
+            it is IrConst<*> && it.kind == IrConstKind.String -> it.value as String
+            else -> null // TODO: getArgumentExpression().safeAs<KtStringTemplateExpression>()
+        }
+    }
+}
+
+private fun manglePartName(facadeName: String, fileName: String): String =
+    "$facadeName$MULTIFILE_PART_NAME_DELIMITER${PackagePartClassUtils.getFilePartShortName(fileName)}"
+
+internal class ParsedJvmFileClassAnnotations(val jvmName: String?, val jvmPackageName: FqName?, val isMultifileClass: Boolean)
