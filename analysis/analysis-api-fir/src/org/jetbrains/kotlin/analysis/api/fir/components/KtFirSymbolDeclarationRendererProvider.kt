@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
 
 internal class KtFirSymbolDeclarationRendererProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -30,8 +31,7 @@ internal class KtFirSymbolDeclarationRendererProvider(
 
     override fun renderDeclaration(symbol: KtDeclarationSymbol, options: KtDeclarationRendererOptions): String {
         require(symbol is KtFirSymbol<*>)
-        return symbol.firRef.withFir(FirResolvePhase.BODY_RESOLVE) { fir ->
-            FirIdeRenderer.render(fir, options, fir.moduleData.session)
-        }
+        symbol.firSymbol.ensureResolved(FirResolvePhase.BODY_RESOLVE)
+        return FirIdeRenderer.render(symbol.firSymbol.fir, options, symbol.firSymbol.fir.moduleData.session)
     }
 }

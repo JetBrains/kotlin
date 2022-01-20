@@ -30,6 +30,12 @@ open class FirPropertySymbol(
     val setterSymbol: FirPropertyAccessorSymbol?
         get() = fir.setter?.symbol
 
+    val backingFieldSymbol: FirBackingFieldSymbol?
+        get() = fir.backingField?.symbol
+
+    val delegateFieldSymbol: FirDelegateFieldSymbol?
+        get() = fir.delegateFieldSymbol
+
     val hasInitializer: Boolean
         get() = fir.initializer != null
 
@@ -60,6 +66,9 @@ class FirBackingFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirBacki
 
     val isVar: Boolean
         get() = fir.isVar
+
+    val propertySymbol: FirPropertySymbol
+        get() = fir.propertySymbol
 
     val getterSymbol: FirPropertyAccessorSymbol?
         get() = fir.propertySymbol.fir.getter?.symbol

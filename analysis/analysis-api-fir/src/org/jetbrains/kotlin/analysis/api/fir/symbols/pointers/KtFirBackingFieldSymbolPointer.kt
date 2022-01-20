@@ -21,9 +21,7 @@ internal class KtFirBackingFieldSymbolPointer(
         @Suppress("DEPRECATION")
         val propertySymbol = propertySymbolPointer.restoreSymbol(analysisSession) ?: return null
         check(propertySymbol is KtFirKotlinPropertySymbol)
-        return propertySymbol.firRef.withFir { firProperty ->
-            analysisSession.firSymbolBuilder.variableLikeBuilder.buildBackingFieldSymbolByProperty(firProperty)
-        }
+        return analysisSession.firSymbolBuilder.variableLikeBuilder.buildBackingFieldSymbolByProperty(propertySymbol.firSymbol)
     }
 }
 

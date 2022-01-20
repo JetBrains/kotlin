@@ -92,7 +92,6 @@ internal val FirDeclaration.containingKtFileIfAny: KtFile?
 internal fun KtDeclaration.isNonAnonymousClassOrObject() =
     this is KtClassOrObject
             && !this.isObjectLiteral()
-            && this !is KtEnumEntry
 
 
 

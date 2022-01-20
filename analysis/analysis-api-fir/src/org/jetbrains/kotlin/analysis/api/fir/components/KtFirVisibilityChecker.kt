@@ -6,13 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
-import org.jetbrains.kotlin.fir.visibilityChecker
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.api.components.KtVisibilityChecker
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFileSymbol
@@ -21,6 +14,13 @@ import org.jetbrains.kotlin.analysis.api.impl.barebone.parentsOfType
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
+import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -42,32 +42,26 @@ internal class KtFirVisibilityChecker(
         require(useSiteFile is KtFirFileSymbol)
 
         val nonLocalContainingDeclaration = findContainingNonLocalDeclaration(position)
+        val useSiteFirFile = useSiteFile.firSymbol.fir
+        val containers = nonLocalContainingDeclaration
+            ?.getOrBuildFirSafe<FirCallableDeclaration>(analysisSession.firResolveState)
+            ?.collectDesignation()
+            ?.path
+            .orEmpty()
 
-        return useSiteFile.firRef.withFir { useSiteFirFile ->
-            val containers = nonLocalContainingDeclaration
-                ?.getOrBuildFirSafe<FirCallableDeclaration>(analysisSession.firResolveState)
-                ?.collectDesignation()
-                ?.path
-                .orEmpty()
+        val explicitDispatchReceiver = receiverExpression
+            ?.getOrBuildFirSafe<FirExpression>(analysisSession.firResolveState)
+            ?.let { ExpressionReceiverValue(it) }
 
-            val explicitDispatchReceiver = receiverExpression
-                ?.getOrBuildFirSafe<FirExpression>(analysisSession.firResolveState)
-                ?.let { ExpressionReceiverValue(it) }
+        val candidateFirSymbol = candidateSymbol.firSymbol.fir as FirMemberDeclaration
 
-            candidateSymbol.firRef.withFir { candidateFirSymbol ->
-                require(candidateFirSymbol is FirMemberDeclaration) {
-                    "$candidateFirSymbol must be a FirStatusOwner and FirSymbolOwner; it were ${candidateFirSymbol::class} instead"
-                }
-
-                rootModuleSession.visibilityChecker.isVisible(
-                    candidateFirSymbol,
-                    rootModuleSession,
-                    useSiteFirFile,
-                    containers,
-                    explicitDispatchReceiver
-                )
-            }
-        }
+        return rootModuleSession.visibilityChecker.isVisible(
+            candidateFirSymbol,
+            rootModuleSession,
+            useSiteFirFile,
+            containers,
+            explicitDispatchReceiver
+        )
     }
 
     private fun findContainingNonLocalDeclaration(element: PsiElement): KtCallableDeclaration? {

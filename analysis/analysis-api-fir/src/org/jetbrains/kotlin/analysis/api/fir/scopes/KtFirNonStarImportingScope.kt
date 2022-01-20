@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractSimpleImportingScope
-import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultSimpleImportingScope
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 

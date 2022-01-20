@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
+import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import java.lang.ref.WeakReference
 import kotlin.reflect.KProperty
 

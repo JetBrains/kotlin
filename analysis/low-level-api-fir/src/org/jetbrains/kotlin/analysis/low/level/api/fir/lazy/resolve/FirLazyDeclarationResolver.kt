@@ -29,6 +29,10 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassBody
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtElement
 
 internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBuilder) {
     /**
@@ -291,7 +295,8 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
             val nonLocalDeclaration = possiblyLocalDeclaration.getNonLocalContainingOrThisDeclaration()
                 ?: error("Container for local declaration cannot be null")
 
-            isLocalDeclarationResolveRequested = possiblyLocalDeclaration != nonLocalDeclaration
+            isLocalDeclarationResolveRequested =
+                possiblyLocalDeclaration != nonLocalDeclaration
             if (isLocalDeclarationResolveRequested && skipLocalDeclaration) return firDeclarationToResolve
 
             val nonLocalFirDeclaration = nonLocalDeclaration.findSourceNonLocalFirDeclaration(
@@ -428,4 +433,10 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
     }
 }
 
+private fun KtDeclaration.isMemberOfEnumEntry(container: KtDeclaration) : Boolean {
+    if (container !is KtClass) return false
+    if (!container.isEnum()) return false
+    val enumEntryBody = this.parent as? KtClassBody ?: return false
+    return enumEntryBody.parent == container
+}
 

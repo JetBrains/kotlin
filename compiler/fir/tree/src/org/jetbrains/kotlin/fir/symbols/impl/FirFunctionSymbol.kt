@@ -105,6 +105,9 @@ class FirAnonymousFunctionSymbol : FirFunctionWithoutNameSymbol<FirAnonymousFunc
     val label: FirLabel? get() = fir.label
 }
 
-class FirPropertyAccessorSymbol : FirFunctionWithoutNameSymbol<FirPropertyAccessor>(Name.identifier("accessor"))
+class FirPropertyAccessorSymbol : FirFunctionWithoutNameSymbol<FirPropertyAccessor>(Name.identifier("accessor")) {
+    val isGetter: Boolean get() = fir.isGetter
+    val isSetter: Boolean get() = fir.isSetter
+}
 
 class FirErrorFunctionSymbol : FirFunctionWithoutNameSymbol<FirErrorFunction>(Name.identifier("error"))

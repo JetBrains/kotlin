@@ -7,22 +7,21 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.utils.firRef
+import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassInitializerSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 
 internal class KtFirClassInitializerSymbol(
-    fir: FirAnonymousInitializer,
-    resolveState: FirModuleResolveState,
+    override val firSymbol: FirAnonymousInitializerSymbol,
+    override val resolveState: FirModuleResolveState,
     override val token: ValidityToken,
-) : KtClassInitializerSymbol(), KtFirSymbol<FirAnonymousInitializer> {
-    override val firRef = firRef(fir, resolveState)
-    override val psi: PsiElement? by firRef.withFirAndCache { fir -> fir.findPsi(fir.moduleData.session) }
+) : KtClassInitializerSymbol(), KtFirSymbol<FirAnonymousInitializerSymbol> {
+    override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
     override fun createPointer(): KtSymbolPointer<KtSymbol> {
         TODO("Figure out how to create such a pointer. Should we give an index to class initializers?")

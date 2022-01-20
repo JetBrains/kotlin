@@ -48,6 +48,9 @@ internal inline fun <reified D : FirDeclaration> Collection<FirCallableSymbol<*>
     return null
 }
 
+internal fun FirBasedSymbol<*>.createSignature(): IdSignature =
+    fir.createSignature()
+
 internal fun FirDeclaration.createSignature(): IdSignature {
     val signatureComposer = moduleData.session.ideSessionComponents.signatureComposer
     return signatureComposer.composeSignature(this)

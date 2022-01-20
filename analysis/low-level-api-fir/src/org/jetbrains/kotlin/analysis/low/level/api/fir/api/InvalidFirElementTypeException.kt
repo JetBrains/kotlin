@@ -11,33 +11,33 @@ import java.util.*
 import kotlin.reflect.KClass
 
 class InvalidFirElementTypeException(
-    actualFirClass: KClass<out FirElement>?,
+    actualFirClass: KClass<*>?,
     ktElement: KtElement?,
-    expectedFirClasses: List<KClass<out FirElement>>,
+    expectedFirClasses: List<KClass<*>>,
 ) : IllegalStateException() {
     override val message: String = buildString {
         if (ktElement != null) {
             append("For $ktElement with text `${ktElement.text}`, ")
         }
         val message = when (expectedFirClasses.size) {
-            0 -> "Unexpected FirElement of type:"
-            1 -> "The FirElement of type ${expectedFirClasses.single()} expected, but"
-            else -> "One of [${expectedFirClasses.joinToString()}] FirElement types expected, but"
+            0 -> "Unexpected element of type:"
+            1 -> "The element of type ${expectedFirClasses.single()} expected, but"
+            else -> "One of [${expectedFirClasses.joinToString()}] element types expected, but"
         }
         append(if (ktElement == null) message else message.replaceFirstChar { it.lowercase(Locale.getDefault()) })
         if (actualFirClass != null) {
             append(" ${actualFirClass.simpleName} found")
         } else {
-            append(" no FirElement found")
+            append(" no element found")
         }
     }
 }
 
 
 fun throwUnexpectedFirElementError(
-    firElement: FirElement?,
+    firElement: Any?,
     ktElement: KtElement? = null,
-    vararg expectedFirClasses: KClass<out FirElement>
+    vararg expectedFirClasses: KClass<*>
 ): Nothing {
     throw InvalidFirElementTypeException(firElement?.let { it::class }, ktElement, expectedFirClasses.toList())
 }

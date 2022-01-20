@@ -5,6 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.analysis.api.components.KtSamResolver
+import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.getClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtSamConstructorSymbol
+import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -13,12 +19,6 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
-import org.jetbrains.kotlin.analysis.api.components.KtSamResolver
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.getClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSamConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 
 internal class KtFirSamResolver(
     override val analysisSession: KtFirAnalysisSession,
@@ -30,7 +30,7 @@ internal class KtFirSamResolver(
         val owner = analysisSession.getClassLikeSymbol(classId) as? FirRegularClass ?: return null
         val resolver = LocalSamResolver(analysisSession.rootModuleSession)
         return resolver.getSamConstructor(owner)?.let {
-            analysisSession.firSymbolBuilder.functionLikeBuilder.buildSamConstructorSymbol(it)
+            analysisSession.firSymbolBuilder.functionLikeBuilder.buildSamConstructorSymbol(it.symbol)
         }
     }
 

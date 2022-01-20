@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
+import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.ClassId
 
@@ -26,7 +26,7 @@ internal class KtFirConstructorSymbolPointer(
             candidates.findDeclarationWithSignature<FirConstructor>(signature, firSession) { processDeclaredConstructors(it) }
                 ?: return null
         if (firConstructor.isPrimary != isPrimary) return null
-        return firSymbolBuilder.functionLikeBuilder.buildConstructorSymbol(firConstructor)
+        return firSymbolBuilder.functionLikeBuilder.buildConstructorSymbol(firConstructor.symbol)
     }
 }
 

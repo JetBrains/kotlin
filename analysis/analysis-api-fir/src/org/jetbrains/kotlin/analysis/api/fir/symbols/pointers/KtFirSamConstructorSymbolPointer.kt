@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtSamConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirSamConstructorSymbolPointer(
@@ -19,7 +19,7 @@ internal class KtFirSamConstructorSymbolPointer(
     override fun restoreSymbol(analysisSession: KtAnalysisSession): KtSamConstructorSymbol? {
         require(analysisSession is KtFirAnalysisSession)
         val owner = analysisSession.getClassLikeSymbol(ownerClassId) as? FirRegularClass ?: return null
-        val classSymbol = analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(owner)
+        val classSymbol = analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(owner.symbol)
         with(analysisSession) {
             return classSymbol.getSamConstructor()
         }

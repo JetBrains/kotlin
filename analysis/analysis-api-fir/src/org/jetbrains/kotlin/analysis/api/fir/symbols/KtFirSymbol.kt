@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
-import org.jetbrains.kotlin.analysis.api.fir.utils.FirRefWithValidityCheck
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -17,19 +17,22 @@ import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.originalIfFakeOverride
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
-internal interface KtFirSymbol<out F : FirDeclaration> : KtSymbol, ValidityTokenOwner {
-    val firRef: FirRefWithValidityCheck<F>
+internal interface KtFirSymbol<out S : FirBasedSymbol<*>> : KtSymbol, ValidityTokenOwner {
+    val firSymbol: S
 
-    override val origin: KtSymbolOrigin get() = firRef.withFir { it.ktSymbolOrigin() }
+    abstract val resolveState: FirModuleResolveState
+
+    override val origin: KtSymbolOrigin get() = firSymbol.fir.ktSymbolOrigin()
 }
 
 internal fun KtFirSymbol<*>.symbolEquals(other: Any?): Boolean {
     if (other !is KtFirSymbol<*>) return false
-    return this.firRef == other.firRef
+    return this.firSymbol == other.firSymbol
 }
 
-internal fun KtFirSymbol<*>.symbolHashCode(): Int = firRef.hashCode()
+internal fun KtFirSymbol<*>.symbolHashCode(): Int = firSymbol.hashCode()
 
 internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (origin) {
     FirDeclarationOrigin.Source -> {

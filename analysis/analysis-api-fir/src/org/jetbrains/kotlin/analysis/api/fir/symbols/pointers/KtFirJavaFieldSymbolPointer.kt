@@ -28,6 +28,6 @@ internal class KtFirJavaFieldSymbolPointer(
                 .singleOrNull()
                 ?: return null
 
-        return firSymbolBuilder.variableLikeBuilder.buildFieldSymbol(javaField)
+        return firSymbolBuilder.variableLikeBuilder.buildFieldSymbol(javaField.symbol)
     }
 }

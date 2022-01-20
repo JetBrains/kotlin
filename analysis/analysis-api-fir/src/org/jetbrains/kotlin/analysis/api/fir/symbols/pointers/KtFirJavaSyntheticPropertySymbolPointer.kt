@@ -28,6 +28,6 @@ internal class KtFirJavaSyntheticPropertySymbolPointer(
                 .singleOrNull()
                 ?: return null
 
-        return firSymbolBuilder.variableLikeBuilder.buildSyntheticJavaPropertySymbol(syntheticProperty)
+        return firSymbolBuilder.variableLikeBuilder.buildSyntheticJavaPropertySymbol(syntheticProperty.symbol)
     }
 }

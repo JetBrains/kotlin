@@ -5,47 +5,68 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.analysis.api.KtInitializerValue
+import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.utils.asKtInitializerValue
+import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInContext
 import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.renderWithType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInContext
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtDeclaration
 
-internal fun KtFirSymbol<FirMemberDeclaration>.getModality(
-    phase: FirResolvePhase = FirResolvePhase.STATUS,
-    defaultModality: Modality? = null
-): Modality {
-    return firRef.withFir(phase) { fir ->
-        fir.modality
-            ?: defaultModality
-            ?: fir.invalidModalityError()
-    }
-}
 
-private fun FirDeclaration.invalidModalityError(): Nothing {
+internal fun FirCallableSymbol<*>.invalidModalityError(): Nothing {
     error(
         """|Symbol modality should not be null, looks like the FIR symbol was not properly resolved
                    |
-                   |${renderWithType(FirRenderer.RenderMode.WithResolvePhases)}
+                   |${fir.renderWithType(FirRenderer.RenderMode.WithResolvePhases)}
                    |
-                   |${(psi as? KtDeclaration)?.getElementTextInContext()}""".trimMargin()
+                   |${(fir.psi as? KtDeclaration)?.getElementTextInContext()}""".trimMargin()
     )
 }
 
+internal fun FirFunctionSymbol<*>.createKtValueParameters(builder: KtSymbolByFirBuilder): List<KtValueParameterSymbol> {
+    return fir.valueParameters.map { valueParameter ->
+        builder.variableLikeBuilder.buildValueParameterSymbol(valueParameter.symbol)
+    }
+}
 
-internal fun KtFirSymbol<FirMemberDeclaration>.getVisibility(
-    phase: FirResolvePhase = FirResolvePhase.STATUS
-): Visibility =
-    firRef.withFir(phase) { fir -> fir.visibility }
+internal fun <D> FirBasedSymbol<D>.createKtTypeParameters(
+    builder: KtSymbolByFirBuilder
+): List<KtFirTypeParameterSymbol> where D : FirTypeParameterRefsOwner, D : FirDeclaration {
+    return fir.typeParameters.map { typeParameter ->
+        builder.classifierBuilder.buildTypeParameterSymbol(typeParameter.symbol)
+    }
+}
 
-internal fun KtFirSymbol<FirCallableDeclaration>.getCallableIdIfNonLocal(): CallableId? =
-    firRef.withFir { fir -> fir.symbol.callableId.takeUnless { it.isLocal } }
+
+internal fun FirCallableSymbol<*>.getCallableIdIfNonLocal(): CallableId? =
+    callableId.takeUnless { it.isLocal }
+
+internal fun FirClassLikeSymbol<*>.getClassIdIfNonLocal(): ClassId? =
+    classId.takeUnless { it.isLocal }
+
+internal fun FirCallableSymbol<*>.dispatchReceiverType(
+    builder: KtSymbolByFirBuilder,
+): KtType? {
+    return dispatchReceiverType?.let { builder.typeBuilder.buildKtType(it) }
+}
+
+internal fun FirVariableSymbol<*>.getKtConstantInitializer(): KtInitializerValue? {
+    ensureResolved(FirResolvePhase.BODY_RESOLVE)
+    val firInitializer = fir.initializer ?: return null
+    return firInitializer.asKtInitializerValue()
+}

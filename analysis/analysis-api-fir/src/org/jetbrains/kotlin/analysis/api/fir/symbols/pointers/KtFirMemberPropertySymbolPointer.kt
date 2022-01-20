@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -26,7 +25,7 @@ internal class KtFirMemberPropertySymbolPointer(
     ): KtKotlinPropertySymbol? {
         val firProperty = candidates.findDeclarationWithSignature<FirProperty>(signature, firSession) { processPropertiesByName(name, it) }
             ?: return null
-        return firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firProperty) as? KtKotlinPropertySymbol
+        return firSymbolBuilder.variableLikeBuilder.buildVariableSymbol(firProperty.symbol) as? KtKotlinPropertySymbol
     }
 }
 

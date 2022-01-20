@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -26,7 +26,7 @@ internal class KtFirEnumEntrySymbolPointer(
             ?: return null
         val enumEntry = enumClass.enumEntryByName(name)
             ?: return null
-        return analysisSession.firSymbolBuilder.buildEnumEntrySymbol(enumEntry)
+        return analysisSession.firSymbolBuilder.buildEnumEntrySymbol(enumEntry.symbol)
     }
 
     private fun getEnumClass(analysisSession: KtFirAnalysisSession, classId: ClassId): FirRegularClass? {
