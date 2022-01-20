@@ -78,7 +78,7 @@ internal class FirElementBuilder {
         moduleFileCache: ModuleFileCache,
         firLazyDeclarationResolver: FirLazyDeclarationResolver
     ): FirFile {
-        val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, preferLazyBodies = false)
+        val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache)
         firLazyDeclarationResolver.lazyResolveFileDeclaration(
             firFile = firFile,
             moduleFileCache = moduleFileCache,

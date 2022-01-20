@@ -1,32 +1,27 @@
+
 RAW_FIR:
 FILE: typeParameterOfTopFunction.kt
-    public? final? [RAW_FIR] fun <resolveMe> ddd(): R|kotlin/Unit| {
-    }
+    public? final? [RAW_FIR] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPORTS:
 FILE: typeParameterOfTopFunction.kt
-    public? final? [RAW_FIR] fun <resolveMe> ddd(): R|kotlin/Unit| {
-    }
+    public? final? [RAW_FIR] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 SUPER_TYPES:
 FILE: typeParameterOfTopFunction.kt
-    public? final? [SUPER_TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
-    }
+    public? final? [SUPER_TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 TYPES:
 FILE: typeParameterOfTopFunction.kt
-    public? final? [TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
-    }
+    public? final? [TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 STATUS:
 FILE: typeParameterOfTopFunction.kt
-    public final [STATUS] fun <resolveMe> ddd(): R|kotlin/Unit| {
-    }
+    public final [STATUS] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: typeParameterOfTopFunction.kt
-    public final [ARGUMENTS_OF_ANNOTATIONS] fun <resolveMe> ddd(): R|kotlin/Unit| {
-    }
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun <resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: typeParameterOfTopFunction.kt
@@ -41,41 +36,6 @@ FILE: typeParameterOfTopFunction.kt
 BODY_RESOLVE:
 FILE: typeParameterOfTopFunction.kt
     public final [BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
-    }
-
-NoResolve:
-FILE: typeParameterOfTopFunction.kt
-    public? final? [RAW_FIR] fun <resolveMe> ddd(): R|kotlin/Unit| {
-    }
-
-BodyResolveWithChildren:
-FILE: typeParameterOfTopFunction.kt
-    public final [BODY_RESOLVE] fun <resolveMe> ddd(): R|kotlin/Unit| {
-    }
-
-AnnotationType:
-FILE: typeParameterOfTopFunction.kt
-    public? final? [TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
-    }
-
-AnnotationsArguments:
-FILE: typeParameterOfTopFunction.kt
-    public final [ARGUMENTS_OF_ANNOTATIONS] fun <resolveMe> ddd(): R|kotlin/Unit| {
-    }
-
-DeclarationStatus:
-FILE: typeParameterOfTopFunction.kt
-    public final [STATUS] fun <resolveMe> ddd(): R|kotlin/Unit| {
-    }
-
-ValueParametersTypes:
-FILE: typeParameterOfTopFunction.kt
-    public? final? [TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
-    }
-
-TypeParametersTypes:
-FILE: typeParameterOfTopFunction.kt
-    public? final? [TYPES] fun <resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 FILE RAW TO BODY:

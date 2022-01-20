@@ -35,7 +35,7 @@ internal class FileStructure private constructor(
             firFileBuilder: FirFileBuilder,
             moduleFileCache: ModuleFileCache,
         ): FileStructure {
-            val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache, preferLazyBodies = false)
+            val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile, moduleFileCache)
             return FileStructure(ktFile, firFile, firLazyDeclarationResolver, firFileBuilder, moduleFileCache)
         }
     }

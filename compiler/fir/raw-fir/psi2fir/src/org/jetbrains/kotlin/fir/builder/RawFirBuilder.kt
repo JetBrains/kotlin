@@ -534,7 +534,10 @@ open class RawFirBuilder(
                 this.name = name
                 symbol = FirValueParameterSymbol(name)
                 defaultValue = if (hasDefaultValue()) {
-                    { this@toFirValueParameter.defaultValue }.toFirExpression("Should have default value")
+                    disabledLazyMode {
+                        // TODO build lazy initializers here
+                        { this@toFirValueParameter.defaultValue }.toFirExpression("Should have default value")
+                    }
                 } else null
                 isCrossinline = hasModifier(CROSSINLINE_KEYWORD)
                 isNoinline = hasModifier(NOINLINE_KEYWORD)
@@ -726,7 +729,7 @@ open class RawFirBuilder(
             val argumentList = buildArgumentList {
                 source = valueArgumentList?.toFirSourceElement()
                 for (argument in valueArguments) {
-                    val argumentExpression = argument.toFirExpression()
+                    val argumentExpression = disabledLazyMode { argument.toFirExpression() }
                     arguments += when (argument) {
                         is KtLambdaArgument -> buildLambdaArgumentExpression {
                             source = argument.toFirSourceElement()
@@ -1044,7 +1047,7 @@ open class RawFirBuilder(
                     isExternal = classOrObject.hasModifier(EXTERNAL_KEYWORD)
                 }
 
-                withCapturedTypeParameters(status.isInner || isLocal, listOf()) {
+                withCapturedTypeParameters(status.isInner || isLocal, classOrObject.toFirSourceElement(), listOf()) {
                     var delegatedFieldsMap: Map<Int, FirFieldSymbol>?
                     buildRegularClass {
                         source = classOrObject.toFirSourceElement()
@@ -1281,7 +1284,7 @@ open class RawFirBuilder(
                     this.typeParameters
                 else
                     listOf()
-                withCapturedTypeParameters(true, actualTypeParameters) {
+                withCapturedTypeParameters(true, functionSource, actualTypeParameters) {
                     val outerContractDescription = function.obtainContractDescription()
                     val bodyWithContractDescription = function.buildFirBody()
                     this.body = bodyWithContractDescription.first
@@ -1569,7 +1572,7 @@ open class RawFirBuilder(
                     symbol = FirPropertySymbol(callableIdForName(propertyName))
                     dispatchReceiverType = currentDispatchReceiverType()
                     extractTypeParametersTo(this, symbol)
-                    withCapturedTypeParameters(true, this.typeParameters) {
+                    withCapturedTypeParameters(true, propertySource, this.typeParameters) {
                         backingField = this@toFirProperty.fieldDeclaration.toFirBackingField(
                             this@toFirProperty,
                             propertySymbol = symbol,

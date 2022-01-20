@@ -1,50 +1,39 @@
+
 RAW_FIR:
 FILE: typeParameterOfTopSetter.kt
-    public? final? [RAW_FIR] var x: Int = IntegerLiteral(2)
+    public? final? [RAW_FIR] var x: Int = LAZY_EXPRESSION
         [TYPES] public? get(): Int
-        [RAW_FIR] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| {
-            ^ Unit#
-        }
+        [RAW_FIR] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 IMPORTS:
 FILE: typeParameterOfTopSetter.kt
-    public? final? [RAW_FIR] var x: Int = IntegerLiteral(2)
+    public? final? [RAW_FIR] var x: Int = LAZY_EXPRESSION
         [TYPES] public? get(): Int
-        [RAW_FIR] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| {
-            ^ Unit#
-        }
+        [RAW_FIR] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 SUPER_TYPES:
 FILE: typeParameterOfTopSetter.kt
-    public? final? [SUPER_TYPES] var x: Int = IntegerLiteral(2)
+    public? final? [SUPER_TYPES] var x: Int = LAZY_EXPRESSION
         [TYPES] public? get(): Int
-        [SUPER_TYPES] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| {
-            ^ Unit#
-        }
+        [SUPER_TYPES] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| { LAZY_BLOCK }
 
 TYPES:
 FILE: typeParameterOfTopSetter.kt
-    public? final? [TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
+    public? final? [TYPES] var x: R|kotlin/Int| = LAZY_EXPRESSION
         [TYPES] public? get(): R|kotlin/Int|
-        [TYPES] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Unit#
-        }
+        [TYPES] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 STATUS:
 FILE: typeParameterOfTopSetter.kt
-    public final [STATUS] var x: R|kotlin/Int| = IntegerLiteral(2)
+    public final [STATUS] var x: R|kotlin/Int| = LAZY_EXPRESSION
         [BODY_RESOLVE] public get(): R|kotlin/Int|
-        [STATUS] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Unit#
-        }
+        [STATUS] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: typeParameterOfTopSetter.kt
-    public final [ARGUMENTS_OF_ANNOTATIONS] var x: R|kotlin/Int| = IntegerLiteral(2)
+    public final [ARGUMENTS_OF_ANNOTATIONS] var x: R|kotlin/Int| = LAZY_EXPRESSION
         [BODY_RESOLVE] public get(): R|kotlin/Int|
-        [ARGUMENTS_OF_ANNOTATIONS] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Unit#
-        }
+        [ARGUMENTS_OF_ANNOTATIONS] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: typeParameterOfTopSetter.kt
@@ -68,86 +57,6 @@ FILE: typeParameterOfTopSetter.kt
         [BODY_RESOLVE] public get(): R|kotlin/Int|
         [BODY_RESOLVE] public set([BODY_RESOLVE] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
             ^ Q|kotlin/Unit|
-        }
-
-NoResolve:
-FILE: typeParameterOfTopSetter.kt
-    public? final? [RAW_FIR] var x: Int = IntegerLiteral(2)
-        [TYPES] public? get(): Int
-        [RAW_FIR] public? set([RAW_FIR] resolveMe: Int): R|kotlin/Unit| {
-            ^ Unit#
-        }
-
-BodyResolveWithChildren:
-FILE: typeParameterOfTopSetter.kt
-    public final [BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)
-        [BODY_RESOLVE] public get(): R|kotlin/Int|
-        [BODY_RESOLVE] public set([BODY_RESOLVE] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Q|kotlin/Unit|
-        }
-
-CallableBodyResolve:
-FILE: typeParameterOfTopSetter.kt
-    public final [BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)
-        [BODY_RESOLVE] public get(): R|kotlin/Int|
-        [BODY_RESOLVE] public set([BODY_RESOLVE] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Q|kotlin/Unit|
-        }
-
-CallableReturnType:
-FILE: typeParameterOfTopSetter.kt
-    public? final? [TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
-        [TYPES] public? get(): R|kotlin/Int|
-        [TYPES] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Unit#
-        }
-
-AnnotationType:
-FILE: typeParameterOfTopSetter.kt
-    public? final? [TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
-        [TYPES] public? get(): R|kotlin/Int|
-        [TYPES] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Unit#
-        }
-
-AnnotationsArguments:
-FILE: typeParameterOfTopSetter.kt
-    public final [ARGUMENTS_OF_ANNOTATIONS] var x: R|kotlin/Int| = IntegerLiteral(2)
-        [BODY_RESOLVE] public get(): R|kotlin/Int|
-        [ARGUMENTS_OF_ANNOTATIONS] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Unit#
-        }
-
-CallableContracts:
-FILE: typeParameterOfTopSetter.kt
-    public final [CONTRACTS] var x: R|kotlin/Int| = IntegerLiteral(2)
-        [BODY_RESOLVE] public get(): R|kotlin/Int|
-        [CONTRACTS] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Unit#
-        }
-
-DeclarationStatus:
-FILE: typeParameterOfTopSetter.kt
-    public final [STATUS] var x: R|kotlin/Int| = IntegerLiteral(2)
-        [BODY_RESOLVE] public get(): R|kotlin/Int|
-        [STATUS] public set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Unit#
-        }
-
-ValueParametersTypes:
-FILE: typeParameterOfTopSetter.kt
-    public? final? [TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
-        [TYPES] public? get(): R|kotlin/Int|
-        [TYPES] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Unit#
-        }
-
-TypeParametersTypes:
-FILE: typeParameterOfTopSetter.kt
-    public? final? [TYPES] var x: R|kotlin/Int| = IntegerLiteral(2)
-        [TYPES] public? get(): R|kotlin/Int|
-        [TYPES] public? set([RAW_FIR] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-            ^ Unit#
         }
 
 FILE RAW TO BODY:
