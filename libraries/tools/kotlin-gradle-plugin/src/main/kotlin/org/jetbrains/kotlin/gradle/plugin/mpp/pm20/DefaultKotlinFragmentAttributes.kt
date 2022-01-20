@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.attributes.java.TargetJvmEnvironment
+import org.gradle.api.attributes.java.TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE
 import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
@@ -18,15 +19,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.consumerRuntimeUsage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.producerApiUsage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.producerRuntimeUsage
 import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 
 val KotlinFragmentPlatformAttributes = FragmentAttributes<KotlinGradleVariant> { fragment ->
-    // TODO NOW! Maybe we want to provide API for Android target to hook into this?
-    if (fragment.platformType == KotlinPlatformType.jvm) {
-        attribute(
-            TargetJvmEnvironment.TARGET_JVM_ENVIRONMENT_ATTRIBUTE,
-            fragment.project.objects.named(TargetJvmEnvironment.STANDARD_JVM)
-        )
+    if (isGradleVersionAtLeast(7, 0) && fragment.platformType == KotlinPlatformType.jvm) {
+        attribute(TARGET_JVM_ENVIRONMENT_ATTRIBUTE, fragment.project.objects.named(TargetJvmEnvironment.STANDARD_JVM))
     }
+
     attribute(KotlinPlatformType.attribute, fragment.platformType)
 }
 
