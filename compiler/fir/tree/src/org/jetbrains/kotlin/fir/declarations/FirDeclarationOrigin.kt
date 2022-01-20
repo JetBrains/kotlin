@@ -12,6 +12,7 @@ sealed class FirDeclarationOrigin(private val displayName: String? = null, val f
     object BuiltIns : FirDeclarationOrigin()
     object Java : FirDeclarationOrigin()
     object Synthetic : FirDeclarationOrigin()
+    object DynamicScope : FirDeclarationOrigin()
     object SamConstructor : FirDeclarationOrigin()
     object Enhancement : FirDeclarationOrigin()
     object ImportedFromObject : FirDeclarationOrigin()
