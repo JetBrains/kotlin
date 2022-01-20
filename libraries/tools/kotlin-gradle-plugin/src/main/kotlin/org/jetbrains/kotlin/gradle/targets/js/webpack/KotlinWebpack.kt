@@ -11,7 +11,6 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.deployment.internal.Deployment
@@ -21,6 +20,8 @@ import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.archivesName
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.distsDirectory
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
@@ -108,7 +109,7 @@ constructor(
 
     @Nested
     val output: KotlinWebpackOutput = KotlinWebpackOutput(
-        library = project.extensions.getByType(BasePluginExtension::class.java).archivesName.orNull,
+        library = project.archivesName,
         libraryTarget = KotlinWebpackOutput.Target.UMD,
         globalObject = "this"
     )
@@ -122,7 +123,7 @@ constructor(
     internal var _destinationDirectory: File? = null
 
     private val defaultDestinationDirectory by lazy {
-        project.extensions.getByType(BasePluginExtension::class.java).distsDirectory.asFile.get()
+        project.distsDirectory.asFile.get()
     }
 
     @get:Internal
@@ -133,7 +134,7 @@ constructor(
         }
 
     private val defaultOutputFileName by lazy {
-        project.extensions.getByType(BasePluginExtension::class.java).archivesName.orNull + ".js"
+        project.archivesName + ".js"
     }
 
     @get:Internal

@@ -11,7 +11,6 @@ import org.gradle.api.UnknownTaskException
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
@@ -160,7 +159,7 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
 
     override val ownModuleName: String
         get() {
-            val baseName = project.extensions.getByType(BasePluginExtension::class.java)?.archivesName
+            val baseName = project.archivesName
                 ?: project.name
             val suffix = if (isMainCompilationData()) "" else "_$compilationPurpose"
             return filterModuleName("$baseName$suffix")
