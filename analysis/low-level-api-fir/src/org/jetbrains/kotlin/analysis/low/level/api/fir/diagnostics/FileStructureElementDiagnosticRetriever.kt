@@ -68,7 +68,7 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
             if (shouldDiagnosticsAlwaysBeCheckedOn(this)) return true
             return when (this) {
                 is FirAnonymousInitializer -> true
-                is FirEnumEntry -> true
+                is FirEnumEntry -> false
                 is FirValueParameter -> true
                 is FirConstructor -> isPrimary
                 else -> false

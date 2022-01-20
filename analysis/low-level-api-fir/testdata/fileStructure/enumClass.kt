@@ -1,9 +1,9 @@
 enum class A {/* NonReanalyzableDeclarationStructureElement */
-    X,
-    Y,
+    X,/* NonReanalyzableDeclarationStructureElement */
+    Y,/* NonReanalyzableDeclarationStructureElement */
     Z
 
-    ;
+    ;/* NonReanalyzableDeclarationStructureElement */
 
     fun foo(){/* ReanalyzableFunctionStructureElement */}
 
