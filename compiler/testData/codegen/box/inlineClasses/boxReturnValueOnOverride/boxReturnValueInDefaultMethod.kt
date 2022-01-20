@@ -15,5 +15,5 @@ value class A(val value: Int) : X<A> {
 
 fun box(): String {
     val res = A(1).next()
-    return if (res.value == 2) "OK" else "FAIL $res"
+    return if (res.value == 2) "OK " else "FAIL $res"
 }

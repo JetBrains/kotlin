@@ -17393,6 +17393,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("boxAnySealed.kt")
+            public void testBoxAnySealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxAnySealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("boxFunLiteralAny.kt")
             public void testBoxFunLiteralAny() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxFunLiteralAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17402,6 +17408,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("boxFunLiteralAnyGeneric.kt")
             public void testBoxFunLiteralAnyGeneric() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxFunLiteralAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("boxFunLiteralAnySealed.kt")
+            public void testBoxFunLiteralAnySealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxFunLiteralAnySealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17571,6 +17583,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("boxReturnValueInDefaultMethodSealed.kt")
+            public void testBoxReturnValueInDefaultMethodSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/boxReturnValueInDefaultMethodSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("covariantOverrideChainErasedToAny.kt")
             public void testCovariantOverrideChainErasedToAny() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17580,6 +17598,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("covariantOverrideChainErasedToAnyGeneric.kt")
             public void testCovariantOverrideChainErasedToAnyGeneric() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("covariantOverrideChainErasedToAnySealed.kt")
+            public void testCovariantOverrideChainErasedToAnySealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToAnySealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17601,6 +17625,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("covariantOverrideChainErasedToNullableAnySealed.kt")
+            public void testCovariantOverrideChainErasedToNullableAnySealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideChainErasedToNullableAnySealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("covariantOverrideErasedToAny.kt")
             public void testCovariantOverrideErasedToAny() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17610,6 +17640,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("covariantOverrideErasedToAnyGeneric.kt")
             public void testCovariantOverrideErasedToAnyGeneric() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("covariantOverrideErasedToAnySealed.kt")
+            public void testCovariantOverrideErasedToAnySealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToAnySealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17625,6 +17661,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("covariantOverrideErasedToInterfaceSealed.kt")
+            public void testCovariantOverrideErasedToInterfaceSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToInterfaceSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("covariantOverrideErasedToPrimitive.kt")
             public void testCovariantOverrideErasedToPrimitive() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToPrimitive.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17634,6 +17676,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("covariantOverrideErasedToPrimitiveGeneric.kt")
             public void testCovariantOverrideErasedToPrimitiveGeneric() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToPrimitiveGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("covariantOverrideErasedToPrimitiveSealed.kt")
+            public void testCovariantOverrideErasedToPrimitiveSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideErasedToPrimitiveSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17649,6 +17697,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("covariantOverrideListVsMutableListSealed.kt")
+            public void testCovariantOverrideListVsMutableListSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideListVsMutableListSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("covariantOverrideUnrelatedInterfaces.kt")
             public void testCovariantOverrideUnrelatedInterfaces() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideUnrelatedInterfaces.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17658,6 +17712,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("covariantOverrideUnrelatedInterfacesGeneric.kt")
             public void testCovariantOverrideUnrelatedInterfacesGeneric() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideUnrelatedInterfacesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("covariantOverrideUnrelatedInterfacesSealed.kt")
+            public void testCovariantOverrideUnrelatedInterfacesSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/covariantOverrideUnrelatedInterfacesSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17673,6 +17733,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("genericOverrideSealed.kt")
+            public void testGenericOverrideSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("genericOverrideSpecialized.kt")
             public void testGenericOverrideSpecialized() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideSpecialized.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17685,6 +17751,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("genericOverrideSpecializedSealed.kt")
+            public void testGenericOverrideSpecializedSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/genericOverrideSpecializedSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("inlineClassInOverriddenReturnTypes.kt")
             public void testInlineClassInOverriddenReturnTypes() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/inlineClassInOverriddenReturnTypes.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17694,6 +17766,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("inlineClassInOverriddenReturnTypesGeneric.kt")
             public void testInlineClassInOverriddenReturnTypesGeneric() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/inlineClassInOverriddenReturnTypesGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("inlineClassInOverriddenReturnTypesSealed.kt")
+            public void testInlineClassInOverriddenReturnTypesSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/inlineClassInOverriddenReturnTypesSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17715,6 +17793,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("kt28483Sealed.kt")
+            public void testKt28483Sealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt28483Sealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("kt31585.kt")
             public void testKt31585() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt31585.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17727,6 +17811,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("kt31585Sealed.kt")
+            public void testKt31585Sealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt31585Sealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("kt35234.kt")
             public void testKt35234() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17736,6 +17826,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("kt35234Generic.kt")
             public void testKt35234Generic() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234Generic.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("kt35234Sealed.kt")
+            public void testKt35234Sealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/kt35234Sealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17757,6 +17853,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("overrideGenericWithInlineClassSealed.kt")
+            public void testOverrideGenericWithInlineClassSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithInlineClassSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullAny.kt")
             public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullAny() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17766,6 +17868,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullAnyGeneric.kt")
             public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullAnyGeneric() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullAnySealed.kt")
+            public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullAnySealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullAnySealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17805,6 +17913,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNullSealed.kt")
+            public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNullSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnyNullSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnySealed.kt")
+            public void testOverrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnySealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideGenericWithNullableInlineClassUpperBoundWithNonNullNullableAnySealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("overrideNullableInlineClassWithNonNullAny.kt")
             public void testOverrideNullableInlineClassWithNonNullAny() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17814,6 +17934,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("overrideNullableInlineClassWithNonNullAnyGeneric.kt")
             public void testOverrideNullableInlineClassWithNonNullAnyGeneric() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullAnyGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("overrideNullableInlineClassWithNonNullAnySealed.kt")
+            public void testOverrideNullableInlineClassWithNonNullAnySealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullAnySealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17853,6 +17979,18 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("overrideNullableInlineClassWithNonNullNullableAnyNullSealed.kt")
+            public void testOverrideNullableInlineClassWithNonNullNullableAnyNullSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnyNullSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("overrideNullableInlineClassWithNonNullNullableAnySealed.kt")
+            public void testOverrideNullableInlineClassWithNonNullNullableAnySealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/overrideNullableInlineClassWithNonNullNullableAnySealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("relatedReturnTypes1a.kt")
             public void testRelatedReturnTypes1a() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1a.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17862,6 +18000,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("relatedReturnTypes1aGeneric.kt")
             public void testRelatedReturnTypes1aGeneric() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1aGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("relatedReturnTypes1aSealed.kt")
+            public void testRelatedReturnTypes1aSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1aSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17877,6 +18021,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("relatedReturnTypes1bSealed.kt")
+            public void testRelatedReturnTypes1bSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes1bSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("relatedReturnTypes2a.kt")
             public void testRelatedReturnTypes2a() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2a.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17886,6 +18036,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("relatedReturnTypes2aGeneric.kt")
             public void testRelatedReturnTypes2aGeneric() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2aGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("relatedReturnTypes2aSealed.kt")
+            public void testRelatedReturnTypes2aSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2aSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
 
             @Test
@@ -17901,6 +18057,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("relatedReturnTypes2bSealed.kt")
+            public void testRelatedReturnTypes2bSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/relatedReturnTypes2bSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("uncastInlineClassToAnyAndBack.kt")
             public void testUncastInlineClassToAnyAndBack() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/uncastInlineClassToAnyAndBack.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17913,6 +18075,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("uncastInlineClassToAnyAndBackSealed.kt")
+            public void testUncastInlineClassToAnyAndBackSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/uncastInlineClassToAnyAndBackSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
             @TestMetadata("unrelatedGenerics.kt")
             public void testUnrelatedGenerics() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/unrelatedGenerics.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17922,6 +18090,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             @TestMetadata("unrelatedGenericsGeneric.kt")
             public void testUnrelatedGenericsGeneric() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/unrelatedGenericsGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+            }
+
+            @Test
+            @TestMetadata("unrelatedGenericsSealed.kt")
+            public void testUnrelatedGenericsSealed() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/unrelatedGenericsSealed.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
             }
         }
 
