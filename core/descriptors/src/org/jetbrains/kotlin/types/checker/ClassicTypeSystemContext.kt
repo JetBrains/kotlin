@@ -900,6 +900,8 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun KotlinTypeMarker.isTypeVariableType(): Boolean {
         return this is UnwrappedType && constructor is NewTypeVariableConstructor
     }
+
+    class WA // Workaround for KT-52313
 }
 
 fun TypeVariance.convertVariance(): Variance {

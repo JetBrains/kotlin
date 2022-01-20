@@ -313,8 +313,16 @@ object AbstractTypeChecker {
                     && typeConstructor.supertypes().any { it.asSimpleType()?.isIntegerLiteralType() == true }
         }
 
+        fun isCapturedIntegerLiteralType(type: SimpleTypeMarker): Boolean {
+            if (type !is CapturedTypeMarker) return false
+            val projection = type.typeConstructor().projection()
+            return !projection.isStarProjection() && projection.getType().upperBoundIfFlexible().isIntegerLiteralType()
+        }
+
+        fun isIntegerLiteralTypeOrCapturedOne(type: SimpleTypeMarker) = type.isIntegerLiteralType() || isCapturedIntegerLiteralType(type)
+
         when {
-            subType.isIntegerLiteralType() && superType.isIntegerLiteralType() -> {
+            isIntegerLiteralTypeOrCapturedOne(subType) && isIntegerLiteralTypeOrCapturedOne(superType) -> {
                 return true
             }
 
