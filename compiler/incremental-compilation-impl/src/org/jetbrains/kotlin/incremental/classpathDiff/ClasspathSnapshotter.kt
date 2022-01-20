@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.incremental.classpathDiff
 
-import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.ChangesCollector.Companion.getNonPrivateMemberNames
-import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.*
+import org.jetbrains.kotlin.incremental.KotlinClassInfo
+import org.jetbrains.kotlin.incremental.PackagePartProtoData
+import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
+import org.jetbrains.kotlin.incremental.md5
 import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
 import org.jetbrains.kotlin.name.ClassId
@@ -72,13 +74,11 @@ object ClassSnapshotter {
             CLASS -> RegularKotlinClassSnapshot(classId, classAbiHash, classMemberLevelSnapshot, classFile.classInfo.supertypes)
             FILE_FACADE, MULTIFILE_CLASS_PART -> PackageFacadeKotlinClassSnapshot(
                 classId, classAbiHash, classMemberLevelSnapshot,
-                packageMembers = PackageMemberSet(
-                    mapOf(classId.packageFqName to (kotlinClassInfo.protoData as PackagePartProtoData).getNonPrivateMemberNames())
-                )
+                packageMemberNames = (kotlinClassInfo.protoData as PackagePartProtoData).getNonPrivateMemberNames()
             )
             MULTIFILE_CLASS -> MultifileClassKotlinClassSnapshot(
                 classId, classAbiHash, classMemberLevelSnapshot,
-                constants = PackageMemberSet(mapOf(classId.packageFqName to kotlinClassInfo.constantsMap.keys))
+                constantNames = kotlinClassInfo.constantsMap.keys
             )
             SYNTHETIC_CLASS -> error("Unexpected class $classId with class kind ${SYNTHETIC_CLASS.name} (synthetic classes should have been removed earlier)")
             UNKNOWN -> error("Can't handle class $classId with class kind ${UNKNOWN.name}")
@@ -183,7 +183,7 @@ private object DirectoryOrJarContentsReader {
                 val entry = zipInputStream.nextEntry ?: break
                 val unixStyleRelativePath = entry.name
                 if (entryFilter == null || entryFilter(unixStyleRelativePath, entry.isDirectory)) {
-                    relativePathsToContents.computeIfAbsent(unixStyleRelativePath) { zipInputStream.readBytes() }
+                    relativePathsToContents.getOrPut(unixStyleRelativePath) { zipInputStream.readBytes() }
                 }
             }
         }
