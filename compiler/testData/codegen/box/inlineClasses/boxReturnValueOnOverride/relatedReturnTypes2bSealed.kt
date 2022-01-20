@@ -1,0 +1,60 @@
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses, +SealedInlineClasses
+
+interface IBase
+
+interface IQ : IBase {
+    fun ok(): String
+}
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+sealed value class IC: IQ
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class X(val t: IQ): IC() {
+    override fun ok(): String = t.ok()
+}
+
+interface IFoo1<T : IBase> {
+    fun foo(): T
+}
+
+interface IFoo2 {
+    fun foo(): Any
+}
+
+object OK : IC() {
+    override fun ok(): String = "OK"
+}
+
+class Test : IFoo1<IC>, IFoo2 {
+    override fun foo(): IC = X(OK)
+}
+
+fun box(): String {
+    val t1: IFoo1<IC> = Test()
+    val foo1 = t1.foo()
+    if (foo1 !is X) {
+        throw AssertionError("foo1 !is X: $foo1")
+    }
+    val ok1 = foo1.ok()
+    if (ok1 != "OK") {
+        throw AssertionError("ok1: $ok1")
+    }
+
+    val t2: IFoo2 = Test()
+    val foo2 = t2.foo()
+    if (foo2 !is IQ) {
+        throw AssertionError("foo2 !is IQ: $foo2")
+    }
+    val ok2 = foo2.ok()
+    if (ok2 != "OK") {
+        throw AssertionError("ok2: $ok2")
+    }
+    if (foo2 !is X) {
+        throw AssertionError("foo2 !is X: $foo2")
+    }
+
+    return "OK"
+}

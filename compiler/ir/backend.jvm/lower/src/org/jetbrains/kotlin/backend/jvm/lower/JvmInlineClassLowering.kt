@@ -104,10 +104,6 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                 buildBoxFunction(declaration)
                 buildUnboxFunction(declaration)
                 buildSpecializedEqualsMethod(declaration)
-
-                if (declaration.superTypes.any { it.isInlineClassType() }) {
-                    rewriteFakeOverrideOfSealedInline(declaration)
-                }
             } else {
                 val inlineDirectSubclasses = declaration.sealedSubclasses.filter { it.owner.isInline }
                 val inlineSubclasses = collectSubclasses(declaration) { it.owner.isInline }
@@ -220,9 +216,16 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         // Update the overridden symbols to point to their inline class replacements
         bridgeFunction.overriddenSymbols = replacement.overriddenSymbols
 
+        val overriddenFromSealedInline = replacement.overriddenSymbols.find { overridden ->
+            overridden.owner.parent.let { it is IrClass && it.isInline }
+        }
+
         // Replace the function body with a wrapper
         if (!bridgeFunction.isFakeOverride || !bridgeFunction.parentAsClass.isInline) {
             createBridgeBody(bridgeFunction, replacement)
+        } else if (overriddenFromSealedInline != null) {
+            // If fake override overrides function from sealed inline class, call the overridden function
+            createBridgeBody(replacement, overriddenFromSealedInline.owner)
         } else {
             // Fake overrides redirect from the replacement to the original function, which is in turn replaced during interfacePhase.
             createBridgeBody(replacement, bridgeFunction)
@@ -644,7 +647,6 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                 irBranch(
                     irIs(irGet(function.valueParameters[0]), type),
                     irReturn(irCall(this@JvmInlineClassLowering.context.inlineClassReplacements.getBoxFunction(it.owner)).apply {
-                        passTypeArgumentsFrom(function)
                         putValueArgument(0, irImplicitCast(irGet(function.valueParameters[0]), type))
                     })
                 )
@@ -718,37 +720,9 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                             +stmt
                         }
                     }
-                    else -> error("Expected either expression or block body")
+                    else -> if (name == "hashCode") irInt(0) else irNull()
                 })
                 +irReturn(irWhen(function.returnType, branches))
-            }
-        }
-    }
-
-    private fun rewriteFakeOverrideOfSealedInline(irClass: IrClass) {
-        val fakeOverridesReplacements = irClass.functions.filter { method ->
-            method.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT
-                    && (method.attributeOwnerId as? IrSimpleFunction)?.isFakeOverride == true
-        }.toList()
-
-        if (fakeOverridesReplacements.isEmpty()) return
-
-        val anyNType = context.irBuiltIns.anyNType
-        val underlyingType = irClass.inlineClassRepresentation!!.underlyingType
-
-        for (function in fakeOverridesReplacements) {
-            val toCall = function.overriddenSymbols.first()
-            val parentType = toCall.owner.parentAsClass.defaultType
-            with(context.createIrBuilder(function.symbol)) {
-                function.body = irExprBody(
-                    irCall(toCall).apply {
-                        for ((index, valueParameter) in function.valueParameters.withIndex()) {
-                            val childToUnderlying = coerceInlineClasses(irGet(valueParameter), irClass.defaultType, underlyingType)
-                            val underlyingToParent = coerceInlineClasses(irImplicitCast(childToUnderlying, anyNType), anyNType, parentType)
-                            putValueArgument(index, underlyingToParent)
-                        }
-                    }
-                )
             }
         }
     }
