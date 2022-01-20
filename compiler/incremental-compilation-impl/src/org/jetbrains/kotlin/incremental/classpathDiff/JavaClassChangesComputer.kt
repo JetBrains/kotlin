@@ -9,38 +9,38 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 
-/** Computes [ChangeSet] between two lists of [JavaClassSnapshot]s .*/
+/** Computes changes between two lists of [JavaClassSnapshot]s .*/
 object JavaClassChangesComputer {
 
     /**
-     * Computes [ChangeSet] between two lists of [JavaClassSnapshot]s.
+     * Computes changes between two lists of [JavaClassSnapshot]s.
      *
-     * Each list must not contain duplicate classes (having the same [JvmClassName]/[ClassId]).
+     * NOTE: Each list of classes must not contain duplicates (having the same [JvmClassName]/[ClassId]).
      */
     fun compute(
         currentJavaClassSnapshots: List<JavaClassSnapshot>,
         previousJavaClassSnapshots: List<JavaClassSnapshot>
-    ): ChangeSet {
+    ): ProgramSymbolSet {
         val currentClasses: Map<ClassId, JavaClassSnapshot> = currentJavaClassSnapshots.associateBy { it.classId }
         val previousClasses: Map<ClassId, JavaClassSnapshot> = previousJavaClassSnapshots.associateBy { it.classId }
 
         // Note: Added classes can also impact recompilation.
         // For example, suppose a source file uses `SomeClass` through `*` imports:
-        //     import foo.* // foo.SomeClass is added in the second build
-        //     import bar.* // bar.SomeClass is present in the first build and unchanged in the second build
-        // In the second build, the source file needs to be recompiled as `SomeClass` is ambiguous now (in this example, the recompilation
-        // will fail, but recompilation needs to happen).
+        //     import foo.* // `foo.SomeClass` is present in both the first build and the second build
+        //     import bar.* // `bar.SomeClass` is added in the second build
+        // The addition of `bar.SomeClass` will require the source file to be recompiled as `SomeClass` will be ambiguous. (In this example,
+        // the recompilation will fail, but recompilation needs to happen.)
         val addedClasses = currentClasses.keys - previousClasses.keys
         val removedClasses = previousClasses.keys - currentClasses.keys
         val unchangedOrModifiedClasses = currentClasses.keys - addedClasses
 
-        return ChangeSet.Collector().run {
-            addChangedClasses(addedClasses)
-            addChangedClasses(removedClasses)
+        return ProgramSymbolSet.Collector().run {
+            addClasses(addedClasses)
+            addClasses(removedClasses)
             unchangedOrModifiedClasses.forEach {
                 collectClassChanges(currentClasses[it]!!, previousClasses[it]!!, this)
             }
-            getChanges()
+            getResult()
         }
     }
 
@@ -52,7 +52,7 @@ object JavaClassChangesComputer {
     private fun collectClassChanges(
         currentClassSnapshot: JavaClassSnapshot,
         previousClassSnapshot: JavaClassSnapshot,
-        changes: ChangeSet.Collector
+        changes: ProgramSymbolSet.Collector
     ) {
         if (currentClassSnapshot.classAbiHash == previousClassSnapshot.classAbiHash) return
 
@@ -61,7 +61,7 @@ object JavaClassChangesComputer {
             if (currentClassSnapshot.classMemberLevelSnapshot.classAbiExcludingMembers.abiHash
                 != previousClassSnapshot.classMemberLevelSnapshot.classAbiExcludingMembers.abiHash
             ) {
-                changes.addChangedClass(classId)
+                changes.addClass(classId)
             } else {
                 collectClassMemberChanges(
                     classId,
@@ -77,7 +77,7 @@ object JavaClassChangesComputer {
                 )
             }
         } else {
-            changes.addChangedClass(classId)
+            changes.addClass(classId)
         }
     }
 
@@ -86,7 +86,7 @@ object JavaClassChangesComputer {
         classId: ClassId,
         currentMemberSnapshots: List<JavaElementSnapshot>,
         previousMemberSnapshots: List<JavaElementSnapshot>,
-        changes: ChangeSet.Collector
+        changes: ProgramSymbolSet.Collector
     ) {
         val currentMemberHashes: Map<Long, JavaElementSnapshot> = currentMemberSnapshots.associateBy { it.abiHash }
         val previousMemberHashes: Map<Long, JavaElementSnapshot> = previousMemberSnapshots.associateBy { it.abiHash }
@@ -96,19 +96,20 @@ object JavaClassChangesComputer {
 
         // Note:
         //   - Added members can also impact recompilation. For example, suppose a source file calls `foo(1)` where `foo` is defined as:
+        //         fun foo(x: Any) { } // Present in both the first build and the second build
         //         fun foo(x: Int) { } // Added in the second build
-        //         fun foo(x: Any) { } // Present in the first build and unchanged in the second build
-        //     In the second build, the source file needs to be recompiled as `foo(1)` will now resolve to `foo(Int)` instead of `foo(Any)`.
+        //     The addition of `foo(x: Int)` will require the source file to be recompiled as `foo(1)` will now be resolved to `foo(Int)`
+        //     instead of `foo(Any)`.
         //   - Modified members will appear in both addedMembers and removedMembers.
         //   - Multiple members may have the same name (but never the same signature (name + desc) or ABI hash). It's okay to report the
         //     same name multiple times.
-        changes.addChangedClassMembers(classId, addedMembers.map { currentMemberHashes[it]!!.name })
-        changes.addChangedClassMembers(classId, removedMembers.map { previousMemberHashes[it]!!.name })
+        changes.addClassMembers(classId, addedMembers.map { currentMemberHashes[it]!!.name })
+        changes.addClassMembers(classId, removedMembers.map { previousMemberHashes[it]!!.name })
 
         // TODO: Check whether the condition to add SAM_LOOKUP_NAME below is too broad, and correct it if necessary.
         // Currently, it matches the logic in ChangesCollector.getDirtyData in buildUtil.kt.
         if (addedMembers.isNotEmpty() || removedMembers.isNotEmpty()) {
-            changes.addChangedClassMember(classId, SAM_LOOKUP_NAME.asString())
+            changes.addClassMember(classId, SAM_LOOKUP_NAME.asString())
         }
     }
 }

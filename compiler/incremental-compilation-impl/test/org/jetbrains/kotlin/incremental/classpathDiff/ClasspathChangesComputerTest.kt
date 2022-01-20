@@ -444,8 +444,8 @@ private fun computeClasspathChanges(
 /** Adapted version of [ChangesEither.Known] for readability in this test. */
 private data class Changes(val lookupSymbols: Set<LookupSymbol>, val fqNames: Set<String>)
 
-private fun ChangeSet.normalize(): Changes {
-    val changes: ChangesEither.Known = getChanges()
+private fun ProgramSymbolSet.normalize(): Changes {
+    val changes: ChangesEither.Known = toChangesEither()
     return Changes(changes.lookupSymbols.toSet(), changes.fqNames.map { it.asString() }.toSet())
 }
 

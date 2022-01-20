@@ -259,7 +259,7 @@ class IncrementalJvmCompilerRunner(
                     shrunkCurrentClasspathAgainstPreviousLookups!!,
                     classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile,
                     reporter
-                ).getChanges()
+                ).toChangesEither()
             }
             is NotAvailableDueToMissingClasspathSnapshot -> ChangesEither.Unknown(BuildAttribute.CLASSPATH_SNAPSHOT_NOT_FOUND)
             is NotAvailableForNonIncrementalRun -> ChangesEither.Unknown(BuildAttribute.UNKNOWN_CHANGES_IN_GRADLE_INPUTS)

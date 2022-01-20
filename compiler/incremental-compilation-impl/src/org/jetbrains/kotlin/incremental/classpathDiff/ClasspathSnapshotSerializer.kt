@@ -133,7 +133,7 @@ object PackageFacadeKotlinClassSnapshotExternalizer : DataExternalizer<PackageFa
         ClassIdExternalizer.save(output, snapshot.classId)
         LongExternalizer.save(output, snapshot.classAbiHash)
         NullableValueExternalizer(KotlinClassInfoExternalizer).save(output, snapshot.classMemberLevelSnapshot)
-        PackageMemberSetExternalizer.save(output, snapshot.packageMembers)
+        SetExternalizer(StringExternalizer).save(output, snapshot.packageMemberNames)
     }
 
     override fun read(input: DataInput): PackageFacadeKotlinClassSnapshot {
@@ -141,7 +141,7 @@ object PackageFacadeKotlinClassSnapshotExternalizer : DataExternalizer<PackageFa
             classId = ClassIdExternalizer.read(input),
             classAbiHash = LongExternalizer.read(input),
             classMemberLevelSnapshot = NullableValueExternalizer(KotlinClassInfoExternalizer).read(input),
-            packageMembers = PackageMemberSetExternalizer.read(input)
+            packageMemberNames = SetExternalizer(StringExternalizer).read(input)
         )
     }
 }
@@ -152,7 +152,7 @@ object MultifileClassKotlinClassSnapshotExternalizer : DataExternalizer<Multifil
         ClassIdExternalizer.save(output, snapshot.classId)
         LongExternalizer.save(output, snapshot.classAbiHash)
         NullableValueExternalizer(KotlinClassInfoExternalizer).save(output, snapshot.classMemberLevelSnapshot)
-        PackageMemberSetExternalizer.save(output, snapshot.constants)
+        SetExternalizer(StringExternalizer).save(output, snapshot.constantNames)
     }
 
     override fun read(input: DataInput): MultifileClassKotlinClassSnapshot {
@@ -160,7 +160,7 @@ object MultifileClassKotlinClassSnapshotExternalizer : DataExternalizer<Multifil
             classId = ClassIdExternalizer.read(input),
             classAbiHash = LongExternalizer.read(input),
             classMemberLevelSnapshot = NullableValueExternalizer(KotlinClassInfoExternalizer).read(input),
-            constants = PackageMemberSetExternalizer.read(input)
+            constantNames = SetExternalizer(StringExternalizer).read(input)
         )
     }
 }
@@ -186,19 +186,6 @@ object KotlinClassInfoExternalizer : DataExternalizer<KotlinClassInfo> {
             multifileClassName = NullableValueExternalizer(StringExternalizer).read(input),
             constantsMap = LinkedHashMapExternalizer(StringExternalizer, ConstantExternalizer).read(input),
             inlineFunctionsMap = LinkedHashMapExternalizer(StringExternalizer, LongExternalizer).read(input)
-        )
-    }
-}
-
-object PackageMemberSetExternalizer : DataExternalizer<PackageMemberSet> {
-
-    override fun save(output: DataOutput, set: PackageMemberSet) {
-        MapExternalizer(FqNameExternalizer, SetExternalizer(StringExternalizer)).save(output, set.packageToMembersMap)
-    }
-
-    override fun read(input: DataInput): PackageMemberSet {
-        return PackageMemberSet(
-            packageToMembersMap = MapExternalizer(FqNameExternalizer, SetExternalizer(StringExternalizer)).read(input)
         )
     }
 }

@@ -37,8 +37,6 @@ object ClasspathSnapshotShrinker {
     ): List<AccessibleClassSnapshot> {
         val lookupSymbols = metrics.getLookupSymbols {
             lookupStorage.lookupSymbols
-                .map { LookupSymbol(name = it.name, scope = it.scope) }
-                .filterLookupSymbols(allClasses)
         }
         return shrinkClasses(allClasses, lookupSymbols, metrics)
     }
@@ -46,7 +44,7 @@ object ClasspathSnapshotShrinker {
     /** Shrinks the given classes by retaining only classes that are referenced by the given lookup symbols. */
     fun shrinkClasses(
         allClasses: List<AccessibleClassSnapshot>,
-        lookupSymbols: List<ProgramSymbol>,
+        lookupSymbols: Collection<LookupSymbolKey>,
         metrics: MetricsReporter = MetricsReporter()
     ): List<AccessibleClassSnapshot> {
         val referencedClasses = metrics.findReferencedClasses {
@@ -64,25 +62,30 @@ object ClasspathSnapshotShrinker {
      */
     private fun findReferencedClasses(
         allClasses: List<AccessibleClassSnapshot>,
-        lookupSymbols: List<ProgramSymbol>
+        lookupSymbolKeys: Collection<LookupSymbolKey>
     ): List<AccessibleClassSnapshot> {
-        val lookedUpClassIds: Set<ClassId> = lookupSymbols.mapNotNullTo(mutableSetOf()) {
-            when (it) {
-                is ClassSymbol -> it.classId
-                is ClassMember -> it.classId
-                is PackageMember -> null
-            }
-        }
-        val lookedUpPackageMembers: PackageMemberSet =
-            lookupSymbols.filterIsInstanceTo<PackageMember, MutableSet<PackageMember>>(mutableSetOf()).compact()
+        // Use LookupSymbolSet for efficiency
+        val lookupSymbols =
+            LookupSymbolSet(lookupSymbolKeys.asSequence().map { LookupSymbol(name = it.name, scope = it.scope) }.asIterable())
 
-        return allClasses.filter {
-            when (it) {
-                is RegularKotlinClassSnapshot, is JavaClassSnapshot -> it.classId in lookedUpClassIds
-                is PackageFacadeKotlinClassSnapshot -> it.packageMembers.containsElementsIn(lookedUpPackageMembers)
-                is MultifileClassKotlinClassSnapshot -> it.constants.containsElementsIn(lookedUpPackageMembers)
+        val referencedClasses = allClasses.filter { clazz ->
+            when (clazz) {
+                is RegularKotlinClassSnapshot, is JavaClassSnapshot -> {
+                    ClassSymbol(clazz.classId).toLookupSymbol() in lookupSymbols
+                            || lookupSymbols.getMembersInScope(clazz.classId.asSingleFqName()).isNotEmpty()
+                }
+                is PackageFacadeKotlinClassSnapshot, is MultifileClassKotlinClassSnapshot -> {
+                    val lookupSymbolsInScope = lookupSymbols.getMembersInScope(clazz.classId.packageFqName)
+                    if (lookupSymbolsInScope.isEmpty()) return@filter false
+                    val packageMemberNames = when (clazz) {
+                        is PackageFacadeKotlinClassSnapshot -> clazz.packageMemberNames
+                        else -> (clazz as MultifileClassKotlinClassSnapshot).constantNames
+                    }
+                    packageMemberNames.any { it in lookupSymbolsInScope }
+                }
             }
         }
+        return referencedClasses
     }
 
     /**
@@ -104,13 +107,13 @@ object ClasspathSnapshotShrinker {
             // No need to collect supertypes outside the given set of classes (e.g., "java/lang/Object")
             @Suppress("SimpleRedundantLet")
             classIdToClassSnapshot[classId]?.let {
-                it.getSupertypes(classNameToClassIdResolver).filterTo(mutableSetOf()) { supertype -> supertype in classIds }
+                it.getSupertypes(classNameToClassIdResolver).intersect(classIds)
             } ?: emptySet()
         }
 
         val referencedClassIds = referencedClasses.mapTo(mutableSetOf()) { it.classId }
-        val transitivelyReferencedClassIds: Set<ClassId> =
-            ImpactAnalysis.findImpactedClassesInclusive(referencedClassIds, supertypesResolver) // Use Set for presence check
+        val transitivelyReferencedClassIds: Set<ClassId> = /* Use Set for presence check */
+            ImpactAnalysis.findImpactedClassesInclusive(referencedClassIds, supertypesResolver)
 
         return allClasses.filter { it.classId in transitivelyReferencedClassIds }
     }
@@ -244,8 +247,6 @@ internal fun shrinkAndSaveClasspathSnapshot(
             val shrunkClasses = shrinkMode.shrunkCurrentClasspathAgainstPreviousLookups.mapTo(mutableSetOf()) { it.classId }
             val notYetShrunkClasses = shrinkMode.currentClasspathSnapshot.filter { it.classId !in shrunkClasses }
             val addedLookupSymbols = shrinkMode.addedLookupSymbols
-                .map { LookupSymbol(name = it.name, scope = it.scope) }
-                .filterLookupSymbols(notYetShrunkClasses)
             val shrunkRemainingClassesAgainstNewLookups = shrinkClasses(notYetShrunkClasses, addedLookupSymbols)
 
             shrinkMode.shrunkCurrentClasspathAgainstPreviousLookups + shrunkRemainingClassesAgainstNewLookups
