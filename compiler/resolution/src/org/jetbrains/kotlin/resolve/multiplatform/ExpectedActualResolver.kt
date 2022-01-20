@@ -102,6 +102,17 @@ object ExpectedActualResolver {
         if (expected !is CallableMemberDescriptor || actual !is CallableMemberDescriptor)
             return false
 
+        if (expected.name != actual.name)
+            return false
+
+        if (expected.containingDeclaration is ClassifierDescriptorWithTypeParameters
+            != actual.containingDeclaration is ClassifierDescriptorWithTypeParameters
+        ) return false
+
+        if (!(expected is FunctionDescriptor && actual is FunctionDescriptor
+                    || expected is PropertyDescriptor && actual is PropertyDescriptor)
+        ) return false
+
         return areCompatibleCallables(expected, actual) is Compatible
     }
 
