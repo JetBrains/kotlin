@@ -563,7 +563,11 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                         putValueArgument(0, irImplicitCast(irGet(function.valueParameters[0]), type))
                     })
                 )
-            } + irBranch(irTrue(), irGet(function.valueParameters[0]))
+            } + irBranch(
+                irTrue(), irReturn(
+                    irImplicitCast(irGet(function.valueParameters[0]), irClass.defaultType)
+                )
+            )
             function.body = irBlockBody {
                 +irReturn(irWhen(irClass.defaultType, branches))
             }
@@ -658,6 +662,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             // TODO: Remove
             if (function.owner.name.asString().let { it == "toString" || it == "hashCode" }) continue
             if (function !in overridesInInline && function !in overridesInNoinline) continue
+            if (function.owner.isFakeOverride) continue
 
             rewriteSingleMethod(
                 context.inlineClassReplacements.getReplacementFunction(function.owner)!!,
