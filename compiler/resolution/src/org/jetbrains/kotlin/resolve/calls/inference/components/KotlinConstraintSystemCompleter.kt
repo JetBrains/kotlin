@@ -216,17 +216,18 @@ class KotlinConstraintSystemCompleter(
         val useBuilderInferenceWithoutAnnotation =
             languageVersionSettings.supportsFeature(LanguageFeature.UseBuilderInferenceWithoutAnnotation)
 
+        val builder = getBuilder()
         for (argument in lambdaArguments) {
             if (!argument.atom.hasBuilderInferenceAnnotation && !useBuilderInferenceWithoutAnnotation)
                 continue
 
             val notFixedInputTypeVariables = argument.inputTypes
-                .map { it.extractTypeVariables() }.flatten().filter { it !in fixedTypeVariables }
+                .flatMap { it.extractTypeVariables() }.filter { it !in fixedTypeVariables }
 
             if (notFixedInputTypeVariables.isEmpty()) continue
 
             for (variable in notFixedInputTypeVariables) {
-                getBuilder().markPostponedVariable(notFixedTypeVariables.getValue(variable).typeVariable)
+                builder.markPostponedVariable(notFixedTypeVariables.getValue(variable).typeVariable)
             }
 
             analyze(argument)

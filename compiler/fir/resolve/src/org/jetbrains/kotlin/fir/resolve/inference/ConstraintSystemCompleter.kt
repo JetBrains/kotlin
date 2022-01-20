@@ -188,14 +188,15 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
 
         // We assume useBuilderInferenceWithoutAnnotation = true for FIR
 
+        val builder = getBuilder()
         for (argument in lambdaArguments) {
             val notFixedInputTypeVariables = argument.inputTypes
-                .map { it.extractTypeVariables() }.flatten().filter { it !in fixedTypeVariables }
+                .flatMap { it.extractTypeVariables() }.filter { it !in fixedTypeVariables }
 
             if (notFixedInputTypeVariables.isEmpty()) continue
 
             for (variable in notFixedInputTypeVariables) {
-                getBuilder().markPostponedVariable(notFixedTypeVariables.getValue(variable).typeVariable)
+                builder.markPostponedVariable(notFixedTypeVariables.getValue(variable).typeVariable)
             }
 
             analyze(argument)
