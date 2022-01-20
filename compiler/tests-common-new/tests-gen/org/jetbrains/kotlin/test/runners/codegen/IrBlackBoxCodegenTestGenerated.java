@@ -45454,6 +45454,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("longCondition.kt")
+        public void testLongCondition() throws Exception {
+            runTest("compiler/testData/codegen/box/when/longCondition.kt");
+        }
+
+        @Test
         @TestMetadata("longInRange.kt")
         public void testLongInRange() throws Exception {
             runTest("compiler/testData/codegen/box/when/longInRange.kt");
