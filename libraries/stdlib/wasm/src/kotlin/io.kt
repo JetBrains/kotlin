@@ -35,3 +35,11 @@ internal actual interface Serializable
 @WasmImport("runtime", "println")
 private fun printlnImpl(messageAddr: Int): Unit =
     implementedAsIntrinsic
+
+internal fun printError(error: Any?) {
+    printErrorImpl(exportString(error.toString()))
+}
+
+@WasmImport("runtime", "printError")
+private fun printErrorImpl(errorAddr: Int): Unit =
+    implementedAsIntrinsic

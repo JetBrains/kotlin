@@ -26,8 +26,7 @@ public actual fun testOnJs(action: () -> Unit) { }
 // TODO: See KT-24975
 public actual val isFloat32RangeEnforced: Boolean = false
 
-// TODO: We need to implement this on wasm
-actual val supportsSuppressedExceptions: Boolean get() = false
+actual val supportsSuppressedExceptions: Boolean get() = true
 
 // TODO: implement named group reference in replacement expression
 public actual val supportsNamedCapturingGroup: Boolean get() = false
