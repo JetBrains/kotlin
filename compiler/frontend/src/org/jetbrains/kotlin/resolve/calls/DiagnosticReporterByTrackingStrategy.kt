@@ -132,6 +132,10 @@ class DiagnosticReporterByTrackingStrategy(
                 val callElement = psiKotlinCall.psiCall.callElement
                 trace.report(AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER.on(callElement))
             }
+            UnsupportedContextualDeclarationCall::class.java -> {
+                val callElement = psiKotlinCall.psiCall.callElement
+                trace.report(UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL.on(callElement))
+            }
         }
     }
 
