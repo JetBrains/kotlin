@@ -226,6 +226,24 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         } else if (overriddenFromSealedInline != null) {
             // If fake override overrides function from sealed inline class, call the overridden function
             createBridgeBody(replacement, overriddenFromSealedInline.owner)
+            // However, if the fake override is overridden, generate when in it, calling its children.
+            if (replacement.parentAsClass.modality == Modality.SEALED) {
+                @Suppress("NAME_SHADOWING")
+                val function = replacement.attributeOwnerId as IrSimpleFunction
+                val irClass = function.parentAsClass
+                val inlineSubclasses = irClass.sealedSubclasses.filter { it.owner.isInline }
+                val noinlineSubclasses = collectSubclasses(irClass) { !it.owner.isInline }
+                val overridesInNoinline = mapOverriddenToOverrides(noinlineSubclasses, listOf(function.symbol))
+                val overridesInInline =
+                    mapOverriddenToOverrides(inlineSubclasses.map { SubclassInfo(it.owner, emptyList()) }, listOf(function.symbol))
+                rewriteSingleMethod(
+                    replacement,
+                    overridesInInline.getOrElse(function.symbol) { emptySet() }
+                        .filterNot { it.owner.isFakeOverride && it.owner.parentAsClass.modality != Modality.SEALED },
+                    overridesInNoinline.getOrElse(function.symbol) { emptySet() }
+                        .filterNot { it.owner.isFakeOverride || it.owner.parentAsClass.isInline }
+                )
+            }
         } else {
             // Fake overrides redirect from the replacement to the original function, which is in turn replaced during interfacePhase.
             createBridgeBody(replacement, bridgeFunction)
