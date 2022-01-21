@@ -79,7 +79,7 @@ open class GenericReplCompiler(
             }
 
             val analysisResult = compilerState.analyzerEngine.analyzeReplLine(psiFile, codeLine)
-            AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder)
+            AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder, renderDiagnosticName = false)
             val scriptDescriptor = when (analysisResult) {
                 is ReplCodeAnalyzerBase.ReplLineAnalysisResult.WithErrors -> {
                     return ReplCompileResult.Error(errorHolder.renderMessage())

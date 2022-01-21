@@ -288,7 +288,11 @@ object KotlinToJVMBytecodeCompiler {
             jvmResolveLibraries(klibPaths, collector.toLogger())
         }?.getFullList() ?: emptyList()
 
-        val analyzerWithCompilerReport = AnalyzerWithCompilerReport(collector, environment.configuration.languageVersionSettings)
+        val analyzerWithCompilerReport = AnalyzerWithCompilerReport(
+            collector,
+            environment.configuration.languageVersionSettings,
+            environment.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+        )
         analyzerWithCompilerReport.analyzeAndReport(sourceFiles) {
             val project = environment.project
             val moduleOutputs = environment.configuration.get(JVMConfigurationKeys.MODULES)?.mapNotNullTo(hashSetOf()) { module ->
@@ -396,7 +400,8 @@ object KotlinToJVMBytecodeCompiler {
                 state.collectedExtraJvmDiagnostics,
                 bindingContext.diagnostics
             ),
-            messageCollector
+            messageCollector,
+            configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         )
         FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector)
 

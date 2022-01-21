@@ -215,7 +215,11 @@ private fun doCompile(
 private fun analyze(sourceFiles: Collection<KtFile>, environment: KotlinCoreEnvironment): AnalysisResult {
     val messageCollector = environment.configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]!!
 
-    val analyzerWithCompilerReport = AnalyzerWithCompilerReport(messageCollector, environment.configuration.languageVersionSettings)
+    val analyzerWithCompilerReport = AnalyzerWithCompilerReport(
+        messageCollector,
+        environment.configuration.languageVersionSettings,
+        environment.configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+    )
 
     analyzerWithCompilerReport.analyzeAndReport(sourceFiles) {
         val project = environment.project

@@ -1,0 +1,4 @@
+$TESTDATA_DIR$/reportInternalDiagnosticNames.kt
+-Xrender-internal-diagnostic-names
+-d
+$TEMP_DIR$

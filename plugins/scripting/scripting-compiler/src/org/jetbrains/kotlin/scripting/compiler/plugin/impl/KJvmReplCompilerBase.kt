@@ -111,7 +111,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
                         snippet,
                         snippetNo
                     )
-                AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder)
+                AnalyzerWithCompilerReport.reportDiagnostics(analysisResult.diagnostics, errorHolder, renderDiagnosticName = false)
 
                 val scriptDescriptor = when (analysisResult) {
                     is ReplCodeAnalyzerBase.ReplLineAnalysisResult.WithErrors -> return failure(messageCollector)

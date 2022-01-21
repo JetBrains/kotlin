@@ -188,7 +188,8 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
         AnalyzerWithCompilerReport.reportDiagnostics(
             result.bindingContext.diagnostics,
-            PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)
+            PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false),
+            renderInternalDiagnosticName = false
         )
 
         assertEquals("There should be no diagnostics", 0, result.bindingContext.diagnostics.count())

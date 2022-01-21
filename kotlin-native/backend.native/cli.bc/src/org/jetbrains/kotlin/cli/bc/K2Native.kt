@@ -81,6 +81,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         }
 
         configuration.put(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, arguments.normalizeAbsolutePath)
+        configuration.put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
 
         try {
             val konanConfig = KonanConfig(project, configuration)

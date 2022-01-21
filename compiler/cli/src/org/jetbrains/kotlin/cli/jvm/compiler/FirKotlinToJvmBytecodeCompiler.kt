@@ -98,6 +98,7 @@ object FirKotlinToJvmBytecodeCompiler {
                 ),
                 projectEnvironment,
                 messageCollector,
+                moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME),
                 moduleConfiguration,
                 performanceManager,
                 targetIds,
@@ -337,7 +338,8 @@ object FirKotlinToJvmBytecodeCompiler {
                 generationState.collectedExtraJvmDiagnostics,
                 dummyBindingContext.diagnostics
             ),
-            messageCollector
+            messageCollector,
+            renderDiagnosticName
         )
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
@@ -349,6 +351,7 @@ object FirKotlinToJvmBytecodeCompiler {
         val allSources: List<KtFile>,
         val projectEnvironment: AbstractProjectEnvironment,
         val messageCollector: MessageCollector,
+        val renderDiagnosticName: Boolean,
         val moduleConfiguration: CompilerConfiguration,
         val performanceManager: CommonCompilerPerformanceManager?,
         val targetIds: List<TargetId>?,

@@ -49,7 +49,11 @@ class DiagnosticMessagesTextHandler(
                 false
             )
 
-        AnalyzerWithCompilerReport.reportDiagnostics(info.analysisResult.bindingContext.diagnostics, diagnosticsFullTextCollector)
+        AnalyzerWithCompilerReport.reportDiagnostics(
+            info.analysisResult.bindingContext.diagnostics,
+            diagnosticsFullTextCollector,
+            renderInternalDiagnosticName = false
+        )
 
         diagnosticsFullTextCollector.flush()
         diagnosticsFullTextPrintStream.flush()

@@ -212,7 +212,11 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
             if (testFile.renderDiagnosticsFullText) {
                 shouldCheckDiagnosticsFullText = true
-                AnalyzerWithCompilerReport.reportDiagnostics(moduleBindingContext.diagnostics, diagnosticsFullTextCollector)
+                AnalyzerWithCompilerReport.reportDiagnostics(
+                    moduleBindingContext.diagnostics,
+                    diagnosticsFullTextCollector,
+                    renderInternalDiagnosticName = false
+                )
             }
         }
 

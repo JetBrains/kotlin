@@ -27,7 +27,7 @@ class JsTranslationResultHandler(testServices: TestServices) : JsBinaryArtifactH
         if (result !is TranslationResult.Success) {
             val outputStream = ByteArrayOutputStream()
             val collector = PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.PLAIN_FULL_PATHS, true)
-            AnalyzerWithCompilerReport.reportDiagnostics(result.diagnostics, collector)
+            AnalyzerWithCompilerReport.reportDiagnostics(result.diagnostics, collector, renderInternalDiagnosticName = false)
             val messages = outputStream.toByteArray().toString(Charset.forName("UTF-8"))
             throw AssertionError("The following errors occurred compiling test:\n$messages")
         }

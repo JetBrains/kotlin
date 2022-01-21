@@ -196,6 +196,8 @@ where advanced options include:
   -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types
   -Xread-deserialized-contracts Enable reading of contracts from metadata
   -Xklib-relative-path-base  Provide a base paths to compute source's relative paths in klib (default is empty)
+  -Xrender-internal-diagnostic-names
+                             Render internal names of warnings and errors
   -Xreport-output-files      Report source to output files mapping
   -Xreport-perf              Report detailed performance statistics
   -Xself-upper-bound-inference Support inferring type arguments based on only self upper bounds of the corresponding type parameters

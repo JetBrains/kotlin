@@ -59,7 +59,7 @@ class JsCoreScriptingCompiler(
 
         val analyzerEngine = JsReplCodeAnalyzer(environment, dependencyDescriptors, analyzerState)
         val analysisResult = analyzerEngine.analyzeReplLine(snippetKtFile, codeLine).also {
-            AnalyzerWithCompilerReport.reportDiagnostics(it.bindingContext.diagnostics, messageCollector)
+            AnalyzerWithCompilerReport.reportDiagnostics(it.bindingContext.diagnostics, messageCollector, renderInternalDiagnosticName = false)
             if (messageCollector.hasErrors()) return ReplCompileResult.Error("Error while analysis")
         }
 

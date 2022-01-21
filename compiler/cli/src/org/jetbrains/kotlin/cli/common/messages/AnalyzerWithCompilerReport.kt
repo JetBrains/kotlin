@@ -38,7 +38,8 @@ import org.jetbrains.kotlin.resolve.jvm.JvmBindingContextSlices
 
 class AnalyzerWithCompilerReport(
     private val messageCollector: MessageCollector,
-    private val languageVersionSettings: LanguageVersionSettings
+    private val languageVersionSettings: LanguageVersionSettings,
+    private val renderDiagnosticName: Boolean
 ) : AbstractAnalyzerWithCompilerReport {
     override val targetEnvironment: TargetEnvironment
         get() = CompilerEnvironment
@@ -47,7 +48,8 @@ class AnalyzerWithCompilerReport(
 
     constructor(configuration: CompilerConfiguration) : this(
         configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY) ?: MessageCollector.NONE,
-        configuration.languageVersionSettings
+        configuration.languageVersionSettings,
+        configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     )
 
     private fun reportIncompleteHierarchies() {
@@ -117,7 +119,7 @@ class AnalyzerWithCompilerReport(
             reportWarning = { message -> messageCollector.report(WARNING, message) }
         )
         reportSyntaxErrors(files)
-        reportDiagnostics(analysisResult.bindingContext.diagnostics, messageCollector)
+        reportDiagnostics(analysisResult.bindingContext.diagnostics, messageCollector, renderDiagnosticName)
         reportIncompleteHierarchies()
         reportAlternativeSignatureErrors()
     }
@@ -140,29 +142,43 @@ class AnalyzerWithCompilerReport(
 
         private val SYNTAX_ERROR_FACTORY = DiagnosticFactory0.create<PsiErrorElement>(Severity.ERROR)
 
-        private fun reportDiagnostic(diagnostic: Diagnostic, reporter: DiagnosticMessageReporter): Boolean {
+        private fun reportDiagnostic(diagnostic: Diagnostic, reporter: DiagnosticMessageReporter, renderDiagnosticName: Boolean): Boolean {
             if (!diagnostic.isValid) return false
+
+            val message = (diagnostic as? MyDiagnostic<*>)?.message ?: DefaultErrorMessages.render(diagnostic)
+            val textToRender = when (renderDiagnosticName) {
+                true -> "[${diagnostic.factoryName}] $message"
+                false -> message
+            }
 
             reporter.report(
                 diagnostic,
                 diagnostic.psiFile,
-                (diagnostic as? MyDiagnostic<*>)?.message ?: DefaultErrorMessages.render(diagnostic)
+                textToRender
             )
 
             return diagnostic.severity == Severity.ERROR
         }
 
-        fun reportDiagnostics(unsortedDiagnostics: GenericDiagnostics<*>, reporter: DiagnosticMessageReporter): Boolean {
+        fun reportDiagnostics(
+            unsortedDiagnostics: GenericDiagnostics<*>,
+            reporter: DiagnosticMessageReporter,
+            renderDiagnosticName: Boolean
+        ): Boolean {
             var hasErrors = false
             val diagnostics = sortedDiagnostics(unsortedDiagnostics.all().filterIsInstance<Diagnostic>())
             for (diagnostic in diagnostics) {
-                hasErrors = hasErrors or reportDiagnostic(diagnostic, reporter)
+                hasErrors = hasErrors or reportDiagnostic(diagnostic, reporter, renderDiagnosticName)
             }
             return hasErrors
         }
 
-        fun reportDiagnostics(diagnostics: GenericDiagnostics<*>, messageCollector: MessageCollector): Boolean {
-            val hasErrors = reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector))
+        fun reportDiagnostics(
+            diagnostics: GenericDiagnostics<*>,
+            messageCollector: MessageCollector,
+            renderInternalDiagnosticName: Boolean
+        ): Boolean {
+            val hasErrors = reportDiagnostics(diagnostics, DefaultDiagnosticReporter(messageCollector), renderInternalDiagnosticName)
 
             if (diagnostics.any { it.factory == Errors.INCOMPATIBLE_CLASS }) {
                 messageCollector.report(
@@ -207,7 +223,7 @@ class AnalyzerWithCompilerReport(
 
                 private fun <E : PsiElement> reportDiagnostic(element: E, factory: DiagnosticFactory0<E>, message: String) {
                     val diagnostic = MyDiagnostic(element, factory, message)
-                    AnalyzerWithCompilerReport.reportDiagnostic(diagnostic, reporter)
+                    AnalyzerWithCompilerReport.reportDiagnostic(diagnostic, reporter, renderDiagnosticName = false)
                     if (allErrorsAtEof && !element.isAtEof()) {
                         allErrorsAtEof = false
                     }

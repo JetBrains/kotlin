@@ -776,6 +776,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/recordAsSingleFileRoot.args");
         }
 
+        @TestMetadata("reportInternalDiagnosticNames.args")
+        public void testReportInternalDiagnosticNames() throws Exception {
+            runTest("compiler/testData/cli/jvm/reportInternalDiagnosticNames.args");
+        }
+
         @TestMetadata("requireKotlinCompilerVersion.args")
         public void testRequireKotlinCompilerVersion() throws Exception {
             runTest("compiler/testData/cli/jvm/requireKotlinCompilerVersion.args");

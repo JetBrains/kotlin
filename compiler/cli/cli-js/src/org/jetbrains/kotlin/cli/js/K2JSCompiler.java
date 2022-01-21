@@ -208,6 +208,8 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         List<KtFile> sourcesFiles = environmentForJS.getSourceFiles();
 
         environmentForJS.getConfiguration().put(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE, arguments.getAllowKotlinPackage());
+        environmentForJS.getConfiguration().put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.getRenderInternalDiagnosticNames());
+
 
         if (!UtilsKt.checkKotlinPackageUsage(environmentForJS.getConfiguration(), sourcesFiles)) return ExitCode.COMPILATION_ERROR;
 
@@ -252,7 +254,9 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         AnalysisResult analysisResult;
         do {
             AnalyzerWithCompilerReport analyzerWithCompilerReport = new AnalyzerWithCompilerReport(
-                    messageCollector, CommonConfigurationKeysKt.getLanguageVersionSettings(configuration)
+                    messageCollector,
+                    CommonConfigurationKeysKt.getLanguageVersionSettings(configuration),
+                    configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
             );
             List<KtFile> sources = environmentForJS.getSourceFiles();
             analyzerWithCompilerReport.analyzeAndReport(sourcesFiles, () -> TopDownAnalyzerFacadeForJS.analyzeFiles(sources, config));
@@ -321,7 +325,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        AnalyzerWithCompilerReport.Companion.reportDiagnostics(translationResult.getDiagnostics(), messageCollector);
+        AnalyzerWithCompilerReport.Companion.reportDiagnostics(translationResult.getDiagnostics(), messageCollector, configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME));
 
         if (translationResult instanceof TranslationResult.Fail) return ExitCode.COMPILATION_ERROR;
 

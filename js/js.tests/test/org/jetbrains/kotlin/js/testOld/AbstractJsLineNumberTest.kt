@@ -67,7 +67,7 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
                 if (translationResult !is TranslationResult.Success) {
                     val outputStream = ByteArrayOutputStream()
                     val collector = PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.PLAIN_FULL_PATHS, true)
-                    AnalyzerWithCompilerReport.reportDiagnostics(translationResult.diagnostics, collector)
+                    AnalyzerWithCompilerReport.reportDiagnostics(translationResult.diagnostics, collector, renderInternalDiagnosticName = false)
                     val messages = outputStream.toByteArray().toString(Charset.forName("UTF-8"))
                     throw AssertionError("The following errors occurred compiling test:\n" + messages)
                 }
