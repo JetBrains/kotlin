@@ -3646,6 +3646,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("kt50875.kt")
+            public void testKt50875() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/kt50875.kt");
+            }
+
+            @Test
             @TestMetadata("literalInWhenSubject.kt")
             public void testLiteralInWhenSubject() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/literalInWhenSubject.kt");

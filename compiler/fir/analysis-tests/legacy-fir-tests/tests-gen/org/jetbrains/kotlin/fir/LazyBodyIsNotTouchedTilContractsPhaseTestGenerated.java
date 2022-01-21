@@ -3222,6 +3222,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/kt50788.kt");
         }
 
+        @TestMetadata("kt50875.kt")
+        public void testKt50875() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/kt50875.kt");
+        }
+
         @TestMetadata("literalInWhenSubject.kt")
         public void testLiteralInWhenSubject() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/literalInWhenSubject.kt");

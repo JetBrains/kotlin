@@ -243,6 +243,14 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
             }
         }
 
+        if (result.rhs.typeRef.coneTypeSafe<ConeKotlinType>()?.isNothing == true) {
+            val lhsType = result.lhs.typeRef.coneTypeSafe<ConeKotlinType>()
+            if (lhsType != null) {
+                val newReturnType = lhsType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
+                result.replaceTypeRef(result.typeRef.resolvedTypeFromPrototype(newReturnType))
+            }
+        }
+
         session.typeContext.run {
             if (result.typeRef.coneTypeSafe<ConeKotlinType>()?.isNullableType() == true
                 && result.rhs.typeRef.coneTypeSafe<ConeKotlinType>()?.isNullableType() == false
@@ -254,8 +262,6 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirBodyResolveTran
                 )
             }
         }
-
-
 
         dataFlowAnalyzer.exitElvis(elvisExpression)
         return result
