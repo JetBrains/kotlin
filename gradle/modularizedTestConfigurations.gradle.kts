@@ -149,7 +149,8 @@ val useBuildFileKey = "fir.bench.use.build.file"
 val testDataPathList = listOfNotNull(
     Configuration(kotlinBuildProperties.pathToKotlinModularizedTestData, "Kotlin"),
     Configuration(kotlinBuildProperties.pathToIntellijModularizedTestData, "IntelliJ", mapOf(useBuildFileKey to "true")),
-    Configuration(kotlinBuildProperties.pathToYoutrackModularizedTestData, "YouTrack", mapOf(languageVersionKey to "1.5"))
+    Configuration(kotlinBuildProperties.pathToYoutrackModularizedTestData, "YouTrack", mapOf(languageVersionKey to "1.5")),
+    Configuration(kotlinBuildProperties.pathToSpaceModularizedTestData, "Space", mapOf(languageVersionKey to "1.6"))
 )
 
 val additionalConfigurationsWithFilter = mapOf(

@@ -31,6 +31,9 @@ val KotlinBuildProperties.pathToIntellijModularizedTestData: String?
 val KotlinBuildProperties.pathToYoutrackModularizedTestData: String?
     get() = getOrNull("kotlin.fir.modularized.testdata.youtrack") as? String
 
+val KotlinBuildProperties.pathToSpaceModularizedTestData: String?
+    get() = getOrNull("kotlin.fir.modularized.testdata.space") as? String
+
 val KotlinBuildProperties.isObsoleteJdkOverrideEnabled: Boolean
     get() = getBoolean("kotlin.build.isObsoleteJdkOverrideEnabled", false)
 
