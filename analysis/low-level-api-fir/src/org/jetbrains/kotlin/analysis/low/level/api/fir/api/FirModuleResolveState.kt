@@ -6,15 +6,18 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.InternalForInline
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
+import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -50,26 +53,37 @@ abstract class FirModuleResolveState {
 
     internal abstract fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic>
 
-    @InternalForInline
-    abstract fun findSourceFirDeclaration(
+    abstract fun findSourceFirSymbol(
         ktDeclaration: KtDeclaration,
-    ): FirDeclaration
+    ): FirBasedSymbol<*>
 
-    @InternalForInline
-    abstract fun findSourceFirDeclaration(
+    abstract fun findSourceFirSymbol(
         ktDeclaration: KtLambdaExpression,
-    ): FirDeclaration
+    ): FirBasedSymbol<*>
 
     /**
      * Looks for compiled non-local [ktDeclaration] declaration by querying its classId/callableId from the SymbolProvider.
      *
      * Works only if [ktDeclaration] is compiled (i.e. comes from .class file).
      */
-    @InternalForInline
-    abstract fun findSourceFirCompiledDeclaration(
+    abstract fun findSourceFirCompiledSymbol(
         ktDeclaration: KtDeclaration
-    ): FirDeclaration
+    ): FirBasedSymbol<*>
 
+
+    open fun resolveToFirSymbol(
+        ktDeclaration: KtDeclaration,
+        resolveState: FirModuleResolveState,
+        phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
+    ): FirBasedSymbol<*> {
+        return when (val module = ktDeclaration.getKtModule()) {
+            is KtSourceModule -> resolveState.findSourceFirSymbol(ktDeclaration).also { resolveState.resolveFirToPhase(it.fir, phase) }
+            is KtLibraryModule -> resolveState.findSourceFirCompiledSymbol(ktDeclaration)
+            else -> error("unsupported module $module")
+        }
+    }
 
     internal abstract fun resolveFirToPhase(declaration: FirDeclaration, toPhase: FirResolvePhase)
+
+
 }

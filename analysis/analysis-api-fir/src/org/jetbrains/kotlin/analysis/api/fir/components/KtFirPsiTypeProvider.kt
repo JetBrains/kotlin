@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.withFirDeclaration
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
@@ -31,9 +29,6 @@ import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.backend.jvm.jvmTypeMapper
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -61,7 +56,6 @@ internal class KtFirPsiTypeProvider(
     ): PsiType? = withValidityAssertion {
         type.coneType.asPsiType(
             rootModuleSession,
-            analysisSession.firResolveState,
             mode.toTypeMappingMode(type, isAnnotationMethod),
             useSitePosition
         )
@@ -85,10 +79,9 @@ internal class KtFirPsiTypeProvider(
 
 private fun ConeKotlinType.simplifyType(
     session: FirSession,
-    state: FirModuleResolveState,
     useSitePosition: PsiElement,
 ): ConeKotlinType {
-    val substitutor = AnonymousTypesSubstitutor(session, state)
+    val substitutor = AnonymousTypesSubstitutor(session)
     val visibilityForApproximation = useSitePosition.visibilityForApproximation
     // TODO: See if the given [useSitePosition] is an `inline` method
     val isInlineFunction = false
@@ -181,11 +174,10 @@ private fun ConeKotlinType.isLocalButAvailableAtPosition(
 
 internal fun ConeKotlinType.asPsiType(
     session: FirSession,
-    state: FirModuleResolveState,
     mode: TypeMappingMode,
     useSitePosition: PsiElement,
 ): PsiType? {
-    val correctedType = simplifyType(session, state, useSitePosition)
+    val correctedType = simplifyType(session, useSitePosition)
 
     if (correctedType is ConeClassErrorType || correctedType !is SimpleTypeMarker) return null
 
@@ -213,7 +205,6 @@ internal fun ConeKotlinType.asPsiType(
 
 private class AnonymousTypesSubstitutor(
     private val session: FirSession,
-    private val state: FirModuleResolveState,
 ) : AbstractConeSubstitutor(session.typeContext) {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeClassLikeType) return null
@@ -222,18 +213,14 @@ private class AnonymousTypesSubstitutor(
         if (!isAnonymous) return null
 
         fun ConeClassLikeType.isNotInterface(): Boolean {
-            val firClassNode = lookupTag.toSymbol(session)?.fir as? FirClass ?: return false
-            return firClassNode.withFirDeclaration(state) { firSuperClass ->
-                firSuperClass.classKind != ClassKind.INTERFACE
-            }
+            val firClassNode = lookupTag.toSymbol(session) as? FirClassSymbol<*> ?: return false
+            return firClassNode.classKind != ClassKind.INTERFACE
         }
 
-        val firClassNode = (type.lookupTag.toSymbol(session) as? FirClassSymbol)?.fir
+        val firClassNode = type.lookupTag.toSymbol(session) as? FirClassSymbol
         if (firClassNode != null) {
-            val superTypesCones = firClassNode.withFirDeclaration(state, FirResolvePhase.SUPER_TYPES) {
-                (it as? FirClass)?.superConeTypes
-            }
-            val superClass = superTypesCones?.firstOrNull { it.isNotInterface() }
+            val superTypesCones = firClassNode.resolvedSuperTypes
+            val superClass = superTypesCones.firstOrNull { (it as? ConeClassLikeType)?.isNotInterface() == true }
             if (superClass != null) return superClass
         }
 

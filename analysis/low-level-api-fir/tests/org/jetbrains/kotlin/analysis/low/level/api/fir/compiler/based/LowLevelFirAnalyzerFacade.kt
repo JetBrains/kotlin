@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolvedFirToPhase
 import org.jetbrains.kotlin.fir.analysis.AbstractFirAnalyzerFacade
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSealedClassInheritorsProcessor
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.test.model.TestFile
@@ -40,8 +40,8 @@ class LowLevelFirAnalyzerFacade(
     }
 
     private fun findSealedInheritors() {
-        allFirFiles.values.forEach {
-            it.resolvedFirToPhase(FirResolvePhase.SUPER_TYPES, resolveState)
+        allFirFiles.values.forEach { firFile ->
+            firFile.ensureResolved(FirResolvePhase.SUPER_TYPES)
         }
         val sealedProcessor = FirSealedClassInheritorsProcessor(allFirFiles.values.first().moduleData.session, ScopeSession())
         sealedProcessor.process(allFirFiles.values)
