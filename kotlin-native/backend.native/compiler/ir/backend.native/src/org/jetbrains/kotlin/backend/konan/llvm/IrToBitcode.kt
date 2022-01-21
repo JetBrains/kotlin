@@ -1216,7 +1216,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             for (catch in catches) {
                 fun genCatchBlock() {
                     using(VariableScope()) {
-                        currentCodeContext.genDeclareVariable(catch.catchParameter, exception, null)
+                        currentCodeContext.genDeclareVariable(catch.catchParameter, exception)
                         functionGenerationContext.generateFrameCheck()
                         evaluateExpressionAndJump(catch.result, success)
                     }
@@ -1455,10 +1455,15 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 }
             } ?: evaluateExpression(it)
         }
-        currentCodeContext.genDeclareVariable(
-                variable, value, debugInfoIfNeeded(
-                (currentCodeContext.functionScope() as FunctionScope).declaration, variable))
+        this.currentCodeContext.genDeclareVariable(variable, value)
     }
+
+    private fun CodeContext.genDeclareVariable(
+            variable: IrVariable,
+            value: LLVMValueRef?
+    ) = genDeclareVariable(
+            variable, value, debugInfoIfNeeded(
+            (functionScope() as FunctionScope).declaration, variable))
 
     //-------------------------------------------------------------------------//
 

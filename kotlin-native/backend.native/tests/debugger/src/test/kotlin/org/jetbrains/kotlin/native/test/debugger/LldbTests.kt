@@ -127,6 +127,37 @@ class LldbTests {
     """)
 
     @Test
+    fun `can inspect catch parameter`() = lldbTest("""
+        fun main() {
+            try {
+                throw Exception("message 1")
+            } catch (e1: Throwable) {
+                println(e1.message)
+            }
+
+            try {
+                throwError()
+            } catch (e2: Throwable) {
+                println(e2.message)
+            }
+        }
+
+        fun throwError() {
+            throw Error("message 2")
+        }
+    """, """
+            > b main.kt:5
+            > ${lldbCommandRunOrContinue()}
+            > fr var
+            (ObjHeader *) e1 = [..]
+            > b main.kt:11
+            > c
+            > fr var
+            (ObjHeader *) e2 = [..]
+            > q
+    """)
+
+    @Test
     fun `swift with kotlin static framework`() = lldbComplexTest {
         val aKtSrc = """
             fun a() = "a"
