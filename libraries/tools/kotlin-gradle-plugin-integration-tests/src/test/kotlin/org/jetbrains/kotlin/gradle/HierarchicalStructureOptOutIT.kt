@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.HierarchicalStructureOptInMigrationArtifactContentIT.Mode.*
+import org.jetbrains.kotlin.gradle.HierarchicalStructureOptInMigrationArtifactContentMppIT.Mode.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -14,7 +14,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 @RunWith(Parameterized::class)
-internal class HierarchicalStructureOptInMigrationArtifactContentIT : BaseGradleIT() {
+internal class HierarchicalStructureOptInMigrationArtifactContentMppIT : BaseGradleIT() {
     enum class Mode {
         HMPP_BY_DEFAULT, OPT_OUT_HMPP, DISABLE_HMPP_BY_DEFAULT
     }
