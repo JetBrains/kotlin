@@ -22,6 +22,15 @@ val KotlinBuildProperties.ignoreTestFailures: Boolean get() = getBoolean("ignore
 val KotlinBuildProperties.disableWerror: Boolean
     get() = getBoolean("kotlin.build.disable.werror") || useFir || isInJpsBuildIdeaSync || getBoolean("test.progressive.mode")
 
+val KotlinBuildProperties.generateModularizedConfigurations: Boolean
+    get() = getBoolean("kotlin.fir.modularized.mt.configurations", false)
+
+val KotlinBuildProperties.generateFullPipelineConfigurations: Boolean
+    get() = getBoolean("kotlin.fir.modularized.fp.configurations", false)
+
+val KotlinBuildProperties.generateAdditionalConfigurations: Boolean
+    get() = getBoolean("kotlin.fir.modularized.additional.configurations", false)
+
 val KotlinBuildProperties.pathToKotlinModularizedTestData: String?
     get() = getOrNull("kotlin.fir.modularized.testdata.kotlin") as? String
 

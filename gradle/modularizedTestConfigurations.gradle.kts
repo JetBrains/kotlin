@@ -159,24 +159,61 @@ val additionalConfigurationsWithFilter = mapOf(
     )
 )
 
+val generateMT = kotlinBuildProperties.generateModularizedConfigurations
+val generateFP = kotlinBuildProperties.generateFullPipelineConfigurations
+val generateAdditionalConfigurations = kotlinBuildProperties.generateAdditionalConfigurations
+
 for ((path, projectName, additionalParameters) in testDataPathList) {
     rootProject.afterEvaluate {
         val configurations = mutableListOf<Pair<String, String?>>(
             "Full $projectName" to null
         )
-
-        additionalConfigurationsWithFilter[projectName]?.let {
-            configurations.addAll(it)
+        if (generateAdditionalConfigurations) {
+            additionalConfigurationsWithFilter[projectName]?.let {
+                configurations.addAll(it)
+            }
         }
 
         val jpsBuildEnabled = kotlinBuildProperties.isInJpsBuildIdeaSync
 
         for ((name, benchFilter) in configurations) {
-            generateGradleConfiguration("[MT] $name", "FirResolveModularizedTotalKotlinTest", path, additionalParameters, benchFilter)
-            generateGradleConfiguration("[FP] $name", "FullPipelineModularizedTest", path, additionalParameters, benchFilter)
+            if (generateMT) {
+                generateGradleConfiguration(
+                    "[MT] $name",
+                    "FirResolveModularizedTotalKotlinTest",
+                    path,
+                    additionalParameters,
+                    benchFilter
+                )
+            }
+            if (generateFP) {
+                generateGradleConfiguration(
+                    "[FP] $name",
+                    "FullPipelineModularizedTest",
+                    path,
+                    additionalParameters,
+                    benchFilter
+                )
+            }
             if (jpsBuildEnabled) {
-                generateJpsConfiguration("[MT-JPS] $name", "FirResolveModularizedTotalKotlinTest", path, additionalParameters, benchFilter)
-                generateJpsConfiguration("[FP-JPS] $name", "FullPipelineModularizedTest", path, additionalParameters, benchFilter)
+                if (generateMT) {
+                    generateJpsConfiguration(
+                        "[MT-JPS] $name",
+                        "FirResolveModularizedTotalKotlinTest",
+                        path,
+                        additionalParameters,
+                        benchFilter
+                    )
+                }
+                if (generateFP) {
+                    generateJpsConfiguration(
+                        "[FP-JPS] $name",
+                        "FullPipelineModularizedTest",
+                        path,
+                        additionalParameters,
+                        benchFilter
+                    )
+                }
             }
         }
     }
