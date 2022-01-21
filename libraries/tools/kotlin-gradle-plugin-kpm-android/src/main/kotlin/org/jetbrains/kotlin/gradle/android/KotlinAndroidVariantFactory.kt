@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.external.createExternalJvmVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 
 fun KotlinGradleModule.createKotlinAndroidVariant(androidVariant: BaseVariant) {
-    val androidOutgoingArtifacts = FragmentArtifacts<KotlinJvmVariant> { fragment ->
+    val androidOutgoingArtifacts = FragmentArtifacts<KotlinJvmVariant> {
         variants.create("classes") { variant ->
             variant.attributes.attribute(AndroidArtifacts.ARTIFACT_TYPE, AndroidArtifacts.ArtifactType.CLASSES_JAR.type)
             variant.artifact(project.provider { fragment.compilationOutputs.classesDirs.singleFile }) {

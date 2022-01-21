@@ -5,30 +5,57 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
+import org.gradle.api.Named
+import org.gradle.api.Project
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 
 /* Internal abbreviation */
 internal typealias FragmentAttributes<T> = KotlinGradleFragmentConfigurationAttributes<T>
 
-fun interface KotlinGradleFragmentConfigurationAttributes<in T : KotlinGradleFragment> {
-    fun AttributeContainer.setAttributes(fragment: T)
+interface KotlinGradleFragmentConfigurationAttributes<in T : KotlinGradleFragment> {
 
-    companion object {
-        val None = FragmentAttributes<KotlinGradleFragment> {}
+    fun setAttributes(attributes: AttributeContainer, fragment: T)
+
+    object None : FragmentAttributes<KotlinGradleFragment> {
+        override fun setAttributes(attributes: AttributeContainer, fragment: KotlinGradleFragment) = Unit
     }
 }
 
-fun <T : KotlinGradleFragment> AttributeContainer.attributes(attributes: FragmentAttributes<T>, fragment: T) = with(attributes) {
-    setAttributes(fragment)
+class KotlinGradleFragmentConfigurationAttributesContext<T : KotlinGradleFragment> internal constructor(
+    internal val attributes: AttributeContainer,
+    val fragment: T,
+) : AttributeContainer by attributes {
+    val project: Project get() = fragment.project
+
+    inline fun <reified T : Named> named(name: String): T = project.objects.named(T::class.java, name)
+
+    inline fun <reified T : Named> namedAttribute(key: Attribute<T>, name: String) = apply { attribute(key, named(name)) }
+
+    override fun <K : Any> attribute(key: Attribute<K>, value: K): KotlinGradleFragmentConfigurationAttributesContext<T> = apply {
+        attributes.attribute(key, value)
+    }
+}
+
+@Suppress("FunctionName")
+fun <T : KotlinGradleFragment> FragmentAttributes(
+    setAttributes: KotlinGradleFragmentConfigurationAttributesContext<T>.() -> Unit
+): KotlinGradleFragmentConfigurationAttributes<T> {
+    return object : KotlinGradleFragmentConfigurationAttributes<T> {
+        override fun setAttributes(attributes: AttributeContainer, fragment: T) {
+            val context = KotlinGradleFragmentConfigurationAttributesContext(attributes, fragment)
+            context.setAttributes()
+        }
+    }
 }
 
 operator fun <T : KotlinGradleFragment> FragmentAttributes<T>.plus(other: FragmentAttributes<T>): FragmentAttributes<T> {
+    if (this === KotlinGradleFragmentConfigurationAttributes.None) return other
+    if (other === KotlinGradleFragmentConfigurationAttributes.None) return this
+
     if (this is CompositeFragmentAttributes && other is CompositeFragmentAttributes) {
         return CompositeFragmentAttributes(this.children + other.children)
     }
-
-    if (this === FragmentAttributes.None) return other
-    if (other === FragmentAttributes.None) return this
 
     if (this is CompositeFragmentAttributes) {
         return CompositeFragmentAttributes(this.children + other)
@@ -43,7 +70,7 @@ operator fun <T : KotlinGradleFragment> FragmentAttributes<T>.plus(other: Fragme
 
 internal class CompositeFragmentAttributes<in T : KotlinGradleFragment>(val children: List<FragmentAttributes<T>>) :
     FragmentAttributes<T> {
-    override fun AttributeContainer.setAttributes(fragment: T) {
-        children.forEach { attribute -> attributes(attribute, fragment) }
+    override fun setAttributes(attributes: AttributeContainer, fragment: T) {
+        children.forEach { child -> child.setAttributes(attributes, fragment) }
     }
 }

@@ -19,8 +19,7 @@ import org.jetbrains.kotlin.project.model.refinesClosure
  * Will add this jar artifact to the given configuration
  */
 
-val KotlinFragmentHostSpecificMetadataArtifact = FragmentArtifacts<KotlinNativeVariantInternal> artifacts@{ fragment ->
-    val project = fragment.project
+val KotlinFragmentHostSpecificMetadataArtifact = FragmentArtifacts<KotlinNativeVariantInternal> artifacts@{
     val hostSpecificMetadataElements = fragment.hostSpecificMetadataElementsConfiguration ?: return@artifacts
 
     val hostSpecificMetadataJar = project.registerTask<Jar>(fragment.disambiguateName("hostSpecificMetadataJar")) { jar ->

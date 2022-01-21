@@ -5,30 +5,46 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
+import org.gradle.api.Project
 import org.gradle.api.artifacts.ConfigurationPublications
 
 /* Internal abbreviation */
 internal typealias FragmentArtifacts<T> = KotlinGradleFragmentConfigurationArtifacts<T>
 
-fun interface KotlinGradleFragmentConfigurationArtifacts<in T : KotlinGradleFragment> {
-    fun ConfigurationPublications.addArtifacts(fragment: T)
+interface KotlinGradleFragmentConfigurationArtifacts<in T : KotlinGradleFragment> {
+    fun addArtifacts(outgoing: ConfigurationPublications, fragment: T)
 
-    companion object {
-        val None = FragmentArtifacts<KotlinGradleFragment> {}
+    object None : KotlinGradleFragmentConfigurationArtifacts<KotlinGradleFragment> {
+        override fun addArtifacts(outgoing: ConfigurationPublications, fragment: KotlinGradleFragment) = Unit
     }
 }
 
-fun <T : KotlinGradleFragment> ConfigurationPublications.artifacts(
-    artifacts: FragmentArtifacts<T>, fragment: T
-) = with(artifacts) { addArtifacts(fragment) }
+class KotlinGradleFragmentConfigurationArtifactsContext<T : KotlinGradleFragment> internal constructor(
+    internal val outgoing: ConfigurationPublications,
+    val fragment: T
+) : ConfigurationPublications by outgoing {
+    val project: Project get() = fragment.project
+}
+
+@Suppress("FunctionName")
+fun <T : KotlinGradleFragment> FragmentArtifacts(
+    addArtifacts: KotlinGradleFragmentConfigurationArtifactsContext<T>.() -> Unit
+): KotlinGradleFragmentConfigurationArtifacts<T> {
+    return object : KotlinGradleFragmentConfigurationArtifacts<T> {
+        override fun addArtifacts(outgoing: ConfigurationPublications, fragment: T) {
+            val context = KotlinGradleFragmentConfigurationArtifactsContext(outgoing, fragment)
+            context.addArtifacts()
+        }
+    }
+}
 
 operator fun <T : KotlinGradleFragment> FragmentArtifacts<T>.plus(other: FragmentArtifacts<T>): FragmentArtifacts<T> {
+    if (this === KotlinGradleFragmentConfigurationArtifacts.None) return other
+    if (other === KotlinGradleFragmentConfigurationArtifacts.None) return this
+
     if (this is CompositeFragmentArtifacts && other is CompositeFragmentArtifacts) {
         return CompositeFragmentArtifacts(this.children + other.children)
     }
-
-    if (this === FragmentArtifacts.None) return other
-    if (other === FragmentArtifacts.None) return this
 
     if (this is CompositeFragmentArtifacts) {
         return CompositeFragmentArtifacts(this.children + other)
@@ -43,7 +59,8 @@ operator fun <T : KotlinGradleFragment> FragmentArtifacts<T>.plus(other: Fragmen
 
 internal class CompositeFragmentArtifacts<in T : KotlinGradleFragment>(val children: List<FragmentArtifacts<T>>) :
     FragmentArtifacts<T> {
-    override fun ConfigurationPublications.addArtifacts(fragment: T) {
-        children.forEach { child -> artifacts(child, fragment) }
+
+    override fun addArtifacts(outgoing: ConfigurationPublications, fragment: T) {
+        children.forEach { child -> child.addArtifacts(outgoing, fragment) }
     }
 }

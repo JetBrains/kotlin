@@ -61,14 +61,14 @@ class KotlinNativeVariantInstantiator<T : KotlinNativeVariantInternal>(
             fragmentName = name,
             dependencyConfigurations = dependencies,
             compileDependencyConfiguration = config.compileDependencies.provider.getConfiguration(context).also { configuration ->
-                config.compileDependencies.relations.run { context.setupExtendsFromRelations(configuration) }
+                config.compileDependencies.relations.setExtendsFrom(configuration, context)
             },
             apiElementsConfiguration = config.apiElements.provider.getConfiguration(context).also { configuration ->
-                config.apiElements.relations.run { context.setupExtendsFromRelations(configuration) }
+                config.apiElements.relations.setExtendsFrom(configuration, context)
             },
             hostSpecificMetadataElementsConfiguration =
             config.hostSpecificMetadataElements.provider.getConfiguration(context).also { configuration ->
-                config.hostSpecificMetadataElements.relations.run { context.setupExtendsFromRelations(configuration) }
+                config.hostSpecificMetadataElements.relations.setExtendsFrom(configuration, context)
             }
         )
     }

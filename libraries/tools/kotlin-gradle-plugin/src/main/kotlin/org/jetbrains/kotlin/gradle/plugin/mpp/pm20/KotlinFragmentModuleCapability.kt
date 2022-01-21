@@ -9,7 +9,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.capabilities.Capability
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ComputedCapability
 
-val KotlinFragmentModuleCapability = FragmentCapabilities<KotlinGradleFragment> { fragment ->
+val KotlinFragmentModuleCapability = FragmentCapabilities<KotlinGradleFragment> {
     capability(fragment.containingModule.moduleCapability ?: return@FragmentCapabilities)
 }
 

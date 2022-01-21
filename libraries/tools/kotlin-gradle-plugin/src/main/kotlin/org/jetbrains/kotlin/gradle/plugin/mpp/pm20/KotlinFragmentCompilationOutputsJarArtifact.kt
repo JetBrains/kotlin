@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 /**
  * Registers a [Jar] task with the variant's compilation outputs and attaches this artifact to the given configuration.
  */
-val KotlinFragmentCompilationOutputsJarArtifact = FragmentArtifacts<KotlinGradleVariant> { fragment ->
-    artifact(fragment.project.locateOrRegisterTask<Jar>(fragment.disambiguateName("jar")) {
+val KotlinFragmentCompilationOutputsJarArtifact = FragmentArtifacts<KotlinGradleVariant> {
+    artifact(project.locateOrRegisterTask<Jar>(fragment.disambiguateName("jar")) {
         it.from(fragment.compilationOutputs.allOutputs)
         it.archiveClassifier.set(dashSeparatedName(fragment.name, fragment.containingModule.moduleClassifier))
     })

@@ -37,7 +37,7 @@ internal class KotlinGradleFragmentConfigurationContextImpl(
 
 fun <T : KotlinGradleFragment> KotlinGradleFragmentConfigurationDefinition<T>.withConfigurationProvider(
     provider: KotlinGradleFragmentConfigurationContext.() -> Configuration
-) = copy(provider = provider)
+) = copy(provider = ConfigurationProvider(provider))
 
 operator fun <T : KotlinGradleFragment> KotlinGradleFragmentConfigurationDefinition<T>.plus(other: FragmentAttributes<T>):
         KotlinGradleFragmentConfigurationDefinition<T> = copy(attributes = attributes + other)

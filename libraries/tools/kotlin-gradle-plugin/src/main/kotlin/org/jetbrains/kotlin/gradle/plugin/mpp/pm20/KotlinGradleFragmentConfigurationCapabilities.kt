@@ -3,51 +3,79 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("FunctionName")
+
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
+import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ConfigurationPublications
 import org.gradle.api.capabilities.Capability
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragmentConfigurationCapabilities.CapabilitiesContainer
 
 /* Internal abbreviation */
 internal typealias FragmentCapabilities<T> = KotlinGradleFragmentConfigurationCapabilities<T>
 
-fun interface KotlinGradleFragmentConfigurationCapabilities<in T : KotlinGradleFragment> {
-    interface Context {
+interface KotlinGradleFragmentConfigurationCapabilities<in T : KotlinGradleFragment> {
+    interface CapabilitiesContainer {
         fun capability(notation: Any)
         val capabilities: List<Capability>
     }
 
-    class ContextImpl internal constructor(
-        private val configuration: Configuration
-    ) : Context {
-        override fun capability(notation: Any) = configuration.outgoing.capability(notation)
-        override val capabilities: List<Capability> get() = configuration.outgoing.capabilities.orEmpty().toList()
-    }
+    fun setCapabilities(container: CapabilitiesContainer, fragment: T)
 
-    fun Context.setCapabilities(fragment: T)
-
-    companion object {
-        val None = FragmentCapabilities<KotlinGradleFragment> {}
+    object None : KotlinGradleFragmentConfigurationCapabilities<KotlinGradleFragment> {
+        override fun setCapabilities(container: CapabilitiesContainer, fragment: KotlinGradleFragment) = Unit
     }
 }
 
-fun <T : KotlinGradleFragment> KotlinGradleFragmentConfigurationCapabilities<T>.onlyIfMadePublic(): KotlinGradleFragmentConfigurationCapabilities<T> {
-    return KotlinGradleFragmentConfigurationCapabilities { fragment ->
-        fragment.containingModule.ifMadePublic { capabilities(this@onlyIfMadePublic, fragment) }
+fun <T : KotlinGradleFragment> KotlinGradleFragmentConfigurationCapabilities<T>.setCapabilities(
+    publications: ConfigurationPublications, fragment: T
+) = setCapabilities(CapabilitiesContainer(publications), fragment)
+
+fun CapabilitiesContainer(configuration: ConfigurationPublications): CapabilitiesContainer =
+    CapabilitiesContainerImpl(configuration)
+
+fun CapabilitiesContainer(configuration: Configuration): CapabilitiesContainer =
+    CapabilitiesContainerImpl(configuration.outgoing)
+
+private class CapabilitiesContainerImpl(
+    private val publications: ConfigurationPublications
+) : CapabilitiesContainer {
+    override fun capability(notation: Any) = publications.capability(notation)
+    override val capabilities: List<Capability> get() = publications.capabilities.orEmpty().toList()
+}
+
+class KotlinGradleFragmentConfigurationCapabilitiesContext<T : KotlinGradleFragment> internal constructor(
+    internal val container: CapabilitiesContainer, val fragment: T
+) : CapabilitiesContainer by container {
+    val project: Project get() = fragment.project
+}
+
+fun <T : KotlinGradleFragment> FragmentCapabilities(
+    setCapabilities: KotlinGradleFragmentConfigurationCapabilitiesContext<T>.() -> Unit
+): KotlinGradleFragmentConfigurationCapabilities<T> = object : KotlinGradleFragmentConfigurationCapabilities<T> {
+    override fun setCapabilities(container: CapabilitiesContainer, fragment: T) {
+        val context = KotlinGradleFragmentConfigurationCapabilitiesContext(container, fragment)
+        context.setCapabilities()
     }
 }
 
-fun <T : KotlinGradleFragment> KotlinGradleFragmentConfigurationCapabilities.Context.capabilities(
-    capabilities: KotlinGradleFragmentConfigurationCapabilities<T>, fragment: T
-) = with(capabilities) { setCapabilities(fragment) }
+fun <T : KotlinGradleFragment> KotlinGradleFragmentConfigurationCapabilities<T>.onlyIfMadePublic():
+        KotlinGradleFragmentConfigurationCapabilities<T> {
+    val decorated = this
+    return FragmentCapabilities {
+        fragment.containingModule.ifMadePublic { decorated.setCapabilities(this, fragment) }
+    }
+}
 
 operator fun <T : KotlinGradleFragment> FragmentCapabilities<T>.plus(other: FragmentCapabilities<T>): FragmentCapabilities<T> {
+    if (this === KotlinGradleFragmentConfigurationCapabilities.None) return other
+    if (other === KotlinGradleFragmentConfigurationCapabilities.None) return this
+
     if (this is CompositeFragmentCapabilities && other is CompositeFragmentCapabilities) {
         return CompositeFragmentCapabilities(this.children + other.children)
     }
-
-    if (this === FragmentCapabilities.None) return other
-    if (other === FragmentCapabilities.None) return this
 
     if (this is CompositeFragmentCapabilities) {
         return CompositeFragmentCapabilities(this.children + other)
@@ -62,7 +90,7 @@ operator fun <T : KotlinGradleFragment> FragmentCapabilities<T>.plus(other: Frag
 
 internal class CompositeFragmentCapabilities<in T : KotlinGradleFragment>(val children: List<FragmentCapabilities<T>>) :
     FragmentCapabilities<T> {
-    override fun KotlinGradleFragmentConfigurationCapabilities.Context.setCapabilities(fragment: T) {
-        children.forEach { capability -> capabilities(capability, fragment) }
+    override fun setCapabilities(container: CapabilitiesContainer, fragment: T) {
+        children.forEach { child -> child.setCapabilities(container, fragment) }
     }
 }

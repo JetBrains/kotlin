@@ -54,23 +54,25 @@ class KotlinJvmVariantInstantiator internal constructor(
 
     override fun create(name: String): KotlinJvmVariant {
         val names = FragmentNameDisambiguation(module, name)
-        val context = KotlinGradleFragmentConfigurationContextImpl(module, config.dependenciesConfigurationFactory.create(module, names), names)
+        val context = KotlinGradleFragmentConfigurationContextImpl(
+            module, config.dependenciesConfigurationFactory.create(module, names), names
+        )
 
         return KotlinJvmVariant(
             containingModule = module,
             fragmentName = name,
             dependencyConfigurations = context.dependencies,
             compileDependenciesConfiguration = config.compileDependencies.provider.getConfiguration(context).also { configuration ->
-                config.compileDependencies.relations.run { context.setupExtendsFromRelations(configuration) }
+                config.compileDependencies.relations.setExtendsFrom(configuration, context)
             },
             runtimeDependenciesConfiguration = config.runtimeDependencies.provider.getConfiguration(context).also { configuration ->
-                config.runtimeDependencies.relations.run { context.setupExtendsFromRelations(configuration) }
+                config.runtimeElements.relations.setExtendsFrom(configuration, context)
             },
             apiElementsConfiguration = config.apiElements.provider.getConfiguration(context).also { configuration ->
-                config.apiElements.relations.run { context.setupExtendsFromRelations(configuration) }
+                config.apiElements.relations.setExtendsFrom(configuration, context)
             },
             runtimeElementsConfiguration = config.runtimeElements.provider.getConfiguration(context).also { configuration ->
-                config.runtimeElements.relations.run { context.setupExtendsFromRelations(configuration) }
+                config.runtimeElements.relations.setExtendsFrom(configuration, context)
             }
         )
     }

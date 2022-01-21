@@ -10,70 +10,70 @@ import org.gradle.api.attributes.Category
 
 
 val DefaultKotlinCompileDependenciesDefinition = KotlinGradleFragmentConfigurationDefinition(
-    provider = {
+    provider = ConfigurationProvider {
         project.configurations.maybeCreate(disambiguateName("compileDependencies")).apply {
             isCanBeConsumed = false
             isCanBeResolved = true
         }
     },
-    relations = { configuration ->
-        configuration.extendsFrom(dependencies.transitiveApiConfiguration)
-        configuration.extendsFrom(dependencies.transitiveImplementationConfiguration)
+    relations = FragmentConfigurationRelation {
+        extendsFrom(dependencies.transitiveApiConfiguration)
+        extendsFrom(dependencies.transitiveImplementationConfiguration)
     },
     attributes = KotlinFragmentPlatformAttributes + KotlinFragmentConsumerApiUsageAttribute
 )
 
 val DefaultKotlinRuntimeDependenciesDefinition = ConfigurationDefinition(
-    provider = {
+    provider = ConfigurationProvider {
         project.configurations.maybeCreate(disambiguateName("runtimeDependencies")).apply {
             isCanBeConsumed = false
             isCanBeResolved = true
         }
     },
     attributes = KotlinFragmentPlatformAttributes + KotlinFragmentConsumerRuntimeUsageAttribute,
-    relations = { configuration ->
-        configuration.extendsFrom(dependencies.transitiveApiConfiguration)
-        configuration.extendsFrom(dependencies.transitiveImplementationConfiguration)
+    relations = FragmentConfigurationRelation {
+        extendsFrom(dependencies.transitiveApiConfiguration)
+        extendsFrom(dependencies.transitiveImplementationConfiguration)
     }
 )
 
 val DefaultKotlinApiElementsDefinition = ConfigurationDefinition(
-    provider = {
-        module.project.configurations.maybeCreate(disambiguateName("apiElements")).apply {
+    provider = ConfigurationProvider {
+        project.configurations.maybeCreate(disambiguateName("apiElements")).apply {
             isCanBeResolved = false
             isCanBeConsumed = false
             module.ifMadePublic { isCanBeConsumed = true }
         }
     },
-    relations = { configuration -> configuration.extendsFrom(dependencies.transitiveApiConfiguration) },
+    relations = FragmentConfigurationRelation { extendsFrom(dependencies.transitiveApiConfiguration) },
     capabilities = KotlinFragmentModuleCapability,
-    attributes = KotlinFragmentPlatformAttributes + KotlinFragmentProducerApiUsageAttribute + { fragment ->
+    attributes = KotlinFragmentPlatformAttributes + KotlinFragmentProducerApiUsageAttribute + FragmentAttributes {
         attribute(Category.CATEGORY_ATTRIBUTE, fragment.project.objects.named(Category::class.java, Category.LIBRARY))
         attribute(Bundling.BUNDLING_ATTRIBUTE, fragment.project.objects.named(Bundling::class.java, Bundling.EXTERNAL))
     },
 )
 
 val DefaultKotlinRuntimeElementsDefinition = ConfigurationDefinition(
-    provider = {
-        module.project.configurations.maybeCreate(disambiguateName("runtimeElements")).apply {
+    provider = ConfigurationProvider {
+        project.configurations.maybeCreate(disambiguateName("runtimeElements")).apply {
             isCanBeResolved = false
             isCanBeConsumed = false
             module.ifMadePublic { isCanBeConsumed = true }
         }
     },
-    relations = { configuration ->
-        configuration.extendsFrom(dependencies.transitiveApiConfiguration)
-        configuration.extendsFrom(dependencies.transitiveImplementationConfiguration)
+    relations = FragmentConfigurationRelation {
+        extendsFrom(dependencies.transitiveApiConfiguration)
+        extendsFrom(dependencies.transitiveImplementationConfiguration)
     },
-    attributes = KotlinFragmentPlatformAttributes + KotlinFragmentProducerRuntimeUsageAttribute + { fragment ->
-        attributes.attribute(Category.CATEGORY_ATTRIBUTE, fragment.project.objects.named(Category::class.java, Category.LIBRARY))
-        attributes.attribute(Bundling.BUNDLING_ATTRIBUTE, fragment.project.objects.named(Bundling::class.java, Bundling.EXTERNAL))
+    attributes = KotlinFragmentPlatformAttributes + KotlinFragmentProducerRuntimeUsageAttribute + FragmentAttributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, fragment.project.objects.named(Category::class.java, Category.LIBRARY))
+        attribute(Bundling.BUNDLING_ATTRIBUTE, fragment.project.objects.named(Bundling::class.java, Bundling.EXTERNAL))
     },
     capabilities = KotlinFragmentModuleCapability.onlyIfMadePublic()
 )
 
 val DefaultKotlinHostSpecificMetadataElementsDefinition = ConfigurationDefinition(
-    provider = {
+    provider = ConfigurationProvider {
         project.configurations.maybeCreate(disambiguateName("hostSpecificMetadataElements")).apply {
             isCanBeResolved = false
             isCanBeConsumed = false
@@ -82,4 +82,3 @@ val DefaultKotlinHostSpecificMetadataElementsDefinition = ConfigurationDefinitio
     attributes = KotlinFragmentPlatformAttributes + KotlinFragmentKonanTargetAttribute + KotlinFragmentMetadataUsageAttribute,
     artifacts = KotlinFragmentHostSpecificMetadataArtifact
 )
-

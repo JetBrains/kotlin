@@ -26,14 +26,14 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
         )
     }
 
-    private val testFragment by lazy {
+    private val dummyFragment by lazy {
         KotlinCommonFragmentFactory(kotlin.main).create("testFragment")
     }
 
     @Test
     fun `test withProvider`() {
         val testDefinition = ConfigurationDefinition<KotlinGradleFragment>(
-            provider = { project.configurations.create("a") }
+            provider = ConfigurationProvider { project.configurations.create("a") }
         ).withConfigurationProvider { project.configurations.create("b") }
 
         assertEquals(
@@ -60,14 +60,14 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
         val testConfiguration = project.configurations.create("dummy")
 
         val fragmentAttributes1 = FragmentAttributes<KotlinGradleFragment> {
-            assertSame(testConfiguration.attributes, this)
+            assertSame(testConfiguration.attributes, attributes)
             assertNull(attributes.getAttribute(testAttribute1))
             assertNull(attributes.getAttribute(testAttribute2))
             attribute(testAttribute1, "value1")
         }
 
         val fragmentAttributes2 = FragmentAttributes<KotlinGradleFragment> {
-            assertSame(testConfiguration.attributes, this)
+            assertSame(testConfiguration.attributes, attributes)
             assertEquals(attributes.getAttribute(testAttribute1), "value1")
             assertNull(attributes.getAttribute(testAttribute2))
             attribute(testAttribute2, "value2")
@@ -81,7 +81,7 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
             listOf(fragmentAttributes1, fragmentAttributes2), composite.children
         )
 
-        testConfiguration.attributes.attributes(composite, testFragment)
+        composite.setAttributes(testConfiguration.attributes, dummyFragment)
 
         assertEquals(
             "value1", testConfiguration.attributes.getAttribute(testAttribute1),
@@ -97,7 +97,7 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
     @Test
     fun `test definition + attributes`() {
         val definition = ConfigurationDefinition<KotlinGradleFragment>(
-            provider = { project.configurations.create("a") }
+            provider = ConfigurationProvider { project.configurations.create("a") }
         )
 
         val attributes1 = FragmentAttributes<KotlinGradleFragment> { }
@@ -131,7 +131,7 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
         )
 
         project.configurations.create("dummy").apply {
-            outgoing.artifacts(composite, testFragment)
+            composite.addArtifacts(outgoing, dummyFragment)
             assertEquals(
                 project.files("artifact1.jar", "artifact2-a.jar", "artifact2-b.jar").toSet(),
                 outgoing.artifacts.files.toSet()
@@ -142,7 +142,7 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
     @Test
     fun `test definition + artifacts`() {
         val definition = ConfigurationDefinition<KotlinGradleFragment>(
-            provider = { throw NotImplementedError() }
+            provider = ConfigurationProvider { throw NotImplementedError() }
         )
 
         val artifacts1 = FragmentArtifacts<KotlinGradleFragment> {}
@@ -174,7 +174,7 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
             listOf(capabilities1, capabilities2), composite.children
         )
 
-        val dummyContext = object : KotlinGradleFragmentConfigurationCapabilities.Context {
+        val testCapabilitiesContainer = object : KotlinGradleFragmentConfigurationCapabilities.CapabilitiesContainer {
             val setCapabilities = mutableListOf<Any>()
             override fun capability(notation: Any) {
                 setCapabilities.add(notation)
@@ -184,9 +184,10 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
 
         }
 
-        dummyContext.capabilities(composite, testFragment)
+        composite.setCapabilities(testCapabilitiesContainer, dummyFragment)
+
         assertEquals(
-            listOf<Any>("capability1", "capability2"), dummyContext.setCapabilities,
+            listOf<Any>("capability1", "capability2"), testCapabilitiesContainer.setCapabilities,
             "Expected 'dummyContext' to receive all capabilities"
         )
     }
@@ -194,7 +195,7 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
     @Test
     fun `test definition + capability`() {
         val definition = ConfigurationDefinition<KotlinGradleFragment>(
-            provider = { throw NotImplementedError() }
+            provider = ConfigurationProvider { throw NotImplementedError() }
         )
 
         val capabilities1 = FragmentCapabilities<KotlinGradleFragment> {}
