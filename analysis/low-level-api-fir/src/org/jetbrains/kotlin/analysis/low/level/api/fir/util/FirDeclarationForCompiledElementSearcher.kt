@@ -21,8 +21,19 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
  * Allows to search for FIR declarations by compiled [KtDeclaration]s.
  */
 internal class FirDeclarationForCompiledElementSearcher(private val symbolProvider: FirSymbolProvider) {
+    fun findNonLocalDeclaration(ktDeclaration: KtDeclaration): FirDeclaration {
+        return when (ktDeclaration) {
+            is KtEnumEntry -> findNonLocalEnumEntry(ktDeclaration)
+            is KtClassOrObject -> findNonLocalClass(ktDeclaration)
+            is KtConstructor<*> -> findConstructorOfNonLocalClass(ktDeclaration)
+            is KtNamedFunction -> findNonLocalFunction(ktDeclaration)
+            is KtProperty -> findNonLocalProperty(ktDeclaration)
 
-    fun findNonLocalEnumEntry(declaration: KtEnumEntry): FirEnumEntry {
+            else -> error("Unsupported compiled declaration of type ${ktDeclaration::class}: ${ktDeclaration.getElementTextInContext()}")
+        }
+    }
+
+    private fun findNonLocalEnumEntry(declaration: KtEnumEntry): FirEnumEntry {
         require(!declaration.isLocal)
         val classId = declaration.containingClassOrObject?.getClassId()
             ?: error("Non-local class should have classId. The class is ${declaration.getElementTextInContext()}")
@@ -35,7 +46,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         } as FirEnumEntry
     }
 
-    fun findNonLocalClass(declaration: KtClassOrObject): FirClassLikeDeclaration {
+    private fun findNonLocalClass(declaration: KtClassOrObject): FirClassLikeDeclaration {
         require(!declaration.isLocal)
         val classId = declaration.getClassId()
             ?: error("Non-local class should have classId. The class is ${declaration.getElementTextInContext()}")
@@ -46,7 +57,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         return classCandidate.fir
     }
 
-    fun findConstructorOfNonLocalClass(declaration: KtConstructor<*>): FirConstructor {
+    private fun findConstructorOfNonLocalClass(declaration: KtConstructor<*>): FirConstructor {
         val containingClass = declaration.containingClassOrObject
             ?: error("Constructor must have outer class: ${declaration.getElementTextInContext()}")
 
@@ -62,7 +73,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         return constructorCandidate.fir
     }
 
-    fun findNonLocalFunction(declaration: KtNamedFunction): FirFunction {
+    private fun findNonLocalFunction(declaration: KtNamedFunction): FirFunction {
         require(!declaration.isLocal)
 
         val functionCandidate =
@@ -73,7 +84,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         return functionCandidate.fir
     }
 
-    fun findNonLocalProperty(declaration: KtProperty): FirProperty {
+    private fun findNonLocalProperty(declaration: KtProperty): FirProperty {
         require(!declaration.isLocal)
 
         val propertyCandidate =
