@@ -772,8 +772,8 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
         return startOffset to endOffset
     }
 
-    private fun sourceViewFor(declaration: IrDeclaration): CharSequence =
-        declaration.fileParent.getKtFile()!!.viewProvider.contents
+    private fun sourceViewFor(declaration: IrDeclaration): CharSequence? =
+        declaration.fileParent.getKtFile()?.viewProvider?.contents
 
     private val throwTypeCastException: IrSimpleFunctionSymbol =
         backendContext.ir.symbols.throwTypeCastException
