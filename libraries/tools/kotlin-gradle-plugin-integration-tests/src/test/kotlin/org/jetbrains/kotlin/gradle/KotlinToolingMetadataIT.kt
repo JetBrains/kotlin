@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.tooling.parseJsonOrThrow
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class KotlinToolingMetadataIT : BaseGradleIT() {
+class KotlinToolingMetadataMppIT : BaseGradleIT() {
     override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
 
     private val defaultKotlinToolingMetadataJsonPath = "build/kotlinToolingMetadata/kotlin-tooling-metadata.json"
