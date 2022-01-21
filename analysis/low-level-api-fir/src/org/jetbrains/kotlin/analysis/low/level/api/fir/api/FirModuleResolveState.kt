@@ -53,37 +53,7 @@ abstract class FirModuleResolveState {
 
     internal abstract fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic>
 
-    abstract fun findSourceFirSymbol(
-        ktDeclaration: KtDeclaration,
-    ): FirBasedSymbol<*>
-
-    abstract fun findSourceFirSymbol(
-        ktDeclaration: KtLambdaExpression,
-    ): FirBasedSymbol<*>
-
-    /**
-     * Looks for compiled non-local [ktDeclaration] declaration by querying its classId/callableId from the SymbolProvider.
-     *
-     * Works only if [ktDeclaration] is compiled (i.e. comes from .class file).
-     */
-    abstract fun findSourceFirCompiledSymbol(
-        ktDeclaration: KtDeclaration
-    ): FirBasedSymbol<*>
-
-
-    open fun resolveToFirSymbol(
-        ktDeclaration: KtDeclaration,
-        resolveState: FirModuleResolveState,
-        phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
-    ): FirBasedSymbol<*> {
-        return when (val module = ktDeclaration.getKtModule()) {
-            is KtSourceModule -> resolveState.findSourceFirSymbol(ktDeclaration).also { resolveState.resolveFirToPhase(it.fir, phase) }
-            is KtLibraryModule -> resolveState.findSourceFirCompiledSymbol(ktDeclaration)
-            else -> error("unsupported module $module")
-        }
-    }
+    abstract fun resolveToFirSymbol(ktDeclaration: KtDeclaration, phase: FirResolvePhase): FirBasedSymbol<*>
 
     internal abstract fun resolveFirToPhase(declaration: FirDeclaration, toPhase: FirResolvePhase)
-
-
 }

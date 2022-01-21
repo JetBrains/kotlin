@@ -1,13 +1,12 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.low.level.api.fir
+package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.DiagnosticsCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirElementBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCom
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInContext
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
+import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
@@ -38,13 +38,13 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.psi.*
 
-internal class FirModuleResolveStateImpl(
+internal class FirSourceModuleResolveState(
     override val project: Project,
-    override val module: KtModule,
+    override val module: KtSourceModule,
     private val sessionProvider: FirIdeSessionProvider,
     val firFileBuilder: FirFileBuilder,
     val firLazyDeclarationResolver: FirLazyDeclarationResolver,
-) : FirModuleResolveState() {
+) : FirPhysicalModuleResolveState() {
     override val rootModuleSession: FirIdeSourcesSession get() = sessionProvider.rootModuleSession
 
     /**
@@ -82,30 +82,28 @@ internal class FirModuleResolveStateImpl(
     override fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> =
         diagnosticsCollector.collectDiagnosticsForFile(ktFile, filter)
 
-    override fun findSourceFirSymbol(ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
+    override fun resolveToFirSymbol(
+        ktDeclaration: KtDeclaration,
+        phase: FirResolvePhase
+    ): FirBasedSymbol<*> {
+        return when (val module = ktDeclaration.getKtModule()) {
+            is KtSourceModule -> findSourceFirSymbol(ktDeclaration).also { resolveFirToPhase(it.fir, phase) }
+            is KtLibraryModule -> findFirCompiledSymbol(ktDeclaration)
+            else -> error("unsupported module $module")
+        }
+    }
+
+    private fun findSourceFirSymbol(ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
         return findSourceFirDeclarationByExpression(ktDeclaration.originalDeclaration ?: ktDeclaration).symbol
     }
 
-    override fun findSourceFirSymbol(ktDeclaration: KtLambdaExpression): FirBasedSymbol<*> {
-        return findSourceFirDeclarationByExpression(ktDeclaration).symbol
-    }
-
-    override fun findSourceFirCompiledSymbol(ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
+    private fun findFirCompiledSymbol(ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
         require(ktDeclaration.containingKtFile.isCompiled) {
             "This method will only work on compiled declarations, but this declaration is not compiled: ${ktDeclaration.getElementTextInContext()}"
         }
 
         val searcher = FirDeclarationForCompiledElementSearcher(rootModuleSession.symbolProvider)
-
-        val firDeclaration = when (ktDeclaration) {
-            is KtEnumEntry -> searcher.findNonLocalEnumEntry(ktDeclaration)
-            is KtClassOrObject -> searcher.findNonLocalClass(ktDeclaration)
-            is KtConstructor<*> -> searcher.findConstructorOfNonLocalClass(ktDeclaration)
-            is KtNamedFunction -> searcher.findNonLocalFunction(ktDeclaration)
-            is KtProperty -> searcher.findNonLocalProperty(ktDeclaration)
-
-            else -> error("Unsupported compiled declaration of type ${ktDeclaration::class}: ${ktDeclaration.getElementTextInContext()}")
-        }
+        val firDeclaration = searcher.findNonLocalDeclaration(ktDeclaration)
         return firDeclaration.symbol
     }
 

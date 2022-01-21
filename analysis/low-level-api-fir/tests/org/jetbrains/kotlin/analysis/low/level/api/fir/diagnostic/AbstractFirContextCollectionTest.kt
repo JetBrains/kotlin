@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
-import org.jetbrains.kotlin.analysis.low.level.api.fir.FirModuleResolveStateImpl
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.FirSourceModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getDiagnostics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
@@ -41,7 +41,7 @@ abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileT
                 register(BeforeElementDiagnosticCollectionHandler::class, handler)
             }
         ) { resolveState ->
-            check(resolveState is FirModuleResolveStateImpl)
+            check(resolveState is FirSourceModuleResolveState)
 
             val fileStructure = resolveState.fileStructureCache.getFileStructure(ktFile, resolveState.rootModuleSession.cache)
             val allStructureElements = fileStructure.getAllStructureElements()

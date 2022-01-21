@@ -43,7 +43,7 @@ fun KtDeclaration.resolveToFirSymbol(
     resolveState: FirModuleResolveState,
     phase: FirResolvePhase = FirResolvePhase.RAW_FIR,
 ): FirBasedSymbol<*> {
-    return resolveState.resolveToFirSymbol(this, resolveState, phase)
+    return resolveState.resolveToFirSymbol(this, phase)
 }
 
 /**

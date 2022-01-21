@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.impl.barebone.parentOfType
 import org.jetbrains.kotlin.analysis.api.impl.barebone.parentsOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.DeclarationCopyBuilder.withBodyFrom
 import org.jetbrains.kotlin.analysis.low.level.api.fir.FirModuleResolveStateDepended
-import org.jetbrains.kotlin.analysis.low.level.api.fir.FirModuleResolveStateImpl
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.FirSourceModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FileTowerProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerDataContextAllElementsCollector
@@ -67,7 +67,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         place: T,
         elementToResolve: T,
     ): FirElement {
-        require(state is FirModuleResolveStateImpl)
+        require(state is FirSourceModuleResolveState)
         require(place.isPhysical)
 
         val declaration = runBodyResolveOnAir(
@@ -95,7 +95,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         state: FirModuleResolveState,
         place: KtElement,
     ): FirTowerContextProvider {
-        require(state is FirModuleResolveStateImpl)
+        require(state is FirSourceModuleResolveState)
 
         return if (place is KtFile) {
             FileTowerProvider(place, onAirGetTowerContextForFile(state, place))
@@ -116,7 +116,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
     }
 
     private fun onAirGetTowerContextForFile(
-        state: FirModuleResolveStateImpl,
+        state: FirSourceModuleResolveState,
         file: KtFile,
     ): FirTowerDataContext {
         require(file.isPhysical)
@@ -144,7 +144,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         originalKtFile: KtFile,
         elementToAnalyze: KtElement
     ): FirModuleResolveState {
-        require(originalState is FirModuleResolveStateImpl)
+        require(originalState is FirSourceModuleResolveState)
         require(elementToAnalyze !is KtFile) { "KtFile for dependency element not supported" }
         require(!elementToAnalyze.isPhysical) { "Depended state should be build only for non-physical elements" }
 
@@ -178,7 +178,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
 
     private fun tryResolveAsFileAnnotation(
         annotationEntry: KtAnnotationEntry,
-        state: FirModuleResolveStateImpl,
+        state: FirSourceModuleResolveState,
         replacement: RawFirReplacement,
         firFile: FirFile,
         collector: FirTowerDataContextCollector? = null,
@@ -202,7 +202,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
     }
 
     private fun runBodyResolveOnAir(
-        state: FirModuleResolveStateImpl,
+        state: FirSourceModuleResolveState,
         replacement: RawFirReplacement,
         onAirCreatedDeclaration: Boolean,
         collector: FirTowerDataContextCollector? = null,

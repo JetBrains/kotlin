@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSessionProviderStorage
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.FirSourceModuleResolveState
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
@@ -26,10 +27,10 @@ internal class FirIdeResolveStateService(project: Project) {
         project.createProjectWideOutOfBlockModificationTracker(),
         ProjectRootModificationTracker.getInstance(project),
     ) {
-        ConcurrentHashMap<KtModule, FirModuleResolveStateImpl>()
+        ConcurrentHashMap<KtModule, FirSourceModuleResolveState>()
     }
 
-    fun getResolveState(module: KtModule): FirModuleResolveStateImpl =
+    fun getResolveState(module: KtModule): FirSourceModuleResolveState =
         stateCache.computeIfAbsent(module) { createResolveStateFor(module, sessionProviderStorage) }
 
     companion object {
@@ -40,13 +41,13 @@ internal class FirIdeResolveStateService(project: Project) {
             module: KtModule,
             sessionProviderStorage: FirIdeSessionProviderStorage,
             configureSession: (FirIdeSession.() -> Unit)? = null,
-        ): FirModuleResolveStateImpl {
+        ): FirSourceModuleResolveState {
             if (module !is KtSourceModule) {
                 error("Creating FirModuleResolveState is not yet supported for $module")
             }
             val sessionProvider = sessionProviderStorage.getSessionProvider(module, configureSession)
             val firFileBuilder = sessionProvider.rootModuleSession.firFileBuilder
-            return FirModuleResolveStateImpl(
+            return FirSourceModuleResolveState(
                 sessionProviderStorage.project,
                 module,
                 sessionProvider,

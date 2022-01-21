@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.FirSourceModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.render
@@ -32,7 +33,7 @@ abstract class AbstractFirOnAirResolveTest : AbstractLowLevelApiSingleFileTest()
         check(place::class == onAir::class)
 
         resolveWithClearCaches(ktFile) { resolveState ->
-            check(resolveState is FirModuleResolveStateImpl)
+            check(resolveState is FirSourceModuleResolveState)
             val firElement = LowLevelFirApiFacadeForResolveOnAir.onAirResolveElement(resolveState, place, onAir)
             val rendered = firElement.render(FirRenderer.RenderMode.WithResolvePhases)
             testServices.assertions.assertEqualsToTestDataFileSibling(rendered)

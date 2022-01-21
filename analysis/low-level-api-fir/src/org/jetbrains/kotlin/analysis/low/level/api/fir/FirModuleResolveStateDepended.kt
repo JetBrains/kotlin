@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.FirSourceModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingKtFileIfAny
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalKtFile
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -27,7 +28,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 
 internal class FirModuleResolveStateDepended(
-    val originalState: FirModuleResolveStateImpl,
+    val originalState: FirSourceModuleResolveState,
     val towerProviderBuiltUponElement: FirTowerContextProvider,
     private val ktToFirMapping: KtToFirMapping?,
 ) : FirModuleResolveState() {
@@ -78,15 +79,7 @@ internal class FirModuleResolveStateDepended(
     override fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> =
         TODO("Diagnostics are not implemented for depended state")
 
-    override fun findSourceFirSymbol(ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
-        return originalState.findSourceFirSymbol(ktDeclaration)
-    }
-
-    override fun findSourceFirSymbol(ktDeclaration: KtLambdaExpression): FirBasedSymbol<*> {
-        return originalState.findSourceFirSymbol(ktDeclaration)
-    }
-
-    override fun findSourceFirCompiledSymbol(ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
-        return originalState.findSourceFirCompiledSymbol(ktDeclaration)
+    override fun resolveToFirSymbol(ktDeclaration: KtDeclaration, phase: FirResolvePhase): FirBasedSymbol<*> {
+        return originalState.resolveToFirSymbol(ktDeclaration, phase)
     }
 }
