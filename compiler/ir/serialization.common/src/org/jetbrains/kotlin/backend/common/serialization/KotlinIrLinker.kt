@@ -155,9 +155,9 @@ abstract class KotlinIrLinker(
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
         if (!symbol.isPublicApi) {
             if (symbol.hasDescriptor) {
-                val descriptor = symbol.descriptor
+                // val descriptor = symbol.descriptor
                 if (!platformSpecificSymbol(symbol)) {
-                    if (descriptor.module !== currentModule) return null
+                    // if (descriptor.module !== currentModule) return null
                 }
             }
         }

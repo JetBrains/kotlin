@@ -198,7 +198,7 @@ open class SymbolTable(
         val idSigToSymbol = hashMapOf<IdSignature, S>()
 
         override fun signature(descriptor: D): IdSignature? =
-            signaturer.composeSignature(descriptor)
+            null
 
         override fun get(d: D, sig: IdSignature?): S? =
             if (sig != null) {
