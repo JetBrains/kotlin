@@ -5,16 +5,18 @@
 
 package org.jetbrains.kotlin.commonizer.cli
 
+import org.jetbrains.kotlin.commonizer.CommonizerSettings
+
 sealed class CommonizerSettingOptionType<T : Any>(
     alias: OptionAlias,
     description: String,
-    val defaultValue: T
+    val commonizerSettingKey: CommonizerSettings.Key<T>
 ) : OptionType<T>(
     alias,
     description,
     mandatory = false,
 )
 
-internal val AdditionalCommonizerSettings: List<CommonizerSettingOptionType<*>> = listOf(
-    PlatformIntegers,
+internal val ADDITIONAL_COMMONIZER_SETTINGS: List<CommonizerSettingOptionType<*>> = listOf(
+    OptimisticNumberCommonization,
 )

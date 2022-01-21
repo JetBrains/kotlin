@@ -74,7 +74,14 @@ internal fun CirNodeWithMembers<*, *>.buildClass(
     context: TargetBuildingContext, treeClass: CirTreeClass, parent: CirNode<*, *>? = null
 ) {
     val classNode = classes.getOrPut(treeClass.clazz.name) {
-        buildClassNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent), treeClass.id)
+        buildClassNode(
+            context.storageManager,
+            context.targets,
+            context.classifiers,
+            ParentNode(parent),
+            treeClass.id,
+            context.commonizerSettings,
+        )
     }
     classNode.targetDeclarations[context.targetIndex] = treeClass.clazz
     val contextWithClass = context.withMemberContextOf(treeClass.clazz)
@@ -90,7 +97,7 @@ internal fun CirNodeWithMembers<*, *>.buildFunction(
     val functionNode = functions.getOrPut(
         FunctionApproximationKey.create(function, SignatureBuildingContext(context.memberContext, function))
     ) {
-        buildFunctionNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent))
+        buildFunctionNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent), context.commonizerSettings)
     }
     /* Multiple type substitutions could in result in the same commonization result */
     functionNode.targetDeclarations.set(context.targetIndex, function)
@@ -102,7 +109,7 @@ internal fun CirNodeWithMembers<*, *>.buildProperty(
     val propertyNode = properties.getOrPut(
         PropertyApproximationKey.create(property, SignatureBuildingContext(context.memberContext, property))
     ) {
-        buildPropertyNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent))
+        buildPropertyNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent), context.commonizerSettings)
     }
     /* Multiple type substitutions could in result in the same commonization result */
     propertyNode.targetDeclarations.set(context.targetIndex, property)
@@ -114,7 +121,13 @@ internal fun CirClassNode.buildConstructor(
     val constructorNode = constructors.getOrPut(
         ConstructorApproximationKey.create(constructor, SignatureBuildingContext(context.memberContext, constructor))
     ) {
-        buildClassConstructorNode(context.storageManager, context.targets, context.classifiers, ParentNode(parent))
+        buildClassConstructorNode(
+            context.storageManager,
+            context.targets,
+            context.classifiers,
+            ParentNode(parent),
+            context.commonizerSettings,
+        )
     }
     /* Multiple type substitutions could in result in the same commonization result */
     constructorNode.targetDeclarations.set(context.targetIndex, constructor)

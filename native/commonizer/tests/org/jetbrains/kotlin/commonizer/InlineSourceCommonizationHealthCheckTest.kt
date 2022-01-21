@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.commonizer
 
-import org.jetbrains.kotlin.commonizer.cli.PlatformIntegers
 import kotlin.test.assertFails
 
 class InlineSourceCommonizationHealthCheckTest : AbstractInlineSourcesCommonizationTest() {
@@ -25,8 +24,8 @@ class InlineSourceCommonizationHealthCheckTest : AbstractInlineSourcesCommonizat
         assertFails("Defining a setting multiple times should be forbidden") {
             commonize {
                 outputTarget("(a, b)")
-                setting(PlatformIntegers, true)
-                setting(PlatformIntegers, false)
+                setting(OptimisticNumberCommonizationEnabled, true)
+                setting(OptimisticNumberCommonizationEnabled, false)
                 "a" withSource "class X"
                 "b" withSource "class X"
             }

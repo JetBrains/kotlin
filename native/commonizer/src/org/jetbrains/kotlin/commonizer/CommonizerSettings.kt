@@ -5,43 +5,40 @@
 
 package org.jetbrains.kotlin.commonizer
 
-import org.jetbrains.kotlin.commonizer.cli.CommonizerSettingOptionType
-import org.jetbrains.kotlin.commonizer.cli.Task
-
 /**
  * Optional configuration settings for commonization task
  */
 interface CommonizerSettings {
-    fun <T : Any> getSetting(setting: CommonizerSettingOptionType<T>): T
+
+    sealed class Key<T : Any> {
+        abstract val defaultValue: T
+    }
+
+    fun <T : Any> getSetting(key: Key<T>): T
+}
+
+object OptimisticNumberCommonizationEnabled : CommonizerSettings.Key<Boolean>() {
+    override val defaultValue: Boolean = true
 }
 
 internal object DefaultCommonizerSettings : CommonizerSettings {
-    override fun <T : Any> getSetting(setting: CommonizerSettingOptionType<T>): T {
-        return setting.defaultValue
-    }
-}
-
-internal class TaskBasedCommonizerSettings(
-    private val task: Task
-) : CommonizerSettings {
-    override fun <T : Any> getSetting(setting: CommonizerSettingOptionType<T>): T {
-        return task.getCommonizerSetting(setting)
+    override fun <T : Any> getSetting(key: CommonizerSettings.Key<T>): T {
+        return key.defaultValue
     }
 }
 
 internal class MapBasedCommonizerSettings(
     vararg settings: CommonizerSetting<*>
 ) : CommonizerSettings {
-    private val settings: Map<CommonizerSettingOptionType<*>, Any> = settings.associate { (k, v) -> k to v }
+    private val settings: Map<CommonizerSettings.Key<*>, Any> = settings.associate { (k, v) -> k to v }
 
-    override fun <T : Any> getSetting(setting: CommonizerSettingOptionType<T>): T {
+    override fun <T : Any> getSetting(key: CommonizerSettings.Key<T>): T {
         @Suppress("UNCHECKED_CAST")
-        return settings[setting] as? T
-            ?: DefaultCommonizerSettings.getSetting(setting)
+        return settings[key] as? T ?: key.defaultValue
     }
 }
 
 internal data class CommonizerSetting<T : Any>(
-    internal val setting: CommonizerSettingOptionType<T>,
+    internal val key: CommonizerSettings.Key<T>,
     internal val settingValue: T,
 )

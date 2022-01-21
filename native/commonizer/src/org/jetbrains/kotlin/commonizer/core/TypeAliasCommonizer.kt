@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.CommonizerSettings
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabled
 import org.jetbrains.kotlin.commonizer.allLeaves
 import org.jetbrains.kotlin.commonizer.cir.*
-import org.jetbrains.kotlin.commonizer.cli.PlatformIntegers
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
@@ -41,7 +41,7 @@ class TypeAliasCommonizer(
             underlyingType = underlyingType,
             expandedType = underlyingType.expandedType(),
             annotations = listOfNotNull(
-                createUnsafeNumberAnnotationIfNecessary(classifiers.classifierIndices.targets, values)
+                createUnsafeNumberAnnotationIfNecessary(classifiers.classifierIndices.targets, settings, values)
             )
         )
     }
@@ -49,8 +49,14 @@ class TypeAliasCommonizer(
 
 private fun createUnsafeNumberAnnotationIfNecessary(
     targets: List<CommonizerTarget>,
+    settings: CommonizerSettings,
     values: List<CirTypeAlias>,
 ): CirAnnotation? {
+    val isOptimisticCommonizationEnabled = settings.getSetting(OptimisticNumberCommonizationEnabled)
+
+    if (!isOptimisticCommonizationEnabled)
+        return null
+
     val expandedTypes = values.map { it.expandedType.classifierId }
 
     // All typealias have to be potentially substitutable (aka have to be some kind of number type)

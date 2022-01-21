@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.DependencyAwareInlineSourceTestFactory
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest.Parameters
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult.Commonized
-import org.jetbrains.kotlin.commonizer.cli.CommonizerSettingOptionType
 import org.jetbrains.kotlin.commonizer.konan.NativeManifestDataProvider
 import org.jetbrains.kotlin.commonizer.utils.*
 import kotlin.test.assertIs
@@ -108,7 +107,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
         }
 
         @InlineSourcesCommonizationTestDsl
-        fun <T : Any> setting(type: CommonizerSettingOptionType<T>, value: T) {
+        fun <T : Any> setting(type: CommonizerSettings.Key<T>, value: T) {
             val setting = Setting(type, value)
             check(setting !in settings) {
                 "An attempt to add the same setting '${type::class.java.simpleName}' multiple times. " +
@@ -120,7 +119,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
 
         // Comparison only by setting type is intentional
         private class Setting<T : Any>(
-            val type: CommonizerSettingOptionType<T>,
+            val type: CommonizerSettings.Key<T>,
             val value: T,
         ) {
             override fun equals(other: Any?): Boolean =

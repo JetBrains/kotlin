@@ -6,17 +6,14 @@
 package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
+import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabled
 import org.jetbrains.kotlin.commonizer.assertCommonized
-import org.jetbrains.kotlin.commonizer.cli.PlatformIntegers
-import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
-import org.jetbrains.kotlin.commonizer.utils.InlineSourceBuilder
-import org.jetbrains.kotlin.commonizer.withAllLeaves
 
-class HierarchicalPlatformIntegerCommonizerTest : AbstractInlineSourcesCommonizationTest() {
+class DisabledOptimisticNumberCommonizationTest : AbstractInlineSourcesCommonizationTest() {
     fun `test non-platform types`() {
         val result = commonize {
             outputTarget("(a, b)")
-            setting(PlatformIntegers, true)
+            setting(OptimisticNumberCommonizationEnabled, false)
             registerFakeStdlibDependency("(a, b)")
 
             "a" withSource """
@@ -30,17 +27,15 @@ class HierarchicalPlatformIntegerCommonizerTest : AbstractInlineSourcesCommoniza
 
         result.assertCommonized(
             "(a, b)", """
-            @UnsafeNumber(["a: kotlin.Short", "b: kotlin.Int"])
-            typealias X = Short
-        """.trimIndent()
+                expect class X : Number
+            """.trimIndent()
         )
     }
 
-    @Suppress("unused")
-    fun `todo test platform types`() {
+    fun `test platform types`() {
         val result = commonize {
             outputTarget("(a, b)")
-            setting(PlatformIntegers, true)
+            setting(OptimisticNumberCommonizationEnabled, false)
             registerFakeStdlibDependency("(a, b)")
 
             "a" withSource """
@@ -54,8 +49,8 @@ class HierarchicalPlatformIntegerCommonizerTest : AbstractInlineSourcesCommoniza
 
         result.assertCommonized(
             "(a, b)", """
-            typealias X = PlatformInt
-        """.trimIndent()
+                expect class X : Number
+            """.trimIndent()
         )
     }
 }

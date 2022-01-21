@@ -107,7 +107,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
             mergeCirTree(LockBasedStorageManager.NO_LOCKS, classifiers, roots, settings = DefaultCommonizerSettings)
         }
 
-        return TypeCommonizer(classifiers)
+        return TypeCommonizer(classifiers, DefaultCommonizerSettings)
     }
 
 
@@ -621,7 +621,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
 
     companion object {
         fun areEqual(classifiers: CirKnownClassifiers, a: CirType, b: CirType): Boolean =
-            TypeCommonizer(classifiers).invoke(listOf(a, b)) != null
+            TypeCommonizer(classifiers, DefaultCommonizerSettings).invoke(listOf(a, b)) != null
     }
 }
 

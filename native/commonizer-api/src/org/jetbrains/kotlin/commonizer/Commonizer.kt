@@ -17,7 +17,7 @@ public interface CInteropCommonizer : Serializable {
         outputTargets: Set<SharedCommonizerTarget>,
         outputDirectory: File,
         logLevel: CommonizerLogLevel = CommonizerLogLevel.Quiet,
-        additionalSettings: List<CommonizerSetting> = emptyList(),
+        additionalSettings: List<AdditionalCommonizerSetting> = emptyList(),
     )
 }
 
@@ -28,14 +28,14 @@ public interface NativeDistributionCommonizer : Serializable {
         outputDirectory: File,
         outputTargets: Set<SharedCommonizerTarget>,
         logLevel: CommonizerLogLevel = CommonizerLogLevel.Quiet,
-        additionalSettings: List<CommonizerSetting> = emptyList(),
+        additionalSettings: List<AdditionalCommonizerSetting> = emptyList(),
     )
 }
 
-public data class CommonizerSetting(
+public data class AdditionalCommonizerSetting(
     public val settingArgument: String,
     public val settingValue: Any,
 )
 
-public infix fun String.setTo(settingValue: Any): CommonizerSetting =
-    CommonizerSetting(this, settingValue)
+public infix fun String.setTo(settingValue: Any): AdditionalCommonizerSetting =
+    AdditionalCommonizerSetting(this, settingValue)

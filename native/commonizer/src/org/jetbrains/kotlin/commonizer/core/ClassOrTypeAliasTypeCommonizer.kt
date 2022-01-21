@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
+import org.jetbrains.kotlin.commonizer.CommonizerSettings
+import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabled
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.utils.isUnderKotlinNativeSyntheticPackages
@@ -15,8 +17,13 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class ClassOrTypeAliasTypeCommonizer(
     private val typeCommonizer: TypeCommonizer,
-    private val classifiers: CirKnownClassifiers
+    private val classifiers: CirKnownClassifiers,
+    private val isOptimisticNumberTypeCommonizationEnabled: Boolean
 ) : NullableSingleInvocationCommonizer<CirClassOrTypeAliasType> {
+
+    constructor(typeCommonizer: TypeCommonizer, classifiers: CirKnownClassifiers, settings: CommonizerSettings) : this(
+        typeCommonizer, classifiers, settings.getSetting(OptimisticNumberCommonizationEnabled)
+    )
 
     private val isMarkedNullableCommonizer = TypeNullabilityCommonizer(typeCommonizer.options)
     private val typeDistanceMeasurement = TypeDistanceMeasurement(typeCommonizer.options)
@@ -27,7 +34,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
         val isMarkedNullable = isMarkedNullableCommonizer.commonize(expansions.map { it.isMarkedNullable }) ?: return null
 
         val substitutedTypes = substituteTypesIfNecessary(values)
-            ?: typeCommonizer.options.enableOptimisticNumberTypeCommonization.ifTrue {
+            ?: isOptimisticNumberTypeCommonizationEnabled.ifTrue {
                 return OptimisticNumbersTypeCommonizer.commonize(expansions)?.makeNullableIfNecessary(isMarkedNullable)
             } ?: return null
 
