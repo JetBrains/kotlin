@@ -176,7 +176,7 @@ object FirJavaGenericVarianceViolationTypeChecker : FirFunctionCallChecker() {
         return when (this) {
             is ConeKotlinTypeProjectionOut -> if (isCovariant) type else this
             is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(type.removeOutProjection(!isCovariant))
-            is ConeStarProjection -> if (isCovariant) StandardTypes.Any else this
+            is ConeStarProjection -> if (isCovariant) StandardTypes.NullableAny else this
             // Don't remove nested projections for types at invariant position.
             is ConeKotlinTypeConflictingProjection,
             is ConeKotlinType -> this
