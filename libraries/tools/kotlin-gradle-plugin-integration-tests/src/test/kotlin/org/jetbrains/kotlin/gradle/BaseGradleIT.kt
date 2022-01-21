@@ -39,12 +39,23 @@ abstract class BaseGradleIT {
 
     protected var workingDir = File(".")
 
-    internal open fun defaultBuildOptions(): BuildOptions = BuildOptions(withDaemon = true)
+    internal open fun defaultBuildOptions(): BuildOptions = BuildOptions(
+        withDaemon = true,
+        enableKpmModelMapping = isKpmModelMappingEnabled
+    )
 
     open val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.None
 
     val isTeamCityRun = System.getenv("TEAMCITY_VERSION") != null
+
+    /**
+     * `var` makes it configurable per test
+     * `open` makes it configurable per test suite
+     */
+    protected open var isKpmModelMappingEnabled = System
+        .getProperty("kotlin.gradle.kpm.enableModelMapping")
+        .toBoolean()
 
     @Before
     open fun setUp() {
@@ -264,6 +275,7 @@ abstract class BaseGradleIT {
         val hierarchicalMPPStructureSupport: Boolean? = null,
         val enableCompatibilityMetadataVariant: Boolean? = null,
         val withReports: List<BuildReportType> = emptyList(),
+        val enableKpmModelMapping: Boolean? = null,
     )
 
     enum class ConfigurationCacheProblems {
@@ -930,6 +942,10 @@ Finished executing task ':$taskName'|
 
             if (options.withReports.isNotEmpty()) {
                 add("-Pkotlin.build.report.output=${options.withReports.joinToString { it.name }}")
+            }
+
+            if (options.enableKpmModelMapping != null) {
+                add("-Pkotlin.kpm.experimentalModelMapping=${options.enableKpmModelMapping}")
             }
 
             add("-Dorg.gradle.unsafe.configuration-cache=${options.configurationCache}")
