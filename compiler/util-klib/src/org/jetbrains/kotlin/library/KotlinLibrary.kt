@@ -109,7 +109,7 @@ val KotlinLibrary.containsErrorCode: Boolean
 val KotlinLibrary.commonizerTarget: String?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_COMMONIZER_TARGET)
 
-val KotlinLibrary.commonizerNativeTargets: List<String>?
+val BaseKotlinLibrary.commonizerNativeTargets: List<String>?
     get() = if (manifestProperties.containsKey(KLIB_PROPERTY_COMMONIZER_NATIVE_TARGETS))
         manifestProperties.propertyList(KLIB_PROPERTY_COMMONIZER_NATIVE_TARGETS, escapeInQuotes = true)
     else null
