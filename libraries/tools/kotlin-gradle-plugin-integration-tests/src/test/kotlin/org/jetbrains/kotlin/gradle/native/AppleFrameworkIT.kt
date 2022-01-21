@@ -3,8 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle
+package org.jetbrains.kotlin.gradle.native
 
+import org.jetbrains.kotlin.gradle.BaseGradleIT
+import org.jetbrains.kotlin.gradle.GradleVersionRequired
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.util.KtTestUtil
