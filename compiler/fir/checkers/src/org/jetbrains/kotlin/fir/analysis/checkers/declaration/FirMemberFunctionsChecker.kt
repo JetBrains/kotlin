@@ -56,6 +56,7 @@ object FirMemberFunctionsChecker : FirSimpleFunctionChecker() {
             }
         }
         val isInsideExpectClass = isInsideExpectClass(containingDeclaration, context)
+        val isInsideExternal = isInsideExternalClass(containingDeclaration, context)
         val hasOpenModifier = KtTokens.OPEN_KEYWORD in modifierList
         if (!function.hasBody) {
             if (containingDeclaration.isInterface) {
@@ -65,7 +66,7 @@ object FirMemberFunctionsChecker : FirSimpleFunctionChecker() {
                 if (!isInsideExpectClass && !hasAbstractModifier && hasOpenModifier) {
                     reporter.reportOn(source, FirErrors.REDUNDANT_OPEN_IN_INTERFACE, context)
                 }
-            } else if (!isInsideExpectClass && !hasAbstractModifier && !function.isExternal) {
+            } else if (!isInsideExpectClass && !hasAbstractModifier && !function.isExternal && !isInsideExternal) {
                 reporter.reportOn(source, FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY, functionSymbol, context)
             }
         }
