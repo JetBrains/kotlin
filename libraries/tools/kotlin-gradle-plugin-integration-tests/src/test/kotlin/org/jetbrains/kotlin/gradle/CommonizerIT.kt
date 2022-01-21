@@ -656,6 +656,25 @@ class CommonizerIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `test KT-50847 missing cinterop in supported target`() {
+        with(Project("commonize-kt-50847-cinterop-missing-in-supported-target")) {
+            build(":compileCommonMainKotlinMetadata", "-PdisableTargetNumber=1") {
+                assertSuccessful()
+                assertTasksSkipped(":cinteropSimpleTarget1")
+                assertTasksExecuted(":cinteropSimpleTarget2")
+                assertTasksExecuted(":commonizeCInterop")
+            }
+
+            build(":compileCommonMainKotlinMetadata", "-PdisableTargetNumber=2") {
+                assertSuccessful()
+                assertTasksSkipped(":cinteropSimpleTarget2")
+                assertTasksExecuted(":cinteropSimpleTarget1")
+                assertTasksExecuted(":commonizeCInterop")
+            }
+        }
+    }
+
     private fun preparedProject(name: String): Project {
         return Project(name).apply {
             setupWorkingDir()
