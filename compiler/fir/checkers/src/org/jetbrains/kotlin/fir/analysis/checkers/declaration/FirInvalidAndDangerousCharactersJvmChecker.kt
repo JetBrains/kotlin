@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.name.Name
 
-object FirInvalidAndDangerousCharactersChecker : FirBasicDeclarationChecker() {
+object FirInvalidAndDangerousCharactersJvmChecker : FirBasicDeclarationChecker() {
     // See The Java Virtual Machine Specification, section 4.7.9.1 https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.9.1
     private val INVALID_CHARS = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
 
