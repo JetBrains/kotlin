@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
  * WebAssembly allows only constant expressions to be used directly in
  * field initializers.
  *
- * TODO: Don't move constant expression initializers
+ * TODO: Don't move null and nullable constant initializers
  * TODO: Make field initialization lazy. Needs design.
  */
 class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringPass {

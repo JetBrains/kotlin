@@ -70,7 +70,7 @@ abstract class BasicWasmBoxTest(
             val outputWasmFile = File("$outputFileBase.wasm")
             val outputJsFile = File("$outputFileBase.js")
             val outputBrowserDir = File("$outputFileBase.browser")
-            val outputFileNoDceBase = outputDir.absolutePath + "/" + getTestName(true) + "/noDce"
+            val outputFileNoDceBase = "${outputFileBase}NoDce"
             val outputWatNoDceFile = File("$outputFileNoDceBase.wat")
             val outputWasmNoDceFile = File("$outputFileNoDceBase.wasm")
             val outputJsNoDceFile = File("$outputFileNoDceBase.js")
@@ -118,7 +118,6 @@ abstract class BasicWasmBoxTest(
                 println(" ------ WAT  file://$outputWatFile")
                 println(" ------ WASM file://$outputWasmFile")
                 println(" ------ JS   file://$outputJsFile")
-                println(" ------ (No-DCE files in noDce sub-directory)")
                 PhaseConfig(
                     wasmPhases,
                     dumpToDirectory = dumpOutputDir.path,
@@ -140,7 +139,6 @@ abstract class BasicWasmBoxTest(
                 AnalyzerWithCompilerReport(config.configuration)
             )
 
-            File(outputFileNoDceBase).mkdirs()
             compileAndRun(
                 phaseConfig = phaseConfig,
                 sourceModule = sourceModule,
@@ -157,7 +155,6 @@ abstract class BasicWasmBoxTest(
                 jsFilesAfter = jsFilesAfter
             )
 
-            File(outputFileBase).mkdirs()
             compileAndRun(
                 phaseConfig = phaseConfig,
                 sourceModule = sourceModule,
@@ -222,15 +219,8 @@ abstract class BasicWasmBoxTest(
             const wasmBinary = read(String.raw`${outputWasmFile.absoluteFile}`, 'binary');
             const wasmModule = new WebAssembly.Module(wasmBinary);
             wasmInstance = new WebAssembly.Instance(wasmModule, { runtime, js_code });
-            wasmInstance.exports.__init();
-
             const ${sanitizeName(config.moduleId)} = wasmInstance.exports;
-            
-            wasmInstance.exports.startUnitTests?.();
-
-            const actualResult = wasmInstance.exports.$testFunction();
-            if (actualResult !== "OK")
-                throw `Wrong box result '${'$'}{actualResult}' (with DCE=${dceEnabled}); Expected "OK"`;
+            ${createJsRun(wasmInstance = "wasmInstance", testFunction = testFunction, dceEnabled = dceEnabled)}
         """.trimIndent()
         outputJsFile.write(compilerResult.js + "\n" + testRunner)
 
@@ -249,18 +239,30 @@ abstract class BasicWasmBoxTest(
             )
     }
 
+    private fun createJsRun(wasmInstance: String, testFunction: String, dceEnabled: Boolean) = """
+            let actualResult
+            try {
+                $wasmInstance.exports.__init();
+                $wasmInstance.exports.startUnitTests?.();
+                actualResult = $wasmInstance.exports.$testFunction();
+            } catch(e) {
+                console.log('Failed with exception!')
+                console.log('Message: ' + e.message)
+                console.log('Name:    ' + e.name)
+                console.log('Stack:')
+                console.log(e.stack)
+            }
+            if (actualResult !== "OK")
+                throw `Wrong box result '${'$'}{actualResult}' (with DCE=${dceEnabled}); Expected "OK"`;
+    """.trimIndent()
+
     private fun createDirectoryToRunInBrowser(directory: File, compilerResult: WasmCompilerResult, dceEnabled: Boolean) {
         val browserRunner =
             """
             const response = await fetch("index.wasm");
             const wasmBinary = await response.arrayBuffer();
             wasmInstance = (await WebAssembly.instantiate(wasmBinary, { runtime, js_code })).instance;
-            wasmInstance.exports.__init();
-            wasmInstance.exports.startUnitTests?.();
-
-            const actualResult = wasmInstance.exports.box();
-            if (actualResult !== "OK")
-                throw `Wrong box result '${'$'}{actualResult}' (with DCE=${dceEnabled}); Expected "OK"`;
+            ${createJsRun(wasmInstance = "wasmInstance", testFunction = "box", dceEnabled = dceEnabled)}
             console.log("Test passed!");    
             """.trimIndent()
 
