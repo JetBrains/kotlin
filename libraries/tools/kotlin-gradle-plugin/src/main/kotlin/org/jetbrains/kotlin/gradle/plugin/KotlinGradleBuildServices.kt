@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.plugin.stat.ReportStatistics
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatListener
 import org.jetbrains.kotlin.gradle.plugin.statistics.ReportStatisticsToBuildScan
-import org.jetbrains.kotlin.gradle.plugin.statistics.ReportStatisticsByHttp
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.report.reportingSettings
@@ -50,7 +49,6 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
     }
 
     companion object {
-
         fun registerIfAbsent(project: Project): Provider<KotlinGradleBuildServices> = project.gradle.sharedServices.registerIfAbsent(
             "kotlin-build-service-${KotlinGradleBuildServices::class.java.canonicalName}_${KotlinGradleBuildServices::class.java.classLoader.hashCode()}",
             KotlinGradleBuildServices::class.java
@@ -66,12 +64,6 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
             val listeners = project.rootProject.objects.listProperty(ReportStatistics::class.java)
                 .value(listOf<ReportStatistics>())
 
-            reportingSettings.httpReportSettings?.let {
-                listeners.add(
-                    ReportStatisticsByHttp(reportingSettings.httpReportSettings)
-                )
-            }
-
             project.rootProject.extensions.findByName("buildScan")
                 ?.also {
                     if (reportingSettings.buildReportOutputs.contains(BuildReportType.BUILD_SCAN)) {
@@ -81,7 +73,7 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
 
             if (listeners.get().isNotEmpty()) {
                 val listenerRegistryHolder = BuildEventsListenerRegistryHolder.getInstance(project)
-                val statListener = KotlinBuildStatListener(project.rootProject.name, listeners.get())
+                val statListener = KotlinBuildStatListener(project.rootProject.name, reportingSettings.buildReportLabel, listeners.get())
                 listenerRegistryHolder.listenerRegistry.onTaskCompletion(project.provider { statListener })
             }
         }

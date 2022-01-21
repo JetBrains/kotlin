@@ -12,6 +12,7 @@ data class ReportingSettings(
     val metricsOutputFile: File? = null,
     val buildReportOutputs: List<BuildReportType> = emptyList(),
     val buildReportMode: BuildReportMode = BuildReportMode.NONE,
+    val buildReportLabel: String? = null,
     val fileReportSettings: FileReportSettings? = null,
     val httpReportSettings: HttpReportSettings? = null
 ) : Serializable {

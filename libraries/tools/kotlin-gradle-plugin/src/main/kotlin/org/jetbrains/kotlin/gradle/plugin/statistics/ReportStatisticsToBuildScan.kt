@@ -10,6 +10,7 @@ import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatData
 import org.jetbrains.kotlin.gradle.plugin.stat.ReportStatistics
 import org.jetbrains.kotlin.konan.file.File
+import java.util.function.Consumer
 import kotlin.system.measureTimeMillis
 
 class ReportStatisticsToBuildScan(
@@ -19,7 +20,7 @@ class ReportStatisticsToBuildScan(
         const val kbSize = 1024
         const val mbSize = kbSize * kbSize
         const val gbSize = kbSize * mbSize
-        const val lengthLimit = 20
+        const val lengthLimit = 100_000
     }
 
     private val tags = LinkedHashSet<String>()
