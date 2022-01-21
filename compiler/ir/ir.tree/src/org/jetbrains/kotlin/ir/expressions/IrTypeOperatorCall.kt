@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.visitors.IrElementConsumer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
@@ -29,6 +30,10 @@ abstract class IrTypeOperatorCall : IrExpression() {
 
     override fun <D> acceptChildren(visitor: IrThinVisitor<Unit, D>, data: D) {
         argument.accept(visitor, data)
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
+        consumer.visitElement(argument)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {

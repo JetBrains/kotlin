@@ -10,9 +10,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
+import org.jetbrains.kotlin.ir.visitors.*
 
 abstract class IrTypeAlias :
     IrDeclarationBase(),
@@ -39,6 +37,10 @@ abstract class IrTypeAlias :
 
     override fun <D> acceptChildren(visitor: IrThinVisitor<Unit, D>, data: D) {
         typeParameters.forEach { it.accept(visitor, data) }
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
+        typeParameters.acceptEach(consumer)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {

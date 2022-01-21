@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementConsumer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
@@ -36,6 +37,10 @@ abstract class IrVariable : IrValueDeclaration() {
 
     override fun <D> acceptChildren(visitor: IrThinVisitor<Unit, D>, data: D) {
         initializer?.accept(visitor, data)
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
+        initializer?.let { consumer.visitElement(it) }
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {

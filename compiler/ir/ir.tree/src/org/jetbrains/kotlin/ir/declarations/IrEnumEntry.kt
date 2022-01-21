@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrEnumEntrySymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementConsumer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
@@ -40,5 +41,10 @@ abstract class IrEnumEntry : IrDeclarationBase(), IrDeclarationWithName {
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
         initializerExpression = initializerExpression?.transform(transformer, data)
         correspondingClass = correspondingClass?.transform(transformer, data) as? IrClass
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
+        initializerExpression?.let { consumer.visitElement(it) }
+        correspondingClass?.let { consumer.visitElement(it) }
     }
 }

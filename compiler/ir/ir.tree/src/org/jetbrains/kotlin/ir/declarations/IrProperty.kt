@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.visitors.IrElementConsumer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
@@ -51,6 +52,12 @@ abstract class IrProperty :
         backingField?.accept(visitor, data)
         getter?.accept(visitor, data)
         setter?.accept(visitor, data)
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
+        backingField?.let { consumer.visitElement(it) }
+        getter?.let { consumer.visitElement(it) }
+        setter?.let { consumer.visitElement(it) }
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {

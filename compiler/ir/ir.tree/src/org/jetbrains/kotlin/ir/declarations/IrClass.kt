@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformIfNeeded
 import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
+import org.jetbrains.kotlin.ir.visitors.*
 
 abstract class IrClass :
     IrDeclarationBase(), IrPossiblyExternalDeclaration, IrDeclarationWithVisibility,
@@ -65,5 +63,11 @@ abstract class IrClass :
         typeParameters = typeParameters.transformIfNeeded(transformer, data)
         declarations.transformInPlace(transformer, data)
         thisReceiver = thisReceiver?.transform(transformer, data)
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
+        typeParameters.acceptEach(consumer)
+        declarations.acceptEach(consumer)
+        thisReceiver?.let { consumer.visitElement(it) }
     }
 }

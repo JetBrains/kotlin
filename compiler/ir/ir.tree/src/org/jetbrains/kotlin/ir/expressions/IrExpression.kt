@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.visitors.IrElementConsumer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
@@ -27,6 +28,10 @@ abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement, IrA
     }
 
     override fun <D> acceptChildren(visitor: IrThinVisitor<Unit, D>, data: D) {
+        // No children by default
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
         // No children by default
     }
 

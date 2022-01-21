@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
+import org.jetbrains.kotlin.ir.visitors.*
 
 abstract class IrDynamicOperatorExpression : IrDynamicExpression() {
     abstract val operator: IrDynamicOperator
@@ -34,6 +32,11 @@ abstract class IrDynamicOperatorExpression : IrDynamicExpression() {
         for (valueArgument in arguments) {
             valueArgument.accept(visitor, data)
         }
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
+        consumer.visitElement(receiver)
+        arguments.acceptEach(consumer)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {

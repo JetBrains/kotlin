@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.ir.visitors.IrElementConsumer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
@@ -24,6 +25,11 @@ abstract class IrDoWhileLoop : IrLoop() {
     override fun <D> acceptChildren(visitor: IrThinVisitor<Unit, D>, data: D) {
         body?.accept(visitor, data)
         condition.accept(visitor, data)
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
+        body?.let { consumer.visitElement(it) }
+        consumer.visitElement(condition)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {

@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 abstract class IrExternalPackageFragment : IrPackageFragment() {
@@ -28,6 +26,10 @@ abstract class IrExternalPackageFragment : IrPackageFragment() {
 
     override fun <D> acceptChildren(visitor: IrThinVisitor<Unit, D>, data: D) {
         declarations.forEach { it.accept(visitor, data) }
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
+        declarations.acceptEach(consumer)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {

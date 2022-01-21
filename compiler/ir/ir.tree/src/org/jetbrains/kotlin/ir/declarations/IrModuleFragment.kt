@@ -10,9 +10,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
 abstract class IrModuleFragment : IrElementBase() {
@@ -42,6 +40,10 @@ abstract class IrModuleFragment : IrElementBase() {
 
     override fun <D> acceptChildren(visitor: IrThinVisitor<Unit, D>, data: D) {
         files.forEach { it.accept(visitor, data) }
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
+        files.acceptEach(consumer)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {

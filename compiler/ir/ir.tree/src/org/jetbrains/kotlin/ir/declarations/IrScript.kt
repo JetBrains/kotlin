@@ -11,9 +11,7 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.transformInPlace
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
+import org.jetbrains.kotlin.ir.visitors.*
 
 //TODO: make IrScript as IrPackageFragment, because script is used as a file, not as a class
 //NOTE: declarations and statements stored separately
@@ -69,6 +67,15 @@ abstract class IrScript :
         implicitReceiversParameters.forEach { it.accept(visitor, data) }
         providedProperties.forEach { it.first.accept(visitor, data) }
         earlierScriptsParameter?.accept(visitor, data)
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
+        statements.acceptEach(consumer)
+        consumer.visitElement(thisReceiver)
+        explicitCallParameters.acceptEach(consumer)
+        implicitReceiversParameters.acceptEach(consumer)
+        providedProperties.forEach { consumer.visitElement(it.first) }
+        earlierScriptsParameter?.let { consumer.visitElement(it) }
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {

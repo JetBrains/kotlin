@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.VariableDescriptorWithAccessors
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.visitors.IrElementConsumer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
@@ -46,6 +47,12 @@ abstract class IrLocalDelegatedProperty :
         delegate.accept(visitor, data)
         getter.accept(visitor, data)
         setter?.accept(visitor, data)
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
+        consumer.visitElement(delegate)
+        consumer.visitElement(getter)
+        setter?.let { consumer.visitElement(it) }
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {

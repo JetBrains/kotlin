@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.visitors.IrElementConsumer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
@@ -31,6 +32,12 @@ abstract class IrSuspensionPoint : IrExpression() {
         suspensionPointIdParameter.accept(visitor, data)
         result.accept(visitor, data)
         resumeResult.accept(visitor, data)
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
+        consumer.visitElement(suspensionPointIdParameter)
+        consumer.visitElement(result)
+        consumer.visitElement(resumeResult)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {

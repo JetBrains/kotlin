@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.visitors.IrElementConsumer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
@@ -29,6 +30,11 @@ abstract class IrCatch : IrElementBase() {
     override fun <D> acceptChildren(visitor: IrThinVisitor<Unit, D>, data: D) {
         catchParameter.accept(visitor, data)
         result.accept(visitor, data)
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
+        consumer.visitElement(catchParameter)
+        consumer.visitElement(result)
     }
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrCatch =

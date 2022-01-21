@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.visitors.IrElementConsumer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
@@ -38,6 +39,10 @@ abstract class IrTypeParameter : IrDeclarationBase(), IrDeclarationWithName {
     }
 
     override fun <D> acceptChildren(visitor: IrThinVisitor<Unit, D>, data: D) {
+        // no children
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
         // no children
     }
 

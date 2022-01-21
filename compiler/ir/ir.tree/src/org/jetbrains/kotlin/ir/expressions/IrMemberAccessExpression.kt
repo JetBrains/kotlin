@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.visitors.IrElementConsumer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
@@ -76,6 +77,18 @@ abstract class IrMemberAccessExpression<S : IrSymbol> : IrDeclarationReference()
         extensionReceiver?.accept(visitor, data)
         if (valueArgumentsCount > 0) {
             argumentsByParameterIndex.forEach { it?.accept(visitor, data) }
+        }
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
+        dispatchReceiver?.let { consumer.visitElement(it) }
+        extensionReceiver?.let { consumer.visitElement(it) }
+        if (valueArgumentsCount > 0) {
+            argumentsByParameterIndex.forEach {
+                if (it != null) {
+                    consumer.visitElement(it)
+                }
+            }
         }
     }
 

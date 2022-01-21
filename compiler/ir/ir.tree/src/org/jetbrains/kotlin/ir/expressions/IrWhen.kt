@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
+import org.jetbrains.kotlin.ir.visitors.*
 
 abstract class IrWhen : IrExpression() {
     abstract val origin: IrStatementOrigin?
@@ -26,6 +24,10 @@ abstract class IrWhen : IrExpression() {
 
     override fun <D> acceptChildren(visitor: IrThinVisitor<Unit, D>, data: D) {
         branches.forEach { it.accept(visitor, data) }
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
+        branches.acceptEach(consumer)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {

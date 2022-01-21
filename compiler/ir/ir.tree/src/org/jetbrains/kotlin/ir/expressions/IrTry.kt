@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
+import org.jetbrains.kotlin.ir.visitors.*
 
 abstract class IrTry : IrExpression() {
     abstract var tryResult: IrExpression
@@ -32,6 +30,12 @@ abstract class IrTry : IrExpression() {
         tryResult.accept(visitor, data)
         catches.forEach { it.accept(visitor, data) }
         finallyExpression?.accept(visitor, data)
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
+        consumer.visitElement(tryResult)
+        catches.acceptEach(consumer)
+        finallyExpression?.let { consumer.visitElement(it) }
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {

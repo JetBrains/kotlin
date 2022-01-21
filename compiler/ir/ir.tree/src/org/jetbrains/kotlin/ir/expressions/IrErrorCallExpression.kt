@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
-import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
+import org.jetbrains.kotlin.ir.visitors.*
 
 abstract class IrErrorCallExpression : IrErrorExpression() {
     abstract var explicitReceiver: IrExpression?
@@ -27,6 +25,11 @@ abstract class IrErrorCallExpression : IrErrorExpression() {
     override fun <D> acceptChildren(visitor: IrThinVisitor<Unit, D>, data: D) {
         explicitReceiver?.accept(visitor, data)
         arguments.forEach { it.accept(visitor, data) }
+    }
+
+    override fun acceptChildren(consumer: IrElementConsumer) {
+        explicitReceiver?.let { consumer.visitElement(it) }
+        arguments.acceptEach(consumer)
     }
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {

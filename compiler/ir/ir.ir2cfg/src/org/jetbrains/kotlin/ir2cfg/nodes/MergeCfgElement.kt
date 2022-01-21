@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir2cfg.nodes
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.visitors.IrElementConsumer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrThinVisitor
@@ -33,6 +34,8 @@ class MergeCfgElement(val from: IrElement, val name: String) : CfgIrElement {
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {}
 
     override fun <D> acceptChildren(visitor: IrThinVisitor<Unit, D>, data: D) {}
+
+    override fun acceptChildren(consumer: IrElementConsumer) {}
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) = Unit
 

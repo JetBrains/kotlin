@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.visitors.IrElementConsumer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -36,7 +36,26 @@ private fun makePatchParentsPhase(number: Int): NamedCompilerPhase<CommonBackend
 
 private class PatchDeclarationParents : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.acceptVoid(PatchDeclarationParentsVisitor())
+        irFile.acceptChildren(object : IrElementConsumer() {
+            private val parentStack = java.util.ArrayDeque<IrDeclarationParent>()
+
+            init {
+                parentStack.add(irFile)
+            }
+
+            override fun visitElement(element: IrElement) {
+                if (element is IrDeclaration) {
+                    element.parent = parentStack.peekFirst()
+                }
+                if (element is IrDeclarationParent) {
+                    parentStack.push(element)
+                }
+                element.acceptChildren(this)
+                if (element is IrDeclarationParent) {
+                    parentStack.pop()
+                }
+            }
+        })
     }
 }
 
