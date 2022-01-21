@@ -11,22 +11,26 @@ import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrExpressionTransformer
 
-abstract class AbstractValueRemapper : IrElementTransformerVoid() {
+abstract class AbstractValueRemapper : IrExpressionTransformer() {
 
     protected abstract fun remapValue(oldValue: IrValueSymbol): IrValueSymbol?
 
-    override fun visitGetValue(expression: IrGetValue): IrExpression {
-        val newValue = remapValue(expression.symbol) ?: return expression
-        return expression.run { IrGetValueImpl(startOffset, endOffset, newValue, origin) }
-    }
-
-    override fun visitSetValue(expression: IrSetValue): IrExpression {
-        expression.transformChildrenVoid()
-        val newValue = remapValue(expression.symbol) ?: return expression
-        assert(newValue.owner.isAssignable)
-        return expression.run { IrSetValueImpl(startOffset, endOffset, type, newValue, value, origin) }
+    override fun transformExpression(expression: IrExpression): IrExpression {
+        when (expression) {
+            is IrGetValue -> {
+                val newValue = remapValue(expression.symbol) ?: return expression
+                return expression.run { IrGetValueImpl(startOffset, endOffset, newValue, origin) }
+            }
+            is IrSetValue -> {
+                val newValue = remapValue(expression.symbol) ?: return expression
+                assert(newValue.owner.isAssignable)
+                return expression.run { IrSetValueImpl(startOffset, endOffset, type, newValue, value, origin) }
+            }
+            else ->
+                return expression
+        }
     }
 }
 
