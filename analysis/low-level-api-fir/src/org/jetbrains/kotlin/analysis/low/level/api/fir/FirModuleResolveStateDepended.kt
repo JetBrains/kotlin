@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.InternalForInline
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
@@ -15,12 +14,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMap
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingKtFileIfAny
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalKtFile
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -78,15 +78,15 @@ internal class FirModuleResolveStateDepended(
     override fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> =
         TODO("Diagnostics are not implemented for depended state")
 
-    @OptIn(InternalForInline::class)
-    override fun findSourceFirDeclaration(ktDeclaration: KtLambdaExpression): FirDeclaration =
-        originalState.findSourceFirDeclaration(ktDeclaration)
+    override fun findSourceFirSymbol(ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
+        return originalState.findSourceFirSymbol(ktDeclaration)
+    }
 
-    @OptIn(InternalForInline::class)
-    override fun findSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration =
-        originalState.findSourceFirDeclaration(ktDeclaration)
+    override fun findSourceFirSymbol(ktDeclaration: KtLambdaExpression): FirBasedSymbol<*> {
+        return originalState.findSourceFirSymbol(ktDeclaration)
+    }
 
-    @OptIn(InternalForInline::class)
-    override fun findSourceFirCompiledDeclaration(ktDeclaration: KtDeclaration) =
-        originalState.findSourceFirCompiledDeclaration(ktDeclaration)
+    override fun findSourceFirCompiledSymbol(ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
+        return originalState.findSourceFirCompiledSymbol(ktDeclaration)
+    }
 }

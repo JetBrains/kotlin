@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.InternalForInline
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.DiagnosticsCollector
@@ -36,6 +35,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.psi.*
 
 internal class FirModuleResolveStateImpl(
@@ -82,14 +82,32 @@ internal class FirModuleResolveStateImpl(
     override fun collectDiagnosticsForFile(ktFile: KtFile, filter: DiagnosticCheckerFilter): Collection<KtPsiDiagnostic> =
         diagnosticsCollector.collectDiagnosticsForFile(ktFile, filter)
 
-    @OptIn(InternalForInline::class)
-    override fun findSourceFirDeclaration(ktDeclaration: KtDeclaration): FirDeclaration {
-        return findSourceFirDeclarationByExpression(ktDeclaration.originalDeclaration ?: ktDeclaration)
+    override fun findSourceFirSymbol(ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
+        return findSourceFirDeclarationByExpression(ktDeclaration.originalDeclaration ?: ktDeclaration).symbol
     }
 
-    @OptIn(InternalForInline::class)
-    override fun findSourceFirDeclaration(ktDeclaration: KtLambdaExpression): FirDeclaration =
-        findSourceFirDeclarationByExpression(ktDeclaration)
+    override fun findSourceFirSymbol(ktDeclaration: KtLambdaExpression): FirBasedSymbol<*> {
+        return findSourceFirDeclarationByExpression(ktDeclaration).symbol
+    }
+
+    override fun findSourceFirCompiledSymbol(ktDeclaration: KtDeclaration): FirBasedSymbol<*> {
+        require(ktDeclaration.containingKtFile.isCompiled) {
+            "This method will only work on compiled declarations, but this declaration is not compiled: ${ktDeclaration.getElementTextInContext()}"
+        }
+
+        val searcher = FirDeclarationForCompiledElementSearcher(rootModuleSession.symbolProvider)
+
+        val firDeclaration = when (ktDeclaration) {
+            is KtEnumEntry -> searcher.findNonLocalEnumEntry(ktDeclaration)
+            is KtClassOrObject -> searcher.findNonLocalClass(ktDeclaration)
+            is KtConstructor<*> -> searcher.findConstructorOfNonLocalClass(ktDeclaration)
+            is KtNamedFunction -> searcher.findNonLocalFunction(ktDeclaration)
+            is KtProperty -> searcher.findNonLocalProperty(ktDeclaration)
+
+            else -> error("Unsupported compiled declaration of type ${ktDeclaration::class}: ${ktDeclaration.getElementTextInContext()}")
+        }
+        return firDeclaration.symbol
+    }
 
     /**
      * [ktDeclaration] should be either [KtDeclaration] or [KtLambdaExpression]
@@ -118,32 +136,13 @@ internal class FirModuleResolveStateImpl(
         }
     }
 
-    @OptIn(InternalForInline::class)
-    override fun findSourceFirCompiledDeclaration(ktDeclaration: KtDeclaration): FirDeclaration {
-        require(ktDeclaration.containingKtFile.isCompiled) {
-            "This method will only work on compiled declarations, but this declaration is not compiled: ${ktDeclaration.getElementTextInContext()}"
-        }
-
-        val searcher = FirDeclarationForCompiledElementSearcher(rootModuleSession.symbolProvider)
-
-        return when (ktDeclaration) {
-            is KtEnumEntry -> searcher.findNonLocalEnumEntry(ktDeclaration)
-            is KtClassOrObject -> searcher.findNonLocalClass(ktDeclaration)
-            is KtConstructor<*> -> searcher.findConstructorOfNonLocalClass(ktDeclaration)
-            is KtNamedFunction -> searcher.findNonLocalFunction(ktDeclaration)
-            is KtProperty -> searcher.findNonLocalProperty(ktDeclaration)
-
-            else -> error("Unsupported compiled declaration of type ${ktDeclaration::class}: ${ktDeclaration.getElementTextInContext()}")
-        }
-    }
-
     override fun resolveFirToPhase(declaration: FirDeclaration, toPhase: FirResolvePhase) {
         if (toPhase == FirResolvePhase.RAW_FIR) return
         val fileCache = when (val session = declaration.moduleData.session) {
             is FirIdeSourcesSession -> session.cache
             else -> return
         }
-        firLazyDeclarationResolver. lazyResolveDeclaration(
+        firLazyDeclarationResolver.lazyResolveDeclaration(
             firDeclarationToResolve = declaration,
             moduleFileCache = fileCache,
             scopeSession = ScopeSession(),
