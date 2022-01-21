@@ -11,6 +11,10 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependencies
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allFriends
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.Executable
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.KLIB
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependencyType.FriendLibrary
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependencyType.Library
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Binaries
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
@@ -18,59 +22,70 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import java.io.File
 
 internal class TestCompilationFactory {
-    private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation>()
+    private val cachedKlibCompilations = ThreadSafeCache<KlibCacheKey, TestCompilation<KLIB>>()
+    private val cachedExecutableCompilations = ThreadSafeCache<ExecutableCacheKey, TestCompilation<Executable>>()
 
-    private sealed interface TestCompilationCacheKey {
-        data class Klib(val sourceModules: Set<TestModule>, val freeCompilerArgs: TestCompilerArgs) : TestCompilationCacheKey
-        data class Executable(val sourceModules: Set<TestModule>) : TestCompilationCacheKey
-    }
+    private data class KlibCacheKey(val sourceModules: Set<TestModule>, val freeCompilerArgs: TestCompilerArgs)
+    private data class ExecutableCacheKey(val sourceModules: Set<TestModule>)
 
-    fun testCasesToExecutable(testCases: Collection<TestCase>, settings: Settings): TestCompilation {
+    fun testCasesToExecutable(testCases: Collection<TestCase>, settings: Settings): TestCompilation<Executable> {
         val rootModules = testCases.flatMapToSet { testCase -> testCase.rootModules }
-        val cacheKey = TestCompilationCacheKey.Executable(rootModules)
+        val cacheKey = ExecutableCacheKey(rootModules)
 
         // Fast pass.
-        cachedCompilations[cacheKey]?.let { return it }
+        cachedExecutableCompilations[cacheKey]?.let { return it }
 
         // Long pass.
         val freeCompilerArgs = rootModules.first().testCase.freeCompilerArgs // Should be identical inside the same test case group.
         val extras = testCases.first().extras // Should be identical inside the same test case group.
-        val libraries = rootModules.flatMapToSet { it.allDependencies }.map { moduleToKlib(it, freeCompilerArgs, settings) }
-        val friends = rootModules.flatMapToSet { it.allFriends }.map { moduleToKlib(it, freeCompilerArgs, settings) }
+        val dependencies = buildList {
+            rootModules.flatMapToSet { it.allDependencies }.mapTo(this) { it.asKlibDependency(freeCompilerArgs, settings, Library) }
+            rootModules.flatMapToSet { it.allFriends }.mapTo(this) { it.asKlibDependency(freeCompilerArgs, settings, FriendLibrary) }
+        }
+        val expectedArtifact = Executable(settings.artifactFileForExecutable(rootModules))
 
-        return cachedCompilations.computeIfAbsent(cacheKey) {
-            TestCompilation.createForExecutable(
+        return cachedExecutableCompilations.computeIfAbsent(cacheKey) {
+            ExecutableCompilation(
                 settings = settings,
                 freeCompilerArgs = freeCompilerArgs,
                 sourceModules = rootModules,
                 extras = extras,
-                dependencies = TestCompilationDependencies(libraries = libraries, friends = friends),
-                expectedExecutableFile = settings.artifactFileForExecutable(rootModules),
+                dependencies = dependencies,
+                expectedArtifact = expectedArtifact
             )
         }
     }
 
-    private fun moduleToKlib(sourceModule: TestModule, freeCompilerArgs: TestCompilerArgs, settings: Settings): TestCompilation {
+    private fun moduleToKlib(sourceModule: TestModule, freeCompilerArgs: TestCompilerArgs, settings: Settings): TestCompilation<KLIB> {
         val sourceModules = setOf(sourceModule)
-        val cacheKey = TestCompilationCacheKey.Klib(sourceModules, freeCompilerArgs)
+        val cacheKey = KlibCacheKey(sourceModules, freeCompilerArgs)
 
         // Fast pass.
-        cachedCompilations[cacheKey]?.let { return it }
+        cachedKlibCompilations[cacheKey]?.let { return it }
 
         // Long pass.
-        val libraries = sourceModule.allDependencies.map { moduleToKlib(it, freeCompilerArgs, settings) }
-        val friends = sourceModule.allFriends.map { moduleToKlib(it, freeCompilerArgs, settings) }
+        val dependencies = buildList {
+            sourceModule.allDependencies.mapTo(this) { it.asKlibDependency(freeCompilerArgs, settings, Library) }
+            sourceModule.allFriends.mapTo(this) { it.asKlibDependency(freeCompilerArgs, settings, FriendLibrary) }
+        }
+        val expectedArtifact = KLIB(settings.artifactFileForKlib(sourceModule, freeCompilerArgs))
 
-        return cachedCompilations.computeIfAbsent(cacheKey) {
-            TestCompilation.createForKlib(
+        return cachedKlibCompilations.computeIfAbsent(cacheKey) {
+            LibraryCompilation(
                 settings = settings,
                 freeCompilerArgs = freeCompilerArgs,
                 sourceModules = sourceModules,
-                dependencies = TestCompilationDependencies(libraries = libraries, friends = friends),
-                expectedKlibFile = settings.artifactFileForKlib(sourceModule, freeCompilerArgs)
+                dependencies = dependencies,
+                expectedArtifact = expectedArtifact
             )
         }
     }
+
+    private fun <T : TestCompilationDependencyType<KLIB>> TestModule.asKlibDependency(
+        freeCompilerArgs: TestCompilerArgs,
+        settings: Settings,
+        type: T
+    ) = CompiledDependency(moduleToKlib(this, freeCompilerArgs, settings), type)
 
     private fun Settings.artifactFileForExecutable(modules: Set<TestModule.Exclusive>) = when (modules.size) {
         1 -> artifactFileForExecutable(modules.first())

@@ -9,11 +9,13 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.klib.AbstractKlibABITestCase
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilation
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependencies
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExecutableCompilation
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExistingLibraryDependency
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.LibraryCompilation
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.Executable
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependencyType.Library
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccessfullyCompiled
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeTargets
@@ -27,10 +29,6 @@ import java.io.File
 
 @Tag("klib")
 abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
-    private val compilationResults: MutableMap<File, TestCompilationResult.Success> by lazy {
-        mutableMapOf(stdlibFile to TestCompilationResult.ExistingArtifact(stdlibFile))
-    }
-
     protected fun runTest(@TestDataFile testPath: String): Unit = AbstractKlibABITestCase.doTest(
         testDir = getAbsoluteFile(testPath),
         buildDir = buildDir,
@@ -48,15 +46,15 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
 
         val testCase = createTestCase(module, COMPILER_ARGS_FOR_KLIB)
 
-        val compilation = TestCompilation.createForKlib(
+        val compilation = LibraryCompilation(
             settings = testRunSettings,
             freeCompilerArgs = testCase.freeCompilerArgs,
             sourceModules = testCase.modules,
-            dependencies = createCompilationDependencies(moduleDependencies),
-            expectedKlibFile = klibFile,
+            dependencies = createExistingDependencies(moduleDependencies),
+            expectedArtifact = TestCompilationArtifact.KLIB(klibFile),
         )
 
-        compilationResults[klibFile] = compilation.result.assertSuccess() // <-- trigger compilation
+        compilation.result.assertSuccess() // <-- trigger compilation
     }
 
     private fun buildBinaryAndRun(allDependencies: Collection<File>) {
@@ -72,16 +70,16 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
 
         val testCase = createTestCase(module, COMPILER_ARGS_FOR_EXECUTABLE)
 
-        val compilation = TestCompilation.createForExecutable(
+        val compilation = ExecutableCompilation(
             settings = testRunSettings,
             freeCompilerArgs = testCase.freeCompilerArgs,
             sourceModules = testCase.modules,
             extras = testCase.extras,
-            dependencies = createCompilationDependencies(allDependencies),
-            expectedExecutableFile = executableFile
+            dependencies = createExistingDependencies(allDependencies),
+            expectedArtifact = Executable(executableFile)
         )
 
-        val compilationResult = compilation.result.assertSuccessfullyCompiled() // <-- trigger compilation
+        val compilationResult = compilation.result.assertSuccess() // <-- trigger compilation
         val executable = TestExecutable(executableFile, compilationResult.loggedData)
 
         runExecutableAndVerify(testCase, executable) // <-- run executable and verify
@@ -106,9 +104,8 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
         initialize(null)
     }
 
-    private fun createCompilationDependencies(dependencies: Collection<File>) = TestCompilationDependencies(
-        libraries = dependencies.map(TestCompilation.Companion::createForExistingArtifact)
-    )
+    private fun createExistingDependencies(dependencies: Collection<File>) =
+        dependencies.map { ExistingLibraryDependency(TestCompilationArtifact.KLIB(it), Library) }
 
     private val buildDir: File get() = testRunSettings.get<SimpleTestDirectories>().testBuildDir
     private val stdlibFile: File get() = testRunSettings.get<KotlinNativeHome>().dir.resolve("klib/common/stdlib")

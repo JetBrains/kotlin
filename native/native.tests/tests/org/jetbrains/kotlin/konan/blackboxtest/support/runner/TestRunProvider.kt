@@ -11,8 +11,9 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.NoTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilation
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.Executable
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationFactory
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccessfullyCompiled
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunners.extractTestNames
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
@@ -32,7 +33,7 @@ internal class TestRunProvider(
     private val testCaseGroupProvider: TestCaseGroupProvider
 ) : BaseTestRunProvider(), ExtensionContext.Store.CloseableResource {
     private val compilationFactory = TestCompilationFactory()
-    private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation>()
+    private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation<Executable>>()
     private val cachedTestNames = ThreadSafeCache<TestCompilationCacheKey, Collection<TestName>>()
 
     /**
@@ -155,8 +156,8 @@ internal class TestRunProvider(
             }
         }
 
-        val (executableFile, loggedCompilerCall) = testCompilation.result.assertSuccessfullyCompiled() // <-- Compilation happens here.
-        val executable = TestExecutable(executableFile, loggedCompilerCall)
+        val (artifact, loggedCompilerCall) = testCompilation.result.assertSuccess() // <-- Compilation happens here.
+        val executable = TestExecutable(artifact.file, loggedCompilerCall)
 
         return action(testCase, executable, cacheKey)
     }
