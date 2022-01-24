@@ -5,6 +5,8 @@
 
 package kotlin.time
 
+import kotlin.jvm.JvmInline
+
 /**
  * A source of time for measuring time intervals.
  *
@@ -30,7 +32,8 @@ public interface TimeSource {
      * This time source returns its readings from a source of monotonic time when it is available in a target platform,
      * and resorts to a non-monotonic time source otherwise.
      */
-    public object Monotonic : TimeSource by MonotonicTimeSource {
+    public object Monotonic : TimeSource {
+        override fun markNow(): DefaultTimeMark = MonotonicTimeSource.markNow()
         override fun toString(): String = MonotonicTimeSource.toString()
     }
 
@@ -46,7 +49,7 @@ public interface TimeSource {
  */
 @SinceKotlin("1.3")
 @ExperimentalTime
-public abstract class TimeMark {
+public interface TimeMark {
     /**
      * Returns the amount of time passed from this mark measured with the time source from which this mark was taken.
      *
@@ -86,6 +89,28 @@ public abstract class TimeMark {
     public fun hasNotPassedNow(): Boolean = elapsedNow().isNegative()
 }
 
+/**
+ * A specialized [TimeMark] returned by [TimeSource.Monotonic].
+ *
+ * This time mark is implemented as an inline value class wrapping a platform-dependent
+ * time reading value of the default monotonic time source, thus allowing to avoid additional boxing
+ * of that value.
+ *
+ * The operations [plus] and [minus] are also specialized to return [DefaultTimeMark] type.
+ */
+@ExperimentalTime
+@SinceKotlin("1.7")
+@JvmInline
+public value class DefaultTimeMark internal constructor(internal val reading: DefaultTimeMarkReading) : TimeMark {
+    override fun elapsedNow(): Duration = MonotonicTimeSource.elapsedFrom(this)
+    override fun plus(duration: Duration): DefaultTimeMark = MonotonicTimeSource.adjustReading(this, duration)
+    override fun minus(duration: Duration): DefaultTimeMark = MonotonicTimeSource.adjustReading(this, -duration)
+    override fun hasPassedNow(): Boolean = !elapsedNow().isNegative()
+    override fun hasNotPassedNow(): Boolean = elapsedNow().isNegative()
+}
+
+internal expect class DefaultTimeMarkReading
+
 
 @ExperimentalTime
 @SinceKotlin("1.3")
@@ -109,7 +134,7 @@ public inline operator fun TimeMark.compareTo(other: TimeMark): Int = throw Erro
 
 
 @ExperimentalTime
-private class AdjustedTimeMark(val mark: TimeMark, val adjustment: Duration) : TimeMark() {
+private class AdjustedTimeMark(val mark: TimeMark, val adjustment: Duration) : TimeMark {
     override fun elapsedNow(): Duration = mark.elapsedNow() - adjustment
 
     override fun plus(duration: Duration): TimeMark = AdjustedTimeMark(mark, adjustment + duration)

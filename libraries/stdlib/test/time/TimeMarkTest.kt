@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package test.time
 
 import kotlin.test.*
 import kotlin.time.*
+import kotlin.time.Duration.Companion.microseconds
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.nanoseconds
 
@@ -56,5 +57,24 @@ class TimeMarkTest {
         markFuture1.assertHasPassed(true)
         markPast1.assertHasPassed(true)
 
+    }
+
+    @Test
+    fun defaultTimeMarkAdjustment() {
+        val baseMark = TimeSource.Monotonic.markNow()
+
+        var markBefore = baseMark
+        markBefore -= 100.microseconds
+        markBefore -= 100.microseconds
+
+        val markAfter = baseMark + 100.microseconds
+
+        MeasureTimeTest.longRunningCalc()
+
+        val elapsedAfter = markAfter.elapsedNow()
+        val elapsedBase = baseMark.elapsedNow()
+        val elapsedBefore = markBefore.elapsedNow()
+        assertTrue(elapsedBefore >= elapsedBase + 200.microseconds)
+        assertTrue(elapsedAfter <= elapsedBase - 100.microseconds)
     }
 }
