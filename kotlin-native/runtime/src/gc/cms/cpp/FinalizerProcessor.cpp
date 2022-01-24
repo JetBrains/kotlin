@@ -14,6 +14,11 @@ void kotlin::gc::FinalizerProcessor::StartFinalizerThreadIfNone() noexcept {
     if (finalizerThread_.joinable()) return;
     finalizerThread_ = std::thread([this] {
         Kotlin_initRuntimeIfNeeded();
+        {
+            std::unique_lock guard(initializedMutex_);
+            initialized_ = true;
+        }
+        initializedCondVar_.notify_all();
         int64_t finalizersEpoch = 0;
         while (true) {
             std::unique_lock lock(finalizerQueueMutex_);
@@ -34,6 +39,11 @@ void kotlin::gc::FinalizerProcessor::StartFinalizerThreadIfNone() noexcept {
             }
             epochDoneCallback_(finalizersEpoch);
         }
+        {
+            std::unique_lock guard(initializedMutex_);
+            initialized_ = false;
+        }
+        initializedCondVar_.notify_all();
     });
 }
 
@@ -67,6 +77,11 @@ void kotlin::gc::FinalizerProcessor::ScheduleTasks(Queue&& tasks, int64_t epoch)
 
 bool kotlin::gc::FinalizerProcessor::IsRunning() noexcept {
     return finalizerThread_.joinable();
+}
+
+void kotlin::gc::FinalizerProcessor::WaitFinalizerThreadInitialized() noexcept {
+    std::unique_lock guard(initializedMutex_);
+    initializedCondVar_.wait(guard, [this] { return initialized_; });
 }
 
 kotlin::gc::FinalizerProcessor::~FinalizerProcessor() {

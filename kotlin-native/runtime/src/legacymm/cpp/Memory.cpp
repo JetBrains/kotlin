@@ -3803,3 +3803,9 @@ ALWAYS_INLINE kotlin::CalledFromNativeGuard::CalledFromNativeGuard(bool reentran
 }
 
 const bool kotlin::kSupportsMultipleMutators = true;
+
+void kotlin::StartFinalizerThreadIfNeeded() noexcept {}
+
+bool kotlin::FinalizersThreadIsRunning() noexcept {
+    return false;
+}

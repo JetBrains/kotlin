@@ -10,6 +10,7 @@
 #include "GCState.hpp"
 
 namespace kotlin::gc {
+
 class FinalizerProcessor : Pinned {
 public:
     using Queue = typename kotlin::mm::ObjectFactory<ConcurrentMarkAndSweep>::FinalizerQueue;
@@ -19,9 +20,11 @@ public:
     void ScheduleTasks(Queue&& tasks, int64_t epoch) noexcept;
     void StopFinalizerThread() noexcept;
     bool IsRunning() noexcept;
-    ~FinalizerProcessor();
-private:
     void StartFinalizerThreadIfNone() noexcept;
+    void WaitFinalizerThreadInitialized() noexcept;
+    ~FinalizerProcessor();
+
+private:
     std::thread finalizerThread_;
     Queue finalizerQueue_;
     std::condition_variable finalizerQueueCondVar_;
@@ -30,5 +33,10 @@ private:
     int64_t finalizerQueueEpoch_ = 0;
     bool shutdownFlag_ = false;
     bool newTasksAllowed_ = true;
+
+    std::mutex initializedMutex_;
+    std::condition_variable initializedCondVar_;
+    bool initialized_ = false;
 };
-}
+
+} // namespace kotlin::gc

@@ -75,10 +75,6 @@ void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGCWithFinalizers
     gc_.state_.waitEpochFinalized(scheduled_epoch);
 }
 
-void gc::ConcurrentMarkAndSweep::ThreadData::StopFinalizerThreadForTests() noexcept {
-    gc_.finalizerProcessor_->StopFinalizerThread();
-}
-
 void gc::ConcurrentMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
     RuntimeLogDebug({kTagGC}, "Attempt to GC on OOM at size=%zu", size);
     ScheduleAndWaitFullGC();
@@ -108,6 +104,21 @@ gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
 gc::ConcurrentMarkAndSweep::~ConcurrentMarkAndSweep() {
     state_.shutdown();
     gcThread_.join();
+}
+
+void gc::ConcurrentMarkAndSweep::StartFinalizerThreadIfNeeded() noexcept {
+    NativeOrUnregisteredThreadGuard guard(true);
+    finalizerProcessor_->StartFinalizerThreadIfNone();
+    finalizerProcessor_->WaitFinalizerThreadInitialized();
+}
+
+void gc::ConcurrentMarkAndSweep::StopFinalizerThreadIfRunning() noexcept {
+    NativeOrUnregisteredThreadGuard guard(true);
+    finalizerProcessor_->StopFinalizerThread();
+}
+
+bool gc::ConcurrentMarkAndSweep::FinalizersThreadIsRunning() noexcept {
+    return finalizerProcessor_->IsRunning();
 }
 
 bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {

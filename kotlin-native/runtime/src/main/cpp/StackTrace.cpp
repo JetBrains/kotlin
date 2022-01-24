@@ -91,6 +91,7 @@ int getSourceInfo(void* symbol, SourceInfo *result, int result_len) {
 // TODO: this implementation is just a hack, e.g. the result is inexact;
 // however it is better to have an inexact stacktrace than not to have any.
 NO_INLINE KStdVector<void*> kotlin::internal::GetCurrentStackTrace(size_t skipFrames) noexcept {
+    NativeOrUnregisteredThreadGuard guard(true);
 #if KONAN_NO_BACKTRACE
     return {};
 #else
@@ -133,6 +134,7 @@ NO_INLINE KStdVector<void*> kotlin::internal::GetCurrentStackTrace(size_t skipFr
 // TODO: this implementation is just a hack, e.g. the result is inexact;
 // however it is better to have an inexact stacktrace than not to have any.
 NO_INLINE size_t kotlin::internal::GetCurrentStackTrace(size_t skipFrames, std_support::span<void*> buffer) noexcept {
+    NativeOrUnregisteredThreadGuard guard(true);
 #if KONAN_NO_BACKTRACE
     return {};
 #else
@@ -237,6 +239,7 @@ KNativePtr adjustAddressForSourceInfo(KNativePtr address) { return address; }
 #endif
 
 KStdVector<KStdString> kotlin::GetStackTraceStrings(std_support::span<void* const> stackTrace) noexcept {
+    NativeOrUnregisteredThreadGuard guard(true);
 #if KONAN_NO_BACKTRACE
     KStdVector<KStdString> strings;
     strings.push_back("<UNIMPLEMENTED>");

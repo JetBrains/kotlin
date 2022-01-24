@@ -240,8 +240,15 @@ void Kotlin_shutdownRuntime() {
     if (!needsFullShutdown) {
         auto lastStatus = compareAndSwap(&globalRuntimeStatus, kGlobalRuntimeRunning, kGlobalRuntimeShutdown);
         RuntimeAssert(lastStatus == kGlobalRuntimeRunning, "Invalid runtime status for shutdown");
+        // The main thread is not doing anything Kotlin anymore, but will stick around to cleanup C++ globals and the like.
+        // Mark the thread native, and don't make the GC thread wait on it.
+        kotlin::SwitchThreadState(runtime->memoryState, kotlin::ThreadState::kNative);
         return;
     }
+
+    // If we're going to need finalizers for the full shutdown, we need to start the thread before
+    // new runtimes are disallowed.
+    kotlin::StartFinalizerThreadIfNeeded();
 
     if (Kotlin_cleanersLeakCheckerEnabled()) {
         // Make sure to collect any lingering cleaners.
@@ -262,8 +269,14 @@ void Kotlin_shutdownRuntime() {
         // First make sure workers are gone.
         WaitNativeWorkersTermination();
 
+        // Allow the current runtime.
+        int knownRuntimes = 1;
+        if (kotlin::FinalizersThreadIsRunning()) {
+            ++knownRuntimes;
+        }
+
         // Now check for existence of any other runtimes.
-        auto otherRuntimesCount = atomicGet(&aliveRuntimesCount) - 1;
+        auto otherRuntimesCount = atomicGet(&aliveRuntimesCount) - knownRuntimes;
         RuntimeAssert(otherRuntimesCount >= 0, "Cannot be negative");
         if (Kotlin_forceCheckedShutdown()) {
             if (otherRuntimesCount > 0) {
