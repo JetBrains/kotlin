@@ -568,7 +568,11 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             }
             !assignIsSuccessful && operatorIsSuccessful -> chooseOperator()
             assignIsSuccessful && !operatorIsSuccessful -> chooseAssign()
-            assignIsSuccessful && operatorIsSuccessful && !operatorReturnTypeMatches -> chooseAssign()
+            assignIsSuccessful && operatorIsSuccessful -> when {
+                leftArgument.typeRef.coneType is ConeDynamicType -> chooseOperator()
+                !operatorReturnTypeMatches -> chooseAssign()
+                else -> reportAmbiguity()
+            }
             else -> reportAmbiguity()
         }
     }
