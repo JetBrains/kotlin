@@ -632,7 +632,8 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             }
             !assignIsSuccessful && operatorIsSuccessful -> chooseOperator()
             assignIsSuccessful && !operatorIsSuccessful -> chooseAssign()
-            assignIsSuccessful && operatorIsSuccessful && !operatorReturnTypeMatches -> chooseAssign()
+            leftArgument.typeRef.coneType is ConeDynamicType -> chooseAssign()
+            !operatorReturnTypeMatches -> chooseAssign()
             else -> reportAmbiguity()
         }
     }
@@ -1182,12 +1183,6 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         val assignCallReference = resolvedAssignCall.calleeReference as? FirNamedReferenceWithCandidate
         val assignIsSuccessful = assignCallReference?.isError == false
 
-        // <array>.set(<index_i>, <array>.get(<index_i>).plus(c))
-        val info = tryResolveAugmentedArraySetCallAsSetGetBlock(augmentedArraySetCall, transformedLhsCall, transformedRhs)
-        val resolvedOperatorCall = info.operatorCall
-        val operatorCallReference = resolvedOperatorCall.calleeReference as? FirNamedReferenceWithCandidate
-        val operatorIsSuccessful = operatorCallReference?.isError == false
-
         fun completeAssignCall() {
             dataFlowAnalyzer.enterFunctionCall(resolvedAssignCall)
             callCompleter.completeCall(resolvedAssignCall, noExpectedType)
@@ -1198,6 +1193,17 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             completeAssignCall()
             return resolvedAssignCall
         }
+
+        // prefer a "simpler" variant for dynamics
+        if (transformedLhsCall.calleeReference.resolvedSymbol?.origin == FirDeclarationOrigin.DynamicScope) {
+            return chooseAssign()
+        }
+
+        // <array>.set(<index_i>, <array>.get(<index_i>).plus(c))
+        val info = tryResolveAugmentedArraySetCallAsSetGetBlock(augmentedArraySetCall, transformedLhsCall, transformedRhs)
+        val resolvedOperatorCall = info.operatorCall
+        val operatorCallReference = resolvedOperatorCall.calleeReference as? FirNamedReferenceWithCandidate
+        val operatorIsSuccessful = operatorCallReference?.isError == false
 
         // if `plus` call already inapplicable then there is no need to try to resolve `set` call
         if (assignIsSuccessful && !operatorIsSuccessful) {
