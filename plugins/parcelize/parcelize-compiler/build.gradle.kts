@@ -44,6 +44,7 @@ dependencies {
     // FIR dependencies
     testApi(project(":compiler:fir:checkers"))
     testApi(project(":compiler:fir:checkers:checkers.jvm"))
+    testApi(project(":compiler:fir:checkers:checkers.js"))
     testApi(project(":plugins:parcelize:parcelize-compiler:parcelize-fir"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 

@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.components.*
+import org.jetbrains.kotlin.fir.analysis.js.checkers.JsDeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.js.checkers.JsExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmExpressionCheckers
 import org.jetbrains.kotlin.fir.moduleData
@@ -67,8 +69,8 @@ private object CheckersFactory {
                 add(CommonDeclarationCheckers)
                 when (platform) {
                     is JvmPlatform -> add(JvmDeclarationCheckers)
-                    else -> {
-                    }
+                    // TODO: JsPlatform is inaccessible due to module's dependencies
+                    else -> add(JsDeclarationCheckers)
                 }
             }
         }
@@ -82,8 +84,8 @@ private object CheckersFactory {
                 add(CommonExpressionCheckers)
                 when (platform) {
                     is JvmPlatform -> add(JvmExpressionCheckers)
-                    else -> {
-                    }
+                    // TODO: JsPlatform is inaccessible due to module's dependencies
+                    else -> add(JsExpressionCheckers)
                 }
             }
         }

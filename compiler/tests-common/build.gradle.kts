@@ -28,6 +28,7 @@ dependencies {
     testApi(project(":compiler:fir:semantics"))
     testApi(project(":compiler:fir:checkers"))
     testApi(project(":compiler:fir:checkers:checkers.jvm"))
+    testApi(project(":compiler:fir:checkers:checkers.js"))
     testApi(project(":compiler:fir:java"))
     testApi(project(":compiler:fir:entrypoint"))
     testApi(project(":compiler:ir.ir2cfg"))

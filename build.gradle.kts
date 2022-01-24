@@ -174,6 +174,7 @@ val firCompilerCoreModules = arrayOf(
     ":compiler:fir:raw-fir:psi2fir",
     ":compiler:fir:checkers",
     ":compiler:fir:checkers:checkers.jvm",
+    ":compiler:fir:checkers:checkers.js",
     ":compiler:fir:entrypoint", // TODO should not be in core modules but FIR IDE uses DependencyListForCliModule from this module
     ":compiler:fir:fir2ir:jvm-backend",  // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module
     ":compiler:fir:fir2ir" // TODO should not be in core modules but FIR IDE uses Fir2IrSignatureComposer from this module

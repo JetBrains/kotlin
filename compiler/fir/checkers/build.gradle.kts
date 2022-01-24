@@ -34,7 +34,8 @@ val generationRoot = projectDir.resolve("gen")
 
 // Add modules for js and native checkers here
 val platformGenerationRoots = listOf(
-    "checkers.jvm"
+    "checkers.jvm",
+    "checkers.js",
 ).map { projectDir.resolve(it).resolve("gen") }
 
 val generateCheckersComponents by tasks.registering(NoDebugJavaExec::class) {
