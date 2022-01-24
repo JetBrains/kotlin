@@ -83,7 +83,7 @@ class ExportModelGenerator(
                     function.getExportedIdentifier(),
                     returnType = exportType(function.returnType),
                     parameters = (listOfNotNull(function.extensionReceiverParameter) + function.valueParameters).map { exportParameter(it) },
-                    typeParameters = function.typeParameters.map { it.name.identifier },
+                    typeParameters = function.typeParameters.map(::exportTypeParameter),
                     isMember = parent is IrClass,
                     isStatic = function.isStaticMethodOfClass,
                     isAbstract = parent is IrClass && !parent.isInterface && function.modality == Modality.ABSTRACT,
@@ -439,6 +439,25 @@ class ExportModelGenerator(
             return exportType(type)
 
         return ExportedType.ErrorType("UnknownType ${type.render()}")
+    }
+
+    private fun exportTypeParameter(typeParameter: IrTypeParameter): ExportedType.TypeParameter {
+        val constraint = typeParameter.superTypes.asSequence()
+            .filter { it != context.irBuiltIns.anyNType }
+            .map(::exportType)
+            .filter { it !is ExportedType.ErrorType && it !is ExportedType.ImplicitlyExportedType }
+            .toList()
+
+        return ExportedType.TypeParameter(
+            typeParameter.name.identifier,
+            constraint.run {
+                when (size) {
+                    0 -> null
+                    1 -> single()
+                    else -> reduce(ExportedType::IntersectionType)
+                }
+            }
+        )
     }
 
     private fun exportType(type: IrType): ExportedType {

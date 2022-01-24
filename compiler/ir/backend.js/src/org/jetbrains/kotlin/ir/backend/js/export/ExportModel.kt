@@ -27,7 +27,7 @@ data class ExportedFunction(
     val name: String,
     val returnType: ExportedType,
     val parameters: List<ExportedParameter>,
-    val typeParameters: List<String> = emptyList(),
+    val typeParameters: List<ExportedType.TypeParameter> = emptyList(),
     val isMember: Boolean = false,
     val isStatic: Boolean = false,
     val isAbstract: Boolean = false,
@@ -111,7 +111,7 @@ sealed class ExportedType {
     ) : ExportedType()
 
     class ClassType(val name: String, val arguments: List<ExportedType>, val ir: IrClass) : ExportedType()
-    class TypeParameter(val name: String) : ExportedType()
+    class TypeParameter(val name: String, val constraint: ExportedType? = null) : ExportedType()
     class Nullable(val baseType: ExportedType) : ExportedType()
     class ErrorType(val comment: String) : ExportedType()
     class TypeOf(val name: String) : ExportedType()

@@ -45,6 +45,15 @@ fun <T> generic1(x: T): T = x
 fun <T> generic2(x: T?): Boolean = (x == null)
 
 @JsExport
+fun <T: String> genericWithConstraint(x: T): T = x
+
+@JsExport
+fun <T> genericWithMultipleConstraints(x: T): T
+        where T : Comparable<T>,
+              T : TestInterface,
+              T : Throwable = x
+
+@JsExport
 fun <A, B, C, D, E> generic3(a: A, b: B, c: C, d: D): E? = null
 
 @JsExport
