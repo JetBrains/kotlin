@@ -78,6 +78,17 @@ java {
     }
 }
 
+tasks.compileJava {
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+}
+
+tasks.compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+}
+
 projectTest(parallel = true) {
     // do not replace with compile/runtime dependency,
     // because it forces Intellij reindexing after each compiler change
