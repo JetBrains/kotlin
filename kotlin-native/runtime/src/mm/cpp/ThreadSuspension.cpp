@@ -43,8 +43,8 @@ void yield() noexcept {
 }
 
 THREAD_LOCAL_VARIABLE bool gSuspensionRequestedByCurrentThread = false;
-std::mutex gSuspensionMutex;
-std::condition_variable gSuspendsionCondVar;
+[[clang::no_destroy]] std::mutex gSuspensionMutex;
+[[clang::no_destroy]] std::condition_variable gSuspendsionCondVar;
 
 } // namespace
 

@@ -60,6 +60,10 @@ public:
 
     void ClearForTests() noexcept;
 
+    void StartFinalizerThreadIfNeeded() noexcept;
+    void StopFinalizerThreadIfRunning() noexcept;
+    bool FinalizersThreadIsRunning() noexcept;
+
 private:
     KStdUniquePtr<Impl> impl_;
 };

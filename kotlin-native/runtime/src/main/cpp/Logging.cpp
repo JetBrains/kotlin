@@ -188,8 +188,8 @@ void logging::Log(Level level, std::initializer_list<const char*> tags, const ch
 }
 
 void logging::VLog(Level level, std::initializer_list<const char*> tags, const char* format, std::va_list args) noexcept {
-    static auto logFilter = internal::CreateLogFilter(compiler::runtimeLogs());
-    static auto logger = internal::CreateStderrLogger();
+    [[clang::no_destroy]] static auto logFilter = internal::CreateLogFilter(compiler::runtimeLogs());
+    [[clang::no_destroy]] static auto logger = internal::CreateStderrLogger();
     RuntimeAssert(tags.size() > 0, "Cannot Log without tags");
     std_support::span<const char* const> tagsSpan(std::data(tags), std::size(tags));
     internal::Log(*logFilter, *logger, level, tagsSpan, format, args);

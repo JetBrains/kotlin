@@ -73,5 +73,18 @@ gc::GCSchedulerConfig& gc::GC::gcSchedulerConfig() noexcept {
 }
 
 void gc::GC::ClearForTests() noexcept {
+    impl_->gc().StopFinalizerThreadIfRunning();
     impl_->objectFactory().ClearForTests();
+}
+
+void gc::GC::StartFinalizerThreadIfNeeded() noexcept {
+    impl_->gc().StartFinalizerThreadIfNeeded();
+}
+
+void gc::GC::StopFinalizerThreadIfRunning() noexcept {
+    impl_->gc().StopFinalizerThreadIfRunning();
+}
+
+bool gc::GC::FinalizersThreadIsRunning() noexcept {
+    return impl_->gc().FinalizersThreadIsRunning();
 }

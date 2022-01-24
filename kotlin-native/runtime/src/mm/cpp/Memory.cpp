@@ -111,8 +111,9 @@ extern "C" void DeinitMemory(MemoryState* state, bool destroyRuntime) {
     auto* node = mm::FromMemoryState(state);
     if (destroyRuntime) {
         ThreadStateGuard guard(state, ThreadState::kRunnable);
-        node->Get()->gc().ScheduleAndWaitFullGC();
-        // TODO: Also make sure that finalizers are run.
+        node->Get()->gc().ScheduleAndWaitFullGCWithFinalizers();
+        // TODO: Why not just destruct `GC` object and its thread data counterpart entirely?
+        mm::GlobalData::Instance().gc().StopFinalizerThreadIfRunning();
     }
     mm::ThreadRegistry::Instance().Unregister(node);
     if (destroyRuntime) {
@@ -293,7 +294,7 @@ extern "C" RUNTIME_NOTHROW void GC_CollectorCallback(void* worker) {
 
 extern "C" void Kotlin_native_internal_GC_collect(ObjHeader*) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    threadData->gc().ScheduleAndWaitFullGC();
+    threadData->gc().ScheduleAndWaitFullGCWithFinalizers();
 }
 
 extern "C" void Kotlin_native_internal_GC_collectCyclic(ObjHeader*) {
@@ -402,7 +403,7 @@ extern "C" void Kotlin_Any_share(ObjHeader* thiz) {
 }
 
 extern "C" RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
-    memory->GetThreadData()->gc().ScheduleAndWaitFullGC();
+    memory->GetThreadData()->gc().ScheduleAndWaitFullGCWithFinalizers();
 }
 
 extern "C" bool TryAddHeapRef(const ObjHeader* object) {
@@ -572,3 +573,11 @@ ALWAYS_INLINE kotlin::CalledFromNativeGuard::CalledFromNativeGuard(bool reentran
 }
 
 const bool kotlin::kSupportsMultipleMutators = kotlin::gc::kSupportsMultipleMutators;
+
+void kotlin::StartFinalizerThreadIfNeeded() noexcept {
+    mm::GlobalData::Instance().gc().StartFinalizerThreadIfNeeded();
+}
+
+bool kotlin::FinalizersThreadIsRunning() noexcept {
+    return mm::GlobalData::Instance().gc().FinalizersThreadIsRunning();
+}

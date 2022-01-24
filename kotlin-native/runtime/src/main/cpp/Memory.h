@@ -520,6 +520,9 @@ private:
 
 extern const bool kSupportsMultipleMutators;
 
+void StartFinalizerThreadIfNeeded() noexcept;
+bool FinalizersThreadIsRunning() noexcept;
+
 } // namespace kotlin
 
 #endif // RUNTIME_MEMORY_H
