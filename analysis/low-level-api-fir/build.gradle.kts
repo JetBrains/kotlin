@@ -14,6 +14,7 @@ dependencies {
     api(project(":compiler:fir:semantics"))
     api(project(":compiler:fir:checkers"))
     api(project(":compiler:fir:checkers:checkers.jvm"))
+    api(project(":compiler:fir:checkers:checkers.js"))
     api(project(":compiler:fir:java"))
     api(project(":compiler:backend.common.jvm"))
     api(project(":analysis:analysis-api-impl-barebone"))

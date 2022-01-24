@@ -30,6 +30,7 @@ dependencies {
     compileOnly(project(":compiler:fir:resolve"))
     compileOnly(project(":compiler:fir:checkers"))
     compileOnly(project(":compiler:fir:checkers:checkers.jvm"))
+    compileOnly(project(":compiler:fir:checkers:checkers.js"))
     compileOnly(project(":compiler:fir:fir2ir"))
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:ir.tree.impl"))
@@ -54,6 +55,7 @@ dependencies {
     // FIR dependencies
     testApi(project(":compiler:fir:checkers"))
     testApi(project(":compiler:fir:checkers:checkers.jvm"))
+    testApi(project(":compiler:fir:checkers:checkers.js"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     testCompileOnly(project(":kotlin-reflect-api"))
