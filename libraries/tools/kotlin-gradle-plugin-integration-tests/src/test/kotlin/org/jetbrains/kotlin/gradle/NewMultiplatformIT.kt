@@ -34,6 +34,7 @@ import java.util.jar.JarFile
 import java.util.zip.ZipFile
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 class NewMultiplatformIT : BaseGradleIT() {
@@ -1160,6 +1161,17 @@ class NewMultiplatformIT : BaseGradleIT() {
             class OptionalCommonUsage
             """.trimIndent()
         )
+
+        build("compileCommonMainKotlinMetadata") {
+            assertSuccessful()
+            val compilerArgsLine = output.lines().singleOrNull { ":compileCommonMainKotlinMetadata Kotlin compiler args" in it }
+            assertNotNull(compilerArgsLine, "The debug log should contain the compiler args for the task :compileCommonMainKotlinMetadata")
+            val args = compilerArgsLine.split(" ")
+            val xCommonSourcesArg = args.singleOrNull { it.startsWith("-Xcommon-sources=") }
+            assertNotNull(xCommonSourcesArg, "The compiler args for K2Metadata should contain the -Xcommon-sources argument")
+            val xCommonSourcesFiles = xCommonSourcesArg.substringAfter("-Xcommon-sources=").split(",")
+            assertTrue { xCommonSourcesFiles.any { it.endsWith("Optional.kt") } }
+        }
 
         build("compileKotlinJvmWithoutJava", "compileKotlinLinux64") {
             assertSuccessful()
