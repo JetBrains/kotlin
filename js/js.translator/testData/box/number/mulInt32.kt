@@ -5,7 +5,7 @@
 //@JsName("imulEmulated")
 //internal fun imul(Int, Int): Int
 
-@Suppress("INVISIBLE_MEMBER")
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 fun imul32(a: Int, b: Int): Int = imul(a, b)
 
 fun imul64(a: Int, b: Int): Int = (a.toLong() * b.toLong()).toInt()
