@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -56,4 +57,6 @@ abstract class FirModuleResolveState {
     abstract fun resolveToFirSymbol(ktDeclaration: KtDeclaration, phase: FirResolvePhase): FirBasedSymbol<*>
 
     internal abstract fun resolveFirToPhase(declaration: FirDeclaration, toPhase: FirResolvePhase)
+
+    abstract fun getTowerContextProvider(ktFile: KtFile): FirTowerContextProvider
 }

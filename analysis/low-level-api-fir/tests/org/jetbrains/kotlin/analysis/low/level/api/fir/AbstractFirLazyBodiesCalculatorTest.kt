@@ -15,14 +15,13 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.firIdeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
+import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractFirLazyBodiesCalculatorTest : AbstractLowLevelApiSingleFileTest() {
-
     private val lazyChecker = object : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {
             TestCase.assertFalse("${FirLazyBlock::class.qualifiedName} should not present in the tree", element is FirLazyBlock)
@@ -34,7 +33,7 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractLowLevelApiSingleFi
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
         resolveWithClearCaches(ktFile) { resolveState ->
             val session = resolveState.rootModuleSession
-            val provider = session.firIdeProvider.kotlinScopeProvider
+            val provider = session.kotlinScopeProvider
 
             val laziedFirFile = RawFirBuilder(
                 session,
@@ -59,5 +58,4 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractLowLevelApiSingleFi
             TestCase.assertEquals(laziedFirFileDump, fullFirFileDump)
         }
     }
-
 }

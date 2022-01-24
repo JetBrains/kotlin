@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLoc
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.runCustomResolveUnderLock
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.firIdeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.FirFileAnnotationsResolveTransformer
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.FirProviderInterceptorForIDE
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LazyTransformerFactory
@@ -114,6 +113,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
         moduleFileCache: ModuleFileCache,
         toPhase: FirResolvePhase,
         scopeSession: ScopeSession,
+        collector: FirTowerDataContextCollector? = null,
         checkPCE: Boolean = false,
     ) {
         if (toPhase == FirResolvePhase.RAW_FIR) return
@@ -126,6 +126,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
                     firFile = firFile,
                     moduleFileCache = moduleFileCache,
                     toPhase = toPhase,
+                    collector = collector,
                     scopeSession = scopeSession,
                     checkPCE = checkPCE,
                 )
@@ -185,7 +186,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
                         scopeSession = scopeSession,
                         moduleFileCache = moduleFileCache,
                         lazyDeclarationResolver = this,
-                        towerDataContextCollector = null,
+                        towerDataContextCollector = collector,
                         firProviderInterceptor = null,
                         checkPCE = checkPCE,
                     )
@@ -298,14 +299,14 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
 
                 declarationToResolve = enumEntry.findSourceNonLocalFirDeclaration(
                     firFileBuilder,
-                    firDeclarationToResolve.moduleData.session.firIdeProvider.symbolProvider,
+                    firDeclarationToResolve.moduleData.session.firProvider.symbolProvider,
                     moduleFileCache
                 )
                 neededPhase = FirResolvePhase.BODY_RESOLVE
             } else {
                 declarationToResolve = nonLocalDeclaration.findSourceNonLocalFirDeclaration(
                     firFileBuilder,
-                    firDeclarationToResolve.moduleData.session.firIdeProvider.symbolProvider,
+                    firDeclarationToResolve.moduleData.session.firProvider.symbolProvider,
                     moduleFileCache
                 )
                 neededPhase = toPhase

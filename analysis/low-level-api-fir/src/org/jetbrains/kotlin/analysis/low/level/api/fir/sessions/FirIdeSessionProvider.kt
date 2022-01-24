@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.fir.FirSessionProvider
 @Immutable
 class FirIdeSessionProvider internal constructor(
     val project: Project,
-    internal val rootModuleSession: FirIdeSourcesSession,
-    val sessions: Map<KtSourceModule, FirIdeSession>
+    internal val rootModuleSession: LLFirResolvableModuleSession,
+    val sessions: Map<KtModule, LLFirResolvableModuleSession>
 ) : FirSessionProvider() {
     override fun getSession(moduleData: FirModuleData): FirSession? =
         sessions[moduleData.module]
@@ -26,6 +26,6 @@ class FirIdeSessionProvider internal constructor(
     fun getSession(module: KtModule): FirSession? =
         sessions[module]
 
-    internal fun getModuleCache(module: KtSourceModule): ModuleFileCache =
-        (sessions.getValue(module) as FirIdeSourcesSession).cache
+    internal fun getModuleCache(module: KtModule): ModuleFileCache =
+        sessions.getValue(module).cache
 }

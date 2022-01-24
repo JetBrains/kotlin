@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir.getTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.ResolutionParameters
@@ -61,7 +60,7 @@ internal class KtFirCompletionCandidateChecker(
         val file = originalFile.getOrBuildFirFile(firResolveState)
         val explicitReceiverExpression = possibleExplicitReceiver?.getOrBuildFirOfType<FirExpression>(firResolveState)
         val resolver = SingleCandidateResolver(firResolveState.rootModuleSession, file)
-        val implicitReceivers = getImplicitReceivers(nameExpression)
+        val implicitReceivers = getImplicitReceivers(originalFile, nameExpression)
         for (implicitReceiverValue in implicitReceivers) {
             val resolutionParameters = ResolutionParameters(
                 singleCandidateResolutionMode = SingleCandidateResolutionMode.CHECK_EXTENSION_FOR_COMPLETION,
@@ -84,8 +83,11 @@ internal class KtFirCompletionCandidateChecker(
         return KtExtensionApplicabilityResult.NonApplicable(KtSubstitutor.Empty(token))
     }
 
-    private fun getImplicitReceivers(fakeNameExpression: KtSimpleNameExpression): Sequence<ImplicitReceiverValue<*>?> {
-        val towerDataContext = analysisSession.firResolveState.getTowerContextProvider()
+    private fun getImplicitReceivers(
+        originalFile: KtFile,
+        fakeNameExpression: KtSimpleNameExpression
+    ): Sequence<ImplicitReceiverValue<*>?> {
+        val towerDataContext = analysisSession.firResolveState.getTowerContextProvider(originalFile)
             .getClosestAvailableParentContext(fakeNameExpression)
             ?: error("Cannot find enclosing declaration for ${fakeNameExpression.getElementTextInContext()}")
 

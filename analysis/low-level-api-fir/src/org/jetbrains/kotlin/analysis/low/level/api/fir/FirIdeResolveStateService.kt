@@ -13,7 +13,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSessionProviderStorage
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSourcesSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.FirSourceModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirLibraryOrLibrarySourceResolvableModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableModuleResolveState
+import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
+import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
@@ -27,10 +33,10 @@ internal class FirIdeResolveStateService(project: Project) {
         project.createProjectWideOutOfBlockModificationTracker(),
         ProjectRootModificationTracker.getInstance(project),
     ) {
-        ConcurrentHashMap<KtModule, FirSourceModuleResolveState>()
+        ConcurrentHashMap<KtModule, LLFirResolvableModuleResolveState>()
     }
 
-    fun getResolveState(module: KtModule): FirSourceModuleResolveState =
+    fun getResolveState(module: KtModule): LLFirResolvableModuleResolveState =
         stateCache.computeIfAbsent(module) { createResolveStateFor(module, sessionProviderStorage) }
 
     companion object {
@@ -41,19 +47,34 @@ internal class FirIdeResolveStateService(project: Project) {
             module: KtModule,
             sessionProviderStorage: FirIdeSessionProviderStorage,
             configureSession: (FirIdeSession.() -> Unit)? = null,
-        ): FirSourceModuleResolveState {
-            if (module !is KtSourceModule) {
-                error("Creating FirModuleResolveState is not yet supported for $module")
-            }
+        ): LLFirResolvableModuleResolveState {
             val sessionProvider = sessionProviderStorage.getSessionProvider(module, configureSession)
-            val firFileBuilder = sessionProvider.rootModuleSession.firFileBuilder
-            return FirSourceModuleResolveState(
-                sessionProviderStorage.project,
-                module,
-                sessionProvider,
-                firFileBuilder,
-                FirLazyDeclarationResolver(firFileBuilder),
-            )
+            return when (module) {
+                is KtSourceModule -> {
+                    val firFileBuilder = (sessionProvider.rootModuleSession as FirIdeSourcesSession).firFileBuilder
+                    FirSourceModuleResolveState(
+                        sessionProviderStorage.project,
+                        module,
+                        sessionProvider,
+                        firFileBuilder,
+                        FirLazyDeclarationResolver(firFileBuilder),
+                    )
+                }
+                is KtLibraryModule, is KtLibrarySourceModule -> {
+                    val firFileBuilder = (sessionProvider.rootModuleSession as LLFirLibraryOrLibrarySourceResolvableModuleSession).firFileBuilder
+                    LLFirLibraryOrLibrarySourceResolvableModuleResolveState(
+                        sessionProviderStorage.project,
+                        module,
+                        sessionProvider,
+                        firFileBuilder,
+                        FirLazyDeclarationResolver(firFileBuilder),
+                    )
+                }
+                else -> {
+                    error("Unexpected $module")
+                }
+            }
+
         }
     }
 }

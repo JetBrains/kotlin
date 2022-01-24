@@ -124,5 +124,3 @@ internal class FirIdeProvider(
         }
     }
 }
-
-internal val FirSession.firIdeProvider: FirIdeProvider by FirSession.sessionComponentAccessor()
