@@ -149,6 +149,11 @@ abstract class KotlinCompileCommon @Inject constructor(
             reportingSettings = reportingSettings(),
             outputFiles = allOutputFiles()
         )
-        compilerRunner.runMetadataCompilerAsync(sourceRoots.kotlinSourceFiles.files.toList(), args, environment)
+        compilerRunner.runMetadataCompilerAsync(
+            sourceRoots.kotlinSourceFiles.files.toList(),
+            commonSourceSet.files.toList(),
+            args,
+            environment
+        )
     }
 }

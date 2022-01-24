@@ -118,10 +118,12 @@ internal open class GradleCompilerRunner(
      */
     fun runMetadataCompilerAsync(
         kotlinSources: List<File>,
+        kotlinCommonSources: List<File>,
         args: K2MetadataCompilerArguments,
         environment: GradleCompilerEnvironment
     ): WorkQueue? {
         args.freeArgs += kotlinSources.map { it.absolutePath }
+        args.commonSources = kotlinCommonSources.map { it.absolutePath }.toTypedArray()
         return runCompilerAsync(KotlinCompilerClass.METADATA, args, environment)
     }
 
