@@ -3,11 +3,7 @@ package org.jetbrains.kotlin.compilerRunner
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
-import org.jetbrains.kotlin.daemon.common.CompilationResultCategory
-import org.jetbrains.kotlin.daemon.common.CompilationResults
-import org.jetbrains.kotlin.daemon.common.LoopbackNetworkInterface
-import org.jetbrains.kotlin.daemon.common.SOCKET_ANY_FREE_PORT
-import org.jetbrains.kotlin.daemon.common.CompileIterationResult
+import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo
 import java.io.File
@@ -52,7 +48,7 @@ internal class GradleCompilationResults(
                 (value as? List<String>)?.let { icLogLines = it }
             }
             CompilationResultCategory.BUILD_METRICS.code -> {
-                buildMetricsReporter.addMetrics(value as? BuildMetrics)
+                (value as? BuildMetrics)?.let { buildMetricsReporter.addMetrics(it) }
             }
         }
     }

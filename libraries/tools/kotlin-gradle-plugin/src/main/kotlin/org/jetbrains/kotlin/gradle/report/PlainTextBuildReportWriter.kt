@@ -15,8 +15,6 @@ import java.io.File
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashSet
 import kotlin.math.max
 
 internal class PlainTextBuildReportWriterDataProcessor(
@@ -88,9 +86,9 @@ internal class PlainTextBuildReportWriter(
     }
 
     private fun printBuildTimes(buildTimes: BuildTimes) {
-        val collectedBuildTimes = buildTimes.asMap()
+        val buildTimesMs = buildTimes.asMapMs()
 
-        if (collectedBuildTimes.isEmpty()) return
+        if (buildTimesMs.isEmpty()) return
 
         p.println("Time metrics:")
         p.withIndent {
@@ -98,7 +96,7 @@ internal class PlainTextBuildReportWriter(
             fun printBuildTime(buildTime: BuildTime) {
                 if (!visitedBuildTimes.add(buildTime)) return
 
-                val timeMs = collectedBuildTimes[buildTime]
+                val timeMs = buildTimesMs[buildTime]
                 if (timeMs != null) {
                     p.println("${buildTime.name}: ${formatTime(timeMs)}")
                     p.withIndent {
