@@ -5,32 +5,42 @@
 
 package org.jetbrains.kotlin.gradle.model
 
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.GradleVersionRequired
-import org.junit.Test
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class NoArgModelIT : BaseGradleIT() {
-    @Test
-    fun testNoArgKt18668() {
-        val project = Project("noArgKt18668")
-        val noArgModel = project.getModels(NoArg::class.java).getModel(":")!!
-        assertEquals(1L, noArgModel.modelVersion)
-        assertEquals("noArgKt18668", noArgModel.name)
-        assertEquals(1, noArgModel.annotations.size)
-        assertTrue(noArgModel.annotations.contains("test.NoArg"))
-        assertTrue(noArgModel.presets.isEmpty())
-        assertFalse(noArgModel.isInvokeInitializers)
+@DisplayName("No-arg plugin models")
+@OtherGradlePluginTests
+class NoArgModelIT : KGPBaseTest() {
+
+    @DisplayName("Valid model with plugin is applied")
+    @GradleTest
+    fun testNoArgKt18668(gradleVersion: GradleVersion) {
+        project("noArgKt18668", gradleVersion) {
+            getModels<NoArg> {
+                with(getModel(":")!!) {
+                    assertEquals(1L, modelVersion)
+                    assertEquals("noArgKt18668", name)
+                    assertEquals(1, annotations.size)
+                    assertTrue(annotations.contains("test.NoArg"))
+                    assertTrue(presets.isEmpty())
+                    assertFalse(isInvokeInitializers)
+                }
+            }
+        }
     }
 
-    @Test
-    fun testNonNoArgProjects() {
-        val project = Project("kotlinProject")
-        val model = project.getModels(NoArg::class.java).getModel(":")
-
-        assertNull(model)
+    @DisplayName("Model is not available when plugin is not applied")
+    @GradleTest
+    fun testNonNoArgProjects(gradleVersion: GradleVersion) {
+        project("kotlinProject", gradleVersion) {
+            getModels<NoArg> {
+                assertNull(getModel(":"))
+            }
+        }
     }
 }
