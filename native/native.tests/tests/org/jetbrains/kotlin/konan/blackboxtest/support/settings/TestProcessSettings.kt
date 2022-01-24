@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.settings
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import java.util.*
 import kotlin.time.Duration
 
 /**
@@ -20,6 +21,10 @@ internal class KotlinNativeTargets(val testTarget: KonanTarget, val hostTarget: 
 internal class KotlinNativeHome(val dir: File) {
     val librariesDir: File = dir.resolve("klib")
     val stdlibFile: File = librariesDir.resolve("common/stdlib")
+
+    val properties: Properties by lazy {
+        dir.resolve("konan/konan.properties").inputStream().use { Properties().apply { load(it) } }
+    }
 }
 
 /**

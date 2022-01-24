@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.settings.CacheKind.WithSt
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ArgsBuilder
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.buildArgs
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.flatMapToSet
+import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
@@ -24,7 +25,8 @@ internal abstract class TestCompilation<A : TestCompilationArtifact> {
 }
 
 internal abstract class BasicCompilation<A : TestCompilationArtifact>(
-    private val targets: KotlinNativeTargets,
+    protected val targets: KotlinNativeTargets,
+    protected val home: KotlinNativeHome,
     private val classLoader: KotlinNativeClassLoader,
     private val optimizationMode: OptimizationMode,
     protected val dependencies: Iterable<TestCompilationDependency<*>>,
@@ -138,7 +140,7 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
 
 internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     targets: KotlinNativeTargets,
-    private val home: KotlinNativeHome,
+    home: KotlinNativeHome,
     classLoader: KotlinNativeClassLoader,
     optimizationMode: OptimizationMode,
     private val memoryModel: MemoryModel,
@@ -150,6 +152,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     expectedArtifact: A
 ) : BasicCompilation<A>(
     targets = targets,
+    home = home,
     classLoader = classLoader,
     optimizationMode = optimizationMode,
     dependencies = dependencies,
@@ -256,6 +259,7 @@ internal class StaticCacheCompilation(
     expectedArtifact: KLIBStaticCache
 ) : BasicCompilation<KLIBStaticCache>(
     targets = settings.get(),
+    home = settings.get(),
     classLoader = settings.get(),
     optimizationMode = settings.get(),
     dependencies = dependencies,
@@ -266,11 +270,12 @@ internal class StaticCacheCompilation(
 
     private val cacheDir = expectedArtifact.file
 
-    private val cacheKind: WithStaticCache = run {
+    private val rootCacheDir: File = run {
         val cacheKind = settings.get<CacheKind>()
-        cacheKind.safeAs<WithStaticCache>() ?: fail {
+        val staticCacheKind = cacheKind as? WithStaticCache ?: fail {
             "${WithStaticCache::class.java} is expected as the current cache kind in ${StaticCacheCompilation::class.java}, found: $cacheKind"
         }
+        staticCacheKind.rootCacheDir ?: fail { "No root cache directory found" }
     }
 
     override fun doBeforeCompile() {
@@ -279,12 +284,14 @@ internal class StaticCacheCompilation(
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         add("-produce", "static_cache")
-        // TODO: additional cache flags: konanProperties.resolvablePropertyList("additionalCacheFlags", target.visibleName)
+
+        // The following line adds "-Xembed-bitcode-marker" for certain iOS device targets:
+        add(home.properties.resolvablePropertyList("additionalCacheFlags", targets.testTarget.visibleName))
         add(
             "-Xadd-cache=${dependencies.libraryToCache.path}",
-            "-Xcache-directory=${cacheDir.path}"
+            "-Xcache-directory=${cacheDir.path}",
+            "-Xcache-directory=$rootCacheDir"
         )
-        cacheKind.rootCacheDir?.let { rootCacheDir -> add("-Xcache-directory=$rootCacheDir") }
     }
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
