@@ -5,18 +5,31 @@
 
 package org.jetbrains.kotlin.scripting.ide_services
 
+import com.intellij.mock.MockApplication
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.util.indexing.FileContentImpl
 import junit.framework.TestCase
+import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.FileAttributeService
+import org.jetbrains.kotlin.analysis.decompiler.stub.files.DummyFileAttributeService
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocationWithRange
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemoryImpl
 import org.jetbrains.kotlin.scripting.ide_services.test_util.*
 import java.io.File
-import kotlin.io.path.*
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createTempDirectory
+import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.reflect.full.isSubclassOf
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.jvm.impl.KJvmCompiledModuleInMemory
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.updateClasspath
@@ -340,6 +353,28 @@ class JvmIdeServicesTest : TestCase() {
             }
     }
 
+    fun testReplScriptClassFileDecompilation() {
+        JvmTestRepl()
+            .use { repl ->
+                val compiledSnippet = checkCompile(repl, "10 + 10")
+                val snippetValue = compiledSnippet.get()!!
+
+                val compiledModule = snippetValue.getCompiledModule() as KJvmCompiledModuleInMemoryImpl
+                val folder = saveCompiledOutput("repl-script-decompilation", compiledModule)
+
+                val vFile = VirtualFileManager.getInstance().findFileByNioPath(folder.resolve("Line_0_simplescript.class").toPath())!!
+                val fileContent = FileContentImpl.createByFile(vFile)
+
+                val application = ApplicationManager.getApplication() as MockApplication
+                KotlinCoreEnvironment.underApplicationLock {
+                    registerDecompilerServices(application)
+                }
+
+                val fileStub = KotlinClassFileDecompiler().stubBuilder.buildFileStub(fileContent)
+                assertNotNull(fileStub)
+            }
+    }
+
     @OptIn(ExperimentalPathApi::class)
     companion object {
         private const val MODULE_PATH = "plugins/scripting/scripting-ide-services-test"
@@ -365,6 +400,21 @@ class JvmIdeServicesTest : TestCase() {
             )
 
             return CliCompilationResult(exitCode, jarPath)
+        }
+
+        private fun saveCompiledOutput(subfolder: String, module: KJvmCompiledModuleInMemory): File {
+            val folder = outputJarDir.resolve(subfolder).toFile()
+            module.compilerOutputFiles.forEach { (name, contents) ->
+                val file = folder.resolve(name)
+                file.parentFile.mkdirs()
+                file.writeBytes(contents)
+            }
+            return folder
+        }
+
+        private fun registerDecompilerServices(application: MockApplication) {
+            application.registerService(ClsKotlinBinaryClassCache::class.java)
+            application.registerService(FileAttributeService::class.java, DummyFileAttributeService)
         }
     }
 }

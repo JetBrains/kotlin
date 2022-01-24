@@ -16,6 +16,7 @@ dependencies {
     implementation(intellijCore())
 
     testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
     testImplementation(projectTests(":analysis:analysis-api-fir"))
 }
