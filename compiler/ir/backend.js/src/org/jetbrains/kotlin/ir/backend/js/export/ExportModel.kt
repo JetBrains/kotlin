@@ -80,7 +80,8 @@ data class ExportedClass(
 
 class ExportedParameter(
     val name: String,
-    val type: ExportedType
+    val type: ExportedType,
+    val hasDefaultValue: Boolean = false
 )
 
 sealed class ExportedType {

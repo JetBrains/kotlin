@@ -110,7 +110,11 @@ class ExportModelGenerator(
         if (parameterName in allReservedWords)
             parameterName = "_$parameterName"
 
-        return ExportedParameter(parameterName, exportType(parameter.type))
+        return ExportedParameter(
+            parameterName,
+            exportType(parameter.type),
+            parameter.origin == JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER
+        )
     }
 
     private fun exportProperty(property: IrProperty): ExportedDeclaration? {

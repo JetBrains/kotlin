@@ -15,5 +15,6 @@ object JsLoweredDeclarationOrigin : IrDeclarationOrigin {
     object BRIDGE_WITHOUT_STABLE_NAME : IrDeclarationOriginImpl("BRIDGE_WITHOUT_STABLE_NAME")
     object OBJECT_GET_INSTANCE_FUNCTION : IrDeclarationOriginImpl("OBJECT_GET_INSTANCE_FUNCTION")
     object JS_SHADOWED_EXPORT : IrDeclarationOriginImpl("JS_SHADOWED_EXPORT")
+    object JS_SHADOWED_DEFAULT_PARAMETER : IrDeclarationOriginImpl("JS_SHADOWED_DEFAULT_PARAMETER")
     object ENUM_GET_INSTANCE_FUNCTION : IrDeclarationOriginImpl("ENUM_GET_INSTANCE_FUNCTION")
 }

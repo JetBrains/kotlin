@@ -112,7 +112,10 @@ class ExportedDefaultParameterStub(val context: JsIrBackendContext) : Declaratio
         exportedDefaultStubFun.parent = declaration.parent
         exportedDefaultStubFun.copyParameterDeclarationsFrom(declaration)
         exportedDefaultStubFun.returnType = declaration.returnType.remapTypeParameters(declaration, exportedDefaultStubFun)
-        exportedDefaultStubFun.valueParameters.forEach { it.defaultValue = null }
+        exportedDefaultStubFun.valueParameters.forEach {
+            it.defaultValue = null
+            it.origin = JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER
+        }
 
         declaration.origin = JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT
 

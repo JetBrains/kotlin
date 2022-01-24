@@ -268,8 +268,12 @@ fun ExportedClass.toReadonlyProperty(): ExportedProperty {
     )
 }
 
-fun ExportedParameter.toTypeScript(indent: String): String =
-    "${sanitizeName(name, withHash = false)}: ${type.toTypeScript(indent)}"
+fun ExportedParameter.toTypeScript(indent: String): String {
+    val name = sanitizeName(name, withHash = false)
+    val type = type.toTypeScript(indent)
+    val questionMark = if (hasDefaultValue) "?" else ""
+    return "$name$questionMark: $type"
+}
 
 fun ExportedType.toTypeScript(indent: String): String = when (this) {
     is ExportedType.Primitive -> typescript
