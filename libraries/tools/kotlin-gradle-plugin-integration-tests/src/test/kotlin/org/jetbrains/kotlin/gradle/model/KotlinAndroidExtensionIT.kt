@@ -5,50 +5,60 @@
 
 package org.jetbrains.kotlin.gradle.model
 
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.util.AGPVersion
-import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.junit.Test
+import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class KotlinAndroidExtensionIT : BaseGradleIT() {
-    override fun defaultBuildOptions(): BuildOptions {
-        return super.defaultBuildOptions().copy(
-            androidGradlePluginVersion = AGPVersion.v3_4_1,
-            androidHome = KtTestUtil.findAndroidSdk()
-        )
+@DisplayName("Kotlin-android plugin models")
+@OtherGradlePluginTests
+class KotlinAndroidExtensionIT : KGPBaseTest() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(
+        androidVersion = TestVersions.AGP.AGP_34,
+        warningMode = WarningMode.Summary
+    )
+
+    @DisplayName("Has valid model when plugin is applied")
+    @GradleTest
+    fun testAndroidExtensionsProject(gradleVersion: GradleVersion) {
+        project("AndroidExtensionsProject", gradleVersion) {
+            getModels<KotlinAndroidExtension> {
+                with(getModel(":app")!!) {
+                    assertEquals(1L, modelVersion)
+                    assertEquals("app", name)
+                    assertFalse(isExperimental)
+                    assertEquals("hashMap", defaultCacheImplementation)
+                }
+            }
+        }
     }
 
-    @Test
-    fun testAndroidExtensionsProject() {
-        val project = Project("AndroidExtensionsProject")
-        val androidExtensionModel = project.getModels(KotlinAndroidExtension::class.java).getModel(":app")!!
-
-        assertEquals(1L, androidExtensionModel.modelVersion)
-        assertEquals("app", androidExtensionModel.name)
-        assertFalse(androidExtensionModel.isExperimental)
-        assertEquals("hashMap", androidExtensionModel.defaultCacheImplementation)
+    @DisplayName("Has valid model in android multivariant project when plugin is applied")
+    @GradleTest
+    fun testAndroidExtensionsManyVariants(gradleVersion: GradleVersion) {
+        project("AndroidExtensionsManyVariants", gradleVersion) {
+            getModels<KotlinAndroidExtension> {
+                with(getModel(":app")!!) {
+                    assertEquals(1L, modelVersion)
+                    assertEquals("app", name)
+                    assertTrue(isExperimental)
+                    assertEquals("hashMap", defaultCacheImplementation)
+                }
+            }
+        }
     }
 
-    @Test
-    fun testAndroidExtensionsManyVariants() {
-        val project = Project("AndroidExtensionsManyVariants")
-        val androidExtensionModel = project.getModels(KotlinAndroidExtension::class.java).getModel(":app")!!
-
-        assertEquals(1L, androidExtensionModel.modelVersion)
-        assertEquals("app", androidExtensionModel.name)
-        assertTrue(androidExtensionModel.isExperimental)
-        assertEquals("hashMap", androidExtensionModel.defaultCacheImplementation)
-    }
-
-    @Test
-    fun testNonAndroidExtensionsProjects() {
-        val project = Project("kotlinProject")
-        val model = project.getModels(KotlinAndroidExtension::class.java).getModel(":")
-
-        assertNull(model)
+    @DisplayName("Doesn't have model when plugin is not applied")
+    @GradleTest
+    fun testNonAndroidExtensionsProjects(gradleVersion: GradleVersion) {
+        project("kotlinProject", gradleVersion) {
+            getModels<KotlinAndroidExtension> {
+                assertNull(getModel(":"))
+            }
+        }
     }
 }
