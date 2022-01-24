@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,6 +30,23 @@ public inline fun measureTime(block: () -> Unit): Duration {
 @SinceKotlin("1.3")
 @ExperimentalTime
 public inline fun TimeSource.measureTime(block: () -> Unit): Duration {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+
+    val mark = markNow()
+    block()
+    return mark.elapsedNow()
+}
+
+/**
+ * Executes the given function [block] and returns the duration of elapsed time interval.
+ *
+ * The elapsed time is measured with the specified `this` [TimeSource.Monotonic] instance.
+ */
+@SinceKotlin("1.7")
+@ExperimentalTime
+public inline fun TimeSource.Monotonic.measureTime(block: () -> Unit): Duration {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }
@@ -75,6 +92,24 @@ public inline fun <T> measureTimedValue(block: () -> T): TimedValue<T> {
 @SinceKotlin("1.3")
 @ExperimentalTime
 public inline fun <T> TimeSource.measureTimedValue(block: () -> T): TimedValue<T> {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+
+    val mark = markNow()
+    val result = block()
+    return TimedValue(result, mark.elapsedNow())
+}
+
+/**
+ * Executes the given [block] and returns an instance of [TimedValue] class, containing both
+ * the result of function execution and the duration of elapsed time interval.
+ *
+ * The elapsed time is measured with the specified `this` [TimeSource.Monotonic] instance.
+ */
+@SinceKotlin("1.7")
+@ExperimentalTime
+public inline fun <T> TimeSource.Monotonic.measureTimedValue(block: () -> T): TimedValue<T> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }

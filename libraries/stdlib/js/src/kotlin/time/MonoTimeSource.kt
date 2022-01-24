@@ -7,12 +7,23 @@ package kotlin.time
 
 import org.w3c.performance.GlobalPerformance
 import org.w3c.performance.Performance
+import kotlin.time.Duration.Companion.milliseconds
+
+@Suppress("ACTUAL_WITHOUT_EXPECT") // visibility
+internal actual typealias DefaultTimeMarkReading = Any
+
+@ExperimentalTime
+internal interface DefaultTimeSource : TimeSource {
+    override fun markNow(): DefaultTimeMark
+    fun elapsedFrom(timeMark: DefaultTimeMark): Duration
+    fun adjustReading(timeMark: DefaultTimeMark, duration: Duration): DefaultTimeMark
+}
 
 @SinceKotlin("1.3")
 @ExperimentalTime
-internal actual object MonotonicTimeSource : TimeSource {
+internal actual object MonotonicTimeSource : DefaultTimeSource, TimeSource {  // TODO: interface should not be required here
 
-    private val actualSource: TimeSource = run {
+    private val actualSource: DefaultTimeSource = run {
         val isNode: Boolean = js("typeof process !== 'undefined' && process.versions && !!process.versions.node")
 
         if (isNode)
@@ -23,7 +34,10 @@ internal actual object MonotonicTimeSource : TimeSource {
 
     }
 
-    override fun markNow(): TimeMark = actualSource.markNow()
+    actual override fun markNow(): DefaultTimeMark = actualSource.markNow()
+    actual override fun elapsedFrom(timeMark: DefaultTimeMark): Duration = actualSource.elapsedFrom(timeMark)
+    actual override fun adjustReading(timeMark: DefaultTimeMark, duration: Duration): DefaultTimeMark =
+        actualSource.adjustReading(timeMark, duration)
 }
 
 internal external interface Process {
@@ -32,27 +46,47 @@ internal external interface Process {
 
 @SinceKotlin("1.3")
 @ExperimentalTime
-internal class HrTimeSource(val process: Process) : TimeSource {
+internal class HrTimeSource(private val process: Process) : DefaultTimeSource {
 
-    override fun markNow(): TimeMark = object : TimeMark() {
-        val startedAt = process.hrtime()
-        override fun elapsedNow(): Duration =
-            process.hrtime(startedAt).let { (seconds, nanos) -> seconds.toDuration(DurationUnit.SECONDS) + nanos.toDuration(DurationUnit.NANOSECONDS) }
-    }
+    override fun markNow(): DefaultTimeMark = DefaultTimeMark(process.hrtime())
+    override fun elapsedFrom(timeMark: DefaultTimeMark): Duration =
+        @Suppress("UNCHECKED_CAST")
+        process.hrtime(timeMark.reading as Array<Double>).let { (seconds, nanos) -> seconds.toDuration(DurationUnit.SECONDS) + nanos.toDuration(DurationUnit.NANOSECONDS) }
+
+    override fun adjustReading(timeMark: DefaultTimeMark, duration: Duration): DefaultTimeMark =
+        @Suppress("UNCHECKED_CAST")
+        (timeMark.reading as Array<Double>).let { (seconds, nanos) ->
+            duration.toComponents { addSeconds, addNanos ->
+                arrayOf<Double>(seconds + addSeconds, nanos + addNanos)
+            }
+        }.let(::DefaultTimeMark)
+
 
     override fun toString(): String = "TimeSource(process.hrtime())"
 }
 
 @SinceKotlin("1.3")
 @ExperimentalTime
-internal class PerformanceTimeSource(val performance: Performance) : AbstractDoubleTimeSource(unit = DurationUnit.MILLISECONDS) {
-    override fun read(): Double = performance.now()
+internal class PerformanceTimeSource(val performance: Performance) : DefaultTimeSource { // AbstractDoubleTimeSource(unit = DurationUnit.MILLISECONDS) {
+    private fun read(): Double = performance.now()
+
+    override fun markNow(): DefaultTimeMark = DefaultTimeMark(read())
+    override fun elapsedFrom(timeMark: DefaultTimeMark): Duration = (read() - timeMark.reading as Double).milliseconds
+    override fun adjustReading(timeMark: DefaultTimeMark, duration: Duration): DefaultTimeMark =
+        DefaultTimeMark(timeMark.reading as Double + duration.toDouble(DurationUnit.MILLISECONDS))
+
     override fun toString(): String = "TimeSource(self.performance.now())"
 }
 
 @SinceKotlin("1.3")
 @ExperimentalTime
-internal object DateNowTimeSource : AbstractDoubleTimeSource(unit = DurationUnit.MILLISECONDS) {
-    override fun read(): Double = kotlin.js.Date.now()
+internal object DateNowTimeSource : DefaultTimeSource {
+    private fun read(): Double = kotlin.js.Date.now()
+
+    override fun markNow(): DefaultTimeMark = DefaultTimeMark(read())
+    override fun elapsedFrom(timeMark: DefaultTimeMark): Duration = (read() - timeMark.reading as Double).milliseconds
+    override fun adjustReading(timeMark: DefaultTimeMark, duration: Duration): DefaultTimeMark =
+        DefaultTimeMark(timeMark.reading as Double + duration.toDouble(DurationUnit.MILLISECONDS))
+
     override fun toString(): String = "TimeSource(Date.now())"
 }

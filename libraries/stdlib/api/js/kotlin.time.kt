@@ -142,9 +142,17 @@ public inline operator fun kotlin.time.TimeMark.compareTo(other: kotlin.time.Tim
 @kotlin.time.ExperimentalTime
 public inline fun kotlin.time.TimeSource.measureTime(block: () -> kotlin.Unit): kotlin.time.Duration
 
+@kotlin.SinceKotlin(version = "1.7")
+@kotlin.time.ExperimentalTime
+public inline fun kotlin.time.TimeSource.Monotonic.measureTime(block: () -> kotlin.Unit): kotlin.time.Duration
+
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.time.ExperimentalTime
 public inline fun <T> kotlin.time.TimeSource.measureTimedValue(block: () -> T): kotlin.time.TimedValue<T>
+
+@kotlin.SinceKotlin(version = "1.7")
+@kotlin.time.ExperimentalTime
+public inline fun <T> kotlin.time.TimeSource.Monotonic.measureTimedValue(block: () -> T): kotlin.time.TimedValue<T>
 
 @kotlin.time.ExperimentalTime
 @kotlin.SinceKotlin(version = "1.3")
@@ -196,6 +204,27 @@ public abstract class AbstractLongTimeSource : kotlin.time.TimeSource {
     public open override fun markNow(): kotlin.time.TimeMark
 
     protected abstract fun read(): kotlin.Long
+}
+
+@kotlin.time.ExperimentalTime
+@kotlin.SinceKotlin(version = "1.7")
+@kotlin.jvm.JvmInline
+public final inline class DefaultTimeMark : kotlin.time.TimeMark {
+    public open override fun elapsedNow(): kotlin.time.Duration
+
+    public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+    public open override fun hasNotPassedNow(): kotlin.Boolean
+
+    public open override fun hasPassedNow(): kotlin.Boolean
+
+    public open override fun hashCode(): kotlin.Int
+
+    public open override operator fun minus(duration: kotlin.time.Duration): kotlin.time.DefaultTimeMark
+
+    public open override operator fun plus(duration: kotlin.time.Duration): kotlin.time.DefaultTimeMark
+
+    public open override fun toString(): kotlin.String
 }
 
 @kotlin.SinceKotlin(version = "1.6")
@@ -550,14 +579,12 @@ public final class TestTimeSource : kotlin.time.AbstractLongTimeSource {
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.time.ExperimentalTime
-public abstract class TimeMark {
-    public constructor TimeMark()
-
+public interface TimeMark {
     public abstract fun elapsedNow(): kotlin.time.Duration
 
-    public final fun hasNotPassedNow(): kotlin.Boolean
+    public open fun hasNotPassedNow(): kotlin.Boolean
 
-    public final fun hasPassedNow(): kotlin.Boolean
+    public open fun hasPassedNow(): kotlin.Boolean
 
     public open operator fun minus(duration: kotlin.time.Duration): kotlin.time.TimeMark
 
@@ -573,7 +600,7 @@ public interface TimeSource {
     }
 
     public object Monotonic : kotlin.time.TimeSource {
-        public open override fun markNow(): kotlin.time.TimeMark
+        public open override fun markNow(): kotlin.time.DefaultTimeMark
 
         public open override fun toString(): kotlin.String
     }

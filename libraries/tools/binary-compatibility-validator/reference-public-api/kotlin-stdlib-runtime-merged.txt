@@ -5799,6 +5799,30 @@ public abstract class kotlin/time/AbstractLongTimeSource : kotlin/time/TimeSourc
 	protected abstract fun read ()J
 }
 
+public final class kotlin/time/DefaultTimeMark : kotlin/time/TimeMark {
+	public static final synthetic fun box-impl (J)Lkotlin/time/DefaultTimeMark;
+	public fun elapsedNow-UwyO8pc ()J
+	public static fun elapsedNow-UwyO8pc (J)J
+	public fun equals (Ljava/lang/Object;)Z
+	public static fun equals-impl (JLjava/lang/Object;)Z
+	public static final fun equals-impl0 (JJ)Z
+	public fun hasNotPassedNow ()Z
+	public static fun hasNotPassedNow-impl (J)Z
+	public fun hasPassedNow ()Z
+	public static fun hasPassedNow-impl (J)Z
+	public fun hashCode ()I
+	public static fun hashCode-impl (J)I
+	public fun minus-LRDsOJo (J)J
+	public synthetic fun minus-LRDsOJo (J)Lkotlin/time/TimeMark;
+	public static fun minus-LRDsOJo (JJ)J
+	public fun plus-LRDsOJo (J)J
+	public synthetic fun plus-LRDsOJo (J)Lkotlin/time/TimeMark;
+	public static fun plus-LRDsOJo (JJ)J
+	public fun toString ()Ljava/lang/String;
+	public static fun toString-impl (J)Ljava/lang/String;
+	public final synthetic fun unbox-impl ()J
+}
+
 public final class kotlin/time/Duration : java/lang/Comparable {
 	public static final field Companion Lkotlin/time/Duration$Companion;
 	public static final synthetic fun box-impl (J)Lkotlin/time/Duration;
@@ -5934,8 +5958,10 @@ public abstract interface annotation class kotlin/time/ExperimentalTime : java/l
 
 public final class kotlin/time/MeasureTimeKt {
 	public static final fun measureTime (Lkotlin/jvm/functions/Function0;)J
+	public static final fun measureTime (Lkotlin/time/TimeSource$Monotonic;Lkotlin/jvm/functions/Function0;)J
 	public static final fun measureTime (Lkotlin/time/TimeSource;Lkotlin/jvm/functions/Function0;)J
 	public static final fun measureTimedValue (Lkotlin/jvm/functions/Function0;)Lkotlin/time/TimedValue;
+	public static final fun measureTimedValue (Lkotlin/time/TimeSource$Monotonic;Lkotlin/jvm/functions/Function0;)Lkotlin/time/TimedValue;
 	public static final fun measureTimedValue (Lkotlin/time/TimeSource;Lkotlin/jvm/functions/Function0;)Lkotlin/time/TimedValue;
 }
 
@@ -5944,13 +5970,19 @@ public final class kotlin/time/TestTimeSource : kotlin/time/AbstractLongTimeSour
 	public final fun plusAssign-LRDsOJo (J)V
 }
 
-public abstract class kotlin/time/TimeMark {
-	public fun <init> ()V
+public abstract interface class kotlin/time/TimeMark {
 	public abstract fun elapsedNow-UwyO8pc ()J
-	public final fun hasNotPassedNow ()Z
-	public final fun hasPassedNow ()Z
-	public fun minus-LRDsOJo (J)Lkotlin/time/TimeMark;
-	public fun plus-LRDsOJo (J)Lkotlin/time/TimeMark;
+	public abstract fun hasNotPassedNow ()Z
+	public abstract fun hasPassedNow ()Z
+	public abstract fun minus-LRDsOJo (J)Lkotlin/time/TimeMark;
+	public abstract fun plus-LRDsOJo (J)Lkotlin/time/TimeMark;
+}
+
+public final class kotlin/time/TimeMark$DefaultImpls {
+	public static fun hasNotPassedNow (Lkotlin/time/TimeMark;)Z
+	public static fun hasPassedNow (Lkotlin/time/TimeMark;)Z
+	public static fun minus-LRDsOJo (Lkotlin/time/TimeMark;J)Lkotlin/time/TimeMark;
+	public static fun plus-LRDsOJo (Lkotlin/time/TimeMark;J)Lkotlin/time/TimeMark;
 }
 
 public abstract interface class kotlin/time/TimeSource {
@@ -5963,7 +5995,8 @@ public final class kotlin/time/TimeSource$Companion {
 
 public final class kotlin/time/TimeSource$Monotonic : kotlin/time/TimeSource {
 	public static final field INSTANCE Lkotlin/time/TimeSource$Monotonic;
-	public fun markNow ()Lkotlin/time/TimeMark;
+	public synthetic fun markNow ()Lkotlin/time/TimeMark;
+	public fun markNow-GKr6HC4 ()J
 	public fun toString ()Ljava/lang/String;
 }
 

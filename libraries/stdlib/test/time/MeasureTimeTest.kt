@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,10 +13,12 @@ import kotlin.time.Duration.Companion.nanoseconds
 
 class MeasureTimeTest {
 
-    private fun longRunningCalc(): String = buildString {
-        repeat(10) {
-            while (Random.nextDouble() >= 0.001);
-            append(('a'..'z').random())
+    companion object {
+        fun longRunningCalc(): String = buildString {
+            repeat(10) {
+                while (Random.nextDouble() >= 0.001);
+                append(('a'..'z').random())
+            }
         }
     }
 

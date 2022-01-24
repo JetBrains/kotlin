@@ -5,9 +5,24 @@
 
 package kotlin.time
 
+import kotlin.time.Duration.Companion.nanoseconds
+
 @SinceKotlin("1.3")
 @ExperimentalTime
-internal actual object MonotonicTimeSource : AbstractLongTimeSource(unit = DurationUnit.NANOSECONDS), TimeSource { // TODO: interface should not be required here
-    override fun read(): Long = System.nanoTime()
+internal actual object MonotonicTimeSource : TimeSource {
+    private fun read(): Long = System.nanoTime()
     override fun toString(): String = "TimeSource(System.nanoTime())"
+
+    actual override fun markNow(): DefaultTimeMark = DefaultTimeMark(read())
+    actual fun elapsedFrom(timeMark: DefaultTimeMark): Duration = (read() - timeMark.reading).nanoseconds
+
+    // may have questionable contract
+    actual fun adjustReading(timeMark: DefaultTimeMark, duration: Duration): DefaultTimeMark =
+        DefaultTimeMark(timeMark.reading + duration.inWholeNanoseconds)
 }
+
+
+@Suppress("ACTUAL_WITHOUT_EXPECT") // visibility
+internal actual typealias DefaultTimeMarkReading = Long
+
+

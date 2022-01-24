@@ -27,3 +27,13 @@ internal actual object MonotonicTimeSource : TimeSource, AbstractDoubleTimeSourc
     override fun toString(): String =
         if (performance != null) "TimeSource(globalThis.performance.now())" else "TimeSource(Date.now())"
 }
+
+@SinceKotlin("1.3")
+@ExperimentalTime
+internal actual object MonotonicTimeSource : TimeSource {
+    actual override fun markNow(): DefaultTimeMark = TODO("Wasm stdlib: MonotonicTimeSource::markNow")
+    actual fun elapsedFrom(timeMark: DefaultTimeMark): Duration = TODO("Wasm stdlib: MonotonicTimeSource")
+    actual fun adjustReading(timeMark: DefaultTimeMark, duration: Duration): DefaultTimeMark = TODO("Wasm stdlib: MonotonicTimeSource")
+}
+
+internal actual class DefaultTimeMarkReading // TODO: Long?
