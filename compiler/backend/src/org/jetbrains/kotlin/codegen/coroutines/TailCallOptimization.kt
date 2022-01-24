@@ -37,6 +37,10 @@ internal class MethodNodeExaminer(
     private val areturnsAfterSafeUnitInstances = mutableSetOf<AbstractInsnNode>()
     private val meaningfulSuccessorsCache = hashMapOf<AbstractInsnNode, List<AbstractInsnNode>>()
 
+    // CHECKCAST is considered safe if it is right before ARETURN and right after suspension point
+    // In this case, we can add check for COROUTINE_SUSPENDED, the same as we did for functions, returning Unit.
+    private val safeCheckcasts = mutableSetOf<AbstractInsnNode>()
+
     init {
         if (!disableTailCallOptimizationForFunctionReturningUnit) {
             // retrieve all POP insns
@@ -57,6 +61,28 @@ internal class MethodNodeExaminer(
                 safeUnitInstances += units
                 units.flatMapTo(areturnsAfterSafeUnitInstances) { it.meaningfulSuccessors() }
             }
+        }
+
+        fun AbstractInsnNode.isPartOfCheckcastChainBeforeAreturn(): Boolean {
+            for (succ in meaningfulSuccessors()) {
+                when (succ.opcode) {
+                    Opcodes.CHECKCAST ->
+                        if (!succ.isPartOfCheckcastChainBeforeAreturn()) return false
+
+                    Opcodes.ARETURN -> {
+                        // do nothing
+                    }
+                    else -> return false
+                }
+            }
+            return true
+        }
+
+        val checkcasts = methodNode.instructions.filter { it.opcode == Opcodes.CHECKCAST }
+        for (checkcast in checkcasts) {
+            if (!checkcast.isPartOfCheckcastChainBeforeAreturn()) continue
+            if (frames[methodNode.instructions.indexOf(checkcast)]?.top() !is FromSuspensionPointValue) continue
+            safeCheckcasts += checkcast
         }
     }
 
@@ -101,6 +127,19 @@ internal class MethodNodeExaminer(
                     mark(label)
                 })
             }
+        }
+    }
+
+    fun addCoroutineSuspendedChecksBeforeSafeCheckcasts() {
+        for (checkcast in safeCheckcasts) {
+            val label = Label()
+            methodNode.instructions.insertBefore(checkcast, withInstructionAdapter {
+                dup()
+                loadCoroutineSuspendedMarker()
+                ifacmpne(label)
+                areturn(AsmTypes.OBJECT_TYPE)
+                mark(label)
+            })
         }
     }
 
@@ -152,7 +191,7 @@ internal class MethodNodeExaminer(
             }
 
             if (!insn.isMeaningful || insn.opcode in SAFE_OPCODES || insn.isInvisibleInDebugVarInsn(methodNode) || isInlineMarker(insn)
-                || insn.isSafeUnitInstance() || insn.isAreturnAfterSafeUnitInstance() || insn.isCheckcastObject()
+                || insn.isSafeUnitInstance() || insn.isAreturnAfterSafeUnitInstance()
             ) {
                 setOf()
             } else null
@@ -184,9 +223,6 @@ internal class MethodNodeExaminer(
     }
 }
 
-private fun AbstractInsnNode.isCheckcastObject(): Boolean =
-    opcode == Opcodes.CHECKCAST && (this as TypeInsnNode).desc == AsmTypes.OBJECT_TYPE.internalName
-
 private fun AbstractInsnNode?.isInvisibleInDebugVarInsn(methodNode: MethodNode): Boolean {
     val insns = methodNode.instructions
     val index = insns.indexOf(this)
@@ -196,7 +232,7 @@ private fun AbstractInsnNode?.isInvisibleInDebugVarInsn(methodNode: MethodNode):
 }
 
 private val SAFE_OPCODES =
-    ((Opcodes.DUP..Opcodes.DUP2_X2) + Opcodes.NOP + Opcodes.POP + Opcodes.POP2 + (Opcodes.IFEQ..Opcodes.GOTO)).toSet()
+    ((Opcodes.DUP..Opcodes.DUP2_X2) + Opcodes.NOP + Opcodes.POP + Opcodes.POP2 + (Opcodes.IFEQ..Opcodes.GOTO)).toSet() + Opcodes.CHECKCAST
 
 private object FromSuspensionPointValue : BasicValue(AsmTypes.OBJECT_TYPE) {
     override fun equals(other: Any?): Boolean = other is FromSuspensionPointValue
@@ -226,8 +262,7 @@ private class TcoInterpreter(private val suspensionPoints: List<SuspensionPoint>
 
     override fun unaryOperation(insn: AbstractInsnNode, value: BasicValue?): BasicValue? {
         // Assume, that CHECKCAST Object does not break tail-call optimization
-        // TODO: Investigate, whether any CHECKCAST is safe in terms of tail-call optimization
-        if (value is FromSuspensionPointValue && insn.isCheckcastObject()) {
+        if (value is FromSuspensionPointValue && insn.opcode == Opcodes.CHECKCAST) {
             return value
         }
         return super.unaryOperation(insn, value).convert(insn)

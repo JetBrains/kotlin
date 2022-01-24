@@ -103,6 +103,7 @@ class CoroutineTransformerMethodVisitor(
             )
             if (examiner.allSuspensionPointsAreTailCalls(suspensionPoints)) {
                 examiner.replacePopsBeforeSafeUnitInstancesWithCoroutineSuspendedChecks()
+                examiner.addCoroutineSuspendedChecksBeforeSafeCheckcasts()
                 dropSuspensionMarkers(methodNode)
                 dropUnboxInlineClassMarkers(methodNode, suspensionPoints)
                 return

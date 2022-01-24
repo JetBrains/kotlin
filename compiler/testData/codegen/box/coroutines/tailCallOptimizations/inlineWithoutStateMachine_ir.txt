@@ -15,25 +15,10 @@ final class InlineWithoutStateMachineKt$box$1 {
     public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
 }
 
-@kotlin.coroutines.jvm.internal.DebugMetadata
-@kotlin.Metadata
-final class InlineWithoutStateMachineKt$complexSuspend$1 {
-    // source: 'inlineWithoutStateMachine.kt'
-    enclosing method InlineWithoutStateMachineKt.complexSuspend(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-    field L$0: java.lang.Object
-    field L$1: java.lang.Object
-    field label: int
-    synthetic field result: java.lang.Object
-    inner (anonymous) class InlineWithoutStateMachineKt$complexSuspend$1
-    method <init>(p0: kotlin.coroutines.Continuation): void
-    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
-}
-
 @kotlin.Metadata
 public final class InlineWithoutStateMachineKt {
     // source: 'inlineWithoutStateMachine.kt'
     inner (anonymous) class InlineWithoutStateMachineKt$box$1
-    inner (anonymous) class InlineWithoutStateMachineKt$complexSuspend$1
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function1): void
     public final static @org.jetbrains.annotations.Nullable method complexSuspend(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
