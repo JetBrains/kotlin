@@ -194,6 +194,7 @@ class LateinitUsageLowering(val backendContext: CommonBackendContext) : BodyLowe
             }
         })
     }
+
 }
 
 private fun CommonBackendContext.buildOrGetNullableField(originalField: IrField): IrField {
@@ -213,7 +214,7 @@ private fun CommonBackendContext.buildOrGetNullableField(originalField: IrField)
 
 private val IrProperty.isRealLateinit get() = isLateinit && !isFakeOverride
 
-private inline fun IrExpression.replaceTailExpression(crossinline transform: (IrExpression) -> IrExpression): IrExpression {
+inline fun IrExpression.replaceTailExpression(crossinline transform: (IrExpression) -> IrExpression): IrExpression {
     var current = this
     var block: IrContainerExpression? = null
     while (current is IrContainerExpression) {
