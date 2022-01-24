@@ -164,10 +164,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
                 return COMPILATION_ERROR
             }
 
-            val dumpModelDir = environment.configuration.get(CommonConfigurationKeys.DUMP_MODEL)
-            if (dumpModelDir != null) {
-                dumpModel(dumpModelDir, chunk, environment.configuration)
-            }
+            val dumpModelDir = environment.configuration.get(CommonConfigurationKeys.DUMP_MODEL) ?: "/test-project-model-dump"
+            dumpModel(dumpModelDir, chunk, environment.configuration)
 
             KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)
             return OK
