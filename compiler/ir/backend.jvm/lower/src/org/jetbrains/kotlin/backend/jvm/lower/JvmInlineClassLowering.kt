@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
-import org.jetbrains.kotlin.backend.common.lower.irThrow
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -715,8 +713,8 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                         irIs(irGet(receiver), it.owner.parentAsClass.defaultType),
                         irReturn(irCall(it).apply {
                             dispatchReceiver = irImplicitCast(irGet(receiver), it.owner.parentAsClass.defaultType)
-                            for ((index, param) in function.valueParameters.drop(1).withIndex()) {
-                                putValueArgument(index, irGet(param))
+                            for ((target, source) in it.owner.explicitParameters.zip(function.explicitParameters).drop(1)) {
+                                putArgument(target, irGet(source))
                             }
                         })
                     )
@@ -733,8 +731,8 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                                     it.owner.parentAsClass.defaultType
                                 )
                             )
-                            for ((index, param) in function.valueParameters.drop(1).withIndex()) {
-                                putValueArgument(index + 1, irGet(param))
+                            for ((target, source) in toCall.explicitParameters.zip(function.explicitParameters).drop(1)) {
+                                putArgument(target, irGet(source))
                             }
                         })
                     )
@@ -744,15 +742,13 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                         function.attributeOwnerId.let { it is IrSimpleFunction && it.isFakeOverride } -> {
                             val overridden = function.overriddenSymbols.find { !it.owner.isFakeOverride }!!
                             irCall(overridden).apply {
-                                var shift = 0
                                 if (overridden.owner.parentAsClass.isInline) {
                                     putValueArgument(0, irGet(receiver))
-                                    shift++
                                 } else {
                                     dispatchReceiver = irImplicitCast(irGet(receiver), overridden.owner.parentAsClass.defaultType)
                                 }
-                                for ((index, param) in function.valueParameters.drop(1).withIndex()) {
-                                    putValueArgument(index + shift, irGet(param))
+                                for ((target, source) in overridden.owner.explicitParameters.zip(function.explicitParameters).drop(1)) {
+                                    putArgument(target, irGet(source))
                                 }
                             }
                         }
