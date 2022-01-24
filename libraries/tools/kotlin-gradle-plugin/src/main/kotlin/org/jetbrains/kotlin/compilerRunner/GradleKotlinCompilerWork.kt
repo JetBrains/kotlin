@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.gradle.logging.*
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.report.*
-import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
 import org.jetbrains.kotlin.gradle.report.TaskExecutionProperties.ABI_SNAPSHOT
-import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState
 import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
@@ -35,7 +33,6 @@ import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 internal class ProjectFilesForCompilation(
     val projectRootFile: File,
@@ -324,7 +321,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         metrics.addAttribute(BuildAttribute.IN_PROCESS_EXECUTION)
         cleanOutputsAndLocalState(outputFiles, log, metrics, reason = "in-process execution strategy is non-incremental")
 
-        metrics.startMeasure(BuildTime.NON_INCREMENTAL_COMPILATION_IN_PROCESS, System.nanoTime())
+        metrics.startMeasure(BuildTime.NON_INCREMENTAL_COMPILATION_IN_PROCESS)
         // in-process compiler should always be run in a different thread
         // to avoid leaking thread locals from compiler (see KT-28037)
         val threadPool = Executors.newSingleThreadExecutor()
@@ -338,7 +335,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             bufferingMessageCollector.flush(messageCollector)
             threadPool.shutdown()
 
-            metrics.endMeasure(BuildTime.NON_INCREMENTAL_COMPILATION_IN_PROCESS, System.nanoTime())
+            metrics.endMeasure(BuildTime.NON_INCREMENTAL_COMPILATION_IN_PROCESS)
         }
     }
 

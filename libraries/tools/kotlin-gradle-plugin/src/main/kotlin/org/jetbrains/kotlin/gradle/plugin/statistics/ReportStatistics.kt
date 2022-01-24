@@ -15,7 +15,7 @@ data class CompileStatData(
     val label: String?,
     val taskName: String?,
     val taskResult: String,
-    val duration: Long,
+    val durationMs: Long,
     val tags: List<String>,
     val changes: List<String>,
     val buildUuid: String = "Unset",
@@ -23,7 +23,7 @@ data class CompileStatData(
     val hostName: String? = "Unset",
     val timeInMillis: Long,
     val nonIncrementalAttributes: Map<BuildAttribute, Int>,
-    val timeData: Map<BuildTime, Long>,
+    val buildTimesMs: Map<BuildTime, Long>,
     val perfData: Map<BuildPerformanceMetric, Long>
 )
 
