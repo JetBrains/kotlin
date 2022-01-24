@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -281,6 +282,7 @@ open class LazyClassMemberScope(
         result.addAll(generateDelegatingDescriptors(name, EXTRACT_FUNCTIONS, result))
         generateDataClassMethods(result, name, location, fromSupertypes)
         generateFunctionsFromAnyForInlineClass(result, name, fromSupertypes)
+        generateFunctionsFromAnyForSealedInlineClassChild(result, name, fromSupertypes)
         c.syntheticResolveExtension.generateSyntheticMethods(thisDescriptor, name, trace.bindingContext, fromSupertypes, result)
 
         c.additionalClassPartsProvider.generateAdditionalMethods(thisDescriptor, result, name, location, fromSupertypes)
@@ -294,6 +296,15 @@ open class LazyClassMemberScope(
         fromSupertypes: List<SimpleFunctionDescriptor>
     ) {
         if (!thisDescriptor.isInlineClass()) return
+        FunctionsFromAny.addFunctionFromAnyIfNeeded(thisDescriptor, result, name, fromSupertypes)
+    }
+
+    private fun generateFunctionsFromAnyForSealedInlineClassChild(
+        result: MutableCollection<SimpleFunctionDescriptor>,
+        name: Name,
+        fromSupertypes: List<SimpleFunctionDescriptor>
+    ) {
+        if (thisDescriptor.isInlineClass() || !thisDescriptor.getSuperClassOrAny().isInlineClass()) return
         FunctionsFromAny.addFunctionFromAnyIfNeeded(thisDescriptor, result, name, fromSupertypes)
     }
 

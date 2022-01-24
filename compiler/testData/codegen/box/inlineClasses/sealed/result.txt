@@ -23,7 +23,10 @@ public final class Result$Throwable {
     // source: 'result.kt'
     private final @org.jetbrains.annotations.NotNull field error: Result$Throwable
     public method <init>(@org.jetbrains.annotations.NotNull p0: Result$Throwable): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public final @org.jetbrains.annotations.NotNull method getError(): Result$Throwable
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public final inner class Result$Throwable
 }
 

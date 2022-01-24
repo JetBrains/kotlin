@@ -21910,6 +21910,150 @@ public class ExternalTestGenerated extends AbstractExternalNativeBlackBoxTest {
                 }
 
                 @Test
+                @TestMetadata("interfaceMethod.kt")
+                public void testInterfaceMethod() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceMethod.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceMethod2.kt")
+                public void testInterfaceMethod2() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceMethod2.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceMethodDefault.kt")
+                public void testInterfaceMethodDefault() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceMethodDefault.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceMethodDefault2.kt")
+                public void testInterfaceMethodDefault2() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceMethodDefault2.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceMethodNoOverrideDeepNonInline.kt")
+                public void testInterfaceMethodNoOverrideDeepNonInline() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceMethodNoOverrideDeepNonInline.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceMethodNoOverrideDeepNonInline2.kt")
+                public void testInterfaceMethodNoOverrideDeepNonInline2() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceMethodNoOverrideDeepNonInline2.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceMethodNoOverrideDeepNonInline3.kt")
+                public void testInterfaceMethodNoOverrideDeepNonInline3() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceMethodNoOverrideDeepNonInline3.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceMethodNoOverrideDeepNonInline4.kt")
+                public void testInterfaceMethodNoOverrideDeepNonInline4() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceMethodNoOverrideDeepNonInline4.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceMethodNoOverrideDeepNonInline5.kt")
+                public void testInterfaceMethodNoOverrideDeepNonInline5() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceMethodNoOverrideDeepNonInline5.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceMethodNoOverrideDeepNonInline6.kt")
+                public void testInterfaceMethodNoOverrideDeepNonInline6() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceMethodNoOverrideDeepNonInline6.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceMethodNoOverrideDeepNonInline7.kt")
+                public void testInterfaceMethodNoOverrideDeepNonInline7() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceMethodNoOverrideDeepNonInline7.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceMethodNoOverrideDeepNonInline8.kt")
+                public void testInterfaceMethodNoOverrideDeepNonInline8() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceMethodNoOverrideDeepNonInline8.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceMethodParam.kt")
+                public void testInterfaceMethodParam() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceMethodParam.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceMethodParam2.kt")
+                public void testInterfaceMethodParam2() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceMethodParam2.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceVal.kt")
+                public void testInterfaceVal() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceVal.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceVal2.kt")
+                public void testInterfaceVal2() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceVal2.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceValNoOverrideDeepNonInline.kt")
+                public void testInterfaceValNoOverrideDeepNonInline() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceValNoOverrideDeepNonInline.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceValNoOverrideDeepNonInline2.kt")
+                public void testInterfaceValNoOverrideDeepNonInline2() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceValNoOverrideDeepNonInline2.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceValNoOverrideDeepNonInline3.kt")
+                public void testInterfaceValNoOverrideDeepNonInline3() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceValNoOverrideDeepNonInline3.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceValNoOverrideDeepNonInline4.kt")
+                public void testInterfaceValNoOverrideDeepNonInline4() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceValNoOverrideDeepNonInline4.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceValNoOverrideDeepNonInline5.kt")
+                public void testInterfaceValNoOverrideDeepNonInline5() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceValNoOverrideDeepNonInline5.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceValNoOverrideDeepNonInline6.kt")
+                public void testInterfaceValNoOverrideDeepNonInline6() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceValNoOverrideDeepNonInline6.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceValNoOverrideDeepNonInline7.kt")
+                public void testInterfaceValNoOverrideDeepNonInline7() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceValNoOverrideDeepNonInline7.kt");
+                }
+
+                @Test
+                @TestMetadata("interfaceValNoOverrideDeepNonInline8.kt")
+                public void testInterfaceValNoOverrideDeepNonInline8() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/interfaceValNoOverrideDeepNonInline8.kt");
+                }
+
+                @Test
                 @TestMetadata("is.kt")
                 public void testIs() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/is.kt");
@@ -21919,6 +22063,198 @@ public class ExternalTestGenerated extends AbstractExternalNativeBlackBoxTest {
                 @TestMetadata("object.kt")
                 public void testObject() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/object.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceMethod.kt")
+                public void testOpenInterfaceMethod() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceMethod.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceMethod2.kt")
+                public void testOpenInterfaceMethod2() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceMethod2.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceMethodDefault.kt")
+                public void testOpenInterfaceMethodDefault() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceMethodDefault.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceMethodDefault2.kt")
+                public void testOpenInterfaceMethodDefault2() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceMethodDefault2.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceMethodNoOverrideDeepNonInline.kt")
+                public void testOpenInterfaceMethodNoOverrideDeepNonInline() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceMethodNoOverrideDeepNonInline.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceMethodNoOverrideDeepNonInline2.kt")
+                public void testOpenInterfaceMethodNoOverrideDeepNonInline2() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceMethodNoOverrideDeepNonInline2.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceMethodNoOverrideDeepNonInline3.kt")
+                public void testOpenInterfaceMethodNoOverrideDeepNonInline3() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceMethodNoOverrideDeepNonInline3.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceMethodNoOverrideDeepNonInline4.kt")
+                public void testOpenInterfaceMethodNoOverrideDeepNonInline4() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceMethodNoOverrideDeepNonInline4.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceMethodNoOverrideDeepNonInline5.kt")
+                public void testOpenInterfaceMethodNoOverrideDeepNonInline5() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceMethodNoOverrideDeepNonInline5.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceMethodNoOverrideDeepNonInline6.kt")
+                public void testOpenInterfaceMethodNoOverrideDeepNonInline6() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceMethodNoOverrideDeepNonInline6.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceMethodNoOverrideDeepNonInline7.kt")
+                public void testOpenInterfaceMethodNoOverrideDeepNonInline7() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceMethodNoOverrideDeepNonInline7.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceMethodNoOverrideDeepNonInline8.kt")
+                public void testOpenInterfaceMethodNoOverrideDeepNonInline8() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceMethodNoOverrideDeepNonInline8.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceMethodNoOverrideInNonInline.kt")
+                public void testOpenInterfaceMethodNoOverrideInNonInline() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceMethodNoOverrideInNonInline.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceMethodNoOverrideInNonInline2.kt")
+                public void testOpenInterfaceMethodNoOverrideInNonInline2() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceMethodNoOverrideInNonInline2.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceMethodParam.kt")
+                public void testOpenInterfaceMethodParam() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceMethodParam.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceMethodParam2.kt")
+                public void testOpenInterfaceMethodParam2() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceMethodParam2.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceMethodReceiver.kt")
+                public void testOpenInterfaceMethodReceiver() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceMethodReceiver.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceMethodReceiver2.kt")
+                public void testOpenInterfaceMethodReceiver2() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceMethodReceiver2.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceVal.kt")
+                public void testOpenInterfaceVal() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceVal.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceVal2.kt")
+                public void testOpenInterfaceVal2() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceVal2.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceValNoOverrideDeepNonInline.kt")
+                public void testOpenInterfaceValNoOverrideDeepNonInline() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceValNoOverrideDeepNonInline.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceValNoOverrideDeepNonInline2.kt")
+                public void testOpenInterfaceValNoOverrideDeepNonInline2() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceValNoOverrideDeepNonInline2.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceValNoOverrideDeepNonInline3.kt")
+                public void testOpenInterfaceValNoOverrideDeepNonInline3() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceValNoOverrideDeepNonInline3.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceValNoOverrideDeepNonInline4.kt")
+                public void testOpenInterfaceValNoOverrideDeepNonInline4() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceValNoOverrideDeepNonInline4.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceValNoOverrideDeepNonInline5.kt")
+                public void testOpenInterfaceValNoOverrideDeepNonInline5() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceValNoOverrideDeepNonInline5.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceValNoOverrideDeepNonInline6.kt")
+                public void testOpenInterfaceValNoOverrideDeepNonInline6() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceValNoOverrideDeepNonInline6.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceValNoOverrideDeepNonInline7.kt")
+                public void testOpenInterfaceValNoOverrideDeepNonInline7() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceValNoOverrideDeepNonInline7.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceValNoOverrideDeepNonInline8.kt")
+                public void testOpenInterfaceValNoOverrideDeepNonInline8() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceValNoOverrideDeepNonInline8.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceValNoOverrideInNonInline.kt")
+                public void testOpenInterfaceValNoOverrideInNonInline() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceValNoOverrideInNonInline.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceValNoOverrideInNonInline2.kt")
+                public void testOpenInterfaceValNoOverrideInNonInline2() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceValNoOverrideInNonInline2.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceValReceiver.kt")
+                public void testOpenInterfaceValReceiver() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceValReceiver.kt");
+                }
+
+                @Test
+                @TestMetadata("openInterfaceValReceiver2.kt")
+                public void testOpenInterfaceValReceiver2() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openInterfaceValReceiver2.kt");
                 }
 
                 @Test
@@ -21970,6 +22306,12 @@ public class ExternalTestGenerated extends AbstractExternalNativeBlackBoxTest {
                 }
 
                 @Test
+                @TestMetadata("openMethodReceiver.kt")
+                public void testOpenMethodReceiver() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openMethodReceiver.kt");
+                }
+
+                @Test
                 @TestMetadata("openVal.kt")
                 public void testOpenVal() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/openVal.kt");
@@ -22003,6 +22345,12 @@ public class ExternalTestGenerated extends AbstractExternalNativeBlackBoxTest {
                 @TestMetadata("openValNoOverrideInNonInline.kt")
                 public void testOpenValNoOverrideInNonInline() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/openValNoOverrideInNonInline.kt");
+                }
+
+                @Test
+                @TestMetadata("openValReceiver.kt")
+                public void testOpenValReceiver() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/openValReceiver.kt");
                 }
 
                 @Test
@@ -22069,6 +22417,12 @@ public class ExternalTestGenerated extends AbstractExternalNativeBlackBoxTest {
                 @TestMetadata("toStringNoOverrideInNonInline.kt")
                 public void testToStringNoOverrideInNonInline() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/toStringNoOverrideInNonInline.kt");
+                }
+
+                @Test
+                @TestMetadata("toStringNoOverrideInNonInline2.kt")
+                public void testToStringNoOverrideInNonInline2() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/toStringNoOverrideInNonInline2.kt");
                 }
             }
 
