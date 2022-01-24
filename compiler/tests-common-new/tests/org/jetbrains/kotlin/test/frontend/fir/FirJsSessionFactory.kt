@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
+import org.jetbrains.kotlin.fir.checkers.registerJsCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSwitchableExtensionDeclarationsSymbolProvider
@@ -112,6 +113,7 @@ object FirJsSessionFactory {
 
             FirSessionFactory.FirSessionConfigurator(this).apply {
                 registerCommonCheckers()
+                registerJsCheckers()
                 for (extensionRegistrar in extensionRegistrars) {
                     registerExtensions(extensionRegistrar.configure())
                 }

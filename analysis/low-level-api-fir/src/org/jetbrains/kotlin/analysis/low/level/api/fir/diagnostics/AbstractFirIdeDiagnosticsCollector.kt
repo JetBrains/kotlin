@@ -17,10 +17,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.components.*
+import org.jetbrains.kotlin.fir.analysis.js.checkers.JsDeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.js.checkers.JsExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmExpressionCheckers
 import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
+import org.jetbrains.kotlin.platform.js.JsPlatform
 
 internal abstract class AbstractLLFirDiagnosticsCollector(
     session: FirSession,
@@ -66,6 +69,7 @@ private object CheckersFactory {
                 add(CommonDeclarationCheckers)
                 when (platform) {
                     is JvmPlatform -> add(JvmDeclarationCheckers)
+                    is JsPlatform -> add(JsDeclarationCheckers)
                     else -> {
                     }
                 }
@@ -81,6 +85,7 @@ private object CheckersFactory {
                 add(CommonExpressionCheckers)
                 when (platform) {
                     is JvmPlatform -> add(JvmExpressionCheckers)
+                    is JsPlatform -> add(JsExpressionCheckers)
                     else -> {
                     }
                 }
