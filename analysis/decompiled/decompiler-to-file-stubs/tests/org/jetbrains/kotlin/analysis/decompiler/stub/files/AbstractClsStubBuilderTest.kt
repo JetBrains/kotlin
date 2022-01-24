@@ -149,7 +149,7 @@ private data class TestData(
     }
 }
 
-private object DummyFileAttributeService : FileAttributeService {
+object DummyFileAttributeService : FileAttributeService {
     override fun <T> write(file: VirtualFile, id: String, value: T, writeValueFun: (DataOutput, T) -> Unit): CachedAttributeData<T> {
         return CachedAttributeData(value, 0)
     }

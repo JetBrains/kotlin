@@ -29,6 +29,10 @@ dependencies {
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core-jvm"))
     testImplementation(project(":kotlin-reflect"))
+    testImplementation(project(":analysis:decompiled:decompiler-to-psi"))
+    testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    testImplementation(intellijCore())
+    testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
     testRuntimeOnly(project(":kotlin-compiler"))
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     testRuntimeOnly(project(":kotlin-scripting-ide-common")) { isTransitive = false }
