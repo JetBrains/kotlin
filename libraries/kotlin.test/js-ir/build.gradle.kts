@@ -55,7 +55,7 @@ tasks.withType<KotlinCompile<*>>().configureEach {
 
     doFirst {
         kotlinOptions.freeCompilerArgs += listOfNotNull(
-            "-Xklib-relative-path-base=$buildDir".takeIf { !kotlinBuildProperties.getBoolean("kotlin.build.use.absolute.paths.in.klib") }
+            "-Xklib-relative-path-base=$buildDir,$projectDir".takeIf { !kotlinBuildProperties.getBoolean("kotlin.build.use.absolute.paths.in.klib") }
         )
     }
 }
