@@ -106,14 +106,21 @@ internal class Timeouts(val executionTimeout: Duration)
  * Used cache kind.
  */
 internal sealed interface CacheKind {
-    object WithoutCache : CacheKind
+    val staticCacheRootDir: File?
+    val staticCacheRequiredForEveryLibrary: Boolean
+
+    object WithoutCache : CacheKind {
+        override val staticCacheRootDir: File? get() = null
+        override val staticCacheRequiredForEveryLibrary get() = false
+    }
 
     class WithStaticCache(
         kotlinNativeHome: KotlinNativeHome,
         kotlinNativeTargets: KotlinNativeTargets,
-        optimizationMode: OptimizationMode
+        optimizationMode: OptimizationMode,
+        override val staticCacheRequiredForEveryLibrary: Boolean
     ) : CacheKind {
-        val rootCacheDir: File? = kotlinNativeHome.dir
+        override val staticCacheRootDir: File? = kotlinNativeHome.dir
             .resolve("klib/cache")
             .resolve(
                 computeCacheDirName(
@@ -127,6 +134,8 @@ internal sealed interface CacheKind {
             private const val CACHE_KIND = "STATIC"
         }
     }
+
+    enum class Alias { NO, ONLY_DIST, EVERYWHERE }
 
     companion object {
         private fun computeCacheDirName(testTarget: KonanTarget, cacheKind: String, debuggable: Boolean) =

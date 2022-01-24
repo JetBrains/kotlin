@@ -156,11 +156,23 @@ private object NativeTestSupport {
         kotlinNativeTargets: KotlinNativeTargets,
         optimizationMode: OptimizationMode
     ): CacheKind {
-        val useCache = systemProperty(USE_CACHE, String::toBooleanStrictOrNull, default = true)
-        return if (useCache)
-            CacheKind.WithStaticCache(kotlinNativeHome, kotlinNativeTargets, optimizationMode)
-        else
-            CacheKind.WithoutCache
+        // Compatibility stuff (initially, the property was boolean):
+        val legacyUseCache = System.getProperty(USE_CACHE)?.let(String::toBooleanStrictOrNull)
+        if (legacyUseCache != null) {
+            return if (legacyUseCache)
+                CacheKind.WithStaticCache(kotlinNativeHome, kotlinNativeTargets, optimizationMode, false)
+            else
+                CacheKind.WithoutCache
+        }
+
+        val staticCacheRequiredForEveryLibrary =
+            when (enumSystemProperty(USE_CACHE, CacheKind.Alias.values(), default = CacheKind.Alias.ONLY_DIST)) {
+                CacheKind.Alias.NO -> return CacheKind.WithoutCache
+                CacheKind.Alias.ONLY_DIST -> false
+                CacheKind.Alias.EVERYWHERE -> true
+            }
+
+        return CacheKind.WithStaticCache(kotlinNativeHome, kotlinNativeTargets, optimizationMode, staticCacheRequiredForEveryLibrary)
     }
 
     private fun computeBaseDirs(): BaseDirs {

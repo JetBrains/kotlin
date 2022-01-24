@@ -11,13 +11,11 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependencyType.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.CacheKind.WithStaticCache
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ArgsBuilder
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.buildArgs
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.flatMapToSet
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 
 internal abstract class TestCompilation<A : TestCompilationArtifact> {
@@ -248,7 +246,7 @@ internal class ExecutableCompilation(
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         super.applyDependencies(argsBuilder)
-        cacheKind.safeAs<WithStaticCache>()?.rootCacheDir?.let { rootCacheDir -> add("-Xcache-directory=$rootCacheDir") }
+        cacheKind.staticCacheRootDir?.let { cacheRootDir -> add("-Xcache-directory=$cacheRootDir") }
         add(dependencies.cachedLibraries) { (libraryCacheDir, _) -> "-Xcache-directory=${libraryCacheDir.path}" }
     }
 }
@@ -270,12 +268,9 @@ internal class StaticCacheCompilation(
 
     private val cacheDir = expectedArtifact.file
 
-    private val rootCacheDir: File = run {
+    private val cacheRootDir: File = run {
         val cacheKind = settings.get<CacheKind>()
-        val staticCacheKind = cacheKind as? WithStaticCache ?: fail {
-            "${WithStaticCache::class.java} is expected as the current cache kind in ${StaticCacheCompilation::class.java}, found: $cacheKind"
-        }
-        staticCacheKind.rootCacheDir ?: fail { "No root cache directory found" }
+        cacheKind.staticCacheRootDir ?: fail { "No cache root directory found for cache kind $cacheKind" }
     }
 
     override fun doBeforeCompile() {
@@ -290,7 +285,7 @@ internal class StaticCacheCompilation(
         add(
             "-Xadd-cache=${dependencies.libraryToCache.path}",
             "-Xcache-directory=${cacheDir.path}",
-            "-Xcache-directory=$rootCacheDir"
+            "-Xcache-directory=$cacheRootDir"
         )
     }
 
@@ -307,9 +302,8 @@ internal class StaticCacheCompilation(
         private val Iterable<TestCompilationDependency<*>>.libraryToCache: KLIB
             get() {
                 val libraries = collectArtifacts<KLIB, TestCompilationDependencyType<KLIB>>()
-                return libraries.singleOrNull() ?: fail {
-                    "Only one library is expected as input for ${StaticCacheCompilation::class.java}, found: $libraries"
-                }
+                return libraries.singleOrNull()
+                    ?: fail { "Only one library is expected as input for ${StaticCacheCompilation::class.java}, found: $libraries" }
             }
     }
 }
