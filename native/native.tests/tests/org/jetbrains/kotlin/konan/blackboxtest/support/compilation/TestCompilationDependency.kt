@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.compilation
 
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.KLIB
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.KLIBStaticCache
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 
 /**
@@ -14,10 +16,14 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilati
  * [FriendLibrary] - similarly but friend modules (-friend-modules).
  * [IncludedLibrary] - similarly but included modules (-Xinclude).
  */
-internal sealed interface TestCompilationDependencyType<A : TestCompilationArtifact> {
-    object Library : TestCompilationDependencyType<TestCompilationArtifact.KLIB>
-    object FriendLibrary : TestCompilationDependencyType<TestCompilationArtifact.KLIB>
-    object IncludedLibrary : TestCompilationDependencyType<TestCompilationArtifact.KLIB>
+internal sealed class TestCompilationDependencyType<A : TestCompilationArtifact>(private val artifactClass: Class<A>) {
+    fun canYield(artifactClass: Class<out TestCompilationArtifact>): Boolean = this.artifactClass.isAssignableFrom(artifactClass)
+
+    object Library : TestCompilationDependencyType<KLIB>(KLIB::class.java)
+    object FriendLibrary : TestCompilationDependencyType<KLIB>(KLIB::class.java)
+    object IncludedLibrary : TestCompilationDependencyType<KLIB>(KLIB::class.java)
+
+    object LibraryStaticCache : TestCompilationDependencyType<KLIBStaticCache>(KLIBStaticCache::class.java)
 }
 
 internal sealed interface TestCompilationDependency<A : TestCompilationArtifact> {
@@ -33,6 +39,6 @@ internal class CompiledDependency<A : TestCompilationArtifact>(
 }
 
 internal class ExistingLibraryDependency(
-    override val artifact: TestCompilationArtifact.KLIB,
-    override val type: TestCompilationDependencyType<TestCompilationArtifact.KLIB>
-) : TestCompilationDependency<TestCompilationArtifact.KLIB>
+    override val artifact: KLIB,
+    override val type: TestCompilationDependencyType<KLIB>
+) : TestCompilationDependency<KLIB>

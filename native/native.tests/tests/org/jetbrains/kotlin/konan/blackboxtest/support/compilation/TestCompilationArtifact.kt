@@ -12,5 +12,6 @@ internal sealed interface TestCompilationArtifact {
     val path: String get() = file.path
 
     data class KLIB(override val file: File) : TestCompilationArtifact
+    data class KLIBStaticCache(override val file: File, val klib: KLIB) : TestCompilationArtifact
     data class Executable(override val file: File) : TestCompilationArtifact
 }

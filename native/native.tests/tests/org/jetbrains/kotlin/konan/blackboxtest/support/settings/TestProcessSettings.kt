@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support.settings
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 import kotlin.time.Duration
 
@@ -124,8 +123,6 @@ internal sealed interface CacheKind {
     }
 
     companion object {
-        val CacheKind.rootCacheDir: File? get() = safeAs<WithStaticCache>()?.rootCacheDir
-
         private fun computeCacheDirName(testTarget: KonanTarget, cacheKind: String, debuggable: Boolean) =
             "$testTarget${if (debuggable) "-g" else ""}$cacheKind"
     }
