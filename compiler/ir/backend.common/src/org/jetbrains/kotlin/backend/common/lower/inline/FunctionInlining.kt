@@ -164,18 +164,16 @@ class FunctionInlining(
 
         fun inline() = inlineFunction(callSite, callee, true)
 
+        private fun IrElement.copy(): IrElement {
+            return copyIrElement.copy(this)
+        }
+
         private fun inlineFunction(
             callSite: IrFunctionAccessExpression,
             callee: IrFunction,
             performRecursiveInline: Boolean
         ): IrReturnableBlock {
-            val copiedCallee = (copyIrElement.copy(callee) as IrFunction).apply {
-
-                // It's a hack to overtake another hack in PIR. Due to PersistentIrFactory registers every created declaration
-                // there also get temporary declaration like this which leads to some unclear behaviour. Since I am not aware
-                // enough about PIR internals the simplest way seemed to me is to unregister temporary function. Hope it is going
-                // to be removed ASAP along with registering every PIR declaration.
-
+            val copiedCallee = (callee.copy() as IrFunction).apply {
                 parent = callee.parent
                 if (performRecursiveInline) {
                     body?.transformChildrenVoid()
@@ -247,7 +245,7 @@ class FunctionInlining(
                     if (argument is IrGetValueWithoutLocation)
                         argument.withLocation(newExpression.startOffset, newExpression.endOffset)
                     else
-                        (copyIrElement.copy(argument) as IrExpression)
+                        (argument.copy() as IrExpression)
 
                 if (insertAdditionalImplicitCasts)
                     ret = ret.implicitCastIfNeededTo(newExpression.type)
@@ -356,10 +354,10 @@ class FunctionInlining(
                                 val arg = boundFunctionParametersMap[parameter]!!
                                 if (arg is IrGetValueWithoutLocation)
                                     arg.withLocation(irCall.startOffset, irCall.endOffset)
-                                else copyIrElement.copy(arg) as IrExpression
+                                else arg.copy() as IrExpression
                             } else {
                                 if (unboundIndex == valueParameters.size && parameter.defaultValue != null)
-                                    copyIrElement.copy(parameter.defaultValue!!.expression) as IrExpression
+                                    parameter.defaultValue!!.expression.copy() as IrExpression
                                 else if (!parameter.isVararg) {
                                     assert(unboundIndex < valueParameters.size) {
                                         "Attempt to use unbound parameter outside of the callee's value parameters"
