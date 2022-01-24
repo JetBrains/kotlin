@@ -5,29 +5,40 @@
 
 package org.jetbrains.kotlin.gradle.model
 
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.junit.Test
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class SamWithReceiverModelIT : BaseGradleIT() {
-    @Test
-    fun testSamWithReceiverSimple() {
-        val project = Project("samWithReceiverSimple")
-        val samWithReceiverModel = project.getModels(SamWithReceiver::class.java).getModel(":")!!
-        assertEquals(1L, samWithReceiverModel.modelVersion)
-        assertEquals("samWithReceiverSimple", samWithReceiverModel.name)
-        assertEquals(1, samWithReceiverModel.annotations.size)
-        assertTrue(samWithReceiverModel.annotations.contains("lib.SamWithReceiver"))
-        assertTrue(samWithReceiverModel.presets.isEmpty())
+@DisplayName("Sam-with-receiver plugin model")
+@OtherGradlePluginTests
+class SamWithReceiverModelIT : KGPBaseTest() {
+
+    @DisplayName("Valid model is available when plugin is applied")
+    @GradleTest
+    fun testSamWithReceiverSimple(gradleVersion: GradleVersion) {
+        project("samWithReceiverSimple", gradleVersion) {
+            getModels<SamWithReceiver> {
+                with(getModel(":")!!) {
+                    assertEquals(1L, modelVersion)
+                    assertEquals("samWithReceiverSimple", name)
+                    assertEquals(1, annotations.size)
+                    assertTrue(annotations.contains("lib.SamWithReceiver"))
+                    assertTrue(presets.isEmpty())
+                }
+            }
+        }
     }
 
-    @Test
-    fun testNonSamWithReceiverProjects() {
-        val project = Project("kotlinProject")
-        val model = project.getModels(SamWithReceiver::class.java).getModel(":")
-
-        assertNull(model)
+    @DisplayName("Model is not available when plugin is not applied")
+    @GradleTest
+    fun testNonSamWithReceiverProjects(gradleVersion: GradleVersion) {
+        project("kotlinProject", gradleVersion) {
+            getModels<SamWithReceiver> {
+                assertNull(getModel(":"))
+            }
+        }
     }
 }
