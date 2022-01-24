@@ -88,7 +88,7 @@ abstract class AbstractFileStructureTest : AbstractLowLevelApiSingleFileTest() {
         val moduleResolveState = getResolveState() as FirSourceModuleResolveState
         return moduleResolveState.fileStructureCache.getFileStructure(
             ktFile = this,
-            moduleFileCache = moduleResolveState.rootModuleSession.cache
+            moduleFileCache = moduleResolveState.cache
         )
     }
 

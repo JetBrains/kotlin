@@ -11,13 +11,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLoc
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.firIdeProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.FirIdeProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInContext
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.psi.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -40,7 +41,7 @@ internal class FileStructure private constructor(
         }
     }
 
-    private val firIdeProvider = firFile.moduleData.session.firIdeProvider
+    private val firProvider = firFile.moduleData.session.firProvider
 
     private val structureElements = ConcurrentHashMap<KtAnnotated, FileStructureElement>()
 
@@ -59,7 +60,6 @@ internal class FileStructure private constructor(
                         newKtDeclaration = declaration as KtDeclaration,
                         cache = moduleFileCache,
                         firLazyDeclarationResolver = firLazyDeclarationResolver,
-                        firIdeProvider = firIdeProvider,
                     )
                 }
                 else -> structureElement
@@ -112,7 +112,7 @@ internal class FileStructure private constructor(
     private fun createDeclarationStructure(declaration: KtDeclaration): FileStructureElement {
         val firDeclaration = declaration.findSourceNonLocalFirDeclaration(
             firFileBuilder,
-            firIdeProvider.symbolProvider,
+            firProvider.symbolProvider,
             moduleFileCache,
             firFile
         )

@@ -32,28 +32,31 @@ import org.jetbrains.kotlin.psi2ir.deparenthesize
  */
 @ThreadSafe
 internal class FirElementBuilder {
-    fun getPsiAsFirElementSource(element: KtElement): KtElement? {
-        val deparenthesized = if (element is KtPropertyDelegate) element.deparenthesize() else element
-        return when {
-            deparenthesized is KtParenthesizedExpression -> deparenthesized.deparenthesize()
-            deparenthesized is KtPropertyDelegate -> deparenthesized.expression ?: element
-            deparenthesized is KtQualifiedExpression && deparenthesized.selectorExpression is KtCallExpression -> {
-                /*
-                 KtQualifiedExpression with KtCallExpression in selector transformed in FIR to FirFunctionCall expression
-                 Which will have a receiver as qualifier
-                 */
-                deparenthesized.selectorExpression ?: error("Incomplete code:\n${element.getElementTextInContext()}")
+    companion object {
+        fun getPsiAsFirElementSource(element: KtElement): KtElement? {
+            val deparenthesized = if (element is KtPropertyDelegate) element.deparenthesize() else element
+            return when {
+                deparenthesized is KtParenthesizedExpression -> deparenthesized.deparenthesize()
+                deparenthesized is KtPropertyDelegate -> deparenthesized.expression ?: element
+                deparenthesized is KtQualifiedExpression && deparenthesized.selectorExpression is KtCallExpression -> {
+                    /*
+                     KtQualifiedExpression with KtCallExpression in selector transformed in FIR to FirFunctionCall expression
+                     Which will have a receiver as qualifier
+                     */
+                    deparenthesized.selectorExpression ?: error("Incomplete code:\n${element.getElementTextInContext()}")
+                }
+                deparenthesized is KtValueArgument -> {
+                    // null will be return in case of invalid KtValueArgument
+                    deparenthesized.getArgumentExpression()
+                }
+                deparenthesized is KtObjectLiteralExpression -> deparenthesized.objectDeclaration
+                deparenthesized is KtStringTemplateEntryWithExpression -> deparenthesized.expression
+                deparenthesized is KtUserType && deparenthesized.parent is KtNullableType -> deparenthesized.parent as KtNullableType
+                else -> deparenthesized
             }
-            deparenthesized is KtValueArgument -> {
-                // null will be return in case of invalid KtValueArgument
-                deparenthesized.getArgumentExpression()
-            }
-            deparenthesized is KtObjectLiteralExpression -> deparenthesized.objectDeclaration
-            deparenthesized is KtStringTemplateEntryWithExpression -> deparenthesized.expression
-            deparenthesized is KtUserType && deparenthesized.parent is KtNullableType -> deparenthesized.parent as KtNullableType
-            else -> deparenthesized
         }
     }
+
 
     fun doKtElementHasCorrespondingFirElement(ktElement: KtElement): Boolean = when (ktElement) {
         is KtImportList -> false

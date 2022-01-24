@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import org.jetbrains.kotlin.fir.FirSession
 
-internal class FirSessionInvalidator(private val invalidateSourcesSession: (FirIdeSourcesSession) -> Unit) {
+internal class FirSessionInvalidator(private val invalidateSourcesSession: (LLFirResolvableModuleSession) -> Unit) {
     fun invalidate(session: FirSession) {
-        require(session is FirIdeSourcesSession)
+        require(session is LLFirResolvableModuleSession)
         invalidateSourcesSession(session)
     }
 }

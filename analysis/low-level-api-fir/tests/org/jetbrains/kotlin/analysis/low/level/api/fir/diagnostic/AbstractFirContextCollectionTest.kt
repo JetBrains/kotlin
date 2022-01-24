@@ -43,7 +43,7 @@ abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileT
         ) { resolveState ->
             check(resolveState is FirSourceModuleResolveState)
 
-            val fileStructure = resolveState.fileStructureCache.getFileStructure(ktFile, resolveState.rootModuleSession.cache)
+            val fileStructure = resolveState.fileStructureCache.getFileStructure(ktFile, resolveState.cache)
             val allStructureElements = fileStructure.getAllStructureElements()
 
             handler.elementsToCheckContext = allStructureElements.map { it.getFirDeclaration() }
