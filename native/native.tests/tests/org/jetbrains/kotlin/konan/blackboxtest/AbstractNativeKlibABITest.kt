@@ -88,7 +88,7 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
     private fun createModule(moduleName: String) = TestModule.Exclusive(
         name = moduleName,
         directDependencySymbols = emptySet(), /* Don't need to pass any dependency symbols here.
-                                                 Dependencies are already handled by the AbstractKlibABITestCase test case class. */
+                                                 Dependencies are already handled by the AbstractKlibABITestCase class. */
         directFriendSymbols = emptySet()
     )
 
