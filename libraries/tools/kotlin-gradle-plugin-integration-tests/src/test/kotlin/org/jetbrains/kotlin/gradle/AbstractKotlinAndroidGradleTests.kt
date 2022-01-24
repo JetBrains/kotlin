@@ -505,6 +505,17 @@ open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
             assertCompiledKotlinSources(project.relativize(affectedSources))
         }
     }
+
+    @Test
+    fun testNamespaceDSLInsteadOfPackageAttributeInManifest() {
+        val project = Project("AndroidExtensionsProjectAGP7")
+        val options = defaultBuildOptions().copy(incremental = false)
+
+        project.build("assembleDebug", options = options) {
+            assertSuccessful()
+            assertContains("The 'kotlin-android-extensions' Gradle plugin is deprecated")
+        }
+    }
 }
 
 open class KotlinAndroid71GradleIT : KotlinAndroid70GradleIT() {
