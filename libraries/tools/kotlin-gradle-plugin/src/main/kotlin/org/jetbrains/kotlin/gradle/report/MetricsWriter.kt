@@ -35,18 +35,13 @@ internal class MetricsWriter(
             }
 
             for (data in build.taskExecutionData) {
-                val path = data.taskPath
-                val type = data.type
-                val buildTimes = data.buildMetrics.buildTimes.asMap().mapKeys { (k, _) -> k.name }
-                val buildPerfMetrics = data.buildMetrics.buildPerformanceMetrics.asMap().mapKeys { (k, _) -> k.name }
-                val buildAttributes = data.buildMetrics.buildAttributes.asMap().mapKeys { (k, _) -> k.name }
-                buildMetricsData.taskData[path] =
+                buildMetricsData.taskData[data.taskPath] =
                     TaskData(
-                        path = path,
-                        typeFqName = type,
-                        timeMetrics = buildTimes,
-                        performanceMetrics = buildPerfMetrics,
-                        buildAttributes = buildAttributes,
+                        path = data.taskPath,
+                        typeFqName = data.type,
+                        buildTimesMs = data.buildMetrics.buildTimes.asMapMs().mapKeys { it.key.name },
+                        performanceMetrics = data.buildMetrics.buildPerformanceMetrics.asMap().mapKeys { it.key.name },
+                        buildAttributes = data.buildMetrics.buildAttributes.asMap().mapKeys { it.key.name },
                         didWork = data.didWork
                     )
             }

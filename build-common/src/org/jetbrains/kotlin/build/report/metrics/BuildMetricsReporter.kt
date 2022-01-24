@@ -6,26 +6,24 @@
 package org.jetbrains.kotlin.build.report.metrics
 
 interface BuildMetricsReporter {
-    fun startMeasure(time: BuildTime, startNs: Long)
-    fun endMeasure(time: BuildTime, endNs: Long)
-    fun addTimeMetric(time: BuildTime, durationMs: Long)
+    fun startMeasure(time: BuildTime)
+    fun endMeasure(time: BuildTime)
+    fun addTimeMetricNs(time: BuildTime, durationNs: Long)
+    fun addTimeMetricMs(time: BuildTime, durationMs: Long) = addTimeMetricNs(time, durationMs * 1_000_000)
 
     fun addMetric(metric: BuildPerformanceMetric, value: Long)
 
     fun addAttribute(attribute: BuildAttribute)
 
     fun getMetrics(): BuildMetrics
-    fun addMetrics(metrics: BuildMetrics?)
+    fun addMetrics(metrics: BuildMetrics)
 }
 
 inline fun <T> BuildMetricsReporter.measure(time: BuildTime, fn: () -> T): T {
-    val start = System.nanoTime()
-    startMeasure(time, start)
-
+    startMeasure(time)
     try {
         return fn()
     } finally {
-        val end = System.nanoTime()
-        endMeasure(time, end)
+        endMeasure(time)
     }
 }

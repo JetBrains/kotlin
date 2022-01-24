@@ -59,7 +59,7 @@ class KotlinBuildStatListener(val projectName: String, val reportStatistics: Lis
             if (event is TaskFinishEvent) {
                 val result = event.result
                 val taskPath = event.descriptor.taskPath
-                val duration = result.endTime - result.startTime
+                val durationMs = result.endTime - result.startTime
                 val taskResult = when (result) {
                     is TaskSuccessResult -> when {
                         result.isFromCache -> TaskExecutionState.FROM_CACHE
@@ -72,7 +72,7 @@ class KotlinBuildStatListener(val projectName: String, val reportStatistics: Lis
                     else -> TaskExecutionState.UNKNOWN
                 }
 
-                reportData(taskPath, duration, taskResult)
+                reportData(taskPath, durationMs, taskResult)
             }
         }
         if (measuredTimeMs > LIMIT_DURATION_MS) {
@@ -80,15 +80,16 @@ class KotlinBuildStatListener(val projectName: String, val reportStatistics: Lis
         }
     }
 
-    private fun reportData(taskPath: String, duration: Long, taskResult: TaskExecutionState) {
+    private fun reportData(taskPath: String, durationMs: Long, taskResult: TaskExecutionState) {
         val (reportDataDuration, compileStatData) = measureTimeMillisWithResult {
             if (!availableForStat(taskPath)) {
                 return
             }
 
             val taskExecutionResult = TaskExecutionResults[taskPath]
-            val timeData = taskExecutionResult?.buildMetrics?.buildTimes?.asMap()?.filterValues { value -> value != 0L } ?: emptyMap()
-            val perfData = taskExecutionResult?.buildMetrics?.buildPerformanceMetrics?.asMap()?.filterValues { value -> value != 0L } ?: emptyMap()
+            val buildTimesMs = taskExecutionResult?.buildMetrics?.buildTimes?.asMapMs()?.filterValues { value -> value != 0L } ?: emptyMap()
+            val perfData =
+                taskExecutionResult?.buildMetrics?.buildPerformanceMetrics?.asMap()?.filterValues { value -> value != 0L } ?: emptyMap()
             val changes = when (val changedFiles = taskExecutionResult?.taskInfo?.changedFiles) {
                 is ChangedFiles.Known -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
                 is ChangedFiles.Dependencies -> changedFiles.modified.map { it.absolutePath } + changedFiles.removed.map { it.absolutePath }
@@ -96,8 +97,8 @@ class KotlinBuildStatListener(val projectName: String, val reportStatistics: Lis
 
             }
             val compileStatData = CompileStatData(
-                duration = duration, taskResult = taskResult.name, label = label,
-                timeData = timeData, perfData = perfData, projectName = projectName, taskName = taskPath, changes = changes,
+                durationMs = durationMs, taskResult = taskResult.name, label = label,
+                buildTimesMs = buildTimesMs, perfData = perfData, projectName = projectName, taskName = taskPath, changes = changes,
                 tags = taskExecutionResult?.taskInfo?.properties?.map { it.name } ?: emptyList(),
                 nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap() ?: emptyMap(),
                 hostName = hostName, kotlinVersion = "1.6", buildUuid = buildUuid, timeInMillis = System.currentTimeMillis()
