@@ -18,7 +18,8 @@ internal class KotlinNativeTargets(val testTarget: KonanTarget, val hostTarget: 
  * The Kotlin/Native home.
  */
 internal class KotlinNativeHome(val dir: File) {
-    val path: String get() = dir.path
+    val librariesDir: File = dir.resolve("klib")
+    val stdlibFile: File = librariesDir.resolve("common/stdlib")
 }
 
 /**

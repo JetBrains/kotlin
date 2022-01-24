@@ -157,7 +157,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
 ) {
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         add(
-            "-repo", home.dir.resolve("klib").path,
+            "-repo", home.librariesDir.path,
             "-output", expectedArtifact.path
         )
         memoryModel.compilerFlags?.let { compilerFlags -> add(compilerFlags) }

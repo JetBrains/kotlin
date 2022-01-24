@@ -45,7 +45,7 @@ class NativeBlackBoxTestSupport : BeforeEachCallback {
         val settings = createTestRunSettings()
 
         // Set the essential compiler property.
-        System.setProperty("kotlin.native.home", settings.get<KotlinNativeHome>().path)
+        System.setProperty("kotlin.native.home", settings.get<KotlinNativeHome>().dir.path)
 
         // Inject the required properties to test instance.
         with(settings.get<BlackBoxTestInstances>().enclosingTestInstance) {
@@ -60,7 +60,7 @@ class NativeSimpleTestSupport : BeforeEachCallback {
         val settings = createSimpleTestRunSettings()
 
         // Set the essential compiler property.
-        System.setProperty("kotlin.native.home", settings.get<KotlinNativeHome>().path)
+        System.setProperty("kotlin.native.home", settings.get<KotlinNativeHome>().dir.path)
 
         // Inject the required properties to test instance.
         with(settings.get<SimpleTestInstances>().enclosingTestInstance) {
@@ -96,7 +96,7 @@ private object NativeTestSupport {
             }
 
             val nativeHome = computeNativeHome()
-            val hostManager = HostManager(distribution = Distribution(nativeHome.path), experimental = false)
+            val hostManager = HostManager(distribution = Distribution(nativeHome.dir.path), experimental = false)
 
             val nativeTargets = computeNativeTargets(hostManager)
 

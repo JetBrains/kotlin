@@ -104,7 +104,7 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
     private fun substituteRealPaths(value: String, settings: Settings): String =
         if ('$' in value) {
             // N.B. Here, more substitutions can be supported in the future if it would be necessary.
-            value.replace(PredefinedPaths.KOTLIN_NATIVE_DISTRIBUTION, settings.get<KotlinNativeHome>().path)
+            value.replace(PredefinedPaths.KOTLIN_NATIVE_DISTRIBUTION, settings.get<KotlinNativeHome>().dir.path)
         } else
             value
 }

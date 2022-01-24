@@ -108,7 +108,7 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
         dependencies.map { ExistingLibraryDependency(TestCompilationArtifact.KLIB(it), Library) }
 
     private val buildDir: File get() = testRunSettings.get<SimpleTestDirectories>().testBuildDir
-    private val stdlibFile: File get() = testRunSettings.get<KotlinNativeHome>().dir.resolve("klib/common/stdlib")
+    private val stdlibFile: File get() = testRunSettings.get<KotlinNativeHome>().stdlibFile
 
     companion object {
         private val COMPILER_ARGS_FOR_KLIB = TestCompilerArgs(
