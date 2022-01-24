@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.common.profiling
 
 import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -43,7 +44,12 @@ class ProfilingCompilerPerformanceManager(
     private fun dumpProfile(postfix: String) {
         outputDir.mkdirs()
         val outputFile = outputDir.resolve("snapshot-${formatter.format(runDate)}-$postfix.collapsed")
-        outputFile.writeText(profiler.execute("collapsed"))
+        val profile = profiler.execute("collapsed")
+        FileOutputStream(outputFile).use { out ->
+            for (chunk in profile.chunkedSequence(1 shl 20)) {
+                out.write(chunk.toByteArray(Charsets.UTF_8))
+            }
+        }
         active = false
     }
 

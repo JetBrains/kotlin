@@ -446,7 +446,7 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
         description = "Debug option: Run compiler with async profiler and save snapshots to `outputDir`; `command` is passed to async-profiler on start.\n" +
                 "`profilerPath` is a path to libasyncProfiler.so; async-profiler.jar should be on the compiler classpath.\n" +
                 "If it's not on the classpath, the compiler will attempt to load async-profiler.jar from the containing directory of profilerPath.\n" +
-                "Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start,framebuf=50000000:<SNAPSHOT_DIR_PATH>"
+                "Example: -Xprofile=<PATH_TO_ASYNC_PROFILER>/async-profiler/build/libasyncProfiler.so:event=cpu,interval=1ms,threads,start:<SNAPSHOT_DIR_PATH>"
     )
     var profileCompilerCommand: String? by NullableStringFreezableVar(null)
 
