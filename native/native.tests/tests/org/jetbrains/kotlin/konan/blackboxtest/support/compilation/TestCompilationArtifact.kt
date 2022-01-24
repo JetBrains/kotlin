@@ -8,10 +8,19 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.compilation
 import java.io.File
 
 internal sealed interface TestCompilationArtifact {
-    val file: File
-    val path: String get() = file.path
+    val logFile: File
 
-    data class KLIB(override val file: File) : TestCompilationArtifact
-    data class KLIBStaticCache(override val file: File, val klib: KLIB) : TestCompilationArtifact
-    data class Executable(override val file: File) : TestCompilationArtifact
+    data class KLIB(val klibFile: File) : TestCompilationArtifact {
+        val path: String get() = klibFile.path
+        override val logFile: File get() = klibFile.resolveSibling("${klibFile.name}.log")
+    }
+
+    data class KLIBStaticCache(val cacheDir: File, val klib: KLIB) : TestCompilationArtifact {
+        override val logFile: File get() = cacheDir.resolve("${klib.klibFile.nameWithoutExtension}-cache.log")
+    }
+
+    data class Executable(val executableFile: File) : TestCompilationArtifact {
+        val path: String get() = executableFile.path
+        override val logFile: File get() = executableFile.resolveSibling("${executableFile.name}.log")
+    }
 }

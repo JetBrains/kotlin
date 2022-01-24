@@ -157,7 +157,7 @@ internal class TestRunProvider(
         }
 
         val (artifact, loggedCompilerCall) = testCompilation.result.assertSuccess() // <-- Compilation happens here.
-        val executable = TestExecutable(artifact.file, loggedCompilerCall)
+        val executable = TestExecutable(artifact.executableFile, loggedCompilerCall)
 
         return action(testCase, executable, cacheKey)
     }

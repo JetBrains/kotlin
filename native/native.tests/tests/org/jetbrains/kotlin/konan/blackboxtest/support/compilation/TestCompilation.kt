@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ArgsBuilder
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.buildArgs
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.flatMapToSet
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.mapToSet
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyList
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
@@ -64,11 +65,7 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
         addFlattenedTwice(sourceModules, { it.files }) { it.location.path }
     }
 
-    protected open fun doBeforeCompile() = Unit
-
     private fun doCompile(): TestCompilationResult.ImmediateResult<out A> {
-        doBeforeCompile()
-
         val compilerArgs = buildArgs {
             applyCommonArgs()
             applySpecificArgs(this)
@@ -101,7 +98,7 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
             loggedFailure to result
         }
 
-        getLogFile(expectedArtifact.file).writeText(loggedCompilerCall.toString())
+        expectedArtifact.logFile.writeText(loggedCompilerCall.toString())
 
         return result
     }
@@ -129,10 +126,12 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
         }
 
         @JvmStatic
-        protected val Iterable<TestCompilationDependency<*>>.cachedLibraries
+        protected val Iterable<TestCompilationDependency<*>>.cachedLibraries: List<KLIBStaticCache>
             get() = collectArtifacts<KLIBStaticCache, LibraryStaticCache>()
 
-        private fun getLogFile(expectedArtifactFile: File): File = expectedArtifactFile.resolveSibling(expectedArtifactFile.name + ".log")
+        @JvmStatic
+        protected val Iterable<KLIBStaticCache>.uniqueCacheDirs: Set<File>
+            get() = mapToSet { (libraryCacheDir, _) -> libraryCacheDir } // Avoid repeating the same directory more than once.
     }
 }
 
@@ -157,10 +156,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     expectedArtifact = expectedArtifact
 ) {
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
-        add(
-            "-repo", home.librariesDir.path,
-            "-output", expectedArtifact.path
-        )
+        add("-repo", home.librariesDir.path)
         memoryModel.compilerFlags?.let { compilerFlags -> add(compilerFlags) }
         threadStateChecker.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         gcType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
@@ -201,7 +197,10 @@ internal class LibraryCompilation(
     expectedArtifact = expectedArtifact
 ) {
     override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
-        add("-produce", "library")
+        add(
+            "-produce", "library",
+            "-output", expectedArtifact.path
+        )
         super.applySpecificArgs(argsBuilder)
     }
 }
@@ -229,7 +228,10 @@ internal class ExecutableCompilation(
     private val cacheKind: CacheKind = settings.get()
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
-        add("-produce", "program")
+        add(
+            "-produce", "program",
+            "-output", expectedArtifact.path
+        )
         when (extras) {
             is NoTestRunnerExtras -> add("-entry", extras.entryPoint)
             is WithTestRunnerExtras -> {
@@ -247,7 +249,7 @@ internal class ExecutableCompilation(
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         super.applyDependencies(argsBuilder)
         cacheKind.staticCacheRootDir?.let { cacheRootDir -> add("-Xcache-directory=$cacheRootDir") }
-        add(dependencies.cachedLibraries) { (libraryCacheDir, _) -> "-Xcache-directory=${libraryCacheDir.path}" }
+        add(dependencies.cachedLibraries.uniqueCacheDirs) { libraryCacheDir -> "-Xcache-directory=${libraryCacheDir.path}" }
     }
 }
 
@@ -266,15 +268,9 @@ internal class StaticCacheCompilation(
     override val sourceModules get() = emptyList<TestModule>()
     override val freeCompilerArgs get() = TestCompilerArgs.EMPTY
 
-    private val cacheDir = expectedArtifact.file
-
     private val cacheRootDir: File = run {
         val cacheKind = settings.get<CacheKind>()
         cacheKind.staticCacheRootDir ?: fail { "No cache root directory found for cache kind $cacheKind" }
-    }
-
-    override fun doBeforeCompile() {
-        cacheDir.mkdirs() // Make sure the directory to hold the cache exists.
     }
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
@@ -284,18 +280,15 @@ internal class StaticCacheCompilation(
         add(home.properties.resolvablePropertyList("additionalCacheFlags", targets.testTarget.visibleName))
         add(
             "-Xadd-cache=${dependencies.libraryToCache.path}",
-            "-Xcache-directory=${cacheDir.path}",
+            "-Xcache-directory=${expectedArtifact.cacheDir.path}",
             "-Xcache-directory=$cacheRootDir"
         )
     }
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
-        addFlattened(dependencies.cachedLibraries) { (libraryCacheDir, library) ->
-            listOf(
-                "-l", library.path,
-                "-Xcache-directory=${libraryCacheDir.path}"
-            )
-        }
+        val cachedLibraries = dependencies.cachedLibraries
+        addFlattened(cachedLibraries) { (_, library) -> listOf("-l", library.path) }
+        add(cachedLibraries.uniqueCacheDirs) { libraryCacheDir -> "-Xcache-directory=${libraryCacheDir.path}" }
     }
 
     companion object {
