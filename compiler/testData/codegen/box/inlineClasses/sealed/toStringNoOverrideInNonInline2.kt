@@ -1,9 +1,7 @@
 // LANGUAGE: -JvmInlineValueClasses, +GenericInlineClassParameter, +SealedInlineClasses
 // IGNORE_BACKEND: JVM
 
-sealed inline class IC {
-    override fun toString(): String = "FAIL"
-}
+sealed inline class IC
 
 inline class ICString(val s: String): IC() {
     override fun toString(): String = s

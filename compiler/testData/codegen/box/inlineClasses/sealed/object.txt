@@ -21,6 +21,9 @@ public final class ICO {
     public final static @org.jetbrains.annotations.NotNull field INSTANCE: ICO
     static method <clinit>(): void
     private method <init>(): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }
 
 @kotlin.jvm.JvmInline

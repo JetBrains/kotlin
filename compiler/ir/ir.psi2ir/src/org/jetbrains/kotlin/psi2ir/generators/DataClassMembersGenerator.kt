@@ -54,6 +54,10 @@ class DataClassMembersGenerator(
         MyDataClassMethodGenerator(ktClassOrObject, irClass, IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER).generate()
     }
 
+    fun generateSealedInlineClassChildMembers(ktClassOrObject: KtClassOrObject, irClass: IrClass) {
+        MyDataClassMethodGenerator(ktClassOrObject, irClass, IrDeclarationOrigin.GENERATED_SEALED_INLINE_CLASS_CHILD_MEMBER).generate()
+    }
+
     fun generateDataClassMembers(ktClassOrObject: KtClassOrObject, irClass: IrClass) {
         MyDataClassMethodGenerator(ktClassOrObject, irClass, IrDeclarationOrigin.GENERATED_DATA_CLASS_MEMBER).generate()
     }

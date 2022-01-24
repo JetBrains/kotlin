@@ -12,13 +12,18 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
+import org.jetbrains.kotlin.resolve.isInlineClass
 
 abstract class FunctionsFromAnyGenerator(protected val declaration: KtClassOrObject, protected val bindingContext: BindingContext) {
     protected val classDescriptor: ClassDescriptor = BindingContextUtils.getNotNull(bindingContext, BindingContext.CLASS, declaration)
 
     open fun generate() {
         val properties = primaryConstructorProperties
-        if (properties.isNotEmpty() || (classDescriptor.isInline && classDescriptor.modality == Modality.SEALED)) {
+        if (properties.isNotEmpty() ||
+            (classDescriptor.isInline && classDescriptor.modality == Modality.SEALED) ||
+            classDescriptor.getSuperClassOrAny().isInlineClass()
+        ) {
             generateToStringIfNeeded(properties)
             generateHashCodeIfNeeded(properties)
             generateEqualsIfNeeded(properties)

@@ -51,8 +51,10 @@ import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegationResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
@@ -112,6 +114,10 @@ class ClassGenerator(
 
             if (irClass.isSingleFieldValueClass && ktClassOrObject is KtClassOrObject) {
                 generateAdditionalMembersForSingleFieldValueClasses(irClass, ktClassOrObject)
+            }
+
+            if (!irClass.isInline && ktClassOrObject is KtClassOrObject && classDescriptor.getSuperClassOrAny().isInlineClass()) {
+                generateAdditionalMembersForSealedInlineClassChildren(irClass, ktClassOrObject)
             }
 
             if (irClass.isData && ktClassOrObject is KtClassOrObject) {
@@ -429,6 +435,10 @@ class ClassGenerator(
 
     private fun generateAdditionalMembersForMultiFieldValueClasses(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
         DataClassMembersGenerator(declarationGenerator, context.configuration.generateBodies).generateMultiFieldValueClassMembers(ktClassOrObject, irClass)
+    }
+
+    private fun generateAdditionalMembersForSealedInlineClassChildren(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
+        DataClassMembersGenerator(declarationGenerator, context.configuration.generateBodies).generateSealedInlineClassChildMembers(ktClassOrObject, irClass)
     }
 
     private fun generateAdditionalMembersForDataClass(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
