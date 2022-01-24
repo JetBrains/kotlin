@@ -29,7 +29,8 @@ abstract class IrSymbolBase<out D : DeclarationDescriptor>(
 
     override fun toString(): String {
         if (isBound) return owner.render()
-        return "Unbound private symbol ${super.toString()}"
+        return "Unbound private symbol " +
+                if (_descriptor != null) "${this::class.java.simpleName}: $_descriptor" else super.toString()
     }
 }
 

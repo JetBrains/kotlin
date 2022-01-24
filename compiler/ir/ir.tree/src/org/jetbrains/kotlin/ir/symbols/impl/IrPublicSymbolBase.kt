@@ -28,7 +28,7 @@ abstract class IrPublicSymbolBase<out D : DeclarationDescriptor> @OptIn(Obsolete
 
     override fun toString(): String {
         if (isBound) return owner.render()
-        return "Unbound public symbol for $signature"
+        return "Unbound public symbol ${this::class.java.simpleName}: $signature"
     }
 }
 

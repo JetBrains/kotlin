@@ -1128,9 +1128,6 @@ val SymbolTable.allUnbound: Set<IrSymbol>
 fun SymbolTable.noUnboundLeft(message: String) {
     val unbound = this.allUnbound
     assert(unbound.isEmpty()) {
-        "$message\n" +
-                unbound.joinToString("\n") {
-                    "${it::class.simpleName} $it ${it.signature?.toString() ?: "(NON-PUBLIC API)"}: ${it.descriptor}"
-                }
+        message + "\n" + unbound.joinToString("\n")
     }
 }
