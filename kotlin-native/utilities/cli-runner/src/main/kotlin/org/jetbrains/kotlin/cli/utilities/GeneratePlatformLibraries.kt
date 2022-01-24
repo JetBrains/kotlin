@@ -25,6 +25,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.exitProcess
+import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 
 // TODO: We definitely need to unify logging in different parts of the compiler.
 private class Logger(val level: Level = Level.NORMAL) {
@@ -65,7 +66,7 @@ private enum class CacheKind(val outputKind: CompilerOutputKind) {
 }
 
 // TODO: Use Distribution's paths after compiler update.
-fun generatePlatformLibraries(args: Array<String>) {
+fun generatePlatformLibraries(args: Array<String>) = usingNativeMemoryAllocator {
     // IMPORTANT! These command line keys are used by the Gradle plugin to configure platform libraries generation,
     // so any changes in them must be reflected at the Gradle plugin side too.
     // See org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator in the Big Kotlin repo.
