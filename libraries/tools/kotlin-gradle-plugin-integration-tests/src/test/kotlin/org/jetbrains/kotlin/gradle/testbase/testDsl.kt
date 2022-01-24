@@ -7,8 +7,11 @@ package org.jetbrains.kotlin.gradle.testbase
 
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
+import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.BaseGradleIT.Companion.acceptAndroidSdkLicenses
+import org.jetbrains.kotlin.gradle.model.ModelContainer
+import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.nio.file.*
@@ -131,6 +134,34 @@ fun TestProject.buildAndFail(
         assertions(buildResult)
     }
 
+}
+
+internal inline fun <reified T> TestProject.getModels(
+    crossinline assertions: ModelContainer<T>.() -> Unit
+) {
+
+    val allBuildArguments = commonBuildSetup(
+        emptyList(),
+        buildOptions,
+        false,
+        enableBuildScan,
+        gradleVersion
+    )
+
+    val connector = GradleConnector
+        .newConnector()
+        .useGradleUserHomeDir(testKitDir.toAbsolutePath().toFile())
+        .useGradleVersion(gradleVersion.version)
+        .forProjectDirectory(projectPath.toAbsolutePath().toFile())
+
+    connector.connect().use {
+        assertions(
+            it
+                .action(ModelFetcherBuildAction(T::class.java))
+                .withArguments(allBuildArguments)
+                .run()
+        )
+    }
 }
 
 fun TestProject.enableLocalBuildCache(
