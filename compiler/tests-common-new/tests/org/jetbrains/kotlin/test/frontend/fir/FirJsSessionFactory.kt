@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.checkers.registerCommonCheckers
+import org.jetbrains.kotlin.fir.checkers.registerJsCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirSwitchableExtensionDeclarationsSymbolProvider
@@ -108,6 +109,7 @@ object FirJsSessionFactory {
 
             FirSessionFactory.FirSessionConfigurator(this).apply {
                 registerCommonCheckers()
+                registerJsCheckers()
                 for (extensionRegistrar in extensionRegistrars) {
                     registerExtensions(extensionRegistrar.configure())
                 }
