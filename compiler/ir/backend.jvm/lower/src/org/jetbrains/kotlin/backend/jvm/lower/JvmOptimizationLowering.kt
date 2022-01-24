@@ -24,12 +24,7 @@ import org.jetbrains.kotlin.ir.builders.irSetField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.copyWithOffsets
-import org.jetbrains.kotlin.ir.symbols.impl.IrPublicSymbolBase
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -43,11 +38,16 @@ internal val jvmOptimizationLoweringPhase = makeIrFilePhase(
 )
 
 class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass {
-
-    companion object {
-        fun isNegation(expression: IrExpression, context: JvmBackendContext): Boolean =
-            expression is IrCall &&
-                    (expression.symbol as? IrPublicSymbolBase<*>)?.signature == context.irBuiltIns.booleanNotSymbol.signature
+    private companion object {
+        private fun isNegation(expression: IrExpression): Boolean =
+            expression is IrCall && expression.symbol.owner.let { not ->
+                not.name == OperatorNameConventions.NOT &&
+                        not.extensionReceiverParameter == null &&
+                        not.valueParameters.isEmpty() &&
+                        not.dispatchReceiverParameter.let { receiver ->
+                            receiver != null && receiver.type.isBoolean()
+                        }
+            }
     }
 
     private val IrFunction.isObjectEquals
@@ -98,7 +98,7 @@ class JvmOptimizationLowering(val context: JvmBackendContext) : FileLoweringPass
                 return optimizePropertyAccess(expression, data)
             }
 
-            if (isNegation(expression, context) && isNegation(expression.dispatchReceiver!!, context)) {
+            if (isNegation(expression) && isNegation(expression.dispatchReceiver!!)) {
                 return (expression.dispatchReceiver as IrCall).dispatchReceiver!!
             }
 

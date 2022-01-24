@@ -481,22 +481,26 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
             ).substitute(type as IrType)
         }
 
-    override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? {
+    override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? =
+        getNameForClassUnderKotlinPackage()?.let(PrimitiveType::getByShortName)
+
+    override fun TypeConstructorMarker.getPrimitiveArrayType(): PrimitiveType? =
+        getNameForClassUnderKotlinPackage()?.let(PrimitiveType::getByShortArrayName)
+
+    private fun TypeConstructorMarker.getNameForClassUnderKotlinPackage(): String? {
         if (this !is IrClassSymbol) return null
 
         val signature = signature?.asPublic()
-        if (signature == null || signature.packageFqName != "kotlin") return null
-
-        return PrimitiveType.getByShortName(signature.declarationFqName)
-    }
-
-    override fun TypeConstructorMarker.getPrimitiveArrayType(): PrimitiveType? {
-        if (this !is IrClassSymbol) return null
-
-        val signature = signature?.asPublic()
-        if (signature == null || signature.packageFqName != "kotlin") return null
-
-        return PrimitiveType.getByShortArrayName(signature.declarationFqName)
+        return if (signature != null) {
+            if (signature.packageFqName == StandardNames.BUILT_INS_PACKAGE_NAME.asString())
+                signature.declarationFqName
+            else null
+        } else {
+            val parent = owner.parent
+            if (parent is IrPackageFragment && parent.fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
+                owner.name.asString()
+            else null
+        }
     }
 
     override fun TypeConstructorMarker.isUnderKotlinPackage(): Boolean {

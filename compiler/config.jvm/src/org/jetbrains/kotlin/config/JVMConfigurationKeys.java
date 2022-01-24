@@ -153,4 +153,7 @@ public class JVMConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> VALIDATE_BYTECODE =
             CompilerConfigurationKey.create("Validate generated JVM bytecode");
+
+    public static final CompilerConfigurationKey<Boolean> LINK_VIA_SIGNATURES =
+            CompilerConfigurationKey.create("Link JVM IR symbols via signatures, instead of by descriptors");
 }

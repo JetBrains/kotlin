@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -144,9 +145,10 @@ private class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLowerin
             copyAttributes(reference)
 
             val function = reference.symbol.owner
-            val isRestricted = reference.symbol.owner.extensionReceiverParameter?.type?.classOrNull?.owner?.annotations?.any {
-                it.type.classOrNull?.signature == IdSignature.CommonSignature("kotlin.coroutines", "RestrictsSuspension", null, 0)
-            } == true
+            val extensionReceiver = function.extensionReceiverParameter?.type?.classOrNull
+            val isRestricted = extensionReceiver != null && extensionReceiver.owner.annotations.any {
+                it.type.classOrNull?.isClassWithFqName(FqNameUnsafe("kotlin.coroutines.RestrictsSuspension")) == true
+            }
             val suspendLambda =
                 if (isRestricted) context.ir.symbols.restrictedSuspendLambdaClass.owner
                 else context.ir.symbols.suspendLambdaClass.owner

@@ -121,7 +121,9 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
             }
 
             annotations =
-                if (isMultifilePart) irFile.annotations.filterNot { it.symbol.owner.parentAsClass.symbol.signature == JVM_NAME }
+                if (isMultifilePart) irFile.annotations.filterNot {
+                    it.symbol.owner.parentAsClass.hasEqualFqName(JvmFileClassUtil.JVM_NAME)
+                }
                 else irFile.annotations
 
             metadata = irFile.metadata
@@ -142,12 +144,7 @@ private class FileClassLowering(val context: JvmBackendContext) : FileLoweringPa
             }
         }
     }
-
-    private companion object {
-        private val JVM_NAME = IdSignature.CommonSignature("kotlin.jvm", "JvmName", null, 0)
-    }
 }
-
 
 fun IrFile.getFileClassInfo(): JvmFileClassInfo =
     when (val fileEntry = this.fileEntry) {

@@ -478,8 +478,8 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
 
     @Argument(
         value = "-Xtype-enhancement-improvements-strict-mode",
-        description = "Enable strict mode for some improvements in the type enhancement for loaded Java types based on nullability annotations," +
-                "including freshly supported reading of the type use annotations from class files. " +
+        description = "Enable strict mode for some improvements in the type enhancement for loaded Java types based on nullability annotations,\n" +
+                "including freshly supported reading of the type use annotations from class files.\n" +
                 "See KT-45671 for more details"
     )
     var typeEnhancementImprovementsInStrictMode: Boolean by FreezableVar(false)
@@ -508,6 +508,13 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
         description = "Enhance not null annotated type parameter's types to definitely not null types (@NotNull T => T & Any)"
     )
     var enhanceTypeParameterTypesToDefNotNull: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xlink-via-signatures",
+        description = "Link JVM IR symbols via signatures, instead of descriptors. \n" +
+                "This mode is slower, but can be useful in troubleshooting problems with the JVM IR backend"
+    )
+    var linkViaSignatures: Boolean by FreezableVar(false)
 
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector, languageVersion)

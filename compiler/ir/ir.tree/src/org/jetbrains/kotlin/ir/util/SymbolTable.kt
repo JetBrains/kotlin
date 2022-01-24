@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrScriptImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazySymbolTable
+import org.jetbrains.kotlin.ir.descriptors.IrBasedClassDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.*
@@ -472,7 +473,17 @@ open class SymbolTable(
     }
 
     override fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
-        classSymbolTable.referenced(descriptor) { signature -> createClassSymbol(descriptor, signature) }
+        @Suppress("Reformat")
+        // This is needed for cases like kt46069.kt, where psi2ir creates descriptor-less IR elements for adapted function references.
+        // In JVM IR, symbols are linked via descriptors by default, so for an adapted function reference, an IrBasedClassDescriptor
+        // is created for any classifier used in the function parameter/return types. Any attempt to translate such type to IrType goes
+        // to this method, which puts the descriptor into unboundClasses, which causes an assertion failure later because we won't bind
+        // such symbol anywhere.
+        // TODO: maybe there's a better solution.
+        if (descriptor is IrBasedClassDescriptor)
+            descriptor.owner.symbol
+        else
+            classSymbolTable.referenced(descriptor) { signature -> createClassSymbol(descriptor, signature) }
 
     fun referenceClass(
         sig: IdSignature,

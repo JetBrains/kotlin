@@ -81,6 +81,8 @@ where advanced options include:
                              -Xlambdas=indy                      Generate lambdas using `invokedynamic` with `LambdaMetafactory.metafactory`. Requires `-jvm-target 1.8` or greater.
                                                                  Lambda objects created using `LambdaMetafactory.metafactory` will have different `toString()`.
                              -Xlambdas=class                     Generate lambdas as explicit classes
+  -Xlink-via-signatures      Link JVM IR symbols via signatures, instead of descriptors.
+                             This mode is slower, but can be useful in troubleshooting problems with the JVM IR backend
   -Xno-call-assertions       Don't generate not-null assertions for arguments of platform types
   -Xno-kotlin-nothing-value-exception
                              Do not use KotlinNothingValueException available since 1.4
@@ -133,7 +135,9 @@ where advanced options include:
   -Xsuppress-missing-builtins-error
                              Suppress the "cannot access built-in declaration" error (useful with -no-stdlib)
   -Xtype-enhancement-improvements-strict-mode
-                             Enable strict mode for some improvements in the type enhancement for loaded Java types based on nullability annotations,including freshly supported reading of the type use annotations from class files. See KT-45671 for more details
+                             Enable strict mode for some improvements in the type enhancement for loaded Java types based on nullability annotations,
+                             including freshly supported reading of the type use annotations from class files.
+                             See KT-45671 for more details
   -Xuse-fast-jar-file-system Use fast implementation on Jar FS. This may speed up compilation time, but currently it's an experimental mode
   -Xuse-ir                   Use the IR backend. This option has no effect unless the language version less than 1.5 is used
   -Xuse-javac                Use javac for Java source and class files analysis
