@@ -38,7 +38,7 @@ internal class CompiledDependency<A : TestCompilationArtifact>(
     override val artifact: A get() = compilation.result.assertSuccess().resultingArtifact
 }
 
-internal class ExistingLibraryDependency(
-    override val artifact: KLIB,
-    override val type: TestCompilationDependencyType<KLIB>
-) : TestCompilationDependency<KLIB>
+internal class ExistingDependency<A : TestCompilationArtifact>(
+    override val artifact: A,
+    override val type: TestCompilationDependencyType<A>
+) : TestCompilationDependency<A>

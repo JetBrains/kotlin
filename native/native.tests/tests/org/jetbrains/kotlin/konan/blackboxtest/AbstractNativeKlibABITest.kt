@@ -9,26 +9,23 @@ import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.klib.AbstractKlibABITestCase
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExecutableCompilation
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExistingLibraryDependency
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.LibraryCompilation
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.Executable
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependencyType.Library
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestExecutable
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.CacheKind
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.SimpleTestDirectories
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.LAUNCHER_FILE_NAME
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.LAUNCHER_MODULE_NAME
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.generateBoxFunctionLauncher
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.junit.jupiter.api.Tag
 import java.io.File
 
 @Tag("klib")
 abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
+    private val producedKlibs = linkedMapOf<KLIB, Collection<File>>() // IMPORTANT: The order makes sense!
+
     protected fun runTest(@TestDataFile testPath: String): Unit = AbstractKlibABITestCase.doTest(
         testDir = getAbsoluteFile(testPath),
         buildDir = buildDir,
@@ -46,18 +43,29 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
 
         val testCase = createTestCase(module, COMPILER_ARGS_FOR_KLIB)
 
+        val klibArtifact = KLIB(klibFile)
         val compilation = LibraryCompilation(
             settings = testRunSettings,
             freeCompilerArgs = testCase.freeCompilerArgs,
             sourceModules = testCase.modules,
-            dependencies = createExistingDependencies(moduleDependencies),
-            expectedArtifact = TestCompilationArtifact.KLIB(klibFile),
+            dependencies = createLibraryDependencies(moduleDependencies),
+            expectedArtifact = klibArtifact
         )
 
         compilation.result.assertSuccess() // <-- trigger compilation
+
+        producedKlibs[klibArtifact] = moduleDependencies // Remember the artifact with its dependencies.
     }
 
     private fun buildBinaryAndRun(allDependencies: Collection<File>) {
+        val cacheDependencies = if (staticCacheRequiredForEveryLibrary) {
+            producedKlibs.map { (klibArtifact, moduleDependencies) ->
+                buildCacheForKlib(moduleDependencies, klibArtifact)
+                klibArtifact.toStaticCacheArtifact().toDependency()
+            }
+        } else
+            emptyList()
+
         val (sourceDir, outputDir) = AbstractKlibABITestCase.createModuleDirs(buildDir, LAUNCHER_MODULE_NAME)
         val executableFile = outputDir.resolve("app." + testRunSettings.get<KotlinNativeTargets>().testTarget.family.exeSuffix)
 
@@ -75,7 +83,7 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
             freeCompilerArgs = testCase.freeCompilerArgs,
             sourceModules = testCase.modules,
             extras = testCase.extras,
-            dependencies = createExistingDependencies(allDependencies),
+            dependencies = createLibraryDependencies(allDependencies) + cacheDependencies,
             expectedArtifact = Executable(executableFile)
         )
 
@@ -83,6 +91,16 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
         val executable = TestExecutable(executableFile, compilationResult.loggedData)
 
         runExecutableAndVerify(testCase, executable) // <-- run executable and verify
+    }
+
+    private fun buildCacheForKlib(moduleDependencies: Collection<File>, klibArtifact: KLIB) {
+        val compilation = StaticCacheCompilation(
+            settings = testRunSettings,
+            dependencies = createLibraryCacheDependencies(moduleDependencies) + klibArtifact.toDependency(),
+            expectedArtifact = klibArtifact.toStaticCacheArtifact()
+        )
+
+        compilation.result.assertSuccess() // <-- trigger compilation
     }
 
     private fun createModule(moduleName: String) = TestModule.Exclusive(
@@ -104,11 +122,23 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
         initialize(null)
     }
 
-    private fun createExistingDependencies(dependencies: Collection<File>) =
-        dependencies.map { ExistingLibraryDependency(TestCompilationArtifact.KLIB(it), Library) }
+    private fun createLibraryDependencies(klibFiles: Iterable<File>): Iterable<TestCompilationDependency<KLIB>> =
+        klibFiles.map { klibFile -> KLIB(klibFile).toDependency() }
+
+    private fun createLibraryCacheDependencies(klibFiles: Iterable<File>): Iterable<TestCompilationDependency<KLIBStaticCache>> =
+        klibFiles.mapNotNull { klibFile -> if (klibFile != stdlibFile) KLIB(klibFile).toStaticCacheArtifact().toDependency() else null }
+
+    private fun KLIB.toDependency() = ExistingDependency(this, Library)
+    private fun KLIBStaticCache.toDependency() = ExistingDependency(this, TestCompilationDependencyType.LibraryStaticCache)
+
+    private fun KLIB.toStaticCacheArtifact() = KLIBStaticCache(
+        cacheDir = klibFile.parentFile.resolve(STATIC_CACHE_DIR_NAME).apply { mkdirs() },
+        klib = this
+    )
 
     private val buildDir: File get() = testRunSettings.get<SimpleTestDirectories>().testBuildDir
     private val stdlibFile: File get() = testRunSettings.get<KotlinNativeHome>().stdlibFile
+    private val staticCacheRequiredForEveryLibrary: Boolean get() = testRunSettings.get<CacheKind>().staticCacheRequiredForEveryLibrary
 
     companion object {
         private val COMPILER_ARGS_FOR_KLIB = TestCompilerArgs(
