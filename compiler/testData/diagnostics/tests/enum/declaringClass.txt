@@ -1,0 +1,3 @@
+package
+
+public fun </*0*/ E : kotlin.Enum<E>> foo(/*0*/ values: kotlin.Array<E>): kotlin.Unit
