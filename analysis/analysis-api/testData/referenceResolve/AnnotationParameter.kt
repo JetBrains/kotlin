@@ -3,6 +3,8 @@ package testing
 annotation class Annotation<T>(val clazz: Class<T>)
 class ATest
 
-@[Annotation<ATest>(javaClass<<caret>ATest>())]
+class A<T>
+
+@[Annotation<ATest>(A<<caret>ATest>())]
 class BTest
 

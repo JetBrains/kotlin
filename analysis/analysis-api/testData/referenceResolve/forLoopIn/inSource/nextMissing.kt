@@ -3,11 +3,11 @@ fun test(f: Foo) {
 }
 
 interface Foo {
-  fun iterator(): Iterator
+    operator fun iterator(): Iterator
 }
 
 interface Iterator {
-  fun hasNext(): Boolean
+    operator fun hasNext(): Boolean
 }
 
 // MULTIRESOLVE

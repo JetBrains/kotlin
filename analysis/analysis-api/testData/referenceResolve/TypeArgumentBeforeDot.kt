@@ -1,5 +1,5 @@
 class Generic<T> {
-    class Nested
+    inner class Nested
 }
 
 class C {

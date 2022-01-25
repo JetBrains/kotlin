@@ -1,2 +1,2 @@
 Resolved to:
-0: (in test) annotation class Annotation
+0: (in test.Annotation) constructor()

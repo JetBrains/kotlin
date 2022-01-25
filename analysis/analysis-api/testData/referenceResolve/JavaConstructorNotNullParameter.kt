@@ -1,7 +1,7 @@
 // FILE: main.kt
 class A {
     fun foo() {
-        <caret>JavaClass()
+        <caret>JavaClass("")
     }
 }
 
