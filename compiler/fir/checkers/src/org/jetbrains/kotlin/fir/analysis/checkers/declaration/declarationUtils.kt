@@ -85,7 +85,7 @@ internal val FirDeclaration.isEnumEntryInitializer: Boolean
     }
 
 // contract: returns(true) implies (this is FirMemberDeclaration<*>)
-internal val FirDeclaration.isLocalMember: Boolean
+val FirDeclaration.isLocalMember: Boolean
     get() = symbol.isLocalMember
 
 internal val FirBasedSymbol<*>.isLocalMember: Boolean
