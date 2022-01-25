@@ -28,11 +28,11 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
     protected val home: KotlinNativeHome,
     private val classLoader: KotlinNativeClassLoader,
     private val optimizationMode: OptimizationMode,
+    protected val freeCompilerArgs: TestCompilerArgs,
     protected val dependencies: Iterable<TestCompilationDependency<*>>,
     protected val expectedArtifact: A
 ) : TestCompilation<A>() {
     protected abstract val sourceModules: Collection<TestModule>
-    protected abstract val freeCompilerArgs: TestCompilerArgs
 
     // Runs the compiler and memorizes the result on property access.
     final override val result: TestCompilationResult<out A> by lazy {
@@ -143,7 +143,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     private val memoryModel: MemoryModel,
     private val threadStateChecker: ThreadStateChecker,
     private val gcType: GCType,
-    override val freeCompilerArgs: TestCompilerArgs,
+    freeCompilerArgs: TestCompilerArgs,
     override val sourceModules: Collection<TestModule>,
     dependencies: Iterable<TestCompilationDependency<*>>,
     expectedArtifact: A
@@ -152,6 +152,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     home = home,
     classLoader = classLoader,
     optimizationMode = optimizationMode,
+    freeCompilerArgs = freeCompilerArgs,
     dependencies = dependencies,
     expectedArtifact = expectedArtifact
 ) {
@@ -255,6 +256,7 @@ internal class ExecutableCompilation(
 
 internal class StaticCacheCompilation(
     settings: Settings,
+    freeCompilerArgs: TestCompilerArgs,
     dependencies: Iterable<TestCompilationDependency<*>>,
     expectedArtifact: KLIBStaticCache
 ) : BasicCompilation<KLIBStaticCache>(
@@ -262,11 +264,11 @@ internal class StaticCacheCompilation(
     home = settings.get(),
     classLoader = settings.get(),
     optimizationMode = settings.get(),
+    freeCompilerArgs = freeCompilerArgs,
     dependencies = dependencies,
     expectedArtifact = expectedArtifact
 ) {
     override val sourceModules get() = emptyList<TestModule>()
-    override val freeCompilerArgs get() = TestCompilerArgs.EMPTY
 
     private val cacheRootDir: File = run {
         val cacheKind = settings.get<CacheKind>()

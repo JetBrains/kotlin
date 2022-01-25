@@ -76,7 +76,7 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
             text = generateBoxFunctionLauncher("box")
         )
 
-        val testCase = createTestCase(module, COMPILER_ARGS_FOR_EXECUTABLE)
+        val testCase = createTestCase(module, COMPILER_ARGS_FOR_STATIC_CACHE_AND_EXECUTABLE)
 
         val compilation = ExecutableCompilation(
             settings = testRunSettings,
@@ -96,6 +96,7 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
     private fun buildCacheForKlib(moduleDependencies: Collection<File>, klibArtifact: KLIB) {
         val compilation = StaticCacheCompilation(
             settings = testRunSettings,
+            freeCompilerArgs = COMPILER_ARGS_FOR_STATIC_CACHE_AND_EXECUTABLE,
             dependencies = createLibraryCacheDependencies(moduleDependencies) + klibArtifact.toDependency(),
             expectedArtifact = klibArtifact.toStaticCacheArtifact()
         )
@@ -145,7 +146,7 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
             listOf("-nostdlib") // stdlib is passed explicitly.
         )
 
-        private val COMPILER_ARGS_FOR_EXECUTABLE = TestCompilerArgs(
+        private val COMPILER_ARGS_FOR_STATIC_CACHE_AND_EXECUTABLE = TestCompilerArgs(
             COMPILER_ARGS_FOR_KLIB.compilerArgs + "-Xpartial-linkage"
         )
 

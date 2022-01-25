@@ -94,6 +94,7 @@ internal class TestCompilationFactory {
             val staticCacheCompilation: StaticCacheCompilation? = if (staticCacheArtifact != null) {
                 StaticCacheCompilation(
                     settings = settings,
+                    freeCompilerArgs = freeCompilerArgs,
                     dependencies = dependencies.staticCacheDependenciesWith(klibCompilation.asKlibDependency(type = /* does not matter in fact*/ Library)),
                     expectedArtifact = staticCacheArtifact
                 )
