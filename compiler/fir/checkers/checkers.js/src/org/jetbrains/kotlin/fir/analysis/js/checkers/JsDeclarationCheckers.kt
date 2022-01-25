@@ -5,6 +5,20 @@
 
 package org.jetbrains.kotlin.fir.analysis.js.checkers
 
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
+import org.jetbrains.kotlin.fir.analysis.js.checkers.declaration.FirJsInlineDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.js.checkers.declaration.FirJsInlinePropertyChecker
 
-object JsDeclarationCheckers : DeclarationCheckers()
+object JsDeclarationCheckers : DeclarationCheckers() {
+    override val functionCheckers: Set<FirFunctionChecker>
+        get() = setOf(
+            FirJsInlineDeclarationChecker,
+        )
+
+    override val propertyCheckers: Set<FirPropertyChecker>
+        get() = setOf(
+            FirJsInlinePropertyChecker,
+        )
+}
