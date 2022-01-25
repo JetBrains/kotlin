@@ -25,7 +25,7 @@ data class CacheInfo(val path: String, val libPath: String, var flatHash: ULong,
 
             if (!info.exists()) return null
 
-            val (libPath, flatHash, transHash, configHash) = info.readLines()
+            val (libPath, _, flatHash, transHash, configHash) = info.readLines()
 
             // safe cast for the backward compatibility with the cache from the previous compiler versions
             val configHashULong = configHash.toULongOrNull(16) ?: 0UL
