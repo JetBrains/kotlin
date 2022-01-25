@@ -23,6 +23,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 private val USE_BUILD_FILE: Boolean = System.getProperty("fir.bench.use.build.file", "true").toBooleanLenient()!!
+private val JVM_TARGET: String = System.getProperty("fir.bench.jvm.target", "1.8")
 
 abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
 
@@ -129,7 +130,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
 
     private fun configureBaseArguments(args: K2JVMCompilerArguments, moduleData: ModuleData, tmp: Path) {
         args.reportPerf = true
-        args.jvmTarget = "1.8"
+        args.jvmTarget = JVM_TARGET
         args.allowKotlinPackage = true
         if (USE_BUILD_FILE) {
             configureArgsUsingBuildFile(args, moduleData, tmp)
@@ -165,6 +166,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         val modulesFile = tmp.toFile().resolve("modules.xml")
         modulesFile.writeText(builder.asText().toString())
         args.buildFile = modulesFile.absolutePath
+        args.jdkHome = moduleData.jdkHome?.absolutePath
     }
 
     abstract fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData)

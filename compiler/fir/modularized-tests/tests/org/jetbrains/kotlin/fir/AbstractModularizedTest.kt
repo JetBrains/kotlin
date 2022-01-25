@@ -32,6 +32,7 @@ data class ModuleData(
     val rawJavaSourceRoots: List<JavaSourceRootData<String>>,
     val rawFriendDirs: List<String>,
     val rawModularJdkRoot: String?,
+    val rawJdkHome: String?,
     val isCommon: Boolean
 ) {
     val qualifiedName get() = if (name in qualifier) qualifier else "$name.$qualifier"
@@ -41,6 +42,7 @@ data class ModuleData(
     val sources = rawSources.map { it.fixPath() }
     val javaSourceRoots = rawJavaSourceRoots.map { JavaSourceRootData(it.path.fixPath(), it.packagePrefix) }
     val friendDirs = rawFriendDirs.map { it.fixPath() }
+    val jdkHome = rawJdkHome?.fixPath()
     val modularJdkRoot = rawModularJdkRoot?.fixPath()
 }
 
@@ -123,6 +125,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         val sources = mutableListOf<String>()
         val friendDirs = mutableListOf<String>()
         val timestamp = moduleElement.attributes.getNamedItem("timestamp")?.nodeValue?.toLong() ?: 0
+        val jdkHome = moduleElement.attributes.getNamedItem("jdkHome")?.nodeValue
         var modularJdkRoot: String? = null
         var isCommon = false
 
@@ -163,6 +166,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
             javaSourceRoots,
             friendDirs,
             modularJdkRoot,
+            jdkHome,
             isCommon
         )
     }
