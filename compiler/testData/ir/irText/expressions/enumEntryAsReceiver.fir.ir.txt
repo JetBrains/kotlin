@@ -84,6 +84,10 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
             overridden:
               public final fun <get-ordinal> (): kotlin.Int [fake_override] declared in <root>.X
             $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
+        FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.X?>? [fake_override]
+          overridden:
+            public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.X?>? [fake_override] declared in <root>.X
+          $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
     PROPERTY name:value visibility:public modality:ABSTRACT [val]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:ABSTRACT <> ($this:<root>.X) returnType:kotlin.Function0<kotlin.String>
         correspondingProperty: PROPERTY name:value visibility:public modality:ABSTRACT [val]
@@ -131,6 +135,10 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
+    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.X?>? [fake_override]
+      overridden:
+        public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'

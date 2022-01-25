@@ -4,6 +4,6 @@
 import java.util.*
 
 fun <E : Enum<E>> foo(values: Array<E>) {
-    EnumSet.noneOf(values.first().<!UNRESOLVED_REFERENCE!>declaringClass<!>)
-    EnumSet.noneOf(values.first().<!UNRESOLVED_REFERENCE!>getDeclaringClass<!>())
+    EnumSet.noneOf(values.first().declaringClass)
+    EnumSet.noneOf(values.first().getDeclaringClass())
 }

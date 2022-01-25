@@ -1,7 +1,7 @@
 enum class TestEnum {
     ENTRY;
 
-    fun getDeclaringClass() {}
+    fun <!VIRTUAL_MEMBER_HIDDEN!>getDeclaringClass<!>() {}
     fun finalize() {}
 }
 
