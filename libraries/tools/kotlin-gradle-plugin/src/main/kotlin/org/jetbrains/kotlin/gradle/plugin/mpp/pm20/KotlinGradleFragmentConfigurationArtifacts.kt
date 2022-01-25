@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.ConfigurationPublications
+import org.gradle.api.artifacts.ConfigurationVariant
 
 /* Internal abbreviation */
 internal typealias FragmentArtifacts<T> = KotlinGradleFragmentConfigurationArtifacts<T>
@@ -22,8 +25,18 @@ interface KotlinGradleFragmentConfigurationArtifacts<in T : KotlinGradleFragment
 class KotlinGradleFragmentConfigurationArtifactsContext<T : KotlinGradleFragment> internal constructor(
     internal val outgoing: ConfigurationPublications,
     val fragment: T
-) : ConfigurationPublications by outgoing {
+) {
     val project: Project get() = fragment.project
+
+    val variants: NamedDomainObjectContainer<ConfigurationVariant> get() = outgoing.variants
+
+    fun artifact(notation: Any) {
+        outgoing.artifact(notation)
+    }
+
+    fun artifact(notation: Any, configure: ConfigurablePublishArtifact.() -> Unit) {
+        outgoing.artifact(notation, configure)
+    }
 }
 
 @Suppress("FunctionName")
