@@ -11,12 +11,10 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
 import org.jetbrains.kotlin.analysis.api.components.RendererModifier
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleModuleTest
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossibleMemberSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.name.FqName
@@ -53,7 +51,7 @@ abstract class AbstractReferenceResolveTest : AbstractHLApiSingleModuleTest() {
                 PsiTreeUtil.findElementOfClassAtOffset(mainKtFile, caretPosition, KtDeclaration::class.java, false) ?: mainKtFile
             ) {
                 val symbols = ktReferences.flatMap { it.resolveToSymbols() }
-                checkReferenceResultForValidity(module, testServices, symbols)
+                checkReferenceResultForValidity(ktReferences, module, testServices, symbols)
                 renderResolvedTo(symbols)
             }
 
@@ -69,6 +67,7 @@ abstract class AbstractReferenceResolveTest : AbstractHLApiSingleModuleTest() {
         mainKtFile.findReferenceAt(caretPosition)?.unwrapMultiReferences().orEmpty().filterIsInstance<KtReference>()
 
     private fun KtAnalysisSession.checkReferenceResultForValidity(
+        references: List<KtReference>,
         module: TestModule,
         testServices: TestServices,
         resolvedTo: List<KtSymbol>
@@ -78,7 +77,9 @@ abstract class AbstractReferenceResolveTest : AbstractHLApiSingleModuleTest() {
                 "Reference should be unresolved, but was resolved to ${renderResolvedTo(resolvedTo)}"
             }
         } else {
-            testServices.assertions.assertTrue(resolvedTo.isNotEmpty()) { "Unresolved reference" }
+            if (resolvedTo.isEmpty()) {
+                testServices.assertions.fail { "Unresolved reference ${references.first().element.text}" }
+            }
         }
     }
 
