@@ -28,6 +28,8 @@ pill {
 
 kotlin.sourceSets.all {
     languageSettings.optIn("kotlin.RequiresOptIn")
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalVariantApi")
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.plugin.mpp.external.AdvancedExternalVariantApi")
 }
 
 dependencies {
