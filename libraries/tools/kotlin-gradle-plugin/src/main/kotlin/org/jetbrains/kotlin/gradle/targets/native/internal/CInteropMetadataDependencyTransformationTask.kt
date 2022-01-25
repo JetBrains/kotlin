@@ -14,9 +14,11 @@ import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.JarMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toModuleIdentifiers
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetMetadataStorageForIde
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.outputFilesProvider
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
+import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 import java.io.File
 import java.util.concurrent.Callable
 import javax.inject.Inject
@@ -91,6 +94,19 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
 ) : DefaultTask() {
 
     @Suppress("unused")
+    class ChooseVisibleSourceSetProjection(
+        @Input val dependencyModuleIdentifiers: List<KotlinModuleIdentifier>,
+        @Nested val projectStructureMetadata: KotlinProjectStructureMetadata,
+        @Input val visibleSourceSetsProvidingCInterops: Set<String>
+    ) {
+        constructor(chooseVisibleSourceSets: ChooseVisibleSourceSets) : this(
+            dependencyModuleIdentifiers = chooseVisibleSourceSets.dependency.toModuleIdentifiers(),
+            projectStructureMetadata = chooseVisibleSourceSets.projectStructureMetadata,
+            visibleSourceSetsProvidingCInterops = chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
+        )
+    }
+
+    @Suppress("unused")
     @get:InputFiles
     @get:Classpath
     protected val inputArtifactFiles: FileCollection = project.filesProvider {
@@ -102,6 +118,11 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         get() = sourceSet.dependencyTransformations.values
             .flatMap { it.metadataDependencyResolutions }
             .filterIsInstance<ChooseVisibleSourceSets>()
+
+    @Suppress("unused")
+    @get:Nested
+    protected val chooseVisibleSourceSetsProjection
+        get() = chooseVisibleSourceSets.map(::ChooseVisibleSourceSetProjection).toSet()
 
     @Suppress("unused")
     @get:Input
