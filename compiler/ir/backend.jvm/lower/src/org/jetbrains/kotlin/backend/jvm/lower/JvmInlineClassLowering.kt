@@ -818,7 +818,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
                                     it.owner.parentAsClass.defaultType
                                 )
                             )
-                            for ((target, source) in it.owner.explicitParameters.zip(function.explicitParameters).drop(1)) {
+                            for ((target, source) in toCall.explicitParameters.zip(function.explicitParameters).drop(1)) {
                                 putArgument(target, irGet(source))
                             }
                         })
