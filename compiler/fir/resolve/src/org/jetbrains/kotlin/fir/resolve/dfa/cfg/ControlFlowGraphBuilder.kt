@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.fir.resolve.dfa.*
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNothing
+import org.jetbrains.kotlin.fir.types.isNullableNothing
 import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.fir.util.listMultimapOf
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
@@ -1317,12 +1319,21 @@ class ControlFlowGraphBuilder {
             exitElvisExpressionNodes.push(it)
         }
 
+        val typedFir = lastNodes.topOrNull()?.fir as? FirExpression
+        val type = typedFir?.typeRef?.coneType
+
         val lhsExitNode = createElvisLhsExitNode(elvisExpression).also {
             popAndAddEdge(it)
         }
 
         val lhsIsNotNullNode = createElvisLhsIsNotNullNode(elvisExpression).also {
-            addEdge(lhsExitNode, it)
+            val preferredKind = if (type?.isNullableNothing == true) {
+                EdgeKind.DeadForward
+            } else {
+                EdgeKind.Forward
+            }
+
+            addEdge(lhsExitNode, it, preferredKind = preferredKind)
             addEdge(it, exitNode)
         }
 
