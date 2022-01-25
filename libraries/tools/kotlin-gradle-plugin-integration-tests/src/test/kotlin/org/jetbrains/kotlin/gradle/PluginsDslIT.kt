@@ -2,6 +2,8 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.MAVEN_LOCAL_URL_PLACEHOLDER
+import org.jetbrains.kotlin.gradle.testbase.transformBuildScriptWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Assert
 import org.junit.Test
@@ -62,9 +64,6 @@ class PluginsDslIT : BaseGradleIT() {
     }
 }
 
-private const val MAVEN_LOCAL_URL_PLACEHOLDER = "<mavenLocalUrl>"
-internal const val PLUGIN_MARKER_VERSION_PLACEHOLDER = "<pluginMarkerVersion>"
-
 internal fun BaseGradleIT.transformProjectWithPluginsDsl(
     projectName: String,
     wrapperVersion: GradleVersion,
@@ -102,11 +101,11 @@ internal fun BaseGradleIT.transformProjectWithPluginsDsl(
 }
 
 internal fun transformBuildScriptWithPluginsDsl(buildScriptContent: String): String =
-    buildScriptContent.replace(PLUGIN_MARKER_VERSION_PLACEHOLDER, KOTLIN_VERSION)
+    transformBuildScriptWithPluginsDsl(buildScriptContent)
 
 /** Copies the logic of Gradle [`mavenLocal()`](https://docs.gradle.org/3.4.1/dsl/org.gradle.api.artifacts.dsl.RepositoryHandler.html#org.gradle.api.artifacts.dsl.RepositoryHandler:mavenLocal())
  */
-private object MavenLocalUrlProvider {
+object MavenLocalUrlProvider {
     /** The URL that points to the Gradle's mavenLocal() repository. */
     val mavenLocalUrl by lazy {
         val path = propertyMavenLocalRepoPath ?: homeSettingsLocalRepoPath ?: m2HomeSettingsLocalRepoPath ?: defaultM2RepoPath

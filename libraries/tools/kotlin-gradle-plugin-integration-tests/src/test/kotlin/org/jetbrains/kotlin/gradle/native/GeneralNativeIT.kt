@@ -106,7 +106,7 @@ internal fun File.disableKotlinNativeCaches() {
     appendText("\nkotlin.native.cacheKind=none\n")
 }
 
-private const val SINGLE_NATIVE_TARGET_PLACEHOLDER = "<SingleNativeTarget>"
+internal const val SINGLE_NATIVE_TARGET_PLACEHOLDER = "<SingleNativeTarget>"
 
 private fun BaseGradleIT.Project.configureSingleNativeTarget(preset: String = HostManager.host.presetName) {
     projectDir.walk()

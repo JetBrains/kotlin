@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import org.jetbrains.kotlin.test.WithMuteInDatabase
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.io.TempDir
@@ -22,4 +23,11 @@ abstract class KGPBaseTest {
 
     @TempDir
     lateinit var workingDir: Path
+
+    lateinit var testDir: String //Some tests configure several projects inside, we need to have all of these in one folder
+
+    @BeforeEach
+    fun initTestDir() {
+        testDir = randomHash()
+    }
 }
