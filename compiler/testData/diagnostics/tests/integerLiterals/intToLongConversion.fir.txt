@@ -1,0 +1,63 @@
+FILE: intToLongConversion.fir.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public abstract interface B : R|kotlin/Any| {
+    }
+    public final fun takeByte(x: R|kotlin/Byte|): R|kotlin/Unit| {
+    }
+    public final fun takeInt(x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun takeNullableInt(x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun takeLong(x: R|kotlin/Long|): R|kotlin/Unit| {
+    }
+    public final fun takeNullableLong(x: R|kotlin/Long|): R|kotlin/Unit| {
+    }
+    public final fun takeOverloaded(x: R|kotlin/Int|): R|A| {
+        ^takeOverloaded Null(null)!!
+    }
+    public final fun takeOverloaded(x: R|kotlin/Long|): R|B| {
+        ^takeOverloaded Null(null)!!
+    }
+    public final fun takeA(a: R|A|): R|kotlin/Unit| {
+    }
+    public final fun takeB(b: R|B|): R|kotlin/Unit| {
+    }
+    public final fun test_constants(): R|kotlin/Unit| {
+        <Inapplicable(INAPPLICABLE): /takeByte>#(Int(1).R|kotlin/Int.plus|(Int(1)))
+        R|/takeInt|(Int(1).R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.plus|(Int(1)))
+        R|/takeNullableInt|(Int(1).R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.plus|(Int(1)))
+        R|/takeLong|(Int(1).R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.toLong|())
+        R|/takeNullableLong|(Int(1).R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.toLong|())
+        lval x: R|B| = R|/takeOverloaded|(Long(2147483648).R|kotlin/Long.minus|(Int(1)).R|kotlin/Long.plus|(Int(1)))
+        <Inapplicable(INAPPLICABLE): /takeA>#(R|<local>/x|)
+        R|/takeB|(R|<local>/x|)
+    }
+    public final val topLevelIntProperty: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.plus|(Int(1))
+        public get(): R|kotlin/Int|
+    public final val topLevelLongProperty: R|kotlin/Long| = Int(1).R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.toLong|()
+        public get(): R|kotlin/Long|
+    public final val topLevelImplicitIntProperty: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.plus|(Int(1))
+        public get(): R|kotlin/Int|
+    public final val topLevelImplicitLongProperty: R|kotlin/Long| = Long(3000000000).R|kotlin/Long.times|(Int(2)).R|kotlin/Long.plus|(Int(1))
+        public get(): R|kotlin/Long|
+    public final fun testTopLevelProperties(): R|kotlin/Unit| {
+        R|/takeInt|(R|/topLevelIntProperty|)
+        R|/takeLong|(R|/topLevelLongProperty|)
+        R|/takeInt|(R|/topLevelImplicitIntProperty|)
+        R|/takeLong|(R|/topLevelImplicitLongProperty|)
+        <Inapplicable(INAPPLICABLE): /takeLong>#(R|/topLevelIntProperty|)
+        <Inapplicable(INAPPLICABLE): /takeLong>#(R|/topLevelImplicitIntProperty|)
+    }
+    public final fun testLocalProperties(): R|kotlin/Unit| {
+        lval localIntProperty: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(1))
+        lval localLongProperty: R|kotlin/Long| = Int(1).R|kotlin/Int.plus|(Int(1)).R|kotlin/Int.toLong|()
+        lval localImplicitIntProperty: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(1))
+        lval localImplicitLongProperty: R|kotlin/Long| = Long(3000000000).R|kotlin/Long.times|(Int(2))
+        R|/takeInt|(R|<local>/localIntProperty|)
+        R|/takeLong|(R|<local>/localLongProperty|)
+        R|/takeInt|(R|<local>/localImplicitIntProperty|)
+        R|/takeLong|(R|<local>/localImplicitLongProperty|)
+        <Inapplicable(INAPPLICABLE): /takeLong>#(R|<local>/localIntProperty|)
+        <Inapplicable(INAPPLICABLE): /takeLong>#(R|<local>/localImplicitIntProperty|)
+    }

@@ -188,6 +188,10 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     // with a fake source that refers to the value parameter in the function type notation
     // e.g., `(x: Int) -> Unit` becomes `Function1<@ParameterName("x") Int, Unit>`
     object ParameterNameAnnotationCall : KtFakeSourceElementKind()
+
+    // for implicit conversion from int to long with `.toLong` function
+    // e.g. val x: Long = 1 + 1 becomes val x: Long = (1 + 1).toLong()
+    object IntToLongConversion : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {

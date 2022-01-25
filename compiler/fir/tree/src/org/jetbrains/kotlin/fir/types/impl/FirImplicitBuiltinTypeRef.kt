@@ -93,6 +93,14 @@ class FirImplicitFloatTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Float)
 
+class FirImplicitUIntTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.UInt)
+
+class FirImplicitULongTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.ULong)
+
 class FirImplicitNothingTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Nothing)
@@ -177,6 +185,8 @@ fun FirImplicitBuiltinTypeRef.withFakeSource(kind: KtFakeSourceElementKind): Fir
         is FirImplicitLongTypeRef -> FirImplicitLongTypeRef(newSource)
         is FirImplicitDoubleTypeRef -> FirImplicitDoubleTypeRef(newSource)
         is FirImplicitFloatTypeRef -> FirImplicitFloatTypeRef(newSource)
+        is FirImplicitUIntTypeRef -> FirImplicitUIntTypeRef(newSource)
+        is FirImplicitULongTypeRef -> FirImplicitULongTypeRef(newSource)
         is FirImplicitNothingTypeRef -> FirImplicitNothingTypeRef(newSource)
         is FirImplicitNullableNothingTypeRef -> FirImplicitNullableNothingTypeRef(newSource)
         is FirImplicitCharTypeRef -> FirImplicitCharTypeRef(newSource)

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.approxima
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.createClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.createSupertypeList
 import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.getApproximatedTypeImpl
-import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.withNullability
+import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralTypeExtensions.withNullabilityAndAttributes
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -68,7 +68,7 @@ class ConeIntegerLiteralConstantTypeImpl(
                 addSignedPossibleTypes()
             }
             return if (possibleTypes.size == 1) {
-                possibleTypes.single().withNullability(nullability).also {
+                possibleTypes.single().withNullabilityAndAttributes(nullability, ConeAttributes.Empty).also {
                     if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
                         assert(it.isLong() || it.isULong())
                     }
@@ -149,12 +149,12 @@ private object ConeIntegerLiteralTypeExtensions {
 
     fun ConeIntegerLiteralType.getApproximatedTypeImpl(expectedType: ConeKotlinType?): ConeClassLikeType {
         val expectedTypeForApproximation = (expectedType?.lowerBoundIfFlexible() as? ConeClassLikeType)
-            ?.withNullability(ConeNullability.NOT_NULL)
+            ?.withNullabilityAndAttributes(ConeNullability.NOT_NULL, ConeAttributes.Empty)
         val approximatedType = when (expectedTypeForApproximation) {
             null, !in possibleTypes -> possibleTypes.first()
             else -> expectedTypeForApproximation
         }
-        return approximatedType.withNullability(nullability)
+        return approximatedType.withNullabilityAndAttributes(nullability, attributes)
     }
 
 
@@ -218,12 +218,12 @@ private object ConeIntegerLiteralTypeExtensions {
         return this
     }
 
-    fun ConeClassLikeType.withNullability(nullability: ConeNullability): ConeClassLikeType {
-        if (nullability == this.nullability) return this
+    fun ConeClassLikeType.withNullabilityAndAttributes(nullability: ConeNullability, attributes: ConeAttributes): ConeClassLikeType {
+        if (nullability == this.nullability && attributes == this.attributes) return this
 
         return when (this) {
             is ConeErrorType -> this
-            is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable)
+            is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable, attributes)
             else -> error("sealed")
         }
     }

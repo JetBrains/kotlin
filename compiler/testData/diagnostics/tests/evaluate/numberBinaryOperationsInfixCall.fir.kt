@@ -7,21 +7,21 @@ fun fooShort(p: Short) = p
 fun test() {
     fooInt(1 <!INFIX_MODIFIER_REQUIRED!>plus<!> 1)
     fooByte(<!ARGUMENT_TYPE_MISMATCH!>1 <!INFIX_MODIFIER_REQUIRED!>plus<!> 1<!>)
-    fooLong(<!ARGUMENT_TYPE_MISMATCH!>1 <!INFIX_MODIFIER_REQUIRED!>plus<!> 1<!>)
+    fooLong(1 <!INFIX_MODIFIER_REQUIRED!>plus<!> 1)
     fooShort(<!ARGUMENT_TYPE_MISMATCH!>1 <!INFIX_MODIFIER_REQUIRED!>plus<!> 1<!>)
 
     fooInt(1 <!INFIX_MODIFIER_REQUIRED!>times<!> 1)
     fooByte(<!ARGUMENT_TYPE_MISMATCH!>1 <!INFIX_MODIFIER_REQUIRED!>times<!> 1<!>)
-    fooLong(<!ARGUMENT_TYPE_MISMATCH!>1 <!INFIX_MODIFIER_REQUIRED!>times<!> 1<!>)
+    fooLong(1 <!INFIX_MODIFIER_REQUIRED!>times<!> 1)
     fooShort(<!ARGUMENT_TYPE_MISMATCH!>1 <!INFIX_MODIFIER_REQUIRED!>times<!> 1<!>)
 
     fooInt(1 <!INFIX_MODIFIER_REQUIRED!>div<!> 1)
     fooByte(<!ARGUMENT_TYPE_MISMATCH!>1 <!INFIX_MODIFIER_REQUIRED!>div<!> 1<!>)
-    fooLong(<!ARGUMENT_TYPE_MISMATCH!>1 <!INFIX_MODIFIER_REQUIRED!>div<!> 1<!>)
+    fooLong(1 <!INFIX_MODIFIER_REQUIRED!>div<!> 1)
     fooShort(<!ARGUMENT_TYPE_MISMATCH!>1 <!INFIX_MODIFIER_REQUIRED!>div<!> 1<!>)
 
     fooInt(1 <!INFIX_MODIFIER_REQUIRED!>rem<!> 1)
     fooByte(<!ARGUMENT_TYPE_MISMATCH!>1 <!INFIX_MODIFIER_REQUIRED!>rem<!> 1<!>)
-    fooLong(<!ARGUMENT_TYPE_MISMATCH!>1 <!INFIX_MODIFIER_REQUIRED!>rem<!> 1<!>)
+    fooLong(1 <!INFIX_MODIFIER_REQUIRED!>rem<!> 1)
     fooShort(<!ARGUMENT_TYPE_MISMATCH!>1 <!INFIX_MODIFIER_REQUIRED!>rem<!> 1<!>)
 }

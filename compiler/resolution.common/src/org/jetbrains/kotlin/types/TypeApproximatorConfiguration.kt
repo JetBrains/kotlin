@@ -19,7 +19,8 @@ open class TypeApproximatorConfiguration {
     open val dynamic: Boolean get() = false // DynamicType
     open val rawType: Boolean get() = false // RawTypeImpl
     open val errorType: Boolean get() = false
-    open val integerLiteralType: Boolean = false // IntegerLiteralTypeConstructor
+    open val integerLiteralConstantType: Boolean get() = false // IntegerLiteralTypeConstructor
+    open val integerConstantOperatorType: Boolean get() = false
     open val definitelyNotNullType: Boolean get() = true
     open val intersection: IntersectionStrategy = IntersectionStrategy.TO_COMMON_SUPERTYPE
     open val intersectionTypesInContravariantPositions = false
@@ -47,7 +48,7 @@ open class TypeApproximatorConfiguration {
         override val allFlexible: Boolean get() = true
         override val intersection: IntersectionStrategy get() = IntersectionStrategy.ALLOWED
         override val errorType: Boolean get() = true
-        override val integerLiteralType: Boolean get() = true
+        override val integerLiteralConstantType: Boolean get() = true
         override val intersectionTypesInContravariantPositions: Boolean get() = true
     }
 
@@ -55,7 +56,7 @@ open class TypeApproximatorConfiguration {
         override val allFlexible: Boolean get() = true
         override val errorType: Boolean get() = true
         override val definitelyNotNullType: Boolean get() = false
-        override val integerLiteralType: Boolean get() = true
+        override val integerLiteralConstantType: Boolean get() = true
         override val intersectionTypesInContravariantPositions: Boolean get() = true
     }
 
@@ -75,23 +76,25 @@ open class TypeApproximatorConfiguration {
     object IncorporationConfiguration : AbstractCapturedTypesApproximation(CaptureStatus.FOR_INCORPORATION)
     object SubtypeCapturedTypesApproximation : AbstractCapturedTypesApproximation(CaptureStatus.FOR_SUBTYPING)
     object InternalTypesApproximation : AbstractCapturedTypesApproximation(CaptureStatus.FROM_EXPRESSION) {
-        override val integerLiteralType: Boolean get() = true
+        override val integerLiteralConstantType: Boolean get() = true
+        override val integerConstantOperatorType: Boolean get() = true
         override val intersectionTypesInContravariantPositions: Boolean get() = true
     }
 
     object FinalApproximationAfterResolutionAndInference :
         AbstractCapturedTypesApproximation(CaptureStatus.FROM_EXPRESSION) {
-        override val integerLiteralType: Boolean get() = true
+        override val integerLiteralConstantType: Boolean get() = true
         override val intersectionTypesInContravariantPositions: Boolean get() = true
     }
 
     object TypeArgumentApproximation : AbstractCapturedTypesApproximation(null) {
-        override val integerLiteralType: Boolean get() = true
+        override val integerLiteralConstantType: Boolean get() = true
+        override val integerConstantOperatorType: Boolean get() = true
         override val intersectionTypesInContravariantPositions: Boolean get() = true
     }
 
     object IntegerLiteralsTypesApproximation : AllFlexibleSameValue() {
-        override val integerLiteralType: Boolean get() = true
+        override val integerLiteralConstantType: Boolean get() = true
         override val allFlexible: Boolean get() = true
         override val intersection: IntersectionStrategy get() = IntersectionStrategy.ALLOWED
         override val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean get() = { true }

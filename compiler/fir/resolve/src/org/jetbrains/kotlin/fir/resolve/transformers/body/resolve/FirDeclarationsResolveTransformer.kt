@@ -305,8 +305,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
     ): FirStatement {
         dataFlowAnalyzer.enterDelegateExpression()
         // First, resolve delegate expression in dependent context
-        val delegateExpression =
-            wrappedDelegateExpression.expression.transformSingle(transformer, ResolutionMode.ContextDependent)
+        val delegateExpression = wrappedDelegateExpression.expression.transformSingle(transformer, ResolutionMode.ContextDependent)
+            .transformSingle(components.integerLiteralAndOperatorApproximationTransformer, null)
 
         // Second, replace result type of delegate expression with stub type if delegate not yet resolved
         if (delegateExpression is FirQualifiedAccess) {
@@ -355,7 +355,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
 
         // Select delegate expression otherwise
         return delegateExpression
-            .approximateIfIsIntegerConst()
     }
 
     private fun transformLocalVariable(variable: FirProperty): FirProperty {
@@ -826,6 +825,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             components.returnTypeCalculator,
             session.typeApproximator,
             dataFlowAnalyzer,
+            components.integerLiteralAndOperatorApproximationTransformer
         )
         lambda.transformSingle(writer, expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.toExpectedType())
 

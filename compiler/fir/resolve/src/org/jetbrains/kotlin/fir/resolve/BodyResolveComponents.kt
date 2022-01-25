@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
+import org.jetbrains.kotlin.fir.resolve.transformers.IntegerLiteralAndOperatorApproximationTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -43,6 +44,7 @@ abstract class BodyResolveComponents : SessionHolder {
     abstract val syntheticCallGenerator: FirSyntheticCallGenerator
     abstract val dataFlowAnalyzer: FirDataFlowAnalyzer<*>
     abstract val outerClassManager: FirOuterClassManager
+    abstract val integerLiteralAndOperatorApproximationTransformer: IntegerLiteralAndOperatorApproximationTransformer
 }
 
 // --------------------------------------- Utils ---------------------------------------

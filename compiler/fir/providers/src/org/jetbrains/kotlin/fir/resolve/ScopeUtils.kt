@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirScopeWithFakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScope
+import org.jetbrains.kotlin.fir.scopes.impl.getOrBuildScopeForIntegerConstantOperatorType
 import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
@@ -90,7 +91,8 @@ private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: Scope
             this
         )
         is ConeDefinitelyNotNullType -> original.scope(useSiteSession, scopeSession, requiredPhase)
-        is ConeIntegerLiteralType -> error("ILT should not be in receiver position")
+        is ConeIntegerConstantOperatorType -> scopeSession.getOrBuildScopeForIntegerConstantOperatorType(useSiteSession, this)
+        is ConeIntegerLiteralConstantType -> error("ILT should not be in receiver position")
         else -> null
     }
 }

@@ -17,7 +17,7 @@ fun test() {
     fooByte(<!ARGUMENT_TYPE_MISMATCH!>1 - 1.toLong()<!>)
     fooByte(<!ARGUMENT_TYPE_MISMATCH!>1 - 1.toShort()<!>)
 
-    fooLong(<!ARGUMENT_TYPE_MISMATCH!>1 - 1<!>)
+    fooLong(1 - 1)
     fooLong(<!ARGUMENT_TYPE_MISMATCH!>1 - 1.toInt()<!>)
     fooLong(<!ARGUMENT_TYPE_MISMATCH!>1 - 1.toByte()<!>)
     fooLong(1 - 1.toLong())

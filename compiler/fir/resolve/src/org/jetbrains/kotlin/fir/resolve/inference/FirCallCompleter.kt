@@ -123,9 +123,11 @@ class FirCallCompleter(
                         .buildAbstractResultingSubstitutor(session.typeContext) as ConeSubstitutor
                     val completedCall = call.transformSingle(
                         FirCallCompletionResultsWriterTransformer(
-                            session, finalSubstitutor, components.returnTypeCalculator,
+                            session, finalSubstitutor,
+                            components.returnTypeCalculator,
                             session.typeApproximator,
                             components.dataFlowAnalyzer,
+                            components.integerLiteralAndOperatorApproximationTransformer
                         ),
                         null
                     )
@@ -236,6 +238,7 @@ class FirCallCompleter(
             session, substitutor, components.returnTypeCalculator,
             session.typeApproximator,
             components.dataFlowAnalyzer,
+            components.integerLiteralAndOperatorApproximationTransformer,
             mode
         )
     }

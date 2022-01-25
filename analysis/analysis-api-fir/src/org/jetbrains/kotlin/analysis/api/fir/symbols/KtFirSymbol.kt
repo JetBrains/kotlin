@@ -13,10 +13,12 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveSta
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.originalIfFakeOverride
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
+import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 
 internal interface KtFirSymbol<out S : FirBasedSymbol<*>> : KtSymbol, ValidityTokenOwner {
@@ -63,6 +65,12 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
             ?: error("Declaration has ImportedFromObject origin, but no importedFromObjectData present")
 
         importedFromObjectData.original.ktSymbolOrigin()
+    }
+    FirDeclarationOrigin.WrappedIntegerOperator -> {
+        val original = (this as FirSimpleFunction).originalForWrappedIntegerOperator?.fir
+            ?: error("Declaration has WrappedIntegerOperator origin, but no originalForWrappedIntegerOperator present")
+
+        original.ktSymbolOrigin()
     }
     else -> {
         val overridden = (this as? FirCallableDeclaration)?.originalIfFakeOverride()

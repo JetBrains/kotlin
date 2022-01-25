@@ -1,5 +1,6 @@
 // !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
-// IGNORE_FIR_DIAGNOSTICS
+// IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: don't support legacy feature
 // TARGET_BACKEND: JVM
 
 // WITH_STDLIB

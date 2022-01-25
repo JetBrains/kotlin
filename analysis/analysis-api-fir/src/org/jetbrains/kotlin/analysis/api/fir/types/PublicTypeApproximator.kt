@@ -26,7 +26,7 @@ internal object PublicTypeApproximator {
         override val allFlexible: Boolean get() = false
         override val errorType: Boolean get() = true
         override val definitelyNotNullType: Boolean get() = false
-        override val integerLiteralType: Boolean get() = true
+        override val integerLiteralConstantType: Boolean get() = true
         override val intersectionTypesInContravariantPositions: Boolean get() = true
         override val anonymous: Boolean get() = true
     }

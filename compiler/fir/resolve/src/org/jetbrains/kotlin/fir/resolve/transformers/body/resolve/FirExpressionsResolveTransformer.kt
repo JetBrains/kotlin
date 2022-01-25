@@ -23,12 +23,15 @@ import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.dfa.coneType
 import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubInferenceSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.InvocationKindTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
+import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
+import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -373,14 +376,58 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             } catch (e: Throwable) {
                 throw RuntimeException("While resolving call ${functionCall.render()}", e)
             }
-
-        dataFlowAnalyzer.exitFunctionCall(completeInference, callCompleted)
+        val result = completeInference.transformToIntegerOperatorCallOrApproximateItIfNeeded(data)
+        dataFlowAnalyzer.exitFunctionCall(result, callCompleted)
         if (callCompleted) {
             if (enableArrayOfCallTransformation) {
-                return arrayOfCallTransformer.transformFunctionCall(completeInference, null)
+                return arrayOfCallTransformer.transformFunctionCall(result, null)
             }
         }
-        return completeInference
+        return result
+    }
+
+    private fun FirFunctionCall.transformToIntegerOperatorCallOrApproximateItIfNeeded(resolutionMode: ResolutionMode): FirFunctionCall {
+        if (!explicitReceiver.isIntegerLiteralOrOperatorCall()) return this
+        val resolvedSymbol = when (val reference = calleeReference) {
+            is FirResolvedNamedReference -> reference.resolvedSymbol
+            is FirErrorNamedReference -> reference.candidateSymbol
+            else -> null
+        } ?: return this
+        if (!resolvedSymbol.isWrappedIntegerOperator()) return this
+
+        val argument = this.argumentList.arguments.singleOrNull() ?: return this
+        assert(argument.isIntegerLiteralOrOperatorCall())
+
+        val originalCall = this
+
+        val integerOperatorType = ConeIntegerConstantOperatorTypeImpl(
+            isUnsigned = resolvedSymbol.isWrappedIntegerOperatorForUnsignedType(),
+            ConeNullability.NOT_NULL
+        )
+
+        val approximationIsNeeded = resolutionMode !is ResolutionMode.ReceiverResolution && resolutionMode !is ResolutionMode.ContextDependent
+
+        val integerOperatorCall = buildIntegerLiteralOperatorCall {
+            source = originalCall.source
+            typeRef = originalCall.typeRef.resolvedTypeFromPrototype(integerOperatorType)
+            annotations.addAll(originalCall.annotations)
+            typeArguments.addAll(originalCall.typeArguments)
+            calleeReference = originalCall.calleeReference
+            origin = originalCall.origin
+            argumentList = originalCall.argumentList
+            explicitReceiver = originalCall.explicitReceiver
+            dispatchReceiver = originalCall.dispatchReceiver
+            extensionReceiver = originalCall.extensionReceiver
+        }
+
+        return if (approximationIsNeeded) {
+            integerOperatorCall.transformSingle<FirFunctionCall, ConeKotlinType?>(
+                components.integerLiteralAndOperatorApproximationTransformer,
+                resolutionMode.expectedType?.coneTypeSafe()
+            )
+        } else {
+            integerOperatorCall
+        }
     }
 
     override fun transformBlock(block: FirBlock, data: ResolutionMode): FirStatement {
@@ -916,6 +963,10 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     expressionType is ConeClassLikeType -> {
                         constExpression.replaceKind(expressionType.toConstKind() as ConstantValueKind<T>)
                         expressionType
+                    }
+                    data is ResolutionMode.ReceiverResolution -> {
+                        require(expressionType is ConeIntegerLiteralConstantTypeImpl)
+                        ConeIntegerConstantOperatorTypeImpl(expressionType.isUnsigned, ConeNullability.NOT_NULL)
                     }
                     expectedTypeRef != null -> {
                         require(expressionType is ConeIntegerLiteralConstantTypeImpl)

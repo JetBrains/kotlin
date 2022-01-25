@@ -560,6 +560,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             "FirSafeCallExpressionImpl",
             "FirCheckedSafeCallSubjectImpl",
             "FirArrayOfCallImpl",
+            "FirIntegerLiteralOperatorCallImpl"
         )
         configureFieldInAllImplementations(
             field = "typeRef",

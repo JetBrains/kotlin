@@ -78,7 +78,8 @@ class Fir2IrTypeConverter(
         object : TypeApproximatorConfiguration.AllFlexibleSameValue() {
             override val allFlexible: Boolean get() = true
             override val errorType: Boolean get() = true
-            override val integerLiteralType: Boolean get() = true
+            override val integerLiteralConstantType: Boolean get() = true
+            override val integerConstantOperatorType: Boolean get() = true
             override val intersectionTypesInContravariantPositions: Boolean get() = true
         }
 
