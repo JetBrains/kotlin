@@ -42,9 +42,7 @@ open class MetadataSerializer(
     fun serialize(environment: KotlinCoreEnvironment) {
         val performanceManager = environment.configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
 
-        performanceManager.notifyAnalysisStarted()
-        val analyzer = runCommonAnalysisForSerialization(environment, dependOnOldBuiltIns, dependencyContainer = null)
-        performanceManager.notifyAnalysisFinished()
+        val analyzer = runCommonAnalysisForSerialization(environment, dependOnOldBuiltIns, dependencyContainerFactory = { null })
 
         if (analyzer == null || analyzer.hasErrors()) return
 
