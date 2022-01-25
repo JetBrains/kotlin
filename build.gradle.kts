@@ -120,7 +120,7 @@ rootProject.apply {
 IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.7.0-dev-953"
+    extra["versions.kotlin-native"] = "1.7.0-dev-1037"
 }
 
 
