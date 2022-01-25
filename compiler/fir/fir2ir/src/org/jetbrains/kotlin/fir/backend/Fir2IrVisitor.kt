@@ -270,7 +270,7 @@ class Fir2IrVisitor(
         val delegate = variable.delegate
         if (delegate != null) {
             val irProperty = declarationStorage.createIrLocalDelegatedProperty(variable, conversionScope.parentFromStack())
-            irProperty.delegate.initializer = convertToIrExpression(delegate)
+            irProperty.delegate.initializer = convertToIrExpression(delegate, isDelegate = true)
             conversionScope.withFunction(irProperty.getter) {
                 memberGenerator.convertFunctionContent(irProperty.getter, variable.getter, null)
             }
@@ -456,7 +456,8 @@ class Fir2IrVisitor(
                 }
             }
         } else if (boundSymbol is FirCallableSymbol) {
-            val receiverSymbol = calleeReference.toSymbolForCall(FirNoReceiverExpression, session, classifierStorage, declarationStorage, conversionScope)
+            val receiverSymbol =
+                calleeReference.toSymbolForCall(FirNoReceiverExpression, session, classifierStorage, declarationStorage, conversionScope)
             val receiver = (receiverSymbol?.owner as? IrSimpleFunction)?.extensionReceiverParameter
             if (receiver != null) {
                 return thisReceiverExpression.convertWithOffsets { startOffset, endOffset ->
@@ -499,10 +500,18 @@ class Fir2IrVisitor(
     }
 
     override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Any?): IrElement {
+        return convertCallableReferenceAccess(callableReferenceAccess, false)
+    }
+
+    private fun convertCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, isDelegate: Boolean): IrElement {
         val explicitReceiverExpression = convertToIrReceiverExpression(
             callableReferenceAccess.explicitReceiver, callableReferenceAccess.calleeReference, callableReferenceAccess
         )
-        return callGenerator.convertToIrCallableReference(callableReferenceAccess, explicitReceiverExpression)
+        return callGenerator.convertToIrCallableReference(
+            callableReferenceAccess,
+            explicitReceiverExpression,
+            isDelegate = isDelegate
+        )
     }
 
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Any?): IrElement {
@@ -525,7 +534,11 @@ class Fir2IrVisitor(
         return accept(this@Fir2IrVisitor, null) as IrStatement
     }
 
-    internal fun convertToIrExpression(expression: FirExpression, annotationMode: Boolean = false): IrExpression {
+    internal fun convertToIrExpression(
+        expression: FirExpression,
+        annotationMode: Boolean = false,
+        isDelegate: Boolean = false
+    ): IrExpression {
         return when (expression) {
             is FirBlock -> expression.convertToIrExpressionOrBlock(
                 if (expression.source?.kind == KtFakeSourceElementKind.DesugaredForLoop) IrStatementOrigin.FOR_LOOP else null
@@ -541,10 +554,14 @@ class Fir2IrVisitor(
                     when (unwrappedExpression) {
                         is FirFunctionCall -> convertToIrCall(unwrappedExpression, annotationMode)
                         is FirArrayOfCall -> convertToArrayOfCall(unwrappedExpression, annotationMode)
+                        is FirCallableReferenceAccess -> convertCallableReferenceAccess(unwrappedExpression, isDelegate)
                         else -> expression.accept(this, null) as IrExpression
                     }
                 } else {
-                    expression.accept(this, null) as IrExpression
+                    when (unwrappedExpression) {
+                        is FirCallableReferenceAccess -> convertCallableReferenceAccess(unwrappedExpression, isDelegate)
+                        else -> expression.accept(this, null) as IrExpression
+                    }
                 }
             }
         }.let {

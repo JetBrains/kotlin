@@ -61,7 +61,8 @@ class CallAndReferenceGenerator(
 
     fun convertToIrCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
-        explicitReceiverExpression: IrExpression?
+        explicitReceiverExpression: IrExpression?,
+        isDelegate: Boolean
     ): IrExpression {
         val type = approximateFunctionReferenceType(callableReferenceAccess.typeRef.coneType).toIrType()
 
@@ -79,7 +80,7 @@ class CallAndReferenceGenerator(
 
         val symbol = callableReferenceAccess.calleeReference.toSymbolForCall(
             callableReferenceAccess.dispatchReceiver, session, classifierStorage, declarationStorage, conversionScope,
-            explicitReceiver = callableReferenceAccess.explicitReceiver
+            explicitReceiver = callableReferenceAccess.explicitReceiver, isDelegate = isDelegate
         )
         // val x by y ->
         //   val `x$delegate` = y
