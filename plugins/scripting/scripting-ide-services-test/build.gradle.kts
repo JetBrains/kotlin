@@ -67,4 +67,6 @@ projectTest(taskName = "embeddableTest", parallel = true) {
     workingDir = rootDir
     dependsOn(embeddableTestRuntime)
     classpath = embeddableTestRuntime
+
+    exclude("**/JvmReplIdeTest.class")
 }

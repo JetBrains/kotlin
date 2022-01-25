@@ -5,23 +5,12 @@
 
 package org.jetbrains.kotlin.scripting.ide_services
 
-import com.intellij.mock.MockApplication
-import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.vfs.VirtualFileManager
-import com.intellij.util.indexing.FileContentImpl
 import junit.framework.TestCase
-import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler
-import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
-import org.jetbrains.kotlin.analysis.decompiler.stub.file.FileAttributeService
-import org.jetbrains.kotlin.analysis.decompiler.stub.files.DummyFileAttributeService
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocationWithRange
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemoryImpl
 import org.jetbrains.kotlin.scripting.ide_services.test_util.*
 import java.io.File
 import kotlin.io.path.ExperimentalPathApi
@@ -29,15 +18,11 @@ import kotlin.io.path.createTempDirectory
 import kotlin.io.path.invariantSeparatorsPathString
 import kotlin.reflect.full.isSubclassOf
 import kotlin.script.experimental.api.*
-import kotlin.script.experimental.jvm.impl.KJvmCompiledModuleInMemory
-import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.jvm
 import kotlin.script.experimental.jvm.updateClasspath
 import kotlin.script.experimental.jvm.util.isError
 import kotlin.script.experimental.jvm.util.isIncomplete
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
-import kotlin.script.experimental.util.LinkedSnippet
-import kotlin.script.experimental.util.get
 
 // Adapted form GenericReplTest
 
@@ -353,28 +338,6 @@ class JvmIdeServicesTest : TestCase() {
             }
     }
 
-    fun testReplScriptClassFileDecompilation() {
-        JvmTestRepl()
-            .use { repl ->
-                val compiledSnippet = checkCompile(repl, "10 + 10")
-                val snippetValue = compiledSnippet.get()!!
-
-                val compiledModule = snippetValue.getCompiledModule() as KJvmCompiledModuleInMemoryImpl
-                val folder = saveCompiledOutput("repl-script-decompilation", compiledModule)
-
-                val vFile = VirtualFileManager.getInstance().findFileByNioPath(folder.resolve("Line_0_simplescript.class").toPath())!!
-                val fileContent = FileContentImpl.createByFile(vFile)
-
-                val application = ApplicationManager.getApplication() as MockApplication
-                KotlinCoreEnvironment.underApplicationLock {
-                    registerDecompilerServices(application)
-                }
-
-                val fileStub = KotlinClassFileDecompiler().stubBuilder.buildFileStub(fileContent)
-                assertNotNull(fileStub)
-            }
-    }
-
     @OptIn(ExperimentalPathApi::class)
     companion object {
         private const val MODULE_PATH = "plugins/scripting/scripting-ide-services-test"
@@ -400,21 +363,6 @@ class JvmIdeServicesTest : TestCase() {
             )
 
             return CliCompilationResult(exitCode, jarPath)
-        }
-
-        private fun saveCompiledOutput(subfolder: String, module: KJvmCompiledModuleInMemory): File {
-            val folder = outputJarDir.resolve(subfolder).toFile()
-            module.compilerOutputFiles.forEach { (name, contents) ->
-                val file = folder.resolve(name)
-                file.parentFile.mkdirs()
-                file.writeBytes(contents)
-            }
-            return folder
-        }
-
-        private fun registerDecompilerServices(application: MockApplication) {
-            application.registerService(ClsKotlinBinaryClassCache::class.java)
-            application.registerService(FileAttributeService::class.java, DummyFileAttributeService)
         }
     }
 }
@@ -472,109 +420,3 @@ class LegacyReplTestLong : TestCase() {
             }
     }
 }
-
-private fun JvmTestRepl.compileAndEval(codeLine: SourceCode): Pair<ResultWithDiagnostics<LinkedSnippet<out CompiledSnippet>>, EvaluatedSnippet?> {
-
-    val compRes = compile(codeLine)
-
-    val evalRes = compRes.valueOrNull()?.let {
-        eval(it)
-    }
-    return compRes to evalRes?.valueOrNull().get()
-}
-
-private fun assertCompileFails(
-    repl: JvmTestRepl,
-    @Suppress("SameParameterValue")
-    line: String
-) {
-    val compiledSnippet =
-        checkCompile(repl, line)
-
-    TestCase.assertNull(compiledSnippet)
-}
-
-private fun assertEvalUnit(
-    repl: JvmTestRepl,
-    @Suppress("SameParameterValue")
-    line: String
-) {
-    val compiledSnippet =
-        checkCompile(repl, line)
-
-    val evalResult = repl.eval(compiledSnippet!!)
-    val valueResult = evalResult.valueOrNull().get()
-
-    TestCase.assertNotNull("Unexpected eval result: $evalResult", valueResult)
-    TestCase.assertTrue(valueResult!!.result is ResultValue.Unit)
-}
-
-private fun <R> assertEvalResult(repl: JvmTestRepl, line: String, expectedResult: R) {
-    val compiledSnippet =
-        checkCompile(repl, line)
-
-    val evalResult = repl.eval(compiledSnippet!!)
-    val valueResult = evalResult.valueOrNull().get()
-
-    TestCase.assertNotNull("Unexpected eval result: $evalResult", valueResult)
-    TestCase.assertTrue(valueResult!!.result is ResultValue.Value)
-    TestCase.assertEquals(expectedResult, (valueResult.result as ResultValue.Value).value)
-}
-
-private inline fun <reified R> assertEvalResultIs(repl: JvmTestRepl, line: String) {
-    val compiledSnippet =
-        checkCompile(repl, line)
-
-    val evalResult = repl.eval(compiledSnippet!!)
-    val valueResult = evalResult.valueOrNull().get()
-
-    TestCase.assertNotNull("Unexpected eval result: $evalResult", valueResult)
-    TestCase.assertTrue(valueResult!!.result is ResultValue.Value)
-    TestCase.assertTrue((valueResult.result as ResultValue.Value).value is R)
-}
-
-private fun checkCompile(repl: JvmTestRepl, line: String): LinkedSnippet<KJvmCompiledScript>? {
-    val codeLine = repl.nextCodeLine(line)
-    val compileResult = repl.compile(codeLine)
-    return compileResult.valueOrNull()
-}
-
-private data class CompilationErrors(
-    val message: String,
-    val location: CompilerMessageLocationWithRange?
-)
-
-private fun <T> ResultWithDiagnostics<T>.getErrors(): CompilationErrors =
-    CompilationErrors(
-        reports.joinToString("\n") { report ->
-            report.location?.let { loc ->
-                CompilerMessageLocationWithRange.create(
-                    report.sourcePath,
-                    loc.start.line,
-                    loc.start.col,
-                    loc.end?.line,
-                    loc.end?.col,
-                    null
-                )?.toString()?.let {
-                    "$it "
-                }
-            }.orEmpty() + report.message
-        },
-        reports.firstOrNull {
-            when (it.severity) {
-                ScriptDiagnostic.Severity.ERROR -> true
-                ScriptDiagnostic.Severity.FATAL -> true
-                else -> false
-            }
-        }?.let {
-            val loc = it.location ?: return@let null
-            CompilerMessageLocationWithRange.create(
-                it.sourcePath,
-                loc.start.line,
-                loc.start.col,
-                loc.end?.line,
-                loc.end?.col,
-                null
-            )
-        }
-    )
