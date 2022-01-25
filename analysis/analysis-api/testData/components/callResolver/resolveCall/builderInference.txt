@@ -1,0 +1,25 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtImplicitReceiverValue:
+        symbol = KtReceiverParameterSymbol:
+          origin: SOURCE
+          type: test/Target<kotlin/String>
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/Target.add(<dispatch receiver>: test.Target<T>, t: T): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            receiverType = null
+            returnType = T
+            symbol = t: T
+        ]
+    argumentMapping = {
+      s -> (KtVariableLikeSignature:
+        receiverType = null
+        returnType = T
+        symbol = t: T)
+    }

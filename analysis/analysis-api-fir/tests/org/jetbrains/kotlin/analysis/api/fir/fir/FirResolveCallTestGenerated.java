@@ -173,6 +173,12 @@ public class FirResolveCallTestGenerated extends AbstractResolveCallTest {
     }
 
     @Test
+    @TestMetadata("builderInference.kt")
+    public void testBuilderInference() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/builderInference.kt");
+    }
+
+    @Test
     @TestMetadata("calleeExpressionOfImplicitInvoke.kt")
     public void testCalleeExpressionOfImplicitInvoke() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/calleeExpressionOfImplicitInvoke.kt");
