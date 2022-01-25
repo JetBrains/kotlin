@@ -19,7 +19,6 @@ internal typealias FragmentCapabilities<T> = KotlinGradleFragmentConfigurationCa
 interface KotlinGradleFragmentConfigurationCapabilities<in T : KotlinGradleFragment> {
     interface CapabilitiesContainer {
         fun capability(notation: Any)
-        val capabilities: List<Capability>
     }
 
     fun setCapabilities(container: CapabilitiesContainer, fragment: T)
@@ -43,7 +42,6 @@ private class CapabilitiesContainerImpl(
     private val publications: ConfigurationPublications
 ) : CapabilitiesContainer {
     override fun capability(notation: Any) = publications.capability(notation)
-    override val capabilities: List<Capability> get() = publications.capabilities.orEmpty().toList()
 }
 
 class KotlinGradleFragmentConfigurationCapabilitiesContext<T : KotlinGradleFragment> internal constructor(

@@ -179,9 +179,6 @@ class KotlinFragmentConfigurationDefinitionTest : AbstractKpmExtensionTest() {
             override fun capability(notation: Any) {
                 setCapabilities.add(notation)
             }
-
-            override val capabilities: List<Capability> get() = throw NotImplementedError()
-
         }
 
         composite.setCapabilities(testCapabilitiesContainer, dummyFragment)
