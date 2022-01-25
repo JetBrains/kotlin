@@ -137,7 +137,6 @@ abstract class KotlinJsIrLink @Inject constructor(
         }
         if (incrementalJsIr && mode == DEVELOPMENT) {
             val visitedCompilations = mutableSetOf<KotlinCompilation<*>>()
-            val allCacheDirectories = mutableSetOf<File>()
 
             val cacheBuilder = CacheBuilder(
                 buildDir,
@@ -154,7 +153,6 @@ abstract class KotlinJsIrLink @Inject constructor(
                 compilation as KotlinCompilation<*>,
                 cacheBuilder,
                 visitedCompilations,
-                allCacheDirectories
             )
 
             args.cacheDirectories = cacheArgs.joinToString(File.pathSeparator) {
@@ -168,7 +166,6 @@ abstract class KotlinJsIrLink @Inject constructor(
         compilation: KotlinCompilation<*>,
         cacheBuilder: CacheBuilder,
         visitedCompilations: MutableSet<KotlinCompilation<*>>,
-        visitedCacheDirectories: MutableSet<File>
     ): List<File> {
         if (compilation in visitedCompilations) return emptyList()
         visitedCompilations.add(compilation)
@@ -179,7 +176,6 @@ abstract class KotlinJsIrLink @Inject constructor(
                     it,
                     cacheBuilder,
                     visitedCompilations,
-                    visitedCacheDirectories
                 )
             }
 
