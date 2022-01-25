@@ -14,60 +14,87 @@ class GCStateHolder {
 public:
     int64_t schedule() {
         std::unique_lock lock(mutex_);
-        if (scheduledEpoch <= startedEpoch) {
-            scheduledEpoch = startedEpoch + 1;
-            cond_.notify_all();
+        if (*scheduledEpoch <= *startedEpoch) {
+            scheduledEpoch.set(lock, *startedEpoch + 1);
         }
-        return scheduledEpoch;
+        return *scheduledEpoch;
     }
 
     void shutdown() {
         std::unique_lock lock(mutex_);
         shutdownFlag_ = true;
-        cond_.notify_all();
+        startedEpoch.notify();
+        finishedEpoch.notify();
+        scheduledEpoch.notify();
+        finalizedEpoch.notify();
     }
 
     void start(int64_t epoch) {
-        std::unique_lock lock(mutex_);
-        startedEpoch = epoch;
-        cond_.notify_all();
+        startedEpoch.set(epoch);
     }
 
     void finish(int64_t epoch) {
-        std::unique_lock lock(mutex_);
-        finishedEpoch = epoch;
-        cond_.notify_all();
+        finishedEpoch.set(epoch);
     }
 
     void finalized(int64_t epoch) {
-        std::unique_lock lock(mutex_);
-        finalizedEpoch = epoch;
-        cond_.notify_all();
+        finalizedEpoch.set(epoch);
     }
 
     void waitEpochFinished(int64_t epoch) {
-        std::unique_lock lock(mutex_);
-        cond_.wait(lock, [this, epoch] { return finishedEpoch >= epoch || shutdownFlag_; });
+        finishedEpoch.wait([this, epoch] { return *finishedEpoch >= epoch || shutdownFlag_; });
     }
 
     void waitEpochFinalized(int64_t epoch) {
-        std::unique_lock lock(mutex_);
-        cond_.wait(lock, [this, epoch] { return finalizedEpoch >= epoch || shutdownFlag_; });
+        finalizedEpoch.wait([this, epoch] { return *finalizedEpoch >= epoch || shutdownFlag_; });
     }
 
     std::optional<int64_t> waitScheduled() {
-        std::unique_lock lock(mutex_);
-        cond_.wait(lock, [this] { return scheduledEpoch > finishedEpoch || shutdownFlag_; });
+        int64_t result = scheduledEpoch.wait([this] { return *scheduledEpoch > *finishedEpoch || shutdownFlag_; });
         if (shutdownFlag_) return std::nullopt;
-        return scheduledEpoch;
+        return result;
     }
 
 private:
+    template <typename T>
+    struct ValueWithCondVar : kotlin::Pinned {
+        explicit ValueWithCondVar(T initializer, std::mutex& mutex) noexcept : value_(initializer), mutex_(mutex) {};
+
+        const T& operator*() const { return value_; }
+
+        void set(T newValue) {
+            std::unique_lock lock(mutex_);
+            set(lock, newValue);
+        }
+
+        void set(std::unique_lock<std::mutex>& lock, T newValue) {
+            RuntimeAssert(lock.owns_lock() && lock.mutex() == &mutex_, "Required the mutex to be locked");
+            value_ = newValue;
+            cond_.notify_all();
+        }
+
+        void notify() {
+            cond_.notify_all();
+        }
+
+        template <class Predicate>
+        const T& wait(Predicate stop_waiting) {
+            std::unique_lock lock(mutex_);
+            cond_.wait(lock, stop_waiting);
+            return value_;
+        }
+
+    private:
+        T value_;
+        std::mutex& mutex_;
+        std::condition_variable cond_;
+    };
+
     std::mutex mutex_;
-    std::condition_variable cond_;
-    int64_t startedEpoch = 0;
-    int64_t finishedEpoch = 0;
-    int64_t scheduledEpoch = 0;
-    int64_t finalizedEpoch = 0;
+    // Use a separate conditional variable for each counter to mitigate a winpthreads bug (see KT-50948 for details).
+    ValueWithCondVar<int64_t> startedEpoch{0, mutex_};
+    ValueWithCondVar<int64_t> finishedEpoch{0, mutex_};
+    ValueWithCondVar<int64_t> scheduledEpoch{0, mutex_};
+    ValueWithCondVar<int64_t> finalizedEpoch{0, mutex_};
     bool shutdownFlag_ = false;
 };
