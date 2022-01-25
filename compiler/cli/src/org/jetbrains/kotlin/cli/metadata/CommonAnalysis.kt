@@ -25,7 +25,7 @@ internal val KotlinCoreEnvironment.destDir: File?
 internal fun runCommonAnalysisForSerialization(
     environment: KotlinCoreEnvironment,
     dependOnBuiltins: Boolean,
-    dependencyContainer: CommonDependenciesContainer?
+    dependencyContainerFactory: () -> CommonDependenciesContainer?
 ): AnalyzerWithCompilerReport? {
     if (environment.destDir == null) {
         val configuration = environment.configuration
@@ -34,19 +34,23 @@ internal fun runCommonAnalysisForSerialization(
         return null
     }
 
+    val performanceManager = environment.configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
+
     var analyzer: AnalyzerWithCompilerReport
     do {
-        analyzer = runCommonAnalysis(environment, dependOnBuiltins, dependencyContainer)
+        performanceManager.notifyAnalysisStarted()
+        analyzer = runCommonAnalysisIteration(environment, dependOnBuiltins, dependencyContainerFactory())
         val result = analyzer.analysisResult
         if (result is AnalysisResult.RetryWithAdditionalRoots) {
             environment.addKotlinSourceRoots(result.additionalKotlinRoots)
         }
+        performanceManager.notifyAnalysisFinished()
     } while (result is AnalysisResult.RetryWithAdditionalRoots)
 
     return if (analyzer.analysisResult.shouldGenerateCode) analyzer else null
 }
 
-private fun runCommonAnalysis(
+private fun runCommonAnalysisIteration(
     environment: KotlinCoreEnvironment,
     dependOnBuiltins: Boolean,
     dependencyContainer: CommonDependenciesContainer?
