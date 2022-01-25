@@ -43,7 +43,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirContractChecker,
             FirFunctionParameterChecker,
-            FirInlineDeclarationChecker,
             FirFunctionReturnChecker,
         )
 
@@ -67,7 +66,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirInitializerTypeMismatchChecker,
             FirDelegatedPropertyChecker,
             FirPropertyFieldTypeChecker,
-            FirInlinePropertyChecker,
             FirPropertyFromParameterChecker,
             FirLocalVariableTypeParametersSyntaxChecker,
             FirDelegateUsesExtensionPropertyTypeParameterChecker,
