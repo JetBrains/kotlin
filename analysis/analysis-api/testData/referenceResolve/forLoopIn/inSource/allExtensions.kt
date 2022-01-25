@@ -3,9 +3,10 @@ fun test(f: Foo) {
 }
 
 interface Foo
-fun Foo.iterator(): Iterator
+fun Foo.iterator(): Iterator = TODO()
 
 interface Iterator
 
-fun Iterator.next(): Any
-fun Iterator.hasNext(): Boolean
+fun Iterator.next(): Any= TODO()
+fun Iterator.hasNext(): Boolean = TODO()
+

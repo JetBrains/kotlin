@@ -1,3 +1,3 @@
 fun x() {
-    val z = jav<caret>a.util.ArrayList()
+    val z = jav<caret>a.util.ArrayList<Int>()
 }

@@ -1,6 +1,6 @@
-@file:[<caret>D("message")]
+@file:[<caret>S("message")]
 
 package foo
 
-import kotlin.Deprecated as D
+import kotlin.Suppress as S
 

@@ -1,6 +1,6 @@
 class Foo {
     val String.foo : Any
     get() {
-        t<caret>his@foo
+        return t<caret>his@foo
     }
 }
