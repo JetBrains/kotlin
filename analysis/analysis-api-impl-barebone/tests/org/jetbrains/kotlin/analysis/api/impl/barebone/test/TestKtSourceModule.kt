@@ -119,6 +119,19 @@ class TestKtLibraryModule(
         GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
 }
 
+class TestKtLibrarySourceModule(
+    project: Project,
+    testModule: TestModule,
+    ktFilesFromSourceJar: Set<KtFile>,
+    testServices: TestServices,
+    override val binaryLibrary: KtLibraryModule,
+) : TestKtModule(project, testModule, ktFilesFromSourceJar, testServices), KtLibrarySourceModule {
+    override val ktModule: KtModule get() = this
+    override val contentScope: GlobalSearchScope get() = GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
+
+    override val libraryName: String get() = testModule.name
+}
+
 private class LibraryByRoots(
     private val roots: List<Path>,
     private val module: KtModule,

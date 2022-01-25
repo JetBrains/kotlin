@@ -10,9 +10,9 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleModuleTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.utils.libraries.CompilerExecutor
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.light.classes.symbol.base.service.NullabilityAnnotationSourceProvider
-import org.jetbrains.kotlin.light.classes.symbol.decompiled.service.CompilerExecutor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability

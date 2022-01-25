@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.light.classes.symbol.decompiled.service
+package org.jetbrains.kotlin.analysis.api.fir.utils.libraries.binary
 
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.mock.MockApplication
@@ -15,7 +15,7 @@ import com.intellij.psi.FileTypeFileViewProviders
 import com.intellij.psi.compiled.ClassFileDecompilers
 import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
-import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
+import org.jetbrains.kotlin.analysis.api.impl.base.test.utils.libraries.LibraryEnvironmentConfigurator
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
@@ -24,13 +24,15 @@ import org.jetbrains.kotlin.analysis.decompiler.stub.files.DummyFileAttributeSer
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
-object SymbolLightClassesForLibraryFrontendApiTestConfiguratorService : FrontendApiTestConfiguratorService {
+object LibraryFrontendApiTestConfiguratorService : FrontendApiTestConfiguratorService {
+    override val allowDependedAnalysisSession: Boolean get() = false
+
     override fun TestConfigurationBuilder.configureTest(disposable: Disposable) {
+        useConfigurators(::LibraryEnvironmentConfigurator)
         usePreAnalysisHandlers(::LibraryModuleRegistrarPreAnalysisHandler)
     }
 
     override fun registerProjectServices(project: MockProject) {
-        project.registerService(ClsJavaStubByVirtualFileCache::class.java)
     }
 
 
@@ -39,14 +41,17 @@ object SymbolLightClassesForLibraryFrontendApiTestConfiguratorService : Frontend
         if (application.getServiceIfCreated(ClsKotlinBinaryClassCache::class.java) != null) return
         application.registerService(ClsKotlinBinaryClassCache::class.java)
         application.registerService(FileAttributeService::class.java, DummyFileAttributeService)
+
         FileTypeFileViewProviders.INSTANCE.addExplicitExtension(
             JavaClassFileType.INSTANCE,
             ClassFileViewProviderFactory()
         )
+
         @Suppress("DEPRECATION")
-        ClassFileDecompilers.getInstance().EP_NAME.point.registerExtension(KotlinClassFileDecompiler(), LoadingOrder.FIRST)
-        @Suppress("DEPRECATION")
-        ClassFileDecompilers.getInstance().EP_NAME.point.registerExtension(KotlinBuiltInDecompiler(), LoadingOrder.FIRST)
+        ClassFileDecompilers.getInstance().EP_NAME.point.apply {
+            registerExtension(KotlinClassFileDecompiler(), LoadingOrder.FIRST)
+            registerExtension(KotlinBuiltInDecompiler(), LoadingOrder.FIRST)
+        }
     }
 
     override fun doOutOfBlockModification(file: KtFile) {

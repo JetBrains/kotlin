@@ -158,7 +158,12 @@ abstract class AbstractFrontendApiTest : TestWithDisposable() {
             testConfiguration.directives,
         )
         val singleModule = moduleStructure.modules.single()
-        val project = testServices.compilerConfigurationProvider.getProject(singleModule)
+        val project = try {
+            testServices.compilerConfigurationProvider.getProject(singleModule)
+        } catch (_: SkipTestException) {
+            return
+        }
+
         val moduleInfoProvider = testServices.projectModuleProvider
         with(project as MockProject) {
             configurator.registerProjectServices(this)
@@ -183,6 +188,7 @@ abstract class AbstractFrontendApiTest : TestWithDisposable() {
         val ktFiles = when (moduleInfo) {
             is TestKtSourceModule -> moduleInfo.testFilesToKtFiles.filterKeys { testFile -> !testFile.isAdditional }.values.toList()
             is TestKtLibraryModule -> moduleInfo.ktFiles.toList()
+            is TestKtLibrarySourceModule -> moduleInfo.ktFiles.toList()
             else -> error("Unexpected $moduleInfo")
         }
 

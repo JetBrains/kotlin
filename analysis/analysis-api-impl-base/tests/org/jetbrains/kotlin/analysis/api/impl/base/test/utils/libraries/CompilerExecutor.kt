@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.light.classes.symbol.decompiled.service
+package org.jetbrains.kotlin.analysis.api.impl.base.test.utils.libraries
 
+import org.jetbrains.kotlin.analysis.api.impl.barebone.test.SkipTestException
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
@@ -17,7 +18,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.notExists
 
 object CompilerExecutor {
-    fun compileLibrary(sourcesPath: Path, options: List<String>, compilationErrorExpected: Boolean): Path? {
+    fun compileLibrary(sourcesPath: Path, options: List<String>, compilationErrorExpected: Boolean): Path {
         val library = sourcesPath / "library.jar"
         val sourceFiles = sourcesPath.toFile().walkBottomUp()
         val commands = buildList {
@@ -37,7 +38,10 @@ object CompilerExecutor {
         if (library.exists() && compilationErrorExpected) {
             error("Compilation error expected but, code was compiled successfully")
         }
-        return library.takeIf(Path::exists)
+        if (library.notExists()) {
+            throw LibraryWasNotCompiledDueToExpectedCompilationError()
+        }
+        return library
     }
 
     fun parseCompilerOptionsFromTestdata(module: TestModule): List<String> = buildList {
@@ -57,3 +61,5 @@ object CompilerExecutor {
         val COMPILATION_ERRORS by directive("Is compilation errors expected in the file")
     }
 }
+
+class LibraryWasNotCompiledDueToExpectedCompilationError : SkipTestException()
