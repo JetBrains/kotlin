@@ -175,6 +175,13 @@ internal class KotlinNativeCompilerRunner(project: Project) : KotlinNativeToolRu
 
         return listOf(toolName, "@${argFile.absolutePath}")
     }
+
+    override val defaultArguments: List<String>
+        get() = mutableListOf<String>().apply {
+            if (project.gradle.startParameter.isOffline) {
+                add("-Xoverride-konan-properties=airplaneMode=true")
+            }
+        }
 }
 
 /** Platform libraries generation tool. Runs the cinterop tool under the hood. */

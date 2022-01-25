@@ -24,11 +24,8 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
-import org.junit.Assume
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.ErrorCollector
+import org.junit.*
+import org.junit.rules.TemporaryFolder
 import java.io.File
 import java.util.*
 import kotlin.test.assertEquals
@@ -1086,6 +1083,81 @@ class GeneralNativeIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `check offline mode is propagated to the compiler`() = with(
+        transformNativeTestProjectWithPluginDsl(
+            "executables",
+            directoryPrefix = "native-binaries"
+        )
+    ) {
+        val buildOptions = defaultBuildOptions()
+
+        val linkTask = ":linkDebugExecutableHost"
+        val compileTask = ":compileKotlinHost"
+
+        build(linkTask, options = buildOptions) {
+            assertSuccessful()
+        }
+
+        // Check that --offline works when all the dependencies are already downloaded:
+        val buildOptionsOffline = buildOptions.copy(freeCommandLineArgs = buildOptions.freeCommandLineArgs + "--offline")
+
+        build("clean", linkTask, options = buildOptionsOffline) {
+            assertSuccessful()
+            withNativeCommandLineArguments(compileTask, linkTask) {
+                assertTrue(it.contains("-Xoverride-konan-properties=airplaneMode=true"))
+            }
+        }
+
+        // Check that --offline fails when there are no downloaded dependencies:
+        val customKonanDataDir = tempDir.newFolder("konanOffline")
+        val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.copy(
+            customEnvironmentVariables = buildOptionsOffline.customEnvironmentVariables +
+                    ("KONAN_DATA_DIR" to customKonanDataDir.absolutePath)
+        )
+
+        build("clean", linkTask, options = buildOptionsOfflineWithCustomKonanDataDir) {
+            assertFailed()
+            assertTasksNotExecuted(listOf(linkTask))
+        }
+
+        checkNoDependenciesDownloaded(customKonanDataDir)
+
+        // Check that the compiler is not extracted if it is not cached:
+        assertTrue(customKonanDataDir.deleteRecursively())
+        build(
+            "clean", linkTask, "-Pkotlin.native.version=1.6.20-M1-9999",
+            options = buildOptionsOfflineWithCustomKonanDataDir
+        ) {
+            assertFailed()
+            assertTasksNotExecuted(listOf(linkTask, compileTask))
+        }
+
+        assertFalse(customKonanDataDir.exists())
+    }
+
+    private fun checkNoDependenciesDownloaded(customKonanDataDir: File) {
+        // Check that no files have actually been downloaded or extracted,
+        // except for maybe the compiler itself, which can be extracted from the Gradle cache
+        // (see NativeCompilerDownloader, it uses regular dependency resolution,
+        // so supports --offline properly by default).
+        val cacheDirName = "cache"
+        val dependenciesDirName = "dependencies"
+
+        fun assertDirectoryHasNothingButMaybe(directory: File, vararg names: String) {
+            assertEquals(emptyList(), directory.listFiles().orEmpty().map { it.name } - names)
+        }
+
+        assertDirectoryHasNothingButMaybe(File(customKonanDataDir, cacheDirName), ".lock")
+        assertDirectoryHasNothingButMaybe(File(customKonanDataDir, dependenciesDirName), ".extracted")
+
+        val customKonanDataDirFiles = customKonanDataDir.listFiles().orEmpty().map { it.name } - setOf(cacheDirName, dependenciesDirName)
+        if (customKonanDataDirFiles.isNotEmpty()) {
+            assertEquals(1, customKonanDataDirFiles.size, message = customKonanDataDirFiles.toString())
+            assertTrue(customKonanDataDirFiles.single().startsWith("kotlin-native-"), message = customKonanDataDirFiles.single())
+        }
+    }
+
     companion object {
         fun List<String>.containsSequentially(vararg elements: String): Boolean {
             check(elements.isNotEmpty())
@@ -1158,5 +1230,15 @@ class GeneralNativeIT : BaseGradleIT() {
             toolName: String = "konanc",
             check: (Map<String, String>) -> Unit
         ) = taskPaths.forEach { taskPath -> check(extractNativeCustomEnvironment(taskPath, toolName)) }
+
+        @field:ClassRule
+        @JvmField
+        val tempDir = TemporaryFolder()
+
+        @JvmStatic
+        @AfterClass
+        fun deleteTempDir() {
+            tempDir.delete()
+        }
     }
 }

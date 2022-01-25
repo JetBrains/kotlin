@@ -54,6 +54,9 @@ abstract class KotlinToolRunner(
     abstract val mustRunViaExec: Boolean
     open fun transformArgs(args: List<String>): List<String> = args
 
+    internal open val defaultArguments: List<String>
+        get() = emptyList()
+
     // for the purpose if there is a way to specify JVM args, for instance, straight in project configs
     open fun getCustomJvmArgs(): List<String> = emptyList()
 
@@ -77,8 +80,9 @@ abstract class KotlinToolRunner(
 
     fun run(args: List<String>) {
         checkClasspath()
+        val argsWithDefault = args + defaultArguments
 
-        if (mustRunViaExec) runViaExec(args) else runInProcess(args)
+        if (mustRunViaExec) runViaExec(argsWithDefault) else runInProcess(argsWithDefault)
     }
 
     private fun runViaExec(args: List<String>) {
