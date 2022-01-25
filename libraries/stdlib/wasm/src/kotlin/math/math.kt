@@ -474,7 +474,7 @@ public actual fun Double.roundToInt(): Int = when {
     isNaN() -> throw IllegalArgumentException("Cannot round NaN value.")
     this > Int.MAX_VALUE -> Int.MAX_VALUE
     this < Int.MIN_VALUE -> Int.MIN_VALUE
-    else -> kotlin.math.fdlibm.rint(this).toInt()
+    else -> floor(this + 0.5).toInt()
 }
 
 /**
@@ -492,7 +492,7 @@ public actual fun Double.roundToLong(): Long = when {
     isNaN() -> throw IllegalArgumentException("Cannot round NaN value.")
     this > Long.MAX_VALUE -> Long.MAX_VALUE
     this < Long.MIN_VALUE -> Long.MIN_VALUE
-    else -> kotlin.math.fdlibm.rint(this).toLong()
+    else -> floor(this + 0.5).toLong()
 }
 
 // endregion
