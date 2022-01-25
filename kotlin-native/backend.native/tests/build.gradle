@@ -1216,6 +1216,15 @@ standaloneTest("freeze6") {
     testLogger = KonanTest.Logger.SILENT
 }
 
+standaloneTest("freeze_disabled") {
+    enabled = (project.testTarget != 'wasm32') && // No exceptions on WASM.
+            !isNoopGC && isExperimentalMM
+    flags = ["-tr"]
+    source = "runtime/workers/freeze_disabled.kt"
+    testLogger = KonanTest.Logger.SILENT
+}
+
+
 task atomic0(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
     useGoldenData = true
