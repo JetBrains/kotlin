@@ -23,6 +23,8 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
         get() = _callCheckers
     override val functionCallCheckers: Set<FirFunctionCallChecker>
         get() = _functionCallCheckers
+    override val integerLiteralOperatorCallCheckers: Set<FirIntegerLiteralOperatorCallChecker>
+        get() = _integerLiteralOperatorCallCheckers
     override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker>
         get() = _variableAssignmentCheckers
     override val tryExpressionCheckers: Set<FirTryExpressionChecker>
@@ -79,6 +81,7 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
     private val _qualifiedAccessExpressionCheckers: MutableSet<FirQualifiedAccessExpressionChecker> = mutableSetOf()
     private val _callCheckers: MutableSet<FirCallChecker> = mutableSetOf()
     private val _functionCallCheckers: MutableSet<FirFunctionCallChecker> = mutableSetOf()
+    private val _integerLiteralOperatorCallCheckers: MutableSet<FirIntegerLiteralOperatorCallChecker> = mutableSetOf()
     private val _variableAssignmentCheckers: MutableSet<FirVariableAssignmentChecker> = mutableSetOf()
     private val _tryExpressionCheckers: MutableSet<FirTryExpressionChecker> = mutableSetOf()
     private val _whenExpressionCheckers: MutableSet<FirWhenExpressionChecker> = mutableSetOf()
@@ -112,6 +115,7 @@ class ComposedExpressionCheckers : ExpressionCheckers() {
         _qualifiedAccessExpressionCheckers += checkers.qualifiedAccessExpressionCheckers
         _callCheckers += checkers.callCheckers
         _functionCallCheckers += checkers.functionCallCheckers
+        _integerLiteralOperatorCallCheckers += checkers.integerLiteralOperatorCallCheckers
         _variableAssignmentCheckers += checkers.variableAssignmentCheckers
         _tryExpressionCheckers += checkers.tryExpressionCheckers
         _whenExpressionCheckers += checkers.whenExpressionCheckers

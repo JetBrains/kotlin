@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildErrorProperty
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.resolve.isIntegerLiteralOrOperatorCall
 import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.classId
@@ -51,6 +53,9 @@ class CandidateFactory private constructor(
         builtInExtensionFunctionReceiverValue: ReceiverValue? = null,
         objectsByName: Boolean = false
     ): Candidate {
+        @Suppress("NAME_SHADOWING")
+        val symbol = symbol.unwrapIntegerOperatorSymbolIfNeeded(callInfo)
+
         val result = Candidate(
             symbol, dispatchReceiverValue, extensionReceiverValue,
             explicitReceiverKind, context.inferenceComponents.constraintSystemFactory, baseSystem,
@@ -85,6 +90,16 @@ class CandidateFactory private constructor(
             result.addDiagnostic(PropertyAsOperator)
         }
         return result
+    }
+
+    private fun FirBasedSymbol<*>.unwrapIntegerOperatorSymbolIfNeeded(callInfo: CallInfo): FirBasedSymbol<*> {
+        if (this !is FirNamedFunctionSymbol) return this
+        val original = fir.originalForWrappedIntegerOperator ?: return this
+        return if (callInfo.arguments.first().isIntegerLiteralOrOperatorCall()) {
+            this
+        } else {
+            original
+        }
     }
 
     private fun ReceiverValue?.isCandidateFromCompanionObjectTypeScope(): Boolean {

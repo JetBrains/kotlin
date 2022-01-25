@@ -19,6 +19,7 @@ sealed class FirDeclarationOrigin(private val displayName: String? = null, val f
     object IntersectionOverride : FirDeclarationOrigin(fromSupertypes = true)
     object Delegated : FirDeclarationOrigin()
     object RenamedForOverride : FirDeclarationOrigin()
+    object WrappedIntegerOperator : FirDeclarationOrigin()
 
     class Plugin(val key: FirPluginKey) : FirDeclarationOrigin(displayName = "Plugin[$key]", generated = true)
 

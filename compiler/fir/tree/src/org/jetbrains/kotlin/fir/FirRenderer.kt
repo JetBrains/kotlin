@@ -1321,6 +1321,10 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
         visitCall(functionCall)
     }
 
+    override fun visitIntegerLiteralOperatorCall(integerLiteralOperatorCall: FirIntegerLiteralOperatorCall) {
+        visitFunctionCall(integerLiteralOperatorCall)
+    }
+
     override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall) {
         visitFunctionCall(implicitInvokeCall)
     }

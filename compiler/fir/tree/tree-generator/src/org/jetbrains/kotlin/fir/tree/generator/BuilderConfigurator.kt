@@ -192,6 +192,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
                 value = "FirFunctionCallOrigin.Regular"
             }
         }
+        builder(integerLiteralOperatorCall, init = configurationForFunctionCallBuilder)
         builder(implicitInvokeCall, init = configurationForFunctionCallBuilder)
 
         builder(getClassCall) {

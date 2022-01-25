@@ -47,8 +47,11 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
     asReversed().flatMap { it.typeArgumentList.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
@@ -485,6 +488,7 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(session: FirSession): Forbidd
         }
         FirDeclarationOrigin.Synthetic -> null
         FirDeclarationOrigin.RenamedForOverride -> null
+        FirDeclarationOrigin.WrappedIntegerOperator -> null
         is FirDeclarationOrigin.Plugin -> null // TODO: figure out what to do with plugin generated functions
     }
 }
@@ -493,3 +497,15 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(session: FirSession): Forbidd
 //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.functionProto
 //  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.constructorProto
 fun FirFunction.getHasStableParameterNames(session: FirSession): Boolean = getAsForbiddenNamedArgumentsTarget(session) == null
+
+@OptIn(ExperimentalContracts::class)
+fun FirExpression?.isIntegerLiteralOrOperatorCall(): Boolean {
+    contract {
+        returns(true) implies (this@isIntegerLiteralOrOperatorCall != null)
+    }
+    return when (this) {
+        is FirConstExpression<*> -> kind == ConstantValueKind.Int || kind == ConstantValueKind.IntegerLiteral
+        is FirIntegerLiteralOperatorCall -> true
+        else -> false
+    }
+}

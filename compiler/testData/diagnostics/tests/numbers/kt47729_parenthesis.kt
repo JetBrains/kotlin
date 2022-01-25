@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 // ISSUE: Kt-47447, KT-47729
 

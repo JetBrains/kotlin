@@ -7,21 +7,21 @@ abstract class C<L> {
 }
 
 fun testLongDotCall(c1: C<Long>) {
-    c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.plus(2)<!>)
-    c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.minus(2)<!>)
-    c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.times(2)<!>)
-    c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.div(2)<!>)
-    c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.rem(2)<!>)
+    c1.takeT(1.plus(2))
+    c1.takeT(1.minus(2))
+    c1.takeT(1.times(2))
+    c1.takeT(1.div(2))
+    c1.takeT(1.rem(2))
     c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.inc()<!>)
     c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.dec()<!>)
     c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.unaryPlus()<!>)
     c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.unaryMinus()<!>)
-    c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.shl(2)<!>)
-    c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.shr(2)<!>)
-    c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.ushr(2)<!>)
-    c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.and(2)<!>)
-    c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.or(2)<!>)
-    c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.xor(2)<!>)
+    c1.takeT(1.shl(2))
+    c1.takeT(1.shr(2))
+    c1.takeT(1.ushr(2))
+    c1.takeT(1.and(2))
+    c1.takeT(1.or(2))
+    c1.takeT(1.xor(2))
     c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.inv()<!>)
 }
 
@@ -42,19 +42,19 @@ fun testByteDotCall(c3: C<Byte>) {
 }
 
 fun testLongOperatorInfixCall(c4: C<Long>) {
-    c4.takeT(<!ARGUMENT_TYPE_MISMATCH!>1 + 2<!>)
-    c4.takeT(<!ARGUMENT_TYPE_MISMATCH!>1 - 2<!>)
-    c4.takeT(<!ARGUMENT_TYPE_MISMATCH!>1 * 2<!>)
-    c4.takeT(<!ARGUMENT_TYPE_MISMATCH!>1 / 2<!>)
-    c4.takeT(<!ARGUMENT_TYPE_MISMATCH!>1 % 2<!>)
+    c4.takeT(1 + 2)
+    c4.takeT(1 - 2)
+    c4.takeT(1 * 2)
+    c4.takeT(1 / 2)
+    c4.takeT(1 % 2)
     c4.takeT(+1)
     c4.takeT(-1)
-    c4.takeT(<!ARGUMENT_TYPE_MISMATCH!>1 shl 2<!>)
-    c4.takeT(<!ARGUMENT_TYPE_MISMATCH!>1 shr 2<!>)
-    c4.takeT(<!ARGUMENT_TYPE_MISMATCH!>1 ushr 2<!>)
-    c4.takeT(<!ARGUMENT_TYPE_MISMATCH!>1 and 2<!>)
-    c4.takeT(<!ARGUMENT_TYPE_MISMATCH!>1 or 2<!>)
-    c4.takeT(<!ARGUMENT_TYPE_MISMATCH!>1 xor 2<!>)
+    c4.takeT(1 shl 2)
+    c4.takeT(1 shr 2)
+    c4.takeT(1 ushr 2)
+    c4.takeT(1 and 2)
+    c4.takeT(1 or 2)
+    c4.takeT(1 xor 2)
 }
 
 fun testShortOperatorInfixCall(c5: C<Short>) {

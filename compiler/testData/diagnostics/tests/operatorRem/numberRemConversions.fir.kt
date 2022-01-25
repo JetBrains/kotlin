@@ -8,7 +8,7 @@ fun fooShort(p: Short) = p
 fun test() {
     fooInt(1 % 1)
     fooByte(<!ARGUMENT_TYPE_MISMATCH!>1 % 1<!>)
-    fooLong(<!ARGUMENT_TYPE_MISMATCH!>1 % 1<!>)
+    fooLong(1 % 1)
     fooShort(<!ARGUMENT_TYPE_MISMATCH!>1 % 1<!>)
 }
 

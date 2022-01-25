@@ -17478,6 +17478,28 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/integerLiterals")
+        @TestDataPath("$PROJECT_ROOT")
+        public class IntegerLiterals {
+            @Test
+            public void testAllFilesPresentInIntegerLiterals() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/integerLiterals"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("intToLongConversion.kt")
+            public void testIntToLongConversion() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/integerLiterals/intToLongConversion.kt");
+            }
+
+            @Test
+            @TestMetadata("literalsInInference.kt")
+            public void testLiteralsInInference() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/integerLiterals/literalsInInference.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/j+k")
         @TestDataPath("$PROJECT_ROOT")
         public class J_k {

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator.commonSuperType
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.util.concurrent.ConcurrentHashMap
 
 abstract class AbstractTypeApproximator(
@@ -340,11 +341,16 @@ abstract class AbstractTypeApproximator(
             return if (conf.typeVariable(typeConstructor)) null else type.defaultResult(toSuper)
         }
 
-        if (typeConstructor.isIntegerLiteralTypeConstructor()) {
-            return if (conf.integerLiteralType)
+        if (typeConstructor.isIntegerLiteralConstantTypeConstructor()) {
+            return runIf(conf.integerLiteralConstantType) {
                 typeConstructor.getApproximatedIntegerLiteralType().withNullability(type.isMarkedNullable())
-            else
-                null
+            }
+        }
+
+        if (typeConstructor.isIntegerConstantOperatorTypeConstructor()) {
+            return runIf(conf.integerConstantOperatorType) {
+                typeConstructor.getApproximatedIntegerLiteralType().withNullability(type.isMarkedNullable())
+            }
         }
 
         return approximateLocalTypes(type, conf, toSuper) // simple classifier type

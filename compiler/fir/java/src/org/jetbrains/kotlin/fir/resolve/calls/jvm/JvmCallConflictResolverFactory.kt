@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls.jvm
 import org.jetbrains.kotlin.fir.NoMutableState
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCompositeConflictResolver
+import org.jetbrains.kotlin.fir.resolve.calls.ConeIntegerOperatorConflictResolver
 import org.jetbrains.kotlin.fir.resolve.calls.ConeOverloadConflictResolver
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.types.typeContext
@@ -24,7 +25,8 @@ object JvmCallConflictResolverFactory : ConeCallConflictResolverFactory() {
         return ConeCompositeConflictResolver(
             ConeOverloadConflictResolver(specificityComparator, components),
             ConeEquivalentCallConflictResolver(specificityComparator, components),
-            JvmPlatformOverloadsConflictResolver(specificityComparator, components)
+            JvmPlatformOverloadsConflictResolver(specificityComparator, components),
+            ConeIntegerOperatorConflictResolver(specificityComparator, components)
         )
     }
 }

@@ -48,6 +48,10 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allFunctionCallCheckers.check(functionCall, data, reporter)
     }
 
+    override fun visitIntegerLiteralOperatorCall(integerLiteralOperatorCall: FirIntegerLiteralOperatorCall, data: CheckerContext) {
+        checkers.allIntegerLiteralOperatorCallCheckers.check(integerLiteralOperatorCall, data, reporter)
+    }
+
     override fun visitImplicitInvokeCall(implicitInvokeCall: FirImplicitInvokeCall, data: CheckerContext) {
         checkers.allFunctionCallCheckers.check(implicitInvokeCall, data, reporter)
     }

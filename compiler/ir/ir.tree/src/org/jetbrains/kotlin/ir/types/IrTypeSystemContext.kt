@@ -306,7 +306,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         setOf(byteType, shortType, intType, longType)
     }
 
-    override fun TypeConstructorMarker.isIntegerLiteralTypeConstructor() = false
+    override fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean = false
+    override fun TypeConstructorMarker.isIntegerLiteralConstantTypeConstructor(): Boolean = false
+    override fun TypeConstructorMarker.isIntegerConstantOperatorTypeConstructor(): Boolean = false
 
     override fun TypeConstructorMarker.isLocalType(): Boolean {
         if (this !is IrClassSymbol) return false

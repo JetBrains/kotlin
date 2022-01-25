@@ -381,6 +381,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun TypeConstructorMarker.isClassTypeConstructor(): Boolean
     fun TypeConstructorMarker.isInterface(): Boolean
     fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean
+    fun TypeConstructorMarker.isIntegerLiteralConstantTypeConstructor(): Boolean
+    fun TypeConstructorMarker.isIntegerConstantOperatorTypeConstructor(): Boolean
     fun TypeConstructorMarker.isLocalType(): Boolean
     fun TypeConstructorMarker.isAnonymous(): Boolean
     fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker?

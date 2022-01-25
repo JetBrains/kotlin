@@ -41,24 +41,24 @@ fun testByteUnaryOperators() {
 }
 
 fun testLongBinaryOperators() {
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2 + 1<!>)
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2 - 1<!>)
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2 * 1<!>)
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2 / 1<!>)
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2 % 1<!>)
+    takeLong(2 + 1)
+    takeLong(2 - 1)
+    takeLong(2 * 1)
+    takeLong(2 / 1)
+    takeLong(2 % 1)
 
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2.plus(1)<!>)
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2.minus(1)<!>)
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2.times(1)<!>)
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2.div(1)<!>)
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2.rem(1)<!>)
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2 shl 1<!>)
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2 shr 1<!>)
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2 ushr 1<!>)
+    takeLong(2.plus(1))
+    takeLong(2.minus(1))
+    takeLong(2.times(1))
+    takeLong(2.div(1))
+    takeLong(2.rem(1))
+    takeLong(2 shl 1)
+    takeLong(2 shr 1)
+    takeLong(2 ushr 1)
 
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2 and 1<!>)
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2 or 1<!>)
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2 xor 1<!>)
+    takeLong(2 and 1)
+    takeLong(2 or 1)
+    takeLong(2 xor 1)
 
     // positive
     takeLong(2 * 100000000000)
