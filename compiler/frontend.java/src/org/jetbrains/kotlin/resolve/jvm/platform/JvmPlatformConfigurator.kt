@@ -60,6 +60,7 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         InconsistentOperatorFromJavaCallChecker,
         PolymorphicSignatureCallChecker,
         SamInterfaceConstructorReferenceCallChecker,
+        EnumDeclaringClassDeprecationChecker,
     ),
 
     additionalTypeCheckers = listOf(
