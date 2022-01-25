@@ -170,13 +170,15 @@ private fun FirBasedSymbol<*>.toSymbolForCall(
     classifierStorage: Fir2IrClassifierStorage,
     declarationStorage: Fir2IrDeclarationStorage,
     preferGetter: Boolean,
-    explicitReceiver: FirExpression? = null
+    explicitReceiver: FirExpression? = null,
+    isDelegate: Boolean = false
 ) = when (this) {
     is FirCallableSymbol<*> -> unwrapCallRepresentative().toSymbolForCall(
         dispatchReceiver,
         declarationStorage,
         preferGetter,
-        explicitReceiver
+        explicitReceiver,
+        isDelegate
     )
     is FirClassifierSymbol<*> -> toSymbol(session, classifierStorage)
     else -> error("Unknown symbol: $this")
@@ -189,11 +191,12 @@ fun FirReference.toSymbolForCall(
     declarationStorage: Fir2IrDeclarationStorage,
     conversionScope: Fir2IrConversionScope,
     preferGetter: Boolean = true,
-    explicitReceiver: FirExpression? = null // Actual only for callable references
+    explicitReceiver: FirExpression? = null, // Actual only for callable references
+    isDelegate: Boolean = false
 ): IrSymbol? {
     return when (this) {
         is FirResolvedNamedReference ->
-            resolvedSymbol.toSymbolForCall(dispatchReceiver, session, classifierStorage, declarationStorage, preferGetter, explicitReceiver)
+            resolvedSymbol.toSymbolForCall(dispatchReceiver, session, classifierStorage, declarationStorage, preferGetter, explicitReceiver, isDelegate)
         is FirErrorNamedReference ->
             candidateSymbol?.toSymbolForCall(
                 dispatchReceiver,
@@ -201,7 +204,8 @@ fun FirReference.toSymbolForCall(
                 classifierStorage,
                 declarationStorage,
                 preferGetter,
-                explicitReceiver
+                explicitReceiver,
+                isDelegate
             )
         is FirThisReference -> {
             when (val boundSymbol = boundSymbol) {
@@ -222,7 +226,8 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
     dispatchReceiver: FirExpression,
     declarationStorage: Fir2IrDeclarationStorage,
     preferGetter: Boolean,
-    explicitReceiver: FirExpression? = null
+    explicitReceiver: FirExpression? = null,
+    isDelegate: Boolean = false
 ): IrSymbol? {
     val dispatchReceiverLookupTag = when (dispatchReceiver) {
         is FirNoReceiverExpression -> {
@@ -242,15 +247,20 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
     }
     return when (this) {
         is FirSimpleSyntheticPropertySymbol -> {
-            (fir as? FirSyntheticProperty)?.let { syntheticProperty ->
-                val delegateSymbol = if (preferGetter) {
-                    syntheticProperty.getter.delegate.symbol
-                } else {
-                    syntheticProperty.setter?.delegate?.symbol
-                        ?: throw AssertionError("Written synthetic property must have a setter")
-                }
-                delegateSymbol.unwrapCallRepresentative().toSymbolForCall(dispatchReceiver, declarationStorage, preferGetter)
-            } ?: declarationStorage.getIrPropertySymbol(this)
+            if (isDelegate) {
+                declarationStorage.getIrPropertySymbol(this)
+            } else {
+                (fir as? FirSyntheticProperty)?.let { syntheticProperty ->
+                    val delegateSymbol = if (preferGetter) {
+                        syntheticProperty.getter.delegate.symbol
+                    } else {
+                        syntheticProperty.setter?.delegate?.symbol
+                            ?: throw AssertionError("Written synthetic property must have a setter")
+                    }
+                    delegateSymbol.unwrapCallRepresentative()
+                        .toSymbolForCall(dispatchReceiver, declarationStorage, preferGetter, isDelegate = false)
+                } ?: declarationStorage.getIrPropertySymbol(this)
+            }
         }
         is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this, dispatchReceiverLookupTag)
         is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(this, dispatchReceiverLookupTag)
