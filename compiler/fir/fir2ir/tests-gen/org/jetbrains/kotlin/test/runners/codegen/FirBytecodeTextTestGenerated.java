@@ -368,6 +368,12 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
     }
 
     @Test
+    @TestMetadata("mergedProgression.kt")
+    public void testMergedProgression() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/mergedProgression.kt");
+    }
+
+    @Test
     @TestMetadata("noAccessorForProtectedInSamePackageCrossinline.kt")
     public void testNoAccessorForProtectedInSamePackageCrossinline() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/noAccessorForProtectedInSamePackageCrossinline.kt");
