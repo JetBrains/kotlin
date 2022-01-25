@@ -73,7 +73,7 @@ kotlin {
 
     sourceSets {
         all {
-            languageSettings.useExperimentalAnnotation("kotlin.native.SymbolNameIsInternal")
+            languageSettings.optIn("kotlin.native.SymbolNameIsInternal")
         }
     }
 }

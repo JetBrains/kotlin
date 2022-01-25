@@ -57,6 +57,6 @@ kotlin {
 
     // Enable experimental stdlib API used by the sample.
     sourceSets.all {
-        languageSettings.useExperimentalAnnotation("kotlin.ExperimentalStdlibApi")
+        languageSettings.optIn("kotlin.ExperimentalStdlibApi")
     }
 }
