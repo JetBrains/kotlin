@@ -177,11 +177,6 @@ internal class KotlinNativeCompilerRunner(project: Project) : KotlinNativeToolRu
     }
 }
 
-/** Klib management tool runner */
-internal class KotlinNativeKlibRunner(project: Project) : KotlinNativeToolRunner("klib", project) {
-    override val mustRunViaExec get() = project.disableKonanDaemon
-}
-
 /** Platform libraries generation tool. Runs the cinterop tool under the hood. */
 internal class KotlinNativeLibraryGenerationRunner(project: Project) :
     AbstractKotlinNativeCInteropRunner("generatePlatformLibraries", project) {
