@@ -58,9 +58,9 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
         reporter: DiagnosticReporter
     ) {
         val languageVersionSettings = context.session.languageVersionSettings
-        val useExperimentalFqNames = languageVersionSettings.getFlag(AnalysisFlags.optIn)
+        val optInFqNames = languageVersionSettings.getFlag(AnalysisFlags.optIn)
         if (!languageVersionSettings.supportsFeature(LanguageFeature.OptInRelease) &&
-            OptInNames.REQUIRES_OPT_IN_FQ_NAME.asString() !in useExperimentalFqNames
+            OptInNames.REQUIRES_OPT_IN_FQ_NAME.asString() !in optInFqNames
         ) {
             reporter.reportOn(element, FirErrors.OPT_IN_IS_NOT_ENABLED, context)
         }

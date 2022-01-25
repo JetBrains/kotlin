@@ -22,6 +22,20 @@ object OptInNames {
     val USE_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
     val WAS_EXPERIMENTAL_ANNOTATION_CLASS = Name.identifier("markerClass")
 
-    val EXPERIMENTAL_FQ_NAMES = setOf(OLD_EXPERIMENTAL_FQ_NAME, REQUIRES_OPT_IN_FQ_NAME)
-    val USE_EXPERIMENTAL_FQ_NAMES = setOf(OLD_USE_EXPERIMENTAL_FQ_NAME, OPT_IN_FQ_NAME)
+    val REQUIRES_OPT_IN_FQ_NAMES = setOf(OLD_EXPERIMENTAL_FQ_NAME, REQUIRES_OPT_IN_FQ_NAME)
+    val OPT_IN_FQ_NAMES = setOf(OLD_USE_EXPERIMENTAL_FQ_NAME, OPT_IN_FQ_NAME)
+
+    @Deprecated(
+        message = "EXPERIMENTAL_FQ_NAMES is deprecated, please use REQUIRES_OPT_IN_FQ_NAMES instead",
+        ReplaceWith("REQUIRES_OPT_IN_FQ_NAMES", imports = ["org.jetbrains.kotlin.resolve.checkers.OptInNames.REQUIRES_OPT_IN_FQ_NAMES"])
+    )
+    @Suppress("unused")
+    val EXPERIMENTAL_FQ_NAMES = REQUIRES_OPT_IN_FQ_NAMES
+
+    @Deprecated(
+        message = "USE_EXPERIMENTAL_FQ_NAMES is deprecated, please use OPT_IN_FQ_NAMES instead",
+        ReplaceWith("OPT_IN_FQ_NAMES", imports = ["org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_FQ_NAMES"])
+    )
+    @Suppress("unused")
+    val USE_EXPERIMENTAL_FQ_NAMES = OPT_IN_FQ_NAMES
 }
