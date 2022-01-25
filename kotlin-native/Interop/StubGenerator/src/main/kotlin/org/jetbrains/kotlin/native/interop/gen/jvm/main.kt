@@ -541,7 +541,7 @@ internal fun buildNativeLibrary(
     )
 }
 
-private fun parseKeyValuePairs(
+fun parseKeyValuePairs(
     argumentValue: List<String>,
 ): Map<String, String> = argumentValue.mapNotNull {
     val keyValueSeparatorIndex = it.indexOf('=')

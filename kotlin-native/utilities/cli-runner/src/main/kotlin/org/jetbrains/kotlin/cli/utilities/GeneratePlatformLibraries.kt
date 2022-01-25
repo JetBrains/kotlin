@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.konan.util.PlatformLibsInfo
 import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.native.interop.gen.jvm.GenerationMode
+import org.jetbrains.kotlin.native.interop.gen.jvm.parseKeyValuePairs
 import org.jetbrains.kotlin.native.interop.tool.CommonInteropArguments.Companion.DEFAULT_MODE
 import org.jetbrains.kotlin.native.interop.tool.SHORT_MODULE_NAME
 import java.io.PrintWriter
@@ -64,6 +65,8 @@ private enum class CacheKind(val outputKind: CompilerOutputKind) {
     DYNAMIC_CACHE(CompilerOutputKind.DYNAMIC_CACHE),
     STATIC_CACHE(CompilerOutputKind.STATIC_CACHE)
 }
+
+private class CInteropOptions(val mode: GenerationMode, val additionalArguments: List<String>)
 
 // TODO: Use Distribution's paths after compiler update.
 fun generatePlatformLibraries(args: Array<String>) = usingNativeMemoryAllocator {
@@ -120,9 +123,20 @@ fun generatePlatformLibraries(args: Array<String>) = usingNativeMemoryAllocator 
             ArgType.Boolean, fullName = "rebuild", description = "Rebuild already existing libraries"
     ).default(false)
 
+    val overrideKonanProperties by argParser.option(ArgType.String,
+            fullName = "Xoverride-konan-properties",
+            description = "Override konan.properties.values"
+    ).multiple().delimiter(";")
+
     argParser.parse(args)
 
-    val distribution = customerDistribution(KonanHomeProvider.determineKonanHome())
+    val distribution = Distribution(
+            KonanHomeProvider.determineKonanHome(),
+            onlyDefaultProfiles = false,
+            runtimeFileOverride = null,
+            propertyOverrides = parseKeyValuePairs(overrideKonanProperties)
+    )
+
     val platformManager = PlatformManager(distribution)
     val target = platformManager.targetByName(targetName)
     val targetCacheArgs = platformManager.let {
@@ -152,8 +166,18 @@ fun generatePlatformLibraries(args: Array<String>) = usingNativeMemoryAllocator 
         CacheInfo(it, cacheKind.outputKind.visibleName, cacheArgs + targetCacheArgs)
     }
 
+    val cinteropOptions = CInteropOptions(
+            mode,
+            additionalArguments = buildList {
+                if (overrideKonanProperties.isNotEmpty()) {
+                    add("-Xoverride-konan-properties")
+                    add(overrideKonanProperties.joinToString(";"))
+                }
+            }
+    )
+
     generatePlatformLibraries(
-            target, mode,
+            target, cinteropOptions,
             DirectoriesInfo(inputDirectory, outputDirectory, stdlibFile), cacheInfo,
             rebuild, saveTemps, logger
     )
@@ -221,7 +245,7 @@ private fun topoSort(defFiles: List<DefFile>): List<DefFile> {
 
 private fun generateLibrary(
         target: KonanTarget,
-        mode: GenerationMode,
+        cinteropOptions: CInteropOptions,
         def: DefFile,
         directories: DirectoriesInfo,
         tmpDirectory: File,
@@ -246,7 +270,8 @@ private fun generateLibrary(
                 "-compiler-option", "-fmodules-cache-path=${tmpDirectory.child("clangModulesCache").absolutePath}",
                 "-repo", outputDirectory.absolutePath,
                 "-no-default-libs", "-no-endorsed-libs", "-Xpurge-user-libs", "-nopack",
-                "-mode", mode.modeName,
+                "-mode", cinteropOptions.mode.modeName,
+                *cinteropOptions.additionalArguments.toTypedArray(),
                 "-$SHORT_MODULE_NAME", def.shortLibraryName,
                 *def.depends.flatMap { listOf("-l", "$outputDirectory/${it.libraryName}") }.toTypedArray()
         )
@@ -331,7 +356,7 @@ private fun buildStdlibCache(
     K2Native.mainNoExit(compilerArgs)
 }
 
-private fun generatePlatformLibraries(target: KonanTarget, mode: GenerationMode,
+private fun generatePlatformLibraries(target: KonanTarget, cinteropOptions: CInteropOptions,
                                       directories: DirectoriesInfo, cacheInfo: CacheInfo?,
                                       rebuild: Boolean, saveTemps: Boolean, logger: Logger) = with(directories) {
     if (cacheInfo != null) {
@@ -398,7 +423,7 @@ private fun generatePlatformLibraries(target: KonanTarget, mode: GenerationMode,
                     }
 
                     logger.log("Processing ${def.name} (${countProcessed.incrementAndGet()}/$countTotal)...")
-                    generateLibrary(target, mode, def, directories, tmpDirectory, rebuild, logger)
+                    generateLibrary(target, cinteropOptions, def, directories, tmpDirectory, rebuild, logger)
                     if (cacheInfo != null) {
                         buildCache(target, def, outputDirectory, cacheInfo, rebuild, logger)
                     }
