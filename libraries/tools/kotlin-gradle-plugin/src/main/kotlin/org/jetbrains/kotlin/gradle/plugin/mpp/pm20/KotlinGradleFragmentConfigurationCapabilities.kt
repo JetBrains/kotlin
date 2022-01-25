@@ -61,14 +61,6 @@ fun <T : KotlinGradleFragment> FragmentCapabilities(
     }
 }
 
-fun <T : KotlinGradleFragment> KotlinGradleFragmentConfigurationCapabilities<T>.onlyIfMadePublic():
-        KotlinGradleFragmentConfigurationCapabilities<T> {
-    val decorated = this
-    return FragmentCapabilities {
-        fragment.containingModule.ifMadePublic { decorated.setCapabilities(this, fragment) }
-    }
-}
-
 operator fun <T : KotlinGradleFragment> FragmentCapabilities<T>.plus(other: FragmentCapabilities<T>): FragmentCapabilities<T> {
     if (this === KotlinGradleFragmentConfigurationCapabilities.None) return other
     if (other === KotlinGradleFragmentConfigurationCapabilities.None) return this

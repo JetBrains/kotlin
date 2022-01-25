@@ -71,7 +71,7 @@ val DefaultKotlinRuntimeElementsDefinition = ConfigurationDefinition(
         attribute(Category.CATEGORY_ATTRIBUTE, fragment.project.objects.named(Category::class.java, Category.LIBRARY))
         attribute(Bundling.BUNDLING_ATTRIBUTE, fragment.project.objects.named(Bundling::class.java, Bundling.EXTERNAL))
     },
-    capabilities = KotlinFragmentModuleCapability.onlyIfMadePublic()
+    capabilities = KotlinFragmentModuleCapability
 )
 
 val DefaultKotlinHostSpecificMetadataElementsDefinition = ConfigurationDefinition(
