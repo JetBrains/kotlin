@@ -5,69 +5,61 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
+import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.testbase.GradleMacLinuxTest
-import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import java.io.File
 import java.util.zip.ZipFile
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+
 @MppGradlePluginTests
-class KlibBasedMppIT : BaseGradleIT() {
+class KlibBasedMppIT : KGPBaseTest() {
     companion object {
         private const val MODULE_GROUP = "com.example"
     }
 
-    override fun defaultBuildOptions(): BuildOptions {
-        return super.defaultBuildOptions().copy(stopDaemons = false)
-    }
-
-    @BeforeEach
-    fun before() {
-        super.setUp()
-    }
-
-    @AfterEach
-    fun after() {
-        super.tearDown()
-    }
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
 
     @GradleMacLinuxTest
-    fun testBuildWithProjectDependency(gradleVersion: GradleVersion) = testBuildWithDependency(gradleVersion) {
-        gradleBuildScript().appendText(
-            "\n" + """
+    fun testBuildWithProjectDependency(gradleVersion: GradleVersion) {
+        testBuildWithDependency(gradleVersion) {
+            gradleBuildScript().appendText(
+                "\n" + """
             dependencies {
                 commonMainImplementation(project("$dependencyModuleName"))
             }
         """.trimIndent()
-        )
-    }
-
-    @GradleMacLinuxTest
-    fun testPublishingAndConsumptionWithEmptySourceSet(gradleVersion: GradleVersion) = testBuildWithDependency(gradleVersion) {
-        // KT-36674
-        projectDir.resolve("$dependencyModuleName/src/$hostSpecificSourceSet").run {
-            assertTrue { isDirectory }
-            deleteRecursively()
+            )
         }
-        publishProjectDepAndAddDependency(validateHostSpecificPublication = false)
     }
 
     @GradleMacLinuxTest
-    fun testHostSpecificSourceSetsInTransitiveDependencies(gradleVersion: GradleVersion) =
-        with(Project("common-klib-lib-and-app", gradleVersion)) {
+    fun testPublishingAndConsumptionWithEmptySourceSet(gradleVersion: GradleVersion) {
+        testBuildWithDependency(gradleVersion) {
+            // KT-36674
+            projectDir.resolve("$dependencyModuleName/src/$hostSpecificSourceSet").run {
+                assertTrue { isDirectory }
+                deleteRecursively()
+            }
+            publishProjectDepAndAddDependency(validateHostSpecificPublication = false)
+        }
+    }
+
+    @GradleMacLinuxTest
+    fun testHostSpecificSourceSetsInTransitiveDependencies(gradleVersion: GradleVersion) {
+        project("common-klib-lib-and-app", gradleVersion) {
             // KT-41083
             // Publish a lib with host specific source sets depending on another lib with host-specific source sets
-            setupWorkingDir()
             val projectDepName = "dependency"
             val publishedGroup = "published"
             val producerProjectName = "producer"
-            embedProject(this, renameTo = projectDepName)
+            embedProject(this, this.projectName, renameTo = projectDepName)
             projectDir.resolve("$projectDepName/src").walkTopDown().filter { it.extension == "kt" }.forEach { ktFile ->
                 // Avoid FQN duplicates between producer & consumer
                 ktFile.modify { it.replace("package com.h0tk3y.hmpp.klib.demo", "package com.h0tk3y.hmpp.klib.lib") }
@@ -89,9 +81,7 @@ class KlibBasedMppIT : BaseGradleIT() {
             }
             gradleSettingsScript().appendText("\nrootProject.name = \"$producerProjectName\"")
 
-            build("publish") {
-                assertSuccessful()
-            }
+            build("publish")
 
             // Then consume the published project. To do that, rename the modules so that Gradle chooses the published ones given the original
             // Maven coordinates and doesn't resolve them as project dependencies.
@@ -120,15 +110,17 @@ class KlibBasedMppIT : BaseGradleIT() {
                 isNative = true
             )
         }
-
-    @GradleMacLinuxTest
-    fun testBuildWithPublishedDependency(gradleVersion: GradleVersion) = testBuildWithDependency(gradleVersion) {
-        publishProjectDepAndAddDependency(validateHostSpecificPublication = true)
     }
 
-    private fun Project.publishProjectDepAndAddDependency(validateHostSpecificPublication: Boolean) {
+    @GradleMacLinuxTest
+    fun testBuildWithPublishedDependency(gradleVersion: GradleVersion) {
+        testBuildWithDependency(gradleVersion) {
+            publishProjectDepAndAddDependency(validateHostSpecificPublication = true)
+        }
+    }
+
+    private fun TestProject.publishProjectDepAndAddDependency(validateHostSpecificPublication: Boolean) {
         build(":$dependencyModuleName:publish") {
-            assertSuccessful()
             if (validateHostSpecificPublication)
                 checkPublishedHostSpecificMetadata(this@build)
         }
@@ -150,9 +142,9 @@ class KlibBasedMppIT : BaseGradleIT() {
 
     private val dependencyModuleName = "project-dep"
 
-    private fun testBuildWithDependency(gradleVersion: GradleVersion, configureDependency: Project.() -> Unit) =
-        with(Project("common-klib-lib-and-app", gradleVersion)) {
-            embedProject(Project("common-klib-lib-and-app"), renameTo = dependencyModuleName)
+    private fun testBuildWithDependency(gradleVersion: GradleVersion, configureDependency: TestProject.() -> Unit) =
+        project("common-klib-lib-and-app", gradleVersion) {
+            embedProject(this, "common-klib-lib-and-app", renameTo = dependencyModuleName)
 
             projectDir.resolve("$dependencyModuleName/src/commonMain/kotlin/TestKt37832.kt").writeText(
                 "package com.example.test.kt37832" + "\n" + "class MyException : RuntimeException()"
@@ -197,13 +189,12 @@ class KlibBasedMppIT : BaseGradleIT() {
             )
 
             build("assemble") {
-                assertSuccessful()
 
                 assertTasksExecuted(*tasksToExecute.toTypedArray())
 
-                assertFileExists("build/classes/kotlin/metadata/commonMain/default/manifest")
-                assertFileExists("build/classes/kotlin/metadata/jvmAndJsMain/default/manifest")
-                assertFileExists("build/classes/kotlin/metadata/linuxMain/klib/${projectName}_linuxMain.klib")
+                assertFileInProjectExists("build/classes/kotlin/metadata/commonMain/default/manifest")
+                assertFileInProjectExists("build/classes/kotlin/metadata/jvmAndJsMain/default/manifest")
+                assertFileInProjectExists("build/classes/kotlin/metadata/linuxMain/klib/${projectName}_linuxMain.klib")
 
                 // Check that the common and JVM+JS source sets don't receive the Kotlin/Native stdlib in the classpath:
                 run {
@@ -228,8 +219,8 @@ class KlibBasedMppIT : BaseGradleIT() {
         else -> error("unexpected host")
     }
 
-    private fun checkPublishedHostSpecificMetadata(compiledProject: CompiledProject) = with(compiledProject) {
-        val groupDir = project.projectDir.resolve("repo/com/example")
+    private fun TestProject.checkPublishedHostSpecificMetadata(buildResult: BuildResult) = with(buildResult) {
+        val groupDir = projectDir.resolve("repo/com/example")
 
         assertTasksExecuted(":$dependencyModuleName:compile${hostSpecificSourceSet.capitalize()}KotlinMetadata")
 
@@ -269,11 +260,9 @@ class KlibBasedMppIT : BaseGradleIT() {
     private val transitiveDepModuleName = "transitive-dep"
 
     @GradleMacLinuxTest
-    fun testKotlinNativeImplPublishedDeps(gradleVersion: GradleVersion) =
+    fun testKotlinNativeImplPublishedDeps(gradleVersion: GradleVersion) {
         testKotlinNativeImplementationDependencies(gradleVersion) {
-            build(":$transitiveDepModuleName:publish", ":$dependencyModuleName:publish") {
-                assertSuccessful()
-            }
+            build(":$transitiveDepModuleName:publish", ":$dependencyModuleName:publish")
 
             gradleBuildScript().appendText(
                 "\n" + """
@@ -291,19 +280,21 @@ class KlibBasedMppIT : BaseGradleIT() {
                 gradleBuildScript(it).appendText("\ngroup = \"com.some.other.group\"")
             }
         }
+    }
 
     @GradleMacLinuxTest
-    fun testKotlinNativeImplProjectDeps(gradleVersion: GradleVersion) =
+    fun testKotlinNativeImplProjectDeps(gradleVersion: GradleVersion) {
         testKotlinNativeImplementationDependencies(gradleVersion) {
             gradleBuildScript().appendText("\ndependencies { \"commonMainImplementation\"(project(\":$dependencyModuleName\")) }")
         }
+    }
 
     private fun testKotlinNativeImplementationDependencies(
         gradleVersion: GradleVersion,
-        setupDependencies: Project.() -> Unit
-    ) = with(Project("common-klib-lib-and-app", gradleVersion)) {
-        embedProject(Project("common-klib-lib-and-app"), renameTo = transitiveDepModuleName)
-        embedProject(Project("common-klib-lib-and-app"), renameTo = dependencyModuleName).apply {
+        setupDependencies: TestProject.() -> Unit
+    ) = project("common-klib-lib-and-app", gradleVersion) {
+        embedProject(this, "common-klib-lib-and-app", renameTo = transitiveDepModuleName)
+        embedProject(this, "common-klib-lib-and-app", renameTo = dependencyModuleName).apply {
             projectDir.resolve(dependencyModuleName).walkTopDown().filter { it.extension == "kt" }.forEach { file ->
                 // Avoid duplicate FQNs as in the compatibility mode, the K2Metadata compiler reports duplicate symbols on them:
                 file.modify { it.replace("package com.h0tk3y.hmpp.klib.demo", "package com.h0tk3y.hmpp.klib.demo1") }
@@ -312,17 +303,15 @@ class KlibBasedMppIT : BaseGradleIT() {
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
         gradleBuildScript(dependencyModuleName).appendText("\ndependencies { \"commonMainImplementation\"(project(\":$transitiveDepModuleName\")) }")
 
-        setupDependencies(this@with)
+        setupDependencies(this)
 
         val compileNativeMetadataTaskName = "compileLinuxMainKotlinMetadata"
-        build(":$compileNativeMetadataTaskName") {
-            assertSuccessful()
-        }
+        build(":$compileNativeMetadataTaskName")
     }
 
     @GradleMacLinuxTest
-    fun testAvoidSkippingSharedNativeSourceSetKt38746(gradleVersion: GradleVersion) =
-        with(Project("hierarchical-all-native", gradleVersion)) {
+    fun testAvoidSkippingSharedNativeSourceSetKt38746(gradleVersion: GradleVersion) {
+        project("hierarchical-all-native", gradleVersion) {
             val targetNames = listOf(
                 // Try different alphabetical ordering of the targets to ensure that the behavior doesn't depend on it, as with 'first target'
                 listOf("a1", "a2", "a3"),
@@ -339,9 +328,9 @@ class KlibBasedMppIT : BaseGradleIT() {
                 }
                 val params = targetParamNames.zip(names + currentHostTargetName) { k, v -> "-P$k=$v" }
                 build(":clean", ":compileCurrentHostAndLinuxKotlinMetadata", *params.toTypedArray()) {
-                    assertSuccessful()
                     assertTasksExecuted(":compileCurrentHostAndLinuxKotlinMetadata", ":compileAllNativeKotlinMetadata")
                 }
             }
         }
+    }
 }

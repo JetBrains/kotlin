@@ -79,3 +79,8 @@ fun TestProject.makeSnapshotTo(destinationPath: String) {
         copyTo(dest.resolve(fileName))
     }
 }
+
+private val hashAlphabet: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+internal fun randomHash(length: Int = 15): String {
+    return List(length) { hashAlphabet.random() }.joinToString("")
+}

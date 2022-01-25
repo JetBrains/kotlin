@@ -5,21 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
-import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.BaseGradleIT.Companion.acceptAndroidSdkLicenses
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
-import org.jetbrains.kotlin.gradle.native.SINGLE_NATIVE_TARGET_PLACEHOLDER
-import org.jetbrains.kotlin.gradle.native.configureJvmMemory
-import org.jetbrains.kotlin.gradle.native.disableKotlinNativeCaches
 import org.jetbrains.kotlin.gradle.util.modify
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.nio.file.*
@@ -80,6 +73,26 @@ fun KGPBaseTest.project(
 
     testProject.test()
     return testProject
+}
+
+fun KGPBaseTest.embedProject(parentProject: TestProject, subProjectName: String, renameTo: String? = null) {
+    val embeddedModuleName = renameTo ?: subProjectName
+    setupProjectFromTestResources(
+        subProjectName,
+        parentProject.gradleVersion,
+        workingDir,
+        embeddedModuleName,
+        parentDir = parentProject.projectName
+    )
+
+    parentProject.apply {
+        gradleSettingsScript().appendText("\ninclude(\"$embeddedModuleName\")")
+
+        val embeddedBuildScript = gradleBuildScript(embeddedModuleName)
+        if (embeddedBuildScript.extension == "kts") {
+            embeddedBuildScript.modify { it.replace(".version(\"$PLUGIN_MARKER_VERSION_PLACEHOLDER\")", "") }
+        }
+    }
 }
 
 /**
@@ -233,6 +246,13 @@ open class GradleProject(
                 file.createNewFile()
             }
         }
+
+    fun buildScript(): File = listOf(buildGradle, buildGradleKts).single { it.toFile().exists() }.toFile()
+
+    fun gradleSettingsScript(): File =
+        listOf(settingsGradleKts, settingsGradle).run {
+            singleOrNull { it.exists() } ?: first()
+        }.toFile()
 }
 
 class TestProject(
@@ -263,59 +283,8 @@ class TestProject(
     }
 }
 
-internal fun KGPBaseTest.transformNativeTestProjectWithPluginDsl(
-    projectName: String,
-    gradleVersion: GradleVersion,
-    directoryPrefix: String? = null
-): TestProject {
-    val project = transformProjectWithPluginsDsl(projectName, gradleVersion, directoryPrefix = directoryPrefix)
-    project.configureSingleNativeTarget()
-    project.gradleProperties().apply {
-        configureJvmMemory()
-        disableKotlinNativeCaches()
-    }
-    return project
-}
-
-private fun TestProject.configureSingleNativeTarget(preset: String = HostManager.host.presetName) {
-    projectPath.toFile().walk()
-        .filter { it.isFile && (it.name == "build.gradle.kts" || it.name == "build.gradle") }
-        .forEach { file ->
-            file.modify {
-                it.replace(SINGLE_NATIVE_TARGET_PLACEHOLDER, preset)
-            }
-        }
-}
-
-internal fun KGPBaseTest.transformProjectWithPluginsDsl(
-    projectName: String,
-    gradleVersion: GradleVersion,
-    directoryPrefix: String? = null,
-    minLogLevel: LogLevel = LogLevel.DEBUG
-): TestProject {
-
-    val result = project(
-        projectName,
-        gradleVersion,
-        buildOptions = defaultBuildOptions.copy(logLevel = minLogLevel),
-        directoryPrefix = directoryPrefix
-    )
-
-    val settingsGradle = File(result.projectPath.toFile(), "settings.gradle").takeIf(File::exists)
-    settingsGradle?.modify {
-        it.replace(MAVEN_LOCAL_URL_PLACEHOLDER, MavenLocalUrlProvider.mavenLocalUrl)
-    }
-
-    result.projectPath.toFile().walkTopDown()
-        .filter {
-            it.isFile && (it.name == "build.gradle" || it.name == "build.gradle.kts" ||
-                    it.name == "settings.gradle" || it.name == "settings.gradle.kts")
-        }
-        .forEach { buildGradle ->
-            buildGradle.modify(::transformBuildScriptWithPluginsDsl)
-        }
-
-    return result
+fun TestProject.gradleBuildScript(subproject: String? = null): File {
+    return subproject?.let { subProject(subproject).buildScript() } ?: buildScript()
 }
 
 private fun commonBuildSetup(
@@ -365,17 +334,13 @@ private fun TestProject.withBuildSummary(
  */
 private val testKitDir get() = Paths.get(".").resolve(".testKitDir")
 
-private val hashAlphabet: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
-internal fun randomHash(length: Int = 15): String {
-    return List(length) { hashAlphabet.random() }.joinToString("")
-}
-
 private fun KGPBaseTest.setupProjectFromTestResources(
     projectName: String,
     gradleVersion: GradleVersion,
     tempDir: Path,
     optionalSubDir: String,
-    directoryPrefix: String? = null
+    directoryPrefix: String? = null,
+    parentDir: String? = null
 ): Path {
     val testProjectPath = directoryPrefix?.let { "$directoryPrefix/$projectName".testProjectPath } ?: projectName.testProjectPath
     assertTrue("Test project exists") { Files.exists(testProjectPath) }
@@ -384,7 +349,7 @@ private fun KGPBaseTest.setupProjectFromTestResources(
     return tempDir
         .resolve(gradleVersion.version)
         .resolve(testDir)
-        .resolve(projectName)
+        .resolve(parentDir ?: projectName)
         .resolve(optionalSubDir)
         .also {
             testProjectPath.copyRecursively(it)
@@ -469,12 +434,6 @@ private fun TestProject.setupNonDefaultJdk(pathToJdk: File) {
         """.trimMargin()
     }
 }
-
-internal const val MAVEN_LOCAL_URL_PLACEHOLDER = "<mavenLocalUrl>"
-internal const val PLUGIN_MARKER_VERSION_PLACEHOLDER = "<pluginMarkerVersion>"
-
-internal fun transformBuildScriptWithPluginsDsl(buildScriptContent: String): String =
-    buildScriptContent.replace(PLUGIN_MARKER_VERSION_PLACEHOLDER, KOTLIN_VERSION)
 
 @OptIn(ExperimentalPathApi::class)
 internal fun Path.enableAndroidSdk() {

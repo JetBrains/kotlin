@@ -142,7 +142,7 @@ class HierarchicalMppDependencyTransformationsLibIT : KGPBaseTest() {
     }
 
     @GradleLinuxTest
-    fun testTransitiveDependencyOnSelf(gradleVersion: GradleVersion) =
+    fun testTransitiveDependencyOnSelf(gradleVersion: GradleVersion) {
         project("transitive-dep-on-self-hmpp", gradleVersion = gradleVersion) {
             testDependencyTransformations(subproject = "lib") { reports ->
                 reports.single {
@@ -152,6 +152,7 @@ class HierarchicalMppDependencyTransformationsLibIT : KGPBaseTest() {
                 }
             }
         }
+    }
 
     @GradleMacLinuxTest
     fun testNativeLeafTestSourceSetsKt46417(gradleVersion: GradleVersion) {
@@ -227,6 +228,7 @@ class HierarchicalMppDependencyTransformationsLibIT : KGPBaseTest() {
     ) {
         val buildGradleKts = gradleBuildScript(subproject)
         assert(buildGradleKts.exists()) { "Kotlin scripts are not found." }
+        assert(buildGradleKts.extension == "kts") { "Only Kotlin scripts are supported." }
 
         val testTaskName = "reportDependencyTransformationsForTest"
 
@@ -323,7 +325,7 @@ class HierarchicalMppIT : KGPBaseTest() {
     }
 
     @GradleLinuxTest
-    fun testMultiModulesHmppKt48370(gradleVersion: GradleVersion) =
+    fun testMultiModulesHmppKt48370(gradleVersion: GradleVersion) {
         project("hierarchical-mpp-multi-modules", gradleVersion = gradleVersion) {
             build(
                 "assemble", buildOptions = defaultBuildOptions.copy(
@@ -331,6 +333,7 @@ class HierarchicalMppIT : KGPBaseTest() {
                 )
             )
         }
+    }
 
     @GradleLinuxTest
     fun testPublishedModules(gradleVersion: GradleVersion) {
@@ -389,7 +392,7 @@ class HierarchicalMppIT : KGPBaseTest() {
     }
 
     @GradleLinuxTest
-    fun testCompileOnlyDependencyProcessingForMetadataCompilations(gradleVersion: GradleVersion) =
+    fun testCompileOnlyDependencyProcessingForMetadataCompilations(gradleVersion: GradleVersion) {
         with(transformNativeTestProjectWithPluginDsl("hierarchical-mpp-project-dependency", gradleVersion)) {
             publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion)
 
@@ -407,6 +410,7 @@ class HierarchicalMppIT : KGPBaseTest() {
 
             build(":my-lib-foo:compileJvmAndJsMainKotlinMetadata")
         }
+    }
 
     @GradleLinuxTest
     fun testHmppDependenciesInJsTests(gradleVersion: GradleVersion) {
@@ -729,7 +733,3 @@ private fun KGPBaseTest.publishThirdPartyLib(
             buildOptions = defaultBuildOptions.copy(jsOptions = BuildOptions.JsOptions(jsCompilerType = jsCompilerType))
         )
     }
-
-private fun TestProject.gradleBuildScript(subproject: String? = null): File {
-    return subproject?.let { subProject(subproject).buildGradleKts.toFile() } ?: buildGradleKts.toFile()
-}

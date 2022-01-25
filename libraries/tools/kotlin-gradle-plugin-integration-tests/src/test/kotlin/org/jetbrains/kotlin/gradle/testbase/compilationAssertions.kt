@@ -9,6 +9,8 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.relativeTo
 import org.gradle.api.logging.LogLevel
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import org.gradle.testkit.runner.BuildResult
 import org.intellij.lang.annotations.Language
 
@@ -83,4 +85,44 @@ fun GradleProject.assertCompiledKotlinSources(
         it.relativeTo(projectPath)
     }
     assertSameFiles(expectedSources, actualSources, "Compiled Kotlin files differ${errorMessageSuffix}:\n")
+}
+
+var testBuildRunId = 0
+
+fun TestProject.checkTaskCompileClasspath(
+    taskPath: String,
+    checkModulesInClasspath: List<String> = emptyList(),
+    checkModulesNotInClasspath: List<String> = emptyList(),
+    isNative: Boolean = false
+) {
+    val subproject = taskPath.substringBeforeLast(":").takeIf { it.isNotEmpty() && it != taskPath }
+    val taskName = taskPath.removePrefix(subproject.orEmpty())
+    val taskClass = if (isNative) "org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile<*, *>" else "AbstractCompile"
+    val expression = """(tasks.getByName("$taskName") as $taskClass).${if (isNative) "libraries" else "classpath"}.toList()"""
+    checkPrintedItems(subproject, expression, checkModulesInClasspath, checkModulesNotInClasspath)
+}
+
+private fun TestProject.checkPrintedItems(
+    subproject: String?,
+    itemsExpression: String,
+    checkAnyItemsContains: List<String>,
+    checkNoItemContains: List<String>
+) = with(this) {
+    val printingTaskName = "printItems${testBuildRunId++}"
+    gradleBuildScript(subproject).appendText(
+        """
+        ${'\n'}
+        tasks.create("$printingTaskName") {
+            doLast {
+                println("###$printingTaskName" + $itemsExpression)
+            }
+        }
+        """.trimIndent()
+    )
+    build("${subproject?.prependIndent(":").orEmpty()}:$printingTaskName") {
+        val itemsLine = output.lines().single { "###$printingTaskName" in it }.substringAfter(printingTaskName)
+        val items = itemsLine.removeSurrounding("[", "]").split(", ").toSet()
+        checkAnyItemsContains.forEach { pattern -> assertTrue { items.any { pattern in it } } }
+        checkNoItemContains.forEach { pattern -> assertFalse { items.any { pattern in it } } }
+    }
 }
