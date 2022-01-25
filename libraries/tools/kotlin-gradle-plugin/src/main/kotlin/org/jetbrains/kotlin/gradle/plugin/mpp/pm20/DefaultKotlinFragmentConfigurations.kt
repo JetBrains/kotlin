@@ -34,6 +34,7 @@ val DefaultKotlinRuntimeDependenciesDefinition = ConfigurationDefinition(
     relations = FragmentConfigurationRelation {
         extendsFrom(dependencies.transitiveApiConfiguration)
         extendsFrom(dependencies.transitiveImplementationConfiguration)
+        extendsFrom(dependencies.transitiveRuntimeOnlyConfiguration)
     }
 )
 
@@ -64,6 +65,7 @@ val DefaultKotlinRuntimeElementsDefinition = ConfigurationDefinition(
     relations = FragmentConfigurationRelation {
         extendsFrom(dependencies.transitiveApiConfiguration)
         extendsFrom(dependencies.transitiveImplementationConfiguration)
+        extendsFrom(dependencies.transitiveRuntimeOnlyConfiguration)
     },
     attributes = KotlinFragmentPlatformAttributes + KotlinFragmentProducerRuntimeUsageAttribute + FragmentAttributes {
         attribute(Category.CATEGORY_ATTRIBUTE, fragment.project.objects.named(Category::class.java, Category.LIBRARY))

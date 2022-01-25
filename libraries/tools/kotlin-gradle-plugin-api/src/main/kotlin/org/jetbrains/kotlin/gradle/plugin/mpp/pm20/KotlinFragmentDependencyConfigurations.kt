@@ -14,13 +14,17 @@ interface KotlinFragmentDependencyConfigurations : KotlinDependencyConfiguration
     /** This configuration includes the dependencies from the refines-parents */
     val transitiveImplementationConfiguration: Configuration
 
+    /** This configuration includes the dependencies from the refines-parents */
+    val transitiveRuntimeOnlyConfiguration: Configuration
+
     private class Impl(
         override val apiConfiguration: Configuration,
         override val implementationConfiguration: Configuration,
         override val compileOnlyConfiguration: Configuration,
         override val runtimeOnlyConfiguration: Configuration,
         override val transitiveApiConfiguration: Configuration,
-        override val transitiveImplementationConfiguration: Configuration
+        override val transitiveImplementationConfiguration: Configuration,
+        override val transitiveRuntimeOnlyConfiguration: Configuration
     ) : KotlinFragmentDependencyConfigurations
 
     companion object {
@@ -30,14 +34,16 @@ interface KotlinFragmentDependencyConfigurations : KotlinDependencyConfiguration
             compileOnlyConfiguration: Configuration,
             runtimeOnlyConfiguration: Configuration,
             transitiveApiConfiguration: Configuration,
-            transitiveImplementationConfiguration: Configuration
+            transitiveImplementationConfiguration: Configuration,
+            transitiveRuntimeOnlyConfiguration: Configuration
         ): KotlinFragmentDependencyConfigurations = Impl(
             apiConfiguration = apiConfiguration,
             implementationConfiguration = implementationConfiguration,
             compileOnlyConfiguration = compileOnlyConfiguration,
             runtimeOnlyConfiguration = runtimeOnlyConfiguration,
             transitiveApiConfiguration = transitiveApiConfiguration,
-            transitiveImplementationConfiguration = transitiveImplementationConfiguration
+            transitiveImplementationConfiguration = transitiveImplementationConfiguration,
+            transitiveRuntimeOnlyConfiguration = transitiveRuntimeOnlyConfiguration
         )
     }
 }

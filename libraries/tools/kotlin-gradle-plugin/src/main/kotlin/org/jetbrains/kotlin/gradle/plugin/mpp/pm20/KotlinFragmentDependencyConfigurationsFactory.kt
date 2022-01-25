@@ -21,6 +21,7 @@ object DefaultKotlinFragmentDependencyConfigurationsFactory : KotlinFragmentDepe
         val runtimeOnlyConfiguration = configurations.maybeCreate(names.disambiguateName("runtimeOnly"))
         val transitiveApiConfiguration = configurations.maybeCreate(names.disambiguateName("transitiveApi"))
         val transitiveImplementationConfiguration = configurations.maybeCreate(names.disambiguateName("transitiveImplementation"))
+        val transitiveRuntimeOnlyConfiguration = configurations.maybeCreate(names.disambiguateName("transitiveRuntimeOnly"))
 
         listOf(
             apiConfiguration,
@@ -28,7 +29,8 @@ object DefaultKotlinFragmentDependencyConfigurationsFactory : KotlinFragmentDepe
             compileOnlyConfiguration,
             runtimeOnlyConfiguration,
             transitiveApiConfiguration,
-            transitiveImplementationConfiguration
+            transitiveImplementationConfiguration,
+            transitiveRuntimeOnlyConfiguration
         ).forEach { configuration ->
             configuration.isCanBeConsumed = false
             configuration.isCanBeResolved = false
@@ -36,6 +38,7 @@ object DefaultKotlinFragmentDependencyConfigurationsFactory : KotlinFragmentDepe
 
         transitiveApiConfiguration.extendsFrom(apiConfiguration)
         transitiveImplementationConfiguration.extendsFrom(implementationConfiguration)
+        transitiveRuntimeOnlyConfiguration.extendsFrom(runtimeOnlyConfiguration)
 
         return KotlinFragmentDependencyConfigurations.create(
             apiConfiguration = apiConfiguration,
@@ -43,7 +46,8 @@ object DefaultKotlinFragmentDependencyConfigurationsFactory : KotlinFragmentDepe
             compileOnlyConfiguration = compileOnlyConfiguration,
             runtimeOnlyConfiguration = runtimeOnlyConfiguration,
             transitiveApiConfiguration = transitiveApiConfiguration,
-            transitiveImplementationConfiguration = transitiveImplementationConfiguration
+            transitiveImplementationConfiguration = transitiveImplementationConfiguration,
+            transitiveRuntimeOnlyConfiguration = transitiveRuntimeOnlyConfiguration
         )
     }
 }

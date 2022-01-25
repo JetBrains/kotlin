@@ -58,6 +58,10 @@ open class KotlinGradleFragmentInternal @Inject constructor(
             this.transitiveImplementationConfiguration.name, other.get().transitiveImplementationConfiguration.name
         )
 
+        project.addExtendsFromRelation(
+            this.transitiveRuntimeOnlyConfiguration.name, other.get().transitiveRuntimeOnlyConfiguration.name
+        )
+
         project.runProjectConfigurationHealthCheckWhenEvaluated {
             kotlinGradleFragmentConsistencyChecker.runAllChecks(this@KotlinGradleFragmentInternal, other.get())
         }
