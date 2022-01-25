@@ -36,16 +36,15 @@ fun <F : FirClassLikeDeclaration> F.runTypeResolvePhaseForLocalClass(
     useSiteFile: FirFile,
     containingDeclarations: List<FirDeclaration>,
 ): F {
-    @Suppress("RemoveExplicitTypeArguments")
     val transformer = FirTypeResolveTransformer(
         session,
         scopeSession,
         currentScopeList,
         initialCurrentFile = useSiteFile,
-        classDeclarationsStack = containingDeclarations.filterIsInstanceTo<FirClass, ArrayDeque<FirClass>>(ArrayDeque())
+        classDeclarationsStack = containingDeclarations.filterIsInstanceTo(ArrayDeque())
     )
 
-    return this.transform<F, Nothing?>(transformer, null)
+    return this.transform(transformer, null)
 }
 
 open class FirTypeResolveTransformer(

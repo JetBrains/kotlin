@@ -125,7 +125,6 @@ class FirStatusResolver(
             return emptyList()
         }
 
-        @Suppress("RemoveExplicitTypeArguments") // Workaround for KT-42175
         return buildList<FirCallableDeclaration> {
             val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
             val symbol = function.symbol

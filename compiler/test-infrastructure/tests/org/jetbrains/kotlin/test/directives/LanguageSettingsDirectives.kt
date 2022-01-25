@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
-@Suppress("RemoveExplicitTypeArguments")
 object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val LANGUAGE by stringDirective(
         description = """
@@ -20,7 +19,6 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         """.trimIndent()
     )
 
-    @Suppress("RemoveExplicitTypeArguments")
     val API_VERSION by valueDirective<ApiVersion>(
         description = "Version of Kotlin API",
         parser = this::parseApiVersion
@@ -43,7 +41,7 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         description = "Allow using Result in return type position"
     )
 
-    val EXPLICIT_API_MODE by enumDirective<ExplicitApiMode>(
+    val EXPLICIT_API_MODE by enumDirective(
         "Configures explicit API mode (AnalysisFlags.explicitApiMode)",
         additionalParser = ExplicitApiMode.Companion::fromString
     )
@@ -54,7 +52,7 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
 
     // --------------------- Jvm Analysis Flags ---------------------
 
-    val JVM_DEFAULT_MODE by enumDirective<JvmDefaultMode>(
+    val JVM_DEFAULT_MODE by enumDirective(
         description = "Configures corresponding analysis flag (JvmAnalysisFlags.jvmDefaultMode)",
         additionalParser = JvmDefaultMode.Companion::fromStringOrNull
     )

@@ -13,9 +13,7 @@ internal data class NameAndSafeValue(val name: String, val safeValue: String)
 
 internal object SafeEnvVars : Iterable<NameAndSafeValue> {
     private val environment: List<NameAndSafeValue> by lazy {
-        // See KT-49925
-        @Suppress("RemoveExplicitTypeArguments")
-        buildList<NameAndSafeValue> {
+        buildList {
             System.getenv().forEach { (name, value) ->
                 val safeValue = if (isSafeEnvVar(name)) doEscape(value) else HIDDEN_VALUE
                 this += NameAndSafeValue(name, safeValue)

@@ -58,8 +58,7 @@ object AbstractTypeMapper {
             val argumentsCount = type.argumentsCount()
             val argumentsList = type.asArgumentList()
 
-            @Suppress("RemoveExplicitTypeArguments") // Workaround for KT-42175
-            val arguments = buildList<KotlinTypeMarker> {
+            val arguments = buildList {
                 for (i in 0 until (argumentsCount - 1)) {
                     this += argumentsList[i].adjustedType()
                 }

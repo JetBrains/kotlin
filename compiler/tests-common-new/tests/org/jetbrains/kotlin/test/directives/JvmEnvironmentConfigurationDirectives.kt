@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
-    @Suppress("RemoveExplicitTypeArguments")
-    val JVM_TARGET by enumDirective<JvmTarget>(
+    val JVM_TARGET by enumDirective(
         description = "Target bytecode version",
         additionalParser = JvmTarget.Companion::fromString
     )
@@ -50,14 +49,12 @@ object JvmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    @Suppress("RemoveExplicitTypeArguments")
-    val STRING_CONCAT by enumDirective<JvmStringConcat>(
+    val STRING_CONCAT by enumDirective(
         description = "Configure mode of string concatenation",
         additionalParser = JvmStringConcat.Companion::fromString
     )
 
-    @Suppress("RemoveExplicitTypeArguments")
-    val ASSERTIONS_MODE by enumDirective<JVMAssertionsMode>(
+    val ASSERTIONS_MODE by enumDirective(
         description = "Configure jvm assertions mode",
         additionalParser = JVMAssertionsMode.Companion::fromString
     )

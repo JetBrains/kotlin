@@ -507,8 +507,7 @@ internal class KtSymbolByFirBuilder private constructor(
         val containingClass = getContainingClass(rootSession) ?: return null
         val originalDeclaration = originalForSubstitutionOverride ?: return null
 
-        @Suppress("RemoveExplicitTypeArguments")
-        val allowedTypeParameters = buildSet<ConeTypeParameterLookupTag> {
+        val allowedTypeParameters = buildSet {
             // declaration's own parameters
             originalDeclaration.typeParameters.mapTo(this) { it.symbol.toLookupTag() }
 

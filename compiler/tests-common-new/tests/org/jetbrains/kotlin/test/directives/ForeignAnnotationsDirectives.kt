@@ -11,14 +11,13 @@ import org.jetbrains.kotlin.test.services.configuration.JavaForeignAnnotationTyp
 import org.jetbrains.kotlin.load.java.ReportLevel
 import org.jetbrains.kotlin.name.FqName
 
-@Suppress("RemoveExplicitTypeArguments")
 object ForeignAnnotationsDirectives : SimpleDirectivesContainer() {
-    val JSR305_GLOBAL_REPORT by enumDirective<ReportLevel>(
+    val JSR305_GLOBAL_REPORT by enumDirective(
         description = "Global report level",
         additionalParser = ReportLevel.Companion::findByDescription
     )
 
-    val JSR305_MIGRATION_REPORT by enumDirective<ReportLevel>(
+    val JSR305_MIGRATION_REPORT by enumDirective(
         description = "Migration report level",
         additionalParser = ReportLevel.Companion::findByDescription
     )
@@ -27,7 +26,7 @@ object ForeignAnnotationsDirectives : SimpleDirectivesContainer() {
         description = "Report level for specific annotations"
     )
 
-    val JSPECIFY_STATE by enumDirective<ReportLevel>(
+    val JSPECIFY_STATE by enumDirective(
         description = "Report level for jSpecify annotations",
         additionalParser = ReportLevel.Companion::findByDescription
     )

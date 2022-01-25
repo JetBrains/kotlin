@@ -31,7 +31,7 @@ abstract class AbstractCollectDiagnosticsTest : AbstractHLApiSingleFileTest() {
         analyseForTest(ktFile) {
             val diagnosticsInFile =
                 ktFile.collectDiagnosticsForFile(KtDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS).map { it.getKey() }.sorted()
-            @Suppress("RemoveExplicitTypeArguments") val diagnosticsFromElements = buildList<Pair<KtElement, DiagnosticKey>> {
+            val diagnosticsFromElements = buildList {
                 ktFile.accept(object : KtTreeVisitorVoid() {
                     override fun visitKtElement(element: KtElement) {
                         for (diagnostic in element.getDiagnostics(KtDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS)) {

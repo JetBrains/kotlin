@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
-@Suppress("RemoveExplicitTypeArguments")
 internal val resolveInlineCallsPhase = makeIrModulePhase(
     ::ResolveInlineCalls,
     name = "ResolveInlineCalls",

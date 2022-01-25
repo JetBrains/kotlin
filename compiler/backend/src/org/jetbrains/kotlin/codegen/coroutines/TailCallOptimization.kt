@@ -203,12 +203,11 @@ internal class MethodNodeExaminer(
             for (index in insns.indices.reversed()) {
                 if (insns[index].opcode == Opcodes.ARETURN) continue
 
-                @Suppress("RemoveExplicitTypeArguments")
                 val newResult =
                     controlFlowGraph
                         .getSuccessorsIndices(index).plus(index)
                         .map(reachableReturnsIndices::get)
-                        .fold<Set<Int>?, Set<Int>?>(mutableSetOf<Int>()) { acc, successorsResult ->
+                        .fold<Set<Int>?, Set<Int>?>(mutableSetOf()) { acc, successorsResult ->
                             if (acc != null && successorsResult != null) acc + successorsResult else null
                         }
 
