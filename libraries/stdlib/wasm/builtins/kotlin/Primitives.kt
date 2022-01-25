@@ -854,9 +854,8 @@ public class Int private constructor(val value: Int) : Number(), Comparable<Int>
         this / other.toInt()
 
     /** Divides this value by the other value. */
-    @WasmOp(WasmOp.I32_DIV_S)
     public operator fun div(other: Int): Int =
-        implementedAsIntrinsic
+        if (this == Int.MIN_VALUE && other == -1) Int.MIN_VALUE else wasm_i32_div_s(this, other)
 
     /** Divides this value by the other value. */
     public inline operator fun div(other: Long): Long =
@@ -1252,9 +1251,8 @@ public class Long private constructor(val value: Long) : Number(), Comparable<Lo
         this / other.toLong()
 
     /** Divides this value by the other value. */
-    @WasmOp(WasmOp.I64_DIV_S)
     public operator fun div(other: Long): Long =
-        implementedAsIntrinsic
+        if (this == Long.MIN_VALUE && other == -1L) Long.MIN_VALUE else wasm_i64_div_s(this, other)
 
     /** Divides this value by the other value. */
     public inline operator fun div(other: Float): Float =
