@@ -594,11 +594,7 @@ object Generators : TemplateGroupBase() {
             val first = ArrayList<T>()
             val second = ArrayList<T>()
             for (element in this) {
-                if (predicate(element)) {
-                    first.add(element)
-                } else {
-                    second.add(element)
-                }
+                (if (predicate(element)) first else second).add(element)
             }
             return Pair(first, second)
             """
