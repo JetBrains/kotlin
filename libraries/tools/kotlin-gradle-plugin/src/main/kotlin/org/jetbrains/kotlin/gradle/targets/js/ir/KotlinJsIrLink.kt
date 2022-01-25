@@ -248,25 +248,17 @@ internal class CacheBuilder(
     ): List<File> {
 
         val allCacheDirectories = mutableListOf<File>()
-        val visitedDependenciesForCache = mutableSetOf<ResolvedDependency>()
+        val visitedDependenciesForCache = mutableSetOf<File>()
 
         compileClasspath.resolvedConfiguration.firstLevelModuleDependencies
             .forEach { dependency ->
                 ensureDependencyCached(
                     dependency
-                )
-                if (dependency !in visitedDependenciesForCache) {
-                    (listOf(dependency) + getAllDependencies(dependency))
-                        .filter { it !in visitedDependenciesForCache }
-                        .forEach { dependencyForCache ->
-                            visitedDependenciesForCache.add(dependencyForCache)
-                            dependencyForCache.moduleArtifacts
-                                .map {
-                                    getCacheDirectory(rootCacheDirectory, dependencyForCache, it, { libraryFilter(it.file) })
-                                }
-                                .filter { it.exists() }
-                                .forEach { allCacheDirectories.add(it) }
-                        }
+                ).forEach {
+                    if (it !in visitedDependenciesForCache) {
+                        visitedDependenciesForCache.add(it)
+                        allCacheDirectories.add(it)
+                    }
                 }
             }
 
@@ -289,24 +281,31 @@ internal class CacheBuilder(
 
     private fun ensureDependencyCached(
         dependency: ResolvedDependency
-    ) {
-        if (dependency in visitedDependencies) return
+    ): List<File> {
+        if (dependency in visitedDependencies) {
+            return dependency.moduleArtifacts
+                .filter { libraryFilter(it.file) }
+                .map {
+                    getCacheDirectory(rootCacheDirectory, dependency, it, { libraryFilter(it.file) })
+                }
+        }
         visitedDependencies.add(dependency)
 
-        dependency.children
-            .forEach { ensureDependencyCached(it) }
+        val depCacheDirs = dependency.children
+            .flatMap { ensureDependencyCached(it) }
+            .distinct()
 
         val artifactsToAddToCache = dependency.moduleArtifacts
             .filter { libraryFilter(it.file) }
 
-        if (artifactsToAddToCache.isEmpty()) return
+        if (artifactsToAddToCache.isEmpty()) return depCacheDirs
 
         val dependenciesCacheDirectories = getDependenciesCacheDirectories(
             rootCacheDirectory,
             dependency,
             libraryFilter = { libraryFilter(it.file) },
             considerArtifact = true
-        ) ?: return
+        ) ?: return depCacheDirs
 
         val nameMap: MutableMap<String, ResolvedArtifact> = mutableMapOf()
         val depsMap: MutableMap<ResolvedArtifact, MutableList<ResolvedArtifact>> = mutableMapOf()
@@ -348,8 +347,11 @@ internal class CacheBuilder(
             newOrderArtifactsToAddToCache = artifactsToAddToCache.toMutableList()
         }
 
+        val additionalCacheDirs = mutableListOf<File>()
         for (library in newOrderArtifactsToAddToCache) {
-            val cacheDirectory = getCacheDirectory(rootCacheDirectory, dependency, library, { libraryFilter(it.file) })
+            val cacheDirectory = getCacheDirectory(rootCacheDirectory, dependency, library, { libraryFilter(it.file) }).also {
+                additionalCacheDirs.add(it)
+            }
             cacheDirectory.mkdirs()
             cacheMap[library] = cacheDirectory
             val additionalDependencies = depsMap[library] ?: emptyList()
@@ -365,6 +367,7 @@ internal class CacheBuilder(
                 dependenciesCacheDirectories + additionalCacheDirectories
             )
         }
+        return depCacheDirs + additionalCacheDirs
     }
 
     fun runCompiler(
