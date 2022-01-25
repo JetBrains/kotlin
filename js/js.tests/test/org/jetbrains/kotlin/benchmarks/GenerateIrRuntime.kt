@@ -306,7 +306,7 @@ class GenerateIrRuntime {
             irOnly = true
             irModuleName = "kotlin"
             allowKotlinPackage = true
-            useExperimental = arrayOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental", "kotlin.ExperimentalMultiplatform")
+            optIn = arrayOf("kotlin.contracts.ExperimentalContracts", "kotlin.Experimental", "kotlin.ExperimentalMultiplatform")
             allowResultReturnType = true
             multiPlatform = true
             languageVersion = "1.4"
