@@ -71,57 +71,18 @@ class NativeSimpleTestSupport : BeforeEachCallback {
 }
 
 private object NativeTestSupport {
+    private val NAMESPACE = ExtensionContext.Namespace.create(NativeBlackBoxTestSupport::class.java.simpleName)
+
     /*************** Test process settings ***************/
 
     fun ExtensionContext.getOrCreateTestProcessSettings(): TestProcessSettings =
         root.getStore(NAMESPACE).getOrComputeIfAbsent(TestProcessSettings::class.java.name) {
-            val optimizationMode = computeOptimizationMode()
-            val memoryModel = computeMemoryModel()
-
-            val threadStateChecker = computeThreadStateChecker()
-            if (threadStateChecker == ThreadStateChecker.ENABLED) {
-                assertEquals(MemoryModel.EXPERIMENTAL, memoryModel) {
-                    "Thread state checker can be enabled only with experimental memory model"
-                }
-                assertEquals(OptimizationMode.DEBUG, optimizationMode) {
-                    "Thread state checker can be enabled only with debug optimization mode"
-                }
-            }
-
-            val gcType = computeGCType()
-            if (gcType != GCType.UNSPECIFIED) {
-                assertEquals(MemoryModel.EXPERIMENTAL, memoryModel) {
-                    "GC type can be specified only with experimental memory model"
-                }
-            }
-
-            val nativeHome = computeNativeHome()
-            val hostManager = HostManager(distribution = Distribution(nativeHome.dir.path), experimental = false)
-
-            val nativeTargets = computeNativeTargets(hostManager)
-
             TestProcessSettings(
-                nativeTargets,
-                nativeHome,
+                computeNativeHome(),
                 computeNativeClassLoader(),
-                computeTestMode(),
-                optimizationMode,
-                memoryModel,
-                threadStateChecker,
-                gcType,
-                CacheMode::class to computeCacheMode(nativeHome, nativeTargets, optimizationMode),
-                computeBaseDirs(),
-                computeTimeouts()
+                computeBaseDirs()
             )
         }.cast()
-
-    private fun computeNativeTargets(hostManager: HostManager): KotlinNativeTargets {
-        val hostTarget = HostManager.host
-        return KotlinNativeTargets(
-            testTarget = ClassLevelProperty.TEST_TARGET.readValue(hostManager::targetByName, default = hostTarget),
-            hostTarget = hostTarget
-        )
-    }
 
     private fun computeNativeHome(): KotlinNativeHome = KotlinNativeHome(File(ProcessLevelProperty.KOTLIN_NATIVE_HOME.readValue()))
 
@@ -136,7 +97,50 @@ private object NativeTestSupport {
         }
     )
 
-    private fun computeTestMode(): TestMode = ClassLevelProperty.TEST_MODE.readValue(TestMode.values(), default = TestMode.WITH_MODULES)
+    private fun computeBaseDirs(): BaseDirs {
+        val testBuildDir = File(EnvironmentVariable.PROJECT_BUILD_DIR.readValue()).resolve("t")
+        testBuildDir.mkdirs() // Make sure it exists. Don't clean up.
+
+        return BaseDirs(testBuildDir)
+    }
+
+    /*************** Test class settings (common part) ***************/
+
+    private fun ExtensionContext.addCommonTestClassSettingsTo(output: MutableCollection<Any>) {
+        val optimizationMode = computeOptimizationMode()
+        val memoryModel = computeMemoryModel()
+
+        val threadStateChecker = computeThreadStateChecker()
+        if (threadStateChecker == ThreadStateChecker.ENABLED) {
+            assertEquals(MemoryModel.EXPERIMENTAL, memoryModel) {
+                "Thread state checker can be enabled only with experimental memory model"
+            }
+            assertEquals(OptimizationMode.DEBUG, optimizationMode) {
+                "Thread state checker can be enabled only with debug optimization mode"
+            }
+        }
+
+        val gcType = computeGCType()
+        if (gcType != GCType.UNSPECIFIED) {
+            assertEquals(MemoryModel.EXPERIMENTAL, memoryModel) {
+                "GC type can be specified only with experimental memory model"
+            }
+        }
+
+        val nativeHome = getOrCreateTestProcessSettings().get<KotlinNativeHome>()
+
+        val hostManager = HostManager(distribution = Distribution(nativeHome.dir.path), experimental = false)
+        val nativeTargets = computeNativeTargets(hostManager)
+
+        output += optimizationMode
+        output += memoryModel
+        output += threadStateChecker
+        output += gcType
+        output += nativeTargets
+        output += CacheMode::class to computeCacheMode(nativeHome, nativeTargets, optimizationMode)
+        output += computeTestMode()
+        output += computeTimeouts()
+    }
 
     private fun computeOptimizationMode(): OptimizationMode =
         ClassLevelProperty.OPTIMIZATION_MODE.readValue(OptimizationMode.values(), default = OptimizationMode.DEBUG)
@@ -150,6 +154,14 @@ private object NativeTestSupport {
     }
 
     private fun computeGCType(): GCType = ClassLevelProperty.GC_TYPE.readValue(GCType.values(), default = GCType.UNSPECIFIED)
+
+    private fun computeNativeTargets(hostManager: HostManager): KotlinNativeTargets {
+        val hostTarget = HostManager.host
+        return KotlinNativeTargets(
+            testTarget = ClassLevelProperty.TEST_TARGET.readValue(hostManager::targetByName, default = hostTarget),
+            hostTarget = hostTarget
+        )
+    }
 
     private fun computeCacheMode(
         kotlinNativeHome: KotlinNativeHome,
@@ -175,19 +187,12 @@ private object NativeTestSupport {
         return CacheMode.WithStaticCache(kotlinNativeHome, kotlinNativeTargets, optimizationMode, staticCacheRequiredForEveryLibrary)
     }
 
-    private fun computeBaseDirs(): BaseDirs {
-        val testBuildDir = File(EnvironmentVariable.PROJECT_BUILD_DIR.readValue()).resolve("t")
-        testBuildDir.mkdirs() // Make sure it exists. Don't clean up.
-
-        return BaseDirs(testBuildDir)
-    }
+    private fun computeTestMode(): TestMode = ClassLevelProperty.TEST_MODE.readValue(TestMode.values(), default = TestMode.WITH_MODULES)
 
     private fun computeTimeouts(): Timeouts {
         val executionTimeout = ClassLevelProperty.EXECUTION_TIMEOUT.readValue({ it.toLongOrNull()?.milliseconds }, default = 10.seconds)
         return Timeouts(executionTimeout)
     }
-
-    private val NAMESPACE = ExtensionContext.Namespace.create(NativeBlackBoxTestSupport::class.java.simpleName)
 
     /*************** Test class settings (for black box tests only) ***************/
 
@@ -198,22 +203,25 @@ private object NativeTestSupport {
             val testProcessSettings = getOrCreateTestProcessSettings()
             val computedTestConfiguration = computeTestConfiguration(enclosingTestClass)
 
-            // Put settings that are always required:
-            val settings = mutableListOf(
-                computedTestConfiguration,
-                computeBinariesDirs(testProcessSettings.get(), testProcessSettings.get(), enclosingTestClass)
-            )
+            val settings = buildList {
+                // Put common settings:
+                addCommonTestClassSettingsTo(this)
 
-            // Add custom settings:
-            computedTestConfiguration.configuration.requiredSettings.mapTo(settings) { clazz ->
-                when (clazz) {
-                    TestRoots::class -> computeTestRoots(enclosingTestClass)
-                    GeneratedSources::class -> computeGeneratedSourceDirs(
-                        testProcessSettings.get(),
-                        testProcessSettings.get(),
-                        enclosingTestClass
-                    )
-                    else -> fail { "Unknown test class setting type: $clazz" }
+                // Put settings that are always required:
+                this += computedTestConfiguration
+                this += computeBinariesDirs(testProcessSettings.get(), testProcessSettings.get(), enclosingTestClass)
+
+                // Add custom settings:
+                computedTestConfiguration.configuration.requiredSettings.forEach { clazz ->
+                    this += when (clazz) {
+                        TestRoots::class -> computeTestRoots(enclosingTestClass)
+                        GeneratedSources::class -> computeGeneratedSourceDirs(
+                            testProcessSettings.get(),
+                            testProcessSettings.get(),
+                            enclosingTestClass
+                        )
+                        else -> fail { "Unknown test class setting type: $clazz" }
+                    }
                 }
             }
 
@@ -315,13 +323,13 @@ private object NativeTestSupport {
     fun ExtensionContext.createSimpleTestRunSettings(): SimpleTestRunSettings {
         val testProcessSettings = getOrCreateTestProcessSettings()
 
-        return SimpleTestRunSettings(
-            parent = testProcessSettings,
-            listOf(
-                computeSimpleTestInstances(),
-                computeSimpleTestDirectories(testProcessSettings.get(), testProcessSettings.get())
-            )
-        )
+        val settings = buildList {
+            addCommonTestClassSettingsTo(this)
+            this += computeSimpleTestInstances()
+            this += computeSimpleTestDirectories(testProcessSettings.get(), testProcessSettings.get())
+        }
+
+        return SimpleTestRunSettings(parent = testProcessSettings, settings)
     }
 
     private fun ExtensionContext.computeSimpleTestInstances(): SimpleTestInstances = SimpleTestInstances(requiredTestInstances.allInstances)
