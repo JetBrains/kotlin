@@ -129,8 +129,8 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
                 return type.hashCode()
             }
 
-            fun toCommonizerSetting(): CommonizerSetting<T> {
-                return CommonizerSetting(type, value)
+            fun toCommonizerSetting(): MapBasedCommonizerSettings.Setting<T> {
+                return MapBasedCommonizerSettings.Setting(type, value)
             }
         }
 

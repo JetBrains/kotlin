@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.commonizer.cli
 
 import org.jetbrains.kotlin.commonizer.*
-import org.jetbrains.kotlin.commonizer.CommonizerSetting
 import org.jetbrains.kotlin.commonizer.MapBasedCommonizerSettings
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -54,13 +53,13 @@ internal abstract class Task(private val options: Collection<Option<*>>) : Compa
         return MapBasedCommonizerSettings(*passedSettings.toTypedArray())
     }
 
-    private fun <T : Any> optionToCommonizerSetting(optionType: CommonizerSettingOptionType<T>): CommonizerSetting<T> {
+    private fun <T : Any> optionToCommonizerSetting(optionType: CommonizerSettingOptionType<T>): MapBasedCommonizerSettings.Setting<T> {
         val key = optionType.commonizerSettingKey
 
         @Suppress("UNCHECKED_CAST")
         val settingValue = options.singleOrNull { option -> option.type == optionType }?.value as? T ?: key.defaultValue
 
-        return CommonizerSetting(key, settingValue)
+        return MapBasedCommonizerSettings.Setting(key, settingValue)
     }
 
     override fun compareTo(other: Task): Int {
