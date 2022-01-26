@@ -307,15 +307,15 @@ extern "C" void Kotlin_ObjCExport_initializeClass(Class clazz) {
   for (int i = 0; i < typeAdapter->directAdapterNum; ++i) {
     const ObjCToKotlinMethodAdapter* adapter = typeAdapter->directAdapters + i;
     SEL selector = sel_registerName(adapter->selector);
-    BOOL added = class_addMethod(clazz, selector, adapter->imp, adapter->encoding);
-    RuntimeAssert(added, "Unexpected selector clash");
+    class_addMethod(clazz, selector, adapter->imp, adapter->encoding);
+    // The method above may fail if there is a matching Swift/Obj-C extension method for this Kotlin class.
+    // This is pretty much ok, and we shouldn't replace that method with our own.
   }
 
   for (int i = 0; i < typeAdapter->classAdapterNum; ++i) {
     const ObjCToKotlinMethodAdapter* adapter = typeAdapter->classAdapters + i;
     SEL selector = sel_registerName(adapter->selector);
-    BOOL added = class_addMethod(object_getClass(clazz), selector, adapter->imp, adapter->encoding);
-    RuntimeAssert(added, "Unexpected selector clash");
+    class_addMethod(object_getClass(clazz), selector, adapter->imp, adapter->encoding);
   }
 
   if (isClassForPackage) return;

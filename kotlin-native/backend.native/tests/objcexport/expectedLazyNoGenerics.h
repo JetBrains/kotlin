@@ -901,6 +901,14 @@ __attribute__((swift_name("Kt46431Kt")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("KT49937")))
+@interface KtKT49937 : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (NSString *)description __attribute__((swift_name("description()")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("LibraryKt")))
 @interface KtLibraryKt : KtBase
 + (NSString *)readDataFromLibraryClassInput:(KtA *)input __attribute__((swift_name("readDataFromLibraryClass(input:)")));
