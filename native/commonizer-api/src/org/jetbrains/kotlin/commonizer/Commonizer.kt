@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer
 
+import org.jetbrains.kotlin.commonizer.cli.OptionAlias
 import java.io.File
 import java.io.Serializable
 
@@ -37,5 +38,5 @@ public data class AdditionalCommonizerSetting(
     public val settingValue: Any,
 )
 
-public infix fun String.setTo(settingValue: Any): AdditionalCommonizerSetting =
-    AdditionalCommonizerSetting(this, settingValue)
+public infix fun OptionAlias.setTo(settingValue: Any): AdditionalCommonizerSetting =
+    AdditionalCommonizerSetting(this.argumentString, settingValue)
