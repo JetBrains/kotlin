@@ -38,6 +38,7 @@ abstract class InspectForForbidenAPIUsage: DefaultTask() {
     }
 
     @Incremental
+    @SkipWhenEmpty
     @get:Classpath
     var validationClasspath: FileCollection = project.objects.fileCollection()
 
@@ -50,6 +51,7 @@ abstract class InspectForForbidenAPIUsage: DefaultTask() {
             }
             MethodReference(it.substring(0, separatorIndex), it.substring(separatorIndex + 1))
         }
+        if (forbidenMethods.isEmpty()) return
 
         val changedFiles =
         inputChanges.getFileChanges(validationClasspath)
@@ -114,7 +116,8 @@ const val API_VERSION = Opcodes.ASM5
 
 class SearchingClassVisitor(methods: Collection<MethodReference>) : ClassVisitor(API_VERSION) {
 
-    class SearchingMethodVisitor(private val searchState: SearchState, private val methodsToFind: Collection<MethodReference>) : MethodVisitor(API_VERSION) {
+    class SearchingMethodVisitor(private val methodsToFind: Collection<MethodReference>) : MethodVisitor(API_VERSION) {
+        var searchState = SearchState()
 
         val calls = TreeMap<CallSite, MutableSet<MethodReference>>()
 
@@ -132,15 +135,14 @@ class SearchingClassVisitor(methods: Collection<MethodReference>) : ClassVisitor
         }
     }
 
-    private val searchState = SearchState()
-    private val methodVisitor = SearchingMethodVisitor(searchState, methods)
+    private val methodVisitor = SearchingMethodVisitor(methods)
 
     override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
-        searchState.className = name
+        methodVisitor.searchState.className = name
     }
 
     override fun visitSource(source: String, debug: String?) {
-        searchState.sourceFile = source
+        methodVisitor.searchState.sourceFile = source
     }
 
     override fun visitMethod(
@@ -148,8 +150,12 @@ class SearchingClassVisitor(methods: Collection<MethodReference>) : ClassVisitor
         desc: String, signature: String?,
         exceptions: Array<String>?
     ): MethodVisitor {
-        searchState.methodName = name
+        methodVisitor.searchState.methodName = name
         return methodVisitor
+    }
+
+    override fun visitEnd() {
+        methodVisitor.searchState = SearchState()
     }
 
     fun getCalls() = methodVisitor.calls
