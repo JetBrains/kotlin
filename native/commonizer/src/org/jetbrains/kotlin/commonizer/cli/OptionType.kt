@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.commonizer.cli
 
-abstract class OptionType<T>(
+internal abstract class OptionType<T>(
     val alias: OptionAlias,
     val description: String,
     val mandatory: Boolean = true

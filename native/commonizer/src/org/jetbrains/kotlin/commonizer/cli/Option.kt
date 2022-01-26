@@ -5,4 +5,4 @@
 
 package org.jetbrains.kotlin.commonizer.cli
 
-class Option<T>(val type: OptionType<T>, val value: T)
+internal class Option<T>(val type: OptionType<T>, val value: T)
