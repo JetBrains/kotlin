@@ -5808,6 +5808,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("immutableName.kt")
+            public void testImmutableName() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/immutableName.kt");
+            }
+
+            @Test
             @TestMetadata("invokePriority.kt")
             public void testInvokePriority() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/invokePriority.kt");

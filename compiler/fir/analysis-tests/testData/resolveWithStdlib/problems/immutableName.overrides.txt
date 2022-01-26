@@ -1,0 +1,14 @@
+ImplDerived:
+  [Source]: public abstract override fun foo(name: R|kotlin/String?|): R|Derived| from Use site scope of /ImplDerived [id: 0]
+  [IntersectionOverride]: public open fun foo(name: R|ft<kotlin/String, kotlin/String?>|): R|@EnhancedNullability Derived| from Use site scope of /ImplDerived [id: 0]
+    [Source]: public open override fun foo(name: R|kotlin/String|): R|Base| from Use site scope of /Impl [id: 1]
+      [Enhancement]: public abstract fun foo(name: R|@EnhancedNullability kotlin/String|): R|ft<Base, Base?>| from Java enhancement scope for /Base [id: 2]
+    [Enhancement]: public abstract fun foo(name: R|ft<kotlin/String, kotlin/String?>|): R|@EnhancedNullability Derived| from Java enhancement scope for /Derived [id: 3]
+      [Enhancement]: public abstract fun foo(name: R|@EnhancedNullability kotlin/String|): R|ft<Base, Base?>| from Java enhancement scope for /Base [id: 2]
+
+DerivedImpl:
+  [Source]: public abstract override fun foo(name: R|kotlin/String?|): R|Derived| from Use site scope of /DerivedImpl [id: 0]
+    [Enhancement]: public abstract fun foo(name: R|ft<kotlin/String, kotlin/String?>|): R|@EnhancedNullability Derived| from Java enhancement scope for /Derived [id: 1]
+      [Enhancement]: public abstract fun foo(name: R|@EnhancedNullability kotlin/String|): R|ft<Base, Base?>| from Java enhancement scope for /Base [id: 2]
+    [Source]: public open override fun foo(name: R|kotlin/String|): R|Base| from Use site scope of /Impl [id: 3]
+      [Enhancement]: public abstract fun foo(name: R|@EnhancedNullability kotlin/String|): R|ft<Base, Base?>| from Java enhancement scope for /Base [id: 2]
