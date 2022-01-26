@@ -645,7 +645,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(SUPER_IS_NOT_AN_EXPRESSION, "Super cannot be a callee")
         map.put(SUPER_NOT_AVAILABLE, "No supertypes are accessible in this context")
         map.put(ABSTRACT_SUPER_CALL, "Abstract member cannot be accessed directly")
-        map.put(ABSTRACT_SUPER_CALL_WARNING, "Abstract fake override member access is deprecated")
+        map.put(ABSTRACT_SUPER_CALL_WARNING, "Abstract fake override member access is deprecated. See https://youtrack.jetbrains.com/issue/KT-49017")
         map.put(
             INSTANCE_ACCESS_BEFORE_SUPER_CALL,
             "Cannot access ''{0}'' before superclass constructor has been called",
@@ -861,7 +861,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             WRONG_EXTENSION_FUNCTION_TYPE_WARNING,
-            "ExtensionFunctionType makes no sense on a non-function type. It will be an error in a future release."
+            "ExtensionFunctionType makes no sense on a non-function type. It will be an error in a future release. See https://youtrack.jetbrains.com/issue/KT-43527"
         )
 
         // Exposed visibility group // #
@@ -1460,7 +1460,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER,
-            "It''s forbidden using extension property type parameter ''{0}'' in delegate",
+            "It''s forbidden using extension property type parameter ''{0}'' in delegate. See https://youtrack.jetbrains.com/issue/KT-24643",
             SYMBOL
         )
         map.put(INITIALIZER_TYPE_MISMATCH, "Initializer type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)

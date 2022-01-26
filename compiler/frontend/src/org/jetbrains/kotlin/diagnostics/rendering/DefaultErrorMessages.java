@@ -146,7 +146,7 @@ public class DefaultErrorMessages {
         MAP.put(REPEATED_ANNOTATION_WARNING, "This annotation is not repeatable");
         MAP.put(NON_SOURCE_ANNOTATION_ON_INLINED_LAMBDA_EXPRESSION, "The lambda expression here is an inlined argument so this annotation cannot be stored anywhere");
         MAP.put(WRONG_EXTENSION_FUNCTION_TYPE, "ExtensionFunctionType is forbidden on a function type without parameters or on a non-function type");
-        MAP.put(WRONG_EXTENSION_FUNCTION_TYPE_WARNING, "ExtensionFunctionType makes no sense on a non-function type. It will be an error in a future release.");
+        MAP.put(WRONG_EXTENSION_FUNCTION_TYPE_WARNING, "ExtensionFunctionType makes no sense on a non-function type. It will be an error in a future release. See https://youtrack.jetbrains.com/issue/KT-43527");
 
         MAP.put(INAPPLICABLE_TARGET_ON_PROPERTY, "''@{0}:'' annotations could be applied only to property declarations", TO_STRING);
         MAP.put(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, "''@{0}:'' annotations could be applied only to mutable properties", TO_STRING);
@@ -492,7 +492,7 @@ public class DefaultErrorMessages {
         MAP.put(SUPERCLASS_NOT_ACCESSIBLE_FROM_INTERFACE, "Superclass is not accessible from interface");
         MAP.put(AMBIGUOUS_SUPER, "Many supertypes available, please specify the one you mean in angle brackets, e.g. 'super<Foo>'");
         MAP.put(ABSTRACT_SUPER_CALL, "Abstract member cannot be accessed directly");
-        MAP.put(ABSTRACT_SUPER_CALL_WARNING, "Abstract fake override member access is deprecated");
+        MAP.put(ABSTRACT_SUPER_CALL_WARNING, "Abstract fake override member access is deprecated. See https://youtrack.jetbrains.com/issue/KT-49017");
         MAP.put(NOT_A_SUPERTYPE, "Not an immediate supertype");
         MAP.put(TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER, "Type arguments do not need to be specified in a 'super' qualifier");
         MAP.put(QUALIFIED_SUPERTYPE_EXTENDED_BY_OTHER_SUPERTYPE, "Explicitly qualified supertype is extended by another supertype ''{0}''", RENDER_TYPE);
@@ -504,7 +504,7 @@ public class DefaultErrorMessages {
         MAP.put(USELESS_NULLABLE_CHECK, "Non-null type is checked for instance of nullable type");
         MAP.put(USELESS_IS_CHECK, "Check for instance is always ''{0}''", TO_STRING);
         MAP.put(WRONG_SETTER_PARAMETER_TYPE, "Setter parameter type must be equal to the type of the property, i.e. ''{0}''", RENDER_TYPE, RENDER_TYPE);
-        MAP.put(DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER, "It''s forbidden using extension property type parameter ''{0}'' in delegate", TO_STRING);
+        MAP.put(DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER, "It''s forbidden using extension property type parameter ''{0}'' in delegate. See https://youtrack.jetbrains.com/issue/KT-24643", TO_STRING);
         MAP.put(WRONG_GETTER_RETURN_TYPE, "Getter return type must be equal to the type of the property, i.e. ''{0}''", RENDER_TYPE, RENDER_TYPE);
         MAP.put(WRONG_SETTER_RETURN_TYPE, "Setter return type must be Unit");
         MAP.put(NO_COMPANION_OBJECT, "Classifier ''{0}'' does not have a companion object, and thus must be initialized here", NAME);
@@ -891,7 +891,7 @@ public class DefaultErrorMessages {
                 FQ_NAMES_IN_TYPES);
         MAP.put(ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED, "{0} is not abstract and does not implement abstract base class member {1}",
                 RENDER_CLASS_OR_OBJECT, FQ_NAMES_IN_TYPES);
-        MAP.put(ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED_WARNING, "Deprecated: {0} is not abstract and does not implement abstract base class member {1}",
+        MAP.put(ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED_WARNING, "Deprecated: {0} is not abstract and does not implement abstract base class member {1}. See https://youtrack.jetbrains.com/issue/KT-45508",
                 RENDER_CLASS_OR_OBJECT, FQ_NAMES_IN_TYPES);
 
         MAP.put(MANY_IMPL_MEMBER_NOT_IMPLEMENTED, "{0} must override {1} because it inherits many implementations of it",
