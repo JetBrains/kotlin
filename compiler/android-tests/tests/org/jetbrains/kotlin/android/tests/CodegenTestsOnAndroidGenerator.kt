@@ -12,6 +12,7 @@ import com.intellij.openapi.util.io.FileUtilRt
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.codegen.CodegenTestFiles
 import org.jetbrains.kotlin.codegen.GenerationUtils
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
@@ -215,7 +216,10 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             val disposable = Disposer.newDisposable()
             val environment = KotlinCoreEnvironment.createForTests(
                 disposable,
-                configuration.copy().apply { put(CommonConfigurationKeys.MODULE_NAME, "android-module-" + currentModuleIndex++) },
+                configuration.copy().apply {
+                    put(CommonConfigurationKeys.MODULE_NAME, "android-module-" + currentModuleIndex++)
+                    configureJdkClasspathRoots()
+                },
                 EnvironmentConfigFiles.JVM_CONFIG_FILES
             )
 

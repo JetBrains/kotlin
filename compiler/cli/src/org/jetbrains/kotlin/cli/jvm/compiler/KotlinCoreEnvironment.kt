@@ -107,7 +107,7 @@ import java.util.zip.ZipFile
 
 class KotlinCoreEnvironment private constructor(
     val projectEnvironment: ProjectEnvironment,
-    private val initialConfiguration: CompilerConfiguration,
+    val configuration: CompilerConfiguration,
     configFiles: EnvironmentConfigFiles
 ) {
 
@@ -191,8 +191,6 @@ class KotlinCoreEnvironment private constructor(
 
     private val classpathRootsResolver: ClasspathRootsResolver
     private val initialRoots = ArrayList<JavaRoot>()
-
-    val configuration: CompilerConfiguration = initialConfiguration.apply { setupJdkClasspathRoots(configFiles) }.copy()
 
     init {
         projectEnvironment.configureProjectEnvironment(configuration, configFiles)
@@ -751,31 +749,6 @@ class KotlinCoreEnvironment private constructor(
                 PsiElementFinder.EP.getPoint(project).registerExtension(JavaElementFinder(this))
                 @Suppress("DEPRECATION")
                 PsiElementFinder.EP.getPoint(project).registerExtension(PsiElementFinderImpl(this))
-            }
-        }
-
-        private fun CompilerConfiguration.setupJdkClasspathRoots(configFiles: EnvironmentConfigFiles) {
-            if (getBoolean(JVMConfigurationKeys.NO_JDK)) return
-
-            val jvmTarget = configFiles == EnvironmentConfigFiles.JVM_CONFIG_FILES
-            if (!jvmTarget) return
-
-            val jdkHome = get(JVMConfigurationKeys.JDK_HOME)
-            val (javaRoot, classesRoots) = if (jdkHome == null) {
-                val javaHome = File(System.getProperty("java.home"))
-                put(JVMConfigurationKeys.JDK_HOME, javaHome)
-
-                javaHome to PathUtil.getJdkClassesRootsFromCurrentJre()
-            } else {
-                jdkHome to PathUtil.getJdkClassesRoots(jdkHome)
-            }
-
-            if (!CoreJrtFileSystem.isModularJdk(javaRoot)) {
-                if (classesRoots.isEmpty()) {
-                    report(ERROR, "No class roots are found in the JDK path: $javaRoot")
-                } else {
-                    addJvmSdkRoots(classesRoots)
-                }
             }
         }
     }

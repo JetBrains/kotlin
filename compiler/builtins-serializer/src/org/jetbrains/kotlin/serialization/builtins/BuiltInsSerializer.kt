@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.metadata.MetadataSerializer
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -49,6 +50,7 @@ class BuiltInsSerializer(dependOnOldBuiltIns: Boolean) : MetadataSerializer(Buil
 
                 addKotlinSourceRoots(srcDirs.map { it.path })
                 addJvmClasspathRoots(extraClassPath)
+                configureJdkClasspathRoots()
 
                 put(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY, destDir)
                 put(CommonConfigurationKeys.MODULE_NAME, "module for built-ins serialization")

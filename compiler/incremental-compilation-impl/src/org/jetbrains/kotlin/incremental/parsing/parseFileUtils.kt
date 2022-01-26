@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -42,6 +43,7 @@ private fun classesFqNames(kotlinFiles: Collection<File>, disposable: Disposable
     val config = CompilerConfiguration()
     config.put(JVMConfigurationKeys.NO_JDK, true)
     config.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
+    config.configureJdkClasspathRoots()
     val configFiles = EnvironmentConfigFiles.JVM_CONFIG_FILES
     val environment = KotlinCoreEnvironment.createForProduction(disposable, config, configFiles)
     val psiManager = PsiManager.getInstance(environment.project)
