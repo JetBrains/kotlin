@@ -53,8 +53,8 @@ internal fun buildPropertyNode(
     storageManager: StorageManager,
     size: Int,
     classifiers: CirKnownClassifiers,
-    nodeRelationship: CirNodeRelationship? = null,
     settings: CommonizerSettings,
+    nodeRelationship: CirNodeRelationship? = null,
 ): CirPropertyNode = buildNode(
     storageManager = storageManager,
     size = size,
@@ -67,8 +67,8 @@ internal fun buildFunctionNode(
     storageManager: StorageManager,
     size: Int,
     classifiers: CirKnownClassifiers,
-    nodeRelationship: CirNodeRelationship?,
     settings: CommonizerSettings,
+    nodeRelationship: CirNodeRelationship?,
 ): CirFunctionNode = buildNode(
     storageManager = storageManager,
     size = size,
@@ -84,9 +84,9 @@ internal fun buildClassNode(
     storageManager: StorageManager,
     size: Int,
     classifiers: CirKnownClassifiers,
+    settings: CommonizerSettings,
     nodeRelationship: CirNodeRelationship?,
     classId: CirEntityId,
-    settings: CommonizerSettings,
 ): CirClassNode = buildNode(
     storageManager = storageManager,
     size = size,
@@ -108,8 +108,8 @@ internal fun buildClassConstructorNode(
     storageManager: StorageManager,
     size: Int,
     classifiers: CirKnownClassifiers,
-    nodeRelationship: CirNodeRelationship?,
     settings: CommonizerSettings,
+    nodeRelationship: CirNodeRelationship?,
 ): CirClassConstructorNode = buildNode(
     storageManager = storageManager,
     size = size,
@@ -122,8 +122,8 @@ internal fun buildTypeAliasNode(
     storageManager: StorageManager,
     size: Int,
     classifiers: CirKnownClassifiers,
-    typeAliasId: CirEntityId,
     settings: CommonizerSettings,
+    typeAliasId: CirEntityId,
 ): CirTypeAliasNode = buildNode(
     storageManager = storageManager,
     size = size,
