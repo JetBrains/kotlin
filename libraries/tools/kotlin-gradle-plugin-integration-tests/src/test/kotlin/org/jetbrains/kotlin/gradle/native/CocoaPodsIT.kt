@@ -1428,6 +1428,13 @@ class CocoaPodsIT : BaseGradleIT() {
     ) {
         val gradleProject = transformProjectWithPluginsDsl(projectName, gradleVersion)
 
+        gradleProject.projectDir.resolve("gradle.properties")
+            .takeIf(File::exists)
+            ?.let {
+                it.appendLine("kotlin_version=${defaultBuildOptions().kotlinVersion}")
+                it.appendLine("test_fixes_version=${defaultBuildOptions().kotlinVersion}")
+            }
+
         with(gradleProject) {
             setupWorkingDir()
 
