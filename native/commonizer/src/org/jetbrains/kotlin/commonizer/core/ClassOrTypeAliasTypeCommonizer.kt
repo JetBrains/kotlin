@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.CommonizerSettings
-import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabled
+import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabledKey
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.utils.isUnderKotlinNativeSyntheticPackages
@@ -22,7 +22,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
 ) : NullableSingleInvocationCommonizer<CirClassOrTypeAliasType> {
 
     constructor(typeCommonizer: TypeCommonizer, classifiers: CirKnownClassifiers, settings: CommonizerSettings) : this(
-        typeCommonizer, classifiers, settings.getSetting(OptimisticNumberCommonizationEnabled)
+        typeCommonizer, classifiers, settings.getSetting(OptimisticNumberCommonizationEnabledKey)
     )
 
     private val isMarkedNullableCommonizer = TypeNullabilityCommonizer(typeCommonizer.options)

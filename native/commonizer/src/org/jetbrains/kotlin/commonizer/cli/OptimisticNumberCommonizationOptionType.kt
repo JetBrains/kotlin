@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.commonizer.cli
 
-import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabled
+import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabledKey
 
 internal object OptimisticNumberCommonizationOptionType : CommonizerSettingOptionType<Boolean>(
     OPTIMISTIC_NUMBER_COMMONIZATION_ENABLED_OPTION_ALIAS,
     "Boolean (default true)\nEnable commonization of integer types with different bit width to the most narrow among them",
-    OptimisticNumberCommonizationEnabled,
+    OptimisticNumberCommonizationEnabledKey,
 ) {
     override fun parse(rawValue: String, onError: (reason: String) -> Nothing): Option<Boolean> =
         Option(this, parseBoolean(rawValue, onError))

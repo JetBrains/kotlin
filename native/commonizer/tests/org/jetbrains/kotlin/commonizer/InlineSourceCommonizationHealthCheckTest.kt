@@ -25,8 +25,8 @@ class InlineSourceCommonizationHealthCheckTest : AbstractInlineSourcesCommonizat
         assertFailsWith<IllegalStateException>("Defining a setting multiple times should be forbidden") {
             commonize {
                 outputTarget("(a, b)")
-                setting(OptimisticNumberCommonizationEnabled, true)
-                setting(OptimisticNumberCommonizationEnabled, false)
+                setting(OptimisticNumberCommonizationEnabledKey, true)
+                setting(OptimisticNumberCommonizationEnabledKey, false)
             }
         }
     }

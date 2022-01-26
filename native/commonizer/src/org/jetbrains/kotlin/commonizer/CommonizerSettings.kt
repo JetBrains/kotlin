@@ -14,7 +14,7 @@ interface CommonizerSettings {
     fun <T : Any> getSetting(key: Key<T>): T
 }
 
-object OptimisticNumberCommonizationEnabled : CommonizerSettings.Key<Boolean>() {
+object OptimisticNumberCommonizationEnabledKey : CommonizerSettings.Key<Boolean>() {
     override val defaultValue: Boolean = true
 }
 

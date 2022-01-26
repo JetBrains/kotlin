@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.CommonizerSettings
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabled
+import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabledKey
 import org.jetbrains.kotlin.commonizer.allLeaves
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
@@ -52,7 +52,7 @@ private fun createUnsafeNumberAnnotationIfNecessary(
     settings: CommonizerSettings,
     values: List<CirTypeAlias>,
 ): CirAnnotation? {
-    val isOptimisticCommonizationEnabled = settings.getSetting(OptimisticNumberCommonizationEnabled)
+    val isOptimisticCommonizationEnabled = settings.getSetting(OptimisticNumberCommonizationEnabledKey)
 
     if (!isOptimisticCommonizationEnabled)
         return null

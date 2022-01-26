@@ -6,14 +6,14 @@
 package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
-import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabled
+import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabledKey
 import org.jetbrains.kotlin.commonizer.assertCommonized
 
 class DisabledOptimisticNumberCommonizationTest : AbstractInlineSourcesCommonizationTest() {
     fun `test non-platform types`() {
         val result = commonize {
             outputTarget("(a, b)")
-            setting(OptimisticNumberCommonizationEnabled, false)
+            setting(OptimisticNumberCommonizationEnabledKey, false)
             registerFakeStdlibDependency("(a, b)")
 
             "a" withSource """
@@ -35,7 +35,7 @@ class DisabledOptimisticNumberCommonizationTest : AbstractInlineSourcesCommoniza
     fun `test platform types`() {
         val result = commonize {
             outputTarget("(a, b)")
-            setting(OptimisticNumberCommonizationEnabled, false)
+            setting(OptimisticNumberCommonizationEnabledKey, false)
             registerFakeStdlibDependency("(a, b)")
 
             "a" withSource """
