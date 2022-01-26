@@ -85,8 +85,10 @@ gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
     objectFactory_(objectFactory),
     gcScheduler_(gcScheduler),
     finalizerProcessor_(make_unique<FinalizerProcessor>([this](int64_t epoch) { state_.finalized(epoch); })) {
-    gcScheduler_.SetScheduleGC([this]() NO_EXTERNAL_CALLS_CHECK NO_INLINE {
+    gcScheduler_.SetScheduleGC([this]() NO_INLINE {
         RuntimeLogDebug({kTagGC}, "Scheduling GC by thread %d", konan::currentThreadId());
+        // This call acquires a lock, so we need to ensure that we're in the safe state.
+        NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
         state_.schedule();
     });
     gcThread_ = std::thread([this] {
