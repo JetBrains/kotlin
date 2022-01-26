@@ -643,6 +643,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +booleanField("isSuspend")
         }
 
+        intersectionTypeRef.configure {
+            +field("leftType", typeRef, nullable = true)
+            +field("rightType", typeRef, nullable = true)
+        }
+
         thisReceiverExpression.configure {
             +field("calleeReference", thisReference)
             +booleanField("isImplicit")

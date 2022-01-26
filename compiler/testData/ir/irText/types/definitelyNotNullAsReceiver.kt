@@ -1,5 +1,5 @@
+// FIR_IDENTICAL
 //!LANGUAGE: +DefinitelyNonNullableTypes
-// IGNORE_BACKEND_FIR: ANY
 
 fun <T> (T & Any).foo() {}
 fun <T> foo(l: (T & Any) -> Unit) {}

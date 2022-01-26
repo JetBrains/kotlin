@@ -1,5 +1,4 @@
 //!LANGUAGE: +DefinitelyNonNullableTypes
-// IGNORE_BACKEND_FIR: ANY
 // SKIP_KT_DUMP
 
 open class B<T> {

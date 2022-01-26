@@ -135,6 +135,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRefWithNullability
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
+import org.jetbrains.kotlin.fir.types.FirIntersectionTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -277,6 +278,8 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
     override fun visitDynamicTypeRef(dynamicTypeRef: FirDynamicTypeRef)  = visitTypeRefWithNullability(dynamicTypeRef)
 
     override fun visitFunctionTypeRef(functionTypeRef: FirFunctionTypeRef)  = visitTypeRefWithNullability(functionTypeRef)
+
+    override fun visitIntersectionTypeRef(intersectionTypeRef: FirIntersectionTypeRef)  = visitTypeRefWithNullability(intersectionTypeRef)
 
     override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef)  = visitTypeRef(implicitTypeRef)
 

@@ -161,6 +161,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val userTypeRef by element(TypeRef, typeRefWithNullability)
     val dynamicTypeRef by element(TypeRef, typeRefWithNullability)
     val functionTypeRef by element(TypeRef, typeRefWithNullability)
+    val intersectionTypeRef by element(TypeRef, typeRefWithNullability)
     val implicitTypeRef by element(TypeRef, typeRef)
 
     val effectDeclaration by element(Contracts)

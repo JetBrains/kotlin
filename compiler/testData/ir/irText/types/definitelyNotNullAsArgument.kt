@@ -1,5 +1,4 @@
 //!LANGUAGE: +DefinitelyNonNullableTypes
-// IGNORE_BACKEND_FIR: ANY
 
 interface I<T> {
     fun input(t: T)

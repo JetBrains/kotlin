@@ -30,7 +30,7 @@ FILE fqName:<root> fileName:/bangbang.kt
     VALUE_PARAMETER name:a index:0 type:X of <root>.test3
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 <X> (a: X of <root>.test3): X of <root>.test3 declared in <root>'
-        CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=X of <root>.test3 origin=EXCLEXCL
+        CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): T0 of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type={X of <root>.test3 & Any} origin=EXCLEXCL
           <T0>: X of <root>.test3
           arg0: GET_VAR 'a: X of <root>.test3 declared in <root>.test3' type=X of <root>.test3 origin=null
   FUN name:useString visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Unit
