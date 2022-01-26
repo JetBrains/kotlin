@@ -108,39 +108,22 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
 
         @InlineSourcesCommonizationTestDsl
         fun <T : Any> setting(type: CommonizerSettings.Key<T>, value: T) {
-            val setting = Setting(type, value)
-            check(setting !in settings) {
+            val setting = MapBasedCommonizerSettings.Setting(type, value)
+            check(setting.key !in settings.map { it.key }) {
                 "An attempt to add the same setting '${type::class.java.simpleName}' multiple times. " +
-                        "Current value: '$value'; Previous value: '${settings.find { it == setting }!!.value}'"
+                        "Current value: '$value'; Previous value: '${settings.find { it.key == setting.key }!!.settingValue}'"
             }
 
             settings.add(setting)
         }
 
-        // Comparison only by setting type is intentional
-        private class Setting<T : Any>(
-            val type: CommonizerSettings.Key<T>,
-            val value: T,
-        ) {
-            override fun equals(other: Any?): Boolean =
-                other is Setting<*> && type == other.type
-
-            override fun hashCode(): Int {
-                return type.hashCode()
-            }
-
-            fun toCommonizerSetting(): MapBasedCommonizerSettings.Setting<T> {
-                return MapBasedCommonizerSettings.Setting(type, value)
-            }
-        }
-
-        private val settings: MutableSet<Setting<*>> = LinkedHashSet()
+        private val settings: MutableSet<MapBasedCommonizerSettings.Setting<*>> = LinkedHashSet()
 
         fun build(): Parameters = Parameters(
             outputTargets = outputTargets ?: setOf(SharedCommonizerTarget(targets.map { it.target }.allLeaves())),
             dependencies = dependencies.toTargetDependent(),
             targets = targets.toList(),
-            settings = MapBasedCommonizerSettings(*settings.map { it.toCommonizerSetting() }.toTypedArray()),
+            settings = MapBasedCommonizerSettings(*settings.toTypedArray()),
         )
     }
 
