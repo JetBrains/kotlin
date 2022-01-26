@@ -45,19 +45,19 @@ internal abstract class Task(private val options: Collection<Option<*>>) : Compa
         return option?.value as T?
     }
 
-    protected fun fetchSettingsFromOptions(): CommonizerSettings {
+    protected fun getSettingsFromOptions(): CommonizerSettings {
         val passedSettings = ADDITIONAL_COMMONIZER_SETTINGS.map { settingOptionType ->
-            optionToCommonizerSetting(settingOptionType)
+            settingOptionType.toCommonizerSetting()
         }
 
         return MapBasedCommonizerSettings(*passedSettings.toTypedArray())
     }
 
-    private fun <T : Any> optionToCommonizerSetting(optionType: CommonizerSettingOptionType<T>): MapBasedCommonizerSettings.Setting<T> {
-        val key = optionType.commonizerSettingKey
+    private fun <T : Any> CommonizerSettingOptionType<T>.toCommonizerSetting(): MapBasedCommonizerSettings.Setting<T> {
+        val key = commonizerSettingKey
 
         @Suppress("UNCHECKED_CAST")
-        val settingValue = options.singleOrNull { option -> option.type == optionType }?.value as? T ?: key.defaultValue
+        val settingValue = options.singleOrNull { option -> option.type == this }?.value as? T ?: key.defaultValue
 
         return MapBasedCommonizerSettings.Setting(key, settingValue)
     }
