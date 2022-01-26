@@ -5,19 +5,6 @@
 
 package org.jetbrains.kotlin.commonizer
 
-interface CommonizerSettings {
-
-    sealed class Key<T : Any> {
-        abstract val defaultValue: T
-    }
-
-    fun <T : Any> getSetting(key: Key<T>): T
-}
-
-object OptimisticNumberCommonizationEnabledKey : CommonizerSettings.Key<Boolean>() {
-    override val defaultValue: Boolean = true
-}
-
 internal object DefaultCommonizerSettings : CommonizerSettings {
     override fun <T : Any> getSetting(key: CommonizerSettings.Key<T>): T {
         return key.defaultValue

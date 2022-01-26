@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.commonizer
 
-import org.jetbrains.kotlin.commonizer.cli.OptionAlias
 import java.io.File
 import java.io.Serializable
 
@@ -18,7 +17,7 @@ public interface CInteropCommonizer : Serializable {
         outputTargets: Set<SharedCommonizerTarget>,
         outputDirectory: File,
         logLevel: CommonizerLogLevel = CommonizerLogLevel.Quiet,
-        additionalSettings: List<AdditionalCommonizerSetting> = emptyList(),
+        additionalSettings: List<AdditionalCommonizerSetting<*>> = emptyList(),
     )
 }
 
@@ -29,14 +28,14 @@ public interface NativeDistributionCommonizer : Serializable {
         outputDirectory: File,
         outputTargets: Set<SharedCommonizerTarget>,
         logLevel: CommonizerLogLevel = CommonizerLogLevel.Quiet,
-        additionalSettings: List<AdditionalCommonizerSetting> = emptyList(),
+        additionalSettings: List<AdditionalCommonizerSetting<*>> = emptyList(),
     )
 }
 
-public data class AdditionalCommonizerSetting(
-    public val key: String,
-    public val value: Any,
+public data class AdditionalCommonizerSetting<T : Any>(
+    public val key: CommonizerSettings.Key<T>,
+    public val value: T,
 )
 
-public infix fun OptionAlias.setTo(settingValue: Any): AdditionalCommonizerSetting =
-    AdditionalCommonizerSetting(this.argumentString, settingValue)
+public infix fun <T : Any> CommonizerSettings.Key<T>.setTo(settingValue: T): AdditionalCommonizerSetting<T> =
+    AdditionalCommonizerSetting(this, settingValue)

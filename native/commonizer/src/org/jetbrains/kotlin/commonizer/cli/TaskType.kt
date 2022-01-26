@@ -20,12 +20,12 @@ internal enum class TaskType(
             NativeTargetsOptionType,
             OutputCommonizerTargetsOptionType,
             BooleanOptionType(
-                COPY_STDLIB_OPTION_ALIAS,
+                COPY_STDLIB_ALIAS,
                 "Boolean (default false);\nwhether to copy Kotlin/Native endorsed libraries to the destination",
                 mandatory = false
             ),
             BooleanOptionType(
-                COPY_ENDORSED_LIBS_OPTION_ALIAS,
+                COPY_ENDORSED_LIBS_ALIAS,
                 "Boolean (default false);\nwhether to copy Kotlin/Native endorsed libraries to the destination",
                 mandatory = false
             ),

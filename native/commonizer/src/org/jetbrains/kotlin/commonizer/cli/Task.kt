@@ -30,7 +30,7 @@ internal abstract class Task(private val options: Collection<Option<*>>) : Compa
     abstract fun execute(logPrefix: String = "")
 
     protected inline fun <reified T, reified O : OptionType<T>> getMandatory(nameFilter: (String) -> Boolean = { true }): T {
-        val option = options.filter { it.type is O }.single { nameFilter(it.type.alias.aliasString) }
+        val option = options.filter { it.type is O }.single { nameFilter(it.type.alias) }
         check(option.type.mandatory)
 
         @Suppress("UNCHECKED_CAST")
@@ -38,7 +38,7 @@ internal abstract class Task(private val options: Collection<Option<*>>) : Compa
     }
 
     internal inline fun <reified T, reified O : OptionType<T>> getOptional(nameFilter: (String) -> Boolean = { true }): T? {
-        val option = options.filter { it.type is O }.singleOrNull { nameFilter(it.type.alias.aliasString) }
+        val option = options.filter { it.type is O }.singleOrNull { nameFilter(it.type.alias) }
         if (option != null) check(!option.type.mandatory)
 
         @Suppress("UNCHECKED_CAST")

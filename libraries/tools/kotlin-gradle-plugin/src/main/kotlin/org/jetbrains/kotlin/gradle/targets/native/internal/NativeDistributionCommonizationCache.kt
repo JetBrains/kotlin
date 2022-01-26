@@ -27,7 +27,7 @@ internal class NativeDistributionCommonizationCache(
         outputDirectory: File,
         outputTargets: Set<SharedCommonizerTarget>,
         logLevel: CommonizerLogLevel,
-        additionalSettings: List<AdditionalCommonizerSetting>,
+        additionalSettings: List<AdditionalCommonizerSetting<*>>,
     ) {
         if (!project.isNativeDistributionCommonizationCacheEnabled) {
             logInfo("Cache disabled")
