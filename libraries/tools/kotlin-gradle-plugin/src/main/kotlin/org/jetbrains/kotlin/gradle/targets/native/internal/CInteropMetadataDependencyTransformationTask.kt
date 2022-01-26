@@ -124,11 +124,6 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     protected val chooseVisibleSourceSetsProjection
         get() = chooseVisibleSourceSets.map(::ChooseVisibleSourceSetProjection).toSet()
 
-    @Suppress("unused")
-    @get:Input
-    protected val dependencyProjectStructureMetadata
-        get() = chooseVisibleSourceSets.map { it.projectStructureMetadata }
-
     @get:Internal
     val outputLibraryFiles = outputFilesProvider {
         outputDirectory.walkTopDown().maxDepth(2).filter { it.isFile && it.extension == KLIB_FILE_EXTENSION }.toList()
