@@ -31,7 +31,7 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
 
     @Test
     public void testAllFilesPresentInReferenceResolve() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
     }
 
     @Test
@@ -59,12 +59,6 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     }
 
     @Test
-    @TestMetadata("AnnotationParameter.kt")
-    public void testAnnotationParameter() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/AnnotationParameter.kt");
-    }
-
-    @Test
     @TestMetadata("AnnotationTypeParameter.kt")
     public void testAnnotationTypeParameter() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/AnnotationTypeParameter.kt");
@@ -74,12 +68,6 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     @TestMetadata("ClassInTypeConstraint.kt")
     public void testClassInTypeConstraint() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/ClassInTypeConstraint.kt");
-    }
-
-    @Test
-    @TestMetadata("ClassNameBeforeDot.kt")
-    public void testClassNameBeforeDot() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/ClassNameBeforeDot.kt");
     }
 
     @Test
@@ -104,24 +92,6 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     @TestMetadata("ClassReferenceInImport.kt")
     public void testClassReferenceInImport() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/ClassReferenceInImport.kt");
-    }
-
-    @Test
-    @TestMetadata("CollectionLiteralLeft.kt")
-    public void testCollectionLiteralLeft() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/CollectionLiteralLeft.kt");
-    }
-
-    @Test
-    @TestMetadata("CollectionLiteralRight.kt")
-    public void testCollectionLiteralRight() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/CollectionLiteralRight.kt");
-    }
-
-    @Test
-    @TestMetadata("CoroutineSuspensionPoint.kt")
-    public void testCoroutineSuspensionPoint() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/CoroutineSuspensionPoint.kt");
     }
 
     @Test
@@ -167,12 +137,6 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     }
 
     @Test
-    @TestMetadata("DeprecatedHidden.kt")
-    public void testDeprecatedHidden() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/DeprecatedHidden.kt");
-    }
-
-    @Test
     @TestMetadata("EnumValues.kt")
     public void testEnumValues() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/EnumValues.kt");
@@ -182,30 +146,6 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     @TestMetadata("ExternalCompanionObject.kt")
     public void testExternalCompanionObject() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/ExternalCompanionObject.kt");
-    }
-
-    @Test
-    @TestMetadata("FakeJavaLang1.kt")
-    public void testFakeJavaLang1() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/FakeJavaLang1.kt");
-    }
-
-    @Test
-    @TestMetadata("FakeJavaLang2.kt")
-    public void testFakeJavaLang2() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/FakeJavaLang2.kt");
-    }
-
-    @Test
-    @TestMetadata("FakeJavaLang3.kt")
-    public void testFakeJavaLang3() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/FakeJavaLang3.kt");
-    }
-
-    @Test
-    @TestMetadata("FakeJavaLang4.kt")
-    public void testFakeJavaLang4() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/FakeJavaLang4.kt");
     }
 
     @Test
@@ -287,18 +227,6 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     }
 
     @Test
-    @TestMetadata("InObjectClassObject.kt")
-    public void testInObjectClassObject() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/InObjectClassObject.kt");
-    }
-
-    @Test
-    @TestMetadata("InSecondClassObject.kt")
-    public void testInSecondClassObject() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/InSecondClassObject.kt");
-    }
-
-    @Test
     @TestMetadata("InVaragReferenceInFunctionBody.kt")
     public void testInVaragReferenceInFunctionBody() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/InVaragReferenceInFunctionBody.kt");
@@ -308,12 +236,6 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     @TestMetadata("InVaragReferenceInNamedParameter.kt")
     public void testInVaragReferenceInNamedParameter() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/InVaragReferenceInNamedParameter.kt");
-    }
-
-    @Test
-    @TestMetadata("InvisibleMember.kt")
-    public void testInvisibleMember() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/InvisibleMember.kt");
     }
 
     @Test
@@ -395,12 +317,6 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     }
 
     @Test
-    @TestMetadata("PropertyPlaceInClassObjectInObject.kt")
-    public void testPropertyPlaceInClassObjectInObject() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/PropertyPlaceInClassObjectInObject.kt");
-    }
-
-    @Test
     @TestMetadata("ReferenceInClassWhereConstraint.kt")
     public void testReferenceInClassWhereConstraint() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/ReferenceInClassWhereConstraint.kt");
@@ -422,12 +338,6 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     @TestMetadata("ResolveClass.kt")
     public void testResolveClass() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/ResolveClass.kt");
-    }
-
-    @Test
-    @TestMetadata("ResolveClassNameInCallExpression.kt")
-    public void testResolveClassNameInCallExpression() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/ResolveClassNameInCallExpression.kt");
     }
 
     @Test
@@ -539,12 +449,6 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     }
 
     @Test
-    @TestMetadata("TopLevelClassVsLocalClassQualifier.kt")
-    public void testTopLevelClassVsLocalClassQualifier() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/TopLevelClassVsLocalClassQualifier.kt");
-    }
-
-    @Test
     @TestMetadata("TopLevelCompanionObjectVsLocalClassConstructor.kt")
     public void testTopLevelCompanionObjectVsLocalClassConstructor() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/TopLevelCompanionObjectVsLocalClassConstructor.kt");
@@ -611,63 +515,9 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     }
 
     @Test
-    @TestMetadata("TypeArgumentBeforeDot2.kt")
-    public void testTypeArgumentBeforeDot2() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/TypeArgumentBeforeDot2.kt");
-    }
-
-    @Test
-    @TestMetadata("TypeArgumentUnresolvedClass.kt")
-    public void testTypeArgumentUnresolvedClass() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/TypeArgumentUnresolvedClass.kt");
-    }
-
-    @Test
-    @TestMetadata("TypeArgumentUnresolvedConstructor.kt")
-    public void testTypeArgumentUnresolvedConstructor() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/TypeArgumentUnresolvedConstructor.kt");
-    }
-
-    @Test
-    @TestMetadata("TypeArgumentWrongNumber.kt")
-    public void testTypeArgumentWrongNumber() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/TypeArgumentWrongNumber.kt");
-    }
-
-    @Test
     @TestMetadata("ValueParameter.kt")
     public void testValueParameter() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/ValueParameter.kt");
-    }
-
-    @Test
-    @TestMetadata("WrongNumberOfTypeArguments.kt")
-    public void testWrongNumberOfTypeArguments() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/WrongNumberOfTypeArguments.kt");
-    }
-
-    @Test
-    @TestMetadata("WrongNumberOfTypeArguments2.kt")
-    public void testWrongNumberOfTypeArguments2() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/WrongNumberOfTypeArguments2.kt");
-    }
-
-    @Test
-    @TestMetadata("WrongNumberOfTypeArguments3.kt")
-    public void testWrongNumberOfTypeArguments3() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/WrongNumberOfTypeArguments3.kt");
-    }
-
-    @Test
-    @TestMetadata("WrongNumberOfTypeArguments4.kt")
-    public void testWrongNumberOfTypeArguments4() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/WrongNumberOfTypeArguments4.kt");
-    }
-
-    @Test
-    @TestMetadata("WrongNumberOfTypeArgumentsInSupertype.kt")
-    public void testWrongNumberOfTypeArgumentsInSupertype() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/WrongNumberOfTypeArgumentsInSupertype.kt");
     }
 
     @Nested
@@ -676,19 +526,13 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     public class ArrayAccess {
         @Test
         public void testAllFilesPresentInArrayAccess() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/arrayAccess"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/arrayAccess"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
         }
 
         @Test
         @TestMetadata("get.kt")
         public void testGet() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/get.kt");
-        }
-
-        @Test
-        @TestMetadata("getFunction.kt")
-        public void testGetFunction() throws Exception {
-            runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/getFunction.kt");
         }
 
         @Test
@@ -704,12 +548,6 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
         }
 
         @Test
-        @TestMetadata("setFunction.kt")
-        public void testSetFunction() throws Exception {
-            runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/setFunction.kt");
-        }
-
-        @Test
         @TestMetadata("setOperator.kt")
         public void testSetOperator() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/setOperator.kt");
@@ -722,7 +560,7 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     public class ConstructorDelegatingReference {
         @Test
         public void testAllFilesPresentInConstructorDelegatingReference() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/constructorDelegatingReference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/constructorDelegatingReference"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
         }
 
         @Test
@@ -744,13 +582,7 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     public class DelegatedPropertyAccessors {
         @Test
         public void testAllFilesPresentInDelegatedPropertyAccessors() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("unresolved.kt")
-        public void testUnresolved() throws Exception {
-            runTest("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/unresolved.kt");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
         }
 
         @Nested
@@ -759,7 +591,7 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
         public class InSource {
             @Test
             public void testAllFilesPresentInInSource() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/inSource"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/inSource"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
             }
 
             @Test
@@ -793,7 +625,7 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
         public class InStandardLibrary {
             @Test
             public void testAllFilesPresentInInStandardLibrary() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/inStandardLibrary"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/delegatedPropertyAccessors/inStandardLibrary"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
             }
 
             @Test
@@ -816,13 +648,7 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     public class ForLoopIn {
         @Test
         public void testAllFilesPresentInForLoopIn() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
-        }
-
-        @Test
-        @TestMetadata("unresolvedIterator.kt")
-        public void testUnresolvedIterator() throws Exception {
-            runTest("analysis/analysis-api/testData/referenceResolve/forLoopIn/unresolvedIterator.kt");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
         }
 
         @Nested
@@ -831,7 +657,7 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
         public class InBuiltIns {
             @Test
             public void testAllFilesPresentInInBuiltIns() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/inBuiltIns"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/inBuiltIns"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
             }
 
             @Test
@@ -853,7 +679,7 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
         public class InLibrary {
             @Test
             public void testAllFilesPresentInInLibrary() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/inLibrary"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/inLibrary"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
             }
 
             @Test
@@ -875,19 +701,13 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
 
             @Test
             public void testAllFilesPresentInInSource() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/inSource"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/forLoopIn/inSource"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
             }
 
             @Test
             @TestMetadata("allMembers.kt")
             public void testAllMembers() throws Exception {
                 runTest("analysis/analysis-api/testData/referenceResolve/forLoopIn/inSource/allMembers.kt");
-            }
-
-            @Test
-            @TestMetadata("nextMissing.kt")
-            public void testNextMissing() throws Exception {
-                runTest("analysis/analysis-api/testData/referenceResolve/forLoopIn/inSource/nextMissing.kt");
             }
         }
     }
@@ -898,7 +718,7 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     public class InImport {
         @Test
         public void testAllFilesPresentInInImport() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/inImport"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/inImport"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
         }
 
         @Test
@@ -962,7 +782,7 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     public class Invoke {
         @Test
         public void testAllFilesPresentInInvoke() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/invoke"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/invoke"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
         }
 
         @Test
@@ -972,21 +792,9 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
         }
 
         @Test
-        @TestMetadata("lambdaAndParensIncorrectVararg.kt")
-        public void testLambdaAndParensIncorrectVararg() throws Exception {
-            runTest("analysis/analysis-api/testData/referenceResolve/invoke/lambdaAndParensIncorrectVararg.kt");
-        }
-
-        @Test
         @TestMetadata("lambdaNoPar.kt")
         public void testLambdaNoPar() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/invoke/lambdaNoPar.kt");
-        }
-
-        @Test
-        @TestMetadata("lambdaNoParIncorrectVararg.kt")
-        public void testLambdaNoParIncorrectVararg() throws Exception {
-            runTest("analysis/analysis-api/testData/referenceResolve/invoke/lambdaNoParIncorrectVararg.kt");
         }
 
         @Test
@@ -996,21 +804,9 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
         }
 
         @Test
-        @TestMetadata("lambdaNoParLabelIncorrectVararg.kt")
-        public void testLambdaNoParLabelIncorrectVararg() throws Exception {
-            runTest("analysis/analysis-api/testData/referenceResolve/invoke/lambdaNoParLabelIncorrectVararg.kt");
-        }
-
-        @Test
         @TestMetadata("lambdaNoParRCurly.kt")
         public void testLambdaNoParRCurly() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/invoke/lambdaNoParRCurly.kt");
-        }
-
-        @Test
-        @TestMetadata("lambdaNoParRCurlyIncorrectVararg.kt")
-        public void testLambdaNoParRCurlyIncorrectVararg() throws Exception {
-            runTest("analysis/analysis-api/testData/referenceResolve/invoke/lambdaNoParRCurlyIncorrectVararg.kt");
         }
 
         @Test
@@ -1032,12 +828,6 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
         }
 
         @Test
-        @TestMetadata("nonemptyLambdaRParIncorrectVararg.kt")
-        public void testNonemptyLambdaRParIncorrectVararg() throws Exception {
-            runTest("analysis/analysis-api/testData/referenceResolve/invoke/nonemptyLambdaRParIncorrectVararg.kt");
-        }
-
-        @Test
         @TestMetadata("oneParam.kt")
         public void testOneParam() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/invoke/oneParam.kt");
@@ -1056,7 +846,7 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     public class NestedTypes {
         @Test
         public void testAllFilesPresentInNestedTypes() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/nestedTypes"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/nestedTypes"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
         }
 
         @Test
@@ -1138,7 +928,7 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     public class PackageReference {
         @Test
         public void testAllFilesPresentInPackageReference() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/packageReference"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/packageReference"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
         }
 
         @Test
@@ -1172,7 +962,7 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     public class QualifiedAccess {
         @Test
         public void testAllFilesPresentInQualifiedAccess() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/qualifiedAccess"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/qualifiedAccess"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
         }
 
         @Test
@@ -1230,7 +1020,7 @@ public class FirLibrarySourceReferenceResolveTestGenerated extends AbstractRefer
     public class TypeParameter {
         @Test
         public void testAllFilesPresentInTypeParameter() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeParameter"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeParameter"), Pattern.compile("^([^.]+)\\.kt$"), null, true, "withErrors");
         }
 
         @Test
