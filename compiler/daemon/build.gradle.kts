@@ -14,7 +14,6 @@ dependencies {
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:cli-js"))
     compileOnly(project(":compiler:incremental-compilation-impl"))
-    compileOnly(project(":daemon-common-new"))
 
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
