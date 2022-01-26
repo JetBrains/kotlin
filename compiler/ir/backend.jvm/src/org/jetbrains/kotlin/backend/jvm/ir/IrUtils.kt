@@ -11,7 +11,9 @@ import org.jetbrains.kotlin.ir.util.isFunction
 import org.jetbrains.kotlin.ir.util.isSuspendFunctionTypeOrSubtype
 
 // this function moved to the IrUtils.kt file to restore binary compatibility with rhizomedb & noria
-fun IrValueParameter.isInlineParameter() =
+@JvmName("isInlineParameter")
+@Deprecated("Use isInlineParameter() from JvmIrInlineUtils.kt.", level = DeprecationLevel.HIDDEN)
+fun IrValueParameter.isInlineParameterOld() =
     index >= 0 && !isNoinline && (type.isFunction() || type.isSuspendFunctionTypeOrSubtype()) &&
             // Parameters with default values are always nullable, so check the expression too.
             // Note that the frontend has a diagnostic for nullable inline parameters, so actually
