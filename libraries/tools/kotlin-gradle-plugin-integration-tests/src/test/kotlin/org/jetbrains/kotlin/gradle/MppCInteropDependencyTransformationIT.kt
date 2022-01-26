@@ -24,24 +24,25 @@ import org.junit.Test
  * - dependency-mode=project: In this case p2 will just declare a regular project dependency on p1
  * - dependency-mode=repository: In this case p2 will rely on a previously published version of p1
  */
-open class MppCInteropDependencyTransformationIT : BaseGradleIT() {
+abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
 
-    protected val baseBuildOptions
-        get() = defaultBuildOptions().copy(
+    override fun defaultBuildOptions(): BuildOptions = super.defaultBuildOptions().run {
+        copy(
             forceOutputToStdout = true,
             warningMode = WarningMode.Fail,
             parallelTasksInProject = true,
-            freeCommandLineArgs = defaultBuildOptions().freeCommandLineArgs + "-s"
+            freeCommandLineArgs = freeCommandLineArgs + "-s"
         )
+    }
 
     protected val projectDependencyOptions
-        get() = baseBuildOptions.copy(
-            freeCommandLineArgs = baseBuildOptions.freeCommandLineArgs + "-PdependencyMode=project"
+        get() = defaultBuildOptions().copy(
+            freeCommandLineArgs = defaultBuildOptions().freeCommandLineArgs + "-PdependencyMode=project"
         )
 
     protected val repositoryDependencyOptions
-        get() = baseBuildOptions.copy(
-            freeCommandLineArgs = baseBuildOptions.freeCommandLineArgs + "-PdependencyMode=repository"
+        get() = defaultBuildOptions().copy(
+            freeCommandLineArgs = defaultBuildOptions().freeCommandLineArgs + "-PdependencyMode=repository"
         )
 
     class ComplexProject : MppCInteropDependencyTransformationIT() {
@@ -178,9 +179,9 @@ open class MppCInteropDependencyTransformationIT : BaseGradleIT() {
 
         private fun WithSourceSetCommonizerDependencies.assertP3SourceSetDependencies() {
             /*
-        windowsAndLinuxMain / windowsAndLinuxTest will not have a 'perfect target match' in p1.
-        They will choose cinterops associated with 'nativeMain'
-         */
+            windowsAndLinuxMain / windowsAndLinuxTest will not have a 'perfect target match' in p1.
+            They will choose cinterops associated with 'nativeMain'
+            */
             listOf("nativeMain", "nativeTest", "windowsAndLinuxMain", "windowsAndLinuxTest").forEach { sourceSetName ->
                 getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies()
                     .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
@@ -266,7 +267,7 @@ open class MppCInteropDependencyTransformationIT : BaseGradleIT() {
         }
 
         @Test
-        private fun `test - transformation - UP-TO-DATE behaviour - on removing and adding targets - on p2 - dependencyMode=project`() {
+        fun `test - transformation - UP-TO-DATE behaviour - on removing and adding targets - on p2 - dependencyMode=project`() {
             `test - transformation - UP-TO-DATE behaviour - on removing and adding targets - on p2`(projectDependencyOptions)
         }
 
@@ -283,7 +284,7 @@ open class MppCInteropDependencyTransformationIT : BaseGradleIT() {
         private fun publishP1ToBuildRepository() = project.publishP1ToBuildRepository()
     }
 
-    class KT46198 : MppCInteropDependencyTransformationIT() {
+    class KT50952 : MppCInteropDependencyTransformationIT() {
         private val project by lazy { Project("cinterop-MetadataDependencyTransformation-kt-50952") }
 
         @Test
