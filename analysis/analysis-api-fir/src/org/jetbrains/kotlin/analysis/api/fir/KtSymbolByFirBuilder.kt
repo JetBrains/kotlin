@@ -9,10 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.ContainerUtil
-import org.jetbrains.kotlin.analysis.api.KtStarProjectionTypeArgument
-import org.jetbrains.kotlin.analysis.api.KtTypeArgument
-import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.ValidityTokenOwner
+import org.jetbrains.kotlin.analysis.api.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.*
 import org.jetbrains.kotlin.analysis.api.fir.utils.weakRef
@@ -63,7 +60,6 @@ internal class KtSymbolByFirBuilder private constructor(
     private val extensionReceiverSymbolsCache: BuilderCache<FirCallableSymbol<*>, KtSymbol>,
     private val filesCache: BuilderCache<FirFileSymbol, KtFileSymbol>,
     private val backingFieldCache: BuilderCache<FirBackingFieldSymbol, KtBackingFieldSymbol>,
-    private val typesCache: BuilderCache<ConeKotlinType, KtType>,
 ) : ValidityTokenOwner {
     private val resolveState by weakRef(resolveState)
 
@@ -88,7 +84,6 @@ internal class KtSymbolByFirBuilder private constructor(
         withReadOnlyCaching = false,
         symbolsCache = BuilderCache(),
         extensionReceiverSymbolsCache = BuilderCache(),
-        typesCache = BuilderCache(),
         backingFieldCache = BuilderCache(),
         filesCache = BuilderCache(),
     )
@@ -102,7 +97,6 @@ internal class KtSymbolByFirBuilder private constructor(
             withReadOnlyCaching = true,
             symbolsCache = symbolsCache.createReadOnlyCopy(),
             extensionReceiverSymbolsCache = extensionReceiverSymbolsCache.createReadOnlyCopy(),
-            typesCache = typesCache.createReadOnlyCopy(),
             filesCache = filesCache.createReadOnlyCopy(),
             backingFieldCache = backingFieldCache.createReadOnlyCopy(),
         )
@@ -427,7 +421,7 @@ internal class KtSymbolByFirBuilder private constructor(
 
     inner class TypeBuilder {
         fun buildKtType(coneType: ConeKotlinType): KtType {
-            return typesCache.cache(coneType) {
+            return withValidityAssertion {
                 when (coneType) {
                     is ConeClassLikeTypeImpl -> {
                         if (hasFunctionalClassId(coneType)) KtFirFunctionalType(coneType, token, this@KtSymbolByFirBuilder)
