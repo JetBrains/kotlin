@@ -59,7 +59,7 @@ internal enum class ObjectStorageKind {
 internal fun IrField.storageKind(context: Context): FieldStorageKind {
     // TODO: Is this correct?
     val annotations = correspondingPropertySymbol?.owner?.annotations ?: annotations
-    val isLegacyMM = context.memoryModel != MemoryModel.EXPERIMENTAL
+    val isLegacyMM = context.memoryManager != MemoryManager.UNRESTRICTED
     // TODO: simplify, once IR types are fully there.
     val typeAnnotations = (type.classifierOrNull?.owner as? IrAnnotationContainer)?.annotations
     val typeFrozen = typeAnnotations?.hasAnnotation(KonanFqNames.frozen) == true ||
@@ -75,7 +75,7 @@ internal fun IrField.storageKind(context: Context): FieldStorageKind {
 }
 
 internal fun IrField.needsGCRegistration(context: Context) =
-        context.memoryModel == MemoryModel.EXPERIMENTAL && // only for the new MM
+        context.memoryManager == MemoryManager.UNRESTRICTED && // only for the new MM
                 type.binaryTypeIsReference() && // only for references
                 (hasNonConstInitializer || // which are initialized from heap object
                         !isFinal) // or are not final
@@ -1352,7 +1352,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             functionGenerationContext.condBr(condition, loopBody, loopScope.loopExit)
 
             functionGenerationContext.positionAtEnd(loopBody)
-            if (context.memoryModel == MemoryModel.EXPERIMENTAL)
+            if (context.memoryManager == MemoryManager.UNRESTRICTED)
                 call(context.llvm.Kotlin_mm_safePointWhileLoopBody, emptyList())
             loop.body?.generate()
 
@@ -1374,7 +1374,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             functionGenerationContext.br(loopBody)
 
             functionGenerationContext.positionAtEnd(loopBody)
-            if (context.memoryModel == MemoryModel.EXPERIMENTAL)
+            if (context.memoryManager == MemoryManager.UNRESTRICTED)
                 call(context.llvm.Kotlin_mm_safePointWhileLoopBody, emptyList())
             loop.body?.generate()
             functionGenerationContext.br(loopScope.loopCheck)
@@ -2600,7 +2600,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     private val IrFunction.needsNativeThreadState: Boolean
         get() {
             // We assume that call site thread state switching is required for interop calls only.
-            val result = context.memoryModel == MemoryModel.EXPERIMENTAL && origin == CBridgeOrigin.KOTLIN_TO_C_BRIDGE
+            val result = context.memoryManager == MemoryManager.UNRESTRICTED && origin == CBridgeOrigin.KOTLIN_TO_C_BRIDGE
             if (result) {
                 check(isExternal)
                 check(!annotations.hasAnnotation(KonanFqNames.gcUnsafeCall))

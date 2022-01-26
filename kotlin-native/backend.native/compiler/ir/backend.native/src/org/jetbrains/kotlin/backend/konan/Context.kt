@@ -41,7 +41,6 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.reflect.KProperty
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyToWithoutSuperTypes
-import org.jetbrains.kotlin.backend.konan.ir.getSuperClassNotAny
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
@@ -460,7 +459,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
     fun useLazyFileInitializers() = config.propertyLazyInitialization
 
-    val memoryModel = config.memoryModel
+    val memoryManager = config.memoryManager
 
     override var inVerbosePhase = false
     override fun log(message: () -> String) {

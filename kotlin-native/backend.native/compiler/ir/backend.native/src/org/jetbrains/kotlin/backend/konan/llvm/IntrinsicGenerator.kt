@@ -2,9 +2,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.cValuesOf
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.KonanFqNames
-import org.jetbrains.kotlin.backend.konan.MemoryModel
-import org.jetbrains.kotlin.backend.konan.RuntimeNames
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
 import org.jetbrains.kotlin.backend.konan.descriptors.isConstantConstructorIntrinsic
 import org.jetbrains.kotlin.backend.konan.descriptors.isTypedIntrinsic
@@ -304,7 +302,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
             args.single()
 
     private fun FunctionGenerationContext.emitIsExperimentalMM(): LLVMValueRef =
-            Int1(context.memoryModel == MemoryModel.EXPERIMENTAL).llvm
+            Int1(context.memoryManager == MemoryManager.UNRESTRICTED).llvm
 
     private fun FunctionGenerationContext.emitGetNativeNullPtr(): LLVMValueRef =
             kNullInt8Ptr

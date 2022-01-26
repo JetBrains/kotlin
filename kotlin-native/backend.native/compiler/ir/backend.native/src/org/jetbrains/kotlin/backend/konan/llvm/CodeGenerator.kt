@@ -281,7 +281,7 @@ internal class StackLocalsManagerImpl(
     fun isEmpty() = stackLocals.isEmpty()
 
     private fun FunctionGenerationContext.createRootSetSlot() =
-            if (context.memoryModel == MemoryModel.EXPERIMENTAL) alloca(kObjHeaderPtr) else null
+            if (context.memoryManager == MemoryManager.UNRESTRICTED) alloca(kObjHeaderPtr) else null
 
     override fun alloc(irClass: IrClass, cleanFieldsExplicitly: Boolean): LLVMValueRef = with(functionGenerationContext) {
         val type = context.llvmDeclarations.forClass(irClass).bodyType
@@ -478,13 +478,13 @@ internal abstract class FunctionGenerationContext(
     // because there is no guarantee of catching Kotlin exception in Kotlin code.
     protected open val needCleanupLandingpadAndLeaveFrame: Boolean
         get() = irFunction?.annotations?.hasAnnotation(RuntimeNames.exportForCppRuntime) == true ||     // Exported to foreign code
-                (!stackLocalsManager.isEmpty() && context.memoryModel != MemoryModel.EXPERIMENTAL) ||
+                (!stackLocalsManager.isEmpty() && context.memoryManager != MemoryManager.UNRESTRICTED) ||
                 switchToRunnable
 
     private var setCurrentFrameIsCalled: Boolean = false
 
     private val switchToRunnable: Boolean =
-            context.memoryModel == MemoryModel.EXPERIMENTAL && switchToRunnable
+            context.memoryManager == MemoryManager.UNRESTRICTED && switchToRunnable
 
     val stackLocalsManager = StackLocalsManagerImpl(this, stackLocalsInitBb)
 
@@ -619,12 +619,12 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun checkGlobalsAccessible(exceptionHandler: ExceptionHandler) {
-        if (context.memoryModel == MemoryModel.STRICT)
+        if (context.memoryManager == MemoryManager.LEGACY)
             call(context.llvm.checkGlobalsAccessible, emptyList(), Lifetime.IRRELEVANT, exceptionHandler)
     }
 
     private fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
-        if (context.memoryModel == MemoryModel.STRICT)
+        if (context.memoryManager == MemoryManager.LEGACY)
             store(value, address)
         else
             call(context.llvm.updateReturnRefFunction, listOf(address, value))
@@ -632,7 +632,7 @@ internal abstract class FunctionGenerationContext(
 
     private fun updateRef(value: LLVMValueRef, address: LLVMValueRef, onStack: Boolean) {
         if (onStack) {
-            if (context.memoryModel == MemoryModel.STRICT)
+            if (context.memoryManager == MemoryManager.LEGACY)
                 store(value, address)
             else
                 call(context.llvm.updateStackRefFunction, listOf(address, value))
@@ -644,7 +644,7 @@ internal abstract class FunctionGenerationContext(
     //-------------------------------------------------------------------------//
 
     fun switchThreadState(state: ThreadState) {
-        check(context.memoryModel == MemoryModel.EXPERIMENTAL) {
+        check(context.memoryManager == MemoryManager.UNRESTRICTED) {
             "Thread state switching is allowed in the experimental memory model only."
         }
         check(!forbidRuntime) {
@@ -657,7 +657,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun switchThreadStateIfExperimentalMM(state: ThreadState) {
-        if (context.memoryModel == MemoryModel.EXPERIMENTAL) {
+        if (context.memoryManager == MemoryManager.UNRESTRICTED) {
             switchThreadState(state)
         }
     }
@@ -1501,7 +1501,7 @@ internal abstract class FunctionGenerationContext(
             } else {
                 check(!setCurrentFrameIsCalled)
             }
-            if (context.memoryModel == MemoryModel.EXPERIMENTAL && !forbidRuntime) {
+            if (context.memoryManager == MemoryManager.UNRESTRICTED && !forbidRuntime) {
                 call(context.llvm.Kotlin_mm_safePointFunctionPrologue, emptyList())
             }
             resetDebugLocation()
@@ -1699,7 +1699,7 @@ internal abstract class FunctionGenerationContext(
             call(context.llvm.leaveFrameFunction,
                     listOf(slotsPhi!!, Int32(vars.skipSlots).llvm, Int32(slotCount).llvm))
         }
-        if (!stackLocalsManager.isEmpty() && context.memoryModel != MemoryModel.EXPERIMENTAL) {
+        if (!stackLocalsManager.isEmpty() && context.memoryManager != MemoryManager.UNRESTRICTED) {
             stackLocalsManager.clean(refsOnly = true) // Only bother about not leaving any dangling references.
         }
     }

@@ -266,7 +266,7 @@ fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when {
 }
 
 internal fun IrClass.isFrozen(context: Context): Boolean {
-    val isLegacyMM = context.memoryModel != MemoryModel.EXPERIMENTAL
+    val isLegacyMM = context.memoryManager == MemoryManager.LEGACY
     return when {
         !context.config.freezing.freezeImplicit -> false
         annotations.hasAnnotation(KonanFqNames.frozen) -> true

@@ -249,19 +249,24 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
                 put(ENABLE_ASSERTIONS, arguments.enableAssertions)
 
-                val memoryModelFromArgument = when (arguments.memoryModel) {
-                    "relaxed" -> MemoryModel.RELAXED
-                    "strict" -> MemoryModel.STRICT
-                    "experimental" -> MemoryModel.EXPERIMENTAL
+                val memoryManagerFromArgument = when (arguments.memoryModel) {
+                    null -> null
+                    "strict" -> MemoryManager.LEGACY
+                    "experimental" -> MemoryManager.UNRESTRICTED
                     else -> {
                         configuration.report(ERROR, "Unsupported memory model ${arguments.memoryModel}")
-                        MemoryModel.STRICT
+                        null
                     }
+                }?.also {
+                    configuration.report(WARNING, "-memory-model option is deprecated, use binary option memoryManager instead")
                 }
 
                 // TODO: revise priority and/or report conflicting values.
-                val memoryModel = get(BinaryOptions.memoryModel) ?: memoryModelFromArgument
-                put(BinaryOptions.memoryModel, memoryModel)
+                val memoryManager = get(BinaryOptions.memoryManager) ?: memoryManagerFromArgument ?: MemoryManager.LEGACY
+                if (memoryManagerFromArgument != null && memoryManager != memoryManagerFromArgument) {
+                    configuration.report(ERROR, "Conflicting values on -memory-model le")
+                }
+                put(BinaryOptions.memoryManager, memoryManager)
 
                 when {
                     arguments.generateWorkerTestRunner -> put(GENERATE_TEST_RUNNER, TestRunnerKind.WORKER)
@@ -317,8 +322,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                         DestroyRuntimeMode.ON_SHUTDOWN
                     }
                 })
-                if (arguments.gc != null && memoryModel != MemoryModel.EXPERIMENTAL) {
-                    configuration.report(ERROR, "-Xgc is only supported for -memory-model experimental")
+                if (arguments.gc != null && memoryManager != MemoryManager.UNRESTRICTED) {
+                    configuration.report(ERROR, "-Xgc is only supported for unrestricted memory manager")
                 }
                 putIfNotNull(GARBAGE_COLLECTOR, when (arguments.gc) {
                     null -> null
@@ -332,8 +337,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 })
                 put(PROPERTY_LAZY_INITIALIZATION, when (arguments.propertyLazyInitialization) {
                     null -> {
-                        when (memoryModel) {
-                            MemoryModel.EXPERIMENTAL -> true
+                        when (memoryManager) {
+                            MemoryManager.UNRESTRICTED -> true
                             else -> false
                         }
                     }
@@ -346,8 +351,8 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 })
                 put(ALLOCATION_MODE, when (arguments.allocator) {
                     null -> {
-                        when (memoryModel) {
-                            MemoryModel.EXPERIMENTAL -> "mimalloc"
+                        when (memoryManager) {
+                            MemoryManager.UNRESTRICTED -> "mimalloc"
                             else -> "std"
                         }
                     }
@@ -359,7 +364,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     }
                 })
                 put(WORKER_EXCEPTION_HANDLING, when (arguments.workerExceptionHandling) {
-                    null -> if (memoryModel == MemoryModel.EXPERIMENTAL) WorkerExceptionHandling.USE_HOOK else WorkerExceptionHandling.LEGACY
+                    null -> if (memoryManager == MemoryManager.UNRESTRICTED) WorkerExceptionHandling.USE_HOOK else WorkerExceptionHandling.LEGACY
                     "legacy" -> WorkerExceptionHandling.LEGACY
                     "use-hook" -> WorkerExceptionHandling.USE_HOOK
                     else -> {

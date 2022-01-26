@@ -8,13 +8,23 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import kotlin.properties.PropertyDelegateProvider
 import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.*
 
 // Note: options defined in this class are a part of user interface, including the names:
 // users can pass these options using a -Xbinary=name=value compiler argument or corresponding Gradle DSL.
 object BinaryOptions : BinaryOptionRegistry() {
     val runtimeAssertionsMode by option<RuntimeAssertsMode>()
 
-    val memoryModel by option<MemoryModel>()
+    val memoryManager by option<MemoryManager>()
+
+    @Deprecated("Use memoryManager instead")
+    val memoryModel by option<MemoryModel>().replacedBy(this::memoryManager) {
+        when (it) {
+            MemoryModel.RELAXED -> null
+            MemoryModel.STRICT -> MemoryManager.LEGACY
+            MemoryModel.EXPERIMENTAL -> MemoryManager.UNRESTRICTED
+        }
+    }
 
     val freezing by option<Freezing>()
 

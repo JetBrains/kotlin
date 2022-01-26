@@ -56,26 +56,20 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             ?: target.family.isAppleFamily // Default is true for Apple targets.
     val generateDebugTrampoline = debug && configuration.get(KonanConfigKeys.GENERATE_DEBUG_TRAMPOLINE) ?: false
 
-    val memoryModel: MemoryModel by lazy {
-        when (configuration.get(BinaryOptions.memoryModel)!!) {
-            MemoryModel.STRICT -> MemoryModel.STRICT
-            MemoryModel.RELAXED -> {
-                configuration.report(CompilerMessageSeverity.ERROR,
-                        "Relaxed memory model is deprecated and isn't expected to work right way with current Kotlin version." +
-                                " Use strict as default. ")
-                MemoryModel.STRICT
-            }
-            MemoryModel.EXPERIMENTAL -> {
+    val memoryManager: MemoryManager by lazy {
+        when (configuration.get(BinaryOptions.memoryManager)!!) {
+            MemoryManager.LEGACY -> MemoryManager.LEGACY
+            MemoryManager.UNRESTRICTED -> {
                 if (!target.supportsThreads()) {
                     configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                            "Experimental memory model requires threads, which are not supported on target ${target.name}. Used strict memory model.")
-                    MemoryModel.STRICT
+                            "Unrestricted memory manager requires threads, which are not supported on target ${target.name}. Used legacy memory manager.")
+                    MemoryManager.LEGACY
                 } else if (destroyRuntimeMode == DestroyRuntimeMode.LEGACY) {
                     configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                            "Experimental memory model is incompatible with 'legacy' destroy runtime mode. Used strict memory model.")
-                    MemoryModel.STRICT
+                            "Unrestricted memory manager is incompatible with 'legacy' destroy runtime mode. Used legacy memory manager.")
+                    MemoryManager.LEGACY
                 } else {
-                    MemoryModel.EXPERIMENTAL
+                    MemoryManager.UNRESTRICTED
                 }
             }
         }
@@ -100,11 +94,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val freezing: Freezing by lazy {
         val freezingMode = configuration.get(BinaryOptions.freezing)
         when {
-            freezingMode == null -> when (memoryModel) {
-                MemoryModel.EXPERIMENTAL -> Freezing.Disabled
+            freezingMode == null -> when (memoryManager) {
+                MemoryManager.UNRESTRICTED -> Freezing.Disabled
                 else -> Freezing.Full
             }
-            memoryModel != MemoryModel.EXPERIMENTAL && freezingMode != Freezing.Full -> {
+            memoryManager != MemoryManager.UNRESTRICTED && freezingMode != Freezing.Full -> {
                 configuration.report(
                         CompilerMessageSeverity.ERROR,
                         "`freezing` can only be adjusted with experimental MM. Falling back to default behavior.")
@@ -227,16 +221,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         } else {
             false
         }
-        when (memoryModel) {
-            MemoryModel.STRICT -> {
+        when (memoryManager) {
+            MemoryManager.LEGACY -> {
                 add("strict.bc")
                 add("legacy_memory_manager.bc")
             }
-            MemoryModel.RELAXED -> {
-                add("relaxed.bc")
-                add("legacy_memory_manager.bc")
-            }
-            MemoryModel.EXPERIMENTAL -> {
+            MemoryManager.UNRESTRICTED -> {
                 add("common_gc.bc")
                 add("experimental_memory_manager.bc")
                 when (gc) {
