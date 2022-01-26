@@ -91,7 +91,7 @@ open class KotlinScriptDefinitionFromAnnotatedTemplate(
                 left.parameters.size == right.parameters.size &&
                 left.parameters.zip(right.parameters).all {
                     it.first.kind == KParameter.Kind.INSTANCE ||
-                    it.first.type == it.second.type
+                    it.first.name == it.second.name
                 }
 
         val resolveFunctions = getResolveFunctions()

@@ -363,7 +363,7 @@ class ScriptTemplateTest : TestCase() {
         val rootDisposable = Disposer.newDisposable()
         try {
             val additionalClasspath = System.getProperty("kotlin.test.script.classpath")?.split(File.pathSeparator)
-                ?.map { File(it) }.orEmpty().toTypedArray()
+                ?.mapNotNull { File(it).takeIf { file -> file.exists() } }.orEmpty().toTypedArray()
             val configuration = KotlinTestUtils.newConfiguration(
                 if (includeKotlinRuntime) ConfigurationKind.ALL else ConfigurationKind.JDK_ONLY,
                 TestJdkKind.FULL_JDK,
@@ -513,7 +513,7 @@ interface AcceptedAnnotationsCheck {
         val actualAnnotations = scriptContents.annotations
         Assert.assertTrue(
             "Loaded annotation: $actualAnnotations",
-            actualAnnotations.single().annotationClass.qualifiedName == TestAnno1::class.qualifiedName
+            actualAnnotations.singleOrNull()?.annotationClass?.qualifiedName == TestAnno1::class.qualifiedName
         )
 
         return ScriptDependencies(
