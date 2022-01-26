@@ -20,7 +20,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.jvm.compiler.report
+import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
 interface JvmContentRootBase : ContentRoot
@@ -82,3 +87,25 @@ val CompilerConfiguration.javaSourceRoots: Set<String>
             else -> null
         }
     }
+
+fun CompilerConfiguration.configureJdkClasspathRoots() {
+    if (getBoolean(JVMConfigurationKeys.NO_JDK)) return
+
+    val jdkHome = get(JVMConfigurationKeys.JDK_HOME)
+    val (javaRoot, classesRoots) = if (jdkHome == null) {
+        val javaHome = File(System.getProperty("java.home"))
+        put(JVMConfigurationKeys.JDK_HOME, javaHome)
+
+        javaHome to PathUtil.getJdkClassesRootsFromCurrentJre()
+    } else {
+        jdkHome to PathUtil.getJdkClassesRoots(jdkHome)
+    }
+
+    if (!CoreJrtFileSystem.isModularJdk(javaRoot)) {
+        if (classesRoots.isEmpty()) {
+            report(CompilerMessageSeverity.ERROR, "No class roots are found in the JDK path: $javaRoot")
+        } else {
+            addJvmSdkRoots(classesRoots)
+        }
+    }
+}

@@ -262,6 +262,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
 
         configuration.put(JVMConfigurationKeys.VALIDATE_IR, true)
         configuration.put(JVMConfigurationKeys.VALIDATE_BYTECODE, true)
+        configuration.configureJdkClasspathRoots()
     }
 
     private fun addJavaSourceRootsByJavaModules(configuration: CompilerConfiguration, moduleInfoFiles: List<TestFile>) {

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.compileModulesUsingFrontendIrAndLightTree
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys
+import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -83,6 +84,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             (arguments.script || arguments.expression != null || arguments.freeArgs.isEmpty())
         ) {
             configuration.configureContentRootsFromClassPath(arguments)
+            configuration.configureJdkClasspathRoots()
 
             // script or repl
             if (arguments.script && arguments.freeArgs.isEmpty()) {
@@ -123,6 +125,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
             val chunk = moduleChunk.modules
             configuration.configureSourceRoots(chunk, buildFile)
+            // should be called after configuring jdk home from build file
+            configuration.configureJdkClasspathRoots()
 
             if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR) && arguments.useFirLT /* TODO: consider storing in the configuration instead of using args here directly */) {
                 val projectEnvironment =

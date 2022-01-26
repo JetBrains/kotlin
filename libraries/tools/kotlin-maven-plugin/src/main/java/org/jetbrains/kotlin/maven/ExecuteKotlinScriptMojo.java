@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot;
+import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootsKt;
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar;
@@ -193,6 +194,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
                     JvmScriptingHostConfigurationKt.getDefaultJvmScriptingHostConfiguration()
             );
 
+            JvmContentRootsKt.configureJdkClasspathRoots(configuration);
             KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
 
             GenerationState state = KotlinToJVMBytecodeCompiler.INSTANCE.analyzeAndGenerate(environment);

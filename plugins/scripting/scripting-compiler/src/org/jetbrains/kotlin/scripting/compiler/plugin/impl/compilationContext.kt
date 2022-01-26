@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.common.setupCommonArguments
 import org.jetbrains.kotlin.cli.jvm.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
@@ -284,6 +285,7 @@ private fun createInitialCompilerConfiguration(
         put(CommonConfigurationKeys.MODULE_NAME, baseArguments.moduleName ?: "kotlin-script")
 
         configureAdvancedJvmOptions(baseArguments)
+        configureJdkClasspathRoots()
     }
 }
 
