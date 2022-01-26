@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.backend.common.ir.isFinalClass
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.export.isAllowedFakeOverriddenDeclaration
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenExported
+import org.jetbrains.kotlin.ir.backend.js.optimization.annotate
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -72,7 +74,11 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                             }
                         }
                     } else {
-                        classBlock.statements += declaration.accept(transformer, context)
+                        classBlock.statements += declaration.accept(transformer, context).annotate {
+                            constructor()
+                            inheritable(!irClass.isFinalClass)
+                            exported(irClass.isExported(context.staticContext.backendContext))
+                        }
                         classModel.preDeclarationBlock.statements += generateInheritanceCode()
                     }
                 }
@@ -278,6 +284,10 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
             if (irClass.isInterface) {
                 classModel.preDeclarationBlock.statements += translatedFunction.makeStmt()
+                    .annotate {
+                        visibility(declaration.visibility)
+                        exported(declaration.isExported(context.staticContext.backendContext))
+                    }
                 return Pair(memberRef, null)
             }
 
