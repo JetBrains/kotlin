@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.commonizer
 
 import kotlin.test.assertFails
+import kotlin.test.assertFailsWith
 
 class InlineSourceCommonizationHealthCheckTest : AbstractInlineSourcesCommonizationTest() {
     fun `test reference module with error diagnostics breaks tests`() {
@@ -21,13 +22,11 @@ class InlineSourceCommonizationHealthCheckTest : AbstractInlineSourcesCommonizat
     }
 
     fun `test duplicated settings are forbidden`() {
-        assertFails("Defining a setting multiple times should be forbidden") {
+        assertFailsWith<IllegalStateException>("Defining a setting multiple times should be forbidden") {
             commonize {
                 outputTarget("(a, b)")
                 setting(OptimisticNumberCommonizationEnabled, true)
                 setting(OptimisticNumberCommonizationEnabled, false)
-                "a" withSource "class X"
-                "b" withSource "class X"
             }
         }
     }
