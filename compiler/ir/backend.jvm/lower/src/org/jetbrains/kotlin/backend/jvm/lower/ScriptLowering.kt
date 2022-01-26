@@ -76,6 +76,8 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
 
         for ((irScript, irScriptClass) in scriptsToClasses) {
             finalizeScriptClass(irScriptClass, irScript, symbolRemapper)
+            // TODO fix parents in script classes
+            irScriptClass.patchDeclarationParents(irScript.parent)
         }
     }
 

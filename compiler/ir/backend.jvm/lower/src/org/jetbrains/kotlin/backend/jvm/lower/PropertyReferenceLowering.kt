@@ -238,7 +238,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         if (data.kProperties.isNotEmpty()) {
             declaration.declarations.add(0, data.kPropertiesField.apply {
                 parent = declaration
-                initializer = context.createJvmIrBuilder(declaration.symbol).run {
+                initializer = context.createJvmIrBuilder(data.kPropertiesField.symbol).run {
                     val initializers = data.kProperties.values.sortedBy { it.index }.map { it.initializer }
                     irExprBody(irArrayOf(kPropertiesFieldType, initializers))
                 }

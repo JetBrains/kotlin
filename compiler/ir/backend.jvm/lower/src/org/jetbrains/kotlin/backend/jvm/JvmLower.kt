@@ -19,24 +19,71 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
-import org.jetbrains.kotlin.ir.util.isAnonymousObject
-import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.NameUtils
 
-private fun makePatchParentsPhase(number: Int): NamedCompilerPhase<CommonBackendContext, IrFile> = makeIrFilePhase(
-    { PatchDeclarationParents() },
-    name = "PatchParents$number",
-    description = "Patch parent references in IrFile, pass $number",
-)
+private var patchParentPhases = 0
+
+private fun makePatchParentsPhase(): NamedCompilerPhase<CommonBackendContext, IrFile> {
+    val number = patchParentPhases++
+    return makeIrFilePhase(
+        { PatchDeclarationParents() },
+        name = "PatchParents$number",
+        description = "Patch parent references in IrFile, pass $number",
+    )
+}
+
+private var checkParentPhases = 0
+
+private fun makeCheckParentsPhase(): NamedCompilerPhase<CommonBackendContext, IrFile> {
+    val number = checkParentPhases++
+    return makeIrFilePhase(
+        { CheckDeclarationParents() },
+        name = "CheckParents$number",
+        description = "Check parent references in IrFile, pass $number",
+    )
+}
 
 private class PatchDeclarationParents : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(PatchDeclarationParentsVisitor())
+    }
+}
+
+private class CheckDeclarationParents : FileLoweringPass {
+    override fun lower(irFile: IrFile) {
+        val checker = CheckDeclarationParentsVisitor()
+        irFile.acceptVoid(checker)
+        if (checker.errors.isNotEmpty()) {
+            val expectedParents = LinkedHashSet<IrDeclarationParent>()
+            throw AssertionError(
+                buildString {
+                    append("Declarations with wrong parent: ")
+                    append(checker.errors.size)
+                    append("\n")
+                    checker.errors.forEach {
+                        append("declaration: ")
+                        append(it.declaration.render())
+                        append("\n\t")
+                        append(it.declaration)
+                        append("\nexpectedParent: ")
+                        append(it.expectedParent.render())
+                        append("\nactualParent: ")
+                        append(it.actualParent?.render())
+                        append("\n")
+                        expectedParents.add(it.expectedParent)
+                    }
+                    append("\nExpected parents:\n")
+                    expectedParents.forEach {
+                        append(it.dump())
+                    }
+                }
+            )
+        }
     }
 }
 
@@ -291,7 +338,7 @@ private val jvmFilePhases = listOf(
     singleAbstractMethodPhase,
     jvmInlineClassPhase,
     tailrecPhase,
-    makePatchParentsPhase(1),
+    // makePatchParentsPhase(),
 
     enumWhenPhase,
     singletonReferencesPhase,
@@ -300,7 +347,7 @@ private val jvmFilePhases = listOf(
     returnableBlocksPhase,
     sharedVariablesPhase,
     localDeclarationsPhase,
-    makePatchParentsPhase(2),
+    // makePatchParentsPhase(),
 
     jvmLocalClassExtractionPhase,
     staticCallableReferencePhase,
@@ -316,6 +363,7 @@ private val jvmFilePhases = listOf(
     defaultArgumentInjectorPhase,
     defaultArgumentCleanerPhase,
 
+    // makePatchParentsPhase(),
     interfacePhase,
     inheritedDefaultMethodsOnClassesPhase,
     replaceDefaultImplsOverriddenSymbolsPhase,
@@ -331,7 +379,7 @@ private val jvmFilePhases = listOf(
     innerClassesMemberBodyPhase,
     innerClassConstructorCallsPhase,
 
-    makePatchParentsPhase(3),
+    // makePatchParentsPhase(),
 
     enumClassPhase,
     objectClassPhase,
@@ -357,7 +405,7 @@ private val jvmFilePhases = listOf(
     renameFieldsPhase,
     fakeInliningLocalVariablesLowering,
 
-    makePatchParentsPhase(4)
+    // makePatchParentsPhase()
 )
 
 val jvmLoweringPhases = NamedCompilerPhase(

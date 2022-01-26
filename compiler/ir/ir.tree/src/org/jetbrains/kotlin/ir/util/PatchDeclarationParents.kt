@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import java.util.*
+import kotlin.collections.ArrayList
 
 fun <T : IrElement> T.patchDeclarationParents(initialParent: IrDeclarationParent? = null) =
     apply {
@@ -55,5 +53,56 @@ class PatchDeclarationParentsVisitor() : IrElementVisitorVoid {
 
     private fun patchParent(declaration: IrDeclaration) {
         declaration.parent = declarationParentsStack.peekFirst()
+    }
+}
+
+
+class CheckDeclarationParentsVisitor() : IrElementVisitorVoid {
+
+    constructor(containingDeclaration: IrDeclarationParent) : this() {
+        declarationParentsStack.push(containingDeclaration)
+    }
+
+    private val declarationParentsStack = ArrayDeque<IrDeclarationParent>()
+
+    class Data(val declaration: IrDeclaration, val expectedParent: IrDeclarationParent, val actualParent: IrDeclarationParent?)
+
+    val errors = ArrayList<Data>()
+
+    override fun visitElement(element: IrElement) {
+        element.acceptChildrenVoid(this)
+    }
+
+    override fun visitPackageFragment(declaration: IrPackageFragment) {
+        declarationParentsStack.push(declaration)
+        super.visitPackageFragment(declaration)
+        declarationParentsStack.pop()
+    }
+
+    override fun visitDeclaration(declaration: IrDeclarationBase) {
+        checkParent(declaration)
+
+        if (declaration is IrDeclarationParent) {
+            declarationParentsStack.push(declaration)
+        }
+
+        super.visitDeclaration(declaration)
+
+        if (declaration is IrDeclarationParent) {
+            declarationParentsStack.pop()
+        }
+    }
+
+    private fun checkParent(declaration: IrDeclaration) {
+        val expectedParent = declarationParentsStack.peekFirst()
+        try {
+            val actualParent = declaration.parent
+            if (actualParent != expectedParent) {
+                errors.add(Data(declaration, expectedParent, actualParent))
+            }
+        } catch (e: Exception) {
+            errors.add(Data(declaration, expectedParent, null))
+        }
+
     }
 }

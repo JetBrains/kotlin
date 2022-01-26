@@ -51,13 +51,17 @@ open class TailrecLowering(val context: BackendContext) : BodyLoweringPass {
                     element.acceptChildrenVoid(this)
                 }
 
-                override fun visitFunction(declaration: IrFunction) {
+                override fun visitSimpleFunction(declaration: IrSimpleFunction) {
                     declaration.acceptChildrenVoid(this)
-                    lowerTailRecursionCalls(declaration)
+                    if (declaration.isTailrec) {
+                        lowerTailRecursionCalls(declaration)
+                    }
                 }
             })
 
-            lowerTailRecursionCalls(container)
+            if (container is IrSimpleFunction && container.isTailrec) {
+                lowerTailRecursionCalls(container)
+            }
         }
     }
 
@@ -110,6 +114,9 @@ private fun TailrecLowering.lowerTailRecursionCalls(irFunction: IrFunction) {
             }
         }
     }.statements
+
+    // TODO BodyTransformer creates temporary variables with wrong parents in nested functions
+    oldBody.patchDeclarationParents(irFunction)
 }
 
 private class BodyTransformer(

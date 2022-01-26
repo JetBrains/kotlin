@@ -78,7 +78,9 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
 
         declaration.transformDeclarationsFlat { memberDeclaration ->
             if (memberDeclaration is IrFunction) {
-                transformFunctionFlat(memberDeclaration)
+                withinScope(memberDeclaration) {
+                    transformFunctionFlat(memberDeclaration)
+                }
             } else {
                 memberDeclaration.accept(this, null)
                 null
@@ -134,7 +136,10 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
     }
 
     private fun transformSimpleFunctionFlat(function: IrSimpleFunction, replacement: IrSimpleFunction): List<IrDeclaration> {
-        replacement.valueParameters.forEach { it.transformChildrenVoid() }
+        replacement.valueParameters.forEach {
+            it.transformChildrenVoid()
+            it.defaultValue?.patchDeclarationParents(replacement)
+        }
         allScopes.push(createScope(function))
         replacement.body = function.body?.transform(this, null)?.patchDeclarationParents(replacement)
         allScopes.pop()

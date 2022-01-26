@@ -78,17 +78,17 @@ private class MainMethodGenerationLowering(private val context: JvmBackendContex
 
         irClass.functions.find { it.isMainMethod() }?.let { mainMethod ->
             if (mainMethod.isSuspend) {
-                irClass.generateMainMethod { args ->
-                    +irRunSuspend(mainMethod, args)
+                irClass.generateMainMethod { newMain, args ->
+                    +irRunSuspend(mainMethod, args, newMain)
                 }
             }
             return
         }
 
         irClass.functions.find { it.isParameterlessMainMethod() }?.let { parameterlessMainMethod ->
-            irClass.generateMainMethod {
+            irClass.generateMainMethod { newMain, _ ->
                 if (parameterlessMainMethod.isSuspend) {
-                    +irRunSuspend(parameterlessMainMethod, null)
+                    +irRunSuspend(parameterlessMainMethod, null, newMain)
                 } else {
                     +irCall(parameterlessMainMethod)
                 }
@@ -104,7 +104,7 @@ private class MainMethodGenerationLowering(private val context: JvmBackendContex
                 name.asString() == "main"
 
     private fun IrSimpleFunction.isMainMethod(): Boolean {
-        if (getJvmNameFromAnnotation() ?: name.asString() != "main") return false
+        if ((getJvmNameFromAnnotation() ?: name.asString()) != "main") return false
         if (!returnType.isUnit()) return false
 
         val parameter = allParameters.singleOrNull() ?: return false
@@ -119,7 +119,7 @@ private class MainMethodGenerationLowering(private val context: JvmBackendContex
         }
     }
 
-    private fun IrClass.generateMainMethod(makeBody: IrBlockBodyBuilder.(IrValueParameter) -> Unit) =
+    private fun IrClass.generateMainMethod(makeBody: IrBlockBodyBuilder.(IrSimpleFunction, IrValueParameter) -> Unit) =
         addFunction {
             name = Name.identifier("main")
             visibility = DescriptorVisibilities.PUBLIC
@@ -131,10 +131,14 @@ private class MainMethodGenerationLowering(private val context: JvmBackendContex
                 name = Name.identifier("args")
                 type = context.irBuiltIns.arrayClass.typeWith(context.irBuiltIns.stringType)
             }
-            body = context.createIrBuilder(symbol).irBlockBody { makeBody(args) }
+            body = context.createIrBuilder(symbol).irBlockBody { makeBody(this@apply, args) }
         }
 
-    private fun IrBuilderWithScope.irRunSuspend(target: IrSimpleFunction, args: IrValueParameter?): IrExpression {
+    private fun IrBuilderWithScope.irRunSuspend(
+        target: IrSimpleFunction,
+        args: IrValueParameter?,
+        newMain: IrSimpleFunction
+    ): IrExpression {
         val backendContext = this@MainMethodGenerationLowering.context
         return irBlock {
             val wrapperConstructor = backendContext.irFactory.buildClass {
@@ -152,7 +156,7 @@ private class MainMethodGenerationLowering(private val context: JvmBackendContex
 
                 wrapper.superTypes += lambdaSuperClass.defaultType
                 wrapper.superTypes += functionClass.typeWith(backendContext.irBuiltIns.anyNType)
-                wrapper.parent = target.parent
+                wrapper.parent = newMain
 
                 val stringArrayType = backendContext.irBuiltIns.arrayClass.typeWith(backendContext.irBuiltIns.stringType)
                 val argsField = args?.let {

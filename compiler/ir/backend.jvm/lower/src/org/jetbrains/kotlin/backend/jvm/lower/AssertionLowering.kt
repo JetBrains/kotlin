@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.config.JVMAssertionsMode
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
@@ -45,16 +42,25 @@ private class AssertionLowering(private val context: JvmBackendContext) :
     // assertions when compiled with -Xassertions=jvm.
     class ClassInfo(val irClass: IrClass, val topLevelClass: IrClass, var assertionsDisabledField: IrField? = null)
 
+    private val scopeOwnerStack = java.util.ArrayDeque<IrDeclaration>()
+
     override fun lower(irFile: IrFile) {
         // In legacy mode we treat assertions as inline function calls
         if (context.state.assertionsMode != JVMAssertionsMode.LEGACY)
             irFile.transformChildren(this, null)
     }
 
+    override fun visitDeclaration(declaration: IrDeclarationBase, data: ClassInfo?): IrStatement {
+        scopeOwnerStack.push(declaration)
+        val result = super.visitDeclaration(declaration, data)
+        scopeOwnerStack.pop()
+        return result
+    }
+
     override fun visitClass(declaration: IrClass, data: ClassInfo?): IrStatement {
         val info = ClassInfo(declaration, data?.topLevelClass ?: declaration)
 
-        super.visitClass(declaration, info)
+        visitDeclaration(declaration, info)
 
         // Note that it's necessary to add this member at the beginning of the class, before all user-visible
         // initializers, which may contain assertions. At the same time, assertions are supposed to be enabled
@@ -77,7 +83,7 @@ private class AssertionLowering(private val context: JvmBackendContext) :
         if (mode == JVMAssertionsMode.ALWAYS_DISABLE)
             return IrCompositeImpl(expression.startOffset, expression.endOffset, context.irBuiltIns.unitType)
 
-        context.createIrBuilder(expression.symbol).run {
+        context.createIrBuilder(scopeOwnerStack.peek().symbol).run {
             at(expression)
             val assertCondition = expression.getValueArgument(0)!!
             val lambdaArgument = if (function.valueParameters.size == 2) expression.getValueArgument(1) else null
