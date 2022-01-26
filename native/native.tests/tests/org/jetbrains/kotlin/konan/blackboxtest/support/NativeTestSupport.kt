@@ -106,7 +106,10 @@ private object NativeTestSupport {
 
     /*************** Test class settings (common part) ***************/
 
-    private fun ExtensionContext.addCommonTestClassSettingsTo(enclosingTestClass: Class<*>, output: MutableCollection<Any>) {
+    private fun ExtensionContext.addCommonTestClassSettingsTo(
+        enclosingTestClass: Class<*>,
+        output: MutableCollection<Any>
+    ): KotlinNativeTargets {
         val enforcedProperties = EnforcedProperties(enclosingTestClass)
 
         val optimizationMode = computeOptimizationMode(enforcedProperties)
@@ -142,6 +145,8 @@ private object NativeTestSupport {
         output += CacheMode::class to computeCacheMode(enforcedProperties, nativeHome, nativeTargets, optimizationMode)
         output += computeTestMode(enforcedProperties)
         output += computeTimeouts(enforcedProperties)
+
+        return nativeTargets
     }
 
     private fun computeOptimizationMode(enforcedProperties: EnforcedProperties): OptimizationMode =
@@ -227,21 +232,17 @@ private object NativeTestSupport {
 
             val settings = buildList {
                 // Put common settings:
-                addCommonTestClassSettingsTo(enclosingTestClass, this)
+                val nativeTargets = addCommonTestClassSettingsTo(enclosingTestClass, this)
 
                 // Put settings that are always required:
                 this += computedTestConfiguration
-                this += computeBinariesDirs(testProcessSettings.get(), testProcessSettings.get(), enclosingTestClass)
+                this += computeBinariesDirs(testProcessSettings.get(), nativeTargets, enclosingTestClass)
 
                 // Add custom settings:
                 computedTestConfiguration.configuration.requiredSettings.forEach { clazz ->
                     this += when (clazz) {
                         TestRoots::class -> computeTestRoots(enclosingTestClass)
-                        GeneratedSources::class -> computeGeneratedSourceDirs(
-                            testProcessSettings.get(),
-                            testProcessSettings.get(),
-                            enclosingTestClass
-                        )
+                        GeneratedSources::class -> computeGeneratedSourceDirs(testProcessSettings.get(), nativeTargets, enclosingTestClass)
                         else -> fail { "Unknown test class setting type: $clazz" }
                     }
                 }
