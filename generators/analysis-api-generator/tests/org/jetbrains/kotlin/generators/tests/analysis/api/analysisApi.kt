@@ -37,12 +37,12 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.AbstractSymbolBy
 import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.symbols.AbstractSymbolByReferenceTest
 import org.jetbrains.kotlin.generators.TestGroupSuite
-import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.*
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.TestModuleKind
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.component
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.group
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.test
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import java.nio.file.Paths
 
 fun TestGroupSuite.generateAnalysisApiTests() {
     generateAnalysisApiComponentsTests()
@@ -52,10 +52,17 @@ fun TestGroupSuite.generateAnalysisApiTests() {
 private fun TestGroupSuite.generateAnalysisApiNonComponentsTests() {
     test(
         AbstractReferenceResolveTest::class,
-        testModuleKinds = TestModuleKind.SOURCES_AND_LIBRARIES_SOURCES,
+        testModuleKinds = TestModuleKind.SOURCE_AND_LIBRARY_SOURCE,
         addFe10 = false,
-    ) {
-        model("referenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+    ) { moduleKind ->
+        when (moduleKind) {
+            TestModuleKind.LIBRARY_SOURCE -> {
+                model("referenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME, excludeDirsRecursively = listOf("withErrors"))
+            }
+            else -> {
+                model("referenceResolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            }
+        }
     }
 
     group("scopes") {

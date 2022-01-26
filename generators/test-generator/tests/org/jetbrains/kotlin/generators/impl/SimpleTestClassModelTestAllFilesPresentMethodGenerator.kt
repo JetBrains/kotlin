@@ -25,7 +25,7 @@ object SimpleTestClassModelTestAllFilesPresentMethodGenerator : MethodGenerator<
     override fun generateBody(method: SimpleTestClassModel.TestAllFilesPresentMethodModel, p: Printer) {
         with(method) {
             val exclude = StringBuilder()
-            for (dir in classModel.excludeDirs) {
+            for (dir in classModel.excludeDirs + classModel.excludeDirsRecursively) {
                 exclude.append(", \"")
                 exclude.append(StringUtil.escapeStringCharacters(dir))
                 exclude.append("\"")

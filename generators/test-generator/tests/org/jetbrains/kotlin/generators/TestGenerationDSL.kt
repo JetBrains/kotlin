@@ -82,6 +82,8 @@ class TestGroup(
         val annotations: List<AnnotationModel>,
         val targetBackendComputer: TargetBackendComputer
     ) {
+        val testDataRoot: String
+            get() = this@TestGroup.testDataRoot
         val baseDir: String
             get() = this@TestGroup.testsRoot
 
@@ -106,6 +108,7 @@ class TestGroup(
             // directives TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND won't be generated
             targetBackend: TargetBackend? = null,
             excludeDirs: List<String> = listOf(),
+            excludeDirsRecursively: List<String> = listOf(),
             filenameStartsLowerCase: Boolean? = null, // assert that file is properly named
             skipIgnored: Boolean = false, // pretty meaningless flag, affects only few test names in one test runner
             deep: Int? = null, // specifies how deep recursive search will follow directory with testdata
@@ -128,7 +131,7 @@ class TestGroup(
                     SimpleTestClassModel(
                         rootFile, recursive, excludeParentDirs,
                         compiledPattern, compiledExcludedPattern, filenameStartsLowerCase, testMethod, className,
-                        realTargetBackend, excludeDirs, skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep, annotations,
+                        realTargetBackend, excludeDirs, excludeDirsRecursively, skipIgnored, testRunnerMethodName, additionalRunnerArguments, deep, annotations,
                         extractTagsFromDirectory(rootFile), methodModels
                     )
                 }

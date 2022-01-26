@@ -28,8 +28,8 @@ internal sealed class TestModuleKind(val componentName: String) {
     object LIBRARY_SOURCE : TestModuleKind("librarySource")
 
     companion object {
-        val SOURCES_ONLY = listOf(SOURCE)
-        val SOURCES_AND_LIBRARIES_SOURCES = listOf(SOURCE, LIBRARY_SOURCE)
+        val SOURCE_ONLY by lazy(LazyThreadSafetyMode.NONE) { listOf(SOURCE) }
+        val SOURCE_AND_LIBRARY_SOURCE by lazy(LazyThreadSafetyMode.NONE) { listOf(SOURCE, LIBRARY_SOURCE) }
     }
 }
 
@@ -41,7 +41,7 @@ internal enum class Frontend(val prefix: String) {
 internal fun FirAndFe10TestGroup.test(
     baseClass: KClass<*>,
     generateFe10: Boolean = true,
-    init: TestGroup.TestClass.() -> Unit,
+    init: TestGroup.TestClass.(module: TestModuleKind) -> Unit,
 ) {
     analysisApiTest(
         "analysis/analysis-api-fir/tests",
@@ -63,8 +63,8 @@ internal fun FirAndFe10TestGroup.test(
 internal fun TestGroupSuite.test(
     baseClass: KClass<*>,
     addFe10: Boolean = true,
-    testModuleKinds: List<TestModuleKind> = TestModuleKind.SOURCES_ONLY,
-    init: TestGroup.TestClass.() -> Unit,
+    testModuleKinds: List<TestModuleKind> = TestModuleKind.SOURCE_ONLY,
+    init: TestGroup.TestClass.(module: TestModuleKind) -> Unit,
 ) {
     FirAndFe10TestGroup(this, directory = null, testModuleKinds).test(baseClass, addFe10, init)
 }
@@ -72,26 +72,24 @@ internal fun TestGroupSuite.test(
 
 internal fun TestGroupSuite.group(
     directory: String,
-    testModuleKinds: List<TestModuleKind> = TestModuleKind.SOURCES_ONLY,
     init: FirAndFe10TestGroup.() -> Unit,
 ) {
-    FirAndFe10TestGroup(this, directory, testModuleKinds).init()
+    FirAndFe10TestGroup(this, directory, testModuleKinds = listOf(TestModuleKind.SOURCE)).init()
 }
 
 
 internal fun TestGroupSuite.component(
     directory: String,
-    moduleKinds: List<TestModuleKind> = TestModuleKind.SOURCES_ONLY,
     init: FirAndFe10TestGroup.() -> Unit,
 ) {
-    group("components/$directory", moduleKinds, init)
+    group("components/$directory", init)
 }
 
 private fun FirAndFe10TestGroup.analysisApiTest(
     testRoot: String,
     frontend: Frontend,
     testClass: KClass<*>,
-    init: TestGroup.TestClass.() -> Unit,
+    init: TestGroup.TestClass.(module: TestModuleKind) -> Unit,
 ) {
     with(suite) {
         val fullTestPath = "analysis/analysis-api/testData" + directory?.let { "/$it" }.orEmpty()
@@ -112,14 +110,19 @@ private fun TestGroup.analysisApiTestClass(
     moduleKind: TestModuleKind,
     testClass: KClass<*>,
     prefixNeeded: Boolean,
-    init: TestGroup.TestClass.() -> Unit
+    init: TestGroup.TestClass.(module: TestModuleKind) -> Unit
 ) {
     val fullPackage = getPackageName(frontend.prefix, testClass)
 
-    val suiteTestClassName = fullPackage +
-            frontend.prefix +
-            moduleKind.componentName.capitalizeAsciiOnly().takeIf { prefixNeeded }.orEmpty() +
-            getDefaultSuiteTestClassName(testClass.java.simpleName)
+    val suiteTestClassName = buildString {
+        append(fullPackage)
+        append(frontend.prefix)
+        moduleKind.componentName
+            .capitalizeAsciiOnly()
+            .takeIf { prefixNeeded }
+            ?.let(::append)
+        append(getDefaultSuiteTestClassName(testClass.java.simpleName))
+    }
 
     getDefaultSuiteTestClassName(testClass.java.simpleName)
 
@@ -131,7 +134,7 @@ private fun TestGroup.analysisApiTestClass(
         useJunit4 = false
     ) {
         method(FrontendConfiguratorTestModel(configurator))
-        init()
+        init(moduleKind)
     }
 }
 

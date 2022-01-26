@@ -1,6 +1,8 @@
 package testing
 
-annotation class Annotation<T>(val clazz: Class<T>)
+import kotlin.reflect.KClass
+
+annotation class Annotation<T : Any>(val clazz: KClass<T>)
 class ATest
 
 @[Annotation<<caret>ATest>(ATest::class)]
