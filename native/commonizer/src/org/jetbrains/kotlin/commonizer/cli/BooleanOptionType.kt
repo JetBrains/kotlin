@@ -11,15 +11,7 @@ internal class BooleanOptionType(
     mandatory: Boolean
 ) : OptionType<Boolean>(alias, description, mandatory) {
     override fun parse(rawValue: String, onError: (reason: String) -> Nothing): Option<Boolean> {
-        val value = rawValue.lowercase().let {
-            when (it) {
-                in TRUE_TOKENS -> true
-                in FALSE_TOKENS -> false
-                else -> onError("Invalid boolean value: $it")
-            }
-        }
-
-        return Option(this, value)
+        return Option(this, parseBoolean(rawValue, onError))
     }
 
     companion object {
@@ -28,14 +20,12 @@ internal class BooleanOptionType(
     }
 }
 
-internal fun OptionType<Boolean>.parseBoolean(rawValue: String, onError: (reason: String) -> Nothing): Option<Boolean> {
-    val value = rawValue.lowercase().let {
+internal fun parseBoolean(rawValue: String, onError: (reason: String) -> Nothing): Boolean {
+    return rawValue.lowercase().let {
         when (it) {
             in BooleanOptionType.TRUE_TOKENS -> true
             in BooleanOptionType.FALSE_TOKENS -> false
             else -> onError("Invalid boolean value: $it")
         }
     }
-
-    return Option(this, value)
 }
