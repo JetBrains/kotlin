@@ -41268,9 +41268,33 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("augmentedAssigmentPlus.kt")
+        public void testAugmentedAssigmentPlus() throws Exception {
+            runTest("compiler/testData/codegen/box/safeCall/augmentedAssigmentPlus.kt");
+        }
+
+        @Test
+        @TestMetadata("augmentedAssigmentPlusAssign.kt")
+        public void testAugmentedAssigmentPlusAssign() throws Exception {
+            runTest("compiler/testData/codegen/box/safeCall/augmentedAssigmentPlusAssign.kt");
+        }
+
+        @Test
         @TestMetadata("genericNull.kt")
         public void testGenericNull() throws Exception {
             runTest("compiler/testData/codegen/box/safeCall/genericNull.kt");
+        }
+
+        @Test
+        @TestMetadata("incrementPostfix.kt")
+        public void testIncrementPostfix() throws Exception {
+            runTest("compiler/testData/codegen/box/safeCall/incrementPostfix.kt");
+        }
+
+        @Test
+        @TestMetadata("incrementPrefix.kt")
+        public void testIncrementPrefix() throws Exception {
+            runTest("compiler/testData/codegen/box/safeCall/incrementPrefix.kt");
         }
 
         @Test
@@ -41367,6 +41391,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("safeCallWithElvisFolding.kt")
         public void testSafeCallWithElvisFolding() throws Exception {
             runTest("compiler/testData/codegen/box/safeCall/safeCallWithElvisFolding.kt");
+        }
+
+        @Test
+        @TestMetadata("withAssignment.kt")
+        public void testWithAssignment() throws Exception {
+            runTest("compiler/testData/codegen/box/safeCall/withAssignment.kt");
         }
     }
 

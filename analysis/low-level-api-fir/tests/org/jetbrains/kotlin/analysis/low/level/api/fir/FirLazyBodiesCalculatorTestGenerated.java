@@ -434,6 +434,24 @@ public class FirLazyBodiesCalculatorTestGenerated extends AbstractFirLazyBodiesC
         }
 
         @Test
+        @TestMetadata("safeCallsWithAssignment.kt")
+        public void testSafeCallsWithAssignment() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/safeCallsWithAssignment.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallsWithAugmentedAssignment.kt")
+        public void testSafeCallsWithAugmentedAssignment() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/safeCallsWithAugmentedAssignment.kt");
+        }
+
+        @Test
+        @TestMetadata("safeCallsWithUnaryOperators.kt")
+        public void testSafeCallsWithUnaryOperators() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/safeCallsWithUnaryOperators.kt");
+        }
+
+        @Test
         @TestMetadata("simpleReturns.kt")
         public void testSimpleReturns() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/simpleReturns.kt");

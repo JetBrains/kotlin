@@ -566,7 +566,10 @@ private fun FirExpression.checkReceiver(name: String?): Boolean {
     return receiverName == name
 }
 
-fun FirQualifiedAccess.wrapWithSafeCall(receiver: FirExpression, source: KtSourceElement): FirSafeCallExpression {
+// this = .f(...)
+// receiver = <expr>
+// Returns safe call <expr>?.{ f(...) }
+fun FirQualifiedAccess.createSafeCall(receiver: FirExpression, source: KtSourceElement): FirSafeCallExpression {
     val checkedSafeCallSubject = buildCheckedSafeCallSubject {
         @OptIn(FirContractViolation::class)
         this.originalReceiverRef = FirExpressionRef<FirExpression>().apply {
@@ -582,9 +585,22 @@ fun FirQualifiedAccess.wrapWithSafeCall(receiver: FirExpression, source: KtSourc
         this.checkedSubjectRef = FirExpressionRef<FirCheckedSafeCallSubject>().apply {
             bind(checkedSafeCallSubject)
         }
-        this.selector = this@wrapWithSafeCall
+        this.selector = this@createSafeCall
         this.source = source
     }
+}
+
+// Turns (a?.b).f(...) to a?.{ b.f(...) ) -- for any qualified access `.f(...)`
+// Other patterns remain unchanged
+fun FirExpression.pullUpSafeCallIfNecessary(): FirExpression {
+    if (this !is FirQualifiedAccess) return this
+    val safeCall = explicitReceiver as? FirSafeCallExpression ?: return this
+    val safeCallSelector = safeCall.selector as? FirExpression ?: return this
+
+    replaceExplicitReceiver(safeCallSelector)
+    safeCall.replaceSelector(this)
+
+    return safeCall
 }
 
 fun List<FirAnnotationCall>.filterUseSiteTarget(target: AnnotationUseSiteTarget): List<FirAnnotationCall> =

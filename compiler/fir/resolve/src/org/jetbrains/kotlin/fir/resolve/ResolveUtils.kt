@@ -392,7 +392,7 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
     session: FirSession,
 ) {
     val receiverType = nullableReceiverExpression.typeRef.coneTypeSafe<ConeKotlinType>()
-    val typeAfterNullCheck = (selector as? FirQualifiedAccess)?.expressionTypeOrUnitForAssignment() ?: return
+    val typeAfterNullCheck = selector.expressionTypeOrUnitForAssignment() ?: return
     val isReceiverActuallyNullable = if (session.languageVersionSettings.supportsFeature(LanguageFeature.SafeCallsAreAlwaysNullable)) {
         true
     } else {
@@ -409,7 +409,7 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
     session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, source, null)
 }
 
-private fun FirQualifiedAccess.expressionTypeOrUnitForAssignment(): ConeKotlinType? {
+private fun FirStatement.expressionTypeOrUnitForAssignment(): ConeKotlinType? {
     if (this is FirExpression) return typeRef.coneTypeSafe()
 
     require(this is FirVariableAssignment) {

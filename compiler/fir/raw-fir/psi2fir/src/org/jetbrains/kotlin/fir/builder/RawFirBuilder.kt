@@ -10,7 +10,10 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -2354,7 +2357,7 @@ open class RawFirBuilder(
                     }
                 }
                 origin = FirFunctionCallOrigin.Operator
-            }
+            }.pullUpSafeCallIfNecessary()
         }
 
         override fun visitQualifiedExpression(expression: KtQualifiedExpression, data: Unit): FirElement {
@@ -2369,7 +2372,7 @@ open class RawFirBuilder(
                 if (expression is KtSafeQualifiedExpression) {
                     @OptIn(FirImplementationDetail::class)
                     firSelector.replaceSource(expression.toFirSourceElement(KtFakeSourceElementKind.DesugaredSafeCallExpression))
-                    return firSelector.wrapWithSafeCall(
+                    return firSelector.createSafeCall(
                         receiver,
                         expression.toFirSourceElement()
                     )

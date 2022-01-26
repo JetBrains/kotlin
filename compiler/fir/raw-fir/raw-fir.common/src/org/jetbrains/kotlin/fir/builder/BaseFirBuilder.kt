@@ -489,7 +489,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             diagnostic = ConeSimpleDiagnostic("Inc/dec without operand", DiagnosticKind.Syntax)
         }
 
-        if (unwrappedReceiver.elementType == DOT_QUALIFIED_EXPRESSION) {
+        if (unwrappedReceiver.elementType == DOT_QUALIFIED_EXPRESSION || unwrappedReceiver.elementType == SAFE_ACCESS_EXPRESSION) {
             return generateIncrementOrDecrementBlockForQualifiedAccess(
                 wholeExpression,
                 operationReference,
@@ -670,35 +670,35 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     private fun generateIncrementOrDecrementBlockForQualifiedAccess(
         wholeExpression: T,
         operationReference: T?,
-        receiverForOperation: T,
+        receiverForOperation: T, // a.b
         callName: Name,
         prefix: Boolean,
         convert: T.() -> FirExpression
     ): FirExpression {
-        return buildBlock {
+        val argumentReceiver = receiverForOperation.receiverExpression // a
+        return buildBlockProbablyUnderSafeCall(
+            receiverForOperation,
+            convert,
+            receiverForOperation.toFirSourceElement(),
+        ) { qualifiedFir ->
+            val receiverFir = (qualifiedFir as? FirQualifiedAccess)?.explicitReceiver ?: buildErrorExpression {
+                source = receiverForOperation.toFirSourceElement()
+                diagnostic = ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)
+            }
+
             val baseSource = wholeExpression?.toFirSourceElement()
             val desugaredSource = baseSource?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
             source = desugaredSource
-
-            val argumentReceiver = receiverForOperation.receiverExpression
-            val argumentSelector = receiverForOperation.selectorExpression
 
             val argumentReceiverVariable = generateTemporaryVariable(
                 baseModuleData,
                 argumentReceiver?.toFirSourceElement(),
                 Name.special("<receiver>"),
-                argumentReceiver?.convert() ?: buildErrorExpression {
-                    source = receiverForOperation.toFirSourceElement()
-                    diagnostic = ConeSimpleDiagnostic("Qualified expression without receiver", DiagnosticKind.Syntax)
-                }
+                initializer = receiverFir,
             ).also { statements += it }
 
             val firArgument = generateResolvedAccessExpression(argumentReceiverVariable.source, argumentReceiverVariable).let { receiver ->
-                val firArgumentSelector = argumentSelector?.convert() ?: buildErrorExpression {
-                    source = receiverForOperation.toFirSourceElement()
-                    diagnostic = ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)
-                }
-                firArgumentSelector.also { if (it is FirQualifiedAccessExpression) it.replaceExplicitReceiver(receiver) }
+                qualifiedFir.also { if (it is FirQualifiedAccessExpression) it.replaceExplicitReceiver(receiver) }
             }
 
             putIncrementOrDecrementStatements(
@@ -759,12 +759,14 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         prefix: Boolean,
         convert: T.() -> FirExpression
     ): FirExpression {
-        return buildBlock {
+        val array = receiver.arrayExpression
+        return buildBlockProbablyUnderSafeCall(
+            array, convert, receiver.toFirSourceElement(),
+        ) { arrayReceiver ->
             val baseSource = wholeExpression?.toFirSourceElement()
             val desugaredSource = baseSource?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
             source = desugaredSource
 
-            val array = receiver.arrayExpression
             val indices = receiver.indexExpressions
             requireNotNull(indices) { "No indices in ${wholeExpression.asText}" }
 
@@ -772,10 +774,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 baseModuleData,
                 array?.toFirSourceElement(),
                 Name.special("<array>"),
-                array?.convert() ?: buildErrorExpression {
-                    source = receiver.toFirSourceElement()
-                    diagnostic = ConeSimpleDiagnostic("No array expression", DiagnosticKind.Syntax)
-                }
+                initializer = arrayReceiver,
             ).also { statements += it }
 
             val indexVariables = indices.mapIndexed { i, index ->
@@ -826,6 +825,42 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     origin = FirFunctionCallOrigin.Operator
                 }
             }
+        }
+    }
+
+
+    // if `receiver` is a safe call a?.f(...), insert a block under safe call
+    // a?.{ val receiver = $subj$.f() ... } where `...` is generated by `init(FIR<$subj$.f()>)`
+    //
+    // Otherwise just returns buildBlock { init(FIR<receiver>)) }
+    private fun buildBlockProbablyUnderSafeCall(
+        receiver: T?,
+        convert: T.() -> FirExpression,
+        sourceElementForError: KtSourceElement?,
+        init: FirBlockBuilder.(receiver: FirExpression) -> Unit = {}
+    ): FirExpression {
+        val receiverFir = receiver?.convert() ?: buildErrorExpression {
+            source = sourceElementForError
+            diagnostic = ConeSimpleDiagnostic("No receiver expression", DiagnosticKind.Syntax)
+        }
+
+        if (receiverFir is FirSafeCallExpression) {
+            receiverFir.replaceSelector(
+                buildBlock {
+                    init(
+                        receiverFir.selector as? FirExpression ?: buildErrorExpression {
+                            source = sourceElementForError
+                            diagnostic = ConeSimpleDiagnostic("Safe call selector expected to be an expression here", DiagnosticKind.Syntax)
+                        }
+                    )
+                }
+            )
+
+            return receiverFir
+        }
+
+        return buildBlock {
+            init(receiverFir)
         }
     }
 
@@ -893,25 +928,50 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             return if (operation == FirOperation.ASSIGN) {
                 val result = unwrappedLhs.convert()
                 (result.annotations as MutableList<FirAnnotation>) += annotations
-                result
+                result.pullUpSafeCallIfNecessary()
             } else {
-                generateAugmentedArraySetCall(unwrappedLhs, baseSource, arrayAccessSource, operation, annotations, rhsAST, convert)
+                val receiver = unwrappedLhs.convert()
+
+                if (receiver is FirSafeCallExpression) {
+                    receiver.replaceSelector(
+                        generateAugmentedArraySetCall(
+                            receiver.selector as FirExpression, baseSource, arrayAccessSource, operation, annotations, rhsAST, convert
+                        )
+                    )
+                    receiver
+                } else {
+                    generateAugmentedArraySetCall(receiver, baseSource, arrayAccessSource, operation, annotations, rhsAST, convert)
+                }
             }
         }
 
         if (operation in FirOperation.ASSIGNMENTS && operation != FirOperation.ASSIGN) {
-            return buildAssignmentOperatorStatement {
+            val lhsReceiver = this@generateAssignment?.convert()
+
+            val receiverToUse =
+                if (lhsReceiver is FirSafeCallExpression)
+                    lhsReceiver.selector as? FirExpression
+                else
+                    lhsReceiver
+
+            val result = buildAssignmentOperatorStatement {
                 source = baseSource
                 this.operation = operation
-                leftArgument = this@generateAssignment?.convert()
-                    ?: buildErrorExpression {
-                        source = null
-                        diagnostic = ConeSimpleDiagnostic(
-                            "Unsupported left value of assignment: ${baseSource?.psi?.text}", DiagnosticKind.ExpressionExpected
-                        )
-                    }
+                leftArgument = receiverToUse ?: buildErrorExpression {
+                    source = null
+                    diagnostic = ConeSimpleDiagnostic(
+                        "Unsupported left value of assignment: ${baseSource?.psi?.text}", DiagnosticKind.ExpressionExpected
+                    )
+                }
                 rightArgument = rhsExpression
                 this.annotations += annotations
+            }
+
+            return if (lhsReceiver is FirSafeCallExpression) {
+                lhsReceiver.replaceSelector(result)
+                lhsReceiver
+            } else {
+                result
             }
         }
         require(operation == FirOperation.ASSIGN)
@@ -956,7 +1016,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     }
 
     private fun generateAugmentedArraySetCall(
-        unwrappedReceiver: T,
+        receiver: FirExpression, // a.get(x,y)
         baseSource: KtSourceElement?,
         arrayAccessSource: KtSourceElement?,
         operation: FirOperation,
@@ -967,15 +1027,15 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         return buildAugmentedArraySetCall {
             source = baseSource
             this.operation = operation
-            assignCall = generateAugmentedCallForAugmentedArraySetCall(unwrappedReceiver, baseSource, operation, rhs, convert)
+            assignCall = generateAugmentedCallForAugmentedArraySetCall(receiver, baseSource, operation, rhs, convert)
             setGetBlock =
-                generateSetGetBlockForAugmentedArraySetCall(unwrappedReceiver, baseSource, arrayAccessSource, operation, rhs, convert)
+                generateSetGetBlockForAugmentedArraySetCall(receiver, baseSource, arrayAccessSource, operation, rhs, convert)
             this.annotations += annotations
         }
     }
 
     private fun generateAugmentedCallForAugmentedArraySetCall(
-        unwrappedReceiver: T,
+        receiver: FirExpression, // a.get(x,y)
         baseSource: KtSourceElement?,
         operation: FirOperation,
         rhs: T?,
@@ -990,7 +1050,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             calleeReference = buildSimpleNamedReference {
                 name = FirOperationNameConventions.ASSIGNMENTS.getValue(operation)
             }
-            explicitReceiver = unwrappedReceiver.convert()
+            explicitReceiver = receiver
             argumentList = buildArgumentList {
                 arguments += rhs?.convert() ?: buildErrorExpression(
                     null,
@@ -1003,7 +1063,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
 
     private fun generateSetGetBlockForAugmentedArraySetCall(
-        unwrappedReceiver: T,
+        receiver: FirExpression,
         baseSource: KtSourceElement?,
         arrayAccessSource: KtSourceElement?,
         operation: FirOperation,
@@ -1020,7 +1080,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
          * }
          */
         return buildBlock {
-            val baseCall = unwrappedReceiver.convert() as FirFunctionCall
+            val baseCall = receiver as FirFunctionCall
 
             val arrayVariable = generateTemporaryVariable(
                 baseModuleData,
@@ -1105,7 +1165,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             classTypeRefWithCorrectSourceKind: FirTypeRef,
             firPropertyReturnTypeRefWithCorrectSourceKind: FirTypeRef
         ) =
-             buildPropertyAccessExpression {
+            buildPropertyAccessExpression {
                 source = parameterSource
                 typeRef = firPropertyReturnTypeRefWithCorrectSourceKind
                 dispatchReceiver = buildThisReceiverExpression {

@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.ElementTypeUtils.getOperationSymbol
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtLightSourceElement
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtNodeTypes.*
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
@@ -556,7 +556,7 @@ class ExpressionsConverter(
             if (isSafe) {
                 @OptIn(FirImplementationDetail::class)
                 it.replaceSource(dotQualifiedExpression.toFirSourceElement(KtFakeSourceElementKind.DesugaredSafeCallExpression))
-                return it.wrapWithSafeCall(
+                return it.createSafeCall(
                     firReceiver!!,
                     dotQualifiedExpression.toFirSourceElement()
                 )
@@ -918,7 +918,7 @@ class ExpressionsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseArrayAccess
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitArrayAccessExpression
      */
-    private fun convertArrayAccessExpression(arrayAccess: LighterASTNode): FirFunctionCall {
+    private fun convertArrayAccessExpression(arrayAccess: LighterASTNode): FirExpression {
         var firExpression: FirExpression? = null
         val indices: MutableList<FirExpression> = mutableListOf()
         arrayAccess.forEachChildren {
@@ -942,7 +942,7 @@ class ExpressionsConverter(
                 getArgument?.let { arguments += it }
             }
             origin = FirFunctionCallOrigin.Operator
-        }
+        }.pullUpSafeCallIfNecessary()
     }
 
     /**

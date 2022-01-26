@@ -393,6 +393,21 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/qualifierWithTypeArguments.kt");
         }
 
+        @TestMetadata("safeCallsWithAssignment.kt")
+        public void testSafeCallsWithAssignment() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/safeCallsWithAssignment.kt");
+        }
+
+        @TestMetadata("safeCallsWithAugmentedAssignment.kt")
+        public void testSafeCallsWithAugmentedAssignment() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/safeCallsWithAugmentedAssignment.kt");
+        }
+
+        @TestMetadata("safeCallsWithUnaryOperators.kt")
+        public void testSafeCallsWithUnaryOperators() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/safeCallsWithUnaryOperators.kt");
+        }
+
         @TestMetadata("simpleReturns.kt")
         public void testSimpleReturns() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/simpleReturns.kt");
