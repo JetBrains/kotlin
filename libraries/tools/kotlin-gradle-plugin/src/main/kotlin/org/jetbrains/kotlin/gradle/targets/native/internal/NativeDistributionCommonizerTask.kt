@@ -55,7 +55,7 @@ internal open class NativeDistributionCommonizerTask : DefaultTask() {
             outputDirectory = getRootOutputDirectory(),
             outputTargets = project.collectAllSharedCommonizerTargetsFromBuild(),
             logLevel = project.commonizerLogLevel,
-            additionalSettings = additionalCommonizerSettings(),
+            additionalSettings = project.additionalCommonizerSettings,
         )
     }
 

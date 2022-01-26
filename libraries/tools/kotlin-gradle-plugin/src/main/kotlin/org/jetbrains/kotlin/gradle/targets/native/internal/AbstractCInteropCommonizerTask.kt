@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.OutputDirectory
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout
@@ -34,11 +35,6 @@ internal fun AbstractCInteropCommonizerTask.outputDirectory(group: CInteropCommo
         .resolve(ensureMaxFileNameLength(interopsDirectoryName))
         .resolve(base64Hash(groupDisambiguation))
 }
-
-internal fun DefaultTask.additionalCommonizerSettings(): List<AdditionalCommonizerSetting> =
-    listOf(
-        OPTIMISTIC_NUMBER_COMMONIZATION_ENABLED_OPTION_ALIAS.argumentString setTo project.isPlatformIntegerCommonizationEnabled
-    )
 
 internal fun AbstractCInteropCommonizerTask.commonizedOutputLibraries(dependent: CInteropCommonizerDependent): FileCollection {
     return outputFilesProvider {

@@ -20,8 +20,8 @@ internal val Project.isCInteropCommonizationEnabled: Boolean get() = PropertiesP
 internal val Project.isIntransitiveMetadataConfigurationEnabled: Boolean
     get() = PropertiesProvider(this).enableIntransitiveMetadataConfiguration
 
-internal val Project.isPlatformIntegerCommonizationEnabled: Boolean
-    get() = PropertiesProvider(this).mppPlatformIntegerCommonization
+internal val Project.isOptimisticNumberCommonizationEnabled: Boolean
+    get() = PropertiesProvider(this).mppOptimisticNumberCommonization
 
 internal val Project.commonizeTask: TaskProvider<Task>
     get() = locateOrRegisterTask(

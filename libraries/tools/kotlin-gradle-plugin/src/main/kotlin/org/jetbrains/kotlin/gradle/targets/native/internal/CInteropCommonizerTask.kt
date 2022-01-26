@@ -85,7 +85,7 @@ internal open class CInteropCommonizerTask : AbstractCInteropCommonizerTask() {
             dependencyLibraries = getNativeDistributionDependencies(group),
             outputDirectory = outputDirectory(group),
             logLevel = project.commonizerLogLevel,
-            additionalSettings = additionalCommonizerSettings(),
+            additionalSettings = project.additionalCommonizerSettings,
         )
     }
 

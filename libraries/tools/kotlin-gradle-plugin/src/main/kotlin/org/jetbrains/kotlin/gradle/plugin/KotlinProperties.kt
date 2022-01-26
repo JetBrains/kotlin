@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_PLATFORM_INTEGER_COMMONIZATION
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_OPTIMISTIC_NUMBER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_DEPENDENCY_PROPAGATION
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
@@ -214,8 +214,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val mppStabilityNoWarn: Boolean?
         get() = booleanProperty(KotlinMultiplatformPlugin.STABILITY_NOWARN_FLAG)
 
-    val mppPlatformIntegerCommonization: Boolean
-        get() = booleanProperty(KOTLIN_MPP_PLATFORM_INTEGER_COMMONIZATION) ?: false
+    val mppOptimisticNumberCommonization: Boolean
+        get() = booleanProperty(KOTLIN_MPP_OPTIMISTIC_NUMBER_COMMONIZATION) ?: false
 
     val wasmStabilityNoWarn: Boolean
         get() = booleanProperty("kotlin.wasm.stability.nowarn") ?: false
@@ -472,7 +472,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT = "kotlin.internal.mpp.hierarchicalStructureByDefault"
         const val KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT = "kotlin.mpp.hierarchicalStructureSupport"
         const val KOTLIN_NATIVE_DEPENDENCY_PROPAGATION = "kotlin.native.enableDependencyPropagation"
-        const val KOTLIN_MPP_PLATFORM_INTEGER_COMMONIZATION = "kotlin.mpp.platformIntegerCommonization"
+        const val KOTLIN_MPP_OPTIMISTIC_NUMBER_COMMONIZATION = "kotlin.mpp.optimisticNumberCommonization"
     }
 
     companion object {
