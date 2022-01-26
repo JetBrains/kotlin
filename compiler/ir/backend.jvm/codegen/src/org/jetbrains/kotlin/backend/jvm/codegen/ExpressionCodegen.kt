@@ -136,7 +136,7 @@ class ExpressionCodegen(
     val inlinedInto: ExpressionCodegen?,
     val smap: SourceMapper,
     val reifiedTypeParametersUsages: ReifiedTypeParametersUsages,
-) : IrThinVisitor<PromisedValue, BlockInfo>(), BaseExpressionCodegen {
+) : IrThinVisitor<PromisedValue, BlockInfo>, BaseExpressionCodegen {
 
     override fun toString(): String = signature.toString()
 
