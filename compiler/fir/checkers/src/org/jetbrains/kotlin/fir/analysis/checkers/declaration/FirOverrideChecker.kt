@@ -346,28 +346,6 @@ object FirOverrideChecker : FirClassChecker() {
             reportNotAcceptedOverrideExperimentalities(
                 overriddenExperimentalities, memberSymbol, context, reporter
             )
-            for (annotation in memberSymbol.fir.annotations) {
-                val annotationType = annotation.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()
-                val lookupTag = annotationType?.lookupTag ?: continue
-                withSuppressedDiagnostics(annotation, context) {
-                    val useSiteTarget = annotation.useSiteTarget
-                    if (useSiteTarget == null || useSiteTarget == AnnotationUseSiteTarget.PROPERTY) {
-                        val experimentality = lookupTag.toFirRegularClassSymbol(session)?.loadExperimentalityForMarkerAnnotation()
-                        if (experimentality != null && experimentality !in overriddenExperimentalities && overriddenMemberSymbols.all {
-                                val ownerClassSymbol = it.dispatchReceiverClassOrNull()?.toFirRegularClassSymbol(session)
-                                ownerClassSymbol == null || !ownerClassSymbol.hasAnnotationItselfOrInParent(context, lookupTag.classId)
-                            }
-                        ) {
-                            val factory = if (session.languageVersionSettings.supportsFeature(LanguageFeature.OptInOnOverrideForbidden)) {
-                                FirErrors.OPT_IN_MARKER_ON_OVERRIDE
-                            } else {
-                                FirErrors.OPT_IN_MARKER_ON_OVERRIDE_WARNING
-                            }
-                            reporter.reportOn(annotation.source, factory, context)
-                        }
-                    }
-                }
-            }
         }
     }
 

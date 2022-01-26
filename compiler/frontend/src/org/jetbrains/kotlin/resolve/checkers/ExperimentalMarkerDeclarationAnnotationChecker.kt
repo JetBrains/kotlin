@@ -82,22 +82,6 @@ class ExperimentalMarkerDeclarationAnnotationChecker(private val module: ModuleD
                 ) {
                     trace.report(Errors.OPT_IN_MARKER_ON_WRONG_TARGET.on(entry, "field"))
                 }
-                if (annotated is KtCallableDeclaration &&
-                    annotated !is KtPropertyAccessor &&
-                    annotationUseSiteTarget == null &&
-                    annotated.hasModifier(KtTokens.OVERRIDE_KEYWORD)
-                ) {
-                    val descriptor = trace.get(BindingContext.DECLARATION_TO_DESCRIPTOR, annotated)
-                    if (descriptor is CallableMemberDescriptor &&
-                        !descriptor.hasExperimentalOverriddenDescriptors(annotationClass.fqNameSafe)
-                    ) {
-                        if (languageVersionSettings.supportsFeature(LanguageFeature.OptInOnOverrideForbidden)) {
-                            trace.report(Errors.OPT_IN_MARKER_ON_OVERRIDE.on(entry))
-                        } else {
-                            trace.report(Errors.OPT_IN_MARKER_ON_OVERRIDE_WARNING.on(entry))
-                        }
-                    }
-                }
             }
         }
 
