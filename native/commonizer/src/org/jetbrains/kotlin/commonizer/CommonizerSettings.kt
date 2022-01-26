@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.commonizer
 
-/**
- * Optional configuration settings for commonization task
- */
 interface CommonizerSettings {
 
     sealed class Key<T : Any> {
