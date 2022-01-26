@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allF
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependencyType.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Binaries
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.CacheKind
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
@@ -77,7 +77,7 @@ internal class TestCompilationFactory {
         val dependencies = collectDependencies(sourceModules, freeCompilerArgs, settings)
         val klibArtifact = KLIB(settings.artifactFileForKlib(sourceModule, freeCompilerArgs))
 
-        val staticCacheArtifact: KLIBStaticCache? = if (settings.get<CacheKind>().staticCacheRequiredForEveryLibrary)
+        val staticCacheArtifact: KLIBStaticCache? = if (settings.get<CacheMode>().staticCacheRequiredForEveryLibrary)
             KLIBStaticCache(cacheDir = klibArtifact.cacheDirForStaticCache(), klib = klibArtifact)
         else
             null // No artifact means no static cache should be compiled.

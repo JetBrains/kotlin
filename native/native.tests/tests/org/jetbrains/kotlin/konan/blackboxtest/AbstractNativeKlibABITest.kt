@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilati
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependencyType.Library
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestExecutable
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.CacheKind
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.SimpleTestDirectories
@@ -139,7 +139,7 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
 
     private val buildDir: File get() = testRunSettings.get<SimpleTestDirectories>().testBuildDir
     private val stdlibFile: File get() = testRunSettings.get<KotlinNativeHome>().stdlibFile
-    private val staticCacheRequiredForEveryLibrary: Boolean get() = testRunSettings.get<CacheKind>().staticCacheRequiredForEveryLibrary
+    private val staticCacheRequiredForEveryLibrary: Boolean get() = testRunSettings.get<CacheMode>().staticCacheRequiredForEveryLibrary
 
     companion object {
         private val COMPILER_ARGS_FOR_KLIB = TestCompilerArgs(

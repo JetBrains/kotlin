@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvid
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.SimpleTestRunProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.CacheKind
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -109,7 +109,7 @@ private object NativeTestSupport {
                 memoryModel,
                 threadStateChecker,
                 gcType,
-                CacheKind::class to computeCacheKind(nativeHome, nativeTargets, optimizationMode),
+                CacheMode::class to computeCacheMode(nativeHome, nativeTargets, optimizationMode),
                 computeBaseDirs(),
                 computeTimeouts()
             )
@@ -151,28 +151,28 @@ private object NativeTestSupport {
 
     private fun computeGCType(): GCType = enumSystemProperty(GC_TYPE, GCType.values(), default = GCType.UNSPECIFIED)
 
-    private fun computeCacheKind(
+    private fun computeCacheMode(
         kotlinNativeHome: KotlinNativeHome,
         kotlinNativeTargets: KotlinNativeTargets,
         optimizationMode: OptimizationMode
-    ): CacheKind {
-        // Compatibility stuff (initially, the property was boolean):
+    ): CacheMode {
+        // TODO: legacy, need to remove it
         val legacyUseCache = System.getProperty(USE_CACHE)?.let(String::toBooleanStrictOrNull)
         if (legacyUseCache != null) {
             return if (legacyUseCache)
-                CacheKind.WithStaticCache(kotlinNativeHome, kotlinNativeTargets, optimizationMode, false)
+                CacheMode.WithStaticCache(kotlinNativeHome, kotlinNativeTargets, optimizationMode, false)
             else
-                CacheKind.WithoutCache
+                CacheMode.WithoutCache
         }
 
         val staticCacheRequiredForEveryLibrary =
-            when (enumSystemProperty(USE_CACHE, CacheKind.Alias.values(), default = CacheKind.Alias.ONLY_DIST)) {
-                CacheKind.Alias.NO -> return CacheKind.WithoutCache
-                CacheKind.Alias.ONLY_DIST -> false
-                CacheKind.Alias.EVERYWHERE -> true
+            when (enumSystemProperty(CACHE_MODE, CacheMode.Alias.values(), default = CacheMode.Alias.STATIC_ONLY_DIST)) {
+                CacheMode.Alias.NO -> return CacheMode.WithoutCache
+                CacheMode.Alias.STATIC_ONLY_DIST -> false
+                CacheMode.Alias.STATIC_EVERYWHERE -> true
             }
 
-        return CacheKind.WithStaticCache(kotlinNativeHome, kotlinNativeTargets, optimizationMode, staticCacheRequiredForEveryLibrary)
+        return CacheMode.WithStaticCache(kotlinNativeHome, kotlinNativeTargets, optimizationMode, staticCacheRequiredForEveryLibrary)
     }
 
     private fun computeBaseDirs(): BaseDirs {
@@ -225,7 +225,8 @@ private object NativeTestSupport {
     private const val MEMORY_MODEL = "kotlin.internal.native.test.memoryModel"
     private const val USE_THREAD_STATE_CHECKER = "kotlin.internal.native.test.useThreadStateChecker"
     private const val GC_TYPE = "kotlin.internal.native.test.gcType"
-    private const val USE_CACHE = "kotlin.internal.native.test.useCache"
+    private const val USE_CACHE = "kotlin.internal.native.test.useCache" // TODO: legacy, need to remove it
+    private const val CACHE_MODE = "kotlin.internal.native.test.cacheMode"
     private const val EXECUTION_TIMEOUT = "kotlin.internal.native.test.executionTimeout"
     private const val PROJECT_BUILD_DIR = "PROJECT_BUILD_DIR"
 

@@ -226,7 +226,7 @@ internal class ExecutableCompilation(
     dependencies = dependencies,
     expectedArtifact = expectedArtifact
 ) {
-    private val cacheKind: CacheKind = settings.get()
+    private val cacheMode: CacheMode = settings.get()
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         add(
@@ -249,7 +249,7 @@ internal class ExecutableCompilation(
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         super.applyDependencies(argsBuilder)
-        cacheKind.staticCacheRootDir?.let { cacheRootDir -> add("-Xcache-directory=$cacheRootDir") }
+        cacheMode.staticCacheRootDir?.let { cacheRootDir -> add("-Xcache-directory=$cacheRootDir") }
         add(dependencies.cachedLibraries.uniqueCacheDirs) { libraryCacheDir -> "-Xcache-directory=${libraryCacheDir.path}" }
     }
 }
@@ -271,8 +271,8 @@ internal class StaticCacheCompilation(
     override val sourceModules get() = emptyList<TestModule>()
 
     private val cacheRootDir: File = run {
-        val cacheKind = settings.get<CacheKind>()
-        cacheKind.staticCacheRootDir ?: fail { "No cache root directory found for cache kind $cacheKind" }
+        val cacheMode = settings.get<CacheMode>()
+        cacheMode.staticCacheRootDir ?: fail { "No cache root directory found for cache mode $cacheMode" }
     }
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
