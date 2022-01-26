@@ -9,7 +9,7 @@ private typealias IsMarkedNullable = Boolean
 
 internal interface TypeNullabilityCommonizer : AssociativeCommonizer<IsMarkedNullable>
 
-internal fun TypeNullabilityCommonizer(options: TypeCommonizer.Options): TypeNullabilityCommonizer {
+internal fun TypeNullabilityCommonizer(options: TypeCommonizer.Context): TypeNullabilityCommonizer {
     return if (options.enableCovariantNullabilityCommonization) CovariantTypeNullabilityCommonizer
     else EqualTypeNullabilityCommonizer
 }
