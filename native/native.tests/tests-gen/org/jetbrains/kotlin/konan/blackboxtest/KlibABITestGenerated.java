@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.konan.blackboxtest;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedProperty;
+import org.jetbrains.kotlin.konan.blackboxtest.support.ClassLevelProperty;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,7 +20,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/klibABI")
 @TestDataPath("$PROJECT_ROOT")
-public class NativeKlibABITestGenerated extends AbstractNativeKlibABITest {
+@EnforcedProperty(property = ClassLevelProperty.CACHE_MODE, propertyValue = "NO")
+public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     @Test
     public void testAllFilesPresentInKlibABI() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klibABI"), Pattern.compile("^([^_](.+))$"), null, false);

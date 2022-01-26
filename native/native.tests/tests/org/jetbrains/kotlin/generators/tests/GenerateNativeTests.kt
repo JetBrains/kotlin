@@ -10,8 +10,11 @@ import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractExternalNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeKlibABITest
+import org.jetbrains.kotlin.konan.blackboxtest.support.ClassLevelProperty
+import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.CacheMode
 import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.Tag
 
@@ -43,7 +46,16 @@ fun main() {
 
         // KLIB ABI tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
-            testClass<AbstractNativeKlibABITest> {
+            testClass<AbstractNativeKlibABITest>(
+                suiteTestClassName = "KlibABITestGenerated",
+                annotations = listOf(enforcedCacheMode(CacheMode.Alias.NO))
+            ) {
+                model("klibABI/", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeKlibABITest>(
+                suiteTestClassName = "KlibABITestWithCacheGenerated",
+                annotations = listOf(enforcedCacheMode(CacheMode.Alias.STATIC_EVERYWHERE))
+            ) {
                 model("klibABI/", pattern = "^([^_](.+))$", recursive = false)
             }
         }
@@ -54,3 +66,9 @@ private inline fun <reified T : Annotation> provider() = annotation(T::class.jav
 
 private fun external() = annotation(Tag::class.java, "external")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
+
+private fun enforcedCacheMode(alias: CacheMode.Alias) = annotation(
+    EnforcedProperty::class.java,
+    EnforcedProperty::property.name to ClassLevelProperty.CACHE_MODE,
+    EnforcedProperty::propertyValue.name to alias.name
+)

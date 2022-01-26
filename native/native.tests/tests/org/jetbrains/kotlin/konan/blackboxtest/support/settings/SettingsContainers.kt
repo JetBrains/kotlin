@@ -44,9 +44,11 @@ internal class TestRunSettings(parent: TestClassSettings, settings: Iterable<Any
 /**
  * The hierarchy of settings containers for simple Native tests (e.g. KLIB tests):
  *
- * | Settings container      | Parent                | Scope                                  |
- * | ----------------------- | --------------------- | ---------------------------------------|
- * | [TestProcessSettings]   | `null`                | The whole Gradle test executor process |
- * | [SimpleTestRunSettings] | [TestProcessSettings] | The single test run of a test function |
+ * | Settings container        | Parent                    | Scope                                       |
+ * | ------------------------- | ------------------------- | ------------------------------------------- |
+ * | [TestProcessSettings]     | `null`                    | The whole Gradle test executor process      |
+ * | [SimpleTestClassSettings] | [TestProcessSettings]     | The single top-level (enclosing) test class |
+ * | [SimpleTestRunSettings]   | [SimpleTestClassSettings] | The single test run of a test function      |
  */
-internal class SimpleTestRunSettings(parent: TestProcessSettings, settings: Iterable<Any>) : Settings(parent, settings)
+internal class SimpleTestClassSettings(parent: TestProcessSettings, settings: Iterable<Any>) : Settings(parent, settings)
+internal class SimpleTestRunSettings(parent: SimpleTestClassSettings, settings: Iterable<Any>) : Settings(parent, settings)
