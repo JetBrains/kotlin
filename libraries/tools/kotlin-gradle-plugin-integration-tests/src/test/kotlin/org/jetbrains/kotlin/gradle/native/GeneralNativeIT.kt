@@ -1158,6 +1158,51 @@ class GeneralNativeIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `check offline mode is propagated to the cinterop`() = with(transformNativeTestProjectWithPluginDsl("native-cinterop")) {
+        val buildOptions = defaultBuildOptions()
+        val cinteropTask = ":projectLibrary:cinteropAnotherNumberHost"
+
+        build(cinteropTask, options = buildOptions) {
+            assertSuccessful()
+        }
+
+        // Check that --offline works when all the dependencies are already downloaded:
+        val buildOptionsOffline = buildOptions.copy(freeCommandLineArgs = buildOptions.freeCommandLineArgs + "--offline")
+
+        build("clean", cinteropTask, options = buildOptionsOffline) {
+            assertSuccessful()
+            withNativeCommandLineArguments(cinteropTask, toolName = "cinterop") {
+                assertTrue(it.containsSequentially("-Xoverride-konan-properties", "airplaneMode=true"))
+            }
+        }
+
+        // Check that --offline fails when there are no downloaded dependencies:
+        val customKonanDataDir = tempDir.newFolder("konanOffline")
+        val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.copy(
+            customEnvironmentVariables = buildOptionsOffline.customEnvironmentVariables +
+                    ("KONAN_DATA_DIR" to customKonanDataDir.absolutePath)
+        )
+
+        build("clean", cinteropTask, options = buildOptionsOfflineWithCustomKonanDataDir) {
+            assertFailed()
+        }
+
+        checkNoDependenciesDownloaded(customKonanDataDir)
+
+        // Check that the compiler is not extracted if it is not cached:
+        assertTrue(customKonanDataDir.deleteRecursively())
+        build(
+            "clean", cinteropTask, "-Pkotlin.native.version=1.6.20-M1-9999",
+            options = buildOptionsOfflineWithCustomKonanDataDir
+        ) {
+            assertFailed()
+            assertTasksNotExecuted(listOf(cinteropTask))
+        }
+
+        assertFalse(customKonanDataDir.exists())
+    }
+
     companion object {
         fun List<String>.containsSequentially(vararg elements: String): Boolean {
             check(elements.isNotEmpty())

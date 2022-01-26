@@ -146,6 +146,13 @@ internal class KotlinNativeCInteropRunner private constructor(project: Project) 
         fun runWithContext(action: () -> Unit)
     }
 
+    override val defaultArguments: List<String>
+        get() = mutableListOf<String>().apply {
+            if (project.gradle.startParameter.isOffline) {
+                addAll(listOf("-Xoverride-konan-properties", "airplaneMode=true"))
+            }
+        }
+
     companion object {
         fun ExecutionContext.run(args: List<String>) {
             val runner = KotlinNativeCInteropRunner(project)
