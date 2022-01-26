@@ -17,7 +17,7 @@ class ReturnTypeCommonizer(
         val isTopLevel = values.all { it.containingClass == null }
         val isCovariant = values.none { it is CirProperty && it.isVar }
         return typeCommonizer
-            .withOptions { withCovariantNullabilityCommonizationEnabled(isTopLevel && isCovariant) }
+            .withContext { withCovariantNullabilityCommonizationEnabled(isTopLevel && isCovariant) }
             .invoke(values.map { it.returnType })
     }
 }

@@ -19,7 +19,7 @@ class TypeAliasCommonizer(
     private val settings: CommonizerSettings,
 ) : NullableSingleInvocationCommonizer<CirTypeAlias> {
 
-    private val typeCommonizer = typeCommonizer.withOptions {
+    private val typeCommonizer = typeCommonizer.withContext {
         withBackwardsTypeAliasSubstitutionEnabled(false)
     }
 

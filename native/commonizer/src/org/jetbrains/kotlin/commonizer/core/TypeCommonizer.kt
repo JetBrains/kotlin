@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.commonizer.utils.safeCastValues
 class TypeCommonizer(
     private val classifiers: CirKnownClassifiers,
     private val settings: CommonizerSettings,
-    val options: Options = Options.default,
+    val context: Context = Context.default,
 ) : NullableSingleInvocationCommonizer<CirType> {
 
     private val classOrTypeAliasTypeCommonizer = ClassOrTypeAliasTypeCommonizer(this, classifiers, settings)
@@ -35,43 +35,43 @@ class TypeCommonizer(
         return null
     }
 
-    data class Options(
+    data class Context(
         val enableCovariantNullabilityCommonization: Boolean = false,
         val enableForwardTypeAliasSubstitution: Boolean = true,
         val enableBackwardsTypeAliasSubstitution: Boolean = true,
     ) {
 
-        fun withCovariantNullabilityCommonizationEnabled(enabled: Boolean = true): Options {
+        fun withCovariantNullabilityCommonizationEnabled(enabled: Boolean = true): Context {
             return if (enableCovariantNullabilityCommonization == enabled) this
             else copy(enableCovariantNullabilityCommonization = enabled)
         }
 
-        fun withForwardTypeAliasSubstitutionEnabled(enabled: Boolean = true): Options {
+        fun withForwardTypeAliasSubstitutionEnabled(enabled: Boolean = true): Context {
             return if (enableForwardTypeAliasSubstitution == enabled) this
             else copy(enableForwardTypeAliasSubstitution = enabled)
         }
 
-        fun withBackwardsTypeAliasSubstitutionEnabled(enabled: Boolean = true): Options {
+        fun withBackwardsTypeAliasSubstitutionEnabled(enabled: Boolean = true): Context {
             return if (enableBackwardsTypeAliasSubstitution == enabled) this
             else copy(enableBackwardsTypeAliasSubstitution = enabled)
         }
 
-        fun withTypeAliasSubstitutionEnabled(enabled: Boolean = true): Options {
+        fun withTypeAliasSubstitutionEnabled(enabled: Boolean = true): Context {
             return withForwardTypeAliasSubstitutionEnabled(enabled).withBackwardsTypeAliasSubstitutionEnabled(enabled)
         }
 
         companion object {
-            val default = Options()
+            val default = Context()
         }
     }
 
-    fun withOptions(options: Options): TypeCommonizer {
-        return if (this.options == options) this
-        else TypeCommonizer(classifiers, settings, options)
+    fun withContext(context: Context): TypeCommonizer {
+        return if (this.context == context) this
+        else TypeCommonizer(classifiers, settings, context)
     }
 
-    inline fun withOptions(createNewOptions: Options.() -> Options): TypeCommonizer {
-        return withOptions(options.createNewOptions())
+    inline fun withContext(createNewContext: Context.() -> Context): TypeCommonizer {
+        return withContext(context.createNewContext())
     }
 }
 
