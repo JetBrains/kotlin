@@ -139,7 +139,16 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         with(KonanConfigKeys) {
             with(configuration) {
                 // Can be overwritten by explicit arguments below.
-                parseBinaryOptions(arguments, configuration).forEach { optionWithValue ->
+                val parsedBinaryOptions = parseBinaryOptions(arguments, configuration)
+                parsedBinaryOptions
+                        .groupBy { it.option.compilerConfigurationKey }
+                        .values
+                        .filter { it.size > 1 }
+                        .forEach { conflictingOptions ->
+                            val names = conflictingOptions.map { it.option.name }
+                            configuration.report(ERROR, "Binary options $names can't be used at the same time")
+                        }
+                for (optionWithValue in parsedBinaryOptions) {
                     configuration.put(optionWithValue)
                 }
 
@@ -623,6 +632,9 @@ private fun <T : Any> parseBinaryOption(
                 "Possible values are: ${option.valueParser.validValuesHint}")
         null
     } else {
+        option.valueParser.warning?.also {
+            configuration.report(WARNING, it)
+        }
         BinaryOptionWithValue(option, value)
     }
 }
