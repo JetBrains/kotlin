@@ -9,6 +9,7 @@ KtSuccessCallInfo:
         smartCastType = kotlin.String
       extensionReceiver = null
       signature = KtVariableLikeSignature:
+        name = length
         receiverType = null
         returnType = kotlin.Int
         symbol = val length: kotlin.Int

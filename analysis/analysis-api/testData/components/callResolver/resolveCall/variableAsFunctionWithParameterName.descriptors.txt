@@ -12,12 +12,25 @@ KtSuccessCallInfo:
         symbol = kotlin/Function2.invoke(<dispatch receiver>: kotlin.Function2<P1, P2, R>, p1: P1, p2: P2): R
         valueParameters = [
           KtVariableLikeSignature:
+            name = a
             receiverType = null
             returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
             symbol = p1: P1,
           KtVariableLikeSignature:
+            name = b
             receiverType = null
             returnType = @R|kotlin.ParameterName|(name = String(b))  kotlin.String
             symbol = p2: P2
         ]
-    argumentMapping = {}
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = a
+        receiverType = null
+        returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
+        symbol = p1: P1),
+      "" -> (KtVariableLikeSignature:
+        name = b
+        receiverType = null
+        returnType = @R|kotlin.ParameterName|(name = String(b))  kotlin.String
+        symbol = p2: P2)
+    }

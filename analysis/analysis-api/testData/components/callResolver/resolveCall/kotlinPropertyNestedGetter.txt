@@ -6,6 +6,7 @@ KtSuccessCallInfo:
         isSafeNavigation = false
       extensionReceiver = null
       signature = KtVariableLikeSignature:
+        name = instance
         receiverType = null
         returnType = KtSubClass
         symbol = val instance: KtSubClass

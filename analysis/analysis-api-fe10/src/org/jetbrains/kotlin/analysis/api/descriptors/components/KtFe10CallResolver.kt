@@ -389,7 +389,11 @@ internal class KtFe10CallResolver(
         this is PropertyDescriptor && kind == CallableMemberDescriptor.Kind.SYNTHESIZED
 
     private fun ResolvedCall<*>.createArgumentMapping(signature: KtFunctionLikeSignature<*>): LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>> {
-        val parameterSignatureByName = signature.valueParameters.associateBy { it.symbol.name }
+        val parameterSignatureByName = signature.valueParameters.associateBy {
+            // ResolvedCall.valueArguments have their names affected by the `@ParameterName` annotations,
+            // so we use `name` instead of `symbol.name`
+            it.name
+        }
         val result = LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>()
         for ((parameter, arguments) in valueArguments) {
             val parameterSymbol = KtFe10DescValueParameterSymbol(parameter, analysisContext)

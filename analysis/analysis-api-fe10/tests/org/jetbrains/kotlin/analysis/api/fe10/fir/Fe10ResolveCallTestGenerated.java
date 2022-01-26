@@ -737,6 +737,12 @@ public class Fe10ResolveCallTestGenerated extends AbstractResolveCallTest {
     }
 
     @Test
+    @TestMetadata("variableAsFunctionWithParameterNameAnnotationConflict2.kt")
+    public void testVariableAsFunctionWithParameterNameAnnotationConflict2() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/variableAsFunctionWithParameterNameAnnotationConflict2.kt");
+    }
+
+    @Test
     @TestMetadata("variableAsFunctionWithParameterNameGeneric.kt")
     public void testVariableAsFunctionWithParameterNameGeneric() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/variableAsFunctionWithParameterNameGeneric.kt");

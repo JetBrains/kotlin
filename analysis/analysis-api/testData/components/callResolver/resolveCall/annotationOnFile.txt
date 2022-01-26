@@ -9,12 +9,14 @@ KtSuccessCallInfo:
         symbol = <constructor>(name: kotlin.String): kotlin.jvm.JvmName
         valueParameters = [
           KtVariableLikeSignature:
+            name = name
             receiverType = null
             returnType = kotlin.String
             symbol = name: kotlin.String
         ]
     argumentMapping = {
       "Foo" -> (KtVariableLikeSignature:
+        name = name
         receiverType = null
         returnType = kotlin.String
         symbol = name: kotlin.String)

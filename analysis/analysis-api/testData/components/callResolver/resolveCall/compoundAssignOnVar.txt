@@ -14,6 +14,7 @@ KtSuccessCallInfo:
           symbol = kotlin/Int.plus(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
           valueParameters = [
             KtVariableLikeSignature:
+              name = other
               receiverType = null
               returnType = kotlin.Int
               symbol = other: kotlin.Int
@@ -22,6 +23,7 @@ KtSuccessCallInfo:
       dispatchReceiver = null
       extensionReceiver = null
       signature = KtVariableLikeSignature:
+        name = i
         receiverType = null
         returnType = kotlin.Int
         symbol = var i: kotlin.Int

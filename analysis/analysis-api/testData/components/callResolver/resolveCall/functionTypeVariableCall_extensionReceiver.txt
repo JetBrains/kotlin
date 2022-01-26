@@ -14,6 +14,7 @@ KtSuccessCallInfo:
         symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<kotlin.String, kotlin.Unit>, p1: kotlin.String): kotlin.Unit
         valueParameters = [
           KtVariableLikeSignature:
+            name = p1
             receiverType = null
             returnType = kotlin.String
             symbol = p1: kotlin.String

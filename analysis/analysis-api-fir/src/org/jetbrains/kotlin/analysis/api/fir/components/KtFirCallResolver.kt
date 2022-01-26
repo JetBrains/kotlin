@@ -734,10 +734,14 @@ internal class KtFirCallResolver(
     private fun Iterable<MutableMap.MutableEntry<FirExpression, FirValueParameter>>?.createArgumentMapping(
         signatureOfCallee: KtFunctionLikeSignature<*>
     ): LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>> {
-        val paramSignatureByName = signatureOfCallee.valueParameters.associateBy { it.symbol.name }
+        val paramSignatureByName = signatureOfCallee.valueParameters.associateBy {
+            // We intentionally use `symbol.name` instead of `name` here, since
+            // `FirValueParameter.name` is not affected by the `@ParameterName`
+            it.symbol.name
+        }
         val ktArgumentMapping = LinkedHashMap<KtExpression, KtVariableLikeSignature<KtValueParameterSymbol>>()
         this?.forEach { (firExpression, firValueParameter) ->
-            val parameterSymbol = paramSignatureByName[firValueParameter.symbol.name] ?: return@forEach
+            val parameterSymbol = paramSignatureByName[firValueParameter.name] ?: return@forEach
             mapArgumentExpressionToParameter(firExpression, parameterSymbol, ktArgumentMapping)
         }
         return ktArgumentMapping

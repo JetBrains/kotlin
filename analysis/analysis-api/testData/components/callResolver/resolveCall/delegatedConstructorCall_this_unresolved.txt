@@ -11,6 +11,7 @@ KtErrorCallInfo:
           symbol = <constructor>(p: kotlin.Int): Sub
           valueParameters = [
             KtVariableLikeSignature:
+              name = p
               receiverType = null
               returnType = kotlin.Int
               symbol = p: kotlin.Int
@@ -27,10 +28,12 @@ KtErrorCallInfo:
           symbol = <constructor>(i: kotlin.Int, j: kotlin.Int): Sub
           valueParameters = [
             KtVariableLikeSignature:
+              name = i
               receiverType = null
               returnType = kotlin.Int
               symbol = i: kotlin.Int,
             KtVariableLikeSignature:
+              name = j
               receiverType = null
               returnType = kotlin.Int
               symbol = j: kotlin.Int

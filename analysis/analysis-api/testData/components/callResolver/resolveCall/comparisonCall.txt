@@ -12,12 +12,14 @@ KtSuccessCallInfo:
         symbol = kotlin/Int.compareTo(<dispatch receiver>: kotlin.Int, other: kotlin.Int): kotlin.Int
         valueParameters = [
           KtVariableLikeSignature:
+            name = other
             receiverType = null
             returnType = kotlin.Int
             symbol = other: kotlin.Int
         ]
     argumentMapping = {
       j -> (KtVariableLikeSignature:
+        name = other
         receiverType = null
         returnType = kotlin.Int
         symbol = other: kotlin.Int)

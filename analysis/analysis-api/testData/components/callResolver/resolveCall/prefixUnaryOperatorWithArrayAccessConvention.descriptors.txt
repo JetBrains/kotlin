@@ -24,6 +24,7 @@ KtSuccessCallInfo:
         symbol = /MyMap.get(<dispatch receiver>: MyMap<K, V>, k: K): V
         valueParameters = [
           KtVariableLikeSignature:
+            name = k
             receiverType = null
             returnType = kotlin.String
             symbol = k: K
@@ -42,10 +43,12 @@ KtSuccessCallInfo:
         symbol = /MyMap.set(<dispatch receiver>: MyMap<K, V>, k: K, v: V): kotlin.Unit
         valueParameters = [
           KtVariableLikeSignature:
+            name = k
             receiverType = null
             returnType = kotlin.String
             symbol = k: K,
           KtVariableLikeSignature:
+            name = v
             receiverType = null
             returnType = kotlin.Int
             symbol = v: V

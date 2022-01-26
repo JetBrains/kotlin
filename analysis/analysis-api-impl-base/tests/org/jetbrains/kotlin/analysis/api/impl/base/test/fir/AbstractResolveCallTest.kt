@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.DebugSymbolRenderer.render
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -115,6 +116,7 @@ private fun KtAnalysisSession.stringRepresentation(call: KtCallInfo): String {
             is KtDiagnostic -> "$severity<$factoryName: $defaultMessage>"
             is KtType -> render()
             is Enum<*> -> name
+            is Name -> asString()
             else -> buildString {
                 val clazz = this@stringValue::class
                 append(clazz.simpleName!!)

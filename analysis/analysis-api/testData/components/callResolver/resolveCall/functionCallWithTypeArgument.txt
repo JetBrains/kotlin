@@ -10,20 +10,24 @@ KtSuccessCallInfo:
         symbol = /function(a: A, b: B): kotlin.Unit
         valueParameters = [
           KtVariableLikeSignature:
+            name = a
             receiverType = null
             returnType = kotlin.Int
             symbol = a: A,
           KtVariableLikeSignature:
+            name = b
             receiverType = null
             returnType = kotlin.String
             symbol = b: B
         ]
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
+        name = a
         receiverType = null
         returnType = kotlin.Int
         symbol = a: A),
       "" -> (KtVariableLikeSignature:
+        name = b
         receiverType = null
         returnType = kotlin.String
         symbol = b: B)
