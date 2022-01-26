@@ -293,6 +293,7 @@ fun testInlineClassWithInterface() {
 
 // CHECK_CALLED_IN_SCOPE: scope=testCompareDifferentInstancesInSmartCast function=equals
 // CHECK_NEW_COUNT: function=testCompareDifferentInstancesInSmartCast count=6
+@Suppress("EQUALITY_NOT_APPLICABLE")
 fun testCompareDifferentInstancesInSmartCast() {
     val x1_1: Any = ClassInt(1)
     val x1_2 = ClassInt(1)
