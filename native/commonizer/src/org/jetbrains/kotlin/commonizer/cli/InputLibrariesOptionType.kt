@@ -7,6 +7,6 @@ package org.jetbrains.kotlin.commonizer.cli
 
 internal object InputLibrariesOptionType : LibrariesSetOptionType(
     mandatory = true,
-    alias = INPUT_LIBRARIES_OPTION_ALIAS,
+    alias = INPUT_LIBRARIES_ALIAS,
     description = "';' separated list of klib file paths that will get commonized"
 )

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.commonizer.parseCommonizerDependency
 
 internal abstract class DependenciesLibrariesSetOptionType(
     mandatory: Boolean,
-    alias: OptionAlias,
+    alias: String,
     description: String
 ) : OptionType<List<CommonizerDependency>>(
     mandatory = mandatory,
