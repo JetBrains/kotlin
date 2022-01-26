@@ -645,6 +645,7 @@ fun extractArgumentsTypeRefAndSource(typeRef: FirTypeRef?): List<FirTypeRefSourc
         is FirFunctionTypeRef -> {
             val valueParameters = delegatedTypeRef.valueParameters
 
+            delegatedTypeRef.receiverTypeRef?.let { result.add(FirTypeRefSource(it, it.source)) }
             for (valueParameter in valueParameters) {
                 val valueParamTypeRef = valueParameter.returnTypeRef
                 result.add(FirTypeRefSource(valueParamTypeRef, valueParamTypeRef.source))
