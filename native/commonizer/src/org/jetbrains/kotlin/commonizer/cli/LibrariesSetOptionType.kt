@@ -9,7 +9,7 @@ import java.io.File
 
 internal abstract class LibrariesSetOptionType(
     mandatory: Boolean,
-    alias: OptionAlias,
+    alias: String,
     description: String
 ) : OptionType<List<File>>(
     mandatory = mandatory,

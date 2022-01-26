@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.commonizer.parseCommonizerTarget
 
 internal object OutputCommonizerTargetsOptionType : OptionType<Set<SharedCommonizerTarget>>(
-    alias = OUTPUT_COMMONIZER_TARGET_OPTION_ALIAS,
+    alias = OUTPUT_COMMONIZER_TARGETS_ALIAS,
     description = "All output targets separated with ';'",
     mandatory = true
 ) {

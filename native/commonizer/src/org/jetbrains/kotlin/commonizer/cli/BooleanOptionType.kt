@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.commonizer.cli
 
 internal class BooleanOptionType(
-    alias: OptionAlias,
+    alias: String,
     description: String,
     mandatory: Boolean
 ) : OptionType<Boolean>(alias, description, mandatory) {
