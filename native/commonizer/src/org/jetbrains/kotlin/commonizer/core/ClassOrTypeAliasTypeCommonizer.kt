@@ -25,8 +25,8 @@ internal class ClassOrTypeAliasTypeCommonizer(
         typeCommonizer, classifiers, settings.getSetting(OptimisticNumberCommonizationEnabledKey)
     )
 
-    private val isMarkedNullableCommonizer = TypeNullabilityCommonizer(typeCommonizer.options)
-    private val typeDistanceMeasurement = TypeDistanceMeasurement(typeCommonizer.options)
+    private val isMarkedNullableCommonizer = TypeNullabilityCommonizer(typeCommonizer.context)
+    private val typeDistanceMeasurement = TypeDistanceMeasurement(typeCommonizer.context)
 
     override fun invoke(values: List<CirClassOrTypeAliasType>): CirClassOrTypeAliasType? {
         if (values.isEmpty()) return null
@@ -203,8 +203,8 @@ internal class ClassOrTypeAliasTypeCommonizer(
      * - The input [types] do not have a single distinct set of associated ids
      */
     private fun selectSubstitutionClassifierId(types: List<CirClassOrTypeAliasType>): CirEntityId? {
-        val forwardSubstitutionAllowed = typeCommonizer.options.enableForwardTypeAliasSubstitution
-        val backwardsSubstitutionAllowed = typeCommonizer.options.enableBackwardsTypeAliasSubstitution
+        val forwardSubstitutionAllowed = typeCommonizer.context.enableForwardTypeAliasSubstitution
+        val backwardsSubstitutionAllowed = typeCommonizer.context.enableBackwardsTypeAliasSubstitution
 
         /* No substitution allowed in any direction */
         if (!forwardSubstitutionAllowed && !backwardsSubstitutionAllowed) {
@@ -268,7 +268,7 @@ private interface TypeDistanceMeasurement {
     }
 
     companion object {
-        operator fun invoke(options: TypeCommonizer.Options): TypeDistanceMeasurement = when {
+        operator fun invoke(options: TypeCommonizer.Context): TypeDistanceMeasurement = when {
             options.enableBackwardsTypeAliasSubstitution && options.enableForwardTypeAliasSubstitution -> Full
             options.enableForwardTypeAliasSubstitution -> ForwardOnly
             else -> None
