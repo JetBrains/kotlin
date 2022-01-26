@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
 @OptIn(SymbolInternals::class)
@@ -84,7 +85,7 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
                 return true
             }
             val kind = info[symbol] ?: EventOccurrencesRange.ZERO
-            if (symbol.fir.isVal && kind.canBeRevisited()) {
+            if (symbol.fir.isVal && (symbol is FirSyntheticPropertySymbol || kind.canBeRevisited())) {
                 reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
                 return true
             }
@@ -110,7 +111,7 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
             node: QualifiedAccessNode
         ): Boolean {
             val kind = info[symbol] ?: EventOccurrencesRange.ZERO
-            if (!kind.isDefinitelyVisited()) {
+            if (symbol !is FirSyntheticPropertySymbol && !kind.isDefinitelyVisited()) {
                 reporter.reportOn(node.fir.source, FirErrors.UNINITIALIZED_VARIABLE, symbol, context)
                 return true
             }

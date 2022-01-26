@@ -9,7 +9,7 @@ fun foo(k: KotlinClass) {
     if (<!SENSELESS_COMPARISON!>k.something == null<!>) return
 
     k.setSomething(1)
-    k.something = <!ASSIGNMENT_TYPE_MISMATCH!>1<!>
+    k.<!VAL_REASSIGNMENT!>something<!> = <!ASSIGNMENT_TYPE_MISMATCH!>1<!>
 }
 
 fun useString(i: String) {}

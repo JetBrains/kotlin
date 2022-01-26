@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.referredPropertySymbol
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 
 class LocalPropertyAndCapturedWriteCollector private constructor() : ControlFlowGraphVisitorVoid() {
     companion object {
@@ -53,11 +54,16 @@ class LocalPropertyAndCapturedWriteCollector private constructor() : ControlFlow
     }
 
     override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
+        val symbol = node.fir.referredPropertySymbol ?: return
+        if (symbol is FirSyntheticPropertySymbol) {
+            symbols[symbol] = true
+            return
+        }
+
         // Check if this variable assignment is inside a lambda or a local function.
         if (lambdaOrLocalFunctionStack.isEmpty()) return
 
         // Check if the assigned variable doesn't belong to any lambda or local function.
-        val symbol = node.fir.referredPropertySymbol ?: return
         if (symbol !in symbols || symbols[symbol] == false) return
 
         // If all nested declarations are lambdas that are invoked in-place (according to the contract),

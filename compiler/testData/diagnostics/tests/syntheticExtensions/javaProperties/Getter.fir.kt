@@ -6,7 +6,7 @@ class KotlinClass {
 fun foo(javaClass: JavaClass, kotlinClass: KotlinClass) {
     useInt(javaClass.getSomething())
     useInt(javaClass.something)
-    javaClass.something = 1
+    javaClass.<!VAL_REASSIGNMENT!>something<!> = 1
     javaClass.<!UNRESOLVED_REFERENCE!>Something<!>
     useInt(kotlinClass.getSomething())
     kotlinClass.<!UNRESOLVED_REFERENCE!>something<!>
