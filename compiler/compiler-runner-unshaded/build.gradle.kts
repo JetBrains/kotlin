@@ -14,7 +14,6 @@ dependencies {
     compileOnly(project(":kotlin-preloader"))
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":daemon-common"))
-    compileOnly(project(":daemon-common-new"))
     compileOnly(project(":compiler:util"))
     compileOnly(intellijCore())
 }

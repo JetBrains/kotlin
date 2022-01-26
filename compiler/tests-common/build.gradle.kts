@@ -42,7 +42,6 @@ dependencies {
     testApi(project(":kotlin-preloader"))
     testApi(project(":compiler:cli-common"))
     testApi(project(":daemon-common"))
-    testApi(project(":daemon-common-new"))
     testApi(project(":js:js.serializer"))
     testApi(project(":js:js.frontend"))
     testApi(project(":js:js.translator"))

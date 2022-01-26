@@ -247,7 +247,6 @@ extra["compilerModulesForJps"] = listOf(
     ":compiler:cli-common",
     ":kotlin-compiler-runner-unshaded",
     ":daemon-common",
-    ":daemon-common-new",
     ":core:compiler.common",
     ":core:compiler.common.jvm",
     ":core:descriptors",

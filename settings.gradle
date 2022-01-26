@@ -100,7 +100,6 @@ include ":benchmarks",
         ":kotlin-util-klib",
         ":kotlin-util-klib-metadata",
         ":daemon-common",
-        ":daemon-common-new",
         ":kotlin-daemon",
         ":kotlin-daemon-client",
         ":kotlin-daemon-client-new",
@@ -585,7 +584,6 @@ project(':compiler:cli-js').projectDir = "$rootDir/compiler/cli/cli-js" as File
 project(':kotlin-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File
 project(':kotlin-daemon').projectDir = "$rootDir/compiler/daemon" as File
 project(':daemon-common').projectDir = "$rootDir/compiler/daemon/daemon-common" as File
-project(':daemon-common-new').projectDir = "$rootDir/compiler/daemon/daemon-common-new" as File
 project(':kotlin-daemon-client').projectDir = "$rootDir/compiler/daemon/daemon-client" as File
 project(':kotlin-daemon-client-new').projectDir = "$rootDir/compiler/daemon/daemon-client-new" as File
 project(':kotlin-daemon-tests').projectDir = "$rootDir/compiler/daemon/daemon-tests" as File

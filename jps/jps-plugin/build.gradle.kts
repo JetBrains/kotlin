@@ -21,7 +21,6 @@ dependencies {
     api(project(":kotlin-compiler-runner-unshaded"))
     api(project(":kotlin-compiler-runner"))
     api(project(":daemon-common"))
-    api(project(":daemon-common-new"))
     api(project(":kotlin-daemon-client"))
     api(project(":kotlin-daemon"))
     testImplementation(projectTests(":generators:test-generator"))
