@@ -174,6 +174,57 @@ interface JvmSignatureUtils {
                 parameters.flatMap { listOf(it.dri) + it.type.drisOfAllNestedBounds })
         return t.dri in allDris
     }
+
+    /**
+     * Builds a distinguishable [function] parameters block, so that it
+     * can be processed or custom rendered down the road.
+     *
+     * Resulting structure:
+     * ```
+     * SymbolContentKind.Parameters(style = wrapped) {
+     *     SymbolContentKind.Parameter(style = indented) { param, }
+     *     SymbolContentKind.Parameter(style = indented) { param, }
+     *     SymbolContentKind.Parameter(style = indented) { param }
+     * }
+     * ```
+     * Wrapping and indentation of parameters is applied conditionally, see [shouldWrapParams]
+     */
+    fun PageContentBuilder.DocumentableContentBuilder.parametersBlock(
+        function: DFunction, paramBuilder: PageContentBuilder.DocumentableContentBuilder.(DParameter) -> Unit
+    ) {
+        val shouldWrap = function.shouldWrapParams()
+        val parametersStyle = if (shouldWrap) setOf(ContentStyle.Wrapped) else emptySet()
+        val elementStyle = if (shouldWrap) setOf(ContentStyle.Indented) else emptySet()
+        group(kind = SymbolContentKind.Parameters, styles = parametersStyle) {
+            function.parameters.dropLast(1).forEach {
+                group(kind = SymbolContentKind.Parameter, styles = elementStyle) {
+                    paramBuilder(it)
+                    punctuation(", ")
+                }
+            }
+            group(kind = SymbolContentKind.Parameter, styles = elementStyle) {
+                paramBuilder(function.parameters.last())
+            }
+        }
+    }
+
+    /**
+     * Determines whether parameters in a function (including constructor) should be wrapped
+     *
+     * Without wrapping:
+     * ```
+     * class SimpleClass(foo: String, bar: String) {}
+     * ```
+     * With wrapping:
+     * ```
+     * class SimpleClass(
+     *     foo: String,
+     *     bar: String,
+     *     baz: String
+     * )
+     * ```
+     */
+    private fun DFunction.shouldWrapParams() = this.parameters.size >= 3
 }
 
 sealed class AtStrategy
