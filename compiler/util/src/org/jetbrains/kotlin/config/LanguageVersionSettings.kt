@@ -225,7 +225,6 @@ enum class LanguageFeature(
     ReportNonVarargSpreadOnGenericCalls(KOTLIN_1_7, kind = BUG_FIX),
     ProhibitSimplificationOfNonTrivialConstBooleanExpressions(KOTLIN_1_7),
     SafeCallsAreAlwaysNullable(KOTLIN_1_7),
-    AbstractClassMemberNotImplementedWithIntermediateAbstractClass(KOTLIN_1_7, kind = BUG_FIX),
     RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_7),
     JvmPermittedSubclassesAttributeForSealed(KOTLIN_1_7),
     ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_7, kind = BUG_FIX),
@@ -251,6 +250,7 @@ enum class LanguageFeature(
     ProhibitConfusingSyntaxInWhenBranches(KOTLIN_1_8, kind = BUG_FIX), // KT-48385
     UseConsistentRulesForPrivateConstructorsOfSealedClasses(sinceVersion = KOTLIN_1_8, kind = BUG_FIX), // KT-44866
     ProgressionsChangingResolve(KOTLIN_1_8), // KT-49276
+    AbstractClassMemberNotImplementedWithIntermediateAbstractClass(KOTLIN_1_8, kind = BUG_FIX), // KT-45508
     ForbidSuperDelegationToAbstractFakeOverride(KOTLIN_1_8), // KT-49017
     ForbidSuperDelegationToAbstractAnyMethod(KOTLIN_1_8), // KT-38078
     ProperEqualityChecksInBuilderInferenceCalls(KOTLIN_1_8, kind = BUG_FIX),
