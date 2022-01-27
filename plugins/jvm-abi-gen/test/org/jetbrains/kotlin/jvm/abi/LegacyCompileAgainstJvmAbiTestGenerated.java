@@ -115,6 +115,11 @@ public class LegacyCompileAgainstJvmAbiTestGenerated extends AbstractLegacyCompi
         runTest("plugins/jvm-abi-gen/testData/compile/privateOnlyConstructors/");
     }
 
+    @TestMetadata("privateValueClassConstructor")
+    public void testPrivateValueClassConstructor() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/privateValueClassConstructor/");
+    }
+
     @TestMetadata("topLevel")
     public void testTopLevel() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compile/topLevel/");
