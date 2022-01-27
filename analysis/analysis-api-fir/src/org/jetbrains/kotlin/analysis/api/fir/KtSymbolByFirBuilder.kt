@@ -483,21 +483,62 @@ internal class KtSymbolByFirBuilder private constructor(
     }
 
     /**
+     * N.B. This functions lifts only a single layer of SUBSTITUTION_OVERRIDE at a time.
+     */
+    private inline fun <reified T : FirCallableDeclaration> T.unwrapSubstitutionOverrideIfNeeded(): T? {
+        unwrapUseSiteSubstitutionOverride()?.let { return it }
+
+        unwrapInheritanceSubstitutionOverrideIfNeeded()?.let { return it }
+
+        return null
+    }
+
+    /**
+     * Use-site substitution override happens in situations like this:
+     *
+     * ```
+     * interface List<A> { fun get(i: Int): A }
+     *
+     * fun take(list: List<String>) {
+     *   list.get(10) // this call
+     * }
+     * ```
+     *
+     * In FIR, `List::get` symbol in the example will be a substitution override with a `String` instead of `A`.
+     * We want to lift such substitution overrides.
+     *
+     * @receiver A declaration that needs to be unwrapped.
+     * @return An unsubstituted declaration ([originalForSubstitutionOverride]]) if [this] is a use-site substitution override.
+     */
+    private inline fun <reified T : FirCallableDeclaration> T.unwrapUseSiteSubstitutionOverride(): T? {
+        val originalDeclaration = originalForSubstitutionOverride ?: return null
+
+        val containingClass = getContainingClass(rootSession) ?: return null
+        val originalContainingClass = originalDeclaration.getContainingClass(rootSession) ?: return null
+
+        // If substitution override does not change the containing class of the FIR declaration,
+        // it is a use-site substitution override
+        if (containingClass != originalContainingClass) return null
+
+        return originalDeclaration
+    }
+
+    /**
      * We want to unwrap a SUBSTITUTION_OVERRIDE wrapper if it doesn't affect the declaration's signature in any way. If the signature
      * is somehow changed, then we want to keep the wrapper.
+     *
+     * Such substitute overrides happen because of inheritance.
      *
      * If the declaration references only its own type parameters, or parameters from the outer declarations, then
      * we consider that it's signature will not be changed by the SUBSTITUTION_OVERRIDE, so the wrapper can be unwrapped.
      *
      * This have a few caveats when it comes to the inner classes. TODO Provide a reference to some more in-detail description of that.
      *
-     * N.B. This functions lifts only a single layer of SUBSTITUTION_OVERRIDE at a time.
-     *
      * @receiver A declaration that needs to be unwrapped.
      * @return An unsubstituted declaration ([originalForSubstitutionOverride]]) if it exists and if it does not have any change
      * in signature; `null` otherwise.
      */
-    private inline fun <reified T : FirCallableDeclaration> T.unwrapSubstitutionOverrideIfNeeded(): T? {
+    private inline fun <reified T : FirCallableDeclaration> T.unwrapInheritanceSubstitutionOverrideIfNeeded(): T? {
         val containingClass = getContainingClass(rootSession) ?: return null
         val originalDeclaration = originalForSubstitutionOverride ?: return null
 

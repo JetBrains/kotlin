@@ -9,18 +9,18 @@ KtSuccessCallInfo:
       signature = KtFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Unit
-        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<@R|kotlin.ParameterName|(name = String(a))  kotlin.Int, kotlin.Unit>, p1: @R|kotlin.ParameterName|(name = String(a))  kotlin.Int): kotlin.Unit
+        symbol = kotlin/Function1.invoke(<dispatch receiver>: kotlin.Function1<P1, R>, p1: P1): R
         valueParameters = [
           KtVariableLikeSignature:
             name = a
             receiverType = null
             returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
-            symbol = p1: @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
+            symbol = p1: P1
         ]
     argumentMapping = {
       1 -> (KtVariableLikeSignature:
         name = a
         receiverType = null
         returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
-        symbol = p1: @R|kotlin.ParameterName|(name = String(a))  kotlin.Int)
+        symbol = p1: P1)
     }
