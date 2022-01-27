@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.util
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions.SIMPLE_UNARY_OPERATION_
 import org.jetbrains.kotlin.util.ReturnsCheck.*
 import org.jetbrains.kotlin.util.ValueParameterCountCheck.NoValueParameters
 import org.jetbrains.kotlin.util.ValueParameterCountCheck.SingleValueParameter
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 sealed class CheckResult(val isSuccess: Boolean) {
     class IllegalSignature(val error: String) : CheckResult(false)
@@ -195,13 +196,43 @@ object OperatorChecks : AbstractModifierChecks() {
             Checks(SIMPLE_UNARY_OPERATION_NAMES, MemberOrExtension, NoValueParameters),
             Checks(listOf(INC, DEC), MemberOrExtension) {
                 val receiver = dispatchReceiverParameter ?: extensionReceiverParameter
-                ensure(receiver != null && (returnType?.isSubtypeOf(receiver.type) ?: false)) {
+                ensure(receiver != null && ((returnType?.isSubtypeOf(receiver.type) ?: false) || incDecCheckForExpectClass(receiver))) {
                     "receiver must be a supertype of the return type"
                 }
             },
             Checks(ASSIGNMENT_OPERATIONS, MemberOrExtension, ReturnsUnit, SingleValueParameter, NoDefaultAndVarargsCheck),
             Checks(COMPONENT_REGEX, MemberOrExtension, NoValueParameters)
-    ) }
+    )
+
+    /**
+     * See KT-49714
+     * Workaround for mismatching types of an implicit dispatch receiver inside an `expect` class
+     * and a type resolved from a reference to this class. During compilation all actual type aliases are known,
+     * so the explicit return type is `actual`. But the implicit receiver type inside the class remains `expect`
+     * because it's received from the default type of the containing class, which is not affected by the `actual` type alias.
+     *
+     * `actual` classes are not affected, since non-parameterized type constructors with equal fqNames are considered
+     * equal, so subtyping check passes in this case despite mismatching expect/actual in the corresponding declaration descriptors.
+     */
+    private fun FunctionDescriptor.incDecCheckForExpectClass(receiver: ReceiverParameterDescriptor): Boolean {
+        val receiverValue = receiver.value
+        if (receiverValue !is ImplicitClassReceiver) return false
+
+        val classDescriptor = receiverValue.classDescriptor
+        if (!classDescriptor.isExpect) return false
+
+        val potentialActualAliasId = classDescriptor.classId ?: return false
+        val actualReceiverTypeAlias =
+            classDescriptor.module.findClassifierAcrossModuleDependencies(potentialActualAliasId).safeAs<TypeAliasDescriptor>()
+                ?: return false
+
+        returnType?.let { returnType ->
+            return returnType.isSubtypeOf(actualReceiverTypeAlias.expandedType)
+        }
+
+        return false
+    }
+}
 
 object InfixChecks : AbstractModifierChecks() {
     override val checks = listOf(
