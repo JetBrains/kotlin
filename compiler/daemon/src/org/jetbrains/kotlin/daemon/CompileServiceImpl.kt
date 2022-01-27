@@ -1046,50 +1046,6 @@ class CompileServiceImpl(
         return true
     }
 
-    // todo: remove after remoteIncrementalCompile is removed
-    private fun doCompile(
-        sessionId: Int,
-        args: Array<out String>,
-        compilerMessagesStreamProxy: RemoteOutputStream,
-        serviceOutputStreamProxy: RemoteOutputStream,
-        operationsTracer: RemoteOperationsTracer?,
-        body: (PrintStream, EventManager, Profiler) -> ExitCode
-    ): CompileService.CallResult<Int> =
-        ifAlive {
-            withValidClientOrSessionProxy(sessionId) {
-                operationsTracer?.before("compile")
-                val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
-                val eventManger = EventManagerImpl()
-                val compilerMessagesStream = PrintStream(
-                    BufferedOutputStream(
-                        RemoteOutputStreamClient(compilerMessagesStreamProxy, rpcProfiler),
-                        REMOTE_STREAM_BUFFER_SIZE
-                    )
-                )
-                val serviceOutputStream = PrintStream(
-                    BufferedOutputStream(
-                        RemoteOutputStreamClient(serviceOutputStreamProxy, rpcProfiler),
-                        REMOTE_STREAM_BUFFER_SIZE
-                    )
-                )
-                try {
-                    val compileServiceReporter = DaemonMessageReporterPrintStreamAdapter(serviceOutputStream)
-                    if (args.none())
-                        throw IllegalArgumentException("Error: empty arguments list.")
-                    log.info("Starting compilation with args: " + args.joinToString(" "))
-                    val exitCode = checkedCompile(compileServiceReporter, rpcProfiler) {
-                        body(compilerMessagesStream, eventManger, rpcProfiler).code
-                    }
-                    CompileService.CallResult.Good(exitCode)
-                } finally {
-                    serviceOutputStream.flush()
-                    compilerMessagesStream.flush()
-                    eventManger.fireCompilationFinished()
-                    operationsTracer?.after("compile")
-                }
-            }
-        }
-
     init {
         // assuming logicaly synchronized
         try {
