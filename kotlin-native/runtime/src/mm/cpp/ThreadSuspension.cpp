@@ -86,9 +86,13 @@ void kotlin::mm::WaitForThreadsSuspension() noexcept {
     }
 }
 
+NO_INLINE void kotlin::mm::SuspendIfRequestedSlowPath() noexcept {
+    mm::ThreadRegistry::Instance().CurrentThreadData()->suspensionData().suspendIfRequestedSlowPath();
+}
+
 ALWAYS_INLINE void kotlin::mm::SuspendIfRequested() noexcept {
     if (IsThreadSuspensionRequested()) {
-        mm::ThreadRegistry::Instance().CurrentThreadData()->suspensionData().suspendIfRequestedSlowPath();
+        SuspendIfRequestedSlowPath();
     }
 }
 

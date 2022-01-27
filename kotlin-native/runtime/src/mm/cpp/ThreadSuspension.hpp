@@ -49,7 +49,7 @@ public:
     }
 
 private:
-    friend void SuspendIfRequested() noexcept;
+    friend void SuspendIfRequestedSlowPath() noexcept;
 
     std::atomic<ThreadState> state_;
     std::atomic<bool> suspended_;
@@ -58,6 +58,7 @@ private:
 
 bool RequestThreadsSuspension() noexcept;
 void WaitForThreadsSuspension() noexcept;
+void SuspendIfRequestedSlowPath() noexcept;
 void SuspendIfRequested() noexcept;
 
 /**
