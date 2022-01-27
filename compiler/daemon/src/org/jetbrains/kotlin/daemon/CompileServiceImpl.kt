@@ -734,58 +734,6 @@ class CompileServiceImpl(
         CompileService.CallResult.Good(res)
     }
 
-    @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
-    override fun remoteCompile(
-        sessionId: Int,
-        targetPlatform: CompileService.TargetPlatform,
-        args: Array<out String>,
-        servicesFacade: CompilerCallbackServicesFacade,
-        compilerOutputStream: RemoteOutputStream,
-        outputFormat: CompileService.OutputFormat,
-        serviceOutputStream: RemoteOutputStream,
-        operationsTracer: RemoteOperationsTracer?
-    ): CompileService.CallResult<Int> =
-        doCompile(sessionId, args, compilerOutputStream, serviceOutputStream, operationsTracer) { printStream, eventManager, profiler ->
-            when (outputFormat) {
-                CompileService.OutputFormat.PLAIN -> compiler[targetPlatform].exec(printStream, *args)
-                CompileService.OutputFormat.XML -> compiler[targetPlatform].execAndOutputXml(
-                    printStream,
-                    createCompileServices(
-                        servicesFacade,
-                        eventManager,
-                        profiler
-                    ),
-                    *args
-                )
-            }
-        }
-
-    @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
-    override fun remoteIncrementalCompile(
-        sessionId: Int,
-        targetPlatform: CompileService.TargetPlatform,
-        args: Array<out String>,
-        servicesFacade: CompilerCallbackServicesFacade,
-        compilerOutputStream: RemoteOutputStream,
-        compilerOutputFormat: CompileService.OutputFormat,
-        serviceOutputStream: RemoteOutputStream,
-        operationsTracer: RemoteOperationsTracer?
-    ): CompileService.CallResult<Int> =
-        doCompile(sessionId, args, compilerOutputStream, serviceOutputStream, operationsTracer) { printStream, eventManager, profiler ->
-            when (compilerOutputFormat) {
-                CompileService.OutputFormat.PLAIN -> throw NotImplementedError("Only XML output is supported in remote incremental compilation")
-                CompileService.OutputFormat.XML -> compiler[targetPlatform].execAndOutputXml(
-                    printStream,
-                    createCompileServices(
-                        servicesFacade,
-                        eventManager,
-                        profiler
-                    ),
-                    *args
-                )
-            }
-        }
-
     override fun classesFqNamesByFiles(
         sessionId: Int, sourceFiles: Set<File>
     ): CompileService.CallResult<Set<String>> =
@@ -817,53 +765,8 @@ class CompileServiceImpl(
     }
 
 
-    @Deprecated("The usages should be replaced with other `leaseReplSession` method", ReplaceWith("leaseReplSession"))
-    override fun leaseReplSession(
-        aliveFlagPath: String?,
-        targetPlatform: CompileService.TargetPlatform,
-        @Suppress("DEPRECATION") servicesFacade: CompilerCallbackServicesFacade,
-        templateClasspath: List<File>,
-        templateClassName: String,
-        scriptArgs: Array<out Any?>?,
-        scriptArgsTypes: Array<out Class<out Any>>?,
-        compilerMessagesOutputStream: RemoteOutputStream,
-        evalOutputStream: RemoteOutputStream?,
-        evalErrorStream: RemoteOutputStream?,
-        evalInputStream: RemoteInputStream?,
-        operationsTracer: RemoteOperationsTracer?
-    ): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
-        if (targetPlatform != CompileService.TargetPlatform.JVM)
-            CompileService.CallResult.Error("Sorry, only JVM target platform is supported now")
-        else {
-            val disposable = Disposer.newDisposable()
-            val compilerMessagesStream = PrintStream(
-                BufferedOutputStream(
-                    RemoteOutputStreamClient(compilerMessagesOutputStream, DummyProfiler()),
-                    REMOTE_STREAM_BUFFER_SIZE
-                )
-            )
-            val messageCollector = KeepFirstErrorMessageCollector(compilerMessagesStream)
-            val repl = KotlinJvmReplService(
-                disposable, port, compilerId, templateClasspath, templateClassName,
-                messageCollector, operationsTracer
-            )
-            val sessionId = state.sessions.leaseSession(ClientOrSessionProxy(aliveFlagPath, repl, disposable))
-
-            CompileService.CallResult.Good(sessionId)
-        }
-    }
-
     // TODO: add more checks (e.g. is it a repl session)
     override fun releaseReplSession(sessionId: Int): CompileService.CallResult<Nothing> = releaseCompileSession(sessionId)
-
-    @Suppress("OverridingDeprecatedMember", "OVERRIDE_DEPRECATION")
-    override fun remoteReplLineCheck(sessionId: Int, codeLine: ReplCodeLine): CompileService.CallResult<ReplCheckResult> =
-        ifAlive(minAliveness = Aliveness.Alive) {
-            withValidRepl(sessionId) {
-                @Suppress("DEPRECATION")
-                CompileService.CallResult.Good(check(codeLine))
-            }
-        }
 
     private fun createCompileServices(
         @Suppress("DEPRECATION") facade: CompilerCallbackServicesFacade,
@@ -898,29 +801,6 @@ class CompileServiceImpl(
 
         return builder.build()
     }
-
-    @Suppress("OverridingDeprecatedMember", "OVERRIDE_DEPRECATION")
-    override fun remoteReplLineCompile(
-        sessionId: Int,
-        codeLine: ReplCodeLine,
-        history: List<ReplCodeLine>?
-    ): CompileService.CallResult<ReplCompileResult> =
-        ifAlive(minAliveness = Aliveness.Alive) {
-            withValidRepl(sessionId) {
-                @Suppress("DEPRECATION")
-                CompileService.CallResult.Good(compile(codeLine, history))
-            }
-        }
-
-    @Suppress("OverridingDeprecatedMember", "OVERRIDE_DEPRECATION")
-    override fun remoteReplLineEval(
-        sessionId: Int,
-        codeLine: ReplCodeLine,
-        history: List<ReplCodeLine>?
-    ): CompileService.CallResult<ReplEvalResult> =
-        ifAlive(minAliveness = Aliveness.Alive) {
-            CompileService.CallResult.Error("Eval on daemon is not supported")
-        }
 
     override fun leaseReplSession(
         aliveFlagPath: String?,

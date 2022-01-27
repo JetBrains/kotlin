@@ -106,36 +106,6 @@ interface CompileService : Remote {
     @Throws(RemoteException::class)
     fun scheduleShutdown(graceful: Boolean): CallResult<Boolean>
 
-    // TODO: consider adding async version of shutdown and release
-
-    @Suppress("DEPRECATION")
-    @Deprecated("The usages should be replaced with `compile` method", ReplaceWith("compile"))
-    @Throws(RemoteException::class)
-    fun remoteCompile(
-            sessionId: Int,
-            targetPlatform: TargetPlatform,
-            args: Array<out String>,
-            servicesFacade: CompilerCallbackServicesFacade,
-            compilerOutputStream: RemoteOutputStream,
-            outputFormat: OutputFormat,
-            serviceOutputStream: RemoteOutputStream,
-            operationsTracer: RemoteOperationsTracer?
-    ): CallResult<Int>
-
-    @Suppress("DEPRECATION")
-    @Deprecated("The usages should be replaced with `compile` method", ReplaceWith("compile"))
-    @Throws(RemoteException::class)
-    fun remoteIncrementalCompile(
-            sessionId: Int,
-            targetPlatform: TargetPlatform,
-            args: Array<out String>,
-            servicesFacade: CompilerCallbackServicesFacade,
-            compilerOutputStream: RemoteOutputStream,
-            compilerOutputFormat: OutputFormat,
-            serviceOutputStream: RemoteOutputStream,
-            operationsTracer: RemoteOperationsTracer?
-    ): CallResult<Int>
-
     @Throws(RemoteException::class)
     fun compile(
             sessionId: Int,
@@ -154,49 +124,8 @@ interface CompileService : Remote {
     @Throws(RemoteException::class)
     fun clearJarCache()
 
-    @Suppress("DEPRECATION")
-    @Deprecated("The usages should be replaced with other `leaseReplSession` method", ReplaceWith("leaseReplSession"))
-    @Throws(RemoteException::class)
-    fun leaseReplSession(
-            aliveFlagPath: String?,
-            targetPlatform: CompileService.TargetPlatform,
-            servicesFacade: CompilerCallbackServicesFacade,
-            templateClasspath: List<File>,
-            templateClassName: String,
-            scriptArgs: Array<out Any?>?,
-            scriptArgsTypes: Array<out Class<out Any>>?,
-            compilerMessagesOutputStream: RemoteOutputStream,
-            evalOutputStream: RemoteOutputStream?,
-            evalErrorStream: RemoteOutputStream?,
-            evalInputStream: RemoteInputStream?,
-            operationsTracer: RemoteOperationsTracer?
-    ): CallResult<Int>
-
     @Throws(RemoteException::class)
     fun releaseReplSession(sessionId: Int): CallResult<Nothing>
-
-    @Deprecated("The usages should be replaced with `replCheck` method", ReplaceWith("replCheck"))
-    @Throws(RemoteException::class)
-    fun remoteReplLineCheck(
-            sessionId: Int,
-            codeLine: ReplCodeLine
-    ): CallResult<ReplCheckResult>
-
-    @Deprecated("The usages should be replaced with `replCompile` method", ReplaceWith("replCompile"))
-    @Throws(RemoteException::class)
-    fun remoteReplLineCompile(
-            sessionId: Int,
-            codeLine: ReplCodeLine,
-            history: List<ReplCodeLine>?
-    ): CallResult<ReplCompileResult>
-
-    @Deprecated("Evaluation on daemon is not supported")
-    @Throws(RemoteException::class)
-    fun remoteReplLineEval(
-            sessionId: Int,
-            codeLine: ReplCodeLine,
-            history: List<ReplCodeLine>?
-    ): CallResult<ReplEvalResult>
 
     @Throws(RemoteException::class)
     fun leaseReplSession(

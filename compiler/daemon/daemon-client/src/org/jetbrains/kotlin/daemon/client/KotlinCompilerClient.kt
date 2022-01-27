@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.daemon.client
 
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -144,48 +145,6 @@ object KotlinCompilerClient {
         compilerService.releaseCompileSession(sessionId)
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Use other compile method", ReplaceWith("compile"))
-    fun compile(compilerService: CompileService,
-                sessionId: Int,
-                targetPlatform: CompileService.TargetPlatform,
-                args: Array<out String>,
-                out: OutputStream,
-                port: Int = SOCKET_ANY_FREE_PORT,
-                operationsTracer: RemoteOperationsTracer? = null
-    ): Int {
-        val outStrm = RemoteOutputStreamServer(out, port = port)
-        return compilerService.remoteCompile(sessionId, targetPlatform, args, CompilerCallbackServicesFacadeServer(port = port), outStrm, CompileService.OutputFormat.PLAIN, outStrm, operationsTracer).get()
-    }
-
-
-    @Suppress("DEPRECATION")
-    @Deprecated("Use non-deprecated compile method", ReplaceWith("compile"))
-    fun incrementalCompile(compileService: CompileService,
-                           sessionId: Int,
-                           targetPlatform: CompileService.TargetPlatform,
-                           args: Array<out String>,
-                           callbackServices: CompilationServices,
-                           compilerOut: OutputStream,
-                           daemonOut: OutputStream,
-                           port: Int = SOCKET_ANY_FREE_PORT,
-                           profiler: Profiler = DummyProfiler(),
-                           operationsTracer: RemoteOperationsTracer? = null
-    ): Int = profiler.withMeasure(this) {
-            compileService.remoteIncrementalCompile(
-                    sessionId,
-                    targetPlatform,
-                    args,
-                    CompilerCallbackServicesFacadeServer(incrementalCompilationComponents = callbackServices.incrementalCompilationComponents,
-                                                         lookupTracker = callbackServices.lookupTracker,
-                                                         compilationCanceledStatus = callbackServices.compilationCanceledStatus,
-                                                         port = port),
-                    RemoteOutputStreamServer(compilerOut, port),
-                    CompileService.OutputFormat.XML,
-                    RemoteOutputStreamServer(daemonOut, port),
-                    operationsTracer).get()
-    }
-
     fun compile(compilerService: CompileService,
                 sessionId: Int,
                 targetPlatform: CompileService.TargetPlatform,
@@ -275,13 +234,42 @@ object KotlinCompilerClient {
             else -> {
                 println("Executing daemon compilation with args: " + filteredArgs.joinToString(" "))
                 val outStrm = RemoteOutputStreamServer(System.out)
-                val servicesFacade = CompilerCallbackServicesFacadeServer()
                 try {
                     val memBefore = daemon.getUsedMemory().get() / 1024
                     val startTime = System.nanoTime()
 
-                    @Suppress("DEPRECATION")
-                    val res = daemon.remoteCompile(CompileService.NO_SESSION, CompileService.TargetPlatform.JVM, filteredArgs.toList().toTypedArray(), servicesFacade, outStrm, CompileService.OutputFormat.PLAIN, outStrm, null)
+                    val compilationOptions = CompilationOptions(
+                        CompilerMode.NON_INCREMENTAL_COMPILER,
+                        CompileService.TargetPlatform.JVM,
+                        arrayOf(ReportCategory.COMPILER_MESSAGE.code, ReportCategory.DAEMON_MESSAGE.code, ReportCategory.EXCEPTION.code, ReportCategory.OUTPUT_MESSAGE.code),
+                        ReportSeverity.INFO.code,
+                        emptyArray()
+                    )
+                    val messageCollector = object : MessageCollector {
+                        override fun clear() {
+                            TODO("Not yet implemented")
+                        }
+
+                        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
+                            TODO("Not yet implemented")
+                        }
+
+                        override fun hasErrors(): Boolean {
+                            TODO("Not yet implemented")
+                        }
+
+                    }
+                    // ((File, List<File>) -> Unit)
+                    val outputsCollector = { x: File, y: List<File> ->  println("$x $y") }
+
+                    val servicesFacade = BasicCompilerServicesWithResultsFacadeServer(messageCollector, outputsCollector)
+                    val res = daemon.compile(
+                        CompileService.NO_SESSION,
+                        filteredArgs.toList().toTypedArray(),
+                        compilationOptions,
+                        servicesFacade,
+                        null
+                    )
 
                     val endTime = System.nanoTime()
                     println("Compilation ${if (res.isGood) "succeeded" else "failed"}, result code: ${res.get()}")
@@ -291,7 +279,6 @@ object KotlinCompilerClient {
                 }
                 finally {
                     // forcing RMI to unregister all objects and stop
-                    UnicastRemoteObject.unexportObject(servicesFacade, true)
                     UnicastRemoteObject.unexportObject(outStrm, true)
                 }
             }

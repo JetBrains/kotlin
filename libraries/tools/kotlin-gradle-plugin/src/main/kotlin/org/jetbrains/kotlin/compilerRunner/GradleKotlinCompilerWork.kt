@@ -360,12 +360,6 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
         val res = exec.invoke(compiler.newInstance(), out, emptyServices, compilerArgs)
         val exitCode = ExitCode.valueOf(res.toString())
-        processCompilerOutput(
-            messageCollector,
-            OutputItemsCollectorImpl(),
-            stream,
-            exitCode
-        )
         try {
             metrics.measure(BuildTime.CLEAR_JAR_CACHE) {
                 val coreEnvironment = Class.forName("org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment", true, classLoader)
