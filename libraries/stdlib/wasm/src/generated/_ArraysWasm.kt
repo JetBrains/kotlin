@@ -1865,7 +1865,8 @@ internal fun CharArray.copyOfUninitializedElements(newSize: Int): CharArray {
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    for (index in fromIndex..toIndex) {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    for (index in fromIndex until toIndex) {
         this[index] = element    
     }
 }
@@ -1882,7 +1883,8 @@ public actual fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    for (index in fromIndex..toIndex) {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    for (index in fromIndex until toIndex) {
         this[index] = element    
     }
 }
@@ -1899,7 +1901,8 @@ public actual fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    for (index in fromIndex..toIndex) {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    for (index in fromIndex until toIndex) {
         this[index] = element    
     }
 }
@@ -1916,7 +1919,8 @@ public actual fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: I
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    for (index in fromIndex..toIndex) {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    for (index in fromIndex until toIndex) {
         this[index] = element    
     }
 }
@@ -1933,7 +1937,8 @@ public actual fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int =
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    for (index in fromIndex..toIndex) {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    for (index in fromIndex until toIndex) {
         this[index] = element    
     }
 }
@@ -1950,7 +1955,8 @@ public actual fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    for (index in fromIndex..toIndex) {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    for (index in fromIndex until toIndex) {
         this[index] = element    
     }
 }
@@ -1967,7 +1973,8 @@ public actual fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: I
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    for (index in fromIndex..toIndex) {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    for (index in fromIndex until toIndex) {
         this[index] = element    
     }
 }
@@ -1984,7 +1991,8 @@ public actual fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex:
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    for (index in fromIndex..toIndex) {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    for (index in fromIndex until toIndex) {
         this[index] = element    
     }
 }
@@ -2001,7 +2009,8 @@ public actual fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toInde
 @SinceKotlin("1.3")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun CharArray.fill(element: Char, fromIndex: Int = 0, toIndex: Int = size): Unit {
-    for (index in fromIndex..toIndex) {
+    AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+    for (index in fromIndex until toIndex) {
         this[index] = element    
     }
 }
