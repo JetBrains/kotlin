@@ -69,11 +69,12 @@ interface Check {
 sealed class MemberKindCheck(override val description: String) : Check {
     object MemberOrExtension : MemberKindCheck("must be a member or an extension function") {
         override fun check(functionDescriptor: FunctionDescriptor) =
-                functionDescriptor.dispatchReceiverParameter != null || functionDescriptor.extensionReceiverParameter != null
+            functionDescriptor.dispatchReceiverParameter != null || functionDescriptor.extensionReceiverParameter != null
     }
+
     object Member : MemberKindCheck("must be a member function") {
         override fun check(functionDescriptor: FunctionDescriptor) =
-                functionDescriptor.dispatchReceiverParameter != null
+            functionDescriptor.dispatchReceiverParameter != null
     }
 }
 
@@ -81,12 +82,15 @@ sealed class ValueParameterCountCheck(override val description: String) : Check 
     object NoValueParameters : ValueParameterCountCheck("must have no value parameters") {
         override fun check(functionDescriptor: FunctionDescriptor) = functionDescriptor.valueParameters.isEmpty()
     }
+
     object SingleValueParameter : ValueParameterCountCheck("must have a single value parameter") {
         override fun check(functionDescriptor: FunctionDescriptor) = functionDescriptor.valueParameters.size == 1
     }
+
     class AtLeast(val n: Int) : ValueParameterCountCheck("must have at least $n value parameter" + (if (n > 1) "s" else "")) {
         override fun check(functionDescriptor: FunctionDescriptor) = functionDescriptor.valueParameters.size >= n
     }
+
     class Equals(val n: Int) : ValueParameterCountCheck("must have exactly $n value parameters") {
         override fun check(functionDescriptor: FunctionDescriptor) = functionDescriptor.valueParameters.size == n
     }
@@ -95,7 +99,7 @@ sealed class ValueParameterCountCheck(override val description: String) : Check 
 private object NoDefaultAndVarargsCheck : Check {
     override val description = "should not have varargs or parameters with default values"
     override fun check(functionDescriptor: FunctionDescriptor) =
-            functionDescriptor.valueParameters.all { !it.declaresOrInheritsDefaultValue() && it.varargElementType == null }
+        functionDescriptor.valueParameters.all { !it.declaresOrInheritsDefaultValue() && it.varargElementType == null }
 }
 
 private object IsKPropertyCheck : Check {
@@ -116,11 +120,11 @@ sealed class ReturnsCheck(val name: String, val type: KotlinBuiltIns.() -> Kotli
 }
 
 internal class Checks private constructor(
-        val name: Name?,
-        val regex: Regex?,
-        val nameList: Collection<Name>?,
-        val additionalCheck: (FunctionDescriptor) -> String?,
-        vararg val checks: Check
+    val name: Name?,
+    val regex: Regex?,
+    val nameList: Collection<Name>?,
+    val additionalCheck: (FunctionDescriptor) -> String?,
+    vararg val checks: Check
 ) {
     fun isApplicable(functionDescriptor: FunctionDescriptor): Boolean {
         if (name != null && functionDescriptor.name != name) return false
@@ -147,16 +151,19 @@ internal class Checks private constructor(
 
     constructor(vararg checks: Check, additionalChecks: FunctionDescriptor.() -> String? = { null })
             : this(null, null, null, additionalChecks, *checks)
+
     constructor(name: Name, vararg checks: Check, additionalChecks: FunctionDescriptor.() -> String? = { null })
             : this(name, null, null, additionalChecks, *checks)
+
     constructor(regex: Regex, vararg checks: Check, additionalChecks: FunctionDescriptor.() -> String? = { null })
             : this(null, regex, null, additionalChecks, *checks)
+
     constructor(nameList: Collection<Name>, vararg checks: Check, additionalChecks: FunctionDescriptor.() -> String? = { null })
             : this(null, null, nameList, additionalChecks, *checks)
 }
 
 abstract class AbstractModifierChecks {
-    abstract internal val checks: List<Checks>
+    internal abstract val checks: List<Checks>
 
     inline fun ensure(cond: Boolean, msg: () -> String) = if (!cond) msg() else null
 
@@ -172,36 +179,38 @@ abstract class AbstractModifierChecks {
 
 object OperatorChecks : AbstractModifierChecks() {
     override val checks = listOf(
-            Checks(GET, MemberOrExtension, ValueParameterCountCheck.AtLeast(1)),
-            Checks(SET, MemberOrExtension, ValueParameterCountCheck.AtLeast(2)) {
-                val lastIsOk =
-                    valueParameters.lastOrNull()?.let { !it.declaresOrInheritsDefaultValue() && it.varargElementType == null } == true
-                ensure(lastIsOk) { "last parameter should not have a default value or be a vararg" }
-            },
-            Checks(GET_VALUE, MemberOrExtension, NoDefaultAndVarargsCheck, ValueParameterCountCheck.AtLeast(2), IsKPropertyCheck),
-            Checks(SET_VALUE, MemberOrExtension, NoDefaultAndVarargsCheck, ValueParameterCountCheck.AtLeast(3), IsKPropertyCheck),
-            Checks(PROVIDE_DELEGATE, MemberOrExtension, NoDefaultAndVarargsCheck, ValueParameterCountCheck.Equals(2), IsKPropertyCheck),
-            Checks(INVOKE, MemberOrExtension),
-            Checks(CONTAINS, MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck, ReturnsBoolean),
-            Checks(ITERATOR, MemberOrExtension, NoValueParameters),
-            Checks(NEXT, MemberOrExtension, NoValueParameters),
-            Checks(HAS_NEXT, MemberOrExtension, NoValueParameters, ReturnsBoolean),
-            Checks(RANGE_TO, MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck),
-            Checks(EQUALS, Member) {
-                fun DeclarationDescriptor.isAny() = this is ClassDescriptor && KotlinBuiltIns.isAny(this)
-                ensure(containingDeclaration.isAny() || overriddenDescriptors.any { it.containingDeclaration.isAny() }) { "must override ''equals()'' in Any" }
-            },
-            Checks(COMPARE_TO, MemberOrExtension, ReturnsInt, SingleValueParameter, NoDefaultAndVarargsCheck),
-            Checks(BINARY_OPERATION_NAMES, MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck),
-            Checks(SIMPLE_UNARY_OPERATION_NAMES, MemberOrExtension, NoValueParameters),
-            Checks(listOf(INC, DEC), MemberOrExtension) {
-                val receiver = dispatchReceiverParameter ?: extensionReceiverParameter
-                ensure(receiver != null && ((returnType?.isSubtypeOf(receiver.type) ?: false) || incDecCheckForExpectClass(receiver))) {
-                    "receiver must be a supertype of the return type"
-                }
-            },
-            Checks(ASSIGNMENT_OPERATIONS, MemberOrExtension, ReturnsUnit, SingleValueParameter, NoDefaultAndVarargsCheck),
-            Checks(COMPONENT_REGEX, MemberOrExtension, NoValueParameters)
+        Checks(GET, MemberOrExtension, ValueParameterCountCheck.AtLeast(1)),
+        Checks(SET, MemberOrExtension, ValueParameterCountCheck.AtLeast(2)) {
+            val lastIsOk =
+                valueParameters.lastOrNull()?.let { !it.declaresOrInheritsDefaultValue() && it.varargElementType == null } == true
+            ensure(lastIsOk) { "last parameter should not have a default value or be a vararg" }
+        },
+        Checks(GET_VALUE, MemberOrExtension, NoDefaultAndVarargsCheck, ValueParameterCountCheck.AtLeast(2), IsKPropertyCheck),
+        Checks(SET_VALUE, MemberOrExtension, NoDefaultAndVarargsCheck, ValueParameterCountCheck.AtLeast(3), IsKPropertyCheck),
+        Checks(PROVIDE_DELEGATE, MemberOrExtension, NoDefaultAndVarargsCheck, ValueParameterCountCheck.Equals(2), IsKPropertyCheck),
+        Checks(INVOKE, MemberOrExtension),
+        Checks(CONTAINS, MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck, ReturnsBoolean),
+        Checks(ITERATOR, MemberOrExtension, NoValueParameters),
+        Checks(NEXT, MemberOrExtension, NoValueParameters),
+        Checks(HAS_NEXT, MemberOrExtension, NoValueParameters, ReturnsBoolean),
+        Checks(RANGE_TO, MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck),
+        Checks(EQUALS, Member) {
+            fun DeclarationDescriptor.isAny() = this is ClassDescriptor && KotlinBuiltIns.isAny(this)
+            ensure(containingDeclaration.isAny() || overriddenDescriptors.any { it.containingDeclaration.isAny() }) {
+                "must override ''equals()'' in Any"
+            }
+        },
+        Checks(COMPARE_TO, MemberOrExtension, ReturnsInt, SingleValueParameter, NoDefaultAndVarargsCheck),
+        Checks(BINARY_OPERATION_NAMES, MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck),
+        Checks(SIMPLE_UNARY_OPERATION_NAMES, MemberOrExtension, NoValueParameters),
+        Checks(listOf(INC, DEC), MemberOrExtension) {
+            val receiver = dispatchReceiverParameter ?: extensionReceiverParameter
+            ensure(receiver != null && ((returnType?.isSubtypeOf(receiver.type) ?: false) || incDecCheckForExpectClass(receiver))) {
+                "receiver must be a supertype of the return type"
+            }
+        },
+        Checks(ASSIGNMENT_OPERATIONS, MemberOrExtension, ReturnsUnit, SingleValueParameter, NoDefaultAndVarargsCheck),
+        Checks(COMPONENT_REGEX, MemberOrExtension, NoValueParameters)
     )
 
     /**
@@ -236,7 +245,8 @@ object OperatorChecks : AbstractModifierChecks() {
 
 object InfixChecks : AbstractModifierChecks() {
     override val checks = listOf(
-            Checks(MemberKindCheck.MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck))
+        Checks(MemberKindCheck.MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck)
+    )
 }
 
 fun FunctionDescriptor.isValidOperator() = isOperator && OperatorChecks.check(this).isSuccess
