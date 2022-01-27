@@ -177,7 +177,7 @@ class DeserializedClassDescriptor(
     override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = inlineClassRepresentation()
 
     private fun computeInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? {
-        if (!isInlineClass()) return null
+        if (!isInlineOrValueClass()) return null
 
         val propertyName = when {
             classProto.hasInlineClassUnderlyingPropertyName() ->
