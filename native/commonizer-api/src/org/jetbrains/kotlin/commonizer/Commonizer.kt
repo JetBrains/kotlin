@@ -33,8 +33,8 @@ public interface NativeDistributionCommonizer : Serializable {
 }
 
 public data class AdditionalCommonizerSetting<T : Any>(
-    public val settingArgument: CommonizerSettings.Key<T>,
-    public val settingValue: T,
+    public val key: CommonizerSettings.Key<T>,
+    public val value: T,
 )
 
 public infix fun <T : Any> CommonizerSettings.Key<T>.setTo(settingValue: T): AdditionalCommonizerSetting<T> =
