@@ -6,6 +6,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import java.io.File
 import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.createDirectories
@@ -31,10 +32,23 @@ open class KaptIncrementalIT : KGPBaseTest() {
         kaptOptions = BuildOptions.KaptOptions(incrementalKapt = true)
     )
 
+    protected open fun KGPBaseTest.kaptProject(
+        gradleVersion: GradleVersion,
+        buildOptions: BuildOptions = defaultBuildOptions,
+        buildJdk: File? = null,
+        test: TestProject.() -> Unit
+    ): TestProject = project(
+        PROJECT_NAME,
+        gradleVersion,
+        buildOptions = buildOptions,
+        buildJdk = buildJdk,
+        test = test
+    )
+
     @DisplayName("After adding new line compilation is incremental")
     @GradleTest
     fun testAddNewLine(gradleVersion: GradleVersion) {
-        project(PROJECT_NAME, gradleVersion) {
+        kaptProject(gradleVersion) {
             build("clean", "build")
 
             javaSourcesDir().resolve("bar/useB.kt").modify { "\n$it" }
@@ -49,8 +63,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
     @DisplayName("On rebuild without changes tasks should be UP-TO-DATE")
     @GradleTest
     fun testBasic(gradleVersion: GradleVersion) {
-        project(
-            PROJECT_NAME,
+        kaptProject(
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
@@ -77,7 +90,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
     @DisplayName("Successfully rebuild after error")
     @GradleTest
     fun testCompileError(gradleVersion: GradleVersion) {
-        project(PROJECT_NAME, gradleVersion) {
+        kaptProject(gradleVersion) {
             build("assemble")
 
             val bKt = javaSourcesDir().resolve("bar/B.kt")
@@ -100,7 +113,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
     @DisplayName("Change in the function body without changing the signature")
     @GradleTest
     fun testChangeFunctionBodyWithoutChangingSignature(gradleVersion: GradleVersion) {
-        project(PROJECT_NAME, gradleVersion) {
+        kaptProject(gradleVersion) {
             build("build", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 checkGenerated(kaptGeneratedToPath, *annotatedElements)
                 checkNotGenerated(kaptGeneratedToPath, "notAnnotatedFun")
@@ -123,7 +136,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
     @DisplayName("Adding new annotated element")
     @GradleTest
     fun testAddAnnotatedElement(gradleVersion: GradleVersion) {
-        project(PROJECT_NAME, gradleVersion) {
+        kaptProject(gradleVersion) {
             build("assemble")
 
             val utilKt = javaSourcesDir().resolve("baz/util.kt")
@@ -148,7 +161,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
     @DisplayName("Adding new annotation triggers kapt run")
     @GradleTest
     fun testAddAnnotation(gradleVersion: GradleVersion) {
-        project(PROJECT_NAME, gradleVersion) {
+        kaptProject(gradleVersion) {
             build("assemble")
 
             val utilKt = javaSourcesDir().resolve("baz/util.kt")
@@ -167,7 +180,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
     @DisplayName("Kapt run is incremental after source file was removed")
     @GradleTest
     fun testRemoveSourceFile(gradleVersion: GradleVersion) {
-        project(PROJECT_NAME, gradleVersion) {
+        kaptProject(gradleVersion) {
             val kapt3IncDataPath = "build/tmp/kapt3/incrementalData/main"
             val kapt3StubsPath = "build/tmp/kapt3/stubs/main"
 
@@ -214,7 +227,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
     @DisplayName("Incremental kapt run is correct after removing all Kotlin sources")
     @GradleTest
     fun testRemoveAllKotlinSources(gradleVersion: GradleVersion) {
-        project(PROJECT_NAME, gradleVersion) {
+        kaptProject(gradleVersion) {
             build("assemble") {
                 assertFileInProjectExists("$KAPT3_STUBS_PATH/bar/UseBKt.java")
             }
@@ -259,7 +272,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
     @DisplayName("On all annotations remove kapt and compile runs incremenatally")
     @GradleTest
     fun testRemoveAnnotations(gradleVersion: GradleVersion) {
-        project(PROJECT_NAME, gradleVersion) {
+        kaptProject(gradleVersion) {
             build("assemble")
 
             val bKt = javaSourcesDir().resolve("bar/B.kt")
@@ -294,7 +307,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
     @DisplayName("Changing annotated property type is handled correctly")
     @GradleTest
     fun testChangeAnnotatedPropertyType(gradleVersion: GradleVersion) {
-        project(PROJECT_NAME, gradleVersion) {
+        kaptProject(gradleVersion) {
             build("assemble")
 
             val bKt = javaSourcesDir().resolve("bar/B.kt")
@@ -315,7 +328,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
     @DisplayName("Change in inline delegate is handled correctly")
     @GradleTest
     fun testChangeInlineDelegate(gradleVersion: GradleVersion) {
-        project(PROJECT_NAME, gradleVersion) {
+        kaptProject(gradleVersion) {
             build("assemble")
 
             val file = javaSourcesDir().resolve("delegate/Usage.kt")
