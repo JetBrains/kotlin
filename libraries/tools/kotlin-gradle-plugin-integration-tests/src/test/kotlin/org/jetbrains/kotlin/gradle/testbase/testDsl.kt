@@ -71,18 +71,27 @@ fun KGPBaseTest.project(
 
     if (buildJdk != null) testProject.setupNonDefaultJdk(buildJdk)
 
+    // enableFeaturePreview("GRADLE_METADATA") is no longer needed when building with Gradle 5.4 or above
+    if (gradleVersion >= GradleVersion.version("5.4")) testProject.removeEnableFeaturePreview()
+
     testProject.test()
     return testProject
 }
 
-fun KGPBaseTest.embedProject(parentProject: TestProject, subProjectName: String, renameTo: String? = null) {
+fun KGPBaseTest.embedProject(
+    parentProject: TestProject,
+    subProjectName: String,
+    renameTo: String? = null,
+    directoryPrefix: String? = null
+) {
     val embeddedModuleName = renameTo ?: subProjectName
     setupProjectFromTestResources(
         subProjectName,
         parentProject.gradleVersion,
         workingDir,
         embeddedModuleName,
-        parentDir = parentProject.projectName
+        parentDir = parentProject.projectName,
+        directoryPrefix = directoryPrefix
     )
 
     parentProject.apply {
@@ -240,6 +249,9 @@ open class GradleProject(
         files: List<Path>
     ): List<Path> = files.map { projectPath.relativize(it) }
 
+    fun relativeToProject(vararg files: File): List<Path> =
+        relativeToProject(files.map { it.toPath() })
+
     fun gradleProperties(): File =
         gradleProperties.toFile().also { file ->
             if (!file.exists()) {
@@ -247,7 +259,8 @@ open class GradleProject(
             }
         }
 
-    fun buildScript(): File = listOf(buildGradle, buildGradleKts).single { it.toFile().exists() }.toFile()
+    fun buildScript(): File = listOf(buildGradle, buildGradleKts).singleOrNull { it.toFile().exists() }?.toFile()
+        ?: error("Build script does not exists under $projectPath")
 
     fun gradleSettingsScript(): File =
         listOf(settingsGradleKts, settingsGradle).run {
@@ -432,6 +445,19 @@ private fun TestProject.setupNonDefaultJdk(pathToJdk: File) {
         |
         |$it        
         """.trimMargin()
+    }
+}
+
+fun GradleProject.removeEnableFeaturePreview() {
+    gradleSettingsScript().apply {
+        if (exists()) {
+            modify {
+                it.replace("enableFeaturePreview('GRADLE_METADATA')", "//")
+            }
+            modify {
+                it.replace("enableFeaturePreview(\"GRADLE_METADATA\")", "//")
+            }
+        }
     }
 }
 

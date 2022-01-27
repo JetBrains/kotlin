@@ -8,17 +8,30 @@ package org.jetbrains.kotlin.gradle.testbase
 import org.gradle.testkit.runner.BuildResult
 import java.nio.file.Path
 
+val SYSTEM_LINE_SEPARATOR: String = System.getProperty("line.separator")
+
 /**
  * Asserts Gradle output contains [expectedSubString] string.
  */
 fun BuildResult.assertOutputContains(
-    expectedSubString: String
+    expectedSubString: String,
+    ignoreCase: Boolean = false
 ) {
-    assert(output.contains(expectedSubString)) {
+    assert(output.contains(expectedSubString, ignoreCase = ignoreCase)) {
         printBuildOutput()
         "Build output does not contain \"$expectedSubString\""
     }
 }
+
+/**
+ * Asserts Gradle output contains every from [expected] string.
+ */
+fun BuildResult.assertOutputContains(vararg expected: String, ignoreCase: Boolean = false): BuildResult {
+    expected.forEach { assertOutputContains(it.normalize(), ignoreCase) }
+    return this
+}
+
+private fun String.normalize() = this.lineSequence().joinToString(SYSTEM_LINE_SEPARATOR)
 
 /**
  * Asserts Gradle output does not contain [notExpectedSubString] string.
@@ -59,6 +72,13 @@ fun BuildResult.assertOutputDoesNotContain(
         |
         """.trimMargin()
     }
+}
+
+/**
+ * Asserts Gradle output does not contain every from [expected] string.
+ */
+fun BuildResult.assertOutputDoesNotContain(vararg expected: String){
+    expected.forEach { assertOutputDoesNotContain(it) }
 }
 
 /**

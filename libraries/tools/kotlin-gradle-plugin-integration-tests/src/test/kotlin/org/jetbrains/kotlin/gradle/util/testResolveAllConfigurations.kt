@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.util
 
+import org.gradle.testkit.runner.BuildResult
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.testbase.*
 import java.nio.file.Files
@@ -47,16 +48,18 @@ fun TestProject.testResolveAllConfigurations(
     skipSetup: Boolean = false,
     excludeConfigurations: List<String> = listOf(),
     options: BuildOptions = buildOptions,
-    withUnresolvedConfigurationNames: TestProject.(List<String>) -> Unit = { assertTrue("Unresolved configurations: $it") { it.isEmpty() } }
+    withUnresolvedConfigurationNames: BuildResult.(List<String>) -> Unit = { assertTrue("Unresolved configurations: $it") { it.isEmpty() } }
 ) {
     if (!skipSetup) {
-        when {
-            Files.exists(buildGradle) -> buildGradle
-                .append("\n${generateResolveAllConfigurationsTask(excludeConfigurations)}")
-            Files.exists(buildGradleKts) -> buildGradleKts
-                .append("\n${generateResolveAllConfigurationsTaskKts(excludeConfigurations)}")
-            else -> error("Build script does not exists under $projectPath")
+        gradleBuildScript(subproject).run {
+            when (extension) {
+                "kts" -> this.toPath()
+                    .append("\n${generateResolveAllConfigurationsTaskKts(excludeConfigurations)}")
+                else -> this.toPath()
+                    .append("\n${generateResolveAllConfigurationsTask(excludeConfigurations)}")
+            }
         }
+
     }
 
     build(RESOLVE_ALL_CONFIGURATIONS_TASK_NAME, buildOptions = options) {

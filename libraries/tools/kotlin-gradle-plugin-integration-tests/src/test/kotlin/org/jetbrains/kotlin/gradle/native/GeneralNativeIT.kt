@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WA
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_PROPERTY_WARNING
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_WARNING
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
+import org.jetbrains.kotlin.gradle.testbase.NativeToolSettingsKind
+import org.jetbrains.kotlin.gradle.testbase.extractNativeToolSettings
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.isWindows
 import org.jetbrains.kotlin.gradle.util.modify
@@ -1240,41 +1242,17 @@ class GeneralNativeIT : BaseGradleIT() {
             return Collections.indexOfSubList(this, elements.toList()) != -1
         }
 
-        private enum class NativeToolSettingsKind(val title: String) {
-            COMPILER_CLASSPATH("Classpath"),
-            COMMAND_LINE_ARGUMENTS("Arguments"),
-            CUSTOM_ENV_VARIABLES("Custom ENV variables")
-        }
-
         private fun CompiledProject.extractNativeToolSettings(
             toolName: String,
             taskPath: String?,
             settingsKind: NativeToolSettingsKind
         ): Sequence<String> {
-            val settingsPrefix = "${settingsKind.title} = ["
-            val settings = output.lineSequence()
-                .run {
-                    if (taskPath != null) dropWhile { "Executing actions for task '$taskPath'" !in it }.drop(1) else this
-                }
-                .dropWhile {
-                    check(taskPath == null || "Executing actions for task" !in it) { "Unexpected log line with new Gradle task: $it" }
-                    "Run in-process tool \"$toolName\"" !in it && "Run \"$toolName\" tool in a separate JVM process" !in it
-                }
-                .drop(1)
-                .dropWhile {
-                    check(taskPath == null || "Executing actions for task" !in it) { "Unexpected log line with new Gradle task: $it" }
-                    settingsPrefix !in it
-                }
-
-            val settingsHeader = settings.firstOrNull()
-            check(settingsHeader != null && settingsPrefix in settingsHeader) {
-                "Cannot find setting '${settingsKind.title}' for task ${taskPath}"
-            }
-
-            return if (settingsHeader.trimEnd().endsWith(']'))
-                emptySequence() // No parameters.
-            else
-                settings.drop(1).map { it.trim() }.takeWhile { it != "]" }
+            return extractNativeToolSettings(
+                output = output,
+                toolName = toolName,
+                taskPath = taskPath,
+                settingsKind = settingsKind
+            )
         }
 
         fun CompiledProject.extractNativeCommandLineArguments(taskPath: String? = null, toolName: String): List<String> =

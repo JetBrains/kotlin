@@ -28,6 +28,9 @@ data class BuildOptions(
     val androidVersion: String? = null,
     val jsOptions: JsOptions? = null,
     val buildReport: List<BuildReportType> = emptyList(),
+    val freeCommandLineArgs: List<String> = emptyList(),
+    val hierarchicalMPPStructureSupport: Boolean? = null,
+    val enableCompatibilityMetadataVariant: Boolean? = null
 ) {
     data class KaptOptions(
         val verbose: Boolean = false,
@@ -116,6 +119,17 @@ data class BuildOptions(
         if (buildReport.isNotEmpty()) {
             arguments.add("-Pkotlin.build.report.output=${buildReport.joinToString()}")
         }
+
+        arguments.addAll(freeCommandLineArgs)
+
+        if (hierarchicalMPPStructureSupport != null) {
+            arguments.add("-Pkotlin.mpp.hierarchicalStructureSupport=${hierarchicalMPPStructureSupport}")
+        }
+
+        if (enableCompatibilityMetadataVariant != null) {
+            arguments.add("-Pkotlin.mpp.enableCompatibilityMetadataVariant=${enableCompatibilityMetadataVariant}")
+        }
+
         return arguments.toList()
     }
 }
