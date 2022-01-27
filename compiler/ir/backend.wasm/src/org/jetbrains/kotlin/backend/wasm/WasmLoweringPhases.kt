@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.common.toMultiModuleAction
 import org.jetbrains.kotlin.backend.wasm.lower.*
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToFunctionCallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
@@ -27,9 +30,12 @@ private fun makeWasmModulePhase(
     name: String,
     description: String,
     prerequisite: Set<NamedCompilerPhase<WasmBackendContext, *>> = emptySet()
-): NamedCompilerPhase<WasmBackendContext, IrModuleFragment> =
-    makeIrModulePhase(
-        lowering, name, description, prerequisite, actions = setOf(validationAction, defaultDumper)
+): NamedCompilerPhase<WasmBackendContext, Iterable<IrModuleFragment>> =
+    makeCustomWasmModulePhase(
+        op = { context, modules -> lowering(context).lower(modules) },
+        name = name,
+        description = description,
+        prerequisite = prerequisite
     )
 
 private fun makeCustomWasmModulePhase(
@@ -37,9 +43,25 @@ private fun makeCustomWasmModulePhase(
     description: String,
     name: String,
     prerequisite: Set<NamedCompilerPhase<WasmBackendContext, *>> = emptySet()
-): NamedCompilerPhase<WasmBackendContext, IrModuleFragment> =
-    makeCustomPhase(
-        op, name, description, prerequisite, actions = setOf(defaultDumper, validationAction), nlevels = 0,
+): NamedCompilerPhase<WasmBackendContext, Iterable<IrModuleFragment>> =
+    NamedCompilerPhase(
+        name = name,
+        description = description,
+        prerequisite = prerequisite,
+        lower = object : SameTypeCompilerPhase<WasmBackendContext, Iterable<IrModuleFragment>> {
+            override fun invoke(
+                phaseConfig: PhaseConfig,
+                phaserState: PhaserState<Iterable<IrModuleFragment>>,
+                context: WasmBackendContext,
+                input: Iterable<IrModuleFragment>
+            ): Iterable<IrModuleFragment> {
+                input.forEach { module ->
+                    op(context, module)
+                }
+                return input
+            }
+        },
+        actions = setOf(defaultDumper.toMultiModuleAction(), validationAction.toMultiModuleAction())
     )
 
 private val validateIrBeforeLowering = makeCustomWasmModulePhase(

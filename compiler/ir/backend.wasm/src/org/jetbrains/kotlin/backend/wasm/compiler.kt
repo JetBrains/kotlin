@@ -32,7 +32,7 @@ fun compileToLoweredIr(
     irFactory: IrFactory,
     exportedDeclarations: Set<FqName> = emptySet(),
     propertyLazyInitialization: Boolean,
-): Pair<IrModuleFragment, WasmBackendContext> {
+): Pair<List<IrModuleFragment>, WasmBackendContext> {
     val mainModule = depsDescriptors.mainModule
     val configuration = depsDescriptors.compilerConfiguration
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) = loadIr(
@@ -55,38 +55,36 @@ fun compileToLoweredIr(
         ExternalDependenciesGenerator(symbolTable, listOf(deserializer)).generateUnboundSymbolsAsDependencies()
     }
 
-    val irFiles = allModules.flatMap { it.files }
-    moduleFragment.files.clear()
-    moduleFragment.files += irFiles
-
     // Create stubs
     ExternalDependenciesGenerator(symbolTable, listOf(deserializer)).generateUnboundSymbolsAsDependencies()
-    moduleFragment.patchDeclarationParents()
+    allModules.forEach { it.patchDeclarationParents() }
 
     deserializer.postProcess()
     symbolTable.noUnboundLeft("Unbound symbols at the end of linker")
 
-    moduleFragment.files.forEach { irFile -> markExportedDeclarations(context, irFile, exportedDeclarations) }
+    for (module in allModules)
+        for (file in module.files)
+            markExportedDeclarations(context, file, exportedDeclarations)
 
-    wasmPhases.invokeToplevel(phaseConfig, context, moduleFragment)
+    wasmPhases.invokeToplevel(phaseConfig, context, allModules)
 
-    return Pair(moduleFragment, context)
+    return Pair(allModules, context)
 }
 
 fun compileWasm(
-    moduleFragment: IrModuleFragment,
+    allModules: List<IrModuleFragment>,
     backendContext: WasmBackendContext,
     emitNameSection: Boolean = false,
     dceEnabled: Boolean = false,
 ): WasmCompilerResult {
 
     if (dceEnabled) {
-        eliminateDeadDeclarations(listOf(moduleFragment), backendContext)
+        eliminateDeadDeclarations(allModules, backendContext)
     }
 
     val compiledWasmModule = WasmCompiledModuleFragment(backendContext.irBuiltIns)
     val codeGenerator = WasmModuleFragmentGenerator(backendContext, compiledWasmModule, allowIncompleteImplementations = dceEnabled)
-    codeGenerator.generateModule(moduleFragment)
+    allModules.forEach { codeGenerator.generateModule(it) }
 
     val linkedModule = compiledWasmModule.linkWasmCompiledFragments()
     val watGenerator = WasmIrToText()
@@ -96,7 +94,7 @@ fun compileWasm(
     val js = compiledWasmModule.generateJs()
 
     val os = ByteArrayOutputStream()
-    WasmIrToBinary(os, linkedModule, moduleFragment.descriptor.name.asString(), emitNameSection).appendWasmModule()
+    WasmIrToBinary(os, linkedModule, allModules.last().descriptor.name.asString(), emitNameSection).appendWasmModule()
     val byteArray = os.toByteArray()
 
     return WasmCompilerResult(

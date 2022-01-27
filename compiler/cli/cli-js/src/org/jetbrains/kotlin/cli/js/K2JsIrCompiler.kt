@@ -321,7 +321,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
 
             if (arguments.wasm) {
-                val (moduleFragment, backendContext) = compileToLoweredIr(
+                val (allModules, backendContext) = compileToLoweredIr(
                     depsDescriptors = module,
                     phaseConfig = PhaseConfig(wasmPhases),
                     irFactory = IrFactoryImpl,
@@ -329,7 +329,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     propertyLazyInitialization = arguments.irPropertyLazyInitialization,
                 )
                 val res = compileWasm(
-                    moduleFragment = moduleFragment,
+                    allModules = allModules,
                     backendContext = backendContext,
                     emitNameSection = arguments.wasmDebug,
                     dceEnabled = arguments.irDce,

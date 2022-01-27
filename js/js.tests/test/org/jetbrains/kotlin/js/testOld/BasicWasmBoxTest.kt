@@ -200,7 +200,7 @@ abstract class BasicWasmBoxTest(
         jsFilesBefore: List<String>,
         jsFilesAfter: List<String>,
     ) {
-        val (moduleFragment, backendContext) = compileToLoweredIr(
+        val (allModules, backendContext) = compileToLoweredIr(
             depsDescriptors = sourceModule,
             phaseConfig = phaseConfig,
             irFactory = IrFactoryImpl,
@@ -209,7 +209,7 @@ abstract class BasicWasmBoxTest(
         )
 
         val compilerResult = compileWasm(
-            moduleFragment = moduleFragment,
+            allModules = allModules,
             backendContext = backendContext,
             emitNameSection = true,
             dceEnabled = dceEnabled,
