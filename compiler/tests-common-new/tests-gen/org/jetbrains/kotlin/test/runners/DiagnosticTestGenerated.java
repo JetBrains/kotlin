@@ -340,6 +340,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("IncDecOperatorsInExpectClass.kt")
+        public void testIncDecOperatorsInExpectClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/IncDecOperatorsInExpectClass.kt");
+        }
+
+        @Test
         @TestMetadata("IncorrectCharacterLiterals.kt")
         public void testIncorrectCharacterLiterals() throws Exception {
             runTest("compiler/testData/diagnostics/tests/IncorrectCharacterLiterals.kt");
