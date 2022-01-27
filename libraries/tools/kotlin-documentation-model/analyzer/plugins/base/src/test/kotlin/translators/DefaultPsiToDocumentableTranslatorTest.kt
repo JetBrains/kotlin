@@ -3,6 +3,8 @@ package translators
 import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.model.firstMemberOfType
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
+import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.model.Annotations
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -162,6 +164,31 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
                     .firstMemberOfType<Text>().body
                 assertEquals(
                     "Here comes description from package-info", documentationOfPackage
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `java package-info package annotations`() {
+        testInline(
+            """
+            |/src/main/java/sample/PackageAnnotation.java
+            |package sample;
+            |@java.lang.annotation.Target(java.lang.annotation.ElementType.PACKAGE)
+            |public @interface PackageAnnotation {
+            |}
+            |
+            |/src/main/java/sample/package-info.java
+            |@PackageAnnotation
+            |package sample;
+            """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                assertEquals(
+                    Annotations.Annotation(DRI("sample", "PackageAnnotation"), emptyMap()),
+                    module.packages.single().extra[Annotations]?.directAnnotations?.values?.single()?.single()
                 )
             }
         }
