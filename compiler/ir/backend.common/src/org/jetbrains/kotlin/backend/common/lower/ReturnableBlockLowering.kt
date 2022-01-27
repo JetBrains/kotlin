@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrDoWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.transformStatement
+import org.jetbrains.kotlin.ir.types.isUnit
 
 // TODO migrate other usages and move this file to backend.jvm
 /**
@@ -158,7 +159,10 @@ class ReturnableBlockTransformer(val context: CommonBackendContext, val containe
             return builder.irBlock(expression, expression.origin) {
                 +variable
                 +loop
-                +irGet(variable)
+                if (!expression.type.isUnit()) {
+                    // this is little hack to avoid exceptions in `MethodVerifier` before optimizations
+                    +irGet(variable)
+                }
             }
         }
     }
