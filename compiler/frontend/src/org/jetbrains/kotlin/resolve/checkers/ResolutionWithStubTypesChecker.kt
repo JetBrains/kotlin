@@ -76,8 +76,8 @@ class ResolutionWithStubTypesChecker(private val kotlinCallResolver: KotlinCallR
         val builderInferenceSession = lambda.builderInferenceSession as BuilderInferenceSession
         val stubVariablesSubstitutor = builderInferenceSession.getNotFixedToInferredTypesSubstitutor()
         val variablesForUsedStubTypes = builderInferenceSession.getUsedStubTypes().map { it.originalTypeVariable }
-        val typeVariablesSubstitutionMap = (builderInferenceSession.getCurrentSubstitutor() as NewTypeSubstitutorByConstructorMap).map
-            .filterKeys { it in variablesForUsedStubTypes }
+        val substitutor = builderInferenceSession.getCurrentSubstitutor() as? NewTypeSubstitutorByConstructorMap ?: return
+        val typeVariablesSubstitutionMap = substitutor.map.filterKeys { it in variablesForUsedStubTypes }
 
         val newReceiverArgument = receiverValue?.buildSubstitutedReceiverArgument(stubVariablesSubstitutor, context)
         val newArguments = valueArguments.replaceTypes(context, resolutionCallbacks) { _, type ->
