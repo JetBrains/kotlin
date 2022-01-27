@@ -22,6 +22,7 @@ class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
             "kotlin.io.path.ExperimentalPathApi",
             "org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
         )
+        args.renderInternalDiagnosticNames = true
     }
 
     fun testTotalKotlin() {
