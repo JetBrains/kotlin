@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.backend.common.phaser.Action
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -308,6 +309,14 @@ interface DeclarationTransformer : FileLoweringPass {
             declaration.statements.transformSubsetFlat(transformer::transformFlatRestricted)
 
             declaration.thisReceiver.accept(this, null)
+        }
+    }
+}
+
+fun <C> Action<IrElement, C>.toMultiModuleAction(): Action<Iterable<IrModuleFragment>, C> {
+    return { state, modules, context ->
+        modules.forEach { module ->
+            this(state, module, context)
         }
     }
 }
