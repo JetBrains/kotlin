@@ -6,15 +6,8 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.testbase.GradleArgumentsProvider
-import org.jetbrains.kotlin.gradle.testbase.GradleTestVersions
-import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
-import org.jetbrains.kotlin.gradle.testbase.enableCacheRedirector
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.modify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.condition.EnabledOnOs
-import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -27,20 +20,9 @@ import kotlin.streams.toList
 const val testSourceRootSuffix = "tests"
 
 @MppGradlePluginTests
-@EnabledOnOs(OS.LINUX)
-class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
+class MppHighlightingTestDataWithGradleIT : KGPBaseTest() {
 
     private val buildScriptCustomizationMarker = "// customized content below"
-
-    @BeforeEach
-    fun before() {
-        super.setUp()
-    }
-
-    @AfterEach
-    fun after() {
-        super.tearDown()
-    }
 
     @GradleTestVersions
     @ParameterizedTest(name = "{3}: {0}")
@@ -51,7 +33,9 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
         testDataDir: File,
         sourceRoots: List<TestCaseSourceRoot>,
         gradleVersion: GradleVersion
-    ) = doTest(CliCompiler.NATIVE, prepareProject(gradleVersion), testDataDir, sourceRoots)
+    ) {
+        doTest(CliCompiler.NATIVE, prepareProject(gradleVersion), testDataDir, sourceRoots)
+    }
 
     @GradleTestVersions
     @ParameterizedTest(name = "{3}: {0}")
@@ -62,11 +46,12 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
         testDataDir: File,
         sourceRoots: List<TestCaseSourceRoot>,
         gradleVersion: GradleVersion
-    ) = doTest(CliCompiler.K2METADATA, prepareProject(gradleVersion), testDataDir, sourceRoots)
+    ) {
+        doTest(CliCompiler.K2METADATA, prepareProject(gradleVersion), testDataDir, sourceRoots)
+    }
 
-    private fun prepareProject(gradleVersion: GradleVersion): Project {
-        val project = Project("mpp-source-set-hierarchy-analysis", gradleVersion)
-        project.setupWorkingDir(false)
+    private fun prepareProject(gradleVersion: GradleVersion): TestProject {
+        val project = project("mpp-source-set-hierarchy-analysis", gradleVersion, enableCacheRedirector = false)
         project.gradleSettingsScript().modify { it.lines().filter { !it.startsWith("include") }.joinToString("\n") }
         project.projectDir.resolve("src").deleteRecursively()
         project.gradleBuildScript().modify { line ->
@@ -78,7 +63,7 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
         return project
     }
 
-    private fun doTest(cliCompiler: CliCompiler, project: Project, testDataDir: File, sourceRoots: List<TestCaseSourceRoot>) =
+    private fun doTest(cliCompiler: CliCompiler, project: TestProject, testDataDir: File, sourceRoots: List<TestCaseSourceRoot>) =
         with(project) {
             val expectedErrorsPerSourceSetName = sourceRoots.associate { sourceRoot ->
                 sourceRoot.kotlinSourceSetName to testDataDir.resolve(sourceRoot.directoryName).walkTopDown()
@@ -133,12 +118,10 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
 
             val tasks = sourceRoots.map { "compile" + it.kotlinSourceSetName.capitalize() + "KotlinMetadata" }
 
-            build(*tasks.toTypedArray()) {
-                if (expectedErrorsPerSourceSetName.values.all { it.all(ErrorInfo::isAllowedInCli) }) {
-                    assertSuccessful()
-                } else {
-                    assertFailed() // TODO: check the exact error message in the output, not just that the build failed
-                }
+            if (expectedErrorsPerSourceSetName.values.all { it.all(ErrorInfo::isAllowedInCli) }) {
+                build(*tasks.toTypedArray())
+            } else {
+                buildAndFail(*tasks.toTypedArray()) // TODO: check the exact error message in the output, not just that the build failed
             }
         }
 

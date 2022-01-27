@@ -35,6 +35,7 @@ fun KGPBaseTest.project(
     enableBuildScan: Boolean = false,
     addHeapDumpOptions: Boolean = true,
     enableGradleDebug: Boolean = false,
+    enableCacheRedirector: Boolean = true,
     projectPathAdditionalSuffix: String = "",
     buildJdk: File? = null,
     directoryPrefix: String? = null,
@@ -48,7 +49,7 @@ fun KGPBaseTest.project(
         directoryPrefix
     )
     projectPath.addDefaultBuildFiles()
-    projectPath.enableCacheRedirector()
+    if (enableCacheRedirector) projectPath.enableCacheRedirector()
     projectPath.enableAndroidSdk()
     if (addHeapDumpOptions) projectPath.addHeapDumpOptions()
 
