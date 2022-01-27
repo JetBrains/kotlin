@@ -9,8 +9,37 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.relativeTo
 import org.gradle.api.logging.LogLevel
+import org.gradle.testkit.runner.BuildResult
+import org.intellij.lang.annotations.Language
 
 private val kotlinSrcRegex by lazy { Regex("\\[KOTLIN\\] compile iteration: ([^\\r\\n]*)") }
+
+@Language("RegExp")
+private fun taskOutputRegex(
+    taskName: String
+) = """
+(?:
+\[LIFECYCLE] \[class org\.gradle(?:\.internal\.buildevents)?\.TaskExecutionLogger] :$taskName|
+\[org\.gradle\.execution\.(?:plan|taskgraph)\.Default(?:Task)?PlanExecutor] :$taskName.*?started
+)
+([\s\S]+?)
+(?:
+Finished executing task ':$taskName'|
+\[org\.gradle\.execution\.(?:plan|taskgraph)\.Default(?:Task)?PlanExecutor] :$taskName.*?completed
+)
+""".trimIndent()
+    .replace("\n", "")
+    .toRegex()
+
+/**
+ * Filter [BuildResult.getOutput] for specific task with given [taskName].
+ *
+ * Requires using [LogLevel.DEBUG].
+ */
+fun BuildResult.getOutputForTask(taskName: String): String = taskOutputRegex(taskName)
+    .find(output)
+    ?.let { it.groupValues[1] }
+    ?: error("Could not find output for task $taskName")
 
 /**
  * Extracts list of compiled .kt files from task output
@@ -45,9 +74,13 @@ fun extractJavaCompiledSources(output: String): List<Path> =
  *
  * Note: log level of output should be set to [LogLevel.DEBUG]
  */
-fun GradleProject.assertCompiledKotlinSources(expectedSources: Iterable<Path>, output: String) {
+fun GradleProject.assertCompiledKotlinSources(
+    expectedSources: Iterable<Path>,
+    output: String,
+    errorMessageSuffix: String = ""
+) {
     val actualSources = extractKotlinCompiledSources(projectPath, output).map {
         it.relativeTo(projectPath)
     }
-    assertSameFiles(expectedSources, actualSources, "Compiled Kotlin files differ:\n")
+    assertSameFiles(expectedSources, actualSources, "Compiled Kotlin files differ${errorMessageSuffix}:\n")
 }
