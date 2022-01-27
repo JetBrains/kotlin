@@ -130,12 +130,14 @@ object FirKotlinToJvmBytecodeCompiler {
 
         if (!checkKotlinPackageUsage(moduleConfiguration, allSources)) return null
 
+        val renderDiagnosticNames = moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+
         val diagnosticsReporter = DiagnosticReporterFactory.createReporter()
         val firResult = runFrontend(allSources, diagnosticsReporter).also {
             performanceManager?.notifyAnalysisFinished()
         }
         if (firResult == null) {
-            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector)
+            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
             return null
         }
 
@@ -155,7 +157,7 @@ object FirKotlinToJvmBytecodeCompiler {
             diagnosticsReporter
         )
 
-        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector)
+        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
 
         performanceManager?.notifyIRGenerationFinished()
         performanceManager?.notifyGenerationFinished()

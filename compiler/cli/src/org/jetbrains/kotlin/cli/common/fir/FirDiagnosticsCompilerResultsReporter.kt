@@ -11,24 +11,29 @@ import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import java.io.Closeable
 import java.io.File
 import java.io.InputStreamReader
 
 object FirDiagnosticsCompilerResultsReporter {
-    fun reportDiagnostics(diagnostics: Collection<KtDiagnostic>, reporter: MessageCollector): Boolean {
+    fun reportDiagnostics(diagnostics: Collection<KtDiagnostic>, reporter: MessageCollector, renderDiagnosticName: Boolean): Boolean {
         var hasErrors = false
         for (diagnostic in diagnostics.sortedWith(DiagnosticComparator)) {
-            hasErrors = reportDiagnostic(diagnostic, reporter) || hasErrors
+            hasErrors = reportDiagnostic(diagnostic, reporter, renderDiagnosticName) || hasErrors
         }
         reportSpecialErrors(diagnostics)
         return hasErrors
     }
 
-    fun reportToMessageCollector(diagnosticsCollector: BaseDiagnosticsCollector, messageCollector: MessageCollector): Boolean {
+    fun reportToMessageCollector(
+        diagnosticsCollector: BaseDiagnosticsCollector,
+        messageCollector: MessageCollector,
+        renderDiagnosticName: Boolean
+    ): Boolean {
         return reportByFile(diagnosticsCollector) { diagnostic, location ->
-            reportDiagnosticToMessageCollector(diagnostic, location, messageCollector)
+            reportDiagnosticToMessageCollector(diagnostic, location, messageCollector, renderDiagnosticName)
         }
     }
 
@@ -85,10 +90,10 @@ object FirDiagnosticsCompilerResultsReporter {
          */
     }
 
-    private fun reportDiagnostic(diagnostic: KtDiagnostic, reporter: MessageCollector): Boolean {
+    private fun reportDiagnostic(diagnostic: KtDiagnostic, reporter: MessageCollector, renderDiagnosticName: Boolean): Boolean {
         if (!diagnostic.isValid) return false
         diagnostic.location()?.let {
-            reportDiagnosticToMessageCollector(diagnostic, it, reporter)
+            reportDiagnosticToMessageCollector(diagnostic, it, reporter, renderDiagnosticName)
         }
         return diagnostic.severity == Severity.ERROR
     }
@@ -96,11 +101,19 @@ object FirDiagnosticsCompilerResultsReporter {
     private fun reportDiagnosticToMessageCollector(
         diagnostic: KtDiagnostic,
         location: CompilerMessageSourceLocation,
-        reporter: MessageCollector
+        reporter: MessageCollector,
+        renderDiagnosticName: Boolean
     ) {
         val severity = AnalyzerWithCompilerReport.convertSeverity(diagnostic.severity)
         val renderer = RootDiagnosticRendererFactory(diagnostic)
-        reporter.report(severity, renderer.render(diagnostic), location)
+
+        val message = renderer.render(diagnostic)
+        val textToRender = when (renderDiagnosticName) {
+            true -> "[${diagnostic.factoryName}] $message"
+            false -> message
+        }
+
+        reporter.report(severity, textToRender, location)
     }
 
     private fun throwErrorDiagnosticAsException(

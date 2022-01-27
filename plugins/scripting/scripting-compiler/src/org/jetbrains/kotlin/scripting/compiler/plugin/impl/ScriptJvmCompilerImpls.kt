@@ -256,6 +256,10 @@ private fun generate(
         diagnosticsReporter
     ).build().also {
         KotlinCodegenFacade.compileCorrectFiles(it)
-        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector)
+        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
+            diagnosticsReporter,
+            messageCollector,
+            kotlinCompilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+        )
     }
 }

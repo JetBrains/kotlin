@@ -403,7 +403,11 @@ object KotlinToJVMBytecodeCompiler {
             messageCollector,
             configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         )
-        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector)
+        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
+            diagnosticsReporter,
+            messageCollector,
+            configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+        )
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
         return state
