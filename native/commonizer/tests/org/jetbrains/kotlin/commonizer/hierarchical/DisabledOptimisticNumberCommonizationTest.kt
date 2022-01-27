@@ -14,7 +14,7 @@ class DisabledOptimisticNumberCommonizationTest : AbstractInlineSourcesCommoniza
         val result = commonize {
             outputTarget("(a, b)")
             setting(OptimisticNumberCommonizationEnabledKey, false)
-            registerFakeStdlibDependency("(a, b)")
+            registerFakeStdlibIntegersDependency("(a, b)")
 
             "a" withSource """
                 typealias X = Short
@@ -36,7 +36,7 @@ class DisabledOptimisticNumberCommonizationTest : AbstractInlineSourcesCommoniza
         val result = commonize {
             outputTarget("(a, b)")
             setting(OptimisticNumberCommonizationEnabledKey, false)
-            registerFakeStdlibDependency("(a, b)")
+            registerFakeStdlibIntegersDependency("(a, b)")
 
             "a" withSource """
                 typealias X = Int

@@ -21,7 +21,7 @@ internal val Project.isIntransitiveMetadataConfigurationEnabled: Boolean
     get() = PropertiesProvider(this).enableIntransitiveMetadataConfiguration
 
 internal val Project.isOptimisticNumberCommonizationEnabled: Boolean
-    get() = PropertiesProvider(this).mppOptimisticNumberCommonization
+    get() = PropertiesProvider(this).mppEnableOptimisticNumberCommonization
 
 internal val Project.commonizeTask: TaskProvider<Task>
     get() = locateOrRegisterTask(

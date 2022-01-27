@@ -45,7 +45,7 @@ internal abstract class Task(private val options: Collection<Option<*>>) : Compa
         return option?.value as T?
     }
 
-    protected fun getSettingsFromOptions(): CommonizerSettings {
+    protected fun getSettings(): CommonizerSettings {
         val passedSettings = ADDITIONAL_COMMONIZER_SETTINGS.map { settingOptionType ->
             settingOptionType.toCommonizerSetting()
         }
