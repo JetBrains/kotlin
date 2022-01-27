@@ -133,3 +133,7 @@ data class BuildOptions(
         return arguments.toList()
     }
 }
+
+fun BuildOptions.withFreeCommandLineArgument(argument: String) = copy(
+    freeCommandLineArgs = freeCommandLineArgs + argument
+)

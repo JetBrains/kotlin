@@ -519,7 +519,7 @@ open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
         }
     }
 
-    @Test
+    @GradleLinuxTest
     fun testNamespaceDSLInsteadOfPackageAttributeInManifest() {
         val project = Project("AndroidExtensionsProjectAGP7")
         val options = defaultBuildOptions().copy(incremental = false)

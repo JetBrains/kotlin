@@ -90,3 +90,12 @@ fun BuildResult.assertTasksPackedToCache(vararg tasks: String) {
         assertOutputContains("Stored cache entry for task '$it' with cache key ")
     }
 }
+
+/**
+ * Asserts given [tasks] haven't been executed.
+ */
+fun BuildResult.assertTasksNotExecuted(vararg tasks: String) {
+    for (task in tasks) {
+        assertOutputDoesNotContain("(Executing actions for task|Executing task) '$task'".toRegex())
+    }
+}

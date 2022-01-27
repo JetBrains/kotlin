@@ -152,7 +152,7 @@ fun BaseGradleIT.reportSourceSetCommonizerDependencies(
     }
 }
 
-private fun createSourceSetCommonizerDependencyOrNull(sourceSetName: String, libraryFile: File): SourceSetCommonizerDependency? {
+internal fun createSourceSetCommonizerDependencyOrNull(sourceSetName: String, libraryFile: File): SourceSetCommonizerDependency? {
     return SourceSetCommonizerDependency(
         sourceSetName,
         file = libraryFile,
@@ -169,7 +169,7 @@ private val File.allParents: Set<File> get() = transitiveClosure(this) { listOfN
 
 private const val dollar = "\$"
 
-private val taskSourceCode = """
+internal val taskSourceCode = """
 tasks.register("reportCommonizerSourceSetDependencies") {
     kotlin.sourceSets.withType(org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet::class).all {
         inputs.files(configurations.getByName(intransitiveMetadataConfigurationName))
