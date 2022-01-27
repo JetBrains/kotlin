@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.psi2ir.generators.fragments
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.NameProvider
+import org.jetbrains.kotlin.ir.util.StringSignatureComposer
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver
 // Used from CodeFragmentCompiler for IDE Debugger Plug-In
 @Suppress("unused")
 class FragmentCompilerSymbolTableDecorator(
-    signatureComposer: IdSignatureComposer,
+    signatureComposer: StringSignatureComposer,
     irFactory: IrFactory,
     private val fragmentInfo: EvaluatorFragmentInfo,
     nameProvider: NameProvider = NameProvider.DEFAULT,

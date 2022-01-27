@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.pipeline
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
+import org.jetbrains.kotlin.backend.common.serialization.signature.StringSignatureBuilderOverDescriptors
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
@@ -30,7 +30,8 @@ fun FirSession.convertToIr(
     irGeneratorExtensions: Collection<IrGenerationExtension>
 ): Fir2IrResult {
     val mangler = JvmDescriptorMangler(null)
-    val signaturer = JvmIdSignatureDescriptor(mangler)
+//    val signaturer = JvmIdSignatureDescriptor(mangler)
+    val signaturer = StringSignatureBuilderOverDescriptors()
 
     val commonFirFiles = moduleData.dependsOnDependencies
         .map { it.session }

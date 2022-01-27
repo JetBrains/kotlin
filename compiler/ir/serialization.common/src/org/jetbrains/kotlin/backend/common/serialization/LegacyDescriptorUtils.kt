@@ -29,6 +29,11 @@ tailrec fun DeclarationDescriptor.findPackage(): PackageFragmentDescriptor {
     else this.containingDeclaration!!.findPackage()
 }
 
+fun isExpect(descriptor: DeclarationDescriptor): Boolean {
+    if (descriptor is PropertyAccessorDescriptor) return isExpect(descriptor.correspondingProperty)
+    return descriptor.isExpectMember || descriptor.containingDeclaration?.isExpectMember == true
+}
+
 // This is Native specific. Try to eliminate.
 val ModuleDescriptor.isForwardDeclarationModule get() =
     name == Name.special("<forward declarations>")

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
-import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
+import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable2
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.name.FqName
 
 class JsIrFileSerializer(
     messageLogger: IrMessageLogger,
-    declarationTable: DeclarationTable,
+    declarationTable: DeclarationTable2,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     compatibilityMode: CompatibilityMode,
     skipExpects: Boolean,

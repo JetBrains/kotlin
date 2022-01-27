@@ -32,7 +32,7 @@ interface Fir2IrComponents {
     val declarationStorage: Fir2IrDeclarationStorage
 
     val typeConverter: Fir2IrTypeConverter
-    val signatureComposer: Fir2IrSignatureComposer
+    val signatureComposer: Fir2IrSignatureComposer2
     val visibilityConverter: Fir2IrVisibilityConverter
 
     val annotationGenerator: AnnotationGenerator

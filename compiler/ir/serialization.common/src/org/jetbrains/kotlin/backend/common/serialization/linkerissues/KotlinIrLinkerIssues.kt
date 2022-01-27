@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.serialization.linkerissues.PotentialC
 import org.jetbrains.kotlin.ir.linkage.KotlinIrLinkerInternalException
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
+import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.ResolvedDependency
 import org.jetbrains.kotlin.utils.ResolvedDependencyId
@@ -28,7 +29,7 @@ abstract class KotlinIrLinkerIssue {
 }
 
 class SignatureIdNotFoundInModuleWithDependencies(
-    private val idSignature: IdSignature,
+    private val signature: StringSignature,
     private val problemModuleDeserializer: IrModuleDeserializer,
     private val allModuleDeserializers: Collection<IrModuleDeserializer>,
     private val userVisibleIrModulesSupport: UserVisibleIrModulesSupport
@@ -41,7 +42,7 @@ class SignatureIdNotFoundInModuleWithDependencies(
             buildString {
                 appendLine("Failed to compute the detailed error message. See the root cause exception.")
                 appendLine()
-                append("Shortly: The required symbol ${idSignature.render()} is missing in the module or module dependencies.")
+                append("Shortly: The required symbol $signature is missing in the module or module dependencies.")
                 append(" This could happen if the required dependency is missing in the project.")
                 append(" Or if there is a dependency that has a different version (without the required symbol) in the project")
                 append(" than the version (with the required symbol) that the module was initially compiled with.")
@@ -56,7 +57,7 @@ class SignatureIdNotFoundInModuleWithDependencies(
         val problemModuleIdWithVersion = allModules.getValue(problemModuleId).moduleIdWithVersion
 
         // cause:
-        append("Module \"$problemModuleId\" has a reference to symbol ${idSignature.render()}.")
+        append("Module \"$problemModuleId\" has a reference to symbol $signature.")
         append(" Neither the module itself nor its dependencies contain such declaration.")
 
         // explanation:
@@ -82,17 +83,17 @@ class SignatureIdNotFoundInModuleWithDependencies(
         appendProjectDependencies(
             allModules = allModules,
             problemModuleIds = setOf(problemModuleId),
-            problemCause = "This module requires symbol ${idSignature.render()}",
+            problemCause = "This module requires symbol $signature",
             sourceCodeModuleId = userVisibleIrModulesSupport.sourceCodeModuleId,
             moduleIdComparator = userVisibleIrModulesSupport.moduleIdComparator
         )
     }
 }
 
-class NoDeserializerForModule(moduleName: Name, idSignature: IdSignature?) : KotlinIrLinkerIssue() {
+class NoDeserializerForModule(moduleName: Name, signature: StringSignature?) : KotlinIrLinkerIssue() {
     override val errorMessage = buildString {
         append("Could not load module ${moduleName.asString()}")
-        if (idSignature != null) append(" in an attempt to find deserializer for symbol ${idSignature.render()}.")
+        if (signature != null) append(" in an attempt to find deserializer for symbol $signature.")
     }
 }
 
@@ -148,7 +149,7 @@ class SymbolTypeMismatch(
             allModules = allModules,
             problemModuleIds = declaringModuleIds,
             problemCause = "This module contains ${
-                idSignature?.render()?.let { "symbol $it" } ?: "a symbol"
+                idSignature?.value?.let { "symbol $it" } ?: "a symbol"
             } that is the cause of the conflict",
             sourceCodeModuleId = userVisibleIrModulesSupport.sourceCodeModuleId,
             moduleIdComparator = userVisibleIrModulesSupport.moduleIdComparator

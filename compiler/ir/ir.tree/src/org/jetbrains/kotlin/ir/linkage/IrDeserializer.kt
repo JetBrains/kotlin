@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.name.Name
 
 interface IrDeserializer : IrProvider {
@@ -26,6 +26,6 @@ interface IrDeserializer : IrProvider {
     }
 
     fun init(moduleFragment: IrModuleFragment?, extensions: Collection<IrLinkerExtension>) {}
-    fun resolveBySignatureInModule(signature: IdSignature, kind: TopLevelSymbolKind, moduleName: Name): IrSymbol
+    fun resolveBySignatureInModule(signature: StringSignature, kind: TopLevelSymbolKind, moduleName: Name): IrSymbol
     fun postProcess() {}
 }

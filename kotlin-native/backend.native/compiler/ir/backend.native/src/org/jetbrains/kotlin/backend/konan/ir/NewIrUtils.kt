@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-private fun IrClass.isClassTypeWithSignature(signature: IdSignature.CommonSignature): Boolean {
+private fun IrClass.isClassTypeWithSignature(signature: StringSignature): Boolean {
     return signature == symbol.signature
 }
 

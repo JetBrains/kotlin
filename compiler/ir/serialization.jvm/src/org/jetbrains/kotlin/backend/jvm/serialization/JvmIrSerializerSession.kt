@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
-import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
+import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable2
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.jvm.serialization.proto.JvmIr
 import org.jetbrains.kotlin.config.JvmSerializeIrMode
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.synthetic.isVisibleOutside
 
 class JvmIrSerializerSession(
     messageLogger: IrMessageLogger,
-    private val declarationTable: DeclarationTable,
+    private val declarationTable: DeclarationTable2,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     private val mode: JvmSerializeIrMode,
     private val fileClassFqName: FqName,

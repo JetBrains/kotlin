@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.fir.analysis
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
+import org.jetbrains.kotlin.backend.common.serialization.signature.StringSignatureBuilderOverDescriptors
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
@@ -104,7 +104,8 @@ class FirAnalyzerFacade(
     override fun convertToIr(extensions: GeneratorExtensions): Fir2IrResult {
         if (_scopeSession == null) runResolution()
         val mangler = JvmDescriptorMangler(null)
-        val signaturer = JvmIdSignatureDescriptor(mangler)
+//        val signaturer = JvmIdSignatureDescriptor(mangler)
+        val signaturer = StringSignatureBuilderOverDescriptors()
 
         val commonFirFiles = session.moduleData.dependsOnDependencies
             .map { it.session }

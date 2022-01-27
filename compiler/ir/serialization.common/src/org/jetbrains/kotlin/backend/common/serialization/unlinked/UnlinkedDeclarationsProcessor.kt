@@ -188,7 +188,7 @@ internal class UnlinkedDeclarationsProcessor(
     }
 
     private fun IrElement.throwLinkageError(unlinkedSymbol: IrSymbol?, message: String = "Unlinked IR symbol"): IrCall {
-        val messageLiteral = message + unlinkedSymbol?.signature?.render()?.let { " $it" }.orEmpty()
+        val messageLiteral = message + unlinkedSymbol?.signature?.value?.let { " $it" }.orEmpty()
 
         val irCall = IrCallImpl(startOffset, endOffset, builtIns.nothingType, builtIns.linkageErrorSymbol, 0, 1, errorOrigin)
         irCall.putValueArgument(0, IrConstImpl.string(startOffset, endOffset, builtIns.stringType, messageLiteral))
@@ -214,7 +214,7 @@ internal class UnlinkedDeclarationsProcessor(
             if (!checkType.isUnlinked()) return expression
 
             reportWarning(
-                "TypeOperator contains unlinked symbol ${checkType.signature?.render() ?: ""}",
+                "TypeOperator contains unlinked symbol ${checkType.signature?.value ?: ""}",
                 currentFile?.location(expression.startOffset)
             )
 
@@ -241,7 +241,7 @@ internal class UnlinkedDeclarationsProcessor(
             if (!symbol.isUnlinked() && !expression.type.isUnlinked()) return expression
 
             reportWarning(
-                "Accessing declaration contains unlinked symbol ${symbol.signature?.render() ?: ""}",
+                "Accessing declaration contains unlinked symbol ${symbol.signature?.value ?: ""}",
                 currentFile?.location(expression.startOffset)
             )
 
@@ -273,7 +273,7 @@ internal class UnlinkedDeclarationsProcessor(
             }
 
             reportWarning(
-                "Accessing field contains unlinked symbol ${symbol.signature?.render()}",
+                "Accessing field contains unlinked symbol ${symbol.signature?.value}",
                 currentFile?.location(expression.startOffset)
             )
 
@@ -294,7 +294,7 @@ internal class UnlinkedDeclarationsProcessor(
         override fun visitClassReference(expression: IrClassReference): IrExpression {
             if (expression.symbol.isUnlinked()) {
                 reportWarning(
-                    "Accessing class contains unlinked symbol ${expression.symbol.signature?.render()}",
+                    "Accessing class contains unlinked symbol ${expression.symbol.signature?.value}",
                     currentFile?.location(expression.startOffset)
                 )
                 return expression.throwLinkageError(expression.symbol)

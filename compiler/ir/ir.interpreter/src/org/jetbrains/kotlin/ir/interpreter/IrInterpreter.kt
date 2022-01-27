@@ -17,13 +17,16 @@ import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.stack.Field
 import org.jetbrains.kotlin.ir.interpreter.state.*
-import org.jetbrains.kotlin.ir.interpreter.state.reflection.*
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KClassState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KFunctionState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KPropertyState
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.KTypeState
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal val bodyMap: Map<IdSignature, IrBody>) {
+class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal val bodyMap: Map<StringSignature, IrBody>) {
     val irBuiltIns: IrBuiltIns
         get() = environment.irBuiltIns
     private val callStack: CallStack
@@ -31,7 +34,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     private val callInterceptor: CallInterceptor = DefaultCallInterceptor(this)
     private var commandCount = 0
 
-    constructor(irBuiltIns: IrBuiltIns, bodyMap: Map<IdSignature, IrBody> = emptyMap()) :
+    constructor(irBuiltIns: IrBuiltIns, bodyMap: Map<StringSignature, IrBody> = emptyMap()) :
             this(IrInterpreterEnvironment(irBuiltIns), bodyMap)
 
     constructor(irModule: IrModuleFragment) : this(IrInterpreterEnvironment(irModule), emptyMap())

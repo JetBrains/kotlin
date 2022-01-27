@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.backend.common.serialization.signature.StringSignatureBuilderOverDescriptors
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -165,7 +166,8 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
                 moduleDescriptor,
                 bindingContext,
                 // SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl, NameProvider.DEFAULT),
-                SymbolTable(createIdSignatureComposer(bindingContext), IrFactoryImpl, NameProvider.DEFAULT),
+//                SymbolTable(createIdSignatureComposer(bindingContext), IrFactoryImpl, NameProvider.DEFAULT),
+                SymbolTable(StringSignatureBuilderOverDescriptors(), IrFactoryImpl, NameProvider.DEFAULT),
                 generatorExtensions
             )
             val irProviders = generateTypicalIrProviderList(

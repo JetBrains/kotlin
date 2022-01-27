@@ -6,18 +6,29 @@
 package org.jetbrains.kotlinx.atomicfu.compiler.extensions
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder.buildValueParameter
-import org.jetbrains.kotlin.ir.util.IdSignature.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.*
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.CAST
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator.IMPLICIT_CAST
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.isPublicApi
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.isPrimitiveType
+import org.jetbrains.kotlin.ir.types.typeOrNull
+import org.jetbrains.kotlin.ir.util.IdSignature.CommonSignature
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.platform.js.isJs
 
 private const val AFU_PKG = "kotlinx.atomicfu"
@@ -475,16 +486,17 @@ class AtomicfuTransformer(private val context: IrPluginContext) {
             sig.packageFqName == packageName && sig.declarationFqName == typeName
         } ?: false
 
-    private fun IrType.getSignature(): CommonSignature? = classOrNull?.let { it.signature?.asPublic() }
+    private fun IrType.getSignature(): CommonSignature? = null // classOrNull?.let { it.signature?.asPublic() }
 
     private fun IrType.atomicToValueType(): IrType {
         require(this is IrSimpleType)
-        return classifier.signature?.asPublic()?.declarationFqName?.let { classId ->
-            if (classId == "AtomicRef")
-                arguments.first().typeOrNull ?: error("$AFU_PKG.AtomicRef type parameter is not IrTypeProjection")
-            else
-                AFU_CLASSES[classId] ?: error("IrType ${this.getClass()} does not match any of atomicfu types")
-        } ?: error("Unexpected signature of the atomic type: ${this.render()}")
+        TODO()
+//        return classifier.signature?.asPublic()?.declarationFqName?.let { classId ->
+//            if (classId == "AtomicRef")
+//                arguments.first().typeOrNull ?: error("$AFU_PKG.AtomicRef type parameter is not IrTypeProjection")
+//            else
+//                AFU_CLASSES[classId] ?: error("IrType ${this.getClass()} does not match any of atomicfu types")
+//        } ?: error("Unexpected signature of the atomic type: ${this.render()}")
     }
 
     private fun IrCall.isAtomicFactory(): Boolean =

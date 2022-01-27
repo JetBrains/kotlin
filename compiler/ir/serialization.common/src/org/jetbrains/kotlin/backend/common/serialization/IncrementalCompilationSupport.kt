@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
@@ -104,26 +104,26 @@ class CurrentModuleWithICDeserializer(
     icReaderFactory: (IrLibrary) -> IrModuleDeserializer) :
     IrModuleDeserializer(delegate.moduleDescriptor, KotlinAbiVersion.CURRENT) {
 
-    private val dirtyDeclarations = mutableMapOf<IdSignature, IrSymbol>()
+    private val dirtyDeclarations = mutableMapOf<StringSignature, IrSymbol>()
     private val icKlib = ICKotlinLibrary(icData)
 
     private val icDeserializer: IrModuleDeserializer = icReaderFactory(icKlib)
 
-    override fun contains(idSig: IdSignature): Boolean {
-        return idSig in dirtyDeclarations || idSig.topLevelSignature() in icDeserializer || idSig in delegate
+    override fun contains(signature: StringSignature): Boolean {
+        return signature in dirtyDeclarations || signature.topLevelSignature() in icDeserializer || signature in delegate
     }
 
-    override fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        dirtyDeclarations[idSig]?.let { return it }
+    override fun deserializeIrSymbol(signature: StringSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
+        dirtyDeclarations[signature]?.let { return it }
 
-        if (idSig.topLevelSignature() in icDeserializer) return icDeserializer.deserializeIrSymbol(idSig, symbolKind)
+        if (signature.topLevelSignature() in icDeserializer) return icDeserializer.deserializeIrSymbol(signature, symbolKind)
 
-        return delegate.deserializeIrSymbol(idSig, symbolKind)
+        return delegate.deserializeIrSymbol(signature, symbolKind)
     }
 
-    override fun addModuleReachableTopLevel(idSig: IdSignature) {
-        assert(idSig in icDeserializer)
-        icDeserializer.addModuleReachableTopLevel(idSig)
+    override fun addModuleReachableTopLevel(signature: StringSignature) {
+        assert(signature in icDeserializer)
+        icDeserializer.addModuleReachableTopLevel(signature)
     }
 
     override fun deserializeReachableDeclarations() {

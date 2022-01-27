@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataIncrementalSerializer
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.backend.common.serialization.signature.StringSignatureBuilderOverDescriptors
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.CodegenTestCase
@@ -219,7 +220,8 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
         val stdlibDescriptor = getModuleDescriptor(stdlib)
         val testDescriptor = getModuleDescriptor(klib, stdlibDescriptor)
 
-        val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
+//        val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
+        val symbolTable = SymbolTable(StringSignatureBuilderOverDescriptors(), IrFactoryImpl)
         val typeTranslator =
             TypeTranslatorImpl(symbolTable, myEnvironment.configuration.languageVersionSettings, testDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(testDescriptor.builtIns, typeTranslator, symbolTable)
@@ -277,7 +279,8 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
             AnalyzingUtils.throwExceptionOnErrors(bindingContext)
         }
 
-        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl, NameProvider.DEFAULT)
+//        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl, NameProvider.DEFAULT)
+        val symbolTable = SymbolTable(StringSignatureBuilderOverDescriptors(), IrFactoryImpl, NameProvider.DEFAULT)
         val context = psi2Ir.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
         val irBuiltIns = context.irBuiltIns
         val irLinker = JsIrLinker(moduleDescriptor, IrMessageLogger.None, irBuiltIns, symbolTable, null)

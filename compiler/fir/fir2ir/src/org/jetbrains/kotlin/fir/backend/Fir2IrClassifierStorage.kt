@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -220,7 +221,7 @@ class Fir2IrClassifierStorage(
         return irClass
     }
 
-    private fun declareIrTypeAlias(signature: IdSignature?, factory: (IrTypeAliasSymbol) -> IrTypeAlias): IrTypeAlias =
+    private fun declareIrTypeAlias(signature: StringSignature?, factory: (IrTypeAliasSymbol) -> IrTypeAlias): IrTypeAlias =
         if (signature == null)
             factory(IrTypeAliasSymbolImpl())
         else
@@ -252,7 +253,7 @@ class Fir2IrClassifierStorage(
 
     internal fun getCachedTypeAlias(firTypeAlias: FirTypeAlias): IrTypeAlias? = typeAliasCache[firTypeAlias]
 
-    private fun declareIrClass(signature: IdSignature?, factory: (IrClassSymbol) -> IrClass): IrClass =
+    private fun declareIrClass(signature: StringSignature?, factory: (IrClassSymbol) -> IrClass): IrClass =
         if (signature == null)
             factory(IrClassSymbolImpl())
         else
@@ -412,7 +413,7 @@ class Fir2IrClassifierStorage(
 
     internal fun getCachedIrEnumEntry(enumEntry: FirEnumEntry): IrEnumEntry? = enumEntryCache[enumEntry]
 
-    private fun declareIrEnumEntry(signature: IdSignature?, factory: (IrEnumEntrySymbol) -> IrEnumEntry): IrEnumEntry =
+    private fun declareIrEnumEntry(signature: StringSignature?, factory: (IrEnumEntrySymbol) -> IrEnumEntry): IrEnumEntry =
         if (signature == null)
             factory(IrEnumEntrySymbolImpl())
         else
@@ -501,9 +502,7 @@ class Fir2IrClassifierStorage(
 
     fun getIrClassSymbolForNotFoundClass(classLikeLookupTag: ConeClassLikeLookupTag): IrClassSymbol {
         val classId = classLikeLookupTag.classId
-        val signature = IdSignature.CommonSignature(
-            classId.packageFqName.asString(), classId.relativeClassName.asString(), 0, 0,
-        )
+        val signature = StringSignature(classId.packageFqName.asString(), classId.relativeClassName.asString())
 
         val parentId = classId.outerClassId
         val parentClass = parentId?.let { getIrClassSymbolForNotFoundClass(ConeClassLikeLookupTagImpl(it)) }

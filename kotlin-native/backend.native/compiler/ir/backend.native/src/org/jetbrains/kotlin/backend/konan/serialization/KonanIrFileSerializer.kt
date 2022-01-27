@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.backend.konan.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
-import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
+import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable2
 import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 
 class KonanIrFileSerializer(
-    messageLogger: IrMessageLogger,
-    declarationTable: DeclarationTable,
-    expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
-    skipExpects: Boolean,
-    bodiesOnlyForInlines: Boolean = false,
-    compatibilityMode: CompatibilityMode,
-    normalizeAbsolutePaths: Boolean,
-    sourceBaseDirs: Collection<String>
+        messageLogger: IrMessageLogger,
+        declarationTable: DeclarationTable2,
+        expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
+        skipExpects: Boolean,
+        bodiesOnlyForInlines: Boolean = false,
+        compatibilityMode: CompatibilityMode,
+        normalizeAbsolutePaths: Boolean,
+        sourceBaseDirs: Collection<String>
 ): IrFileSerializer(messageLogger, declarationTable, expectDescriptorToSymbol, compatibilityMode, bodiesOnlyForInlines, skipExpects, normalizeAbsolutePaths = normalizeAbsolutePaths, sourceBaseDirs = sourceBaseDirs) {
 
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean {

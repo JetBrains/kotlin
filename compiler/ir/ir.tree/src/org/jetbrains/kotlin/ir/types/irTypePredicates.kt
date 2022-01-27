@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.ir.util.hasEqualFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -45,16 +46,17 @@ object IdSignatureValues {
     @JvmField val iterable = getPublicSignature(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, "Iterable")
     @JvmField val continuation = getPublicSignature(StandardNames.COROUTINES_PACKAGE_FQ_NAME, "Continuation")
     @JvmField val result = getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "Result")
-    @JvmField val sequence = IdSignature.CommonSignature("kotlin.sequences", "Sequence", null, 0)
+    @JvmField val sequence = StringSignature("kotlin.sequences/Sequence")
 }
 
-private fun IrType.isNotNullClassType(signature: IdSignature.CommonSignature) = isClassType(signature, hasQuestionMark = false)
-private fun IrType.isNullableClassType(signature: IdSignature.CommonSignature) = isClassType(signature, hasQuestionMark = true)
+private fun IrType.isNotNullClassType(signature: StringSignature) = isClassType(signature, hasQuestionMark = false)
+private fun IrType.isNullableClassType(signature: StringSignature) = isClassType(signature, hasQuestionMark = true)
 
-fun getPublicSignature(packageFqName: FqName, name: String) =
-    IdSignature.CommonSignature(packageFqName.asString(), name, null, 0)
+fun getPublicSignature(packageFqName: FqName, name: String): StringSignature =
+    StringSignature("$packageFqName/$name")
+//    IdSignature.CommonSignature(packageFqName.asString(), name, null, 0)
 
-private fun IrType.isClassType(signature: IdSignature.CommonSignature, hasQuestionMark: Boolean? = null): Boolean {
+private fun IrType.isClassType(signature: StringSignature, hasQuestionMark: Boolean? = null): Boolean {
     if (this !is IrSimpleType) return false
     if (hasQuestionMark != null && this.hasQuestionMark != hasQuestionMark) return false
     return signature == classifier.signature ||
@@ -73,7 +75,7 @@ private fun classFqNameEquals(symbol: IrClassSymbol, fqName: FqNameUnsafe): Bool
     return classFqNameEquals(symbol.owner, fqName)
 }
 
-private val idSignatureToPrimitiveType: Map<IdSignature.CommonSignature, PrimitiveType> =
+private val idSignatureToPrimitiveType: Map<StringSignature, PrimitiveType> =
     PrimitiveType.values().associateBy {
         getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, it.typeName.asString())
     }
@@ -81,7 +83,7 @@ private val idSignatureToPrimitiveType: Map<IdSignature.CommonSignature, Primiti
 private val shortNameToPrimitiveType: Map<Name, PrimitiveType> =
     PrimitiveType.values().associateBy(PrimitiveType::typeName)
 
-private val idSignatureToUnsignedType: Map<IdSignature.CommonSignature, UnsignedType> =
+private val idSignatureToUnsignedType: Map<StringSignature, UnsignedType> =
     UnsignedType.values().associateBy {
         getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, it.typeName.asString())
     }
@@ -89,7 +91,7 @@ private val idSignatureToUnsignedType: Map<IdSignature.CommonSignature, Unsigned
 private val shortNameToUnsignedType: Map<Name, UnsignedType> =
     UnsignedType.values().associateBy(UnsignedType::typeName)
 
-val primitiveArrayTypesSignatures: Map<PrimitiveType, IdSignature.CommonSignature> =
+val primitiveArrayTypesSignatures: Map<PrimitiveType, StringSignature> =
     PrimitiveType.values().associateWith {
         getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "${it.typeName.asString()}Array")
     }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.StringSignature
 import java.io.File
 import java.io.PrintWriter
 import java.security.MessageDigest
@@ -195,9 +196,9 @@ class PersistentCacheProviderImpl(private val cachePath: String) : PersistentCac
 }
 
 interface PersistentCacheConsumer {
-    fun commitInlineFunctions(path: String, hashes: Collection<Pair<IdSignature, TransHash>>, sigResolver: (IdSignature) -> Int)
+    fun commitInlineFunctions(path: String, hashes: Collection<Pair<StringSignature, TransHash>>, sigResolver: (StringSignature) -> Int)
     fun commitFileFingerPrint(path: String, fingerprint: Hash)
-    fun commitInlineGraph(path: String, hashes: Collection<Pair<IdSignature, TransHash>>, sigResolver: (IdSignature) -> Int)
+    fun commitInlineGraph(path: String, hashes: Collection<Pair<StringSignature, TransHash>>, sigResolver: (StringSignature) -> Int)
     fun commitBinaryAst(path: String, astData: ByteArray)
     fun commitBinaryDts(path: String, dstData: ByteArray)
     fun commitSourceMap(path: String, mapData: ByteArray)
@@ -209,8 +210,8 @@ interface PersistentCacheConsumer {
         val EMPTY = object : PersistentCacheConsumer {
             override fun commitInlineFunctions(
                 path: String,
-                hashes: Collection<Pair<IdSignature, TransHash>>,
-                sigResolver: (IdSignature) -> Int
+                hashes: Collection<Pair<StringSignature, TransHash>>,
+                sigResolver: (StringSignature) -> Int
             ) {
             }
 
@@ -219,8 +220,8 @@ interface PersistentCacheConsumer {
 
             override fun commitInlineGraph(
                 path: String,
-                hashes: Collection<Pair<IdSignature, TransHash>>,
-                sigResolver: (IdSignature) -> Int
+                hashes: Collection<Pair<StringSignature, TransHash>>,
+                sigResolver: (StringSignature) -> Int
             ) {
             }
 
@@ -252,8 +253,8 @@ class PersistentCacheConsumerImpl(private val cachePath: String) : PersistentCac
     private fun commitFileHashMapping(
         path: String,
         cacheDst: String,
-        hashes: Collection<Pair<IdSignature, TransHash>>,
-        sigResolver: (IdSignature) -> Int
+        hashes: Collection<Pair<StringSignature, TransHash>>,
+        sigResolver: (StringSignature) -> Int
     ) {
         val fileId = createFileCacheId(path)
         val fileDir = File(File(cachePath), fileId)
@@ -270,7 +271,7 @@ class PersistentCacheConsumerImpl(private val cachePath: String) : PersistentCac
         }
     }
 
-    override fun commitInlineFunctions(path: String, hashes: Collection<Pair<IdSignature, TransHash>>, sigResolver: (IdSignature) -> Int) {
+    override fun commitInlineFunctions(path: String, hashes: Collection<Pair<StringSignature, TransHash>>, sigResolver: (StringSignature) -> Int) {
         commitFileHashMapping(path, inlineFunctionsFile, hashes, sigResolver)
     }
 
@@ -287,7 +288,7 @@ class PersistentCacheConsumerImpl(private val cachePath: String) : PersistentCac
         }
     }
 
-    override fun commitInlineGraph(path: String, hashes: Collection<Pair<IdSignature, TransHash>>, sigResolver: (IdSignature) -> Int) {
+    override fun commitInlineGraph(path: String, hashes: Collection<Pair<StringSignature, TransHash>>, sigResolver: (StringSignature) -> Int) {
         commitFileHashMapping(path, inlineGraphFile, hashes, sigResolver)
     }
 

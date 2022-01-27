@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
+import org.jetbrains.kotlin.backend.common.serialization.signature.StringSignatureBuilderOverDescriptors
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IrIntrinsicMethods
 import org.jetbrains.kotlin.backend.jvm.ir.getKtFile
 import org.jetbrains.kotlin.backend.jvm.serialization.DisabledIdSignatureDescriptor
@@ -83,7 +84,7 @@ open class JvmIrCodegenFactory(
             else {
                 val mangler = JvmDescriptorMangler(MainFunctionDetector(input.bindingContext, input.languageVersionSettings))
                 val signaturer =
-                    if (enableIdSignatures) JvmIdSignatureDescriptor(mangler)
+                    if (enableIdSignatures) StringSignatureBuilderOverDescriptors()
                     else DisabledIdSignatureDescriptor
                 val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
                 mangler to symbolTable

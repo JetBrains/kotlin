@@ -9,6 +9,7 @@ dependencies {
     api(project(":kotlin-util-klib"))
     api(project(":kotlin-util-klib-metadata"))
     api(project(":compiler:util"))
+    api(project(":compiler:frontend"))
     implementation(project(":compiler:psi"))
     compileOnly(project(":kotlin-reflect-api"))
 

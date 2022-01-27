@@ -493,9 +493,9 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     private fun TypeConstructorMarker.getNameForClassUnderKotlinPackage(): String? {
         if (this !is IrClassSymbol) return null
 
-        val signature = signature?.asPublic()
+        val signature = signature
         return if (signature != null) {
-            if (signature.packageFqName == StandardNames.BUILT_INS_PACKAGE_NAME.asString())
+            if (signature.packageFqName() == StandardNames.BUILT_INS_PACKAGE_NAME)
                 signature.declarationFqName
             else null
         } else {

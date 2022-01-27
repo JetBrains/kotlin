@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator
 import org.jetbrains.kotlin.fir.backend.generators.DelegatedMemberGenerator
 import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
+import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer2
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -22,7 +22,7 @@ class Fir2IrComponentsStorage(
     override val scopeSession: ScopeSession,
     override val symbolTable: SymbolTable,
     override val irFactory: IrFactory,
-    override val signatureComposer: FirBasedSignatureComposer
+    override val signatureComposer: FirBasedSignatureComposer2
 ) : Fir2IrComponents {
 
     override lateinit var converter: Fir2IrConverter

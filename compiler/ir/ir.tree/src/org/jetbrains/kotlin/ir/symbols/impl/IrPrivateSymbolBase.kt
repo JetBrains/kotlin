@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.ir.util.render
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -56,7 +57,8 @@ abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolO
 
     private var _owner: B? = null
     override val owner: B
-        get() = _owner ?: throw IllegalStateException("Symbol with ${javaClass.simpleName} is unbound")
+        get() = _owner
+            ?: throw IllegalStateException("Symbol with ${javaClass.simpleName} is unbound")
 
     override fun bind(owner: B) {
         if (_owner == null) {
@@ -66,7 +68,7 @@ abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolO
         }
     }
 
-    override val signature: IdSignature?
+    override val signature: StringSignature?
         get() = null
 
     override val isBound: Boolean

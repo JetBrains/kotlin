@@ -211,7 +211,7 @@ class IrDeclarationDeserializer(
 
     private inline fun <T> withDeserializedIrDeclarationBase(
         proto: ProtoDeclarationBase,
-        block: (IrSymbol, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T
+        block: (IrSymbol, StringSignature, Int, Int, IrDeclarationOrigin, Long) -> T
     ): T where T : IrDeclaration, T : IrSymbolOwner {
         val (s, uid) = symbolDeserializer.deserializeIrSymbolToDeclare(proto.symbol)
         val coordinates = BinaryCoordinates.decode(proto.coordinates)
@@ -250,7 +250,7 @@ class IrDeclarationDeserializer(
             )
         }
 
-        val sig: IdSignature
+        val sig: StringSignature
         val result = symbolTable.run {
             if (isGlobal) {
                 val p = symbolDeserializer.deserializeIrSymbolToDeclare(proto.base.symbol)
@@ -259,7 +259,8 @@ class IrDeclarationDeserializer(
                 declareGlobalTypeParameter(sig, { symbol }, factory)
             } else {
                 val symbolData = BinarySymbolData.decode(proto.base.symbol)
-                sig = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
+//                sig = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
+                sig = symbolDeserializer.deserializeSignature(symbolData.signatureId)
                 declareScopedTypeParameter(
                     sig,
                     {
@@ -349,7 +350,7 @@ class IrDeclarationDeserializer(
 
                 sealedSubclasses = proto.sealedSubclassList.map { deserializeIrSymbol(it) as IrClassSymbol }
 
-                fakeOverrideBuilder.enqueueClass(this, signature, compatibilityMode)
+                fakeOverrideBuilder.enqueueClass(this, signature, symbolDeserializer.fileSymbol.owner, compatibilityMode)
             }
         }
 
@@ -506,7 +507,7 @@ class IrDeclarationDeserializer(
 
     private inline fun <T : IrFunction> withDeserializedIrFunctionBase(
         proto: ProtoFunctionBase,
-        block: (IrFunctionSymbol, IdSignature, Int, Int, IrDeclarationOrigin, Long) -> T
+        block: (IrFunctionSymbol, StringSignature, Int, Int, IrDeclarationOrigin, Long) -> T
     ): T = withDeserializedIrDeclarationBase(proto.base) { symbol, idSig, startOffset, endOffset, origin, fcode ->
         symbolTable.withScope(symbol) {
             block(checkSymbolType(symbol), idSig, startOffset, endOffset, origin, fcode).usingParent {

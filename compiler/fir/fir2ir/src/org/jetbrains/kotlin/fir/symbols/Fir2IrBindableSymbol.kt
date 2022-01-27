@@ -7,15 +7,16 @@ package org.jetbrains.kotlin.fir.symbols
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrDeclaration>(
-    override val signature: IdSignature,
+    override val signature: StringSignature,
     private val containerSource: DeserializedContainerSource? = null
 ) : IrBindableSymbol<D, B> {
 

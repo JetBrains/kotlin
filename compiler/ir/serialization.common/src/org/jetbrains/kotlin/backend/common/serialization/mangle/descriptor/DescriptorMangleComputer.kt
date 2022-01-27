@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinMangleComputer
-import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleMode
-import org.jetbrains.kotlin.backend.common.serialization.mangle.collectForMangler
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
+import org.jetbrains.kotlin.ir.util.MangleConstant
+import org.jetbrains.kotlin.ir.util.collectForMangler
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsByExistingArgumentsWith
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 abstract class DescriptorMangleComputer(protected val builder: StringBuilder, private val mode: MangleMode) :

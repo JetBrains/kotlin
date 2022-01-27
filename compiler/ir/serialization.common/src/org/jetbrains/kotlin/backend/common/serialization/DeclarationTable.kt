@@ -7,12 +7,15 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
+import org.jetbrains.kotlin.backend.common.serialization.signature.StringSignatureBuilderOverIr
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.ir.util.render
 
 
@@ -22,6 +25,16 @@ interface IdSignatureClashTracker {
     companion object {
         val DEFAULT_TRACKER = object : IdSignatureClashTracker {
             override fun commit(declaration: IrDeclaration, signature: IdSignature) {}
+        }
+    }
+}
+
+interface StringSignatureClashTracker {
+    fun commit(declaration: IrDeclaration, signature: StringSignature)
+
+    companion object {
+        val DEFAULT_TRACKER = object : StringSignatureClashTracker {
+            override fun commit(declaration: IrDeclaration, signature: StringSignature) {}
         }
     }
 }
@@ -39,7 +52,7 @@ abstract class GlobalDeclarationTable(
     protected fun loadKnownBuiltins(builtIns: IrBuiltIns) {
         builtIns.knownBuiltins.forEach {
             val symbol = (it as IrSymbolOwner).symbol
-            table[it] = symbol.signature!!.also { id -> clashTracker.commit(it, id) }
+//            table[it] = symbol.signature!!.also { id -> clashTracker.commit(it, id) }
         }
     }
 
@@ -96,6 +109,47 @@ open class DeclarationTable(globalTable: GlobalDeclarationTable) {
         assert(table[declaration] == null) { "Declaration table already has signature for ${declaration.render()}" }
         table.put(declaration, signature)
     }
+}
+
+
+open class DeclarationTable2(val table: MutableMap<IrDeclaration, StringSignature>, private val clashTracker: StringSignatureClashTracker) {
+
+    private val localDeclarationTable = mutableMapOf<IrDeclaration, Int>()
+    private var localCounter = 0
+
+    private val computator = StringSignatureBuilderOverIr {
+        localDeclarationTable.getOrPut(it) { localCounter++ }
+    }
+
+    fun inFile(file: IrFile?, block: () -> Unit) {
+        localDeclarationTable.clear()
+        localCounter = 0
+        computator.inFile(file, block)
+    }
+
+    private fun computeForLocalDeclaration(declaration: IrDeclaration): StringSignature {
+        val id = localDeclarationTable.getOrPut(declaration) { localCounter++ }
+        return StringSignature("\$$id")
+    }
+
+    fun computeForDeclaration(declaration: IrDeclaration): StringSignature {
+        return table[declaration] ?: run {
+            computator.buildForDeclaration(declaration)?.also {
+                table[declaration] = it
+                clashTracker.commit(declaration, it)
+            } ?: computeForLocalDeclaration(declaration)
+        }
+    }
+
+    protected fun loadKnownBuiltins(builtIns: IrBuiltIns) {
+        builtIns.knownBuiltins.forEach {
+            val symbol = (it as IrSymbolOwner).symbol
+            table[it] = symbol.signature!!.also { id -> clashTracker.commit(it, id) }
+        }
+    }
+
+    open fun assumeDeclarationSignature(clazz: IrClass, stringSignature: StringSignature, file: IrFile) {}
+    protected open fun tryComputeBackendSpecificSignature(declaration: IrDeclaration): StringSignature? = null
 }
 
 // This is what we pre-populate tables with

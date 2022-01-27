@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.scripting.js
 
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.backend.common.serialization.signature.StringSignatureBuilderOverDescriptors
 import org.jetbrains.kotlin.cli.common.repl.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -24,7 +23,8 @@ class JsReplCompiler(private val environment: KotlinCoreEnvironment) : ReplCompi
             NameTables(emptyList(), mappedNames = mutableMapOf()),
             readLibrariesFromConfiguration(environment.configuration),
             ReplCodeAnalyzerBase.ResettableAnalyzerState(),
-            SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl)
+//            SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl)
+            SymbolTable(StringSignatureBuilderOverDescriptors(), IrFactoryImpl)
         )
     }
 

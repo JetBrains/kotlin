@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
+import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.encodings.WobblyTF8
 import org.jetbrains.kotlin.name.FqName
@@ -32,18 +32,18 @@ class IrFileDeserializer(
     val symbolDeserializer: IrSymbolDeserializer,
     val declarationDeserializer: IrDeclarationDeserializer,
 ) {
-    val reversedSignatureIndex = fileProto.declarationIdList.associateBy { symbolDeserializer.deserializeIdSignature(it) }
+    val reversedSignatureIndex = fileProto.declarationIdList.associateBy { symbolDeserializer.deserializeSignature(it) }
 
     private var annotations: List<ProtoConstructorCall>? = fileProto.annotationList
 
-    fun deserializeDeclaration(idSig: IdSignature): IrDeclaration {
-        return declarationDeserializer.deserializeDeclaration(loadTopLevelDeclarationProto(idSig)).also {
+    fun deserializeDeclaration(signature: StringSignature): IrDeclaration {
+        return declarationDeserializer.deserializeDeclaration(loadTopLevelDeclarationProto(signature)).also {
             file.declarations += it
         }
     }
 
-    private fun loadTopLevelDeclarationProto(idSig: IdSignature): ProtoDeclaration {
-        val idSigIndex = reversedSignatureIndex[idSig] ?: error("Not found Idx for $idSig")
+    private fun loadTopLevelDeclarationProto(signature: StringSignature): ProtoDeclaration {
+        val idSigIndex = reversedSignatureIndex[signature] ?: error("Not found Idx for $signature")
         return libraryFile.declaration(idSigIndex)
     }
 
@@ -71,21 +71,21 @@ class FileDeserializationState(
         IrSymbolDeserializer(
             linker.symbolTable, fileReader, file.symbol,
             fileProto.actualList,
-            ::addIdSignature,
+//            ::addIdSignature,
             linker::handleExpectActualMapping,
             symbolProcessor = linker.symbolProcessor,
-        ) { idSig, symbolKind ->
+        ) { signature, symbolKind ->
 
-            val topLevelSig = idSig.topLevelSignature()
+            val topLevelSig = signature.topLevelSignature()
             val actualModuleDeserializer = moduleDeserializer.findModuleDeserializerForTopLevelId(topLevelSig)
                 ?: run {
                     // The symbol might be gone in newer version of dependency KLIB. Then the KLIB that was compiled against
                     // the older version of dependency KLIB will still have a reference to non-existing symbol. And the linker will have to
                     // handle such situation appropriately. See KT-41378.
-                    linker.handleSignatureIdNotFoundInModuleWithDependencies(idSig, moduleDeserializer)
+                    linker.handleSignatureIdNotFoundInModuleWithDependencies(signature, moduleDeserializer)
                 }
 
-            actualModuleDeserializer.deserializeIrSymbol(idSig, symbolKind)
+            actualModuleDeserializer.deserializeIrSymbol(signature, symbolKind)
         }
 
     private val declarationDeserializer = IrDeclarationDeserializer(
@@ -105,20 +105,20 @@ class FileDeserializationState(
 
     val fileDeserializer = IrFileDeserializer(file, fileReader, fileProto, symbolDeserializer, declarationDeserializer)
 
-    private val reachableTopLevels = LinkedHashSet<IdSignature>()
+    private val reachableTopLevels = LinkedHashSet<StringSignature>()
 
     init {
         // Explicitly exported declarations (e.g. top-level initializers) must be deserialized before all other declarations.
         // Thus we schedule their deserialization in deserializer's constructor.
         fileProto.explicitlyExportedToCompilerList.forEach {
             val symbolData = symbolDeserializer.parseSymbolData(it)
-            val sig = symbolDeserializer.deserializeIdSignature(symbolData.signatureId)
-            assert(!sig.isPackageSignature())
+            val sig = symbolDeserializer.deserializeSignature(symbolData.signatureId)
+//            assert(!sig.isPackageSignature())
             addIdSignature(sig.topLevelSignature())
         }
     }
 
-    fun addIdSignature(key: IdSignature) {
+    fun addIdSignature(key: StringSignature) {
         reachableTopLevels.add(key)
     }
 
