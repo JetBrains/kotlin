@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
-import org.junit.Assume
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.*
+import org.junit.rules.TemporaryFolder
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class NativePlatformLibsIT : BaseGradleIT() {
@@ -32,6 +32,16 @@ class NativePlatformLibsIT : BaseGradleIT() {
             // This test class causes build timeouts on Windows CI machines.
             // We temporary disable it for windows until a proper fix is found.
             Assume.assumeFalse(HostManager.hostIsMingw)
+        }
+
+        @field:ClassRule
+        @JvmField
+        val tempDir = TemporaryFolder()
+
+        @JvmStatic
+        @AfterClass
+        fun deleteTempDir() {
+            tempDir.delete()
         }
     }
 
@@ -81,8 +91,11 @@ class NativePlatformLibsIT : BaseGradleIT() {
         }
     }
 
-    private fun Project.buildWithLightDist(vararg tasks: String, check: CompiledProject.() -> Unit) =
-        build(*tasks, "-Pkotlin.native.distribution.type=light", check = check)
+    private fun Project.buildWithLightDist(
+        vararg tasks: String,
+        options: BuildOptions = defaultBuildOptions(),
+        check: CompiledProject.() -> Unit
+    ) = build(*tasks, "-Pkotlin.native.distribution.type=light", options = options, check = check)
 
     @Test
     fun testNoGenerationForOldCompiler() = with(platformLibrariesProject("linuxX64")) {
@@ -278,5 +291,50 @@ class NativePlatformLibsIT : BaseGradleIT() {
             assertContains("Unpack Kotlin/Native compiler to ")
             assertContains("Generate platform libraries for linux_x64")
         }
+    }
+
+    @Test
+    fun `check offline mode is propagated to the platform libs generator`() = with(platformLibrariesProject("linuxX64")) {
+        deleteInstalledCompilers()
+
+        // Install the compiler at the first time. Don't build to reduce execution time.
+        buildWithLightDist("tasks") {
+            assertSuccessful()
+            assertContains("Generate platform libraries for linux_x64")
+        }
+
+        deleteInstalledCompilers()
+
+        // Check that --offline works when all the dependencies are already downloaded:
+        val buildOptionsOffline = defaultBuildOptions()
+            .let { it.copy(freeCommandLineArgs = it.freeCommandLineArgs + "--offline") }
+
+        buildWithLightDist("tasks", options = buildOptionsOffline) {
+            assertSuccessful()
+            assertContains("Generate platform libraries for linux_x64")
+        }
+
+        // Check that --offline fails when there are no downloaded dependencies:
+        val customKonanDataDir = tempDir.newFolder("konanOffline")
+        val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.copy(
+            customEnvironmentVariables = buildOptionsOffline.customEnvironmentVariables +
+                    ("KONAN_DATA_DIR" to customKonanDataDir.absolutePath)
+        )
+
+        buildWithLightDist("tasks", options = buildOptionsOfflineWithCustomKonanDataDir) {
+            assertFailed()
+            assertContains("Generate platform libraries for linux_x64")
+        }
+
+        // The build above have extracted the cached compiler to the custom KONAN_DATA_DIR; remove it:
+        assertTrue(customKonanDataDir.deleteRecursively())
+
+        // Check that the compiler is not extracted if it is not cached:
+        buildWithLightDist("tasks", "-Pkotlin.native.version=1.6.20-M1-9999", options = buildOptionsOfflineWithCustomKonanDataDir) {
+            assertFailed()
+            assertNotContains("Generate platform libraries for linux_x64")
+        }
+
+        assertFalse(customKonanDataDir.exists())
     }
 }

@@ -196,4 +196,11 @@ internal class KotlinNativeLibraryGenerationRunner(project: Project) :
     AbstractKotlinNativeCInteropRunner("generatePlatformLibraries", project) {
     // The library generator works for a long time so enabling C2 can improve performance.
     override val disableC2: Boolean = false
+
+    override val defaultArguments: List<String>
+        get() = mutableListOf<String>().apply {
+            if (project.gradle.startParameter.isOffline) {
+                addAll(listOf("-Xoverride-konan-properties", "airplaneMode=true"))
+            }
+        }
 }
