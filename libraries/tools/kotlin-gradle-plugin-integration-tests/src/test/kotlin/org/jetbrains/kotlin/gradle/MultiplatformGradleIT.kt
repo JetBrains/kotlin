@@ -24,108 +24,83 @@ import org.jetbrains.kotlin.gradle.internals.KOTLIN_12X_MPP_DEPRECATION_WARNING
 import org.jetbrains.kotlin.gradle.plugin.EXPECTED_BY_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_DEPRECATION_WARNING
-import org.jetbrains.kotlin.gradle.testbase.GradleLinuxTest
-import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import java.io.File
 import kotlin.test.assertTrue
 
 @TestDataPath("\$CONTENT_ROOT/resources")
 @MppGradlePluginTests
-class MultiplatformGradleIT : BaseGradleIT() {
+class MultiplatformGradleIT : KGPBaseTest() {
 
-    override fun defaultBuildOptions(): BuildOptions {
-        return super.defaultBuildOptions().copy(stopDaemons = false)
-    }
-
-    @BeforeEach
-    fun before() {
-        super.setUp()
-    }
-
-    @AfterEach
-    fun after() {
-        super.tearDown()
-    }
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
 
     @GradleLinuxTest
     fun testMultiplatformCompile(gradleVersion: GradleVersion) {
-        val project = Project("multiplatformProject", gradleVersion)
+        with(project("multiplatformProject", gradleVersion)) {
+            build("build") {
+                assertOutputContains(KOTLIN_12X_MPP_DEPRECATION_WARNING)
 
-        project.build("build") {
-            assertSuccessful()
+                assertTasksExecuted(
+                    ":lib:compileKotlinCommon",
+                    ":lib:compileTestKotlinCommon",
+                    ":libJvm:compileKotlin",
+                    ":libJvm:compileTestKotlin",
+                    ":libJs:compileKotlin2Js",
+                    ":libJs:compileTestKotlin2Js"
+                )
+                assertFileInProjectExists("lib/build/classes/kotlin/main/foo/PlatformClass.kotlin_metadata")
+                assertFileInProjectExists("lib/build/classes/kotlin/test/foo/PlatformTest.kotlin_metadata")
+                assertFileInProjectExists("libJvm/build/classes/kotlin/main/foo/PlatformClass.class")
+                assertFileInProjectExists("libJvm/build/classes/kotlin/test/foo/PlatformTest.class")
+                assertFileInProjectExists("libJs/build/classes/kotlin/main/libJs.js")
+                assertFileInProjectExists("libJs/build/classes/kotlin/test/libJs_test.js")
+            }
 
-            assertContains(KOTLIN_12X_MPP_DEPRECATION_WARNING)
-
-            assertTasksExecuted(
-                ":lib:compileKotlinCommon",
-                ":lib:compileTestKotlinCommon",
-                ":libJvm:compileKotlin",
-                ":libJvm:compileTestKotlin",
-                ":libJs:compileKotlin2Js",
-                ":libJs:compileTestKotlin2Js"
-            )
-            assertFileExists("lib/build/classes/kotlin/main/foo/PlatformClass.kotlin_metadata")
-            assertFileExists("lib/build/classes/kotlin/test/foo/PlatformTest.kotlin_metadata")
-            assertFileExists("libJvm/build/classes/kotlin/main/foo/PlatformClass.class")
-            assertFileExists("libJvm/build/classes/kotlin/test/foo/PlatformTest.class")
-            assertFileExists("libJs/build/classes/kotlin/main/libJs.js")
-            assertFileExists("libJs/build/classes/kotlin/test/libJs_test.js")
-        }
-
-        project.projectDir.resolve("gradle.properties").appendText("\nkotlin.internal.mpp12x.deprecation.suppress=true")
-        project.build {
-            assertSuccessful()
-
-            assertNotContains(KOTLIN_12X_MPP_DEPRECATION_WARNING)
+            projectDir.resolve("gradle.properties").appendText("\nkotlin.internal.mpp12x.deprecation.suppress=true")
+            build {
+                assertOutputDoesNotContain(KOTLIN_12X_MPP_DEPRECATION_WARNING)
+            }
         }
     }
 
     @GradleLinuxTest
     fun testDeprecatedImplementWarning(gradleVersion: GradleVersion) {
-        val project = Project("multiplatformProject", gradleVersion)
+        with(project("multiplatformProject", gradleVersion)) {
+            build("build") {
+                assertOutputDoesNotContain(IMPLEMENT_DEPRECATION_WARNING)
+            }
 
-        project.build("build") {
-            assertSuccessful()
-            assertNotContains(IMPLEMENT_DEPRECATION_WARNING)
-        }
+            projectDir.walk().filter { it.name == "build.gradle" }.forEach { buildGradle ->
+                buildGradle.modify { it.replace(EXPECTED_BY_CONFIG_NAME, IMPLEMENT_CONFIG_NAME) }
+            }
 
-        project.projectDir.walk().filter { it.name == "build.gradle" }.forEach { buildGradle ->
-            buildGradle.modify { it.replace(EXPECTED_BY_CONFIG_NAME, IMPLEMENT_CONFIG_NAME) }
-        }
-
-        project.build("build") {
-            assertSuccessful()
-            assertContains(IMPLEMENT_DEPRECATION_WARNING)
+            build("build") {
+                assertOutputContains(IMPLEMENT_DEPRECATION_WARNING)
+            }
         }
     }
 
     @GradleLinuxTest
     fun testCommonKotlinOptions(gradleVersion: GradleVersion) {
-        with(Project("multiplatformProject", gradleVersion)) {
-            setupWorkingDir()
-
+        with(project("multiplatformProject", gradleVersion)) {
             File(projectDir, "lib/build.gradle").appendText(
                 "\ncompileKotlinCommon.kotlinOptions.freeCompilerArgs = ['-Xno-inline']" +
                         "\ncompileKotlinCommon.kotlinOptions.suppressWarnings = true"
             )
 
             build("build") {
-                assertSuccessful()
-                assertContains("-Xno-inline")
-                assertContains("-nowarn")
+                assertOutputContains("-Xno-inline")
+                assertOutputContains("-nowarn")
             }
         }
     }
 
     @GradleLinuxTest
     fun testSubprojectWithAnotherClassLoader(gradleVersion: GradleVersion) {
-        with(Project("multiplatformProject", gradleVersion)) {
-            setupWorkingDir()
-
+        with(project("multiplatformProject", gradleVersion)) {
             // Make sure there is a plugin applied with the plugins DSL, so that Gradle loads the
             // plugins separately for the subproject, with a different class loader:
             File(projectDir, "libJs/build.gradle").modify {
@@ -155,35 +130,29 @@ class MultiplatformGradleIT : BaseGradleIT() {
                 }
             }
 
-            build("build") {
-                assertSuccessful()
-            }
+            build("build")
         }
     }
 
     // todo: also make incremental compilation test
     @GradleLinuxTest
-    fun testIncrementalBuild(gradleVersion: GradleVersion): Unit = Project("multiplatformProject", gradleVersion).run {
+    fun testIncrementalBuild(gradleVersion: GradleVersion): Unit = with(project("multiplatformProject", gradleVersion)) {
         val compileCommonTask = ":lib:compileKotlinCommon"
         val compileJsTask = ":libJs:compileKotlin2Js"
         val compileJvmTask = ":libJvm:compileKotlin"
         val allKotlinTasks = listOf(compileCommonTask, compileJsTask, compileJvmTask)
 
-        build("build") {
-            assertSuccessful()
-        }
+        build("build")
 
         val commonProjectDir = File(projectDir, "lib")
         commonProjectDir.getFileByName("PlatformClass.kt").modify { it + "\n" }
         build("build") {
-            assertSuccessful()
-            assertTasksExecuted(allKotlinTasks)
+            assertTasksExecuted(*allKotlinTasks.toTypedArray())
         }
 
         val jvmProjectDir = File(projectDir, "libJvm")
         jvmProjectDir.getFileByName("PlatformClass.kt").modify { it + "\n" }
         build("build") {
-            assertSuccessful()
             assertTasksExecuted(compileJvmTask)
             assertTasksUpToDate(compileCommonTask, compileJsTask)
         }
@@ -191,17 +160,14 @@ class MultiplatformGradleIT : BaseGradleIT() {
         val jsProjectDir = File(projectDir, "libJs")
         jsProjectDir.getFileByName("PlatformClass.kt").modify { it + "\n" }
         build("build") {
-            assertSuccessful()
             assertTasksExecuted(compileJsTask)
             assertTasksUpToDate(compileCommonTask, compileJvmTask)
         }
     }
 
     @GradleLinuxTest
-    fun testMultipleCommonModules(gradleVersion: GradleVersion): Unit = with(Project("multiplatformMultipleCommonModules", gradleVersion)) {
-        build("build", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
-            assertSuccessful()
-
+    fun testMultipleCommonModules(gradleVersion: GradleVersion): Unit = with(project("multiplatformMultipleCommonModules", gradleVersion)) {
+        build("build", buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Summary)) {
             val sourceSets = listOf("", "Test")
             val commonTasks = listOf("libA", "libB").flatMap { module ->
                 sourceSets.map { sourceSet -> ":$module:compile${sourceSet}KotlinCommon" }
@@ -209,27 +175,25 @@ class MultiplatformGradleIT : BaseGradleIT() {
             val platformTasks = listOf("libJvm" to "", "libJs" to "2Js").flatMap { (module, platformSuffix) ->
                 sourceSets.map { sourceSet -> ":$module:compile${sourceSet}Kotlin$platformSuffix" }
             }
-            assertTasksExecuted(commonTasks + platformTasks)
+            assertTasksExecuted(*(commonTasks + platformTasks).toTypedArray())
 
             val expectedJvmMainClasses =
                 listOf("PlatformClassB", "PlatformClassA", "JavaLibUseKt", "CommonClassB", "CommonClassA").map { "foo/$it" }
-            val jvmMainClassesDir = File(projectDir, kotlinClassesDir(subproject = "libJvm"))
+            val jvmMainClassesDir = subProject("libJvm").kotlinClassesDir().toFile()
             expectedJvmMainClasses.forEach { className ->
-                assertTrue(File(jvmMainClassesDir, className + ".class").isFile, "Class $className should be compiled for JVM.")
+                assertTrue(File(jvmMainClassesDir, "$className.class").isFile, "Class $className should be compiled for JVM.")
             }
 
             val expectedJvmTestClasses = listOf("PlatformTestB", "PlatformTestA", "CommonTestB", "CommonTestA").map { "foo/$it" }
-            val jvmTestClassesDir = File(projectDir, kotlinClassesDir(subproject = "libJvm", sourceSet = "test"))
+            val jvmTestClassesDir = subProject("libJvm").kotlinClassesDir(sourceSet = "test").toFile()
             expectedJvmTestClasses.forEach { className ->
-                assertTrue(File(jvmTestClassesDir, className + ".class").isFile, "Class $className should be compiled for JVM.")
+                assertTrue(File(jvmTestClassesDir, "$className.class").isFile, "Class $className should be compiled for JVM.")
             }
         }
     }
 
     @GradleLinuxTest
-    fun testFreeCompilerArgsAssignment(gradleVersion: GradleVersion): Unit = with(Project("multiplatformProject", gradleVersion)) {
-        setupWorkingDir()
-
+    fun testFreeCompilerArgsAssignment(gradleVersion: GradleVersion): Unit = with(project("multiplatformProject", gradleVersion)) {
         val overrideCompilerArgs = "kotlinOptions.freeCompilerArgs = ['-verbose']"
 
         gradleBuildScript("lib").appendText("\ncompileKotlinCommon.$overrideCompilerArgs")
@@ -237,14 +201,12 @@ class MultiplatformGradleIT : BaseGradleIT() {
         gradleBuildScript("libJs").appendText("\ncompileKotlin2Js.$overrideCompilerArgs")
 
         build("build") {
-            assertSuccessful()
             assertTasksExecuted(":lib:compileKotlinCommon", ":libJvm:compileKotlin", ":libJs:compileKotlin2Js")
         }
     }
 
     @GradleLinuxTest
-    fun testCommonModuleAsTransitiveDependency(gradleVersion: GradleVersion) = with(Project("multiplatformProject", gradleVersion)) {
-        setupWorkingDir()
+    fun testCommonModuleAsTransitiveDependency(gradleVersion: GradleVersion) = with(project("multiplatformProject", gradleVersion)) {
         gradleBuildScript("libJvm").appendText(
             """
             ${'\n'}
@@ -259,29 +221,24 @@ class MultiplatformGradleIT : BaseGradleIT() {
         )
 
         build("printCompileConfiguration") {
-            assertSuccessful()
             // Check that `lib` is contained in the resolved compile artifacts of `libJvm`:
-            assertContains("Dependency: 'lib'")
+            assertOutputContains("Dependency: 'lib'")
         }
     }
 
     @GradleLinuxTest
-    fun testArchivesBaseNameAsCommonModuleName(gradleVersion: GradleVersion) = with(Project("multiplatformProject", gradleVersion)) {
-        setupWorkingDir()
-
+    fun testArchivesBaseNameAsCommonModuleName(gradleVersion: GradleVersion) = with(project("multiplatformProject", gradleVersion)) {
         val moduleName = "my_module_name"
 
         gradleBuildScript("lib").appendText("\narchivesBaseName = '$moduleName'")
 
         build("compileKotlinCommon") {
-            assertSuccessful()
-            assertFileExists(kotlinClassesDir(subproject = "lib") + "META-INF/$moduleName.kotlin_module")
+            assertFileExists(subProject("lib").kotlinClassesDir().resolve("META-INF/$moduleName.kotlin_module"))
         }
     }
 
     @GradleLinuxTest
-    fun testKt23092(gradleVersion: GradleVersion) = with(Project("multiplatformProject", gradleVersion)) {
-        setupWorkingDir()
+    fun testKt23092(gradleVersion: GradleVersion) = with(project("multiplatformProject", gradleVersion)) {
         val successMarker = "Found JavaCompile task:"
 
         gradleBuildScript("lib").appendText(
@@ -294,16 +251,13 @@ class MultiplatformGradleIT : BaseGradleIT() {
         )
 
         build(":lib:tasks") {
-            assertSuccessful()
-            assertContains("$successMarker :lib:compileJava")
-            assertContains("$successMarker :lib:compileTestJava")
+            assertOutputContains("$successMarker :lib:compileJava")
+            assertOutputContains("$successMarker :lib:compileTestJava")
         }
     }
 
     @GradleLinuxTest
-    fun testCustomSourceSets(gradleVersion: GradleVersion) = with(Project("multiplatformProject", gradleVersion)) {
-        setupWorkingDir()
-
+    fun testCustomSourceSets(gradleVersion: GradleVersion) = with(project("multiplatformProject", gradleVersion)) {
         val sourceSetName = "foo"
         val sourceSetDeclaration = "\nsourceSets { $sourceSetName { } }"
 
@@ -325,22 +279,19 @@ class MultiplatformGradleIT : BaseGradleIT() {
         val customSourceSetCompileTasks = listOf(":lib" to "Common", ":libJs" to "2Js", ":libJvm" to "")
             .map { (module, platform) -> "$module:compile${sourceSetName.capitalize()}Kotlin$platform" }
 
-        build(*customSourceSetCompileTasks.toTypedArray(), options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
-            assertSuccessful()
-            assertTasksExecuted(customSourceSetCompileTasks)
+        build(*customSourceSetCompileTasks.toTypedArray(), buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Summary)) {
+            assertTasksExecuted(*customSourceSetCompileTasks.toTypedArray())
         }
     }
 
     @GradleLinuxTest
     fun testWithJavaDuplicatedResourcesFail(gradleVersion: GradleVersion) = with(
-        Project(
+        project(
             projectName = "mpp-single-jvm-target",
             gradleVersion = gradleVersion,
-            minLogLevel = LogLevel.WARN
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.WARN)
         )
     ) {
-        setupWorkingDir()
-
         gradleBuildScript().modify { buildFileContent ->
             buildFileContent
                 .lines()
@@ -362,8 +313,7 @@ class MultiplatformGradleIT : BaseGradleIT() {
         )
 
         build("assemble") {
-            assertSuccessful()
-            assertNotContains("no duplicate handling strategy has been set")
+            assertOutputDoesNotContain("no duplicate handling strategy has been set")
         }
     }
 }
