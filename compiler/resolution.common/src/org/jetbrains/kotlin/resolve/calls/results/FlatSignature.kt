@@ -72,14 +72,15 @@ private fun <T> SimpleConstraintSystem.isValueParameterTypeNotLessSpecific(
 
     var specificValueParameterTypes = specific.valueParameterTypes
     var generalValueParameterTypes = general.valueParameterTypes
+
     if (specificContextReceiverCount != generalContextReceiverCount) {
         specificValueParameterTypes = specificValueParameterTypes.drop(specificContextReceiverCount)
         generalValueParameterTypes = generalValueParameterTypes.drop(generalContextReceiverCount)
     }
-    val valueParameters = specificValueParameterTypes.map(typeKindSelector).zip(generalValueParameterTypes.map(typeKindSelector))
 
-    for ((specificType, generalType) in valueParameters) {
-        if (specificType == null || generalType == null) continue
+    for (index in specificValueParameterTypes.indices) {
+        val specificType = typeKindSelector(specificValueParameterTypes[index]) ?: continue
+        val generalType = typeKindSelector(generalValueParameterTypes[index]) ?: continue
 
         if (specificityComparator.isDefinitelyLessSpecific(specificType, generalType)) {
             return false
