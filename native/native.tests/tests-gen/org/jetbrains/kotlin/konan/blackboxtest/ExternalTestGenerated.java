@@ -34199,6 +34199,12 @@ public class ExternalTestGenerated extends AbstractExternalNativeBlackBoxTest {
             }
 
             @Test
+            @TestMetadata("incorrectTypeOfTypealiasForSuspendFunctionalType.kt")
+            public void testIncorrectTypeOfTypealiasForSuspendFunctionalType() throws Exception {
+                runTest("compiler/testData/codegen/box/typealias/incorrectTypeOfTypealiasForSuspendFunctionalType.kt");
+            }
+
+            @Test
             @TestMetadata("innerClassTypeAliasConstructor.kt")
             public void testInnerClassTypeAliasConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/typealias/innerClassTypeAliasConstructor.kt");
