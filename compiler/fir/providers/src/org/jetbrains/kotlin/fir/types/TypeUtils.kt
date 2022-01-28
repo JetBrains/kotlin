@@ -175,7 +175,7 @@ fun <T : ConeKotlinType> T.withNullability(
             ConeNullability.NULLABLE -> original.withNullability(nullability, typeContext)
             ConeNullability.UNKNOWN -> original.withNullability(nullability, typeContext)
         }
-        is ConeIntegerLiteralType -> ConeIntegerLiteralTypeImpl(value, isUnsigned, nullability)
+        is ConeIntegerLiteralTypeImpl -> ConeIntegerLiteralTypeImpl(value, possibleTypes, isUnsigned, nullability)
         else -> error("sealed: ${this::class}")
     } as T
 }
