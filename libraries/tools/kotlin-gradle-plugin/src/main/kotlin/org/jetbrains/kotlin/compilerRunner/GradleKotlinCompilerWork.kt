@@ -13,14 +13,16 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.daemon.client.DaemonSettings
+import org.jetbrains.kotlin.daemon.client.KotlinDaemonClientProtocol
+import org.jetbrains.kotlin.daemon.client.ProtocolSettings
+import org.jetbrains.kotlin.daemon.client.getKotlinDaemonClient
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.logging.*
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.report.*
-import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
 import org.jetbrains.kotlin.gradle.report.TaskExecutionProperties.ABI_SNAPSHOT
-import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState
 import org.jetbrains.kotlin.gradle.tasks.throwGradleExceptionIfError
@@ -35,7 +37,6 @@ import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import javax.inject.Inject
-import kotlin.collections.ArrayList
 
 internal class ProjectFilesForCompilation(
     val projectRootFile: File,
@@ -174,6 +175,32 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         } else {
             compileOutOfProcess() to KotlinCompilerExecutionStrategy.OUT_OF_PROCESS
         }
+    }
+
+    private fun compileWithDaemonNew(messageCollector: MessageCollector): ExitCode? {
+        val daemonClient = getKotlinDaemonClient(
+            DaemonSettings(
+                compilerClasspath = compilerFullClasspath,
+                jvmArgs = daemonJvmArgs ?: listOf(),
+                protocol = KotlinDaemonClientProtocol.Rmi,
+                protocolSettings = ProtocolSettings.RmiSettings()
+            )
+        )
+        val targetPlatform = when (compilerClassName) {
+            KotlinCompilerClass.JVM -> CompileService.TargetPlatform.JVM
+            KotlinCompilerClass.JS -> CompileService.TargetPlatform.JS
+            KotlinCompilerClass.METADATA -> CompileService.TargetPlatform.METADATA
+            else -> throw IllegalArgumentException("Unknown compiler type $compilerClassName")
+        }
+        val compilationOptions = CompilationOptions(
+            compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
+            targetPlatform = targetPlatform,
+            reportCategories = reportCategories(isVerbose),
+            reportSeverity = reportSeverity(isVerbose),
+            requestedCompilationResults = emptyArray(),
+            kotlinScriptExtensions = kotlinScriptExtensions
+        )
+        return daemonClient.compile(compilationOptions, compilerArgs.toList())
     }
 
     private fun compileWithDaemon(messageCollector: MessageCollector): ExitCode? {
