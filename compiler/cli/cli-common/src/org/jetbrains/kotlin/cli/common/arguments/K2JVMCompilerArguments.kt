@@ -27,8 +27,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var classpath: String? by NullableStringFreezableVar(null)
 
-    @GradleDeprecatedOption(removeAfter = "1.5", level = DeprecationLevel.ERROR)
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-include-runtime", description = "Include Kotlin runtime into the resulting JAR")
     var includeRuntime: Boolean by FreezableVar(false)
 
