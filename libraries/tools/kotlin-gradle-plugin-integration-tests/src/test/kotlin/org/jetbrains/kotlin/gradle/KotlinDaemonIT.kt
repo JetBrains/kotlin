@@ -109,7 +109,7 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
             buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.INFO)
         ) {
             gradleProperties.append(
-                "\nkotlin.daemon.jvmargs=-Xmx16m"
+                "\nkotlin.daemon.jvmargs=-Xmx12m"
             )
 
             buildAndFail("assemble") {
