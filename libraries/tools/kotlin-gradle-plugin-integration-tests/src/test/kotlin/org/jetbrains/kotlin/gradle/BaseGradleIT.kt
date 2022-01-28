@@ -860,7 +860,10 @@ Finished executing task ':$taskName'|
             }
         }
 
-        val actualTestResults = readAndCleanupTestResults(testReportDirs, projectDir.toPath())
+        val actualTestResults = readAndCleanupTestResults(testReportDirs, projectDir.toPath()) { s ->
+            val excl = "Invalid connection: com.apple.coresymbolicationd"
+            s.lines().filter { it != excl }.joinToString("\n")
+        }
         val expectedTestResults = prettyPrintXml(resourcesRootFile.resolve(assertionFileName).readText())
 
         assertEquals(expectedTestResults, actualTestResults)
