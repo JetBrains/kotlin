@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.foldMap
 // We assume type IS an invariant type projection to prevent additional wrapper here
 // (more exactly, invariant type projection contains type)
 sealed class ConeKotlinType : ConeKotlinTypeProjection(), KotlinTypeMarker, TypeArgumentListMarker {
-    override val kind: ProjectionKind
+    final override val kind: ProjectionKind
         get() = ProjectionKind.INVARIANT
 
     abstract val typeArguments: Array<out ConeTypeProjection>
 
-    override val type: ConeKotlinType
+    final override val type: ConeKotlinType
         get() = this
 
     abstract val nullability: ConeNullability
@@ -69,16 +69,16 @@ open class ConeFlexibleType(
     val upperBound: ConeSimpleKotlinType
 ) : ConeKotlinType(), FlexibleTypeMarker {
 
-    override val typeArguments: Array<out ConeTypeProjection>
+    final override val typeArguments: Array<out ConeTypeProjection>
         get() = lowerBound.typeArguments
 
-    override val nullability: ConeNullability
+    final override val nullability: ConeNullability
         get() = lowerBound.nullability.takeIf { it == upperBound.nullability } ?: ConeNullability.UNKNOWN
 
-    override val attributes: ConeAttributes
+    final override val attributes: ConeAttributes
         get() = lowerBound.attributes
 
-    override fun equals(other: Any?): Boolean {
+    final override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
@@ -90,25 +90,10 @@ open class ConeFlexibleType(
         return true
     }
 
-    override fun hashCode(): Int {
+    final override fun hashCode(): Int {
         var result = lowerBound.hashCode()
         result = 31 * result + upperBound.hashCode()
         return result
-    }
-
-}
-
-fun ConeKotlinType.upperBoundIfFlexible(): ConeSimpleKotlinType {
-    return when (this) {
-        is ConeSimpleKotlinType -> this
-        is ConeFlexibleType -> upperBound
-    }
-}
-
-fun ConeKotlinType.lowerBoundIfFlexible(): ConeSimpleKotlinType {
-    return when (this) {
-        is ConeSimpleKotlinType -> this
-        is ConeFlexibleType -> lowerBound
     }
 }
 
@@ -231,12 +216,4 @@ class ConeIntersectionType(
         if (hashCode != 0) return hashCode
         return intersectedTypes.hashCode().also { hashCode = it }
     }
-}
-
-fun ConeIntersectionType.withAlternative(alternativeType: ConeKotlinType): ConeIntersectionType {
-    return ConeIntersectionType(intersectedTypes, alternativeType)
-}
-
-fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
-    return ConeIntersectionType(intersectedTypes.map(func), alternativeType?.let(func))
 }
