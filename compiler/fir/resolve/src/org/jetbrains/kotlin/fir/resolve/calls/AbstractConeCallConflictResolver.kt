@@ -7,12 +7,17 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.results.*
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.requireOrDescribe
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 abstract class AbstractConeCallConflictResolver(
     private val specificityComparator: TypeSpecificityComparator,
@@ -160,9 +165,28 @@ abstract class AbstractConeCallConflictResolver(
         call: Candidate,
         function: FirFunction
     ): List<ConeKotlinType> {
-        return listOfNotNull(function.receiverTypeRef?.coneType) +
-                (call.resultingTypeForCallableReference?.typeArguments?.map { it as ConeKotlinType }
-                    ?: call.argumentMapping?.map { it.value.argumentType() }.orEmpty())
+        return buildList {
+            addIfNotNull(function.receiverTypeRef?.coneType)
+            val typeForCallableReference = call.resultingTypeForCallableReference
+            if (typeForCallableReference != null) {
+                typeForCallableReference.typeArguments
+                    .mapTo(this) {
+                        when (it) {
+                            is ConeTypeVariableType -> {
+                                val typeParameterLookupTag = it.lookupTag.originalTypeParameter as ConeTypeParameterLookupTag?
+                                if (typeParameterLookupTag == null) {
+                                    ConeErrorType(ConeSimpleDiagnostic("no type parameter for type variable", DiagnosticKind.Other))
+                                } else {
+                                    ConeTypeParameterTypeImpl(typeParameterLookupTag, it.isNullable)
+                                }
+                            }
+                            else -> it as ConeKotlinType
+                        }
+                    }
+            } else {
+                call.argumentMapping?.mapTo(this) { it.value.argumentType() }
+            }
+        }
     }
 
     private fun createFlatSignature(call: Candidate, klass: FirClassLikeDeclaration): FlatSignature<Candidate> {
