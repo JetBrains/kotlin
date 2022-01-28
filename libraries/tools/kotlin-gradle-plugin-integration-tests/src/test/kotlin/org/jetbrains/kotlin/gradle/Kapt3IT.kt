@@ -235,7 +235,7 @@ open class Kapt3IT : Kapt3BaseIT() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(incremental = false)
         ) {
-            build("build") {
+            build("build", enableGradleDebug = true) {
                 assertTasksExecuted(":kaptGenerateStubsKotlin")
                 assertOutputDoesNotContain(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
             }
@@ -803,7 +803,7 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @DisplayName("Works with JPMS on JDK 9+")
-    @JdkVersions(versions = [JavaVersion.VERSION_1_9])
+    @JdkVersions(versions = [JavaVersion.VERSION_11])
     @GradleWithJdkTest
     fun testJpmsModule(
         gradleVersion: GradleVersion,

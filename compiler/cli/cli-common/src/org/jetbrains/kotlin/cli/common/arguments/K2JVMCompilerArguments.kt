@@ -47,8 +47,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-no-jdk", description = "Don't automatically include the Java runtime into the classpath")
     var noJdk: Boolean by FreezableVar(false)
 
-    @GradleDeprecatedOption(removeAfter = "1.6", level = DeprecationLevel.ERROR)
-    @GradleOption(DefaultValues.BooleanTrueDefault::class)
     @Argument(
         value = "-no-stdlib",
         description = "Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection into the classpath"

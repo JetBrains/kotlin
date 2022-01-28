@@ -38,13 +38,6 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      var noJdk: kotlin.Boolean
 
     /**
-     * Don't automatically include the Kotlin/JVM stdlib and Kotlin reflection into the classpath
-     * Default value: true
-     */
-    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
-     var noStdlib: kotlin.Boolean
-
-    /**
      * Use the old JVM backend
      * Default value: false
      */

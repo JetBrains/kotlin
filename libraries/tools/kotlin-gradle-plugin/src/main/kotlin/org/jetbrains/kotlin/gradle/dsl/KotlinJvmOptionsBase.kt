@@ -58,14 +58,6 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
             noJdkField = value
         }
 
-    private var noStdlibField: kotlin.Boolean? = null
-    @Deprecated(message = "This option has no effect and will be removed in a future release.", level = DeprecationLevel.ERROR)
-    override var noStdlib: kotlin.Boolean
-        get() = noStdlibField ?: true
-        set(value) {
-            noStdlibField = value
-        }
-
     private var useOldBackendField: kotlin.Boolean? = null
     override var useOldBackend: kotlin.Boolean
         get() = useOldBackendField ?: false
@@ -85,7 +77,6 @@ internal abstract class KotlinJvmOptionsBase : org.jetbrains.kotlin.gradle.dsl.K
         jvmTarget?.let { args.jvmTarget = it }
         moduleName?.let { args.moduleName = it }
         noJdkField?.let { args.noJdk = it }
-        noStdlibField?.let { args.noStdlib = it }
         useOldBackendField?.let { args.useOldBackend = it }
     }
 }
@@ -102,7 +93,7 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fi
     jvmTarget = null
     moduleName = null
     noJdk = false
+    useOldBackend = false
     noStdlib = true
     noReflect = true
-    useOldBackend = false
 }

@@ -256,6 +256,12 @@ private fun Printer.generateImpl(
         for (property in properties) {
             println("${property.name} = ${property.gradleDefaultValue}")
         }
+        // Adding required 'noStdlib' and 'noReflect' compiler arguments for JVM compilation
+        // Otherwise compilation via build tools will fail
+        if (type.shortName().toString() == "KotlinJvmOptionsBase") {
+            println("noStdlib = true")
+            println("noReflect = true")
+        }
     }
     println("}")
 }
