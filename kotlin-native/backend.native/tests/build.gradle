@@ -110,13 +110,6 @@ tasks.withType(RunExternalTestGroup.class).configureEach {
 ext.isExperimentalMM = project.globalTestArgs.contains("-memory-model") && project.globalTestArgs.contains("experimental")
 ext.isNoopGC = project.globalTestArgs.contains("-Xgc=noop")
 
-if (ext.isExperimentalMM) {
-    // TODO: Make it more aggressive and only turn it on for a subset of tests.
-    tasks.withType(KonanCompileNativeBinary.class).configureEach {
-        extraOpts "-Xbinary=gcSchedulerType=aggressive"
-    }
-}
-
 // TODO: It also makes sense to test -g without asserts, and also to test -opt with asserts.
 if (project.globalTestArgs.contains("-g")) {
     tasks.withType(KonanCompileNativeBinary.class).configureEach {

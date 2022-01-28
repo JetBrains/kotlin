@@ -58,9 +58,8 @@ fun test() {
     val progressReportsCount = 100
 
     if (Platform.memoryModel == MemoryModel.EXPERIMENTAL) {
-        kotlin.native.internal.GC.thresholdAllocations = retainLimit
-        // Effectively disable trigger on safepoints.
-        kotlin.native.internal.GC.threshold = Int.MAX_VALUE
+        kotlin.native.internal.GC.autotune = false
+        kotlin.native.internal.GC.targetHeapBytes = retainLimit
     }
 
     // On Linux, the child process might immediately commit the same amount of memory as the parent.
