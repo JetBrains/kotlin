@@ -233,6 +233,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             parents += functionBuilder
             defaultNull("invocationKind", "label", "body", "controlFlowGraphReference")
             default("inlineStatus", "InlineStatus.Unknown")
+            withCopy()
         }
 
         builder(propertyAccessor) {

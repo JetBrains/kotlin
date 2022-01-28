@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCall
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.remapArgumentsWithVararg
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.writeResultType
-import org.jetbrains.kotlin.fir.scopes.impl.FirIntegerOperatorCall
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -195,50 +194,37 @@ class FirCallCompletionResultsWriterTransformer(
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ExpectedArgumentType?): FirStatement {
         val calleeReference = functionCall.calleeReference as? FirNamedReferenceWithCandidate
             ?: return functionCall
-        var result = prepareQualifiedTransform(functionCall, calleeReference)
+        val result = prepareQualifiedTransform(functionCall, calleeReference)
         val typeRef = result.typeRef as FirResolvedTypeRef
         val subCandidate = calleeReference.candidate
         val resultType: FirTypeRef
-        result = when (result) {
-            is FirIntegerOperatorCall -> {
-                val expectedType = data?.getExpectedType(functionCall)
-                resultType =
-                    typeRef.resolvedTypeFromPrototype(typeRef.coneTypeUnsafe<ConeIntegerLiteralType>().getApproximatedType(expectedType))
-                result.argumentList.transformArguments(this, expectedType?.toExpectedType())
-                result
+        resultType = typeRef.substituteTypeRef(subCandidate)
+        val expectedArgumentsTypeMapping = runIf(!calleeReference.isError) { subCandidate.createArgumentsMapping() }
+        result.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
+        if (calleeReference.isError) {
+            subCandidate.argumentMapping?.let {
+                result.replaceArgumentList(buildArgumentListForErrorCall(result.argumentList, it))
             }
-            else -> {
-                resultType = typeRef.substituteTypeRef(subCandidate)
-                val expectedArgumentsTypeMapping = runIf(!calleeReference.isError) { subCandidate.createArgumentsMapping() }
-                result.argumentList.transformArguments(this, expectedArgumentsTypeMapping)
-                if (calleeReference.isError) {
-                    subCandidate.argumentMapping?.let {
-                        result.replaceArgumentList(buildArgumentListForErrorCall(result.argumentList, it))
+        } else {
+            subCandidate.handleVarargs()
+            subCandidate.argumentMapping?.let {
+                val newArgumentList = buildResolvedArgumentList(it, source = functionCall.argumentList.source)
+                val symbol = subCandidate.symbol
+                val functionIsInline =
+                    (symbol as? FirNamedFunctionSymbol)?.fir?.isInline == true || symbol.isArrayConstructorWithLambda
+                for ((argument, parameter) in newArgumentList.mapping) {
+                    val lambda = (argument.unwrapArgument() as? FirAnonymousFunctionExpression)?.anonymousFunction ?: continue
+                    val inlineStatus = when {
+                        parameter.isCrossinline && functionIsInline -> InlineStatus.CrossInline
+                        parameter.isNoinline -> InlineStatus.NoInline
+                        functionIsInline -> InlineStatus.Inline
+                        else -> InlineStatus.NoInline
                     }
-                } else {
-                    subCandidate.handleVarargs()
-                    subCandidate.argumentMapping?.let {
-                        val newArgumentList = buildResolvedArgumentList(it, source = functionCall.argumentList.source)
-                        val symbol = subCandidate.symbol
-                        val functionIsInline =
-                            (symbol as? FirNamedFunctionSymbol)?.fir?.isInline == true || symbol.isArrayConstructorWithLambda
-                        for ((argument, parameter) in newArgumentList.mapping) {
-                            val lambda = (argument.unwrapArgument() as? FirAnonymousFunctionExpression)?.anonymousFunction ?: continue
-                            val inlineStatus = when {
-                                parameter.isCrossinline && functionIsInline -> InlineStatus.CrossInline
-                                parameter.isNoinline -> InlineStatus.NoInline
-                                functionIsInline -> InlineStatus.Inline
-                                else -> InlineStatus.NoInline
-                            }
-                            lambda.replaceInlineStatus(inlineStatus)
-                        }
-                        result.replaceArgumentList(newArgumentList)
-                    }
+                    lambda.replaceInlineStatus(inlineStatus)
                 }
-                result
+                result.replaceArgumentList(newArgumentList)
             }
         }
-
         result.replaceTypeRef(resultType)
         session.lookupTracker?.recordTypeResolveAsLookup(resultType, functionCall.source, null)
 
