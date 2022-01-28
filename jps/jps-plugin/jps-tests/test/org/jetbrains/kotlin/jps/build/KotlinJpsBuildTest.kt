@@ -957,6 +957,11 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         }
     }
 
+    fun testKotlinLombokProjectBuild() {
+        initProject(LOMBOK)
+        buildAllModules().assertSuccessful()
+    }
+
     private fun BuildResult.checkErrors() {
         val actualErrors = getMessages(BuildMessage.Kind.ERROR)
                 .map { it as CompilerMessage }

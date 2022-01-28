@@ -36,6 +36,11 @@ enum class KotlinJpsLibrary(val id: String, vararg val roots: File) {
     JsTest(
         "KotlinJavaScriptTest",
         PathUtil.kotlinPathsForDistDirectory.jsKotlinTestJarPath
+    ),
+    Lombok(
+        "lombok",
+        PathUtil.kotlinPathsForDistDirectory.stdlibPath,
+        File(lombok.Lombok::class.java.protectionDomain.codeSource.location.toURI().path)
     );
 
     fun create(project: JpsProject): JpsLibrary {

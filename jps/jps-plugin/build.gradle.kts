@@ -77,6 +77,7 @@ dependencies {
     testRuntimeOnly(toolsJar())
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":kotlin-script-runtime"))
+    testImplementation("org.projectlombok:lombok:1.18.16")
 }
 
 sourceSets {
