@@ -162,6 +162,7 @@ import kotlin.math.absoluteValue
 import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.reflect.KProperty
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 
 /**
  * An enum of the different "states" a parameter of a composable function can have relating to
@@ -581,6 +582,24 @@ class ComposableFunctionBodyTransformer(
         getTopLevelFunctions(
             ComposeFqNames.fqNameFor(KtxNameConventions.SOURCEINFORMATIONMARKERSTART)
         ).map { it.owner }.first()
+    }
+
+    private val isTraceInProgressFunction by guardedLazy {
+        getTopLevelFunctions(
+            ComposeFqNames.fqNameFor(KtxNameConventions.IS_TRACE_IN_PROGRESS)
+        ).map { it.owner }.firstOrNull()
+    }
+
+    private val traceEventStartFunction by guardedLazy {
+        getTopLevelFunctions(
+            ComposeFqNames.fqNameFor(KtxNameConventions.TRACE_EVENT_START)
+        ).map { it.owner }.firstOrNull()
+    }
+
+    private val traceEventEndFunction by guardedLazy {
+        getTopLevelFunctions(
+            ComposeFqNames.fqNameFor(KtxNameConventions.TRACE_EVENT_END)
+        ).map { it.owner }.firstOrNull()
     }
 
     private val sourceInformationMarkerEndFunction by guardedLazy {
@@ -1142,6 +1161,7 @@ class ComposableFunctionBodyTransformer(
             body.startOffset,
             body.endOffset,
             listOfNotNull(
+                irTraceEventStart(irFunctionSourceKey(), declaration),
                 irStartRestartGroup(
                     body,
                     scope,
@@ -1679,7 +1699,8 @@ class ComposableFunctionBodyTransformer(
                     irEndRestartGroup(),
                     updateScopeFunction.symbol,
                     irLambda(lambda, updateScopeBlockType)
-                )
+                ),
+                irTraceEventEnd()
             )
         )
     }
@@ -1900,6 +1921,38 @@ class ComposableFunctionBodyTransformer(
             recordSourceParameter(it, 2, scope)
         }
     }
+
+    private fun irIsTraceInProgress(): IrExpression? =
+        isTraceInProgressFunction?.let { irCall(it) }
+
+    private fun irIfTraceInProgress(body: IrExpression): IrExpression? =
+        irIsTraceInProgress()?.let { isTraceInProgress ->
+            irIf(isTraceInProgress, body)
+        }
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    private fun irTraceEventStart(key: IrExpression, declaration: IrFunction): IrExpression? =
+        traceEventStartFunction?.let { traceEventStart ->
+            val startOffset = declaration.body!!.startOffset
+            val endOffset = declaration.body!!.endOffset
+
+            val name = declaration.kotlinFqName
+            val file = declaration.file.name
+            val line = declaration.file.fileEntry.getLineNumber(declaration.startOffset)
+            val traceInfo = "$name ($file:$line)" // TODO(174715171) decide on what to log
+
+            irIfTraceInProgress(
+                irCall(traceEventStart, startOffset, endOffset).also {
+                    it.putValueArgument(0, key)
+                    it.putValueArgument(1, irConst(traceInfo))
+                }
+            )
+        }
+
+    private fun irTraceEventEnd(): IrExpression? =
+        traceEventEndFunction?.let {
+            irIfTraceInProgress(irCall(it))
+        }
 
     private fun irSourceInformationMarkerEnd(
         element: IrElement,
