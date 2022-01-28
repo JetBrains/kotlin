@@ -6,9 +6,9 @@ Analysis API is an API which allows analysing Kotlin code and retrieve compiler-
 expression types, symbols, smartcast, and many others. Analysis API is an API which is used to implement Kotlin Plugin 2.0 which is under
 active development now.
 
-Analysis API is Kotlin compioler implemetnation independent . That means that it do not expose any Kotlin compiler internals.
+Analysis API is Kotlin compiler implementation independent . That means that it do not expose any Kotlin compiler internals.
 
-Analysis API itself is a just set of interfaces/abstraact classes without specific implementation inside. But there are two implementations
+Analysis API itself is a just set of interfaces/abstract classes without specific implementation inside. But there are two implementations
 currently available.
 
 * FIR-based implementation. FIR is a new compiler frontend which is a part of K2 Kotlin compiler. Read more:
