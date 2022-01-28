@@ -61,6 +61,9 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
         """
         @Composable
         fun Test(x: Foo, %composer: Composer?, %changed: Int) {
+          if (isTraceInProgress()) {
+            traceEventStart(<>)
+          }
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(Test)<A(x)>,<A(Foo(...>,<rememb...>,<A(reme...>:Test.kt")
           val %dirty = %changed
@@ -79,6 +82,9 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
           }
           %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
             Test(x, %composer, %changed or 0b0001)
+          }
+          if (isTraceInProgress()) {
+            traceEventEnd()
           }
         }
         """
@@ -103,6 +109,9 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Test(x: Foo, %composer: Composer?, %changed: Int) {
+              if (isTraceInProgress()) {
+                traceEventStart(<>)
+              }
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Test)<A(x)>,<A(Foo(...>,<rememb...>,<A(reme...>:Test.kt")
               A(x, %composer, 0b1000)
@@ -113,6 +122,9 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
               }, %composer, 0), %composer, 0b1000)
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Test(x, %composer, %changed or 0b0001)
+              }
+              if (isTraceInProgress()) {
+                traceEventEnd()
               }
             }
         """
@@ -132,6 +144,9 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
         """
             @Composable
             fun Example(%composer: Composer?, %changed: Int) {
+              if (isTraceInProgress()) {
+                traceEventStart(<>)
+              }
               %composer = %composer.startRestartGroup(<>)
               sourceInformation(%composer, "C(Example)<A(list...>:Test.kt")
               if (%changed !== 0 || !%composer.skipping) {
@@ -141,6 +156,9 @@ class StabilityPropagationTransformTests : ComposeIrTransformTest() {
               }
               %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
                 Example(%composer, %changed or 0b0001)
+              }
+              if (isTraceInProgress()) {
+                traceEventEnd()
               }
             }
         """
