@@ -14,8 +14,12 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -24,7 +28,10 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.getOrPutNullable
-import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCodegen
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContext
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.isStaticSerializable
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.serialName
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.serializableAnnotationIsUseless
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
@@ -129,6 +136,12 @@ class SerializableIrGenerator(
                 }
                 else -> generateSuperNonSerializableCall(superClass)
             }
+
+            // Handle function-intialized interface delegates
+            irClass.declarations
+                .filterIsInstance<IrField>()
+                .filter { it.origin == IrDeclarationOrigin.DELEGATE }
+                .forEach { +irSetField(irGet(thiz), it, it.initializer!!.expression) }
 
             statementsAfterSerializableProperty[null]?.forEach { +it }
             for (index in startPropOffset until serializableProperties.size) {
@@ -263,8 +276,8 @@ class SerializableIrGenerator(
         val superProperties = bindingContext.serializablePropertiesFor(superClass.descriptor).serializableProperties
         val superSlots = superProperties.bitMaskSlotCount()
         val arguments = allValueParameters.subList(0, superSlots) +
-                    allValueParameters.subList(propertiesStart, propertiesStart + superProperties.size) +
-                    allValueParameters.last() // SerializationConstructorMarker
+                allValueParameters.subList(propertiesStart, propertiesStart + superProperties.size) +
+                allValueParameters.last() // SerializationConstructorMarker
         val call = IrDelegatingConstructorCallImpl.fromSymbolDescriptor(
             startOffset,
             endOffset,
@@ -290,7 +303,8 @@ class SerializableIrGenerator(
 
             // Since writeSelf is a static method, we have to replace all references to this in property initializers
             val thisSymbol = irClass.thisReceiver!!.symbol
-            val initializerAdapter: (IrExpressionBody) -> IrExpression = createInitializerAdapter(irClass, propertyByParamReplacer, thisSymbol to { irGet(objectToSerialize) })
+            val initializerAdapter: (IrExpressionBody) -> IrExpression =
+                createInitializerAdapter(irClass, propertyByParamReplacer, thisSymbol to { irGet(objectToSerialize) })
 
             // Compute offset of properties in superclass
             var ignoreIndexTo = -1

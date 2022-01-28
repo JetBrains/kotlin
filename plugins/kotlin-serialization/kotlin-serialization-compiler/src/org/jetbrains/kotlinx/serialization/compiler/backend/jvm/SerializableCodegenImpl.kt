@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -42,9 +43,9 @@ class SerializableCodegenImpl(
     companion object {
         fun generateSerializableExtensions(codegen: ImplementationBodyCodegen) {
             val serializableClass = codegen.descriptor
-            if (serializableClass.isInternalSerializable)
+            if (serializableClass.isInternalSerializable) {
                 SerializableCodegenImpl(codegen).generate()
-            else if (serializableClass.serializableAnnotationIsUseless) {
+            } else if (serializableClass.serializableAnnotationIsUseless) {
                 throw CompilationException(
                     "@Serializable annotation on $serializableClass would be ignored because it is impossible to serialize it automatically. " +
                             "Provide serializer manually via e.g. companion object", null, serializableClass.findPsi()
@@ -228,13 +229,31 @@ class SerializableCodegenImpl(
         }
 
         // these properties required to be manually invoked, because they are not in serializableProperties
-        val serializedProps = properties.serializableProperties.map { it.descriptor }
+        val serializedProps = properties.serializableProperties.map { it.descriptor }.toSet()
 
         (descToProps - serializedProps)
             .filter { classCodegen.shouldInitializeProperty(it.value) }
             .forEach { (_, prop) -> classCodegen.initializeProperty(exprCodegen, prop) }
         (paramsToProps - serializedProps)
             .forEach { (t, u) -> exprCodegen.genInitParam(t, u) }
+
+        // Initialize delegates
+        var delegate = 0
+        for (specifier in classCodegen.myClass.superTypeListEntries) {
+            if (specifier is KtDelegatedSuperTypeEntry) {
+                val expr = specifier.delegateExpression!!
+
+                load(0, thisAsmType)
+                val stackValue = exprCodegen.gen(expr)
+                stackValue.put(exprCodegen.v)
+
+                putfield(
+                    thisAsmType.internalName,
+                    "\$\$delegate_${delegate++}",
+                    stackValue.type.descriptor
+                )
+            }
+        }
 
         // init blocks
         // todo: proper order with other initializers?
