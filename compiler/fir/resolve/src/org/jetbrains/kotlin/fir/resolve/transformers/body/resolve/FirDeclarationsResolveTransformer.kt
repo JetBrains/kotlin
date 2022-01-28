@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
@@ -801,14 +802,15 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
         }
         val returnTypeRefFromResolvedAtom =
             resolvedLambdaAtom?.returnType?.let { lambda.returnTypeRef.resolvedTypeFromPrototype(it) }
-        lambda = lambda.copy(
+        lambda = buildAnonymousFunctionCopy(lambda) {
             receiverTypeRef = lambda.receiverTypeRef?.takeIf { it !is FirImplicitTypeRef }
-                ?: resolvedLambdaAtom?.receiver?.let { lambda.receiverTypeRef?.resolvedTypeFromPrototype(it) },
-            valueParameters = valueParameters,
+                ?: resolvedLambdaAtom?.receiver?.let { lambda.receiverTypeRef?.resolvedTypeFromPrototype(it) }
+            this.valueParameters.clear()
+            this.valueParameters.addAll(valueParameters)
             returnTypeRef = (lambda.returnTypeRef as? FirResolvedTypeRef)
                 ?: returnTypeRefFromResolvedAtom
-                ?: lambda.returnTypeRef
-        )
+                        ?: lambda.returnTypeRef
+        }
         lambda = lambda.transformValueParameters(ImplicitToErrorTypeTransformer, null)
         val bodyExpectedType = returnTypeRefFromResolvedAtom ?: expectedTypeRef
         context.withAnonymousFunction(lambda, components, data) {
