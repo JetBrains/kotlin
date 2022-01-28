@@ -55,13 +55,8 @@ internal actual fun String.nativeLastIndexOf(str: String, fromIndex: Int): Int {
 @SinceKotlin("1.2")
 @Deprecated("Use CharArray.concatToString() instead", ReplaceWith("chars.concatToString()"))
 @DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
-public actual fun String(chars: CharArray): String {
-    var result = ""
-    for (char in chars) {
-        result += char
-    }
-    return result
-}
+public actual fun String(chars: CharArray): String =
+    chars.concatToString()
 
 /**
  * Converts the characters from a portion of the specified array to a string.
@@ -73,13 +68,9 @@ public actual fun String(chars: CharArray): String {
 @Deprecated("Use CharArray.concatToString(startIndex, endIndex) instead", ReplaceWith("chars.concatToString(offset, offset + length)"))
 @DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public actual fun String(chars: CharArray, offset: Int, length: Int): String {
-    if (offset < 0 || length < 0 || chars.size - offset < length)
-        throw IndexOutOfBoundsException("size: ${chars.size}; offset: $offset; length: $length")
-    var result = ""
-    for (index in offset until offset + length) {
-        result += chars[index]
-    }
-    return result
+    if (offset < 0 || length < 0 || offset + length > chars.size)
+        throw IndexOutOfBoundsException()
+    return String.unsafeFromCharArray(chars.copyOfRange(offset, offset + length))
 }
 
 /**
