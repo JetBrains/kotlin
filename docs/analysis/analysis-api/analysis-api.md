@@ -13,11 +13,11 @@ currently available.
 
 * FIR-based implementation. FIR is a new compiler frontend which is a part of K2 Kotlin compiler. Read more:
     * [Analysis API FIR Implementation documentation](analysis-api-fir.md)
-    * [Analysis API FIR Implementation source code](../../analysis/analysis-api-fir)
-    * [FIR Compiler documentation](../fir/fir-basics.md)
+    * [Analysis API FIR Implementation source code](../../../analysis/analysis-api-fir)
+    * [FIR Compiler documentation](../../fir/fir-basics.md)
 * FE1.0-based implementation. FE1.0 is an original Kotlin compiler frontend. Read more:
     * [Analysis API FE1.0 Implementation documentation](analysis-api-fe10.md)
-    * [Analysis API FE1.0 Implementation source code](../../analysis/analysis-api-fe10)
+    * [Analysis API FE1.0 Implementation source code](../../../analysis/analysis-api-fe10)
 
 Analysis API can work outside IntelliJ IDEA (e.g, it can be used for implementing Kotlin LSP server) but it still uses some basic classes
 form IntelliJ Core. This is needed mostly for working with [PsiElements](https://plugins.jetbrains.com/docs/intellij/psi-elements.html),
