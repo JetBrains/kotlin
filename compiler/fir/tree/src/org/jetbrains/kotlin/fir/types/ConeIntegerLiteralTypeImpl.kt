@@ -5,60 +5,23 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.fir.isLong
+import org.jetbrains.kotlin.fir.isULong
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
-class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
-    override val possibleTypes: Collection<ConeClassLikeType>
-
+class ConeIntegerLiteralTypeImpl(
+    value: Long,
+    override val possibleTypes: Collection<ConeClassLikeType>,
+    isUnsigned: Boolean,
+    nullability: ConeNullability
+) : ConeIntegerLiteralType(value, isUnsigned, nullability) {
     override val attributes: ConeAttributes
         get() = ConeAttributes.Empty
-
-    constructor(
-        value: Long,
-        isUnsigned: Boolean,
-        nullability: ConeNullability = ConeNullability.NOT_NULL
-    ) : super(value, isUnsigned, nullability) {
-        possibleTypes = mutableListOf()
-
-        fun checkBoundsAndAddPossibleType(classId: ClassId, range: LongRange) {
-            if (value in range) {
-                possibleTypes.add(createType(classId))
-            }
-        }
-
-        fun addSignedPossibleTypes() {
-            checkBoundsAndAddPossibleType(StandardClassIds.Int, INT_RANGE)
-            possibleTypes += createType(StandardClassIds.Long)
-            checkBoundsAndAddPossibleType(StandardClassIds.Byte, BYTE_RANGE)
-            checkBoundsAndAddPossibleType(StandardClassIds.Short, SHORT_RANGE)
-        }
-
-        fun addUnsignedPossibleType() {
-            checkBoundsAndAddPossibleType(StandardClassIds.UInt, UINT_RANGE)
-            possibleTypes += createType(StandardClassIds.ULong)
-            checkBoundsAndAddPossibleType(StandardClassIds.UByte, UBYTE_RANGE)
-            checkBoundsAndAddPossibleType(StandardClassIds.UShort, USHORT_RANGE)
-        }
-
-        if (isUnsigned) {
-            addUnsignedPossibleType()
-        } else {
-            addSignedPossibleTypes()
-        }
-    }
-
-    private constructor(
-        value: Long,
-        possibleTypes: Collection<ConeClassLikeType>,
-        isUnsigned: Boolean,
-        nullability: ConeNullability = ConeNullability.NOT_NULL
-    ) : super(value, isUnsigned, nullability) {
-        this.possibleTypes = possibleTypes
-    }
 
     override val supertypes: List<ConeClassLikeType> by lazy {
         listOf(
@@ -79,6 +42,49 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
 
     @OptIn(ExperimentalUnsignedTypes::class)
     companion object {
+        fun create(
+            value: Long,
+            isUnsigned: Boolean,
+            nullability: ConeNullability = ConeNullability.NOT_NULL
+        ): ConeSimpleKotlinType {
+            val possibleTypes = mutableListOf<ConeClassLikeType>()
+
+            fun checkBoundsAndAddPossibleType(classId: ClassId, range: LongRange) {
+                if (value in range) {
+                    possibleTypes.add(createType(classId))
+                }
+            }
+
+            fun addSignedPossibleTypes() {
+                checkBoundsAndAddPossibleType(StandardClassIds.Int, INT_RANGE)
+                possibleTypes += createType(StandardClassIds.Long)
+                checkBoundsAndAddPossibleType(StandardClassIds.Byte, BYTE_RANGE)
+                checkBoundsAndAddPossibleType(StandardClassIds.Short, SHORT_RANGE)
+            }
+
+            fun addUnsignedPossibleType() {
+                checkBoundsAndAddPossibleType(StandardClassIds.UInt, UINT_RANGE)
+                possibleTypes += createType(StandardClassIds.ULong)
+                checkBoundsAndAddPossibleType(StandardClassIds.UByte, UBYTE_RANGE)
+                checkBoundsAndAddPossibleType(StandardClassIds.UShort, USHORT_RANGE)
+            }
+
+            if (isUnsigned) {
+                addUnsignedPossibleType()
+            } else {
+                addSignedPossibleTypes()
+            }
+            return if (possibleTypes.size == 1) {
+                possibleTypes.single().withNullability(nullability).also {
+                    if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+                        assert(it.isLong() || it.isULong())
+                    }
+                }
+            } else {
+                ConeIntegerLiteralTypeImpl(value, possibleTypes, isUnsigned, nullability)
+            }
+        }
+
         private fun createType(classId: ClassId): ConeClassLikeType {
             return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(classId), emptyArray(), false)
         }
@@ -137,7 +143,7 @@ class ConeIntegerLiteralTypeImpl : ConeIntegerLiteralType {
                 Mode.COMMON_SUPER_TYPE -> left.possibleTypes intersect right.possibleTypes
                 Mode.INTERSECTION_TYPE -> left.possibleTypes union right.possibleTypes
             }
-            return ConeIntegerLiteralTypeImpl(left.value, possibleTypes, left.isUnsigned)
+            return ConeIntegerLiteralTypeImpl(left.value, possibleTypes, left.isUnsigned, left.nullability)
         }
 
         private fun fold(left: ConeIntegerLiteralType, right: SimpleTypeMarker): SimpleTypeMarker? =

@@ -906,17 +906,27 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
         val type = when (val kind = constExpression.kind) {
             ConstantValueKind.IntegerLiteral, ConstantValueKind.UnsignedIntegerLiteral -> {
-                val integerLiteralType =
-                    ConeIntegerLiteralTypeImpl(constExpression.value as Long, isUnsigned = kind == ConstantValueKind.UnsignedIntegerLiteral)
-                if (data.expectedType != null) {
-                    val coneType = data.expectedType?.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)
-                    val approximatedType = integerLiteralType.getApproximatedType(coneType)
-                    val newConstKind = approximatedType.toConstKind()
-                    @Suppress("UNCHECKED_CAST")
-                    constExpression.replaceKind(newConstKind as ConstantValueKind<T>)
-                    approximatedType
-                } else {
-                    integerLiteralType
+                val expressionType = ConeIntegerLiteralTypeImpl.create(
+                    constExpression.value as Long,
+                    isUnsigned = kind == ConstantValueKind.UnsignedIntegerLiteral
+                )
+                val expectedTypeRef = data.expectedType
+                @Suppress("UNCHECKED_CAST")
+                when {
+                    expressionType is ConeClassLikeType -> {
+                        constExpression.replaceKind(expressionType.toConstKind() as ConstantValueKind<T>)
+                        expressionType
+                    }
+                    expectedTypeRef != null -> {
+                        require(expressionType is ConeIntegerLiteralTypeImpl)
+                        val coneType = expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)
+                        val approximatedType= expressionType.getApproximatedType(coneType)
+                        constExpression.replaceKind(approximatedType.toConstKind() as ConstantValueKind<T>)
+                        approximatedType
+                    }
+                    else -> {
+                        expressionType
+                    }
                 }
             }
             else -> kind.expectedConeType(session)
