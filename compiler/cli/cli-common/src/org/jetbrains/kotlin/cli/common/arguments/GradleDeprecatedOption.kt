@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 @Retention(AnnotationRetention.RUNTIME)
-annotation class DeprecatedOption(
+annotation class GradleDeprecatedOption(
     val message: String = "This option has no effect and will be removed in a future release.",
     val removeAfter: String,
     val level: DeprecationLevel

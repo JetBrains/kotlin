@@ -27,12 +27,12 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var classpath: String? by NullableStringFreezableVar(null)
 
-    @DeprecatedOption(removeAfter = "1.5", level = DeprecationLevel.ERROR)
+    @GradleDeprecatedOption(removeAfter = "1.5", level = DeprecationLevel.ERROR)
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(value = "-include-runtime", description = "Include Kotlin runtime into the resulting JAR")
     var includeRuntime: Boolean by FreezableVar(false)
 
-    @DeprecatedOption(
+    @GradleDeprecatedOption(
         message = "This option is not working well with Gradle caching and will be removed in the future.",
         removeAfter = "1.7",
         level = DeprecationLevel.WARNING
@@ -49,7 +49,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-no-jdk", description = "Don't automatically include the Java runtime into the classpath")
     var noJdk: Boolean by FreezableVar(false)
 
-    @DeprecatedOption(removeAfter = "1.6", level = DeprecationLevel.ERROR)
+    @GradleDeprecatedOption(removeAfter = "1.6", level = DeprecationLevel.ERROR)
     @GradleOption(DefaultValues.BooleanTrueDefault::class)
     @Argument(
         value = "-no-stdlib",
@@ -57,7 +57,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var noStdlib: Boolean by FreezableVar(false)
 
-    @DeprecatedOption(removeAfter = "1.5", level = DeprecationLevel.ERROR)
+    @GradleDeprecatedOption(removeAfter = "1.5", level = DeprecationLevel.ERROR)
     @GradleOption(DefaultValues.BooleanTrueDefault::class)
     @Argument(value = "-no-reflect", description = "Don't automatically include Kotlin reflection into the classpath")
     var noReflect: Boolean by FreezableVar(false)
@@ -97,7 +97,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     // Advanced options
 
-    @DeprecatedOption(removeAfter = "1.6", level = DeprecationLevel.HIDDEN)
+    @GradleDeprecatedOption(removeAfter = "1.6", level = DeprecationLevel.HIDDEN)
     @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(
         value = "-Xuse-ir",
