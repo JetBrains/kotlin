@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.CheckDeclarationParentsVisitor
+import org.jetbrains.kotlin.backend.common.checkDeclarationParents
 import org.jetbrains.kotlin.backend.common.IrValidator
 import org.jetbrains.kotlin.backend.common.IrValidatorConfig
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -46,7 +46,7 @@ internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragme
     )
     try {
         module.accept(IrValidator(context, validatorConfig), null)
-        module.accept(CheckDeclarationParentsVisitor, null)
+        module.checkDeclarationParents()
     } catch (t: Throwable) {
         // TODO: Add reference to source.
         if (validatorConfig.abortOnError)
@@ -64,7 +64,7 @@ internal fun fileValidationCallback(state: ActionState, irFile: IrFile, context:
     )
     try {
         irFile.accept(IrValidator(context, validatorConfig), null)
-        irFile.accept(CheckDeclarationParentsVisitor, null)
+        irFile.checkDeclarationParents()
     } catch (t: Throwable) {
         // TODO: Add reference to source.
         if (validatorConfig.abortOnError)
