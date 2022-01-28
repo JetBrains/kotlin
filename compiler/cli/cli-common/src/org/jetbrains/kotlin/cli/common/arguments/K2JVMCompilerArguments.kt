@@ -55,8 +55,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     )
     var noStdlib: Boolean by FreezableVar(false)
 
-    @GradleDeprecatedOption(removeAfter = "1.5", level = DeprecationLevel.ERROR)
-    @GradleOption(DefaultValues.BooleanTrueDefault::class)
     @Argument(value = "-no-reflect", description = "Don't automatically include Kotlin reflection into the classpath")
     var noReflect: Boolean by FreezableVar(false)
 

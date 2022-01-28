@@ -103,5 +103,6 @@ internal fun org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments.fi
     moduleName = null
     noJdk = false
     noStdlib = true
+    noReflect = true
     useOldBackend = false
 }
