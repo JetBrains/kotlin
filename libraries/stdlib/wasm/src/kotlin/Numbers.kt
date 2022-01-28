@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -132,3 +132,77 @@ public actual fun Long.rotateLeft(bitCount: Int): Long =
 @kotlin.internal.InlineOnly
 public actual inline fun Long.rotateRight(bitCount: Int): Long =
     shl(64 - bitCount) or ushr(bitCount)
+
+/**
+ * Returns `true` if the specified number is a
+ * Not-a-Number (NaN) value, `false` otherwise.
+ */
+actual fun Double.isNaN(): Boolean = this != this
+
+/**
+ * Returns `true` if the specified number is a
+ * Not-a-Number (NaN) value, `false` otherwise.
+ */
+actual fun Float.isNaN(): Boolean = this != this
+
+/**
+ * Returns `true` if this value is infinitely large in magnitude.
+ */
+actual fun Double.isInfinite(): Boolean = (this == Double.POSITIVE_INFINITY) || (this == Double.NEGATIVE_INFINITY)
+
+/**
+ * Returns `true` if this value is infinitely large in magnitude.
+ */
+actual fun Float.isInfinite(): Boolean = (this == Float.POSITIVE_INFINITY) || (this == Float.NEGATIVE_INFINITY)
+
+/**
+ * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
+ */
+actual fun Double.isFinite(): Boolean = !isInfinite() && !isNaN()
+
+/**
+ * Returns `true` if the argument is a finite floating-point value; returns `false` otherwise (for `NaN` and infinity arguments).
+ */
+actual fun Float.isFinite(): Boolean = !isInfinite() && !isNaN()
+
+/**
+ * Returns a bit representation of the specified floating-point value as [Long]
+ * according to the IEEE 754 floating-point "double format" bit layout.
+ */
+@SinceKotlin("1.2")
+public actual fun Double.toBits(): Long = if (isNaN()) Double.NaN.toRawBits() else toRawBits()
+
+/**
+ * Returns a bit representation of the specified floating-point value as [Long]
+ * according to the IEEE 754 floating-point "double format" bit layout,
+ * preserving `NaN` values exact layout.
+ */
+@SinceKotlin("1.2")
+public actual fun Double.toRawBits(): Long = wasm_i64_reinterpret_f64(this)
+
+/**
+ * Returns the [Double] value corresponding to a given bit representation.
+ */
+@SinceKotlin("1.2")
+public actual fun Double.Companion.fromBits(bits: Long): Double = wasm_f64_reinterpret_i64(bits)
+
+/**
+ * Returns a bit representation of the specified floating-point value as [Int]
+ * according to the IEEE 754 floating-point "single format" bit layout.
+ */
+@SinceKotlin("1.2")
+public actual fun Float.toBits(): Int = if (isNaN()) Float.NaN.toRawBits() else toRawBits()
+
+/**
+ * Returns a bit representation of the specified floating-point value as [Int]
+ * according to the IEEE 754 floating-point "single format" bit layout,
+ * preserving `NaN` values exact layout.
+ */
+@SinceKotlin("1.2")
+public actual fun Float.toRawBits(): Int = wasm_i32_reinterpret_f32(this)
+
+/**
+ * Returns the [Float] value corresponding to a given bit representation.
+ */
+@SinceKotlin("1.2")
+public actual fun Float.Companion.fromBits(bits: Int): Float = wasm_f32_reinterpret_i32(bits)
