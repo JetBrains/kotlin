@@ -95,8 +95,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
 
     // Advanced options
 
-    @GradleDeprecatedOption(removeAfter = "1.6", level = DeprecationLevel.HIDDEN)
-    @GradleOption(DefaultValues.BooleanFalseDefault::class)
     @Argument(
         value = "-Xuse-ir",
         description = "Use the IR backend. This option has no effect unless the language version less than 1.5 is used"
