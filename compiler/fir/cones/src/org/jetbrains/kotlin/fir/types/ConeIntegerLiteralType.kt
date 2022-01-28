@@ -35,7 +35,3 @@ abstract class ConeIntegerLiteralType(
         return 31 * possibleTypes.hashCode() + nullability.hashCode()
     }
 }
-
-fun ConeIntegerLiteralType.canBeInt(): Boolean {
-    return value in Int.MIN_VALUE..Int.MAX_VALUE
-}

@@ -7,16 +7,13 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.SmartSet
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val ConeKotlinType.isNullable: Boolean get() = nullability != ConeNullability.NOT_NULL
-
 val ConeKotlinType.isMarkedNullable: Boolean get() = nullability == ConeNullability.NULLABLE
 
-val ConeKotlinType.classId: ClassId? get() = this.safeAs<ConeClassLikeType>()?.lookupTag?.classId
+val ConeKotlinType.classId: ClassId? get() = (this as? ConeClassLikeType)?.lookupTag?.classId
 
 /**
  * Recursively visits each [ConeKotlinType] inside (including itself) and performs the given action.
@@ -52,6 +49,30 @@ private fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean, visi
     }
 }
 
+// ----------------------------------- Transformations -----------------------------------
+
+fun ConeKotlinType.upperBoundIfFlexible(): ConeSimpleKotlinType {
+    return when (this) {
+        is ConeSimpleKotlinType -> this
+        is ConeFlexibleType -> upperBound
+    }
+}
+
+fun ConeKotlinType.lowerBoundIfFlexible(): ConeSimpleKotlinType {
+    return when (this) {
+        is ConeSimpleKotlinType -> this
+        is ConeFlexibleType -> lowerBound
+    }
+}
+
+fun ConeIntersectionType.withAlternative(alternativeType: ConeKotlinType): ConeIntersectionType {
+    return ConeIntersectionType(intersectedTypes, alternativeType)
+}
+
+fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
+    return ConeIntersectionType(intersectedTypes.map(func), alternativeType?.let(func))
+}
+
 fun ConeClassLikeType.withArguments(typeArguments: Array<out ConeTypeProjection>): ConeClassLikeType = when (this) {
     is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, isNullable, attributes)
     is ConeErrorType -> this
@@ -78,46 +99,4 @@ fun ConeClassLikeType.replaceArgumentsWithStarProjections(): ConeClassLikeType {
     if (typeArguments.isEmpty()) return this
     val newArguments = Array(typeArguments.size) { ConeStarProjection }
     return withArguments(newArguments)
-}
-
-val ConeKotlinType.isAny: Boolean get() = isBuiltinType(StandardClassIds.Any, false)
-val ConeKotlinType.isNullableAny: Boolean get() = isBuiltinType(StandardClassIds.Any, true)
-val ConeKotlinType.isNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, false)
-val ConeKotlinType.isNullableNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, true)
-val ConeKotlinType.isUnit: Boolean get() = isBuiltinType(StandardClassIds.Unit, false)
-val ConeKotlinType.isBoolean: Boolean get() = isBuiltinType(StandardClassIds.Boolean, false)
-val ConeKotlinType.isNullableBoolean: Boolean get() = isBuiltinType(StandardClassIds.Boolean, true)
-val ConeKotlinType.isBooleanOrNullableBoolean: Boolean get() = isAnyOfBuiltinType(setOf(StandardClassIds.Boolean))
-val ConeKotlinType.isEnum: Boolean get() = isBuiltinType(StandardClassIds.Enum, false)
-val ConeKotlinType.isString: Boolean get() = isBuiltinType(StandardClassIds.String, false)
-val ConeKotlinType.isInt: Boolean get() = isBuiltinType(StandardClassIds.Int, false)
-val ConeKotlinType.isPrimitiveOrNullablePrimitive: Boolean get() = isAnyOfBuiltinType(StandardClassIds.primitiveTypes)
-val ConeKotlinType.isPrimitive: Boolean get() = isPrimitiveOrNullablePrimitive && nullability == ConeNullability.NOT_NULL
-val ConeKotlinType.isArrayType: Boolean
-    get() {
-        return isBuiltinType(StandardClassIds.Array, false) ||
-                StandardClassIds.primitiveArrayTypeByElementType.values.any { isBuiltinType(it, false) }
-    }
-
-// Same as [KotlinBuiltIns#isNonPrimitiveArray]
-val ConeKotlinType.isNonPrimitiveArray: Boolean
-    get() = this is ConeClassLikeType && lookupTag.classId == StandardClassIds.Array
-
-val ConeKotlinType.isPrimitiveArray: Boolean
-    get() = this is ConeClassLikeType && lookupTag.classId in StandardClassIds.primitiveArrayTypeByElementType.values
-
-val ConeKotlinType.isUnsignedTypeOrNullableUnsignedType: Boolean get() = isAnyOfBuiltinType(StandardClassIds.unsignedTypes)
-val ConeKotlinType.isUnsignedType: Boolean get() = isUnsignedTypeOrNullableUnsignedType && nullability == ConeNullability.NOT_NULL
-
-private val builtinIntegerTypes = setOf(StandardClassIds.Int, StandardClassIds.Byte, StandardClassIds.Long, StandardClassIds.Short)
-val ConeKotlinType.isIntegerTypeOrNullableIntegerTypeOfAnySize: Boolean get() = isAnyOfBuiltinType(builtinIntegerTypes)
-
-private fun ConeKotlinType.isBuiltinType(classId: ClassId, isNullable: Boolean?): Boolean {
-    if (this !is ConeClassLikeType) return false
-    return lookupTag.classId == classId && (isNullable == null || type.isNullable == isNullable)
-}
-
-private fun ConeKotlinType.isAnyOfBuiltinType(classIds: Set<ClassId>): Boolean {
-    if (this !is ConeClassLikeType) return false
-    return lookupTag.classId in classIds
 }
