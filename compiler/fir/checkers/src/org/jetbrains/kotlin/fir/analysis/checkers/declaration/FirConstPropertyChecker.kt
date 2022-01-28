@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.lexer.KtTokens
 
@@ -57,7 +57,7 @@ object FirConstPropertyChecker : FirPropertyChecker() {
         }
 
         val type = declaration.returnTypeRef.coneType.fullyExpandedType(context.session)
-        if ((type !is ConeClassErrorType) && !type.canBeUsedForConstVal()) {
+        if ((type !is ConeErrorType) && !type.canBeUsedForConstVal()) {
             reporter.reportOn(declaration.source, FirErrors.TYPE_CANT_BE_USED_FOR_CONST_VAL, declaration.returnTypeRef.coneType, context)
             return
         }

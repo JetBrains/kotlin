@@ -276,7 +276,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
                         val callee = functionCall.calleeReference
                         if (typeRef is FirResolvedTypeRef) {
                             val type = typeRef.type
-                            if (type is ConeKotlinErrorType) {
+                            if (type is ConeErrorType) {
                                 errorFunctionCallTypes++
                                 val psi = callee.psi
                                 if (callee is FirErrorNamedReference && psi != null) {
@@ -293,7 +293,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
                         val callee = qualifiedAccessExpression.calleeReference
                         if (typeRef is FirResolvedTypeRef) {
                             val type = typeRef.type
-                            if (type is ConeKotlinErrorType) {
+                            if (type is ConeErrorType) {
                                 errorQualifiedAccessTypes++
                                 val psi = callee.psi
                                 if (callee is FirErrorNamedReference && psi != null) {
@@ -329,7 +329,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
                     override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
                         resolvedTypes++
                         val type = resolvedTypeRef.type
-                        if (type is ConeKotlinErrorType || type is ConeClassErrorType) {
+                        if (type is ConeErrorType || type is ConeErrorType) {
                             errorTypes++
                             if (resolvedTypeRef is FirErrorTypeRef && resolvedTypeRef.diagnostic is ConeStubDiagnostic) {
                                 return

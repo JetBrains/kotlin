@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedSymbolError
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.typeContext
 
@@ -33,7 +33,7 @@ internal class KtFirTypeCreator(
         val lookupTag = when (builder) {
             is KtClassTypeBuilder.ByClassId -> {
                 val classSymbol = rootModuleSession.symbolProvider.getClassLikeSymbolByClassId(builder.classId)
-                    ?: return ConeClassErrorType(ConeUnresolvedSymbolError(builder.classId)).asKtType() as KtClassType
+                    ?: return ConeErrorType(ConeUnresolvedSymbolError(builder.classId)).asKtType() as KtClassType
                 classSymbol.toLookupTag()
             }
             is KtClassTypeBuilder.BySymbol -> {

@@ -171,7 +171,7 @@ private fun ConeClassLikeType.withNullability(nullability: ConeNullability): Con
     if (nullability == this.nullability) return this
 
     return when (this) {
-        is ConeClassErrorType -> this
+        is ConeErrorType -> this
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullability.isNullable)
         else -> error("sealed")
     }

@@ -42,7 +42,7 @@ inline fun FirFunctionCall.copyAsImplicitInvokeCall(
 fun FirTypeRef.resolvedTypeFromPrototype(
     type: ConeKotlinType
 ): FirResolvedTypeRef {
-    return if (type is ConeKotlinErrorType) {
+    return if (type is ConeErrorType) {
         buildErrorTypeRef {
             source = this@resolvedTypeFromPrototype.source
             this.type = type

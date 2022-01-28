@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.types
 object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
     private val ConeKotlinType.priority : Int
         get() = when (this) {
-            is ConeKotlinErrorType -> 8
+            is ConeErrorType -> 8
             is ConeLookupTagBasedType -> 7
             is ConeFlexibleType -> 6
             is ConeCapturedType -> 5
@@ -72,8 +72,8 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
         }
 
         when (a) {
-            is ConeKotlinErrorType -> {
-                require(b is ConeKotlinErrorType) {
+            is ConeErrorType -> {
+                require(b is ConeErrorType) {
                     "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
                 }
                 return a.hashCode() - b.hashCode()

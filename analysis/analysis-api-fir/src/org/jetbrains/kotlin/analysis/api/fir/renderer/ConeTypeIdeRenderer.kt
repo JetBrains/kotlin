@@ -47,7 +47,7 @@ internal class ConeTypeIdeRenderer(
 
     fun renderType(type: ConeTypeProjection): String = buildString {
         when (type) {
-            is ConeKotlinErrorType -> {
+            is ConeErrorType -> {
                 renderErrorType(type)
             }
             //is Dynamic??? -> append("dynamic")
@@ -90,7 +90,7 @@ internal class ConeTypeIdeRenderer(
         }
     }
 
-    private fun StringBuilder.renderErrorType(type: ConeKotlinErrorType) {
+    private fun StringBuilder.renderErrorType(type: ConeErrorType) {
         val diagnostic = type.diagnostic
         if (options.renderUnresolvedTypeAsResolved && diagnostic is ConeUnresolvedError) {
             val qualifierRendered = diagnostic.qualifier?.let { FqName(it).render() }.orEmpty()

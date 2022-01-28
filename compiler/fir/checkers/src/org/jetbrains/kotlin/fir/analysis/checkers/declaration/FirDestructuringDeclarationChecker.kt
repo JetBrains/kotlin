@@ -146,7 +146,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
             }
             is ConeConstraintSystemHasContradiction -> {
                 val componentType = componentCall.typeRef.coneType
-                if (componentType is ConeKotlinErrorType) {
+                if (componentType is ConeErrorType) {
                     // There will be other errors on this error type.
                     return
                 }

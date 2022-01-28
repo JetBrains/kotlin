@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
-import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
@@ -83,7 +83,7 @@ abstract class FirSerializerExtension {
     open fun serializeTypeAlias(typeAlias: FirTypeAlias, proto: ProtoBuf.TypeAlias.Builder) {
     }
 
-    open fun serializeErrorType(type: ConeKotlinErrorType, builder: ProtoBuf.Type.Builder) {
+    open fun serializeErrorType(type: ConeErrorType, builder: ProtoBuf.Type.Builder) {
         throw IllegalStateException("Cannot serialize error type: $type")
     }
 

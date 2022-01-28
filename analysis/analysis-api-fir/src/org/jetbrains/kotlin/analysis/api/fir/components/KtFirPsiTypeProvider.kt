@@ -179,9 +179,9 @@ internal fun ConeKotlinType.asPsiType(
 ): PsiType? {
     val correctedType = simplifyType(session, useSitePosition)
 
-    if (correctedType is ConeClassErrorType || correctedType !is SimpleTypeMarker) return null
+    if (correctedType is ConeErrorType || correctedType !is SimpleTypeMarker) return null
 
-    if (correctedType.typeArguments.any { it is ConeClassErrorType }) return null
+    if (correctedType.typeArguments.any { it is ConeErrorType }) return null
 
     val signatureWriter = BothSignatureWriter(BothSignatureWriter.Mode.SKIP_CHECKS)
 

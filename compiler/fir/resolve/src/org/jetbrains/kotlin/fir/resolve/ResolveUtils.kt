@@ -60,7 +60,7 @@ fun FirFunction.constructFunctionalType(isSuspend: Boolean = false): ConeLookupT
         else -> null
     }
     val parameters = valueParameters.map {
-        it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType(
+        it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeErrorType(
             ConeSimpleDiagnostic(
                 "No type for parameter",
                 DiagnosticKind.ValueParameterWithNoTypeAnnotation
@@ -235,7 +235,7 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
             val implicitReceiver = implicitReceiverStack[labelName]
             buildResolvedTypeRef {
                 source = null
-                type = implicitReceiver?.type ?: ConeKotlinErrorType(
+                type = implicitReceiver?.type ?: ConeErrorType(
                     ConeSimpleDiagnostic(
                         "Unresolved this@$labelName",
                         DiagnosticKind.UnresolvedLabel

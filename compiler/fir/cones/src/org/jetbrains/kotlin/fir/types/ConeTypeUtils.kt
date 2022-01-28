@@ -54,7 +54,7 @@ private fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean, visi
 
 fun ConeClassLikeType.withArguments(typeArguments: Array<out ConeTypeProjection>): ConeClassLikeType = when (this) {
     is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, isNullable, attributes)
-    is ConeClassErrorType -> this
+    is ConeErrorType -> this
     else -> error("Unknown cone type: ${this::class}")
 }
 

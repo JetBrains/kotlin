@@ -177,7 +177,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         // as children in delegatedTypeRef. We should make sure those elements are only visited once, otherwise diagnostics will be
         // collected twice: once through resolvedTypeRef's children and another through resolvedTypeRef.delegatedTypeRef's children.
         val resolvedTypeRefType = resolvedTypeRef.type
-        if (resolvedTypeRefType is ConeClassErrorType) {
+        if (resolvedTypeRefType is ConeErrorType) {
             super.visitResolvedTypeRef(resolvedTypeRef, data)
         }
         if (resolvedTypeRef.source?.kind is KtFakeSourceElementKind) return
@@ -185,7 +185,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
         //the note about is just wrong
         //if we don't visit resolved type we can't make any diagnostics on them
         //so here we check resolvedTypeRef
-        if (resolvedTypeRefType !is ConeClassErrorType) {
+        if (resolvedTypeRefType !is ConeErrorType) {
             withAnnotationContainer(resolvedTypeRef) {
                 checkElement(resolvedTypeRef)
             }

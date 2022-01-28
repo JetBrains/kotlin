@@ -386,7 +386,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         private fun ConeTypeProjection.localTypeRenderer(): String {
             val nullabilitySuffix = when {
-                this is ConeKotlinType && this !is ConeKotlinErrorType && this !is ConeClassErrorType -> nullability.suffix
+                this is ConeKotlinType && this !is ConeErrorType && this !is ConeErrorType -> nullability.suffix
                 else -> ""
             }
 

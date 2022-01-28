@@ -59,7 +59,7 @@ internal fun FirTypeRef.toConeKotlinTypeProbablyFlexible(
     mode: FirJavaTypeConversionMode = FirJavaTypeConversionMode.DEFAULT
 ): ConeKotlinType =
     (resolveIfJavaType(session, javaTypeParameterStack, mode) as? FirResolvedTypeRef)?.type
-        ?: ConeKotlinErrorType(ConeSimpleDiagnostic("Type reference in Java not resolved: ${this::class.java}", DiagnosticKind.Java))
+        ?: ConeErrorType(ConeSimpleDiagnostic("Type reference in Java not resolved: ${this::class.java}", DiagnosticKind.Java))
 
 internal fun JavaType.toFirJavaTypeRef(session: FirSession, javaTypeParameterStack: JavaTypeParameterStack): FirJavaTypeRef {
     return buildJavaTypeRef {
@@ -202,7 +202,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             val classId = ClassId.topLevel(FqName(this.classifierQualifiedName))
             classId.constructClassLikeType(emptyArray(), isNullable = lowerBound != null, attributes)
         }
-        else -> ConeKotlinErrorType(ConeSimpleDiagnostic("Unexpected classifier: $classifier", DiagnosticKind.Java))
+        else -> ConeErrorType(ConeSimpleDiagnostic("Unexpected classifier: $classifier", DiagnosticKind.Java))
     }
 }
 
@@ -233,7 +233,7 @@ private fun List<FirTypeParameterSymbol>.eraseToUpperBounds(session: FirSession)
 private fun FirTypeParameter.eraseToUpperBound(session: FirSession, cache: MutableMap<FirTypeParameter, ConeKotlinType>): ConeKotlinType {
     return cache.getOrPut(this) {
         // Mark to avoid loops.
-        cache[this] = ConeKotlinErrorType(ConeIntermediateDiagnostic("self-recursive type parameter $name"))
+        cache[this] = ConeErrorType(ConeIntermediateDiagnostic("self-recursive type parameter $name"))
         // We can assume that Java type parameter bounds are already converted.
         symbol.resolvedBounds.first().coneType.eraseAsUpperBound(session, cache)
     }

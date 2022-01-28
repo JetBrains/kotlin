@@ -116,7 +116,7 @@ internal class KtFirFunctionalType(
 }
 
 internal class KtFirClassErrorType(
-    override val coneType: ConeClassErrorType,
+    override val coneType: ConeErrorType,
     override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtClassErrorType(), KtFirType {

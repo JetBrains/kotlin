@@ -77,7 +77,7 @@ internal fun JavaAnnotationArgument.toFirExpression(
                 typeRef = it
                 buildResolvedTypeRef {
                     type = it.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible()?.arrayElementType()
-                        ?: ConeClassErrorType(ConeSimpleDiagnostic("expected type is not array type"))
+                        ?: ConeErrorType(ConeSimpleDiagnostic("expected type is not array type"))
                 }
             }
             argumentList = buildArgumentList {

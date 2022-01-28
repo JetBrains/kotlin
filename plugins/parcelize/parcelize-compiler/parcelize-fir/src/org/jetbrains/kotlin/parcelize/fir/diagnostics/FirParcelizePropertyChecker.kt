@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.classId
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.CREATOR_NAME
@@ -64,7 +64,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker() {
         reporter: DiagnosticReporter
     ) {
         val type = property.returnTypeRef.coneType
-        if (type is ConeKotlinErrorType || containingClassSymbol.hasCustomParceler(context.session)) return
+        if (type is ConeErrorType || containingClassSymbol.hasCustomParceler(context.session)) return
         /*
          * TODO: abstract code from ParcelSerializer or IrParcelSerializerFactory to avoid duplication
          *    of allowed types checking

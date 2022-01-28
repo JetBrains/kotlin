@@ -214,7 +214,7 @@ object FirOverrideChecker : FirClassChecker() {
         val overridingReturnType = resolvedReturnTypeRef.coneType
 
         // Don't report *_ON_OVERRIDE diagnostics according to an error return type. That should be reported separately.
-        if (overridingReturnType is ConeKotlinErrorType) {
+        if (overridingReturnType is ConeErrorType) {
             return null
         }
 

@@ -355,7 +355,7 @@ private class ElementsToShortenCollector(
     val ConeKotlinType.candidateClassId: ClassId?
         get() {
             return when (this) {
-                is ConeClassErrorType -> when (val diagnostic = this.diagnostic) {
+                is ConeErrorType -> when (val diagnostic = this.diagnostic) {
                     // Tolerate code that misses type parameters while shortening it.
                     is ConeUnmatchedTypeArgumentsError -> diagnostic.symbol.classId
                     else -> null

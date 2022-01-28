@@ -107,7 +107,7 @@ class FirSpecificTypeResolverTransformer(
         )
         val resolvedType = resolvedTypeWithDiagnostic.first.takeIfAcceptable()
         val diagnostic = resolvedTypeWithDiagnostic.second
-        return if (resolvedType != null && resolvedType !is ConeClassErrorType && diagnostic == null) {
+        return if (resolvedType != null && resolvedType !is ConeErrorType && diagnostic == null) {
             buildResolvedTypeRef {
                 source = functionTypeRef.source
                 type = resolvedType
@@ -120,7 +120,7 @@ class FirSpecificTypeResolverTransformer(
                 if (resolvedType != null) {
                     type = resolvedType
                 }
-                this.diagnostic = diagnostic ?: (resolvedType as? ConeClassErrorType)?.diagnostic
+                this.diagnostic = diagnostic ?: (resolvedType as? ConeErrorType)?.diagnostic
                         ?: ConeSimpleDiagnostic("Unresolved functional type: ${functionTypeRef.render()}")
             }
         }
@@ -128,7 +128,7 @@ class FirSpecificTypeResolverTransformer(
 
     private fun transformType(typeRef: FirTypeRef, resolvedType: ConeKotlinType, diagnostic: ConeDiagnostic?): FirResolvedTypeRef {
         return when {
-            resolvedType is ConeClassErrorType -> {
+            resolvedType is ConeErrorType -> {
                 buildErrorTypeRef {
                     val typeRefSourceKind = typeRef.source?.kind
                     val diagnosticSource = resolvedType.diagnostic.safeAs<ConeUnexpectedTypeArgumentsError>()
@@ -170,7 +170,7 @@ class FirSpecificTypeResolverTransformer(
     }
 
     private fun ConeKotlinType.takeIfAcceptable(): ConeKotlinType? = this.takeUnless {
-        !errorTypeAsResolved && it is ConeClassErrorType
+        !errorTypeAsResolved && it is ConeErrorType
     }
 
     override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: ScopeClassDeclaration): FirTypeRef {

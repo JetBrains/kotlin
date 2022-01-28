@@ -40,7 +40,7 @@ fun FirLookupTrackerComponent.recordTypeResolveAsLookup(typeRef: FirTypeRef, sou
     if (source == null && fileSource == null) return // TODO: investigate all cases
 
     fun recordIfValid(type: ConeKotlinType) {
-        if (type is ConeKotlinErrorType) return // TODO: investigate whether some cases should be recorded, e.g. unresolved
+        if (type is ConeErrorType) return // TODO: investigate whether some cases should be recorded, e.g. unresolved
         type.classId?.let {
             if (!it.isLocal) {
                 if (it.shortClassName.asString() != "Companion") {
