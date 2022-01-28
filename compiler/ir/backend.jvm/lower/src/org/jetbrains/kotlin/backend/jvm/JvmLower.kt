@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.checkDeclarationParents
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.lower.optimizations.foldConstantLoweringPhase
@@ -19,7 +20,9 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.PatchDeclarationParentsVisitor
+import org.jetbrains.kotlin.ir.util.isAnonymousObject
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -28,6 +31,7 @@ import org.jetbrains.kotlin.name.NameUtils
 
 private var patchParentPhases = 0
 
+@Suppress("unused")
 private fun makePatchParentsPhase(): NamedCompilerPhase<CommonBackendContext, IrFile> {
     val number = patchParentPhases++
     return makeIrFilePhase(
@@ -39,6 +43,7 @@ private fun makePatchParentsPhase(): NamedCompilerPhase<CommonBackendContext, Ir
 
 private var checkParentPhases = 0
 
+@Suppress("unused")
 private fun makeCheckParentsPhase(): NamedCompilerPhase<CommonBackendContext, IrFile> {
     val number = checkParentPhases++
     return makeIrFilePhase(
@@ -56,34 +61,7 @@ private class PatchDeclarationParents : FileLoweringPass {
 
 private class CheckDeclarationParents : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        val checker = CheckDeclarationParentsVisitor()
-        irFile.acceptVoid(checker)
-        if (checker.errors.isNotEmpty()) {
-            val expectedParents = LinkedHashSet<IrDeclarationParent>()
-            throw AssertionError(
-                buildString {
-                    append("Declarations with wrong parent: ")
-                    append(checker.errors.size)
-                    append("\n")
-                    checker.errors.forEach {
-                        append("declaration: ")
-                        append(it.declaration.render())
-                        append("\n\t")
-                        append(it.declaration)
-                        append("\nexpectedParent: ")
-                        append(it.expectedParent.render())
-                        append("\nactualParent: ")
-                        append(it.actualParent?.render())
-                        append("\n")
-                        expectedParents.add(it.expectedParent)
-                    }
-                    append("\nExpected parents:\n")
-                    expectedParents.forEach {
-                        append(it.dump())
-                    }
-                }
-            )
-        }
+        irFile.checkDeclarationParents()
     }
 }
 

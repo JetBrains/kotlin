@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
-import org.jetbrains.kotlin.backend.common.CheckDeclarationParentsVisitor
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.IrValidator
-import org.jetbrains.kotlin.backend.common.IrValidatorConfig
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dump
@@ -60,7 +57,7 @@ fun <Data, Context> makeVerifyAction(verifier: (Context, Data) -> Unit): Action<
 fun dumpIrElement(actionState: ActionState, data: IrElement, @Suppress("UNUSED_PARAMETER") context: Any?): String {
     val beforeOrAfterStr = actionState.beforeOrAfter.name.toLowerCaseAsciiOnly()
 
-    var dumpText: String = ""
+    var dumpText = ""
     val elementName: String
 
     val dumpStrategy = System.getProperty("org.jetbrains.kotlin.compiler.ir.dump.strategy")
@@ -143,7 +140,7 @@ fun <Fragment : IrElement> validationCallback(context: CommonBackendContext, fra
         checkProperties = checkProperties,
     )
     fragment.accept(IrValidator(context, validatorConfig), null)
-    fragment.accept(CheckDeclarationParentsVisitor, null)
+    fragment.checkDeclarationParents()
 }
 
 val validationAction = makeVerifyAction(::validationCallback)

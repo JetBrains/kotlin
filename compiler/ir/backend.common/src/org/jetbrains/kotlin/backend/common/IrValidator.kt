@@ -18,17 +18,20 @@ package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.util.DeclarationParentsVisitor
+import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
+@Suppress("unused")
 fun validateIrFile(context: CommonBackendContext, irFile: IrFile) {
     val visitor = IrValidator(context, IrValidatorConfig(abortOnError = false, ensureAllNodesAreDifferent = false))
     irFile.acceptVoid(visitor)
 }
 
+@Suppress("unused")
 fun validateIrModule(context: CommonBackendContext, irModule: IrModuleFragment) {
     val visitor = IrValidator(
         context,
@@ -92,31 +95,50 @@ class IrValidator(val context: CommonBackendContext, val config: IrValidatorConf
     }
 }
 
-fun IrModuleFragment.checkDeclarationParents() {
-    this.accept(CheckDeclarationParentsVisitor, null)
+fun IrElement.checkDeclarationParents() {
+    val checker = CheckDeclarationParentsVisitor()
+    acceptVoid(checker)
+    if (checker.errors.isNotEmpty()) {
+        val expectedParents = LinkedHashSet<IrDeclarationParent>()
+        throw AssertionError(
+            buildString {
+                append("Declarations with wrong parent: ")
+                append(checker.errors.size)
+                append("\n")
+                checker.errors.forEach {
+                    append("declaration: ")
+                    append(it.declaration.render())
+                    append("\n\t")
+                    append(it.declaration)
+                    append("\nexpectedParent: ")
+                    append(it.expectedParent.render())
+                    append("\nactualParent: ")
+                    append(it.actualParent?.render())
+                    append("\n")
+                    expectedParents.add(it.expectedParent)
+                }
+                append("\nExpected parents:\n")
+                expectedParents.forEach {
+                    append(it.dump())
+                }
+            }
+        )
+    }
 }
 
-object CheckDeclarationParentsVisitor : IrElementVisitor<Unit, IrDeclarationParent?> {
+class CheckDeclarationParentsVisitor : DeclarationParentsVisitor() {
+    class Error(val declaration: IrDeclaration, val expectedParent: IrDeclarationParent, val actualParent: IrDeclarationParent?)
 
-    override fun visitElement(element: IrElement, data: IrDeclarationParent?) {
-        element.acceptChildren(this, element as? IrDeclarationParent ?: data)
-    }
+    val errors = ArrayList<Error>()
 
-    override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) {
-        checkParent(declaration, data)
-        super.visitDeclaration(declaration, data)
-    }
-
-    private fun checkParent(declaration: IrDeclaration, expectedParent: IrDeclarationParent?) {
-        val parent = try {
-            declaration.parent
-        } catch (e: Throwable) {
-            error("$declaration for ${declaration.render()} has no parent")
-        }
-
-        if (parent != expectedParent) {
-            error("$declaration for ${declaration.render()} has unexpected parent $parent")
+    override fun handleParent(declaration: IrDeclaration, parent: IrDeclarationParent) {
+        try {
+            val actualParent = declaration.parent
+            if (actualParent != parent) {
+                errors.add(Error(declaration, parent, actualParent))
+            }
+        } catch (e: Exception) {
+            errors.add(Error(declaration, parent, null))
         }
     }
 }
-
