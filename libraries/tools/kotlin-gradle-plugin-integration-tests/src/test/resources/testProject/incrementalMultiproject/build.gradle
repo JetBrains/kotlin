@@ -1,3 +1,4 @@
+// Remove buildscript block once js incremental test will be migrated
 buildscript {
     repositories {
         mavenLocal()

@@ -73,8 +73,10 @@ open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationM
         val libBuildGradle = File(lib, "build.gradle")
         libBuildGradle.modify {
             """
-            apply plugin: 'groovy'
-            apply plugin: 'kotlin'
+            plugins {
+                id 'groovy'
+                id 'org.jetbrains.kotlin.jvm'
+            }
 
             dependencies {
                 implementation "org.jetbrains.kotlin:kotlin-stdlib:${"$"}kotlin_version"
