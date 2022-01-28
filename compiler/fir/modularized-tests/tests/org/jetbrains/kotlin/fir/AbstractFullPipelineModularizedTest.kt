@@ -145,6 +145,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         args.freeArgs = moduleData.sources.map { it.absolutePath }
         args.destination = tmp.toAbsolutePath().toFile().toString()
         args.friendPaths = moduleData.friendDirs.map { it.canonicalPath }.toTypedArray()
+        args.optIn = moduleData.optInAnnotations.toTypedArray()
     }
 
     private fun configureArgsUsingBuildFile(args: K2JVMCompilerArguments, moduleData: ModuleData, tmp: Path) {

@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.setupLanguageVersionSettings
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
@@ -31,6 +31,7 @@ data class ModuleData(
     val rawSources: List<String>,
     val rawJavaSourceRoots: List<JavaSourceRootData<String>>,
     val rawFriendDirs: List<String>,
+    val optInAnnotations: List<String>,
     val rawModularJdkRoot: String?,
     val rawJdkHome: String?,
     val isCommon: Boolean
@@ -99,6 +100,11 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
             configuration.addJavaSourceRoot(it.path, it.packagePrefix)
         }
         configuration.addJvmClasspathRoots(moduleData.classpath)
+        configuration.languageVersionSettings = LanguageVersionSettingsImpl(
+            LanguageVersion.LATEST_STABLE,
+            ApiVersion.LATEST_STABLE,
+            analysisFlags = mutableMapOf(AnalysisFlags.optIn to moduleData.optInAnnotations)
+        )
 
         // in case of modular jdk only
         configuration.putIfNotNull(JVMConfigurationKeys.JDK_HOME, moduleData.modularJdkRoot)
@@ -124,6 +130,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         val classpath = mutableListOf<String>()
         val sources = mutableListOf<String>()
         val friendDirs = mutableListOf<String>()
+        val optInAnnotations = mutableListOf<String>()
         val timestamp = moduleElement.attributes.getNamedItem("timestamp")?.nodeValue?.toLong() ?: 0
         val jdkHome = moduleElement.attributes.getNamedItem("jdkHome")?.nodeValue
         var modularJdkRoot: String? = null
@@ -153,6 +160,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
                 "sources" -> sources += item.attributes.getNamedItem("path").nodeValue
                 "commonSources" -> isCommon = true
                 "modularJdkRoot" -> modularJdkRoot = item.attributes.getNamedItem("path").nodeValue
+                "useOptIn" -> optInAnnotations += item.attributes.getNamedItem("annotation").nodeValue
             }
         }
 
@@ -165,9 +173,10 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
             sources,
             javaSourceRoots,
             friendDirs,
+            optInAnnotations,
             modularJdkRoot,
             jdkHome,
-            isCommon
+            isCommon,
         )
     }
 

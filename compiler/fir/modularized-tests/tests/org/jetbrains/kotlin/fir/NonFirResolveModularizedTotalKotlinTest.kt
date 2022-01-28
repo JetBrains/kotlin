@@ -82,7 +82,8 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
                     LanguageFeature.NewInference to if (USE_NI) LanguageFeature.State.ENABLED else LanguageFeature.State.DISABLED
                 ),
                 analysisFlags = mapOf(
-                    AnalysisFlags.skipPrereleaseCheck to true
+                    AnalysisFlags.skipPrereleaseCheck to true,
+                    AnalysisFlags.optIn to moduleData.optInAnnotations
                 )
             )
 
