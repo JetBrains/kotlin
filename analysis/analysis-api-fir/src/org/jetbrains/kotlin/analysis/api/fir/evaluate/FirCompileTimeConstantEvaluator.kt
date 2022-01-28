@@ -164,7 +164,7 @@ internal object FirCompileTimeConstantEvaluator {
 
     private fun ConeKotlinType.toConstantValueKind(): ConstantValueKind<*>? =
         when (this) {
-            is ConeKotlinErrorType -> null
+            is ConeErrorType -> null
             is ConeLookupTagBasedType -> lookupTag.name.asString().toConstantValueKind()
             is ConeFlexibleType -> upperBound.toConstantValueKind()
             is ConeCapturedType -> lowerType?.toConstantValueKind() ?: constructor.supertypes!!.first().toConstantValueKind()

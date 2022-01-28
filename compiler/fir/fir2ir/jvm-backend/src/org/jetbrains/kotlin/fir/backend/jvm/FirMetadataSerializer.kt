@@ -47,7 +47,7 @@ class FirMetadataSerializer(
 ) : MetadataSerializer {
     private val approximator = object : AbstractTypeApproximator(session.typeContext, session.languageVersionSettings) {
         override fun createErrorType(debugName: String): SimpleTypeMarker {
-            return ConeKotlinErrorType(ConeIntermediateDiagnostic(debugName))
+            return ConeErrorType(ConeIntermediateDiagnostic(debugName))
         }
     }
 

@@ -37,11 +37,9 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), KotlinTypeMarker, Type
 
 sealed class ConeSimpleKotlinType : ConeKotlinType(), SimpleTypeMarker
 
-typealias ConeKotlinErrorType = ConeClassErrorType
-
 class ConeClassLikeErrorLookupTag(override val classId: ClassId) : ConeClassLikeLookupTag()
 
-class ConeClassErrorType(val diagnostic: ConeDiagnostic, val isUninferredParameter: Boolean = false) : ConeClassLikeType() {
+class ConeErrorType(val diagnostic: ConeDiagnostic, val isUninferredParameter: Boolean = false) : ConeClassLikeType() {
     override val lookupTag: ConeClassLikeLookupTag
         get() = ConeClassLikeErrorLookupTag(ClassId.fromString("<error>"))
 

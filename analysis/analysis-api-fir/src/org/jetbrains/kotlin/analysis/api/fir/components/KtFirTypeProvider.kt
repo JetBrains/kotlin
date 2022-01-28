@@ -139,7 +139,7 @@ internal class KtFirTypeProvider(
                 ConeDefinitelyNotNullType.create(it, analysisSession.rootModuleSession.typeContext) ?: it
             }
             is ConeIntersectionType -> intersectedTypes.asSequence().flatMap { it.getDirectSuperTypes(shouldApproximate) }
-            is ConeClassErrorType -> emptySequence()
+            is ConeErrorType -> emptySequence()
             is ConeLookupTagBasedType -> getSubstitutedSuperTypes(shouldApproximate)
             else -> emptySequence()
         }.distinct()

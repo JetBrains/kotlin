@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
@@ -124,7 +124,7 @@ fun ConeKotlinType.scopeForSupertype(
     subClass: FirClass,
 ): FirTypeScope? {
     if (this !is ConeClassLikeType) return null
-    if (this is ConeClassErrorType) return null
+    if (this is ConeErrorType) return null
     val symbol = lookupTag.toSymbol(useSiteSession)
     return if (symbol is FirRegularClassSymbol) {
         symbol.fir.scopeForClassImpl(

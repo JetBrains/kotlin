@@ -118,7 +118,7 @@ class FirTypeDeserializer(
             return ConeFlexibleType(lowerBound!!, upperBound!!)
         }
 
-        return simpleType(proto, attributes) ?: ConeKotlinErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
+        return simpleType(proto, attributes) ?: ConeErrorType(ConeSimpleDiagnostic("?!id:0", DiagnosticKind.DeserializationError))
     }
 
     private fun typeParameterSymbol(typeParameterId: Int): ConeTypeParameterLookupTag? =
@@ -211,7 +211,7 @@ class FirTypeDeserializer(
                 }
                 else -> null
             }
-        return result ?: ConeClassErrorType(
+        return result ?: ConeErrorType(
             ConeSimpleDiagnostic(
                 "Bad suspend function in metadata with constructor: $functionTypeConstructor",
                 DiagnosticKind.DeserializationError
@@ -240,7 +240,7 @@ class FirTypeDeserializer(
 
         val variance = ProtoEnumFlags.variance(typeArgumentProto.projection)
         val type = typeArgumentProto.type(typeTable)
-            ?: return ConeKotlinErrorType(ConeSimpleDiagnostic("No type recorded", DiagnosticKind.DeserializationError))
+            ?: return ConeErrorType(ConeSimpleDiagnostic("No type recorded", DiagnosticKind.DeserializationError))
         val coneType = type(type)
         return coneType.toTypeProjection(variance)
     }

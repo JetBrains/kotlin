@@ -68,7 +68,7 @@ interface FirDeclarationPresenter {
                 appendRepresentation(it.original)
                 append(it.nullability.suffix)
             }
-            is ConeClassErrorType -> {
+            is ConeErrorType -> {
                 append("ERROR(")
                 append(it.diagnostic.reason)
                 append(')')

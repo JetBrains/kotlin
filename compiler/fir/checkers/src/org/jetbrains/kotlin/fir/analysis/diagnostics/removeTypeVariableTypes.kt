@@ -28,6 +28,6 @@ private class TypeVariableTypeRemovingSubstitutor(typeContext: ConeTypeContext) 
             check(originalTypeParameter is ConeTypeParameterLookupTag)
             return ConeTypeParameterTypeImpl(originalTypeParameter, type.isNullable, type.attributes)
         }
-        return ConeClassErrorType(ConeUnknownLambdaParameterTypeDiagnostic())
+        return ConeErrorType(ConeUnknownLambdaParameterTypeDiagnostic())
     }
 }

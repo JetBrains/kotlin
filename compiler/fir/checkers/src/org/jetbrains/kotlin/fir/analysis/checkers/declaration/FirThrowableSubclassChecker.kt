@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
-import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 
 object FirThrowableSubclassChecker : FirClassChecker() {
     override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -37,7 +37,7 @@ object FirThrowableSubclassChecker : FirClassChecker() {
     }
 
     private fun FirClass.hasThrowableSupertype(context: CheckerContext) =
-        superConeTypes.any { it !is ConeClassErrorType && it.isSubtypeOfThrowable(context.session) }
+        superConeTypes.any { it !is ConeErrorType && it.isSubtypeOfThrowable(context.session) }
 
     private fun FirClass.hasGenericOuterDeclaration(context: CheckerContext): Boolean {
         if (!classId.isLocal) return false

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.types.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -22,7 +22,7 @@ internal class FirErrorTypeRefImpl(
 ) : FirErrorTypeRef() {
     constructor(source: KtSourceElement?, delegatedTypeRef: FirTypeRef?, diagnostic: ConeDiagnostic) : this(
         source,
-        ConeClassErrorType(diagnostic),
+        ConeErrorType(diagnostic),
         delegatedTypeRef, diagnostic
     )
 

@@ -46,7 +46,7 @@ object FirTopLevelTypeAliasChecker : FirTypeAliasChecker() {
         val fullyExpandedType = expandedTypeRef.coneType.fullyExpandedType(context.session)
 
         if (containsTypeParameter(fullyExpandedType) ||
-            fullyExpandedType is ConeClassErrorType && fullyExpandedType.diagnostic is ConeUnsupportedDynamicType
+            fullyExpandedType is ConeErrorType && fullyExpandedType.diagnostic is ConeUnsupportedDynamicType
         ) {
             reporter.reportOn(
                 declaration.expandedTypeRef.source,

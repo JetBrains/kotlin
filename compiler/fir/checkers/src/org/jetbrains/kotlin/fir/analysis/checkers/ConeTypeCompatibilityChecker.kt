@@ -242,7 +242,7 @@ object ConeTypeCompatibilityChecker {
     private fun ConeKotlinType?.collectUpperBounds(): Set<ConeClassLikeType> {
         if (this == null) return emptySet()
         return when (this) {
-            is ConeClassErrorType -> emptySet() // Ignore error types
+            is ConeErrorType -> emptySet() // Ignore error types
             is ConeLookupTagBasedType -> when (this) {
                 is ConeClassLikeType -> setOf(this)
                 is ConeTypeVariableType -> {
@@ -267,7 +267,7 @@ object ConeTypeCompatibilityChecker {
     private fun ConeKotlinType?.collectLowerBounds(): Set<ConeClassLikeType> {
         if (this == null) return emptySet()
         return when (this) {
-            is ConeClassErrorType -> emptySet() // Ignore error types
+            is ConeErrorType -> emptySet() // Ignore error types
             is ConeLookupTagBasedType -> when (this) {
                 is ConeClassLikeType -> setOf(this)
                 is ConeTypeVariableType -> emptySet()

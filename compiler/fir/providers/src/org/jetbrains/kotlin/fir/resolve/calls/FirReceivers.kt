@@ -46,7 +46,7 @@ abstract class AbstractExplicitReceiverValue<E : FirExpression> : AbstractExplic
     override val type: ConeKotlinType
         // NB: safe cast is necessary here
         get() = explicitReceiver.typeRef.coneTypeSafe()
-            ?: ConeKotlinErrorType(ConeIntermediateDiagnostic("No type calculated for: ${explicitReceiver.renderWithType()}")) // TODO: assert here
+            ?: ConeErrorType(ConeIntermediateDiagnostic("No type calculated for: ${explicitReceiver.renderWithType()}")) // TODO: assert here
 
     override val receiverExpression: FirExpression
         get() = explicitReceiver

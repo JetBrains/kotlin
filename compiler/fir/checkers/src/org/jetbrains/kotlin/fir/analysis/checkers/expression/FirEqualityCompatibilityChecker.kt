@@ -120,7 +120,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
             lType.isNullableNothing -> rType
             else -> return
         }
-        if (type is ConeKotlinErrorType) return
+        if (type is ConeErrorType) return
         val isPositiveCompare = expression.operation == FirOperation.EQ || expression.operation == FirOperation.IDENTITY
         val compareResult = with(context.session.typeContext) {
             when {

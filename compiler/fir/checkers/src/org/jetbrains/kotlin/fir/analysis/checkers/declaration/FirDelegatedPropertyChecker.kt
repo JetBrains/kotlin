@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateErr
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceiver
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.render
 import org.jetbrains.kotlin.fir.types.typeContext
@@ -39,7 +39,7 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
         // TODO: Also suppress delegate issue if type inference failed. For example, in
         //  compiler/testData/diagnostics/tests/delegatedProperty/inference/differentDelegatedExpressions.fir.kt, no delegate issues are
         //  reported due to the inference issue.
-        if (delegateType is ConeKotlinErrorType) {
+        if (delegateType is ConeErrorType) {
             val delegateSource = delegate.source
             // Implicit recursion type is not reported since the type ref does not have a real source.
             if (delegateSource != null && (delegateType.diagnostic as? ConeSimpleDiagnostic)?.kind == DiagnosticKind.RecursionInImplicitTypes) {

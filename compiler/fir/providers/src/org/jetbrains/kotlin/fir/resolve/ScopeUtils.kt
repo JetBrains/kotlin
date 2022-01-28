@@ -58,7 +58,7 @@ fun ConeKotlinType.scope(
 
 private fun ConeKotlinType.scope(useSiteSession: FirSession, scopeSession: ScopeSession, requiredPhase: FirResolvePhase): FirTypeScope? {
     return when (this) {
-        is ConeKotlinErrorType -> null
+        is ConeErrorType -> null
         is ConeClassLikeType -> {
             val fullyExpandedType = fullyExpandedType(useSiteSession)
             val fir = fullyExpandedType.lookupTag.toSymbol(useSiteSession)?.fir as? FirClass ?: return null

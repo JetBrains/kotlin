@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -86,14 +86,14 @@ infix fun DataFlowVariable.notEq(constant: Boolean?): OperationStatement {
 infix fun OperationStatement.implies(effect: Statement<*>): Implication = Implication(this, effect)
 
 infix fun RealVariable.typeEq(type: ConeKotlinType): TypeStatement =
-    if (type !is ConeClassErrorType) {
+    if (type !is ConeErrorType) {
         MutableTypeStatement(this, linkedSetOf<ConeKotlinType>().apply { this += type }, HashSet())
     } else {
         MutableTypeStatement(this)
     }
 
 infix fun RealVariable.typeNotEq(type: ConeKotlinType): TypeStatement =
-    if (type !is ConeClassErrorType) {
+    if (type !is ConeErrorType) {
         MutableTypeStatement(this, linkedSetOf(), LinkedHashSet<ConeKotlinType>().apply { this += type })
     } else {
         MutableTypeStatement(this)

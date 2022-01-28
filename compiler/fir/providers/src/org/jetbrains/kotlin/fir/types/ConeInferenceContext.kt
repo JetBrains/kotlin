@@ -362,12 +362,12 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return isContainedInInvariantOrContravariantPositions
     }
 
-    override fun createErrorType(debugName: String): ConeClassErrorType {
-        return ConeClassErrorType(ConeIntermediateDiagnostic(debugName))
+    override fun createErrorType(debugName: String): ConeErrorType {
+        return ConeErrorType(ConeIntermediateDiagnostic(debugName))
     }
 
     override fun createErrorTypeWithCustomConstructor(debugName: String, constructor: TypeConstructorMarker): KotlinTypeMarker {
-        return ConeKotlinErrorType(ConeIntermediateDiagnostic("$debugName c: $constructor"))
+        return ConeErrorType(ConeIntermediateDiagnostic("$debugName c: $constructor"))
     }
 
     override fun CapturedTypeMarker.captureStatus(): CaptureStatus {

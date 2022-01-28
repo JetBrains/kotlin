@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
 import org.jetbrains.kotlin.fir.returnExpressions
-import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
@@ -444,7 +444,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         }
 
         private fun createCannotInferErrorType(message: String, isUninferredParameter: Boolean = false) =
-            ConeClassErrorType(
+            ConeErrorType(
                 ConeSimpleDiagnostic(
                     message,
                     DiagnosticKind.CannotInferParameterType,

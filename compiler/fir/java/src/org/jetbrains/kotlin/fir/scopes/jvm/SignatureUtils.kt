@@ -111,7 +111,7 @@ private fun StringBuilder.appendConeType(
     }
 
     when (coneType) {
-        is ConeClassErrorType -> Unit // TODO: just skipping it seems wrong
+        is ConeErrorType -> Unit // TODO: just skipping it seems wrong
         is ConeClassLikeType -> {
             appendClassLikeType(coneType)
         }

@@ -61,7 +61,7 @@ class FirSamResolverImpl(
                 getFunctionTypeForPossibleSamType(type.lowerBound)?.lowerBoundIfFlexible() ?: return null,
                 getFunctionTypeForPossibleSamType(type.upperBound)?.upperBoundIfFlexible() ?: return null,
             )
-            is ConeClassErrorType, is ConeStubType -> null
+            is ConeErrorType, is ConeStubType -> null
             // TODO: support those types as well
             is ConeTypeParameterType, is ConeTypeVariableType,
             is ConeCapturedType, is ConeDefinitelyNotNullType, is ConeIntersectionType,
@@ -356,7 +356,7 @@ private val PUBLIC_METHOD_NAMES_IN_OBJECT = setOf("equals", "hashCode", "getClas
 
 private fun FirSimpleFunction.getFunctionTypeForAbstractMethod(): ConeLookupTagBasedType {
     val parameterTypes = valueParameters.map {
-        it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType(ConeIntermediateDiagnostic("No type for parameter $it"))
+        it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeErrorType(ConeIntermediateDiagnostic("No type for parameter $it"))
     }
 
     return createFunctionalType(

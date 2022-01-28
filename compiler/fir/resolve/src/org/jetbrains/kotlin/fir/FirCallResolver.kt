@@ -123,7 +123,7 @@ class FirCallResolver(
             resultExpression
         }
         val typeRef = components.typeFromCallee(resultFunctionCall)
-        if (typeRef.type is ConeKotlinErrorType) {
+        if (typeRef.type is ConeErrorType) {
             resultFunctionCall.resultType = typeRef
         }
 

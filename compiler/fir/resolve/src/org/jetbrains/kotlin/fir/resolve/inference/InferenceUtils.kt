@@ -78,7 +78,7 @@ fun extractLambdaInfoFromFunctionalType(
         argumentValueParameters.mapIndexed { index, parameter ->
             parameter.returnTypeRef.coneTypeSafe()
                 ?: expectedParameters.getOrNull(index)
-                ?: ConeClassErrorType(
+                ?: ConeErrorType(
                     ConeSimpleDiagnostic("Cannot infer type for parameter ${parameter.name}", DiagnosticKind.CannotInferParameterType)
                 )
         }

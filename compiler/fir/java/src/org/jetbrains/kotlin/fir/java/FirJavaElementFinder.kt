@@ -266,7 +266,7 @@ private fun ConeKotlinType.mapToCanonicalString(session: FirSession): String {
 
 private fun ConeClassLikeType.mapToCanonicalString(session: FirSession): String {
     return when (this) {
-        is ConeClassErrorType -> ERROR_TYPE_STUB
+        is ConeErrorType -> ERROR_TYPE_STUB
         else -> fullyExpandedType(session).mapToCanonicalNoExpansionString(session)
     }
 }

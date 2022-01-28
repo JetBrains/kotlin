@@ -54,7 +54,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
 
     private fun ConeKotlinType.substituteRecursive(): ConeKotlinType? {
         return when (this) {
-            is ConeClassErrorType -> return null
+            is ConeErrorType -> return null
             is ConeClassLikeType -> this.substituteArguments()
             is ConeLookupTagBasedType -> return null
             is ConeFlexibleType -> this.substituteBounds()?.let {

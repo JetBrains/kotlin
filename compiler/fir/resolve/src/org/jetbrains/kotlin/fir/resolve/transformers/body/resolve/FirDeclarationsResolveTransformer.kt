@@ -1067,7 +1067,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
                 valueParameter.transformReturnTypeRef(
                     StoreType,
                     valueParameter.returnTypeRef.resolvedTypeFromPrototype(
-                        ConeKotlinErrorType(
+                        ConeErrorType(
                             ConeSimpleDiagnostic(
                                 "No type for parameter",
                                 DiagnosticKind.ValueParameterWithNoTypeAnnotation

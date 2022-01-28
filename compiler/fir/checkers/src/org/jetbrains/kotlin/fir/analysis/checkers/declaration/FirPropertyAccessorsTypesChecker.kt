@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.canHaveAbstractDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isOpen
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.types.ConeClassErrorType
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isUnit
 
@@ -49,7 +49,7 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
                 return
             }
             val getterReturnType = getterReturnTypeRef.coneType
-            if (propertyType is ConeClassErrorType || getterReturnType is ConeClassErrorType) {
+            if (propertyType is ConeErrorType || getterReturnType is ConeErrorType) {
                 return
             }
             if (getterReturnType != property.returnTypeRef.coneType) {
@@ -94,7 +94,7 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
             }
             val valueSetterType = valueSetterParameter.returnTypeRef.coneType
             val valueSetterTypeSource = valueSetterParameter.returnTypeRef.source
-            if (propertyType is ConeClassErrorType || valueSetterType is ConeClassErrorType) {
+            if (propertyType is ConeErrorType || valueSetterType is ConeErrorType) {
                 return
             }
 
@@ -105,7 +105,7 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
             }
 
             val setterReturnType = setter.returnTypeRef.coneType
-            if (propertyType is ConeClassErrorType || valueSetterType is ConeClassErrorType) {
+            if (propertyType is ConeErrorType || valueSetterType is ConeErrorType) {
                 return
             }
 

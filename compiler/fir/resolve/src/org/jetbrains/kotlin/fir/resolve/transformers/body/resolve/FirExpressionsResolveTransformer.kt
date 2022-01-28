@@ -998,7 +998,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                 is FirSuperReference -> {
                     // TODO: unresolved supertype
                     val supertype = reference.superTypeRef.coneTypeSafe<ConeClassLikeType>()
-                        ?.takeIf { it !is ConeClassErrorType } ?: return delegatedConstructorCall
+                        ?.takeIf { it !is ConeErrorType } ?: return delegatedConstructorCall
                     supertype.fullyExpandedType(session)
                 }
                 else -> return delegatedConstructorCall

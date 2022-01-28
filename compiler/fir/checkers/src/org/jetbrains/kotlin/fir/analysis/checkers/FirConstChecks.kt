@@ -61,7 +61,7 @@ internal fun checkConstantArguments(
                 ?.typeRef
                 ?.coneType
 
-            if (coneType is ConeClassErrorType)
+            if (coneType is ConeErrorType)
                 return ConstantArgumentKind.NOT_CONST
 
             while (coneType?.classId == StandardClassIds.Array)

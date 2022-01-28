@@ -191,7 +191,7 @@ private fun FirClassifierSymbol<*>.collectSuperTypes(
             list += superClassTypes
             if (deep)
                 superClassTypes.forEach {
-                    if (it !is ConeClassErrorType) {
+                    if (it !is ConeErrorType) {
                         if (substituteSuperTypes) {
                             val substitutedTypes = SmartList<ConeClassLikeType>()
                             it.lookupTag.toSymbol(useSiteSession)?.collectSuperTypes(
@@ -234,7 +234,7 @@ private fun FirClassifierSymbol<*>.collectSuperTypes(
 private fun ConeClassLikeType?.isClassBasedType(
     useSiteSession: FirSession
 ): Boolean {
-    if (this is ConeClassErrorType) return false
+    if (this is ConeErrorType) return false
     val symbol = this?.lookupTag?.toSymbol(useSiteSession) as? FirClassSymbol ?: return false
     return when (symbol) {
         is FirAnonymousObjectSymbol -> true
@@ -245,7 +245,7 @@ private fun ConeClassLikeType?.isClassBasedType(
 fun createSubstitutionForSupertype(superType: ConeLookupTagBasedType, session: FirSession): ConeSubstitutor {
     val klass = superType.lookupTag.toSymbol(session)?.fir as? FirRegularClass ?: return ConeSubstitutor.Empty
     val arguments = superType.typeArguments.map {
-        it as? ConeKotlinType ?: ConeClassErrorType(ConeSimpleDiagnostic("illegal projection usage", DiagnosticKind.IllegalProjectionUsage))
+        it as? ConeKotlinType ?: ConeErrorType(ConeSimpleDiagnostic("illegal projection usage", DiagnosticKind.IllegalProjectionUsage))
     }
     val mapping = klass.typeParameters.map { it.symbol }.zip(arguments).toMap()
     return ConeSubstitutorByMap(mapping, session)
