@@ -650,7 +650,8 @@ tasks {
             ":kotlin-test:kotlin-test-js:kotlin-test-js-it".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
             ":kotlin-test:kotlin-test-js-ir:kotlin-test-js-ir-it".takeIf { !kotlinBuildProperties.isInJpsBuildIdeaSync },
             ":kotlinx-metadata-jvm",
-            ":tools:binary-compatibility-validator"
+            ":tools:binary-compatibility-validator",
+            ":kotlin-stdlib-wasm",
         )).forEach {
             dependsOn("$it:check")
         }
