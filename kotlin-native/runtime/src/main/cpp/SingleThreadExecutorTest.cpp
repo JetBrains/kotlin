@@ -52,32 +52,34 @@ testing::MockFunction<void(PinnedContext&)>* PinnedContext::dtorMock = nullptr;
 
 } // namespace
 
-TEST(ThreadWithContextTest, ContextThreadBound) {
+TEST(SingleThreadExecutorTest, ContextThreadBound) {
     PinnedContext::ScopedMocks mocks;
     PinnedContext* createdContext = nullptr;
     std::thread::id createdThread;
-    testing::StrictMock<testing::MockFunction<void()>> function;
     EXPECT_CALL(mocks.ctorMock, Call(_)).WillOnce([&](PinnedContext& context) {
         createdContext = &context;
         createdThread = std::this_thread::get_id();
     });
-    EXPECT_CALL(function, Call()).WillOnce([&] { EXPECT_THAT(std::this_thread::get_id(), createdThread); });
-    auto thread = ::make_unique<ThreadWithContext<PinnedContext>>([] { return PinnedContext(); }, function.AsStdFunction());
-    thread->waitInitialized();
+    auto executor = ::make_unique<SingleThreadExecutor<PinnedContext>>();
+    // Make sure context is created.
+    executor->context();
     testing::Mock::VerifyAndClearExpectations(&mocks.ctorMock);
-    EXPECT_THAT(createdThread, thread->get_id());
-    EXPECT_THAT(thread->context(), testing::Ref(*createdContext));
+    EXPECT_THAT(createdThread, executor->threadId());
+    EXPECT_THAT(executor->context(), testing::Ref(*createdContext));
+
+    testing::StrictMock<testing::MockFunction<void()>> task;
+    EXPECT_CALL(task, Call()).WillOnce([&] { EXPECT_THAT(std::this_thread::get_id(), createdThread); });
+    executor->execute(task.AsStdFunction()).get();
+    testing::Mock::VerifyAndClearExpectations(&task);
 
     EXPECT_CALL(mocks.dtorMock, Call(testing::Ref(*createdContext))).WillOnce([&] {
         EXPECT_THAT(std::this_thread::get_id(), createdThread);
     });
-    thread.reset();
-    // The function is expected to be called at some point between `waitInitialized` and the thread exit.
-    testing::Mock::VerifyAndClearExpectations(&function);
+    executor.reset();
     testing::Mock::VerifyAndClearExpectations(&mocks.dtorMock);
 }
 
-TEST(ThreadWithContextTest, WaitInitialized) {
+TEST(SingleThreadExecutorTest, WaitContext) {
     PinnedContext::ScopedMocks mocks;
     PinnedContext* createdContext = nullptr;
     std::mutex ctorMutex;
@@ -86,41 +88,34 @@ TEST(ThreadWithContextTest, WaitInitialized) {
         createdContext = &context;
     });
 
-    testing::StrictMock<testing::MockFunction<void()>> function;
-    EXPECT_CALL(function, Call()).Times(0);
     ctorMutex.lock();
-    auto thread = ::make_unique<ThreadWithContext<PinnedContext>>([] { return PinnedContext(); }, function.AsStdFunction());
+    SingleThreadExecutor<PinnedContext> executor;
 
-    std::atomic_bool initialized = false;
-    std::thread initializedWaiter([&] {
-        thread->waitInitialized();
-        initialized = true;
-    });
+    auto future = executor.execute([] {});
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    EXPECT_THAT(initialized.load(), false);
-    testing::Mock::VerifyAndClearExpectations(&function);
+    auto futureStatus = future.wait_for(std::chrono::milliseconds(10));
+    EXPECT_THAT(futureStatus, std::future_status::timeout);
 
-    EXPECT_CALL(function, Call());
     ctorMutex.unlock();
-    initializedWaiter.join();
+    // Wait for `thread` to initialize.
+    executor.context();
+    future.get();
     testing::Mock::VerifyAndClearExpectations(&mocks.ctorMock);
-    testing::Mock::VerifyAndClearExpectations(&function);
-    EXPECT_THAT(initialized.load(), true);
 
-    EXPECT_THAT(thread->context(), testing::Ref(*createdContext));
+    EXPECT_THAT(executor.context(), testing::Ref(*createdContext));
     EXPECT_CALL(mocks.dtorMock, Call(testing::Ref(*createdContext)));
 }
 
-TEST(SingleThreadExecutorTest, Execute) {
-    SingleThreadExecutor<JoiningThread> executor;
+TEST(SingleThreadExecutorTest, execute) {
+    struct Context {};
+    SingleThreadExecutor<Context> executor;
 
     std::mutex taskMutex;
     testing::StrictMock<testing::MockFunction<void()>> task;
 
     EXPECT_CALL(task, Call()).WillOnce([&] { std::unique_lock guard(taskMutex); });
     taskMutex.lock();
-    auto future = executor.Execute(task.AsStdFunction());
+    auto future = executor.execute(task.AsStdFunction());
 
     auto futureStatus = future.wait_for(std::chrono::milliseconds(10));
     EXPECT_THAT(futureStatus, std::future_status::timeout);
@@ -131,7 +126,8 @@ TEST(SingleThreadExecutorTest, Execute) {
 }
 
 TEST(SingleThreadExecutorTest, DropExecutorWithTasks) {
-    auto executor = make_unique<SingleThreadExecutor<JoiningThread>>();
+    struct Context {};
+    auto executor = make_unique<SingleThreadExecutor<Context>>();
 
     std::mutex taskMutex;
     testing::StrictMock<testing::MockFunction<void()>> task;
@@ -142,13 +138,13 @@ TEST(SingleThreadExecutorTest, DropExecutorWithTasks) {
         std::unique_lock guard(taskMutex);
     });
     taskMutex.lock();
-    auto future = executor->Execute(task.AsStdFunction());
+    auto future = executor->execute(task.AsStdFunction());
     while (!taskStarted) {}
 
     KStdVector<std::pair<std::future<void>, bool>> newTasks;
     constexpr size_t tasksCount = 100;
     for (size_t i = 0; i < tasksCount; ++i) {
-        newTasks.push_back(std::make_pair(executor->Execute([&newTasks, i] { newTasks[i].second = true; }), false));
+        newTasks.push_back(std::make_pair(executor->execute([&newTasks, i] { newTasks[i].second = true; }), false));
     }
 
     taskMutex.unlock();
@@ -171,7 +167,7 @@ TEST(SingleThreadExecutorTest, ExecuteFromManyThreads) {
     struct Context {
         KStdVector<int> result;
     };
-    auto executor = MakeSingleThreadExecutorWithContext<Context>();
+    SingleThreadExecutor<Context> executor;
 
     std::atomic_bool canStart = false;
 
@@ -182,7 +178,7 @@ TEST(SingleThreadExecutorTest, ExecuteFromManyThreads) {
         threads.emplace_back([&, i] {
             while (!canStart) {
             }
-            executor.Execute([&] { executor.thread().context().result.push_back(i); }).get();
+            executor.execute([&] { executor.context().result.push_back(i); }).get();
         });
     }
 
@@ -192,5 +188,5 @@ TEST(SingleThreadExecutorTest, ExecuteFromManyThreads) {
         thread.join();
     }
 
-    EXPECT_THAT(executor.thread().context().result, testing::UnorderedElementsAreArray(expected));
+    EXPECT_THAT(executor.context().result, testing::UnorderedElementsAreArray(expected));
 }

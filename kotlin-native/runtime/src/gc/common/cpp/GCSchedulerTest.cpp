@@ -286,12 +286,11 @@ using TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
 class MutatorThread : private Pinned {
 public:
     MutatorThread(GCSchedulerConfig& config, std::function<void(GCSchedulerThreadData&)> slowPath) :
-        executor_(MakeSingleThreadExecutorWithContext<Context>(
-                [&config, slowPath = std::move(slowPath)] { return Context(config, std::move(slowPath)); })) {}
+        executor_([&config, slowPath = std::move(slowPath)] { return Context(config, std::move(slowPath)); }) {}
 
     std::future<void> Allocate(size_t bytes) {
-        return executor_.Execute([&, bytes] {
-            auto& context = executor_.thread().context();
+        return executor_.execute([&, bytes] {
+            auto& context = executor_.context();
             context.threadDataTestApi.SetAllocatedBytes(bytes);
             context.slowPath(context.threadData);
         });
@@ -307,7 +306,7 @@ private:
             threadData(config, [](GCSchedulerThreadData&) {}), threadDataTestApi(threadData), slowPath(slowPath) {}
     };
 
-    SingleThreadExecutor<ThreadWithContext<Context>> executor_;
+    SingleThreadExecutor<Context> executor_;
 };
 
 template <compiler::GCSchedulerType schedulerType, int MutatorCount>

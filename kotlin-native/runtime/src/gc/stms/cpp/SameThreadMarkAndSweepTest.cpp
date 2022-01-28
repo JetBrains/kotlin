@@ -647,17 +647,15 @@ namespace {
 
 class Mutator : private Pinned {
 public:
-    Mutator() : executor_(MakeSingleThreadExecutorWithContext<Context>()) {}
-
     template <typename F>
     [[nodiscard]] std::future<void> Execute(F&& f) {
-        return executor_.Execute(
-                [this, f = std::forward<F>(f)] { f(*executor_.thread().context().memory_->memoryState()->GetThreadData(), *this); });
+        return executor_.execute(
+                [this, f = std::forward<F>(f)] { f(*executor_.context().memory_->memoryState()->GetThreadData(), *this); });
     }
 
     StackObjectHolder& AddStackRoot() {
-        RuntimeAssert(std::this_thread::get_id() == executor_.thread().get_id(), "AddStackRoot can only be called in the mutator thread");
-        auto& context = executor_.thread().context();
+        RuntimeAssert(std::this_thread::get_id() == executor_.threadId(), "AddStackRoot can only be called in the mutator thread");
+        auto& context = executor_.context();
         auto holder = make_unique<StackObjectHolder>(*context.memory_->memoryState()->GetThreadData());
         auto& holderRef = *holder;
         context.stackRoots_.push_back(std::move(holder));
@@ -665,8 +663,8 @@ public:
     }
 
     StackObjectHolder& AddStackRoot(ObjHeader* object) {
-        RuntimeAssert(std::this_thread::get_id() == executor_.thread().get_id(), "AddStackRoot can only be called in the mutator thread");
-        auto& context = executor_.thread().context();
+        RuntimeAssert(std::this_thread::get_id() == executor_.threadId(), "AddStackRoot can only be called in the mutator thread");
+        auto& context = executor_.context();
         auto holder = make_unique<StackObjectHolder>(object);
         auto& holderRef = *holder;
         context.stackRoots_.push_back(std::move(holder));
@@ -674,8 +672,8 @@ public:
     }
 
     GlobalObjectHolder& AddGlobalRoot() {
-        RuntimeAssert(std::this_thread::get_id() == executor_.thread().get_id(), "AddGlobalRoot can only be called in the mutator thread");
-        auto& context = executor_.thread().context();
+        RuntimeAssert(std::this_thread::get_id() == executor_.threadId(), "AddGlobalRoot can only be called in the mutator thread");
+        auto& context = executor_.context();
         auto holder = make_unique<GlobalObjectHolder>(*context.memory_->memoryState()->GetThreadData());
         auto& holderRef = *holder;
         context.globalRoots_.push_back(std::move(holder));
@@ -683,15 +681,15 @@ public:
     }
 
     GlobalObjectHolder& AddGlobalRoot(ObjHeader* object) {
-        RuntimeAssert(std::this_thread::get_id() == executor_.thread().get_id(), "AddGlobalRoot can only be called in the mutator thread");
-        auto& context = executor_.thread().context();
+        RuntimeAssert(std::this_thread::get_id() == executor_.threadId(), "AddGlobalRoot can only be called in the mutator thread");
+        auto& context = executor_.context();
         auto holder = make_unique<GlobalObjectHolder>(*context.memory_->memoryState()->GetThreadData(), object);
         auto& holderRef = *holder;
         context.globalRoots_.push_back(std::move(holder));
         return holderRef;
     }
 
-    KStdVector<ObjHeader*> Alive() { return ::Alive(*executor_.thread().context().memory_->memoryState()->GetThreadData()); }
+    KStdVector<ObjHeader*> Alive() { return ::Alive(*executor_.context().memory_->memoryState()->GetThreadData()); }
 
 private:
     struct Context {
@@ -705,7 +703,7 @@ private:
         }
     };
 
-    SingleThreadExecutor<ThreadWithContext<Context>> executor_;
+    SingleThreadExecutor<Context> executor_;
 };
 
 } // namespace
