@@ -14816,6 +14816,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("inferLabeledElementTypeForLambdaInReturnInCatch.kt")
+                public void testInferLabeledElementTypeForLambdaInReturnInCatch() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/completion/inferLabeledElementTypeForLambdaInReturnInCatch.kt");
+                }
+
+                @Test
                 @TestMetadata("intersectionType.kt")
                 public void testIntersectionType() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/completion/intersectionType.kt");
