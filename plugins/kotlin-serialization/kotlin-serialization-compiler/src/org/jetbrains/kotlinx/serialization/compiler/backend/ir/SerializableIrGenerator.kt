@@ -15,12 +15,14 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -137,12 +139,6 @@ class SerializableIrGenerator(
                 else -> generateSuperNonSerializableCall(superClass)
             }
 
-            // Handle function-intialized interface delegates
-            irClass.declarations
-                .filterIsInstance<IrField>()
-                .filter { it.origin == IrDeclarationOrigin.DELEGATE }
-                .forEach { +irSetField(irGet(thiz), it, it.initializer!!.expression) }
-
             statementsAfterSerializableProperty[null]?.forEach { +it }
             for (index in startPropOffset until serializableProperties.size) {
                 val prop = serializableProperties[index]
@@ -181,6 +177,28 @@ class SerializableIrGenerator(
                 +irIfThenElse(compilerContext.irBuiltIns.unitType, propNotSeenTest, ifNotSeenExpr, assignParamExpr)
 
                 statementsAfterSerializableProperty[prop.descriptor]?.forEach { +it }
+
+                // Handle function-intialized interface delegates
+                irClass.declarations
+                    .filterIsInstance<IrField>()
+                    .filter { it.origin == IrDeclarationOrigin.DELEGATE }
+                    .forEach {
+                        val receiver = if (!it.isStatic) irGet(thiz) else null
+                        val transformer = object : IrElementTransformerVoid() {
+                            override fun visitValueAccess(expression: IrValueAccessExpression) =
+                                when (val owner = expression.symbol.owner) {
+                                    is IrValueParameter -> propertyByParamReplacer(owner.descriptor as ValueParameterDescriptor)!!
+                                    else -> super.visitValueAccess(expression)
+                                }
+                        }
+
+                        +irSetField(
+                            receiver,
+                            it,
+                            it.initializer!!.expression.transform(transformer, null),
+                            IrStatementOrigin.INITIALIZE_FIELD
+                        )
+                    }
             }
         }
 
