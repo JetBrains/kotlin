@@ -46,7 +46,7 @@ class CompilerPluginRuntimeVersionCheckTest {
     private lateinit var projectRoot: File
 
     private val compilerPluginVersion by lazy {
-        val metadataFile = File(projectSetup.props.localSupportRepo).resolve(
+        val metadataFile = File(projectSetup.props.tipOfTreeMavenRepoPath).resolve(
             "androidx/compose/compiler/compiler/maven-metadata.xml"
         )
         check(metadataFile.exists()) {
@@ -126,7 +126,7 @@ class CompilerPluginRuntimeVersionCheckTest {
             "org.jetbrains.kotlin:kotlin-gradle-plugin:${projectSetup.props.kotlinVersion}"
         val repositoriesBlock = buildString {
             appendLine("repositories {")
-            appendLine("maven { url \"${projectSetup.props.localSupportRepo}\" }")
+            appendLine("maven { url \"${projectSetup.props.tipOfTreeMavenRepoPath}\" }")
             projectSetup.allRepositoryPaths.forEach {
                 appendLine(
                     """
