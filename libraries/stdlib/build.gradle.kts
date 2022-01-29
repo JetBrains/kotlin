@@ -43,6 +43,10 @@ val jsV1Dir = "${projectDir}/../js-v1"
 val jsSrcDir = "$jsV1Dir/src"
 val jsSrcJsDir = "${jsSrcDir}/js"
 
+// for js-ir
+val jsIrDir = "${projectDir}/../js-ir"
+val jsIrMainSources = "${buildDir}/src/jsMainSources"
+lateinit var jsIrTarget: KotlinJsTargetDsl
 
 kotlin {
     metadata {
@@ -103,6 +107,32 @@ kotlin {
                     metaInfo = false
                     outputFile = "${buildDir}/classes/js-v1/runtime/kotlin.js"
                     sourceMap = true
+                }
+            }
+        }
+    }
+    jsIrTarget = js("jsIr", IR) {
+        nodejs {
+            testTask {
+                useMocha {
+                    timeout = "10s"
+                }
+            }
+        }
+        compilations {
+            all {
+                kotlinOptions {
+                    freeCompilerArgs += "-Xallow-kotlin-package"
+                }
+            }
+            val main by getting
+            main.apply {
+                kotlinOptions {
+                    freeCompilerArgs += "-Xir-module-name=kotlin"
+
+                    if (!kotlinBuildProperties.disableWerror) {
+                        allWarningsAsErrors = true
+                    }
                 }
             }
         }
@@ -185,6 +215,68 @@ kotlin {
             }
             js().compilations["main"].compileKotlinTaskProvider.configure {
                 dependsOn(prepareBuiltinsSources)
+            }
+        }
+
+        val jsIrMain by getting {
+            kotlin.apply {
+                srcDir(jsIrMainSources)
+                srcDir("$jsIrDir/builtins")
+                srcDir("$jsIrDir/runtime")
+                srcDir("$jsIrDir/src")
+            }
+
+            val prepareJsIrMainSources by tasks.registering(Sync::class) {
+                val unimplementedNativeBuiltIns =
+                    (file("$builtinsDir/native/kotlin/").list()!!.toSortedSet() - file("$jsIrDir/builtins/").list()!!)
+                        .map { "core/builtins/native/kotlin/$it" }
+
+                // TODO: try to reuse absolute paths defined in the beginning
+                val sources = listOf(
+                    "core/builtins/src/kotlin/",
+                    "libraries/stdlib/js/src/",
+                    "libraries/stdlib/js/runtime/"
+                ) + unimplementedNativeBuiltIns
+
+                val excluded = listOf(
+                    // stdlib/js/src/generated is used exclusively for current `js-v1` backend.
+                    "libraries/stdlib/js/src/generated/**",
+
+                    // JS-specific optimized version of emptyArray() already defined
+                    "core/builtins/src/kotlin/ArrayIntrinsics.kt"
+                )
+
+                sources.forEach { path ->
+                    from("$rootDir/$path") {
+                        into(path.dropLastWhile { it != '/' })
+                        excluded.filter { it.startsWith(path) }.forEach {
+                            exclude(it.substring(path.length))
+                        }
+                    }
+                }
+
+                into(jsIrMainSources)
+
+// Required to compile native builtins with the rest of runtime
+                val builtInsHeader = """@file:Suppress(
+    "NON_ABSTRACT_FUNCTION_WITH_NO_BODY",
+    "MUST_BE_INITIALIZED_OR_BE_ABSTRACT",
+    "EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE",
+    "PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED",
+    "WRONG_MODIFIER_TARGET",
+    "UNUSED_PARAMETER"
+)
+"""
+                doLast {
+                    unimplementedNativeBuiltIns.forEach { path ->
+                        val file = File("$jsIrMainSources/$path")
+                        val sourceCode = builtInsHeader + file.readText()
+                        file.writeText(sourceCode)
+                    }
+                }
+            }
+            jsIrTarget.compilations["main"].compileKotlinTaskProvider.configure {
+                dependsOn(prepareJsIrMainSources)
             }
         }
 
@@ -307,7 +399,7 @@ tasks {
             sourceMapFile.writeText(groovy.json.JsonOutput.toJson(sourceMap))
             compileMetaFile.copyTo(jsOutputMetaFile, overwrite = true)
         }
-}
+    }
 
     val jsMainClasses by existing {
         dependsOn(mergeJs)
@@ -324,6 +416,7 @@ tasks {
         from(jsOutputMetaFileName)
         from(jsOutputMapFileName)
         from(kotlin.js().compilations["main"].output.allOutputs)
+        from(jsIrTarget.compilations["main"].output.allOutputs)
         filesMatching("*.*") { mode = 0b110100100 } // KTI-401
     }
 

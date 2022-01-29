@@ -9,6 +9,7 @@ import kotlin.js.*
 
 internal fun arrayToString(array: Array<*>) = array.joinToString(", ", "[", "]") { toString(it) }
 
+@OptIn(ExperimentalUnsignedTypes::class)
 internal fun <T> Array<out T>?.contentDeepHashCodeInternal(): Int {
     if (this == null) return 0
     var result = 1
