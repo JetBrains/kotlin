@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
-import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
@@ -177,29 +174,21 @@ class SerializableIrGenerator(
                 +irIfThenElse(compilerContext.irBuiltIns.unitType, propNotSeenTest, ifNotSeenExpr, assignParamExpr)
 
                 statementsAfterSerializableProperty[prop.descriptor]?.forEach { +it }
-
-                // Handle function-intialized interface delegates
-                irClass.declarations
-                    .filterIsInstance<IrField>()
-                    .filter { it.origin == IrDeclarationOrigin.DELEGATE }
-                    .forEach {
-                        val receiver = if (!it.isStatic) irGet(thiz) else null
-                        val transformer = object : IrElementTransformerVoid() {
-                            override fun visitValueAccess(expression: IrValueAccessExpression) =
-                                when (val owner = expression.symbol.owner) {
-                                    is IrValueParameter -> propertyByParamReplacer(owner.descriptor as ValueParameterDescriptor)!!
-                                    else -> super.visitValueAccess(expression)
-                                }
-                        }
-
-                        +irSetField(
-                            receiver,
-                            it,
-                            it.initializer!!.expression.transform(transformer, null),
-                            IrStatementOrigin.INITIALIZE_FIELD
-                        )
-                    }
             }
+
+            // Handle function-intialized interface delegates
+            irClass.declarations
+                .filterIsInstance<IrField>()
+                .filter { it.origin == IrDeclarationOrigin.DELEGATE }
+                .forEach {
+                    val receiver = if (!it.isStatic) irGet(thiz) else null
+                    +irSetField(
+                        receiver,
+                        it,
+                        initializerAdapter(it.initializer!!),
+                        IrStatementOrigin.INITIALIZE_FIELD
+                    )
+                }
         }
 
     private fun IrBlockBodyBuilder.getStaticSerialDescriptorExpr(): IrExpression {
