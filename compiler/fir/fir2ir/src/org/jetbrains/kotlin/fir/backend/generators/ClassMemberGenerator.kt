@@ -317,7 +317,7 @@ internal class ClassMemberGenerator(
             } else {
                 IrDelegatingConstructorCallImpl(
                     startOffset, endOffset,
-                    constructedIrType,
+                    irBuiltIns.unitType,
                     irConstructorSymbol,
                     typeArgumentsCount = constructor.typeParameters.size,
                     valueArgumentsCount = irConstructorSymbol.owner.valueParameters.size
