@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.gradle.testbase
 
 import java.io.IOException
-import java.nio.file.FileVisitResult
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.SimpleFileVisitor
+import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.*
 import kotlin.streams.asSequence
@@ -50,7 +47,7 @@ internal val Path.allJavaSources: List<Path>
  *
  * Prefer using JUnit5 `@TempDir` over this method when possible.
  */
-internal fun createTempDir(prefix: String): Path = Files
+internal fun createTempDirDeleteOnExit(prefix: String): Path = Files
     .createTempDirectory(prefix)
     .apply { toFile().deleteOnExit() }
 
@@ -108,3 +105,5 @@ internal fun Path.deleteRecursively() {
         }
     })
 }
+
+internal fun Iterable<String>.toPaths(): List<Path> = map { Paths.get(it) }

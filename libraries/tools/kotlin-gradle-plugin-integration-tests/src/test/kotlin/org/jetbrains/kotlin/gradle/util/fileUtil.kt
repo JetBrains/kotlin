@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.util
 
+import org.jetbrains.kotlin.gradle.testbase.createTempDirDeleteOnExit
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import kotlin.io.path.relativeTo
 
 fun File.getFileByName(name: String): File =
     findFileByName(name) ?: throw AssertionError("Could not find file with name '$name' in $this")
@@ -36,10 +34,7 @@ fun File.addNewLine() {
     modify { "$it\n" }
 }
 
-fun createTempDir(prefix: String): File =
-    Files.createTempDirectory(prefix).toFile().apply {
-        deleteOnExit()
-    }
+fun createTempDir(prefix: String): File = createTempDirDeleteOnExit(prefix).toFile()
 
 /**
  * converts back slashes to forward slashes

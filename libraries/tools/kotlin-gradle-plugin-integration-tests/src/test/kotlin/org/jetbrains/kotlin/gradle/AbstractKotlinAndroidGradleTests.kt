@@ -1030,8 +1030,7 @@ fun getSomething() = 10
                 .filter { it.contains("[KOTLIN] compile iteration:") }
                 .drop(1)
                 .joinToString(separator = "/n")
-            val actualSources = getCompiledKotlinSources(filteredOutput).projectRelativePaths(project)
-            assertSameFiles(project.relativize(androidModuleKt), actualSources, "Compiled Kotlin files differ:\n  ")
+            assertCompiledKotlinSources(project.relativize(androidModuleKt), output = filteredOutput)
         }
     }
 

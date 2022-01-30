@@ -10,7 +10,7 @@ import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 import kotlin.io.path.readText
-import kotlin.test.assertEquals
+import kotlin.test.asserter
 
 /**
  * Asserts file under [file] path exists and is a regular file.
@@ -189,8 +189,24 @@ fun GradleProject.assertFileDoesNotContain(
     }
 }
 
-fun GradleProject.assertSameFiles(expected: Iterable<Path>, actual: Iterable<Path>, messagePrefix: String) {
-    val expectedSet = expected.map { it.toString().normalizePath() }.toSortedSet().joinToString("\n")
-    val actualSet = actual.map { it.toString().normalizePath() }.toSortedSet().joinToString("\n")
-    assertEquals(expectedSet, actualSet, messagePrefix)
+fun assertSameFiles(expected: Iterable<Path>, actual: Iterable<Path>, messagePrefix: String) {
+    val expectedSet = expected.map { it.toString().normalizePath() }.toSet()
+    val actualSet = actual.map { it.toString().normalizePath() }.toSet()
+    asserter.assertTrue(lazyMessage = {
+        messagePrefix +
+                "Actual set does not exactly match expected set.\n" +
+                "Expected set: ${expectedSet.sorted().joinToString(", ")}\n" +
+                "Actual set: ${actualSet.sorted().joinToString(", ")}\n"
+    }, actualSet.size == expectedSet.size && actualSet.containsAll(expectedSet))
+}
+
+fun assertContainsFiles(expected: Iterable<Path>, actual: Iterable<Path>, messagePrefix: String) {
+    val expectedSet = expected.map { it.toString().normalizePath() }.toSet()
+    val actualSet = actual.map { it.toString().normalizePath() }.toSet()
+    asserter.assertTrue(lazyMessage = {
+        messagePrefix +
+                "Actual set does not contain all of expected set.\n" +
+                "Expected set: ${expectedSet.sorted().joinToString(", ")}\n" +
+                "Actual set: ${actualSet.sorted().joinToString(", ")}\n"
+    }, actualSet.containsAll(expectedSet))
 }
