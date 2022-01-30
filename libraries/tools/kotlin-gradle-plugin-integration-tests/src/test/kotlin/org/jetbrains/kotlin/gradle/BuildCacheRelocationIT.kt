@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledOnOs
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.createDirectory
+import kotlin.io.path.pathString
 
 @DisplayName("Build cache relocation")
 @SimpleGradlePluginTests
@@ -263,20 +265,6 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         )
     }
 
-    @DisplayName("Incremental compilation build cache does not break relocated cache")
-    @GradleTest
-    fun testKotlinCompileCachingIncrementalBuildWithRelocation(gradleVersion: GradleVersion) {
-        val firstProject = project("buildCacheSimple", gradleVersion) {
-            enableLocalBuildCache(localBuildCacheDir)
-        }
-
-        val secondProject = project("buildCacheSimple", gradleVersion) {
-            enableLocalBuildCache(localBuildCacheDir)
-        }
-
-        checkKotlinCompileCachingIncrementalBuild(firstProject, secondProject)
-    }
-
     @DisplayName("Kapt incremental compilation works with cache")
     @GradleTest
     fun testKaptCachingIncrementalBuildWithoutRelocation(gradleVersion: GradleVersion) {
@@ -335,10 +323,22 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         }
     }
 
-    private fun checkKotlinCompileCachingIncrementalBuild(
-        firstProject: TestProject,
-        secondProject: TestProject
-    ) {
+    @DisplayName("Kotlin incremental compilation should work correctly")
+    @GradleTest
+    fun testKotlinIncrementalCompilation(gradleVersion: GradleVersion) {
+        checkKotlinIncrementalCompilation(gradleVersion)
+    }
+
+    @DisplayName("Kotlin incremental compilation with `kotlin.incremental.useClasspathSnapshot` feature should work correctly")
+    @GradleTest
+    fun testKotlinIncrementalCompilation_withClasspathSnapshot(gradleVersion: GradleVersion) {
+        checkKotlinIncrementalCompilation(gradleVersion, useClasspathSnapshot = true)
+    }
+
+    private fun checkKotlinIncrementalCompilation(gradleVersion: GradleVersion, useClasspathSnapshot: Boolean? = null) {
+        val buildOptions = defaultBuildOptions.copy(useClasspathSnapshot = useClasspathSnapshot)
+        val (firstProject, secondProject) = prepareTestProjects("buildCacheSimple", gradleVersion, buildOptions)
+
         // First build, should be stored into the build cache:
         firstProject.build("assemble") {
             assertTasksPackedToCache(":compileKotlin")
@@ -351,9 +351,13 @@ class BuildCacheRelocationIT : KGPBaseTest() {
 
         // Change the return type of foo() from Int to String in foo.kt, and check that fooUsage.kt is recompiled as well:
         val fooKtSourceFile = secondProject.kotlinSourcesDir().resolve("foo.kt")
+        val fooUsageKtSourceFile = secondProject.kotlinSourcesDir().resolve("fooUsage.kt")
         fooKtSourceFile.modify { it.replace("Int = 1", "String = \"abc\"") }
-        secondProject.build("assemble") {
-            assertIncrementalCompilation(modifiedFiles = setOf(fooKtSourceFile))
+        secondProject.build("assemble", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            secondProject.assertIncrementalCompilation(
+                this,
+                listOf(fooKtSourceFile, fooUsageKtSourceFile).relativizeTo(secondProject.projectPath).map { it.pathString }
+            )
         }
 
         // Revert the change to the return type of foo(), and check if we get a cache hit

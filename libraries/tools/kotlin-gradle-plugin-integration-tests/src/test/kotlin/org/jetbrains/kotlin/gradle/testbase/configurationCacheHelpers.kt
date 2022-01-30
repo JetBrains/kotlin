@@ -55,7 +55,7 @@ fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
  */
 @OptIn(ExperimentalPathApi::class)
 private fun copyReportToTempDir(htmlReportFile: Path): Path =
-    createTempDir("report").let { tempDir ->
+    createTempDirDeleteOnExit("report").let { tempDir ->
         htmlReportFile.parent.toFile().copyRecursively(tempDir.toFile())
         tempDir.resolve(htmlReportFile.name)
     }
