@@ -11,24 +11,16 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.report.BuildReportType
-import org.jetbrains.kotlin.gradle.testbase.applyAndroidTestFixes
-import org.jetbrains.kotlin.gradle.testbase.enableCacheRedirector
-import org.jetbrains.kotlin.gradle.testbase.extractJavaCompiledSources
-import org.jetbrains.kotlin.gradle.testbase.extractKotlinCompiledSources
-import org.jetbrains.kotlin.gradle.testbase.prettyPrintXml
-import org.jetbrains.kotlin.gradle.testbase.readAndCleanupTestResults
-import org.jetbrains.kotlin.gradle.testbase.addPluginManagementToSettings
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.test.RunnerWithMuteInDatabase
-import org.jetbrains.kotlin.test.util.trimTrailingWhitespaces
 import org.junit.After
 import org.junit.AfterClass
-import org.junit.Assert
 import org.junit.Before
 import org.junit.runner.RunWith
 import java.io.File
@@ -384,14 +376,7 @@ abstract class BaseGradleIT {
         }
     }
 
-    class CompiledProject(val project: Project, val output: String, val resultCode: Int) {
-        fun getCompiledKotlinSources(output: String) =
-            extractKotlinCompiledSources(project.projectDir.toPath(), output).map { sourcePath -> sourcePath.toFile() }
-
-        val compiledJavaSources: Iterable<File> by lazy {
-            extractJavaCompiledSources(output).map { sourcePath -> sourcePath.toFile() }
-        }
-    }
+    class CompiledProject(val project: Project, val output: String, val resultCode: Int)
 
     // Basically the same as `Project.build`, tells gradle to wait for debug on 5005 port
     // Faster to type than `project.build("-Dorg.gradle.debug=true")` or `project.build(options = defaultBuildOptions().copy(debug = true))`
@@ -584,27 +569,6 @@ abstract class BaseGradleIT {
         return map { it.canonicalFile.toRelativeString(project.projectDir) }
     }
 
-    fun CompiledProject.assertSameFiles(expected: Iterable<String>, actual: Iterable<String>, messagePrefix: String): CompiledProject {
-        val expectedSet = expected.map { it.normalizePath() }.toSortedSet().joinToString("\n")
-        val actualSet = actual.map { it.normalizePath() }.toSortedSet().joinToString("\n")
-        Assert.assertEquals(messagePrefix, expectedSet, actualSet)
-        return this
-    }
-
-    fun CompiledProject.assertContainFiles(
-        expected: Iterable<String>,
-        actual: Iterable<String>,
-        messagePrefix: String = ""
-    ): CompiledProject {
-        val expectedNormalized = expected.map(::normalizePath).toSortedSet()
-        val actualNormalized = actual.map(::normalizePath).toSortedSet()
-        assertTrue(
-            actualNormalized.containsAll(expectedNormalized),
-            messagePrefix + "expected files: ${expectedNormalized.joinToString()}\n  !in actual files: ${actualNormalized.joinToString()}"
-        )
-        return this
-    }
-
     fun CompiledProject.findTasksByPattern(pattern: String): Set<String> {
         return "task '($pattern)'".toRegex().findAll(output).mapTo(HashSet()) { it.groupValues[1] }
     }
@@ -769,13 +733,14 @@ Finished executing task ':$taskName'|
         output: String = this.output,
         suffix: String = ""
     ): CompiledProject {
-        val messagePrefix = "Compiled Kotlin files differ${suffix}:\n  "
-        val actualSources = getCompiledKotlinSources(output).projectRelativePaths(this.project)
-        return if (weakTesting) {
-            assertContainFiles(expectedSourcesRelativePaths, actualSources, messagePrefix)
+        val messagePrefix = "Compiled Kotlin files differ${suffix}:\n"
+        val actualSources = extractCompiledKotlinFiles(output)
+        if (weakTesting) {
+            assertContainsFiles(expectedSourcesRelativePaths.toPaths(), actualSources, messagePrefix)
         } else {
-            assertSameFiles(expectedSourcesRelativePaths, actualSources, messagePrefix)
+            assertSameFiles(expectedSourcesRelativePaths.toPaths(), actualSources, messagePrefix)
         }
+        return this
     }
 
     fun CompiledProject.assertCompiledKotlinFiles(expectedFiles: Iterable<File>): CompiledProject =
@@ -790,11 +755,15 @@ Finished executing task ':$taskName'|
     fun CompiledProject.assertCompiledJavaSources(
         sources: Iterable<String>,
         weakTesting: Boolean = false
-    ): CompiledProject =
+    ): CompiledProject {
+        val messagePrefix = "Compiled Java files differ:\n"
+        val actualSources = extractCompiledJavaFiles(project.projectDir, output)
         if (weakTesting)
-            assertContainFiles(sources, compiledJavaSources.projectRelativePaths(this.project), "Compiled Java files differ:\n  ")
+            assertContainsFiles(sources.toPaths(), actualSources, messagePrefix)
         else
-            assertSameFiles(sources, compiledJavaSources.projectRelativePaths(this.project), "Compiled Java files differ:\n  ")
+            assertSameFiles(sources.toPaths(), actualSources, messagePrefix)
+        return this
+    }
 
     fun Project.resourcesDir(subproject: String? = null, sourceSet: String = "main"): String =
         (subproject?.plus("/") ?: "") + "build/resources/$sourceSet/"
@@ -892,7 +861,7 @@ Finished executing task ':$taskName'|
             options.incrementalJsKlib?.let { add("-Pkotlin.incremental.js.klib=$it") }
             options.jsIrBackend?.let { add("-Pkotlin.js.useIrBackend=$it") }
             options.usePreciseJavaTracking?.let { add("-Pkotlin.incremental.usePreciseJavaTracking=$it") }
-            options.useClasspathSnapshot?.let { add("-Pkotlin.incremental.useClasspathSnapshot=$it") }
+            options.useClasspathSnapshot?.let { add("-P${COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.property}=$it") }
             options.androidGradlePluginVersion?.let { add("-Pandroid_tools_version=$it") }
             if (options.debug) {
                 add("-Dorg.gradle.debug=true")

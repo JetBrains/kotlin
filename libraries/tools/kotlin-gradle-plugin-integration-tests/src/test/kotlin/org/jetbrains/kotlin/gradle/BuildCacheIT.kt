@@ -102,33 +102,6 @@ class BuildCacheIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Incremental compilation works with cache")
-    @GradleTest
-    fun testKotlinCompileIncrementalBuildWithoutRelocation(gradleVersion: GradleVersion) {
-        project("buildCacheSimple", gradleVersion) {
-            enableLocalBuildCache(localBuildCacheDir)
-
-            build("assemble") {
-                assertTasksPackedToCache(":compileKotlin")
-            }
-
-            build("clean", "assemble") {
-                assertTasksFromCache(":compileKotlin")
-            }
-
-            val fooKtSourceFile = kotlinSourcesDir().resolve("foo.kt")
-            fooKtSourceFile.modify { it.replace("Int = 1", "String = \"abc\"") }
-            build("assemble") {
-                assertIncrementalCompilation(modifiedFiles = setOf(fooKtSourceFile))
-            }
-
-            fooKtSourceFile.modify { it.replace("String = \"abc\"", "Int = 1") }
-            build("clean", "assemble") {
-                assertTasksFromCache(":compileKotlin")
-            }
-        }
-    }
-
     @DisplayName("Debug log level should not break build cache")
     @GradleTest
     fun testDebugLogLevelCaching(gradleVersion: GradleVersion) {
