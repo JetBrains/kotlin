@@ -129,7 +129,15 @@ abstract class IncrementalCompilerRunner<
                 else -> providedChangedFiles
             }
 
-            val compilationMode = sourcesToCompile(caches, changedFiles, args, messageCollector, classpathAbiSnapshot)
+            // Check whether the cache directory is populated (note that it may be deleted upon a Gradle build cache hit if the directory is
+            // marked as @LocalState in the Gradle task).
+            val cacheDirectoryNotPopulated = cacheDirectory.walk().none { it.isFile }
+
+            val compilationMode = if (cacheDirectoryNotPopulated) {
+                CompilationMode.Rebuild(BuildAttribute.CACHE_DIRECTORY_NOT_POPULATED)
+            } else {
+                sourcesToCompile(caches, changedFiles, args, messageCollector, classpathAbiSnapshot)
+            }
 
             val exitCode = when (compilationMode) {
                 is CompilationMode.Incremental -> {

@@ -256,7 +256,7 @@ class IncrementalJvmCompilerRunner(
             is NotAvailableDueToMissingClasspathSnapshot -> ChangesEither.Unknown(BuildAttribute.CLASSPATH_SNAPSHOT_NOT_FOUND)
             is NotAvailableForNonIncrementalRun -> ChangesEither.Unknown(BuildAttribute.UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
             is ClasspathSnapshotDisabled -> reporter.measure(BuildTime.IC_ANALYZE_CHANGES_IN_DEPENDENCIES) {
-                val lastBuildInfo = BuildInfo.read(lastBuildInfoFile) ?: return CompilationMode.Rebuild(BuildAttribute.IC_IS_NOT_ENABLED)
+                val lastBuildInfo = BuildInfo.read(lastBuildInfoFile) ?: return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
                 reporter.reportVerbose { "Last Kotlin Build info -- $lastBuildInfo" }
                 val scopes = caches.lookupCache.lookupSymbols.map { it.scope.ifBlank { it.name } }.distinct()
 
