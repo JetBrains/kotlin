@@ -3,14 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.fir.fir;
+package org.jetbrains.kotlin.analysis.api.fir.components;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService;
 import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.fir.AbstractResolveCallTest;
+import org.jetbrains.kotlin.analysis.api.impl.base.test.components.AbstractResolveCallTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
