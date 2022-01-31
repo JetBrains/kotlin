@@ -281,7 +281,10 @@ private val functionInliningPhase = makeIrModulePhase<JvmBackendContext>(
                 return (symbol.owner as? IrSimpleFunction)?.resolveFakeOverride() ?: symbol.owner
             }
         }
-        FunctionInlining(context, JvmInlineFunctionResolver(), context.innerClassesSupport)
+        FunctionInlining(
+            context, JvmInlineFunctionResolver(), context.innerClassesSupport,
+            inlineArgumentsWithTheirOriginalType = true
+        )
     },
     name = "FunctionInliningPhase",
     description = "Perform function inlining",

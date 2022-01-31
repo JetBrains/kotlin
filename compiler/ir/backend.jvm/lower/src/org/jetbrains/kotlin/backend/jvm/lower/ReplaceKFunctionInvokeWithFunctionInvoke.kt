@@ -45,7 +45,10 @@ private class ReplaceKFunctionInvokeWithFunctionInvoke : FileLoweringPass, IrEle
         if (callee.name != OperatorNameConventions.INVOKE) return super.visitCall(expression)
 
         val parentClass = callee.parent as? IrClass ?: return super.visitCall(expression)
-        if (!parentClass.defaultType.isKFunction() && !parentClass.defaultType.isKSuspendFunction()) return super.visitCall(expression)
+        if (!parentClass.defaultType.isKFunction() && !parentClass.defaultType.isKSuspendFunction()) {
+            implicitCastKFunctionReceiverIntoFunctionIfNeeded(expression, parentClass)
+            return super.visitCall(expression)
+        }
 
         // The single overridden function of KFunction{n}.invoke must be Function{n}.invoke.
         val newCallee = callee.overriddenSymbols.single()
@@ -61,6 +64,18 @@ private class ReplaceKFunctionInvokeWithFunctionInvoke : FileLoweringPass, IrEle
                     putValueArgument(i, expression.getValueArgument(i)?.transform(this@ReplaceKFunctionInvokeWithFunctionInvoke, null))
                 }
             }
+        }
+    }
+
+    // This method suppose to cover case when we have `Function{n}.invoke` but receiver has type of `KFunction`
+    private fun implicitCastKFunctionReceiverIntoFunctionIfNeeded(expression: IrCall, parentClass: IrClass) {
+        val receiver = expression.dispatchReceiver
+        if (receiver != null && (receiver.type.isKFunction() || receiver.type.isKSuspendFunction())) {
+            val newType = parentClass.defaultType
+
+            expression.dispatchReceiver = IrTypeOperatorCallImpl(
+                expression.startOffset, expression.endOffset, newType, IrTypeOperator.IMPLICIT_CAST, newType, receiver.transform(this, null)
+            )
         }
     }
 }
