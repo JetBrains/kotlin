@@ -1,0 +1,73 @@
+KtErrorCallInfo:
+  candidateCalls = [
+    KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /function(a: kotlin.Char): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = a
+              receiverType = null
+              returnType = kotlin.Char
+              symbol = a: kotlin.Char
+          ]
+      argumentMapping = {
+        1 -> (KtVariableLikeSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Char
+          symbol = a: kotlin.Char)
+      },
+    KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /function(b: kotlin.Boolean): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = b: kotlin.Boolean
+          ]
+      argumentMapping = {
+        1 -> (KtVariableLikeSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.Boolean
+          symbol = b: kotlin.Boolean)
+      },
+    KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /function(c: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = c
+              receiverType = null
+              returnType = kotlin.String
+              symbol = c: kotlin.String
+          ]
+      argumentMapping = {
+        1 -> (KtVariableLikeSignature:
+          name = c
+          receiverType = null
+          returnType = kotlin.String
+          symbol = c: kotlin.String)
+      }
+  ]
+  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions are applicable: [/function, /function, /function]>

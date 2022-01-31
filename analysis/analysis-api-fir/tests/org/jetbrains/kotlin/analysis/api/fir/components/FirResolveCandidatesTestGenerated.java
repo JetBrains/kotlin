@@ -41,6 +41,34 @@ public class FirResolveCandidatesTestGenerated extends AbstractResolveCandidates
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates")
+    @TestDataPath("$PROJECT_ROOT")
+    public class MultipleCandidates {
+        @Test
+        public void testAllFilesPresentInMultipleCandidates() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("ambiguous.kt")
+        public void testAmbiguous() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/ambiguous.kt");
+        }
+
+        @Test
+        @TestMetadata("ambiguousWithExplicitTypeParameters.kt")
+        public void testAmbiguousWithExplicitTypeParameters() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/ambiguousWithExplicitTypeParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("ambiguousWithInferredTypeParameters.kt")
+        public void testAmbiguousWithInferredTypeParameters() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/ambiguousWithInferredTypeParameters.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate")
     @TestDataPath("$PROJECT_ROOT")
     public class SingleCandidate {
