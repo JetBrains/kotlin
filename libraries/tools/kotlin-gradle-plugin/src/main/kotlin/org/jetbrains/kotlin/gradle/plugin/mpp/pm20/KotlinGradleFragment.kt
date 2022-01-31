@@ -87,7 +87,9 @@ open class KotlinGradleFragmentInternal @Inject constructor(
         get() = _directRefinesDependencies.map { it.get() }
 
     override val declaredModuleDependencies: Iterable<KotlinModuleDependency>
-        get() = project.configurations.getByName(apiConfigurationName).allDependencies.map { it.toModuleDependency(project) } // FIXME impl
+        get() = listOf(apiConfiguration, implementationConfiguration).flatMapTo(mutableSetOf()) {
+            it.allDependencies.map { it.toModuleDependency(project) }
+        }
 
     override val kotlinSourceRoots: SourceDirectorySet =
         project.objects.sourceDirectorySet(
