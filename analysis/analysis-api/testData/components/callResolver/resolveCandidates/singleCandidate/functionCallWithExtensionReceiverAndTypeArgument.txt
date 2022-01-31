@@ -1,0 +1,26 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = "str"
+        isSafeNavigation = false
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.String
+        returnType = kotlin.Unit
+        symbol = /function(<extension receiver>: A, a: B): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: B
+        ]
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = a
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = a: B)
+    }
