@@ -14,23 +14,23 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataCo
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.analysis.low.level.api.fir.FirPhaseRunner
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirIdeDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.FirLazyTransformerForIDE.Companion.updatePhaseDeep
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
 
 /**
  * Transform designation into IMPLICIT_TYPES_BODY_RESOLVE declaration. Affects only for target declaration, it's children and dependents
  */
-internal class FirDesignatedImplicitTypesTransformerForIDE(
+internal class LLFirDesignatedImplicitTypesTransformer(
     private val designation: FirDeclarationDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
     towerDataContextCollector: FirTowerDataContextCollector?,
     implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession = ImplicitBodyResolveComputationSession(),
-) : FirLazyTransformerForIDE, FirImplicitAwareBodyResolveTransformer(
+) : LLFirLazyTransformer, FirImplicitAwareBodyResolveTransformer(
     session,
     implicitBodyResolveComputationSession = implicitBodyResolveComputationSession,
     phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
@@ -41,17 +41,17 @@ internal class FirDesignatedImplicitTypesTransformerForIDE(
         session,
         scopeSession,
         implicitBodyResolveComputationSession,
-        ::FirIdeDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
+        ::LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
     )
 ) {
-    private val ideDeclarationTransformer = IDEDeclarationTransformer(designation)
+    private val ideDeclarationTransformer = LLFirDeclarationTransformer(designation)
 
     override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration =
         ideDeclarationTransformer.transformDeclarationContent(this, declaration, data) {
             super.transformDeclarationContent(declaration, data)
         }
 
-    override fun transformDeclaration(phaseRunner: FirPhaseRunner) {
+    override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.declaration.resolvePhase >= FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) return
         designation.declaration.ensurePhase(FirResolvePhase.CONTRACTS)
 

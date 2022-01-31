@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.FirIdeProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 
 internal abstract class LLFirResolvableModuleSession(
     builtinTypes: BuiltinTypes,
-) : FirIdeModuleSession(builtinTypes, Kind.Source) {
-    internal val cache: ModuleFileCache get() = (firProvider as FirIdeProvider).cache
+) : LLFirModuleSession(builtinTypes, Kind.Source) {
+    internal val cache: ModuleFileCache get() = (firProvider as LLFirProvider).cache
     abstract val firFileBuilder: FirFileBuilder
 }

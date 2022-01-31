@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.analysis.api.impl.barebone.test.projectModuleProvide
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.createResolveStateForNoCaching
-import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.FirLazyTransformerForIDE
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -82,12 +81,12 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
         if (ignoreTest(filePath, configuration)) {
             return
         }
-        val oldEnableDeepEnsure = FirLazyTransformerForIDE.enableDeepEnsure
+        val oldEnableDeepEnsure = LLFirLazyTransformer.enableDeepEnsure
         try {
-            FirLazyTransformerForIDE.enableDeepEnsure = true
+            LLFirLazyTransformer.enableDeepEnsure = true
             super.runTest(filePath)
         } finally {
-            FirLazyTransformerForIDE.enableDeepEnsure = oldEnableDeepEnsure
+            LLFirLazyTransformer.enableDeepEnsure = oldEnableDeepEnsure
         }
     }
 }

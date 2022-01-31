@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
 
-internal class IDEDeclarationTransformer(private val designation: FirDeclarationDesignation) {
+internal class LLFirDeclarationTransformer(private val designation: FirDeclarationDesignation) {
     private val designationWithoutTargetIterator = designation.toSequence(includeTarget = false).iterator()
     private var isInsideTargetDeclaration: Boolean = false
     private var designationPassed: Boolean = false

@@ -12,22 +12,22 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.analysis.low.level.api.fir.FirPhaseRunner
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.FirLazyTransformerForIDE.Companion.updatePhaseDeep
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
 
 /**
  * Transform designation into TYPES phase. Affects only for designation, target declaration and it's children
  */
-internal class FirDesignatedTypeResolverTransformerForIDE(
+internal class LLFirDesignatedTypeResolverTransformer(
     private val designation: FirDeclarationDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
-) : FirLazyTransformerForIDE, FirTypeResolveTransformer(session, scopeSession) {
+) : LLFirLazyTransformer, FirTypeResolveTransformer(session, scopeSession) {
 
-    private val declarationTransformer = IDEDeclarationTransformer(designation)
+    private val declarationTransformer = LLFirDeclarationTransformer(designation)
 
     override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         return if (element is FirDeclaration && (element is FirRegularClass || element is FirFile)) {
@@ -40,7 +40,7 @@ internal class FirDesignatedTypeResolverTransformerForIDE(
         }
     }
 
-    override fun transformDeclaration(phaseRunner: FirPhaseRunner) {
+    override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.declaration.resolvePhase >= FirResolvePhase.TYPES) return
         designation.declaration.ensurePhase(FirResolvePhase.SUPER_TYPES)
 

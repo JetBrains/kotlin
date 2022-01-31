@@ -10,11 +10,10 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.analysis.low.level.api.fir.FirPhaseRunner
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 
-internal interface FirLazyTransformerForIDE {
-    fun transformDeclaration(phaseRunner: FirPhaseRunner)
+internal interface LLFirLazyTransformer {
+    fun transformDeclaration(phaseRunner: LLFirPhaseRunner)
     fun ensureResolved(declaration: FirDeclaration)
     fun ensureResolvedDeep(declaration: FirDeclaration) {
         if (!enableDeepEnsure) return
@@ -64,8 +63,8 @@ internal interface FirLazyTransformerForIDE {
         internal var enableDeepEnsure: Boolean = false
             @TestOnly set
 
-        val DUMMY = object : FirLazyTransformerForIDE {
-            override fun transformDeclaration(phaseRunner: FirPhaseRunner) = Unit
+        val DUMMY = object : LLFirLazyTransformer {
+            override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) = Unit
             override fun ensureResolved(declaration: FirDeclaration) = error("Not implemented")
         }
     }

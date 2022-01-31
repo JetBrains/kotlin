@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
-import org.jetbrains.kotlin.analysis.low.level.api.fir.FirPhaseRunner
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirIdeDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
 
-internal class FirFileAnnotationsResolveTransformer(
+internal class LLFirFileAnnotationsResolveTransformer(
     private val firFile: FirFile,
     private val annotations: List<FirAnnotation>,
     session: FirSession,
@@ -31,10 +31,10 @@ internal class FirFileAnnotationsResolveTransformer(
         session,
         scopeSession,
         implicitBodyResolveComputationSession,
-        ::FirIdeDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
+        ::LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
     ),
     firTowerDataContextCollector = firTowerDataContextCollector
-), FirLazyTransformerForIDE {
+), LLFirLazyTransformer {
 
     override fun transformDeclarationContent(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {
         require(declaration is FirFile) { "Unexpected declaration ${declaration::class.simpleName}" }
@@ -46,7 +46,7 @@ internal class FirFileAnnotationsResolveTransformer(
         return declaration
     }
 
-    override fun transformDeclaration(phaseRunner: FirPhaseRunner) {
+    override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (annotations.all { it.resolved }) return
         check(firFile.resolvePhase >= FirResolvePhase.IMPORTS) { "Invalid file resolve phase ${firFile.resolvePhase}" }
 

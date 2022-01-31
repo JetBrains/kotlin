@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirElementBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuild
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.FirIdeProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSessionProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSourcesSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSourcesSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getElementTextInContext
@@ -36,12 +36,12 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.psi.*
 
 internal abstract class LLFirResolvableModuleResolveState(
-    protected val sessionProvider: FirIdeSessionProvider,
+    protected val sessionProvider: LLFirSessionProvider,
     val firFileBuilder: FirFileBuilder,
     val firLazyDeclarationResolver: FirLazyDeclarationResolver,
-) : FirModuleResolveState() {
+) : LLFirModuleResolveState() {
     final override val rootModuleSession = sessionProvider.rootModuleSession
-    val cache = (rootModuleSession.firProvider as FirIdeProvider).cache
+    val cache = (rootModuleSession.firProvider as LLFirProvider).cache
 
     val fileStructureCache = FileStructureCache(firFileBuilder, firLazyDeclarationResolver)
     val elementBuilder = FirElementBuilder()
@@ -127,7 +127,7 @@ internal abstract class LLFirResolvableModuleResolveState(
     override fun resolveFirToPhase(declaration: FirDeclaration, toPhase: FirResolvePhase) {
         if (toPhase == FirResolvePhase.RAW_FIR) return
         val fileCache = when (val session = declaration.moduleData.session) {
-            is FirIdeSourcesSession -> session.cache
+            is LLFirSourcesSession -> session.cache
             else -> return
         }
         firLazyDeclarationResolver.lazyResolveDeclaration(

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.*
@@ -53,7 +53,7 @@ import kotlin.contracts.contract
  */
 internal class KtSymbolByFirBuilder private constructor(
     private val project: Project,
-    resolveState: FirModuleResolveState,
+    resolveState: LLFirModuleResolveState,
     override val token: ValidityToken,
     val withReadOnlyCaching: Boolean,
     private val symbolsCache: BuilderCache<FirBasedSymbol<*>, KtSymbol>,
@@ -74,7 +74,7 @@ internal class KtSymbolByFirBuilder private constructor(
     val typeBuilder = TypeBuilder()
 
     constructor(
-        resolveState: FirModuleResolveState,
+        resolveState: LLFirModuleResolveState,
         project: Project,
         token: ValidityToken
     ) : this(
@@ -88,7 +88,7 @@ internal class KtSymbolByFirBuilder private constructor(
         filesCache = BuilderCache(),
     )
 
-    fun createReadOnlyCopy(newResolveState: FirModuleResolveState): KtSymbolByFirBuilder {
+    fun createReadOnlyCopy(newResolveState: LLFirModuleResolveState): KtSymbolByFirBuilder {
         check(!withReadOnlyCaching) { "Cannot create readOnly KtSymbolByFirBuilder from a readonly one" }
         return KtSymbolByFirBuilder(
             project,

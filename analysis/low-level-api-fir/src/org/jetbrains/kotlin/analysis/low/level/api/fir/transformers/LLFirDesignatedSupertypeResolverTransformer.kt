@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.toSymbol
-import org.jetbrains.kotlin.analysis.low.level.api.fir.FirPhaseRunner
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
@@ -21,14 +21,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCa
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.runCustomResolveUnderLock
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.FirLazyTransformerForIDE.Companion.updatePhaseDeep
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
 
 /**
  * Transform designation into SUPER_TYPES phase. Affects only for designation, target declaration, it's children and dependents
  */
-internal class FirDesignatedSupertypeResolverTransformerForIDE(
+internal class LLFirDesignatedSupertypeResolverTransformer(
     private val designation: FirDeclarationDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
@@ -36,7 +36,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
     private val firLazyDeclarationResolver: FirLazyDeclarationResolver,
     private val firProviderInterceptor: FirProviderInterceptor?,
     private val checkPCE: Boolean,
-) : FirLazyTransformerForIDE {
+) : LLFirLazyTransformer {
 
     private val supertypeComputationSession = SupertypeComputationSession()
 
@@ -49,7 +49,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
             localClassesNavigationInfo = null,
             firProviderInterceptor = firProviderInterceptor,
         ) {
-        val declarationTransformer = IDEDeclarationTransformer(classDesignation)
+        val declarationTransformer = LLFirDeclarationTransformer(classDesignation)
 
         override fun visitDeclarationContent(declaration: FirDeclaration, data: Any?) {
             declarationTransformer.visitDeclarationContent(this, declaration, data) {
@@ -62,7 +62,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
     private inner class DesignatedFirApplySupertypesTransformer(classDesignation: FirDeclarationDesignation) :
         FirApplySupertypesTransformer(supertypeComputationSession) {
 
-        val declarationTransformer = IDEDeclarationTransformer(classDesignation)
+        val declarationTransformer = LLFirDeclarationTransformer(classDesignation)
 
         override fun transformDeclarationContent(declaration: FirDeclaration, data: Any?): FirDeclaration {
             return declarationTransformer.transformDeclarationContent(this, declaration, data) {
@@ -129,7 +129,7 @@ internal class FirDesignatedSupertypeResolverTransformerForIDE(
         }
     }
 
-    override fun transformDeclaration(phaseRunner: FirPhaseRunner) {
+    override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.declaration.resolvePhase >= FirResolvePhase.SUPER_TYPES) return
         designation.firFile.ensurePhase(FirResolvePhase.IMPORTS)
 

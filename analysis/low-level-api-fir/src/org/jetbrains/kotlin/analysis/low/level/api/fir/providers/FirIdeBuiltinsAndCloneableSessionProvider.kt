@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-internal class FirIdeBuiltinsAndCloneableSessionProvider(override val symbolProvider: FirSymbolProvider) : FirProvider() {
+internal class LLFirBuiltinsAndCloneableSessionProvider(override val symbolProvider: FirSymbolProvider) : FirProvider() {
     override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? =
         symbolProvider.getClassLikeSymbolByClassId(classId)?.fir
 
@@ -26,5 +26,5 @@ internal class FirIdeBuiltinsAndCloneableSessionProvider(override val symbolProv
 
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> = shouldNotBeCalled()
 
-    private fun shouldNotBeCalled(): Nothing = error("Should not be called for FirIdeBuiltinsAndCloneableSession")
+    private fun shouldNotBeCalled(): Nothing = error("Should not be called for LLFirBuiltinsAndCloneableSession")
 }

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
-fun FirIdeEnsureBasedTransformerForReturnTypeCalculator(
+fun LLFirEnsureBasedTransformerForReturnTypeCalculator(
     designation: Iterator<FirElement>,
     session: FirSession,
     scopeSession: ScopeSession,
@@ -31,7 +31,7 @@ fun FirIdeEnsureBasedTransformerForReturnTypeCalculator(
     designation.forEachRemaining(designationList::add)
     require(designationList.isNotEmpty()) { "Designation should not be empty" }
 
-    return FirIdeEnsureBasedTransformerForReturnTypeCalculatorImpl(
+    return LLFirEnsureBasedTransformerForReturnTypeCalculatorImpl(
         designationList,
         session,
         scopeSession,
@@ -42,7 +42,7 @@ fun FirIdeEnsureBasedTransformerForReturnTypeCalculator(
 }
 
 
-private class FirIdeEnsureBasedTransformerForReturnTypeCalculatorImpl(
+private class LLFirEnsureBasedTransformerForReturnTypeCalculatorImpl(
     designation: List<FirElement>,
     session: FirSession,
     scopeSession: ScopeSession,

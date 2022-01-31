@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 @ThreadSafeMutableState
-internal class FirIdeProvider(
+internal class LLFirProvider(
     @Suppress("UNUSED_PARAMETER") project: Project,
     val session: FirSession,
     @Suppress("UNUSED_PARAMETER") module: KtModule,
@@ -40,7 +40,7 @@ internal class FirIdeProvider(
 ) : FirProvider() {
     override val symbolProvider: FirSymbolProvider = SymbolProvider()
 
-    private val providerHelper = FirProviderHelper(
+    private val providerHelper = LLFirProviderHelper(
         cache,
         firFileBuilder,
         declarationProvider,

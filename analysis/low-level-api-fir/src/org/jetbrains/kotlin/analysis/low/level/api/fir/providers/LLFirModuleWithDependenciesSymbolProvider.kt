@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-internal class FirModuleWithDependenciesSymbolProvider(
+internal class LLFirModuleWithDependenciesSymbolProvider(
     session: FirSession,
     private val providers: List<FirSymbolProvider>,
     val dependencyProvider: DependentModuleProviders
@@ -81,7 +81,7 @@ internal class DependentModuleProviders(session: FirSession, private val provide
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
         providers.firstNotNullOfOrNull { provider ->
             when (provider) {
-                is FirModuleWithDependenciesSymbolProvider -> provider.getClassLikeSymbolByFqNameWithoutDependencies(classId)
+                is LLFirModuleWithDependenciesSymbolProvider -> provider.getClassLikeSymbolByFqNameWithoutDependencies(classId)
                 else -> provider.getClassLikeSymbolByClassId(classId)
             }
         }
@@ -91,7 +91,7 @@ internal class DependentModuleProviders(session: FirSession, private val provide
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
         providers.forEach { provider ->
             when (provider) {
-                is FirModuleWithDependenciesSymbolProvider ->
+                is LLFirModuleWithDependenciesSymbolProvider ->
                     provider.getTopLevelCallableSymbolsToWithoutDependencies(destination, packageFqName, name)
                 else -> provider.getTopLevelCallableSymbolsTo(destination, packageFqName, name)
             }
@@ -102,7 +102,7 @@ internal class DependentModuleProviders(session: FirSession, private val provide
     override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
         providers.forEach { provider ->
             when (provider) {
-                is FirModuleWithDependenciesSymbolProvider ->
+                is LLFirModuleWithDependenciesSymbolProvider ->
                     provider.getTopLevelFunctionSymbolsToWithoutDependencies(destination, packageFqName, name)
                 else -> provider.getTopLevelFunctionSymbolsTo(destination, packageFqName, name)
             }
@@ -113,7 +113,7 @@ internal class DependentModuleProviders(session: FirSession, private val provide
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
         providers.forEach { provider ->
             when (provider) {
-                is FirModuleWithDependenciesSymbolProvider ->
+                is LLFirModuleWithDependenciesSymbolProvider ->
                     provider.getTopLevelPropertySymbolsToWithoutDependencies(destination, packageFqName, name)
                 else -> provider.getTopLevelPropertySymbolsTo(destination, packageFqName, name)
             }
@@ -123,7 +123,7 @@ internal class DependentModuleProviders(session: FirSession, private val provide
     override fun getPackage(fqName: FqName): FqName? =
         providers.firstNotNullOfOrNull { provider ->
             when (provider) {
-                is FirModuleWithDependenciesSymbolProvider -> provider.getPackageWithoutDependencies(fqName)
+                is LLFirModuleWithDependenciesSymbolProvider -> provider.getPackageWithoutDependencies(fqName)
                 else -> provider.getPackage(fqName)
             }
         }

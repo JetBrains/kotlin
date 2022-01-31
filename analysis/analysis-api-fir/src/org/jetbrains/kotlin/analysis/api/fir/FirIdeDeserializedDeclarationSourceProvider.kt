@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.KtFakeSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.KtDeclarationAndFirDeclarationEqualityChecker
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -163,7 +163,7 @@ fun FirBasedSymbol<*>.findPsi(): PsiElement? =
     fir.findPsi(fir.moduleData.session)
 
 fun FirElement.findPsi(session: FirSession): PsiElement? =
-    findPsi((session as FirIdeSession).project)
+    findPsi((session as LLFirSession).project)
 
 /**
  * Finds [PsiElement] which will be used as go-to referenced element for [KtPsiReference]
@@ -171,4 +171,4 @@ fun FirElement.findPsi(session: FirSession): PsiElement? =
  * Otherwise, behaves the same way as [findPsi] returns exact PSI declaration corresponding to passed [FirDeclaration]
  */
 fun FirDeclaration.findReferencePsi(): PsiElement? =
-    psi ?: FirIdeDeserializedDeclarationSourceProvider.findPsi(this, (moduleData.session as FirIdeSession).project)
+    psi ?: FirIdeDeserializedDeclarationSourceProvider.findPsi(this, (moduleData.session as LLFirSession).project)

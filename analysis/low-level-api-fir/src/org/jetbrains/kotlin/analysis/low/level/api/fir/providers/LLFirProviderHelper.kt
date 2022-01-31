@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
 
-internal class FirProviderHelper(
+internal class LLFirProviderHelper(
     private val cache: ModuleFileCache,
     private val firFileBuilder: FirFileBuilder,
     private val declarationProvider: KotlinDeclarationProvider,

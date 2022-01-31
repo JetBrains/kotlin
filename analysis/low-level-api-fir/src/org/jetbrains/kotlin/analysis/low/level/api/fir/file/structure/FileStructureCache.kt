@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Belongs to a [org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState]
+ * Belongs to a [org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState]
  */
 internal class FileStructureCache(
     private val fileBuilder: FirFileBuilder,

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.executeWithoutPCE
 
-internal class FirPhaseRunner {
+internal class LLFirPhaseRunner {
     /**
      * We temporary disable multi-locks to fix deadlocks problem
      * @see org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LockProvider

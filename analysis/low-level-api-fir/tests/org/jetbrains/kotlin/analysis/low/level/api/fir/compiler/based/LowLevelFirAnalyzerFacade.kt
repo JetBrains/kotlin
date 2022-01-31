@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
 import org.jetbrains.kotlin.fir.analysis.AbstractFirAnalyzerFacade
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.test.model.TestFile
 
 class LowLevelFirAnalyzerFacade(
-    val resolveState: FirModuleResolveState,
+    val resolveState: LLFirModuleResolveState,
     val allFirFiles: Map<TestFile, FirFile>,
     private val diagnosticCheckerFilter: DiagnosticCheckerFilter,
 ) : AbstractFirAnalyzerFacade() {

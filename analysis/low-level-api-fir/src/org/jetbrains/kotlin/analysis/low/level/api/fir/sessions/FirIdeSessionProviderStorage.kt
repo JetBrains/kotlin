@@ -10,7 +10,7 @@ import com.intellij.openapi.util.ModificationTracker
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentMap
-import org.jetbrains.kotlin.analysis.low.level.api.fir.FirPhaseRunner
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.executeWithoutPCE
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
@@ -26,26 +26,26 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.moduleData
 import java.util.concurrent.ConcurrentHashMap
 
-class FirIdeSessionProviderStorage(val project: Project) {
+class LLFirSessionProviderStorage(val project: Project) {
     private val sessionsCache = ConcurrentHashMap<KtModule, FromModuleViewSessionCache>()
 
     private val librariesCache by softCachedValue(project, project.createLibrariesModificationTracker()) { LibrariesCache() }
 
     fun getSessionProvider(
         rootModule: KtModule,
-        configureSession: (FirIdeSession.() -> Unit)? = null
-    ): FirIdeSessionProvider {
-        val firPhaseRunner = FirPhaseRunner()
+        configureSession: (LLFirSession.() -> Unit)? = null
+    ): LLFirSessionProvider {
+        val firPhaseRunner = LLFirPhaseRunner()
 
         val builtinTypes = BuiltinTypes()
-        val builtinsAndCloneableSession = FirIdeSessionFactory.createBuiltinsAndCloneableSession(project, builtinTypes)
+        val builtinsAndCloneableSession = LLFirSessionFactory.createBuiltinsAndCloneableSession(project, builtinTypes)
         val cache = sessionsCache.getOrPut(rootModule) { FromModuleViewSessionCache() }
         val (sessions, session) = cache.withMappings(project) { mappings ->
             val sessions = mutableMapOf<KtModule, LLFirResolvableModuleSession>().apply { putAll(mappings) }
             val session = executeWithoutPCE {
                 when (rootModule) {
                     is KtSourceModule -> {
-                        FirIdeSessionFactory.createSourcesSession(
+                        LLFirSessionFactory.createSourcesSession(
                             project,
                             rootModule,
                             builtinsAndCloneableSession,
@@ -58,7 +58,7 @@ class FirIdeSessionProviderStorage(val project: Project) {
                             configureSession = configureSession,
                         )
                     }
-                    is KtLibraryModule, is KtLibrarySourceModule -> FirIdeSessionFactory.creatLibraryOrLibrarySourceResolvableSession(
+                    is KtLibraryModule, is KtLibrarySourceModule -> LLFirSessionFactory.creatLibraryOrLibrarySourceResolvableSession(
                         project,
                         rootModule,
                         builtinsAndCloneableSession,
@@ -75,7 +75,7 @@ class FirIdeSessionProviderStorage(val project: Project) {
             sessions to session
         }
 
-        return FirIdeSessionProvider(project, session, sessions)
+        return LLFirSessionProvider(project, session, sessions)
     }
 }
 
@@ -83,7 +83,7 @@ private class FromModuleViewSessionCache {
     @Volatile
     private var mappings: PersistentMap<KtModule, FirSessionWithModificationTracker> = persistentMapOf()
 
-    val sessionInvalidator: FirSessionInvalidator = FirSessionInvalidator { session ->
+    val sessionInvalidator: LLFirSessionInvalidator = LLFirSessionInvalidator { session ->
         mappings[session.moduleData.module]?.invalidate()
     }
 

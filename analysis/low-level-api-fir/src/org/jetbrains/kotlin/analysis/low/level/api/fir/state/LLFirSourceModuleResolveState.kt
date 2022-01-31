@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilt
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.DiagnosticsCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSessionProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
-internal class FirSourceModuleResolveState(
+internal class LLFirSourceModuleResolveState(
     override val project: Project,
     override val module: KtModule,
-    sessionProvider: FirIdeSessionProvider,
+    sessionProvider: LLFirSessionProvider,
     firFileBuilder: FirFileBuilder,
     firLazyDeclarationResolver: FirLazyDeclarationResolver,
 ) : LLFirResolvableModuleResolveState(sessionProvider, firFileBuilder, firLazyDeclarationResolver) {

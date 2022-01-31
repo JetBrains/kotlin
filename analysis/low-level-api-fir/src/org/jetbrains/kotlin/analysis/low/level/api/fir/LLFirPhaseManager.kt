@@ -6,20 +6,19 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.FirPhaseManager
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirSessionInvalidator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidator
 
 @ThreadSafeMutableState
-internal class IdeFirPhaseManager(
+internal class LLFirPhaseManager(
     private val lazyDeclarationResolver: FirLazyDeclarationResolver,
     private val cache: ModuleFileCache,
-    private val sessionInvalidator: FirSessionInvalidator,
+    private val sessionInvalidator: LLFirSessionInvalidator,
 ) : FirPhaseManager() {
     override fun ensureResolved(
         symbol: FirBasedSymbol<*>,

@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.impl.barebone.parentsOfType
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
@@ -64,7 +64,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 internal class KtFirReferenceShortener(
     override val analysisSession: KtFirAnalysisSession,
     override val token: ValidityToken,
-    override val firResolveState: FirModuleResolveState,
+    override val firResolveState: LLFirModuleResolveState,
 ) : KtReferenceShortener(), KtFirAnalysisSessionComponent {
     private val context = FirShorteningContext(firResolveState)
 
@@ -163,7 +163,7 @@ private data class AvailableSymbol<out T>(
     val importKind: ImportKind,
 )
 
-private class FirShorteningContext(val firResolveState: FirModuleResolveState) {
+private class FirShorteningContext(val firResolveState: LLFirModuleResolveState) {
 
     private val firSession: FirSession
         get() = firResolveState.rootModuleSession
@@ -281,7 +281,7 @@ private class ElementsToShortenCollector(
     private val selection: TextRange,
     private val classShortenOption: (FirClassLikeSymbol<*>) -> ShortenOption,
     private val callableShortenOption: (FirCallableSymbol<*>) -> ShortenOption,
-    private val firResolveState: FirModuleResolveState,
+    private val firResolveState: LLFirModuleResolveState,
 ) :
     FirVisitorVoid() {
     val namesToImport: MutableList<FqName> = mutableListOf()

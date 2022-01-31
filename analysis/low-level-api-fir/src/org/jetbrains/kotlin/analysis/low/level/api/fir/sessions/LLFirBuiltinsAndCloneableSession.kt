@@ -6,14 +6,11 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 
-internal class FirIdeSourcesSession @PrivateSessionConstructor constructor(
-    override val module: KtSourceModule,
+@OptIn(PrivateSessionConstructor::class)
+class LLFirBuiltinsAndCloneableSession @PrivateSessionConstructor constructor(
     override val project: Project,
-    override val firFileBuilder: FirFileBuilder,
     builtinTypes: BuiltinTypes,
-) : LLFirResolvableModuleSession(builtinTypes)
+) : LLFirSession(builtinTypes, Kind.Library)

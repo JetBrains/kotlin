@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.FileDiagnosticRetriever
@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCa
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.FirIdeProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableModuleResolveState
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
@@ -40,7 +38,7 @@ internal class KtToFirMapping(firElement: FirElement, recorder: FirElementsRecor
     private val mapping = FirElementsRecorder.recordElementsFrom(firElement, recorder)
     private val userTypeMapping = ConcurrentHashMap<KtUserType, FirElement>()
 
-    fun getElement(ktElement: KtElement, state: FirModuleResolveState): FirElement? {
+    fun getElement(ktElement: KtElement, state: LLFirModuleResolveState): FirElement? {
         mapping[ktElement]?.let { return it }
 
         val userType = when (ktElement) {
@@ -58,7 +56,7 @@ internal class KtToFirMapping(firElement: FirElement, recorder: FirElementsRecor
         }
     }
 
-    fun getFirOfClosestParent(element: KtElement, state: FirModuleResolveState): FirElement? {
+    fun getFirOfClosestParent(element: KtElement, state: LLFirModuleResolveState): FirElement? {
         var current: PsiElement? = element
         while (current != null && current !is KtFile) {
             if (current is KtElement) {

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureCache
@@ -69,7 +69,7 @@ internal class FirElementBuilder {
         moduleFileCache: ModuleFileCache,
         fileStructureCache: FileStructureCache,
         firLazyDeclarationResolver: FirLazyDeclarationResolver,
-        state: FirModuleResolveState,
+        state: LLFirModuleResolveState,
     ): FirElement? = when (element) {
         is KtFile -> getOrBuildFirForKtFile(element, firFileBuilder, moduleFileCache, firLazyDeclarationResolver)
         else -> getOrBuildFirForNonKtFileElement(element, fileStructureCache, moduleFileCache, state)
@@ -96,7 +96,7 @@ internal class FirElementBuilder {
         element: KtElement,
         fileStructureCache: FileStructureCache,
         moduleFileCache: ModuleFileCache,
-        state: FirModuleResolveState,
+        state: LLFirModuleResolveState,
     ): FirElement? {
         require(element !is KtFile)
 

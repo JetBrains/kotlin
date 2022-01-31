@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.diagnostics.*
 
-internal class FirIdeDiagnosticReporter : DiagnosticReporter() {
+internal class LLFirDiagnosticReporter : DiagnosticReporter() {
     val diagnostics = mutableMapOf<PsiElement, MutableList<KtPsiDiagnostic>>()
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {

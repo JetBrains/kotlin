@@ -9,13 +9,13 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyDeclarationResolver
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSessionProviderStorage
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.FirIdeSourcesSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionProviderStorage
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSourcesSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.FirSourceModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirLibraryOrLibrarySourceResolvableModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableModuleResolveState
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModifi
 import org.jetbrains.kotlin.analysis.utils.caches.strongCachedValue
 import java.util.concurrent.ConcurrentHashMap
 
-internal class FirIdeResolveStateService(project: Project) {
-    private val sessionProviderStorage = FirIdeSessionProviderStorage(project)
+internal class LLFirResolveStateService(project: Project) {
+    private val sessionProviderStorage = LLFirSessionProviderStorage(project)
 
     private val stateCache by strongCachedValue(
         project.createProjectWideOutOfBlockModificationTracker(),
@@ -40,19 +40,19 @@ internal class FirIdeResolveStateService(project: Project) {
         stateCache.computeIfAbsent(module) { createResolveStateFor(module, sessionProviderStorage) }
 
     companion object {
-        fun getInstance(project: Project): FirIdeResolveStateService =
-            ServiceManager.getService(project, FirIdeResolveStateService::class.java)
+        fun getInstance(project: Project): LLFirResolveStateService =
+            ServiceManager.getService(project, LLFirResolveStateService::class.java)
 
         internal fun createResolveStateFor(
             module: KtModule,
-            sessionProviderStorage: FirIdeSessionProviderStorage,
-            configureSession: (FirIdeSession.() -> Unit)? = null,
+            sessionProviderStorage: LLFirSessionProviderStorage,
+            configureSession: (LLFirSession.() -> Unit)? = null,
         ): LLFirResolvableModuleResolveState {
             val sessionProvider = sessionProviderStorage.getSessionProvider(module, configureSession)
             return when (module) {
                 is KtSourceModule -> {
-                    val firFileBuilder = (sessionProvider.rootModuleSession as FirIdeSourcesSession).firFileBuilder
-                    FirSourceModuleResolveState(
+                    val firFileBuilder = (sessionProvider.rootModuleSession as LLFirSourcesSession).firFileBuilder
+                    LLFirSourceModuleResolveState(
                         sessionProviderStorage.project,
                         module,
                         sessionProvider,
@@ -83,11 +83,11 @@ internal class FirIdeResolveStateService(project: Project) {
 fun createResolveStateForNoCaching(
     module: KtModule,
     project: Project,
-    configureSession: (FirIdeSession.() -> Unit)? = null,
-): FirModuleResolveState =
-    FirIdeResolveStateService.createResolveStateFor(
+    configureSession: (LLFirSession.() -> Unit)? = null,
+): LLFirModuleResolveState =
+    LLFirResolveStateService.createResolveStateFor(
         module = module,
-        sessionProviderStorage = FirIdeSessionProviderStorage(project),
+        sessionProviderStorage = LLFirSessionProviderStorage(project),
         configureSession = configureSession
     )
 

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 
-internal class FirProviderInterceptorForIDE private constructor(
+internal class LLFirFirProviderInterceptor private constructor(
     private val firFile: FirFile,
     private val session: FirSession,
     private val symbolSet: Set<FirClassLikeSymbol<*>>,
@@ -43,7 +43,7 @@ internal class FirProviderInterceptorForIDE private constructor(
             }
             nodeInfoCollector.visitElement(element)
 
-            return FirProviderInterceptorForIDE(firFile, session, nodeInfoCollector.symbolSet, nodeInfoCollector.classIdToElementMap)
+            return LLFirFirProviderInterceptor(firFile, session, nodeInfoCollector.symbolSet, nodeInfoCollector.classIdToElementMap)
         }
     }
 }
