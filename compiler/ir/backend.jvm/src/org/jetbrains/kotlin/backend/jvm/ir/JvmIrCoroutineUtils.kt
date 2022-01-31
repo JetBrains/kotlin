@@ -42,10 +42,16 @@ private fun IrFunction.isBridgeToSuspendImplMethod(): Boolean =
         it.name.asString() == name.asString() + SUSPEND_IMPL_NAME_SUFFIX && it.attributeOwnerId == attributeOwnerId
     }
 
-private fun IrFunction.isStaticInlineClassReplacementDelegatingCall(): Boolean =
-    this is IrAttributeContainer && !isStaticInlineClassReplacement &&
-            (parent as? IrClass)?.declarations?.find { it is IrAttributeContainer && it.attributeOwnerId == attributeOwnerId && it !== this }
-                ?.isStaticInlineClassReplacement == true
+private fun IrFunction.isStaticInlineClassReplacementDelegatingCall(): Boolean {
+    if (this !is IrAttributeContainer || isStaticInlineClassReplacement) return false
+
+    val parentClass = parent as? IrClass ?: return false
+    if (!parentClass.isSingleFieldValueClass) return false
+
+    return parentClass.declarations.find {
+        it is IrAttributeContainer && it.attributeOwnerId == attributeOwnerId && it !== this
+    }?.isStaticInlineClassReplacement == true
+}
 
 private val BRIDGE_ORIGINS = setOf(
     IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
