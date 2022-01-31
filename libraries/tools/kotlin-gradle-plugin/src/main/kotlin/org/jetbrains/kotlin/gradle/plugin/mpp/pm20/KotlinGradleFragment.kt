@@ -70,7 +70,9 @@ open class KotlinGradleFragmentInternal @Inject constructor(
     }
 
     private fun checkCanRefine(other: KotlinGradleFragment) {
-        check(containingModule == other.containingModule) { "Fragments can only refine each other within one module." }
+        check(containingModule == other.containingModule) {
+            "Fragments can only refine each other within one module. Can't make $this refine $other"
+        }
     }
 
     override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
