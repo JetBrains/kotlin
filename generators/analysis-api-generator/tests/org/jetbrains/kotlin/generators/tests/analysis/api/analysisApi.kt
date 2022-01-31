@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.AbstractReferenceResolve
 import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.AbstractAnalysisApiAnnotationsOnDeclarationsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.AbstractAnalysisApiAnnotationsOnFilesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.AbstractAnalysisApiAnnotationsOnTypesTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.components.AbstractResolveCallTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.diagnosticProvider.AbstractCollectDiagnosticsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.expressionInfoProvider.AbstractReturnTargetSymbolTest
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.components.typeCreator.A
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.typeInfoProvider.AbstractFunctionClassKindTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.typeInfoProvider.AbstractIsDenotableTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.typeProvider.AbstractHasCommonSubtypeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.fir.AbstractResolveCallTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.scopes.AbstractDelegateMemberScopeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.scopes.AbstractFileScopeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.scopes.AbstractMemberScopeByFqNameTest
