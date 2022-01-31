@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.common.ir.allParameters
+import org.jetbrains.kotlin.backend.common.ir.isFinalClass
 import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.descriptors.OverriddenFunctionInfo
 import org.jetbrains.kotlin.backend.konan.descriptors.implementedInterfaces
@@ -486,14 +487,12 @@ internal object DataFlowIR {
             }, data = null)
         }
 
-        private fun IrClass.isFinal() = modality == Modality.FINAL
-
         fun mapClassReferenceType(irClass: IrClass): Type {
             // Do not try to devirtualize ObjC classes.
             if (irClass.module.name == Name.special("<forward declarations>") || irClass.isObjCClass())
                 return Type.Virtual
 
-            val isFinal = irClass.isFinal()
+            val isFinal = irClass.isFinalClass
             val isAbstract = irClass.isAbstract()
             val name = irClass.fqNameForIrSerialization.asString()
             classMap[irClass]?.let { return it }
@@ -638,7 +637,7 @@ internal object DataFlowIR {
                     }
                     val bridgeTargetSymbol = if (isSpecialBridge || bridgeTarget == null) null else mapFunction(bridgeTarget)
                     val placeToFunctionsTable = !isAbstract && it !is IrConstructor && irClass != null
-                            && (it.isOverridableOrOverrides || bridgeTarget != null || function.isSpecial || !irClass.isFinal())
+                            && (it.isOverridableOrOverrides || bridgeTarget != null || function.isSpecial || !irClass.isFinalClass)
                     val symbolTableIndex = if (placeToFunctionsTable) module.numberOfFunctions++ else -1
                     val frozen = it is IrConstructor && irClass!!.isFrozen(context)
                     val functionSymbol = if (it.isExported())
