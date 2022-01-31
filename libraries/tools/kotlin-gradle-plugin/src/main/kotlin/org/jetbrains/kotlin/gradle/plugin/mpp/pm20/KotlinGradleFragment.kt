@@ -84,8 +84,11 @@ open class KotlinGradleFragmentInternal @Inject constructor(
     private val _directRefinesDependencies = mutableSetOf<Provider<KotlinGradleFragment>>()
 
     override val directRefinesDependencies: Iterable<KotlinGradleFragment>
-        get() = _directRefinesDependencies.map { it.get() }
+        get() = _directRefinesDependencies.map { it.get() }.toSet()
 
+    // TODO: separate the declared module dependencies and exported module dependencies? we need this to keep implementation dependencies
+    //       out of the consumer's metadata compilations compile classpath; however, Native variants must expose implementation as API
+    //       anyway, so for now all fragments follow that behavior
     override val declaredModuleDependencies: Iterable<KotlinModuleDependency>
         get() = listOf(apiConfiguration, implementationConfiguration).flatMapTo(mutableSetOf()) {
             it.allDependencies.map { it.toModuleDependency(project) }
