@@ -58,6 +58,12 @@ abstract class CommonCompilerPerformanceManager(private val presentableName: Str
         recordPerfCountersMeasurements()
     }
 
+    open fun addSourcesStats(files: Int, lines: Int) {
+        if (!isEnabled) return
+        this.files = this.files?.plus(files) ?: files
+        this.lines = this.lines?.plus(lines) ?: lines
+    }
+
     open fun notifyAnalysisStarted() {
         analysisStart = PerformanceCounter.currentTime()
     }
