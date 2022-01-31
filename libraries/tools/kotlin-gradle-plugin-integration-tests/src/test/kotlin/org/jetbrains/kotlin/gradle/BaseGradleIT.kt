@@ -155,12 +155,11 @@ abstract class BaseGradleIT {
         fun prepareWrapper(
             version: String,
             environmentVariables: Map<String, String> = mapOf(),
-            withDaemon: Boolean = true,
-            stopDaemons: Boolean = true
+            withDaemon: Boolean = true
         ): File {
             val wrapper = gradleWrappers.getOrPut(version) { createNewWrapperDir(version) }
 
-            if (withDaemon && stopDaemons) {
+            if (withDaemon) {
                 DaemonRegistry.register(version)
 
                 if (DaemonRegistry.activeDaemons.size > MAX_ACTIVE_GRADLE_PROCESSES) {
@@ -270,7 +269,6 @@ abstract class BaseGradleIT {
         val hierarchicalMPPStructureSupport: Boolean? = null,
         val enableCompatibilityMetadataVariant: Boolean? = null,
         val withReports: List<BuildReportType> = emptyList(),
-        val stopDaemons: Boolean = true,
     )
 
     enum class ConfigurationCacheProblems {
@@ -430,7 +428,7 @@ abstract class BaseGradleIT {
         val wrapperVersion = chooseWrapperVersionOrFinishTest()
 
         val env = createEnvironmentVariablesMap(options)
-        val wrapperDir = prepareWrapper(wrapperVersion, env, stopDaemons = options.stopDaemons)
+        val wrapperDir = prepareWrapper(wrapperVersion, env)
 
         val cmd = createBuildCommand(wrapperDir, params, options)
 

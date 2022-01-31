@@ -520,7 +520,7 @@ open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testNamespaceDSLInsteadOfPackageAttributeInManifest() {
         val project = Project("AndroidExtensionsProjectAGP7")
         val options = defaultBuildOptions().copy(incremental = false)
@@ -869,8 +869,7 @@ abstract class AbstractKotlinAndroidGradleTests : BaseGradleIT() {
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
             androidHome = KtTestUtil.findAndroidSdk(),
-            androidGradlePluginVersion = androidGradlePluginVersion,
-            stopDaemons = false
+            androidGradlePluginVersion = androidGradlePluginVersion
         )
 
     @GradleTestWithOsCondition
