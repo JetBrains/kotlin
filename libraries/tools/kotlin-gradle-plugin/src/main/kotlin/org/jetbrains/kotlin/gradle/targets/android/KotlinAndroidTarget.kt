@@ -15,6 +15,7 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Usage.JAVA_RUNTIME_JARS
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
+import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 open class KotlinAndroidTarget(
@@ -205,7 +206,7 @@ open class KotlinAndroidTarget(
                 compilation,
                 project.usageByName(usageName),
                 dependencyConfigurationName,
-                overrideConfigurationArtifacts = setOf(artifact),
+                overrideConfigurationArtifacts = project.listProperty { listOf(artifact) },
                 overrideConfigurationAttributes = HierarchyAttributeContainer(configuration.attributes) {
                     val valueString = run {
                         val value = configuration.attributes.getAttribute(it)

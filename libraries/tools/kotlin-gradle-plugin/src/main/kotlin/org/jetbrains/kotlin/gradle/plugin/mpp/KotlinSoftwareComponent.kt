@@ -16,6 +16,7 @@ import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.COMMON_MAIN_ELEMENTS_CONFIGU
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
+import org.jetbrains.kotlin.gradle.utils.listProperty
 
 abstract class KotlinSoftwareComponent(
     private val project: Project,
@@ -67,7 +69,7 @@ abstract class KotlinSoftwareComponent(
                 compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
                 usage = javaApiUsage,
                 dependencyConfigurationName = metadataTarget.apiElementsConfigurationName,
-                overrideConfigurationArtifacts = setOf(allMetadataArtifact)
+                overrideConfigurationArtifacts = project.listProperty { listOf(allMetadataArtifact) }
             )
 
 
@@ -126,8 +128,8 @@ class DefaultKotlinUsageContext(
     override val compilation: KotlinCompilation<*>,
     private val usage: Usage,
     override val dependencyConfigurationName: String,
-    private val overrideConfigurationArtifacts: Set<PublishArtifact>? = null,
-    private val overrideConfigurationAttributes: AttributeContainer? = null,
+    internal val overrideConfigurationArtifacts: ListProperty<PublishArtifact>? = null,
+    internal val overrideConfigurationAttributes: AttributeContainer? = null,
     override val includeIntoProjectStructureMetadata: Boolean = true
 ) : KotlinUsageContext {
 
@@ -148,7 +150,7 @@ class DefaultKotlinUsageContext(
         configuration.incoming.dependencyConstraints
 
     override fun getArtifacts(): Set<PublishArtifact> =
-        overrideConfigurationArtifacts ?:
+        overrideConfigurationArtifacts?.get()?.toSet() ?:
         // TODO Gradle Java plugin does that in a different way; check whether we can improve this
         configuration.artifacts
 
