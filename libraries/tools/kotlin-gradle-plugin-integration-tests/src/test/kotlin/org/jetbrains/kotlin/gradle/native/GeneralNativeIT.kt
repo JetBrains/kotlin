@@ -99,6 +99,13 @@ private fun BaseGradleIT.Project.configureSingleNativeTarget(preset: String = Ho
         }
 }
 
+internal fun BaseGradleIT.BuildOptions.withCustomKonanDataDir(
+    customKonanDataDir: File
+) = this.copy(
+    customEnvironmentVariables = this.customEnvironmentVariables +
+            ("KONAN_DATA_DIR" to customKonanDataDir.absolutePath)
+)
+
 class GeneralNativeIT : BaseGradleIT() {
 
     val nativeHostTargetName = MPPNativeTargets.current
@@ -1110,30 +1117,32 @@ class GeneralNativeIT : BaseGradleIT() {
         }
 
         // Check that --offline fails when there are no downloaded dependencies:
-        val customKonanDataDir = tempDir.newFolder("konanOffline")
-        val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.copy(
-            customEnvironmentVariables = buildOptionsOffline.customEnvironmentVariables +
-                    ("KONAN_DATA_DIR" to customKonanDataDir.absolutePath)
-        )
+        run {
+            val customKonanDataDir = tempDir.newFolder()
+            val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.withCustomKonanDataDir(customKonanDataDir)
 
-        build("clean", linkTask, options = buildOptionsOfflineWithCustomKonanDataDir) {
-            assertFailed()
-            assertTasksNotExecuted(listOf(linkTask))
+            build("clean", linkTask, options = buildOptionsOfflineWithCustomKonanDataDir) {
+                assertFailed()
+                assertTasksNotExecuted(listOf(linkTask))
+            }
+
+            checkNoDependenciesDownloaded(customKonanDataDir)
         }
-
-        checkNoDependenciesDownloaded(customKonanDataDir)
 
         // Check that the compiler is not extracted if it is not cached:
-        assertTrue(customKonanDataDir.deleteRecursively())
-        build(
-            "clean", linkTask, "-Pkotlin.native.version=1.6.20-M1-9999",
-            options = buildOptionsOfflineWithCustomKonanDataDir
-        ) {
-            assertFailed()
-            assertTasksNotExecuted(listOf(linkTask, compileTask))
-        }
+        run {
+            val customKonanDataDir = tempDir.newFolder()
+            val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.withCustomKonanDataDir(customKonanDataDir)
+            build(
+                "clean", linkTask, "-Pkotlin.native.version=1.6.20-M1-9999",
+                options = buildOptionsOfflineWithCustomKonanDataDir
+            ) {
+                assertFailed()
+                assertTasksNotExecuted(listOf(linkTask, compileTask))
+            }
 
-        assertFalse(customKonanDataDir.exists())
+            assertTrue(customKonanDataDir.listFiles().isNullOrEmpty())
+        }
     }
 
     private fun checkNoDependenciesDownloaded(customKonanDataDir: File) {
@@ -1178,29 +1187,32 @@ class GeneralNativeIT : BaseGradleIT() {
         }
 
         // Check that --offline fails when there are no downloaded dependencies:
-        val customKonanDataDir = tempDir.newFolder("konanOffline")
-        val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.copy(
-            customEnvironmentVariables = buildOptionsOffline.customEnvironmentVariables +
-                    ("KONAN_DATA_DIR" to customKonanDataDir.absolutePath)
-        )
+        run {
+            val customKonanDataDir = tempDir.newFolder()
+            val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.withCustomKonanDataDir(customKonanDataDir)
 
-        build("clean", cinteropTask, options = buildOptionsOfflineWithCustomKonanDataDir) {
-            assertFailed()
+            build("clean", cinteropTask, options = buildOptionsOfflineWithCustomKonanDataDir) {
+                assertFailed()
+            }
+
+            checkNoDependenciesDownloaded(customKonanDataDir)
         }
-
-        checkNoDependenciesDownloaded(customKonanDataDir)
 
         // Check that the compiler is not extracted if it is not cached:
-        assertTrue(customKonanDataDir.deleteRecursively())
-        build(
-            "clean", cinteropTask, "-Pkotlin.native.version=1.6.20-M1-9999",
-            options = buildOptionsOfflineWithCustomKonanDataDir
-        ) {
-            assertFailed()
-            assertTasksNotExecuted(listOf(cinteropTask))
-        }
+        run {
+            val customKonanDataDir = tempDir.newFolder()
+            val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.withCustomKonanDataDir(customKonanDataDir)
 
-        assertFalse(customKonanDataDir.exists())
+            build(
+                "clean", cinteropTask, "-Pkotlin.native.version=1.6.20-M1-9999",
+                options = buildOptionsOfflineWithCustomKonanDataDir
+            ) {
+                assertFailed()
+                assertTasksNotExecuted(listOf(cinteropTask))
+            }
+
+            assertTrue(customKonanDataDir.listFiles().isNullOrEmpty())
+        }
     }
 
     companion object {

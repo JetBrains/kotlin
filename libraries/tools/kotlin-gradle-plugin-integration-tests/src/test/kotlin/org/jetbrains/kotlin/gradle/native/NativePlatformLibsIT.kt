@@ -315,26 +315,27 @@ class NativePlatformLibsIT : BaseGradleIT() {
         }
 
         // Check that --offline fails when there are no downloaded dependencies:
-        val customKonanDataDir = tempDir.newFolder("konanOffline")
-        val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.copy(
-            customEnvironmentVariables = buildOptionsOffline.customEnvironmentVariables +
-                    ("KONAN_DATA_DIR" to customKonanDataDir.absolutePath)
-        )
+        run {
+            val customKonanDataDir = tempDir.newFolder()
+            val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.withCustomKonanDataDir(customKonanDataDir)
 
-        buildWithLightDist("tasks", options = buildOptionsOfflineWithCustomKonanDataDir) {
-            assertFailed()
-            assertContains("Generate platform libraries for linux_x64")
+            buildWithLightDist("tasks", options = buildOptionsOfflineWithCustomKonanDataDir) {
+                assertFailed()
+                assertContains("Generate platform libraries for linux_x64")
+            }
         }
 
         // The build above have extracted the cached compiler to the custom KONAN_DATA_DIR; remove it:
-        assertTrue(customKonanDataDir.deleteRecursively())
+        run {
+            val customKonanDataDir = tempDir.newFolder()
+            val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.withCustomKonanDataDir(customKonanDataDir)
+            // Check that the compiler is not extracted if it is not cached:
+            buildWithLightDist("tasks", "-Pkotlin.native.version=1.6.20-M1-9999", options = buildOptionsOfflineWithCustomKonanDataDir) {
+                assertFailed()
+                assertNotContains("Generate platform libraries for linux_x64")
+            }
 
-        // Check that the compiler is not extracted if it is not cached:
-        buildWithLightDist("tasks", "-Pkotlin.native.version=1.6.20-M1-9999", options = buildOptionsOfflineWithCustomKonanDataDir) {
-            assertFailed()
-            assertNotContains("Generate platform libraries for linux_x64")
+            assertTrue(customKonanDataDir.listFiles().isNullOrEmpty())
         }
-
-        assertFalse(customKonanDataDir.exists())
     }
 }
