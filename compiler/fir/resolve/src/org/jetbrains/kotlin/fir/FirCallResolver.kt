@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
+import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerResolveManager
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
@@ -159,11 +160,43 @@ class FirCallResolver(
         val info: CallInfo, val applicability: CandidateApplicability, val candidates: Collection<Candidate>,
     )
 
+    /** WARNING: This function is public for the analysis API and should only be used there. */
+    fun <T : FirQualifiedAccess> collectAllCandidates(
+        qualifiedAccess: T,
+        name: Name,
+        containingDeclarations: List<FirDeclaration> = transformer.components.containingDeclarations,
+        resolutionContext: ResolutionContext = transformer.resolutionContext
+    ): List<OverloadCandidate> {
+        class AllCandidatesCollector(
+            components: BodyResolveComponents,
+            resolutionStageRunner: ResolutionStageRunner
+        ) : CandidateCollector(components, resolutionStageRunner) {
+            private val allCandidatesSet = mutableSetOf<Candidate>()
+
+            override fun consumeCandidate(group: TowerGroup, candidate: Candidate, context: ResolutionContext): CandidateApplicability {
+                allCandidatesSet += candidate
+                return super.consumeCandidate(group, candidate, context)
+            }
+
+            val allCandidates: List<Candidate>
+                get() = allCandidatesSet.toList()
+        }
+
+        val collector = AllCandidatesCollector(components, components.resolutionStageRunner)
+        val origin = (qualifiedAccess as? FirFunctionCall)?.origin ?: FirFunctionCallOrigin.Regular
+        val result =
+            collectCandidates(qualifiedAccess, name, forceCallKind = null, origin, containingDeclarations, resolutionContext, collector)
+        return collector.allCandidates.map { OverloadCandidate(it, isInBestCandidates = it in result.candidates) }
+    }
+
     private fun <T : FirQualifiedAccess> collectCandidates(
         qualifiedAccess: T,
         name: Name,
         forceCallKind: CallKind? = null,
-        origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular
+        origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
+        containingDeclarations: List<FirDeclaration> = transformer.components.containingDeclarations,
+        resolutionContext: ResolutionContext = transformer.resolutionContext,
+        collector: CandidateCollector? = null
     ): ResolutionResult {
         val explicitReceiver = qualifiedAccess.explicitReceiver
         val argumentList = (qualifiedAccess as? FirFunctionCall)?.argumentList ?: FirEmptyArgumentList
@@ -179,11 +212,15 @@ class FirCallResolver(
             typeArguments,
             session,
             components.file,
-            transformer.components.containingDeclarations,
+            containingDeclarations,
             origin = origin
         )
         towerResolver.reset()
-        val result = towerResolver.runResolver(info, transformer.resolutionContext)
+        val result = if (collector != null) {
+            towerResolver.runResolver(info, resolutionContext, collector)
+        } else {
+            towerResolver.runResolver(info, resolutionContext)
+        }
         val bestCandidates = result.bestCandidates()
 
         fun chooseMostSpecific(): Set<Candidate> {
@@ -773,19 +810,6 @@ class FirCallResolver(
         }
     }
 
-    private fun createConeDiagnosticForCandidateWithError(
-        applicability: CandidateApplicability,
-        candidate: Candidate
-    ): ConeDiagnostic {
-        return when (applicability) {
-            CandidateApplicability.HIDDEN -> ConeHiddenCandidateError(candidate)
-            CandidateApplicability.VISIBILITY_ERROR -> ConeVisibilityError(candidate.symbol)
-            CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ConeInapplicableWrongReceiver(listOf(candidate))
-            CandidateApplicability.NO_COMPANION_OBJECT -> ConeNoCompanionObject(candidate)
-            else -> ConeInapplicableCandidateError(applicability, candidate)
-        }
-    }
-
     private fun buildErrorReference(
         callInfo: CallInfo,
         diagnostic: ConeDiagnostic,
@@ -800,3 +824,6 @@ class FirCallResolver(
         )
     }
 }
+
+/** A candidate in the overload candidate set. */
+data class OverloadCandidate(val candidate: Candidate, val isInBestCandidates: Boolean)

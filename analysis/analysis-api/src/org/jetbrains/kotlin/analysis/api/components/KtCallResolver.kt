@@ -6,10 +6,14 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtArrayAccessExpression
+import org.jetbrains.kotlin.psi.KtCallElement
+import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtUnaryExpression
 
 public abstract class KtCallResolver : KtAnalysisSessionComponent() {
     public abstract fun resolveCall(psi: KtElement): KtCallInfo?
+    public abstract fun resolveCandidates(psi: KtElement): List<KtCallInfo>
 }
 
 public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
@@ -26,4 +30,10 @@ public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
 
     public fun KtArrayAccessExpression.resolveCall(): KtCallInfo =
         analysisSession.callResolver.resolveCall(this) ?: error("KtArrayAccessExpression should always resolve to a KtCallInfo")
+
+    public fun KtCallElement.resolveCandidates(): List<KtCallInfo> =
+        analysisSession.callResolver.resolveCandidates(this)
+
+    public fun KtArrayAccessExpression.resolveCandidates(): List<KtCallInfo> =
+        analysisSession.callResolver.resolveCandidates(this)
 }
