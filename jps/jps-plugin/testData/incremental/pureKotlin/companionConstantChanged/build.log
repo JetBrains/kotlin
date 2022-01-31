@@ -2,7 +2,7 @@
 
 Cleaning output files:
   out/production/module/META-INF/module.kotlin_module
-  out/production/module/test/A$Companion.class
+  out/production/module/test/A$CompanionObject.class
   out/production/module/test/A.class
 End of files
 Compiling files:
