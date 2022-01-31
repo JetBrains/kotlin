@@ -35,13 +35,13 @@ import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.checkers.OptInNames.REQUIRES_OPT_IN_FQ_NAMES
 import org.jetbrains.kotlin.resolve.checkers.OptInNames.OLD_EXPERIMENTAL_FQ_NAME
 import org.jetbrains.kotlin.resolve.checkers.OptInNames.OLD_USE_EXPERIMENTAL_FQ_NAME
 import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_FQ_NAME
-import org.jetbrains.kotlin.resolve.checkers.OptInNames.REQUIRES_OPT_IN_FQ_NAME
-import org.jetbrains.kotlin.resolve.checkers.OptInNames.USE_EXPERIMENTAL_ANNOTATION_CLASS
 import org.jetbrains.kotlin.resolve.checkers.OptInNames.OPT_IN_FQ_NAMES
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.REQUIRES_OPT_IN_FQ_NAME
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.REQUIRES_OPT_IN_FQ_NAMES
+import org.jetbrains.kotlin.resolve.checkers.OptInNames.USE_EXPERIMENTAL_ANNOTATION_CLASS
 import org.jetbrains.kotlin.resolve.checkers.OptInNames.WAS_EXPERIMENTAL_FQ_NAME
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationSettings
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.KotlinType
@@ -234,11 +233,6 @@ class ExperimentalUsageChecker(project: Project) : CallChecker {
             val container = containingDeclaration
             if (useMarkersFromContainer && container is ClassDescriptor && this !is ConstructorDescriptor) {
                 result.addAll(container.loadExperimentalities(moduleAnnotationsResolver, languageVersionSettings, visited, useFutureError))
-            }
-
-            for (moduleAnnotationClassId in moduleAnnotationsResolver.getAnnotationsOnContainingModule(this)) {
-                val annotationClass = module.findClassAcrossModuleDependencies(moduleAnnotationClassId)
-                result.addIfNotNull(annotationClass?.loadExperimentalityForMarkerAnnotation())
             }
 
             return result
