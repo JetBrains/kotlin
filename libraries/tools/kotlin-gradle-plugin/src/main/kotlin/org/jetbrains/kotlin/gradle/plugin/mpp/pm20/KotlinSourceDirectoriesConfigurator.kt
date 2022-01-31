@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 
@@ -14,16 +16,32 @@ interface KotlinSourceDirectoriesConfigurator<in T : KotlinGradleFragment>: Kotl
 object DefaultKotlinSourceDirectoriesConfigurator : KotlinSourceDirectoriesConfigurator<KotlinGradleFragment> {
     override fun configure(fragment: KotlinGradleFragment) {
         fragment.kotlinSourceRoots.srcDir(
-            defaultSourceFolder(
-                project = fragment.project,
-                moduleName = fragment.containingModule.name,
-                fragmentName = fragment.fragmentName,
-                type = "kotlin"
-            )
+            fragment.project.provider {
+                defaultSourceFolder(
+                    fragment,
+                    type = "kotlin"
+                )
+            }
         )
     }
 
-    fun defaultSourceFolder(project: Project, moduleName: String, fragmentName: String, type: String): File {
-        return project.file("src/${lowerCamelCaseName(fragmentName, moduleName)}/$type")
+    private fun fragmentDirectoryName(fragment: KotlinGradleFragment): String {
+        val project = fragment.project
+        val isModelMappingEnabled = project.multiplatformExtensionOrNull != null
+        val kpmDefaultResult = lowerCamelCaseName(fragment.name, fragment.containingModule.name)
+        return if (!isModelMappingEnabled) {
+            kpmDefaultResult
+        } else {
+            val sourceSet =
+                project.kotlinExtension.sourceSets.find { it is FragmentMappedKotlinSourceSet && it.underlyingFragment == fragment }
+            if (sourceSet != null)
+                sourceSet.name
+            else kpmDefaultResult
+        }
+    }
+
+    fun defaultSourceFolder(fragment: KotlinGradleFragment, type: String): File {
+        val fragmentDirectoryName = fragmentDirectoryName(fragment)
+        return fragment.project.file("src/$fragmentDirectoryName/$type")
     }
 }
