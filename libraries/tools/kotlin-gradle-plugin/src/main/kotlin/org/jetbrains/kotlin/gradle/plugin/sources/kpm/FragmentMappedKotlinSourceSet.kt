@@ -19,11 +19,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.unambiguousNameInProject
 import org.jetbrains.kotlin.gradle.plugin.sources.createDefaultSourceDirectorySet
 
 class FragmentMappedKotlinSourceSet(
+    private val sourceSetName: String,
     private val project: Project,
     internal val underlyingFragment: KotlinGradleFragment
 ) : KotlinSourceSet {
     val displayName: String
-        get() = underlyingFragment.unambiguousNameInProject
+        get() = sourceSetName
 
     override val apiConfigurationName: String get() = underlyingFragment.apiConfigurationName
     override val implementationConfigurationName: String get() = underlyingFragment.implementationConfigurationName

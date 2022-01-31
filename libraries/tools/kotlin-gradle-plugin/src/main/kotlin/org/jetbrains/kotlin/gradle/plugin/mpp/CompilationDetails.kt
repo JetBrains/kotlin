@@ -330,7 +330,7 @@ open class DefaultCompilationDetails<T : KotlinCommonOptions>(
     }
 }
 
-internal open class DefaultCompilationDetailsWithRuntime<T : KotlinCommonOptions>(
+open class DefaultCompilationDetailsWithRuntime<T : KotlinCommonOptions>(
     target: KotlinTarget,
     compilationPurpose: String,
     createKotlinOptions: DefaultCompilationDetails<*>.() -> T
@@ -517,18 +517,19 @@ internal class WithJavaCompilationDetails<T : KotlinCommonOptions>(
     }
 }
 
-internal class AndroidCompilationDetails(
+class AndroidCompilationDetails(
     target: KotlinTarget,
     compilationPurpose: String,
+    /** Workaround mutual creation order: a compilation is not added to the target's compilations collection until some point, pass it here */
+    private val getCompilationInstance: () -> KotlinJvmAndroidCompilation
 ) : DefaultCompilationDetailsWithRuntime<KotlinJvmOptions>(
     target,
     compilationPurpose,
     { KotlinJvmOptionsImpl() }
 ) {
-    override val compilation: KotlinJvmAndroidCompilation
-        get() = super.compilation as KotlinJvmAndroidCompilation
+    override val compilation: KotlinJvmAndroidCompilation get() = getCompilationInstance()
 
-    val androidVariant = compilation.androidVariant
+    val androidVariant get() = compilation.androidVariant
 
     override val friendArtifacts: FileCollection
         get() = target.project.files(super.friendArtifacts, compilation.testedVariantArtifacts)
