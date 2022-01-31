@@ -127,11 +127,7 @@ open class FakeFileForLightClass(
     override fun isEquivalentTo(another: PsiElement?) = this == another
 
     override fun setPackageName(packageName: String) {
-        if (lightClass() is KtLightClassForFacade) {
-            ktFile.packageDirective?.fqName = FqName(packageName)
-        } else {
-            super.setPackageName(packageName)
-        }
+        ktFile.packageName = packageName
     }
 
     override fun isPhysical() = false
