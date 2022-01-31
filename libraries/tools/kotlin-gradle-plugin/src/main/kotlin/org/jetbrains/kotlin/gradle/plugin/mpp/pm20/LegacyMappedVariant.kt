@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 internal open class LegacyMappedVariant(
     internal val compilation: KotlinCompilation<*>,
 ) : KotlinGradleVariant {
+    override fun toString(): String = "variant mapped to $compilation"
+
     private val fragmentForDefaultSourceSet =
         (compilation.defaultSourceSet as FragmentMappedKotlinSourceSet).underlyingFragment
 
