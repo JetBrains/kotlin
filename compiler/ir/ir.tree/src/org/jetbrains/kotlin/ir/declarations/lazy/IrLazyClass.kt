@@ -75,7 +75,9 @@ class IrLazyClass(
     private fun shouldBuildStub(descriptor: DeclarationDescriptor): Boolean =
         descriptor !is DeclarationDescriptorWithVisibility ||
                 !DescriptorVisibilities.isPrivate(descriptor.visibility) ||
-                isObject && descriptor is ClassConstructorDescriptor
+                // These two exceptions are needed for K/N caches usage.
+                isObject && descriptor is ClassConstructorDescriptor ||
+                isInline && descriptor is ClassConstructorDescriptor && descriptor.isPrimary
 
     override var typeParameters: List<IrTypeParameter> by lazyVar(stubGenerator.lock) {
         descriptor.declaredTypeParameters.mapTo(arrayListOf()) {
