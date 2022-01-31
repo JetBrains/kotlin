@@ -9,6 +9,9 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
 
 interface SourceSetMappedFragmentLocator {
@@ -34,14 +37,39 @@ private class MultiplatformSourceSetMappedFragmentLocator : SourceSetMappedFragm
     override fun locateFragmentForSourceSet(project: Project, sourceSetName: String): SourceSetMappedFragmentLocator.FragmentLocation? {
         val camelCaseParts = sourceSetName.camelCaseParts()
         if (camelCaseParts.size < 2) {
-            return null
+            SourceSetMappedFragmentLocator.FragmentLocation(KotlinGradleModule.MAIN_MODULE_NAME, sourceSetName)
         }
+
+        val androidTarget = when (val ext = project.topLevelExtension) {
+            is KotlinAndroidProjectExtension -> ext.target
+            is KotlinMultiplatformExtension ->
+                ext.targets.withType(KotlinAndroidTarget::class.java).singleOrNull()
+                    ?: ext.presets.withType(KotlinAndroidTargetPreset::class.java).single().targetUnderConstruction
+            else -> null
+        }
+
         val candidateModuleNames = (1..camelCaseParts.size).asSequence().map { camelCaseParts.takeLast(it).joinToString("").decapitalize() }
+
         val moduleName =
-            candidateModuleNames.firstOrNull { project.kpmModules.findByName(it) != null } ?: candidateModuleNames.first()
-        val fragmentName = sourceSetName.dropLast(moduleName.length)
+            run {
+                if (androidTarget != null && sourceSetName.startsWith(androidTarget.name))
+                    androidSourceSetModuleName(androidTarget.name, sourceSetName)
+                else null
+            } ?: candidateModuleNames.firstOrNull { project.kpmModules.findByName(it) != null }
+            ?: KotlinGradleModule.MAIN_MODULE_NAME
+
+        val fragmentName =
+            if (sourceSetName.endsWith(moduleName, ignoreCase = true)) sourceSetName.dropLast(moduleName.length) else sourceSetName
 
         return SourceSetMappedFragmentLocator.FragmentLocation(moduleName, fragmentName)
+    }
+
+    private fun androidSourceSetModuleName(targetName: String, sourceSetName: String): String? {
+        val compilationName = sourceSetName.removePrefix(targetName).takeIf { it != sourceSetName } ?: return null
+        return when {
+            "Test" in compilationName -> "test"
+            else -> KotlinGradleModule.MAIN_MODULE_NAME
+        }
     }
 
     private fun String.camelCaseParts(): List<String> {

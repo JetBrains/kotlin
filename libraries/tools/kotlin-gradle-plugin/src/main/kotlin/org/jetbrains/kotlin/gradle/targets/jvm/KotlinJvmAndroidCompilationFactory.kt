@@ -16,6 +16,10 @@ class KotlinJvmAndroidCompilationFactory(
     override val itemClass: Class<KotlinJvmAndroidCompilation>
         get() = KotlinJvmAndroidCompilation::class.java
 
-    override fun create(name: String): KotlinJvmAndroidCompilation =
-        KotlinJvmAndroidCompilation(target, name)
+    override fun create(name: String): KotlinJvmAndroidCompilation {
+        lateinit var result: KotlinJvmAndroidCompilation
+        val details = AndroidCompilationDetails(target, name) { result }
+        result = KotlinJvmAndroidCompilation(details)
+        return result
+    }
 }
