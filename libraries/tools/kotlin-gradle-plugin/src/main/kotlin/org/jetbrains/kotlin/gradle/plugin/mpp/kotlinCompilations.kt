@@ -93,7 +93,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
         compilationDetails.source(sourceSet)
     }
 
-    override fun toString(): String = "compilation '$compilationPurpose' ($target)"
+    override fun toString(): String = "compilation '$name' ($target)"
 
     override fun associateWith(other: KotlinCompilation<*>) {
         compilationDetails.associateWith((other as AbstractKotlinCompilation<*>).compilationDetails)

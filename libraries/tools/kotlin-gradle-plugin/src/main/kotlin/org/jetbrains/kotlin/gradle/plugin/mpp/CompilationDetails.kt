@@ -14,6 +14,7 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.ofVariantCompileDependen
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.unambiguousNameInProject
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
+import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
@@ -401,6 +403,39 @@ internal open class SharedNativeCompilationDetails(
     override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
         addSourcesToKotlinNativeCompileTask(project, compileKotlinTaskName, { sourceSet.kotlin }, addAsCommonSources)
     }
+}
+
+internal open class MetadataMappedCompilationDetails<T : KotlinCommonOptions>(
+    override val target: KotlinMetadataTarget,
+    final override val compilationData: AbstractKotlinFragmentMetadataCompilationData<T>
+) : CompilationDetails<T> {
+    override val compileDependencyFilesHolder: DependencyFilesHolder =
+        DependencyFilesHolder.ofMetadataCompilationDependencies(compilationData)
+
+    override val kotlinDependenciesHolder: HasKotlinDependencies
+        get() = compilationData.fragment
+
+    override fun associateWith(other: CompilationDetails<*>) {
+        throw UnsupportedOperationException("not supported in the mapped model")
+    }
+
+    override val associateCompilations: Set<CompilationDetails<*>>
+        get() = emptySet()
+
+    override fun source(sourceSet: KotlinSourceSet) {
+        throw UnsupportedOperationException("metadata compilations have predefined sources")
+    }
+
+    private val underlyingSourceSet: FragmentMappedKotlinSourceSet
+        get() = target.project.kotlinExtension.sourceSets.withType<FragmentMappedKotlinSourceSet>().single {
+            it.underlyingFragment == compilationData.fragment
+        }
+
+    override val directlyIncludedKotlinSourceSets: MutableSet<KotlinSourceSet>
+        get() = Collections.unmodifiableSet(hashSetOf(underlyingSourceSet))
+
+    override val defaultSourceSetName: String
+        get() = underlyingSourceSet.name
 }
 
 internal open class VariantMappedCompilationDetails<T : KotlinCommonOptions>(

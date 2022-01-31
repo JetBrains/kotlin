@@ -118,17 +118,20 @@ class KotlinNativeCompilation(
 }
 
 class KotlinSharedNativeCompilation(
-    target: KotlinMetadataTarget,
-    val konanTargets: List<KonanTarget>, name: String) :
-    KotlinNativeFragmentMetadataCompilationData,
+    val konanTargets: List<KonanTarget>,
+    compilationDetails: CompilationDetails<KotlinCommonOptions>
+) : KotlinNativeFragmentMetadataCompilationData,
     AbstractKotlinNativeCompilation(
         // TODO: this will end up as '-target' argument passed to K2Native, which is wrong.
         // Rewrite this when we'll compile native-shared source-sets against commonized platform libs
         // We find any konan target that is enabled on the current host in order to pass the checks that avoid compiling the code otherwise.
         konanTargets.find { it.enabledOnCurrentHost } ?: konanTargets.first(),
-        SharedNativeCompilationDetails(target, name) { NativeCompileOptions { defaultSourceSet.languageSettings } }
+        compilationDetails
     ),
     KotlinMetadataCompilation<KotlinCommonOptions> {
+
+    override fun getName() =
+        if (compilationDetails is MetadataMappedCompilationDetails) defaultSourceSetName else super.compilationPurpose
 
     override val target: KotlinMetadataTarget get() = super.target as KotlinMetadataTarget
 

@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util
 
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AbstractKotlinFragmentMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariantWithRuntime
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.resolvableMetadataConfigurationName
 
 interface DependencyFilesHolder {
     val dependencyConfigurationName: String
@@ -34,6 +36,17 @@ internal fun DependencyFilesHolder.Companion.ofVariantRuntimeDependencies(varian
             get() = variant.runtimeDependencyFiles
             set(value) { variant.runtimeDependencyFiles = value }
     }
+
+internal fun DependencyFilesHolder.Companion.ofMetadataCompilationDependencies(
+    compilationData: AbstractKotlinFragmentMetadataCompilationData<*>
+) = object : DependencyFilesHolder {
+    override val dependencyConfigurationName: String
+        get() = compilationData.fragment.containingModule.resolvableMetadataConfigurationName
+
+    override var dependencyFiles: FileCollection
+        get() = compilationData.compileDependencyFiles
+        set(value) { compilationData.compileDependencyFiles = value }
+}
 
 class SimpleDependencyFilesHolder(
     override val dependencyConfigurationName: String,

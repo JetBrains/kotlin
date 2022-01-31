@@ -30,9 +30,9 @@ internal open class KpmAwareTargetConfigurator<T : KotlinTarget>(
     }
 
     override fun configureCompilations(target: T) {
-        target.compilations.create(KotlinCompilation.MAIN_COMPILATION_NAME)
+        target.compilations.maybeCreate(KotlinCompilation.MAIN_COMPILATION_NAME)
         if (legacyModelTargetConfigurator.createTestCompilation) {
-            target.compilations.create(KotlinCompilation.TEST_COMPILATION_NAME)
+            target.compilations.maybeCreate(KotlinCompilation.TEST_COMPILATION_NAME)
         }
     }
 

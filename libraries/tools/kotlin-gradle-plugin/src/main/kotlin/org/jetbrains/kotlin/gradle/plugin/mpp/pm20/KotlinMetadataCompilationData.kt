@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.gradle.targets.metadata.ResolvedMetadataFilesProvide
 import org.jetbrains.kotlin.gradle.targets.metadata.createMetadataDependencyTransformationClasspath
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.newProperty
+import org.jetbrains.kotlin.gradle.utils.setValue
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -55,7 +57,7 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
     override val compileAllTaskName: String
         get() = compileAllTask.name
 
-    override val compileDependencyFiles: FileCollection by project.provider {
+    override var compileDependencyFiles: FileCollection by project.newProperty {
         createMetadataDependencyTransformationClasspath(
             project,
             resolvableMetadataConfiguration(fragment.containingModule),
@@ -199,7 +201,7 @@ internal class MetadataCompilationRegistry {
         withAllNativeCallbacks.forEach { it.invoke(compilationData) }
     }
 
-    fun getForFragmentOrNull(fragment: KotlinGradleFragment): KotlinMetadataCompilationData<*>? =
+    fun getForFragmentOrNull(fragment: KotlinGradleFragment): AbstractKotlinFragmentMetadataCompilationData<*>? =
         listOf(commonCompilationDataPerFragment.getValue(fragment), nativeCompilationDataPerFragment.getValue(fragment)).singleOrNull {
             it.isActive
         }
