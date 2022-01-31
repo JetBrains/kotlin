@@ -84,7 +84,8 @@ class FunctionInlining(
     val inlineFunctionResolver: InlineFunctionResolver,
     val innerClassesSupport: InnerClassesSupport? = null,
     val insertAdditionalImplicitCasts: Boolean = false,
-    val alwaysCreateTemporaryVariablesForArguments: Boolean = false
+    val alwaysCreateTemporaryVariablesForArguments: Boolean = false,
+    val inlineArgumentsWithTheirOriginalType: Boolean = false,
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
 
     constructor(context: CommonBackendContext) : this(context, DefaultInlineFunctionResolver(context), null)
@@ -604,18 +605,15 @@ class FunctionInlining(
                 else -> error(this)
             }
             arguments.forEach {
+                // Arguments may reference the previous ones - substitute them.
+                val irExpression = it.argumentExpression.transform(substitutor, data = null)
                 val newArgument = if (it.isImmutableVariableLoad) {
-                    it.argumentExpression.transform( // Arguments may reference the previous ones - substitute them.
-                        substitutor,
-                        data = null
-                    )
+                    IrGetValueWithoutLocation((irExpression as IrGetValue).symbol)
                 } else {
                     val newVariable =
                         currentScope.scope.createTemporaryVariable(
-                            irExpression = it.argumentExpression.transform( // Arguments may reference the previous ones - substitute them.
-                                substitutor,
-                                data = null
-                            ),
+                            irExpression = irExpression,
+                            irType = if (inlineArgumentsWithTheirOriginalType) it.parameter.getOriginalType() else irExpression.type,
                             nameHint = callee.symbol.owner.name.asStringStripSpecialMarkers(),
                             isMutable = false
                         )
@@ -631,6 +629,30 @@ class FunctionInlining(
                 }
             }
             return evaluationStatements
+        }
+
+        // In short this is needed for `kt44429` test. We need to get original generic type to trick type system on JVM backend.
+        private fun IrValueParameter.getOriginalType(): IrType {
+            if (this.parent !is IrFunction) return type
+            val callee = this.parent as IrFunction
+            val original = callee.originalFunction
+
+            fun IrValueParameter?.getTypeIfFromTypeParameter(): IrType? {
+                val typeClassifier = this?.type?.classifierOrNull?.owner as? IrTypeParameter ?: return null
+                if (typeClassifier.parent != this.parent) return null
+                return callee.typeParameters[typeClassifier.index].defaultType
+            }
+
+            return when (this) {
+                callee.dispatchReceiverParameter -> original.dispatchReceiverParameter?.getTypeIfFromTypeParameter()
+                    ?: callee.dispatchReceiverParameter!!.type
+                callee.extensionReceiverParameter -> original.extensionReceiverParameter?.getTypeIfFromTypeParameter()
+                    ?: callee.extensionReceiverParameter!!.type
+                else -> callee.valueParameters.first { it == this }.let { valueParameter ->
+                    original.valueParameters[valueParameter.index].getTypeIfFromTypeParameter()
+                        ?: valueParameter.type
+                }
+            }
         }
 
         private fun evaluateArguments(callSite: IrFunctionAccessExpression, callee: IrFunction): List<IrStatement> {
@@ -695,7 +717,7 @@ class FunctionInlining(
                 irExpression = IrBlockImpl(
                     variableInitializer.startOffset,
                     variableInitializer.endOffset,
-                    variableInitializer.type,
+                    if (inlineArgumentsWithTheirOriginalType) parameter.getOriginalType() else variableInitializer.type,
                     InlinerExpressionLocationHint((currentScope.irElement as IrSymbolOwner).symbol)
                 ).apply {
                     statements.add(variableInitializer)
