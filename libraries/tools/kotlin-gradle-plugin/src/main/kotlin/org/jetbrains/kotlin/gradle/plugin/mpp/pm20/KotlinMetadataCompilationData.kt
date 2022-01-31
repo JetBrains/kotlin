@@ -159,7 +159,7 @@ internal open class KotlinNativeFragmentMetadataCompilationDataImpl(
         get() = lowerCamelCaseName("compile", fragment.disambiguateName(""), "KotlinNativeMetadata")
 
     override val isActive: Boolean
-        get() = fragment.isNativeShared()
+        get() = fragment.isNativeShared() && fragment.containingModule.variantsContainingFragment(fragment).count() > 1
 
     override val kotlinOptions: NativeCompileOptions = NativeCompileOptions { languageSettings }
 
