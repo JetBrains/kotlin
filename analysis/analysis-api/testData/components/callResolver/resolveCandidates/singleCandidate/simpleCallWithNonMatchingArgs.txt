@@ -1,0 +1,15 @@
+KtErrorCallInfo:
+  candidateCalls = [
+    KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /foo(): kotlin.Unit
+          valueParameters = []
+      argumentMapping = {}
+  ]
+  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final fun /foo(): R|kotlin/Unit|>

@@ -1,5 +1,5 @@
 fun function(a: Int, b: String) {}
 
 fun call() {
-    <expr>function(1)</expr>
+    <expr>function(b = "foo", a = 1)</expr>
 }
