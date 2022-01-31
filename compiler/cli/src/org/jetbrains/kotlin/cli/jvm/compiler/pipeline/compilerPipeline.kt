@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -82,10 +83,15 @@ fun compileModulesUsingFrontendIrAndLightTree(
     compilerConfiguration: CompilerConfiguration,
     messageCollector: MessageCollector,
     buildFile: File?,
-    chunk: List<Module>
+    chunk: List<Module>,
+    targetDescription: String
 ): Boolean {
     require(projectEnvironment is VfsBasedProjectEnvironment) // TODO: abstract away this requirement
     ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
+    val performanceManager = compilerConfiguration[CLIConfigurationKeys.PERF_MANAGER]
+
+    performanceManager?.notifyCompilerInitialized(0, 0, targetDescription)
 
     messageCollector.report(
         CompilerMessageSeverity.STRONG_WARNING,
@@ -118,30 +124,45 @@ fun compileModulesUsingFrontendIrAndLightTree(
             moduleConfiguration
         )
         val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
+
+        performanceManager?.notifyAnalysisStarted()
+
         val analysisResults = compileModuleToAnalyzedFir(
             compilerInput,
             compilerEnvironment,
             emptyList(),
             null,
-            diagnosticsReporter
+            diagnosticsReporter,
+            performanceManager
         )
 
-        if (diagnosticsReporter.hasErrors) {
-            diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
-            continue
-        }
+        performanceManager?.notifyAnalysisFinished()
 
         // TODO: consider what to do if many modules has main classes
         if (mainClassFqName == null && moduleConfiguration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
             mainClassFqName = findMainClass(analysisResults.fir)
         }
 
+        if (diagnosticsReporter.hasErrors) {
+            diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
+            continue
+        }
+
+        performanceManager?.notifyGenerationStarted()
+        performanceManager?.notifyIRTranslationStarted()
+
         val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment)
-        val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)
+
+        performanceManager?.notifyIRTranslationFinished()
+
+        val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment, performanceManager)
 
         diagnosticsReporter.reportToMessageCollector(
             messageCollector, moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         )
+
+        performanceManager?.notifyIRGenerationFinished()
+        performanceManager?.notifyGenerationFinished()
 
         if (!diagnosticsReporter.hasErrors) {
             outputs.add(codegenOutput.generationState)
@@ -184,7 +205,8 @@ fun convertAnalyzedFirToIr(
 
 fun generateCodeFromIr(
     input: ModuleCompilerIrBackendInput,
-    environment: ModuleCompilerEnvironment
+    environment: ModuleCompilerEnvironment,
+    performanceManager: CommonCompilerPerformanceManager?
 ): ModuleCompilerOutput {
     // IR
     val codegenFactory = JvmIrCodegenFactory(
@@ -216,11 +238,16 @@ fun generateCodeFromIr(
         environment.diagnosticsReporter
     ).build()
 
+    performanceManager?.notifyIRLoweringStarted()
+
     generationState.beforeCompile()
     codegenFactory.generateModuleInFrontendIRMode(
         generationState, input.irModuleFragment, input.symbolTable, input.extensions,
         FirJvmBackendExtension(input.firSession, input.components)
-    )
+    ) {
+        performanceManager?.notifyIRLoweringFinished()
+        performanceManager?.notifyIRGenerationStarted()
+    }
     CodegenFactory.doCheckCancelled(generationState)
     generationState.factory.done()
 
@@ -232,7 +259,8 @@ fun compileModuleToAnalyzedFir(
     environment: ModuleCompilerEnvironment,
     previousStepsSymbolProviders: List<FirSymbolProvider>,
     incrementalExcludesScope: AbstractProjectFileSearchScope?,
-    diagnosticsReporter: DiagnosticReporter
+    diagnosticsReporter: DiagnosticReporter,
+    performanceManager: CommonCompilerPerformanceManager?
 ): ModuleCompilerAnalyzedOutput {
     var sourcesScope = environment.projectEnvironment.getSearchScopeByIoFiles(input.platformSources) //!!
     val sessionProvider = FirProjectSessionProvider()
@@ -276,9 +304,11 @@ fun compileModuleToAnalyzedFir(
         sourceFriendsDependencies(input.friendFirModules)
     }
 
+    val countFilesAndLines = if (performanceManager == null) null else performanceManager::addSourcesStats
+
     // raw fir
-    val commonRawFir = commonSession?.buildFirViaLightTree(input.commonSources, diagnosticsReporter)
-    val rawFir = session.buildFirViaLightTree(input.platformSources, diagnosticsReporter)
+    val commonRawFir = commonSession?.buildFirViaLightTree(input.commonSources, diagnosticsReporter, countFilesAndLines)
+    val rawFir = session.buildFirViaLightTree(input.platformSources, diagnosticsReporter, countFilesAndLines)
 
     // resolution
     commonSession?.apply {

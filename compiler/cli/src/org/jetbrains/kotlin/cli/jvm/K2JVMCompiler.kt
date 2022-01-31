@@ -126,19 +126,20 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             val chunk = moduleChunk.modules
             configuration.configureSourceRoots(chunk, buildFile)
 
+            val targetDescription = chunk.map { input -> input.getModuleName() + "-" + input.getModuleType() }.let { names ->
+                names.singleOrNull() ?: names.joinToString()
+            }
             if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR) && arguments.useFirLT /* TODO: consider storing in the configuration instead of using args here directly */) {
                 val projectEnvironment =
                     createProjectEnvironment(configuration, rootDisposable, EnvironmentConfigFiles.JVM_CONFIG_FILES, messageCollector)
 
                 compileModulesUsingFrontendIrAndLightTree(
-                    projectEnvironment, configuration, messageCollector, buildFile, chunk
+                    projectEnvironment, configuration, messageCollector, buildFile, chunk, targetDescription
                 )
             } else {
                 val environment = createCoreEnvironment(
                     rootDisposable, configuration, messageCollector,
-                    chunk.map { input -> input.getModuleName() + "-" + input.getModuleType() }.let { names ->
-                        names.singleOrNull() ?: names.joinToString()
-                    }
+                    targetDescription
                 ) ?: return COMPILATION_ERROR
                 environment.registerJavacIfNeeded(arguments).let {
                     if (!it) return COMPILATION_ERROR
