@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.fir.lightTree.fir
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.builder.generateTemporaryVariable
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.generateTemporaryVariable
 import org.jetbrains.kotlin.fir.lightTree.converter.generateDestructuringBlock
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 

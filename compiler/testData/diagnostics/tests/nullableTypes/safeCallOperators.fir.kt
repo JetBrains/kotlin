@@ -64,7 +64,7 @@ fun foo(a: A?) {
         // 1. All kinds of green code with safe+call + invoke we identified fails with CCE if `a != null`, anyway
         // 2. In case of null value, the behavior is intended (no call performed)
         <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>q()<!>
-        <!SAFE_CALL_WILL_CHANGE_NULLABILITY, SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL, UNNECESSARY_SAFE_CALL!>?.<!>w<!>++
+        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>w<!>++
 
         (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>l<!>) += 1
         (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>l<!>)[0]
@@ -75,7 +75,7 @@ fun foo(a: A?) {
         (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>ll<!>)[0][0]++
         (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>ll<!>)[0][0] = 1
         (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>q<!>)()
-        (<!SAFE_CALL_WILL_CHANGE_NULLABILITY, SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL, UNNECESSARY_SAFE_CALL!>?.<!>w<!>)++
+        (<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>w<!>)++
 
         <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>l<!>.plusAssign(1)
         <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>a<!UNNECESSARY_SAFE_CALL!>?.<!>l<!>.get(0)

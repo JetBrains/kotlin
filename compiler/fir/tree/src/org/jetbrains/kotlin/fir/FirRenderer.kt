@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.Name
@@ -1302,7 +1305,11 @@ open class FirRenderer(builder: StringBuilder, protected val mode: RenderMode = 
     override fun visitAugmentedArraySetCall(augmentedArraySetCall: FirAugmentedArraySetCall) {
         augmentedArraySetCall.annotations.renderAnnotations()
         print("ArraySet:[")
-        augmentedArraySetCall.assignCall.accept(this)
+        augmentedArraySetCall.lhsGetCall.accept(this)
+        print(" ")
+        print(augmentedArraySetCall.operation.operator)
+        print(" ")
+        augmentedArraySetCall.rhs.accept(this)
         print("]")
     }
 

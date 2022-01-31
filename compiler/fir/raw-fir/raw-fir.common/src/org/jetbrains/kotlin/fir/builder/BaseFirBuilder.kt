@@ -1024,123 +1024,28 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         rhs: T?,
         convert: T.() -> FirExpression
     ): FirStatement {
+        require(receiver is FirFunctionCall) {
+            "Array access should be desugared to a function call, but $receiver is found"
+        }
+
         return buildAugmentedArraySetCall {
             source = baseSource
             this.operation = operation
-            assignCall = generateAugmentedCallForAugmentedArraySetCall(receiver, baseSource, operation, rhs, convert)
-            setGetBlock =
-                generateSetGetBlockForAugmentedArraySetCall(receiver, baseSource, arrayAccessSource, operation, rhs, convert)
-            this.annotations += annotations
-        }
-    }
-
-    private fun generateAugmentedCallForAugmentedArraySetCall(
-        receiver: FirExpression, // a.get(x,y)
-        baseSource: KtSourceElement?,
-        operation: FirOperation,
-        rhs: T?,
-        convert: T.() -> FirExpression
-    ): FirFunctionCall {
-        /*
-         * Desugarings of a[x, y] += z to
-         * a.get(x, y).plusAssign(z)
-         */
-        return buildFunctionCall {
-            source = baseSource?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
-            calleeReference = buildSimpleNamedReference {
-                name = FirOperationNameConventions.ASSIGNMENTS.getValue(operation)
-            }
-            explicitReceiver = receiver
-            argumentList = buildArgumentList {
-                arguments += rhs?.convert() ?: buildErrorExpression(
-                    null,
-                    ConeSimpleDiagnostic("No value for array set", DiagnosticKind.Syntax)
-                )
-            }
-            origin = FirFunctionCallOrigin.Operator
-        }
-    }
-
-
-    private fun generateSetGetBlockForAugmentedArraySetCall(
-        receiver: FirExpression,
-        baseSource: KtSourceElement?,
-        arrayAccessSource: KtSourceElement?,
-        operation: FirOperation,
-        rhs: T?,
-        convert: T.() -> FirExpression
-    ): FirBlock {
-        /*
-         * Desugarings of a[x, y] += z to
-         * {
-         *     val tmp_a = a
-         *     val tmp_x = x
-         *     val tmp_y = y
-         *     tmp_a.set(tmp_x, tmp_a.get(tmp_x, tmp_y).plus(z))
-         * }
-         */
-        return buildBlock {
-            val baseCall = receiver as FirFunctionCall
-
-            val arrayVariable = generateTemporaryVariable(
-                baseModuleData,
-                source = null,
-                specialName = "<array>",
-                initializer = baseCall.explicitReceiver ?: buildErrorExpression {
-                    source = baseSource?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
-                    diagnostic = ConeSimpleDiagnostic("No receiver for array access", DiagnosticKind.Syntax)
-                }
+            this.lhsGetCall = receiver
+            this.rhs = rhs?.convert() ?: buildErrorExpression(
+                null,
+                ConeSimpleDiagnostic("No value for array set", DiagnosticKind.Syntax)
             )
-            statements += arrayVariable
-            val indexVariables = baseCall.arguments.mapIndexed { i, index ->
-                generateTemporaryVariable(baseModuleData, source = null, specialName = "<index_$i>", initializer = index)
-            }
-            statements += indexVariables
-            statements += buildFunctionCall {
-                source = baseSource?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
-                explicitReceiver = arrayVariable.toQualifiedAccess()
-                calleeReference = buildSimpleNamedReference {
-                    name = OperatorNameConventions.SET
-                }
-                origin = FirFunctionCallOrigin.Operator
-                argumentList = buildArgumentList {
-                    for (indexVariable in indexVariables) {
-                        arguments += indexVariable.toQualifiedAccess()
-                    }
-
-                    val getCall = buildFunctionCall {
-                        source = arrayAccessSource?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
-                        explicitReceiver = arrayVariable.toQualifiedAccess()
-                        calleeReference = buildSimpleNamedReference {
-                            name = OperatorNameConventions.GET
-                        }
-                        argumentList = buildArgumentList {
-                            for (indexVariable in indexVariables) {
-                                arguments += indexVariable.toQualifiedAccess()
-                            }
-                        }
-                        origin = FirFunctionCallOrigin.Operator
-                    }
-
-                    val operatorCall = buildFunctionCall {
-                        calleeReference = buildSimpleNamedReference {
-                            name = FirOperationNameConventions.ASSIGNMENTS_TO_SIMPLE_OPERATOR.getValue(operation)
-                        }
-                        explicitReceiver = getCall
-                        argumentList = buildArgumentList {
-                            arguments += rhs?.convert() ?: buildErrorExpression(
-                                null,
-                                ConeSimpleDiagnostic(
-                                    "No value for array set",
-                                    DiagnosticKind.Syntax
-                                )
-                            )
-                        }
-                        origin = FirFunctionCallOrigin.Operator
-                    }
-                    arguments += operatorCall
-                }
-            }
+            // Second copy of rhs is used because we analyze it twice in different contexts
+            // and now they should be different expressions instances to make everything work properly.
+            // But this lead to exponential time already at FIR building stage,
+            // so we hope this hack will be removed with KT-50861
+            this.rhs2 = rhs?.convert() ?: buildErrorExpression(
+                null,
+                ConeSimpleDiagnostic("No value for array set", DiagnosticKind.Syntax)
+            )
+            this.arrayAccessSource = arrayAccessSource
+            this.annotations += annotations
         }
     }
 
@@ -1260,14 +1165,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
     protected fun FirCallableDeclaration.initContainingClassAttr() {
         initContainingClassAttr(context)
-    }
-
-    private fun FirVariable.toQualifiedAccess(): FirQualifiedAccessExpression = buildPropertyAccessExpression {
-        calleeReference = buildResolvedNamedReference {
-            source = this@toQualifiedAccess.source?.fakeElement(KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess)
-            name = this@toQualifiedAccess.name
-            resolvedSymbol = this@toQualifiedAccess.symbol
-        }
     }
 
     protected inline fun <R> withDefaultSourceElementKind(newDefault: KtSourceElementKind, action: () -> R): R {

@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildVariableAssignment
+import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.toAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.references.*
@@ -46,6 +44,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransformer) : FirPartialBodyResolveTransformer(transformer) {
@@ -1043,32 +1042,16 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         augmentedArraySetCall.transformAnnotations(transformer, data)
         val operatorName = FirOperationNameConventions.ASSIGNMENTS.getValue(augmentedArraySetCall.operation)
 
-        val firstCalls = with(augmentedArraySetCall.setGetBlock.statements.last() as FirFunctionCall) setCall@{
-            (annotations as MutableList<FirAnnotation>) += augmentedArraySetCall.annotations
-            buildList {
-                add(this@setCall)
-                with(arguments.last() as FirFunctionCall) plusCall@{
-                    add(this@plusCall)
-                    add(explicitReceiver as FirFunctionCall)
-                }
-            }
-        }
-        val secondCalls = listOf(
-            augmentedArraySetCall.assignCall,
-            augmentedArraySetCall.assignCall.explicitReceiver as FirFunctionCall
-        )
+        val transformedLhsCall =
+            augmentedArraySetCall.lhsGetCall.transformSingle(transformer, ResolutionMode.ContextIndependent).takeIf { it.isSuccessful() }
 
-        val firstResult = augmentedArraySetCall.setGetBlock.transformSingle(transformer, ResolutionMode.ContextIndependent)
-        val secondResult = augmentedArraySetCall.assignCall.transformSingle(transformer, ResolutionMode.ContextIndependent)
-
-        fun isSuccessful(functionCall: FirFunctionCall): Boolean =
-            functionCall.typeRef !is FirErrorTypeRef && functionCall.calleeReference is FirResolvedNamedReference
-
-        val firstSucceed = firstCalls.all(::isSuccessful)
-        val secondSucceed = secondCalls.all(::isSuccessful)
+        val blockForGetSetVersion: FirBlock? =
+            transformedLhsCall?.let { augmentedArraySetCall.tryResolveAugmentedArraySetCallAsSetGetBlock(it) }
+        val assignResolvedCall: FirFunctionCall? =
+            transformedLhsCall?.let { augmentedArraySetCall.tryResolveWithOperatorAssignConvention(it) }
 
         val result: FirStatement = when {
-            firstSucceed && secondSucceed -> {
+            assignResolvedCall != null && blockForGetSetVersion != null -> {
                 augmentedArraySetCall.also {
                     it.replaceCalleeReference(
                         buildErrorNamedReference {
@@ -1079,16 +1062,19 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                     )
                 }
             }
-            firstSucceed -> {
+            blockForGetSetVersion != null -> {
                 //checking secondResult leave erroneous nodes in dfa graph,
                 //we add another block so final type of expression will be correct
                 //todo replace this hack with proper graph cleaning
-                transformer.components.dataFlowAnalyzer.enterBlock(augmentedArraySetCall.setGetBlock)
-                transformer.components.dataFlowAnalyzer.exitBlock(augmentedArraySetCall.setGetBlock)
-                firstResult
+                transformer.components.dataFlowAnalyzer.enterBlock(blockForGetSetVersion)
+                transformer.components.dataFlowAnalyzer.exitBlock(blockForGetSetVersion)
+                blockForGetSetVersion
             }
-            secondSucceed -> secondResult
+            assignResolvedCall != null -> assignResolvedCall
             else -> {
+                augmentedArraySetCall.rhs.transformSingle(transformer, ResolutionMode.ContextIndependent)
+                augmentedArraySetCall.rhs2.transformSingle(transformer, ResolutionMode.ContextIndependent)
+
                 augmentedArraySetCall.also {
                     it.replaceCalleeReference(
                         buildErrorNamedReference {
@@ -1101,6 +1087,149 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         }
         return result
     }
+
+    private fun FirFunctionCall.isSuccessful(): Boolean =
+        typeRef !is FirErrorTypeRef && calleeReference is FirResolvedNamedReference
+
+
+    /**
+     * Desugarings of a[x, y] += z to
+     * a.get(x, y).plusAssign(z)
+     *
+     * @return null if `plusAssign` is unresolved
+     * @return block defined as described above, otherwise
+     */
+    private fun FirAugmentedArraySetCall.tryResolveWithOperatorAssignConvention(lhsGetCall: FirFunctionCall): FirFunctionCall? {
+        val assignCall = buildFunctionCall {
+            source = this@tryResolveWithOperatorAssignConvention.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
+            calleeReference = buildSimpleNamedReference {
+                name = FirOperationNameConventions.ASSIGNMENTS.getValue(operation)
+            }
+            explicitReceiver = lhsGetCall
+            argumentList = buildArgumentList {
+                arguments += rhs2
+            }
+            origin = FirFunctionCallOrigin.Operator
+            annotations += this@tryResolveWithOperatorAssignConvention.annotations
+        }
+
+        val transformedCall = assignCall.transformSingle(transformer, ResolutionMode.ContextIndependent)
+        return transformedCall.takeIf { it.isSuccessful() }
+    }
+
+    /**
+     * Desugarings of a[x, y] += z to
+     * {
+     *     val tmp_a = a
+     *     val tmp_x = x
+     *     val tmp_y = y
+     *     tmp_a.set(tmp_x, tmp_y, tmp_a.get(tmp_x, tmp_y).plus(z))
+     * }
+     *
+     * @return null if `set` or `plus` calls are unresolved
+     * @return block defined as described above, otherwise
+     */
+    private fun FirAugmentedArraySetCall.tryResolveAugmentedArraySetCallAsSetGetBlock(lhsGetCall: FirFunctionCall): FirBlock? {
+        val arrayVariable = generateTemporaryVariable(
+            session.moduleData,
+            source = null,
+            specialName = "<array>",
+            initializer = lhsGetCall.explicitReceiver ?: buildErrorExpression {
+                source =
+                    this@tryResolveAugmentedArraySetCallAsSetGetBlock.source
+                        ?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
+                diagnostic = ConeSimpleDiagnostic("No receiver for array access", DiagnosticKind.Syntax)
+            }
+        )
+
+        val indexVariables = lhsGetCall.arguments.flatMap {
+            if (it is FirVarargArgumentsExpression)
+                it.arguments
+            else
+                listOf(it)
+        }.mapIndexed { i, index ->
+            generateTemporaryVariable(session.moduleData, source = null, specialName = "<index_$i>", initializer = index)
+        }
+
+        val getCall = buildFunctionCall {
+            source = arrayAccessSource?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
+            explicitReceiver = arrayVariable.toQualifiedAccess()
+            calleeReference = buildSimpleNamedReference {
+                name = OperatorNameConventions.GET
+            }
+            argumentList = buildArgumentList {
+                for (indexVariable in indexVariables) {
+                    arguments += indexVariable.toQualifiedAccess()
+                }
+            }
+            origin = FirFunctionCallOrigin.Operator
+        }
+
+        val operatorCall = buildFunctionCall {
+            calleeReference = buildSimpleNamedReference {
+                name = FirOperationNameConventions.ASSIGNMENTS_TO_SIMPLE_OPERATOR.getValue(operation)
+            }
+            explicitReceiver = getCall
+            argumentList = buildArgumentList {
+                arguments += rhs
+            }
+            origin = FirFunctionCallOrigin.Operator
+        }
+
+        val setCall = buildFunctionCall {
+            source =
+                this@tryResolveAugmentedArraySetCallAsSetGetBlock.source
+                    ?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
+            explicitReceiver = arrayVariable.toQualifiedAccess()
+            calleeReference = buildSimpleNamedReference {
+                name = OperatorNameConventions.SET
+            }
+            origin = FirFunctionCallOrigin.Operator
+            argumentList = buildArgumentList {
+                for (indexVariable in indexVariables) {
+                    arguments += indexVariable.toQualifiedAccess()
+                }
+
+                arguments += operatorCall
+            }
+
+            annotations += this@tryResolveAugmentedArraySetCallAsSetGetBlock.annotations
+        }
+
+        arrayVariable.transformSingle(transformer, ResolutionMode.ContextIndependent)
+        indexVariables.forEach { it.transformSingle(transformer, ResolutionMode.ContextIndependent) }
+        val transformedSet = setCall.transformSingle(transformer, ResolutionMode.ContextIndependent)
+
+        if (!transformedSet.isSuccessful()) return null
+
+        val transformedOperator =
+            transformedSet.argumentList.arguments.last().let {
+                if (it is FirNamedArgumentExpression)
+                    it.expression
+                else
+                    it
+            }
+
+        require(transformedOperator is FirFunctionCall) {
+            "Last argument of set call should be an operator but $transformedOperator found"
+        }
+
+        if (!transformedOperator.isSuccessful()) return null
+
+        return buildBlock {
+            statements += arrayVariable
+            statements += indexVariables
+            statements += setCall
+        }.also {
+            it.replaceTypeRef(
+                buildResolvedTypeRef {
+                    source = this@tryResolveAugmentedArraySetCallAsSetGetBlock.source
+                    type = session.builtinTypes.unitType.type
+                }
+            )
+        }
+    }
+
 
     override fun transformArrayOfCall(arrayOfCall: FirArrayOfCall, data: ResolutionMode): FirStatement {
         if (data is ResolutionMode.ContextDependent) {

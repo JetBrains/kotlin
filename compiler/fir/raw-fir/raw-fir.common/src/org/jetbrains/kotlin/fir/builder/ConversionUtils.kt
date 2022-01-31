@@ -285,50 +285,6 @@ fun generateResolvedAccessExpression(source: KtSourceElement?, variable: FirVari
         }
     }
 
-fun generateTemporaryVariable(
-    moduleData: FirModuleData,
-    source: KtSourceElement?,
-    name: Name,
-    initializer: FirExpression,
-    typeRef: FirTypeRef? = null,
-    extractedAnnotations: Collection<FirAnnotation>? = null,
-): FirVariable =
-    buildProperty {
-        this.source = source
-        this.moduleData = moduleData
-        origin = FirDeclarationOrigin.Source
-        returnTypeRef = typeRef ?: buildImplicitTypeRef {
-            this.source = source
-        }
-        this.name = name
-        this.initializer = initializer
-        symbol = FirPropertySymbol(name)
-        isVar = false
-        isLocal = true
-        status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
-        if (extractedAnnotations != null) {
-            // LT extracts annotations ahead.
-            // PSI extracts annotations on demand. Use a similar util in [PsiConversionUtils]
-            annotations.addAll(extractedAnnotations)
-        }
-    }
-
-fun generateTemporaryVariable(
-    moduleData: FirModuleData,
-    source: KtSourceElement?,
-    specialName: String,
-    initializer: FirExpression,
-    extractedAnnotations: Collection<FirAnnotation>? = null,
-): FirVariable =
-    generateTemporaryVariable(
-        moduleData,
-        source,
-        Name.special("<$specialName>"),
-        initializer,
-        null,
-        extractedAnnotations,
-    )
-
 val FirClassBuilder.ownerRegularOrAnonymousObjectSymbol
     get() = when (this) {
         is FirAnonymousObjectBuilder -> symbol

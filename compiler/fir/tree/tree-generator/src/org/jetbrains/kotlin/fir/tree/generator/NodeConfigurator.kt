@@ -461,10 +461,13 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         augmentedArraySetCall.configure {
-            +field("assignCall", functionCall)
-            +field("setGetBlock", block)
+            +field("lhsGetCall", functionCall)
+            +field("rhs", expression)
+            +field("rhs2", expression)
             +field("operation", operationType)
+            // Used for resolution errors reporting in case
             +field("calleeReference", reference, withReplace = true)
+            +field("arrayAccessSource", sourceElementType, nullable = true)
         }
 
         classReferenceExpression.configure {
