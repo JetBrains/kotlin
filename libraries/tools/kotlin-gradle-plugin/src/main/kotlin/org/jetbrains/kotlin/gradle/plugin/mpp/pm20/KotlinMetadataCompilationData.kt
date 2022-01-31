@@ -120,8 +120,8 @@ internal open class KotlinCommonFragmentMetadataCompilationDataImpl(
     override val isActive: Boolean
         get() = !fragment.isNativeShared() &&
                 fragment.containingModule.variantsContainingFragment(fragment).run {
-                    !all { it.platformType in setOf(KotlinPlatformType.androidJvm, KotlinPlatformType.jvm)} &&
-                            !all { it.platformType == KotlinPlatformType.js }
+                    !all { it.platformType in setOf(KotlinPlatformType.androidJvm, KotlinPlatformType.jvm) } &&
+                            mapTo(hashSetOf()) { it.platformType }.size > 1
                 }
 
     override val kotlinOptions: KotlinMultiplatformCommonOptions = KotlinMultiplatformCommonOptionsImpl()
