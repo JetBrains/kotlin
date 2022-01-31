@@ -1362,6 +1362,12 @@ linkTest("enum_linkTest") {
     lib = "codegen/enum/linkTest_lib.kt"
 }
 
+linkTest("enum_openMethodNoOverrides") {
+    useGoldenData = true
+    source = "codegen/enum/openMethodNoOverrides_main.kt"
+    lib = "codegen/enum/openMethodNoOverrides_lib.kt"
+}
+
 task enum_varargParam(type: KonanLocalTest) {
     useGoldenData = true
     source = "codegen/enum/varargParam.kt"

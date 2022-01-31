@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.common.atMostOne
+import org.jetbrains.kotlin.backend.common.ir.isFinalClass
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
 import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
@@ -61,9 +62,6 @@ val IrFunction.isOverridable get() = this is IrSimpleFunction && this.isOverrida
 
 val IrFunction.isOverridableOrOverrides
     get() = this is IrSimpleFunction && (this.isOverridable || this.overriddenSymbols.isNotEmpty())
-
-val IrClass.isFinalClass: Boolean
-    get() = modality == Modality.FINAL
 
 fun IrClass.isSpecialClassWithNoSupertypes() = this.isAny() || this.isNothing()
 
