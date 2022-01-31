@@ -144,10 +144,10 @@ class Executable constructor(
 
     /**
      * A name of a task running this executable.
-     * Returns null if the executables's target is not a host one (macosX64, linuxX64 or mingw64).
+     * Returns null if the executables's target is not a host one (macosArm64, macosX64, linuxX64 or mingw64).
      */
     val runTaskName: String?
-        get() = if (konanTarget in listOf(KonanTarget.MACOS_X64, KonanTarget.LINUX_X64, KonanTarget.MINGW_X64)) {
+        get() = if (konanTarget in listOf(KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64, KonanTarget.LINUX_X64, KonanTarget.MINGW_X64)) {
             lowerCamelCaseName("run", name, compilation.target.targetName)
         } else {
             null
@@ -155,7 +155,7 @@ class Executable constructor(
 
     /**
      * A task running this executable.
-     * Returns null if the executables's target is not a host one (macosX64, linuxX64 or mingw64).
+     * Returns null if the executables's target is not a host one (macosArm64, macosX64, linuxX64 or mingw64).
      */
     val runTaskProvider: TaskProvider<AbstractExecTask<*>>?
         get() = runTaskName?.let { project.tasks.withType(AbstractExecTask::class.java).named(it) }
