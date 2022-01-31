@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmAwareTargetConfigurator
+import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
@@ -542,6 +542,19 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 is KotlinTarget -> dataOwner.apiElementsConfigurationName
                 else -> error("unexpected owner of $this")
             }
+    }
+}
+
+internal class KpmNativeTargetConfigurator<T : KotlinNativeTarget>(private val nativeTargetConfigurator: KotlinNativeTargetConfigurator<T>) :
+    KpmAwareTargetConfigurator<T>(nativeTargetConfigurator) {
+
+    override fun configureTarget(target: T) {
+        super.configureTarget(target)
+        configureBinariesTask(target)
+    }
+
+    private fun configureBinariesTask(target: T) {
+        target.project.registerTask<DefaultTask>(target.artifactsTaskName) { }
     }
 }
 
