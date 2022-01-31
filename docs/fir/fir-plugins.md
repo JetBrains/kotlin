@@ -8,7 +8,7 @@ Generally, FIR compiler supports search for declarations only with a specific cl
 
 _Note:_ there are plans to design some new syntax for passing information from code to plugins instead of annotations, because they have some problems and limitations due to the compiler design reasons.
 
-There is a special service in FIR named [FirPredicateBasedProvider](https://jetbrains.team/p/kt/repositories/kotlin/files/compiler/fir/resolve/src/org/jetbrains/kotlin/fir/extensions/FirPredicateBasedProvider.kt). It allows to find all declarations in compiled code which match some [DeclarationPredicate](https://jetbrains.team/p/kt/repositories/kotlin/files/compiler/fir/tree/src/org/jetbrains/kotlin/fir/extensions/predicate/DeclarationPredicate.kt).
+There is a special service in FIR named [FirPredicateBasedProvider](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/resolve/src/org/jetbrains/kotlin/fir/extensions/FirPredicateBasedProvider.kt). It allows to find all declarations in compiled code which match some [DeclarationPredicate](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/tree/src/org/jetbrains/kotlin/fir/extensions/predicate/DeclarationPredicate.kt).
 
 There are multiple types of predicates and each one has DSL functions to create them (in parenthesis):
 - `AnnotatedWith` matches all declarations which have on of annotations passed to it (`has(vararg annotations: FqName)`)
@@ -82,7 +82,7 @@ class Derived : Base() { // supertype Base not resolved yet
 
 ## Extensions
 
-All extensions to FIR compiler are inheritors of [FirExtension](https://jetbrains.team/p/kt/repositories/kotlin/files/compiler/fir/tree/src/org/jetbrains/kotlin/fir/extensions/FirExtension.kt). It has only one  method, which can be overridden in custom extensions (`registerPredicates`) which was explained before.
+All extensions to FIR compiler are inheritors of [FirExtension](https://github.com/JetBrains/kotlin/blob/master/compiler/fir/tree/src/org/jetbrains/kotlin/fir/extensions/FirExtension.kt). It has only one  method, which can be overridden in custom extensions (`registerPredicates`) which was explained before.
 
 For registering FIR extension you need to implement and register just one extension point named [FirExtensionRegistrar](https://github.com/JetBrains/kotlin/blob/mastercompiler/fir/entrypoint/src/org/jetbrains/kotlin/fir/extensions/FirExtensionRegistrar.kt?tab=source&line=24). It has one method to implement (`configurePlugin`) in which you need register all your FIR extensions, using special DSL syntax:
 
