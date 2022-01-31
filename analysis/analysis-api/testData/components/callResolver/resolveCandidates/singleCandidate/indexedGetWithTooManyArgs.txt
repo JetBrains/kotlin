@@ -3,12 +3,14 @@ KtErrorCallInfo:
     KtSimpleFunctionCall:
       isImplicitInvoke = false
       partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-        dispatchReceiver = null
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = c
+          isSafeNavigation = false
         extensionReceiver = null
         signature = KtFunctionLikeSignature:
           receiverType = null
-          returnType = kotlin.Unit
-          symbol = /function(a: kotlin.Int, b: kotlin.String): kotlin.Unit
+          returnType = kotlin.Boolean
+          symbol = /C.get(<dispatch receiver>: C, a: kotlin.Int, b: kotlin.String): kotlin.Boolean
           valueParameters = [
             KtVariableLikeSignature:
               name = a
@@ -26,7 +28,12 @@ KtErrorCallInfo:
           name = a
           receiverType = null
           returnType = kotlin.Int
-          symbol = a: kotlin.Int)
+          symbol = a: kotlin.Int),
+        "foo" -> (KtVariableLikeSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.String
+          symbol = b: kotlin.String)
       }
   ]
-  diagnostic = ERROR<NO_VALUE_FOR_PARAMETER: No value passed for parameter 'b'>
+  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final operator fun /C.get(a: R|kotlin/Int|, b: R|kotlin/String|): R|kotlin/Boolean|>

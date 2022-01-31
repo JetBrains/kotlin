@@ -1,0 +1,16 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtSmartCastedReceiverValue:
+        original = KtExplicitReceiverValue:
+          expression = a
+          isSafeNavigation = false
+        smartCastType = kotlin.String
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.String
+        returnType = kotlin.Unit
+        symbol = /foo(<extension receiver>: kotlin.String): kotlin.Unit
+        valueParameters = []
+    argumentMapping = {}

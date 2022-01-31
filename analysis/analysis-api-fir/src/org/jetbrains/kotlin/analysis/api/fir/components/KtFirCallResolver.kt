@@ -84,7 +84,28 @@ internal class KtFirCallResolver(
     }
 
     override fun resolveCall(psi: KtElement): KtCallInfo? = withValidityAssertion {
-        if (psi.isNotResolvable()) return null
+        val ktCallInfos = getKtCallInfos(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
+            listOfNotNull(
+                toKtCallInfo(
+                    psiToResolve,
+                    resolveCalleeExpressionOfFunctionCall,
+                    resolveFragmentOfCall
+                )
+            )
+        }
+        check(ktCallInfos.size <= 1) { "Should only return 1 KtCallInfo" }
+        return ktCallInfos.singleOrNull()
+    }
+
+    private inline fun getKtCallInfos(
+        psi: KtElement,
+        getKtCallInfos: FirElement.(
+            psiToResolve: KtElement,
+            resolveCalleeExpressionOfFunctionCall: Boolean,
+            resolveFragmentOfCall: Boolean
+        ) -> List<KtCallInfo>
+    ): List<KtCallInfo> {
+        if (psi.isNotResolvable()) return emptyList()
 
         val containingCallExpressionForCalleeExpression = psi.getContainingCallExpressionForCalleeExpression()
         val containingBinaryExpressionForLhs = psi.getContainingBinaryExpressionForIncompleteLhs()
@@ -94,11 +115,11 @@ internal class KtFirCallResolver(
             ?: containingBinaryExpressionForLhs
             ?: containingUnaryExpressionForIncOrDec
             ?: psi
-        val fir = psiToResolve.getOrBuildFir(analysisSession.firResolveState) ?: return null
-        fir.toKtCallInfo(
+        val fir = psiToResolve.getOrBuildFir(analysisSession.firResolveState) ?: return emptyList()
+        return fir.getKtCallInfos(
             psiToResolve,
-            resolveCalleeExpressionOfFunctionCall = psiToResolve == containingCallExpressionForCalleeExpression,
-            resolveFragmentOfCall = psiToResolve == containingBinaryExpressionForLhs || psiToResolve == containingUnaryExpressionForIncOrDec
+            psiToResolve == containingCallExpressionForCalleeExpression,
+            psiToResolve == containingBinaryExpressionForLhs || psiToResolve == containingUnaryExpressionForIncOrDec
         )
     }
 
@@ -678,14 +699,62 @@ internal class KtFirCallResolver(
         firSymbolBuilder.variableLikeBuilder.buildValueParameterSymbol(this)
 
     override fun resolveCandidates(psi: KtElement): List<KtCallInfo> = withValidityAssertion {
-        val firCall = when (val fir = psi.getOrBuildFir(firResolveState)) {
-            is FirFunctionCall -> fir
-            is FirSafeCallExpression -> fir.selector.safeAs<FirFunctionCall>()
-            // TODO: FirDelegatedConstructorColl, FirAnnotationCall, FirArrayOfCall, FirConstructor
-            else -> null
-        } ?: return@withValidityAssertion emptyList()
-        val firFile = psi.containingKtFile.getOrBuildFirFile(firResolveState)
-        AllCandidatesResolver(analysisSession.rootModuleSession, firFile).getAllCandidates(firCall, psi)
+        getKtCallInfos(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
+            resolveCandidates(
+                psiToResolve,
+                resolveCalleeExpressionOfFunctionCall,
+                resolveFragmentOfCall
+            )
+        }
+    }
+
+    // TODO: Refactor common code with FirElement.toKtCallInfo() when other FirResolvables are handled
+    private fun FirElement.resolveCandidates(
+        psi: KtElement,
+        resolveCalleeExpressionOfFunctionCall: Boolean,
+        resolveFragmentOfCall: Boolean,
+    ): List<KtCallInfo> {
+        if (this is FirCheckNotNullCall)
+            return listOf(KtSuccessCallInfo(KtCheckNotNullCall(token, argumentList.arguments.first().psi as KtExpression)))
+        if (resolveCalleeExpressionOfFunctionCall && this is FirImplicitInvokeCall) {
+            // For implicit invoke, we resolve the calleeExpression of the CallExpression to the call that creates the receiver of this
+            // implicit invoke call. For example,
+            // ```
+            // fun test(f: () -> Unit) {
+            //   f() // calleeExpression `f` resolves to the local variable access, while `f()` resolves to the implicit `invoke` call.
+            //       // This way `f` is also the explicit receiver of this implicit `invoke` call
+            // }
+            // ```
+            return explicitReceiver?.resolveCandidates(
+                psi,
+                resolveCalleeExpressionOfFunctionCall = false,
+                resolveFragmentOfCall = resolveFragmentOfCall
+            ) ?: emptyList()
+        }
+        return when (this) {
+            is FirFunctionCall -> {
+                val firFile = psi.containingKtFile.getOrBuildFirFile(firResolveState)
+                AllCandidatesResolver(analysisSession.rootModuleSession, firFile).getAllCandidates(this, psi, resolveFragmentOfCall)
+            }
+            is FirSafeCallExpression -> selector.resolveCandidates(
+                psi,
+                resolveCalleeExpressionOfFunctionCall,
+                resolveFragmentOfCall
+            )
+            is FirArrayOfCall, is FirComparisonExpression, is FirEqualityOperatorCall -> {
+                listOfNotNull(
+                    toKtCallInfo(
+                        psi,
+                        resolveCalleeExpressionOfFunctionCall,
+                        resolveFragmentOfCall
+                    )
+                )
+            }
+            else -> {
+                // TODO: FirDelegatedConstructorCall, FirAnnotationCall, FirPropertyAccessExpression, FirVariableAssignment
+                listOf()
+            }
+        }
     }
 
     private inner class AllCandidatesResolver(private val firSession: FirSession, private val firFile: FirFile) {
@@ -709,7 +778,7 @@ internal class KtFirCallResolver(
 
         private val resolutionContext = ResolutionContext(firSession, bodyResolveComponents, stubBodyResolveTransformer.context)
 
-        fun getAllCandidates(functionCall: FirFunctionCall, element: KtElement): List<KtCallInfo> {
+        fun getAllCandidates(functionCall: FirFunctionCall, element: KtElement, resolveFragmentOfCall: Boolean): List<KtCallInfo> {
             initializeBodyResolveContext(element)
 
             // If a function call is resolved to an implicit invoke call, the FirImplicitInvokeCall will have the `invoke()` function as the
@@ -740,7 +809,15 @@ internal class KtFirCallResolver(
                     resolutionContext
                 )
             }
-            return candidates.mapNotNull { convertToKtCallInfo(originalFunctionCall, element, it.candidate, it.isInBestCandidates) }
+            return candidates.mapNotNull {
+                convertToKtCallInfo(
+                    originalFunctionCall,
+                    element,
+                    it.candidate,
+                    it.isInBestCandidates,
+                    resolveFragmentOfCall
+                )
+            }
         }
 
         @OptIn(PrivateForInline::class, SymbolInternals::class)
@@ -757,9 +834,10 @@ internal class KtFirCallResolver(
             functionCall: FirFunctionCall,
             element: KtElement,
             candidate: Candidate,
-            isInBestCandidates: Boolean
+            isInBestCandidates: Boolean,
+            resolveFragmentOfCall: Boolean
         ): KtCallInfo? {
-            val call = createKtCall(element, functionCall, candidate, resolveFragmentOfCall = false) // TODO: resolveFragmentOfCall
+            val call = createKtCall(element, functionCall, candidate, resolveFragmentOfCall)
                 ?: error("expect `createKtCall` to succeed for candidate")
             return if (candidate.isSuccessful && isInBestCandidates) {
                 KtSuccessCallInfo(call)
