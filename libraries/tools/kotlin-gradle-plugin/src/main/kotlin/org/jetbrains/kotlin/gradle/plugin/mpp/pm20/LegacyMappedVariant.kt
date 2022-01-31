@@ -61,10 +61,20 @@ internal open class LegacyMappedVariant(
             }
 
     override val gradleVariantNames: Set<String>
-        get() = if (compilation.isMain()) {
-            val apiElements = compilation.target.apiElementsConfigurationName
-            setOf(apiElements, publishedConfigurationName(apiElements))
-        } else emptySet()
+        get() {
+            val allTargetComponents = (compilation.target as AbstractKotlinTarget).kotlinComponents
+            val allTargetUsages = allTargetComponents.flatMap {
+                when (it) {
+                    is KotlinVariant -> it.usages
+                    is JointAndroidKotlinTargetComponent -> it.usages
+                    else -> emptyList()
+                }
+            }
+            val compilationUsages = allTargetUsages.filterIsInstance<DefaultKotlinUsageContext>().filter { it.compilation == compilation }
+            return compilationUsages.filter { it.includeIntoProjectStructureMetadata }
+                .flatMap { listOf(it.dependencyConfigurationName, publishedConfigurationName(it.dependencyConfigurationName)) }
+                .toSet()
+        }
 
     override val kotlinSourceRoots: SourceDirectorySet
         get() = compilation.defaultSourceSet.kotlin
@@ -184,15 +194,11 @@ internal fun mapTargetCompilationsToKpmVariants(target: AbstractKotlinTarget, pu
                 mainModule,
                 kotlinComponent.defaultArtifactId.removePrefix(target.project.name.toLowerCase() + "-")
             )
-            val variant = mainModule.variants.withType<LegacyMappedVariant>().single {
-                it.compilation == target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-            }
             val usages = when (kotlinComponent) { // unfortunately, there's no common supertype with `usages`
                 is KotlinVariant -> kotlinComponent.usages
                 is JointAndroidKotlinTargetComponent -> kotlinComponent.usages
                 else -> error("unexpected type of kotlinComponent in legacy variant mapping: ${kotlinComponent.javaClass}")
             }
-            val configurations = usages.map { target.project.configurations.getByName(it.dependencyConfigurationName) }
 
             // Include Sources
             moduleHolder.whenPublicationAssigned { publication ->
@@ -201,14 +207,28 @@ internal fun mapTargetCompilationsToKpmVariants(target: AbstractKotlinTarget, pu
                 }
             }
 
-            // FIXME: apply overrides for attributes and artifacts from the DefaultKotlinUsageContext!
             // FIXME: include additional variants into project structure metadata?
 
-            VariantPublishingConfigurator.get(target.project).configureSingleVariantPublishing(
-                variant,
+            val request = BasicPlatformPublicationToMavenRequest(
+                kotlinComponent.name,
+                mainModule,
                 moduleHolder,
-                configurations
+                usages.map { usage ->
+                    val variant = mainModule.variants.withType<LegacyMappedVariant>().single {
+                        it.compilation == usage.compilation
+                    }
+                    (usage as? DefaultKotlinUsageContext) ?: error("unexpected KotlinUsageContext type: ${usage.javaClass}")
+                    AdvancedVariantPublicationRequest(
+                        variant,
+                        target.project.configurations.getByName(usage.dependencyConfigurationName),
+                        usage.overrideConfigurationAttributes,
+                        usage.overrideConfigurationArtifacts,
+                        usage.includeIntoProjectStructureMetadata
+                    )
+                }
             )
+
+            VariantPublishingConfigurator.get(target.project).configurePublishing(request)
         }
     }
 }

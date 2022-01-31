@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
 
@@ -67,7 +68,7 @@ constructor(
                     compilation = compilations.getByName(MAIN_COMPILATION_NAME),
                     usage = project.usageByName("java-api-jars"),
                     dependencyConfigurationName = commonFakeApiElementsConfigurationName,
-                    overrideConfigurationArtifacts = emptySet()
+                    overrideConfigurationArtifacts = project.listProperty { emptyList() }
                 )
     }
 
