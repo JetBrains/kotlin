@@ -27,8 +27,8 @@ abstract class Impl : Base {
 
 // FILE: test.kt
 
-abstract <!RETURN_TYPE_MISMATCH_ON_INHERITANCE!>class ImplDerived<!> : Impl(), Derived {
-    abstract <!NOTHING_TO_OVERRIDE!>override<!> fun foo(name: String?): Derived
+abstract class ImplDerived : Impl(), Derived {
+    abstract override fun foo(name: String?): Derived
 }
 
 abstract class DerivedImpl : Derived, Impl() {
