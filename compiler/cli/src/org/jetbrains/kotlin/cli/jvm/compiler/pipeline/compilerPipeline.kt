@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
-import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
+import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
@@ -108,6 +108,7 @@ fun compileModulesUsingFrontendIrAndLightTree(
             else platformSources.add(file)
         }
 
+        val renderDiagnosticName = moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         val diagnosticsReporter = DiagnosticReporterFactory.createReporter()
 
         val compilerInput = ModuleCompilerInput(
@@ -124,6 +125,12 @@ fun compileModulesUsingFrontendIrAndLightTree(
             null,
             diagnosticsReporter
         )
+
+        if (diagnosticsReporter.hasErrors) {
+            diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
+            continue
+        }
+
         // TODO: consider what to do if many modules has main classes
         if (mainClassFqName == null && moduleConfiguration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
             mainClassFqName = findMainClass(analysisResults.fir)
@@ -132,12 +139,13 @@ fun compileModulesUsingFrontendIrAndLightTree(
         val irInput = convertAnalyzedFirToIr(compilerInput, analysisResults, compilerEnvironment)
         val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment)
 
-        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
-            diagnosticsReporter,
-            messageCollector,
-            moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+        diagnosticsReporter.reportToMessageCollector(
+            messageCollector, moduleConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
         )
-        outputs.add(codegenOutput.generationState)
+
+        if (!diagnosticsReporter.hasErrors) {
+            outputs.add(codegenOutput.generationState)
+        }
     }
 
     return writeOutputs(

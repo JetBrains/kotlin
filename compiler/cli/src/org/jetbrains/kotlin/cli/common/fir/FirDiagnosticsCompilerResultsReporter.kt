@@ -258,3 +258,7 @@ object FirDiagnosticsCompilerResultsReporter {
         }
     }
 }
+
+fun BaseDiagnosticsCollector.reportToMessageCollector(messageCollector: MessageCollector, renderDiagnosticName: Boolean) {
+    FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(this, messageCollector, renderDiagnosticName)
+}
