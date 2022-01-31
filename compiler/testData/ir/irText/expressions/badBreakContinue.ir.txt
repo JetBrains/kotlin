@@ -20,7 +20,8 @@ FILE fqName:<root> fileName:/badBreakContinue.kt
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing
                 BLOCK_BODY
                   ERROR_EXPR 'Loop not found for break expression: break@L1' type=kotlin.Nothing
-                  ERROR_EXPR 'Loop not found for continue expression: continue@L1' type=kotlin.Nothing
+                  RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Nothing declared in <root>.test3'
+                    ERROR_EXPR 'Loop not found for continue expression: continue@L1' type=kotlin.Nothing
   FUN name:test4 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       WHILE label=null origin=WHILE_LOOP

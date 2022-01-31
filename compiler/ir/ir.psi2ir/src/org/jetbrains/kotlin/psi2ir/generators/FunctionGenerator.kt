@@ -57,16 +57,18 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             ktFunction.bodyExpression?.let { generateFunctionBody(it) }
         }
 
-    fun generateLambdaFunctionDeclaration(ktFunction: KtFunctionLiteral): IrSimpleFunction =
-        declareSimpleFunction(
+    fun generateLambdaFunctionDeclaration(ktFunction: KtFunctionLiteral): IrSimpleFunction {
+        val lambdaDescriptor = getOrFail(BindingContext.FUNCTION, ktFunction)
+        return declareSimpleFunction(
             ktFunction,
             null,
             emptyList(),
             IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
-            getOrFail(BindingContext.FUNCTION, ktFunction)
+            lambdaDescriptor
         ) {
-            generateLambdaBody(ktFunction)
+            generateLambdaBody(ktFunction, lambdaDescriptor)
         }
+    }
 
     fun generateFakeOverrideFunction(functionDescriptor: FunctionDescriptor, ktElement: KtPureElement): IrSimpleFunction? =
         functionDescriptor.takeIf { it.visibility != DescriptorVisibilities.INVISIBLE_FAKE }
