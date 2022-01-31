@@ -211,9 +211,10 @@ internal fun ProtoClass.findClass(irClass: IrClass, fileReader: IrLibraryFile, s
 
     for (i in 0 until this.declarationCount) {
         val child = this.getDeclaration(i)
-        val childClass = when (child.declaratorCase) {
-            ProtoDeclaration.DeclaratorCase.IR_CLASS -> child.irClass
-            ProtoDeclaration.DeclaratorCase.IR_ENUM_ENTRY -> child.irEnumEntry.correspondingClass
+        val childClass = when {
+            child.declaratorCase == ProtoDeclaration.DeclaratorCase.IR_CLASS -> child.irClass
+            child.declaratorCase == ProtoDeclaration.DeclaratorCase.IR_ENUM_ENTRY
+                    && child.irEnumEntry.hasCorrespondingClass() -> child.irEnumEntry.correspondingClass
             else -> continue
         }
 
