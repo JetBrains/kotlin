@@ -455,7 +455,12 @@ internal open class VariantMappedCompilationDetails<T : KotlinCommonOptions>(
     }
 
     override fun associateWith(other: CompilationDetails<*>) {
-        throw UnsupportedOperationException("not supported in the mapped model")
+        if (other !is VariantMappedCompilationDetails<*>)
+            error("a mapped variant can't be associated with a legacy one")
+        val otherModule = other.variant.containingModule
+        if (otherModule === variant.containingModule)
+            error("cannot associate $compilation with ${other.compilation} as they are mapped to the same $otherModule")
+        variant.containingModule.dependencies { implementation(otherModule) }
     }
 
     override val associateCompilations: Set<CompilationDetails<*>> get() = emptySet()
