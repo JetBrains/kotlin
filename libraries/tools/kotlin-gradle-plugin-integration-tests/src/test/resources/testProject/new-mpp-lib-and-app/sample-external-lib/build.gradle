@@ -79,7 +79,6 @@ apply plugin: 'maven-publish'
 afterEvaluate {
     kotlin {
         jvm('jvm6').compilations.create('benchmark') {
-            defaultSourceSet.dependsOn(sourceSets.jvm6Main)
             assemble.dependsOn compileKotlinTask
         }
     }
