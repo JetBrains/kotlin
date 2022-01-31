@@ -27,8 +27,16 @@ class FirTowerResolver(
     fun runResolver(
         info: CallInfo,
         context: ResolutionContext,
-        collector: CandidateCollector = this.collector,
-        manager: TowerResolveManager = this.manager
+        externalCollector: CandidateCollector? = null
+    ): CandidateCollector {
+        return runResolver(info, context, externalCollector ?: collector, manager)
+    }
+
+    fun runResolver(
+        info: CallInfo,
+        context: ResolutionContext,
+        collector: CandidateCollector,
+        manager: TowerResolveManager
     ): CandidateCollector {
         val candidateFactoriesAndCollectors = buildCandidateFactoriesAndCollectors(info, collector, context)
 

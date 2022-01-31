@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.analysis.api.calls.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayOf
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayTypeToArrayOfCall
@@ -18,24 +19,32 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir.getTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
+import org.jetbrains.kotlin.fir.resolve.calls.Candidate
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
+import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
@@ -627,6 +636,104 @@ internal class KtFirCallResolver(
     @OptIn(SymbolInternals::class)
     private fun FirValueParameterSymbol.toKtSymbol(): KtValueParameterSymbol =
         firSymbolBuilder.variableLikeBuilder.buildValueParameterSymbol(this)
+
+    override fun resolveCandidates(psi: KtElement): List<KtCallInfo> = withValidityAssertion {
+        val firCall = when (val fir = psi.getOrBuildFir(firResolveState)) {
+            is FirFunctionCall -> fir
+            is FirSafeCallExpression -> fir.regularQualifiedAccess.safeAs<FirFunctionCall>()
+            // TODO: FirDelegatedConstructorColl, FirAnnotationCall, FirArrayOfCall, FirConstructor
+            else -> null
+        } ?: return@withValidityAssertion emptyList()
+        val firFile = psi.containingKtFile.getOrBuildFirFile(firResolveState)
+        AllCandidatesResolver(analysisSession.rootModuleSession, firFile).getAllCandidates(firCall, psi)
+    }
+
+    private inner class AllCandidatesResolver(private val firSession: FirSession, private val firFile: FirFile) {
+        private val scopeSession = ScopeSession()
+
+        // TODO: This transformer is not intended for actual transformations and created here only to simplify access to call resolver
+        private val stubBodyResolveTransformer = FirBodyResolveTransformer(
+            session = firSession,
+            phase = FirResolvePhase.BODY_RESOLVE,
+            implicitTypeOnly = false,
+            scopeSession = scopeSession,
+        )
+
+        private val bodyResolveComponents =
+            FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents(
+                firSession,
+                scopeSession,
+                stubBodyResolveTransformer,
+                stubBodyResolveTransformer.context,
+            )
+
+        private val resolutionContext = ResolutionContext(firSession, bodyResolveComponents, stubBodyResolveTransformer.context)
+
+        @OptIn(PrivateForInline::class)
+        fun getAllCandidates(functionCall: FirFunctionCall, element: KtElement): List<KtCallInfo> {
+            val towerContext = firResolveState.getTowerContextProvider().getClosestAvailableParentContext(element)
+            towerContext?.let { bodyResolveComponents.context.replaceTowerDataContext(it) }
+            // Note: All candidate symbols should have the same name
+            val name =
+                functionCall.calleeReference.getCandidateSymbols().firstOrNull()?.safeAs<FirFunctionSymbol<*>>()?.name ?: return emptyList()
+            return bodyResolveComponents.context.withFile(firFile, bodyResolveComponents) {
+                val candidates = bodyResolveComponents.callResolver.collectAllCandidates(
+                    functionCall,
+                    name,
+                    element.getContainingDeclarations(),
+                    resolutionContext
+                )
+                candidates.mapNotNull { convertToKtCallInfo(functionCall, element, it.candidate, it.isInBestCandidates) }
+            }
+        }
+
+        private fun KtElement.getContainingDeclarations(): List<FirDeclaration> {
+            fun KtElement.getContainingKtDeclaration(): KtDeclaration? =
+                when (val container = this.parentOfType<KtDeclaration>()) {
+                    is KtDestructuringDeclaration -> container.parentOfType()
+                    else -> container
+                }
+
+            val containingDeclarations = mutableListOf<FirDeclaration>()
+            var current = getContainingKtDeclaration()
+            while (current != null) {
+                val firElement = current.getOrBuildFir(firResolveState)
+                val firDeclaration = when (firElement) {
+                    is FirAnonymousObjectExpression -> firElement.anonymousObject
+                    is FirAnonymousFunctionExpression -> firElement.anonymousFunction
+                    is FirDeclaration -> firElement
+                    else -> error(
+                        "Expected a FirDeclaration for KtDeclaration (type: ${current::class.simpleName}) " +
+                                "but was ${firElement?.let { it::class.simpleName }}. KtDeclaration text:\n${current.text}"
+                    )
+                }
+                containingDeclarations += firDeclaration
+                current = current.getContainingKtDeclaration()
+            }
+            return containingDeclarations.asReversed()
+        }
+
+        @OptIn(SymbolInternals::class)
+        private fun convertToKtCallInfo(
+            functionCall: FirFunctionCall,
+            element: KtElement,
+            candidate: Candidate,
+            isInBestCandidates: Boolean
+        ): KtCallInfo? {
+            val call = createKtCall(element, functionCall, candidate, resolveFragmentOfCall = false) // TODO: resolveFragmentOfCall
+                ?: error("expect `createKtCall` to succeed for candidate")
+            return if (candidate.isSuccessful && isInBestCandidates) {
+                KtSuccessCallInfo(call)
+            } else {
+                val diagnostic = createConeDiagnosticForCandidateWithError(candidate.currentApplicability, candidate)
+                if (diagnostic is ConeHiddenCandidateError) return null
+                val ktDiagnostic =
+                    functionCall.source?.let { diagnostic.asKtDiagnostic(it, element.toKtPsiSourceElement(), diagnosticCache) }
+                        ?: KtNonBoundToPsiErrorDiagnostic(factoryName = null, diagnostic.reason, token)
+                KtErrorCallInfo(listOf(call), ktDiagnostic, token)
+            }
+        }
+    }
 
     private fun FirArrayOfCall.toKtCallInfo(): KtCallInfo? {
         val arrayOfSymbol = with(analysisSession) {

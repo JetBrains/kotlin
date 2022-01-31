@@ -146,6 +146,9 @@ internal class KtFe10CallResolver(
         } ?: handleResolveErrors(this, psi)
     }
 
+    // TODO: See Call.resolveCandidates() in plugins/kotlin/core/src/org/jetbrains/kotlin/idea/core/Utils.kt
+    override fun resolveCandidates(psi: KtElement): List<KtCallInfo> = TODO()
+
     private fun handleAsCompoundAssignment(context: BindingContext, binaryExpression: KtBinaryExpression): KtCallInfo? {
         val left = binaryExpression.left ?: return null
         val right = binaryExpression.right
