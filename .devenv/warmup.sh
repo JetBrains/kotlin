@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# -e  Exit immediately if a pipeline, which may consist of a command, a list, or a compound command returns a non-zero status...
+# -x  Print a trace of commands...
+# -u  Treat unset variables and parameters other than the special parameters ‘@’ or ‘*’ as an error ...
+set -e -x -u
+
+# Try to build all production and test sources for quick start with any task
+./gradlew assemble testClasses dist
