@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerState
 import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerStateInternals
 import org.jetbrains.kotlin.types.checker.intersectTypes
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
-import sun.reflect.annotation.TypeAnnotation
 
 /*
  NB: this checker is exceptionally temporary added for stdlib migration purposes (see KT-49276).
@@ -80,7 +79,7 @@ class PassingProgressionAsCollectionCallChecker(private val kotlinCallResolver: 
                 )
             )
         }
-        val newCall = kotlinCall.replaceArguments(newArguments)
+        val newCall = kotlinCall.replaceArguments(newArguments, kotlinCall.explicitReceiver)
 
         val candidateForCollectionReplacedArgument = kotlinCallResolver.resolveCall(
             scopeTower, resolutionCallbacks, newCall, expectedType, context.collectAllCandidates
@@ -109,12 +108,12 @@ class PassingProgressionAsCollectionCallChecker(private val kotlinCallResolver: 
                     } else type
                 } ?: continue
 
-            val cons = alternativeParameterType.constructor
+            val alternativeParameterTypeConstructor = alternativeParameterType.upperIfFlexible().constructor
 
-            if (cons.declarationDescriptor != builtIns.collection && (cons !is IntersectionTypeConstructor || cons.supertypes.none { it.constructor.declarationDescriptor == builtIns.collection })) continue
+            if (alternativeParameterTypeConstructor.declarationDescriptor != builtIns.collection && (alternativeParameterTypeConstructor !is IntersectionTypeConstructor || alternativeParameterTypeConstructor.supertypes.none { it.constructor.declarationDescriptor == builtIns.collection })) continue
 
             val argumentExpression = argument.psiExpression ?: continue
-            val initialArgumentType = resolvedCall.candidateDescriptor.valueParameters.getOrNull(i)?.type ?: continue
+            val initialArgumentType = resolvedCall.candidateDescriptor.valueParameters.getOrNull(i)?.type?.upperIfFlexible() ?: continue
 
             // Iterable initial type is an exception, considered as similar to Collection passing candidate
             if (initialArgumentType.constructor.declarationDescriptor == builtIns.iterable) continue

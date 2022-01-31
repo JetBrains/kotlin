@@ -4564,6 +4564,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("kt51062.kt")
+            public void testKt51062() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/checkArguments/kt51062.kt");
+            }
+
+            @Test
             @TestMetadata("overloadedFunction.kt")
             public void testOverloadedFunction() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/checkArguments/overloadedFunction.kt");

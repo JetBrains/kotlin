@@ -371,7 +371,7 @@ internal fun List<KotlinCallArgument>.replaceTypes(
 
 internal fun PSIKotlinCall.replaceArguments(
     newArguments: List<KotlinCallArgument>,
-    newReceiverArgument: ReceiverExpressionKotlinCallArgument? = null,
+    newReceiverArgument: ReceiverKotlinCallArgument? = null,
 ): PSIKotlinCall = PSIKotlinCallImpl(
     callKind, psiCall, tracingStrategy, newReceiverArgument, dispatchReceiverForInvokeExtension, name, typeArguments, newArguments,
     externalArgument, startingDataFlowInfo, resultDataFlowInfo, dataFlowInfoForArguments, isForImplicitInvoke
