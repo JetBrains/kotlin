@@ -1,0 +1,12 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.Int
+        returnType = kotlin.String
+        symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.String
+        valueParameters = []
+    argumentMapping = {}
