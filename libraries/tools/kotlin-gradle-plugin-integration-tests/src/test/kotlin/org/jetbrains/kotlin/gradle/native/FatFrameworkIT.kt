@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assume
 import org.junit.BeforeClass
+import org.junit.Ignore
 import org.junit.Test
 import kotlin.test.assertTrue
 
@@ -195,6 +196,7 @@ class FatFrameworkIT : BaseGradleIT() {
     /**
      * Test that the configurations exposing the frameworks don't interfere with variant-aware dependency resolution
      */
+    @Ignore("Fails due to KT-50925")
     @Test
     fun testDependencyResolution() = with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
         setupWorkingDir()
