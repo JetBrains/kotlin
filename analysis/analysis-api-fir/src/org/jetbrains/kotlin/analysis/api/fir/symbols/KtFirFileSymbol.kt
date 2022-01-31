@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithDeclaration
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 
 internal class KtFirFileSymbol(
     override val firSymbol: FirFileSymbol,
-    override val resolveState: FirModuleResolveState,
+    override val resolveState: LLFirModuleResolveState,
     override val token: ValidityToken,
 ) : KtFileSymbol(), KtSymbolWithDeclarations, KtFirSymbol<FirFileSymbol> {
     override val psi: PsiElement? by cached { firSymbol.findPsi() }

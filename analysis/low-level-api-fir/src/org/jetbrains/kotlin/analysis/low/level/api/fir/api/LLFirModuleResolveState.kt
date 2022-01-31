@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 
-abstract class FirModuleResolveState {
+abstract class LLFirModuleResolveState {
     abstract val project: Project
 
     abstract val rootModuleSession: FirSession

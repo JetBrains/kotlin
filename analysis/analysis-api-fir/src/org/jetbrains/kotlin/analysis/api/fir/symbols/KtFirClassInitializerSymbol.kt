@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 
 internal class KtFirClassInitializerSymbol(
     override val firSymbol: FirAnonymousInitializerSymbol,
-    override val resolveState: FirModuleResolveState,
+    override val resolveState: LLFirModuleResolveState,
     override val token: ValidityToken,
 ) : KtClassInitializerSymbol(), KtFirSymbol<FirAnonymousInitializerSymbol> {
     override val psi: PsiElement? by cached { firSymbol.findPsi() }

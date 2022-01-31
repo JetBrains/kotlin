@@ -11,24 +11,24 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.StatusComputationSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.FirPhaseRunner
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.FirLazyTransformerForIDE.Companion.updatePhaseDeep
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
 
 /**
  * Transform designation into STATUS phase. Affects only for designation, target declaration, it's children and dependents
  */
-internal class FirDesignatedStatusResolveTransformerForIDE(
+internal class LLFirDesignatedStatusResolveTransformer(
     private val designation: FirDeclarationDesignationWithFile,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
-) : FirLazyTransformerForIDE {
+) : LLFirLazyTransformer {
     private inner class FirDesignatedStatusResolveTransformerForIDE :
         FirStatusResolveTransformer(session, scopeSession, StatusComputationSession.Regular()) {
 
-        val designationTransformer = IDEDeclarationTransformer(designation)
+        val designationTransformer = LLFirDeclarationTransformer(designation)
 
         override fun transformDeclarationContent(declaration: FirDeclaration, data: FirResolvedDeclarationStatus?): FirDeclaration =
             designationTransformer.transformDeclarationContent(this, declaration, data) {
@@ -36,7 +36,7 @@ internal class FirDesignatedStatusResolveTransformerForIDE(
             }
     }
 
-    override fun transformDeclaration(phaseRunner: FirPhaseRunner) {
+    override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.declaration.resolvePhase >= FirResolvePhase.STATUS) return
         designation.declaration.ensurePhase(FirResolvePhase.TYPES)
 

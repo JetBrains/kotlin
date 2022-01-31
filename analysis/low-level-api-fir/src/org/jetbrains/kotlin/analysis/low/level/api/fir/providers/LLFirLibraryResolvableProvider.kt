@@ -32,5 +32,5 @@ internal class LLFirLibraryResolvableProvider(
 
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> = shouldNotBeCalled()
 
-    private fun shouldNotBeCalled(): Nothing = error("Should not be called for FirIdeLibrariesSessionProvider")
+    private fun shouldNotBeCalled(): Nothing = error("Should not be called for LLFirLibrariesSessionProvider")
 }

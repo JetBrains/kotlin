@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosticCollectorComponent
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.AbstractFirIdeDiagnosticsCollector
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.AbstractLLFirDiagnosticsCollector
 
-internal class FirIdeStructureElementDiagnosticsCollector(
+internal class LLFirStructureElementDiagnosticsCollector(
     session: FirSession,
     private val doCreateVisitor: (components: List<AbstractDiagnosticCollectorComponent>) -> CheckerRunningDiagnosticCollectorVisitor,
     useExtendedCheckers: Boolean,
-) : AbstractFirIdeDiagnosticsCollector(
+) : AbstractLLFirDiagnosticsCollector(
     session,
     useExtendedCheckers,
 ) {

@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLoc
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.FirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.runCustomResolveUnderLock
-import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.FirFileAnnotationsResolveTransformer
-import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.FirProviderInterceptorForIDE
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirFileAnnotationsResolveTransformer
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirFirProviderInterceptor
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LazyTransformerFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
@@ -69,7 +69,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
         }
 
         if (!annotations.all { it.resolved }) {
-            FirFileAnnotationsResolveTransformer(
+            LLFirFileAnnotationsResolveTransformer(
                 firFile = firFile,
                 annotations = annotations,
                 session = firFile.moduleData.session,
@@ -387,7 +387,7 @@ internal class FirLazyDeclarationResolver(private val firFileBuilder: FirFileBui
         val scopeSession = ScopeSession()
 
         val firProviderInterceptor = if (onAirCreatedDeclaration) {
-            FirProviderInterceptorForIDE.createForFirElement(
+            LLFirFirProviderInterceptor.createForFirElement(
                 session = designation.firFile.moduleData.session,
                 firFile = designation.firFile,
                 element = designation.declaration

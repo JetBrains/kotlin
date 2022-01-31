@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.FirPhaseRunner
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerDataContextAllElementsCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
@@ -29,7 +29,7 @@ internal class LLFirLibraryResolveModuleFileCache(
     val kotlinScopeProvider: FirScopeProvider,
     override val session: LLFirLibraryOrLibrarySourceResolvableModuleSession
 ) : ModuleFileCache() {
-    private val firFileBuilder = FirFileBuilder(kotlinScopeProvider, FirPhaseRunner())
+    private val firFileBuilder = FirFileBuilder(kotlinScopeProvider, LLFirPhaseRunner())
 
     private val firLazyDeclarationResolver = FirLazyDeclarationResolver(firFileBuilder)
 

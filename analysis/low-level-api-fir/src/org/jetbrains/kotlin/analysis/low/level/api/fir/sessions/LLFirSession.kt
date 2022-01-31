@@ -6,18 +6,17 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 
 @OptIn(PrivateSessionConstructor::class)
-abstract class FirIdeSession(override val builtinTypes: BuiltinTypes, kind: Kind) : FirSession(sessionProvider = null, kind) {
+abstract class LLFirSession(override val builtinTypes: BuiltinTypes, kind: Kind) : FirSession(sessionProvider = null, kind) {
     abstract val project: Project
 }
 
 @OptIn(PrivateSessionConstructor::class)
-abstract class FirIdeModuleSession(builtinTypes: BuiltinTypes, kind: Kind) : FirIdeSession(builtinTypes, kind) {
+abstract class LLFirModuleSession(builtinTypes: BuiltinTypes, kind: Kind) : LLFirSession(builtinTypes, kind) {
     abstract val module: KtModule
 }

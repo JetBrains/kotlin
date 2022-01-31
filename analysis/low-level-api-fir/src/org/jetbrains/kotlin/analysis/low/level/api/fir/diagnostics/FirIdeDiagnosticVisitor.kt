@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.components.AbstractDiagnosti
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 
-internal open class FirIdeDiagnosticVisitor(
+internal open class LLFirDiagnosticVisitor(
     context: CheckerContext,
     components: List<AbstractDiagnosticCollectorComponent>,
 ) : CheckerRunningDiagnosticCollectorVisitor(context, components) {

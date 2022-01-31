@@ -63,7 +63,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
     }
 
     fun <T : KtElement> onAirResolveElement(
-        state: FirModuleResolveState,
+        state: LLFirModuleResolveState,
         place: T,
         elementToResolve: T,
     ): FirElement {
@@ -92,7 +92,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
     }
 
     fun onAirGetTowerContextProvider(
-        state: FirModuleResolveState,
+        state: LLFirModuleResolveState,
         place: KtElement,
     ): FirTowerContextProvider {
         require(state is LLFirResolvableModuleResolveState)
@@ -140,10 +140,10 @@ object LowLevelFirApiFacadeForResolveOnAir {
     }
 
     fun getResolveStateForDependentCopy(
-        originalState: FirModuleResolveState,
+        originalState: LLFirModuleResolveState,
         originalKtFile: KtFile,
         elementToAnalyze: KtElement
-    ): FirModuleResolveState {
+    ): LLFirModuleResolveState {
         require(originalState is LLFirResolvableModuleResolveState)
         require(elementToAnalyze !is KtFile) { "KtFile for dependency element not supported" }
         require(!elementToAnalyze.isPhysical) { "Depended state should be build only for non-physical elements" }
@@ -299,7 +299,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
     fun onAirResolveTypeInPlace(
         place: KtElement,
         typeReference: KtTypeReference,
-        state: FirModuleResolveState,
+        state: LLFirModuleResolveState,
     ): FirResolvedTypeRef {
         val context = state.getTowerContextProvider(place.containingKtFile).getClosestAvailableParentContext(place)
             ?: error("TowerContext not found for ${place.getElementTextInContext()}")

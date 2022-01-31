@@ -9,23 +9,25 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.Immutable
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCache
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionProvider
 
 @Immutable
-class FirIdeSessionProvider internal constructor(
+class LLFirSessionProvider internal constructor(
     val project: Project,
     internal val rootModuleSession: LLFirResolvableModuleSession,
-    val sessions: Map<KtModule, LLFirResolvableModuleSession>
+    private val moduleToSession: Map<KtModule, LLFirResolvableModuleSession>
 ) : FirSessionProvider() {
     override fun getSession(moduleData: FirModuleData): FirSession? =
-        sessions[moduleData.module]
+        moduleToSession[moduleData.module]
 
     fun getSession(module: KtModule): FirSession? =
-        sessions[module]
+        moduleToSession[module]
 
     internal fun getModuleCache(module: KtModule): ModuleFileCache =
-        sessions.getValue(module).cache
+        moduleToSession.getValue(module).cache
+
+    val allSessions: Collection<LLFirModuleSession>
+        get() = moduleToSession.values
 }

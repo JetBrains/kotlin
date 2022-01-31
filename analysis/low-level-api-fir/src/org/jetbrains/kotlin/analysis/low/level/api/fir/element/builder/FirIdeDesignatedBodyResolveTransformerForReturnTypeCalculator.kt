@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesigna
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 
-fun FirIdeDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator(
+fun LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator(
     designation: Iterator<FirElement>,
     session: FirSession,
     scopeSession: ScopeSession,
@@ -34,7 +34,7 @@ fun FirIdeDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator(
     designation.forEachRemaining(designationList::add)
     require(designationList.isNotEmpty()) { "Designation should not be empty" }
 
-    return FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
+    return LLFirDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
         designationList,
         session,
         scopeSession,
@@ -44,7 +44,7 @@ fun FirIdeDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator(
     )
 }
 
-private class FirIdeDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
+private class LLFirDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
     private val designation: List<FirElement>,
     session: FirSession,
     scopeSession: ScopeSession,

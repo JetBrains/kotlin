@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.FirPhaseRunner
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.ensurePhase
@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirAnnotationArgumentsResolveTransformer
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 
-internal class FirDesignatedAnnotationArgumentsResolveTransformerForIDE(
+internal class LLFirDesignatedAnnotationArgumentsResolveTransformer(
     private val designation: FirDeclarationDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
-) : FirLazyTransformerForIDE, FirAnnotationArgumentsResolveTransformer(session, scopeSession) {
+) : LLFirLazyTransformer, FirAnnotationArgumentsResolveTransformer(session, scopeSession) {
 
     private fun moveNextDeclaration(designationIterator: Iterator<FirDeclaration>) {
         if (!designationIterator.hasNext()) {
@@ -47,7 +47,7 @@ internal class FirDesignatedAnnotationArgumentsResolveTransformerForIDE(
         }
     }
 
-    override fun transformDeclaration(phaseRunner: FirPhaseRunner) {
+    override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.declaration.resolvePhase >= FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) return
         designation.declaration.ensurePhase(FirResolvePhase.STATUS)
 
@@ -59,7 +59,7 @@ internal class FirDesignatedAnnotationArgumentsResolveTransformerForIDE(
             }
         }
 
-        FirLazyTransformerForIDE.updatePhaseDeep(designation.declaration, FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
+        LLFirLazyTransformer.updatePhaseDeep(designation.declaration, FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
         ensureResolved(designation.declaration)
         ensureResolvedDeep(designation.declaration)
     }

@@ -6,20 +6,25 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.FirModuleResolveStateDepended
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirModuleResolveState
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirModuleResolveState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.psi.KtElement
 
-internal class TowerProviderForElementForState(private val state: FirModuleResolveState) : FirTowerContextProvider {
+internal class TowerProviderForElementForState(private val state: LLFirModuleResolveState) : FirTowerContextProvider {
     override fun getClosestAvailableParentContext(ktElement: KtElement): FirTowerDataContext? {
-        return if (state is FirModuleResolveStateDepended) {
-            state.towerProviderBuiltUponElement.getClosestAvailableParentContext(ktElement)
-                ?: LowLevelFirApiFacadeForResolveOnAir.onAirGetTowerContextProvider(state.originalState, ktElement)
-                    .getClosestAvailableParentContext(ktElement)
-        } else {
-            LowLevelFirApiFacadeForResolveOnAir.onAirGetTowerContextProvider(state, ktElement).getClosestAvailableParentContext(ktElement)
+        if (state is FirModuleResolveStateDepended) {
+            state.towerProviderBuiltUponElement
+                .getClosestAvailableParentContext(ktElement)
+                ?.let { return it }
+
+            return LowLevelFirApiFacadeForResolveOnAir
+                .onAirGetTowerContextProvider(state.originalState, ktElement)
+                .getClosestAvailableParentContext(ktElement)
         }
+        return LowLevelFirApiFacadeForResolveOnAir
+            .onAirGetTowerContextProvider(state, ktElement)
+            .getClosestAvailableParentContext(ktElement)
     }
 }
