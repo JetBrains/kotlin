@@ -18,9 +18,8 @@ import org.jetbrains.kotlin.gradle.plugin.getJavaTaskProvider
 import org.jetbrains.kotlin.gradle.plugin.getTestedVariantData
 
 class KotlinJvmAndroidCompilation(
-    target: KotlinAndroidTarget,
-    name: String
-) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(AndroidCompilationDetails(target, name)) {
+    compilationDetails: AndroidCompilationDetails
+) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilationDetails) {
 
     lateinit var androidVariant: BaseVariant
         internal set

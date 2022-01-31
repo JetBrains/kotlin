@@ -9,6 +9,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinAndroidPlugin.Companion.dynamicallyApplyWhenAndroidPluginIsApplied
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.PublicationRegistrationMode
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.mapTargetCompilationsToKpmVariants
 
 class KotlinAndroidTargetPreset(
     private val project: Project
@@ -20,11 +23,22 @@ class KotlinAndroidTargetPreset(
         val result = KotlinAndroidTarget(name, project).apply {
             disambiguationClassifier = name
             preset = this@KotlinAndroidTargetPreset
+            targetUnderConstruction = this
         }
 
         project.dynamicallyApplyWhenAndroidPluginIsApplied({ result })
+
+        if (project.hasKpmModel) {
+            mapTargetCompilationsToKpmVariants(result, PublicationRegistrationMode.AFTER_EVALUATE)
+        }
+
+        targetUnderConstruction = null
+
         return result
     }
+
+    /** This is a way to check if there's an Android target being configured now despite it not being added to the `kotlin.targets` yet */
+    internal var targetUnderConstruction: KotlinAndroidTarget? = null
 
     companion object {
         const val PRESET_NAME = "android"
