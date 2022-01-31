@@ -35,6 +35,24 @@ public class Fe10ResolveCallTestGenerated extends AbstractResolveCallTest {
     }
 
     @Test
+    @TestMetadata("ambiguous.kt")
+    public void testAmbiguous() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/ambiguous.kt");
+    }
+
+    @Test
+    @TestMetadata("ambiguousWithExplicitTypeParameters.kt")
+    public void testAmbiguousWithExplicitTypeParameters() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/ambiguousWithExplicitTypeParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("ambiguousWithInferredTypeParameters.kt")
+    public void testAmbiguousWithInferredTypeParameters() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/ambiguousWithInferredTypeParameters.kt");
+    }
+
+    @Test
     @TestMetadata("annotationEntry.kt")
     public void testAnnotationEntry() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/annotationEntry.kt");
