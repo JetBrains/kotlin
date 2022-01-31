@@ -19,11 +19,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 interface KotlinMetadataCompilation<T : KotlinCommonOptions> : KotlinCompilation<T>
 
 class KotlinCommonCompilation(
-    target: KotlinTarget,
-    name: String
-) : AbstractKotlinCompilation<KotlinMultiplatformCommonOptions>(
-    MetadataCompilationDetails(target, name)
-), KotlinMetadataCompilation<KotlinMultiplatformCommonOptions> {
+    compilationDetails: CompilationDetails<KotlinMultiplatformCommonOptions>
+) : AbstractKotlinCompilation<KotlinMultiplatformCommonOptions>(compilationDetails),
+    KotlinMetadataCompilation<KotlinMultiplatformCommonOptions> {
+
+    override fun getName() =
+        if (compilationDetails is MetadataMappedCompilationDetails) defaultSourceSetName else super.compilationPurpose
 
     override val compileKotlinTask: KotlinCompileCommon
         get() = super.compileKotlinTask as KotlinCompileCommon

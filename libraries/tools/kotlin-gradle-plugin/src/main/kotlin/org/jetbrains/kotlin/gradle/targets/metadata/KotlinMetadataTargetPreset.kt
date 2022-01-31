@@ -9,8 +9,11 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KpmAwareTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinOptions
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
+import org.jetbrains.kotlin.gradle.targets.metadata.KpmMetadataTargetConfigurator
 
 class KotlinMetadataTargetPreset(
     project: Project
@@ -37,8 +40,12 @@ class KotlinMetadataTargetPreset(
         const val PRESET_NAME = "metadata"
     }
 
-    override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<AbstractKotlinCompilation<*>, KotlinMetadataTarget> =
-        KotlinMetadataTargetConfigurator()
+    override fun createKotlinTargetConfigurator(): AbstractKotlinTargetConfigurator<KotlinMetadataTarget> {
+        val metadataConfigurator = KotlinMetadataTargetConfigurator()
+        return if (project.hasKpmModel)
+            KpmMetadataTargetConfigurator(metadataConfigurator)
+        else metadataConfigurator
+    }
 
     override fun instantiateTarget(name: String): KotlinMetadataTarget {
         return project.objects.newInstance(KotlinMetadataTarget::class.java, project)
@@ -52,9 +59,11 @@ class KotlinMetadataTargetPreset(
             mainCompilation.source(commonMainSourceSet)
 
             project.whenEvaluated {
-                // Since there's no default source set, apply language settings from commonMain:
-                mainCompilation.compileKotlinTaskProvider.configure { compileKotlinMetadata ->
-                    applyLanguageSettingsToKotlinOptions(commonMainSourceSet.languageSettings, compileKotlinMetadata.kotlinOptions)
+                if (!project.hasKpmModel) {
+                    // Since there's no default source set, apply language settings from commonMain:
+                    mainCompilation.compileKotlinTaskProvider.configure { compileKotlinMetadata ->
+                        applyLanguageSettingsToKotlinOptions(commonMainSourceSet.languageSettings, compileKotlinMetadata.kotlinOptions)
+                    }
                 }
             }
         }

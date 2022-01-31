@@ -36,5 +36,8 @@ class KotlinSharedNativeCompilationFactory(
         get() = KotlinSharedNativeCompilation::class.java
 
     override fun create(name: String): KotlinSharedNativeCompilation =
-        KotlinSharedNativeCompilation(target, konanTargets, name)
+        KotlinSharedNativeCompilation(
+            konanTargets,
+            SharedNativeCompilationDetails(target, name) { NativeCompileOptions { defaultSourceSet.languageSettings } }
+        )
 }
