@@ -56,6 +56,12 @@ public class FirResolveCandidatesTestGenerated extends AbstractResolveCandidates
         }
 
         @Test
+        @TestMetadata("ambiguousImplicitInvoke.kt")
+        public void testAmbiguousImplicitInvoke() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/ambiguousImplicitInvoke.kt");
+        }
+
+        @Test
         @TestMetadata("ambiguousWithExplicitTypeParameters.kt")
         public void testAmbiguousWithExplicitTypeParameters() throws Exception {
             runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/ambiguousWithExplicitTypeParameters.kt");
@@ -66,6 +72,18 @@ public class FirResolveCandidatesTestGenerated extends AbstractResolveCandidates
         public void testAmbiguousWithInferredTypeParameters() throws Exception {
             runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/ambiguousWithInferredTypeParameters.kt");
         }
+
+        @Test
+        @TestMetadata("implicitInvoke.kt")
+        public void testImplicitInvoke() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/implicitInvoke.kt");
+        }
+
+        @Test
+        @TestMetadata("implicitInvokeWithReceiver.kt")
+        public void testImplicitInvokeWithReceiver() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/implicitInvokeWithReceiver.kt");
+        }
     }
 
     @Nested
@@ -75,6 +93,24 @@ public class FirResolveCandidatesTestGenerated extends AbstractResolveCandidates
         @Test
         public void testAllFilesPresentInSingleCandidate() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("consecutiveImplicitInvoke1.kt")
+        public void testConsecutiveImplicitInvoke1() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/consecutiveImplicitInvoke1.kt");
+        }
+
+        @Test
+        @TestMetadata("consecutiveImplicitInvoke2.kt")
+        public void testConsecutiveImplicitInvoke2() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/consecutiveImplicitInvoke2.kt");
+        }
+
+        @Test
+        @TestMetadata("consecutiveImplicitInvoke3.kt")
+        public void testConsecutiveImplicitInvoke3() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/consecutiveImplicitInvoke3.kt");
         }
 
         @Test

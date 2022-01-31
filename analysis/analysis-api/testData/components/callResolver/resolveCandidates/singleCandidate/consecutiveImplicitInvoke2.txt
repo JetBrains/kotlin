@@ -1,0 +1,50 @@
+KtErrorCallInfo:
+  candidateCalls = [
+    KtSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = i()
+          isSafeNavigation = false
+        signature = KtFunctionLikeSignature:
+          receiverType = kotlin.Int
+          returnType = kotlin.Long
+          symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.Long
+          valueParameters = []
+      argumentMapping = {}
+  ]
+  diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: [/invoke]>
+
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = true
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = i()
+        isSafeNavigation = false
+      signature = KtFunctionLikeSignature:
+        receiverType = kotlin.Long
+        returnType = kotlin.Double
+        symbol = /invoke(<extension receiver>: kotlin.Long): kotlin.Double
+        valueParameters = []
+    argumentMapping = {}
+
+KtErrorCallInfo:
+  candidateCalls = [
+    KtSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = i()
+          isSafeNavigation = false
+        signature = KtFunctionLikeSignature:
+          receiverType = kotlin.Double
+          returnType = kotlin.Unit
+          symbol = /invoke(<extension receiver>: kotlin.Double): kotlin.Unit
+          valueParameters = []
+      argumentMapping = {}
+  ]
+  diagnostic = ERROR<UNRESOLVED_REFERENCE_WRONG_RECEIVER: Unresolved reference. None of the following candidates is applicable because of receiver type mismatch: [/invoke]>

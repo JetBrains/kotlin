@@ -2,7 +2,9 @@ KtSuccessCallInfo:
   call = KtSimpleFunctionCall:
     isImplicitInvoke = true
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-      dispatchReceiver = null
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = x
+        isSafeNavigation = false
       extensionReceiver = null
       signature = KtFunctionLikeSignature:
         receiverType = null

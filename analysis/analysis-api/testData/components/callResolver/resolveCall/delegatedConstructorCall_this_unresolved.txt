@@ -8,23 +8,6 @@ KtErrorCallInfo:
         signature = KtFunctionLikeSignature:
           receiverType = null
           returnType = Sub
-          symbol = <constructor>(p: kotlin.Int): Sub
-          valueParameters = [
-            KtVariableLikeSignature:
-              name = p
-              receiverType = null
-              returnType = kotlin.Int
-              symbol = p: kotlin.Int
-          ]
-      argumentMapping = {},
-    KtDelegatedConstructorCall:
-      kind = THIS_CALL
-      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KtFunctionLikeSignature:
-          receiverType = null
-          returnType = Sub
           symbol = <constructor>(i: kotlin.Int, j: kotlin.Int): Sub
           valueParameters = [
             KtVariableLikeSignature:
@@ -37,6 +20,23 @@ KtErrorCallInfo:
               receiverType = null
               returnType = kotlin.Int
               symbol = j: kotlin.Int
+          ]
+      argumentMapping = {},
+    KtDelegatedConstructorCall:
+      kind = THIS_CALL
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = Sub
+          symbol = <constructor>(p: kotlin.Int): Sub
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = p
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = p: kotlin.Int
           ]
       argumentMapping = {}
   ]
