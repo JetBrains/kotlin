@@ -31,9 +31,6 @@ public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
     public fun KtArrayAccessExpression.resolveCall(): KtCallInfo =
         analysisSession.callResolver.resolveCall(this) ?: error("KtArrayAccessExpression should always resolve to a KtCallInfo")
 
-    public fun KtCallElement.resolveCandidates(): List<KtCallInfo> =
-        analysisSession.callResolver.resolveCandidates(this)
-
-    public fun KtArrayAccessExpression.resolveCandidates(): List<KtCallInfo> =
+    public fun KtElement.resolveCandidates(): List<KtCallInfo> =
         analysisSession.callResolver.resolveCandidates(this)
 }

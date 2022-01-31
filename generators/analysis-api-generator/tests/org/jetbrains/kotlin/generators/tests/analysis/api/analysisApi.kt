@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.AbstractAnal
 import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.AbstractAnalysisApiAnnotationsOnFilesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.annotations.AbstractAnalysisApiAnnotationsOnTypesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.AbstractResolveCallTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.components.AbstractResolveCandidatesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.diagnosticProvider.AbstractCollectDiagnosticsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.components.expressionInfoProvider.AbstractReturnTargetSymbolTest
@@ -133,6 +134,12 @@ private fun TestGroupSuite.generateAnalysisApiComponentsTests() {
     component("callResolver") {
         test(AbstractResolveCallTest::class) {
             model("resolveCall")
+        }
+        test(
+            AbstractResolveCandidatesTest::class,
+            generateFe10 = false // TODO: Not yet implemented
+        ) {
+            model("resolveCandidates")
         }
     }
 
