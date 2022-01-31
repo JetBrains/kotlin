@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import java.util.*
+
 internal fun lowerCamelCaseName(vararg nameParts: String?): String {
     val nonEmptyParts = nameParts.mapNotNull { it?.takeIf(String::isNotEmpty) }
     return nonEmptyParts.drop(1).joinToString(
@@ -18,6 +20,14 @@ internal fun dashSeparatedName(nameParts: Iterable<String?>) = dashSeparatedName
 
 internal fun dashSeparatedName(vararg nameParts: String?): String {
     val nonEmptyParts = nameParts.mapNotNull { it?.takeIf(String::isNotEmpty) }
+    return nonEmptyParts.joinToString(separator = "-")
+}
+
+internal fun dashSeparatedLowercaseName(nameParts: Iterable<String?>) =
+    dashSeparatedName(*nameParts.toList().toTypedArray())
+
+internal fun dashSeparatedLowercaseName(vararg nameParts: String?): String {
+    val nonEmptyParts = nameParts.mapNotNull { it?.takeIf(String::isNotEmpty)?.toLowerCase(Locale.ENGLISH) }
     return nonEmptyParts.joinToString(separator = "-")
 }
 
