@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 import kotlin.test.fail
 
@@ -48,7 +49,7 @@ open class MppCInteropDependencyTransformationIT : KGPBaseTest() {
     class ComplexProject : MppCInteropDependencyTransformationIT() {
         private fun getProject(gradleVersion: GradleVersion) = project("cinterop-MetadataDependencyTransformation", gradleVersion)
 
-        @GradleMacLinuxTest
+        @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
         fun `test - compile project - dependencyMode=project`(gradleVersion: GradleVersion) {
             testCompileProject(getProject(gradleVersion), projectDependencyOptions) {
                 assertProjectDependencyMode()
@@ -56,7 +57,7 @@ open class MppCInteropDependencyTransformationIT : KGPBaseTest() {
             }
         }
 
-        @GradleMacLinuxTest
+        @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
         fun `test - compile project - dependencyMode=repository`(gradleVersion: GradleVersion) {
             with(getProject(gradleVersion)) {
                 publishP1ToBuildRepository()
@@ -97,7 +98,7 @@ open class MppCInteropDependencyTransformationIT : KGPBaseTest() {
             }
         }
 
-        @GradleMacLinuxTest
+        @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
         fun `test - source set dependencies - dependencyMode=project`(gradleVersion: GradleVersion) {
             with(getProject(gradleVersion)) {
                 reportSourceSetCommonizerDependencies(this, "p2", projectDependencyOptions) {
@@ -116,7 +117,7 @@ open class MppCInteropDependencyTransformationIT : KGPBaseTest() {
             }
         }
 
-        @GradleMacLinuxTest
+        @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
         fun `test - source set dependencies - dependencyMode=repository`(gradleVersion: GradleVersion) {
             with(getProject(gradleVersion)) {
                 publishP1ToBuildRepository()
@@ -183,9 +184,9 @@ open class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
         private fun WithSourceSetCommonizerDependencies.assertP3SourceSetDependencies() {
             /*
-        windowsAndLinuxMain / windowsAndLinuxTest will not have a 'perfect target match' in p1.
-        They will choose cinterops associated with 'nativeMain'
-         */
+            windowsAndLinuxMain / windowsAndLinuxTest will not have a 'perfect target match' in p1.
+            They will choose cinterops associated with 'nativeMain'
+             */
             listOf("nativeMain", "nativeTest", "windowsAndLinuxMain", "windowsAndLinuxTest").forEach { sourceSetName ->
                 getCommonizerDependencies(sourceSetName).withoutNativeDistributionDependencies()
                     .assertDependencyFilesMatches(".*cinterop-simple.*", ".*cinterop-withPosix.*")
@@ -217,7 +218,7 @@ open class MppCInteropDependencyTransformationIT : KGPBaseTest() {
             }
         }
 
-        @GradleMacLinuxTest
+        @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
         fun `test - transformation - UP-TO-DATE behaviour`(gradleVersion: GradleVersion) {
             with(getProject(gradleVersion)) {
                 publishP1ToBuildRepository()
@@ -259,7 +260,7 @@ open class MppCInteropDependencyTransformationIT : KGPBaseTest() {
             }
         }
 
-        @GradleMacLinuxTest
+        @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
         fun `test - transformation - UP-TO-DATE behaviour - on removing and adding targets - on p2 - dependencyMode=repository`(
             gradleVersion: GradleVersion
         ) {
@@ -269,7 +270,7 @@ open class MppCInteropDependencyTransformationIT : KGPBaseTest() {
             }
         }
 
-        @GradleMacLinuxTest
+        @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
         fun `test - transformation - UP-TO-DATE behaviour - on removing and adding targets - on p2 - dependencyMode=project`(gradleVersion: GradleVersion) {
             with(getProject(gradleVersion)) {
                 `test - transformation - UP-TO-DATE behaviour - on removing and adding targets - on p2`(projectDependencyOptions)
@@ -289,14 +290,14 @@ open class MppCInteropDependencyTransformationIT : KGPBaseTest() {
     class KT50952 : MppCInteropDependencyTransformationIT() {
         private fun getProject(gradleVersion: GradleVersion) = project("cinterop-MetadataDependencyTransformation-kt-50952", gradleVersion)
 
-        @GradleMacLinuxTest
+        @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
         fun `test UP-TO-DATE - when changing consumer targets - dependencyMode=repository`(gradleVersion: GradleVersion) {
             val project = getProject(gradleVersion)
             project.publishP1ToBuildRepository()
             `test UP-TO-DATE - when changing consumer targets`(project, repositoryDependencyOptions)
         }
 
-        @GradleMacLinuxTest
+        @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
         fun `test UP-TO-DATE - when changing consumer targets - dependencyMode=project`(gradleVersion: GradleVersion) {
             `test UP-TO-DATE - when changing consumer targets`(getProject(gradleVersion), projectDependencyOptions)
         }

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.utils.minSupportedGradleVersion
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 import java.util.zip.ZipFile
 import kotlin.test.assertEquals
@@ -30,7 +31,7 @@ import kotlin.test.assertTrue
 @GradleTestVersions(minVersion = minSupportedGradleVersion)
 class HierarchicalMppDependencyTransformationsLibIT : KGPBaseTest() {
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testNoSourceSetsVisibleIfNoVariantMatched(gradleVersion: GradleVersion) {
         publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion)
 
@@ -57,7 +58,7 @@ class HierarchicalMppDependencyTransformationsLibIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testDependenciesInTests(gradleVersion: GradleVersion) {
         publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion) {
             projectDir.resolve("src/jvmMain").copyRecursively(projectDir.resolve("src/linuxX64Main"))
@@ -141,7 +142,7 @@ class HierarchicalMppDependencyTransformationsLibIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testTransitiveDependencyOnSelf(gradleVersion: GradleVersion) {
         project("transitive-dep-on-self-hmpp", gradleVersion = gradleVersion) {
             testDependencyTransformations(subproject = "lib") { reports ->
@@ -154,7 +155,7 @@ class HierarchicalMppDependencyTransformationsLibIT : KGPBaseTest() {
         }
     }
 
-    @GradleMacLinuxTest
+    @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
     fun testNativeLeafTestSourceSetsKt46417(gradleVersion: GradleVersion) {
         project("kt-46417-ios-test-source-sets", gradleVersion = gradleVersion) {
             testDependencyTransformations("p2") { reports ->
@@ -166,7 +167,7 @@ class HierarchicalMppDependencyTransformationsLibIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testDependenciesInNonPublishedSourceSets(gradleVersion: GradleVersion) {
         publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion)
 
@@ -182,7 +183,7 @@ class HierarchicalMppDependencyTransformationsLibIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     //Doesn't work on macOS
     fun testMixedScopesFilesExistKt44845(gradleVersion: GradleVersion) {
         publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion)
@@ -222,7 +223,7 @@ class HierarchicalMppDependencyTransformationsLibIT : KGPBaseTest() {
         }
     }
 
-    internal fun TestProject.testDependencyTransformations(
+    private fun TestProject.testDependencyTransformations(
         subproject: String? = null,
         check: BuildResult.(reports: Iterable<DependencyTransformationReport>) -> Unit
     ) {
@@ -314,7 +315,7 @@ class HierarchicalMppDependencyTransformationsLibIT : KGPBaseTest() {
 @GradleTestVersions(minVersion = minSupportedGradleVersion)
 class HierarchicalMppIT : KGPBaseTest() {
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testHmppWithProjectJsIrDependency(gradleVersion: GradleVersion) {
         with(transformNativeTestProjectWithPluginDsl("hierarchical-mpp-with-js-project-dependency", gradleVersion)) {
             build(
@@ -324,7 +325,7 @@ class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testMultiModulesHmppKt48370(gradleVersion: GradleVersion) {
         project("hierarchical-mpp-multi-modules", gradleVersion = gradleVersion) {
             build(
@@ -335,7 +336,7 @@ class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testPublishedModules(gradleVersion: GradleVersion) {
         publishThirdPartyLib(withGranularMetadata = false, gradleVersion = gradleVersion)
 
@@ -358,7 +359,7 @@ class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testProjectDependencies(gradleVersion: GradleVersion) {
         publishThirdPartyLib(withGranularMetadata = false, gradleVersion = gradleVersion)
 
@@ -371,7 +372,7 @@ class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testHmppWithPublishedJsBothDependency(gradleVersion: GradleVersion) {
         val directoryPrefix = "hierarchical-mpp-with-js-published-modules"
         publishThirdPartyLib(
@@ -391,7 +392,7 @@ class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testCompileOnlyDependencyProcessingForMetadataCompilations(gradleVersion: GradleVersion) {
         with(transformNativeTestProjectWithPluginDsl("hierarchical-mpp-project-dependency", gradleVersion)) {
             publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion)
@@ -412,7 +413,7 @@ class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testHmppDependenciesInJsTests(gradleVersion: GradleVersion) {
         val thirdPartyRepo =
             publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion).projectDir.parentFile.resolve("repo")
@@ -424,7 +425,7 @@ class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testProcessingDependencyDeclaredInNonRootSourceSet(gradleVersion: GradleVersion) {
         publishThirdPartyLib(withGranularMetadata = true, gradleVersion = gradleVersion)
 

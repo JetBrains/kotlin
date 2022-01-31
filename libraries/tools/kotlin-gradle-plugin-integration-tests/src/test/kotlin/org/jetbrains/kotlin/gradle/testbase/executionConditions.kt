@@ -5,33 +5,30 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
-import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.extension.ConditionEvaluationResult
 import org.junit.jupiter.api.extension.ExecutionCondition
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.platform.commons.util.AnnotationUtils
-import org.junit.platform.commons.util.Preconditions
-
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class GradleTestOsCondition(
-    val enabledOn: Array<OS>
-)
 
 internal class ExecutionOnOsCondition : ExecutionCondition {
     private val isUnderTeamcity = System.getenv("TEAMCITY_VERSION") != null
     private val enabledByDefault = ConditionEvaluationResult.enabled("@GradleTestOsCondition is not present")
+
     private val enabledOnCurrentOs = "Enabled on operating system: " + System.getProperty("os.name")
-    private val disabledOnCurrentOs = "Disabled on operating system: " + System.getProperty("os.name")
+    private val notSupportedOnCurrentOs = "Test is not supported on operating system: " + System.getProperty("os.name")
+    private val disabledForCI = "Disabled for operating system: " + System.getProperty("os.name") + " on CI"
 
     override fun evaluateExecutionCondition(context: ExtensionContext): ConditionEvaluationResult {
-        val annotation = AnnotationUtils.findAnnotation(context.element, GradleTestOsCondition::class.java)
-        if (annotation.isPresent && isUnderTeamcity) {
-            val enabledOn = annotation.get().enabledOn
-            Preconditions.condition(enabledOn.any(), "You must declare at least one OS in @GradleTestOsCondition")
-            return if (enabledOn.any { it.isCurrentOs })
-                ConditionEvaluationResult.enabled(enabledOnCurrentOs)
-            else ConditionEvaluationResult.disabled(disabledOnCurrentOs)
+        val annotation = AnnotationUtils.findAnnotation(context.element, GradleTestWithOsCondition::class.java)
+        if (annotation.isPresent) {
+            val supportedOn = annotation.get().supportedOn
+            val enabledForCI = annotation.get().enabledForCI
+
+            return if (!supportedOn.any { it.isCurrentOs })
+                ConditionEvaluationResult.disabled(notSupportedOnCurrentOs)
+            else if (!enabledForCI.any { it.isCurrentOs } && isUnderTeamcity)
+                ConditionEvaluationResult.disabled(disabledForCI)
+            else ConditionEvaluationResult.enabled(enabledOnCurrentOs)
         }
 
         return enabledByDefault

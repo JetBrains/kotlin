@@ -11,6 +11,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 import java.util.zip.ZipFile
 import kotlin.test.assertFalse
@@ -26,7 +27,7 @@ class KlibBasedMppIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
 
-    @GradleMacLinuxTest
+    @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
     fun testBuildWithProjectDependency(gradleVersion: GradleVersion) {
         testBuildWithDependency(gradleVersion) {
             gradleBuildScript().appendText(
@@ -39,7 +40,7 @@ class KlibBasedMppIT : KGPBaseTest() {
         }
     }
 
-    @GradleMacLinuxTest
+    @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
     fun testPublishingAndConsumptionWithEmptySourceSet(gradleVersion: GradleVersion) {
         testBuildWithDependency(gradleVersion) {
             // KT-36674
@@ -51,7 +52,7 @@ class KlibBasedMppIT : KGPBaseTest() {
         }
     }
 
-    @GradleMacLinuxTest
+    @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
     fun testHostSpecificSourceSetsInTransitiveDependencies(gradleVersion: GradleVersion) {
         project("common-klib-lib-and-app", gradleVersion) {
             // KT-41083
@@ -112,7 +113,7 @@ class KlibBasedMppIT : KGPBaseTest() {
         }
     }
 
-    @GradleMacLinuxTest
+    @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
     fun testBuildWithPublishedDependency(gradleVersion: GradleVersion) {
         testBuildWithDependency(gradleVersion) {
             publishProjectDepAndAddDependency(validateHostSpecificPublication = true)
@@ -259,7 +260,7 @@ class KlibBasedMppIT : KGPBaseTest() {
 
     private val transitiveDepModuleName = "transitive-dep"
 
-    @GradleMacLinuxTest
+    @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
     fun testKotlinNativeImplPublishedDeps(gradleVersion: GradleVersion) {
         testKotlinNativeImplementationDependencies(gradleVersion) {
             build(":$transitiveDepModuleName:publish", ":$dependencyModuleName:publish")
@@ -282,7 +283,7 @@ class KlibBasedMppIT : KGPBaseTest() {
         }
     }
 
-    @GradleMacLinuxTest
+    @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
     fun testKotlinNativeImplProjectDeps(gradleVersion: GradleVersion) {
         testKotlinNativeImplementationDependencies(gradleVersion) {
             gradleBuildScript().appendText("\ndependencies { \"commonMainImplementation\"(project(\":$dependencyModuleName\")) }")
@@ -309,7 +310,7 @@ class KlibBasedMppIT : KGPBaseTest() {
         build(":$compileNativeMetadataTaskName")
     }
 
-    @GradleMacLinuxTest
+    @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
     fun testAvoidSkippingSharedNativeSourceSetKt38746(gradleVersion: GradleVersion) {
         project("hierarchical-all-native", gradleVersion) {
             val targetNames = listOf(

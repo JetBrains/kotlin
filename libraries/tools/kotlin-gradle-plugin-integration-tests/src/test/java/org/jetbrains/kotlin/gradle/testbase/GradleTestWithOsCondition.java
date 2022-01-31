@@ -23,6 +23,7 @@ import java.lang.annotation.Target;
 @ParameterizedTest(name = "{0}: {displayName}")
 @ArgumentsSource(GradleArgumentsProvider.class)
 @ExtendWith(ExecutionOnOsCondition.class)
-@GradleTestOsCondition(enabledOn = {OS.LINUX, OS.MAC})
-public @interface GradleMacLinuxTest {
+public @interface GradleTestWithOsCondition {
+    OS[] supportedOn() default  {OS.LINUX, OS.MAC, OS.WINDOWS};
+    OS[] enabledForCI() default  {OS.LINUX};
 }

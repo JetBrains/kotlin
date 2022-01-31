@@ -37,7 +37,7 @@ class MultiplatformGradleIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testMultiplatformCompile(gradleVersion: GradleVersion) {
         with(project("multiplatformProject", gradleVersion)) {
             build("build") {
@@ -66,7 +66,7 @@ class MultiplatformGradleIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testDeprecatedImplementWarning(gradleVersion: GradleVersion) {
         with(project("multiplatformProject", gradleVersion)) {
             build("build") {
@@ -83,7 +83,7 @@ class MultiplatformGradleIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testCommonKotlinOptions(gradleVersion: GradleVersion) {
         with(project("multiplatformProject", gradleVersion)) {
             File(projectDir, "lib/build.gradle").appendText(
@@ -98,7 +98,7 @@ class MultiplatformGradleIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testSubprojectWithAnotherClassLoader(gradleVersion: GradleVersion) {
         with(project("multiplatformProject", gradleVersion)) {
             // Make sure there is a plugin applied with the plugins DSL, so that Gradle loads the
@@ -135,7 +135,7 @@ class MultiplatformGradleIT : KGPBaseTest() {
     }
 
     // todo: also make incremental compilation test
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testIncrementalBuild(gradleVersion: GradleVersion): Unit = with(project("multiplatformProject", gradleVersion)) {
         val compileCommonTask = ":lib:compileKotlinCommon"
         val compileJsTask = ":libJs:compileKotlin2Js"
@@ -165,7 +165,7 @@ class MultiplatformGradleIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testMultipleCommonModules(gradleVersion: GradleVersion): Unit = with(project("multiplatformMultipleCommonModules", gradleVersion)) {
         build("build", buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Summary)) {
             val sourceSets = listOf("", "Test")
@@ -192,7 +192,7 @@ class MultiplatformGradleIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testFreeCompilerArgsAssignment(gradleVersion: GradleVersion): Unit = with(project("multiplatformProject", gradleVersion)) {
         val overrideCompilerArgs = "kotlinOptions.freeCompilerArgs = ['-verbose']"
 
@@ -205,7 +205,7 @@ class MultiplatformGradleIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testCommonModuleAsTransitiveDependency(gradleVersion: GradleVersion) = with(project("multiplatformProject", gradleVersion)) {
         gradleBuildScript("libJvm").appendText(
             """
@@ -226,7 +226,7 @@ class MultiplatformGradleIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testArchivesBaseNameAsCommonModuleName(gradleVersion: GradleVersion) = with(project("multiplatformProject", gradleVersion)) {
         val moduleName = "my_module_name"
 
@@ -237,7 +237,7 @@ class MultiplatformGradleIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testKt23092(gradleVersion: GradleVersion) = with(project("multiplatformProject", gradleVersion)) {
         val successMarker = "Found JavaCompile task:"
 
@@ -256,7 +256,7 @@ class MultiplatformGradleIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testCustomSourceSets(gradleVersion: GradleVersion) = with(project("multiplatformProject", gradleVersion)) {
         val sourceSetName = "foo"
         val sourceSetDeclaration = "\nsourceSets { $sourceSetName { } }"
@@ -284,7 +284,7 @@ class MultiplatformGradleIT : KGPBaseTest() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testWithJavaDuplicatedResourcesFail(gradleVersion: GradleVersion) = with(
         project(
             projectName = "mpp-single-jvm-target",

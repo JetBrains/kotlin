@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.condition.OS
 import java.io.File
 import java.util.zip.ZipFile
 import kotlin.test.assertEquals
@@ -23,7 +24,7 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_6_0
 
-    @GradleMacLinuxTest
+    @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
     fun testAndroidMppSourceSets(gradleVersion: GradleVersion): Unit = with(
         Project("new-mpp-android-source-sets", gradleVersion)
     ) {
@@ -83,7 +84,7 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
          */
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testAndroidWithNewMppApp(gradleVersion: GradleVersion) = with(Project("new-mpp-android", gradleVersion)) {
         build("assemble", "compileDebugUnitTestJavaWithJavac", "printCompilerPluginOptions") {
             assertSuccessful()
@@ -270,7 +271,7 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testAndroidMppProductionDependenciesInTests(gradleVersion: GradleVersion) = with(Project("new-mpp-android", gradleVersion)) {
         // Test the fix for KT-29343
         setupWorkingDir()
@@ -317,7 +318,7 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testCustomAttributesInAndroidTargets(gradleVersion: GradleVersion) = with(Project("new-mpp-android", gradleVersion)) {
         // Test the fix for KT-27714
 
@@ -410,7 +411,7 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
         }
     }
 
-    @GradleMacLinuxTest
+    @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
     fun testLintInAndroidProjectsDependingOnMppWithoutAndroid(gradleVersion: GradleVersion) =
         with(Project("AndroidProject", gradleVersion)) {
             embedProject(Project("sample-lib", gradleVersion, directoryPrefix = "new-mpp-lib-and-app"))
@@ -424,7 +425,7 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
             }
         }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testJvmWithJava(gradleVersion: GradleVersion) = with(Project("mppJvmWithJava", gradleVersion)) {
         setupWorkingDir()
 
@@ -437,7 +438,7 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun `test KotlinToolingMetadataArtifact is bundled into apk`(gradleVersion: GradleVersion): Unit =
         with(Project("kotlinToolingMetadataAndroid", gradleVersion)) {
             build("assembleDebug") {
@@ -463,7 +464,7 @@ open class KotlinAndroid36GradleIT : KotlinAndroid34GradleIT() {
             }
         }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun `test MPP allTests task depending on Android unit tests`(gradleVersion: GradleVersion): Unit =
         with(Project("new-mpp-android", gradleVersion)) {
             build(":lib:allTests", "--dry-run") {
@@ -489,7 +490,7 @@ open class KotlinAndroid70GradleIT : KotlinAndroid36GradleIT() {
      * Regression test for KT-49066. It is not really AGP 7.0 specific, but it is not added to the base class to avoid
      * running it multiple times.
      */
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testCustomModuleName(gradleVersion: GradleVersion) {
         val project = Project("AndroidIncrementalMultiModule", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = true, kotlinDaemonDebugPort = null)
@@ -540,7 +541,7 @@ open class KotlinAndroid71GradleIT : KotlinAndroid70GradleIT() {
      * Starting from AGP version 7.1.0-alpha13, a new attribute com.android.build.api.attributes.AgpVersionAttr was added.
      * This attribute is *not intended* to be published.
      */
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testKT49798AgpVersionAttrNotPublished(gradleVersion: GradleVersion) = with(Project("new-mpp-android", gradleVersion)) {
         build("publish") {
             val debugPublicationDirectory = projectDir.resolve("lib/build/repo/com/example/lib-androidlib-debug")
@@ -559,7 +560,7 @@ open class KotlinAndroid71GradleIT : KotlinAndroid70GradleIT() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testAndroidMultiplatformPublicationAGPCompatibility(gradleVersion: GradleVersion) =
         with(Project("new-mpp-android-agp-compatibility", gradleVersion)) {
             /* Publish producer library with current version of AGP */
@@ -614,7 +615,7 @@ open class KotlinAndroid34GradleIT : KotlinAndroid3GradleIT() {
     override val androidGradlePluginVersion: AGPVersion
         get() = AGPVersion.v3_4_1
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testKaptUsingApOptionProvidersAsNestedInputOutput(gradleVersion: GradleVersion) = with(Project("AndroidProject", gradleVersion)) {
         setupWorkingDir()
 
@@ -676,7 +677,7 @@ open class KotlinAndroid34GradleIT : KotlinAndroid3GradleIT() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testAgpNestedArgsNotEvaluatedDuringConfiguration(gradleVersion: GradleVersion) = with(Project("AndroidProject", gradleVersion)) {
         setupWorkingDir()
 
@@ -712,7 +713,7 @@ open class KotlinAndroid34GradleIT : KotlinAndroid3GradleIT() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testOmittedStdlibVersion(gradleVersion: GradleVersion) = Project("AndroidProject", gradleVersion).run {
         setupWorkingDir()
 
@@ -762,7 +763,7 @@ open class KotlinAndroid34GradleIT : KotlinAndroid3GradleIT() {
 }
 
 abstract class KotlinAndroid3GradleIT : AbstractKotlinAndroidGradleTests() {
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testApplyWithFeaturePlugin(gradleVersion: GradleVersion) {
         Assumptions.assumeTrue(
             androidGradlePluginVersion < AGPVersion.v3_6_0,
@@ -794,7 +795,7 @@ abstract class KotlinAndroid3GradleIT : AbstractKotlinAndroidGradleTests() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testAfterEvaluateOrdering(gradleVersion: GradleVersion) = with(Project("AndroidProject", gradleVersion)) {
         setupWorkingDir()
 
@@ -872,7 +873,7 @@ abstract class AbstractKotlinAndroidGradleTests : BaseGradleIT() {
             stopDaemons = false
         )
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testSimpleCompile(gradleVersion: GradleVersion) {
         val project = Project("AndroidProject", gradleVersion)
 
@@ -915,7 +916,7 @@ abstract class AbstractKotlinAndroidGradleTests : BaseGradleIT() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testAssembleAndroidTestFirst(gradleVersion: GradleVersion) {
         val project = Project("AndroidProject", gradleVersion, minLogLevel = LogLevel.INFO)
 
@@ -925,7 +926,7 @@ abstract class AbstractKotlinAndroidGradleTests : BaseGradleIT() {
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testIncrementalCompile(gradleVersion: GradleVersion) {
         val project = Project("AndroidIncrementalSingleModuleProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = true)
@@ -954,7 +955,7 @@ fun getSomething() = 10
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testMultiModuleIC(gradleVersion: GradleVersion) {
         val project = Project("AndroidIncrementalMultiModule", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = true, kotlinDaemonDebugPort = null)
@@ -993,7 +994,7 @@ fun getSomething() = 10
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testIncrementalBuildWithNoChanges(gradleVersion: GradleVersion) {
         val project = Project("AndroidIncrementalSingleModuleProject", gradleVersion)
         val tasksToExecute = listOf(
@@ -1012,7 +1013,7 @@ fun getSomething() = 10
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testAndroidDaggerIC(gradleVersion: GradleVersion) {
         val project = Project("AndroidDaggerProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = true)
@@ -1051,7 +1052,7 @@ fun getSomething() = 10
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testAndroidIcepickProject(gradleVersion: GradleVersion) {
         val project = Project("AndroidIcepickProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
@@ -1061,7 +1062,7 @@ fun getSomething() = 10
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testAndroidExtensions(gradleVersion: GradleVersion) {
         val project = Project("AndroidExtensionsProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
@@ -1072,7 +1073,7 @@ fun getSomething() = 10
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testParcelize(gradleVersion: GradleVersion) {
         val project = Project("AndroidParcelizeProject", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
@@ -1082,7 +1083,7 @@ fun getSomething() = 10
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testAndroidExtensionsIncremental(gradleVersion: GradleVersion) {
         Assumptions.assumeTrue(androidGradlePluginVersion < AGPVersion.v3_6_0, "Ignored for newer AGP versions because of KT-38622")
 
@@ -1110,7 +1111,7 @@ fun getSomething() = 10
     }
 
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testAndroidExtensionsManyVariants(gradleVersion: GradleVersion) {
         val project = Project("AndroidExtensionsManyVariants", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
@@ -1120,7 +1121,7 @@ fun getSomething() = 10
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testAndroidExtensionsSpecificFeatures(gradleVersion: GradleVersion) {
         val project = Project("AndroidExtensionsSpecificFeatures", gradleVersion)
         val options = defaultBuildOptions().copy(incremental = false)
@@ -1144,7 +1145,7 @@ fun getSomething() = 10
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testDetectAndroidJava8(gradleVersion: GradleVersion) = with(Project("AndroidProject", gradleVersion)) {
         setupWorkingDir()
 
@@ -1184,7 +1185,7 @@ fun getSomething() = 10
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun shouldAllowToApplyPluginWhenAndroidPluginIsMissing(gradleVersion: GradleVersion) {
         with(Project("simpleProject", gradleVersion, minLogLevel = LogLevel.WARN)) {
             setupWorkingDir()
@@ -1209,7 +1210,7 @@ fun getSomething() = 10
         }
     }
 
-    @GradleLinuxTest
+    @GradleTestWithOsCondition
     fun testLintDependencyResolutionKt49483(gradleVersion: GradleVersion) = with(Project("AndroidProject", gradleVersion)) {
         setupWorkingDir()
 

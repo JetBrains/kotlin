@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_SHORT_NAME
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_UNIQUE_NAME
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.condition.OS
 import java.util.*
 import java.util.jar.JarFile
 import java.util.zip.ZipFile
@@ -82,7 +83,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
     @MppGradlePluginTests
     class NewMultiplatformLibAndAppIT : NewMultiplatform() {
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testLibAndApp(gradleVersion: GradleVersion) =
             doTestLibAndApp(
                 "sample-lib",
@@ -91,7 +92,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
                 gradleVersion
             )
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testLibAndAppWithoutHMPP(gradleVersion: GradleVersion) = doTestLibAndApp(
             "sample-lib",
             "sample-app",
@@ -99,7 +100,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
             gradleVersion
         )
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testLibAndAppWithCompatibilityArtifact(gradleVersion: GradleVersion) = doTestLibAndApp(
             "sample-lib",
             "sample-app",
@@ -107,7 +108,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
             gradleVersion
         )
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testLibAndAppWithGradleKotlinDsl(gradleVersion: GradleVersion) = doTestLibAndApp(
             "sample-lib-gradle-kotlin-dsl",
             "sample-app-gradle-kotlin-dsl",
@@ -287,7 +288,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
     @MppGradlePluginTests
     class NewMultiplatformLibAndAppJsBothCompilersIT : NewMultiplatform() {
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testLibAndAppJsLegacy(gradleVersion: GradleVersion) = doTestLibAndAppJsBothCompilers(
             "sample-lib",
             "sample-app",
@@ -295,7 +296,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
             gradleVersion
         )
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testLibAndAppJsIr(gradleVersion: GradleVersion) = doTestLibAndAppJsBothCompilers(
             "sample-lib",
             "sample-app",
@@ -303,7 +304,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
             gradleVersion
         )
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testLibAndAppJsBoth(gradleVersion: GradleVersion) = doTestLibAndAppJsBothCompilers(
             "sample-lib",
             "sample-app",
@@ -311,7 +312,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
             gradleVersion
         )
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testLibAndAppWithGradleKotlinDslJsLegacy(gradleVersion: GradleVersion) = doTestLibAndAppJsBothCompilers(
             "sample-lib-gradle-kotlin-dsl",
             "sample-app-gradle-kotlin-dsl",
@@ -319,7 +320,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
             gradleVersion
         )
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testLibAndAppWithGradleKotlinDslJsIr(gradleVersion: GradleVersion) = doTestLibAndAppJsBothCompilers(
             "sample-lib-gradle-kotlin-dsl",
             "sample-app-gradle-kotlin-dsl",
@@ -327,7 +328,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
             gradleVersion
         )
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testLibAndAppWithGradleKotlinDslJsBoth(gradleVersion: GradleVersion) = doTestLibAndAppJsBothCompilers(
             "sample-lib-gradle-kotlin-dsl",
             "sample-app-gradle-kotlin-dsl",
@@ -475,7 +476,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
 
     @MppGradlePluginTests
     class NewMultiplatformResolveIT : NewMultiplatform() {
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testResolveMppLibDependencyToMetadata(gradleVersion: GradleVersion) {
             val libProject = project("sample-lib", gradleVersion, directoryPrefix = "new-mpp-lib-and-app")
             val appProject = project("sample-app", gradleVersion, directoryPrefix = "new-mpp-lib-and-app")
@@ -533,17 +534,17 @@ abstract class NewMultiplatform : KGPBaseTest() {
         }
 
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testResolveJsPartOfMppLibDependencyToMetadataWithHmpp(gradleVersion: GradleVersion) =
             testResolveJsPartOfMppLibDependencyToMetadata(hmppWoCompatibilityMetadataArtifact, gradleVersion)
 
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testResolveJsPartOfMppLibDependencyToMetadataWithHmppAndCompatibilityMetadataArtifact(gradleVersion: GradleVersion) =
             testResolveJsPartOfMppLibDependencyToMetadata(hmppWithCompatibilityMetadataArtifact, gradleVersion)
 
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testResolveJsPartOfMppLibDependencyToMetadataWithoutHmpp(gradleVersion: GradleVersion) =
             testResolveJsPartOfMppLibDependencyToMetadata(noHMPP, gradleVersion)
 
@@ -613,7 +614,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
         }
 
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testResolveMppProjectDependencyToMetadata(gradleVersion: GradleVersion) {
             val libProject = project("sample-lib", gradleVersion, directoryPrefix = "new-mpp-lib-and-app")
             val appProject = project("sample-app", gradleVersion, directoryPrefix = "new-mpp-lib-and-app")
@@ -647,11 +648,11 @@ abstract class NewMultiplatform : KGPBaseTest() {
 
     @MppGradlePluginTests
     class NewMultiplatformJvmWithJavaIT : NewMultiplatform() {
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testJvmWithJavaEquivalence(gradleVersion: GradleVersion) =
             doTestJvmWithJava(testJavaSupportInJvmTargets = false, gradleVersion = gradleVersion)
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         @Disabled //Test was muted by mute-common.csv before
         fun testJavaSupportInJvmTargets(gradleVersion: GradleVersion) =
             doTestJvmWithJava(testJavaSupportInJvmTargets = true, gradleVersion = gradleVersion)
@@ -819,11 +820,11 @@ abstract class NewMultiplatform : KGPBaseTest() {
 
     @MppGradlePluginTests
     class NewMultiplatformLibWithTestsIT : NewMultiplatform() {
-        @GradleMacLinuxTest
+        @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
         fun testLibWithTests(gradleVersion: GradleVersion) =
             doTestLibWithTests(transformNativeTestProject("new-mpp-lib-with-tests", gradleVersion))
 
-        @GradleMacLinuxTest
+        @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
         fun testLibWithTestsKotlinDsl(gradleVersion: GradleVersion) =
             with(transformNativeTestProject("new-mpp-lib-with-tests", gradleVersion)) {
                 gradleBuildScript().delete()
@@ -908,7 +909,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
     @MppGradlePluginTests
     class NewMultiplatformCompilationIT : NewMultiplatform() {
 
-        @GradleMacLinuxTest
+        @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
         fun testNativeCompilationShouldNotProduceAnyWarningsForAssociatedCompilations(gradleVersion: GradleVersion) {
             with(project("native-common-dependencies-warning", gradleVersion)) {
                 build("help") {
@@ -917,7 +918,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
             }
         }
 
-        @GradleMacLinuxTest
+        @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
         fun testNativeCompilationShouldProduceWarningOnCompileOnlyCommonDependency(gradleVersion: GradleVersion) {
             with(project("native-common-dependencies-warning", gradleVersion)) {
                 gradleBuildScript().modify {
@@ -929,7 +930,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
             }
         }
 
-        @GradleMacLinuxTest
+        @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
         fun testNativeCompilationCompileOnlyDependencyWarningCouldBeDisabled(gradleVersion: GradleVersion) {
             with(project("native-common-dependencies-warning", gradleVersion)) {
                 gradleBuildScript().modify {
@@ -946,7 +947,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
             }
         }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testIncrementalCompilation(gradleVersion: GradleVersion) = with(project("new-mpp-jvm-js-ic", gradleVersion)) {
             build("build")
 
@@ -979,7 +980,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
             }
         }
 
-        @GradleMacLinuxTest
+        @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
         fun testAssociateCompilations(gradleVersion: GradleVersion) {
             testAssociateCompilationsImpl(gradleVersion)
         }
@@ -1032,7 +1033,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
     @MppGradlePluginTests
     class NewMultiplatformLanguageSettingsIT : NewMultiplatform() {
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testLanguageSettingsClosureForKotlinDsl(gradleVersion: GradleVersion) =
             with(transformNativeTestProjectWithPluginDsl("sample-lib-gradle-kotlin-dsl", gradleVersion, "new-mpp-lib-and-app")) {
                 gradleBuildScript().appendText(
@@ -1054,7 +1055,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
                 }
             }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testLanguageSettingsApplied(gradleVersion: GradleVersion) =
             with(transformNativeTestProject("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
                 gradleBuildScript().appendText(
@@ -1106,7 +1107,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
                 }
             }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testLanguageSettingsConsistency(gradleVersion: GradleVersion) =
             with(project("sample-lib", gradleVersion, directoryPrefix = "new-mpp-lib-and-app")) {
                 gradleBuildScript().appendText(
@@ -1174,7 +1175,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
     @MppGradlePluginTests
     class NewMultiplatformIT : NewMultiplatform() {
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testMavenPublishAppliedBeforeMultiplatformPlugin(gradleVersion: GradleVersion) =
             with(transformNativeTestProject("sample-lib", gradleVersion, directoryPrefix = "new-mpp-lib-and-app")) {
                 gradleBuildScript().modify { "apply plugin: 'maven-publish'\n$it" }
@@ -1182,7 +1183,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
                 build()
             }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testResourceProcessing(gradleVersion: GradleVersion) =
             with(project("sample-lib", gradleVersion, directoryPrefix = "new-mpp-lib-and-app")) {
                 val targetsWithResources = listOf("jvm6", "nodeJs", "linux64")
@@ -1199,7 +1200,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
                 }
             }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testSourceSetCyclicDependencyDetection(gradleVersion: GradleVersion) =
             with(project("sample-lib", gradleVersion, directoryPrefix = "new-mpp-lib-and-app")) {
                 gradleBuildScript().appendText(
@@ -1218,7 +1219,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
                 }
             }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testPublishingOnlySupportedNativeTargets(gradleVersion: GradleVersion) =
             with(transformNativeTestProject("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
                 val publishedVariant = nativeHostTargetName
@@ -1236,7 +1237,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
                 }
             }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testNonMppConsumersOfLibraryPublishedWithNoMetadataOptIn(gradleVersion: GradleVersion) {
             val repoDir = with(transformNativeTestProject("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
                 build(
@@ -1292,7 +1293,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
             }
         }
 
-        @GradleMacLinuxTest
+        @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
         fun testOptionalExpectations(gradleVersion: GradleVersion) =
             with(transformNativeTestProject("new-mpp-lib-with-tests", gradleVersion)) {
                 projectDir.resolve("src/commonMain/kotlin/Optional.kt").writeText(
@@ -1347,7 +1348,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
                 }
             }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testSourceJars(gradleVersion: GradleVersion) =
             with(transformNativeTestProject("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
                 build("publish") {
@@ -1382,7 +1383,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
                 }
             }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testConsumeMppLibraryFromNonKotlinProject(gradleVersion: GradleVersion) {
             val libRepo = with(transformNativeTestProject("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
                 build("publish")
@@ -1399,7 +1400,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
             }
         }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testPublishMultimoduleProjectWithMetadata(gradleVersion: GradleVersion) {
             val libProject = transformNativeTestProject("sample-lib", gradleVersion, "new-mpp-lib-and-app")
             transformNativeTestProject("sample-external-lib", gradleVersion, "new-mpp-lib-and-app").apply {
@@ -1528,7 +1529,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
             }
         }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testMppBuildWithCompilerPlugins(gradleVersion: GradleVersion) =
             with(transformNativeTestProject("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
                 val printOptionsTaskName = "printCompilerPluginOptions"
@@ -1617,7 +1618,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
                 }
             }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testJsDceInMpp(gradleVersion: GradleVersion) = with(project("new-mpp-js-dce", gradleVersion)) {
             build("runRhino", buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Summary)) {
                 assertTasksExecuted(":mainProject:runDceNodeJsKotlin")
@@ -1635,7 +1636,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
             }
         }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testDefaultSourceSetsDsl(gradleVersion: GradleVersion) =
             with(project("sample-lib", gradleVersion, directoryPrefix = "new-mpp-lib-and-app")) {
                 val testOutputPrefix = "# default source set "
@@ -1668,7 +1669,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
                 }
             }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testDependenciesDsl(gradleVersion: GradleVersion) =
             with(transformProjectWithPluginsDsl("newMppDependenciesDsl", gradleVersion)) {
                 val originalBuildscriptContent = gradleBuildScript("app").readText()
@@ -1713,7 +1714,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
                 testDependencies()
             }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testMultipleTargetsSamePlatform(gradleVersion: GradleVersion) =
             with(project("newMppMultipleTargetsSamePlatform", gradleVersion)) {
                 testResolveAllConfigurations("app") {
@@ -1731,7 +1732,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
                 }
             }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testUnusedSourceSetsReport(gradleVersion: GradleVersion) =
             with(project("sample-lib", gradleVersion, directoryPrefix = "new-mpp-lib-and-app")) {
 
@@ -1758,7 +1759,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
                 }
             }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testPomRewritingInSinglePlatformProject(gradleVersion: GradleVersion) = with(project("kt-27059-pom-rewriting", gradleVersion)) {
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
@@ -1823,7 +1824,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
             doTestPomRewriting(mppProjectDependency = false, keepPomIntact = true)
         }
 
-        @GradleMacLinuxTest
+        @GradleTestWithOsCondition(enabledForCI = [OS.LINUX, OS.MAC])
         fun testTestRunsApi(gradleVersion: GradleVersion) = with(project("new-mpp-associate-compilations", gradleVersion)) {
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
@@ -1864,7 +1865,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
             }
         }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testKlibsWithTheSameProjectName(gradleVersion: GradleVersion) =
             with(transformProjectWithPluginsDsl("new-mpp-klibs-with-same-name", gradleVersion)) {
                 // KT-36721.
@@ -1901,7 +1902,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
                 }
             }
 
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         fun testErrorInClasspathMode(gradleVersion: GradleVersion) {
             val classpathModeOptions = defaultBuildOptions.copy(
                 freeCommandLineArgs = listOf("-Dorg.gradle.kotlin.dsl.provider.mode=classpath")
@@ -1923,7 +1924,7 @@ abstract class NewMultiplatform : KGPBaseTest() {
 
         // TODO: this test fails with deprecation error on Gradle <7.0
         // Should be fixed via planned fixes in Kotlin/JS plugin: https://youtrack.jetbrains.com/issue/KFC-252
-        @GradleLinuxTest
+        @GradleTestWithOsCondition
         @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
         fun testWasmJs(gradleVersion: GradleVersion) = with(
             project(
