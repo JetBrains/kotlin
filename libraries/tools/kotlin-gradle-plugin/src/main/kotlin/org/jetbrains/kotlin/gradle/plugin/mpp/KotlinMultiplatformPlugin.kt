@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.registerDefaultVariantFactories
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.setupFragmentsMetadataForKpmModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.setupKpmModulesPublication
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.sources.CleanupStaleSourceSetMetadataEntriesService
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetMetadataStorageForIde
@@ -105,8 +106,8 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         if (!project.hasKpmModel) {
             configurePublishingWithMavenPublish(project)
-            targetsContainer.withType(AbstractKotlinTarget::class.java).all { applyUserDefinedAttributes(it) }
         }
+        targetsContainer.withType(AbstractKotlinTarget::class.java).all { applyUserDefinedAttributes(it) }
 
         // propagate compiler plugin options to the source set language settings
         setupAdditionalCompilerArguments(project)
@@ -268,15 +269,52 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
     val project = target.project
 
-    project.whenEvaluated {
-        fun copyAttributes(from: AttributeContainer, to: AttributeContainer) {
-            fun <T> copyAttribute(key: Attribute<T>, from: AttributeContainer, to: AttributeContainer) {
-                to.attribute(key, from.getAttribute(key)!!)
-            }
+    if (!project.hasKpmModel) {
+        applyUserDefinedAttributesWithLegacyModel(target)
+    } else {
+        applyUserDefinedAttributesWithKpm(target)
+    }
+}
 
-            from.keySet().forEach { key -> copyAttribute(key, from, to) }
+private fun applyUserDefinedAttributesWithKpm(
+    target: AbstractKotlinTarget,
+) {
+    fun copyAttributesToVariant(variant: KotlinGradleVariant, from: AttributeContainer) {
+        variant.gradleVariantNames.forEach { configurationOrVariantName ->
+            val configuration = variant.project.configurations.findByName(configurationOrVariantName)
+                ?: return@forEach
+            copyAttributes(from, configuration.attributes)
         }
+    }
 
+    val project = target.project
+    project.whenEvaluated {
+        multiplatformExtension.targets.all target@{ target ->
+            if (target is KotlinMetadataTarget)
+                return@target
+
+            target.compilations.all compilation@{ compilation ->
+                if (compilation is AbstractKotlinCompilation) {
+                    val details = compilation.compilationDetails as? VariantMappedCompilationDetails<*>
+                        ?: return@compilation
+                    copyAttributesToVariant(details.variant, compilation.attributes)
+                }
+            }
+        }
+    }
+
+    // Also handle the legacy-mapped variants, which are not accessible through the compilations in the loop above
+    project.kpmModules.getByName(KotlinGradleModule.MAIN_MODULE_NAME).variants.withType(LegacyMappedVariant::class.java).all { variant ->
+        val compilation = variant.compilation
+        copyAttributesToVariant(variant, compilation.attributes)
+    }
+}
+
+private fun applyUserDefinedAttributesWithLegacyModel(
+    target: AbstractKotlinTarget,
+) {
+    val project = target.project
+    project.whenEvaluated {
         // To copy the attributes to the output configurations, find those output configurations and their producing compilations
         // based on the target's components:
         val outputConfigurationsWithCompilations =
