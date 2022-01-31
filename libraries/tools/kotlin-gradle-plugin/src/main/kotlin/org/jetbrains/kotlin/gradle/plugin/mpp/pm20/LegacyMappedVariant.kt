@@ -200,10 +200,15 @@ internal fun mapTargetCompilationsToKpmVariants(target: AbstractKotlinTarget, pu
                 else -> error("unexpected type of kotlinComponent in legacy variant mapping: ${kotlinComponent.javaClass}")
             }
 
-            // Include Sources
             moduleHolder.whenPublicationAssigned { publication ->
+                // Include Sources
                 kotlinComponent.sourcesArtifacts.forEach {
                     publication.artifact(it)
+                }
+
+                // Support the `mavenPublication { ... }` DSL in target:
+                target.publicationConfigureActions.all { action ->
+                    action.execute(publication)
                 }
             }
 
