@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.unambiguousNameInProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.sourcesJarTaskNamed
 
 interface KotlinSourceArchiveTaskConfigurator<in T : KotlinGradleVariant> {
@@ -19,7 +20,7 @@ object DefaultKotlinSourceArchiveTaskConfigurator : KotlinSourceArchiveTaskConfi
             project = variant.project,
             sourceSets = lazy {
                 FragmentSourcesProvider().getSourcesFromRefinesClosureAsMap(variant)
-                    .entries.associate { it.key.fragmentName to it.value.get() }
+                    .entries.associate { it.key.unambiguousNameInProject to it.value.get() }
             },
             artifactNameAppendix = variant.name
         )
