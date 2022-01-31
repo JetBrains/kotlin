@@ -77,6 +77,18 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         project.plugins.apply(JavaBasePlugin::class.java)
 
+        if (project.hasKpmModel) {
+            setupFragmentsMetadataForKpmModules(project)
+            setupKpmModulesPublication(project)
+            registerDefaultVariantFactories(project)
+            with(project.kpmModules) {
+                create(KotlinGradleModule.MAIN_MODULE_NAME) {
+                    it.makePublic()
+                }
+                create(KotlinGradleModule.TEST_MODULE_NAME)
+            }
+        }
+
         val targetsContainer = project.container(KotlinTarget::class.java)
         val kotlinMultiplatformExtension = project.extensions.getByType(KotlinMultiplatformExtension::class.java)
         val targetsFromPreset = TargetFromPresetExtension(kotlinMultiplatformExtension)
@@ -133,13 +145,6 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
                     SourceSetMetadataStorageForIde.cleanupStaleEntries(project)
                 }
             }
-        }
-
-        if (project.hasKpmModel) {
-            setupFragmentsMetadataForKpmModules(project)
-            setupKpmModulesPublication(project)
-            registerDefaultVariantFactories(project)
-            project.kpmModules.matching { it.name == KotlinGradleModule.MAIN_MODULE_NAME }.all { it.makePublic() }
         }
     }
 
