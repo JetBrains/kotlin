@@ -100,6 +100,64 @@ open class Kapt3WorkersIT : Kapt3IT() {
             }
         }
     }
+
+    @DisplayName("Additional Kapt jvm arguments are passed to the process")
+    @GradleTest
+    internal fun additionalJvmArgumentsArePassed(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            gradleProperties.append(
+                """
+                
+                kapt.workers.isolation = process
+                """.trimIndent()
+            )
+
+            buildGradle.append(
+                //language=Groovy
+                """
+                
+                tasks
+                    .withType(org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask.class)
+                    .configureEach {
+                        it.kaptProcessJvmArgs.addAll(['-Xmx64m', '-Duser.country=DE'])
+                    }
+                """.trimIndent()
+            )
+
+            build("assemble") {
+                assertOutputContains("Starting process 'Gradle Worker Daemon.*-Xmx64m.*-Duser.country=DE.*".toRegex())
+            }
+        }
+    }
+
+    @DisplayName("Warning is produced on additional Kapt jvm arguments and 'none' workers isolation mode")
+    @GradleTest
+    internal fun warningOnNoneIsolationModeAndAdditionalJvmArguments(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            gradleProperties.append(
+                """
+                
+                kapt.workers.isolation = none
+                """.trimIndent()
+            )
+
+            buildGradle.append(
+                //language=Groovy
+                """
+                
+                tasks
+                    .withType(org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask.class)
+                    .configureEach {
+                        it.kaptProcessJvmArgs.addAll(['-Xmx64m', '-Duser.country=DE'])
+                    }
+                """.trimIndent()
+            )
+
+            build("assemble") {
+                assertOutputContains("Kapt additional JVM arguments are ignored in 'NONE' workers isolation mode")
+            }
+        }
+    }
 }
 
 @DisplayName("Kapt with classloaders cache executing via workers ")

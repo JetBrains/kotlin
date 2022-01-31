@@ -8,10 +8,11 @@ package org.jetbrains.kotlin.gradle.internal
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
-import org.gradle.api.tasks.incremental.IncrementalTaskInputs
+import org.gradle.kotlin.dsl.listProperty
 import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.work.InputChanges
 import org.gradle.workers.IsolationMode
@@ -76,6 +77,9 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
 
     @get:Internal
     internal val projectDir = project.projectDir
+
+    @get:Input
+    val kaptProcessJvmArgs: ListProperty<String> = objectFactory.listProperty<String>().convention(emptyList())
 
     private fun getAnnotationProcessorOptions(): Map<String, String> {
         val options = processorOptions.subpluginOptionsByPluginId[Kapt3GradleSubplugin.KAPT_SUBPLUGIN_ID] ?: return emptyMap()
@@ -195,13 +199,17 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
                     // for tests
                     it.forkOptions.jvmArgs("-verbose:class")
                 }
+                kaptProcessJvmArgs.get().run { if (isNotEmpty()) it.forkOptions.jvmArgs(this) }
                 it.forkOptions.executable = defaultKotlinJavaToolchain.get()
                     .javaExecutable
                     .asFile.get()
                     .absolutePath
                 logger.info("Kapt worker classpath: ${it.classpath}")
             }
-            IsolationMode.NONE -> workerExecutor.noIsolation()
+            IsolationMode.NONE -> {
+                warnAdditionalJvmArgsAreNotUsed(isolationMode)
+                workerExecutor.noIsolation()
+            }
             IsolationMode.AUTO, IsolationMode.CLASSLOADER -> throw UnsupportedOperationException(
                 "Kapt worker compilation does not support class loader isolation. " +
                         "Please use either \"none\" or \"process\" in gradle.properties."
@@ -213,6 +221,12 @@ abstract class KaptWithoutKotlincTask @Inject constructor(
             it.toolsJarURLSpec.set(toolsJarURLSpec)
             it.kaptClasspath.setFrom(kaptClasspath)
             it.classloadersCacheSize.set(classLoadersCacheSize)
+        }
+    }
+
+    private fun warnAdditionalJvmArgsAreNotUsed(isolationMode: IsolationMode) {
+        if (kaptProcessJvmArgs.get().isNotEmpty()) {
+            logger.warn("Kapt additional JVM arguments are ignored in '${isolationMode.name}' workers isolation mode")
         }
     }
 
