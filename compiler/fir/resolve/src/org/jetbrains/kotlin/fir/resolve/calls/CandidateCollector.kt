@@ -48,7 +48,7 @@ open class CandidateCollector(
 
     fun bestCandidates(): List<Candidate> = candidates
 
-    fun shouldStopAtTheLevel(group: TowerGroup): Boolean =
+    open fun shouldStopAtTheLevel(group: TowerGroup): Boolean =
         currentApplicability.shouldStopResolve && bestGroup < group
 
     fun isSuccess(): Boolean {

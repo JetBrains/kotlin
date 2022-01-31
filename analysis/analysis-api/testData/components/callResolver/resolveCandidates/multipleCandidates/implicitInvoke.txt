@@ -1,0 +1,82 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = x(b: kotlin.Boolean): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = b: kotlin.Boolean
+        ]
+    argumentMapping = {
+      true -> (KtVariableLikeSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = b: kotlin.Boolean)
+    }
+
+KtErrorCallInfo:
+  candidateCalls = [
+    KtSimpleFunctionCall:
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Unit
+          symbol = /x(c: kotlin.Char): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = c
+              receiverType = null
+              returnType = kotlin.Char
+              symbol = c: kotlin.Char
+          ]
+      argumentMapping = {
+        true -> (KtVariableLikeSignature:
+          name = c
+          receiverType = null
+          returnType = kotlin.Char
+          symbol = c: kotlin.Char)
+      }
+  ]
+  diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is kotlin/Boolean but kotlin/Char was expected>
+
+KtErrorCallInfo:
+  candidateCalls = [
+    KtSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = x
+          isSafeNavigation = false
+        signature = KtFunctionLikeSignature:
+          receiverType = kotlin.Int
+          returnType = kotlin.Unit
+          symbol = /invoke(<extension receiver>: kotlin.Int, i: kotlin.Int): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = i
+              receiverType = null
+              returnType = kotlin.Int
+              symbol = i: kotlin.Int
+          ]
+      argumentMapping = {
+        true -> (KtVariableLikeSignature:
+          name = i
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = i: kotlin.Int)
+      }
+  ]
+  diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is kotlin/Boolean but kotlin/Int was expected>

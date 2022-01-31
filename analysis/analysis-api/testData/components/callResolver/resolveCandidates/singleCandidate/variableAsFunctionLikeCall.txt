@@ -3,7 +3,9 @@ KtSuccessCallInfo:
     isImplicitInvoke = true
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = null
-      extensionReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = x
+        isSafeNavigation = false
       signature = KtFunctionLikeSignature:
         receiverType = kotlin.Int
         returnType = kotlin.String

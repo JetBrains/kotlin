@@ -1,0 +1,42 @@
+KtErrorCallInfo:
+  candidateCalls = [
+    KtSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = x
+          isSafeNavigation = false
+        signature = KtFunctionLikeSignature:
+          receiverType = kotlin.Int
+          returnType = kotlin.Unit
+          symbol = invoke(<extension receiver>: kotlin.Int, a: kotlin.String): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = a
+              receiverType = null
+              returnType = kotlin.String
+              symbol = a: kotlin.String
+          ]
+      argumentMapping = {},
+    KtSimpleFunctionCall:
+      isImplicitInvoke = true
+      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = null
+        extensionReceiver = KtExplicitReceiverValue:
+          expression = x
+          isSafeNavigation = false
+        signature = KtFunctionLikeSignature:
+          receiverType = kotlin.Int
+          returnType = kotlin.Unit
+          symbol = invoke(<extension receiver>: kotlin.Int, b: kotlin.Boolean): kotlin.Unit
+          valueParameters = [
+            KtVariableLikeSignature:
+              name = b
+              receiverType = null
+              returnType = kotlin.Boolean
+              symbol = b: kotlin.Boolean
+          ]
+      argumentMapping = {}
+  ]
+  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions are applicable: [<local>/invoke, <local>/invoke]>

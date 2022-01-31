@@ -178,6 +178,9 @@ class FirCallResolver(
                 return super.consumeCandidate(group, candidate, context)
             }
 
+            // We want to get candidates at all tower levels.
+            override fun shouldStopAtTheLevel(group: TowerGroup): Boolean = false
+
             val allCandidates: List<Candidate>
                 get() = allCandidatesSet.toList()
         }

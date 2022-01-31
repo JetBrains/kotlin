@@ -11,12 +11,14 @@ KtErrorCallInfo:
           symbol = /function(a: kotlin.Char): kotlin.Unit
           valueParameters = [
             KtVariableLikeSignature:
+              name = a
               receiverType = null
               returnType = kotlin.Char
               symbol = a: kotlin.Char
           ]
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
+          name = a
           receiverType = null
           returnType = kotlin.Char
           symbol = a: kotlin.Char)
@@ -37,12 +39,14 @@ KtErrorCallInfo:
           symbol = /function(b: kotlin.Boolean): kotlin.Unit
           valueParameters = [
             KtVariableLikeSignature:
+              name = b
               receiverType = null
               returnType = kotlin.Boolean
               symbol = b: kotlin.Boolean
           ]
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
+          name = b
           receiverType = null
           returnType = kotlin.Boolean
           symbol = b: kotlin.Boolean)
@@ -63,12 +67,14 @@ KtErrorCallInfo:
           symbol = /function(c: kotlin.String): kotlin.Unit
           valueParameters = [
             KtVariableLikeSignature:
+              name = c
               receiverType = null
               returnType = kotlin.String
               symbol = c: kotlin.String
           ]
       argumentMapping = {
         1 -> (KtVariableLikeSignature:
+          name = c
           receiverType = null
           returnType = kotlin.String
           symbol = c: kotlin.String)

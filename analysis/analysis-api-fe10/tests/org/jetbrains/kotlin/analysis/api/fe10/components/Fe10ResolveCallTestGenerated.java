@@ -41,6 +41,12 @@ public class Fe10ResolveCallTestGenerated extends AbstractResolveCallTest {
     }
 
     @Test
+    @TestMetadata("ambiguousImplicitInvoke.kt")
+    public void testAmbiguousImplicitInvoke() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/ambiguousImplicitInvoke.kt");
+    }
+
+    @Test
     @TestMetadata("ambiguousWithExplicitTypeParameters.kt")
     public void testAmbiguousWithExplicitTypeParameters() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/ambiguousWithExplicitTypeParameters.kt");
