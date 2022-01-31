@@ -55,7 +55,6 @@ publishing {
 afterEvaluate {
     kotlin {
         jvm("jvm6").compilations.create("benchmark") {
-            defaultSourceSet.dependsOn(sourceSets["jvm6Main"])
             tasks["assemble"].dependsOn(compileKotlinTask)
         }
     }
