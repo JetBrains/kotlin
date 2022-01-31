@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.loadIr
 import org.jetbrains.kotlin.ir.declarations.IrFactory
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -25,15 +26,13 @@ import java.io.ByteArrayOutputStream
 
 class WasmCompilerResult(val wat: String, val js: String, val wasm: ByteArray)
 
-fun compileWasm(
+fun compileToLoweredIr(
     depsDescriptors: ModulesStructure,
     phaseConfig: PhaseConfig,
     irFactory: IrFactory,
     exportedDeclarations: Set<FqName> = emptySet(),
     propertyLazyInitialization: Boolean,
-    emitNameSection: Boolean = false,
-    dceEnabled: Boolean = false,
-): WasmCompilerResult {
+): Pair<IrModuleFragment, WasmBackendContext> {
     val mainModule = depsDescriptors.mainModule
     val configuration = depsDescriptors.compilerConfiguration
     val (moduleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) = loadIr(
@@ -71,12 +70,22 @@ fun compileWasm(
 
     wasmPhases.invokeToplevel(phaseConfig, context, moduleFragment)
 
+    return Pair(moduleFragment, context)
+}
+
+fun compileWasm(
+    moduleFragment: IrModuleFragment,
+    backendContext: WasmBackendContext,
+    emitNameSection: Boolean = false,
+    dceEnabled: Boolean = false,
+): WasmCompilerResult {
+
     if (dceEnabled) {
-        eliminateDeadDeclarations(listOf(moduleFragment), context)
+        eliminateDeadDeclarations(listOf(moduleFragment), backendContext)
     }
 
-    val compiledWasmModule = WasmCompiledModuleFragment(context.irBuiltIns)
-    val codeGenerator = WasmModuleFragmentGenerator(context, compiledWasmModule, allowIncompleteImplementations = dceEnabled)
+    val compiledWasmModule = WasmCompiledModuleFragment(backendContext.irBuiltIns)
+    val codeGenerator = WasmModuleFragmentGenerator(backendContext, compiledWasmModule, allowIncompleteImplementations = dceEnabled)
     codeGenerator.generateModule(moduleFragment)
 
     val linkedModule = compiledWasmModule.linkWasmCompiledFragments()
@@ -87,7 +96,7 @@ fun compileWasm(
     val js = compiledWasmModule.generateJs()
 
     val os = ByteArrayOutputStream()
-    WasmIrToBinary(os, linkedModule, moduleDescriptor.name.asString(), emitNameSection).appendWasmModule()
+    WasmIrToBinary(os, linkedModule, moduleFragment.descriptor.name.asString(), emitNameSection).appendWasmModule()
     val byteArray = os.toByteArray()
 
     return WasmCompilerResult(
@@ -96,7 +105,6 @@ fun compileWasm(
         wasm = byteArray
     )
 }
-
 
 fun WasmCompiledModuleFragment.generateJs(): String {
     //language=js
