@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.VariantMappedCompilationDetails
 import java.util.concurrent.Callable
 
 internal open class KpmAwareTargetConfigurator<T : KotlinTarget>(
@@ -13,7 +16,33 @@ internal open class KpmAwareTargetConfigurator<T : KotlinTarget>(
 ) : AbstractKotlinTargetConfigurator<T>(true, legacyModelTargetConfigurator.createDefaultSourceSets),
     KotlinTargetConfigurator<T> by legacyModelTargetConfigurator {
     // NB: this override enforces calls to other overridden functions; without it, the delegate would call its own ones
-    override fun configureTarget(target: T) = super<AbstractKotlinTargetConfigurator>.configureTarget(target)
+    override fun configureTarget(target: T) {
+        super<AbstractKotlinTargetConfigurator>.configureTarget(target)
+        doKpmSpecificConfigurationSteps(target)
+    }
+
+    protected open fun doKpmSpecificConfigurationSteps(target: T) {
+        setupMavenPublicationDsl(target)
+    }
+
+    private fun setupMavenPublicationDsl(target: T) {
+        if (target is AbstractKotlinTarget) {
+            target.compilations.all { compilation ->
+                val compilationDetails = (compilation as? AbstractKotlinCompilation)?.compilationDetails as? VariantMappedCompilationDetails
+                if (compilationDetails is VariantMappedCompilationDetails<*> && compilationDetails.variant.containingModule.isMain) {
+                    val variant = compilationDetails.variant
+                    if (variant is SingleMavenPublishedModuleHolder) {
+                        variant.whenPublicationAssigned { publication ->
+                            target.publicationConfigureActions.all { action ->
+                                action.execute(publication)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     override fun defineConfigurationsForTarget(target: T) = Unit // done in KPM
 
@@ -58,6 +87,7 @@ internal class KpmAwareTargetWithTestsConfigurator<R : KotlinTargetTestRun<*>, T
 
     override fun configureTarget(target: T) {
         super<KotlinTargetWithTestsConfigurator>.configureTarget(target)
+        doKpmSpecificConfigurationSteps(target)
     }
 
     override val testRunClass: Class<R>
