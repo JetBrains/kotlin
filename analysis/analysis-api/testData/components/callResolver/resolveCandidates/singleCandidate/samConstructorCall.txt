@@ -1,0 +1,24 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = java.util.Comparator<ft<kotlin.Int, kotlin.Int?>>
+        symbol = java/util/Comparator(function: kotlin.Function2<ft<T, T?>, ft<T, T?>, kotlin.Int>): java.util.Comparator<T>
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = function
+            receiverType = null
+            returnType = kotlin.Function2<ft<kotlin.Int, kotlin.Int?>, ft<kotlin.Int, kotlin.Int?>, kotlin.Int>
+            symbol = function: kotlin.Function2<ft<T, T?>, ft<T, T?>, kotlin.Int>
+        ]
+    argumentMapping = {
+      {x: Int, y: Int -> 1} -> (KtVariableLikeSignature:
+        name = function
+        receiverType = null
+        returnType = kotlin.Function2<ft<kotlin.Int, kotlin.Int?>, ft<kotlin.Int, kotlin.Int?>, kotlin.Int>
+        symbol = function: kotlin.Function2<ft<T, T?>, ft<T, T?>, kotlin.Int>)
+    }

@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.calls.KtCall
 import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
+import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleModuleTest
 import org.jetbrains.kotlin.psi.*
@@ -15,33 +17,38 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractResolveCallTest : AbstractHLApiSingleModuleTest() {
+abstract class AbstractResolveCandidatesTest : AbstractHLApiSingleModuleTest() {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val ktFile = ktFiles.first()
         val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
 
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(expression) {
-                resolveCall(expression)?.let { stringRepresentation(it) }
+                val candidates = resolveCandidates(expression)
+                if (candidates.isEmpty()) {
+                    "NO_CANDIDATES"
+                } else {
+                    candidates.joinToString("\n\n") { stringRepresentation(it) }
+                }
             }
-        } ?: "null"
+        }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 
-    private fun KtAnalysisSession.resolveCall(element: PsiElement): KtCallInfo? = when (element) {
-        is KtValueArgument -> element.getArgumentExpression()?.resolveCall()
+    private fun KtAnalysisSession.resolveCandidates(element: PsiElement): List<KtCallInfo> = when (element) {
+        is KtValueArgument -> resolveCandidates(element.getArgumentExpression()!!)
         is KtDeclarationModifierList -> {
             val annotationEntry = element.annotationEntries.singleOrNull()
                 ?: error("Only single annotation entry is supported for now")
-            annotationEntry.resolveCall()
+            annotationEntry.resolveCandidates()
         }
         is KtFileAnnotationList -> {
             val annotationEntry = element.annotationEntries.singleOrNull()
                 ?: error("Only single annotation entry is supported for now")
-            annotationEntry.resolveCall()
+            annotationEntry.resolveCandidates()
         }
-        is KtElement -> element.resolveCall()
-        else -> error("Selected element type (${element::class.simpleName}) is not supported for resolveCall()")
+        is KtElement -> element.resolveCandidates()
+        else -> error("Selected element type (${element::class.simpleName}) is not supported for resolveCandidates()")
     }
 
 }
