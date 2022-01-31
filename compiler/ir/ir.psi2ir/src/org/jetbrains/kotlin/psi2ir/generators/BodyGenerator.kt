@@ -34,10 +34,10 @@ import org.jetbrains.kotlin.psi.synthetics.findClassDescriptor
 import org.jetbrains.kotlin.psi2ir.intermediate.VariableLValue
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
-import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 class BodyGenerator(
     val scopeOwnerSymbol: IrSymbol,
@@ -74,7 +74,7 @@ class BodyGenerator(
     fun generateExpressionBody(ktExpression: KtExpression): IrExpressionBody =
         context.irFactory.createExpressionBody(createStatementGenerator().generateExpression(ktExpression))
 
-    fun generateLambdaBody(ktFun: KtFunctionLiteral): IrBody {
+    fun generateLambdaBody(ktFun: KtFunctionLiteral, lambdaDescriptor: SimpleFunctionDescriptor): IrBody {
         val statementGenerator = createStatementGenerator()
 
         val ktBody = ktFun.bodyExpression!!
@@ -101,7 +101,14 @@ class BodyGenerator(
             val ktReturnedValue = ktBodyStatements.last()
             val irReturnedValue = statementGenerator.generateStatement(ktReturnedValue)
             irBlockBody.statements.add(
-                if (ktReturnedValue.isUsedAsResultOfLambda(context.bindingContext) && irReturnedValue is IrExpression) {
+                // We used to determine whether the last expression in a lambda is used as a return value with 'isUsedAsResultOfLambda',
+                // but it's in fact rather unreliable (see, for example, KT-51306).
+                // Instead, we just check whether lambda is expected to return a non-Unit value,
+                // and check that the last expression is not 'return' or 'throw'.
+                if (!lambdaDescriptor.returnType!!.isUnit() &&
+                    irReturnedValue is IrExpression &&
+                    irReturnedValue !is IrReturn && irReturnedValue !is IrThrow
+                ) {
                     generateReturnExpression(irReturnedValue.startOffset, irReturnedValue.endOffset, irReturnedValue)
                 } else {
                     irReturnedValue

@@ -47042,6 +47042,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("kt51036.kt")
+        public void testKt51036() throws Exception {
+            runTest("compiler/testData/codegen/box/unit/kt51036.kt");
+        }
+
+        @Test
         @TestMetadata("nullableUnit.kt")
         public void testNullableUnit() throws Exception {
             runTest("compiler/testData/codegen/box/unit/nullableUnit.kt");
