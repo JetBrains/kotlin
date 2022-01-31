@@ -349,13 +349,8 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         val fooKtSourceFile = secondProject.kotlinSourcesDir().resolve("foo.kt")
         fooKtSourceFile.modify { it.replace("Int = 1", "String = \"abc\"") }
         secondProject.build("assemble", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
-            if (useClasspathSnapshot == true) {
-                // FIXME: Incremental compilation after cache hit is not yet supported, so the fact that we have incremental compilation
-                // here is actually a bug. We'll fix it in the next commit.
-                assertIncrementalCompilation(expectedCompiledKotlinFiles = listOf("src/main/kotlin/foo.kt"))
-            } else {
-                assertNonIncrementalCompilation()
-            }
+            // Incremental compilation after cache hit is not yet supported
+            assertNonIncrementalCompilation()
         }
 
         // Revert the change to the return type of foo(), and check if we get a cache hit
