@@ -15564,6 +15564,26 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
 
+            @TestMetadata("array.kt")
+            public void testArray() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue/array.kt");
+            }
+
+            @TestMetadata("arrayIC.kt")
+            public void testArrayIC() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue/arrayIC.kt");
+            }
+
+            @TestMetadata("primitive.kt")
+            public void testPrimitive() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue/primitive.kt");
+            }
+
+            @TestMetadata("recursive.kt")
+            public void testRecursive() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue/recursive.kt");
+            }
+
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue/simple.kt");
