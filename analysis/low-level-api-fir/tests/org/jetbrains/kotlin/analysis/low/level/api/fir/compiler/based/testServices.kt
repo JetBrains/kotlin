@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.impl.barebone.test.projectModuleProvide
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveStateService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.PackagePartProviderFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.SealedClassInheritorsProviderTestImpl
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
@@ -31,6 +30,7 @@ import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticPackageProviderF
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
+import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
 import org.jetbrains.kotlin.light.classes.symbol.IDEKotlinAsJavaFirSupport
 import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCache
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -67,7 +67,7 @@ fun MockProject.registerTestServices(
 
 private class FirSealedClassInheritorsProcessorFactoryTestImpl : FirSealedClassInheritorsProcessorFactory() {
     override fun createSealedClassInheritorsProvider(): SealedClassInheritorsProvider {
-        return SealedClassInheritorsProviderTestImpl()
+        return SealedClassInheritorsProviderImpl
     }
 }
 
