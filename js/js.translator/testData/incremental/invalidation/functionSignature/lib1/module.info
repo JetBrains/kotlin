@@ -1,0 +1,85 @@
+STEP 0:
+    dependencies: stdlib
+    modifications:
+        U : l1.out.int.kt.txt -> l1.kt
+    dirty: l1.kt
+STEP 1:
+    dependencies: stdlib
+    modifications:
+        U : l1.out.bool.kt.txt -> l1.kt
+    dirty: l1.kt
+STEP 2:
+    dependencies: stdlib
+    modifications:
+        U : l1.out.double.kt.txt -> l1.kt
+    dirty: l1.kt
+STEP 3:
+    dependencies: stdlib
+    modifications:
+        U : l1.out.string.kt.txt -> l1.kt
+    dirty: l1.kt
+STEP 4:
+    dependencies: stdlib
+    modifications:
+        U : l1.out.string_or_null.kt.txt -> l1.kt
+    dirty: l1.kt
+STEP 5:
+    dependencies: stdlib
+    modifications:
+        U : l1.out.any.kt.txt -> l1.kt
+    dirty: l1.kt
+STEP 6:
+    dependencies: stdlib
+    modifications:
+        U : l1.out.any_or_null.kt.txt -> l1.kt
+    dirty: l1.kt
+STEP 7:
+    dependencies: stdlib
+    modifications:
+        U : l1.out.unit.kt.txt -> l1.kt
+    dirty: l1.kt
+STEP 8:
+    dependencies: stdlib
+    modifications:
+        U : l1.out.int.kt.txt -> l1.kt
+    dirty: l1.kt
+STEP 9:
+    dependencies: stdlib
+    modifications:
+        U : l1.in.int.out.int.kt.txt -> l1.kt
+    dirty: l1.kt
+STEP 10:
+    dependencies: stdlib
+    modifications:
+        U : l1.in.int.string.out.int.kt.txt -> l1.kt
+    dirty: l1.kt
+STEP 11:
+    dependencies: stdlib
+    modifications:
+        U : l1.in.int.string_or_null.out.int.kt.txt -> l1.kt
+    dirty: l1.kt
+STEP 12:
+    dependencies: stdlib
+    modifications:
+        U : l1.out.any.kt.txt -> l1.kt
+    dirty: l1.kt
+STEP 13:
+    dependencies: stdlib
+    modifications:
+        U : l1.in.any.out.any.kt.txt -> l1.kt
+    dirty: l1.kt
+STEP 14:
+    dependencies: stdlib
+    modifications:
+        U : l1.in.any_or_null.out.any.kt.txt -> l1.kt
+    dirty: l1.kt
+STEP 15:
+    dependencies: stdlib
+    modifications:
+        U : l1.out.int.kt.txt -> l1.kt
+    dirty: l1.kt
+STEP 16:
+    dependencies: stdlib
+    modifications:
+        U : l1.in.vararg_int.out.int.kt.txt -> l1.kt
+    dirty: l1.kt

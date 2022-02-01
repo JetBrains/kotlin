@@ -1,0 +1,2 @@
+
+fun box() = foo()

@@ -30,6 +30,21 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/incremental/invalidation"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, false);
     }
 
+    @TestMetadata("class")
+    public void testClass() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/class/");
+    }
+
+    @TestMetadata("classFunctionsAndFields")
+    public void testClassFunctionsAndFields() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/classFunctionsAndFields/");
+    }
+
+    @TestMetadata("constVals")
+    public void testConstVals() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/constVals/");
+    }
+
     @TestMetadata("fastPath1")
     public void testFastPath1() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/fastPath1/");
@@ -38,6 +53,51 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
     @TestMetadata("fastPath2")
     public void testFastPath2() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/fastPath2/");
+    }
+
+    @TestMetadata("functionDefaultParams")
+    public void testFunctionDefaultParams() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/functionDefaultParams/");
+    }
+
+    @TestMetadata("functionSignature")
+    public void testFunctionSignature() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/functionSignature/");
+    }
+
+    @TestMetadata("genericFunctions")
+    public void testGenericFunctions() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/genericFunctions/");
+    }
+
+    @TestMetadata("genericInlineFunctions")
+    public void testGenericInlineFunctions() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/genericInlineFunctions/");
+    }
+
+    @TestMetadata("inlineBecomeNonInline")
+    public void testInlineBecomeNonInline() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/inlineBecomeNonInline/");
+    }
+
+    @TestMetadata("inlineFunctionAsParam")
+    public void testInlineFunctionAsParam() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionAsParam/");
+    }
+
+    @TestMetadata("inlineFunctionDefaultParams")
+    public void testInlineFunctionDefaultParams() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/inlineFunctionDefaultParams/");
+    }
+
+    @TestMetadata("jsCode")
+    public void testJsCode() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/jsCode/");
+    }
+
+    @TestMetadata("jsExport")
+    public void testJsExport() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/jsExport/");
     }
 
     @TestMetadata("moveFilesBetweenModules")
@@ -50,9 +110,29 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/moveInlineFunctionBetweenModules/");
     }
 
+    @TestMetadata("nonInlineBecomeInline")
+    public void testNonInlineBecomeInline() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/nonInlineBecomeInline/");
+    }
+
     @TestMetadata("privateInlineFunction1")
     public void testPrivateInlineFunction1() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/privateInlineFunction1/");
+    }
+
+    @TestMetadata("removeFile")
+    public void testRemoveFile() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/removeFile/");
+    }
+
+    @TestMetadata("removeModule")
+    public void testRemoveModule() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/removeModule/");
+    }
+
+    @TestMetadata("removeUnusedFile")
+    public void testRemoveUnusedFile() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/removeUnusedFile/");
     }
 
     @TestMetadata("renameFile")
@@ -65,8 +145,18 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/simple/");
     }
 
+    @TestMetadata("suspendFunctions")
+    public void testSuspendFunctions() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/suspendFunctions/");
+    }
+
     @TestMetadata("transitiveInlineFunction")
     public void testTransitiveInlineFunction() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/transitiveInlineFunction/");
+    }
+
+    @TestMetadata("variance")
+    public void testVariance() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/variance/");
     }
 }
