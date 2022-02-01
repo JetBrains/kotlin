@@ -87,29 +87,20 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(args
             return true
         }
 
-        val deprecatedName = argument.deprecatedName.takeUnless(String::isEmpty)
-        if (deprecatedName == arg) {
+        val deprecatedName = argument.deprecatedName
+        if (deprecatedName.isNotEmpty() && (deprecatedName == arg || arg.startsWith("$deprecatedName="))) {
             errors.deprecatedArguments[deprecatedName] = argument.value
             return true
         }
 
-        if (argument.isAdvanced) {
-            if (argument.value == arg) {
-                if (property.returnType.classifier != Boolean::class) {
-                    errors.extraArgumentsPassedInObsoleteForm.add(arg)
-                }
-                return true
+        if (argument.value == arg) {
+            if (argument.isAdvanced && property.returnType.classifier != Boolean::class) {
+                errors.extraArgumentsPassedInObsoleteForm.add(arg)
             }
-
-            if (deprecatedName != null && arg.startsWith("$deprecatedName=")) {
-                errors.deprecatedArguments[deprecatedName] = argument.value
-                return true
-            }
-
-            return arg.startsWith(argument.value + "=")
+            return true
         }
 
-        return argument.value == arg || arg.startsWith(argument.value + "=")
+        return arg.startsWith(argument.value + "=")
     }
 
     val freeArgs = ArrayList<String>()
