@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
 
 interface SourceSetMappedFragmentLocator {
     data class FragmentLocation(val moduleName: String, val fragmentName: String) {
@@ -37,7 +38,7 @@ private class MultiplatformSourceSetMappedFragmentLocator : SourceSetMappedFragm
         }
         val candidateModuleNames = (1..camelCaseParts.size).asSequence().map { camelCaseParts.takeLast(it).joinToString("").decapitalize() }
         val moduleName =
-            candidateModuleNames.firstOrNull { project.kotlinExtension.kpmModules.findByName(it) != null } ?: candidateModuleNames.first()
+            candidateModuleNames.firstOrNull { project.kpmModules.findByName(it) != null } ?: candidateModuleNames.first()
         val fragmentName = sourceSetName.dropLast(moduleName.length)
 
         return SourceSetMappedFragmentLocator.FragmentLocation(moduleName, fragmentName)

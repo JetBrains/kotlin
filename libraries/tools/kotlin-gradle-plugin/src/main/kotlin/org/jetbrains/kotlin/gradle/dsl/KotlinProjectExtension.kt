@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.DefaultKpmGradleProjectModelContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModuleFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
@@ -118,8 +119,11 @@ open class KotlinProjectExtension @Inject constructor(project: Project) : Kotlin
             DslObject(this).extensions.add("sourceSets", value)
         }
 
-    internal val kpmModules: NamedDomainObjectContainer<KotlinGradleModule> =
-        project.objects.domainObjectContainer(KotlinGradleModule::class.java, KotlinGradleModuleFactory(project))
+    internal val kpmModelContainer by lazy {
+        if (PropertiesProvider(project).experimentalKpmModelMapping) {
+            DefaultKpmGradleProjectModelContainer.create(project)
+        } else error("Model mapping is not enabled.")
+    }
 }
 
 abstract class KotlinSingleTargetExtension(project: Project) : KotlinProjectExtension(project) {

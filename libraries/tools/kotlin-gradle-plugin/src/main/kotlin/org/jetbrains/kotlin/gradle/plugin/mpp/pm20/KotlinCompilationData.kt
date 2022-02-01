@@ -31,12 +31,12 @@ interface KotlinVariantCompilationDataInternal<T : KotlinCommonOptions> : Kotlin
         get() {
             // FIXME support compiling against the artifact task outputs
             // TODO note for Android: see the friend artifacts code in KotlinAndroidCompilation
-            return owner.containingModule.project.pm20Extension.modules.flatMap { it.variants.map { it.compilationOutputs.classesDirs } }
+            return owner.containingModule.project.kpmModules.flatMap { it.variants.map { it.compilationOutputs.classesDirs } }
         }
 
     override val moduleName: String
         get() = // TODO accurate module names that don't rely on all variants having a main counterpart
-            owner.containingModule.project.pm20Extension.modules
+            owner.containingModule.project.kpmModules
                 .getByName(KotlinGradleModule.MAIN_MODULE_NAME).variants.findByName(owner.name)?.ownModuleName() ?: ownModuleName
 
     override val ownModuleName: String

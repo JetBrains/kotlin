@@ -119,19 +119,13 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
 fun rootPublicationComponentName(module: KotlinGradleModule) =
     module.disambiguateName("root")
 
-internal val Project.kpmModules: NamedDomainObjectContainer<KotlinGradleModule>
-    get() = when (val ext = project.topLevelExtensionOrNull) {
-        is KotlinPm20ProjectExtension -> ext.modules
-        is KotlinProjectExtension -> ext.kpmModules
-        else -> error("can't find Kotlin KPM modules in $project")
-    }
+open class KotlinPm20ProjectExtension(project: Project) :
+    KotlinTopLevelExtension(project) {
 
-open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtension(project) {
-    val modules: NamedDomainObjectContainer<KotlinGradleModule> =
-        project.objects.domainObjectContainer(
-            KotlinGradleModule::class.java,
-            KotlinGradleModuleFactory(project)
-        )
+    internal val kpmModelContainer = DefaultKpmGradleProjectModelContainer.create(project)
+
+    val modules: NamedDomainObjectContainer<KotlinGradleModule>
+        get() = project.kpmModules
 
     @Suppress("unused") // DSL function
     fun mainAndTest(configure: KotlinGradleModule.() -> Unit) {
@@ -147,11 +141,6 @@ open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtensio
 
     fun main(configure: KotlinGradleModule.() -> Unit = { }) = main.apply(configure)
     fun test(configure: KotlinGradleModule.() -> Unit = { }) = test.apply(configure)
-
-    internal val metadataCompilationRegistryByModuleId: MutableMap<KotlinModuleIdentifier, MetadataCompilationRegistry> =
-        mutableMapOf()
-
-    internal var rootPublication: MavenPublication? = null
 
     @PublishedApi
     @JvmName("isAllowCommonizer")
