@@ -9,6 +9,8 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.isMainCompilationData
 
 /** This is a disjoint-set union-like approach to having a module name that is equal across associated compilations, as the compiler
  * now requires that to properly compile internal calls to friend classes. Associating a compilation with another one leads to their
@@ -17,10 +19,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
  * TODO: once the compiler is able to correctly generate calls to internals in other modules, remove this logic.
  */
 internal class KotlinCompilationsModuleGroups {
-    private val moduleLeaderCompilationMap: MutableMap<KotlinCompilation<*>, KotlinCompilation<*>> =
+    private val moduleLeaderCompilationMap: MutableMap<KotlinCompilationData<*>, KotlinCompilationData<*>> =
         mutableMapOf()
 
-    fun getModuleLeader(compilation: KotlinCompilation<*>): KotlinCompilation<*> {
+    fun getModuleLeader(compilation: KotlinCompilationData<*>): KotlinCompilationData<*> {
         if (compilation !in moduleLeaderCompilationMap) {
             moduleLeaderCompilationMap[compilation] = compilation
         }
@@ -31,7 +33,7 @@ internal class KotlinCompilationsModuleGroups {
         }
     }
 
-    fun unionModules(compilationA: KotlinCompilation<*>, compilationB: KotlinCompilation<*>) {
+    fun unionModules(compilationA: KotlinCompilationData<*>, compilationB: KotlinCompilationData<*>) {
         val aLeader = getModuleLeader(compilationA)
         val bLeader = getModuleLeader(compilationB)
 
@@ -41,10 +43,10 @@ internal class KotlinCompilationsModuleGroups {
         listOf(aLeader, bLeader).run {
             /** heuristically choose the new leader: choose `main` when possible, don't choose `*test*` when there's an alternative,
              * if that didn't work, choose the first name lexicographically */
-            val newLeader = singleOrNull { it.isMain() }
-                ?: singleOrNull { it.name.contains("main", true) }
-                ?: singleOrNull { !it.name.contains("test", true) }
-                ?: minByOrNull { it.name }!!
+            val newLeader = singleOrNull { it.isMainCompilationData() }
+                ?: singleOrNull { it.compilationPurpose.contains("main", true) }
+                ?: singleOrNull { !it.compilationPurpose.contains("test", true) }
+                ?: minByOrNull { it.compilationPurpose }!!
 
             forEach { moduleLeaderCompilationMap[it] = newLeader }
         }
@@ -53,11 +55,11 @@ internal class KotlinCompilationsModuleGroups {
     companion object {
         private const val EXT_NAME = "kotlin.compilations.moduleGroups"
 
-        fun getModuleLeaderCompilation(compilation: KotlinCompilation<*>): KotlinCompilation<*> =
-            getInstance(compilation.target.project).getModuleLeader(compilation)
+        fun getModuleLeaderCompilation(compilation: KotlinCompilationData<*>): KotlinCompilationData<*> =
+            getInstance(compilation.project).getModuleLeader(compilation)
 
-        fun unionModules(compilationA: KotlinCompilation<*>, compilationB: KotlinCompilation<*>) {
-            getInstance(compilationA.target.project).unionModules(compilationA, compilationB)
+        fun unionModules(compilationA: KotlinCompilationData<*>, compilationB: KotlinCompilationData<*>) {
+            getInstance(compilationA.project).unionModules(compilationA, compilationB)
         }
 
         private fun getInstance(project: Project): KotlinCompilationsModuleGroups {
