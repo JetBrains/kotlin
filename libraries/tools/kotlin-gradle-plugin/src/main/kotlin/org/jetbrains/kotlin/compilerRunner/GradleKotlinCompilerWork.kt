@@ -127,12 +127,12 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     override fun run() {
         try {
             val messageCollector = GradlePrintingMessageCollector(log, allWarningsAsErrors)
-            val exitCode = compileWithDaemonOrFallbackImpl(messageCollector)
+            val (exitCode, executionStrategy) = compileWithDaemonOrFallbackImpl(messageCollector)
             if (incrementalCompilationEnvironment?.disableMultiModuleIC == true) {
                 incrementalCompilationEnvironment.multiModuleICSettings.buildHistoryFile.delete()
             }
 
-            throwGradleExceptionIfError(exitCode)
+            throwGradleExceptionIfError(exitCode, executionStrategy)
         } finally {
             val properties = ArrayList<TaskExecutionProperties>()
             COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS.value.toBooleanLenient()?.let {
@@ -151,7 +151,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         }
     }
 
-    private fun compileWithDaemonOrFallbackImpl(messageCollector: MessageCollector): ExitCode {
+    private fun compileWithDaemonOrFallbackImpl(messageCollector: MessageCollector): Pair<ExitCode, KotlinCompilerExecutionStrategy> {
         with(log) {
             kotlinDebug { "Kotlin compiler class: ${compilerClassName}" }
             kotlinDebug { "Kotlin compiler classpath: ${compilerFullClasspath.joinToString { it.canonicalPath }}" }
@@ -162,7 +162,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             val daemonExitCode = compileWithDaemon(messageCollector)
 
             if (daemonExitCode != null) {
-                return daemonExitCode
+                return daemonExitCode to KotlinCompilerExecutionStrategy.DAEMON
             } else {
                 log.warn("Could not connect to kotlin daemon. Using fallback strategy.")
             }
@@ -170,9 +170,9 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
         val isGradleDaemonUsed = System.getProperty("org.gradle.daemon")?.let(String::toBoolean)
         return if (compilerExecutionStrategy == KotlinCompilerExecutionStrategy.IN_PROCESS || isGradleDaemonUsed == false) {
-            compileInProcess(messageCollector)
+            compileInProcess(messageCollector) to KotlinCompilerExecutionStrategy.IN_PROCESS
         } else {
-            compileOutOfProcess()
+            compileOutOfProcess() to KotlinCompilerExecutionStrategy.OUT_OF_PROCESS
         }
     }
 
