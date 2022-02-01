@@ -116,18 +116,20 @@ fun File.dependencies() =
 
 
 fun Task.dependsOnPlatformLibs() {
-    (this as? KonanTest)?.run {
-        project.file(source).dependencies().forEach {
-            this.dependsOn(":kotlin-native:platformLibs:${project.testTarget.name}-$it")
-            //this.dependsOn(":kotlin-native:platformLibs:${project.testTarget.name}-${it}Cache")
-        }
-        if (this is KonanLinkTest) {
-            project.file(lib).dependencies().forEach {
+    if (!project.hasPlatformLibs) {
+        (this as? KonanTest)?.run {
+            project.file(source).dependencies().forEach {
                 this.dependsOn(":kotlin-native:platformLibs:${project.testTarget.name}-$it")
+                //this.dependsOn(":kotlin-native:platformLibs:${project.testTarget.name}-${it}Cache")
             }
-        }
-        this.dependsOnDist()
-    } ?: error("unsupported task : $this")
+            if (this is KonanLinkTest) {
+                project.file(lib).dependencies().forEach {
+                    this.dependsOn(":kotlin-native:platformLibs:${project.testTarget.name}-$it")
+                }
+            }
+            this.dependsOnDist()
+        } ?: error("unsupported task : $this")
+    }
 }
 
 @Suppress("UNCHECKED_CAST")
