@@ -19,7 +19,7 @@ val inventNamesForLocalClassesPhase = makeIrFilePhase(
     name = "InventNamesForLocalClasses",
     description = "Invent names for local classes and anonymous objects",
     // MainMethodGeneration introduces lambdas, needing names for their local classes.
-    prerequisite = setOf(mainMethodGenerationPhase)
+    prerequisite = setOf(jvmClassPreprocessingPhase)
 )
 
 class JvmInventNamesForLocalClasses(private val context: JvmBackendContext) : InventNamesForLocalClasses(allowTopLevelCallables = false) {

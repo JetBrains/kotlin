@@ -90,7 +90,7 @@ private val arrayConstructorPhase = makeIrFilePhase(
     description = "Transform `Array(size) { index -> value }` into a loop"
 )
 
-internal val expectDeclarationsRemovingPhase = makeIrModulePhase<CommonBackendContext>(
+internal val expectDeclarationsRemovingPhase = makeIrModulePhase(
     ::ExpectDeclarationRemover,
     name = "ExpectDeclarationsRemoving",
     description = "Remove expect declaration from module fragment"
@@ -278,15 +278,13 @@ private val kotlinNothingValueExceptionPhase = makeIrFilePhase<CommonBackendCont
 )
 
 private val jvmFilePhases = listOf(
-    typeAliasAnnotationMethodsPhase,
-    provisionalFunctionExpressionPhase,
+    jvmClassPreprocessingPhase,
 
-    jvmOverloadsAnnotationPhase,
-    mainMethodGenerationPhase,
+    provisionalFunctionExpressionPhase,
 
     inventNamesForLocalClassesPhase,
     kCallableNamePropertyPhase,
-    annotationPhase,
+
     annotationImplementationPhase,
     polymorphicSignaturePhase,
     varargPhase,
@@ -330,8 +328,6 @@ private val jvmFilePhases = listOf(
     jvmLocalClassExtractionPhase,
     staticCallableReferencePhase,
 
-    jvmDefaultConstructorPhase,
-
     flattenStringConcatenationPhase,
     foldConstantLoweringPhase,
     computeStringTrimPhase,
@@ -374,7 +370,6 @@ private val jvmFilePhases = listOf(
     toArrayPhase,
     jvmSafeCallFoldingPhase,
     jvmOptimizationLoweringPhase,
-    additionalClassAnnotationPhase,
     typeOperatorLowering,
     replaceKFunctionInvokeWithFunctionInvokePhase,
     kotlinNothingValueExceptionPhase,
