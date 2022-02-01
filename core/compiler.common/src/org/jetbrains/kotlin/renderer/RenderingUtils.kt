@@ -25,8 +25,6 @@ fun Name.render(): String {
 }
 
 private fun Name.shouldBeEscaped(): Boolean {
-    if (isSpecial) return false
-
     val string = asString()
     return string in KeywordStringsGenerated.KEYWORDS || string.any { !Character.isLetterOrDigit(it) && it != '_' }
 }
