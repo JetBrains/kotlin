@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.artifacts.Dependency
 import org.gradle.jvm.tasks.Jar
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguationOmittingMain
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedLowercaseName
 
@@ -24,4 +24,4 @@ val KotlinFragmentCompilationOutputsJarArtifact = FragmentArtifacts<KotlinGradle
 }
 
 internal val KotlinGradleVariant.outputsJarTaskName: String
-    get() = disambiguateName("jar")
+    get() = FragmentNameDisambiguationOmittingMain(containingModule, name).disambiguateName("jar")

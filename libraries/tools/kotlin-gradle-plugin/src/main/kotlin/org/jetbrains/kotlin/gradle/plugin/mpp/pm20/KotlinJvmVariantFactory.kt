@@ -7,7 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguation
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.FragmentNameDisambiguationOmittingMain
 
 typealias KotlinJvmVariantFactory = KotlinGradleFragmentFactory<KotlinJvmVariant>
 
@@ -53,7 +53,7 @@ class KotlinJvmVariantInstantiator internal constructor(
 ) : KotlinGradleFragmentFactory.FragmentInstantiator<KotlinJvmVariant> {
 
     override fun create(name: String): KotlinJvmVariant {
-        val names = FragmentNameDisambiguation(module, name)
+        val names = FragmentNameDisambiguationOmittingMain(module, name)
         val context = KotlinGradleFragmentConfigurationContextImpl(
             module, config.dependenciesConfigurationFactory.create(module, names), names
         )
