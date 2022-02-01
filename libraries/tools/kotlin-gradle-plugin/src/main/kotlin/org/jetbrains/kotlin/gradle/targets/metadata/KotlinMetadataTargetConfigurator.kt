@@ -287,6 +287,8 @@ class KotlinMetadataTargetConfigurator :
     ): AbstractKotlinCompilation<*> {
         val project = target.project
 
+        check(!project.hasKpmModel) { "KotlinMetadataTargetConfigurator cannot work with KPM!" }
+
         val compilationName = sourceSet.name
 
         val platformCompilations = compilationsBySourceSets(project)
@@ -304,7 +306,9 @@ class KotlinMetadataTargetConfigurator :
 
         return compilationFactory.create(compilationName).apply {
             target.compilations.add(this@apply)
-            addExactSourceSetsEagerly(setOf(sourceSet))
+
+            (compilationDetails as DefaultCompilationDetails<*>).addExactSourceSetsEagerly(setOf(sourceSet))
+
             configureMetadataDependenciesForCompilation(this@apply)
 
             if (!isHostSpecific) {

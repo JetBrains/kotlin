@@ -77,9 +77,6 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
 
     override fun getName(): String = compilationName
 
-    override val relatedConfigurationNames: List<String>
-        get() = super.relatedConfigurationNames + compileDependencyConfigurationName
-
     val moduleName: String
 
     val disambiguatedName

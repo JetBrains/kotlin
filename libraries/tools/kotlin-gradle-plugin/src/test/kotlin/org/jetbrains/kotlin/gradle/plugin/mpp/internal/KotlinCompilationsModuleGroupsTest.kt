@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.internal
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.MockKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.MockKotlinSourceSet
 import org.junit.Before
@@ -28,7 +29,7 @@ class KotlinCompilationsModuleGroupsTest {
         assertEquals(a, instance.getModuleLeader(a))
     }
 
-    private fun assertLeader(leader: KotlinCompilation<*>, vararg ofCompilations: KotlinCompilation<*>) {
+    private fun assertLeader(leader: KotlinCompilationData<*>, vararg ofCompilations: KotlinCompilationData<*>) {
         val leadersForModules = ofCompilations.map { instance.getModuleLeader(it) }
         assertEquals(leadersForModules.map { leader }, leadersForModules)
     }

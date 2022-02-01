@@ -1,4 +1,4 @@
- /*
+/*
  * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
@@ -12,14 +12,13 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationWithResources
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
 open class KotlinJvmCompilation(
-    override val target: KotlinJvmTarget,
-    name: String
-) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(target, name), KotlinCompilationWithResources<KotlinJvmOptions> {
-
-    override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsImpl()
+    compilationDetails: CompilationDetailsWithRuntime<KotlinJvmOptions>,
+) : AbstractKotlinCompilationToRunnableFiles<KotlinJvmOptions>(compilationDetails), KotlinCompilationWithResources<KotlinJvmOptions> {
+    override val target: KotlinJvmTarget get() = compilationDetails.target as KotlinJvmTarget
 
     override val processResourcesTaskName: String
         get() = disambiguateName("processResources")

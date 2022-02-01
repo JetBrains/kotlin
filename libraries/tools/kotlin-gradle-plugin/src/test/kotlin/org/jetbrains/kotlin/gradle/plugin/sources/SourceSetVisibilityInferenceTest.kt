@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.sources
 
 import groovy.lang.Closure
+import org.gradle.api.Project
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
@@ -13,6 +14,8 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
+import org.jetbrains.kotlin.project.model.LanguageSettings
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -271,7 +274,7 @@ class MockKotlinSourceSet(private val name: String) : KotlinSourceSet {
 class MockKotlinCompilation(
     override val compilationName: String,
     override val defaultSourceSet: KotlinSourceSet
-) : KotlinCompilation<KotlinCommonOptions> {
+) : KotlinCompilation<KotlinCommonOptions>, KotlinCompilationData<KotlinCommonOptions> {
     override val kotlinSourceSets: Set<KotlinSourceSet> = setOf(defaultSourceSet)
 
     override val allKotlinSourceSets: Set<KotlinSourceSet>
@@ -296,6 +299,8 @@ class MockKotlinCompilation(
     override val associateWith: MutableList<KotlinCompilation<*>> = mutableListOf()
 
     override fun defaultSourceSet(configure: KotlinSourceSet.() -> Unit) = defaultSourceSet.run(configure)
+
+    override val compilationPurpose: String get() = compilationName
 
     //region Not implemented
     override val target: KotlinTarget get() = throw UnsupportedOperationException()
@@ -322,7 +327,15 @@ class MockKotlinCompilation(
     override fun attributes(configure: Closure<*>) = throw UnsupportedOperationException()
     override val compileAllTaskName: String get() = throw UnsupportedOperationException()
     override val moduleName: String get() = throw UnsupportedOperationException()
+    override fun toString(): String = "compilation '${name}'"
+    override val project: Project get() = throw UnsupportedOperationException()
+    override val owner: Any get() = throw UnsupportedOperationException()
+    override val compilationClassifier: String get() = throw UnsupportedOperationException()
+    override val kotlinSourceDirectoriesByFragmentName: Map<String, SourceDirectorySet> get() = throw UnsupportedOperationException()
+    override val languageSettings: LanguageSettings get() = throw UnsupportedOperationException()
+    override val platformType: KotlinPlatformType get() = throw UnsupportedOperationException()
+    override val ownModuleName: String get() = throw UnsupportedOperationException()
+    override val friendPaths: Iterable<FileCollection> get() = throw UnsupportedOperationException()
     //endregion
 
-    override fun toString(): String = "compilation '${name}'"
 }

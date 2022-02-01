@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import groovy.lang.Closure
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.BasePluginConvention
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
@@ -25,7 +24,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.unambiguousNameInProject
 import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTargetConfigurator
-import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.project.model.refinesClosure
 import java.util.concurrent.Callable
@@ -68,109 +66,16 @@ internal fun KotlinGradleVariant.ownModuleName(): String {
     return filterModuleName("$baseName$suffix")
 }
 
-open class KotlinVariantMappedJvmCompilation(
-    override val target: KotlinJvmTarget,
-    internal val variant: KotlinJvmVariant,
-) : KotlinJvmCompilation(target, variant.containingModule.name) {
-    // TODO: in the legacy model, it used to be a KotlinCompilationWithResources
-
-    override val runtimeDependencyConfigurationName: String
-        get() = variant.runtimeDependenciesConfiguration.name
-
-    override var runtimeDependencyFiles: FileCollection
-        get() = variant.runtimeDependencyFiles
-        set(value) {
-            variant.runtimeDependencyFiles = value
-        }
-
-    // TODO: compilation data implements compileDependencyFiles as a val, not var, fix this?
-    override val compileDependencyConfigurationName: String
-        get() = variant.compileDependenciesConfiguration.name
-
-    override var compileDependencyFiles: FileCollection
-        get() = compilationData.compileDependencyFiles
-        set(value) {
-            variant.compileDependencyFiles = value
-        }
-
-    private val compilationData: KotlinJvmVariantCompilationData
-        get() = variant.compilationData
-
-    override val kotlinOptions: KotlinJvmOptions = compilationData.kotlinOptions
-
-    override val compilationName: String
-        get() = compilationData.compilationPurpose
-
-    // FIXME: mutating this set should not be allowed
-    override val kotlinSourceSets: MutableSet<KotlinSourceSet>
-        get() = super.kotlinSourceSets
-
-    override val allKotlinSourceSets: Set<KotlinSourceSet>
-        get() {
-            val allMappedSourceSets = target.project.kotlinExtension.sourceSets
-                .filterIsInstance<FragmentMappedKotlinSourceSet>()
-                .associateBy { it.underlyingFragment }
-            return variant.refinesClosure.mapNotNull { allMappedSourceSets[it] }.toSet()
-        }
-
-    override val defaultSourceSetName: String
-        get() = variant.unambiguousNameInProject
-
-    override fun source(sourceSet: KotlinSourceSet) {
-        defaultSourceSet.dependsOn(sourceSet)
-    }
-
-    override fun associateWith(other: KotlinCompilation<*>) {
-        throw UnsupportedOperationException("not supported in the mapped model")
-    }
-
-    override val associateWith: List<KotlinCompilation<*>> get() = emptyList()
-
-    override fun getAttributes(): AttributeContainer {
-        // TODO: not implemented?
-        return HierarchyAttributeContainer(target.attributes)
-    }
-
-    override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) {
-        variant.dependencies(configure)
-    }
-
-    override fun dependencies(configureClosure: Closure<Any?>) {
-        variant.dependencies(configureClosure)
-    }
-
-    override val apiConfigurationName: String
-        get() = variant.apiConfigurationName
-    override val implementationConfigurationName: String
-        get() = variant.implementationConfigurationName
-    override val compileOnlyConfigurationName: String
-        get() = variant.compileOnlyConfigurationName
-    override val runtimeOnlyConfigurationName: String
-        get() = variant.runtimeOnlyConfigurationName
-
-    override val project: Project
-        get() = variant.project
-
-    override val output: KotlinCompilationOutput
-        get() = variant.compilationOutputs
-
-    override val compileKotlinTaskName: String
-        get() = compilationData.compileKotlinTaskName
-
-    override val compileAllTaskName: String
-        get() = compilationData.compileAllTaskName
-
-    override val moduleName: String
-        get() = compilationData.moduleName
-}
-
 class KotlinMappedJvmCompilationFactory(
     target: KotlinJvmTarget
 ) : KotlinJvmCompilationFactory(target) {
-    override fun create(name: String): KotlinVariantMappedJvmCompilation {
+    override fun create(name: String): KotlinJvmCompilation {
         val module = target.project.kpmModules.maybeCreate(name)
         val variant = module.fragments.create(target.name, KotlinJvmVariant::class.java)
-        return KotlinVariantMappedJvmCompilation(target, variant)
+
+        return KotlinJvmCompilation(
+            VariantMappedCompilationDetailsWithRuntime(variant, target),
+        )
     }
 }
 
@@ -196,7 +101,10 @@ class KotlinMappedJvmTargetConfigurator : KotlinJvmTargetConfigurator() {
     override fun createArchiveTasks(target: KotlinJvmTarget): TaskProvider<out Zip> =
         checkNotNull(
             target.project.locateTask<Jar>(
-                (target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME) as KotlinVariantMappedJvmCompilation).variant.outputsJarTaskName
+                target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+                    .compilationDetails.let { it as VariantMappedCompilationDetails<*> }
+                    .variant.let { it as KotlinJvmVariant }
+                    .outputsJarTaskName
             )
         )
 }

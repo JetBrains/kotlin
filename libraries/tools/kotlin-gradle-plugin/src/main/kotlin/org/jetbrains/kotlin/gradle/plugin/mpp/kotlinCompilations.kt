@@ -9,25 +9,16 @@ import groovy.lang.Closure
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.UnknownTaskException
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.execution.TaskExecutionListener
 import org.gradle.api.file.FileCollection
-import org.gradle.api.file.SourceDirectorySet
-import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.TaskState
-import org.gradle.api.tasks.bundling.AbstractArchiveTask
-import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal.KotlinCompilationsModuleGroups
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
-import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
-import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.locateTask
@@ -54,12 +45,29 @@ internal fun KotlinCompilation<*>.isMain(): Boolean =
 internal val KotlinCompilation<*>.kotlinSourceSetsIncludingDefault: Set<KotlinSourceSet> get() = kotlinSourceSets + defaultSourceSet
 
 abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
-    target: KotlinTarget,
-    override val compilationPurpose: String
-) : KotlinCompilation<T>, HasKotlinDependencies, KotlinCompilationData<T> {
+    internal open val compilationDetails: CompilationDetails<T>
+) : KotlinCompilation<T>,
+    // FIXME: replace with separate `final override`s, which is safer wrt accidental overrides
+    HasKotlinDependencies by compilationDetails.kotlinDependenciesHolder,
+    KotlinCompilationData<T> by compilationDetails.compilationData {
 
-    override val compilationName: String
-        get() = compilationPurpose
+    override val target: KotlinTarget get() = compilationDetails.target
+
+    final override val compileDependencyConfigurationName: String
+        get() = compilationDetails.compileDependencyFilesHolder.dependencyConfigurationName
+
+    // FIXME: use delegation to callable reference once KT-50019 is fixed
+    final override var compileDependencyFiles: FileCollection
+        get() = compilationDetails.compileDependencyFilesHolder.dependencyFiles
+        set(value) {
+            compilationDetails.compileDependencyFilesHolder.dependencyFiles = value
+        }
+
+    override val platformType: KotlinPlatformType get() = compilationDetails.compilationData.platformType
+    final override val kotlinSourceSets: MutableSet<KotlinSourceSet> get() = compilationDetails.directlyIncludedKotlinSourceSets
+    final override val defaultSourceSetName: String get() = compilationDetails.defaultSourceSetName
+
+    final override val compilationName: String get() = compilationDetails.compilationData.compilationPurpose
 
     override fun kotlinOptions(configure: T.() -> Unit) =
         configure(kotlinOptions)
@@ -72,242 +80,27 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     override val compileKotlinTaskProvider: TaskProvider<out KotlinCompile<T>>
         get() = target.project.locateTask(compileKotlinTaskName) ?: throw GradleException("Couldn't locate  task $compileKotlinTaskName")
 
-    // Don't declare this property in the constructor to avoid NPE
-    // when an overriding property of a subclass is accessed instead.
-    @Suppress("CanBePrimaryConstructorProperty")
-    override val target: KotlinTarget = target
-
-    private val attributeContainer = HierarchyAttributeContainer(target.attributes)
+    private val attributeContainer by lazy { HierarchyAttributeContainer(target.attributes) }
 
     override fun getAttributes(): AttributeContainer = attributeContainer
-
-    override val kotlinSourceSets: MutableSet<KotlinSourceSet> = mutableSetOf()
-
-    override val allKotlinSourceSets: Set<KotlinSourceSet>
-        get() = kotlinSourceSets + kotlinSourceSets.resolveAllDependsOnSourceSets()
-
-    override val defaultSourceSetName: String
-        get() = lowerCamelCaseName(
-            target.disambiguationClassifier.takeIf { target !is KotlinMetadataTarget },
-            when {
-                isMain() && target is KotlinMetadataTarget ->
-                    KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME // corner case: main compilation of the metadata target compiles commonMain
-                else -> compilationPurpose
-            }
-        )
 
     override val defaultSourceSet: KotlinSourceSet
         get() = target.project.kotlinExtension.sourceSets.getByName(defaultSourceSetName)
 
     override fun defaultSourceSet(configure: KotlinSourceSet.() -> Unit) = defaultSourceSet.configure()
 
-    override val output: KotlinCompilationOutput by lazy {
-        DefaultKotlinCompilationOutput(
-            target.project,
-            Callable { target.project.buildDir.resolve("processedResources/${target.targetName}/$name") })
-    }
-
-    open fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) =
-        addSourcesToKotlinCompileTask(
-            project,
-            compileKotlinTaskName,
-            sourceSet.customSourceFilesExtensions,
-            addAsCommonSources
-        ) { sourceSet.kotlin }
-
-    internal fun addExactSourceSetsEagerly(sourceSets: Set<KotlinSourceSet>) {
-        with(target.project) {
-            //TODO possibly issue with forced instantiation
-            sourceSets.forEach { sourceSet ->
-                addSourcesToCompileTask(
-                    sourceSet,
-                    addAsCommonSources = lazy {
-                        CompilationSourceSetUtil.sourceSetsInMultipleCompilations(project).contains(sourceSet.name)
-                    }
-                )
-
-                // Use `forced = false` since `api`, `implementation`, and `compileOnly` may be missing in some cases like
-                // old Java & Android projects:
-                addExtendsFromRelation(apiConfigurationName, sourceSet.apiConfigurationName, forced = false)
-                addExtendsFromRelation(implementationConfigurationName, sourceSet.implementationConfigurationName, forced = false)
-                addExtendsFromRelation(compileOnlyConfigurationName, sourceSet.compileOnlyConfigurationName, forced = false)
-
-                if (this@AbstractKotlinCompilation is KotlinCompilationToRunnableFiles<*>) {
-                    addExtendsFromRelation(runtimeOnlyConfigurationName, sourceSet.runtimeOnlyConfigurationName, forced = false)
-                }
-
-                if (sourceSet.name != defaultSourceSetName) {
-                    kotlinExtension.sourceSets.findByName(defaultSourceSetName)?.let { defaultSourceSet ->
-                        // Temporary solution for checking consistency across source sets participating in a compilation that may
-                        // not be interconnected with the dependsOn relation: check the settings as if the default source set of
-                        // the compilation depends on the one added to the compilation:
-                        defaultSourceSetLanguageSettingsChecker.runAllChecks(
-                            defaultSourceSet,
-                            sourceSet
-                        )
-                    }
-                }
-            }
-        }
-    }
-
     override fun source(sourceSet: KotlinSourceSet) {
-        if (kotlinSourceSets.add(sourceSet)) {
-            target.project.whenEvaluated {
-                addExactSourceSetsEagerly(sourceSet.withAllDependsOnSourceSets())
-            }
-        }
+        compilationDetails.source(sourceSet)
     }
-
-    override val compileDependencyConfigurationName: String
-        get() = lowerCamelCaseName(
-            target.disambiguationClassifier,
-            compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }.orEmpty(),
-            "compileClasspath"
-        )
-
-    override val compileKotlinTaskName: String
-        get() = lowerCamelCaseName(
-            "compile",
-            compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
-            "Kotlin",
-            target.targetName
-        )
-
-    override val compileAllTaskName: String
-        get() = lowerCamelCaseName(target.disambiguationClassifier, compilationPurpose, "classes")
-
-    override lateinit var compileDependencyFiles: FileCollection
-
-    override val apiConfigurationName: String
-        get() = disambiguateName(API)
-
-    override val implementationConfigurationName: String
-        get() = disambiguateName(IMPLEMENTATION)
-
-    override val compileOnlyConfigurationName: String
-        get() = disambiguateName(COMPILE_ONLY)
-
-    override val runtimeOnlyConfigurationName: String
-        get() = disambiguateName(RUNTIME_ONLY)
-
-    override fun dependencies(configure: KotlinDependencyHandler.() -> Unit): Unit =
-        DefaultKotlinDependencyHandler(this, target.project).run(configure)
-
-    override fun dependencies(configureClosure: Closure<Any?>) =
-        dependencies f@{ ConfigureUtil.configure(configureClosure, this@f) }
 
     override fun toString(): String = "compilation '$compilationPurpose' ($target)"
 
-    internal val friendArtifactsTask: TaskProvider<AbstractArchiveTask>? by lazy {
-        if (associateWithTransitiveClosure.any { it.isMain() }) {
-            val archiveTasks = target.project.tasks.withType(AbstractArchiveTask::class.java)
-            if (!archiveTasks.isEmpty()) {
-                try {
-                    archiveTasks.named(target.artifactsTaskName)
-                } catch (e: UnknownTaskException) {
-                    // Native tasks does not extend AbstractArchiveTask
-                    null
-                }
-            } else {
-                null
-            }
-        } else {
-            null
-        }
-    }
-
-    /**
-     * If a compilation is aware of its associate compilations' outputs being added to the classpath in a transformed or packaged way,
-     * it should point to those friend artifact files via this property.
-     */
-    internal open val friendArtifacts: FileCollection
-        get() = with(target.project) {
-            val friendArtifactsTaskProvider = friendArtifactsTask
-            if (friendArtifactsTaskProvider != null) {
-                // In case the main artifact is transitively added to the test classpath via a test dependency on another module
-                // that depends on this module's production part, include the main artifact in the friend artifacts, lazily:
-                files(
-                    Callable {
-                        friendArtifactsTaskProvider.flatMap { it.archiveFile }
-                    }
-                )
-            } else files()
-        }
-
-    override val friendPaths: Iterable<FileCollection>
-        get() = mutableListOf<FileCollection>().also { allCollections ->
-            associateWithTransitiveClosure.forEach { allCollections.add(it.output.classesDirs) }
-            allCollections.add(friendArtifacts)
-        }
-
-    override val moduleName: String
-        get() = KotlinCompilationsModuleGroups.getModuleLeaderCompilation(this).takeIf { it != this }?.ownModuleName() ?: ownModuleName
-
     override fun associateWith(other: KotlinCompilation<*>) {
-        require(other.target == target) { "Only associations between compilations of a single target are supported" }
-        other as AbstractKotlinCompilation<*>
-
-        _associateWith += other
-
-        addAssociateCompilationDependencies(other)
-        KotlinCompilationsModuleGroups.unionModules(this, other)
+        compilationDetails.associateWith((other as AbstractKotlinCompilation<*>).compilationDetails)
     }
-
-    /**
-     * Adds `allDependencies` of configurations mentioned in `configurationNames` to configuration named [this] in
-     * a lazy manner
-     */
-    private fun String.addAllDependenciesFromOtherConfigurations(project: Project, vararg configurationNames: String) {
-        project.configurations.named(this).configure { receiverConfiguration ->
-            receiverConfiguration.dependencies.addAllLater(
-                project.objects.listProperty(Dependency::class.java).apply {
-                    set(
-                        project.provider {
-                            configurationNames
-                                .map { project.configurations.getByName(it) }
-                                .flatMap { it.allDependencies }
-                        }
-                    )
-                }
-            )
-        }
-    }
-
-    @OptIn(ExperimentalStdlibApi::class)
-    protected open fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
-        /*
-          we add dependencies to compileDependencyConfiguration ('compileClasspath' usually) and runtimeDependency
-          ('runtimeClasspath') instead of modifying respective api/implementation/compileOnly/runtimeOnly configs
-
-          This is needed because api/implementation/compileOnly/runtimeOnly are used in IDE Import and will leak
-          to dependencies of IDE modules. But they are not needed here, because IDE resolution works inherently
-          transitively and symbols from associated compilation will be resolved from source sets of associated
-          compilation itself (moreover, direct dependencies are not equivalent to transitive ones because of
-          resolution order - e.g. in case of FQNs clash, so it's even harmful)
-        */
-        project.dependencies.add(compileOnlyConfigurationName, project.files(Callable { other.output.classesDirs }))
-        project.dependencies.add(runtimeOnlyConfigurationName, project.files(Callable { other.output.allOutputs }))
-
-        compileDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
-            project,
-            other.apiConfigurationName,
-            other.implementationConfigurationName,
-            other.compileOnlyConfigurationName
-        )
-
-        runtimeDependencyConfigurationName?.addAllDependenciesFromOtherConfigurations(
-            project,
-            other.apiConfigurationName,
-            other.implementationConfigurationName,
-            other.runtimeOnlyConfigurationName
-        )
-    }
-
-    private val _associateWith: MutableSet<AbstractKotlinCompilation<*>> = mutableSetOf()
 
     override val associateWith: List<KotlinCompilation<*>>
-        get() = Collections.unmodifiableList(_associateWith.toList())
+        get() = Collections.unmodifiableList(compilationDetails.associateCompilations.map { it.compilation })
 
     override val project: Project
         get() = target.project
@@ -315,20 +108,12 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     override val owner: KotlinTarget
         get() = target
 
-    override val compilationClassifier: String?
-        get() = target.disambiguationClassifier
+    override val allKotlinSourceSets: Set<KotlinSourceSet>
+        get() = compilationDetails.directlyIncludedKotlinSourceSets +
+                compilationDetails.directlyIncludedKotlinSourceSets.resolveAllDependsOnSourceSets()
 
-    override val kotlinSourceDirectoriesByFragmentName: Map<String, SourceDirectorySet>
-        get() = defaultSourceSet.withAllDependsOnSourceSets().associate { it.name to it.kotlin }
-
-    override val languageSettings: LanguageSettingsBuilder
-        get() = defaultSourceSet.languageSettings
-
-    override val platformType: KotlinPlatformType
-        get() = target.platformType
-
-    override val ownModuleName: String
-        get() = ownModuleName()
+    override val relatedConfigurationNames: List<String>
+        get() = compilationDetails.kotlinDependenciesHolder.relatedConfigurationNames + compileDependencyConfigurationName
 }
 
 internal fun addCommonSourcesToKotlinCompileTask(
@@ -368,14 +153,6 @@ internal fun addSourcesToKotlinCompileTask(
         }
 }
 
-private fun KotlinCompilation<*>.ownModuleName(): String {
-    val project = target.project
-    val baseName = project.extensions.getByType(BasePluginExtension::class.java).archivesName.orNull
-        ?: project.name
-    val suffix = if (isMain()) "" else "_$compilationName"
-    return filterModuleName("$baseName$suffix")
-}
-
 internal val KotlinCompilation<*>.associateWithTransitiveClosure: Iterable<KotlinCompilation<*>>
     get() = mutableSetOf<KotlinCompilation<*>>().apply {
         fun visit(other: KotlinCompilation<*>) {
@@ -387,17 +164,19 @@ internal val KotlinCompilation<*>.associateWithTransitiveClosure: Iterable<Kotli
     }
 
 abstract class AbstractKotlinCompilationToRunnableFiles<T : KotlinCommonOptions>(
-    target: KotlinTarget,
-    name: String
-) : AbstractKotlinCompilation<T>(target, name), KotlinCompilationToRunnableFiles<T> {
-    override val runtimeDependencyConfigurationName: String
-        get() = lowerCamelCaseName(
-            target.disambiguationClassifier,
-            compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
-            "runtimeClasspath"
-        )
+    override val compilationDetails: CompilationDetailsWithRuntime<T>,
+) : AbstractKotlinCompilation<T>(compilationDetails),
+    KotlinCompilationToRunnableFiles<T> {
 
-    override lateinit var runtimeDependencyFiles: FileCollection
+    final override val runtimeDependencyConfigurationName: String get() = compilationDetails.runtimeDependencyFilesHolder.dependencyConfigurationName
+    final override var runtimeDependencyFiles: FileCollection
+        get() = compilationDetails.runtimeDependencyFilesHolder.dependencyFiles
+        set(value) {
+            compilationDetails.runtimeDependencyFilesHolder.dependencyFiles = value
+        }
+
+    override val relatedConfigurationNames: List<String>
+        get() = super<AbstractKotlinCompilation>.relatedConfigurationNames + runtimeDependencyConfigurationName
 }
 
 internal fun KotlinCompilation<*>.disambiguateName(simpleName: String): String {
