@@ -5046,6 +5046,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                 }
 
                 @Test
+                @TestMetadata("invAsCompileTimeCall.kt")
+                public void testInvAsCompileTimeCall() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/invAsCompileTimeCall.kt");
+                }
+
+                @Test
                 @TestMetadata("localVal.kt")
                 public void testLocalVal() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/constantEvaluator/constant/localVal.kt");

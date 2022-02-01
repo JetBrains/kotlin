@@ -1,0 +1,4 @@
+package
+
+public const val Mask: kotlin.Int = -1073741824
+public const val Mask_Inv: kotlin.Int = 1073741823
