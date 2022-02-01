@@ -1,15 +1,15 @@
 [
 	{
-		"declaration": "final suspend fun kotlin.Any.<anonymous>(): kotlin.Unit defined in invokeCoroutineBuilder",
+		"declaration": "final suspend fun kotlin.Any.`<anonymous>`(): kotlin.Unit defined in invokeCoroutineBuilder",
 		"visibility": "local",
 		"class": "SuspendLambdaKt$invokeCoroutineBuilder$1",
 		"members": [
 			{"visibility": "local",	"declaration": "<this>", "name": "L$0", "desc": "Ljava/lang/Object;"},
 			{"name": "invokeSuspend", "desc": "(Ljava/lang/Object;)Ljava/lang/Object;"},
-			{"visibility": "local",	"declaration": "final suspend fun kotlin.Any.<anonymous>(): kotlin.Unit", "name": "<init>", "desc": "(Lkotlin/coroutines/Continuation;)V"},
+			{"visibility": "local",	"declaration": "final suspend fun kotlin.Any.`<anonymous>`(): kotlin.Unit", "name": "<init>", "desc": "(Lkotlin/coroutines/Continuation;)V"},
 			{"name": "label", "desc": "I"},
 			{"name": "create", "desc": "(Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;"},
-			{"visibility": "local",	"declaration": "final suspend fun kotlin.Any.<anonymous>(): kotlin.Unit", "name": "invoke", "desc": "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"}
+			{"visibility": "local",	"declaration": "final suspend fun kotlin.Any.`<anonymous>`(): kotlin.Unit", "name": "invoke", "desc": "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"}
 		]
 	},
 	{

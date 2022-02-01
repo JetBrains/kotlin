@@ -16,9 +16,9 @@ public final class Outer</*0*/ T> {
     public final inner class Inner</*0*/ F> /*captured type parameters: /*1*/ T*/ {
         public constructor Inner</*0*/ F>()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        private final fun </*0*/ E> foobar(): () -> Outer.Inner.foobar.<anonymous>.Derived<E, F, T>
+        private final fun </*0*/ E> foobar(): () -> Outer.Inner.foobar.`<anonymous>`.Derived<E, F, T>
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        private final fun noParameters(): () -> Outer.Inner.noParameters.<anonymous>.Derived2<F, T>
+        private final fun noParameters(): () -> Outer.Inner.noParameters.`<anonymous>`.Derived2<F, T>
         public final fun test(/*0*/ z: Outer<kotlin.String>.Inner<F>): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

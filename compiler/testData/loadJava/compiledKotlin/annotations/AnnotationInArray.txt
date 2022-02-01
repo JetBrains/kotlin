@@ -3,7 +3,7 @@ package test
 public final annotation class Anno : kotlin.Annotation {
     /*primary*/ public constructor Anno(/*0*/ value: kotlin.Array<test.Bnno>)
     public final val value: kotlin.Array<test.Bnno>
-        public final fun <get-value>(): kotlin.Array<test.Bnno>
+        public final fun `<get-value>`(): kotlin.Array<test.Bnno>
 }
 
 @test.Anno(value = {test.Bnno(value = "x"), test.Bnno(value = "y")}) public final class AnnotationInArray {
@@ -13,5 +13,5 @@ public final annotation class Anno : kotlin.Annotation {
 public final annotation class Bnno : kotlin.Annotation {
     /*primary*/ public constructor Bnno(/*0*/ value: kotlin.String)
     public final val value: kotlin.String
-        public final fun <get-value>(): kotlin.String
+        public final fun `<get-value>`(): kotlin.String
 }

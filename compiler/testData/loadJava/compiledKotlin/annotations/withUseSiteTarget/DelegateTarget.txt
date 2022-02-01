@@ -7,7 +7,7 @@ public final annotation class Anno : kotlin.Annotation {
 public final class Class {
     /*primary*/ public constructor Class()
     @delegate:test.Anno public final val property: kotlin.String
-        public final fun <get-property>(): kotlin.String
+        public final fun `<get-property>`(): kotlin.String
 }
 
 public final class CustomDelegate {

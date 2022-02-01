@@ -2,47 +2,47 @@ package
 
 public final class C {
     public constructor C()
-    public final val <no name provided>: kotlin.Int = 1
-    public final fun <no name provided>(): kotlin.Unit
+    public final val `<no name provided>`: kotlin.Int = 1
+    public final fun `<no name provided>`(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
-    public final class <no name provided> {
-        public constructor <no name provided>()
+    public final class `<no name provided>` {
+        public constructor `<no name provided>`()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 
-    public final enum class <no name provided> : kotlin.Enum<C.<no name provided>> {
-        private constructor <no name provided>()
+    public final enum class `<no name provided>` : kotlin.Enum<C.`<no name provided>`> {
+        private constructor `<no name provided>`()
         public final override /*1*/ /*fake_override*/ val name: kotlin.String
         public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
         protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
-        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: C.<no name provided>): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: C.`<no name provided>`): kotlin.Int
         public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
-        public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<C.<no name provided>!>!
+        public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<C.`<no name provided>`!>!
         public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
-        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): C.<no name provided>
-        public final /*synthesized*/ fun values(): kotlin.Array<C.<no name provided>>
+        public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): C.`<no name provided>`
+        public final /*synthesized*/ fun values(): kotlin.Array<C.`<no name provided>`>
     }
 }
 
-public final class C1</*0*/ <no name provided>> {
-    public constructor C1</*0*/ <no name provided>>()
+public final class C1</*0*/ `<no name provided>`> {
+    public constructor C1</*0*/ `<no name provided>`>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public final class C2 {
-    public constructor C2(/*0*/ <no name provided>: [ERROR : Type annotation was missing for parameter <no name provided>])
-    public final val <no name provided>: [ERROR : Annotation is absent]
+    public constructor C2(/*0*/ `<no name provided>`: [ERROR : Type annotation was missing for parameter <no name provided>])
+    public final val `<no name provided>`: [ERROR : Annotation is absent]
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

@@ -2,9 +2,9 @@ package
 
 public abstract class A {
     public constructor A()
-    private final val <no name provided>: [ERROR : No type, no body]
-    private final val <no name provided>: [ERROR : No type, no body]
-    private final val <no name provided>: [ERROR : No type, no body]
+    private final val `<no name provided>`: [ERROR : No type, no body]
+    private final val `<no name provided>`: [ERROR : No type, no body]
+    private final val `<no name provided>`: [ERROR : No type, no body]
     private final val private: [ERROR : No type, no body]
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public final fun foo(): kotlin.Unit

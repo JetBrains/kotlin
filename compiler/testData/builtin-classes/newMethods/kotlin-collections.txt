@@ -23,7 +23,7 @@ public abstract class CharIterator : kotlin.collections.Iterator<kotlin.Char> {
 
 public interface Collection</*0*/ out E> : kotlin.collections.Iterable<E> {
     public abstract val size: kotlin.Int
-        public abstract fun <get-size>(): kotlin.Int
+        public abstract fun `<get-size>`(): kotlin.Int
     public abstract operator fun contains(/*0*/ element: E): kotlin.Boolean
     public abstract fun containsAll(/*0*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
     public abstract fun isEmpty(): kotlin.Boolean
@@ -63,7 +63,7 @@ public interface Iterator</*0*/ out T> {
 
 public interface List</*0*/ out E> : kotlin.collections.Collection<E> {
     public abstract override /*1*/ val size: kotlin.Int
-        public abstract override /*1*/ fun <get-size>(): kotlin.Int
+        public abstract override /*1*/ fun `<get-size>`(): kotlin.Int
     public abstract override /*1*/ fun contains(/*0*/ element: E): kotlin.Boolean
     public abstract override /*1*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
     public abstract operator fun get(/*0*/ index: kotlin.Int): E
@@ -95,13 +95,13 @@ public abstract class LongIterator : kotlin.collections.Iterator<kotlin.Long> {
 
 public interface Map</*0*/ K, /*1*/ out V> {
     public abstract val entries: kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>>
-        public abstract fun <get-entries>(): kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>>
+        public abstract fun `<get-entries>`(): kotlin.collections.Set<kotlin.collections.Map.Entry<K, V>>
     public abstract val keys: kotlin.collections.Set<K>
-        public abstract fun <get-keys>(): kotlin.collections.Set<K>
+        public abstract fun `<get-keys>`(): kotlin.collections.Set<K>
     public abstract val size: kotlin.Int
-        public abstract fun <get-size>(): kotlin.Int
+        public abstract fun `<get-size>`(): kotlin.Int
     public abstract val values: kotlin.collections.Collection<V>
-        public abstract fun <get-values>(): kotlin.collections.Collection<V>
+        public abstract fun `<get-values>`(): kotlin.collections.Collection<V>
     public abstract fun containsKey(/*0*/ key: K): kotlin.Boolean
     public abstract fun containsValue(/*0*/ value: V): kotlin.Boolean
     public abstract operator fun get(/*0*/ key: K): V?
@@ -109,15 +109,15 @@ public interface Map</*0*/ K, /*1*/ out V> {
 
     public interface Entry</*0*/ out K, /*1*/ out V> {
         public abstract val key: K
-            public abstract fun <get-key>(): K
+            public abstract fun `<get-key>`(): K
         public abstract val value: V
-            public abstract fun <get-value>(): V
+            public abstract fun `<get-value>`(): V
     }
 }
 
 public interface MutableCollection</*0*/ E> : kotlin.collections.Collection<E>, kotlin.collections.MutableIterable<E> {
     public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
-        public abstract override /*1*/ /*fake_override*/ fun <get-size>(): kotlin.Int
+        public abstract override /*1*/ /*fake_override*/ fun `<get-size>`(): kotlin.Int
     public abstract fun add(/*0*/ element: E): kotlin.Boolean
     public abstract fun addAll(/*0*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
     public abstract fun clear(): kotlin.Unit
@@ -143,7 +143,7 @@ public interface MutableIterator</*0*/ out T> : kotlin.collections.Iterator<T> {
 
 public interface MutableList</*0*/ E> : kotlin.collections.List<E>, kotlin.collections.MutableCollection<E> {
     public abstract override /*2*/ /*fake_override*/ val size: kotlin.Int
-        public abstract override /*2*/ /*fake_override*/ fun <get-size>(): kotlin.Int
+        public abstract override /*2*/ /*fake_override*/ fun `<get-size>`(): kotlin.Int
     public abstract override /*1*/ fun add(/*0*/ element: E): kotlin.Boolean
     public abstract fun add(/*0*/ index: kotlin.Int, /*1*/ element: E): kotlin.Unit
     public abstract fun addAll(/*0*/ index: kotlin.Int, /*1*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
@@ -181,13 +181,13 @@ public interface MutableListIterator</*0*/ T> : kotlin.collections.ListIterator<
 
 public interface MutableMap</*0*/ K, /*1*/ V> : kotlin.collections.Map<K, V> {
     public abstract override /*1*/ val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>>
-        public abstract override /*1*/ fun <get-entries>(): kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>>
+        public abstract override /*1*/ fun `<get-entries>`(): kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K, V>>
     public abstract override /*1*/ val keys: kotlin.collections.MutableSet<K>
-        public abstract override /*1*/ fun <get-keys>(): kotlin.collections.MutableSet<K>
+        public abstract override /*1*/ fun `<get-keys>`(): kotlin.collections.MutableSet<K>
     public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
-        public abstract override /*1*/ /*fake_override*/ fun <get-size>(): kotlin.Int
+        public abstract override /*1*/ /*fake_override*/ fun `<get-size>`(): kotlin.Int
     public abstract override /*1*/ val values: kotlin.collections.MutableCollection<V>
-        public abstract override /*1*/ fun <get-values>(): kotlin.collections.MutableCollection<V>
+        public abstract override /*1*/ fun `<get-values>`(): kotlin.collections.MutableCollection<V>
     public abstract fun clear(): kotlin.Unit
     public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: K): kotlin.Boolean
     public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: V): kotlin.Boolean
@@ -199,16 +199,16 @@ public interface MutableMap</*0*/ K, /*1*/ V> : kotlin.collections.Map<K, V> {
 
     public interface MutableEntry</*0*/ K, /*1*/ V> : kotlin.collections.Map.Entry<K, V> {
         public abstract override /*1*/ /*fake_override*/ val key: K
-            public abstract override /*1*/ /*fake_override*/ fun <get-key>(): K
+            public abstract override /*1*/ /*fake_override*/ fun `<get-key>`(): K
         public abstract override /*1*/ /*fake_override*/ val value: V
-            public abstract override /*1*/ /*fake_override*/ fun <get-value>(): V
+            public abstract override /*1*/ /*fake_override*/ fun `<get-value>`(): V
         public abstract fun setValue(/*0*/ newValue: V): V
     }
 }
 
 public interface MutableSet</*0*/ E> : kotlin.collections.Set<E>, kotlin.collections.MutableCollection<E> {
     public abstract override /*2*/ /*fake_override*/ val size: kotlin.Int
-        public abstract override /*2*/ /*fake_override*/ fun <get-size>(): kotlin.Int
+        public abstract override /*2*/ /*fake_override*/ fun `<get-size>`(): kotlin.Int
     public abstract override /*1*/ fun add(/*0*/ element: E): kotlin.Boolean
     public abstract override /*1*/ fun addAll(/*0*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
     public abstract override /*1*/ fun clear(): kotlin.Unit
@@ -224,7 +224,7 @@ public interface MutableSet</*0*/ E> : kotlin.collections.Set<E>, kotlin.collect
 
 public interface Set</*0*/ out E> : kotlin.collections.Collection<E> {
     public abstract override /*1*/ val size: kotlin.Int
-        public abstract override /*1*/ fun <get-size>(): kotlin.Int
+        public abstract override /*1*/ fun `<get-size>`(): kotlin.Int
     public abstract override /*1*/ fun contains(/*0*/ element: E): kotlin.Boolean
     public abstract override /*1*/ fun containsAll(/*0*/ elements: kotlin.collections.Collection<E>): kotlin.Boolean
     public abstract override /*1*/ fun isEmpty(): kotlin.Boolean

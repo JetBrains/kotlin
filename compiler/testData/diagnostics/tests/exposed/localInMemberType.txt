@@ -3,22 +3,22 @@ package
 public final class Something {
     public constructor Something()
     internal final val internalVal1: kotlin.Any
-    internal final val internalVal2: Something.internalVal2.<anonymous>.A
-    private final val privateVal1: Something.privateVal1.<no name provided>
-    private final val privateVal2: Something.privateVal2.<anonymous>.A
+    internal final val internalVal2: Something.internalVal2.`<anonymous>`.A
+    private final val privateVal1: Something.privateVal1.`<no name provided>`
+    private final val privateVal2: Something.privateVal2.`<anonymous>`.A
     protected final val protectedVal1: kotlin.Any
-    protected final val protectedVal2: Something.protectedVal2.<anonymous>.A
+    protected final val protectedVal2: Something.protectedVal2.`<anonymous>`.A
     public final val publicVal1: kotlin.Any
-    public final val publicVal2: Something.publicVal2.<anonymous>.A
+    public final val publicVal2: Something.publicVal2.`<anonymous>`.A
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     internal final fun internalFun1(): kotlin.Any
-    internal final fun internalFun2(): Something.internalFun2.<anonymous>.A
-    private final fun privateFun1(): Something.privateFun1.<no name provided>
-    private final fun privateFun2(): Something.privateFun2.<anonymous>.A
+    internal final fun internalFun2(): Something.internalFun2.`<anonymous>`.A
+    private final fun privateFun1(): Something.privateFun1.`<no name provided>`
+    private final fun privateFun2(): Something.privateFun2.`<anonymous>`.A
     protected final fun protectedFun1(): kotlin.Any
-    protected final fun protectedFun2(): Something.protectedFun2.<anonymous>.A
+    protected final fun protectedFun2(): Something.protectedFun2.`<anonymous>`.A
     public final fun publicFun1(): kotlin.Any
-    public final fun publicFun2(): Something.publicFun2.<anonymous>.A
+    public final fun publicFun2(): Something.publicFun2.`<anonymous>`.A
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

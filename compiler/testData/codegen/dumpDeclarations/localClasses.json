@@ -46,15 +46,15 @@
 		]
 	},
 	{
-		"declaration": "final fun <anonymous>(): kotlin.Unit defined in L.b",
+		"declaration": "final fun `<anonymous>`(): kotlin.Unit defined in L.b",
 		"visibility": "local",
 		"class": "L$b$1",
 		"members": [
-			{"visibility": "local",	"declaration": "final fun <anonymous>(): kotlin.Unit", "name": "invoke", "desc": "()Ljava/lang/Object;"},
-			{"visibility": "local",	"declaration": "final fun <anonymous>(): kotlin.Unit", "name": "invoke", "desc": "()V"},
-			{"visibility": "local",	"declaration": "final fun <anonymous>(): kotlin.Unit", "name": "<init>", "desc": "()V"},
+			{"visibility": "local",	"declaration": "final fun `<anonymous>`(): kotlin.Unit", "name": "invoke", "desc": "()Ljava/lang/Object;"},
+			{"visibility": "local",	"declaration": "final fun `<anonymous>`(): kotlin.Unit", "name": "invoke", "desc": "()V"},
+			{"visibility": "local",	"declaration": "final fun `<anonymous>`(): kotlin.Unit", "name": "<init>", "desc": "()V"},
 			{"name": "INSTANCE", "desc": "LL$b$1;"},
-			{"visibility": "public",	"declaration": "final class <closure-L$b$1> : kotlin.jvm.internal.Lambda, () -> kotlin.Unit", "name": "<clinit>", "desc": "()V"}
+			{"visibility": "public",	"declaration": "final class `<closure-L$b$1>` : kotlin.jvm.internal.Lambda, () -> kotlin.Unit", "name": "<clinit>", "desc": "()V"}
 		]
 	},
 	{
@@ -68,15 +68,15 @@
 		]
 	},
 	{
-		"declaration": "final fun <anonymous>(): kotlin.Unit defined in L.b",
+		"declaration": "final fun `<anonymous>`(): kotlin.Unit defined in L.b",
 		"visibility": "local",
 		"class": "L$b$1",
 		"members": [
-			{"visibility": "local",	"declaration": "final fun <anonymous>(): kotlin.Unit", "name": "invoke", "desc": "()Ljava/lang/Object;"},
-			{"visibility": "local",	"declaration": "final fun <anonymous>(): kotlin.Unit", "name": "invoke", "desc": "()V"},
-			{"visibility": "local",	"declaration": "final fun <anonymous>(): kotlin.Unit", "name": "<init>", "desc": "()V"},
+			{"visibility": "local",	"declaration": "final fun `<anonymous>`(): kotlin.Unit", "name": "invoke", "desc": "()Ljava/lang/Object;"},
+			{"visibility": "local",	"declaration": "final fun `<anonymous>`(): kotlin.Unit", "name": "invoke", "desc": "()V"},
+			{"visibility": "local",	"declaration": "final fun `<anonymous>`(): kotlin.Unit", "name": "<init>", "desc": "()V"},
 			{"name": "INSTANCE", "desc": "LL$b$1;"},
-			{"visibility": "public",	"declaration": "final class <closure-L$b$1> : kotlin.jvm.internal.Lambda, () -> kotlin.Unit", "name": "<clinit>", "desc": "()V"}
+			{"visibility": "public",	"declaration": "final class `<closure-L$b$1>` : kotlin.jvm.internal.Lambda, () -> kotlin.Unit", "name": "<clinit>", "desc": "()V"}
 		]
 	},
 	{

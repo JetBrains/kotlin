@@ -9,7 +9,7 @@ public final class A {
         public companion object Companion {
             /*primary*/ private constructor Companion()
             public final val TEST: kotlin.Int
-                public final fun <get-TEST>(): kotlin.Int
+                public final fun `<get-TEST>`(): kotlin.Int
         }
     }
 }

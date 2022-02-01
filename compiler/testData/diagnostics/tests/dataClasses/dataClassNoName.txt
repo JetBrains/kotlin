@@ -1,14 +1,14 @@
 package
 
-public final data class <no name provided> {
-    public constructor <no name provided>()
-    public final /*synthesized*/ fun copy(): <no name provided>
+public final data class `<no name provided>` {
+    public constructor `<no name provided>`()
+    public final /*synthesized*/ fun copy(): `<no name provided>`
     public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }
 
-public data interface <no name provided> {
+public data interface `<no name provided>` {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
