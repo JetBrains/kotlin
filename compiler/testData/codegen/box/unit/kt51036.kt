@@ -1,6 +1,8 @@
 // WITH_STDLIB
 // IGNORE_BACKEND: WASM
 //  ^ Unresolved reference: synchronized
+// IGNORE_BACKEND: NATIVE
+//  ^ Unresolved reference: synchronized
 
 fun box(): String {
     A().close()
