@@ -14,11 +14,11 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":core:compiler.common"))
     compileOnly(project(":core:compiler.common.jvm"))
-    compileOnly(project(":analysis:low-level-api-fir"))
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:analysis-api-providers"))
 
     api(intellijCore())
+    api(commonDependency("org.jetbrains.intellij.deps:asm-all"))
     api(commonDependency("com.google.guava:guava"))
 }
 
