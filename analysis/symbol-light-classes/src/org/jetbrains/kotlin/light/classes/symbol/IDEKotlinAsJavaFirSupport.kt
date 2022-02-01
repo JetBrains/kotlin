@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupport() {
     override fun findClassOrObjectDeclarationsInPackage(
@@ -91,13 +90,15 @@ class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupp
     override fun getLightClassForScript(script: KtScript): KtLightClass =
         error("Should not be called")
 
-    override fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> =
-        //TODO Split by modules
-        findFilesForFacade(facadeFqName, scope).ifNotEmpty {
-            listOfNotNull(
-                project.getService(SymbolLightClassFacadeCache::class.java).getOrCreateSymbolLightFacade(this.toList(), facadeFqName)
-            )
-        } ?: emptyList()
+    override fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
+        val filesByModule = findFilesForFacade(facadeFqName, scope).groupBy { it.getKtModule(project) }
+
+        val lightClassFacadeCache = project.getService(SymbolLightClassFacadeCache::class.java)
+
+        return filesByModule.values.mapNotNull { files ->
+            lightClassFacadeCache.getOrCreateSymbolLightFacade(files, facadeFqName)
+        }
+    }
 
     override fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> =
         error("Should not be called")
