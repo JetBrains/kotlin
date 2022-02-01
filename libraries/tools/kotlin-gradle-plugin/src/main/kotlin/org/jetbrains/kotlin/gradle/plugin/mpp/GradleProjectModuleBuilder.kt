@@ -121,7 +121,7 @@ private fun detectModules(targets: Iterable<KotlinTarget>, sourceSets: Iterable<
 
 @Suppress("unused")
 class GradleProjectModuleBuilder(private val addInferredSourceSetVisibilityAsExplicit: Boolean) {
-    private fun getModulesFromPm20Project(project: Project) = project.pm20Extension.modules.toList()
+    private fun getModulesFromPm20Project(project: Project) = project.kpmModules.toList()
 
     fun buildModulesFromProject(project: Project): List<KotlinModule> {
         if (project.topLevelExtension is KotlinPm20ProjectExtension)
