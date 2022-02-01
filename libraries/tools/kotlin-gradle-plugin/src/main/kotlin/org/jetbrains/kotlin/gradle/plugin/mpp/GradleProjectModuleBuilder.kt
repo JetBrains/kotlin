@@ -300,7 +300,10 @@ class GradleModuleVariantResolver : ModuleVariantResolver {
         // FIXME check composite builds, it's likely that resolvedVariantProvider fails on them?
         val resolvedGradleVariantName = resolvedVariantProvider.getResolvedVariantName(dependencyModuleId, compileClasspath)
         val kotlinVariantName = when (dependencyModule) {
-            is KotlinGradleModule -> dependencyModule.variants.single { resolvedGradleVariantName in it.gradleVariantNames }.name
+            is KotlinGradleModule -> {
+                dependencyModule.variants.singleOrNull { resolvedGradleVariantName in it.gradleVariantNames }?.name
+                    ?: return VariantResolution.Unknown(requestingVariant, dependencyModule)
+            }
             else -> resolvedGradleVariantName?.let(::kotlinVariantNameFromPublishedVariantName)
         }
 

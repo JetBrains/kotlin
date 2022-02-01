@@ -9,24 +9,14 @@ import groovy.lang.Closure
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.Project
-import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePluginExtension
-import org.gradle.api.tasks.TaskProvider
-import org.gradle.api.tasks.bundling.Jar
-import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.unambiguousNameInProject
-import org.jetbrains.kotlin.gradle.plugin.sources.kpm.FragmentMappedKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.filterModuleName
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTargetConfigurator
-import org.jetbrains.kotlin.gradle.tasks.locateTask
-import org.jetbrains.kotlin.project.model.refinesClosure
-import java.util.concurrent.Callable
 
 open class KotlinJvmVariant(
     containingModule: KotlinGradleModule,
@@ -77,34 +67,4 @@ class KotlinMappedJvmCompilationFactory(
             VariantMappedCompilationDetailsWithRuntime(variant, target),
         )
     }
-}
-
-class KotlinMappedJvmTargetConfigurator : KotlinJvmTargetConfigurator() {
-    override fun defineConfigurationsForTarget(target: KotlinJvmTarget) = Unit // done in KPM
-    override fun configureCompilationDefaults(target: KotlinJvmTarget) {
-        // everything else is done in KPM, but KPM doesn't have resources processing yet
-        target.compilations.all { compilation ->
-            configureResourceProcessing(
-                compilation,
-                target.project.files(Callable { compilation.allKotlinSourceSets.map { it.resources } })
-            )
-        }
-    }
-
-    override fun configureCompilations(target: KotlinJvmTarget) {
-        target.compilations.create(KotlinCompilation.MAIN_COMPILATION_NAME)
-        target.compilations.create(KotlinCompilation.TEST_COMPILATION_NAME)
-    }
-
-    override fun configureArchivesAndComponent(target: KotlinJvmTarget) = Unit // done in KPM
-
-    override fun createArchiveTasks(target: KotlinJvmTarget): TaskProvider<out Zip> =
-        checkNotNull(
-            target.project.locateTask<Jar>(
-                target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-                    .compilationDetails.let { it as VariantMappedCompilationDetails<*> }
-                    .variant.let { it as KotlinJvmVariant }
-                    .outputsJarTaskName
-            )
-        )
 }

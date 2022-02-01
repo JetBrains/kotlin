@@ -6,16 +6,13 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinOnlyTargetConfigurator
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.*
 
 abstract class KotlinOnlyTargetPreset<R : KotlinOnlyTarget<T>, T : KotlinCompilation<*>>(
     protected val project: Project
 ) : KotlinTargetPreset<R> {
 
-    protected abstract fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<T, R>
+    protected abstract fun createKotlinTargetConfigurator(): AbstractKotlinTargetConfigurator<R>
 
     protected open fun provideTargetDisambiguationClassifier(target: KotlinOnlyTarget<T>): String? =
         target.targetName

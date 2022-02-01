@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeCompileOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -209,4 +209,19 @@ internal class KotlinNativeVariantCompilationData(
         get() = variant
 
     override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions { variant.languageSettings }
+}
+
+internal class KotlinMappedNativeCompilationFactory(
+    target: KotlinNativeTarget,
+    private val variantClass: Class<out KotlinNativeVariantInternal>
+) : KotlinNativeCompilationFactory(target) {
+    override fun create(name: String): KotlinNativeCompilation {
+        val module = target.project.kpmModules.maybeCreate(name)
+        val variant = module.fragments.create(target.name, variantClass)
+
+        return KotlinNativeCompilation(
+            target.konanTarget,
+            VariantMappedCompilationDetails(variant, target)
+        )
+    }
 }
