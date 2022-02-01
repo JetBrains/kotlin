@@ -278,15 +278,11 @@ private val kotlinNothingValueExceptionPhase = makeIrFilePhase<CommonBackendCont
 )
 
 private val jvmFilePhases = listOf(
-    typeAliasAnnotationMethodsPhase,
+    jvmClassPreprocessingPhase,
     provisionalFunctionExpressionPhase,
-
-    jvmOverloadsAnnotationPhase,
-    mainMethodGenerationPhase,
 
     inventNamesForLocalClassesPhase,
     kCallableNamePropertyPhase,
-    annotationPhase,
     annotationImplementationPhase,
     polymorphicSignaturePhase,
     varargPhase,
@@ -330,8 +326,6 @@ private val jvmFilePhases = listOf(
     jvmLocalClassExtractionPhase,
     staticCallableReferencePhase,
 
-    jvmDefaultConstructorPhase,
-
     flattenStringConcatenationPhase,
     foldConstantLoweringPhase,
     computeStringTrimPhase,
@@ -374,7 +368,6 @@ private val jvmFilePhases = listOf(
     toArrayPhase,
     jvmSafeCallFoldingPhase,
     jvmOptimizationLoweringPhase,
-    additionalClassAnnotationPhase,
     typeOperatorLowering,
     replaceKFunctionInvokeWithFunctionInvokePhase,
     kotlinNothingValueExceptionPhase,

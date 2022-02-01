@@ -34,14 +34,7 @@ import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
-internal val mainMethodGenerationPhase = makeIrFilePhase(
-    ::MainMethodGenerationLowering,
-    name = "MainMethodGeneration",
-    description = "Generate main bridges to parameterless mains, and wrappers for suspend mains.",
-    prerequisite = setOf(jvmOverloadsAnnotationPhase)
-)
-
-private class MainMethodGenerationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
+internal class MainMethodGenerationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
 
     /**
      * This pass finds extended main methods and introduces a regular

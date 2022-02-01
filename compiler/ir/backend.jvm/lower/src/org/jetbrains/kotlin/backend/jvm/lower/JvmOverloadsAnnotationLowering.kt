@@ -25,15 +25,9 @@ import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.JvmNames.JVM_OVERLOADS_FQ_NAME
 
-internal val jvmOverloadsAnnotationPhase = makeIrFilePhase(
-    ::JvmOverloadsAnnotationLowering,
-    name = "JvmOverloadsAnnotation",
-    description = "Handle JvmOverloads annotations"
-)
-
 // TODO: `IrValueParameter.defaultValue` property does not track default values in super-parameters. See KT-28637.
 
-private class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : ClassLoweringPass {
+internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {
         val functions = irClass.declarations.filterIsInstance<IrFunction>().filter {

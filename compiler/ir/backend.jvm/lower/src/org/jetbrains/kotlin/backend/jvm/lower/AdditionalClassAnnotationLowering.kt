@@ -28,14 +28,7 @@ import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.Name
 import java.lang.annotation.ElementType
 
-internal val additionalClassAnnotationPhase = makeIrFilePhase(
-    ::AdditionalClassAnnotationLowering,
-    name = "AdditionalClassAnnotation",
-    description = "Add Documented, Retention, Target, Repeatable annotations to annotation classes",
-    prerequisite = setOf(repeatedAnnotationPhase)
-)
-
-private class AdditionalClassAnnotationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
+internal class AdditionalClassAnnotationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
     private val symbols = context.ir.symbols.javaAnnotations
 
     override fun lower(irClass: IrClass) {
