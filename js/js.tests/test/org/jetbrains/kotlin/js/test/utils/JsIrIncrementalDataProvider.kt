@@ -120,7 +120,7 @@ class TestModuleCache(val files: MutableMap<String, FileCache>) {
                 files.remove(path)
             }
 
-            override fun commitLibraryInfo(libraryPath: String, flatHash: ULong, transHash: ULong, configHash: ULong, moduleName: String) {
+            override fun commitLibraryInfo(libraryPath: String, moduleName: String, flatHash: ULong, transHash: ULong, configHash: ULong) {
                 storedModuleName = moduleName
             }
         }

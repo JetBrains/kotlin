@@ -201,7 +201,7 @@ class PersistentCacheProviderImpl(private val cachePath: String) : PersistentCac
 
     override fun moduleName(): String {
         val infoFile = File(File(cachePath), "info")
-        return infoFile.readLines()[3]
+        return infoFile.readLines()[1]
     }
 }
 
@@ -215,7 +215,7 @@ interface PersistentCacheConsumer {
     fun commitSourceMap(path: String, mapData: ByteArray)
     fun invalidateForFile(path: String)
 
-    fun commitLibraryInfo(libraryPath: String, flatHash: ULong, transHash: ULong, configHash: ULong, moduleName: String)
+    fun commitLibraryInfo(libraryPath: String, moduleName: String, flatHash: ULong, transHash: ULong, configHash: ULong)
 
     companion object {
         val EMPTY = object : PersistentCacheConsumer {
@@ -246,7 +246,7 @@ interface PersistentCacheConsumer {
 
             }
 
-            override fun commitLibraryInfo(libraryPath: String, flatHash: ULong, transHash: ULong, configHash: ULong, moduleName: String) {
+            override fun commitLibraryInfo(libraryPath: String, moduleName: String, flatHash: ULong, transHash: ULong, configHash: ULong) {
 
             }
 
@@ -345,7 +345,7 @@ class PersistentCacheConsumerImpl(private val cachePath: String) : PersistentCac
         commitByteArrayToCacheFile(path, fileSourceMap, mapData)
     }
 
-    override fun commitLibraryInfo(libraryPath: String, flatHash: ULong, transHash: ULong, configHash: ULong, moduleName: String) {
+    override fun commitLibraryInfo(libraryPath: String, moduleName: String, flatHash: ULong, transHash: ULong, configHash: ULong) {
         val infoFile = File(File(cachePath), "info")
         if (infoFile.exists()) {
             infoFile.delete()
@@ -354,10 +354,10 @@ class PersistentCacheConsumerImpl(private val cachePath: String) : PersistentCac
 
         PrintWriter(infoFile).use {
             it.println(libraryPath)
+            it.println(moduleName)
             it.println(flatHash.toString(16))
             it.println(transHash.toString(16))
             it.println(configHash.toString(16))
-            it.println(moduleName)
         }
     }
 }

@@ -218,10 +218,10 @@ private fun buildCacheForModule(
 
     cacheConsumer.commitLibraryInfo(
         libraryInfo.libPath.toCanonicalPath(),
+        irModule.name.asString(),
         libraryInfo.flatHash,
         libraryInfo.transHash,
-        libraryInfo.configHash,
-        irModule.name.asString()
+        libraryInfo.configHash
     )
 }
 
@@ -616,7 +616,7 @@ fun rebuildCacheForDirtyFiles(
 
     val currentIrModule = irModules.find { it.second == library }?.first!!
 
-    cacheConsumer.commitLibraryInfo(library.libraryFile.path.toCanonicalPath(), 0UL, 0UL, 0UL, currentIrModule.name.asString())
+    cacheConsumer.commitLibraryInfo(library.libraryFile.path.toCanonicalPath(), currentIrModule.name.asString(), 0UL, 0UL, 0UL)
 
     buildCacheForModuleFiles(
         currentIrModule,

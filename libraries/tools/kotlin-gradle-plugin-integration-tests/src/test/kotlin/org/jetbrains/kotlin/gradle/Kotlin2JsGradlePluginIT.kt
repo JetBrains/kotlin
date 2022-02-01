@@ -218,6 +218,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
                 assertTrue("lib and libOther should be once in cache") {
                     lib && libOther
                 }
+                assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
             }
         }
     }
