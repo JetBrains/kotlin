@@ -11,10 +11,8 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptionsImpl
-import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
@@ -41,7 +39,7 @@ internal abstract class AbstractKotlinFragmentMetadataCompilationData<T : Kotlin
 ) : KotlinMetadataCompilationData<T> {
 
     override val owner
-        get() = project.pm20Extension
+        get() = project.topLevelExtension
 
     override val compilationPurpose: String
         get() = fragment.fragmentName
