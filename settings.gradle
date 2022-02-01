@@ -169,6 +169,7 @@ include ":benchmarks",
         ":native:kotlin-native-utils",
         ":native:frontend.native",
         ":native:kotlin-klib-commonizer",
+        ":native:platform-integers",
         ":native:kotlin-klib-commonizer-api",
         ":native:kotlin-klib-commonizer-embeddable",
         ":core:compiler.common",
@@ -614,6 +615,7 @@ project(':kotlin-util-klib-metadata').projectDir = "$rootDir/compiler/util-klib-
 project(':native:kotlin-native-utils').projectDir = "$rootDir/native/utils" as File
 project(':native:frontend.native').projectDir = "$rootDir/native/frontend" as File
 project(':native:kotlin-klib-commonizer').projectDir = "$rootDir/native/commonizer" as File
+project(':native:platform-integers').projectDir = "$rootDir/native/platform-integers" as File
 project(":native:kotlin-klib-commonizer-api").projectDir = "$rootDir/native/commonizer-api" as File
 project(':native:kotlin-klib-commonizer-embeddable').projectDir = "$rootDir/native/commonizer-embeddable" as File
 project(':plugins:android-extensions-compiler').projectDir = "$rootDir/plugins/android-extensions/android-extensions-compiler" as File

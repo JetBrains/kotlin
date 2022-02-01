@@ -476,11 +476,11 @@ allprojects {
         "-progressive".takeIf { hasProperty("test.progressive.mode") }
     )
 
-    tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
+    tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>>().configureEach {
         kotlinOptions {
             languageVersion = kotlinLanguageVersion
             apiVersion = kotlinLanguageVersion
-            freeCompilerArgs = commonCompilerArgs
+            freeCompilerArgs = freeCompilerArgs + commonCompilerArgs
         }
     }
 

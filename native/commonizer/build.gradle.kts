@@ -43,10 +43,11 @@ dependencies {
     testApi(intellijCore())
 }
 
-val runCommonizer by tasks.registering(JavaExec::class) {
+// TODO(kirpichenkov): doesn't work with HMPP (attempt to resolve unresolvable configuration compileOnly); should it work?
+/*val runCommonizer by tasks.registering(JavaExec::class) {
     classpath(configurations.compileOnly, sourceSets.main.get().runtimeClasspath)
     main = "org.jetbrains.kotlin.commonizer.cli.CommonizerCLI"
-}
+}*/
 
 sourceSets {
     "main" { projectDefault() }
