@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ConfigurationPublications
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 
 /* Internal abbreviation */
@@ -18,6 +19,33 @@ interface KotlinGradleFragmentConfigurationRelation {
 
     object None : KotlinGradleFragmentConfigurationRelation {
         override fun setExtendsFrom(configuration: Configuration, context: KotlinGradleFragmentConfigurationContext) = Unit
+    }
+}
+
+operator fun FragmentConfigurationRelation.plus(other: FragmentConfigurationRelation): FragmentConfigurationRelation {
+    if (this === KotlinGradleFragmentConfigurationRelation.None) return other
+    if (other === KotlinGradleFragmentConfigurationRelation.None) return this
+
+    if (this is CompositeFragmentConfigurationRelation && other is CompositeFragmentConfigurationRelation) {
+        return CompositeFragmentConfigurationRelation(this.children + other.children)
+    }
+
+    if (this is CompositeFragmentConfigurationRelation) {
+        return CompositeFragmentConfigurationRelation(this.children + other)
+    }
+
+    if (other is CompositeFragmentConfigurationRelation) {
+        return CompositeFragmentConfigurationRelation(listOf(this) + other.children)
+    }
+
+    return CompositeFragmentConfigurationRelation(listOf(this, other))
+}
+
+internal class CompositeFragmentConfigurationRelation(val children: List<FragmentConfigurationRelation>) :
+    FragmentConfigurationRelation {
+
+    override fun setExtendsFrom(configuration: Configuration, context: KotlinGradleFragmentConfigurationContext) {
+        children.forEach { child -> child.setExtendsFrom(configuration, context) }
     }
 }
 

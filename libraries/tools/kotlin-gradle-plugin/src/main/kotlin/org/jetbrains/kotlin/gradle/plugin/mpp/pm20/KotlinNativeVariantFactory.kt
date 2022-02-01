@@ -26,7 +26,9 @@ data class KotlinNativeVariantConfig<T : KotlinNativeVariantInternal>(
         DefaultKotlinCompileDependenciesDefinition + KotlinFragmentKonanTargetAttribute,
 
     val apiElements: ConfigurationDefinition<T> =
-        DefaultKotlinApiElementsDefinition + KotlinFragmentKonanTargetAttribute,
+        DefaultKotlinApiElementsDefinition
+                + KotlinFragmentKonanTargetAttribute
+                + FragmentConfigurationRelation { extendsFrom(dependencies.transitiveImplementationConfiguration) },
 
     val hostSpecificMetadataElements: ConfigurationDefinition<T> =
         DefaultKotlinHostSpecificMetadataElementsDefinition,
