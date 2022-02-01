@@ -71,8 +71,8 @@ interface KotlinTargetConfigurator<KotlinTargetType : KotlinTarget> {
 }
 
 abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>(
-    protected val createDefaultSourceSets: Boolean,
-    protected val createTestCompilation: Boolean
+    internal val createDefaultSourceSets: Boolean,
+    internal val createTestCompilation: Boolean
 ) : KotlinTargetConfigurator<KotlinTargetType> {
 
     protected open fun setupCompilationDependencyFiles(compilation: KotlinCompilation<KotlinCommonOptions>) {
