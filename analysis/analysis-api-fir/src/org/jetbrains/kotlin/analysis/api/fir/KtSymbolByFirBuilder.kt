@@ -605,8 +605,11 @@ private class BuilderCache<From, To : Any> private constructor(
 internal fun FirElement.buildSymbol(builder: KtSymbolByFirBuilder) =
     (this as? FirDeclaration)?.symbol?.let(builder::buildSymbol)
 
-internal fun FirDeclaration.buildSymbol(builder: KtSymbolByFirBuilder) =
+internal fun FirDeclaration.buildSymbol(builder: KtSymbolByFirBuilder): KtSymbol =
     builder.buildSymbol(symbol)
+
+internal fun FirBasedSymbol<*>.buildSymbol(builder: KtSymbolByFirBuilder): KtSymbol =
+    builder.buildSymbol(this)
 
 private fun collectReferencedTypeParameters(declaration: FirCallableDeclaration): Set<ConeTypeParameterLookupTag> {
     val allUsedTypeParameters = mutableSetOf<ConeTypeParameterLookupTag>()
