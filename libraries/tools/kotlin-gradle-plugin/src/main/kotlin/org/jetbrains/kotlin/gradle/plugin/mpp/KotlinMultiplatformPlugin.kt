@@ -26,6 +26,12 @@ import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.handleHierarchicalStructureFlagsMigration
+import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.registerDefaultVariantFactories
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.setupFragmentsMetadataForKpmModules
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.setupKpmModulesPublication
 import org.jetbrains.kotlin.gradle.plugin.sources.CleanupStaleSourceSetMetadataEntriesService
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetMetadataStorageForIde
@@ -124,6 +130,13 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
                     SourceSetMetadataStorageForIde.cleanupStaleEntries(project)
                 }
             }
+        }
+
+        if (project.hasKpmModel) {
+            setupFragmentsMetadataForKpmModules(project)
+            setupKpmModulesPublication(project)
+            registerDefaultVariantFactories(project)
+            project.kpmModules.matching { it.name == KotlinGradleModule.MAIN_MODULE_NAME }.all { it.makePublic() }
         }
     }
 

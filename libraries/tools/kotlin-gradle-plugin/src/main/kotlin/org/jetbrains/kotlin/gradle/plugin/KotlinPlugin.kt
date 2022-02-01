@@ -368,7 +368,7 @@ internal class KotlinCommonSourceSetProcessor(
             project.locateTask<Task>(kotlinCompilation.target.artifactsTaskName)?.dependsOn(kotlinTask)
         }
 
-        if (kotlinCompilation is AbstractKotlinCompilation<*>) {
+        if (kotlinCompilation is KotlinCompilation<*>) {
             project.whenEvaluated {
                 val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project)
                 subpluginEnvironment.addSubpluginOptions(project, kotlinCompilation)

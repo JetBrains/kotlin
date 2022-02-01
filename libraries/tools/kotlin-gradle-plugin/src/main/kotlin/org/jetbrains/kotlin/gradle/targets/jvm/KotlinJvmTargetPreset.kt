@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinMappedJvmCompilationFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinMappedJvmTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTargetConfigurator
 
@@ -23,9 +26,14 @@ class KotlinJvmTargetPreset(
     override fun getName(): String = PRESET_NAME
 
     override fun createCompilationFactory(forTarget: KotlinJvmTarget): KotlinCompilationFactory<KotlinJvmCompilation> =
-        KotlinJvmCompilationFactory(forTarget)
+        if (PropertiesProvider(project).experimentalKpmModelMapping)
+            KotlinMappedJvmCompilationFactory(forTarget)
+        else KotlinJvmCompilationFactory(forTarget)
 
-    override fun createKotlinTargetConfigurator() = KotlinJvmTargetConfigurator()
+    override fun createKotlinTargetConfigurator() =
+        if (PropertiesProvider(project).experimentalKpmModelMapping)
+            KotlinMappedJvmTargetConfigurator()
+        else KotlinJvmTargetConfigurator()
 
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.jvm
