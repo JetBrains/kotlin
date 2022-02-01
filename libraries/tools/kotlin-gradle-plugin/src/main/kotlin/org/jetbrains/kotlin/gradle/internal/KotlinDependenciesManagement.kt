@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.hasKpmModel
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
@@ -100,12 +101,11 @@ internal fun configureStdlibDefaultDependency(project: Project) = with(project) 
 
     val scopesToHandleConfigurations = listOf(KotlinDependencyScope.API_SCOPE, KotlinDependencyScope.IMPLEMENTATION_SCOPE)
 
-    when (val topLevelExtension = project.topLevelExtension) {
-        is KotlinPm20ProjectExtension -> {
-            addStdlibToPm20Project(topLevelExtension)
-        }
-        is KotlinProjectExtension -> {
-            topLevelExtension.sourceSets.all { kotlinSourceSet ->
+    val ext = topLevelExtension
+    when {
+        project.hasKpmModel -> addStdlibToKpmProject(project)
+        ext is KotlinProjectExtension -> {
+            ext.sourceSets.all { kotlinSourceSet ->
                 scopesToHandleConfigurations.forEach { scope ->
                     val scopeConfiguration = project.sourceSetDependencyConfigurationByScope(kotlinSourceSet, scope)
 
@@ -130,11 +130,10 @@ internal fun configureStdlibDefaultDependency(project: Project) = with(project) 
     }
 }
 
-private fun addStdlibToPm20Project(
-    topLevelExtension: KotlinPm20ProjectExtension
+private fun addStdlibToKpmProject(
+    project: Project
 ) {
-    val project = topLevelExtension.project
-    topLevelExtension.modules.matching { it.name == KotlinGradleModule.MAIN_MODULE_NAME }.configureEach { main ->
+    project.kpmModules.matching { it.name == KotlinGradleModule.MAIN_MODULE_NAME }.configureEach { main ->
         main.fragments.matching { it.name == KotlinGradleFragment.COMMON_FRAGMENT_NAME }.configureEach { common ->
             common.dependencies {
                 api(project.kotlinDependency("kotlin-stdlib-common", project.topLevelExtension.coreLibrariesVersion))

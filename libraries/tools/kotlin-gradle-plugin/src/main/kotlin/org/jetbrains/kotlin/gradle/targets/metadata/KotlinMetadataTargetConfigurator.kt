@@ -70,7 +70,7 @@ class KotlinMetadataTargetConfigurator :
     override fun configureTarget(target: KotlinMetadataTarget) {
         super.configureTarget(target)
 
-        if (target.project.isKotlinGranularMetadataEnabled) {
+        if (target.project.isKotlinGranularMetadataEnabled && !target.project.hasKpmModel) {
             KotlinBuildStatsService.getInstance()?.report(BooleanMetrics.ENABLED_HMPP, true)
 
             target.compilations.withType(KotlinCommonCompilation::class.java).getByName(KotlinCompilation.MAIN_COMPILATION_NAME).run {
@@ -147,16 +147,18 @@ class KotlinMetadataTargetConfigurator :
             }
         }
 
-        val legacyJar = target.project.registerTask<Jar>(target.legacyArtifactsTaskName)
-        legacyJar.configure {
-            // Capture it here to use in onlyIf spec. Direct usage causes serialization of target attempt when configuration cache is enabled
-            val isCompatibilityMetadataVariantEnabled = target.project.isCompatibilityMetadataVariantEnabled
-            it.description = "Assembles an archive containing the Kotlin metadata of the commonMain source set."
-            if (!isCompatibilityMetadataVariantEnabled) {
-                it.archiveClassifier.set("commonMain")
+        if (target.project.isCompatibilityMetadataVariantEnabled) {
+            val legacyJar = target.project.registerTask<Jar>(target.legacyArtifactsTaskName)
+            legacyJar.configure {
+                // Capture it here to use in onlyIf spec. Direct usage causes serialization of target attempt when configuration cache is enabled
+                val isCompatibilityMetadataVariantEnabled = target.project.isCompatibilityMetadataVariantEnabled
+                it.description = "Assembles an archive containing the Kotlin metadata of the commonMain source set."
+                if (!isCompatibilityMetadataVariantEnabled) {
+                    it.archiveClassifier.set("commonMain")
+                }
+                it.onlyIf { isCompatibilityMetadataVariantEnabled }
+                it.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
             }
-            it.onlyIf { isCompatibilityMetadataVariantEnabled }
-            it.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
         }
 
         return result

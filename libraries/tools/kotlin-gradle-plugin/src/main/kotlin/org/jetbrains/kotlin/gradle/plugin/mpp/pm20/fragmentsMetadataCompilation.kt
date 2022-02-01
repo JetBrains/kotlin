@@ -29,6 +29,13 @@ import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
 import java.util.concurrent.Callable
 
+internal fun setupFragmentsMetadataForKpmModules(project: Project) {
+    project.kpmModules.all { module ->
+        configureMetadataResolutionAndBuild(module)
+        configureMetadataExposure(module)
+    }
+}
+
 internal fun configureMetadataResolutionAndBuild(module: KotlinGradleModule) {
     val project = module.project
     createResolvableMetadataConfigurationForModule(module)
