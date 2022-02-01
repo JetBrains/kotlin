@@ -47,6 +47,9 @@ operator fun <T : KotlinGradleFragment> KotlinGradleFragmentConfigurationDefinit
 operator fun <T : KotlinGradleFragment> KotlinGradleFragmentConfigurationDefinition<T>.plus(other: FragmentArtifacts<T>):
         KotlinGradleFragmentConfigurationDefinition<T> = copy(artifacts = artifacts + other)
 
+operator fun <T : KotlinGradleFragment> KotlinGradleFragmentConfigurationDefinition<T>.plus(other: FragmentConfigurationRelation):
+        KotlinGradleFragmentConfigurationDefinition<T> = copy(relations = relations + other)
+
 @AdvancedExternalVariantApi
 operator fun <T : KotlinGradleFragment> KotlinGradleFragmentConfigurationDefinition<T>.plus(other: FragmentCapabilities<T>):
         KotlinGradleFragmentConfigurationDefinition<T> = copy(capabilities = capabilities + other)
