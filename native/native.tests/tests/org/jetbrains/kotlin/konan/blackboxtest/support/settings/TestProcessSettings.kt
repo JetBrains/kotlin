@@ -93,6 +93,16 @@ internal enum class GCType(val compilerFlag: String?) {
     override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
 }
 
+internal enum class GCScheduler(val compilerFlag: String?) {
+    UNSPECIFIED(null),
+    DISABLED("-Xbinary=gcSchedulerType=disabled"),
+    WITH_TIMER("-Xbinary=gcSchedulerType=with_timer"),
+    ON_SAFE_POINTS("-Xbinary=gcSchedulerType=on_safe_points"),
+    AGGRESSIVE("-Xbinary=gcSchedulerType=aggressive");
+
+    override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
+}
+
 /**
  * Current project's directories.
  */

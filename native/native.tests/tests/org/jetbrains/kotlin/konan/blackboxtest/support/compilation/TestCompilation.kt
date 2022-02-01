@@ -143,6 +143,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     private val memoryModel: MemoryModel,
     private val threadStateChecker: ThreadStateChecker,
     private val gcType: GCType,
+    private val gcScheduler: GCScheduler,
     freeCompilerArgs: TestCompilerArgs,
     override val sourceModules: Collection<TestModule>,
     dependencies: Iterable<TestCompilationDependency<*>>,
@@ -161,6 +162,7 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
         memoryModel.compilerFlags?.let { compilerFlags -> add(compilerFlags) }
         threadStateChecker.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         gcType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
+        gcScheduler.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
     }
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
@@ -192,6 +194,7 @@ internal class LibraryCompilation(
     memoryModel = settings.get(),
     threadStateChecker = settings.get(),
     gcType = settings.get(),
+    gcScheduler = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     sourceModules = sourceModules,
     dependencies = dependencies,
@@ -221,6 +224,7 @@ internal class ExecutableCompilation(
     memoryModel = settings.get(),
     threadStateChecker = settings.get(),
     gcType = settings.get(),
+    gcScheduler = settings.get(),
     freeCompilerArgs = freeCompilerArgs,
     sourceModules = sourceModules,
     dependencies = dependencies,

@@ -164,7 +164,6 @@ class GCSchedulerDataAggressive : public gc::GCSchedulerData {
 public:
     GCSchedulerDataAggressive(gc::GCSchedulerConfig& config, std::function<void()> scheduleGC) noexcept :
         scheduleGC_(std::move(scheduleGC)) {
-        RuntimeLogInfo({kTagGC}, "Initialize GC scheduler config in the aggressive mode");
         // TODO: Make it even more aggressive and run on a subset of backend.native tests.
         config.threshold = 1000;
         config.allocationThresholdBytes = 10000;
@@ -188,12 +187,16 @@ KStdUniquePtr<gc::GCSchedulerData> kotlin::gc::internal::MakeGCSchedulerData(
         std::function<std::chrono::time_point<std::chrono::steady_clock>()> currentTimeProvider) noexcept {
     switch (type) {
         case SchedulerType::kDisabled:
+            RuntimeLogDebug({kTagGC}, "GC scheduler disabled");
             return ::make_unique<GCEmptySchedulerData>();
         case SchedulerType::kWithTimer:
+            RuntimeLogDebug({kTagGC}, "Initializing timer-based GC scheduler");
             return ::make_unique<GCSchedulerDataWithTimer>(config, std::move(scheduleGC), std::move(currentTimeProvider));
         case SchedulerType::kOnSafepoints:
+            RuntimeLogDebug({kTagGC}, "Initializing safe-point-based GC scheduler");
             return ::make_unique<GCSchedulerDataOnSafepoints>(config, std::move(scheduleGC), std::move(currentTimeProvider));
         case SchedulerType::kAggressive:
+            RuntimeLogDebug({kTagGC}, "Initializing aggressive GC scheduler");
             return ::make_unique<GCSchedulerDataAggressive>(config, std::move(scheduleGC));
     }
 }

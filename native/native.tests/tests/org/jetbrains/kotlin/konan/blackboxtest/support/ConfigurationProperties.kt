@@ -38,6 +38,7 @@ internal enum class ClassLevelProperty(shortName: String) {
     MEMORY_MODEL("memoryModel"),
     USE_THREAD_STATE_CHECKER("useThreadStateChecker"),
     GC_TYPE("gcType"),
+    GC_SCHEDULER("gcScheduler"),
     CACHE_MODE("cacheMode"),
     EXECUTION_TIMEOUT("executionTimeout");
 
