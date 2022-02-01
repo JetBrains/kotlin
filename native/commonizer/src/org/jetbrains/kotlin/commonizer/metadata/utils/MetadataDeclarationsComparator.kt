@@ -83,7 +83,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         }
 
         class Class(val clazzA: KmClass, val clazzB: KmClass) : PathElement {
-            override val name get() = clazzA.name
+            override val name get() = clazzA.name.split("/").last()
         }
 
         class TypeAlias(val typeAliasA: KmTypeAlias, val typeAliasB: KmTypeAlias) : PathElement {
@@ -250,6 +250,8 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         abstract val name: String
         abstract val path: List<PathElement>
 
+        protected fun pathString() = path.joinToString("/") { it.name }
+
         // an entity has different non-nullable values
         data class DifferentValues(
             override val kind: EntityKind,
@@ -257,7 +259,13 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             override val path: List<PathElement>,
             val valueA: Any,
             val valueB: Any
-        ) : Mismatch()
+        ) : Mismatch() {
+            // TODO: fix Kotlin metadata rendering for values
+            override fun toString(): String {
+                val spacedName = if (name.isEmpty()) "" else "$name "
+                return "$kind ${spacedName}is different in (A): $valueA and (B): $valueB; path: ${pathString()}"
+            }
+        }
 
         // an entity is missing at one side and present at another side,
         // or: an entity has nullable value at one side and non-nullable value at another side
@@ -270,6 +278,11 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         ) : Mismatch() {
             val missingInB: Boolean
                 get() = !missingInA
+
+            override fun toString(): String {
+                val (missing, existing) = if (missingInA) "A" to "B" else "B" to "A"
+                return "Missing $kind in ($missing): '$name'; in ($existing) it's: $existentValue; path: '${pathString()}'"
+            }
         }
     }
 
