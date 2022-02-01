@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -23,19 +22,17 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.constructFunctionalTypeRef
-import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeConstraintSystemHasContradiction
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePropertyAsOperator
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterInQualifiedAccess
-import org.jetbrains.kotlin.fir.resolve.inference.*
-import org.jetbrains.kotlin.fir.resolve.propagateTypeFromQualifiedAccessAfterNullCheck
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.remapArgumentsWithVararg
@@ -78,6 +75,8 @@ class FirCallCompletionResultsWriterTransformer(
 
     private val arrayOfCallTransformer = FirArrayOfCallTransformer()
     private var enableArrayOfCallTransformation = false
+
+    private val samResolver: FirSamResolver = FirSamResolverImpl(session, ScopeSession())
 
     enum class Mode {
         Normal, DelegatedPropertyCompletion
@@ -584,14 +583,22 @@ class FirCallCompletionResultsWriterTransformer(
                 expectedArgumentType.isBuiltinFunctionalType(session) -> expectedArgumentType
                 // fun interface (a.k.a. SAM), then unwrap it and build a functional type from that interface function
                 expectedArgumentType is ConeClassLikeType -> {
-                    val sam =
-                        (session.firProvider.getFirClassifierByFqName(expectedArgumentType.lookupTag.classId) as? FirClass)
-                            ?.takeIf { it.classKind == ClassKind.INTERFACE }
-                            ?.declarations?.singleOrNull() as? FirSimpleFunction
-                    sam?.let {
-                        createFunctionalType(
-                            sam.valueParameters.map { it.returnTypeRef.coneType }, null, sam.returnTypeRef.coneType, sam.isSuspend
-                        )
+                    val firRegularClass =
+                        session.symbolProvider.getClassLikeSymbolByClassId(expectedArgumentType.lookupTag.classId)?.fir as? FirRegularClass
+
+                    firRegularClass?.let {
+                        val functionType = samResolver.getFunctionTypeForPossibleSamType(firRegularClass.defaultType())
+                        if (functionType != null) {
+                            createFunctionalType(
+                                functionType.typeArguments.dropLast(1).map { it as ConeKotlinType },
+                                null,
+                                functionType.typeArguments.last() as ConeKotlinType,
+                                functionType.classId?.relativeClassName?.asString()
+                                    ?.startsWith(FunctionClassKind.SuspendFunction.classNamePrefix) == true
+                            )
+                        } else {
+                            null
+                        }
                     }
                 }
                 else -> null

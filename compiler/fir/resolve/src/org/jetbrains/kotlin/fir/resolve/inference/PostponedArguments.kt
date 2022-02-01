@@ -61,7 +61,6 @@ fun Candidate.preprocessLambdaArgument(
         ) ?: extractLambdaInfo(expectedType, anonymousFunction, csBuilder, context.session, this)
 
     if (expectedType != null) {
-        // TODO: add SAM conversion processing
         val parameters = resolvedArgument.parameters
         val lambdaType = createFunctionalType(
             if (resolvedArgument.coerceFirstParameterToExtensionReceiver) parameters.drop(1) else parameters,

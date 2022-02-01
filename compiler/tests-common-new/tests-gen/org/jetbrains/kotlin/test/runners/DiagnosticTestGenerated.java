@@ -19645,6 +19645,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("samWithSuspendFunctionFromAnotherModule.kt")
+            public void testSamWithSuspendFunctionFromAnotherModule() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multimodule/samWithSuspendFunctionFromAnotherModule.kt");
+            }
+
+            @Test
             @TestMetadata("varargConflict.kt")
             public void testVarargConflict() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multimodule/varargConflict.kt");
