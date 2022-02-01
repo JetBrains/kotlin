@@ -174,9 +174,9 @@ abstract class TypeCheckerStateForConstraintSystem(
      *
      * T?
      *
-     * Foo <: T? -- Foo & Any <: T -- Foo!! <: T
-     * Foo? <: T? -- Foo? & Any <: T -- Foo!! <: T
-     * (Foo..Bar) <: T? -- (Foo..Bar) & Any <: T -- (Foo..Bar)!! <: T
+     * Foo <: T? -- Foo & Any <: T
+     * Foo? <: T? -- Foo? & Any <: T -- Foo & Any <: T
+     * (Foo..Bar) <: T? -- (Foo..Bar) & Any <: T
      *
      * T!
      *
@@ -249,11 +249,15 @@ abstract class TypeCheckerStateForConstraintSystem(
                 when (subType) {
                     is SimpleTypeMarker ->
                         // Foo <: T! -- (Foo!! .. Foo) <: T
-                        subType.createConstraintPartForLowerBoundAndFlexibleTypeVariable()
+                        if (subType.isMarkedNullable()) {
+                            subType
+                        } else {
+                            createFlexibleType(subType, subType.withNullability(true))
+                        }
 
                     is FlexibleTypeMarker ->
                         // (Foo..Bar) <: T! -- (Foo!! .. Bar) <: T
-                        createFlexibleType(subType.lowerBound().makeSimpleTypeDefinitelyNotNullOrNotNull(), subType.upperBound())
+                        createFlexibleType(subType.lowerBound(), subType.upperBound().withNullability(true))
 
                     else -> error("sealed")
                 }
