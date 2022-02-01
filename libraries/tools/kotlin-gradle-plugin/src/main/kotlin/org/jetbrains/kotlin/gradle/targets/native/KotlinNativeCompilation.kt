@@ -14,6 +14,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinNativeFragmentMetadataCompilationData
@@ -54,12 +55,12 @@ internal class NativeCompileOptions(languageSettingsProvider: () -> LanguageSett
 }
 
 abstract class AbstractKotlinNativeCompilation(
-    target: KotlinTarget,
     override val konanTarget: KonanTarget,
-    compilationName: String
-) : AbstractKotlinCompilation<KotlinCommonOptions>(target, compilationName), KotlinNativeCompilationData<KotlinCommonOptions> {
-
-    override val kotlinOptions: KotlinCommonOptions = NativeCompileOptions { defaultSourceSet.languageSettings }
+    compilationDetails: CompilationDetails<KotlinCommonOptions>
+) : AbstractKotlinCompilation<KotlinCommonOptions>(
+    compilationDetails
+),
+    KotlinNativeCompilationData<KotlinCommonOptions> {
 
     override val compileKotlinTask: KotlinNativeCompile
         get() = super.compileKotlinTask as KotlinNativeCompile
@@ -67,10 +68,6 @@ abstract class AbstractKotlinNativeCompilation(
     @Suppress("UNCHECKED_CAST")
     override val compileKotlinTaskProvider: TaskProvider<out KotlinNativeCompile>
         get() = super.compileKotlinTaskProvider as TaskProvider<out KotlinNativeCompile>
-
-    override fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
-        addSourcesToKotlinNativeCompileTask(project, compileKotlinTaskName, { sourceSet.kotlin }, addAsCommonSources)
-    }
 
     internal val useGenericPluginArtifact: Boolean
         get() = project.nativeUseEmbeddableCompilerJar
@@ -96,11 +93,13 @@ internal fun addSourcesToKotlinNativeCompileTask(
 }
 
 class KotlinNativeCompilation(
-    override val target: KotlinNativeTarget,
     konanTarget: KonanTarget,
-    name: String
-) : AbstractKotlinNativeCompilation(target, konanTarget, name),
+    details: CompilationDetails<KotlinCommonOptions>
+) : AbstractKotlinNativeCompilation(konanTarget, details),
     KotlinCompilationWithResources<KotlinCommonOptions> {
+
+    override val target: KotlinNativeTarget
+        get() = super.target as KotlinNativeTarget
 
     // Interop DSL.
     val cinterops = project.container(DefaultCInteropSettings::class.java) { cinteropName ->
@@ -114,50 +113,24 @@ class KotlinNativeCompilation(
     override val processResourcesTaskName: String
         get() = disambiguateName("processResources")
 
-    override val compileDependencyConfigurationName: String
-        get() = lowerCamelCaseName(
-            target.disambiguationClassifier,
-            compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }.orEmpty(),
-            "compileKlibraries"
-        )
-
-    override val compileAllTaskName: String
-        get() = lowerCamelCaseName(target.disambiguationClassifier, compilationPurpose, "klibrary")
-
     val binariesTaskName: String
         get() = lowerCamelCaseName(target.disambiguationClassifier, compilationPurpose, "binaries")
-
-    override fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
-        compileDependencyFiles += other.output.classesDirs + project.filesProvider { other.compileDependencyFiles }
-
-        target.project.configurations.named(implementationConfigurationName).configure { configuration ->
-            configuration.extendsFrom(target.project.configurations.findByName(other.implementationConfigurationName))
-        }
-    }
 }
 
-class KotlinSharedNativeCompilation(override val target: KotlinMetadataTarget, val konanTargets: List<KonanTarget>, name: String) :
+class KotlinSharedNativeCompilation(
+    target: KotlinMetadataTarget,
+    val konanTargets: List<KonanTarget>, name: String) :
     KotlinNativeFragmentMetadataCompilationData,
     AbstractKotlinNativeCompilation(
-        target,
         // TODO: this will end up as '-target' argument passed to K2Native, which is wrong.
         // Rewrite this when we'll compile native-shared source-sets against commonized platform libs
         // We find any konan target that is enabled on the current host in order to pass the checks that avoid compiling the code otherwise.
         konanTargets.find { it.enabledOnCurrentHost } ?: konanTargets.first(),
-        name
+        SharedNativeCompilationDetails(target, name) { NativeCompileOptions { defaultSourceSet.languageSettings } }
     ),
     KotlinMetadataCompilation<KotlinCommonOptions> {
 
-    override val friendArtifacts: FileCollection
-        get() = super.friendArtifacts.plus(run {
-            val project = target.project
-            val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(project, defaultSourceSet).toMutableSet().apply {
-                // TODO: implement proper dependsOn/refines compiler args for Kotlin/Native and pass the dependsOn klibs separately;
-                //       But for now, those dependencies don't have any special semantics, so passing all them as friends works, too
-                addAll(defaultSourceSet.resolveAllDependsOnSourceSets())
-            }
-            project.files(friendSourceSets.mapNotNull { project.getMetadataCompilationForSourceSet(it)?.output?.classesDirs })
-        })
+    override val target: KotlinMetadataTarget get() = super.target as KotlinMetadataTarget
 
     override val isActive: Boolean
         get() = true // old plugin only creates necessary compilations

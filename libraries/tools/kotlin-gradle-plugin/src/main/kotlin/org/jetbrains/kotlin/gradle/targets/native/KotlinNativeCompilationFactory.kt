@@ -17,11 +17,15 @@ class KotlinNativeCompilationFactory(
         get() = KotlinNativeCompilation::class.java
 
     override fun create(name: String): KotlinNativeCompilation =
-        // TODO: Validate compilation free args using the [CompilationFreeArgsValidator]
-        //       when the compilation and the link args are separated (see KT-33717).
-        // Note: such validation should be done in the whenEvaluate block because
+    // TODO: Validate compilation free args using the [CompilationFreeArgsValidator]
+    //       when the compilation and the link args are separated (see KT-33717).
+    // Note: such validation should be done in the whenEvaluate block because
         // a user can change args during project configuration.
-        KotlinNativeCompilation(target, target.konanTarget, name)
+
+        KotlinNativeCompilation(
+            target.konanTarget,
+            NativeCompilationDetails(target, name) { NativeCompileOptions { defaultSourceSet.languageSettings } }
+        )
 }
 
 class KotlinSharedNativeCompilationFactory(
