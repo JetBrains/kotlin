@@ -25,7 +25,7 @@ val KotlinFragmentHostSpecificMetadataArtifact = FragmentArtifacts<KotlinNativeV
     val hostSpecificMetadataJar = project.registerTask<Jar>(fragment.disambiguateName("hostSpecificMetadataJar")) { jar ->
         jar.archiveClassifier.set("metadata")
         jar.archiveAppendix.set(fragment.disambiguateName(""))
-        project.pm20Extension.metadataCompilationRegistryByModuleId.getValue(fragment.containingModule.moduleIdentifier)
+        project.metadataCompilationRegistryByModuleId.getValue(fragment.containingModule.moduleIdentifier)
             .withAll { metadataCompilation ->
                 val metadataFragment = metadataCompilation.fragment
                 if (metadataCompilation is KotlinNativeFragmentMetadataCompilationData) {

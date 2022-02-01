@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.getSourceSetCompiledMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.FragmentGranularMetadataResolverFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleModule.Companion.moduleName
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.kpmModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toModuleDependency
 import org.jetbrains.kotlin.gradle.plugin.sources.SourceSetMetadataStorageForIde
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
@@ -49,7 +50,7 @@ private class IdeFragmentDependencyResolverImpl(
     private val fragmentGranularMetadataResolverFactory: FragmentGranularMetadataResolverFactory
 ) : IdeFragmentDependencyResolver {
     override fun resolveDependencies(moduleName: String, fragmentName: String): List<IdeFragmentDependency> {
-        val fragment = project.pm20Extension.modules.getByName(moduleName).fragments.getByName(fragmentName)
+        val fragment = project.kpmModules.getByName(moduleName).fragments.getByName(fragmentName)
         val fragmentGranularMetadataResolver = fragmentGranularMetadataResolverFactory.getOrCreate(fragment)
         return fragmentGranularMetadataResolver.resolutions.flatMap { resolution ->
             resolveDependenciesForIde(fragment, resolution)
