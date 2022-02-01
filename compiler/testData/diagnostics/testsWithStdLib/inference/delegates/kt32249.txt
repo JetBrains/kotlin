@@ -1,6 +1,6 @@
 package
 
-private fun </*0*/ T> wrapper(/*0*/ defaultValue: T): wrapper.<no name provided><T>
+private fun </*0*/ T> wrapper(/*0*/ defaultValue: T): wrapper.`<no name provided>`<T>
 
 public object Foo {
     private constructor Foo()

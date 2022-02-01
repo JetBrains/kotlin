@@ -5,9 +5,9 @@ public final enum class E : kotlin.Enum<test.E> {
 
     /*primary*/ private constructor E()
     public final override /*1*/ /*fake_override*/ val name: kotlin.String
-        public final override /*1*/ /*fake_override*/ fun <get-name>(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun `<get-name>`(): kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun <get-ordinal>(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun `<get-ordinal>`(): kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
     protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
@@ -21,7 +21,7 @@ public final enum class E : kotlin.Enum<test.E> {
 public final annotation class EnumAnno : kotlin.Annotation {
     /*primary*/ public constructor EnumAnno(/*0*/ value: test.E)
     public final val value: test.E
-        public final fun <get-value>(): test.E
+        public final fun `<get-value>`(): test.E
 }
 
 public final class EnumArgumentWithCustomToString {
@@ -32,5 +32,5 @@ public final class EnumArgumentWithCustomToString {
 public final annotation class EnumArrayAnno : kotlin.Annotation {
     /*primary*/ public constructor EnumArrayAnno(/*0*/ vararg value: test.E /*kotlin.Array<out test.E>*/)
     public final val value: kotlin.Array<out test.E>
-        public final fun <get-value>(): kotlin.Array<out test.E>
+        public final fun `<get-value>`(): kotlin.Array<out test.E>
 }

@@ -2,8 +2,8 @@ package
 
 public final class K : p.Nameless {
     public constructor K()
-    public final val <no name provided>: kotlin.Int = 1
-    public final fun <no name provided>(): kotlin.Unit
+    public final val `<no name provided>`: kotlin.Int = 1
+    public final fun `<no name provided>`(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

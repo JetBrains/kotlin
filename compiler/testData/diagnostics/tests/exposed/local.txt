@@ -1,8 +1,8 @@
 package
 
 public fun bar(): My
-public fun foo(): foo.<anonymous>.A
-public fun gav(): () -> gav.<anonymous>.B
+public fun foo(): foo.`<anonymous>`.A
+public fun gav(): () -> gav.`<anonymous>`.B
 
 public abstract class My {
     public constructor My()

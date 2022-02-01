@@ -399,16 +399,16 @@ fun case_20(x: Boolean, y: Nothing?) {
     }
 
     if (z.B19.C19.D19 !== <!DEBUG_INFO_CONSTANT!>y<!>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided> & case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>?")!>z.B19.C19.D19<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>"), DEBUG_INFO_SMARTCAST!>z.B19.C19.D19<!>.equals(null)
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>"), DEBUG_INFO_SMARTCAST!>z.B19.C19.D19<!>.propT
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>"), DEBUG_INFO_SMARTCAST!>z.B19.C19.D19<!>.propAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided> & case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>?")!>z.B19.C19.D19<!>.propNullableT
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided> & case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>?")!>z.B19.C19.D19<!>.propNullableAny
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>"), DEBUG_INFO_SMARTCAST!>z.B19.C19.D19<!>.funT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>"), DEBUG_INFO_SMARTCAST!>z.B19.C19.D19<!>.funAny()
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided> & case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>?")!>z.B19.C19.D19<!>.funNullableT()
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided> & case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>?")!>z.B19.C19.D19<!>.funNullableAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>` & case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`?")!>z.B19.C19.D19<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`"), DEBUG_INFO_SMARTCAST!>z.B19.C19.D19<!>.equals(null)
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`"), DEBUG_INFO_SMARTCAST!>z.B19.C19.D19<!>.propT
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`"), DEBUG_INFO_SMARTCAST!>z.B19.C19.D19<!>.propAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>` & case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`?")!>z.B19.C19.D19<!>.propNullableT
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>` & case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`?")!>z.B19.C19.D19<!>.propNullableAny
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`"), DEBUG_INFO_SMARTCAST!>z.B19.C19.D19<!>.funT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`"), DEBUG_INFO_SMARTCAST!>z.B19.C19.D19<!>.funAny()
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>` & case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`?")!>z.B19.C19.D19<!>.funNullableT()
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>` & case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`?")!>z.B19.C19.D19<!>.funNullableAny()
     }
 }
 
@@ -498,19 +498,19 @@ fun case_25(b: Boolean, z: Nothing?) {
     val y = if (b) x else <!DEBUG_INFO_CONSTANT!>z<!>
 
     if (y !== <!DEBUG_INFO_CONSTANT!>z<!> || <!DEBUG_INFO_CONSTANT!>y<!> != <!DEBUG_INFO_CONSTANT!>implicitNullableNothingProperty<!>) {
-        val z1 = <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided>?")!><!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_25.<anonymous>.<no name provided>?)? & () -> case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>y<!>()<!>
+        val z1 = <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>`?")!><!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_25.`<anonymous>`.`<no name provided>`?)? & () -> case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>y<!>()<!>
 
         if (z1 != <!DEBUG_INFO_CONSTANT!>z<!> && <!DEBUG_INFO_CONSTANT!>implicitNullableNothingProperty<!> !== z1) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>z1<!>.a
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>z1<!>.equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>z1<!>.propT
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>z1<!>.propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?")!>z1<!>.propNullableT
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?")!>z1<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>z1<!>.funT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>z1<!>.funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?")!>z1<!>.funNullableT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided> & case_25.<anonymous>.<no name provided>?")!>z1<!>.funNullableAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>z1<!>.a
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>z1<!>.equals(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>z1<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>z1<!>.propAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?")!>z1<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?")!>z1<!>.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>z1<!>.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>z1<!>.funAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?")!>z1<!>.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>` & case_25.`<anonymous>`.`<no name provided>`?")!>z1<!>.funNullableAny()
         }
     }
 }
@@ -584,19 +584,19 @@ fun case_29(x: Boolean) {
     val y = if (x) z else null
 
     if (false || false || false || false || y !== <!DEBUG_INFO_CONSTANT!>v<!>) {
-        val t = <!DEBUG_INFO_EXPRESSION_TYPE("case_29.<anonymous>.<no name provided>?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>()<!>
+        val t = <!DEBUG_INFO_EXPRESSION_TYPE("case_29.`<anonymous>`.`<no name provided>`?")!><!UNSAFE_IMPLICIT_INVOKE_CALL!>y<!>()<!>
 
         if (<!EQUALITY_NOT_APPLICABLE!>z !== t<!> || false) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.<anonymous>.<no name provided>?")!>t<!><!UNSAFE_CALL!>.<!>a
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.<anonymous>.<no name provided>?")!>t<!><!UNSAFE_CALL!>.<!>equals(null)
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.<anonymous>.<no name provided>?")!>t<!>.propT
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.<anonymous>.<no name provided>?")!>t<!><!UNSAFE_CALL!>.<!>propAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.<anonymous>.<no name provided>?")!>t<!>.propNullableT
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.<anonymous>.<no name provided>?")!>t<!>.propNullableAny
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.<anonymous>.<no name provided>?")!>t<!>.funT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.<anonymous>.<no name provided>?")!>t<!><!UNSAFE_CALL!>.<!>funAny()
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.<anonymous>.<no name provided>?")!>t<!>.funNullableT()
-            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.<anonymous>.<no name provided>?")!>t<!>.funNullableAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.`<anonymous>`.`<no name provided>`?")!>t<!><!UNSAFE_CALL!>.<!>a
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.`<anonymous>`.`<no name provided>`?")!>t<!><!UNSAFE_CALL!>.<!>equals(null)
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.`<anonymous>`.`<no name provided>`?")!>t<!>.propT
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.`<anonymous>`.`<no name provided>`?")!>t<!><!UNSAFE_CALL!>.<!>propAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.`<anonymous>`.`<no name provided>`?")!>t<!>.propNullableT
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.`<anonymous>`.`<no name provided>`?")!>t<!>.propNullableAny
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.`<anonymous>`.`<no name provided>`?")!>t<!>.funT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.`<anonymous>`.`<no name provided>`?")!>t<!><!UNSAFE_CALL!>.<!>funAny()
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.`<anonymous>`.`<no name provided>`?")!>t<!>.funNullableT()
+            <!DEBUG_INFO_EXPRESSION_TYPE("case_29.`<anonymous>`.`<no name provided>`?")!>t<!>.funNullableAny()
         }
     }
 }
@@ -982,7 +982,7 @@ fun case_55(b: Boolean) {
     }
 
     if (a.B19.C19.D19 === a.B19.C19.z) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_55.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>? & kotlin.Nothing?")!>a.B19.C19.D19<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_55.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`? & kotlin.Nothing?")!>a.B19.C19.D19<!>
     }
 }
 
@@ -1063,10 +1063,10 @@ fun case_60(b: Boolean) {
     val y = if (b) x else <!DEBUG_INFO_CONSTANT!>nullableNothingProperty<!>
 
     if (y != <!DEBUG_INFO_CONSTANT!>nullableNothingProperty<!>) {
-        val z = <!DEBUG_INFO_EXPRESSION_TYPE("case_60.<anonymous>.<no name provided>?")!><!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_60.<anonymous>.<no name provided>?)? & () -> case_60.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>y<!>()<!>
+        val z = <!DEBUG_INFO_EXPRESSION_TYPE("case_60.`<anonymous>`.`<no name provided>`?")!><!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_60.`<anonymous>`.`<no name provided>`?)? & () -> case_60.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>y<!>()<!>
 
         if (z == <!DEBUG_INFO_CONSTANT!>nullableNothingProperty<!>) {
-            <!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("case_60.<anonymous>.<no name provided>? & kotlin.Nothing?")!>z<!>
+            <!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("case_60.`<anonymous>`.`<no name provided>`? & kotlin.Nothing?")!>z<!>
         }
     }
 }

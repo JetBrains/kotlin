@@ -1,7 +1,7 @@
 package
 
-private fun </*0*/ E> foobar(): () -> foobar.<anonymous>.Derived<E>
-private fun noParameters(): () -> noParameters.<anonymous>.Derived2
+private fun </*0*/ E> foobar(): () -> foobar.`<anonymous>`.Derived<E>
+private fun noParameters(): () -> noParameters.`<anonymous>`.Derived2
 public fun test(): kotlin.Unit
 
 public final class A</*0*/ R1, /*1*/ R2, /*2*/ R3, /*3*/ R4> {

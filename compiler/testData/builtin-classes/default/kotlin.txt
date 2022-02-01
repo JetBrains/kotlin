@@ -26,7 +26,7 @@ public open class Any {
 public final class Array</*0*/ T> {
     public constructor Array</*0*/ T>(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> T)
     public final val size: kotlin.Int
-        public final fun <get-size>(): kotlin.Int
+        public final fun `<get-size>`(): kotlin.Int
     public final operator fun get(/*0*/ index: kotlin.Int): T
     public final operator fun iterator(): kotlin.collections.Iterator<T>
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: T): kotlin.Unit
@@ -49,7 +49,7 @@ public final class BooleanArray {
     /*primary*/ public constructor BooleanArray(/*0*/ size: kotlin.Int)
     public constructor BooleanArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Boolean)
     public final val size: kotlin.Int
-        public final fun <get-size>(): kotlin.Int
+        public final fun `<get-size>`(): kotlin.Int
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Boolean
     public final operator fun iterator(): kotlin.collections.BooleanIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Boolean): kotlin.Unit
@@ -112,13 +112,13 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public companion object Companion {
         /*primary*/ private constructor Companion()
         public const final val MAX_VALUE: kotlin.Byte
-            public final fun <get-MAX_VALUE>(): kotlin.Byte
+            public final fun `<get-MAX_VALUE>`(): kotlin.Byte
         public const final val MIN_VALUE: kotlin.Byte
-            public final fun <get-MIN_VALUE>(): kotlin.Byte
+            public final fun `<get-MIN_VALUE>`(): kotlin.Byte
         @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BITS: kotlin.Int
-            public final fun <get-SIZE_BITS>(): kotlin.Int
+            public final fun `<get-SIZE_BITS>`(): kotlin.Int
         @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BYTES: kotlin.Int
-            public final fun <get-SIZE_BYTES>(): kotlin.Int
+            public final fun `<get-SIZE_BYTES>`(): kotlin.Int
     }
 }
 
@@ -126,7 +126,7 @@ public final class ByteArray {
     /*primary*/ public constructor ByteArray(/*0*/ size: kotlin.Int)
     public constructor ByteArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Byte)
     public final val size: kotlin.Int
-        public final fun <get-size>(): kotlin.Int
+        public final fun `<get-size>`(): kotlin.Int
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Byte
     public final operator fun iterator(): kotlin.collections.ByteIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Byte): kotlin.Unit
@@ -152,25 +152,25 @@ public final class Char : kotlin.Comparable<kotlin.Char> {
     public companion object Companion {
         /*primary*/ private constructor Companion()
         public const final val MAX_HIGH_SURROGATE: kotlin.Char
-            public final fun <get-MAX_HIGH_SURROGATE>(): kotlin.Char
+            public final fun `<get-MAX_HIGH_SURROGATE>`(): kotlin.Char
         public const final val MAX_LOW_SURROGATE: kotlin.Char
-            public final fun <get-MAX_LOW_SURROGATE>(): kotlin.Char
+            public final fun `<get-MAX_LOW_SURROGATE>`(): kotlin.Char
         public const final val MAX_SURROGATE: kotlin.Char
-            public final fun <get-MAX_SURROGATE>(): kotlin.Char
+            public final fun `<get-MAX_SURROGATE>`(): kotlin.Char
         @kotlin.SinceKotlin(version = "1.3") public const final val MAX_VALUE: kotlin.Char
-            public final fun <get-MAX_VALUE>(): kotlin.Char
+            public final fun `<get-MAX_VALUE>`(): kotlin.Char
         public const final val MIN_HIGH_SURROGATE: kotlin.Char
-            public final fun <get-MIN_HIGH_SURROGATE>(): kotlin.Char
+            public final fun `<get-MIN_HIGH_SURROGATE>`(): kotlin.Char
         public const final val MIN_LOW_SURROGATE: kotlin.Char
-            public final fun <get-MIN_LOW_SURROGATE>(): kotlin.Char
+            public final fun `<get-MIN_LOW_SURROGATE>`(): kotlin.Char
         public const final val MIN_SURROGATE: kotlin.Char
-            public final fun <get-MIN_SURROGATE>(): kotlin.Char
+            public final fun `<get-MIN_SURROGATE>`(): kotlin.Char
         @kotlin.SinceKotlin(version = "1.3") public const final val MIN_VALUE: kotlin.Char
-            public final fun <get-MIN_VALUE>(): kotlin.Char
+            public final fun `<get-MIN_VALUE>`(): kotlin.Char
         @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BITS: kotlin.Int
-            public final fun <get-SIZE_BITS>(): kotlin.Int
+            public final fun `<get-SIZE_BITS>`(): kotlin.Int
         @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BYTES: kotlin.Int
-            public final fun <get-SIZE_BYTES>(): kotlin.Int
+            public final fun `<get-SIZE_BYTES>`(): kotlin.Int
     }
 }
 
@@ -178,7 +178,7 @@ public final class CharArray {
     /*primary*/ public constructor CharArray(/*0*/ size: kotlin.Int)
     public constructor CharArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Char)
     public final val size: kotlin.Int
-        public final fun <get-size>(): kotlin.Int
+        public final fun `<get-size>`(): kotlin.Int
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public final operator fun iterator(): kotlin.collections.CharIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Char): kotlin.Unit
@@ -186,7 +186,7 @@ public final class CharArray {
 
 public interface CharSequence {
     public abstract val length: kotlin.Int
-        public abstract fun <get-length>(): kotlin.Int
+        public abstract fun `<get-length>`(): kotlin.Int
     public abstract operator fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public abstract fun subSequence(/*0*/ startIndex: kotlin.Int, /*1*/ endIndex: kotlin.Int): kotlin.CharSequence
 }
@@ -198,27 +198,27 @@ public interface Comparable</*0*/ in T> {
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.MustBeDocumented public final annotation class ContextFunctionTypeParams : kotlin.Annotation {
     /*primary*/ public constructor ContextFunctionTypeParams(/*0*/ count: kotlin.Int)
     public final val count: kotlin.Int
-        public final fun <get-count>(): kotlin.Int
+        public final fun `<get-count>`(): kotlin.Int
 }
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.MustBeDocumented public final annotation class Deprecated : kotlin.Annotation {
     /*primary*/ public constructor Deprecated(/*0*/ message: kotlin.String, /*1*/ replaceWith: kotlin.ReplaceWith = ..., /*2*/ level: kotlin.DeprecationLevel = ...)
     public final val level: kotlin.DeprecationLevel
-        public final fun <get-level>(): kotlin.DeprecationLevel
+        public final fun `<get-level>`(): kotlin.DeprecationLevel
     public final val message: kotlin.String
-        public final fun <get-message>(): kotlin.String
+        public final fun `<get-message>`(): kotlin.String
     public final val replaceWith: kotlin.ReplaceWith
-        public final fun <get-replaceWith>(): kotlin.ReplaceWith
+        public final fun `<get-replaceWith>`(): kotlin.ReplaceWith
 }
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "1.4") public final annotation class DeprecatedSinceKotlin : kotlin.Annotation {
     /*primary*/ public constructor DeprecatedSinceKotlin(/*0*/ warningSince: kotlin.String = ..., /*1*/ errorSince: kotlin.String = ..., /*2*/ hiddenSince: kotlin.String = ...)
     public final val errorSince: kotlin.String
-        public final fun <get-errorSince>(): kotlin.String
+        public final fun `<get-errorSince>`(): kotlin.String
     public final val hiddenSince: kotlin.String
-        public final fun <get-hiddenSince>(): kotlin.String
+        public final fun `<get-hiddenSince>`(): kotlin.String
     public final val warningSince: kotlin.String
-        public final fun <get-warningSince>(): kotlin.String
+        public final fun `<get-warningSince>`(): kotlin.String
 }
 
 public final enum class DeprecationLevel : kotlin.Enum<kotlin.DeprecationLevel> {
@@ -230,9 +230,9 @@ public final enum class DeprecationLevel : kotlin.Enum<kotlin.DeprecationLevel> 
 
     /*primary*/ private constructor DeprecationLevel()
     public final override /*1*/ /*fake_override*/ val name: kotlin.String
-        public final override /*1*/ /*fake_override*/ fun <get-name>(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun `<get-name>`(): kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun <get-ordinal>(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun `<get-ordinal>`(): kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: kotlin.DeprecationLevel): kotlin.Int
 
@@ -294,19 +294,19 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public companion object Companion {
         /*primary*/ private constructor Companion()
         public const final val MAX_VALUE: kotlin.Double
-            public final fun <get-MAX_VALUE>(): kotlin.Double
+            public final fun `<get-MAX_VALUE>`(): kotlin.Double
         public const final val MIN_VALUE: kotlin.Double
-            public final fun <get-MIN_VALUE>(): kotlin.Double
+            public final fun `<get-MIN_VALUE>`(): kotlin.Double
         public const final val NEGATIVE_INFINITY: kotlin.Double
-            public final fun <get-NEGATIVE_INFINITY>(): kotlin.Double
+            public final fun `<get-NEGATIVE_INFINITY>`(): kotlin.Double
         public const final val NaN: kotlin.Double
-            public final fun <get-NaN>(): kotlin.Double
+            public final fun `<get-NaN>`(): kotlin.Double
         public const final val POSITIVE_INFINITY: kotlin.Double
-            public final fun <get-POSITIVE_INFINITY>(): kotlin.Double
+            public final fun `<get-POSITIVE_INFINITY>`(): kotlin.Double
         @kotlin.SinceKotlin(version = "1.4") public const final val SIZE_BITS: kotlin.Int
-            public final fun <get-SIZE_BITS>(): kotlin.Int
+            public final fun `<get-SIZE_BITS>`(): kotlin.Int
         @kotlin.SinceKotlin(version = "1.4") public const final val SIZE_BYTES: kotlin.Int
-            public final fun <get-SIZE_BYTES>(): kotlin.Int
+            public final fun `<get-SIZE_BYTES>`(): kotlin.Int
     }
 }
 
@@ -314,7 +314,7 @@ public final class DoubleArray {
     /*primary*/ public constructor DoubleArray(/*0*/ size: kotlin.Int)
     public constructor DoubleArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Double)
     public final val size: kotlin.Int
-        public final fun <get-size>(): kotlin.Int
+        public final fun `<get-size>`(): kotlin.Int
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Double
     public final operator fun iterator(): kotlin.collections.DoubleIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Double): kotlin.Unit
@@ -327,9 +327,9 @@ public final class DoubleArray {
 public abstract class Enum</*0*/ E : kotlin.Enum<E>> : kotlin.Comparable<E> {
     /*primary*/ public constructor Enum</*0*/ E : kotlin.Enum<E>>(/*0*/ name: kotlin.String, /*1*/ ordinal: kotlin.Int)
     public final val name: kotlin.String
-        public final fun <get-name>(): kotlin.String
+        public final fun `<get-name>`(): kotlin.String
     public final val ordinal: kotlin.Int
-        public final fun <get-ordinal>(): kotlin.Int
+        public final fun `<get-ordinal>`(): kotlin.Int
     protected final fun clone(): kotlin.Any
     public final override /*1*/ fun compareTo(/*0*/ other: E): kotlin.Int
 
@@ -395,19 +395,19 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public companion object Companion {
         /*primary*/ private constructor Companion()
         public const final val MAX_VALUE: kotlin.Float
-            public final fun <get-MAX_VALUE>(): kotlin.Float
+            public final fun `<get-MAX_VALUE>`(): kotlin.Float
         public const final val MIN_VALUE: kotlin.Float
-            public final fun <get-MIN_VALUE>(): kotlin.Float
+            public final fun `<get-MIN_VALUE>`(): kotlin.Float
         public const final val NEGATIVE_INFINITY: kotlin.Float
-            public final fun <get-NEGATIVE_INFINITY>(): kotlin.Float
+            public final fun `<get-NEGATIVE_INFINITY>`(): kotlin.Float
         public const final val NaN: kotlin.Float
-            public final fun <get-NaN>(): kotlin.Float
+            public final fun `<get-NaN>`(): kotlin.Float
         public const final val POSITIVE_INFINITY: kotlin.Float
-            public final fun <get-POSITIVE_INFINITY>(): kotlin.Float
+            public final fun `<get-POSITIVE_INFINITY>`(): kotlin.Float
         @kotlin.SinceKotlin(version = "1.4") public const final val SIZE_BITS: kotlin.Int
-            public final fun <get-SIZE_BITS>(): kotlin.Int
+            public final fun `<get-SIZE_BITS>`(): kotlin.Int
         @kotlin.SinceKotlin(version = "1.4") public const final val SIZE_BYTES: kotlin.Int
-            public final fun <get-SIZE_BYTES>(): kotlin.Int
+            public final fun `<get-SIZE_BYTES>`(): kotlin.Int
     }
 }
 
@@ -415,7 +415,7 @@ public final class FloatArray {
     /*primary*/ public constructor FloatArray(/*0*/ size: kotlin.Int)
     public constructor FloatArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Float)
     public final val size: kotlin.Int
-        public final fun <get-size>(): kotlin.Int
+        public final fun `<get-size>`(): kotlin.Int
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Float
     public final operator fun iterator(): kotlin.collections.FloatIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Float): kotlin.Unit
@@ -488,13 +488,13 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public companion object Companion {
         /*primary*/ private constructor Companion()
         public const final val MAX_VALUE: kotlin.Int
-            public final fun <get-MAX_VALUE>(): kotlin.Int
+            public final fun `<get-MAX_VALUE>`(): kotlin.Int
         public const final val MIN_VALUE: kotlin.Int
-            public final fun <get-MIN_VALUE>(): kotlin.Int
+            public final fun `<get-MIN_VALUE>`(): kotlin.Int
         @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BITS: kotlin.Int
-            public final fun <get-SIZE_BITS>(): kotlin.Int
+            public final fun `<get-SIZE_BITS>`(): kotlin.Int
         @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BYTES: kotlin.Int
-            public final fun <get-SIZE_BYTES>(): kotlin.Int
+            public final fun `<get-SIZE_BYTES>`(): kotlin.Int
     }
 }
 
@@ -502,7 +502,7 @@ public final class IntArray {
     /*primary*/ public constructor IntArray(/*0*/ size: kotlin.Int)
     public constructor IntArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Int)
     public final val size: kotlin.Int
-        public final fun <get-size>(): kotlin.Int
+        public final fun `<get-size>`(): kotlin.Int
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Int
     public final operator fun iterator(): kotlin.collections.IntIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Int): kotlin.Unit
@@ -572,13 +572,13 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public companion object Companion {
         /*primary*/ private constructor Companion()
         public const final val MAX_VALUE: kotlin.Long
-            public final fun <get-MAX_VALUE>(): kotlin.Long
+            public final fun `<get-MAX_VALUE>`(): kotlin.Long
         public const final val MIN_VALUE: kotlin.Long
-            public final fun <get-MIN_VALUE>(): kotlin.Long
+            public final fun `<get-MIN_VALUE>`(): kotlin.Long
         @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BITS: kotlin.Int
-            public final fun <get-SIZE_BITS>(): kotlin.Int
+            public final fun `<get-SIZE_BITS>`(): kotlin.Int
         @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BYTES: kotlin.Int
-            public final fun <get-SIZE_BYTES>(): kotlin.Int
+            public final fun `<get-SIZE_BYTES>`(): kotlin.Int
     }
 }
 
@@ -586,7 +586,7 @@ public final class LongArray {
     /*primary*/ public constructor LongArray(/*0*/ size: kotlin.Int)
     public constructor LongArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Long)
     public final val size: kotlin.Int
-        public final fun <get-size>(): kotlin.Int
+        public final fun `<get-size>`(): kotlin.Int
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Long
     public final operator fun iterator(): kotlin.collections.LongIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Long): kotlin.Unit
@@ -610,7 +610,7 @@ public abstract class Number {
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "1.1") public final annotation class ParameterName : kotlin.Annotation {
     /*primary*/ public constructor ParameterName(/*0*/ name: kotlin.String)
     public final val name: kotlin.String
-        public final fun <get-name>(): kotlin.String
+        public final fun `<get-name>`(): kotlin.String
 }
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented @kotlin.SinceKotlin(version = "1.1") public final annotation class PublishedApi : kotlin.Annotation {
@@ -620,9 +620,9 @@ public abstract class Number {
 @kotlin.annotation.Target(allowedTargets = {}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented public final annotation class ReplaceWith : kotlin.Annotation {
     /*primary*/ public constructor ReplaceWith(/*0*/ expression: kotlin.String, /*1*/ vararg imports: kotlin.String /*kotlin.Array<out kotlin.String>*/)
     public final val expression: kotlin.String
-        public final fun <get-expression>(): kotlin.String
+        public final fun `<get-expression>`(): kotlin.String
     public final val imports: kotlin.Array<out kotlin.String>
-        public final fun <get-imports>(): kotlin.Array<out kotlin.String>
+        public final fun `<get-imports>`(): kotlin.Array<out kotlin.String>
 }
 
 public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
@@ -682,13 +682,13 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public companion object Companion {
         /*primary*/ private constructor Companion()
         public const final val MAX_VALUE: kotlin.Short
-            public final fun <get-MAX_VALUE>(): kotlin.Short
+            public final fun `<get-MAX_VALUE>`(): kotlin.Short
         public const final val MIN_VALUE: kotlin.Short
-            public final fun <get-MIN_VALUE>(): kotlin.Short
+            public final fun `<get-MIN_VALUE>`(): kotlin.Short
         @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BITS: kotlin.Int
-            public final fun <get-SIZE_BITS>(): kotlin.Int
+            public final fun `<get-SIZE_BITS>`(): kotlin.Int
         @kotlin.SinceKotlin(version = "1.3") public const final val SIZE_BYTES: kotlin.Int
-            public final fun <get-SIZE_BYTES>(): kotlin.Int
+            public final fun `<get-SIZE_BYTES>`(): kotlin.Int
     }
 }
 
@@ -696,7 +696,7 @@ public final class ShortArray {
     /*primary*/ public constructor ShortArray(/*0*/ size: kotlin.Int)
     public constructor ShortArray(/*0*/ size: kotlin.Int, /*1*/ init: (kotlin.Int) -> kotlin.Short)
     public final val size: kotlin.Int
-        public final fun <get-size>(): kotlin.Int
+        public final fun `<get-size>`(): kotlin.Int
     public final operator fun get(/*0*/ index: kotlin.Int): kotlin.Short
     public final operator fun iterator(): kotlin.collections.ShortIterator
     public final operator fun set(/*0*/ index: kotlin.Int, /*1*/ value: kotlin.Short): kotlin.Unit
@@ -705,13 +705,13 @@ public final class ShortArray {
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) @kotlin.annotation.MustBeDocumented public final annotation class SinceKotlin : kotlin.Annotation {
     /*primary*/ public constructor SinceKotlin(/*0*/ version: kotlin.String)
     public final val version: kotlin.String
-        public final fun <get-version>(): kotlin.String
+        public final fun `<get-version>`(): kotlin.String
 }
 
 public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequence {
     /*primary*/ public constructor String()
     public open override /*1*/ val length: kotlin.Int
-        public open override /*1*/ fun <get-length>(): kotlin.Int
+        public open override /*1*/ fun `<get-length>`(): kotlin.Int
     public open override /*1*/ fun compareTo(/*0*/ other: kotlin.String): kotlin.Int
     public open override /*1*/ fun get(/*0*/ index: kotlin.Int): kotlin.Char
     public final operator fun plus(/*0*/ other: kotlin.Any?): kotlin.String
@@ -725,7 +725,7 @@ public final class String : kotlin.Comparable<kotlin.String>, kotlin.CharSequenc
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPE, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final annotation class Suppress : kotlin.Annotation {
     /*primary*/ public constructor Suppress(/*0*/ vararg names: kotlin.String /*kotlin.Array<out kotlin.String>*/)
     public final val names: kotlin.Array<out kotlin.String>
-        public final fun <get-names>(): kotlin.Array<out kotlin.String>
+        public final fun `<get-names>`(): kotlin.Array<out kotlin.String>
 }
 
 public open class Throwable {
@@ -734,9 +734,9 @@ public open class Throwable {
     /*primary*/ public constructor Throwable(/*0*/ message: kotlin.String?, /*1*/ cause: kotlin.Throwable?)
     public constructor Throwable(/*0*/ cause: kotlin.Throwable?)
     public open val cause: kotlin.Throwable?
-        public open fun <get-cause>(): kotlin.Throwable?
+        public open fun `<get-cause>`(): kotlin.Throwable?
     public open val message: kotlin.String?
-        public open fun <get-message>(): kotlin.String?
+        public open fun `<get-message>`(): kotlin.String?
 }
 
 public object Unit {

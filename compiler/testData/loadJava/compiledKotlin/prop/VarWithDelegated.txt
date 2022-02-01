@@ -3,8 +3,8 @@ package test
 public final class A {
     /*primary*/ public constructor A()
     public final var a: kotlin.Int
-        public final fun <get-a>(): kotlin.Int
-        public final fun <set-a>(/*0*/ <set-?>: kotlin.Int): kotlin.Unit
+        public final fun `<get-a>`(): kotlin.Int
+        public final fun `<set-a>`(/*0*/ `<set-?>`: kotlin.Int): kotlin.Unit
 }
 
 public final class MyProperty</*0*/ T> {

@@ -1,10 +1,10 @@
 package
 
-public fun invalid1(): My<invalid1.<anonymous>.Local>
-public fun invalid2(): My<invalid2.<no name provided>>
-public fun invalid3(): My<invalid3.<no name provided>>
-public fun invalid4(): My<My<invalid4.<anonymous>.Local>>
-public fun invalid5(): My<invalid5.<anonymous>.invalid5a.<anonymous>.Local>
+public fun invalid1(): My<invalid1.`<anonymous>`.Local>
+public fun invalid2(): My<invalid2.`<no name provided>`>
+public fun invalid3(): My<invalid3.`<no name provided>`>
+public fun invalid4(): My<My<invalid4.`<anonymous>`.Local>>
+public fun invalid5(): My<invalid5.`<anonymous>`.invalid5a.`<anonymous>`.Local>
 public fun valid1(): kotlin.Any
 public fun valid2(): Base
 public fun valid3(): My<Base>

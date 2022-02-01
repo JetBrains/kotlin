@@ -1,8 +1,8 @@
 package
 
 public val b: First
-private val withTwoSupertypes: withTwoSupertypes.<anonymous>.<no name provided>
-private val withoutType: withoutType.<anonymous>.<no name provided>
+private val withTwoSupertypes: withTwoSupertypes.`<anonymous>`.`<no name provided>`
+private val withoutType: withoutType.`<anonymous>`.`<no name provided>`
 public fun </*0*/ T> lazy(/*0*/ initializer: () -> T): Lazy<T>
 
 public final class A</*0*/ T> {

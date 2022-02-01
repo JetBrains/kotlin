@@ -9,6 +9,6 @@ public final class Class {
 
     public interface Trait {
         @test.Anno public abstract val property: kotlin.Int
-            public abstract fun <get-property>(): kotlin.Int
+            public abstract fun `<get-property>`(): kotlin.Int
     }
 }

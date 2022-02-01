@@ -11,13 +11,13 @@ public abstract class A {
 
 public final class C {
     public constructor C()
-    private final val propA: C.propA.<no name provided>
-    private final val propAI: C.propAI.<no name provided>
-    private final val propG: C.propG.<no name provided>
-    private final val propI: C.propI.<no name provided>
-    private final val propL: C.propL.<anonymous>.L
-    private final val propL2: C.propL2.<anonymous>.L.L1.L2
-    private final val propOI: C.propOI.<no name provided>.D
+    private final val propA: C.propA.`<no name provided>`
+    private final val propAI: C.propAI.`<no name provided>`
+    private final val propG: C.propG.`<no name provided>`
+    private final val propI: C.propI.`<no name provided>`
+    private final val propL: C.propL.`<anonymous>`.L
+    private final val propL2: C.propL2.`<anonymous>`.L.L1.L2
+    private final val propOI: C.propOI.`<no name provided>`.D
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

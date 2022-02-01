@@ -7,11 +7,11 @@ public final enum class Enum : kotlin.Enum<test.Enum> {
 
     /*primary*/ private constructor Enum()
     public final val c: kotlin.Int
-        public final fun <get-c>(): kotlin.Int
+        public final fun `<get-c>`(): kotlin.Int
     public final override /*1*/ /*fake_override*/ val name: kotlin.String
-        public final override /*1*/ /*fake_override*/ fun <get-name>(): kotlin.String
+        public final override /*1*/ /*fake_override*/ fun `<get-name>`(): kotlin.String
     public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
-        public final override /*1*/ /*fake_override*/ fun <get-ordinal>(): kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun `<get-ordinal>`(): kotlin.Int
     protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
     public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.Enum): kotlin.Int
     public final fun f(): kotlin.Int

@@ -2,13 +2,13 @@ public final fun foo(): dynamic
 public final fun ext(): dynamic
 public final fun bar(): dynamic
 public final var baz: dynamic
-    public final fun <get-baz>(): dynamic
-    public final fun <set-baz>(/*0*/ <set-?>: dynamic): kotlin.Unit
+    public final fun `<get-baz>`(): dynamic
+    public final fun `<set-baz>`(/*0*/ `<set-?>`: dynamic): kotlin.Unit
 public final fun ext(): dynamic
 public final fun extValFun(): dynamic
 public final var extVal: dynamic
-    public final fun <get-extVal>(): dynamic
-    public final fun <set-extVal>(/*0*/ <set-?>: dynamic): kotlin.Unit
+    public final fun `<get-extVal>`(): dynamic
+    public final fun `<set-extVal>`(/*0*/ `<set-?>`: dynamic): kotlin.Unit
 public final fun extExtVal(): dynamic
 public final operator fun invoke(): dynamic
 public final operator fun plus(/*0*/ p0: dynamic): dynamic

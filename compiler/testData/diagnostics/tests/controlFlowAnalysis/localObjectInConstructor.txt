@@ -5,7 +5,7 @@ public fun println(/*0*/ obj: kotlin.Any?): kotlin.Any?
 
 public final class Demo0 {
     public constructor Demo0()
-    private final val some: Demo0.some.<no name provided>
+    private final val some: Demo0.some.`<no name provided>`
     private final var state: kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -14,7 +14,7 @@ public final class Demo0 {
 
 public final class Demo1 {
     public constructor Demo1()
-    private final val some: Demo1.some.<no name provided>
+    private final val some: Demo1.some.`<no name provided>`
     private final var state: kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -32,7 +32,7 @@ public final class Demo1A {
 
 public final class Demo2 {
     public constructor Demo2()
-    private final val some: Demo2.some.<no name provided>
+    private final val some: Demo2.some.`<no name provided>`
     private final var state: kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -59,7 +59,7 @@ public final class Demo4 {
 
 public final class Demo5 {
     public constructor Demo5()
-    private final val some: Demo5.some.<no name provided>
+    private final val some: Demo5.some.`<no name provided>`
     private final var state: kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

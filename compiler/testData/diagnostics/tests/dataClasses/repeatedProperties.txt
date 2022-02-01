@@ -29,12 +29,12 @@ public final data class A2 {
 }
 
 public final data class A3 {
-    public constructor A3(/*0*/ <no name provided>: kotlin.Int, /*1*/ <no name provided>: kotlin.Int)
-    public final val <no name provided>: kotlin.Int
-    public final val <no name provided>: kotlin.Int
+    public constructor A3(/*0*/ `<no name provided>`: kotlin.Int, /*1*/ `<no name provided>`: kotlin.Int)
+    public final val `<no name provided>`: kotlin.Int
+    public final val `<no name provided>`: kotlin.Int
     public final operator /*synthesized*/ fun component1(): kotlin.Int
     public final operator /*synthesized*/ fun component2(): kotlin.Int
-    public final /*synthesized*/ fun copy(/*0*/ <no name provided>: kotlin.Int = ..., /*1*/ <no name provided>: kotlin.Int = ...): A3
+    public final /*synthesized*/ fun copy(/*0*/ `<no name provided>`: kotlin.Int = ..., /*1*/ `<no name provided>`: kotlin.Int = ...): A3
     public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String

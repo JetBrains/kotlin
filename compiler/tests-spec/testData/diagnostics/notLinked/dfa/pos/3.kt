@@ -245,7 +245,7 @@ fun case_20(b: Boolean) {
     }
 
     if (a.B19.C19.D19 == null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.<no name provided>.B19.<no name provided>.C19.<no name provided>.D19.<no name provided>? & kotlin.Nothing?")!>a.B19.C19.D19<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("case_20.`<no name provided>`.B19.`<no name provided>`.C19.`<no name provided>`.D19.`<no name provided>`? & kotlin.Nothing?")!>a.B19.C19.D19<!>
     }
 }
 
@@ -297,10 +297,10 @@ fun case_25(b: Boolean) {
     val y = if (b) x else null
 
     if (y != null) {
-        val z = <!DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided>?")!><!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_25.<anonymous>.<no name provided>?)? & () -> case_25.<anonymous>.<no name provided>?"), DEBUG_INFO_SMARTCAST!>y<!>()<!>
+        val z = <!DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>`?")!><!DEBUG_INFO_EXPRESSION_TYPE("(() -> case_25.`<anonymous>`.`<no name provided>`?)? & () -> case_25.`<anonymous>`.`<no name provided>`?"), DEBUG_INFO_SMARTCAST!>y<!>()<!>
 
         if (z == null) {
-            <!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("case_25.<anonymous>.<no name provided>? & kotlin.Nothing?")!>z<!>
+            <!DEBUG_INFO_CONSTANT, DEBUG_INFO_EXPRESSION_TYPE("case_25.`<anonymous>`.`<no name provided>`? & kotlin.Nothing?")!>z<!>
         }
     }
 }

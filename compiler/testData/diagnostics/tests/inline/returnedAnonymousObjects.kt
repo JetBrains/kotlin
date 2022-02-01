@@ -20,33 +20,33 @@ private fun foo4(f: () -> Int) = object {
 }
 
 fun test1(b: Boolean) {
-    var x = <!DEBUG_INFO_EXPRESSION_TYPE("foo1.<no name provided>")!>foo1 { 1 }<!>
+    var x = <!DEBUG_INFO_EXPRESSION_TYPE("foo1.`<no name provided>`")!>foo1 { 1 }<!>
     if (b) {
-        x = <!DEBUG_INFO_EXPRESSION_TYPE("foo1.<no name provided>")!>foo1 { 2 }<!>
+        x = <!DEBUG_INFO_EXPRESSION_TYPE("foo1.`<no name provided>`")!>foo1 { 2 }<!>
     }
     x.bar()
 }
 
 fun test2(b: Boolean) {
-    var x = <!DEBUG_INFO_EXPRESSION_TYPE("foo2.<no name provided>")!>foo2 { 1 }<!>
+    var x = <!DEBUG_INFO_EXPRESSION_TYPE("foo2.`<no name provided>`")!>foo2 { 1 }<!>
     if (b) {
-        x = <!DEBUG_INFO_EXPRESSION_TYPE("foo2.<no name provided>")!>foo2 { 2 }<!>
+        x = <!DEBUG_INFO_EXPRESSION_TYPE("foo2.`<no name provided>`")!>foo2 { 2 }<!>
     }
     x.bar()
 }
 
 fun test3(b: Boolean) {
-    var x = <!DEBUG_INFO_EXPRESSION_TYPE("foo3.<no name provided>")!>foo3 { 1 }<!>
+    var x = <!DEBUG_INFO_EXPRESSION_TYPE("foo3.`<no name provided>`")!>foo3 { 1 }<!>
     if (b) {
-        x = <!DEBUG_INFO_EXPRESSION_TYPE("foo3.<no name provided>")!>foo3 { 2 }<!>
+        x = <!DEBUG_INFO_EXPRESSION_TYPE("foo3.`<no name provided>`")!>foo3 { 2 }<!>
     }
     x.bar()
 }
 
 fun test4(b: Boolean) {
-    var x = <!DEBUG_INFO_EXPRESSION_TYPE("foo4.<no name provided>")!>foo4 { 1 }<!>
+    var x = <!DEBUG_INFO_EXPRESSION_TYPE("foo4.`<no name provided>`")!>foo4 { 1 }<!>
     if (b) {
-        x = <!DEBUG_INFO_EXPRESSION_TYPE("foo4.<no name provided>")!>foo4 { 2 }<!>
+        x = <!DEBUG_INFO_EXPRESSION_TYPE("foo4.`<no name provided>`")!>foo4 { 2 }<!>
     }
     x.bar()
 }

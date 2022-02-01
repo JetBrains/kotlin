@@ -1,4 +1,4 @@
 package test
 
 public val kotlin.Int.itIs: kotlin.Int
-    public fun kotlin.Int.<get-itIs>(): kotlin.Int
+    public fun kotlin.Int.`<get-itIs>`(): kotlin.Int
