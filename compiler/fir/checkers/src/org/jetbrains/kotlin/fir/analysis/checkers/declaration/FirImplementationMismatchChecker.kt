@@ -218,7 +218,7 @@ object FirImplementationMismatchChecker : FirClassChecker() {
         }
 
         clashes.forEach {
-            reporter.reportOn(containingClass.source, FirErrors.CONFLICTING_INHERITED_MEMBERS, it.toList(), context)
+            reporter.reportOn(containingClass.source, FirErrors.CONFLICTING_INHERITED_MEMBERS, containingClass.symbol, it.toList(), context)
         }
     }
 

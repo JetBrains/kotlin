@@ -1788,6 +1788,7 @@ internal class VarOverriddenByValByDelegationImpl(
 ) : KtFirDiagnostic.VarOverriddenByValByDelegation(), KtAbstractFirDiagnostic<KtClassOrObject>
 
 internal class ConflictingInheritedMembersImpl(
+    override val owner: KtClassLikeSymbol,
     override val conflictingDeclarations: List<KtCallableSymbol>,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: ValidityToken,

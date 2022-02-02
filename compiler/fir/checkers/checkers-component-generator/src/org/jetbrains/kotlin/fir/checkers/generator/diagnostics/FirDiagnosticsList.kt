@@ -751,6 +751,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val CONFLICTING_INHERITED_MEMBERS by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirClassSymbol<*>>("owner")
             parameter<List<FirCallableSymbol<*>>>("conflictingDeclarations")
         }
 

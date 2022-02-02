@@ -1353,6 +1353,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             CONFLICTING_INHERITED_MEMBERS,
             "{0} inherits conflicting members: {1}",
+            DECLARATION_NAME,
             commaSeparated(DECLARATION_NAME)
         )
 
