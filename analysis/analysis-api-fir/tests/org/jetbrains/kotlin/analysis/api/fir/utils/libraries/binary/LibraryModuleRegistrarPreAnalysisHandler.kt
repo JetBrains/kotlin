@@ -10,8 +10,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.TestKtLibraryModule
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.projectModuleProvider
-import org.jetbrains.kotlin.analysis.api.impl.base.test.utils.libraries.TestLibraryUtils
 import org.jetbrains.kotlin.analysis.api.impl.base.test.utils.libraries.compiledLibraryProvider
+import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.registerTestServices
 import org.jetbrains.kotlin.test.model.TestModule
@@ -38,7 +38,7 @@ class LibraryModuleRegistrarPreAnalysisHandler(
     private fun getDecompiledVirtualFilesFromLibrary(module: TestModule, project: Project): List<KtClsFile> {
         val library = testServices.compiledLibraryProvider.getCompiledLibrary(module).jar
 
-        val virtualFiles = TestLibraryUtils.getAllVirtualFilesFromJar(library)
+        val virtualFiles = LibraryUtils.getAllVirtualFilesFromJar(library)
         return virtualFiles.mapNotNull { virtualFile ->
             PsiManager.getInstance(project).findFile(virtualFile) as? KtClsFile
         }

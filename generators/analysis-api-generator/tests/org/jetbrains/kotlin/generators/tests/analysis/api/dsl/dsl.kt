@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorServi
 import org.jetbrains.kotlin.analysis.api.fir.utils.libraries.binary.LibraryFrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.fir.utils.libraries.source.LibrarySourceFrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.api.standalone.StandaloneModeConfiguratorService
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.getDefaultSuiteTestClassName
@@ -26,6 +27,8 @@ internal sealed class TestModuleKind(val componentName: String) {
     object SOURCE : TestModuleKind("source")
     object LIBRARY : TestModuleKind("library")
     object LIBRARY_SOURCE : TestModuleKind("librarySource")
+
+    object STANDALONE_MODE : TestModuleKind("StandaloneMode")
 
     companion object {
         val SOURCE_ONLY by lazy(LazyThreadSafetyMode.NONE) { listOf(SOURCE) }
@@ -59,7 +62,6 @@ internal fun FirAndFe10TestGroup.test(
     }
 }
 
-
 internal fun TestGroupSuite.test(
     baseClass: KClass<*>,
     addFe10: Boolean = true,
@@ -69,20 +71,19 @@ internal fun TestGroupSuite.test(
     FirAndFe10TestGroup(this, directory = null, testModuleKinds).test(baseClass, addFe10, init)
 }
 
-
 internal fun TestGroupSuite.group(
     directory: String,
+    testModuleKinds: List<TestModuleKind> = TestModuleKind.SOURCE_ONLY,
     init: FirAndFe10TestGroup.() -> Unit,
 ) {
-    FirAndFe10TestGroup(this, directory, testModuleKinds = listOf(TestModuleKind.SOURCE)).init()
+    FirAndFe10TestGroup(this, directory, testModuleKinds).init()
 }
-
 
 internal fun TestGroupSuite.component(
     directory: String,
     init: FirAndFe10TestGroup.() -> Unit,
 ) {
-    group("components/$directory", init)
+    group("components/$directory", init = init)
 }
 
 private fun FirAndFe10TestGroup.analysisApiTest(
@@ -95,7 +96,7 @@ private fun FirAndFe10TestGroup.analysisApiTest(
         val fullTestPath = "analysis/analysis-api/testData" + directory?.let { "/$it" }.orEmpty()
         testGroup(testRoot, fullTestPath) {
             if (testModuleKinds.size == 1) {
-                analysisApiTestClass(frontend, moduleKind = TestModuleKind.SOURCE, testClass, prefixNeeded = false, init)
+                analysisApiTestClass(frontend, moduleKind = testModuleKinds.single(), testClass, prefixNeeded = false, init)
             } else {
                 testModuleKinds.forEach { component ->
                     analysisApiTestClass(frontend, component, testClass, prefixNeeded = true, init)
@@ -138,7 +139,7 @@ private fun TestGroup.analysisApiTestClass(
     }
 }
 
-private fun createConfigurator(
+internal fun createConfigurator(
     frontend: Frontend,
     moduleKind: TestModuleKind
 ): KClass<out FrontendApiTestConfiguratorService> = when (frontend) {
@@ -146,11 +147,13 @@ private fun createConfigurator(
         TestModuleKind.SOURCE -> FirFrontendApiTestConfiguratorService::class
         TestModuleKind.LIBRARY -> LibraryFrontendApiTestConfiguratorService::class
         TestModuleKind.LIBRARY_SOURCE -> LibrarySourceFrontendApiTestConfiguratorService::class
+        TestModuleKind.STANDALONE_MODE -> StandaloneModeConfiguratorService::class
     }
     Frontend.FE10 -> when (moduleKind) {
         TestModuleKind.SOURCE -> KtFe10FrontendApiTestConfiguratorService::class
         TestModuleKind.LIBRARY -> TODO("TestModuleKind.LIBRARY is unsupported for fe10")
         TestModuleKind.LIBRARY_SOURCE -> TODO("TestModuleKind.LIBRARY_SOURCE is unsupported for fe10")
+        TestModuleKind.STANDALONE_MODE -> TODO("TestModuleKind.STANDALONE_MODE is unsupported for fe10")
     }
 }
 
