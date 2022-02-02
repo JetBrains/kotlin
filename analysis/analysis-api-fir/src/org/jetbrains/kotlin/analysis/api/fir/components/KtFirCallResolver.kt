@@ -698,9 +698,9 @@ internal class KtFirCallResolver(
     private fun FirValueParameterSymbol.toKtSymbol(): KtValueParameterSymbol =
         firSymbolBuilder.variableLikeBuilder.buildValueParameterSymbol(this)
 
-    override fun resolveCandidates(psi: KtElement): List<KtCallInfo> = withValidityAssertion {
+    override fun collectCallCandidates(psi: KtElement): List<KtCallInfo> = withValidityAssertion {
         getKtCallInfos(psi) { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
-            resolveCandidates(
+            collectCallCandidates(
                 psiToResolve,
                 resolveCalleeExpressionOfFunctionCall,
                 resolveFragmentOfCall
@@ -709,7 +709,7 @@ internal class KtFirCallResolver(
     }
 
     // TODO: Refactor common code with FirElement.toKtCallInfo() when other FirResolvables are handled
-    private fun FirElement.resolveCandidates(
+    private fun FirElement.collectCallCandidates(
         psi: KtElement,
         resolveCalleeExpressionOfFunctionCall: Boolean,
         resolveFragmentOfCall: Boolean,
@@ -725,7 +725,7 @@ internal class KtFirCallResolver(
             //       // This way `f` is also the explicit receiver of this implicit `invoke` call
             // }
             // ```
-            return explicitReceiver?.resolveCandidates(
+            return explicitReceiver?.collectCallCandidates(
                 psi,
                 resolveCalleeExpressionOfFunctionCall = false,
                 resolveFragmentOfCall = resolveFragmentOfCall
@@ -736,7 +736,7 @@ internal class KtFirCallResolver(
                 val firFile = psi.containingKtFile.getOrBuildFirFile(firResolveState)
                 AllCandidatesResolver(analysisSession.rootModuleSession, firFile).getAllCandidates(this, psi, resolveFragmentOfCall)
             }
-            is FirSafeCallExpression -> selector.resolveCandidates(
+            is FirSafeCallExpression -> selector.collectCallCandidates(
                 psi,
                 resolveCalleeExpressionOfFunctionCall,
                 resolveFragmentOfCall

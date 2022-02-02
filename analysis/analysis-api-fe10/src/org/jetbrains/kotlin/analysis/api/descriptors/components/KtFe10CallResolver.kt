@@ -147,7 +147,7 @@ internal class KtFe10CallResolver(
     }
 
     // TODO: See Call.resolveCandidates() in plugins/kotlin/core/src/org/jetbrains/kotlin/idea/core/Utils.kt
-    override fun resolveCandidates(psi: KtElement): List<KtCallInfo> = TODO()
+    override fun collectCallCandidates(psi: KtElement): List<KtCallInfo> = TODO()
 
     private fun handleAsCompoundAssignment(context: BindingContext, binaryExpression: KtBinaryExpression): KtCallInfo? {
         val left = binaryExpression.left ?: return null
