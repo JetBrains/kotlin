@@ -164,23 +164,31 @@ abstract class ClasspathSnapshotTestCommon {
 
         fun ClassFile.readBytes() = asFile().readBytes()
 
-        fun ClassFile.snapshot(): ClassSnapshot = listOf(this).snapshot().single()
+        fun ClassFile.snapshot(granularity: ClassSnapshotGranularity? = null): ClassSnapshot = listOf(this).snapshot(granularity).single()
 
-        fun List<ClassFile>.snapshot(): List<ClassSnapshot> {
-            val classFilesWithContents = this.map { ClassFileWithContents(it, it.readBytes()) }
-            return ClassSnapshotter.snapshot(classFilesWithContents)
+        fun List<ClassFile>.snapshot(granularity: ClassSnapshotGranularity? = null): List<ClassSnapshot> {
+            val classes = map { ClassFileWithContents(it, it.readBytes()) }
+            return if (granularity == null) {
+                ClassSnapshotter.snapshot(classes)
+            } else {
+                ClassSnapshotter.snapshot(classes, granularity = granularity)
+            }
         }
     }
 }
 
-internal fun snapshotClasspath(classpathSourceDir: File, tmpDir: TemporaryFolder): ClasspathSnapshot {
+internal fun snapshotClasspath(
+    classpathSourceDir: File,
+    tmpDir: TemporaryFolder,
+    granularity: ClassSnapshotGranularity? = null
+): ClasspathSnapshot {
     val classpath = mutableListOf<File>()
     val classpathEntrySnapshots = classpathSourceDir.listFiles()!!.sortedBy { it.name }.map { classpathEntrySourceDir ->
         val classFiles = ClasspathSnapshotTestCommon.CompileUtil.compileAll(classpathEntrySourceDir, classpath, tmpDir)
         classpath.addAll(listOfNotNull(classFiles.firstOrNull()?.classRoot))
 
         val relativePaths = classFiles.map { it.unixStyleRelativePath }
-        val classSnapshots = classFiles.snapshot()
+        val classSnapshots = classFiles.snapshot(granularity)
         ClasspathEntrySnapshot(
             classSnapshots = relativePaths.zip(classSnapshots).toMap(LinkedHashMap())
         )

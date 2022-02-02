@@ -28,6 +28,9 @@ abstract class ClasspathChangesComputerTest : ClasspathSnapshotTestCommon() {
     abstract fun testModifiedAddedRemovedElements()
 
     @Test
+    abstract fun testModifiedAddedRemovedElements_ClassLevelSnapshot()
+
+    @Test
     abstract fun testImpactAnalysis()
 }
 
@@ -67,6 +70,28 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
                 LookupSymbol(name = "AddedClass", scope = "com.example"),
 
                 // RemovedClass
+                LookupSymbol(name = "RemovedClass", scope = "com.example"),
+            ),
+            fqNames = setOf(
+                "com.example.ModifiedClassUnchangedMembers",
+                "com.example.ModifiedClassChangedMembers",
+                "com.example.AddedClass",
+                "com.example.RemovedClass",
+            )
+        ).assertEquals(changes)
+    }
+
+    @Test
+    override fun testModifiedAddedRemovedElements_ClassLevelSnapshot() {
+        val changes = computeClasspathChanges(
+            File(testDataDir, "testModifiedAddedRemovedElements/src/kotlin"), tmpDir,
+            ClassSnapshotGranularity.CLASS_LEVEL
+        )
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "ModifiedClassUnchangedMembers", scope = "com.example"),
+                LookupSymbol(name = "ModifiedClassChangedMembers", scope = "com.example"),
+                LookupSymbol(name = "AddedClass", scope = "com.example"),
                 LookupSymbol(name = "RemovedClass", scope = "com.example"),
             ),
             fqNames = setOf(
@@ -229,6 +254,28 @@ class JavaOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
     }
 
     @Test
+    override fun testModifiedAddedRemovedElements_ClassLevelSnapshot() {
+        val changes = computeClasspathChanges(
+            File(testDataDir, "testModifiedAddedRemovedElements/src/java"), tmpDir,
+            ClassSnapshotGranularity.CLASS_LEVEL
+        )
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "ModifiedClassUnchangedMembers", scope = "com.example"),
+                LookupSymbol(name = "ModifiedClassChangedMembers", scope = "com.example"),
+                LookupSymbol(name = "AddedClass", scope = "com.example"),
+                LookupSymbol(name = "RemovedClass", scope = "com.example")
+            ),
+            fqNames = setOf(
+                "com.example.ModifiedClassUnchangedMembers",
+                "com.example.ModifiedClassChangedMembers",
+                "com.example.AddedClass",
+                "com.example.RemovedClass"
+            )
+        ).assertEquals(changes)
+    }
+
+    @Test
     override fun testImpactAnalysis() {
         val changes = computeClasspathChanges(File(testDataDir, "testImpactAnalysis_JavaOnly/src"), tmpDir)
         Changes(
@@ -294,9 +341,13 @@ class KotlinAndJavaClasspathChangesComputerTest : ClasspathSnapshotTestCommon() 
     }
 }
 
-private fun computeClasspathChanges(classpathSourceDir: File, tmpDir: TemporaryFolder): Changes {
-    val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir)
-    val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir)
+private fun computeClasspathChanges(
+    classpathSourceDir: File,
+    tmpDir: TemporaryFolder,
+    granularity: ClassSnapshotGranularity? = null
+): Changes {
+    val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir, granularity)
+    val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir, granularity)
     return computeClasspathChanges(currentSnapshot, previousSnapshot)
 }
 

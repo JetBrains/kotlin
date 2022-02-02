@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.readBytes
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.snapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.JavaSourceFile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.TestSourceFile
@@ -49,6 +50,19 @@ class KotlinOnlyClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
             "publicFunction's body",
             "privateFunction's body"
         )
+    }
+
+    @Test
+    fun testSimpleClass_ClassLevelSnapshot() {
+        val sourceFile = getSourceFile("testSimpleClass", "com/example/SimpleClass.kt")
+        val classFile = sourceFile.compileSingle()
+        val actualSnapshot = classFile.snapshot(ClassSnapshotGranularity.CLASS_LEVEL).toGson()
+        val expectedSnapshot = sourceFile.getExpectedSnapshotFile(ClassSnapshotGranularity.CLASS_LEVEL).readText()
+
+        assertEquals(expectedSnapshot, actualSnapshot)
+
+        // Check that the snapshot does not contain class member details
+        actualSnapshot.assertDoesNotContain("publicProperty", "privateProperty", "publicFunction", "privateFunction")
     }
 
     @Test
@@ -116,11 +130,25 @@ class JavaOnlyClasspathSnapshotterTest : ClasspathSnapshotTestCommon() {
             "privateMethod's body"
         )
     }
+
+    @Test
+    fun testSimpleClass_ClassLevelSnapshot() {
+        val sourceFile = getSourceFile("testSimpleClass", "com/example/SimpleClass.java")
+        val classFile = sourceFile.compileSingle()
+        val actualSnapshot = classFile.snapshot(ClassSnapshotGranularity.CLASS_LEVEL).toGson()
+        val expectedSnapshot = sourceFile.getExpectedSnapshotFile(ClassSnapshotGranularity.CLASS_LEVEL).readText()
+
+        assertEquals(expectedSnapshot, actualSnapshot)
+
+        // Check that the snapshot does not contain class member details
+        actualSnapshot.assertDoesNotContain("publicField", "privateField", "publicMethod", "privateMethod")
+    }
 }
 
-private fun TestSourceFile.getExpectedSnapshotFile(): File {
+private fun TestSourceFile.getExpectedSnapshotFile(granularity: ClassSnapshotGranularity? = null): File {
     val relativePath = sourceFile.unixStyleRelativePath.substringBeforeLast(".") + ".json"
-    return sourceFile.baseDir.resolve("../expected-snapshot/$relativePath")
+    val expectedSnapshotDirName = if (granularity == null) "expected-snapshot" else "expected-snapshot-${granularity.name}"
+    return sourceFile.baseDir.resolve("../$expectedSnapshotDirName/$relativePath")
 }
 
 private fun String.assertContains(vararg elements: String) {
