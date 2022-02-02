@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.ir.backend.js.export.isExported
+import org.jetbrains.kotlin.ir.backend.js.optimization.annotate
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -15,6 +17,11 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
     override fun visitSimpleFunction(declaration: IrSimpleFunction, context: JsGenerationContext): JsStatement {
         require(!declaration.isExpect)
         return declaration.accept(IrFunctionToJsTransformer(), context).makeStmt()
+            .annotate(context) {
+                withParams(declaration.valueParameters)
+                withReturnType(declaration.returnType)
+                withTypeVariables(declaration.typeParameters)
+            }
     }
 
     override fun visitConstructor(declaration: IrConstructor, context: JsGenerationContext): JsStatement {
@@ -43,7 +50,9 @@ class IrDeclarationToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatemen
             context.staticContext.initializerBlock.statements += jsAssignment(fieldName.makeRef(), initializer).makeStmt()
         }
 
-        return JsVars(JsVars.JsVar(fieldName))
+        return JsVars(JsVars.JsVar(fieldName)).annotate(context) {
+            mutability(isMutable = true, declaration.type)
+        }
     }
 
     override fun visitVariable(declaration: IrVariable, context: JsGenerationContext): JsStatement {

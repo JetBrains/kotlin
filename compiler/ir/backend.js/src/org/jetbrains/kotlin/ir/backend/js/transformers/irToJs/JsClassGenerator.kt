@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenExported
 import org.jetbrains.kotlin.ir.backend.js.optimization.annotate
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.overrides.isOverridableMemberOrAccessor
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -74,11 +75,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                             }
                         }
                     } else {
-                        classBlock.statements += declaration.accept(transformer, context).annotate {
-                            constructor()
-                            inheritable(!irClass.isFinalClass)
-                            exported(irClass.isExported(context.staticContext.backendContext))
-                        }
+                        classBlock.statements += declaration.accept(transformer, context).annotateConstructor(declaration)
                         classModel.preDeclarationBlock.statements += generateInheritanceCode()
                     }
                 }
@@ -91,14 +88,28 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                         declaration.generateAssignmentIfMangled(memberRef)
                     } else {
                         val (memberRef, function) = generateMemberFunction(declaration)
-                        function?.let { classBlock.statements += jsAssignment(memberRef, it.apply { name = null }).makeStmt() }
+                        function?.let {
+                            classBlock.statements += jsAssignment(memberRef, it.apply { name = null }).makeStmt()
+                                .annotate(context) {
+                                    exportability(
+                                        declaration.correspondingPropertySymbol == null &&
+                                                declaration.isExported(context.staticContext.backendContext) &&
+                                                !declaration.isMangled()
+                                    )
+                                    visibility(declaration.visibility)
+                                    inheritable(declaration.isOverridableMemberOrAccessor())
+                                    withParams(declaration.valueParameters)
+                                    withReturnType(declaration.returnType)
+                                    withTypeVariables(declaration.typeParameters)
+                                }
+                        }
                         declaration.generateAssignmentIfMangled(memberRef)
                     }
                 }
                 is IrClass -> {
 //                    classBlock.statements += JsClassGenerator(declaration, context).generate()
                 }
-                is IrField -> {
+                is IrField, is IrProperty -> {
                 }
                 else -> {
                     compilationException(
@@ -247,13 +258,15 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         }
 
     private fun IrSimpleFunction.generateAssignmentIfMangled(memberRef: JsExpression) {
-        if (
-            irClass.isExported(context.staticContext.backendContext) &&
-            visibility.isPublicAPI && hasMangledName() &&
-            correspondingPropertySymbol == null
-        ) {
+        if (isMangled()) {
             classBlock.statements += jsAssignment(prototypeAccessRef(), memberRef).makeStmt()
         }
+    }
+
+    private fun IrSimpleFunction.isMangled(): Boolean {
+        return irClass.isExported(context.staticContext.backendContext) &&
+                visibility.isPublicAPI && hasMangledName() &&
+                correspondingPropertySymbol == null
     }
 
     private fun IrSimpleFunction.hasMangledName(): Boolean {
@@ -284,7 +297,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
             if (irClass.isInterface) {
                 classModel.preDeclarationBlock.statements += translatedFunction.makeStmt()
-                    .annotate {
+                    .annotate(context) {
                         visibility(declaration.visibility)
                         exported(declaration.isExported(context.staticContext.backendContext))
                     }
@@ -333,8 +346,25 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         if (!irClass.declarations.any { it is IrConstructor }) {
             val func = JsFunction(emptyScope, JsBlock(), "Ctor for ${irClass.name}")
             func.name = className
-            classBlock.statements += func.makeStmt()
+            classBlock.statements += func.makeStmt().annotateConstructor()
             classModel.preDeclarationBlock.statements += generateInheritanceCode()
+        }
+    }
+
+    private fun JsStatement.annotateConstructor(declaration: IrFunction? = null): JsStatement {
+        return annotate(context) {
+            val interfaces = irClass.superTypes.filter { it !== baseClass && !it.isAny() }
+            if (irClass.isInterface) {
+                interface_()
+                extends(interfaces)
+            } else {
+                constructor()
+                inheritable(!irClass.isFinalClass)
+                extends(baseClass?.let { listOf(it) }.orEmpty())
+                implements(interfaces)
+                declaration?.run { withParams(valueParameters) }
+            }
+            withTypeVariables(declaration?.typeParameters.orEmpty() + irClass.typeParameters)
         }
     }
 

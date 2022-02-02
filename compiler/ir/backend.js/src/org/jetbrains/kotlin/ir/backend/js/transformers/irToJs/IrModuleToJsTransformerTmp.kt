@@ -100,7 +100,7 @@ class IrModuleToJsTransformerTmp(
         }
 
         modes.filter { it.dce }.forEach {
-            result[it] = compilationOutput(it.perModule).optimize()
+            result[it] = compilationOutput(it.perModule).optimize(backendContext)
         }
 
         return CompilerResult(result, dts)

@@ -464,7 +464,7 @@ class ExportModelGenerator(
         )
     }
 
-    private fun exportType(type: IrType): ExportedType {
+    fun exportType(type: IrType, withImplicitExport: Boolean = true): ExportedType {
         if (type is IrDynamicType)
             return ExportedType.Primitive.Any
 
@@ -507,7 +507,7 @@ class ExportModelGenerator(
 
             classifier is IrClassSymbol -> {
                 val klass = classifier.owner
-                val isImplicitlyExported = !klass.isExported(context)
+                val isImplicitlyExported = withImplicitExport && !klass.isExported(context)
                 val name = if (generateNamespacesForPackages) klass.fqNameWhenAvailable!!.asString() else klass.name.asString()
 
                 when (klass.kind) {

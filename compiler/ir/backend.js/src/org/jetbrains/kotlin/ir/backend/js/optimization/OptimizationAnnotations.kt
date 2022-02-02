@@ -7,25 +7,47 @@ package org.jetbrains.kotlin.ir.backend.js.optimization
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
-import org.jetbrains.kotlin.js.backend.ast.JsDocComment
-import org.jetbrains.kotlin.js.backend.ast.JsStatement
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.isAny
+import org.jetbrains.kotlin.js.backend.ast.*
 
-fun JsStatement.annotate(builder: OptimizationAnnotations.() -> Unit): List<JsStatement> {
-    return OptimizationAnnotations()
+fun JsStatement.annotate(context: JsGenerationContext, builder: OptimizationAnnotations.() -> Unit): JsStatement {
+    return OptimizationAnnotations(context)
         .apply { builder() }
-        .run { listOf(makeStmt(), this@annotate) }
+        .run {
+            JsGlobalBlock().apply {
+                statements += makeStmt()
+                statements += this@annotate
+            }
+        }
 }
 
-class OptimizationAnnotations {
+class OptimizationAnnotations(val context: JsGenerationContext) {
     private val jsDoc = JsDocComment(mutableMapOf())
+    private val typeToClosureTypeAnnotationConverter = IrTypeToClosureTypeAnnotation(context.staticContext.backendContext)
 
     fun constructor() {
         jsDoc.appendTag("constructor")
+        jsDoc.appendTag("struct")
     }
 
-    fun struct() {
-        jsDoc.appendTag("struct")
+    fun interface_() {
+        jsDoc.appendTag("interface")
+    }
+
+    fun template(types: Iterable<String>) {
+        jsDoc.appendTag("template", description = types.joinToString(", "))
+    }
+
+    fun param(type: String, name: String) {
+        jsDoc.appendTag("param", type, name)
     }
 
     fun override() {
@@ -36,12 +58,36 @@ class OptimizationAnnotations {
         jsDoc.appendTag("final")
     }
 
+    fun define(type: String) {
+        jsDoc.appendTag("define", type)
+    }
+
     fun const(type: String? = null) {
         jsDoc.appendTag("const", type)
     }
 
+    fun type(type: String) {
+        jsDoc.appendTag("type", type)
+    }
+
+    fun param(type: String) {
+        jsDoc.appendTag("param", type)
+    }
+
     fun export() {
         jsDoc.appendTag("export")
+    }
+
+    fun extends(type: String) {
+        jsDoc.appendTag("extends", type)
+    }
+
+    fun implements(type: String) {
+        jsDoc.appendTag("implements", type)
+    }
+
+    fun returnType(type: String) {
+        jsDoc.appendTag("return", type)
     }
 
     fun public() {
@@ -76,11 +122,81 @@ class OptimizationAnnotations {
         }
     }
 
-    internal fun makeStmt(): JsStatement {
-        return jsDoc.makeStmt()
+    fun mutability(isMutable: Boolean, type: IrType) {
+        val closureType = typeToClosureTypeAnnotationConverter.convertOrNull(type)
+        if (!isMutable) {
+            const(closureType)
+        } else if (closureType != null) {
+            type(closureType)
+        }
     }
 
-    private fun JsDocComment.appendTag(tag: String, tagValue: String? = null) {
-        tags[tag] = tagValue
+    fun exportability(isExported: Boolean) {
+        if (isExported) {
+            export()
+        }
+    }
+
+    fun overridden(isOverridden: Boolean) {
+        if (isOverridden) {
+            override()
+        }
+    }
+
+    fun withReturnType(type: IrType) {
+        if (type == context.staticContext.backendContext.irBuiltIns.unitType) return
+        returnType(typeToClosureTypeAnnotationConverter.convert(type))
+    }
+
+    fun withParams(params: List<IrValueParameter>) {
+        if (params.isEmpty()) return
+        params.forEach {
+            param(
+                typeToClosureTypeAnnotationConverter.convert(it.type),
+                context.getNameForValueDeclaration(it).ident
+            )
+        }
+    }
+
+    fun withTypeVariables(typeVariables: List<IrTypeParameter>) {
+        if (typeVariables.isEmpty()) return
+        template(
+            typeVariables.map {
+                typeToClosureTypeAnnotationConverter.convert(
+                    IrSimpleTypeImpl(it.symbol, false, emptyList(), emptyList())
+                )
+            }
+        )
+    }
+
+    fun implements(parents: List<IrType>) {
+        parents.applyToEachType(::implements)
+    }
+
+    fun extends(parents: List<IrType>) {
+        parents.applyToEachType(::extends)
+    }
+
+    fun constant(type: IrType) {
+        typeToClosureTypeAnnotationConverter.convertOrNull(type)?.run {
+            define(this)
+        }
+    }
+
+    private inline fun List<IrType>.applyToEachType(fn: (String) -> Unit) {
+        if (isEmpty() || singleOrNull()?.isAny() == true) return
+        forEach {
+            typeToClosureTypeAnnotationConverter.convertOrNull(it)?.run {
+                fn(this)
+            }
+        }
+    }
+
+    internal fun makeStmt(): JsStatement {
+        return if (jsDoc.tags.isEmpty()) JsEmpty else jsDoc.makeStmt()
+    }
+
+    private fun JsDocComment.appendTag(tag: String, tagValue: String? = null, description: String = "") {
+        tags[tag] = tagValue?.run { "{$this} $description" } ?: description
     }
 }
