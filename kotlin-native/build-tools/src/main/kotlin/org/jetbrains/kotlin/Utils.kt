@@ -259,6 +259,20 @@ fun Task.dependsOnDist() {
     }
 }
 
+fun Task.dependsOnCrossDist(target: KonanTarget) {
+    if (project.isDefaultNativeHome) {
+        if (target != HostManager.host) {
+            // if a test_target property is set then tests should depend on a crossDist
+            // otherwise, runtime components would not be build for a target.
+            dependsOn(":kotlin-native:${target.name}CrossDist")
+        }
+    } else {
+        if (!project.isCrossDist) {
+            dependsOn(":kotlin-native:${target.name}CrossDist")
+        }
+    }
+}
+
 fun Task.konanOldPluginTaskDependenciesWalker(index:Int = 0, walker: Task.(Int)->Unit) {
     walker(index + 1)
     dependsOn.forEach{
