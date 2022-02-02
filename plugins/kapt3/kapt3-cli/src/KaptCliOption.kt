@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.kapt.cli
 
 import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.kapt.cli.CliToolOption.Format.*
-import java.io.File
 
 class CliToolOption(val name: String, val format: Format) {
     enum class Format {
@@ -174,18 +173,18 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-verbose", FLAG)
     ),
 
-    SHOW_PROCESSOR_TIMINGS(
-        "showProcessorTimings",
+    SHOW_PROCESSOR_STATS(
+        "showProcessorStats",
         "true | false",
         "Show processor timings",
-        cliToolOption = CliToolOption("-Kapt-show-processor-timings", FLAG)
+        cliToolOption = CliToolOption("-Kapt-show-processor-stats", FLAG)
     ),
 
-    DUMP_PROCESSOR_TIMINGS(
-        "dumpProcessorTimings",
+    DUMP_PROCESSOR_STATS(
+        "dumpProcessorStats",
         "<path>",
-        "Dump processor performance statistics to the specified file",
-        cliToolOption = CliToolOption("-Kapt-dump-processor-timings", VALUE)
+        "Dump processor statistics (performance and generations) to the specified file",
+        cliToolOption = CliToolOption("-Kapt-dump-processor-stats", VALUE)
     ),
 
     STRICT_MODE_OPTION(

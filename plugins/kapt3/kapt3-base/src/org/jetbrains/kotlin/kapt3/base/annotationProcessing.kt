@@ -116,13 +116,13 @@ fun KaptContext.doAnnotationProcessing(
             logger.info("Annotation processing complete, errors: $errorCount, warnings: $warningCount")
         }
 
-        val showProcessorTimings = options[KaptFlag.SHOW_PROCESSOR_TIMINGS]
+        val showProcessorTimings = options[KaptFlag.SHOW_PROCESSOR_STATS]
         if (logger.isVerbose || showProcessorTimings) {
             val loggerFun = if (showProcessorTimings) logger::warn else logger::info
-            showProcessorTimings(wrappedProcessors, loggerFun)
+            showProcessorStats(wrappedProcessors, loggerFun)
         }
 
-        options.processorsPerfReportFile?.let { dumpProcessorTiming(wrappedProcessors, options.processorsPerfReportFile, logger::info) }
+        options.processorsStatsReportFile?.let { dumpProcessorStats(wrappedProcessors, options.processorsStatsReportFile, logger::info) }
 
         if (logger.isVerbose) {
             filer.displayState()
@@ -137,14 +137,14 @@ fun KaptContext.doAnnotationProcessing(
     }
 }
 
-private fun showProcessorTimings(wrappedProcessors: List<ProcessorWrapper>, logger: (String) -> Unit) {
+private fun showProcessorStats(wrappedProcessors: List<ProcessorWrapper>, logger: (String) -> Unit) {
     logger("Annotation processor stats:")
     wrappedProcessors.forEach { processor ->
         logger(processor.renderSpentTime())
     }
 }
 
-private fun dumpProcessorTiming(wrappedProcessors: List<ProcessorWrapper>, apReportFile: File, logger: (String) -> Unit) {
+private fun dumpProcessorStats(wrappedProcessors: List<ProcessorWrapper>, apReportFile: File, logger: (String) -> Unit) {
     logger("Dumping Kapt Annotation Processing performance report to ${apReportFile.absolutePath}")
 
     apReportFile.writeText(buildString {
