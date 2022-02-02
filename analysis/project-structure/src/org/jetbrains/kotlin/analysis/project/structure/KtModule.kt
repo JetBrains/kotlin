@@ -110,7 +110,7 @@ public sealed interface KtBinaryModule : KtModule, KtModuleWithProject {
 }
 
 /**
- * A module which represents a binary library. E.g, JAR o KLIB.
+ * A module which represents a binary library. E.g, JAR or KLIB.
  */
 public interface KtLibraryModule : KtBinaryModule {
     public val libraryName: String

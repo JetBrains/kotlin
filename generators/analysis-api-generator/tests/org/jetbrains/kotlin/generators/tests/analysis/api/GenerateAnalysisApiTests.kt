@@ -21,4 +21,5 @@ private fun TestGroupSuite.generateTests() {
     generateFirLowLevelApiTests()
     generateDecompiledTests()
     generateSymbolLightClassesTests()
+    generateStandaloneModeTests()
 }

@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.component
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.group
 import org.jetbrains.kotlin.generators.tests.analysis.api.dsl.test
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
-import java.nio.file.Paths
 
 fun TestGroupSuite.generateAnalysisApiTests() {
     generateAnalysisApiComponentsTests()
