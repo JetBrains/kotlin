@@ -228,7 +228,7 @@ class DeclarationsConverter(
 
     private fun MutableList<String>.collectSegments(expression: LighterASTNode) {
         when (expression.tokenType) {
-            REFERENCE_EXPRESSION -> add(expression.asText)
+            REFERENCE_EXPRESSION -> add(expression.getAsStringWithoutBacktick())
             DOT_QUALIFIED_EXPRESSION -> {
                 expression.forEachChildren {
                     collectSegments(it)
