@@ -15,11 +15,13 @@ import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -52,8 +54,9 @@ class MemoizedInlineClassReplacements(
     val getReplacementFunction: (IrFunction) -> IrSimpleFunction? =
         storageManager.createMemoizedFunctionWithNullableValues {
             when {
-                // Do not generate constructor-impl for sealed inline classes
-                it is IrConstructor && it.parentAsClass.modality == Modality.SEALED -> null
+                // Generate constructor-impl for sealed inline classes with a parameter
+                it is IrConstructor && it.parentAsClass.modality == Modality.SEALED ->
+                    createStaticReplacementForSealedInlineClassConstructor(it)
 
                 // Don't mangle anonymous or synthetic functions, except for generated SAM wrapper methods
                 (it.isLocal && it is IrSimpleFunction && it.overriddenSymbols.isEmpty()) ||
@@ -87,6 +90,25 @@ class MemoizedInlineClassReplacements(
                 else ->
                     null
             }
+        }
+
+    private fun createStaticReplacementForSealedInlineClassConstructor(constructor: IrConstructor): IrSimpleFunction =
+        buildReplacement(constructor, JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT, noFakeOverride = true) {
+            valueParameters = listOf(
+                context.irFactory.createValueParameter(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    IrDeclarationOrigin.PRIMARY_CONSTRUCTOR_PARAMETER_FOR_SEALED_INLINE_CLASS,
+                    IrValueParameterSymbolImpl(),
+                    Name.identifier("\$value"),
+                    index = 0,
+                    type = context.irBuiltIns.anyNType,
+                    varargElementType = null,
+                    isCrossinline = false,
+                    isNoinline = false,
+                    isHidden = false,
+                    isAssignable = false
+                )
+            )
         }
 
     private fun IrFunction.isRemoveAtSpecialBuiltinStub() =
