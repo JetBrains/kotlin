@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.resolve.inference
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
-import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
@@ -21,12 +20,6 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
-    override fun TypeVariableMarker.shouldBeFlexible(): Boolean {
-        if (this !is ConeTypeParameterBasedTypeVariable) return false
-
-        return this.typeParameterSymbol.fir.bounds.any { it.coneTypeSafe<ConeFlexibleType>() != null }
-    }
-
     override fun TypeVariableMarker.hasOnlyInputTypesAttribute(): Boolean {
         // TODO
         return false

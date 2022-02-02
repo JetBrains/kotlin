@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
  *   but we need access classes from :compiler:resolution for this function implementation
  */
 interface ConstraintSystemUtilContext {
-    fun TypeVariableMarker.shouldBeFlexible(): Boolean
     fun TypeVariableMarker.hasOnlyInputTypesAttribute(): Boolean
     fun KotlinTypeMarker.unCapture(): KotlinTypeMarker
     fun TypeVariableMarker.isReified(): Boolean

@@ -59,7 +59,7 @@ class ConstraintIncorporator(
         typeVariable: TypeVariableMarker,
         constraint: Constraint
     ) {
-        val shouldBeTypeVariableFlexible = with(utilContext) { typeVariable.shouldBeFlexible() }
+        val shouldBeTypeVariableFlexible = false
 
         // \alpha <: constraint.type
         if (constraint.kind != ConstraintKind.LOWER) {
