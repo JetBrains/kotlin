@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.incremental.ChangesEither
 import org.jetbrains.kotlin.incremental.LookupSymbol
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.snapshot
-import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compileAll
 import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -300,21 +298,6 @@ private fun computeClasspathChanges(classpathSourceDir: File, tmpDir: TemporaryF
     val currentSnapshot = snapshotClasspath(File(classpathSourceDir, "current-classpath"), tmpDir)
     val previousSnapshot = snapshotClasspath(File(classpathSourceDir, "previous-classpath"), tmpDir)
     return computeClasspathChanges(currentSnapshot, previousSnapshot)
-}
-
-private fun snapshotClasspath(classpathSourceDir: File, tmpDir: TemporaryFolder): ClasspathSnapshot {
-    val classpath = mutableListOf<File>()
-    val classpathEntrySnapshots = classpathSourceDir.listFiles()!!.sortedBy { it.name }.map { classpathEntrySourceDir ->
-        val classFiles = compileAll(classpathEntrySourceDir, classpath, tmpDir)
-        classpath.addAll(listOfNotNull(classFiles.firstOrNull()?.classRoot))
-
-        val relativePaths = classFiles.map { it.unixStyleRelativePath }
-        val classSnapshots = classFiles.snapshot()
-        ClasspathEntrySnapshot(
-            classSnapshots = relativePaths.zip(classSnapshots).toMap(LinkedHashMap())
-        )
-    }
-    return ClasspathSnapshot(classpathEntrySnapshots)
 }
 
 private fun computeClasspathChanges(

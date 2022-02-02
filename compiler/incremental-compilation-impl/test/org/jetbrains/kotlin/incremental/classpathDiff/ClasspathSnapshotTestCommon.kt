@@ -172,3 +172,18 @@ abstract class ClasspathSnapshotTestCommon {
         }
     }
 }
+
+internal fun snapshotClasspath(classpathSourceDir: File, tmpDir: TemporaryFolder): ClasspathSnapshot {
+    val classpath = mutableListOf<File>()
+    val classpathEntrySnapshots = classpathSourceDir.listFiles()!!.sortedBy { it.name }.map { classpathEntrySourceDir ->
+        val classFiles = ClasspathSnapshotTestCommon.CompileUtil.compileAll(classpathEntrySourceDir, classpath, tmpDir)
+        classpath.addAll(listOfNotNull(classFiles.firstOrNull()?.classRoot))
+
+        val relativePaths = classFiles.map { it.unixStyleRelativePath }
+        val classSnapshots = classFiles.snapshot()
+        ClasspathEntrySnapshot(
+            classSnapshots = relativePaths.zip(classSnapshots).toMap(LinkedHashMap())
+        )
+    }
+    return ClasspathSnapshot(classpathEntrySnapshots)
+}
