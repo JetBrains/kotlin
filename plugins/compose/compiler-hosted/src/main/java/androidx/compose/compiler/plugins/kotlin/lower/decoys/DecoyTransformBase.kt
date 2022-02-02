@@ -70,7 +70,7 @@ internal interface DecoyTransformBase {
             is IdSignature.LoweredDeclarationSignature -> TODO()
             is IdSignature.FileSignature -> TODO()
             is IdSignature.CommonSignature -> id!!
-            is IdSignature.CompositeSignature -> this.getSignatureId()
+            is IdSignature.CompositeSignature -> this.nearestPublicSig().getSignatureId()
             is IdSignature.LocalSignature -> this.getSignatureId()
         }
     }
