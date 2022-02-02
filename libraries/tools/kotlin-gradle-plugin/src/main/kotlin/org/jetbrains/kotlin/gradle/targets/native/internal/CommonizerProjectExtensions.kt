@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.commonizer.AdditionalCommonizerSetting
-import org.jetbrains.kotlin.commonizer.CommonizerLogLevel
-import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabledKey
-import org.jetbrains.kotlin.commonizer.setTo
+import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 
 internal val Project.commonizerLogLevel: CommonizerLogLevel
@@ -24,5 +21,6 @@ internal val Project.commonizerLogLevel: CommonizerLogLevel
 
 internal val Project.additionalCommonizerSettings: List<AdditionalCommonizerSetting<*>>
     get() = listOf(
-        OptimisticNumberCommonizationEnabledKey setTo isOptimisticNumberCommonizationEnabled
+        OptimisticNumberCommonizationEnabledKey setTo isOptimisticNumberCommonizationEnabled,
+        PlatformIntegerCommonizationEnabledKey setTo isPlatformIntegerCommonizationEnabled,
     )

@@ -25,6 +25,9 @@ internal val Project.isIntransitiveMetadataConfigurationEnabled: Boolean
 internal val Project.isOptimisticNumberCommonizationEnabled: Boolean
     get() = PropertiesProvider(this).mppEnableOptimisticNumberCommonization
 
+internal val Project.isPlatformIntegerCommonizationEnabled: Boolean
+    get() = PropertiesProvider(this).mppEnablePlatformIntegerCommonization
+
 internal val Project.commonizeTask: TaskProvider<Task>
     get() = locateOrRegisterTask(
         "commonize",

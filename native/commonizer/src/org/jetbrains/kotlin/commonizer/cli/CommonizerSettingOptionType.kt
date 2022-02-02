@@ -15,7 +15,3 @@ internal sealed class CommonizerSettingOptionType<T : Any>(
     description,
     mandatory = false,
 )
-
-internal val ADDITIONAL_COMMONIZER_SETTINGS: List<CommonizerSettingOptionType<*>> = listOf(
-    OptimisticNumberCommonizationOptionType,
-)

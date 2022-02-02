@@ -17,6 +17,8 @@ internal fun AbstractInlineSourcesCommonizationTest.ParametersBuilder.registerFa
         unsingedVarIntegers()
         singedVarIntegers()
         unsafeNumberAnnotationSource()
+        ranges()
+        platformIntegers()
     }
 }
 
@@ -24,10 +26,16 @@ internal fun InlineSourceBuilder.ModuleBuilder.unsignedIntegers() {
     source(
         """
         package kotlin
-        class UByte
-        class UShort
-        class UInt
-        class ULong
+        
+        class UByte : Comparable<UByte> { override fun compareTo(other: UByte): Int = null!! }
+        class UShort : Comparable<UShort> { override fun compareTo(other: UShort): Int = null!! }
+        class UInt : Comparable<UInt> { override fun compareTo(other: UInt): Int = null!! }
+        class ULong : Comparable<ULong> { override fun compareTo(other: ULong): Int = null!! }
+        
+        class UByteArray
+        class UShortArray
+        class UIntArray
+        class ULongArray
         """.trimIndent(), "unsigned.kt"
     )
 }
@@ -36,10 +44,10 @@ private fun InlineSourceBuilder.ModuleBuilder.unsingedVarIntegers() {
     source(
         """
         package kotlinx.cinterop
-        class UByteVarOf
-        class UShortVarOf
-        class UIntVarOf
-        class ULongVarOf
+        class UByteVarOf<T : UByte>
+        class UShortVarOf<T : UShort>
+        class UIntVarOf<T : UInt>
+        class ULongVarOf<T : ULong>
         """.trimIndent(), "UnsignedVarOf.kt"
     )
 }
@@ -48,10 +56,10 @@ private fun InlineSourceBuilder.ModuleBuilder.singedVarIntegers() {
     source(
         """
         package kotlinx.cinterop
-        class ByteVarOf
-        class ShortVarOf
-        class IntVarOf
-        class LongVarOf
+        class ByteVarOf<T : Byte>
+        class ShortVarOf<T : Short>
+        class IntVarOf<T : Int>
+        class LongVarOf<T : Long>
         """.trimIndent(), "SignedVarOf.kt"
     )
 }
@@ -72,5 +80,63 @@ internal fun InlineSourceBuilder.ModuleBuilder.unsafeNumberAnnotationSource() {
             typealias UnsafeNumber = kotlinx.cinterop.UnsafeNumber
         """.trimIndent(),
         "UnsafeNumberTypeAlias.kt"
+    )
+}
+
+internal fun InlineSourceBuilder.ModuleBuilder.ranges() {
+    source(
+        """
+            package kotlin.ranges
+            
+            interface ClosedRange<T : Comparable<T>>
+            
+            open class IntProgression
+            open class UIntProgression
+            open class LongProgression
+            open class ULongProgression
+            
+            class IntRange : IntProgression(), ClosedRange<Int>
+            class UIntRange : UIntProgression(), ClosedRange<UInt>
+            class LongRange : LongProgression(), ClosedRange<Long>
+            class ULongRange : ULongProgression(), ClosedRange<ULong>
+        """.trimIndent(),
+        "Ranges.kt"
+    )
+}
+
+private fun InlineSourceBuilder.ModuleBuilder.platformIntegers() {
+    source(
+        """
+            package kotlin
+            
+            expect class PlatformInt : Number, Comparable<PlatformInt>
+            expect class PlatformUInt : Comparable<PlatformUInt>
+            expect class PlatformIntArray
+            expect class PlatformUIntArray
+        """.trimIndent(),
+        "PlatformInts.kt"
+    )
+
+    source(
+        """
+            package kotlinx.cinterop
+            
+            abstract class CVariable
+            
+            expect class PlatformIntVarOf<T : PlatformInt> : CVariable
+            expect class PlatformUIntVarOf<T : PlatformUInt> : CVariable
+        """.trimIndent(),
+        "PlatformVars.kt"
+    )
+
+    source(
+        """
+            package kotlin.ranges
+            
+            expect open class PlatformIntProgression
+            expect open class PlatformUIntProgression
+            expect class PlatformIntRange : PlatformIntProgression, ClosedRange<PlatformInt>
+            expect class PlatformUIntRange : PlatformUIntProgression, ClosedRange<PlatformUInt>
+        """.trimIndent()
     )
 }

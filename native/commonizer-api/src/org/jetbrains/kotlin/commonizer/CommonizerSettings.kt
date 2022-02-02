@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.commonizer
 
 import org.jetbrains.kotlin.commonizer.cli.OPTIMISTIC_NUMBER_COMMONIZATION_ENABLED_ALIAS
+import org.jetbrains.kotlin.commonizer.cli.PLATFORM_INTEGER_COMMONIZATION_ENABLED_ALIAS
 
 public interface CommonizerSettings {
 
@@ -21,4 +22,10 @@ public object OptimisticNumberCommonizationEnabledKey : CommonizerSettings.Key<B
     override val defaultValue: Boolean = true
     override val alias: String
         get() = OPTIMISTIC_NUMBER_COMMONIZATION_ENABLED_ALIAS
+}
+
+public object PlatformIntegerCommonizationEnabledKey : CommonizerSettings.Key<Boolean>() {
+    override val defaultValue: Boolean = false
+    override val alias: String
+        get() = PLATFORM_INTEGER_COMMONIZATION_ENABLED_ALIAS
 }

@@ -589,14 +589,14 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
             outputTarget("(a, b)")
             setting(OptimisticNumberCommonizationEnabledKey, true)
             registerFakeStdlibIntegersDependency("(a, b)")
-            simpleSingleSourceTarget("a", "typealias X = kotlinx.cinterop.UIntVarOf")
-            simpleSingleSourceTarget("b", "typealias X = kotlinx.cinterop.ULongVarOf")
+            simpleSingleSourceTarget("a", "typealias X = kotlinx.cinterop.UIntVarOf<UInt>")
+            simpleSingleSourceTarget("b", "typealias X = kotlinx.cinterop.ULongVarOf<ULong>")
         }
 
         result.assertCommonized(
             "(a, b)", """
                 @UnsafeNumber(["a: kotlinx.cinterop.UIntVarOf", "b: kotlinx.cinterop.ULongVarOf"])
-                typealias X = kotlinx.cinterop.UIntVarOf
+                typealias X = kotlinx.cinterop.UIntVarOf<UInt>
             """.trimIndent()
         )
     }
@@ -606,14 +606,14 @@ class HierarchicalOptimisticNumbersTypeCommonizerTest : AbstractInlineSourcesCom
             outputTarget("(a, b)")
             setting(OptimisticNumberCommonizationEnabledKey, true)
             registerFakeStdlibIntegersDependency("(a, b)")
-            simpleSingleSourceTarget("a", "typealias X = kotlinx.cinterop.IntVarOf")
-            simpleSingleSourceTarget("b", "typealias X = kotlinx.cinterop.LongVarOf")
+            simpleSingleSourceTarget("a", "typealias X = kotlinx.cinterop.IntVarOf<Int>")
+            simpleSingleSourceTarget("b", "typealias X = kotlinx.cinterop.LongVarOf<Long>")
         }
 
         result.assertCommonized(
             "(a, b)", """
                 @UnsafeNumber(["a: kotlinx.cinterop.IntVarOf", "b: kotlinx.cinterop.LongVarOf"])
-                typealias X = kotlinx.cinterop.IntVarOf
+                typealias X = kotlinx.cinterop.IntVarOf<Int>
             """.trimIndent()
         )
     }
