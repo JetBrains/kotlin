@@ -94,7 +94,7 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
                     { environment.createPackagePartProvider(it) }
                 ),
                 config?.languageVersionSettings ?: LanguageVersionSettingsImpl.DEFAULT,
-                sourceScope = PsiBasedProjectFileSearchScope(scope),
+                javaSourcesScope = PsiBasedProjectFileSearchScope(scope),
                 librariesScope = PsiBasedProjectFileSearchScope(allProjectScope),
                 lookupTracker = null,
                 incrementalCompilationContext = null,
