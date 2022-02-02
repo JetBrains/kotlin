@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.resolve.konan.diagnostics
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.konan.PHANTOM_TYPES
+import org.jetbrains.kotlin.descriptors.konan.PLATFORM_TYPES
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -148,5 +148,5 @@ object LeakingPhantomTypesChecker {
     private val DeclarationDescriptor.isPhantom: Boolean
         get() = fqNameSafe in PHANTOM_FQ_NAMES
 
-    private val PHANTOM_FQ_NAMES = PHANTOM_TYPES.map { it.asSingleFqName() }.toSet()
+    private val PHANTOM_FQ_NAMES = PLATFORM_TYPES.map { it.asSingleFqName() }.toSet()
 }
