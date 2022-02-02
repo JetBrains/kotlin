@@ -54,7 +54,7 @@ tasks.withType(KotlinCompile).configureEach {
 androidx {
     name = "Compose Compiler Daemon"
     type = LibraryType.COMPILER_DAEMON
-    mavenGroup = LibraryGroups.Compose.COMPILER
+    mavenGroup = LibraryGroups.COMPOSE_COMPILER
     inceptionYear = "2021"
     description = "Compiler Daemon that includes the Compose plugin"
 }
