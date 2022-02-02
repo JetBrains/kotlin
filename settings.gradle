@@ -385,7 +385,12 @@ void intellij(String imlPath) {
     imlFile = imlFile.exists() ? imlFile : new File("${rootDir}/intellij/plugins/kotlin/${imlPath}")
     imlFile = imlFile.exists() ? imlFile : new File("${rootDir}/intellij/community/${imlPath}")
     imlFile = imlFile.exists() ? imlFile : new File("${rootDir}/intellij/${imlPath}")
-    assert imlFile.exists()
+    if (!imlFile.exists()) {
+        throw new IllegalStateException("$imlFile doesn't exist. Please, update mapping in settings.gradle. And regenerate " +
+                "build.gradle files in kt-branch in 'intellij' repo (./gradlew generateIdePluginGradleFiles). Or you can " +
+                "remove 'attachedIntellijVersion' in your 'local.properties' if you don't care about being possible to" +
+                "browse Kotlin plugin sources in scope of Kotlin compiler sources")
+    }
     String fileName = imlFile.name
     String projectName = ":kotlin-ide.${fileName.substring(0, fileName.length() - ".iml".length())}"
     include(projectName)
