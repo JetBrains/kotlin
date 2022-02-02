@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.project.model.LanguageSettings
 import java.util.*
 import java.util.concurrent.Callable
 
@@ -45,25 +46,46 @@ internal fun KotlinCompilation<*>.isMain(): Boolean =
 internal val KotlinCompilation<*>.kotlinSourceSetsIncludingDefault: Set<KotlinSourceSet> get() = kotlinSourceSets + defaultSourceSet
 
 abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
-    internal open val compilationDetails: CompilationDetails<T>
+    internal open val compilationDetails: CompilationDetails<T>,
 ) : KotlinCompilation<T>,
-    // FIXME: replace with separate `final override`s, which is safer wrt accidental overrides
-    HasKotlinDependencies by compilationDetails.kotlinDependenciesHolder,
-    KotlinCompilationData<T> by compilationDetails.compilationData {
+    HasKotlinDependencies,
+    KotlinCompilationData<T> {
+
+    //region HasKotlinDependencies delegation: delegate members manually for better control and prevention of accidental overrides
+    private val kotlinDependenciesHolder get() = compilationDetails.kotlinDependenciesHolder
+    override val apiConfigurationName: String get() = kotlinDependenciesHolder.apiConfigurationName
+    override val implementationConfigurationName: String get() = kotlinDependenciesHolder.implementationConfigurationName
+    override val compileOnlyConfigurationName: String get() = kotlinDependenciesHolder.compileOnlyConfigurationName
+    override val runtimeOnlyConfigurationName: String get() = kotlinDependenciesHolder.runtimeOnlyConfigurationName
+    final override fun dependencies(configure: KotlinDependencyHandler.() -> Unit) = kotlinDependenciesHolder.dependencies(configure)
+    final override fun dependencies(configureClosure: Closure<Any?>) = kotlinDependenciesHolder.dependencies(configureClosure)
+    //endregion
+
+    //region KotlinCompilationData delegation: delegate members manually for better control and prevention of accidental overrides
+    private val compilationData get() = compilationDetails.compilationData
+    override val compileAllTaskName: String get() = compilationData.compileAllTaskName
+    final override val compilationPurpose: String get() = compilationData.compilationPurpose
+    final override val compilationClassifier: String? get() = compilationData.compilationClassifier
+    final override val languageSettings: LanguageSettings get() = compilationData.languageSettings
+    final override val ownModuleName: String get() = compilationData.ownModuleName
+    final override val moduleName: String get() = compilationData.moduleName
+    final override val friendPaths: Iterable<FileCollection> get() = compilationData.friendPaths
+    final override val platformType: KotlinPlatformType get() = compilationData.platformType
+    final override val output: KotlinCompilationOutput get() = compilationData.output
+    final override val compileKotlinTaskName: String get() = compilationData.compileKotlinTaskName
+    final override val kotlinOptions: T get() = compilationData.kotlinOptions
+    final override val kotlinSourceDirectoriesByFragmentName get() = compilationData.kotlinSourceDirectoriesByFragmentName
+    //endregion
 
     override val target: KotlinTarget get() = compilationDetails.target
 
     final override val compileDependencyConfigurationName: String
         get() = compilationDetails.compileDependencyFilesHolder.dependencyConfigurationName
 
-    // FIXME: use delegation to callable reference once KT-50019 is fixed
     final override var compileDependencyFiles: FileCollection
         get() = compilationDetails.compileDependencyFilesHolder.dependencyFiles
-        set(value) {
-            compilationDetails.compileDependencyFilesHolder.dependencyFiles = value
-        }
+        set(value) { compilationDetails.compileDependencyFilesHolder.dependencyFiles = value }
 
-    override val platformType: KotlinPlatformType get() = compilationDetails.compilationData.platformType
     final override val kotlinSourceSets: MutableSet<KotlinSourceSet> get() = compilationDetails.directlyIncludedKotlinSourceSets
     final override val defaultSourceSetName: String get() = compilationDetails.defaultSourceSetName
 
