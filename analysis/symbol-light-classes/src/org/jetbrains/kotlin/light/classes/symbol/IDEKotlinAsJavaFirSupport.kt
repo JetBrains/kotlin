@@ -91,13 +91,9 @@ class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupp
         error("Should not be called")
 
     override fun getFacadeClasses(facadeFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        val filesByModule = findFilesForFacade(facadeFqName, scope).groupBy { it.getKtModule(project) }
+        val filesForFacade = findFilesForFacade(facadeFqName, scope)
 
-        val lightClassFacadeCache = project.getService(SymbolLightClassFacadeCache::class.java)
-
-        return filesByModule.values.mapNotNull { files ->
-            lightClassFacadeCache.getOrCreateSymbolLightFacade(files, facadeFqName)
-        }
+        return getFacadeClassesForFiles(facadeFqName, filesForFacade)
     }
 
     override fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> =
@@ -112,10 +108,7 @@ class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupp
             .asSequence()
             .filter { it.isFromSourceOrLibraryBinary(project) }
             .groupBy { it.javaFileFacadeFqName }
-            .mapNotNull {
-                project.getService(SymbolLightClassFacadeCache::class.java)
-                    .getOrCreateSymbolLightFacade(it.value, it.key)
-            }
+            .flatMap { (fqName, files) -> getFacadeClassesForFiles(fqName, files) }
 
     override fun getFacadeNames(packageFqName: FqName, scope: GlobalSearchScope): Collection<String> =
         project.createDeclarationProvider(scope)
@@ -134,6 +127,16 @@ class IDEKotlinAsJavaFirSupport(private val project: Project) : KotlinAsJavaSupp
 
     override fun createFacadeForSyntheticFile(facadeClassFqName: FqName, file: KtFile): PsiClass =
         TODO("Not implemented")
+
+    private fun getFacadeClassesForFiles(facadeFqName: FqName, allFiles: Collection<KtFile>): Collection<PsiClass> {
+        val filesByModule = allFiles.groupBy { it.getKtModule(project) }
+
+        val lightClassFacadeCache = project.getService(SymbolLightClassFacadeCache::class.java)
+
+        return filesByModule.values.mapNotNull { files ->
+            lightClassFacadeCache.getOrCreateSymbolLightFacade(files, facadeFqName)
+        }
+    }
 }
 
 
