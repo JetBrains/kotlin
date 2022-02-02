@@ -40,7 +40,7 @@ open class KaptExtension: KaptExtensionConfig {
 
     override var stripMetadata: Boolean = false
     
-    override var showProcessorTimings: Boolean = false
+    override var showProcessorStats: Boolean = false
 
     override var detectMemoryLeaks: String = "default"
 
