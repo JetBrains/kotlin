@@ -203,6 +203,7 @@ run {
     // Add regular gradle test tasks
     dependsOn(tasksOf(Test))
     dependsOn(tasksOf(CoverageTest))
+    dependsOn(tasksOf(FileCheckTest))
     dependsOn(":kotlin-native:Interop:Indexer:check")
 }
 
@@ -220,7 +221,10 @@ task sanity {
     // Add regular gradle test tasks
     dependsOn(tasksOf(Test))
     dependsOn(tasksOf(CoverageTest))
-    dependsOn(tasksOf(FileCheckTest))
+    dependsOn(tasksOf(FileCheckTest) { task ->
+        // Avoid cross-compilation in a sanity run.
+        task.targetName == project.target.name
+    })
     dependsOn(":kotlin-native:Interop:Indexer:check")
     dependsOn(":kotlin-native:Interop:StubGenerator:check")
 }
@@ -6032,6 +6036,16 @@ Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
 
 fileCheckTest("filecheck_smoke0") {
     annotatedSource = project.file('filecheck/smoke0.kt')
+}
+
+if (HostManager.@Companion.hostIsMac) {
+    fileCheckTest("filecheck_force_arm_instruction_set") {
+        annotatedSource = project.file('filecheck/force_arm_instruction_set.kt')
+        targetName = "watchos_arm32"
+        // Perform check after optimization pipeline because
+        // LLVM might infer attributes.
+        phaseToCheck = "BitcodeOptimization"
+    }
 }
 
 fileCheckTest("filecheck_replace_invoke_with_call") {
