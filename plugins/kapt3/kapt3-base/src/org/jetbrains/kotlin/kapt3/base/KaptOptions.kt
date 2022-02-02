@@ -43,7 +43,7 @@ class KaptOptions(
     val processingClassLoader: ClassLoader?,
     //construct new classloader for these processors instead of using one defined in processingClassLoader
     val separateClassloaderForProcessors: Set<String>,
-    val processorsPerfReportFile: File?
+    val processorsStatsReportFile: File?
 ) : KaptFlags {
     override fun get(flag: KaptFlag) = flags[flag]
 
@@ -73,7 +73,7 @@ class KaptOptions(
 
         var mode: AptMode = AptMode.WITH_COMPILATION
         var detectMemoryLeaks: DetectMemoryLeaksMode = DetectMemoryLeaksMode.DEFAULT
-        var processorsPerfReportFile: File? = null
+        var processorsStatsReportFile: File? = null
 
         fun build(): KaptOptions {
             val sourcesOutputDir = this.sourcesOutputDir ?: error("'sourcesOutputDir' must be set")
@@ -88,7 +88,7 @@ class KaptOptions(
                 mode, detectMemoryLeaks,
                 processingClassLoader = null,
                 separateClassloaderForProcessors = emptySet(),
-                processorsPerfReportFile = processorsPerfReportFile
+                processorsStatsReportFile = processorsStatsReportFile
             )
         }
     }
@@ -114,7 +114,7 @@ interface KaptFlags {
 }
 
 enum class KaptFlag(val description: String, val defaultValue: Boolean = false) {
-    SHOW_PROCESSOR_TIMINGS("Show processor time"),
+    SHOW_PROCESSOR_STATS("Show processor stats"),
     VERBOSE("Verbose mode"),
     INFO_AS_WARNINGS("Info as warnings"),
     USE_LIGHT_ANALYSIS("Use light analysis", defaultValue = true),

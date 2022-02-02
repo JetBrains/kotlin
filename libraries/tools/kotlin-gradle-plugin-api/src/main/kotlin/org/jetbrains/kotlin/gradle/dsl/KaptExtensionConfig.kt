@@ -46,9 +46,9 @@ interface KaptExtensionConfig {
     var stripMetadata: Boolean
 
     /**
-     * If `true`, show annotation processor timings.
+     * If `true`, show annotation processor stats.
      */
-    var showProcessorTimings: Boolean
+    var showProcessorStats: Boolean
 
     /**
      * If `true`, detect memory leaks in annotation processors.

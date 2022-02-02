@@ -491,7 +491,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         )
         pluginOptions += SubpluginOption("stripMetadata", "${kaptExtension.stripMetadata}")
         pluginOptions += SubpluginOption("keepKdocCommentsInStubs", "${project.isKaptKeepKdocCommentsInStubs()}")
-        pluginOptions += SubpluginOption("showProcessorTimings", "${kaptExtension.showProcessorTimings}")
+        pluginOptions += SubpluginOption("showProcessorStats", "${kaptExtension.showProcessorStats}")
         pluginOptions += SubpluginOption("detectMemoryLeaks", kaptExtension.detectMemoryLeaks)
         pluginOptions += SubpluginOption("infoAsWarnings", "${project.isInfoAsWarnings()}")
         pluginOptions += FilesSubpluginOption("stubs", listOf(getKaptStubsDir()))
