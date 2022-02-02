@@ -94,7 +94,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
     private fun logSettings(context: CompileContext) {
         LOG.debug("==========================================")
-        LOG.info("is Kotlin incremental compilation enabled for JVM: ${IncrementalCompilation.isEnabledForJvm()}")
+        LOG.info("SHakaSHakais Kotlin incremental compilation enabled for JVM: ${IncrementalCompilation.isEnabledForJvm()}")
         LOG.info("is Kotlin incremental compilation enabled for JS: ${IncrementalCompilation.isEnabledForJs()}")
         LOG.info("is Kotlin compiler daemon enabled: ${isDaemonEnabled()}")
 
@@ -442,6 +442,8 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         val generatedFiles = getGeneratedFiles(context, chunk, environment.outputItemsCollector)
+
+        LOG.info("Stat2:${environment.stat.toString()}")
 
         markDirtyComplementaryMultifileClasses(generatedFiles, kotlinContext, incrementalCaches, fsOperations)
 

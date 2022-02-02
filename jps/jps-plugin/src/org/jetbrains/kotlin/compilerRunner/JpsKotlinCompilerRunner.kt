@@ -213,18 +213,21 @@ class JpsKotlinCompilerRunner {
             reportSeverity(verbose),
             requestedCompilationResults = emptyArray()
         )
-        return doWithDaemon(environment) { sessionId, daemon ->
+        val serviceFacade = JpsCompilerServicesFacadeImpl(environment)
+        val res = doWithDaemon(environment) { sessionId, daemon ->
             environment.withProgressReporter { progress ->
                 progress.compilationStarted()
                 daemon.compile(
                     sessionId,
                     withAdditionalCompilerArgs(compilerArgs),
                     options,
-                    JpsCompilerServicesFacadeImpl(environment),
+                    serviceFacade,
                     null
                 )
             }
         }
+        environment.stat = serviceFacade.stat
+        return res
     }
 
     private fun <T> withDaemonOrFallback(withDaemon: () -> T?, fallback: () -> T): T =

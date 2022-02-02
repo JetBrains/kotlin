@@ -27,7 +27,8 @@ class JpsCompilerEnvironment(
     val classesToLoadByParent: ClassCondition,
     messageCollector: MessageCollector,
     outputItemsCollector: OutputItemsCollectorImpl,
-    val progressReporter: ProgressReporter
+    val progressReporter: ProgressReporter,
+    var stat: MutableMap<String,Int>? = null
 ) : CompilerEnvironment(services, messageCollector, outputItemsCollector) {
     override val outputItemsCollector: OutputItemsCollectorImpl
         get() = super.outputItemsCollector as OutputItemsCollectorImpl
