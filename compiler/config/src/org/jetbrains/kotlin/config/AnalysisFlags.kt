@@ -37,9 +37,6 @@ object AnalysisFlags {
     val constraintSystemForOverloadResolution by AnalysisFlag.Delegates.ConstraintSystemForOverloadResolution
 
     @JvmStatic
-    val useTypeRefinement by AnalysisFlag.Delegates.Boolean
-
-    @JvmStatic
     val ideMode by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
