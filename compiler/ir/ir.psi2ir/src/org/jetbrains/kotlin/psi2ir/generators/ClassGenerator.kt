@@ -24,19 +24,15 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.expressions.putTypeArguments
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
+import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.ir.util.createIrClassFromDescriptor
-import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
-import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
@@ -93,6 +89,10 @@ class ClassGenerator(
                 classDescriptor.thisAsReceiverParameter,
                 classDescriptor.thisAsReceiverParameter.type.toIrType()
             )
+
+            if (irClass.isInline && irClass.modality == Modality.SEALED) {
+                generateFieldForSealedInlineClass(irClass)
+            }
 
             generateFieldsForContextReceivers(irClass, classDescriptor)
 
@@ -465,6 +465,21 @@ class ClassGenerator(
             context.additionalDescriptorStorage.put(receiverDescriptor.value, irField)
             irClass.addMember(irField)
         }
+    }
+
+    private fun generateFieldForSealedInlineClass(irClass: IrClass) {
+        val irField = context.irFactory.createField(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            IrDeclarationOrigin.FIELD_FOR_SEALED_INLINE_CLASS,
+            IrFieldSymbolImpl(),
+            Name.identifier("\$value"),
+            context.irBuiltIns.anyNType,
+            DescriptorVisibilities.PROTECTED,
+            isFinal = true,
+            isExternal = false,
+            isStatic = false
+        )
+        irClass.addMember(irField)
     }
 
     private fun generatePrimaryConstructor(irClass: IrClass, ktClassOrObject: KtPureClassOrObject): IrConstructor? {

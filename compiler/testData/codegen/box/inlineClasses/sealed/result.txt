@@ -34,9 +34,13 @@ public final class Result$Throwable {
 @kotlin.Metadata
 public abstract class Result {
     // source: 'result.kt'
+    protected synthetic final field $value: java.lang.Object
     private method <init>(): void
+    private synthetic method <init>(p0: java.lang.Object): void
+    public synthetic method <init>(p0: java.lang.Object, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic final static method box-impl(p0: java.lang.Object): Result
+    protected static @org.jetbrains.annotations.NotNull method constructor-impl(p0: java.lang.Object): java.lang.Object
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: java.lang.Object, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: java.lang.Object, p1: java.lang.Object): boolean
