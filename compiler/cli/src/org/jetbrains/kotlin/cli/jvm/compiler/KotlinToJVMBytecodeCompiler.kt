@@ -87,9 +87,8 @@ object KotlinToJVMBytecodeCompiler {
             val projectEnvironment =
                 PsiBasedProjectEnvironment(
                     environment.project,
-                    VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
-                    { environment.createPackagePartProvider(it) }
-                )
+                    VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
+                ) { environment.createPackagePartProvider(it) }
             return FirKotlinToJvmBytecodeCompiler.compileModulesUsingFrontendIR(
                 projectEnvironment,
                 environment.configuration,
@@ -160,7 +159,7 @@ object KotlinToJVMBytecodeCompiler {
                 val file = File(path)
                 packagePrefix == null &&
                         (file.name == PsiJavaModule.MODULE_INFO_FILE ||
-                                (file.isDirectory && file.listFiles().any { it.name == PsiJavaModule.MODULE_INFO_FILE }))
+                                (file.isDirectory && file.listFiles()!!.any { it.name == PsiJavaModule.MODULE_INFO_FILE }))
             }
         }
 
@@ -272,7 +271,12 @@ object KotlinToJVMBytecodeCompiler {
             configuration.languageVersionSettings,
             false,
         )
+
+        val performanceManager = environment.configuration[CLIConfigurationKeys.PERF_MANAGER]
+        performanceManager?.notifyIRTranslationStarted()
         val backendInput = codegenFactory.convertToIr(input)
+        performanceManager?.notifyIRTranslationFinished()
+
         return Pair(codegenFactory, backendInput)
     }
 
@@ -352,6 +356,8 @@ object KotlinToJVMBytecodeCompiler {
         backendInput: CodegenFactory.BackendInput,
         diagnosticsReporter: BaseDiagnosticsCollector,
     ): CodegenFactory.CodegenInput {
+        val performanceManager = environment.configuration[CLIConfigurationKeys.PERF_MANAGER]
+
         val state = GenerationState.Builder(
             environment.project,
             ClassBuilderFactories.BINARIES,
@@ -368,13 +374,15 @@ object KotlinToJVMBytecodeCompiler {
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
-        environment.configuration.get(CLIConfigurationKeys.PERF_MANAGER)?.notifyGenerationStarted()
+        performanceManager?.notifyGenerationStarted()
 
         state.beforeCompile()
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
+        performanceManager?.notifyIRLoweringStarted()
         return codegenFactory.invokeLowerings(state, backendInput)
+            .also { performanceManager?.notifyIRLoweringFinished() }
     }
 
     private fun runCodegen(
@@ -385,12 +393,17 @@ object KotlinToJVMBytecodeCompiler {
         configuration: CompilerConfiguration,
     ): GenerationState {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
+        val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
+
+        performanceManager?.notifyIRGenerationStarted()
         state.codegenFactory.invokeCodegen(codegenInput)
 
         CodegenFactory.doCheckCancelled(state)
         state.factory.done()
+        performanceManager?.notifyIRGenerationFinished()
 
-        configuration.get(CLIConfigurationKeys.PERF_MANAGER)?.notifyGenerationFinished()
+        performanceManager?.notifyGenerationFinished()
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 
