@@ -1,0 +1,2 @@
+Resolved to:
+0: (in test.pkg.ColorSpace.Companion) internal const val MinId: kotlin.Int
