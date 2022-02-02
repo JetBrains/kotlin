@@ -5895,6 +5895,7 @@ Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
     return project.tasks.create(name, FileCheckTest) { task ->
         task.configure(configureClosure)
         task.llvmIr = project.file("$testOutputFileCheck/$name/$target/out.${task.phaseToCheck}.ll")
+        def target = task.target
         if (task.enabled) {
             konanArtifacts {
                 def lib = task.interop
