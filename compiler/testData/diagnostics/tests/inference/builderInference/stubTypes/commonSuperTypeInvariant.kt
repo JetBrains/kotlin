@@ -68,13 +68,13 @@ fun test() {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select2(get(), Test.foo(getInv()))<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String?>")!>getInv()<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<TypeVariable(R1)>..Inv<TypeVariable(R1)>?)")!>Test.foo(<!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String?>")!>getInv()<!>)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(TypeVariable(R1)..TypeVariable(R1)?)")!>Test.foo(get())<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select2(Test.foo(get()), <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<kotlin.String?>..Inv<kotlin.String?>?)")!>Test.foo(<!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String?>")!>getInv()<!>)<!>)<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select2(Test.foo(get()), getInv())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(TypeVariable(R1) & Any..TypeVariable(R1)?)")!>Test.foo(get())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>select2(Test.foo(get()), <!DEBUG_INFO_EXPRESSION_TYPE("(Inv<kotlin.String?>..Inv<kotlin.String?>?)")!>Test.foo(<!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String?>")!>getInv()<!>)<!>)<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>select2(Test.foo(get()), getInv())<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select3(get(), getInv())<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select3(get(), Test.foo(getInv()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select3(Test.foo(get()), Test.foo(getInv()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select3(Test.foo(get()), getInv())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>select3(Test.foo(get()), Test.foo(getInv()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>select3(Test.foo(get()), getInv())<!>
 
         build2 {
             emit(1)

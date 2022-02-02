@@ -24,7 +24,7 @@ fun <V> SLRUMap<V>.getOrPut(value: V, l: List<V>) {
 
     takeE(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>value<!>)
     takeEList(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>l<!>)
-    takeE(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>id(value)<!>)
+    takeE(id(value))
 
     if (value != null) {
         takeV(value)

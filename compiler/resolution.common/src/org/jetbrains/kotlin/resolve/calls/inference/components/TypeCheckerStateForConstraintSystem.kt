@@ -249,12 +249,12 @@ abstract class TypeCheckerStateForConstraintSystem(
                 when (subType) {
                     is SimpleTypeMarker ->
                         // Foo <: T! -- (Foo!! .. Foo) <: T
-                        createFlexibleType(subType.withNullability(false), subType.withNullability(true))
+                        createFlexibleType(subType.makeSimpleTypeDefinitelyNotNullOrNotNull(), subType.withNullability(true))
 
                     is FlexibleTypeMarker ->
                         // (Foo..Bar) <: T! -- (Foo!! .. Bar) <: T
                         createFlexibleType(
-                            subType.lowerBound().withNullability(false),
+                            subType.lowerBound().makeSimpleTypeDefinitelyNotNullOrNotNull(),
                             subType.upperBound().withNullability(true)
                         )
 
@@ -285,7 +285,7 @@ abstract class TypeCheckerStateForConstraintSystem(
         val simplifiedSuperType = if (typeVariableLowerBound.isDefinitelyNotNullType()) {
             superType.withNullability(true)
         } else if (typeVariable.isFlexible() && superType is SimpleTypeMarker) {
-            createFlexibleType(superType.withNullability(false), superType.withNullability(true))
+            createFlexibleType(superType.makeSimpleTypeDefinitelyNotNullOrNotNull(), superType.withNullability(true))
         } else superType
 
         addUpperConstraint(typeVariableLowerBound.typeConstructor(), simplifiedSuperType)
