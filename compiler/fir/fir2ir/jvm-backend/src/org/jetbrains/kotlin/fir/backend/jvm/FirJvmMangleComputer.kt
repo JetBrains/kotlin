@@ -47,7 +47,7 @@ open class FirJvmMangleComputer(
 
     open fun FirFunction.specialValueParamPrefix(param: FirValueParameter): String = ""
 
-    private fun addReturnType(): Boolean = false
+    private fun addReturnType(): Boolean = true
 
     override fun copy(newMode: MangleMode): FirJvmMangleComputer =
         FirJvmMangleComputer(builder, newMode, session)
