@@ -15,6 +15,7 @@ sealed class ResolutionMode {
     object ContextDependent : ResolutionMode()
     object ContextDependentDelegate : ResolutionMode()
     object ContextIndependent : ResolutionMode()
+    object ReceiverResolution : ResolutionMode()
 
     // TODO: it's better not to use WithExpectedType(FirImplicitTypeRef)
     class WithExpectedType(
@@ -57,7 +58,8 @@ sealed class ResolutionMode {
 
 fun ResolutionMode.expectedType(components: BodyResolveComponents, allowFromCast: Boolean = false): FirTypeRef? = when (this) {
     is ResolutionMode.WithExpectedType -> expectedTypeRef
-    is ResolutionMode.ContextIndependent -> components.noExpectedType
+    is ResolutionMode.ContextIndependent,
+    is ResolutionMode.ReceiverResolution -> components.noExpectedType
     is ResolutionMode.WithExpectedTypeFromCast -> expectedTypeRef.takeIf { allowFromCast }
     is ResolutionMode.WithSuggestedType -> suggestedTypeRef
     else -> null

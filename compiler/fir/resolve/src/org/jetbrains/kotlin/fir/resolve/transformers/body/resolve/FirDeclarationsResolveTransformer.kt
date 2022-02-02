@@ -764,6 +764,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirBodyResolveTransfor
             }
             is ResolutionMode.WithExpectedType,
             is ResolutionMode.ContextIndependent,
+            is ResolutionMode.ReceiverResolution,
             is ResolutionMode.WithSuggestedType -> {
                 val expectedTypeRef = when (data) {
                     is ResolutionMode.WithExpectedType -> {

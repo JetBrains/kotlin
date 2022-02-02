@@ -133,7 +133,7 @@ class FirCallResolver(
     private inline fun <reified Q : FirQualifiedAccess> Q.transformExplicitReceiver(): Q {
         val explicitReceiver =
             explicitReceiver as? FirQualifiedAccessExpression
-                ?: return transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent) as Q
+                ?: return transformExplicitReceiver(transformer, ResolutionMode.ReceiverResolution) as Q
 
         (explicitReceiver.calleeReference as? FirSuperReference)?.let {
             transformer.transformSuperReceiver(it, explicitReceiver, this)
@@ -143,14 +143,14 @@ class FirCallResolver(
         if (explicitReceiver is FirPropertyAccessExpression) {
             this.replaceExplicitReceiver(
                 transformer.transformQualifiedAccessExpression(
-                    explicitReceiver, ResolutionMode.ContextIndependent,
+                    explicitReceiver, ResolutionMode.ReceiverResolution,
                     isUsedAsReceiver = true
                 ) as FirExpression
             )
             return this
         }
 
-        return transformExplicitReceiver(transformer, ResolutionMode.ContextIndependent) as Q
+        return transformExplicitReceiver(transformer, ResolutionMode.ReceiverResolution) as Q
     }
 
     private data class ResolutionResult(
