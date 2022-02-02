@@ -19,7 +19,6 @@
 package androidx.compose.compiler.plugins.kotlin.lower.decoys
 
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
-import androidx.compose.compiler.plugins.kotlin.lower.AbstractComposeLowering
 import androidx.compose.compiler.plugins.kotlin.lower.ModuleLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
@@ -46,14 +45,13 @@ class RecordDecoySignaturesTransformer(
     override val signatureBuilder: IdSignatureSerializer,
     metrics: ModuleMetrics,
     val mangler: KotlinMangler.IrMangler
-) : AbstractComposeLowering(
-    context = pluginContext,
+) : AbstractDecoysLowering(
+    pluginContext = pluginContext,
     symbolRemapper = symbolRemapper,
     bindingTrace = bindingTrace,
     metrics = metrics,
-),
-    ModuleLoweringPass,
-    DecoyTransformBase {
+    signatureBuilder = signatureBuilder
+), ModuleLoweringPass {
 
     override fun lower(module: IrModuleFragment) {
         module.transformChildrenVoid()
@@ -67,19 +65,18 @@ class RecordDecoySignaturesTransformer(
         val decoyAnnotation = declaration.getAnnotation(DecoyFqNames.Decoy)!!
         val decoyFunction =
             symbolRemapper.getReferencedFunction(declaration.getComposableForDecoy())
-        val sig =
-            signatureBuilder.computeSignature(decoyFunction.owner)
-                as? IdSignature.CommonSignature
+        val sig: IdSignature = signatureBuilder.computeSignature(decoyFunction.owner)
+        val commonSignature: IdSignature.CommonSignature? = findNearestCommonSignature(sig)
 
-        if (sig != null) {
+        if (commonSignature != null) {
             decoyAnnotation.putValueArgument(
                 1,
                 irVarargString(
                     listOf(
-                        sig.packageFqName,
-                        sig.declarationFqName,
-                        sig.id.toString(),
-                        sig.mask.toString()
+                        commonSignature.packageFqName,
+                        commonSignature.declarationFqName,
+                        commonSignature.id.toString(),
+                        commonSignature.mask.toString()
                     )
                 )
             )
@@ -88,6 +85,16 @@ class RecordDecoySignaturesTransformer(
         }
 
         return super.visitFunction(declaration)
+    }
+
+    private fun findNearestCommonSignature(
+        sig: IdSignature
+    ): IdSignature.CommonSignature? {
+        return when (sig) {
+            is IdSignature.CommonSignature -> sig
+            is IdSignature.CompositeSignature -> findNearestCommonSignature(sig.inner)
+            else -> null
+        }
     }
 
     private fun IrDeclaration.canBeLinkedAgainst(): Boolean =
