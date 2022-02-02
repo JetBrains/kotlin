@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.CommonizerSettings
 import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabledKey
+import org.jetbrains.kotlin.commonizer.PlatformIntegerCommonizationEnabledKey
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.*
 import org.jetbrains.kotlin.commonizer.utils.isUnderKotlinNativeSyntheticPackages
@@ -18,14 +19,18 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 internal class ClassOrTypeAliasTypeCommonizer(
     private val typeCommonizer: TypeCommonizer,
     private val classifiers: CirKnownClassifiers,
-    private val isOptimisticNumberTypeCommonizationEnabled: Boolean
+    private val isOptimisticNumberTypeCommonizationEnabled: Boolean,
+    private val isPlatformIntegerCommonizationEnabled: Boolean,
 ) : NullableSingleInvocationCommonizer<CirClassOrTypeAliasType> {
 
     constructor(typeCommonizer: TypeCommonizer, classifiers: CirKnownClassifiers, settings: CommonizerSettings) : this(
-        typeCommonizer, classifiers, settings.getSetting(OptimisticNumberCommonizationEnabledKey)
+        typeCommonizer, classifiers,
+        settings.getSetting(OptimisticNumberCommonizationEnabledKey),
+        settings.getSetting(PlatformIntegerCommonizationEnabledKey),
     )
 
     private val isMarkedNullableCommonizer = TypeNullabilityCommonizer(typeCommonizer.context)
+    private val platformIntegerCommonizer = PlatformIntegerCommonizer(typeCommonizer)
     private val typeDistanceMeasurement = TypeDistanceMeasurement(typeCommonizer.context)
 
     override fun invoke(values: List<CirClassOrTypeAliasType>): CirClassOrTypeAliasType? {
@@ -34,7 +39,9 @@ internal class ClassOrTypeAliasTypeCommonizer(
         val isMarkedNullable = isMarkedNullableCommonizer.commonize(expansions.map { it.isMarkedNullable }) ?: return null
 
         val substitutedTypes = substituteTypesIfNecessary(values)
-            ?: isOptimisticNumberTypeCommonizationEnabled.ifTrue {
+            ?: isPlatformIntegerCommonizationEnabled.ifTrue {
+                return platformIntegerCommonizer.commonize(expansions)?.makeNullableIfNecessary(isMarkedNullable)
+            } ?: isOptimisticNumberTypeCommonizationEnabled.ifTrue {
                 return OptimisticNumbersTypeCommonizer.commonize(expansions)?.makeNullableIfNecessary(isMarkedNullable)
             } ?: return null
 
