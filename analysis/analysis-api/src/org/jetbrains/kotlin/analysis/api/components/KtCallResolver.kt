@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.KtUnaryExpression
 
 public abstract class KtCallResolver : KtAnalysisSessionComponent() {
     public abstract fun resolveCall(psi: KtElement): KtCallInfo?
-    public abstract fun resolveCandidates(psi: KtElement): List<KtCallInfo>
+    public abstract fun collectCallCandidates(psi: KtElement): List<KtCallInfo>
 }
 
 public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
@@ -31,6 +31,13 @@ public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
     public fun KtArrayAccessExpression.resolveCall(): KtCallInfo =
         analysisSession.callResolver.resolveCall(this) ?: error("KtArrayAccessExpression should always resolve to a KtCallInfo")
 
-    public fun KtElement.resolveCandidates(): List<KtCallInfo> =
-        analysisSession.callResolver.resolveCandidates(this)
+    /**
+     * Returns all the candidates considered during [overload resolution](https://kotlinlang.org/spec/overload-resolution.html) for the call
+     * corresponding to this [KtElement].
+     *
+     * [resolveCall] only returns the final result of overload resolution, i.e., the selected callable after considering candidate
+     * applicability and choosing the most specific candidate.
+     */
+    public fun KtElement.collectCallCandidates(): List<KtCallInfo> =
+        analysisSession.callResolver.collectCallCandidates(this)
 }

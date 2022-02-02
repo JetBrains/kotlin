@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.calls.KtCall
 import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleModuleTest
 import org.jetbrains.kotlin.psi.*
@@ -24,7 +22,7 @@ abstract class AbstractResolveCandidatesTest : AbstractHLApiSingleModuleTest() {
 
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(expression) {
-                val candidates = resolveCandidates(expression)
+                val candidates = collectCallCandidates(expression)
                 if (candidates.isEmpty()) {
                     "NO_CANDIDATES"
                 } else {
@@ -35,19 +33,19 @@ abstract class AbstractResolveCandidatesTest : AbstractHLApiSingleModuleTest() {
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 
-    private fun KtAnalysisSession.resolveCandidates(element: PsiElement): List<KtCallInfo> = when (element) {
-        is KtValueArgument -> resolveCandidates(element.getArgumentExpression()!!)
+    private fun KtAnalysisSession.collectCallCandidates(element: PsiElement): List<KtCallInfo> = when (element) {
+        is KtValueArgument -> this@collectCallCandidates.collectCallCandidates(element.getArgumentExpression()!!)
         is KtDeclarationModifierList -> {
             val annotationEntry = element.annotationEntries.singleOrNull()
                 ?: error("Only single annotation entry is supported for now")
-            annotationEntry.resolveCandidates()
+            annotationEntry.collectCallCandidates()
         }
         is KtFileAnnotationList -> {
             val annotationEntry = element.annotationEntries.singleOrNull()
                 ?: error("Only single annotation entry is supported for now")
-            annotationEntry.resolveCandidates()
+            annotationEntry.collectCallCandidates()
         }
-        is KtElement -> element.resolveCandidates()
+        is KtElement -> element.collectCallCandidates()
         else -> error("Selected element type (${element::class.simpleName}) is not supported for resolveCandidates()")
     }
 
