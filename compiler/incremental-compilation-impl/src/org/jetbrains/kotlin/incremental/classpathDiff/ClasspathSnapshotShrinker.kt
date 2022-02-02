@@ -115,6 +115,10 @@ object ClasspathSnapshotShrinker {
         return allClasses.filter { it.classId in transitivelyReferencedClassIds }
     }
 
+    /**
+     * Helper class to allow the caller of [ClasspathSnapshotShrinker] to provide a list of [BuildTime]s as different callers may want to
+     * record different [BuildTime]s (because the [BuildTime.parent]s are different).
+     */
     class MetricsReporter(
         private val metrics: BuildMetricsReporter? = null,
         private val getLookupSymbols: BuildTime? = null,

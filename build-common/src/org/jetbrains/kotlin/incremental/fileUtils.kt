@@ -56,12 +56,13 @@ fun File.forceDeleteRecursively() {
 @Suppress("SpellCheckingInspection")
 fun File.forceMkdirs() {
     when {
-        this.isDirectory -> { /* Do nothing */ }
-        this.isFile -> error("File.forceMkdirs does not accept a regular file: $path")
+        isDirectory -> Unit
+        isFile -> error("File.forceMkdirs does not accept a regular file: $path")
         else -> {
-            // Note that if the directory already exists, mkdirs() will return `false`, but here we ensure that the directory does not exist
-            // before calling mkdirs(), so it's safe to check the returned result of mkdirs() below.
-            if (!mkdirs()) {
+            // Note that `mkdirs()` returns `false` if the directory already exists (even though we have checked that the directory did not
+            // exist earlier, it might just have been created by some other thread). Therefore, we need to check if the directory exists
+            // again in addition to the returned result of `mkdirs()`.
+            if (!mkdirs() && !isDirectory) {
                 throw IOException("Could not create directory '$path'")
             }
         }

@@ -346,7 +346,7 @@ object ByteArrayExternalizer : DataExternalizer<ByteArray> {
     }
 }
 
-open class GenericCollectionExternalizer<T, C : Collection<T>>(
+abstract class GenericCollectionExternalizer<T, C : Collection<T>>(
     private val elementExternalizer: DataExternalizer<T>,
     private val newCollection: (size: Int) -> MutableCollection<T>
 ) : DataExternalizer<C> {
@@ -364,6 +364,9 @@ open class GenericCollectionExternalizer<T, C : Collection<T>>(
         repeat(size) {
             collection.add(elementExternalizer.read(input))
         }
+        // We want `collection` to be both a mutable collection (so we can add elements to it as done above) and a type that can be safely
+        // converted to type `C` (to be used as the returned value of this method). However, there is no type-safe way to express that, so
+        // we have to use this unsafe cast.
         @Suppress("UNCHECKED_CAST")
         return collection as C
     }

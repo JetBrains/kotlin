@@ -287,18 +287,17 @@ internal object ImpactAnalysis {
      * impacted classes.
      */
     fun findImpactedClassesInclusive(classIds: Set<ClassId>, impactedClassesResolver: (ClassId) -> Set<ClassId>): Set<ClassId> {
-        val visitedClasses = mutableSetOf<ClassId>()
-        var toVisitClasses = classIds
-        while (toVisitClasses.isNotEmpty()) {
-            visitedClasses.addAll(toVisitClasses)
+        // Standard Breadth-First Search
+        val visitedAndToVisitClasses = classIds.toMutableSet()
+        val classesToVisit = ArrayDeque(classIds)
 
-            val nextClassesToVisit = mutableSetOf<ClassId>()
-            toVisitClasses.forEach {
-                nextClassesToVisit.addAll(impactedClassesResolver.invoke(it) - visitedClasses)
-            }
-            toVisitClasses = nextClassesToVisit
+        while (classesToVisit.isNotEmpty()) {
+            val classToVisit = classesToVisit.removeFirst()
+            val nextClassesToVisit = impactedClassesResolver.invoke(classToVisit) - visitedAndToVisitClasses
+            visitedAndToVisitClasses.addAll(nextClassesToVisit)
+            classesToVisit.addAll(nextClassesToVisit)
         }
-        return visitedClasses
+        return visitedAndToVisitClasses
     }
 }
 
