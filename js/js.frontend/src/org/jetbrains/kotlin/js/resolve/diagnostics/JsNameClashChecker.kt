@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.config.isTypeRefinementEnabled
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -119,7 +118,7 @@ class JsNameClashChecker(
         existing: CallableMemberDescriptor,
         overrideDescriptor: CallableMemberDescriptor
     ): Boolean {
-        return if (!languageVersionSettings.isTypeRefinementEnabled) {
+        return if (kotlinTypeRefiner === KotlinTypeRefiner.Default) {
             // Fast-path
             existing == overrideDescriptor
         } else {
