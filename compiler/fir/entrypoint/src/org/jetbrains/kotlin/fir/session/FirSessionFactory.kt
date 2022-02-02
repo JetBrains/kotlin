@@ -84,7 +84,7 @@ object FirSessionFactory {
         externalSessionProvider: FirProjectSessionProvider?,
         projectEnvironment: AbstractProjectEnvironment,
         languageVersionSettings: LanguageVersionSettings,
-        sourceScope: AbstractProjectFileSearchScope,
+        javaSourcesScope: AbstractProjectFileSearchScope,
         librariesScope: AbstractProjectFileSearchScope,
         lookupTracker: LookupTracker?,
         incrementalCompilationContext: IncrementalCompilationContext?,
@@ -116,7 +116,7 @@ object FirSessionFactory {
         return createJavaModuleBasedSession(
             mainModuleData,
             sessionProvider,
-            sourceScope,
+            javaSourcesScope,
             projectEnvironment,
             incrementalCompilationContext,
             extensionRegistrars,
@@ -130,7 +130,7 @@ object FirSessionFactory {
     fun createJavaModuleBasedSession(
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,
-        scope: AbstractProjectFileSearchScope,
+        javaSourcesScope: AbstractProjectFileSearchScope,
         projectEnvironment: AbstractProjectEnvironment,
         incrementalCompilationContext: IncrementalCompilationContext?,
         extensionRegistrars: List<FirExtensionRegistrar>,
@@ -189,7 +189,7 @@ object FirSessionFactory {
                         *(incrementalCompilationContext?.previousFirSessionsSymbolProviders?.toTypedArray() ?: emptyArray()),
                         symbolProviderForBinariesFromIncrementalCompilation,
                         generatedSymbolsProvider,
-                        JavaSymbolProvider(this, projectEnvironment.getFirJavaFacade(this, moduleData, scope)),
+                        JavaSymbolProvider(this, projectEnvironment.getFirJavaFacade(this, moduleData, javaSourcesScope)),
                         dependenciesSymbolProvider,
                     )
                 )
