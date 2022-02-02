@@ -19,12 +19,9 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isFromJava
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.load.java.typeEnhancement.hasEnhancedNullability
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -39,12 +36,7 @@ object JvmIrMangler : IrBasedKotlinManglerImpl() {
         override fun copy(newMode: MangleMode): IrMangleComputer =
             JvmIrManglerComputer(builder, newMode, compatibleMode)
 
-        override fun addReturnTypeSpecialCase(irFunction: IrFunction): Boolean {
-            return irFunction is IrSimpleFunction &&
-                    !irFunction.isFakeOverride &&
-                    irFunction.isFromJava() &&
-                    irFunction.correspondingPropertySymbol == null
-        }
+        override fun addReturnTypeSpecialCase(irFunction: IrFunction): Boolean = true
 
         override fun mangleTypePlatformSpecific(type: IrType, tBuilder: StringBuilder) {
             if (type.hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)) {
@@ -69,11 +61,7 @@ class JvmDescriptorMangler(private val mainDetector: MainFunctionDetector?) : De
         private val mainDetector: MainFunctionDetector?,
         mode: MangleMode
     ) : DescriptorMangleComputer(builder, mode) {
-        // See KT-46042. Under certain conditions, two methods of the same Java class only differ in their return type.
-        // However a) there are always exactly two; b) exactly one of them is a fake override.
-        // Thus we need only mark either one of them in a special way.
-        override fun addReturnTypeSpecialCase(functionDescriptor: FunctionDescriptor): Boolean =
-            functionDescriptor is JavaMethodDescriptor && functionDescriptor.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+        override fun addReturnTypeSpecialCase(functionDescriptor: FunctionDescriptor): Boolean = true
 
         override fun copy(newMode: MangleMode): DescriptorMangleComputer = JvmDescriptorManglerComputer(builder, mainDetector, newMode)
 
