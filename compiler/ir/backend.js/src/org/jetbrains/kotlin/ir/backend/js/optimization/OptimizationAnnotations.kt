@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
+import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.types.IrType
@@ -153,8 +155,9 @@ class OptimizationAnnotations(val context: JsGenerationContext) {
         params.forEach {
             param(
                 typeToClosureTypeAnnotationConverter.convert(it.type),
-                context.getNameForValueDeclaration(it).ident
+                it.getName()
             )
+
         }
     }
 
@@ -194,6 +197,14 @@ class OptimizationAnnotations(val context: JsGenerationContext) {
 
     internal fun makeStmt(): JsStatement {
         return if (jsDoc.tags.isEmpty()) JsEmpty else jsDoc.makeStmt()
+    }
+
+    private fun IrDeclarationWithName.getName(): String {
+        return if (context.localNames != null) {
+            context.getNameForValueDeclaration(this).ident
+        } else {
+            sanitizeName(name.asString())
+        }
     }
 
     private fun JsDocComment.appendTag(tag: String, tagValue: String? = null, description: String = "") {
