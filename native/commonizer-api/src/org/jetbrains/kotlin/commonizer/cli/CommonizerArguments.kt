@@ -20,3 +20,4 @@ public const val COPY_ENDORSED_LIBS_ALIAS: String = "copy-endorsed-libs"
 
 // Commonizer settings
 public const val OPTIMISTIC_NUMBER_COMMONIZATION_ENABLED_ALIAS: String = "optimistic-numbers"
+public const val PLATFORM_INTEGER_COMMONIZATION_ENABLED_ALIAS: String = "platform-integers"
