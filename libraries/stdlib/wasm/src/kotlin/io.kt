@@ -24,11 +24,10 @@ public actual fun print(message: Any?) {
 }
 
 @SinceKotlin("1.6")
-public actual fun readln(): String = TODO("Wasm stdlib: IO")
+public actual fun readln(): String = throw UnsupportedOperationException("readln is not supported in Kotlin/WASM")
 
 @SinceKotlin("1.6")
-public actual fun readlnOrNull(): String? = TODO("Wasm stdlib: IO")
-
+public actual fun readlnOrNull(): String? = throw UnsupportedOperationException("readlnOrNull is not supported in Kotlin/WASM")
 
 internal actual interface Serializable
 
