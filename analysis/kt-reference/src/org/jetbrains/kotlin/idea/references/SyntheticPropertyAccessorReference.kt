@@ -14,8 +14,6 @@ abstract class SyntheticPropertyAccessorReference(
     expression: KtNameReferenceExpression,
     val getter: Boolean
 ) : KtSimpleReference<KtNameReferenceExpression>(expression) {
-    protected abstract fun additionalIsReferenceToChecker(element: PsiElement): Boolean
-
     protected fun isAccessorName(name: String): Boolean {
         if (getter) {
             return name.startsWith("get") || name.startsWith("is")
