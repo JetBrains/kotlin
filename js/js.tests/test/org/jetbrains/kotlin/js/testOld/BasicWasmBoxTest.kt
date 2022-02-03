@@ -75,7 +75,7 @@ abstract class BasicWasmBoxTest(
             val outputWasmNoDceFile = File("$outputFileNoDceBase.wasm")
             val outputJsNoDceFile = File("$outputFileNoDceBase.js")
             val outputBrowserNoDceDir = File("$outputFileNoDceBase.browser")
-            val languageVersionSettings = inputFiles.mapNotNull { it.languageVersionSettings }.firstOrNull()
+            val languageVersionSettings = inputFiles.firstNotNullOfOrNull { it.languageVersionSettings }
 
             val kotlinFiles = mutableListOf<String>()
             val jsFilesBefore = mutableListOf<String>()
@@ -142,9 +142,7 @@ abstract class BasicWasmBoxTest(
             compileAndRun(
                 phaseConfig = phaseConfig,
                 sourceModule = sourceModule,
-                config = config,
                 testPackage = testPackage,
-                testFunction = TEST_FUNCTION,
                 dceEnabled = false,
                 outputWatFile = outputWatNoDceFile,
                 outputWasmFile = outputWasmNoDceFile,
@@ -158,9 +156,7 @@ abstract class BasicWasmBoxTest(
             compileAndRun(
                 phaseConfig = phaseConfig,
                 sourceModule = sourceModule,
-                config = config,
                 testPackage = testPackage,
-                testFunction = TEST_FUNCTION,
                 dceEnabled = true,
                 outputBrowserDir = outputBrowserDir,
                 debugMode = debugMode,
@@ -185,9 +181,7 @@ abstract class BasicWasmBoxTest(
     private fun compileAndRun(
         phaseConfig: PhaseConfig,
         sourceModule: ModulesStructure,
-        config: JsConfig,
         testPackage: String?,
-        testFunction: String,
         dceEnabled: Boolean,
         outputWatFile: File,
         outputWasmFile: File,
@@ -201,7 +195,7 @@ abstract class BasicWasmBoxTest(
             depsDescriptors = sourceModule,
             phaseConfig = phaseConfig,
             irFactory = IrFactoryImpl,
-            exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction))),
+            exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, TEST_FUNCTION))),
             propertyLazyInitialization = true,
         )
 
@@ -219,8 +213,8 @@ abstract class BasicWasmBoxTest(
             const wasmBinary = read(String.raw`${outputWasmFile.absoluteFile}`, 'binary');
             const wasmModule = new WebAssembly.Module(wasmBinary);
             wasmInstance = new WebAssembly.Instance(wasmModule, { js_code });
-            const ${sanitizeName(config.moduleId)} = wasmInstance.exports;
-            ${createJsRun(wasmInstance = "wasmInstance", testFunction = testFunction, dceEnabled = dceEnabled)}
+            const ${sanitizeName(TEST_MODULE)} = wasmInstance.exports;
+            ${createJsRun(wasmInstance = "wasmInstance", dceEnabled = dceEnabled)}
         """.trimIndent()
         outputJsFile.write(compilerResult.js + "\n" + testRunner)
 
@@ -239,12 +233,12 @@ abstract class BasicWasmBoxTest(
             )
     }
 
-    private fun createJsRun(wasmInstance: String, testFunction: String, dceEnabled: Boolean) = """
+    private fun createJsRun(wasmInstance: String, dceEnabled: Boolean) = """
             let actualResult
             try {
                 $wasmInstance.exports.__init();
                 $wasmInstance.exports.startUnitTests?.();
-                actualResult = $wasmInstance.exports.$testFunction();
+                actualResult = $wasmInstance.exports.$TEST_FUNCTION();
             } catch(e) {
                 console.log('Failed with exception!')
                 console.log('Message: ' + e.message)
@@ -262,7 +256,7 @@ abstract class BasicWasmBoxTest(
             const response = await fetch("index.wasm");
             const wasmBinary = await response.arrayBuffer();
             wasmInstance = (await WebAssembly.instantiate(wasmBinary, { js_code })).instance;
-            ${createJsRun(wasmInstance = "wasmInstance", testFunction = "box", dceEnabled = dceEnabled)}
+            ${createJsRun(wasmInstance = "wasmInstance", dceEnabled = dceEnabled)}
             console.log("Test passed!");    
             """.trimIndent()
 
