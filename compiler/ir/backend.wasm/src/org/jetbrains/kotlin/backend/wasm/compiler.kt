@@ -110,33 +110,10 @@ fun WasmCompiledModuleFragment.generateJs(): String {
     var wasmInstance = null;
     
     const externrefBoxes = new WeakMap();
-    
-    const runtime = {
-        identity(x) {
-            return x;
-        },
-
-        println(valueAddr) {
-            console.log(">>>  " + importStringFromWasm(valueAddr));
-        },
-        
-        printError(valueAddr) {
-            console.error(">>>  " + importStringFromWasm(valueAddr));
-        },
-    };
-    
-    function importStringFromWasm(addr) {
-        const mem16 = new Uint16Array(wasmInstance.exports.memory.buffer);
-        const mem32 = new Int32Array(wasmInstance.exports.memory.buffer);
-        const len = mem32[addr / 4];
-        const str_start_addr = (addr + 4) / 2;
-        const slice = mem16.slice(str_start_addr, str_start_addr + len);
-        return String.fromCharCode.apply(null, slice);
-    }
     """.trimIndent()
 
-    val jsCode =
-        "\nconst js_code = {${jsFuns.joinToString(",\n") { "\"" + it.importName + "\" : " + it.jsCode }}};"
+    val jsFuns = jsFuns.joinToString(",\n") { "\"" + it.importName + "\" : " + it.jsCode }
+    val jsCode = "\nconst js_code = {$jsFuns};"
 
     return runtime + jsCode
 }

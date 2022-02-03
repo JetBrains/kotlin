@@ -65,14 +65,11 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext, private val al
         }
 
         val jsCode = declaration.getJsFunAnnotation() ?: if (declaration.isExternal) declaration.name.asString() else null
-        val importedName = if (jsCode != null) {
+        val importedName = jsCode?.let {
             val jsCodeName = jsCodeName(declaration)
-            context.addJsFun(jsCodeName, jsCode)
+            context.addJsFun(jsCodeName, it)
             WasmImportPair("js_code", jsCodeName(declaration))
-        } else {
-            declaration.getWasmImportAnnotation()
         }
-
 
         if (declaration.isFakeOverride)
             return

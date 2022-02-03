@@ -13,10 +13,6 @@ import kotlin.reflect.KClass
 @Retention(AnnotationRetention.BINARY)
 internal annotation class ExcludedFromCodegen
 
-@Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
-@Retention(AnnotationRetention.BINARY)
-internal annotation class WasmImport(val module: String, val name: String)
-
 @Target(CLASS)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class WasmArrayOf(

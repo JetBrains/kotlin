@@ -138,6 +138,15 @@ internal fun anyToExternRef(x: Any): ExternalInterfaceType {
         x.asWasmExternRef()
 }
 
+@JsFun("""(addr) => {
+    const mem16 = new Uint16Array(wasmInstance.exports.memory.buffer);
+    const mem32 = new Int32Array(wasmInstance.exports.memory.buffer);
+    const len = mem32[addr / 4];
+    const str_start_addr = (addr + 4) / 2;
+    const slice = mem16.slice(str_start_addr, str_start_addr + len);
+    return String.fromCharCode.apply(null, slice);
+}
+""")
 internal external fun importStringFromWasm(addr: Int): ExternalInterfaceType
 
 @JsFun("x => x.length")

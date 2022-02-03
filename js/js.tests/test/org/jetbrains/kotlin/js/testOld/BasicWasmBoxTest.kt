@@ -218,7 +218,7 @@ abstract class BasicWasmBoxTest(
         val testRunner = """
             const wasmBinary = read(String.raw`${outputWasmFile.absoluteFile}`, 'binary');
             const wasmModule = new WebAssembly.Module(wasmBinary);
-            wasmInstance = new WebAssembly.Instance(wasmModule, { runtime, js_code });
+            wasmInstance = new WebAssembly.Instance(wasmModule, { js_code });
             const ${sanitizeName(config.moduleId)} = wasmInstance.exports;
             ${createJsRun(wasmInstance = "wasmInstance", testFunction = testFunction, dceEnabled = dceEnabled)}
         """.trimIndent()
@@ -261,7 +261,7 @@ abstract class BasicWasmBoxTest(
             """
             const response = await fetch("index.wasm");
             const wasmBinary = await response.arrayBuffer();
-            wasmInstance = (await WebAssembly.instantiate(wasmBinary, { runtime, js_code })).instance;
+            wasmInstance = (await WebAssembly.instantiate(wasmBinary, { js_code })).instance;
             ${createJsRun(wasmInstance = "wasmInstance", testFunction = "box", dceEnabled = dceEnabled)}
             console.log("Test passed!");    
             """.trimIndent()
