@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegationResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.inlineClassRepresentation
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 import org.jetbrains.kotlin.resolve.isInlineClass
@@ -113,7 +114,18 @@ class ClassGenerator(
             }
 
             if (irClass.isSingleFieldValueClass && ktClassOrObject is KtClassOrObject) {
-                generateAdditionalMembersForSingleFieldValueClasses(irClass, ktClassOrObject)
+                val representation = classDescriptor.valueClassRepresentation
+                    ?: error("Unknown representation for inline class: $classDescriptor")
+                irClass.valueClassRepresentation = representation.mapUnderlyingType { type ->
+                    type.toIrType() as? IrSimpleType ?: error("Inline class underlying type is not a simple type: $classDescriptor")
+                }
+
+                val isSealedInlineSubclassOfSealedInlineClass =
+                    classDescriptor.getSuperClassOrAny().isInlineClass() && classDescriptor.modality == Modality.SEALED
+
+                if (!isSealedInlineSubclassOfSealedInlineClass) {
+                    generateAdditionalMembersForSingleFieldValueClasses(irClass, ktClassOrObject)
+                }
             }
 
             if (irClass.isData && ktClassOrObject is KtClassOrObject) {
