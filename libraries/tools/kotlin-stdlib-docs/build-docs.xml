@@ -298,6 +298,7 @@
               skipDeprecated="false"
               jdkversion="8"
               analysisplatform="common"
+              noStdlibLink="true"
               classpathref="kotlin-test-common.classpath"
               languageVersion="${language.version}"
               includeRootPackage="false"
@@ -311,7 +312,8 @@
         <target value="JVM"/>
         <target value="JS"/>
         <target value="Native"/>
-      </passconfig>
+        <ExternalDocumentationLink url="https://kotlinlang.org/api/latest/jvm/stdlib/" packageListUrl="${stdlib.package.list}" />
+     </passconfig>
 
         <passconfig
                 include="${kotlin-test-include-md}"
@@ -319,6 +321,7 @@
                 skipDeprecated="false"
                 jdkversion="8"
                 analysisplatform="jvm"
+                noStdlibLink="true"
                 classpathref="kotlin-test-jvm.classpath"
                 languageVersion="${language.version}"
                 includeRootPackage="false">
@@ -328,6 +331,7 @@
 
             <target value="JVM" />
             <packageoptions prefix="org.junit" skipdeprecated="true"/>
+          <ExternalDocumentationLink url="https://kotlinlang.org/api/latest/jvm/stdlib/" packageListUrl="${stdlib.package.list}" />
         </passconfig>
 
 
@@ -337,6 +341,7 @@
               skipDeprecated="false"
               jdkversion="8"
               analysisplatform="jvm"
+              noStdlibLink="true"
               classpathref="kotlin-test-junit.classpath"
               languageVersion="${language.version}"
               includeRootPackage="false">
@@ -356,6 +361,7 @@
               skipDeprecated="false"
               jdkversion="8"
               analysisplatform="jvm"
+              noStdlibLink="true"
               classpathref="kotlin-test-junit5.classpath"
               languageVersion="${language.version}"
               includeRootPackage="false">
@@ -376,6 +382,7 @@
               skipDeprecated="false"
               jdkversion="8"
               analysisplatform="jvm"
+              noStdlibLink="true"
               classpathref="kotlin-test-testng.classpath"
               languageVersion="${language.version}"
               includeRootPackage="false">
@@ -395,6 +402,7 @@
               skipDeprecated="false"
               jdkversion="8"
               analysisplatform="js"
+              noStdlibLink="true"
               classpathref="kotlin-test-js.classpath"
               languageVersion="${language.version}"
               includeRootPackage="false"
@@ -414,6 +422,7 @@
               skipDeprecated="false"
               jdkversion="8"
               analysisplatform="js"
+              noStdlibLink="true"
               classpathref="kotlin-test-js.classpath"
               languageVersion="${language.version}"
               includeRootPackage="false"
