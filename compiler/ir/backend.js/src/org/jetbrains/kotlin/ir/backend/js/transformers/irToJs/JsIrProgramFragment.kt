@@ -117,7 +117,10 @@ private class JsIrModuleCrossModuleReferecenceBuilder(val module: JsIrModule, va
             val importedAs = tagToName[tag]!!
             val moduleName = it.module.module.import()
 
-            val importStatement = JsVars.JsVar(importedAs, JsNameRef(exportedAs, ReservedJsNames.makeCrossModuleNameRef(moduleName)))
+            val importStatement = JsVars.JsVar(
+                importedAs,
+                JsArrayAccess(ReservedJsNames.makeCrossModuleNameRef(moduleName), JsStringLiteral(exportedAs))
+            )
 
             tag to importStatement
         }

@@ -209,6 +209,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                             }
                         }
 
+                    classBlock.statements += property.generatePropertyAccessorDefinition()
                     classBlock.statements += JsExpressionStatement(
                         defineProperty(
                             classPrototypeRef,
@@ -445,6 +446,17 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
     private fun generateFastPrototype() = baseClassRef?.let { prototypeOf(it) }
 
     private fun IrType.isFunctionType() = isFunctionOrKFunction() || isSuspendFunctionOrKFunction()
+
+    private fun IrProperty.generatePropertyAccessorDefinition(): JsStatement {
+        val type = this@generatePropertyAccessorDefinition.backingField?.type ?: return JsEmpty
+        val prototype = prototypeOf(classNameRef)
+        val name = context.getNameForProperty(this)
+        return JsNameRef(name, prototype).makeStmt()
+            .annotate(context) {
+                export()
+                mutability(isVar, type)
+            }
+    }
 
     private fun generateAssociatedObjectKey(): JsIntLiteral? {
         return context.getAssociatedObjectKey(irClass)?.let { JsIntLiteral(it) }

@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.ir.backend.js.optimization
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
-import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
@@ -20,8 +17,8 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.js.backend.ast.*
 
-fun JsStatement.annotate(context: JsGenerationContext, builder: OptimizationAnnotations.() -> Unit): JsStatement {
-    return OptimizationAnnotations(context)
+fun JsStatement.annotate(context: JsGenerationContext, builder: ExtendedOptimizationAnnotations.() -> Unit): JsStatement {
+    return ExtendedOptimizationAnnotations(context)
         .apply { builder() }
         .run {
             JsGlobalBlock().apply {
@@ -31,9 +28,19 @@ fun JsStatement.annotate(context: JsGenerationContext, builder: OptimizationAnno
         }
 }
 
-class OptimizationAnnotations(val context: JsGenerationContext) {
+fun JsStatement.annotateWithoutContext(builder: BasicOptimizationAnnotations.() -> Unit): JsStatement {
+    return BasicOptimizationAnnotations()
+        .apply { builder() }
+        .run {
+            JsGlobalBlock().apply {
+                statements += makeStmt()
+                statements += this@annotateWithoutContext
+            }
+        }
+}
+
+open class BasicOptimizationAnnotations {
     private val jsDoc = JsDocComment(mutableMapOf())
-    private val typeToClosureTypeAnnotationConverter = IrTypeToClosureTypeAnnotation(context.staticContext.backendContext)
 
     fun constructor() {
         jsDoc.appendTag("constructor")
@@ -103,6 +110,18 @@ class OptimizationAnnotations(val context: JsGenerationContext) {
     fun protected() {
         jsDoc.appendTag("protected")
     }
+
+    internal fun makeStmt(): JsStatement {
+        return if (jsDoc.tags.isEmpty()) JsEmpty else jsDoc.makeStmt()
+    }
+
+    private fun JsDocComment.appendTag(tag: String, tagValue: String? = null, description: String = "") {
+        tags[tag] = tagValue?.run { "{$this} $description" } ?: description
+    }
+}
+
+class ExtendedOptimizationAnnotations(val context: JsGenerationContext): BasicOptimizationAnnotations() {
+    private val typeToClosureTypeAnnotationConverter = IrTypeToClosureTypeAnnotation(context.staticContext.backendContext)
 
     fun inheritable(isInheritable: Boolean) {
         if (!isInheritable) {
@@ -195,19 +214,11 @@ class OptimizationAnnotations(val context: JsGenerationContext) {
         }
     }
 
-    internal fun makeStmt(): JsStatement {
-        return if (jsDoc.tags.isEmpty()) JsEmpty else jsDoc.makeStmt()
-    }
-
     private fun IrDeclarationWithName.getName(): String {
         return if (context.localNames != null) {
             context.getNameForValueDeclaration(this).ident
         } else {
             sanitizeName(name.asString())
         }
-    }
-
-    private fun JsDocComment.appendTag(tag: String, tagValue: String? = null, description: String = "") {
-        tags[tag] = tagValue?.run { "{$this} $description" } ?: description
     }
 }

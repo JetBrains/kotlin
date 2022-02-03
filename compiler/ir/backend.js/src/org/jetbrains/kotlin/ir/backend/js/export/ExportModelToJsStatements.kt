@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.export
 
+import org.jetbrains.kotlin.ir.backend.js.optimization.annotateWithoutContext
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsAstUtils
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.defineProperty
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsAssignment
@@ -151,19 +152,17 @@ class ExportModelToJsStatements(
         if (companionObject != null) {
             val companionName = companionObject.getJsNameOrKotlinName().identifier
             blockStatements.add(
-                jsAssignment(
-                    JsNameRef(companionName, bindConstructor.makeRef()),
-                    JsNameRef(companionName, innerClassRef),
-                ).makeStmt()
+                jsAssignment(JsNameRef(companionName, bindConstructor.makeRef()), JsNameRef(companionName, innerClassRef))
+                    .makeStmt()
+                    .annotateWithoutContext { export() }
             )
         }
 
         secondaryConstructors.forEach {
             val currentFunRef = namer.getNameForStaticDeclaration(it.ir).makeRef()
-            val assignment = jsAssignment(
-                JsNameRef(it.name, bindConstructor.makeRef()),
-                currentFunRef.bindToThis()
-            ).makeStmt()
+            val assignment = jsAssignment(JsNameRef(it.name, bindConstructor.makeRef()), currentFunRef.bindToThis())
+                .makeStmt()
+                .annotateWithoutContext { export() }
 
             blockStatements.add(assignment)
         }

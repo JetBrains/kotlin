@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.js.backend.ast.JsArrayAccess
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef
+import org.jetbrains.kotlin.js.backend.ast.JsStringLiteral
 
 class ReservedJsNames {
     companion object {
         fun makeInternalModuleName() = JsName("_", false)
         fun makeJsExporterName() = JsName("\$jsExportAll\$", false)
-        fun makeCrossModuleNameRef(moduleName: JsName) = JsNameRef("\$crossModule\$", moduleName.makeRef())
+        fun makeCrossModuleNameRef(moduleName: JsName) = JsArrayAccess(moduleName.makeRef(), JsStringLiteral("\$crossModule\$"))
     }
 }
