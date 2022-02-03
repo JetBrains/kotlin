@@ -16,7 +16,14 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleReference<KtSimpleNameExpression>(expression) {
-    protected abstract fun doCanBeReferenceTo(candidateTarget: PsiElement): Boolean
+    // Extension point used by deprecated android extensions.
+    abstract fun isReferenceToViaExtension(element: PsiElement): Boolean
+
+    override fun isReferenceTo(candidateTarget: PsiElement): Boolean {
+        if (!canBeReferenceTo(candidateTarget)) return false
+        if (isReferenceToViaExtension(candidateTarget)) return true
+        return super.isReferenceTo(candidateTarget)
+    }
 
     override fun getRangeInElement(): TextRange {
         val element = element.getReferencedNameElement()
