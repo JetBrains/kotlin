@@ -32,8 +32,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.lexer.KtTokens.CLOSING_QUOTE
-import org.jetbrains.kotlin.lexer.KtTokens.OPEN_QUOTE
+import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -407,6 +406,29 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             else ->
                 throw AssertionError("Unknown literal type: $type, $text")
         }
+    }
+
+    fun convertUnaryPlusMinusCallOnIntegerLiteralIfNecessary(
+        source: T,
+        receiver: FirExpression,
+        operationToken: IElementType
+    ): FirExpression? {
+        if (receiver !is FirConstExpression<*>) return null
+        if (receiver.kind != ConstantValueKind.IntegerLiteral) return null
+        if (operationToken != PLUS && operationToken != MINUS) return null
+
+        val value = receiver.value as Long
+        val convertedValue = when (operationToken) {
+            MINUS -> -value
+            PLUS -> value
+            else -> error("Should not be here")
+        }
+
+        return buildConstExpression(
+            source.toFirSourceElement(),
+            ConstantValueKind.IntegerLiteral,
+            convertedValue
+        )
     }
 
     fun Array<out T?>.toInterpolatingCall(
