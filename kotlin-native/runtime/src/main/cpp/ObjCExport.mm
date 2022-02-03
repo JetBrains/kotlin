@@ -493,6 +493,7 @@ static OBJ_GETTER(blockToKotlinImp, id block, SEL cmd) {
   for (int i = 1; i <= parameterCount; ++i) {
     const char* argEncoding = [signature getArgumentTypeAtIndex:i];
     if (argEncoding[0] != '@') {
+      kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
       [NSException raise:NSGenericException
             format:@"Converting Obj-C blocks with non-reference-typed arguments to kotlin.Any is not supported (%s)", argEncoding];
     }
@@ -500,6 +501,7 @@ static OBJ_GETTER(blockToKotlinImp, id block, SEL cmd) {
 
   const char* returnTypeEncoding = signature.methodReturnType;
   if (returnTypeEncoding[0] != '@') {
+    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
     [NSException raise:NSGenericException
           format:@"Converting Obj-C blocks with non-reference-typed return value to kotlin.Any is not supported (%s)", returnTypeEncoding];
   }
