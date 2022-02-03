@@ -667,14 +667,14 @@ class GeneralNativeIT : BaseGradleIT() {
         }
 
         // Check that setting new value to tracked environment variable triggers tests rerun
-        build("check", options = defaultBuildOptions().copy(withDaemon = false, androidHome = projectDir)) {
+        build("check", options = defaultBuildOptions().copy(androidHome = projectDir)) {
             assertSuccessful()
 
             assertTasksExecuted(*testsToExecute.toTypedArray())
             assertTasksSkipped(*testsToSkip.toTypedArray())
         }
 
-        build("check", options = defaultBuildOptions().copy(withDaemon = false, androidHome = projectDir)) {
+        build("check", options = defaultBuildOptions().copy(androidHome = projectDir)) {
             assertSuccessful()
 
             assertTasksUpToDate(*testsToExecute.toTypedArray())
