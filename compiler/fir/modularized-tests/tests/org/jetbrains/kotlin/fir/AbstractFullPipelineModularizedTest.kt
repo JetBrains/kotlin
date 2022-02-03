@@ -215,6 +215,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
     open fun formatReport(stream: PrintStream, finalReport: Boolean) {
         stream.println("TOTAL MODULES: ${totalModules.size}")
         stream.println("OK MODULES: ${okModules.size}")
+        stream.println("FAILED MODULES: ${totalModules.size - okModules.size}")
 
         formatReportTable(stream)
 
