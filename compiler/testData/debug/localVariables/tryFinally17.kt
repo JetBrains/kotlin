@@ -18,5 +18,4 @@ fun box(): String {
 // test.kt:8 box:
 // test.kt:9 box:
 // test.kt:10 box: x:java.lang.String="x":java.lang.String
-// test.kt:11 box:
 // test.kt:12 box:
