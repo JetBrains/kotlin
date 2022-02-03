@@ -91,7 +91,7 @@ gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
         NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
         state_.schedule();
     });
-    gcThread_ = std::thread([this] {
+    gcThread_ = ScopedThread(ScopedThread::attributes().name("GC thread"), [this] {
         while (true) {
             auto epoch = state_.waitScheduled();
             if (epoch.has_value()) {
@@ -106,7 +106,6 @@ gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
 
 gc::ConcurrentMarkAndSweep::~ConcurrentMarkAndSweep() {
     state_.shutdown();
-    gcThread_.join();
 }
 
 void gc::ConcurrentMarkAndSweep::StartFinalizerThreadIfNeeded() noexcept {

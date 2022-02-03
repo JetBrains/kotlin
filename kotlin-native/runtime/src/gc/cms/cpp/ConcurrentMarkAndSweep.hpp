@@ -10,6 +10,7 @@
 #include "Allocator.hpp"
 #include "GCScheduler.hpp"
 #include "ObjectFactory.hpp"
+#include "ScopedThread.hpp"
 #include "Types.h"
 #include "Utils.hpp"
 #include "GCState.hpp"
@@ -85,7 +86,7 @@ private:
 
     uint64_t lastGCTimestampUs_ = 0;
     GCStateHolder state_;
-    std::thread gcThread_;
+    ScopedThread gcThread_;
     KStdUniquePtr<FinalizerProcessor> finalizerProcessor_;
 };
 

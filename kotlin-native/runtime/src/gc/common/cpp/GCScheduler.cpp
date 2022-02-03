@@ -11,9 +11,12 @@
 #include "GlobalData.hpp"
 #include "KAssert.h"
 #include "Porting.h"
-#include "RepeatedTimer.hpp"
 #include "ThreadRegistry.hpp"
 #include "ThreadData.hpp"
+
+#ifndef KONAN_NO_THREADS
+#include "RepeatedTimer.hpp"
+#endif
 
 using namespace kotlin;
 
@@ -91,6 +94,8 @@ class GCEmptySchedulerData : public gc::GCSchedulerData {
     void UpdateAliveSetBytes(size_t bytes) noexcept override {}
 };
 
+#ifndef KONAN_NO_THREADS
+
 class GCSchedulerDataWithTimer : public gc::GCSchedulerData {
 public:
     GCSchedulerDataWithTimer(
@@ -101,7 +106,7 @@ public:
         heapGrowthController_(config),
         regularIntervalPacer_(config, currentTimeProvider),
         scheduleGC_(std::move(scheduleGC)),
-        timer_(config_.regularGcInterval(), [this]() {
+        timer_("GC Timer thread", config_.regularGcInterval(), [this]() {
             if (regularIntervalPacer_.NeedsGC()) {
                 scheduleGC_();
             }
@@ -129,6 +134,8 @@ private:
     std::function<void()> scheduleGC_;
     RepeatedTimer timer_;
 };
+
+#endif // !KONAN_NO_THREADS
 
 class GCSchedulerDataOnSafepoints : public gc::GCSchedulerData {
 public:
@@ -190,8 +197,12 @@ KStdUniquePtr<gc::GCSchedulerData> kotlin::gc::internal::MakeGCSchedulerData(
             RuntimeLogDebug({kTagGC}, "GC scheduler disabled");
             return ::make_unique<GCEmptySchedulerData>();
         case SchedulerType::kWithTimer:
+#ifndef KONAN_NO_THREADS
             RuntimeLogDebug({kTagGC}, "Initializing timer-based GC scheduler");
             return ::make_unique<GCSchedulerDataWithTimer>(config, std::move(scheduleGC), std::move(currentTimeProvider));
+#else
+            RuntimeFail("GC scheduler with timer is not supported on this platform");
+#endif
         case SchedulerType::kOnSafepoints:
             RuntimeLogDebug({kTagGC}, "Initializing safe-point-based GC scheduler");
             return ::make_unique<GCSchedulerDataOnSafepoints>(config, std::move(scheduleGC), std::move(currentTimeProvider));

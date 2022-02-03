@@ -6,12 +6,12 @@
 #include "InitializationScheme.hpp"
 
 #include <atomic>
-#include <thread>
 
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 #include "ObjectTestSupport.hpp"
+#include "ScopedThread.hpp"
 #include "TestSupport.hpp"
 #include "ThreadData.hpp"
 #include "Types.h"
@@ -200,7 +200,7 @@ TEST_F(InitSingletonTest, InitSingletonConcurrent) {
     constexpr size_t kThreadCount = kDefaultThreadCount;
     std::atomic<bool> canStart(false);
     std::atomic<size_t> readyCount(0);
-    KStdVector<std::thread> threads;
+    KStdVector<ScopedThread> threads;
     ObjHeader* location = nullptr;
     KStdVector<ObjHeader*> stackLocations(kThreadCount, nullptr);
     KStdVector<ObjHeader*> actual(kThreadCount, nullptr);
@@ -222,9 +222,7 @@ TEST_F(InitSingletonTest, InitSingletonConcurrent) {
     // Constructor is called exactly once.
     EXPECT_CALL(constructor(), Call(_));
     canStart = true;
-    for (auto& t : threads) {
-        t.join();
-    }
+    threads.clear();
     testing::Mock::VerifyAndClearExpectations(&constructor());
 
     EXPECT_THAT(location, testing::Not(testing::Truly(isNullOrMarker)));
@@ -236,7 +234,7 @@ TEST_F(InitSingletonTest, InitSingletonConcurrentFailing) {
     constexpr size_t kThreadCount = kDefaultThreadCount;
     std::atomic<bool> canStart(false);
     std::atomic<size_t> readyCount(0);
-    KStdVector<std::thread> threads;
+    KStdVector<ScopedThread> threads;
     constexpr int kException = 42;
     ObjHeader* location = nullptr;
     KStdVector<ObjHeader*> stackLocations(kThreadCount, nullptr);
@@ -263,9 +261,7 @@ TEST_F(InitSingletonTest, InitSingletonConcurrentFailing) {
     // Constructor is called exactly `kThreadCount` times.
     EXPECT_CALL(constructor(), Call(_)).Times(kThreadCount).WillRepeatedly([]() { throw kException; });
     canStart = true;
-    for (auto& t : threads) {
-        t.join();
-    }
+    threads.clear();
     testing::Mock::VerifyAndClearExpectations(&constructor());
 
     EXPECT_THAT(location, nullptr);

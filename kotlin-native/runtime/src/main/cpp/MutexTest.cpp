@@ -6,9 +6,10 @@
 #include "Mutex.hpp"
 
 #include <mutex>
-#include <thread>
 
 #include "gtest/gtest.h"
+
+#include "ScopedThread.hpp"
 #include "TestSupport.hpp"
 
 using namespace kotlin;
@@ -23,13 +24,13 @@ TYPED_TEST(MutexTest, SmokeDetachedThread) {
     using LockUnderTest = TypeParam;
 
     LockUnderTest lock;
-    std::thread secondThread;
+    ScopedThread secondThread;
     std::atomic<bool> started = false;
     std::atomic<int32_t> protectedCounter = 0;
 
     {
         std::unique_lock guard1(lock);
-        secondThread = std::thread([&lock, &started, &protectedCounter]() {
+        secondThread = ScopedThread([&lock, &started, &protectedCounter]() {
             started = true;
             std::unique_lock guard2(lock);
             protectedCounter++;

@@ -10,8 +10,8 @@
 #include <future>
 #include <mutex>
 #include <shared_mutex>
-#include <thread>
 
+#include "ScopedThread.hpp"
 #include "Types.h"
 #include "Utils.hpp"
 
@@ -54,7 +54,7 @@ public:
     }
 
     // Id of the worker thread.
-    std::thread::id threadId() const noexcept { return thread_.get_id(); }
+    ScopedThread::id threadId() const noexcept { return thread_.get_id(); }
 
     // Schedule task execution on the worker thread. The returned future is resolved when the task has completed.
     // If `this` is destroyed before the task manages to complete, the returned future will fail with exception upon `.get()`.
@@ -104,7 +104,7 @@ private:
     KStdDeque<std::packaged_task<void()>> queue_;
     bool shutdownRequested_ = false;
 
-    std::thread thread_;
+    ScopedThread thread_;
 };
 
 } // namespace kotlin

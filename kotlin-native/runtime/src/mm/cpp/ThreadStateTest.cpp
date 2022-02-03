@@ -10,6 +10,7 @@
 
 #include "Memory.h"
 #include "MemoryPrivate.hpp"
+#include "ScopedThread.hpp"
 #include "TestSupport.hpp"
 #include "ThreadData.hpp"
 #include "ThreadState.hpp"
@@ -110,7 +111,7 @@ TEST_F(ThreadStateTest, StateGuardForCurrentThread) {
 }
 
 TEST_F(ThreadStateTest, CalledFromNativeGuard_DetachedThread) {
-    std::thread t([] {
+    ScopedThread([] {
         ASSERT_FALSE(mm::IsCurrentThreadRegistered());
         {
             CalledFromNativeGuard guard;
@@ -120,11 +121,10 @@ TEST_F(ThreadStateTest, CalledFromNativeGuard_DetachedThread) {
         EXPECT_TRUE(mm::IsCurrentThreadRegistered());
         EXPECT_EQ(mm::GetMemoryState()->GetThreadData()->state(), ThreadState::kNative);
     });
-    t.join();
 }
 
 TEST_F(ThreadStateTest, CalledFromNativeGuard_AttachedThread) {
-    std::thread t([] {
+    ScopedThread([] {
         // CalledFromNativeGuard checks that runtime is fully initialized under the hood.
         Kotlin_initRuntimeIfNeeded();
 
@@ -136,11 +136,10 @@ TEST_F(ThreadStateTest, CalledFromNativeGuard_AttachedThread) {
         }
         EXPECT_EQ(threadData->state(), ThreadState::kNative);
     });
-    t.join();
 }
 
 TEST_F(ThreadStateTest, NativeOrUnregisteredThreadGuard_DetachedThread) {
-    std::thread t([] {
+    ScopedThread([] {
         {
             ASSERT_FALSE(mm::IsCurrentThreadRegistered());
             NativeOrUnregisteredThreadGuard guard;
@@ -148,7 +147,6 @@ TEST_F(ThreadStateTest, NativeOrUnregisteredThreadGuard_DetachedThread) {
         }
         EXPECT_FALSE(mm::IsCurrentThreadRegistered());
     });
-    t.join();
 }
 
 TEST_F(ThreadStateTest, NativeOrUnregisteredThreadGuard_AttachedThread) {
@@ -341,7 +339,7 @@ TEST(ThreadStateDeathTest, ReentrantStateSwitch_NativeOrUnregisteredThreadGuard)
 }
 
 TEST(ThreadStateDeathTest, ReentrantStateSwitch_CalledFromNativeGuard) {
-    std::thread t([]() {
+    ScopedThread([]() {
         // CalledFromNativeGuard checks that runtime is fully initialized under the hood.
         Kotlin_initRuntimeIfNeeded();
         auto* threadData = mm::GetMemoryState()->GetThreadData();
@@ -367,7 +365,6 @@ TEST(ThreadStateDeathTest, ReentrantStateSwitch_CalledFromNativeGuard) {
         }
         EXPECT_EQ(threadData->state(), ThreadState::kNative);
     });
-    t.join();
 }
 
 
