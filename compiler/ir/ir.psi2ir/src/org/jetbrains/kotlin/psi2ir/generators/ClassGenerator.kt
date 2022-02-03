@@ -114,7 +114,12 @@ class ClassGenerator(
                 irClass.inlineClassRepresentation = representation.mapUnderlyingType { type ->
                     type.toIrType() as? IrSimpleType ?: error("Inline class underlying type is not a simple type: $classDescriptor")
                 }
-                generateAdditionalMembersForInlineClasses(irClass, ktClassOrObject)
+                val isSealedInlineSubclassOfSealedInlineClass =
+                    classDescriptor.getSuperClassOrAny().isInlineClass() && classDescriptor.modality == Modality.SEALED
+
+                if (!isSealedInlineSubclassOfSealedInlineClass) {
+                    generateAdditionalMembersForInlineClasses(irClass, ktClassOrObject)
+                }
             }
 
             if (irClass.isData && ktClassOrObject is KtClassOrObject) {
