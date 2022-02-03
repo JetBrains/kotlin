@@ -1204,10 +1204,9 @@ class ExpressionCodegen(
             // Generate `try { ... } catch (e: Any?) { <finally>; throw e }` around every part of
             // the try-catch that is not a copy-pasted `finally` block.
             val defaultCatchStart = markNewLabel()
-            // Make sure the ASTORE generated below has the line number of the
-            // finally block and does not take over the line number of whatever
-            // was generated before.
-            tryInfo.onExit.markLineNumber(true)
+            // Make sure the ASTORE generated below has the line number of the first expression of the finally block
+            // and does not take over the line number of whatever was generated before.
+            tryInfo.onExit.firstChild().markLineNumber(true)
             // While keeping this value on the stack should be enough, the bytecode validator will
             // complain if a catch block does not start with ASTORE.
             val savedException = frameMap.enterTemp(AsmTypes.JAVA_THROWABLE_TYPE)
@@ -1244,6 +1243,9 @@ class ExpressionCodegen(
             }
         }
     }
+
+    private fun IrExpression.firstChild(): IrElement =
+        if (this is IrContainerExpression) statements.firstOrNull() ?: this else this
 
     private fun genTryCatchCover(catchStart: Label, tryStart: Label, tryEnd: Label, tryGaps: List<Pair<Label, Label>>, type: String?) {
         val lastRegionStart = tryGaps.fold(tryStart) { regionStart, (gapStart, gapEnd) ->

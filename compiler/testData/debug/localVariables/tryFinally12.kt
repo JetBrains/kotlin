@@ -34,5 +34,4 @@ fun box(): String {
 // test.kt:14 box: i:int=0:int, e:java.lang.Exception=java.lang.RuntimeException, y:java.lang.String="y":java.lang.String
 // test.kt:15 box: i:int=0:int, e:java.lang.Exception=java.lang.RuntimeException, y:java.lang.String="y":java.lang.String, z:java.lang.String="z":java.lang.String
 // test.kt:17 box: i:int=0:int
-// test.kt:20 box:
 // test.kt:21 box:

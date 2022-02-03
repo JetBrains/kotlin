@@ -4257,6 +4257,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("tryFinally.kt")
+        public void testTryFinally() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/lineNumbers/tryFinally.kt");
+        }
+
+        @Test
         @TestMetadata("when.kt")
         public void testWhen() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/lineNumbers/when.kt");
