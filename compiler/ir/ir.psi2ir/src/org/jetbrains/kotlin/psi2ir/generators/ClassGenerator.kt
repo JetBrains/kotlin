@@ -117,10 +117,6 @@ class ClassGenerator(
                 generateAdditionalMembersForInlineClasses(irClass, ktClassOrObject)
             }
 
-            if (!irClass.isInline && ktClassOrObject is KtClassOrObject && classDescriptor.getSuperClassOrAny().isInlineClass()) {
-                generateAdditionalMembersForSealedInlineClassChildren(irClass, ktClassOrObject)
-            }
-
             if (irClass.isData && ktClassOrObject is KtClassOrObject) {
                 generateAdditionalMembersForDataClass(irClass, ktClassOrObject)
             }
@@ -424,10 +420,6 @@ class ClassGenerator(
 
     private fun generateAdditionalMembersForInlineClasses(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
         DataClassMembersGenerator(declarationGenerator).generateInlineClassMembers(ktClassOrObject, irClass)
-    }
-
-    private fun generateAdditionalMembersForSealedInlineClassChildren(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
-        DataClassMembersGenerator(declarationGenerator).generateSealedInlineClassChildMembers(ktClassOrObject, irClass)
     }
 
     private fun generateAdditionalMembersForDataClass(irClass: IrClass, ktClassOrObject: KtClassOrObject) {

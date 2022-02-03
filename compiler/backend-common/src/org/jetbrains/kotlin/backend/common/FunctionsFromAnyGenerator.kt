@@ -21,8 +21,7 @@ abstract class FunctionsFromAnyGenerator(protected val declaration: KtClassOrObj
     open fun generate() {
         val properties = primaryConstructorProperties
         if (properties.isNotEmpty() ||
-            (classDescriptor.isInline && classDescriptor.modality == Modality.SEALED) ||
-            classDescriptor.getSuperClassOrAny().isInlineClass()
+            (classDescriptor.isInline && classDescriptor.modality == Modality.SEALED)
         ) {
             generateToStringIfNeeded(properties)
             generateHashCodeIfNeeded(properties)

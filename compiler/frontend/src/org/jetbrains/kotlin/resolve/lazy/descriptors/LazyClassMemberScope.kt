@@ -33,22 +33,19 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScope.Companion.ALL_NAME_FILTER
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.NullableLazyValue
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeCheckerImpl
-import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
-import java.util.*
 
 open class LazyClassMemberScope(
     c: LazyClassContext,
@@ -282,7 +279,6 @@ open class LazyClassMemberScope(
         result.addAll(generateDelegatingDescriptors(name, EXTRACT_FUNCTIONS, result))
         generateDataClassMethods(result, name, location, fromSupertypes)
         generateFunctionsFromAnyForInlineClass(result, name, fromSupertypes)
-        generateFunctionsFromAnyForSealedInlineClassChild(result, name, fromSupertypes)
         c.syntheticResolveExtension.generateSyntheticMethods(thisDescriptor, name, trace.bindingContext, fromSupertypes, result)
 
         c.additionalClassPartsProvider.generateAdditionalMethods(thisDescriptor, result, name, location, fromSupertypes)
@@ -296,15 +292,6 @@ open class LazyClassMemberScope(
         fromSupertypes: List<SimpleFunctionDescriptor>
     ) {
         if (!thisDescriptor.isInlineClass()) return
-        FunctionsFromAny.addFunctionFromAnyIfNeeded(thisDescriptor, result, name, fromSupertypes)
-    }
-
-    private fun generateFunctionsFromAnyForSealedInlineClassChild(
-        result: MutableCollection<SimpleFunctionDescriptor>,
-        name: Name,
-        fromSupertypes: List<SimpleFunctionDescriptor>
-    ) {
-        if (thisDescriptor.isInlineClass() || !thisDescriptor.getSuperClassOrAny().isInlineClass()) return
         FunctionsFromAny.addFunctionFromAnyIfNeeded(thisDescriptor, result, name, fromSupertypes)
     }
 
