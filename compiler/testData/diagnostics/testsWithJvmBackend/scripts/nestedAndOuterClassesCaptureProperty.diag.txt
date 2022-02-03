@@ -1,0 +1,1 @@
+/nestedAndOuterClassesCaptureProperty.kts:9:5: error: Nested class User captures the script class instance. Try to use explicit inner modifier for both nested User and outer Outer

@@ -1,0 +1,1 @@
+/objectCapturesPropertyViaExtension2.kts:17:1: error: Object ZipHelper captures the script class instance. Try to use class or anonymous object instead

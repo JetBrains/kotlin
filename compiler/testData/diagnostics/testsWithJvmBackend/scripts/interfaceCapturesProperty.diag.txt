@@ -1,0 +1,1 @@
+/interfaceCapturesProperty.kts:8:1: error: Interface A captures the script class instance. Try to use class instead
