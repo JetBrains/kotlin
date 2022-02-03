@@ -43,13 +43,13 @@ internal class KtFirSimpleNameReference(
         return fixUpAnnotationCallResolveToCtor(results)
     }
 
-    override fun doCanBeReferenceTo(candidateTarget: PsiElement): Boolean {
+    override fun canBeReferenceTo(candidateTarget: PsiElement): Boolean {
         return true // TODO
     }
 
-
-    override fun isReferenceTo(element: PsiElement): Boolean {
-        return resolve() == element //todo
+    // Extension point used for deprecated Android Extensions. Not going to implement for FIR.
+    override fun isReferenceToViaExtension(element: PsiElement): Boolean {
+        return false
     }
 
     override fun handleElementRename(newElementName: String): PsiElement? {
