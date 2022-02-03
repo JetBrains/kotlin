@@ -21,7 +21,7 @@ dependencies {
     api(intellijCore())
     implementation(project(":analysis:analysis-api-providers"))
     implementation(project(":analysis:analysis-internal-utils"))
-    implementation(project(":analysis:kt-reference"))
+    implementation(project(":analysis:kt-references"))
 
     testApi(projectTests(":analysis:low-level-api-fir"))
     testApi(projectTests(":compiler:tests-common"))
