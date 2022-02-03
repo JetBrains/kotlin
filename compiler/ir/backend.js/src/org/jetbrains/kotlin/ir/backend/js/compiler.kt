@@ -41,7 +41,8 @@ class CompilationOutputs(
 class LoweredIr(
     val context: JsIrBackendContext,
     val mainModule: IrModuleFragment,
-    val allModules: List<IrModuleFragment>
+    val allModules: List<IrModuleFragment>,
+    val moduleFragmentToUniqueName: Map<IrModuleFragment, String>,
 )
 
 fun compile(
@@ -60,7 +61,7 @@ fun compile(
     icCompatibleIr2Js: Boolean = false,
 ): LoweredIr {
 
-    val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer) =
+    val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
         loadIr(depsDescriptors, irFactory, verifySignatures, filesToLower, loadFunctionInterfacesIntoStdlib = true)
 
     return compileIr(
@@ -68,6 +69,7 @@ fun compile(
         depsDescriptors.mainModule,
         depsDescriptors.compilerConfiguration,
         dependencyModules,
+        moduleToName,
         irBuiltIns,
         symbolTable,
         deserializer,
@@ -88,6 +90,7 @@ fun compileIr(
     mainModule: MainModule,
     configuration: CompilerConfiguration,
     dependencyModules: List<IrModuleFragment>,
+    moduleToName: Map<IrModuleFragment, String>,
     irBuiltIns: IrBuiltIns,
     symbolTable: SymbolTable,
     deserializer: JsIrLinker,
@@ -147,7 +150,7 @@ fun compileIr(
         lowerPreservingTags(allModules, context, phaseConfig, it)
     } ?: jsPhases.invokeToplevel(phaseConfig, context, allModules)
 
-    return LoweredIr(context, moduleFragment, allModules)
+    return LoweredIr(context, moduleFragment, allModules, moduleToName)
 }
 
 fun generateJsCode(

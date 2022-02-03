@@ -331,7 +331,7 @@ fun generateWrappedModuleBody(
         )
 
         val dependencies = others.map { module ->
-            val moduleName = module.moduleName
+            val moduleName = module.externalModuleName
 
             moduleName to generateSingleWrappedModuleBody(
                 moduleName,

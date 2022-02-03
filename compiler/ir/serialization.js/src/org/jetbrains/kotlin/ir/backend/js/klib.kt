@@ -244,7 +244,8 @@ data class IrModuleInfo(
     val allDependencies: List<IrModuleFragment>,
     val bultins: IrBuiltIns,
     val symbolTable: SymbolTable,
-    val deserializer: JsIrLinker
+    val deserializer: JsIrLinker,
+    val moduleFragmentToUniqueName: Map<IrModuleFragment, String>,
 )
 
 fun sortDependencies(mapping: Map<KotlinLibrary, ModuleDescriptor>): Collection<KotlinLibrary> {
@@ -390,7 +391,14 @@ fun getIrModuleInfoForKlib(
     ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     irLinker.postProcess()
 
-    return IrModuleInfo(moduleFragment, deserializedModuleFragments, irBuiltIns, symbolTable, irLinker)
+    return IrModuleInfo(
+        moduleFragment,
+        deserializedModuleFragments,
+        irBuiltIns,
+        symbolTable,
+        irLinker,
+        deserializedModuleFragmentsToLib.getUniqueNameForEachFragment()
+    )
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -457,7 +465,14 @@ fun getIrModuleInfoForSourceFiles(
         irBuiltIns.knownBuiltins.forEach { it.acceptVoid(mangleChecker) }
     }
 
-    return IrModuleInfo(moduleFragment, deserializedModuleFragments, irBuiltIns, symbolTable, irLinker)
+    return IrModuleInfo(
+        moduleFragment,
+        deserializedModuleFragments,
+        irBuiltIns,
+        symbolTable,
+        irLinker,
+        deserializedModuleFragmentsToLib.getUniqueNameForEachFragment()
+    )
 }
 
 fun prepareAnalyzedSourceModule(
@@ -830,3 +845,11 @@ private fun KlibMetadataIncrementalSerializer(configuration: CompilerConfigurati
         skipExpects = !configuration.expectActualLinker,
         allowErrorTypes = allowErrors
     )
+
+private fun Map<IrModuleFragment, KotlinLibrary>.getUniqueNameForEachFragment(): Map<IrModuleFragment, String> {
+    return this.entries.mapNotNull { (moduleFragment, klib) ->
+        klib.manifestProperties.getProperty(KLIB_PROPERTY_JS_OUTPUT_NAME)?.let {
+            moduleFragment to it
+        }
+    }.toMap()
+}

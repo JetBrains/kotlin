@@ -410,6 +410,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                         ir.context,
                         mainCallArguments,
                         relativeRequirePath = true,
+                        moduleToName = ir.moduleFragmentToUniqueName
                     )
 
                     transformer.generateModule(ir.allModules, setOf(TranslationMode.fromFlags(arguments.irDce, arguments.irPerModule)))
@@ -421,6 +422,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                         dceJs = arguments.irDce,
                         multiModule = arguments.irPerModule,
                         relativeRequirePath = true,
+                        moduleToName = ir.moduleFragmentToUniqueName
                     )
 
                     transformer.generateModule(ir.allModules)
