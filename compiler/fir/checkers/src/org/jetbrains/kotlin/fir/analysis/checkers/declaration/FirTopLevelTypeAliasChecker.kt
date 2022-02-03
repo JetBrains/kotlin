@@ -24,12 +24,14 @@ object FirTopLevelTypeAliasChecker : FirTypeAliasChecker() {
         }
 
         fun containsTypeParameter(type: ConeKotlinType): Boolean {
-            if (type is ConeTypeParameterType) {
+            val unwrapped = type.lowerBoundIfFlexible().unwrapDefinitelyNotNull()
+
+            if (unwrapped is ConeTypeParameterType) {
                 return true
             }
 
-            if (type is ConeClassLikeType && type.lookupTag.toSymbol(context.session) is FirTypeAliasSymbol) {
-                for (typeArgument in type.typeArguments) {
+            if (unwrapped is ConeClassLikeType && unwrapped.lookupTag.toSymbol(context.session) is FirTypeAliasSymbol) {
+                for (typeArgument in unwrapped.typeArguments) {
                     val typeArgumentType = (typeArgument as? ConeKotlinType) ?: (typeArgument as? ConeKotlinTypeProjection)?.type
                     if (typeArgumentType != null && containsTypeParameter(typeArgumentType)) {
                         return true

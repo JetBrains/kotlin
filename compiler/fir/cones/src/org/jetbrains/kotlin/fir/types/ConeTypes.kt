@@ -175,6 +175,13 @@ fun ConeKotlinType.lowerBoundIfFlexible(): ConeSimpleKotlinType {
     }
 }
 
+fun ConeSimpleKotlinType.unwrapDefinitelyNotNull(): ConeSimpleKotlinType {
+    return when (this) {
+        is ConeDefinitelyNotNullType -> original
+        else -> this
+    }
+}
+
 class ConeCapturedTypeConstructor(
     val projection: ConeTypeProjection,
     var supertypes: List<ConeKotlinType>? = null,

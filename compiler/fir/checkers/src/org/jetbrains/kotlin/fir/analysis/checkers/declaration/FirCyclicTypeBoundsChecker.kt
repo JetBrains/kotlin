@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker() {
 
@@ -77,5 +76,6 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker() {
     private fun extractTypeParamNames(ref: FirTypeRef): Set<Name> =
         ref.unwrapBound().mapNotNull { extractTypeParamName(it.coneType) }.toSet()
 
-    private fun extractTypeParamName(type: ConeKotlinType): Name? = type.safeAs<ConeTypeParameterType>()?.lookupTag?.name
+    private fun extractTypeParamName(type: ConeKotlinType): Name? =
+        (type.lowerBoundIfFlexible().unwrapDefinitelyNotNull() as? ConeTypeParameterType)?.lookupTag?.name
 }
