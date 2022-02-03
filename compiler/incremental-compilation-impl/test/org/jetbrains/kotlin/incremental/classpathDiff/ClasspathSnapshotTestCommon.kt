@@ -9,11 +9,13 @@ import com.google.gson.GsonBuilder
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.asFile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.snapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compile
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compileAll
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.SourceFile.KotlinSourceFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
+import java.lang.ProcessBuilder.Redirect
 
 abstract class ClasspathSnapshotTestCommon {
 
@@ -68,12 +70,12 @@ abstract class ClasspathSnapshotTestCommon {
             } else {
                 val srcDir = tmpDir.newFolder()
                 asFile().copyTo(File(srcDir, unixStyleRelativePath))
-                compileAll(srcDir, classpath = emptyList(), tmpDir)
+                compileAll(srcDir, tmpDir)
             }
         }
 
         /** Compiles the source files in the given directory and returns all generated .class files. */
-        fun compileAll(srcDir: File, classpath: List<File>, tmpDir: TemporaryFolder): List<ClassFile> {
+        fun compileAll(srcDir: File, tmpDir: TemporaryFolder, classpath: List<File> = emptyList()): List<ClassFile> {
             val kotlinClasses = compileKotlin(srcDir, classpath, tmpDir)
 
             val javaClasspath = classpath + listOfNotNull(kotlinClasses.firstOrNull()?.classRoot)
@@ -126,11 +128,19 @@ abstract class ClasspathSnapshotTestCommon {
             }
 
             val classesDir = tmpDir.newFolder()
-            org.jetbrains.kotlin.test.MockLibraryUtil.compileKotlin(
+            // Note: Calling the following is simpler:
+            //     org.jetbrains.kotlin.test.MockLibraryUtil.compileKotlin(
+            //         srcDir.path, classesDir, extraClasspath = classpath.map { it.path }.toTypedArray())
+            // However, it currently fails with UnsupportedClassVersionError, so we have to launch a new kotlinc process instead
+            // (Linux only).
+            val commandAndArgs = listOf(
+                "dist/kotlinc/bin/kotlinc",
                 srcDir.path,
-                classesDir,
-                extraClasspath = classpath.map { it.path }.toTypedArray()
+                "-d", classesDir.path,
+                "-classpath", (listOf(srcDir) + classpath).joinToString(File.pathSeparator) { it.path }
             )
+            runCommandInNewProcess(commandAndArgs)
+
             return getClassFilesInDir(classesDir)
         }
 
@@ -184,7 +194,7 @@ internal fun snapshotClasspath(
 ): ClasspathSnapshot {
     val classpath = mutableListOf<File>()
     val classpathEntrySnapshots = classpathSourceDir.listFiles()!!.sortedBy { it.name }.map { classpathEntrySourceDir ->
-        val classFiles = ClasspathSnapshotTestCommon.CompileUtil.compileAll(classpathEntrySourceDir, classpath, tmpDir)
+        val classFiles = compileAll(classpathEntrySourceDir, tmpDir, classpath)
         classpath.addAll(listOfNotNull(classFiles.firstOrNull()?.classRoot))
 
         val relativePaths = classFiles.map { it.unixStyleRelativePath }
@@ -194,4 +204,22 @@ internal fun snapshotClasspath(
         )
     }
     return ClasspathSnapshot(classpathEntrySnapshots)
+}
+
+private fun runCommandInNewProcess(commandAndArgs: List<String>) {
+    val processBuilder = ProcessBuilder(commandAndArgs)
+    processBuilder.redirectInput(Redirect.INHERIT)
+    processBuilder.redirectOutput(Redirect.INHERIT)
+    processBuilder.redirectErrorStream(true)
+    val process = processBuilder.start()
+
+    val exitCode = try {
+        process.waitFor()
+    } finally {
+        process.destroyForcibly()
+    }
+    check(exitCode == 0) {
+        "Process returned exit code: $exitCode\n" +
+                "commandAndArgs = ${commandAndArgs.joinToString(" ")}"
+    }
 }

@@ -8,18 +8,22 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.incremental.ChangesEither
 import org.jetbrains.kotlin.incremental.LookupSymbol
+import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_LEVEL
+import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.asFile
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.snapshot
+import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compileAll
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.resolve.sam.SAM_LOOKUP_NAME
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.io.File
 import kotlin.test.fail
 
-abstract class ClasspathChangesComputerTest : ClasspathSnapshotTestCommon() {
+private val testDataDir =
+    File("compiler/incremental-compilation-impl/testData/org/jetbrains/kotlin/incremental/classpathDiff/ClasspathChangesComputerTest")
 
-    companion object {
-        val testDataDir =
-            File("compiler/incremental-compilation-impl/testData/org/jetbrains/kotlin/incremental/classpathDiff/ClasspathChangesComputerTest")
-    }
+abstract class ClasspathChangesComputerTest : ClasspathSnapshotTestCommon() {
 
     @Test
     abstract fun testAbiVersusNonAbiChanges()
@@ -29,6 +33,9 @@ abstract class ClasspathChangesComputerTest : ClasspathSnapshotTestCommon() {
 
     @Test
     abstract fun testModifiedAddedRemovedElements_ClassLevelSnapshot()
+
+    @Test
+    abstract fun testMixedClassSnapshotGranularities()
 
     @Test
     abstract fun testImpactAnalysis()
@@ -83,10 +90,7 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
 
     @Test
     override fun testModifiedAddedRemovedElements_ClassLevelSnapshot() {
-        val changes = computeClasspathChanges(
-            File(testDataDir, "testModifiedAddedRemovedElements/src/kotlin"), tmpDir,
-            ClassSnapshotGranularity.CLASS_LEVEL
-        )
+        val changes = computeClasspathChanges(File(testDataDir, "testModifiedAddedRemovedElements/src/kotlin"), tmpDir, CLASS_LEVEL)
         Changes(
             lookupSymbols = setOf(
                 LookupSymbol(name = "ModifiedClassUnchangedMembers", scope = "com.example"),
@@ -99,6 +103,30 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
                 "com.example.ModifiedClassChangedMembers",
                 "com.example.AddedClass",
                 "com.example.RemovedClass",
+            )
+        ).assertEquals(changes)
+    }
+
+    @Test
+    override fun testMixedClassSnapshotGranularities() {
+        val currentClasspathSnapshot = testMixedClassSnapshotGranularities_snapshotClasspath("kotlin", "current-classpath", tmpDir)
+        val previousClasspathSnapshot = testMixedClassSnapshotGranularities_snapshotClasspath("kotlin", "previous-classpath", tmpDir)
+
+        val changes = computeClasspathChanges(currentClasspathSnapshot, previousClasspathSnapshot)
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "CoarseGrainedFirstBuild_CoarseGrainedSecondBuild_Class", scope = "com.example"),
+                LookupSymbol(name = "CoarseGrainedFirstBuild_FineGrainedSecondBuild_Class", scope = "com.example"),
+                LookupSymbol(name = "FineGrainedFirstBuild_CoarseGrainedSecondBuild_Class", scope = "com.example"),
+                LookupSymbol(name = "modifiedProperty", scope = "com.example.FineGrainedFirstBuild_FineGrainedSecondBuild_Class"),
+                LookupSymbol(name = "modifiedFunction", scope = "com.example.FineGrainedFirstBuild_FineGrainedSecondBuild_Class"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.FineGrainedFirstBuild_FineGrainedSecondBuild_Class")
+            ),
+            fqNames = setOf(
+                "com.example.CoarseGrainedFirstBuild_CoarseGrainedSecondBuild_Class",
+                "com.example.CoarseGrainedFirstBuild_FineGrainedSecondBuild_Class",
+                "com.example.FineGrainedFirstBuild_CoarseGrainedSecondBuild_Class",
+                "com.example.FineGrainedFirstBuild_FineGrainedSecondBuild_Class"
             )
         ).assertEquals(changes)
     }
@@ -255,10 +283,7 @@ class JavaOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
 
     @Test
     override fun testModifiedAddedRemovedElements_ClassLevelSnapshot() {
-        val changes = computeClasspathChanges(
-            File(testDataDir, "testModifiedAddedRemovedElements/src/java"), tmpDir,
-            ClassSnapshotGranularity.CLASS_LEVEL
-        )
+        val changes = computeClasspathChanges(File(testDataDir, "testModifiedAddedRemovedElements/src/java"), tmpDir, CLASS_LEVEL)
         Changes(
             lookupSymbols = setOf(
                 LookupSymbol(name = "ModifiedClassUnchangedMembers", scope = "com.example"),
@@ -271,6 +296,30 @@ class JavaOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
                 "com.example.ModifiedClassChangedMembers",
                 "com.example.AddedClass",
                 "com.example.RemovedClass"
+            )
+        ).assertEquals(changes)
+    }
+
+    @Test
+    override fun testMixedClassSnapshotGranularities() {
+        val currentClasspathSnapshot = testMixedClassSnapshotGranularities_snapshotClasspath("java", "current-classpath", tmpDir)
+        val previousClasspathSnapshot = testMixedClassSnapshotGranularities_snapshotClasspath("java", "previous-classpath", tmpDir)
+
+        val changes = computeClasspathChanges(currentClasspathSnapshot, previousClasspathSnapshot)
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "CoarseGrainedFirstBuild_CoarseGrainedSecondBuild_Class", scope = "com.example"),
+                LookupSymbol(name = "CoarseGrainedFirstBuild_FineGrainedSecondBuild_Class", scope = "com.example"),
+                LookupSymbol(name = "FineGrainedFirstBuild_CoarseGrainedSecondBuild_Class", scope = "com.example"),
+                LookupSymbol(name = "modifiedField", scope = "com.example.FineGrainedFirstBuild_FineGrainedSecondBuild_Class"),
+                LookupSymbol(name = "modifiedMethod", scope = "com.example.FineGrainedFirstBuild_FineGrainedSecondBuild_Class"),
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.FineGrainedFirstBuild_FineGrainedSecondBuild_Class")
+            ),
+            fqNames = setOf(
+                "com.example.CoarseGrainedFirstBuild_CoarseGrainedSecondBuild_Class",
+                "com.example.CoarseGrainedFirstBuild_FineGrainedSecondBuild_Class",
+                "com.example.FineGrainedFirstBuild_CoarseGrainedSecondBuild_Class",
+                "com.example.FineGrainedFirstBuild_FineGrainedSecondBuild_Class"
             )
         ).assertEquals(changes)
     }
@@ -307,7 +356,7 @@ class KotlinAndJavaClasspathChangesComputerTest : ClasspathSnapshotTestCommon() 
     @Test
     fun testImpactAnalysis() {
         val changes =
-            computeClasspathChanges(File(ClasspathChangesComputerTest.testDataDir, "testImpactAnalysis_KotlinAndJava/src"), tmpDir)
+            computeClasspathChanges(File(testDataDir, "testImpactAnalysis_KotlinAndJava/src"), tmpDir)
         Changes(
             lookupSymbols = setOf(
                 LookupSymbol(name = "changedProperty", scope = "com.example.ChangedKotlinSuperClass"),
@@ -339,6 +388,36 @@ class KotlinAndJavaClasspathChangesComputerTest : ClasspathSnapshotTestCommon() 
             )
         ).assertEquals(changes)
     }
+}
+
+private fun testMixedClassSnapshotGranularities_snapshotClasspath(
+    language: String, classpathSourceDirName: String, tmpDir: TemporaryFolder
+): ClasspathSnapshot {
+    val classes = compileAll(File("$testDataDir/testMixedClassSnapshotGranularities/src/$language/$classpathSourceDirName/0"), tmpDir)
+
+    fun getGranularity(classFile: ClassFile): ClassSnapshotGranularity {
+        val granularity = when (val className = classFile.asFile().nameWithoutExtension) {
+            "CoarseGrainedFirstBuild_CoarseGrainedSecondBuild_Class" -> CLASS_LEVEL to CLASS_LEVEL
+            "CoarseGrainedFirstBuild_FineGrainedSecondBuild_Class" -> CLASS_LEVEL to CLASS_MEMBER_LEVEL
+            "FineGrainedFirstBuild_CoarseGrainedSecondBuild_Class" -> CLASS_MEMBER_LEVEL to CLASS_LEVEL
+            "FineGrainedFirstBuild_FineGrainedSecondBuild_Class" -> CLASS_MEMBER_LEVEL to CLASS_MEMBER_LEVEL
+            else -> error("Unrecognized class: $className")
+        }
+        return when (classpathSourceDirName) {
+            "previous-classpath" -> granularity.first
+            "current-classpath" -> granularity.second
+            else -> error("Unrecognized classpathSourceDirName: $classpathSourceDirName")
+        }
+    }
+
+    return classes.map { it.snapshot(getGranularity(it)) }.toClasspathSnapshot()
+}
+
+private fun List<ClassSnapshot>.toClasspathSnapshot(): ClasspathSnapshot {
+    val classpathEntrySnapshot = ClasspathEntrySnapshot(associateByTo(LinkedHashMap()) {
+        JvmClassName.byClassId((it as AccessibleClassSnapshot).classId).internalName + ".class"
+    })
+    return ClasspathSnapshot(listOf(classpathEntrySnapshot))
 }
 
 private fun computeClasspathChanges(

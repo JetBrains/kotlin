@@ -2,6 +2,7 @@
   <dictionary name="hungnv">
     <words>
       <w>externalizers</w>
+      <w>granularities</w>
       <w>multifile</w>
       <w>shrinker</w>
       <w>snapshotter</w>
