@@ -200,8 +200,11 @@ private fun createOtherScopesForNestedClassesOrCompanion(
     }
 
 fun FirRegularClass.resolveSupertypesInTheAir(session: FirSession): List<FirTypeRef> {
-    return FirSupertypeResolverVisitor(session, SupertypeComputationSession(), ScopeSession())
-        .resolveSpecificClassLikeSupertypes(this, superTypeRefs)
+    return FirSupertypeResolverVisitor(session, SupertypeComputationSession(), ScopeSession()).run {
+        withFile(session.firProvider.getFirClassifierContainerFile(this@resolveSupertypesInTheAir.symbol)) {
+            resolveSpecificClassLikeSupertypes(this@resolveSupertypesInTheAir, superTypeRefs)
+        }
+    }
 }
 
 open class FirSupertypeResolverVisitor(
@@ -211,7 +214,7 @@ open class FirSupertypeResolverVisitor(
     private val scopeForLocalClass: PersistentList<FirScope>? = null,
     private val localClassesNavigationInfo: LocalClassesNavigationInfo? = null,
     private val firProviderInterceptor: FirProviderInterceptor? = null,
-    private var useSiteFile: FirFile? = null,
+    @property:PrivateForInline var useSiteFile: FirFile? = null,
     containingDeclarations: List<FirDeclaration> = emptyList(),
 ) : FirDefaultVisitor<Unit, Any?>() {
     private val supertypeGenerationExtensions = session.extensionService.supertypeGenerators
@@ -225,7 +228,8 @@ open class FirSupertypeResolverVisitor(
         }
     }
 
-    private inline fun <R> withFile(file: FirFile, block: () -> R): R {
+    @OptIn(PrivateForInline::class)
+    inline fun <R> withFile(file: FirFile, block: () -> R): R {
         val oldFile = useSiteFile
         try {
             useSiteFile = file
@@ -345,6 +349,8 @@ open class FirSupertypeResolverVisitor(
         val scopes = prepareScopes(classLikeDeclaration)
 
         val transformer = FirSpecificTypeResolverTransformer(session, supertypeSupplier = supertypeComputationSession.supertypesSupplier)
+
+        @OptIn(PrivateForInline::class)
         val resolvedTypesRefs = transformer.withFile(useSiteFile) {
             resolveSuperTypeRefs(
                 transformer,

@@ -151,4 +151,10 @@ private class FirAnnotationResolveTransformer(
             predicateBasedProvider.registerAnnotatedDeclaration(declaration, owners)
         }
     }
+
+    override fun transformFile(file: FirFile, data: Multimap<AnnotationFqn, FirRegularClass>): FirFile {
+        typeResolverTransformer.withFile(file) {
+            return super.transformFile(file, data)
+        }
+    }
 }
