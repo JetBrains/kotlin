@@ -159,7 +159,7 @@ val commonCompilerModules = arrayOf(
     ":analysis:decompiled:decompiler-to-file-stubs",
     ":analysis:decompiled:decompiler-to-psi",
     ":analysis:decompiled:light-classes-for-decompiled",
-    ":analysis:kt-reference",
+    ":analysis:kt-references",
 ).also { extra["commonCompilerModules"] = it }
 
 val firCompilerCoreModules = arrayOf(

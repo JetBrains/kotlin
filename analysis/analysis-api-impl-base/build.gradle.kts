@@ -7,7 +7,7 @@ dependencies {
     api(project(":compiler:psi"))
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-impl-barebone"))
-    api(project(":analysis:kt-reference"))
+    api(project(":analysis:kt-references"))
     api(intellijCore())
     implementation(project(":analysis:analysis-internal-utils"))
 

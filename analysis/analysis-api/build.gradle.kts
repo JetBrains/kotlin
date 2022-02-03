@@ -17,7 +17,7 @@ dependencies {
     compileOnly(project(":analysis:low-level-api-fir"))
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(project(":analysis:analysis-api-providers"))
-    implementation(project(":analysis:kt-reference"))
+    implementation(project(":analysis:kt-references"))
 
     api(intellijCore())
     api(commonDependency("com.google.guava:guava"))
