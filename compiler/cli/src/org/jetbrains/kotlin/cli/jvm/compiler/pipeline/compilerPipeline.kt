@@ -307,8 +307,14 @@ fun compileModuleToAnalyzedFir(
     val countFilesAndLines = if (performanceManager == null) null else performanceManager::addSourcesStats
 
     // raw fir
-    val commonRawFir = commonSession?.buildFirViaLightTree(input.commonSources, diagnosticsReporter, countFilesAndLines)
-    val rawFir = session.buildFirViaLightTree(input.platformSources, diagnosticsReporter, countFilesAndLines)
+    val commonRawFir = commonSession?.buildFirViaLightTree(
+        input.commonSources,
+        environment.projectEnvironment,
+        diagnosticsReporter,
+        countFilesAndLines
+    )
+    val rawFir =
+        session.buildFirViaLightTree(input.platformSources, environment.projectEnvironment, diagnosticsReporter, countFilesAndLines)
 
     // resolution
     commonSession?.apply {

@@ -107,6 +107,9 @@ open class VfsBasedProjectEnvironment(
         baseModuleData: FirModuleData,
         fileSearchScope: AbstractProjectFileSearchScope
     ) = FirJavaFacade(firSession, baseModuleData, project.createJavaClassFinder(fileSearchScope.asPsiSearchScope()))
+
+    override fun getFileText(filePath: String): String? =
+        localFileSystem.findFileByPath(filePath)?.inputStream?.reader(Charsets.UTF_8)?.readText()
 }
 
 private fun AbstractProjectFileSearchScope.asPsiSearchScope() =

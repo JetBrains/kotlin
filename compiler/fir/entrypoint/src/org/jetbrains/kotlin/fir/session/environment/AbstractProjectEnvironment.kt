@@ -60,4 +60,6 @@ interface AbstractProjectEnvironment {
         baseModuleData: FirModuleData,
         fileSearchScope: AbstractProjectFileSearchScope
     ): FirJavaFacade
+
+    fun getFileText(filePath: String): String?
 }
