@@ -23,8 +23,7 @@ class SimpleCallReceiver(
     private val extensionReceiverValue: IntermediateValue?,
     private val contextReceiverValues: List<IntermediateValue>
 ) : CallReceiver {
-
-    override fun call(withDispatchAndExtensionAndContextReceivers: (IntermediateValue?, IntermediateValue?, List<IntermediateValue>) -> IrExpression): IrExpression {
-        return withDispatchAndExtensionAndContextReceivers(dispatchReceiverValue, extensionReceiverValue, contextReceiverValues)
+    override fun call(builder: CallExpressionBuilder): IrExpression {
+        return builder.withReceivers(dispatchReceiverValue, extensionReceiverValue, contextReceiverValues)
     }
 }

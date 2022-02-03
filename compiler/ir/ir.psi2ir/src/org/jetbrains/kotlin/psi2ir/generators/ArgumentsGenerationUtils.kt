@@ -140,7 +140,7 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
                 is SuperCallReceiverValue ->
                     generateThisOrSuperReceiver(receiver, receiver.thisType.constructor.declarationDescriptor as ClassDescriptor)
                 is ExpressionReceiver ->
-                    generateExpression(receiver.expression)
+                    generateStatement(receiver.expression) as IrExpression
                 is ExtensionReceiver -> {
                     IrGetValueImpl(
                         defaultStartOffset, defaultStartOffset, irReceiverType,

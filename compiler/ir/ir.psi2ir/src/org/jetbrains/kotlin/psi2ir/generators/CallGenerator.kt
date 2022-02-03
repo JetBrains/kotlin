@@ -306,7 +306,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
             }
         }
 
-    private fun generateFunctionCall(
+    internal fun generateFunctionCall(
         functionDescriptor: FunctionDescriptor,
         startOffset: Int,
         endOffset: Int,

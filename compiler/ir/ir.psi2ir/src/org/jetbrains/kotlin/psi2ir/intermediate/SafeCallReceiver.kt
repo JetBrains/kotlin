@@ -35,8 +35,7 @@ class SafeCallReceiver(
     val dispatchReceiver: IntermediateValue?,
     val isStatement: Boolean
 ) : CallReceiver {
-
-    override fun call(withDispatchAndExtensionAndContextReceivers: (IntermediateValue?, IntermediateValue?, List<IntermediateValue>) -> IrExpression): IrExpression {
+    override fun call(builder: CallExpressionBuilder): IrExpression {
         val irTmp = generator.scope.createTemporaryVariable(extensionReceiver?.load() ?: dispatchReceiver!!.load(), "safe_receiver")
         val safeReceiverValue = VariableLValue(generator.context, irTmp)
 
@@ -50,7 +49,7 @@ class SafeCallReceiver(
             extensionReceiverValue = null
         }
 
-        val irResult = withDispatchAndExtensionAndContextReceivers(dispatchReceiverValue, extensionReceiverValue, contextReceivers)
+        val irResult = builder.withReceivers(dispatchReceiverValue, extensionReceiverValue, contextReceivers)
 
         val resultType = if (isStatement) generator.context.irBuiltIns.unitType else irResult.type.makeNullable()
 
