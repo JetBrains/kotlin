@@ -494,14 +494,14 @@ static OBJ_GETTER(blockToKotlinImp, id block, SEL cmd) {
     const char* argEncoding = [signature getArgumentTypeAtIndex:i];
     if (argEncoding[0] != '@') {
       [NSException raise:NSGenericException
-            format:@"Blocks with non-reference-typed arguments aren't supported (%s)", argEncoding];
+            format:@"Converting Obj-C blocks with non-reference-typed arguments to kotlin.Any is not supported (%s)", argEncoding];
     }
   }
 
   const char* returnTypeEncoding = signature.methodReturnType;
   if (returnTypeEncoding[0] != '@') {
     [NSException raise:NSGenericException
-          format:@"Blocks with non-reference-typed return value aren't supported (%s)", returnTypeEncoding];
+          format:@"Converting Obj-C blocks with non-reference-typed return value to kotlin.Any is not supported (%s)", returnTypeEncoding];
   }
 
   auto converter = parameterCount < Kotlin_ObjCExport_blockToFunctionConverters_size
