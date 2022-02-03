@@ -116,10 +116,6 @@ class ClassGenerator(
                 generateAdditionalMembersForSingleFieldValueClasses(irClass, ktClassOrObject)
             }
 
-            if (!irClass.isInline && ktClassOrObject is KtClassOrObject && classDescriptor.getSuperClassOrAny().isInlineClass()) {
-                generateAdditionalMembersForSealedInlineClassChildren(irClass, ktClassOrObject)
-            }
-
             if (irClass.isData && ktClassOrObject is KtClassOrObject) {
                 generateAdditionalMembersForDataClass(irClass, ktClassOrObject)
             }
@@ -435,10 +431,6 @@ class ClassGenerator(
 
     private fun generateAdditionalMembersForMultiFieldValueClasses(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
         DataClassMembersGenerator(declarationGenerator, context.configuration.generateBodies).generateMultiFieldValueClassMembers(ktClassOrObject, irClass)
-    }
-
-    private fun generateAdditionalMembersForSealedInlineClassChildren(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
-        DataClassMembersGenerator(declarationGenerator, context.configuration.generateBodies).generateSealedInlineClassChildMembers(ktClassOrObject, irClass)
     }
 
     private fun generateAdditionalMembersForDataClass(irClass: IrClass, ktClassOrObject: KtClassOrObject) {
