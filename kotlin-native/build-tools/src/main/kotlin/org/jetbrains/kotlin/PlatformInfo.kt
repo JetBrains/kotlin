@@ -13,6 +13,10 @@ object PlatformInfo {
     fun isLinux() = HostManager.hostIsLinux
 
     @JvmStatic
+    val hostName: String
+        get() = HostManager.hostName
+
+    @JvmStatic
     fun isAppleTarget(project: Project): Boolean {
         val target = getTarget(project)
         return target.family.isAppleFamily

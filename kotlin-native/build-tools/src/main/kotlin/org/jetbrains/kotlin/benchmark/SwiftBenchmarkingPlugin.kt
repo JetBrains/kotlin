@@ -64,7 +64,10 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
         }
     }
 
-    override fun Project.determinePreset(): AbstractKotlinNativeTargetPreset<*> = kotlin.presets.macosX64 as AbstractKotlinNativeTargetPreset<*>
+    override fun Project.determinePreset(): AbstractKotlinNativeTargetPreset<*> =
+            defaultHostPreset(this).also { preset ->
+                logger.quiet("$project has been configured for ${preset.name} platform.")
+            } as AbstractKotlinNativeTargetPreset<*>
 
     override fun KotlinNativeTarget.configureNativeOutput(project: Project) {
         binaries.framework(nativeFrameworkName, listOf(project.benchmark.buildType)) {

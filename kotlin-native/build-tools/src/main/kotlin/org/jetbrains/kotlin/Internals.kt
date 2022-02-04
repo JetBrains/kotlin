@@ -33,6 +33,9 @@ internal val Project.kotlin: KotlinMultiplatformExtension
 internal val NamedDomainObjectCollection<KotlinTargetPreset<*>>.macosX64: KotlinTargetPreset<*>
     get() = getByName(::macosX64.name)
 
+internal val NamedDomainObjectCollection<KotlinTargetPreset<*>>.macosArm64: KotlinTargetPreset<*>
+    get() = getByName(::macosArm64.name)
+
 internal val NamedDomainObjectCollection<KotlinTargetPreset<*>>.linuxX64: KotlinTargetPreset<*>
     get() = getByName(::linuxX64.name)
 
