@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolver
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -16,8 +15,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -29,22 +26,9 @@ class SingleCandidateResolver(
 ) {
     private val scopeSession = ScopeSession()
 
-    // TODO This transformer is not intended for actual transformations and created here only to simplify access to body resolve components
-    private val stubBodyResolveTransformer = object : FirBodyResolveTransformer(
-        session = firSession,
-        phase = FirResolvePhase.BODY_RESOLVE,
-        implicitTypeOnly = false,
-        scopeSession = scopeSession,
-    ) {}
-    private val bodyResolveComponents =
-        FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents(
-            firSession,
-            scopeSession,
-            stubBodyResolveTransformer,
-            stubBodyResolveTransformer.context,
-        )
+    private val bodyResolveComponents = createStubBodyResolveComponents(firSession)
     private val firCallCompleter = FirCallCompleter(
-        stubBodyResolveTransformer,
+        bodyResolveComponents.transformer,
         bodyResolveComponents,
     )
     private val resolutionStageRunner = ResolutionStageRunner()
@@ -62,7 +46,7 @@ class SingleCandidateResolver(
         val dispatchReceiverValue = infoProvider.dispatchReceiverValue()
         val implicitExtensionReceiverValue = infoProvider.implicitExtensionReceiverValue()
 
-        val resolutionContext = stubBodyResolveTransformer.resolutionContext
+        val resolutionContext = bodyResolveComponents.transformer.resolutionContext
 
         val candidate = CandidateFactory(resolutionContext, callInfo).createCandidate(
             callInfo,
