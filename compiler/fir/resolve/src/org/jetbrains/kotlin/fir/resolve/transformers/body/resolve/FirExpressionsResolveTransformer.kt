@@ -1057,17 +1057,13 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
             }
 
             val reference = delegatedConstructorCall.calleeReference
-            val constructorType: ConeClassLikeType = when (reference) {
-                is FirThisReference -> {
-                    lastDispatchReceiver?.type as? ConeClassLikeType ?: return delegatedConstructorCall
-                }
-                is FirSuperReference -> {
-                    // TODO: unresolved supertype
-                    val supertype = reference.superTypeRef.coneTypeSafe<ConeClassLikeType>()
-                        ?.takeIf { it !is ConeErrorType } ?: return delegatedConstructorCall
-                    supertype.fullyExpandedType(session)
-                }
-                else -> return delegatedConstructorCall
+            val constructorType: ConeClassLikeType? = when (reference) {
+                is FirThisReference -> lastDispatchReceiver?.type as? ConeClassLikeType
+                is FirSuperReference -> reference.superTypeRef
+                    .coneTypeSafe<ConeClassLikeType>()
+                    ?.takeIf { it !is ConeErrorType }
+                    ?.fullyExpandedType(session)
+                else -> null
             }
 
             val resolvedCall = callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, constructorType)
