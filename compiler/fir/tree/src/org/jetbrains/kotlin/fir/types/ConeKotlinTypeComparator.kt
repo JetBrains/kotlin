@@ -8,14 +8,15 @@ package org.jetbrains.kotlin.fir.types
 object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
     private val ConeKotlinType.priority : Int
         get() = when (this) {
-            is ConeErrorType -> 8
-            is ConeLookupTagBasedType -> 7
-            is ConeFlexibleType -> 6
-            is ConeCapturedType -> 5
-            is ConeDefinitelyNotNullType -> 4
-            is ConeIntersectionType -> 3
-            is ConeStubType -> 2
-            is ConeIntegerLiteralType -> 1
+            is ConeErrorType -> 9
+            is ConeLookupTagBasedType -> 8
+            is ConeFlexibleType -> 7
+            is ConeCapturedType -> 6
+            is ConeDefinitelyNotNullType -> 5
+            is ConeIntersectionType -> 4
+            is ConeStubType -> 3
+            is ConeIntegerLiteralConstantType -> 2
+            is ConeIntegerConstantOperatorType -> 1
             else -> 0
         }
 
@@ -151,8 +152,8 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                 }
                 return compare(a.nullability, b.nullability)
             }
-            is ConeIntegerLiteralType -> {
-                require(b is ConeIntegerLiteralType) {
+            is ConeIntegerLiteralConstantType -> {
+                require(b is ConeIntegerLiteralConstantType) {
                     "priority is inconsistent: ${a.render()} v.s. ${b.render()}"
                 }
                 val valueDiff = a.value - b.value
@@ -165,6 +166,9 @@ object ConeKotlinTypeComparator : Comparator<ConeKotlinType> {
                 }
                 // Can't compare individual types from each side, since their orders are not guaranteed.
                 return a.hashCode() - b.hashCode()
+            }
+            is ConeIntegerConstantOperatorType -> {
+                return compare(a.nullability, b.nullability)
             }
             else ->
                 error("Unsupported type comparison: ${a.render()} v.s. ${b.render()}")

@@ -397,7 +397,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     }
 
     override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {
-        return ConeIntegerLiteralTypeImpl.findCommonSuperType(explicitSupertypes)
+        return ConeIntegerLiteralType.findCommonSuperType(explicitSupertypes)
     }
 
     override fun unionTypeAttributes(types: List<KotlinTypeMarker>): List<AnnotationMarker> {
