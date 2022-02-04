@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.backend.common.serialization.isSerializableExpectCla
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -212,6 +214,82 @@ abstract class KlibMetadataSerializer(
                     fqName,
                     descriptors.isEmpty()
                 )
+            }
+        }
+
+        if (result.isEmpty()) {
+            result += withNewContext {
+                buildFragment(
+                    emptyPackageProto(),
+                    emptyList(),
+                    fqName,
+                    true
+                )
+            }
+        }
+
+        return result
+    }
+
+    protected val List<FirDeclaration>.usedForPackageProtoCount: Int
+        get() = count { it is FirProperty || it is FirSimpleFunction || it is FirTypeAlias }
+
+    protected val List<FirDeclaration>.usedForPackageProto: List<FirDeclaration>
+        get() = filter { it is FirProperty || it is FirSimpleFunction || it is FirTypeAlias }
+
+    fun serializeFirMetadata(
+        fqName: FqName,
+        serializer: FirElementSerializer,
+        file: FirFile,
+    ): List<ProtoBuf.PackageFragment> {
+        val classes = file.declarations.filterIsInstance<FirClass>()
+
+        if (
+            TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE == null &&
+            TOP_LEVEL_DECLARATION_COUNT_PER_FILE == null
+        ) {
+            val packageProto = serializer.packagePartProto(fqName, file).build()
+
+            val classesProto = classes.map {
+                val proto = serializer.classProto(it).build()
+                val index = serializer.stringTable.getFqNameIndex(it)
+                proto to index
+            }
+
+            val fragment = withNewContext {
+                buildFragment(
+                    packageProto,
+                    classesProto,
+                    fqName,
+                    file.declarations.usedForPackageProtoCount > 0 && classes.isEmpty()
+                )
+            }
+
+            return listOf(fragment)
+        }
+
+        val result = mutableListOf<ProtoBuf.PackageFragment>()
+
+        result += classes.maybeChunked(TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE) { chunk ->
+            withNewContext {
+                val packageProto = emptyPackageProto()
+
+                val classesProto = classes.map {
+                    val proto = serializer.classProto(it).build()
+                    val index = serializer.stringTable.getFqNameIndex(it)
+                    proto to index
+                }
+
+                buildFragment(packageProto, classesProto, fqName, chunk.isEmpty())
+            }
+        }
+
+        val packageProtoDeclarations = file.declarations.usedForPackageProto
+
+        result += packageProtoDeclarations.maybeChunked(TOP_LEVEL_DECLARATION_COUNT_PER_FILE) { chunk ->
+            withNewContext {
+                val packageProto = serializer.packagePartProto(fqName, chunk).build()
+                buildFragment(packageProto, emptyList(), fqName, chunk.isEmpty())
             }
         }
 
