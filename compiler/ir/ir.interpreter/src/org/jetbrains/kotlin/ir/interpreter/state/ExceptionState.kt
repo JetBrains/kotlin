@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.interpreter.state
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.getOriginalPropertyByName
 import org.jetbrains.kotlin.ir.interpreter.stack.Field
 import org.jetbrains.kotlin.ir.interpreter.stack.Fields
@@ -39,11 +40,13 @@ internal class ExceptionState private constructor(
         if (!fields.containsKey(causeProperty.symbol)) setCause(null)
     }
 
-    constructor(irClass: IrClass, stackTrace: List<String>) : this(irClass, mutableMapOf(), stackTrace)
+    constructor(
+        irClass: IrClass, environment: IrInterpreterEnvironment
+    ) : this(irClass, mutableMapOf(), environment.callStack.getStackTrace())
 
     constructor(
-        exception: Throwable, irClass: IrClass, stackTrace: List<String>
-    ) : this(irClass, evaluateFields(exception, irClass, stackTrace), stackTrace + evaluateAdditionalStackTrace(exception)) {
+        exception: Throwable, irClass: IrClass, stackTrace: List<String>, environment: IrInterpreterEnvironment
+    ) : this(irClass, evaluateFields(exception, irClass, environment), stackTrace + evaluateAdditionalStackTrace(exception, environment)) {
         setCause(null)  // TODO check this fact
         if (irClass.name.asString() != exception::class.java.simpleName) {
             // ir class wasn't found in classpath, a stub was passed => need to save java class hierarchy
@@ -88,6 +91,10 @@ internal class ExceptionState private constructor(
         setField(causeProperty.symbol, causeValue ?: Primitive.nullStateOfType(causeProperty.getter!!.returnType))
     }
 
+    fun getShortDescription(): String {
+        return message.let { if (it?.isNotEmpty() == true) it else "???" }
+    }
+
     fun getFullDescription(): String {
         // TODO remainder of the stack trace with "..."
         val message = message.let { if (it?.isNotEmpty() == true) ": $it" else "" }
@@ -102,18 +109,19 @@ internal class ExceptionState private constructor(
     override fun toString(): String = message?.let { "$exceptionFqName: $it" } ?: exceptionFqName
 
     companion object {
-        private fun evaluateFields(exception: Throwable, irClass: IrClass, stackTrace: List<String>): Fields {
+        private fun evaluateFields(exception: Throwable, irClass: IrClass, environment: IrInterpreterEnvironment): Fields {
+            val stackTrace = environment.callStack.getStackTrace()
             val messageProperty = irClass.getOriginalPropertyByName("message")
             val causeProperty = irClass.getOriginalPropertyByName("cause")
 
             val messageVar = messageProperty.symbol to Primitive(exception.message, messageProperty.getter!!.returnType)
             val causeVar = exception.cause?.let {
-                causeProperty.symbol to ExceptionState(it, irClass, stackTrace + it.stackTrace.reversed().map { "at $it" })
+                causeProperty.symbol to ExceptionState(it, irClass, stackTrace + it.stackTrace.reversed().map { "at $it" }, environment)
             }
             return causeVar?.let { mutableMapOf(messageVar, it) } ?: mutableMapOf(messageVar)
         }
 
-        private fun evaluateAdditionalStackTrace(e: Throwable): List<String> {
+        private fun evaluateAdditionalStackTrace(e: Throwable, environment: IrInterpreterEnvironment): List<String> {
             // TODO do we really need this?... It will point to JVM stdlib
             val additionalStack = mutableListOf<String>()
             if (e.stackTrace.any { it.className == "java.lang.invoke.MethodHandle" }) {
@@ -136,6 +144,10 @@ internal class ExceptionState private constructor(
                     }
                     cause = cause.cause
                 }
+            }
+
+            if (environment.configuration.collapseStackTraceFromJDK && additionalStack.isNotEmpty()) {
+                return listOf("at <JDK>")
             }
             return additionalStack
         }

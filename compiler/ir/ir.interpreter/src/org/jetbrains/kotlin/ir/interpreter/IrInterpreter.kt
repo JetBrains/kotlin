@@ -60,7 +60,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
             callStack.popInstruction().handle()
         }
 
-        return callStack.popState().toIrExpression(expression).apply { callStack.dropFrame() }
+        return environment.stateToIrExpression(callStack.popState(), expression).apply { callStack.dropFrame() }
     }
 
     internal fun withNewCallStack(call: IrCall, init: IrInterpreter.() -> Any?): State {
@@ -221,7 +221,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         // this check is used to be sure that object will be created once
         val objectState = when (constructorCall) {
             !is IrConstructorCall -> callStack.loadState(constructorCall.getThisReceiver())
-            else -> (if (irClass.isSubclassOfThrowable()) ExceptionState(irClass, callStack.getStackTrace()) else Common(irClass))
+            else -> (if (irClass.isSubclassOfThrowable()) ExceptionState(irClass, environment) else Common(irClass))
                 .apply {
                     // must set object's state here, before actual initialization, to avoid cyclic evaluation
                     if (irClass.isObject) environment.mapOfObjects[irClass.symbol] = this

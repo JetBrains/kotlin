@@ -17,4 +17,6 @@ class IrInterpreterConfiguration(
     val maxStack: Int = 10_000,
     val maxCommands: Int = 1_000_000,
     val createNonCompileTimeObjects: Boolean = false,
+    val printOnlyExceptionMessage: Boolean = false,
+    val collapseStackTraceFromJDK: Boolean = true,
 )

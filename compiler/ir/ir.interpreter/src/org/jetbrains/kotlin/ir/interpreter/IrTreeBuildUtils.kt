@@ -65,31 +65,6 @@ fun Any?.toIrConst(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffse
     toIrConstOrNull(irType, startOffset, endOffset)
         ?: throw UnsupportedOperationException("Unsupported const element type ${irType.makeNotNull().render()}")
 
-internal fun State.toIrExpression(expression: IrExpression): IrExpression {
-    val start = expression.startOffset
-    val end = expression.endOffset
-    val type = expression.type.makeNotNull()
-    return when (this) {
-        is Primitive<*> ->
-            when {
-                this.value == null -> this.value.toIrConst(type, start, end)
-                type.isPrimitiveType() || type.isString() -> this.value.toIrConst(type, start, end)
-                else -> expression // TODO support for arrays
-            }
-        is ExceptionState -> {
-            IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + this.getFullDescription())
-        }
-        is Complex -> {
-            val stateType = this.irClass.defaultType
-            when {
-                stateType.isUnsignedType() -> (this.fields.values.single() as Primitive<*>).value.toIrConst(type, start, end)
-                else -> expression
-            }
-        }
-        else -> expression // TODO support
-    }
-}
-
 internal fun IrFunction.createCall(origin: IrStatementOrigin? = null): IrCall {
     this as IrSimpleFunction
     return IrCallImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, returnType, symbol, typeParameters.size, valueParameters.size, origin)

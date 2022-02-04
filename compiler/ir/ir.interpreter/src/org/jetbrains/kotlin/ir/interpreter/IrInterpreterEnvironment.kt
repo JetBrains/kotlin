@@ -9,20 +9,21 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.state.Common
 import org.jetbrains.kotlin.ir.interpreter.state.Complex
+import org.jetbrains.kotlin.ir.interpreter.state.ExceptionState
 import org.jetbrains.kotlin.ir.interpreter.state.Primitive
 import org.jetbrains.kotlin.ir.interpreter.state.State
 import org.jetbrains.kotlin.ir.interpreter.state.Wrapper
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.typeOrNull
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 
@@ -113,6 +114,32 @@ class IrInterpreterEnvironment(
             null -> Primitive.nullStateOfType(irType)
             else -> irType.classOrNull?.owner?.let { Wrapper(value, it, this) }
                 ?: Wrapper(value, this.javaClassToIrClass[value::class.java]!!, this)
+        }
+    }
+
+    internal fun stateToIrExpression(state: State, original: IrExpression): IrExpression {
+        val start = original.startOffset
+        val end = original.endOffset
+        val type = original.type.makeNotNull()
+        return when (state) {
+            is Primitive<*> ->
+                when {
+                    state.value == null -> state.value.toIrConst(type, start, end)
+                    type.isPrimitiveType() || type.isString() -> state.value.toIrConst(type, start, end)
+                    else -> original // TODO support for arrays
+                }
+            is ExceptionState -> {
+                val message = if (configuration.printOnlyExceptionMessage) state.getShortDescription() else "\n" + state.getFullDescription()
+                IrErrorExpressionImpl(original.startOffset, original.endOffset, original.type, message)
+            }
+            is Complex -> {
+                val stateType = state.irClass.defaultType
+                when {
+                    stateType.isUnsignedType() -> (state.fields.values.single() as Primitive<*>).value.toIrConst(type, start, end)
+                    else -> original
+                }
+            }
+            else -> original // TODO support
         }
     }
 

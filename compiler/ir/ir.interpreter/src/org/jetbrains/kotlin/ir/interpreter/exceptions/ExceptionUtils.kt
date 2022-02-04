@@ -34,6 +34,6 @@ internal fun Throwable.handleUserException(environment: IrInterpreterEnvironment
     val exceptionName = this::class.java.simpleName
     val irExceptionClass = environment.irExceptions.firstOrNull { it.name.asString() == exceptionName }
         ?: environment.irBuiltIns.throwableClass.owner
-    environment.callStack.pushState(ExceptionState(this, irExceptionClass, environment.callStack.getStackTrace()))
+    environment.callStack.pushState(ExceptionState(this, irExceptionClass, environment.callStack.getStackTrace(), environment))
     environment.callStack.dropFramesUntilTryCatch()
 }

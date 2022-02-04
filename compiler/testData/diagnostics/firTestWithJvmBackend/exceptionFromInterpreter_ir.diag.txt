@@ -1,11 +1,5 @@
-/exceptionFromInterpreter_ir.kt:7:26: error: An exception occur while evaluating const value initializer:
-Exception java.lang.ArithmeticException: / by zero
-	at ExceptionFromInterpreter_irKt.<clinit>(exceptionFromInterpreter_ir.kt:7)
+/exceptionFromInterpreter_ir.kt:6:26: error: Cannot evaluate constant expression: / by zero
 
-/exceptionFromInterpreter_ir.kt:8:39: error: An exception occur while evaluating const value initializer:
-Exception java.lang.IllegalArgumentException: marginPrefix must be non-blank string.
-	at ExceptionFromInterpreter_irKt.<clinit>(exceptionFromInterpreter_ir.kt:8)
+/exceptionFromInterpreter_ir.kt:7:39: error: Cannot evaluate constant expression: marginPrefix must be non-blank string.
 
-/exceptionFromInterpreter_ir.kt:12:4: error: An exception occur while evaluating const value initializer:
-Exception java.lang.ArithmeticException: / by zero
-	at ExceptionFromInterpreter_irKt.<clinit>(exceptionFromInterpreter_ir.kt:12)
+/exceptionFromInterpreter_ir.kt:11:4: error: Cannot evaluate constant expression: / by zero

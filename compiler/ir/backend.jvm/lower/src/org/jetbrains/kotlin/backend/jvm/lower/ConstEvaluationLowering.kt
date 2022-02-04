@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
+import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.checker.IrConstTransformer
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
@@ -22,7 +24,8 @@ val constEvaluationPhase = makeIrModulePhase(
 
 // TODO make context common
 class ConstEvaluationLowering(val context: JvmBackendContext) : FileLoweringPass {
-    val interpreter = IrInterpreter(context.irBuiltIns)
+    val configuration = IrInterpreterConfiguration(printOnlyExceptionMessage = true)
+    val interpreter = IrInterpreter(IrInterpreterEnvironment(context.irBuiltIns, configuration), emptyMap())
 
     override fun lower(irFile: IrFile) {
         val transformer = IrConstTransformer(interpreter, irFile, mode = EvaluationMode.ONLY_INTRINSIC_CONST) { element, error ->
