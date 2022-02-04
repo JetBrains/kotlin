@@ -148,6 +148,27 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         languageOrApiVersionChanged(CommonCompilerArguments::apiVersion)
     }
 
+    @WorkingDir("LanguageOrApiVersionChanged")
+    fun testLanguageVersionExperimental() {
+        initProject(LibraryDependency.JVM_MOCK_RUNTIME)
+        val module = myProject.modules.first()
+        val args = module.kotlinCompilerArguments
+
+        // Try to set Language version to Stable+2 (there is no promises that metadata will be supported)
+        val experimentalLevelVersion: LanguageVersion
+        try {
+            experimentalLevelVersion = LanguageVersion.values()[LanguageVersion.LATEST_STABLE.ordinal+2]
+        } catch (e: ArrayIndexOutOfBoundsException) {
+            // there is no Stable+2 version for now, skiping test
+            return
+        }
+        CommonCompilerArguments::languageVersion.set(args, experimentalLevelVersion.versionString)
+        myProject.kotlinCommonCompilerArguments = args
+
+        buildAllModules().assertSuccessful()
+        assertCompiled(KotlinBuilder.KOTLIN_BUILDER_NAME, "src/Bar.kt", "src/Foo.kt")
+    }
+
     private fun languageOrApiVersionChanged(versionProperty: KMutableProperty1<CommonCompilerArguments, String?>) {
         initProject(LibraryDependency.JVM_MOCK_RUNTIME)
 
