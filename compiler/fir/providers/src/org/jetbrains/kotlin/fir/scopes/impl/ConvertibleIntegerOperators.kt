@@ -5,15 +5,19 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
 
 object ConvertibleIntegerOperators {
-    val operatorsNames: Set<Name> = listOf(
+    val binaryOperatorsNames: Set<Name> = listOf(
         "plus", "minus", "times", "div", "rem",
         "and", "or", "xor",
         "shl", "shr", "ushr"
-    ).mapTo(mutableSetOf()) { Name.identifier(it) }
+    ).toNameSet()
+
+    // Constant conversion for those unary operators works only for signed integers
+    val unaryOperatorNames: Set<Name> = listOf(
+        "inv", "unaryPlus", "unaryMinus"
+    ).toNameSet()
+
+    private fun List<String>.toNameSet(): Set<Name> = mapTo(mutableSetOf()) { Name.identifier(it) }
 }

@@ -14,15 +14,15 @@ fun testLongDotCall(c1: C<Long>) {
     c1.takeT(1.rem(2))
     c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.inc()<!>)
     c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.dec()<!>)
-    c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.unaryPlus()<!>)
-    c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.unaryMinus()<!>)
+    c1.takeT(1.unaryPlus())
+    c1.takeT(1.unaryMinus())
     c1.takeT(1.shl(2))
     c1.takeT(1.shr(2))
     c1.takeT(1.ushr(2))
     c1.takeT(1.and(2))
     c1.takeT(1.or(2))
     c1.takeT(1.xor(2))
-    c1.takeT(<!ARGUMENT_TYPE_MISMATCH!>1.inv()<!>)
+    c1.takeT(1.inv())
 }
 
 fun testShortDotCall(c2: C<Short>) {
