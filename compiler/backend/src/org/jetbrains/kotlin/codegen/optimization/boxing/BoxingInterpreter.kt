@@ -137,10 +137,7 @@ open class BoxingInterpreter(
     override fun unaryOperation(insn: AbstractInsnNode, value: BasicValue): BasicValue? {
         checkUsedValue(value)
 
-        return if (insn.opcode == Opcodes.CHECKCAST
-            && isExactValue(value)
-            && !isCastToProgression(insn) // operations such as cast kotlin/ranges/IntRange to kotlin/ranges/IntProgression, should be allowed
-        )
+        return if (insn.opcode == Opcodes.CHECKCAST && isExactValue(value))
             value
         else
             super.unaryOperation(insn, value)
@@ -150,16 +147,6 @@ open class BoxingInterpreter(
         value is ProgressionIteratorBasicValue ||
                 value is CleanBoxedValue ||
                 value.type != null && isProgressionClass(value.type)
-
-    private fun isCastToProgression(insn: AbstractInsnNode): Boolean {
-        assert(insn.opcode == Opcodes.CHECKCAST) { "Expected opcode Opcodes.CHECKCAST, but ${insn.opcode} found" }
-        val desc = (insn as TypeInsnNode).desc
-        return desc in setOf(
-            "kotlin/ranges/CharProgression",
-            "kotlin/ranges/IntProgression",
-            "kotlin/ranges/LongProgression"
-        )
-    }
 
     override fun merge(v: BasicValue, w: BasicValue) =
         mergeStackValues(v, w)
