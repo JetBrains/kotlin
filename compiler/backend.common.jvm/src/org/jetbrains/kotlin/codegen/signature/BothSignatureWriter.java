@@ -182,10 +182,10 @@ public class BothSignatureWriter extends JvmSignatureWriter {
     }
 
     @Override
-    public void writeParameterType(JvmMethodParameterKind parameterKind) {
+    public void writeParameterType(@NotNull JvmMethodParameterKind parameterKind, boolean isSkippedInGenericSignature) {
         // This magic mimics the behavior of javac that enum constructor have these synthetic parameters in erased signature, but doesn't
         // have them in generic signature. IDEA, javac and their friends rely on this behavior.
-        if (parameterKind.isSkippedInGenericSignature()) {
+        if (isSkippedInGenericSignature) {
             generic = true;
 
             // pushing dummy visitor, because we don't want these parameters to appear in generic JVM signature
@@ -194,7 +194,7 @@ public class BothSignatureWriter extends JvmSignatureWriter {
         else {
             push(signatureVisitor().visitParameterType());
         }
-        super.writeParameterType(parameterKind);
+        super.writeParameterType(parameterKind, isSkippedInGenericSignature);
     }
 
     @Override

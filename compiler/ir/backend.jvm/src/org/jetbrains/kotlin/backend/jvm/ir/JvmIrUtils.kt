@@ -551,3 +551,7 @@ fun IrClass.findEnumValuesFunction(context: JvmBackendContext): IrSimpleFunction
             && it.returnType.isBoxedArray
             && it.returnType.getArrayElementType(context.irBuiltIns).classOrNull == this.symbol
 }
+
+val IrValueParameter.isSkippedInGenericSignature: Boolean
+    get() = origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS ||
+            origin == JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER
