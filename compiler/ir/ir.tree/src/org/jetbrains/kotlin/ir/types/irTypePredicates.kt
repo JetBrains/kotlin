@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.ir.util.hasEqualFqName
 import org.jetbrains.kotlin.name.FqName
@@ -52,9 +51,7 @@ object IdSignatureValues {
 private fun IrType.isNotNullClassType(signature: StringSignature) = isClassType(signature, hasQuestionMark = false)
 private fun IrType.isNullableClassType(signature: StringSignature) = isClassType(signature, hasQuestionMark = true)
 
-fun getPublicSignature(packageFqName: FqName, name: String): StringSignature =
-    StringSignature("$packageFqName/$name")
-//    IdSignature.CommonSignature(packageFqName.asString(), name, null, 0)
+fun getPublicSignature(packageFqName: FqName, name: String): StringSignature = StringSignature("$packageFqName/$name")
 
 private fun IrType.isClassType(signature: StringSignature, hasQuestionMark: Boolean? = null): Boolean {
     if (this !is IrSimpleType) return false
@@ -63,9 +60,9 @@ private fun IrType.isClassType(signature: StringSignature, hasQuestionMark: Bool
             classifier.owner.let { it is IrClass && it.hasFqNameEqualToSignature(signature) }
 }
 
-private fun IrClass.hasFqNameEqualToSignature(signature: IdSignature.CommonSignature): Boolean =
+private fun IrClass.hasFqNameEqualToSignature(signature: StringSignature): Boolean =
     name.asString() == signature.shortName &&
-            hasEqualFqName(FqName("${signature.packageFqName}.${signature.declarationFqName}"))
+            hasEqualFqName(FqName("${signature.packageFqName().asString()}.${signature.declarationFqName}"))
 
 fun IrClassifierSymbol.isClassWithFqName(fqName: FqNameUnsafe): Boolean =
     this is IrClassSymbol && classFqNameEquals(this, fqName)
@@ -125,7 +122,7 @@ fun IrType.isUnsignedType(hasQuestionMark: Boolean = false): Boolean =
 fun IrType.getUnsignedType(): UnsignedType? =
     getPrimitiveOrUnsignedType(idSignatureToUnsignedType, shortNameToUnsignedType)
 
-fun <T : Enum<T>> IrType.getPrimitiveOrUnsignedType(byIdSignature: Map<IdSignature.CommonSignature, T>, byShortName: Map<Name, T>): T? {
+fun <T : Enum<T>> IrType.getPrimitiveOrUnsignedType(byIdSignature: Map<StringSignature, T>, byShortName: Map<Name, T>): T? {
     if (this !is IrSimpleType) return null
     val symbol = classifier as? IrClassSymbol ?: return null
     if (symbol.signature != null) return byIdSignature[symbol.signature]

@@ -12,11 +12,9 @@ import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -76,7 +74,7 @@ class JvmIrLinkageModeTest : CodegenTestCase() {
     private class LinkageTestIrExtension(val idSignatureShouldBePresent: Boolean) : IrGenerationExtension {
         override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
             val file = moduleFragment.files.single()
-            val signatures = mutableListOf<IdSignature>()
+            val signatures = mutableListOf<StringSignature>()
             file.acceptVoid(object : IrElementVisitorVoid {
                 override fun visitElement(element: IrElement) {
                     element.acceptChildrenVoid(this)
@@ -87,7 +85,7 @@ class JvmIrLinkageModeTest : CodegenTestCase() {
                     signatures.addIfNotNull(declaration.symbol.signature)
                 }
             })
-            val allSignatures = signatures.map { it.render().substringBefore("|") }.toSet()
+            val allSignatures = signatures.map { it.value.substringBefore("|") }.toSet()
             if (idSignatureShouldBePresent) {
                 val message = allSignatures.sorted().joinToString("\n")
                 assertTrue(message, "test/Class" in allSignatures)

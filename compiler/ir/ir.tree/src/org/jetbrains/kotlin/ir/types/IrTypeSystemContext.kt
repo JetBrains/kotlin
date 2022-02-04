@@ -495,7 +495,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
         val signature = signature
         return if (signature != null) {
-            if (signature.packageFqName() == StandardNames.BUILT_INS_PACKAGE_NAME)
+            if (signature.packageFqName() == StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
                 signature.declarationFqName
             else null
         } else {
