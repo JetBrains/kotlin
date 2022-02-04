@@ -60,8 +60,12 @@ class FirModuleDescriptor(val session: FirSession) : ModuleDescriptor {
         return this
     }
 
-    override fun getName(): Name {
-        return Name.identifier("module for FIR session")
+    private var innerName = Name.identifier("module for FIR session")
+
+    override fun getName() = innerName
+
+    fun setName(name: Name) {
+        innerName = name
     }
 
     override val stableName: Name?

@@ -385,8 +385,28 @@ fun getIrModuleInfoForKlib(
     messageLogger: IrMessageLogger,
     loadFunctionInterfacesIntoStdlib: Boolean,
     mapping: (KotlinLibrary) -> ModuleDescriptor,
-): IrModuleInfo {
+) = getIrModuleInfoForKlib2(
+    moduleDescriptor,
+    friendModules,
+    configuration,
+    symbolTable,
+    messageLogger,
+    loadFunctionInterfacesIntoStdlib,
+) {
     val mainModuleLib = sortedDependencies.last()
+    deserializeDependencies(sortedDependencies, it, mainModuleLib, filesToLoad, mapping)
+}
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+fun getIrModuleInfoForKlib2(
+    moduleDescriptor: ModuleDescriptor,
+    friendModules: Map<String, List<String>>,
+    configuration: CompilerConfiguration,
+    symbolTable: SymbolTable,
+    messageLogger: IrMessageLogger,
+    loadFunctionInterfacesIntoStdlib: Boolean,
+    deserializeDependencies: (JsIrLinker) -> Map<IrModuleFragment, KotlinLibrary>,
+): IrModuleInfo {
     val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
     val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
@@ -404,7 +424,7 @@ fun getIrModuleInfoForKlib(
         unlinkedDeclarationsSupport = unlinkedDeclarationsSupport
     )
 
-    val deserializedModuleFragmentsToLib = deserializeDependencies(sortedDependencies, irLinker, mainModuleLib, filesToLoad, mapping)
+    val deserializedModuleFragmentsToLib = deserializeDependencies(irLinker)
     val deserializedModuleFragments = deserializedModuleFragmentsToLib.keys.toList()
     irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(
         irBuiltIns,

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.model
 
 import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue
 import org.jetbrains.kotlin.ir.backend.js.CompilerResult
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
@@ -49,8 +50,15 @@ object BinaryArtifacts {
             get() = ArtifactKinds.Native
     }
 
-    class KLib(val outputFile: File) : ResultingArtifact.Binary<KLib>() {
+    open class KLib(val outputFile: File) : ResultingArtifact.Binary<KLib>() {
         override val kind: BinaryKind<KLib>
             get() = ArtifactKinds.KLib
     }
+
+    // TODO: real dirty
+    class KLibForFir(
+        outputFile: File,
+        val descriptor: FirModuleDescriptor,
+        val library: KotlinLibrary,
+    ) : KLib(outputFile)
 }
