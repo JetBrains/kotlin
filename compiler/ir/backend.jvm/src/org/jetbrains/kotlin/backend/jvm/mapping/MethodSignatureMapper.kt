@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.jvm.mapping
 
-import org.jetbrains.kotlin.ir.util.parentsWithSelf
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
@@ -255,12 +254,12 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
 
         for (i in 0 until function.contextReceiverParametersCount) {
             val contextReceiver = function.valueParameters[i]
-            writeParameter(sw, JvmMethodParameterKind.CONTEXT_RECEIVER, contextReceiver.type, function)
+            writeParameter(sw, JvmMethodParameterKind.VALUE, contextReceiver.type, function)
         }
 
         val receiverParameter = function.extensionReceiverParameter
         if (receiverParameter != null) {
-            writeParameter(sw, JvmMethodParameterKind.RECEIVER, receiverParameter.type, function)
+            writeParameter(sw, JvmMethodParameterKind.VALUE, receiverParameter.type, function)
         }
 
         for (i in function.contextReceiverParametersCount until function.valueParameters.size) {

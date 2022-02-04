@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.computeExpandedTypeForInlineClass
@@ -607,31 +606,37 @@ class ExpressionCodegen(
 
         callGenerator.beforeCallStart()
 
+        fun handleParameter(parameter: IrValueParameter, argument: IrExpression, asmType: Type) {
+            callGenerator.genValueAndPut(parameter, argument, asmType, this, data)
+        }
+
+        fun getValueArgument(i: Int): IrExpression =
+            expression.getValueArgument(i) ?: error(
+                "No argument for parameter ${callee.symbol.owner.valueParameters[i].render()}:\n${expression.dump()}"
+            )
+
         expression.dispatchReceiver?.let { receiver ->
-            val type = if (expression.superQualifierSymbol != null) receiver.asmType else callable.owner
-            callGenerator.genValueAndPut(callee.dispatchReceiverParameter!!, receiver, type, this, data)
+            handleParameter(
+                callee.dispatchReceiverParameter!!,
+                receiver,
+                if (expression.superQualifierSymbol != null) receiver.asmType else callable.owner,
+            )
         }
 
-        fun handleValueParameter(i: Int, irParameter: IrValueParameter) {
-            val arg = expression.getValueArgument(i)
-            val parameterType = callable.valueParameterTypes[i]
-            require(arg != null) {
-                "No argument for parameter ${irParameter.render()}:\n${expression.dump()}"
-            }
-            callGenerator.genValueAndPut(irParameter, arg, parameterType, this, data)
+        val valueParameterAsmTypes = callable.signature.valueParameters
+        val contextReceiverCount = callee.contextReceiverParametersCount
+        for (i in 0 until contextReceiverCount) {
+            handleParameter(callee.valueParameters[i], getValueArgument(i), valueParameterAsmTypes[i].asmType)
         }
-
-        val contextReceivers = callee.valueParameters.subList(0, callee.contextReceiverParametersCount)
-        contextReceivers.forEachIndexed(::handleValueParameter)
 
         expression.extensionReceiver?.let { receiver ->
-            val type = callable.signature.valueParameters.singleOrNull { it.kind == JvmMethodParameterKind.RECEIVER }?.asmType
-                ?: error("No single extension receiver parameter: ${callable.signature.valueParameters}")
-            callGenerator.genValueAndPut(callee.extensionReceiverParameter!!, receiver, type, this, data)
+            handleParameter(callee.extensionReceiverParameter!!, receiver, valueParameterAsmTypes[contextReceiverCount].asmType)
         }
 
-        callee.valueParameters.subList(callee.contextReceiverParametersCount, callee.valueParameters.size)
-            .forEachIndexed { i, valueParameter -> handleValueParameter(i + contextReceivers.size, valueParameter) }
+        val valueParametersShift = if (callee.extensionReceiverParameter != null) 1 else 0
+        for (i in contextReceiverCount until callee.valueParameters.size) {
+            handleParameter(callee.valueParameters[i], getValueArgument(i), valueParameterAsmTypes[i + valueParametersShift].asmType)
+        }
 
         expression.markLineNumber(true)
 
