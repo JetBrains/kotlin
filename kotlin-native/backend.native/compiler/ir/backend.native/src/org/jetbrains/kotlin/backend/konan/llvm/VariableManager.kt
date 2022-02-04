@@ -18,13 +18,13 @@ internal fun IrElement.needDebugInfo(context: Context) = context.shouldContainDe
 
 internal class VariableManager(val functionGenerationContext: FunctionGenerationContext) {
     internal interface Record {
-        fun load() : LLVMValueRef
+        fun load(resultSlot: LLVMValueRef?) : LLVMValueRef
         fun store(value: LLVMValueRef)
         fun address() : LLVMValueRef
     }
 
     inner class SlotRecord(val address: LLVMValueRef, val refSlot: Boolean, val isVar: Boolean) : Record {
-        override fun load() : LLVMValueRef = functionGenerationContext.loadSlot(address, isVar)
+        override fun load(resultSlot: LLVMValueRef?) : LLVMValueRef = functionGenerationContext.loadSlot(address, isVar, resultSlot)
         override fun store(value: LLVMValueRef) {
             functionGenerationContext.storeAny(value, address, true)
         }
@@ -33,14 +33,14 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
     }
 
     inner class ParameterRecord(val address: LLVMValueRef, val refSlot: Boolean) : Record {
-        override fun load(): LLVMValueRef = functionGenerationContext.loadSlot(address, false)
+        override fun load(resultSlot: LLVMValueRef?): LLVMValueRef = functionGenerationContext.loadSlot(address, false, resultSlot)
         override fun store(value: LLVMValueRef) = functionGenerationContext.store(value, address)
         override fun address() : LLVMValueRef = this.address
         override fun toString() = (if (refSlot) "refslot" else "slot") + " for ${address}"
     }
 
     class ValueRecord(val value: LLVMValueRef, val name: Name) : Record {
-        override fun load() : LLVMValueRef = value
+        override fun load(resultSlot: LLVMValueRef?) : LLVMValueRef = value
         override fun store(value: LLVMValueRef) = throw Error("writing to immutable: ${name}")
         override fun address() : LLVMValueRef = throw Error("no address for: ${name}")
         override fun toString() = "value of ${value} from ${name}"
@@ -135,8 +135,8 @@ internal class VariableManager(val functionGenerationContext: FunctionGeneration
         return variables[index].address()
     }
 
-    fun load(index: Int): LLVMValueRef {
-        return variables[index].load()
+    fun load(index: Int, resultSlot: LLVMValueRef?): LLVMValueRef {
+        return variables[index].load(resultSlot)
     }
 
     fun store(value: LLVMValueRef, index: Int) {
