@@ -9,7 +9,9 @@
 package foo
 
 interface NonExportedInterface
+interface NonExportedGenericInterface<T>
 open class NonExportedType(val value: Int)
+open class NonExportedGenericType<T>(val value: T)
 
 @JsExport
 interface ExportedInterface
@@ -45,3 +47,9 @@ class E : NonExportedType(42), ExportedInterface
 
 @JsExport
 class F : A(NonExportedType(42)), NonExportedInterface
+
+@JsExport
+class G : NonExportedGenericInterface<NonExportedType>
+
+@JsExport
+class H : NonExportedGenericType<NonExportedType>(NonExportedType(42))
