@@ -140,7 +140,11 @@ private static String getAnalyzerTargetName() {
     String target = System.getProperty("os.name")
     if (target == 'Linux') return 'linux'
     if (target.startsWith('Windows')) return 'windows'
-    if (target.startsWith('Mac')) return 'macos'
+    if (target.startsWith('Mac'))
+        if (System.getProperty("os.arch") == "aarch64")
+            return 'macosArm64'
+        else
+            return 'macosX64'
     return 'unknown'
 }
 
