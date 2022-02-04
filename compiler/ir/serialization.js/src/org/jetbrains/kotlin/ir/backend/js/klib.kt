@@ -322,6 +322,23 @@ fun deserializeDependencies(
     }
 }
 
+fun deserializeDependenciesAsFir(
+    sortedDependencies: Collection<KotlinLibrary>,
+    irLinker: JsIrLinker,
+    mainModuleLib: KotlinLibrary?,
+    filesToLoad: Set<String>?,
+): Map<IrModuleFragment, KotlinLibrary> {
+    return sortedDependencies.associateBy { klib ->
+        when {
+            mainModuleLib == null -> irLinker.deserializeIrModuleHeaderAsFir(klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
+            filesToLoad != null && klib == mainModuleLib -> irLinker.deserializeDirtyFilesAsFir(klib, filesToLoad)
+            filesToLoad != null && klib != mainModuleLib -> irLinker.deserializeHeadersWithInlineBodiesAsFir(klib)
+            klib == mainModuleLib -> irLinker.deserializeIrModuleHeaderAsFir(klib, { DeserializationStrategy.ALL })
+            else -> irLinker.deserializeIrModuleHeaderAsFir(klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
+        }
+    }
+}
+
 fun Map<IrModuleFragment, KotlinLibrary>.getUniqueNameForEachFragment(): Map<IrModuleFragment, String> {
     return this.entries.mapNotNull { (moduleFragment, klib) ->
         klib.manifestProperties.getProperty(KLIB_PROPERTY_JS_OUTPUT_NAME)?.let {
@@ -433,8 +450,32 @@ fun getIrModuleInfoForKlib(
     loweredIcData: Map<ModuleDescriptor, SerializedIcData>,
     filterModulesWithCache: (Iterable<IrModuleFragment>) -> Set<IrModuleFragment>,
     mapping: (KotlinLibrary) -> ModuleDescriptor,
-): IrModuleInfo {
+) = getIrModuleInfoForKlib2(
+    moduleDescriptor,
+    friendModules,
+    configuration,
+    symbolTable,
+    messageLogger,
+    loadFunctionInterfacesIntoStdlib,
+    loweredIcData,
+    filterModulesWithCache,
+) {
     val mainModuleLib = sortedDependencies.last()
+    deserializeDependencies(sortedDependencies, it, mainModuleLib, filesToLoad, mapping)
+}
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+fun getIrModuleInfoForKlib2(
+    moduleDescriptor: ModuleDescriptor,
+    friendModules: Map<String, List<String>>,
+    configuration: CompilerConfiguration,
+    symbolTable: SymbolTable,
+    messageLogger: IrMessageLogger,
+    loadFunctionInterfacesIntoStdlib: Boolean,
+    loweredIcData: Map<ModuleDescriptor, SerializedIcData>,
+    filterModulesWithCache: (Iterable<IrModuleFragment>) -> Set<IrModuleFragment>,
+    deserializeDependencies: (JsIrLinker) -> Map<IrModuleFragment, KotlinLibrary>,
+): IrModuleInfo {
     val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
     val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
@@ -453,7 +494,7 @@ fun getIrModuleInfoForKlib(
             allowUnboundSymbols
         )
 
-    val deserializedModuleFragmentsToLib = deserializeDependencies(sortedDependencies, irLinker, mainModuleLib, filesToLoad, mapping)
+    val deserializedModuleFragmentsToLib = deserializeDependencies(irLinker)
     val deserializedModuleFragments = deserializedModuleFragmentsToLib.keys.toList()
     irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(
         irBuiltIns,

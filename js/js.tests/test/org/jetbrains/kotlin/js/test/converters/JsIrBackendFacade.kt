@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDe
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.CompilerOutputSink
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner.Companion.TEST_FUNCTION
 import org.jetbrains.kotlin.js.test.utils.esModulesSubDir
 import org.jetbrains.kotlin.js.test.utils.extractTestPackage
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -36,9 +38,11 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
+import org.jetbrains.kotlin.test.frontend.fir.resolveJsLibraries
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 
@@ -58,7 +62,14 @@ class JsIrBackendFacade(
         val isMainModule = JsEnvironmentConfigurator.isMainModule(module, testServices)
         if (!isMainModule) return null
 
-        val moduleInfo = loadIrFromKlib(module, configuration)
+        val firArtifact = inputArtifact.safeAs<BinaryArtifacts.KLibForFir>()
+
+        val moduleInfo = if (firArtifact != null) {
+            loadIrFromKlibAsFir(module, configuration, firArtifact.descriptor, firArtifact.library)
+        } else {
+            loadIrFromKlib(module, configuration)
+        }
+
         return compileIrToJs(module, moduleInfo, configuration, inputArtifact)
     }
 
@@ -204,6 +215,37 @@ class JsIrBackendFacade(
             { emptySet() },
             { if (it == mainModuleLib) moduleDescriptor else testServices.jsLibraryProvider.getDescriptorByCompiledLibrary(it) },
         )
+    }
+
+    private fun loadIrFromKlibAsFir(
+        module: TestModule,
+        configuration: CompilerConfiguration,
+        moduleDescriptor: FirModuleDescriptor,
+        mainModuleLib: KotlinLibrary,
+    ): IrModuleInfo {
+        val filesToLoad = module.files.takeIf { !firstTimeCompilation }?.map { "/${it.relativePath}" }?.toSet()
+
+        val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
+        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImplForJsIC(WholeWorldStageController()),)
+
+        val friendLibraries = JsEnvironmentConfigurator.getDependencies(module, testServices, DependencyRelation.FriendDependency)
+            .map { testServices.jsLibraryProvider.getCompiledLibraryByDescriptor(it) }
+        val friendModules = mapOf(mainModuleLib.uniqueName to friendLibraries.map { it.uniqueName })
+
+        val kekLibs = resolveJsLibraries(module, testServices, configuration).map { it.library }
+
+        return getIrModuleInfoForKlib2(
+            moduleDescriptor,
+            friendModules,
+            configuration,
+            symbolTable,
+            messageLogger,
+            loadFunctionInterfacesIntoStdlib = true,
+            emptyMap(),
+            { emptySet() },
+        ) {
+            deserializeDependenciesAsFir(kekLibs + mainModuleLib, it, mainModuleLib, filesToLoad)
+        }
     }
 
     private fun loadIrFromSources(

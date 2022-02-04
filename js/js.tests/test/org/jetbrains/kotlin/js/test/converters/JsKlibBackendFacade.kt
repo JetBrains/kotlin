@@ -181,6 +181,6 @@ class JsKlibBackendFacade(
             testServices.jsIrIncrementalDataProvider.recordIncrementalData(module, lib)
         }
 
-        return BinaryArtifacts.KLib(File(outputFile))
+        return BinaryArtifacts.KLibForFir(File(outputFile), descriptor, lib)
     }
 }

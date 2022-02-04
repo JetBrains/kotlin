@@ -425,6 +425,20 @@ abstract class KotlinIrLinker(
         return deserializerForModule.moduleFragment
     }
 
+    fun deserializeIrModuleHeaderAsFir(
+        kotlinLibrary: KotlinLibrary?,
+        deserializationStrategy: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_REFERENCED },
+        _moduleName: String? = null
+    ): IrModuleFragment {
+        assert(kotlinLibrary != null || _moduleName != null) { "Either library or explicit name have to be provided" }
+        val moduleName = kotlinLibrary?.uniqueName?.let { "<$it>" } ?: _moduleName!!
+        val deserializerForModule = deserializersForModules.getOrPut(moduleName) {
+            IrModuleDeserializerWithBuiltIns(builtIns, createModuleDeserializer(moduleDescriptor, kotlinLibrary, deserializationStrategy))
+        }
+        // The IrModule and its IrFiles have been created during module initialization.
+        return deserializerForModule.moduleFragment
+    }
+
     protected open fun maybeWrapWithBuiltInAndInit(
         moduleDescriptor: ModuleDescriptor,
         moduleDeserializer: IrModuleDeserializer
@@ -453,8 +467,18 @@ abstract class KotlinIrLinker(
     fun deserializeHeadersWithInlineBodies(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary): IrModuleFragment =
         deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, { DeserializationStrategy.WITH_INLINE_BODIES })
 
+    fun deserializeHeadersWithInlineBodiesAsFir(kotlinLibrary: KotlinLibrary): IrModuleFragment =
+        deserializeIrModuleHeaderAsFir(kotlinLibrary, { DeserializationStrategy.WITH_INLINE_BODIES })
+
     fun deserializeDirtyFiles(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary, dirtyFiles: Collection<String>): IrModuleFragment {
         return deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, {
+            if (it in dirtyFiles) DeserializationStrategy.ALL
+            else DeserializationStrategy.WITH_INLINE_BODIES
+        })
+    }
+
+    fun deserializeDirtyFilesAsFir(kotlinLibrary: KotlinLibrary, dirtyFiles: Collection<String>): IrModuleFragment {
+        return deserializeIrModuleHeaderAsFir(kotlinLibrary, {
             if (it in dirtyFiles) DeserializationStrategy.ALL
             else DeserializationStrategy.WITH_INLINE_BODIES
         })
