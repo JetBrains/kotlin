@@ -55,8 +55,11 @@ class MemoizedInlineClassReplacements(
         storageManager.createMemoizedFunctionWithNullableValues {
             when {
                 // Generate constructor-impl for sealed inline classes with a parameter
-                it is IrConstructor && it.parentAsClass.modality == Modality.SEALED ->
+                it is IrConstructor && it.parentAsClass.isInline && it.parentAsClass.modality == Modality.SEALED ->
                     createStaticReplacementForSealedInlineClassConstructor(it)
+
+                // Do not update sealed inline class value getter
+                it.origin == IrDeclarationOrigin.GETTER_OF_SEALED_INLINE_CLASS_FIELD -> null
 
                 // Don't mangle anonymous or synthetic functions, except for generated SAM wrapper methods
                 (it.isLocal && it is IrSimpleFunction && it.overriddenSymbols.isEmpty()) ||
@@ -99,7 +102,7 @@ class MemoizedInlineClassReplacements(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     IrDeclarationOrigin.PRIMARY_CONSTRUCTOR_PARAMETER_FOR_SEALED_INLINE_CLASS,
                     IrValueParameterSymbolImpl(),
-                    Name.identifier("\$value"),
+                    InlineClassAbi.sealedInlineClassFieldName,
                     index = 0,
                     type = context.irBuiltIns.anyNType,
                     varargElementType = null,

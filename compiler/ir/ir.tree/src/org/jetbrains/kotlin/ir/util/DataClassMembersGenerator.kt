@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.isInlineClass
 
 /**
  * A platform-, frontend-independent logic for generating synthetic members of data class: equals, hashCode, toString, componentN, and copy.
@@ -323,9 +324,13 @@ abstract class DataClassMembersGenerator(
     // Entry for psi2ir
     fun generateEqualsMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
         buildMember(function) {
-            generateEqualsMethodBody(properties.map { getIrProperty(it) })
+            generateEqualsMethodBody(sealedInlineClassAwareProperties(function, properties))
         }
     }
+
+    private fun sealedInlineClassAwareProperties(function: FunctionDescriptor, properties: List<PropertyDescriptor>): List<IrProperty> =
+        if ((function.containingDeclaration as? ClassDescriptor)?.isInlineClass() == true) emptyList()
+        else properties.map { getIrProperty(it) }
 
     // Entry for fir2ir
     fun generateEqualsMethod(irFunction: IrFunction, properties: List<IrProperty>) {
@@ -344,7 +349,7 @@ abstract class DataClassMembersGenerator(
     // Entry for psi2ir
     fun generateHashCodeMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
         buildMember(function) {
-            generateHashCodeMethodBody(properties.map { getIrProperty(it) })
+            generateHashCodeMethodBody(sealedInlineClassAwareProperties(function, properties))
         }
     }
 
@@ -358,7 +363,7 @@ abstract class DataClassMembersGenerator(
     // Entry for psi2ir
     fun generateToStringMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
         buildMember(function) {
-            generateToStringMethodBody(properties.map { getIrProperty(it) })
+            generateToStringMethodBody(sealedInlineClassAwareProperties(function, properties))
         }
     }
 
