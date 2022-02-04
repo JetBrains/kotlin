@@ -28,6 +28,9 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.serialization.FirElementSerializer
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -119,6 +122,32 @@ fun generateIrForKlibSerialization(
     irFactory: IrFactory,
     verifySignatures: Boolean = true,
     getDescriptorByLibrary: (KotlinLibrary) -> ModuleDescriptor,
+) = generateIrForKlibSerialization(
+    project,
+    files,
+    configuration,
+    analysisResult.moduleDescriptor,
+    analysisResult.bindingContext,
+    sortedDependencies,
+    icData,
+    expectDescriptorToSymbol,
+    irFactory,
+    verifySignatures,
+    getDescriptorByLibrary,
+)
+
+fun generateIrForKlibSerialization(
+    project: Project,
+    files: List<KtFile>,
+    configuration: CompilerConfiguration,
+    moduleDescriptor2: ModuleDescriptor,
+    bindingContext2: BindingContext,
+    sortedDependencies: Collection<KotlinLibrary>,
+    icData: MutableList<KotlinFileSerializedData>,
+    expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
+    irFactory: IrFactory,
+    verifySignatures: Boolean = true,
+    getDescriptorByLibrary: (KotlinLibrary) -> ModuleDescriptor,
 ): IrModuleFragment {
     val incrementalDataProvider = configuration.get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
@@ -153,7 +182,7 @@ fun generateIrForKlibSerialization(
 
     val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
     val psi2Ir = Psi2IrTranslator(configuration.languageVersionSettings, Psi2IrConfiguration(errorPolicy.allowErrors, allowUnboundSymbols))
-    val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
+    val psi2IrContext = psi2Ir.createGeneratorContext(moduleDescriptor2, bindingContext2, symbolTable)
     val irBuiltIns = psi2IrContext.irBuiltIns
 
     val feContext = psi2IrContext.run {
@@ -704,6 +733,7 @@ fun serializeModuleIntoKlib(
     containsErrorCode: Boolean = false,
     abiVersion: KotlinAbiVersion,
     jsOutputName: String?,
+    signatureTracker: IdSignatureClashTracker = JsUniqIdClashTracker(),
 ) {
     assert(files.size == moduleFragment.files.size)
 
@@ -719,7 +749,8 @@ fun serializeModuleIntoKlib(
             compatibilityMode,
             skipExpects = !configuration.expectActualLinker,
             normalizeAbsolutePaths = absolutePathNormalization,
-            sourceBaseDirs = sourceBaseDirs
+            sourceBaseDirs = sourceBaseDirs,
+            signatureTracker = signatureTracker,
         ).serializedIrModule(moduleFragment)
 
     val moduleDescriptor = moduleFragment.descriptor
@@ -747,6 +778,136 @@ fun serializeModuleIntoKlib(
             """.trimMargin()
         }
         val packageFragment = metadataSerializer.serializeScope(ktFile, bindingContext, moduleDescriptor)
+        val compiledKotlinFile = KotlinFileSerializedData(packageFragment.toByteArray(), binaryFile)
+
+        additionalFiles += compiledKotlinFile
+        processCompiledFileData(VfsUtilCore.virtualToIoFile(ktFile.virtualFile), compiledKotlinFile)
+    }
+
+    val compiledKotlinFiles = (cleanFiles + additionalFiles)
+
+    val header = metadataSerializer.serializeHeader(
+        moduleDescriptor,
+        compiledKotlinFiles.map { it.irData.fqName }.distinct().sorted(),
+        emptyList()
+    ).toByteArray()
+    incrementalResultsConsumer?.run {
+        processHeader(header)
+    }
+
+    val serializedMetadata =
+        metadataSerializer.serializedMetadata(
+            compiledKotlinFiles.groupBy { it.irData.fqName }
+                .map { (fqn, data) -> fqn to data.sortedBy { it.irData.path }.map { it.metadata } }.toMap(),
+            header
+        )
+
+    val fullSerializedIr = SerializedIrModule(compiledKotlinFiles.map { it.irData })
+
+    val versions = KotlinLibraryVersioning(
+        abiVersion = compatibilityMode.abiVersion,
+        libraryVersion = null,
+        compilerVersion = KotlinCompilerVersion.VERSION,
+        metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
+        irVersion = KlibIrVersion.INSTANCE.toString()
+    )
+
+    val properties = Properties().also { p ->
+        if (jsOutputName != null) {
+            p.setProperty(KLIB_PROPERTY_JS_OUTPUT_NAME, jsOutputName)
+        }
+        if (containsErrorCode) {
+            p.setProperty(KLIB_PROPERTY_CONTAINS_ERROR_CODE, "true")
+        }
+    }
+
+    buildKotlinLibrary(
+        linkDependencies = dependencies,
+        ir = fullSerializedIr,
+        metadata = serializedMetadata,
+        dataFlowGraph = null,
+        manifestProperties = properties,
+        moduleName = moduleName,
+        nopack = nopack,
+        perFile = perFile,
+        output = klibPath,
+        versions = versions,
+        builtInsPlatform = BuiltInsPlatform.JS
+    )
+}
+
+@Suppress("UNUSED_PARAMETER")
+fun serializeModuleIntoKlibAsFir(
+    moduleName: String,
+    project: Project,
+    configuration: CompilerConfiguration,
+    messageLogger: IrMessageLogger,
+    bindingContext: BindingContext,
+    files: List<KtFile>,
+    klibPath: String,
+    dependencies: List<KotlinLibrary>,
+    moduleFragment: IrModuleFragment,
+    expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
+    cleanFiles: List<KotlinFileSerializedData>,
+    nopack: Boolean,
+    perFile: Boolean,
+    containsErrorCode: Boolean = false,
+    abiVersion: KotlinAbiVersion,
+    jsOutputName: String?,
+    session: FirSession,
+    serializer: FirElementSerializer,
+    signatureTracker: IdSignatureClashTracker = JsUniqIdClashTracker(),
+    firFiles: List<FirFile> = emptyList(),
+) {
+    assert(files.size == moduleFragment.files.size)
+
+    val compatibilityMode = CompatibilityMode(abiVersion)
+    val sourceBaseDirs = configuration[CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES] ?: emptyList()
+    val absolutePathNormalization = configuration[CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH] ?: false
+
+    val serializedIr =
+        JsIrModuleSerializer(
+            messageLogger,
+            moduleFragment.irBuiltins,
+            expectDescriptorToSymbol,
+            compatibilityMode,
+            skipExpects = !configuration.expectActualLinker,
+            normalizeAbsolutePaths = absolutePathNormalization,
+            sourceBaseDirs = sourceBaseDirs,
+            signatureTracker = signatureTracker,
+        ).serializedIrModule(moduleFragment)
+
+    val moduleDescriptor = moduleFragment.descriptor
+    val metadataSerializer = KlibMetadataIncrementalSerializer(configuration, project, containsErrorCode)
+
+    val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
+    val empty = ByteArray(0)
+
+    fun processCompiledFileData(ioFile: File, compiledFile: KotlinFileSerializedData) {
+        incrementalResultsConsumer?.run {
+            processPackagePart(ioFile, compiledFile.metadata, empty, empty)
+            with(compiledFile.irData) {
+                processIrFile(ioFile, fileData, types, signatures, strings, declarations, bodies, fqName.toByteArray(), debugInfo)
+            }
+        }
+    }
+
+    val additionalFiles = mutableListOf<KotlinFileSerializedData>()
+    val serializedIrFiles = serializedIr.files.toList()
+
+    for (it in files.indices) {
+        val ktFile = files[it]
+        val binaryFile = serializedIrFiles[it]
+        val firFile = firFiles[it]
+
+        assert(ktFile.virtualFilePath == binaryFile.path) {
+            """The Kt and Ir files are put in different order
+                Kt: ${ktFile.virtualFilePath}
+                Ir: ${binaryFile.path}
+            """.trimMargin()
+        }
+
+        val packageFragment = metadataSerializer.serializeFirMetadata(ktFile.packageFqName, serializer, firFile).single()
         val compiledKotlinFile = KotlinFileSerializedData(packageFragment.toByteArray(), binaryFile)
 
         additionalFiles += compiledKotlinFile

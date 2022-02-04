@@ -13,18 +13,25 @@ import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.ir.backend.js.KotlinFileSerializedData
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 
 class Fir2IrResultsConverter(
@@ -35,6 +42,15 @@ class Fir2IrResultsConverter(
     BackendKinds.IrBackend
 ) {
     override fun transform(
+        module: TestModule,
+        inputArtifact: FirOutputArtifact
+    ) = when (module.targetBackend) {
+        TargetBackend.JVM_IR -> transformAsJvm(module, inputArtifact)
+        TargetBackend.JS_IR -> transformAsJs(module, inputArtifact)
+        else -> testServices.assertions.fail { "Target backend ${module.targetBackend} not supported for transformation into IR" }
+    }
+
+    private fun transformAsJvm(
         module: TestModule,
         inputArtifact: FirOutputArtifact
     ): IrBackendInput {
@@ -85,6 +101,41 @@ class Fir2IrResultsConverter(
                 FirJvmBackendExtension(inputArtifact.session, components),
                 notifyCodegenStart = {},
             )
+        )
+    }
+
+    @Suppress("UNUSED_VARIABLE")
+    private fun transformAsJs(
+        module: TestModule,
+        inputArtifact: FirOutputArtifact
+    ): IrBackendInput {
+        val compilerConfigurationProvider = testServices.compilerConfigurationProvider
+        val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
+        val extensions = GeneratorExtensions()
+
+        val (irModuleFragment, symbolTable, components) = inputArtifact.firAnalyzerFacade.convertToIr(extensions)
+        val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
+
+        // TODO: handle fir from light tree
+        val ktFiles = inputArtifact.allFirFiles.values.mapNotNull { it.psi as KtFile? }
+
+        // Create and initialize the module and its dependencies
+        val project = compilerConfigurationProvider.getProject(module)
+
+        val verifySignatures = JsEnvironmentConfigurationDirectives.SKIP_MANGLE_VERIFICATION !in module.directives
+
+        val icData = mutableListOf<KotlinFileSerializedData>()
+        val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
+
+        return IrBackendInput.JsIrBackendInput(
+            irModuleFragment,
+            ktFiles,
+            dummyBindingContext,
+            icData,
+            expectDescriptorToSymbol,
+            inputArtifact.firAnalyzerFacade.scopeSession,
+            components,
+            firFiles = inputArtifact.allFirFiles.map { it.value },
         )
     }
 }

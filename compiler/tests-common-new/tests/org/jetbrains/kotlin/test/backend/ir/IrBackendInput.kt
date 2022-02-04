@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.test.backend.ir
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.ir.backend.js.KotlinFileSerializedData
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -29,6 +32,9 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
         val bindingContext: BindingContext,
         val icData: List<KotlinFileSerializedData>,
         val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
+        val scopeSession: ScopeSession? = null,
+        val components: Fir2IrComponents? = null,
+        val firFiles: List<FirFile> = emptyList()
     ) : IrBackendInput()
 
     data class JvmIrBackendInput(

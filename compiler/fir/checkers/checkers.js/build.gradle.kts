@@ -7,6 +7,7 @@ plugins {
 
 dependencies {
     api(project(":compiler:fir:checkers"))
+    api(project(":compiler:fir:java"))
 
     /*
      * We can't remove this dependency until we use
@@ -16,7 +17,7 @@ dependencies {
     implementation(project(":compiler:psi"))
 
     compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
+    compileOnly(intellijCore())
 }
 
 sourceSets {
