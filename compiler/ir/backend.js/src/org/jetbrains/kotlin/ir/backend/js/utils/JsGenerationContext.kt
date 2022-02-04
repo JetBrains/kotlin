@@ -77,4 +77,6 @@ class JsGenerationContext(
     }
 
     fun checkIfJsCode(symbol: IrFunctionSymbol): Boolean = symbol == staticContext.backendContext.intrinsics.jsCode
+
+    fun checkIfAnnotatedWithJsFunc(symbol: IrFunctionSymbol): Boolean = symbol.owner.isAnnotatedWithJsFun()
 }

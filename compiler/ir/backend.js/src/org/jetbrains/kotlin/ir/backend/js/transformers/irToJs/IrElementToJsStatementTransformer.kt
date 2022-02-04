@@ -135,24 +135,8 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitCall(expression: IrCall, data: JsGenerationContext): JsStatement {
-        if (data.checkIfJsCode(expression.symbol)) {
-            val statements = translateJsCodeIntoStatementList(
-                expression.getValueArgument(0)
-                    ?: compilationException(
-                        "JsCode is expected",
-                        expression
-                    ),
-                data.staticContext.backendContext
-            ) ?: compilationException(
-                "Cannot compute js code",
-                expression
-            )
-            return when (statements.size) {
-                0 -> JsEmpty
-                1 -> statements.single().withSource(expression, data)
-                // TODO: use transparent block (e.g. JsCompositeBlock)
-                else -> JsBlock(statements)
-            }
+        if (data.checkIfJsCode(expression.symbol) || data.checkIfAnnotatedWithJsFunc(expression.symbol)) {
+            return JsCallTransformer(expression, data).generateStatement()
         }
         return translateCall(expression, data, IrElementToJsExpressionTransformer()).withSource(expression, data).makeStmt()
             .also { data.staticContext.polyfills.visitDeclaration(expression.symbol.owner) }
