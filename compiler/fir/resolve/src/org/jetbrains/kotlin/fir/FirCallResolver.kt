@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isReferredViaField
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
 import org.jetbrains.kotlin.fir.references.*
@@ -436,15 +438,14 @@ class FirCallResolver(
 
     fun resolveDelegatingConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
-        constructedType: ConeClassLikeType
+        constructedType: ConeClassLikeType?
     ): FirDelegatedConstructorCall {
         val name = SpecialNames.INIT
-        val symbol = constructedType.lookupTag.toSymbol(components.session)
-        val typeArguments =
-            constructedType.typeArguments.take((symbol?.fir as? FirRegularClass)?.typeParameters?.count { it is FirTypeParameter } ?: 0)
-                .map {
-                    it.toFirTypeProjection()
-                }
+        val symbol = constructedType?.lookupTag?.toSymbol(components.session)
+        val typeArguments = constructedType?.typeArguments
+            ?.take((symbol?.fir as? FirRegularClass)?.typeParameters?.count { it is FirTypeParameter } ?: 0)
+            ?.map { it.toFirTypeProjection() }
+            ?: emptyList()
 
         val callInfo = CallInfo(
             delegatedConstructorCall,
@@ -459,6 +460,17 @@ class FirCallResolver(
             components.containingDeclarations,
         )
         towerResolver.reset()
+
+        if (constructedType == null) {
+            val errorReference = createErrorReferenceWithErrorCandidate(
+                callInfo,
+                ConeSimpleDiagnostic("Erroneous delegated constructor call", DiagnosticKind.UnresolvedSupertype),
+                delegatedConstructorCall.calleeReference.source,
+                transformer.resolutionContext,
+                components.resolutionStageRunner
+            )
+            return delegatedConstructorCall.transformCalleeReference(StoreNameReference, errorReference)
+        }
 
         val result = towerResolver.runResolverForDelegatingConstructor(
             callInfo,
