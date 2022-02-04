@@ -117,8 +117,8 @@ infix fun DeclarationPredicate.and(other: DeclarationPredicate): DeclarationPred
 
 fun under(vararg annotations: AnnotationFqn): DeclarationPredicate = UnderAnnotatedWith(annotations.toSet())
 fun has(vararg annotations: AnnotationFqn): DeclarationPredicate = AnnotatedWith(annotations.toSet())
-fun metaUnder(vararg metaAnnotations: AnnotationFqn): DeclarationPredicate = AnnotatedWithMeta(metaAnnotations.toSet())
-fun metaHas(vararg metaAnnotations: AnnotationFqn): DeclarationPredicate = UnderMetaAnnotated(metaAnnotations.toSet())
+fun metaUnder(vararg metaAnnotations: AnnotationFqn): DeclarationPredicate = UnderMetaAnnotated(metaAnnotations.toSet())
+fun metaHas(vararg metaAnnotations: AnnotationFqn): DeclarationPredicate = AnnotatedWithMeta(metaAnnotations.toSet())
 
 fun hasOrUnder(vararg annotations: AnnotationFqn): DeclarationPredicate = has(*annotations) or under(*annotations)
 fun metaHasOrUnder(vararg metaAnnotations: AnnotationFqn): DeclarationPredicate = metaHas(*metaAnnotations) or metaUnder(*metaAnnotations)
