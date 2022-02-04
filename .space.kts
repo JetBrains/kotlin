@@ -8,7 +8,7 @@ import circlet.pipelines.config.dsl.api.Ide
 fun warmupJob(ide: Ide) {
     job("Kotlin project warmup for ${ide.name}") {
         startOn {
-            schedule { cron("0 5 * * *") }
+            schedule { cron("0 2 * * *") }  // 5 am GMT +3
         }
 
         warmup(ide = ide) {
