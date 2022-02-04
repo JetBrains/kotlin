@@ -278,6 +278,10 @@ open class FirJvmMangleComputer(
         regularClass.mangleSimpleDeclaration(regularClass.name.asString())
     }
 
+    override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Boolean) {
+        anonymousObject.mangleSimpleDeclaration("<anonymous>")
+    }
+
     override fun visitProperty(property: FirProperty, data: Boolean) {
         isRealExpect = isRealExpect or property.isExpect
         typeParameterContainer.add(property)
