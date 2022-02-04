@@ -23,18 +23,22 @@ def frameworkName = 'benchmarksAnalyzer'
 
 def buildType = NativeBuildType.valueOf(findProperty('nativeBuildType') ?: 'DEBUG')
 
+def archSuffix = PlatformInfo.hostName.substring(PlatformInfo.hostName.lastIndexOf('_') + 1).capitalize()
+
 kotlin {
     sourceSets {
-        macosMain {
+        nativeMain {
             kotlin.srcDir "$toolsPath/benchmarks/shared/src"
             kotlin.srcDir "$toolsPath/benchmarksAnalyzer/src/main/kotlin"
             kotlin.srcDir "$rootProject.projectDir/../endorsedLibraries/kotlinx.cli/src/main/kotlin"
             kotlin.srcDir "$rootProject.projectDir/../endorsedLibraries/kotlinx.cli/src/main/kotlin-native"
             kotlin.srcDir "$toolsPath/benchmarksAnalyzer/src/main/kotlin-native"
         }
+        macosX64Main { dependsOn nativeMain }
+        macosArm64Main { dependsOn nativeMain }
     }
 
-    configure([macosX64("macos")]) {
+    configure([macosX64(), macosArm64()]) {
         compilations.main.cinterops {
             libcurl {
                 defFile "$toolsPath/benchmarksAnalyzer/src/nativeInterop/cinterop/libcurl.def"
@@ -42,7 +46,11 @@ kotlin {
         }
     }
 
-    macosX64("macos").binaries {
+    macosX64().binaries {
+        framework(frameworkName, [buildType])
+    }
+
+    macosArm64().binaries {
         framework(frameworkName, [buildType])
     }
 }
@@ -51,7 +59,7 @@ MPPTools.addTimeListener(project)
 
 task konanRun {
     if (PlatformInfo.isMac()) {
-        dependsOn 'build'
+        dependsOn "linkBenchmarksAnalyzerDebugFrameworkMacos${archSuffix}"
     }
 }
 
@@ -75,16 +83,26 @@ def compilerFlags(def buildType) {
     return result
 }
 
+def getMacTarget() {
+    if (PlatformInfo.isMac()) {
+        if (PlatformInfo.hostName == "macos_x64")
+           return kotlin.macosX64("macosX64")
+        else return kotlin.macosArm64("macosArm64")
+    }
+    throw new GradleException('Current host isn\'t run with Mac OS')
+}
+
 task konanJsonReport {
     doLast {
         if (PlatformInfo.isMac()) {
             def applicationName = "FrameworkBenchmarksAnalyzer"
-            def frameworkPath = kotlin.macosX64("macos").binaries.
-                    getFramework(frameworkName, kotlin.macosX64("macos").binaries.DEBUG).outputFile.absolutePath
+            def macTarget = getMacTarget()
+            def frameworkPath = macTarget.binaries.
+                    getFramework(frameworkName, macTarget.binaries.DEBUG).outputFile.absolutePath
             def nativeExecutable = new File("$frameworkPath/$frameworkName").canonicalPath
-            def nativeCompileTime = MPPTools.getNativeCompileTime(project, applicationName, ['compileKotlinMacos',
-                                                                                    'linkBenchmarksAnalyzerDebugFrameworkMacos',
-                                                                                    'cinteropLibcurlMacos'])
+            def nativeCompileTime = MPPTools.getNativeCompileTime(project, applicationName, ["compileKotlinMacos${archSuffix}".toString(),
+                                                                                    "linkBenchmarksAnalyzerDebugFrameworkMacos${archSuffix}".toString(),
+                                                                                    "cinteropLibcurlMacos${archSuffix}".toString()])
             def properties = getCommonProperties() + ['type'           : 'native',
                                                       'compilerVersion': "${konanVersion}".toString(),
                                                       'flags'          : compilerFlags(buildType).sort(),
