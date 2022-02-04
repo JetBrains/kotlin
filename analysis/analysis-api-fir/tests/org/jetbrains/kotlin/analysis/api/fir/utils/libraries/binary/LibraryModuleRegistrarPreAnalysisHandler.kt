@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils.libraries.binary
 
-import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.TestKtLibraryModule
@@ -13,13 +12,11 @@ import org.jetbrains.kotlin.analysis.api.impl.barebone.test.projectModuleProvide
 import org.jetbrains.kotlin.analysis.api.impl.base.test.utils.libraries.compiledLibraryProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.registerTestServices
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.PreAnalysisHandler
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-
 
 class LibraryModuleRegistrarPreAnalysisHandler(
     testServices: TestServices
@@ -32,7 +29,6 @@ class LibraryModuleRegistrarPreAnalysisHandler(
         val decompiledKtFiles = getDecompiledVirtualFilesFromLibrary(testModule, project)
 
         moduleInfoProvider.registerModuleInfo(testModule, TestKtLibraryModule(project, testModule, decompiledKtFiles, testServices))
-        (project as MockProject).registerTestServices(testModule, decompiledKtFiles, testServices)
     }
 
     private fun getDecompiledVirtualFilesFromLibrary(module: TestModule, project: Project): List<KtClsFile> {

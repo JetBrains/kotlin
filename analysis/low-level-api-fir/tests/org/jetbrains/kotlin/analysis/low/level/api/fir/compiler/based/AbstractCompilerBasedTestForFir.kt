@@ -40,7 +40,7 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
         defaultConfiguration(this)
 
         useAdditionalService(::TestKtModuleProvider)
-        usePreAnalysisHandlers(::ModuleRegistrarPreAnalysisHandler.bind(disposable))
+        usePreAnalysisHandlers(::ModuleRegistrarPreAnalysisHandler.bind(disposable, true))
 
         firHandlersStep {
             useHandlers(::LLDiagnosticParameterChecker)

@@ -8,8 +8,12 @@ package org.jetbrains.kotlin.analysis.api.standalone
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.fir.FirFrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
@@ -21,9 +25,14 @@ object StandaloneModeConfiguratorService : FrontendApiTestConfiguratorService {
         with(FirFrontendApiTestConfiguratorService) { configureTest(disposable) }
     }
 
-    // TODO: other variant to register project services by compiler configuration?
-    override fun registerProjectServices(project: MockProject) {
-        // Will be configured at the test
+    override fun registerProjectServices(
+        project: MockProject,
+        compilerConfig: CompilerConfiguration,
+        files: List<KtFile>,
+        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
+        projectStructureProvider: ProjectStructureProvider
+    ) {
+        configureProjectEnvironment(project, compilerConfig, files, packagePartProvider)
     }
 
     override fun registerApplicationServices(application: MockApplication) {
