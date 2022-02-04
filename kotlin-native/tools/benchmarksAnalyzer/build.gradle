@@ -44,7 +44,11 @@ def getHostName() {
     def target = System.getProperty("os.name")
     if (target == 'Linux') return 'linux'
     if (target.startsWith('Windows')) return 'windows'
-    if (target.startsWith('Mac')) return 'macos'
+    if (target.startsWith('Mac'))
+        if (System.getProperty("os.name") == "aarch64")
+            return 'macosArm64'
+        else
+            return 'macosX64'
     return 'unknown'
 }
 
@@ -97,7 +101,8 @@ kotlin {
         }
         linuxMain { dependsOn nativeMain }
         windowsMain { dependsOn nativeMain }
-        macosMain {dependsOn nativeMain }
+        macosX64Main { dependsOn nativeMain }
+        macosArm64Main { dependsOn nativeMain }
     }
 
     targets {
@@ -128,7 +133,14 @@ kotlin {
                 }
             }
         }
-        fromPreset(presets.macosX64, 'macos') {
+        fromPreset(presets.macosX64, 'macosX64') {
+            compilations.main.cinterops {
+                libcurl {
+                    includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
+                }
+            }
+        }
+        fromPreset(presets.macosArm64, 'macosArm64') {
             compilations.main.cinterops {
                 libcurl {
                     includeDirs.headerFilterOnly '/opt/local/include', '/usr/local/include'
@@ -141,7 +153,7 @@ kotlin {
             }
         }
 
-        configure([windows, linux, macos]) {
+        configure([windows, linux, macosX64, macosArm64]) {
             def isCurrentHost = (name == getHostName())
             compilations.all {
                 cinterops.all {
