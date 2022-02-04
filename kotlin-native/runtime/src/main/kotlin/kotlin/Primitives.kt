@@ -1603,9 +1603,7 @@ public final class Float private constructor() : Number(), Comparable<Float> {
 
     public override fun toString() = NumberConverter.convert(this)
 
-    public override fun hashCode(): Int {
-        return bits()
-    }
+    public override fun hashCode(): Int = toBits()
 
     @TypedIntrinsic(IntrinsicType.REINTERPRET)
     @PublishedApi
@@ -1915,7 +1913,7 @@ public final class Double private constructor() : Number(), Comparable<Double> {
 
     public override fun toString(): String = NumberConverter.convert(this)
 
-    public override fun hashCode(): Int = bits().hashCode()
+    public override fun hashCode(): Int = toBits().hashCode()
 
     @TypedIntrinsic(IntrinsicType.REINTERPRET)
     @PublishedApi
