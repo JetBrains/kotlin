@@ -123,6 +123,8 @@ object InlineClassAbi {
 
     private val IrFunction.propertyName: Name
         get() = (this as IrSimpleFunction).correspondingPropertySymbol!!.owner.name
+
+    val sealedInlineClassFieldName = Name.identifier("\$value")
 }
 
 val IrType.requiresMangling: Boolean
@@ -144,8 +146,9 @@ val IrFunction.hasMangledReturnType: Boolean
 
 val IrClass.inlineClassFieldName: Name
     get() =
-        if (modality == Modality.SEALED) error("Sealed inline class ${render()} does not have a field")
-        else (inlineClassRepresentation ?: error("Not an inline class: ${render()}")).underlyingPropertyName
+        (inlineClassRepresentation
+            ?: error("Not an inline class: ${render()}")
+        ).underlyingPropertyName
 
 val IrFunction.isInlineClassFieldGetter: Boolean
     get() = (parent as? IrClass)?.let { it.isInline && it.modality != Modality.SEALED } == true &&

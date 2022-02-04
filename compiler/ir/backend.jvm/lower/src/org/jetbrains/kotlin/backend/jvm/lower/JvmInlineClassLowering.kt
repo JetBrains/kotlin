@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.*
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -25,11 +26,12 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
@@ -71,15 +73,61 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     override fun IrFunction.isSpecificFieldGetter(): Boolean = isInlineClassFieldGetter
 
     override fun buildAdditionalMethodsForSealedInlineClass(declaration: IrClass) {
-        val inlineSubclasses = collectSubclasses(declaration) { it.owner.isInline }
-        val inlineDirectSubclasses = declaration.sealedSubclasses.filter { it.owner.isInline }
-        val noinlineSubclasses = collectSubclasses(declaration) { !it.owner.isInline }
+        if (declaration.isChildOfSealedInlineClass()) {
+            updateGetterForSealedInlineClassChild(declaration)
+        }
 
-        // TODO: Generate during Psi2Ir/Fir2Ir
-        // TODO: Merge with rewriteOpenMethodsForSealed
-        rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "hashCode")
-        rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "toString")
-        rewriteOpenMethodsForSealed(declaration, inlineDirectSubclasses, noinlineSubclasses)
+        if (declaration.modality == Modality.SEALED) {
+            val inlineSubclasses = collectSubclasses(declaration) { it.owner.isInline }
+            val inlineDirectSubclasses = declaration.sealedSubclasses.filter { it.owner.isInline }
+            val noinlineSubclasses = collectSubclasses(declaration) { !it.owner.isInline }
+
+            // TODO: Generate during Psi2Ir/Fir2Ir
+            // TODO: Merge with rewriteOpenMethodsForSealed
+            rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "hashCode")
+            rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "toString")
+            rewriteOpenMethodsForSealed(declaration, inlineDirectSubclasses, noinlineSubclasses)
+        }
+    }
+
+    private fun updateGetterForSealedInlineClassChild(irClass: IrClass) {
+        val fieldGetter = irClass.functions.find { it.isInlineClassFieldGetter } ?: error("${irClass.render()} has no getter")
+
+        val parent = irClass.superTypes.single { it.isInlineClassType() }.classOrNull!!.owner
+
+        val methodToOverride = parent.functions.single { it.name == InlineClassAbi.sealedInlineClassFieldName }
+
+        require(
+            methodToOverride.origin == IrDeclarationOrigin.FAKE_OVERRIDE ||
+                    methodToOverride.origin == IrDeclarationOrigin.GETTER_OF_SEALED_INLINE_CLASS_FIELD
+        )
+
+        val fakeOverride = IrFunctionImpl(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            IrDeclarationOrigin.FAKE_OVERRIDE,
+            IrSimpleFunctionSymbolImpl(),
+            methodToOverride.name,
+            methodToOverride.visibility,
+            methodToOverride.modality,
+            methodToOverride.returnType,
+            methodToOverride.isInline,
+            methodToOverride.isExternal,
+            methodToOverride.isTailrec,
+            methodToOverride.isSuspend,
+            methodToOverride.isOperator,
+            methodToOverride.isInfix,
+            methodToOverride.isExpect
+        )
+
+        fakeOverride.overriddenSymbols += methodToOverride.symbol
+
+        irClass.addMember(fakeOverride)
+
+        with(context.createIrBuilder(fieldGetter.symbol)) {
+            fieldGetter.body = irExprBody(
+                irCall(fakeOverride.symbol)
+            )
+        }
     }
 
     private fun collectSubclasses(irClass: IrClass, predicate: (IrClassSymbol) -> Boolean): List<SubclassInfo> {
@@ -511,7 +559,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         IrDeclarationOrigin.PRIMARY_CONSTRUCTOR_PARAMETER_FOR_SEALED_INLINE_CLASS,
                         IrValueParameterSymbolImpl(),
-                        Name.identifier("\$value"),
+                        InlineClassAbi.sealedInlineClassFieldName,
                         index = 0,
                         type = context.irBuiltIns.anyNType,
                         varargElementType = null,

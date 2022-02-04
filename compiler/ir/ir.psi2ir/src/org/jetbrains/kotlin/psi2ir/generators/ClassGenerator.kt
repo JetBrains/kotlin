@@ -24,14 +24,18 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptorImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.expressions.putTypeArguments
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -92,14 +96,20 @@ class ClassGenerator(
             )
 
             if (irClass.isInline && irClass.modality == Modality.SEALED) {
-                generateFieldForSealedInlineClass(irClass)
+                generatePropertyForSealedInlineClassOrFakeOverride(irClass)
             }
 
             generateFieldsForContextReceivers(irClass, classDescriptor)
 
-            val irPrimaryConstructor = generatePrimaryConstructor(irClass, ktClassOrObject)
-            if (irPrimaryConstructor != null) {
-                generateDeclarationsForPrimaryConstructorParameters(irClass, irPrimaryConstructor, ktClassOrObject)
+            val inlineClassChildOfSealedInlineClass = irClass.isInline && classDescriptor.getSuperClassOrAny().isInline
+
+            // Do not generate constructor and box/unbox functions for inline class children of
+            // sealed inline class, since we cannot have boxed inline class children.
+            if (!inlineClassChildOfSealedInlineClass) {
+                val irPrimaryConstructor = generatePrimaryConstructor(irClass, ktClassOrObject)
+                if (irPrimaryConstructor != null) {
+                    generateDeclarationsForPrimaryConstructorParameters(irClass, irPrimaryConstructor, ktClassOrObject)
+                }
             }
 
             if (ktClassOrObject is KtClassOrObject) //todo: supertype list for synthetic declarations
@@ -116,9 +126,13 @@ class ClassGenerator(
             if (irClass.isSingleFieldValueClass && ktClassOrObject is KtClassOrObject) {
                 val representation = classDescriptor.valueClassRepresentation
                     ?: error("Unknown representation for inline class: $classDescriptor")
-                irClass.valueClassRepresentation = representation.mapUnderlyingType { type ->
-                    type.toIrType() as? IrSimpleType ?: error("Inline class underlying type is not a simple type: $classDescriptor")
-                }
+
+                irClass.valueClassRepresentation =
+                    if (irClass.modality == Modality.SEALED)
+                        InlineClassRepresentation(Name.identifier("\$value"), context.irBuiltIns.anyNType as IrSimpleType)
+                    else representation.mapUnderlyingType { type ->
+                        type.toIrType() as? IrSimpleType ?: error("Inline class underlying type is not a simple type: $classDescriptor")
+                    }
 
                 val isSealedInlineSubclassOfSealedInlineClass =
                     classDescriptor.getSuperClassOrAny().isInlineClass() && classDescriptor.modality == Modality.SEALED
@@ -471,8 +485,22 @@ class ClassGenerator(
         }
     }
 
-    private fun generateFieldForSealedInlineClass(irClass: IrClass) {
-        val irField = context.irFactory.createField(
+    private fun generatePropertyForSealedInlineClassOrFakeOverride(irClass: IrClass) {
+        val irProperty = context.irFactory.createProperty(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            IrDeclarationOrigin.FIELD_FOR_SEALED_INLINE_CLASS,
+            IrPropertySymbolImpl(),
+            Name.identifier("\$value"),
+            DescriptorVisibilities.PROTECTED,
+            Modality.FINAL,
+            isVar = false,
+            isConst = false,
+            isLateinit = false,
+            isDelegated = false,
+            isExternal = false,
+            isExpect = false
+        )
+        irProperty.backingField = context.irFactory.createField(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             IrDeclarationOrigin.FIELD_FOR_SEALED_INLINE_CLASS,
             IrFieldSymbolImpl(),
@@ -483,7 +511,33 @@ class ClassGenerator(
             isExternal = false,
             isStatic = false
         )
-        irClass.addMember(irField)
+        irProperty.getter = context.irFactory.createFunction(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            IrDeclarationOrigin.GETTER_OF_SEALED_INLINE_CLASS_FIELD,
+            IrSimpleFunctionSymbolImpl(),
+            Name.identifier("\$value"),
+            DescriptorVisibilities.PROTECTED,
+            Modality.FINAL,
+            context.irBuiltIns.anyNType,
+            isInline = false,
+            isExternal = false,
+            isTailrec = false,
+            isSuspend = false,
+            isOperator = false,
+            isInfix = false,
+            isExpect = false,
+            isFakeOverride = false
+        ).also { function ->
+            function.body = context.irFactory.createExpressionBody(
+                IrGetFieldImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    irProperty.backingField!!.symbol,
+                    context.irBuiltIns.anyNType
+                )
+            )
+        }
+
+        irClass.addMember(irProperty)
     }
 
     private fun generatePrimaryConstructor(irClass: IrClass, ktClassOrObject: KtPureClassOrObject): IrConstructor? {

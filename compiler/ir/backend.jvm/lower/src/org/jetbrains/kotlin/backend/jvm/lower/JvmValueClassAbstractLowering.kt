@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.MemoizedValueClassAbstractReplacements
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.irReturn
@@ -62,9 +63,10 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
             val irConstructor = declaration.primaryConstructor!!
             // The field getter is used by reflection and cannot be removed here unless it is internal.
             declaration.declarations.removeIf {
-                it == irConstructor || (it is IrFunction && it.isSpecificFieldGetter() && !it.visibility.isPublicAPI)
+                (it == irConstructor && declaration.modality != Modality.SEALED) ||
+                        (it is IrFunction && it.isSpecificFieldGetter() && !it.visibility.isPublicAPI)
             }
-            if (declaration.modality != Modality.SEALED) {
+            if (declaration.modality != Modality.SEALED && !declaration.isChildOfSealedInlineClass()) {
                 buildPrimaryValueClassConstructor(declaration, irConstructor)
                 buildBoxFunction(declaration)
                 buildUnboxFunctions(declaration)
@@ -77,6 +79,8 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
 
         return declaration
     }
+
+    protected fun IrClass.isChildOfSealedInlineClass(): Boolean = superTypes.any { it.isInlineClassType() }
 
     protected open fun buildAdditionalMethodsForSealedInlineClass(declaration: IrClass) {}
 
