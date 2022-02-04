@@ -8,4 +8,4 @@ class A2<K : Comparable<K & Any>?>
 
 fun <R : T & Any, T> bar() {}
 
-fun <E : E  & Any> baz() {}
+fun <<!CYCLIC_GENERIC_UPPER_BOUND!>E : E  & Any<!>> baz() {}
