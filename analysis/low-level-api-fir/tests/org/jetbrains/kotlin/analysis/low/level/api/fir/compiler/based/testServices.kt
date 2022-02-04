@@ -7,17 +7,14 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider
-import org.jetbrains.kotlin.analysis.api.impl.barebone.test.projectModuleProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveStateService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.PackagePartProviderFactory
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
@@ -35,18 +32,15 @@ import org.jetbrains.kotlin.light.classes.symbol.IDEKotlinAsJavaFirSupport
 import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCache
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 
 fun MockProject.registerTestServices(
-    testModule: TestModule,
     allKtFiles: List<KtFile>,
-    testServices: TestServices,
+    packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
+    projectStructureProvider: ProjectStructureProvider
 ) {
     registerService(
         PackagePartProviderFactory::class.java,
-        PackagePartProviderTestImpl(testServices, testModule)
+        PackagePartProviderTestImpl(packagePartProvider)
     )
     registerService(
         FirSealedClassInheritorsProcessorFactory::class.java,
@@ -60,7 +54,7 @@ fun MockProject.registerTestServices(
     )
     registerService(KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(allKtFiles))
     registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(allKtFiles))
-    registerService(ProjectStructureProvider::class.java, KotlinProjectStructureProviderTestImpl(testServices))
+    registerService(ProjectStructureProvider::class.java, projectStructureProvider)
     registerService(SymbolLightClassFacadeCache::class.java)
     reRegisterJavaElementFinder(this)
 }
@@ -72,20 +66,10 @@ private class FirSealedClassInheritorsProcessorFactoryTestImpl : FirSealedClassI
 }
 
 private class PackagePartProviderTestImpl(
-    private val testServices: TestServices,
-    private val testModule: TestModule
+    private val packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
 ) : PackagePartProviderFactory() {
     override fun createPackagePartProviderForLibrary(scope: GlobalSearchScope): PackagePartProvider {
-        val factory = testServices.compilerConfigurationProvider.getPackagePartProviderFactory(testModule)
-        return factory(scope)
-    }
-}
-
-private class KotlinProjectStructureProviderTestImpl(testServices: TestServices) : ProjectStructureProvider() {
-    private val moduleInfoProvider = testServices.projectModuleProvider
-    override fun getKtModuleForKtElement(element: PsiElement): KtModule {
-        val containingFile = element.containingFile as KtFile
-        return moduleInfoProvider.getModuleInfoByKtFile(containingFile) as KtModule
+        return packagePartProvider(scope)
     }
 }
 

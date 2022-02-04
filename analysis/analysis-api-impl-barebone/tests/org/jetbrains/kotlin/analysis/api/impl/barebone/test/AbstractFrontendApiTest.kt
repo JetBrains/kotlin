@@ -10,9 +10,14 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.Disposer
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.testFramework.TestDataFile
 import junit.framework.ComparisonFailure
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -31,6 +36,7 @@ import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurat
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
+import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.concurrent.ExecutionException
@@ -47,9 +53,17 @@ interface FrontendApiTestConfiguratorService {
     fun TestConfigurationBuilder.configureTest(disposable: Disposable)
 
     fun processTestFiles(files: List<KtFile>): List<KtFile> = files
+
     fun getOriginalFile(file: KtFile): KtFile = file
 
-    fun registerProjectServices(project: MockProject)
+    fun registerProjectServices(
+        project: MockProject,
+        compilerConfig: CompilerConfiguration,
+        files: List<KtFile>,
+        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
+        projectStructureProvider: ProjectStructureProvider
+    )
+
     fun registerApplicationServices(application: MockApplication)
 
     fun prepareTestFiles(files: List<KtFile>, module: TestModule, testServices: TestServices) {}
@@ -164,11 +178,6 @@ abstract class AbstractFrontendApiTest : TestWithDisposable() {
             return
         }
 
-        val moduleInfoProvider = testServices.projectModuleProvider
-        with(project as MockProject) {
-            configurator.registerProjectServices(this)
-        }
-
         registerApplicationServices()
         testConfiguration.testServices.register(TestModuleStructure::class, moduleStructure)
         testConfiguration.preAnalysisHandlers.forEach { preprocessor ->
@@ -182,14 +191,28 @@ abstract class AbstractFrontendApiTest : TestWithDisposable() {
             }
         }
 
+        val ktFiles = getKtFilesFromModule(testServices, singleModule)
+        with(project as MockProject) {
+            val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(singleModule)
+            compilerConfiguration.addJavaSourceRoots(ktFiles.map { File(it.virtualFilePath) })
+            configurator.registerProjectServices(
+                this,
+                compilerConfiguration,
+                ktFiles,
+                testServices.compilerConfigurationProvider.getPackagePartProviderFactory(singleModule),
+                KotlinProjectStructureProviderTestImpl(testServices)
+            )
+        }
 
-        val moduleInfo = moduleInfoProvider.getModule(singleModule.name)
-
-        val ktFiles = when (moduleInfo) {
-            is TestKtSourceModule -> moduleInfo.testFilesToKtFiles.filterKeys { testFile -> !testFile.isAdditional }.values.toList()
-            is TestKtLibraryModule -> moduleInfo.ktFiles.toList()
-            is TestKtLibrarySourceModule -> moduleInfo.ktFiles.toList()
-            else -> error("Unexpected $moduleInfo")
+        testConfiguration.preAnalysisHandlers.forEach { preprocessor ->
+            try {
+                preprocessor.prepareSealedClassInheritors(moduleStructure)
+            } catch (exception: Throwable) {
+                when (handleInitializationError(exception, moduleStructure)) {
+                    InitializationErrorAction.IGNORE -> {}
+                    InitializationErrorAction.THROW -> throw exception
+                }
+            }
         }
 
         configurator.prepareTestFiles(ktFiles, singleModule, testServices)
@@ -232,5 +255,15 @@ abstract class AbstractFrontendApiTest : TestWithDisposable() {
 
     companion object {
         val DISABLE_DEPENDED_MODE_DIRECTIVE = "DISABLE_DEPENDED_MODE"
+    }
+}
+
+fun getKtFilesFromModule(testServices: TestServices, testModule: TestModule): List<KtFile> {
+    val moduleInfoProvider = testServices.projectModuleProvider
+    return when (val moduleInfo = moduleInfoProvider.getModule(testModule.name)) {
+        is TestKtSourceModule -> moduleInfo.testFilesToKtFiles.filterKeys { testFile -> !testFile.isAdditional }.values.toList()
+        is TestKtLibraryModule -> moduleInfo.ktFiles.toList()
+        is TestKtLibrarySourceModule -> moduleInfo.ktFiles.toList()
+        else -> error("Unexpected $moduleInfo")
     }
 }
