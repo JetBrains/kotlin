@@ -395,8 +395,13 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
         } ?: return this
         if (!resolvedSymbol.isWrappedIntegerOperator()) return this
 
-        val argument = this.argumentList.arguments.singleOrNull() ?: return this
-        assert(argument.isIntegerLiteralOrOperatorCall())
+        val arguments = this.argumentList.arguments
+        val argument = when (arguments.size) {
+            0 -> null
+            1 -> arguments.first()
+            else -> return this
+        }
+        assert(argument?.isIntegerLiteralOrOperatorCall() != false)
 
         val originalCall = this
 

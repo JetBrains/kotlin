@@ -94,6 +94,8 @@ class CandidateFactory private constructor(
 
     private fun FirBasedSymbol<*>.unwrapIntegerOperatorSymbolIfNeeded(callInfo: CallInfo): FirBasedSymbol<*> {
         if (this !is FirNamedFunctionSymbol) return this
+        // There is no need to unwrap unary operators
+        if (fir.valueParameters.isEmpty()) return this
         val original = fir.originalForWrappedIntegerOperator ?: return this
         return if (callInfo.arguments.first().isIntegerLiteralOrOperatorCall()) {
             this

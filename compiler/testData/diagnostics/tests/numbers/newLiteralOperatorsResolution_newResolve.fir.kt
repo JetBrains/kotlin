@@ -70,9 +70,9 @@ fun testLongUnaryOperators() {
     takeLong(-1)
 
     // Mismatch
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2.unaryPlus()<!>)
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2.unaryMinus()<!>)
-    takeLong(<!ARGUMENT_TYPE_MISMATCH!>2.inv()<!>)
+    takeLong(2.unaryPlus())
+    takeLong(2.unaryMinus())
+    takeLong(2.inv())
     takeLong(<!ARGUMENT_TYPE_MISMATCH!>1.inc()<!>)
     takeLong(<!ARGUMENT_TYPE_MISMATCH!>1.dec()<!>)
 }

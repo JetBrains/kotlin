@@ -17487,6 +17487,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("constantUnaryOperators.kt")
+            public void testConstantUnaryOperators() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/integerLiterals/constantUnaryOperators.kt");
+            }
+
+            @Test
             @TestMetadata("intToLongConversion.kt")
             public void testIntToLongConversion() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/integerLiterals/intToLongConversion.kt");
