@@ -230,7 +230,7 @@ internal class KtFirIntersectionType(
 }
 
 internal class KtFirIntegerLiteralType(
-    override val coneType: ConeIntegerLiteralType,
+    override val coneType: ConeIntegerLiteralConstantType,
     override val token: ValidityToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtIntegerLiteralType(), KtFirType {

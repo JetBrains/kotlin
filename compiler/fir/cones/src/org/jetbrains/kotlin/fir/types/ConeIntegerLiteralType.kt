@@ -7,31 +7,45 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
-abstract class ConeIntegerLiteralType(
-    val value: Long,
+sealed class ConeIntegerLiteralType(
     val isUnsigned: Boolean,
-    override val nullability: ConeNullability
+    final override val nullability: ConeNullability
 ) : ConeSimpleKotlinType(), TypeConstructorMarker {
     abstract val possibleTypes: Collection<ConeClassLikeType>
     abstract val supertypes: List<ConeClassLikeType>
 
-    override val typeArguments: Array<out ConeTypeProjection> = emptyArray()
+    final override val typeArguments: Array<out ConeTypeProjection> = emptyArray()
+    final override val attributes: ConeAttributes get() = ConeAttributes.Empty
 
     abstract fun getApproximatedType(expectedType: ConeKotlinType? = null): ConeClassLikeType
 
-    override fun equals(other: Any?): Boolean {
+    final override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
         other as ConeIntegerLiteralType
 
+        if (isUnsigned != other.isUnsigned) return false
         if (possibleTypes != other.possibleTypes) return false
         if (nullability != other.nullability) return false
 
         return true
     }
 
-    override fun hashCode(): Int {
+    final override fun hashCode(): Int {
         return 31 * possibleTypes.hashCode() + nullability.hashCode()
     }
+
+    companion object
 }
+
+abstract class ConeIntegerLiteralConstantType(
+    val value: Long,
+    isUnsigned: Boolean,
+    nullability: ConeNullability
+) : ConeIntegerLiteralType(isUnsigned, nullability)
+
+abstract class ConeIntegerConstantOperatorType(
+    isUnsigned: Boolean,
+    nullability: ConeNullability
+) : ConeIntegerLiteralType(isUnsigned, nullability)

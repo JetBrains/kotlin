@@ -93,8 +93,12 @@ interface FirDeclarationPresenter {
                 append(it.lookupTag.name)
                 append(it.nullability.suffix)
             }
-            is ConeIntegerLiteralType -> {
+            is ConeIntegerLiteralConstantType -> {
                 append(it.value)
+                append(it.nullability.suffix)
+            }
+            is ConeIntegerConstantOperatorType -> {
+                append("IOT")
                 append(it.nullability.suffix)
             }
             is ConeFlexibleType,

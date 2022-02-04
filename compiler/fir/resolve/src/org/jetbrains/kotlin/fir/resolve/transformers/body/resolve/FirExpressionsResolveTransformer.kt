@@ -906,7 +906,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
 
         val type = when (val kind = constExpression.kind) {
             ConstantValueKind.IntegerLiteral, ConstantValueKind.UnsignedIntegerLiteral -> {
-                val expressionType = ConeIntegerLiteralTypeImpl.create(
+                val expressionType = ConeIntegerLiteralConstantTypeImpl.create(
                     constExpression.value as Long,
                     isUnsigned = kind == ConstantValueKind.UnsignedIntegerLiteral
                 )
@@ -918,7 +918,7 @@ open class FirExpressionsResolveTransformer(transformer: FirBodyResolveTransform
                         expressionType
                     }
                     expectedTypeRef != null -> {
-                        require(expressionType is ConeIntegerLiteralTypeImpl)
+                        require(expressionType is ConeIntegerLiteralConstantTypeImpl)
                         val coneType = expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)
                         val approximatedType= expressionType.getApproximatedType(coneType)
                         constExpression.replaceKind(approximatedType.toConstKind() as ConstantValueKind<T>)

@@ -49,7 +49,8 @@ fun ConeKotlinType.render(): String {
         is ConeStubTypeForChainInference -> "${renderAttributes()}Stub (chain inference): ${constructor.variable}"
         is ConeStubTypeForSyntheticFixation -> "${renderAttributes()}Stub (fixation): ${constructor.variable}"
         is ConeStubType -> "${renderAttributes()}Stub (subtyping): ${constructor.variable}"
-        is ConeIntegerLiteralType -> "${renderAttributes()}ILT: $value"
+        is ConeIntegerLiteralConstantType -> "${renderAttributes()}ILT: $value"
+        is ConeIntegerConstantOperatorType -> "${renderAttributes()}IOT"
     } + nullabilitySuffix
 }
 
