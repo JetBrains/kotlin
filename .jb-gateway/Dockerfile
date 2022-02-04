@@ -1,1 +1,1 @@
-FROM kotlin.registry.jetbrains.space/p/kotlin/containers/kotlin-build-env:1.0
+FROM registry.jetbrains.team/p/kti/containers/kotlin-build-env:1.0
