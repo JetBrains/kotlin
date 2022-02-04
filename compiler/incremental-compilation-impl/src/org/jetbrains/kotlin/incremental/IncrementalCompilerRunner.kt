@@ -223,7 +223,7 @@ abstract class IncrementalCompilerRunner<
                 }
                 it.isFile -> {
                     reporter.reportVerbose { "  Deleting file '${it.path}'" }
-                    it.forceDeleteRecursively()
+                    it.deleteRecursivelyOrThrow()
                 }
             }
         }

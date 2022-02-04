@@ -35,33 +35,32 @@ fun File.isClassFile(): Boolean =
  */
 fun File.cleanDirectoryContents() {
     when {
-        isDirectory -> listFiles()!!.forEach { it.forceDeleteRecursively() }
+        isDirectory -> listFiles()!!.forEach { it.deleteRecursivelyOrThrow() }
         isFile -> error("File.cleanDirectoryContents does not accept a regular file: $path")
-        else -> forceMkdirs()
+        else -> mkdirsOrThrow()
     }
 }
 
-/** Deletes this file or directory recursively (if it exists). */
-fun File.forceDeleteRecursively() {
+/** Deletes this file or directory recursively (if it exists), throwing an exception if the deletion failed. */
+fun File.deleteRecursivelyOrThrow() {
     if (!deleteRecursively()) {
         throw IOException("Could not delete '$path'")
     }
 }
 
 /**
- * Creates this directory (if it does not yet exist).
- *
- * If this is a regular file, this method will throw an exception.
+ * Creates this directory (if it does not yet exist), throwing an exception if the directiory creation failed or if a regular file already
+ * exists at this path.
  */
 @Suppress("SpellCheckingInspection")
-fun File.forceMkdirs() {
+fun File.mkdirsOrThrow() {
     when {
         isDirectory -> Unit
-        isFile -> error("File.forceMkdirs does not accept a regular file: $path")
+        isFile -> error("A regular file already exists at this path: $path")
         else -> {
             // Note that `mkdirs()` returns `false` if the directory already exists (even though we have checked that the directory did not
             // exist earlier, it might just have been created by some other thread). Therefore, we need to check if the directory exists
-            // again in addition to the returned result of `mkdirs()`.
+            // again when `mkdirs()` returns `false`.
             if (!mkdirs() && !isDirectory) {
                 throw IOException("Could not create directory '$path'")
             }
