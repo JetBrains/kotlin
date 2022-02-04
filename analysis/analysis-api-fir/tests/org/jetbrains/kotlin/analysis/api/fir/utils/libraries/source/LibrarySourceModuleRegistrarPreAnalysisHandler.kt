@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.utils.libraries.source
 
-import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
@@ -13,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.impl.barebone.test.TestKtLibrarySourceM
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.projectModuleProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.test.utils.libraries.compiledLibraryProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.registerTestServices
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
@@ -54,7 +52,6 @@ class LibrarySourceModuleRegistrarPreAnalysisHandler(
         libraryKtModule.librarySources = sourcesKtModule
 
         moduleInfoProvider.registerModuleInfo(testModule, sourcesKtModule)
-        (project as MockProject).registerTestServices(testModule, librarySourceKtFiles, testServices)
     }
 }
 

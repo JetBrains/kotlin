@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.standalone;
 
 import com.intellij.mock.MockProject;
-import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveStateService;
 
 class RegisterComponentService {
@@ -15,10 +14,5 @@ class RegisterComponentService {
                 LLFirResolveStateService.class,
                 new LLFirResolveStateService(project)
         );
-    }
-
-    @TestOnly
-    static void unregisterLLFirResolveStateService(MockProject project) {
-        project.getPicoContainer().unregisterComponent(LLFirResolveStateService.class.getName());
     }
 }
