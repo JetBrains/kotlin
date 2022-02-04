@@ -8,11 +8,16 @@ package org.jetbrains.kotlin.analysis.api.fir
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.FrontendApiTestConfiguratorService
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
+import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.registerTestServices
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.FirLowLevelFrontendApiTestConfiguratorService
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.references.KotlinFirReferenceContributor
 import org.jetbrains.kotlin.idea.references.KotlinReferenceProviderContributor
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -30,8 +35,20 @@ object FirFrontendApiTestConfiguratorService : FrontendApiTestConfiguratorServic
         return FirLowLevelFrontendApiTestConfiguratorService.getOriginalFile(file)
     }
 
-    override fun registerProjectServices(project: MockProject) {
-        FirLowLevelFrontendApiTestConfiguratorService.registerProjectServices(project)
+    override fun registerProjectServices(
+        project: MockProject,
+        compilerConfig: CompilerConfiguration,
+        files: List<KtFile>,
+        packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
+        projectStructureProvider: ProjectStructureProvider
+    ) {
+        FirLowLevelFrontendApiTestConfiguratorService.registerProjectServices(
+            project,
+            compilerConfig,
+            files,
+            packagePartProvider,
+            projectStructureProvider
+        )
     }
 
     override fun registerApplicationServices(application: MockApplication) {

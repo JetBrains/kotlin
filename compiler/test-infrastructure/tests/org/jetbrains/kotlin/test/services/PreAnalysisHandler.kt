@@ -7,4 +7,6 @@ package org.jetbrains.kotlin.test.services
 
 abstract class PreAnalysisHandler(protected val testServices: TestServices) {
     abstract fun preprocessModuleStructure(moduleStructure: TestModuleStructure)
+
+    open fun prepareSealedClassInheritors(moduleStructure: TestModuleStructure) {}
 }

@@ -47,3 +47,7 @@ abstract class TestConfiguration {
 fun <T, R> ((TestServices, T) -> R).bind(value: T): Constructor<R> {
     return { this.invoke(it, value) }
 }
+
+fun <T1, T2, R> ((TestServices, T1, T2) -> R).bind(value1: T1, value2: T2): Constructor<R> {
+    return { this.invoke(it, value1, value2) }
+}
