@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
+import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
@@ -115,6 +116,8 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             buildSpecializedEqualsMethod(declaration)
 
             if (declaration.modality == Modality.SEALED) {
+                patchReceiverParameterOfValueGetter(declaration)
+
                 val inlineSubclasses = collectSubclasses(declaration) { it.owner.isInline }
                 val inlineDirectSubclasses = declaration.sealedSubclasses.filter { it.owner.isInline }
                 val noinlineSubclasses = collectSubclasses(declaration) { !it.owner.isInline }
@@ -129,6 +132,11 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         }
 
         return declaration
+    }
+
+    private fun patchReceiverParameterOfValueGetter(irClass: IrClass) {
+        val getter = irClass.functions.single { it.name == InlineClassAbi.sealedInlineClassFieldName }
+        getter.dispatchReceiverParameter = irClass.thisReceiver?.copyTo(getter, type = irClass.defaultType)
     }
 
     private fun IrClass.isChildOfSealedInlineClass(): Boolean = superTypes.any { it.isInlineClassType() }
@@ -163,12 +171,15 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         )
 
         fakeOverride.overriddenSymbols += methodToOverride.symbol
+        fakeOverride.dispatchReceiverParameter = irClass.thisReceiver?.copyTo(fakeOverride, type = irClass.defaultType)
 
         irClass.addMember(fakeOverride)
 
         with(context.createIrBuilder(fieldGetter.symbol)) {
             fieldGetter.body = irExprBody(
-                irCall(fakeOverride.symbol)
+                irCall(fakeOverride.symbol).apply {
+                    dispatchReceiver = irGet(fieldGetter.dispatchReceiverParameter!!)
+                }
             )
         }
     }
