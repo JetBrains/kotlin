@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.isUnderlyingPropertyOfInlineClass
 import org.jetbrains.kotlin.types.KotlinType
+import java.lang.reflect.Constructor
+import java.lang.reflect.Field
 import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Type
@@ -37,6 +39,16 @@ internal class InlineClassAwareCaller<out M : Member?>(
 
     override val parameterTypes: List<Type>
         get() = caller.parameterTypes
+
+    private val memberParameterTypes: List<Class<*>>
+        get() = when (val m = member) {
+            is Method -> m.parameterTypes.asList()
+            is Constructor<*> -> m.parameterTypes.asList()
+            is Field -> listOf(m.type)
+            // TODO: Check if there are any cases other than the above three, especially if they result in null.
+            // TODO: Check the Exceptions and error messages to be thrown.
+            else -> throw IllegalArgumentException("temp err")
+        }
 
     private class BoxUnboxData(val argumentRange: IntRange, val unbox: Array<Method?>, val box: Method?) {
         operator fun component1(): IntRange = argumentRange
@@ -110,10 +122,15 @@ internal class InlineClassAwareCaller<out M : Member?>(
         // maxOf is needed because in case of a bound top level extension, shift can be -1 (see above). But in that case, we need not unbox
         // the extension receiver argument, since it has already been unboxed at compile time and generated into the reference
         val argumentRange = maxOf(shift, 0) until (kotlinParameterTypes.size + shift)
+        val javaParamTypes = memberParameterTypes
 
         val unbox = Array(expectedArgsSize) { i ->
             if (i in argumentRange) {
-                kotlinParameterTypes[i - shift].toInlineClass()?.getUnboxMethod(descriptor)
+                val idx = i - shift
+
+                kotlinParameterTypes[idx].toInlineClass()
+                    ?.takeIf { it != javaParamTypes[idx] }
+                    ?.getUnboxMethod(descriptor)
             } else null
         }
 
