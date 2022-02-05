@@ -93,8 +93,16 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
     }
 
     private fun patchReceiverParameterOfValueGetter(irClass: IrClass) {
-        val getter = irClass.functions.single { it.name == InlineClassAbi.sealedInlineClassFieldName }
+        val getter = irClass.functions.single { it.origin == IrDeclarationOrigin.GETTER_OF_SEALED_INLINE_CLASS_FIELD }
         getter.dispatchReceiverParameter = irClass.thisReceiver?.copyTo(getter, type = irClass.defaultType)
+
+        val field = irClass.fields.single { it.origin == IrDeclarationOrigin.FIELD_FOR_SEALED_INLINE_CLASS }
+
+        with(context.createIrBuilder(getter.symbol)) {
+            getter.body = irExprBody(
+                irGetField(irGet(getter.dispatchReceiverParameter!!), field)
+            )
+        }
     }
 
     private fun updateGetterForSealedInlineClassChild(irClass: IrClass) {

@@ -527,15 +527,7 @@ class ClassGenerator(
             isInfix = false,
             isExpect = false,
             isFakeOverride = false
-        ).also { function ->
-            function.body = context.irFactory.createExpressionBody(
-                IrGetFieldImpl(
-                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    irProperty.backingField!!.symbol,
-                    context.irBuiltIns.anyNType
-                )
-            )
-        }
+        )
 
         irClass.addMember(irProperty)
     }
