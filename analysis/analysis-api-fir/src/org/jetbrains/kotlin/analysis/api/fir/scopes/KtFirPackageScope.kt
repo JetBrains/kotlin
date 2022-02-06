@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.analysis.api.withValidityAssertion
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
+import org.jetbrains.kotlin.fir.extensions.FirExtensionService
+import org.jetbrains.kotlin.fir.extensions.declarationGenerators
+import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -40,10 +43,15 @@ internal class KtFirPackageScope(
         FirPackageMemberScope(fqName, builder.rootSession)
     }
 
-    override fun getPossibleCallableNames() = withValidityAssertion {
+    private val firExtensionService: FirExtensionService
+        get() = firScope.session.extensionService
+
+    override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         hashSetOf<Name>().apply {
             addAll(declarationsProvider.getFunctionsNamesInPackage(fqName))
             addAll(declarationsProvider.getPropertyNamesInPackage(fqName))
+
+            addAll(collectGeneratedTopLevelCallables())
         }
     }
 
@@ -56,7 +64,39 @@ internal class KtFirPackageScope(
                 .findPackage(fqName.asString())
                 ?.getClasses(searchScope)
                 ?.mapNotNullTo(this) { it.name?.let(Name::identifier) }
+
+            addAll(collectGeneratedTopLevelClassifiers())
         }
+    }
+
+    private fun collectGeneratedTopLevelCallables(): Set<Name> {
+        val generators = firExtensionService.declarationGenerators
+
+        val generatedTopLevelDeclarations = generators
+            .asSequence()
+            .flatMap {
+                // FIXME this function should be called only once during plugin's lifetime, so this usage is not really correct (1)
+                it.getTopLevelCallableIds()
+            }
+            .filter { it.packageName == fqName }
+            .map { it.callableName }
+
+        return generatedTopLevelDeclarations.toSet()
+    }
+
+    private fun collectGeneratedTopLevelClassifiers(): Set<Name> {
+        val declarationGenerators = firExtensionService.declarationGenerators
+
+        val generatedTopLevelClassifiers = declarationGenerators
+            .asSequence()
+            .flatMap {
+                // FIXME this function should be called only once during plugin's lifetime, so this usage is not really correct (2)
+                it.getTopLevelClassIds()
+            }
+            .filter { it.packageFqName == fqName }
+            .map { it.shortClassName }
+
+        return generatedTopLevelClassifiers.toSet()
     }
 
     override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
