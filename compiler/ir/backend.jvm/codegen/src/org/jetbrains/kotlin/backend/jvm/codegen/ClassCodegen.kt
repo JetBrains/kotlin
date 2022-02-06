@@ -564,6 +564,7 @@ private fun IrClass.getFlags(languageVersionSettings: LanguageVersionSettings): 
                 isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
                 isEnumClass -> Opcodes.ACC_ENUM or Opcodes.ACC_SUPER or modality.flags
                 hasAnnotation(JVM_RECORD_ANNOTATION_FQ_NAME) -> VersionIndependentOpcodes.ACC_RECORD or Opcodes.ACC_SUPER or modality.flags
+                isInline && modality == Modality.SEALED -> 0
                 else -> Opcodes.ACC_SUPER or modality.flags
             }
 

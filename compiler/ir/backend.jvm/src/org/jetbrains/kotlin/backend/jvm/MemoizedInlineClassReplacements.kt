@@ -96,11 +96,11 @@ class MemoizedInlineClassReplacements(
         }
 
     private fun createStaticReplacementForSealedInlineClassConstructor(constructor: IrConstructor): IrSimpleFunction =
-        buildReplacement(constructor, JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT, noFakeOverride = true) {
+        buildReplacement(constructor, JvmLoweredDeclarationOrigin.PRIMARY_CONSTRUCTOR_FOR_SEALED_INLINE_CLASS, noFakeOverride = true) {
             valueParameters = listOf(
                 context.irFactory.createValueParameter(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                    IrDeclarationOrigin.PRIMARY_CONSTRUCTOR_PARAMETER_FOR_SEALED_INLINE_CLASS,
+                    JvmLoweredDeclarationOrigin.PRIMARY_CONSTRUCTOR_PARAMETER_FOR_SEALED_INLINE_CLASS,
                     IrValueParameterSymbolImpl(),
                     InlineClassAbi.sealedInlineClassFieldName,
                     index = 0,
@@ -110,7 +110,9 @@ class MemoizedInlineClassReplacements(
                     isNoinline = false,
                     isHidden = false,
                     isAssignable = false
-                )
+                ).also {
+                    it.parent = this
+                }
             )
         }
 
