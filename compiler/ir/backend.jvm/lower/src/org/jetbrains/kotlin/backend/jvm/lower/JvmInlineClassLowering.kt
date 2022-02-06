@@ -109,7 +109,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                         putValueArgument(0, irGet(newConstructor.valueParameters[0]))
                     }
                 )
-                // TODO: Add init block
+                moveInitBlocksInto(irClass, newConstructor)
                 +irReturn(irGet(res))
             }
         }
@@ -640,23 +640,29 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
         // null-checks, default arguments, and anonymous initializers.
         val function = context.inlineClassReplacements.getReplacementFunction(irConstructor)!!
 
-        val initBlocks = valueClass.declarations.filterIsInstance<IrAnonymousInitializer>()
-
         function.valueParameters.forEach { it.transformChildrenVoid() }
         function.body = context.createIrBuilder(function.symbol).irBlockBody {
             val argument = function.valueParameters[0]
             val thisValue = irTemporary(coerceInlineClasses(irGet(argument), argument.type, function.returnType, skipCast = true))
             valueMap[valueClass.thisReceiver!!.symbol] = thisValue
-            for (initBlock in initBlocks) {
-                for (stmt in initBlock.body.statements) {
-                    +stmt.transformStatement(this@JvmInlineClassLowering).patchDeclarationParents(function)
-                }
-            }
+            moveInitBlocksInto(valueClass, function)
             +irReturn(irGet(thisValue))
         }
 
-        valueClass.declarations.removeAll(initBlocks)
         valueClass.declarations += function
+    }
+
+    private fun IrBlockBodyBuilder.moveInitBlocksInto(
+        irClass: IrClass,
+        function: IrSimpleFunction
+    ) {
+        val initBlocks = irClass.declarations.filterIsInstance<IrAnonymousInitializer>()
+        for (initBlock in initBlocks) {
+            for (stmt in initBlock.body.statements) {
+                +stmt.transformStatement(this@JvmInlineClassLowering).patchDeclarationParents(function)
+            }
+        }
+        irClass.declarations.removeAll(initBlocks)
     }
 
     override fun buildBoxFunction(valueClass: IrClass) {

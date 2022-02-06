@@ -19988,6 +19988,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
                 }
 
                 @Test
+                @TestMetadata("initBlocks.kt")
+                public void testInitBlocks() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/constructor/initBlocks.kt");
+                }
+
+                @Test
                 @TestMetadata("object.kt")
                 public void testObject() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/constructor/object.kt");
