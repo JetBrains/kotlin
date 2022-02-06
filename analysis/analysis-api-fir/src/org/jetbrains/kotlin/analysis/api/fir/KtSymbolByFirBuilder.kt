@@ -106,10 +106,13 @@ internal class KtSymbolByFirBuilder private constructor(
         buildSymbol(fir.symbol)
 
     fun buildSymbol(firSymbol: FirBasedSymbol<*>): KtSymbol {
+        assertIsValidAndAccessible()
+
         return when (firSymbol) {
             is FirClassLikeSymbol<*> -> classifierBuilder.buildClassLikeSymbol(firSymbol)
             is FirTypeParameterSymbol -> classifierBuilder.buildTypeParameterSymbol(firSymbol)
             is FirCallableSymbol<*> -> callableBuilder.buildCallableSymbol(firSymbol)
+            is FirFileSymbol -> buildFileSymbol(firSymbol)
             else -> throwUnexpectedElementError(firSymbol)
         }
     }
