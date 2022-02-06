@@ -233,7 +233,23 @@ object KotlinCompilerClient {
             }
             else -> {
                 println("Executing daemon compilation with args: " + filteredArgs.joinToString(" "))
-                val outStrm = RemoteOutputStreamServer(System.out)
+                val messageCollector = object : MessageCollector {
+                    override fun clear() {
+                        TODO("Not yet implemented1")
+                    }
+
+                    override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
+                        println("${severity.name}\t${location?.path ?: ""}:${location?.line ?: ""} \t$message")
+                    }
+
+                    override fun hasErrors(): Boolean {
+                        TODO("Not yet implemented3")
+                    }
+
+                }
+
+                val outputsCollector = { x: File, y: List<File> ->  println("$x $y") }
+                val servicesFacade = BasicCompilerServicesWithResultsFacadeServer(messageCollector, outputsCollector)
                 try {
                     val memBefore = daemon.getUsedMemory().get() / 1024
                     val startTime = System.nanoTime()
@@ -245,24 +261,8 @@ object KotlinCompilerClient {
                         ReportSeverity.INFO.code,
                         emptyArray()
                     )
-                    val messageCollector = object : MessageCollector {
-                        override fun clear() {
-                            TODO("Not yet implemented")
-                        }
 
-                        override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
-                            TODO("Not yet implemented")
-                        }
 
-                        override fun hasErrors(): Boolean {
-                            TODO("Not yet implemented")
-                        }
-
-                    }
-                    // ((File, List<File>) -> Unit)
-                    val outputsCollector = { x: File, y: List<File> ->  println("$x $y") }
-
-                    val servicesFacade = BasicCompilerServicesWithResultsFacadeServer(messageCollector, outputsCollector)
                     val res = daemon.compile(
                         CompileService.NO_SESSION,
                         filteredArgs.toList().toTypedArray(),
@@ -279,7 +279,7 @@ object KotlinCompilerClient {
                 }
                 finally {
                     // forcing RMI to unregister all objects and stop
-                    UnicastRemoteObject.unexportObject(outStrm, true)
+                    UnicastRemoteObject.unexportObject(servicesFacade, true)
                 }
             }
         }
