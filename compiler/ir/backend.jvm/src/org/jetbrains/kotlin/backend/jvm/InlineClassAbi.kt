@@ -64,7 +64,7 @@ object InlineClassAbi {
             assert(irFunction.constructedClass.isSingleFieldValueClass) {
                 "Should not mangle names of non-inline class constructors: ${irFunction.render()}"
             }
-            return Name.identifier("constructor-impl")
+            return constructorName
         }
 
         val suffix = hashSuffix(irFunction, mangleReturnTypes, useOldMangleRules)
@@ -125,6 +125,8 @@ object InlineClassAbi {
         get() = (this as IrSimpleFunction).correspondingPropertySymbol!!.owner.name
 
     val sealedInlineClassFieldName = Name.identifier("\$value")
+
+    val constructorName = Name.identifier("constructor-impl")
 }
 
 val IrType.requiresMangling: Boolean

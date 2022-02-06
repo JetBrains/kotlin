@@ -2,9 +2,6 @@
 @kotlin.Metadata
 public final class Result$Ok {
     // source: 'result.kt'
-    private final field value: java.lang.Object
-    private synthetic method <init>(p0: java.lang.Object): void
-    public synthetic final static method box-impl(p0: java.lang.Object): Result$Ok
     public static @org.jetbrains.annotations.NotNull method constructor-impl(p0: java.lang.Object): java.lang.Object
     public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: java.lang.Object, p1: java.lang.Object): boolean
@@ -14,7 +11,6 @@ public final class Result$Ok {
     public static method hashCode-impl(p0: java.lang.Object): int
     public method toString(): java.lang.String
     public static method toString-impl(p0: java.lang.Object): java.lang.String
-    public synthetic final method unbox-impl(): java.lang.Object
     public final inner class Result$Ok
 }
 
@@ -23,18 +19,16 @@ public final class Result$Throwable {
     // source: 'result.kt'
     private final @org.jetbrains.annotations.NotNull field error: Result$Throwable
     public method <init>(@org.jetbrains.annotations.NotNull p0: Result$Throwable): void
-    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public final @org.jetbrains.annotations.NotNull method getError(): Result$Throwable
-    public method hashCode(): int
-    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public final inner class Result$Throwable
 }
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
-public abstract class Result {
+public class Result {
     // source: 'result.kt'
     protected synthetic final field $value: java.lang.Object
+    protected final @org.jetbrains.annotations.Nullable method $value(): java.lang.Object
     private method <init>(): void
     private synthetic method <init>(p0: java.lang.Object): void
     public synthetic method <init>(p0: java.lang.Object, p1: kotlin.jvm.internal.DefaultConstructorMarker): void

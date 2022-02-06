@@ -101,15 +101,9 @@ class ClassGenerator(
 
             generateFieldsForContextReceivers(irClass, classDescriptor)
 
-            val inlineClassChildOfSealedInlineClass = irClass.isInline && classDescriptor.getSuperClassOrAny().isInline
-
-            // Do not generate constructor and box/unbox functions for inline class children of
-            // sealed inline class, since we cannot have boxed inline class children.
-            if (!inlineClassChildOfSealedInlineClass) {
-                val irPrimaryConstructor = generatePrimaryConstructor(irClass, ktClassOrObject)
-                if (irPrimaryConstructor != null) {
-                    generateDeclarationsForPrimaryConstructorParameters(irClass, irPrimaryConstructor, ktClassOrObject)
-                }
+            val irPrimaryConstructor = generatePrimaryConstructor(irClass, ktClassOrObject)
+            if (irPrimaryConstructor != null) {
+                generateDeclarationsForPrimaryConstructorParameters(irClass, irPrimaryConstructor, ktClassOrObject)
             }
 
             if (ktClassOrObject is KtClassOrObject) //todo: supertype list for synthetic declarations

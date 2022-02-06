@@ -66,7 +66,7 @@ internal abstract class JvmValueClassAbstractLowering(val context: JvmBackendCon
                 (it == irConstructor && declaration.modality != Modality.SEALED) ||
                         (it is IrFunction && it.isSpecificFieldGetter() && !it.visibility.isPublicAPI)
             }
-            if (declaration.modality != Modality.SEALED && !declaration.isChildOfSealedInlineClass()) {
+            if (declaration.modality != Modality.SEALED && !declaration.superTypes.any { it.isInlineClassType() }) {
                 buildPrimaryValueClassConstructor(declaration, irConstructor)
                 buildBoxFunction(declaration)
                 buildUnboxFunctions(declaration)
