@@ -20170,6 +20170,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Constructor extends AbstractLightAnalysisModeTest {
+                @TestMetadata("initBlocks.kt")
+                public void ignoreInitBlocks() throws Exception {
+                    runTest("compiler/testData/codegen/box/inlineClasses/sealed/constructor/initBlocks.kt");
+                }
+
                 @TestMetadata("object.kt")
                 public void ignoreObject() throws Exception {
                     runTest("compiler/testData/codegen/box/inlineClasses/sealed/constructor/object.kt");
