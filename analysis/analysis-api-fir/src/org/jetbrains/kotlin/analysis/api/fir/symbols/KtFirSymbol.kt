@@ -72,6 +72,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
 
         original.ktSymbolOrigin()
     }
+    is FirDeclarationOrigin.Plugin -> KtSymbolOrigin.PLUGIN
     else -> {
         val overridden = (this as? FirCallableDeclaration)?.originalIfFakeOverride()
             ?: throw InvalidFirDeclarationOriginForSymbol(this)
