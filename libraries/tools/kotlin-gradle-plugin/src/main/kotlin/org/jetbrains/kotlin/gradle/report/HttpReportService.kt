@@ -33,13 +33,14 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
         var uuid: String
         var projectName: String
         var httpSettings: HttpReportSettings
+        var kotlinVersion: String
     }
 
     private val log = Logging.getLogger(this.javaClass)
 
     override fun onFinish(event: FinishEvent?) {
         if (event is TaskFinishEvent) {
-            val data = prepareData(event, parameters.projectName, parameters.uuid, parameters.label)
+            val data = prepareData(event, parameters.projectName, parameters.uuid, parameters.label, parameters.kotlinVersion)
             data?.also { executorService.submit { report(data) } }
         }
     }
@@ -50,7 +51,7 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
 
     companion object {
 
-        fun registerIfAbsent(project: Project): Provider<HttpReportService>? {
+        fun registerIfAbsent(project: Project, kotlinVersion: String): Provider<HttpReportService>? {
             val rootProject = project.gradle.rootProject
             val reportingSettings = reportingSettings(rootProject)
 
@@ -63,6 +64,7 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
                     it.parameters.projectName = rootProject.name
                     it.parameters.uuid = UUID.randomUUID().toString()
                     it.parameters.httpSettings = httpSettings
+                    it.parameters.kotlinVersion = kotlinVersion
                 }!!
             }
 

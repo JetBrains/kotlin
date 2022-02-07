@@ -49,7 +49,7 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
     }
 
     companion object {
-        fun registerIfAbsent(project: Project): Provider<KotlinGradleBuildServices> = project.gradle.sharedServices.registerIfAbsent(
+        fun registerIfAbsent(project: Project, kotlinVersion: String): Provider<KotlinGradleBuildServices> = project.gradle.sharedServices.registerIfAbsent(
             "kotlin-build-service-${KotlinGradleBuildServices::class.java.canonicalName}_${KotlinGradleBuildServices::class.java.classLoader.hashCode()}",
             KotlinGradleBuildServices::class.java
         ) { service ->
@@ -57,10 +57,10 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
             service.parameters.buildDir = project.rootProject.buildDir
 
             val reportingSettings = reportingSettings(project.rootProject)
-            addListeners(project, reportingSettings)
+            addListeners(project, reportingSettings, kotlinVersion)
         }
 
-        fun addListeners(project: Project, reportingSettings: ReportingSettings) {
+        fun addListeners(project: Project, reportingSettings: ReportingSettings, kotlinVersion: String) {
             val listeners = project.rootProject.objects.listProperty(ReportStatistics::class.java)
                 .value(listOf<ReportStatistics>())
 
@@ -73,7 +73,7 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
 
             if (listeners.get().isNotEmpty()) {
                 val listenerRegistryHolder = BuildEventsListenerRegistryHolder.getInstance(project)
-                val statListener = KotlinBuildStatListener(project.rootProject.name, reportingSettings.buildReportLabel, listeners.get())
+                val statListener = KotlinBuildStatListener(project.rootProject.name, reportingSettings.buildReportLabel, kotlinVersion, listeners.get())
                 listenerRegistryHolder.listenerRegistry.onTaskCompletion(project.provider { statListener })
             }
         }
