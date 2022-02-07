@@ -356,6 +356,11 @@ val coreLibProjects by extra {
         ":kotlin-reflect"
     )
 }
+val mppProjects by extra {
+    listOf(
+        ":kotlin-stdlib-mpp",
+    )
+}
 
 val projectsWithEnabledContextReceivers by extra {
     listOf(
