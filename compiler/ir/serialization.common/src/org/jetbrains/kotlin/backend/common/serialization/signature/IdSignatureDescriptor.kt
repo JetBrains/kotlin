@@ -54,7 +54,9 @@ open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMa
             get() = visibility == DescriptorVisibilities.PRIVATE
 
         private val DeclarationDescriptorWithVisibility.isTopLevelPrivate: Boolean
-            get() = isPrivate && mangler.run { !isPlatformSpecificExport() } && containingDeclaration is PackageFragmentDescriptor
+            get() = isPrivate &&
+                    this is CallableMemberDescriptor &&
+                    mangler.run { !isPlatformSpecificExport() } && containingDeclaration is PackageFragmentDescriptor
 
         override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, data: Nothing?) {
             packageFqn = descriptor.fqName
