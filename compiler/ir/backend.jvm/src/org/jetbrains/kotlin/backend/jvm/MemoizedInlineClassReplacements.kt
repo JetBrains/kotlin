@@ -143,7 +143,7 @@ class MemoizedInlineClassReplacements(
      */
     val getBoxFunction: (IrClass) -> IrSimpleFunction =
         storageManager.createMemoizedFunction { irClass ->
-            require(irClass.isSingleFieldValueClass)
+            require(irClass.isInline && irClass.superTypes.none { it.isInlineClassType() })
             irFactory.buildFun {
                 name = Name.identifier(KotlinTypeMapper.BOX_JVM_METHOD_NAME)
                 origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER
@@ -166,7 +166,7 @@ class MemoizedInlineClassReplacements(
      */
     val getUnboxFunction: (IrClass) -> IrSimpleFunction =
         storageManager.createMemoizedFunction { irClass ->
-            require(irClass.isSingleFieldValueClass)
+            require(irClass.isInline && irClass.superTypes.none { it.isInlineClassType() })
             irFactory.buildFun {
                 name = Name.identifier(KotlinTypeMapper.UNBOX_JVM_METHOD_NAME)
                 origin = JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER

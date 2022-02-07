@@ -331,13 +331,9 @@ abstract class DataClassMembersGenerator(
     // Entry for psi2ir
     fun generateEqualsMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
         buildMember(function) {
-            generateEqualsMethodBody(sealedInlineClassAwareProperties(function, properties))
+            generateEqualsMethodBody(properties.map { getIrProperty(it) })
         }
     }
-
-    private fun sealedInlineClassAwareProperties(function: FunctionDescriptor, properties: List<PropertyDescriptor>): List<IrProperty> =
-        if ((function.containingDeclaration as? ClassDescriptor)?.isInlineClass() == true) emptyList()
-        else properties.map { getIrProperty(it) }
 
     // Entry for fir2ir
     fun generateEqualsMethod(irFunction: IrFunction, properties: List<IrProperty>) {
@@ -357,7 +353,7 @@ abstract class DataClassMembersGenerator(
     fun generateHashCodeMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
         buildMember(function) {
             generateHashCodeMethodBody(
-                sealedInlineClassAwareProperties(function, properties),
+                properties.map { getIrProperty(it) },
                 if (irClass.kind == ClassKind.OBJECT && irClass.isData) fqName.hashCode() else 0
             )
         }
@@ -376,7 +372,7 @@ abstract class DataClassMembersGenerator(
     // Entry for psi2ir
     fun generateToStringMethod(function: FunctionDescriptor, properties: List<PropertyDescriptor>) {
         buildMember(function) {
-            generateToStringMethodBody(sealedInlineClassAwareProperties(function, properties))
+            generateToStringMethodBody(properties.map { getIrProperty(it) })
         }
     }
 

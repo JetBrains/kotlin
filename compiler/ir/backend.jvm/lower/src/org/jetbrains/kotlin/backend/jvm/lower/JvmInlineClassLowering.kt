@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val jvmInlineClassPhase = makeIrFilePhase(
     ::JvmInlineClassLowering,
@@ -78,6 +79,7 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             val parent = declaration.sealedInlineClassParent()
             updateGetterForSealedInlineClassChild(declaration, parent)
             rewriteConstructorForSealedInlineClassChild(declaration, parent, irConstructor)
+            removeMethods(declaration)
         }
 
         if (declaration.modality == Modality.SEALED) {
@@ -92,6 +94,16 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
             rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "hashCode")
             rewriteFunctionFromAnyForSealed(declaration, inlineSubclasses, noinlineSubclasses, "toString")
             rewriteOpenMethodsForSealed(declaration, inlineDirectSubclasses, noinlineSubclasses)
+        }
+    }
+
+    // Since we cannot create objects of sealed inline class children, we remove virtual methods from the classfile.
+    private fun removeMethods(irClass: IrClass) {
+        irClass.declarations.removeIf {
+            it is IrSimpleFunction &&
+                    (it.origin == IrDeclarationOrigin.GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER ||
+                            it.origin == IrDeclarationOrigin.DEFINED ||
+                            it.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR)
         }
     }
 
@@ -758,10 +770,11 @@ private class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClass
                             })
                         )
                     } + inlineSubclasses.map {
-                    val delegate = replacements.getReplacementFunction(
+                    val delegate =
                         it.bottom.declarations
-                            .single { f -> f is IrSimpleFunction && f.name.asString() == name } as IrFunction
-                    )!!
+                            .find { f -> f is IrSimpleFunction && f.name.asString() == name }.safeAs<IrFunction>()
+                            ?.let { f -> replacements.getReplacementFunction(f) }
+                            ?: it.bottom.functions.single { f -> f.name.asString() == "$name-impl" }
                     val underlyingType = getInlineClassUnderlyingType(it.bottom)
 
                     irBranch(
@@ -1062,3 +1075,5 @@ private class SubclassInfo(
     // Sealed subclasses from top to the bottom
     val sealedParents: List<IrClassSymbol>
 )
+
+internal fun IrClass.isChildOfSealedInlineClass(): Boolean = superTypes.any { it.isInlineClassType() }
