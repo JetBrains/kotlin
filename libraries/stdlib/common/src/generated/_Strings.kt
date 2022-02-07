@@ -63,8 +63,9 @@ public inline fun CharSequence.findLast(predicate: (Char) -> Boolean): Char? {
 }
 
 /**
- * Returns first character.
- * @throws [NoSuchElementException] if the char sequence is empty.
+ * Returns the first character.
+ * 
+ * @throws NoSuchElementException if the char sequence is empty.
  */
 public fun CharSequence.first(): Char {
     if (isEmpty())

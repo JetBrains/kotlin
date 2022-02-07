@@ -4491,6 +4491,12 @@ public final class kotlin/ranges/RangesKt {
 	public static final fun downTo (SI)Lkotlin/ranges/IntProgression;
 	public static final fun downTo (SJ)Lkotlin/ranges/LongProgression;
 	public static final fun downTo (SS)Lkotlin/ranges/IntProgression;
+	public static final fun first (Lkotlin/ranges/CharProgression;)C
+	public static final fun first (Lkotlin/ranges/IntProgression;)I
+	public static final fun first (Lkotlin/ranges/LongProgression;)J
+	public static final fun firstOrNull (Lkotlin/ranges/CharProgression;)Ljava/lang/Character;
+	public static final fun firstOrNull (Lkotlin/ranges/IntProgression;)Ljava/lang/Integer;
+	public static final fun firstOrNull (Lkotlin/ranges/LongProgression;)Ljava/lang/Long;
 	public static final synthetic fun floatRangeContains (Lkotlin/ranges/ClosedRange;B)Z
 	public static final fun floatRangeContains (Lkotlin/ranges/ClosedRange;D)Z
 	public static final synthetic fun floatRangeContains (Lkotlin/ranges/ClosedRange;I)Z
@@ -4501,6 +4507,12 @@ public final class kotlin/ranges/RangesKt {
 	public static final synthetic fun intRangeContains (Lkotlin/ranges/ClosedRange;F)Z
 	public static final fun intRangeContains (Lkotlin/ranges/ClosedRange;J)Z
 	public static final fun intRangeContains (Lkotlin/ranges/ClosedRange;S)Z
+	public static final fun last (Lkotlin/ranges/CharProgression;)C
+	public static final fun last (Lkotlin/ranges/IntProgression;)I
+	public static final fun last (Lkotlin/ranges/LongProgression;)J
+	public static final fun lastOrNull (Lkotlin/ranges/CharProgression;)Ljava/lang/Character;
+	public static final fun lastOrNull (Lkotlin/ranges/IntProgression;)Ljava/lang/Integer;
+	public static final fun lastOrNull (Lkotlin/ranges/LongProgression;)Ljava/lang/Long;
 	public static final fun longRangeContains (Lkotlin/ranges/ClosedRange;B)Z
 	public static final synthetic fun longRangeContains (Lkotlin/ranges/ClosedRange;D)Z
 	public static final synthetic fun longRangeContains (Lkotlin/ranges/ClosedRange;F)Z
@@ -4640,6 +4652,14 @@ public final class kotlin/ranges/URangesKt {
 	public static final fun downTo-J1ME1BU (II)Lkotlin/ranges/UIntProgression;
 	public static final fun downTo-Kr8caGY (BB)Lkotlin/ranges/UIntProgression;
 	public static final fun downTo-eb3DHEI (JJ)Lkotlin/ranges/ULongProgression;
+	public static final fun first (Lkotlin/ranges/UIntProgression;)I
+	public static final fun first (Lkotlin/ranges/ULongProgression;)J
+	public static final fun firstOrNull (Lkotlin/ranges/UIntProgression;)Lkotlin/UInt;
+	public static final fun firstOrNull (Lkotlin/ranges/ULongProgression;)Lkotlin/ULong;
+	public static final fun last (Lkotlin/ranges/UIntProgression;)I
+	public static final fun last (Lkotlin/ranges/ULongProgression;)J
+	public static final fun lastOrNull (Lkotlin/ranges/UIntProgression;)Lkotlin/UInt;
+	public static final fun lastOrNull (Lkotlin/ranges/ULongProgression;)Lkotlin/ULong;
 	public static final fun random (Lkotlin/ranges/UIntRange;Lkotlin/random/Random;)I
 	public static final fun random (Lkotlin/ranges/ULongRange;Lkotlin/random/Random;)J
 	public static final fun randomOrNull (Lkotlin/ranges/UIntRange;Lkotlin/random/Random;)Lkotlin/UInt;

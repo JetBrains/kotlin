@@ -1005,8 +1005,9 @@ public inline fun CharArray.findLast(predicate: (Char) -> Boolean): Char? {
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the array is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
  */
 public fun <T> Array<out T>.first(): T {
     if (isEmpty())
@@ -1015,8 +1016,9 @@ public fun <T> Array<out T>.first(): T {
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the array is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
  */
 public fun ByteArray.first(): Byte {
     if (isEmpty())
@@ -1025,8 +1027,9 @@ public fun ByteArray.first(): Byte {
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the array is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
  */
 public fun ShortArray.first(): Short {
     if (isEmpty())
@@ -1035,8 +1038,9 @@ public fun ShortArray.first(): Short {
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the array is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
  */
 public fun IntArray.first(): Int {
     if (isEmpty())
@@ -1045,8 +1049,9 @@ public fun IntArray.first(): Int {
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the array is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
  */
 public fun LongArray.first(): Long {
     if (isEmpty())
@@ -1055,8 +1060,9 @@ public fun LongArray.first(): Long {
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the array is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
  */
 public fun FloatArray.first(): Float {
     if (isEmpty())
@@ -1065,8 +1071,9 @@ public fun FloatArray.first(): Float {
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the array is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
  */
 public fun DoubleArray.first(): Double {
     if (isEmpty())
@@ -1075,8 +1082,9 @@ public fun DoubleArray.first(): Double {
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the array is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
  */
 public fun BooleanArray.first(): Boolean {
     if (isEmpty())
@@ -1085,8 +1093,9 @@ public fun BooleanArray.first(): Boolean {
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the array is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
  */
 public fun CharArray.first(): Char {
     if (isEmpty())
