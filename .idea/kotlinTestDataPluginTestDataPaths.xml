@@ -57,6 +57,7 @@
         <option value="$PROJECT_DIR$/js/js.translator/testData" />
         <option value="$PROJECT_DIR$/plugins/parcelize/parcelize-compiler/testData" />
         <option value="$PROJECT_DIR$/plugins/fir-plugin-prototype/testData" />
+        <option value="$PROJECT_DIR$/compiler/fir/raw-fir/psi2fir/testData" />
       </array>
     </option>
   </component>
