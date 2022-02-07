@@ -34,6 +34,7 @@ enum class TaskExecutionState {
 class KotlinBuildStatListener(
     val projectName: String,
     val label: String?,
+    val kotlinVersion: String,
     val reportStatistics: List<ReportStatistics>
 ) : OperationCompletionListener, AutoCloseable {
 
@@ -52,7 +53,13 @@ class KotlinBuildStatListener(
             return taskPath.contains("Kotlin") && (TaskExecutionResults[taskPath] != null)
         }
 
-        internal fun prepareData(event: TaskFinishEvent, projectName:String, uuid: String, label: String?): CompileStatData? {
+        internal fun prepareData(
+            event: TaskFinishEvent,
+            projectName: String,
+            uuid: String,
+            label: String?,
+            kotlinVersion: String
+        ): CompileStatData? {
             val result = event.result
             val taskPath = event.descriptor.taskPath
             val durationMs = result.endTime - result.startTime
@@ -63,10 +70,10 @@ class KotlinBuildStatListener(
                     else -> TaskExecutionState.SUCCESS
                 }
 
-                    is TaskSkippedResult -> TaskExecutionState.SKIPPED
-                    is TaskFailureResult -> TaskExecutionState.FAILED
-                    else -> TaskExecutionState.UNKNOWN
-                }
+                is TaskSkippedResult -> TaskExecutionState.SKIPPED
+                is TaskFailureResult -> TaskExecutionState.FAILED
+                else -> TaskExecutionState.UNKNOWN
+            }
 
             if (!availableForStat(taskPath)) {
                 return null
@@ -87,7 +94,7 @@ class KotlinBuildStatListener(
                 buildTimesMs = buildTimesMs, perfData = perfData, projectName = projectName, taskName = taskPath, changes = changes,
                 tags = taskExecutionResult?.taskInfo?.properties?.map { it.name } ?: emptyList(),
                 nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap() ?: emptyMap(),
-                hostName = hostName, kotlinVersion = "1.6", buildUuid = uuid, timeInMillis = System.currentTimeMillis()
+                hostName = hostName, kotlinVersion = kotlinVersion, buildUuid = uuid, timeInMillis = System.currentTimeMillis()
             )
         }
 
@@ -96,7 +103,7 @@ class KotlinBuildStatListener(
     override fun onFinish(event: FinishEvent?) {
         if (event is TaskFinishEvent) {
             val (collectDataDuration, compileStatData) = measureTimeMillisWithResult {
-                prepareData(event, projectName, buildUuid, label)
+                prepareData(event, projectName, buildUuid, label, kotlinVersion)
             }
             log.debug("Collect data takes $collectDataDuration: $compileStatData")
 

@@ -90,7 +90,7 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
         }
         project.registerCommonizerClasspathConfigurationIfNecessary()
 
-        KotlinGradleBuildServices.registerIfAbsent(project).get()
+        KotlinGradleBuildServices.registerIfAbsent(project, kotlinPluginVersion).get()
 
         KotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, kotlinPluginVersion)
 
@@ -98,7 +98,7 @@ abstract class KotlinBasePluginWrapper : Plugin<Project> {
 
         buildMetricReporter?.also { BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(it) }
 
-        HttpReportService.registerIfAbsent(project)
+        HttpReportService.registerIfAbsent(project, kotlinPluginVersion)
             ?.also { BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(it) }
 
         project.tasks.withType(AbstractKotlinCompile::class.java).configureEach {
