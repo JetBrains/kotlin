@@ -30,7 +30,7 @@ class IrSerializableProperty(
     override val originalDescriptorName: Name = ir.name
     val type = ir.getter!!.returnType as IrSimpleType
     val genericIndex = type.genericIndex
-    fun serializableWith(ctx: SerializationPluginContext) = ir.annotations.serializableWith() ?: analyzeSpecialSerializers(ctx, ir.annotations)
+    fun serializableWith(ctx: SerializationBaseContext) = ir.annotations.serializableWith() ?: analyzeSpecialSerializers(ctx, ir.annotations)
     override val optional = !ir.annotations.hasAnnotation(SerializationAnnotations.requiredAnnotationFqName) && declaresDefaultValue
     override val transient = ir.annotations.hasAnnotation(SerializationAnnotations.serialTransientFqName) || !hasBackingField
 }

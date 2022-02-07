@@ -72,7 +72,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         fun applyPluginDefinedReifiedOperationMarker(
             insn: MethodInsnNode,
             instructions: InsnList,
-            type: KotlinType,
+            type: KT,
             asmType: Type
         ): Int = -1
     }
@@ -206,7 +206,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
         val applyResult = intrinsicsSupport.applyPluginDefinedReifiedOperationMarker(
             insn,
             instructions,
-            intrinsicsSupport.toKotlinType(type),
+            type,
             asmType
         )
         if (applyResult == -1) return false

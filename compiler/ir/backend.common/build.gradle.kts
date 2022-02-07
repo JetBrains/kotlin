@@ -10,6 +10,7 @@ dependencies {
     api(project(":compiler:ir.tree"))
     api(project(":compiler:ir.interpreter"))
     compileOnly(intellijCore())
+    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 }
 
 sourceSets {

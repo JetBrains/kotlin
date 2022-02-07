@@ -8,11 +8,11 @@ package org.jetbrains.kotlinx.serialization.compiler.extensions
 import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
-import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.InsnList
@@ -24,22 +24,6 @@ open class SerializationCodegenExtension @JvmOverloads constructor(val metadataP
         SerializableCodegenImpl.generateSerializableExtensions(codegen)
         SerializerCodegenImpl.generateSerializerExtensions(codegen, metadataPlugin)
         SerializableCompanionCodegenImpl.generateSerializableExtensions(codegen)
-    }
-
-    override fun applyFunction(receiver: StackValue, resolvedCall: ResolvedCall<*>, c: ExpressionCodegenExtension.Context): StackValue? {
-        return JvmSerializerIntrinsic.applyFunction(resolvedCall, c)
-    }
-
-    override fun applyPluginDefinedReifiedOperationMarker(
-        insn: MethodInsnNode,
-        instructions: InsnList,
-        type: KotlinType,
-        asmType: Type,
-        typeMapper: KotlinTypeMapper,
-        typeSystem: TypeSystemCommonBackendContext,
-        module: ModuleDescriptor
-    ): Int {
-        return JvmSerializerIntrinsic.applyPluginDefinedReifiedOperationMarker(insn, instructions, type, typeMapper, typeSystem, module)
     }
 
     override val shouldGenerateClassSyntheticPartsInLightClassesMode: Boolean

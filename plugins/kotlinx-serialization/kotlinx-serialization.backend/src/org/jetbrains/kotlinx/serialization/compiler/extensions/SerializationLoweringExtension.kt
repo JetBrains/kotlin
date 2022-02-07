@@ -5,25 +5,34 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.extensions
 
+import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlinx.serialization.compiler.backend.ir.*
+import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializationJvmIrIntrinsicSupport
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationPackages
+import org.jetbrains.org.objectweb.asm.tree.InsnList
+import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -44,7 +53,7 @@ fun ClassLoweringPass.runOnFileInOrder(irFile: IrFile) {
 
 
 class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugin: SerializationDescriptorSerializerPlugin?) :
-    IrPluginContext by baseContext {
+    IrPluginContext by baseContext, SerializationBaseContext {
     lateinit var serialInfoImplJvmIrGenerator: SerialInfoImplJvmIrGenerator
 
     internal val copiedStaticWriteSelf: MutableMap<IrSimpleFunction, IrSimpleFunction> = ConcurrentHashMap()
@@ -63,7 +72,9 @@ class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugi
         )
     ).singleOrNull()
 
-    val runtimeHasEnumSerializerFactoryFunctions = enumSerializerFactoryFunc != null && markedEnumSerializerFactoryFunc != null
+    override val runtimeHasEnumSerializerFactoryFunctions = enumSerializerFactoryFunc != null && markedEnumSerializerFactoryFunc != null
+
+    override fun referenceClassId(classId: ClassId): IrClassSymbol? = referenceClass(classId)
 }
 
 private inline fun IrClass.runPluginSafe(block: () -> Unit) {
@@ -126,4 +137,25 @@ open class SerializationLoweringExtension @JvmOverloads constructor(
         moduleFragment.files.forEach(pass1::runOnFileInOrder)
         moduleFragment.files.forEach(pass2::runOnFileInOrder)
     }
+
+    override fun retrieveIntrinsic(symbol: IrFunctionSymbol): Any? {
+        if (!SerializationJvmIrIntrinsicSupport.isSerializerReifiedFunction(symbol.owner)) return null
+        return SerializationJvmIrIntrinsicSupport.ReifiedSerializerMethod
+    }
+
+    override fun applyPluginDefinedReifiedOperationMarker(
+        insn: MethodInsnNode,
+        instructions: InsnList,
+        type: IrType,
+        jvmBackendContext: BackendContext,
+    ): Int {
+        val ctx = jvmBackendContext as? JvmBackendContext ?: return -1
+        return SerializationJvmIrIntrinsicSupport(ctx).applyPluginDefinedReifiedOperationMarker(
+            insn,
+            instructions,
+            type,
+        )
+    }
 }
+
+

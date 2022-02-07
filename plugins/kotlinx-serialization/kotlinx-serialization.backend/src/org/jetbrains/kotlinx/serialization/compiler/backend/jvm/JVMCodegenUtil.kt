@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.context.ClassContext
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.SimpleType
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
@@ -95,11 +97,11 @@ internal val serializationExceptionName = "kotlinx/serialization/$SERIAL_EXC"
 internal val serializationExceptionMissingFieldName = "kotlinx/serialization/$MISSING_FIELD_EXC"
 internal val serializationExceptionUnknownIndexName = "kotlinx/serialization/$UNKNOWN_FIELD_EXC"
 
-private val annotationType = Type.getObjectType("java/lang/annotation/Annotation")
-private val annotationArrayType = Type.getObjectType("[${annotationType.descriptor}")
-private val doubleAnnotationArrayType = Type.getObjectType("[${annotationArrayType.descriptor}")
-private val stringType = AsmTypes.JAVA_STRING_TYPE
-private val stringArrayType = Type.getObjectType("[${stringType.descriptor}")
+internal val annotationType = Type.getObjectType("java/lang/annotation/Annotation")
+internal val annotationArrayType = Type.getObjectType("[${annotationType.descriptor}")
+internal val doubleAnnotationArrayType = Type.getObjectType("[${annotationArrayType.descriptor}")
+internal val stringType = AsmTypes.JAVA_STRING_TYPE
+internal val stringArrayType = Type.getObjectType("[${stringType.descriptor}")
 
 internal val descriptorGetterName = JvmAbi.getterName(SERIAL_DESC_FIELD)
 internal val getLazyValueName = JvmAbi.getterName("value")
@@ -256,7 +258,8 @@ internal fun AbstractSerialGenerator?.stackValueSerializerInstance(
     genericSerializerFieldGetter: (InstructionAdapter.(Int, KotlinType) -> Unit)? = null
 ): Boolean {
     return stackValueSerializerInstance(
-        expressionCodegen,codegen.typeMapper,
+        expressionCodegen,
+        codegen.typeMapper,
         module,
         kType,
         maybeSerializer,
@@ -357,7 +360,7 @@ internal fun AbstractSerialGenerator?.stackValueSerializerInstance(
                     } else {
                         fillArray(annotationType, annotations) { _, annotation ->
                             val (annotationClass, args, consParams) = annotation
-                            expressionCodegen?.generateSyntheticAnnotationOnStack(annotationClass, args, consParams)
+                            expressionCodegen?.generateSyntheticAnnotationOnStack(annotationClass, args, consParams) ?: nop()
                         }
                     }
                 }
