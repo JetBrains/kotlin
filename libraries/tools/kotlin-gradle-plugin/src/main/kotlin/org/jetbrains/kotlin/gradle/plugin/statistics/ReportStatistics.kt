@@ -10,13 +10,15 @@ import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import java.text.SimpleDateFormat
 
+// CompileStatData is used for reports by http. Any change in this data can change index mapping for elasticSearch
 data class CompileStatData(
     val version: Int = 1,
     val projectName: String?,
     val label: String?,
     val taskName: String?,
     val taskResult: String,
-    val durationMs: Long,
+    // duration in milliseconds
+    val duration: Long,
     val tags: List<String>,
     val changes: List<String>,
     val buildUuid: String = "Unset",
@@ -25,7 +27,8 @@ data class CompileStatData(
     val timeInMillis: Long,
     val timestamp: String = formatter.format(timeInMillis),
     val nonIncrementalAttributes: Map<BuildAttribute, Int>,
-    val buildTimesMs: Map<BuildTime, Long>,
+    //time in milliseconds
+    val timeData: Map<BuildTime, Long>,
     val perfData: Map<BuildPerformanceMetric, Long>
 ) {
     companion object {
