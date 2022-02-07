@@ -1,35 +1,34 @@
-KtErrorCallInfo:
-  candidateCalls = [
-    KtSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-        dispatchReceiver = KtExplicitReceiverValue:
-          expression = a
-          isSafeNavigation = false
-        extensionReceiver = null
-        signature = KtFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /A.x(<dispatch receiver>: A, b: kotlin.Boolean): kotlin.Unit
-          valueParameters = [
-            KtVariableLikeSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = b: kotlin.Boolean
-          ]
-      argumentMapping = {
-        1 -> (KtVariableLikeSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = b: kotlin.Boolean)
-      }
-  ]
+KtInapplicableCallCandidateInfo:
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is kotlin/Int but kotlin/Boolean was expected>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = a
+        isSafeNavigation = false
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /A.x(<dispatch receiver>: A, b: kotlin.Boolean): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = b: kotlin.Boolean
+        ]
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = b: kotlin.Boolean)
+    }
+  isInBestCandidates = false
 
-KtSuccessCallInfo:
-  call = KtSimpleFunctionCall:
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
     isImplicitInvoke = true
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = null
@@ -54,3 +53,4 @@ KtSuccessCallInfo:
         returnType = kotlin.Int
         symbol = i: kotlin.Int)
     }
+  isInBestCandidates = true

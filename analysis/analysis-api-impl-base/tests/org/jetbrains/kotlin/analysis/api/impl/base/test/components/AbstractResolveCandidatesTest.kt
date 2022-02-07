@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
+import org.jetbrains.kotlin.analysis.api.calls.KtCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.impl.barebone.test.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.test.test.framework.AbstractHLApiSingleModuleTest
 import org.jetbrains.kotlin.psi.*
@@ -26,14 +26,17 @@ abstract class AbstractResolveCandidatesTest : AbstractHLApiSingleModuleTest() {
                 if (candidates.isEmpty()) {
                     "NO_CANDIDATES"
                 } else {
-                    candidates.joinToString("\n\n") { stringRepresentation(it) }
+                    val sortedCandidates = candidates.sortedWith { candidate1, candidate2 ->
+                        compareCalls(candidate1.candidate, candidate2.candidate)
+                    }
+                    sortedCandidates.joinToString("\n\n") { stringRepresentation(it) }
                 }
             }
         }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 
-    private fun KtAnalysisSession.collectCallCandidates(element: PsiElement): List<KtCallInfo> = when (element) {
+    private fun KtAnalysisSession.collectCallCandidates(element: PsiElement): List<KtCallCandidateInfo> = when (element) {
         is KtValueArgument -> this@collectCallCandidates.collectCallCandidates(element.getArgumentExpression()!!)
         is KtDeclarationModifierList -> {
             val annotationEntry = element.annotationEntries.singleOrNull()

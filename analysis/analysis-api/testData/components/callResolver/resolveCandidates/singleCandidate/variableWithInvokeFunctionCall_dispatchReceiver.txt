@@ -1,5 +1,5 @@
-KtSuccessCallInfo:
-  call = KtSimpleFunctionCall:
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
     isImplicitInvoke = true
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = null
@@ -12,3 +12,4 @@ KtSuccessCallInfo:
         symbol = /invoke(<extension receiver>: kotlin.Int): kotlin.Unit
         valueParameters = []
     argumentMapping = {}
+  isInBestCandidates = true

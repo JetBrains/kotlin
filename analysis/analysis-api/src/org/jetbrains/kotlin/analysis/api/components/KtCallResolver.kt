@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.calls.KtCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtCallElement
@@ -13,7 +14,7 @@ import org.jetbrains.kotlin.psi.KtUnaryExpression
 
 public abstract class KtCallResolver : KtAnalysisSessionComponent() {
     public abstract fun resolveCall(psi: KtElement): KtCallInfo?
-    public abstract fun collectCallCandidates(psi: KtElement): List<KtCallInfo>
+    public abstract fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo>
 }
 
 public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
@@ -38,6 +39,6 @@ public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
      * [resolveCall] only returns the final result of overload resolution, i.e., the selected callable after considering candidate
      * applicability and choosing the most specific candidate.
      */
-    public fun KtElement.collectCallCandidates(): List<KtCallInfo> =
+    public fun KtElement.collectCallCandidates(): List<KtCallCandidateInfo> =
         analysisSession.callResolver.collectCallCandidates(this)
 }
