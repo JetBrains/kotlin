@@ -8,9 +8,14 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.targets.android.findAndroidTarget
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDependent
+import org.jetbrains.kotlin.gradle.targets.native.internal.from
+import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
 import org.jetbrains.kotlin.gradle.utils.androidPluginIds
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheck
 
@@ -61,4 +66,36 @@ internal fun Project.runMissingAndroidTargetProjectConfigurationHealthCheck(
           
         """.trimIndent()
     )
+}
+
+internal fun Project.runDisabledCInteropCommonizationOnHmppProjectConfigurationHealthCheck(
+    warningLogger: (warningMessage: String) -> Unit = project.logger::warn
+) {
+    if (kotlinPropertiesProvider.ignoreDisabledCInteropCommonization) return
+    if (isAllowCommonizer() && !kotlinPropertiesProvider.enableCInteropCommonization) {
+        val multiplatformExtension = multiplatformExtensionOrNull ?: return
+
+        val affectedCompilations = multiplatformExtension.targets.flatMap { it.compilations }
+            .filterIsInstance<KotlinSharedNativeCompilation>()
+            .filter { compilation -> CInteropCommonizerDependent.from(compilation)?.interops.orEmpty().isNotEmpty() }
+
+        /* CInterop commonizer would not affect the project: No compilation that would actually benefit */
+        if (affectedCompilations.isEmpty()) return
+
+        warningLogger(
+            """
+                [WARNING] The project is using Kotlin Multiplatform with hierarchical structure and disabled 'cinterop commonization'
+                    See: https://kotlinlang.org/docs/mpp-share-on-platforms.html#use-native-libraries-in-the-hierarchical-structure
+               
+                    'cinterop commonization' can be enabled in your 'gradle.properties'
+                    kotlin.mpp.enableCInteropCommonization=true
+                
+                    The following source sets are affected: 
+                    ${affectedCompilations.map { it.defaultSourceSetName }.sorted().joinToString(", ", "[", "]")}
+                
+                    The following compilations are affected: 
+                    ${affectedCompilations.map { "${it.target.name}/${it.compilationName}" }.sorted().joinToString(", ", "[", "]")}
+            """.trimIndent()
+        )
+    }
 }

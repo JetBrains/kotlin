@@ -188,6 +188,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val ignoreAbsentAndroidMultiplatformTarget: Boolean
         get() = booleanProperty("kotlin.mpp.absentAndroidTarget.nowarn") ?: false
 
+    val ignoreDisabledCInteropCommonization: Boolean
+        get() = booleanProperty("$KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION.nowarn") ?: false
+
     val ignoreIncorrectNativeDependencies: Boolean?
         get() = booleanProperty(KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES)
 
