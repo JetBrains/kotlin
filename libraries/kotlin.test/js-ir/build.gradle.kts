@@ -30,7 +30,7 @@ kotlin {
     sourceSets {
         named("commonMain") {
             dependencies {
-                api(project(":kotlin-stdlib-js-ir"))
+                api(kotlinStdlib("mpp"))
             }
             kotlin.srcDir(commonMainSources.get().destinationDir)
         }
@@ -38,9 +38,6 @@ kotlin {
             kotlin.srcDir(commonTestSources.get().destinationDir)
         }
         named("jsMain") {
-            dependencies {
-                api(project(":kotlin-stdlib-js-ir"))
-            }
             kotlin.srcDir(jsMainSources.get().destinationDir)
         }
     }
