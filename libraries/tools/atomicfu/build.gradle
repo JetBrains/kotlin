@@ -6,7 +6,7 @@ repositories {
 apply plugin: 'kotlin'
 apply plugin: 'jps-compatible'
 
-configurePublishing(project)
+configureGradlePluginPublishing(project)
 
 pill {
     variant = 'FULL'
