@@ -327,6 +327,66 @@ public infix fun kotlin.ULong.downTo(to: kotlin.ULong): kotlin.ranges.ULongProgr
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public infix fun kotlin.UShort.downTo(to: kotlin.UShort): kotlin.ranges.UIntProgression
 
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.CharProgression.first(): kotlin.Char
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.IntProgression.first(): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.LongProgression.first(): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.UIntProgression.first(): kotlin.UInt
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.ULongProgression.first(): kotlin.ULong
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.CharProgression.firstOrNull(): kotlin.Char?
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.IntProgression.firstOrNull(): kotlin.Int?
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.LongProgression.firstOrNull(): kotlin.Long?
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.UIntProgression.firstOrNull(): kotlin.UInt?
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.ULongProgression.firstOrNull(): kotlin.ULong?
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.CharProgression.last(): kotlin.Char
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.IntProgression.last(): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.LongProgression.last(): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.UIntProgression.last(): kotlin.UInt
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.ULongProgression.last(): kotlin.ULong
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.CharProgression.lastOrNull(): kotlin.Char?
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.IntProgression.lastOrNull(): kotlin.Int?
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.LongProgression.lastOrNull(): kotlin.Long?
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.UIntProgression.lastOrNull(): kotlin.UInt?
+
+@kotlin.SinceKotlin(version = "1.7")
+public fun kotlin.ranges.ULongProgression.lastOrNull(): kotlin.ULong?
+
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ranges.CharRange.random(): kotlin.Char

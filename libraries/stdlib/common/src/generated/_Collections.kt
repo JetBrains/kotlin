@@ -188,8 +188,9 @@ public inline fun <T> List<T>.findLast(predicate: (T) -> Boolean): T? {
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the collection is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the collection is empty.
  */
 public fun <T> Iterable<T>.first(): T {
     when (this) {
@@ -204,8 +205,9 @@ public fun <T> Iterable<T>.first(): T {
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the list is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the list is empty.
  */
 public fun <T> List<T>.first(): T {
     if (isEmpty())

@@ -241,4 +241,28 @@ public class URangeTest {
         assertFailsWith<NoSuchElementException> { UIntRange.EMPTY.random() }
         assertFailsWith<NoSuchElementException> { ULongRange.EMPTY.random() }
     }
+
+    @Test fun firstInEmptyRange() {
+        assertFailsWith<NoSuchElementException> { UIntRange.EMPTY.first() }
+        assertFailsWith<NoSuchElementException> { ULongRange.EMPTY.first() }
+        assertFailsWith<NoSuchElementException> { UIntProgression.fromClosedRange(0u, 3u, -2).first() }
+    }
+
+    @Test fun firstOrNullInEmptyRange() {
+        assertNull(UIntRange.EMPTY.firstOrNull())
+        assertNull(ULongRange.EMPTY.firstOrNull())
+        assertNull(UIntProgression.fromClosedRange(0u, 3u, -2).firstOrNull())
+    }
+
+    @Test fun lastInEmptyRange() {
+        assertFailsWith<NoSuchElementException> { UIntRange.EMPTY.last() }
+        assertFailsWith<NoSuchElementException> { ULongRange.EMPTY.last() }
+        assertFailsWith<NoSuchElementException> { UIntProgression.fromClosedRange(0u, 3u, -2).last() }
+    }
+
+    @Test fun lastOrNullInEmptyRange() {
+        assertNull(UIntRange.EMPTY.lastOrNull())
+        assertNull(ULongRange.EMPTY.lastOrNull())
+        assertNull(UIntProgression.fromClosedRange(0u, 3u, -2).lastOrNull())
+    }
 }

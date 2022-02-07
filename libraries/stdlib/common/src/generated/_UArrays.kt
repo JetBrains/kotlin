@@ -507,8 +507,9 @@ public inline fun UShortArray.findLast(predicate: (UShort) -> Boolean): UShort? 
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the array is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -518,8 +519,9 @@ public inline fun UIntArray.first(): UInt {
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the array is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -529,8 +531,9 @@ public inline fun ULongArray.first(): ULong {
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the array is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -540,8 +543,9 @@ public inline fun UByteArray.first(): UByte {
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the array is empty.
+ * Returns the first element.
+ * 
+ * @throws NoSuchElementException if the array is empty.
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes

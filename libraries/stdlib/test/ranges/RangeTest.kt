@@ -399,4 +399,32 @@ public class RangeTest {
         assertNull(LongRange.EMPTY.randomOrNull())
         assertNull(CharRange.EMPTY.randomOrNull())
     }
+
+    @Test fun firstInEmptyRange() {
+        assertFailsWith<NoSuchElementException> { IntRange.EMPTY.first() }
+        assertFailsWith<NoSuchElementException> { LongRange.EMPTY.first() }
+        assertFailsWith<NoSuchElementException> { CharRange.EMPTY.first() }
+        assertFailsWith<NoSuchElementException> { IntProgression.fromClosedRange(0, 3, -2).first() }
+    }
+
+    @Test fun firstOrNullInEmptyRange() {
+        assertNull(IntRange.EMPTY.firstOrNull())
+        assertNull(LongRange.EMPTY.firstOrNull())
+        assertNull(CharRange.EMPTY.firstOrNull())
+        assertNull(IntProgression.fromClosedRange(0, 3, -2).firstOrNull())
+    }
+
+    @Test fun lastInEmptyRange() {
+        assertFailsWith<NoSuchElementException> { IntRange.EMPTY.last() }
+        assertFailsWith<NoSuchElementException> { LongRange.EMPTY.last() }
+        assertFailsWith<NoSuchElementException> { CharRange.EMPTY.last() }
+        assertFailsWith<NoSuchElementException> { IntProgression.fromClosedRange(0, 3, -2).last() }
+    }
+
+    @Test fun lastOrNullInEmptyRange() {
+        assertNull(IntRange.EMPTY.lastOrNull())
+        assertNull(LongRange.EMPTY.lastOrNull())
+        assertNull(CharRange.EMPTY.lastOrNull())
+        assertNull(IntProgression.fromClosedRange(0, 3, -2).lastOrNull())
+    }
 }

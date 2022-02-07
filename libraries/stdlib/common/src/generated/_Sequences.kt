@@ -100,10 +100,11 @@ public inline fun <T> Sequence<T>.findLast(predicate: (T) -> Boolean): T? {
 }
 
 /**
- * Returns first element.
- * @throws [NoSuchElementException] if the sequence is empty.
+ * Returns the first element.
  *
  * The operation is _terminal_.
+ * 
+ * @throws NoSuchElementException if the sequence is empty.
  */
 public fun <T> Sequence<T>.first(): T {
     val iterator = iterator()

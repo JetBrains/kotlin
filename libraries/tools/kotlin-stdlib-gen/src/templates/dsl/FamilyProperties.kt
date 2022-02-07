@@ -34,6 +34,7 @@ object DocExtensions {
             CharSequences -> "char sequence"
             ArraysOfObjects, ArraysOfPrimitives, InvariantArraysOfObjects, ArraysOfUnsigned -> "array"
             Ranges, RangesOfPrimitives -> "range"
+            ProgressionsOfPrimitives -> "progression"
             Strings, Sequences, Maps, Lists, Sets -> name.singularize().decapitalize()
             else -> "collection"
         }
