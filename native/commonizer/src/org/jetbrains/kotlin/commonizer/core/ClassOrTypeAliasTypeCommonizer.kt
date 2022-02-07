@@ -38,11 +38,12 @@ internal class ClassOrTypeAliasTypeCommonizer(
         val expansions = values.map { it.expandedType() }
         val isMarkedNullable = isMarkedNullableCommonizer.commonize(expansions.map { it.isMarkedNullable }) ?: return null
 
+        @Suppress("IMPLICIT_NOTHING_TYPE_ARGUMENT_AGAINST_NOT_NOTHING_EXPECTED_TYPE")
         val substitutedTypes = substituteTypesIfNecessary(values)
             ?: isPlatformIntegerCommonizationEnabled.ifTrue {
-                return platformIntegerCommonizer(expansions)?.makeNullableIfNecessary(isMarkedNullable)
+                platformIntegerCommonizer(expansions)?.makeNullableIfNecessary(isMarkedNullable)?.let { return it }
             } ?: isOptimisticNumberTypeCommonizationEnabled.ifTrue {
-                return OptimisticNumbersTypeCommonizer.commonize(expansions)?.makeNullableIfNecessary(isMarkedNullable)
+                OptimisticNumbersTypeCommonizer.commonize(expansions)?.makeNullableIfNecessary(isMarkedNullable)?.let { return it }
             } ?: return null
 
         val classifierId = substitutedTypes.singleDistinctValueOrNull { it.classifierId } ?: return null
