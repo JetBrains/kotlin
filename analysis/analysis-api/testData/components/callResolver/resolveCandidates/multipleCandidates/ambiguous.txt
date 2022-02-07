@@ -1,83 +1,80 @@
-KtErrorCallInfo:
-  candidateCalls = [
-    KtSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KtFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /function(a: kotlin.Char): kotlin.Unit
-          valueParameters = [
-            KtVariableLikeSignature:
-              name = a
-              receiverType = null
-              returnType = kotlin.Char
-              symbol = a: kotlin.Char
-          ]
-      argumentMapping = {
-        1 -> (KtVariableLikeSignature:
-          name = a
-          receiverType = null
-          returnType = kotlin.Char
-          symbol = a: kotlin.Char)
-      }
-  ]
+KtInapplicableCallCandidateInfo:
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is kotlin/Int but kotlin/Char was expected>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /function(a: kotlin.Char): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Char
+            symbol = a: kotlin.Char
+        ]
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = a
+        receiverType = null
+        returnType = kotlin.Char
+        symbol = a: kotlin.Char)
+    }
+  isInBestCandidates = true
 
-KtErrorCallInfo:
-  candidateCalls = [
-    KtSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KtFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /function(b: kotlin.Boolean): kotlin.Unit
-          valueParameters = [
-            KtVariableLikeSignature:
-              name = b
-              receiverType = null
-              returnType = kotlin.Boolean
-              symbol = b: kotlin.Boolean
-          ]
-      argumentMapping = {
-        1 -> (KtVariableLikeSignature:
-          name = b
-          receiverType = null
-          returnType = kotlin.Boolean
-          symbol = b: kotlin.Boolean)
-      }
-  ]
+KtInapplicableCallCandidateInfo:
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is kotlin/Int but kotlin/Boolean was expected>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /function(b: kotlin.Boolean): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = b: kotlin.Boolean
+        ]
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = b
+        receiverType = null
+        returnType = kotlin.Boolean
+        symbol = b: kotlin.Boolean)
+    }
+  isInBestCandidates = true
 
-KtErrorCallInfo:
-  candidateCalls = [
-    KtSimpleFunctionCall:
-      isImplicitInvoke = false
-      partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
-        dispatchReceiver = null
-        extensionReceiver = null
-        signature = KtFunctionLikeSignature:
-          receiverType = null
-          returnType = kotlin.Unit
-          symbol = /function(c: kotlin.String): kotlin.Unit
-          valueParameters = [
-            KtVariableLikeSignature:
-              name = c
-              receiverType = null
-              returnType = kotlin.String
-              symbol = c: kotlin.String
-          ]
-      argumentMapping = {
-        1 -> (KtVariableLikeSignature:
-          name = c
-          receiverType = null
-          returnType = kotlin.String
-          symbol = c: kotlin.String)
-      }
-  ]
+KtInapplicableCallCandidateInfo:
   diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is kotlin/Int but kotlin/String was expected>
+  candidate = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /function(c: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = c
+            receiverType = null
+            returnType = kotlin.String
+            symbol = c: kotlin.String
+        ]
+    argumentMapping = {
+      1 -> (KtVariableLikeSignature:
+        name = c
+        receiverType = null
+        returnType = kotlin.String
+        symbol = c: kotlin.String)
+    }
+  isInBestCandidates = true

@@ -1,5 +1,5 @@
-KtSuccessCallInfo:
-  call = KtSimpleFunctionCall:
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
     isImplicitInvoke = true
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = KtExplicitReceiverValue:
@@ -24,3 +24,4 @@ KtSuccessCallInfo:
         returnType = @R|kotlin.ParameterName|(name = String(a))  kotlin.Int
         symbol = p1: P1)
     }
+  isInBestCandidates = true
