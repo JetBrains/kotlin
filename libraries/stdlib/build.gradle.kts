@@ -39,6 +39,7 @@ val builtinsRuntimeSrcDir = "${buildDir}/src/builtin-sources-for-runtime"
 
 val jsCommonDir = "${projectDir}/../js"
 val jsCommonSrcDir = "${jsCommonDir}/src"
+val jsCommonTestSrcDir = "${jsCommonDir}/test"
 val jsV1Dir = "${projectDir}/../js-v1"
 val jsSrcDir = "$jsV1Dir/src"
 val jsSrcJsDir = "${jsSrcDir}/js"
@@ -46,6 +47,7 @@ val jsSrcJsDir = "${jsSrcDir}/js"
 // for js-ir
 val jsIrDir = "${projectDir}/../js-ir"
 val jsIrMainSources = "${buildDir}/src/jsMainSources"
+val jsIrTestSources = "${buildDir}/src/jsTestSources"
 lateinit var jsIrTarget: KotlinJsTargetDsl
 
 kotlin {
@@ -78,12 +80,31 @@ kotlin {
                     )
                 }
             }
+            val test by getting {
+                kotlinOptions {
+                    // This is needed for JavaTypeTest; typeOf for non-reified type parameters doesn't work otherwise, for implementation reasons.
+                    freeCompilerArgs -= "-Xno-optimized-callable-references"
+                }
+            }
+            project.sourceSets.create("longRunningTest")
+            val longRunningTest by getting {
+                defaultSourceSet {
+                    dependencies {
+                        implementation(main.output.allOutputs)
+                    }
+                }
+            }
         }
     }
     js(LEGACY) {
         browser {
         }
         nodejs {
+            testTask {
+                useMocha {
+                    timeout = "10s"
+                }
+            }
         }
         compilations {
             all {
@@ -109,9 +130,15 @@ kotlin {
                     sourceMap = true
                 }
             }
+            val test by getting; test.apply {
+                kotlinOptions {
+                    moduleKind = "umd"
+                }
+            }
         }
     }
     jsIrTarget = js("jsIr", IR) {
+        browser {}
         nodejs {
             testTask {
                 useMocha {
@@ -146,6 +173,16 @@ kotlin {
                 srcDir("../unsigned/src")
             }
         }
+        commonTest {
+            dependencies {
+//                compileOnly(project(":kotlin-test:kotlin-test-common"))
+//                compileOnly(project(":kotlin-test:kotlin-test-annotations-common"))
+            }
+            kotlin.apply {
+                srcDir("../common/test")
+                srcDir("../test")
+            }
+        }
         val jvmMain by getting {
             project.configurations.getByName("jvmMainCompileOnly").extendsFrom(configurationBuiltins)
             dependencies {
@@ -158,6 +195,20 @@ kotlin {
             )
 //            kotlin.srcDirs(*jvmSrcDirs)
             project.sourceSets["main"].java.srcDirs(*jvmSrcDirs)
+        }
+
+        val jvmTest by getting {
+            dependencies {
+                api(project(":kotlin-test:kotlin-test-junit"))
+            }
+            kotlin.srcDir("../jvm/test")
+        }
+
+        val jvmLongRunningTest by getting {
+            dependencies {
+                api(project(":kotlin-test:kotlin-test-junit"))
+            }
+            kotlin.srcDir("../jvm/testLongRunning")
         }
 
         val jsRuntime by getting {
@@ -215,6 +266,15 @@ kotlin {
             }
             js().compilations["main"].compileKotlinTaskProvider.configure {
                 dependsOn(prepareBuiltinsSources)
+            }
+        }
+        val jsTest by getting {
+            dependencies {
+                api(project(":kotlin-test:kotlin-test-js-v1"))
+            }
+            kotlin.apply {
+                srcDir(jsCommonTestSrcDir)
+                srcDir("$jsV1Dir/test")
             }
         }
 
@@ -279,6 +339,19 @@ kotlin {
                 dependsOn(prepareJsIrMainSources)
             }
         }
+        val jsIrTest by getting {
+            kotlin.srcDir(jsIrTestSources)
+            dependencies {
+                api(project(":kotlin-test:kotlin-test-js-ir"))
+            }
+            val prepareJsIrTestSources by tasks.registering(Sync::class) {
+                from(jsCommonTestSrcDir)
+                into(jsIrTestSources)
+            }
+            jsIrTarget.compilations["test"].compileKotlinTaskProvider.configure {
+                dependsOn(prepareJsIrTestSources)
+            }
+        }
 
         all {
             languageSettings {
@@ -287,6 +360,10 @@ kotlin {
                     optIn("kotlin.RequiresOptIn")
                     optIn("kotlin.ExperimentalMultiplatform")
                     optIn("kotlin.contracts.ExperimentalContracts")
+                }
+                if (this@all.name.endsWith("Test")) {
+                    optIn("kotlin.ExperimentalUnsignedTypes")
+                    optIn("kotlin.ExperimentalStdlibApi")
                 }
             }
         }
@@ -426,6 +503,17 @@ tasks {
         doLast {
             Files.copy(jsResultingJarFile.get().asFile.toPath(), archiveFile.get().asFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
         }
+    }
+
+
+    val jvmLongRunningTest by registering(Test::class) {
+        val compilation = kotlin.jvm().compilations["longRunningTest"]
+        classpath = compilation.compileDependencyFiles + compilation.runtimeDependencyFiles + compilation.output.allOutputs
+        testClassesDirs = compilation.output.classesDirs
+    }
+
+    if (project.hasProperty("kotlin.stdlib.test.long.running")) {
+        check.configure { dependsOn(jvmLongRunningTest) }
     }
 }
 
