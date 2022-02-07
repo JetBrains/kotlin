@@ -1,5 +1,5 @@
-KtSuccessCallInfo:
-  call = KtSimpleFunctionCall:
+KtApplicableCallCandidateInfo:
+  candidate = KtSimpleFunctionCall:
     isImplicitInvoke = true
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = KtExplicitReceiverValue:
@@ -20,3 +20,4 @@ KtSuccessCallInfo:
             symbol = p1: P1
         ]
     argumentMapping = {}
+  isInBestCandidates = true

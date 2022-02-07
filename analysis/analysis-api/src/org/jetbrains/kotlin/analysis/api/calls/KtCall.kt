@@ -66,6 +66,49 @@ public fun KtCallInfo.successfulVariableAccessCall(): KtVariableAccessCall? = su
 @Suppress("UNCHECKED_CAST")
 public fun KtCallInfo.successfulConstructorCallOrNull(): KtFunctionCall<KtConstructorSymbol>? =
     successfulCallOrNull<KtFunctionCall<*>>()?.takeIf { it.symbol is KtConstructorSymbol } as KtFunctionCall<KtConstructorSymbol>?
+
+/**
+ * A candidate considered for a call. I.e., one of the overload candidates in scope at the call site.
+ */
+public sealed class KtCallCandidateInfo(
+    private val _candidate: KtCall,
+    private val _isInBestCandidates: Boolean,
+) : ValidityTokenOwner {
+    override val token: ValidityToken
+        get() = _candidate.token
+    public val candidate: KtCall get() = withValidityAssertion { _candidate }
+
+    /**
+     * Returns true if the [candidate] is in the final set of candidates that the call is actually resolved to. There can be multiple
+     * candidates if the call is ambiguous.
+     */
+    public val isInBestCandidates: Boolean get() = withValidityAssertion { _isInBestCandidates }
+}
+
+/**
+ * A candidate that is applicable for a call. A candidate is applicable if the call's arguments are complete and are assignable to the
+ * candidate's parameters, AND the call's type arguments are complete and fit all the constraints of the candidate's type parameters.
+ */
+public class KtApplicableCallCandidateInfo(
+    candidate: KtCall,
+    isInBestCandidates: Boolean,
+) : KtCallCandidateInfo(candidate, isInBestCandidates)
+
+/**
+ * A candidate that is NOT applicable for a call. A candidate is inapplicable if a call argument is missing or is not assignable to the
+ * candidate's parameters, OR a call type argument is missing or does not fit the constraints of the candidate's type parameters.
+ */
+public class KtInapplicableCallCandidateInfo(
+    candidate: KtCall,
+    isInBestCandidates: Boolean,
+    private val _diagnostic: KtDiagnostic,
+) : KtCallCandidateInfo(candidate, isInBestCandidates) {
+    /**
+     * The reason the [candidate] was not applicable for the call (e.g., argument type mismatch, or no value for parameter).
+     */
+    public val diagnostic: KtDiagnostic get() = withValidityAssertion { _diagnostic }
+}
+
 /**
  * A call to a function, a simple/compound access to a property, or a simple/compound access through `get` and `set` convention.
  */
