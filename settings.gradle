@@ -583,6 +583,7 @@ if (buildProperties.inJpsBuildIdeaSync) {
             ":kotlin-test",
             ":kotlin-test:kotlin-test-js",
             ":kotlin-test:kotlin-test-js-ir",
+            ":kotlin-test:kotlin-test-js-v1",
             ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
             ":kotlin-test:kotlin-test-js-ir:kotlin-test-js-ir-it",
             ":kotlin-test:kotlin-test-wasm",
@@ -607,6 +608,7 @@ if (buildProperties.inJpsBuildIdeaSync) {
     project(':kotlin-test').projectDir = "$rootDir/libraries/kotlin.test" as File
     project(':kotlin-test:kotlin-test-js').projectDir = "$rootDir/libraries/kotlin.test/js" as File
     project(':kotlin-test:kotlin-test-js-ir').projectDir = "$rootDir/libraries/kotlin.test/js-ir" as File
+    project(':kotlin-test:kotlin-test-js-v1').projectDir = "$rootDir/libraries/kotlin.test/js-v1" as File
     project(':kotlin-test:kotlin-test-js:kotlin-test-js-it').projectDir = "$rootDir/libraries/kotlin.test/js/it" as File
     project(':kotlin-test:kotlin-test-js-ir:kotlin-test-js-ir-it').projectDir = "$rootDir/libraries/kotlin.test/js-ir/it" as File
     project(':kotlin-test:kotlin-test-wasm').projectDir = "$rootDir/libraries/kotlin.test/wasm" as File
