@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.gradle.util.normalizePath
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledIf
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.zip.ZipFile
@@ -178,7 +177,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
             build("compileDevelopmentExecutableKotlinJs") {
-                val cacheDir = projectPath.resolve("app/build/klib/cache/lib/unspecified/")
+                val cacheDir = projectPath.resolve("app/build/klib/cache/lib/")
                     .toFile()
                 assertTrue("Lib cache size should be 2") {
                     cacheDir
@@ -186,33 +185,30 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
                         ?.size == 2
                 }
 
-                var lib: Boolean = false
-                var libOther: Boolean = false
+                var lib = false
+                var libOther = false
 
                 cacheDir.listFiles()!!
                     .forEach {
                         it.listFiles()!!
-                            .single()
-                            .let {
-                                it.listFiles()!!
-                                    .filter { it.isFile }
-                                    .forEach {
-                                        val text = it.readText()
-                                        if (text.contains("<kotlin-js-ir-ic-multiple-artifacts:lib>")) {
-                                            if (lib) {
-                                                error("lib should be only once in cache")
-                                            }
-                                            lib = true
-                                        }
-
-                                        if (text.contains("<kotlin-js-ir-ic-multiple-artifacts:lib_other>")) {
-                                            if (libOther) {
-                                                error("libOther should be only once in cache")
-                                            }
-                                            libOther = true
-                                        }
+                            .filter { it.isFile }
+                            .forEach {
+                                val text = it.readText()
+                                if (text.contains("<kotlin-js-ir-ic-multiple-artifacts:lib>")) {
+                                    if (lib) {
+                                        error("lib should be only once in cache")
                                     }
+                                    lib = true
+                                }
+
+                                if (text.contains("<kotlin-js-ir-ic-multiple-artifacts:lib_other>")) {
+                                    if (libOther) {
+                                        error("libOther should be only once in cache")
+                                    }
+                                    libOther = true
+                                }
                             }
+
                     }
 
                 assertTrue("lib and libOther should be once in cache") {

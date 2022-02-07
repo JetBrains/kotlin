@@ -5,47 +5,27 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import org.gradle.api.artifacts.Configuration
-import org.gradle.api.artifacts.ResolvedArtifact
-import org.gradle.api.artifacts.ResolvedDependency
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
-import org.gradle.api.logging.Logger
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.*
-import org.gradle.work.InputChanges
+import org.gradle.internal.hash.FileHasher
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
-import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
-import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
-import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptionsImpl
-import org.jetbrains.kotlin.gradle.dsl.copyFreeCompilerArgsToArgs
-import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
-import org.jetbrains.kotlin.gradle.report.ReportingSettings
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.tasks.SourceRoots
-import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
-import org.jetbrains.kotlin.gradle.utils.getAllDependencies
-import org.jetbrains.kotlin.gradle.utils.getCacheDirectory
-import org.jetbrains.kotlin.gradle.utils.getDependenciesCacheDirectories
 import org.jetbrains.kotlin.gradle.utils.getValue
-import org.jetbrains.kotlin.library.resolveSingleFileKlib
-import org.jetbrains.kotlin.library.uniqueName
-import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
@@ -77,9 +57,17 @@ abstract class KotlinJsIrLink @Inject constructor(
     @get:Internal
     internal lateinit var compilation: KotlinCompilationData<*>
 
+    private val platformType by project.provider {
+        compilation.platformType
+    }
+
     @Transient
     @get:Internal
     internal val propertiesProvider = PropertiesProvider(project)
+
+    @get:Inject
+    open val fileHasher: FileHasher
+        get() = throw UnsupportedOperationException()
 
     @get:Input
     internal val incrementalJsIr: Boolean = propertiesProvider.incrementalJsIr
@@ -117,12 +105,13 @@ abstract class KotlinJsIrLink @Inject constructor(
         return !entryModule.get().asFile.exists()
     }
 
-    override fun callCompilerAsync(
-        args: K2JSCompilerArguments,
-        sourceRoots: SourceRoots,
-        inputChanges: InputChanges,
-        taskOutputsBackup: TaskOutputsBackup?
-    ) {
+    @get:Internal
+    val rootCacheDirectory by lazy {
+        buildDir.resolve("klib/cache")
+    }
+
+    override fun processArgs(args: K2JSCompilerArguments) {
+        super.processArgs(args)
         KotlinBuildStatsService.applyIfInitialised {
             it.report(BooleanMetrics.JS_IR_INCREMENTAL, incrementalJsIr)
             val newArgs = K2JSCompilerArguments()
@@ -136,55 +125,31 @@ abstract class KotlinJsIrLink @Inject constructor(
             )
         }
         if (incrementalJsIr && mode == DEVELOPMENT) {
-            val visitedCompilations = mutableSetOf<KotlinCompilation<*>>()
-
-            val cacheBuilder = CacheBuilder(
-                buildDir,
-                kotlinOptions,
-                libraryFilter,
-                compilerRunner.get(),
-                { createCompilerArgs() },
-                { objects.fileCollection() },
-                defaultCompilerClasspath,
-                logger,
-                reportingSettings()
-            )
-            val cacheArgs = visitCompilation(
-                compilation as KotlinCompilation<*>,
-                cacheBuilder,
-                visitedCompilations,
-            )
-
-            args.cacheDirectories = cacheArgs.joinToString(File.pathSeparator) {
-                it.normalize().absolutePath
-            }
+            args.cacheDirectories = args.libraries?.splitByPathSeparator()
+                ?.map {
+                    val file = File(it)
+                    rootCacheDirectory
+                        .resolve(file.nameWithoutExtension)
+                        .also {
+                            it.mkdirs()
+                        }
+                        .resolve(fileHasher.hash(file).toString())
+                }
+                ?.plus(rootCacheDirectory.resolve(entryModule.get().asFile.name))
+                ?.let {
+                    if (it.isNotEmpty())
+                        it.joinToString(File.pathSeparator)
+                    else
+                        null
+                }
         }
-        super.callCompilerAsync(args, sourceRoots, inputChanges, taskOutputsBackup)
     }
 
-    private fun visitCompilation(
-        compilation: KotlinCompilation<*>,
-        cacheBuilder: CacheBuilder,
-        visitedCompilations: MutableSet<KotlinCompilation<*>>,
-    ): List<File> {
-        if (compilation in visitedCompilations) return emptyList()
-        visitedCompilations.add(compilation)
-
-        val associatedCaches = compilation.associateWith
-            .flatMap {
-                visitCompilation(
-                    it,
-                    cacheBuilder,
-                    visitedCompilations,
-                )
-            }
-
-        return cacheBuilder
-            .buildCompilerArgs(
-                project.configurations.getByName(compilation.compileDependencyConfigurationName),
-                compilation.output.classesDirs,
-                associatedCaches
-            )
+    private fun String.splitByPathSeparator(): List<String> {
+        return this.split(File.pathSeparator.toRegex())
+            .dropLastWhile { it.isEmpty() }
+            .toTypedArray()
+            .filterNot { it.isEmpty() }
     }
 
     override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
@@ -204,10 +169,6 @@ abstract class KotlinJsIrLink @Inject constructor(
         super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
     }
 
-    private val platformType by project.provider {
-        compilation.platformType
-    }
-
     private fun KotlinJsOptions.configureOptions(vararg additionalCompilerArgs: String) {
         freeCompilerArgs += additionalCompilerArgs.toList() +
                 PRODUCE_JS +
@@ -216,234 +177,5 @@ abstract class KotlinJsIrLink @Inject constructor(
         if (platformType == KotlinPlatformType.wasm) {
             freeCompilerArgs += WASM_BACKEND
         }
-    }
-}
-
-internal class CacheBuilder(
-    private val buildDir: File,
-    private val kotlinOptions: KotlinJsOptions,
-    private val libraryFilter: (File) -> Boolean,
-    private val compilerRunner: GradleCompilerRunner,
-    private val compilerArgsFactory: () -> K2JSCompilerArguments,
-    private val objectFilesFactory: () -> FileCollection,
-    private val computedCompilerClasspath: FileCollection,
-    private val logger: Logger,
-    private val reportingSettings: ReportingSettings
-) {
-    val rootCacheDirectory by lazy {
-        buildDir.resolve("klib/cache")
-    }
-
-    private val visitedDependencies = mutableSetOf<ResolvedDependency>()
-    private val visitedFiles = mutableSetOf<File>()
-    private val visitedCacheDirectories = mutableSetOf<File>()
-
-    private val objectFiles
-        get() = objectFilesFactory()
-
-    fun buildCompilerArgs(
-        compileClasspath: Configuration,
-        additionalForResolve: FileCollection?,
-        associatedCaches: List<File>
-    ): List<File> {
-
-        val allCacheDirectories = mutableListOf<File>()
-        val visitedDependenciesForCache = mutableSetOf<File>()
-
-        compileClasspath.resolvedConfiguration.firstLevelModuleDependencies
-            .forEach { dependency ->
-                ensureDependencyCached(
-                    dependency
-                ).forEach {
-                    if (it !in visitedDependenciesForCache) {
-                        visitedDependenciesForCache.add(it)
-                        allCacheDirectories.add(it)
-                    }
-                }
-            }
-
-        additionalForResolve?.files?.forEach { file ->
-            val cacheDirectory = rootCacheDirectory.resolve(file.name)
-            cacheDirectory.mkdirs()
-            runCompiler(
-                file,
-                compileClasspath.files,
-                cacheDirectory,
-                (allCacheDirectories + associatedCaches).distinct()
-            )
-            allCacheDirectories.add(cacheDirectory)
-        }
-
-        return associatedCaches + allCacheDirectories
-            .filter { it !in visitedCacheDirectories }
-            .also { visitedCacheDirectories.addAll(it) }
-    }
-
-    private fun ensureDependencyCached(
-        dependency: ResolvedDependency
-    ): List<File> {
-        if (dependency in visitedDependencies) {
-            return dependency.moduleArtifacts
-                .filter { libraryFilter(it.file) }
-                .map {
-                    getCacheDirectory(rootCacheDirectory, dependency, it, { libraryFilter(it.file) })
-                }
-        }
-        visitedDependencies.add(dependency)
-
-        val depCacheDirs = dependency.children
-            .flatMap { ensureDependencyCached(it) }
-            .distinct()
-
-        val artifactsToAddToCache = dependency.moduleArtifacts
-            .filter { libraryFilter(it.file) }
-
-        if (artifactsToAddToCache.isEmpty()) return depCacheDirs
-
-        val dependenciesCacheDirectories = getDependenciesCacheDirectories(
-            rootCacheDirectory,
-            dependency,
-            libraryFilter = { libraryFilter(it.file) },
-            considerArtifact = true
-        ) ?: return depCacheDirs
-
-        val nameMap: MutableMap<String, ResolvedArtifact> = mutableMapOf()
-        val depsMap: MutableMap<ResolvedArtifact, MutableList<ResolvedArtifact>> = mutableMapOf()
-        val cacheMap: MutableMap<ResolvedArtifact, File> = mutableMapOf()
-        var newOrderArtifactsToAddToCache = mutableListOf<ResolvedArtifact>()
-
-        if (artifactsToAddToCache.size > 1) {
-            artifactsToAddToCache.forEach {
-                val klib = resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(it.file.absolutePath))
-                nameMap[klib.uniqueName] = it
-            }
-            artifactsToAddToCache.forEach { artifact ->
-                val klib = resolveSingleFileKlib(org.jetbrains.kotlin.konan.file.File(artifact.file.absolutePath))
-                klib.unresolvedDependencies
-                    .forEach { depLib ->
-                        val depName = depLib.path.substringAfterLast("/")
-                        nameMap[depName]?.let {
-                            val depsSet = depsMap.getOrPut(artifact) {
-                                mutableListOf()
-                            }
-                            depsSet.add(it)
-                        }
-                    }
-            }
-            fun traverseDependency(library: ResolvedArtifact) {
-                depsMap[library]?.let {
-                    it.forEach {
-                        traverseDependency(it)
-                    }
-                }
-                if (library !in newOrderArtifactsToAddToCache) {
-                    newOrderArtifactsToAddToCache.add(library)
-                }
-            }
-            depsMap.forEach { key, deps ->
-                traverseDependency(key)
-            }
-        } else {
-            newOrderArtifactsToAddToCache = artifactsToAddToCache.toMutableList()
-        }
-
-        val additionalCacheDirs = mutableListOf<File>()
-        for (library in newOrderArtifactsToAddToCache) {
-            val cacheDirectory = getCacheDirectory(rootCacheDirectory, dependency, library, { libraryFilter(it.file) }).also {
-                additionalCacheDirs.add(it)
-            }
-            cacheDirectory.mkdirs()
-            cacheMap[library] = cacheDirectory
-            val additionalDependencies = depsMap[library] ?: emptyList()
-            val additionalCacheDirectories = if (additionalDependencies.isNotEmpty()) {
-                additionalDependencies.map { cacheMap.getValue(it) }
-            } else emptyList()
-            runCompiler(
-                library.file,
-                (getAllDependencies(dependency)
-                    .flatMap { it.moduleArtifacts } + additionalDependencies)
-                    .map { it.file },
-                cacheDirectory,
-                dependenciesCacheDirectories + additionalCacheDirectories
-            )
-        }
-        return depCacheDirs + additionalCacheDirs
-    }
-
-    fun runCompiler(
-        file: File,
-        dependencies: Collection<File>,
-        cacheDirectory: File,
-        dependenciesCacheDirectories: Collection<File>
-    ) {
-        if (file in visitedFiles) return
-        val compilerArgs = compilerArgsFactory()
-        kotlinOptions.copyFreeCompilerArgsToArgs(compilerArgs)
-        var prevIndex: Int? = null
-        compilerArgs.freeArgs = compilerArgs.freeArgs
-            .filterIndexed { index, arg ->
-                !listOf("-source-map-base-dirs", "-source-map-prefix").any {
-                    if (prevIndex != null) {
-                        prevIndex = null
-                        return@any true
-                    }
-                    if (arg.startsWith(it)) {
-                        prevIndex = index
-                        return@any true
-                    }
-
-                    false
-                }
-            }
-
-        compilerArgs.freeArgs = compilerArgs.freeArgs
-            .filterNot { arg ->
-                IGNORED_ARGS.any {
-                    arg.startsWith(it)
-                }
-            }
-
-        visitedFiles.add(file)
-        compilerArgs.includes = file.normalize().absolutePath
-        compilerArgs.outputFile = cacheDirectory.normalize().absolutePath
-        if (dependenciesCacheDirectories.isNotEmpty()) {
-            compilerArgs.cacheDirectories = dependenciesCacheDirectories.joinToString(File.pathSeparator)
-        }
-        compilerArgs.irBuildCache = true
-
-        compilerArgs.libraries = dependencies
-            .filter { it.exists() && libraryFilter(it) }
-            .distinct()
-            .filterNot { it == file }
-            .joinToString(File.pathSeparator) { it.normalize().absolutePath }
-
-        val messageCollector = GradlePrintingMessageCollector(logger, false)
-        val outputItemCollector = OutputItemsCollectorImpl()
-        val environment = GradleCompilerEnvironment(
-            computedCompilerClasspath,
-            messageCollector,
-            outputItemCollector,
-            outputFiles = objectFiles.files.toList(),
-            reportingSettings = reportingSettings
-        )
-
-        compilerRunner
-            .runJsCompilerAsync(
-                emptyList(),
-                emptyList(),
-                compilerArgs,
-                environment,
-                null
-            )?.await()
-    }
-
-    companion object {
-        private val IGNORED_ARGS = listOf(
-            ENTRY_IR_MODULE,
-            PRODUCE_JS,
-            PRODUCE_UNZIPPED_KLIB,
-            ENABLE_DCE,
-            GENERATE_D_TS
-        )
     }
 }

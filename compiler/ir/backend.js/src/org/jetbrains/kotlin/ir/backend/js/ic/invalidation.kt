@@ -40,7 +40,9 @@ import java.security.MessageDigest
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
 private fun KotlinLibrary.fingerprint(fileIndex: Int): Hash {
-    return ((((types(fileIndex).md5() * 31) + signatures(fileIndex).md5()) * 31 + strings(fileIndex).md5()) * 31 + declarations(fileIndex).md5()) * 31 + bodies(fileIndex).md5()
+    return ((((types(fileIndex).md5() * 31) + signatures(fileIndex).md5()) * 31 + strings(fileIndex).md5()) * 31 + declarations(fileIndex).md5()) * 31 + bodies(
+        fileIndex
+    ).md5()
 }
 
 private fun invalidateCacheForModule(
@@ -295,7 +297,7 @@ private fun createCacheConsumer(path: String): PersistentCacheConsumer {
     return PersistentCacheConsumerImpl(path)
 }
 
-private fun loadCacheInfo(cachePaths: Collection<String>): MutableMap<ModulePath, CacheInfo> {
+fun loadCacheInfo(cachePaths: Collection<String>): MutableMap<ModulePath, CacheInfo> {
     val caches = cachePaths.map { CacheInfo.load(it) ?: error("Cannot load IC cache from $it") }
     val result = mutableMapOf<ModulePath, CacheInfo>()
     return caches.associateByTo(result) { it.libPath.toCanonicalPath() }
@@ -311,7 +313,7 @@ private fun loadLibraries(configuration: CompilerConfiguration, dependencies: Co
     return allResolvedDependencies.getFullList().associateBy { it.libraryFile.path.toCanonicalPath() }
 }
 
-private fun String.toCanonicalPath(): String = File(this).canonicalPath
+fun String.toCanonicalPath(): String = File(this).canonicalPath
 
 typealias ModuleName = String
 typealias ModulePath = String
@@ -408,35 +410,101 @@ enum class CacheUpdateStatus(val upToDate: Boolean) {
 
 }
 
+fun actualizeCaches(
+    includes: String,
+    compilerConfiguration: CompilerConfiguration,
+    dependencies: Collection<ModulePath>,
+    icCachePaths: Collection<String>,
+    irFactory: () -> IrFactory,
+    mainArguments: List<String>?,
+    executor: CacheExecutor,
+    callback: (CacheUpdateStatus) -> Unit
+): List<String> {
+    val (libraries, dependencyGraph, configMD5) = CacheConfiguration(dependencies, compilerConfiguration)
+    val cacheMap = libraries.values.zip(icCachePaths).toMap()
+
+    val icCacheMap: MutableMap<ModulePath, CacheInfo> = mutableMapOf<ModulePath, CacheInfo>()
+    val resultCaches = mutableListOf<String>()
+
+    val visitedLibraries = mutableSetOf<KotlinLibrary>()
+    fun visitDependency(library: KotlinLibrary) {
+        if (library in visitedLibraries) return
+        visitedLibraries.add(library)
+
+        val libraryDeps = dependencyGraph[library] ?: error("Unknown library ${library.libraryName}")
+        libraryDeps.forEach { visitDependency(it) }
+
+        val cachePath = cacheMap[library] ?: error("Unknown cache for library ${library.libraryName}")
+        resultCaches.add(cachePath)
+
+        val moduleName = library.libraryFile.path.toCanonicalPath()
+        val cacheInfo = CacheInfo.loadOrCreate(cachePath, moduleName, configHash = configMD5)
+        icCacheMap[moduleName] = cacheInfo
+
+        val updateStatus = actualizeCacheForModule(
+            moduleName = moduleName,
+            cachePath = cachePath,
+            compilerConfiguration = compilerConfiguration,
+            configMD5 = configMD5,
+            libraries = libraries,
+            dependencyGraph = dependencyGraph,
+            icCacheMap = icCacheMap,
+            irFactory = irFactory(),
+            mainArguments = mainArguments,
+            executor = executor
+        )
+        callback(updateStatus)
+    }
+
+    val canonicalIncludes = includes.toCanonicalPath()
+    val mainLibrary = libraries[canonicalIncludes] ?: error("Main library not found in libraries: $canonicalIncludes")
+    visitDependency(mainLibrary)
+    return resultCaches
+}
+
+class CacheConfiguration(
+    private val dependencies: Collection<ModulePath>,
+    val compilerConfiguration: CompilerConfiguration
+) {
+    val libraries: Map<ModulePath, KotlinLibrary> = loadLibraries(compilerConfiguration, dependencies)
+
+    val dependencyGraph: Map<KotlinLibrary, List<KotlinLibrary>>
+        get() {
+            val nameToKotlinLibrary: Map<ModuleName, KotlinLibrary> = libraries.values.associateBy { it.moduleName }
+
+            return libraries.values.associateWith {
+                it.manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).map { depName ->
+                    nameToKotlinLibrary[depName] ?: error("No Library found for $depName")
+                }
+            }
+        }
+
+    val configMD5
+        get() = compilerConfiguration.calcMD5()
+
+    operator fun component1() = libraries
+    operator fun component2() = dependencyGraph
+    operator fun component3() = configMD5
+}
+
 // Returns true if caches up-to-date
 fun actualizeCacheForModule(
     moduleName: String,
     cachePath: String,
     compilerConfiguration: CompilerConfiguration,
-    dependencies: Collection<ModulePath>,
-    icCachePaths: Collection<String>,
+    configMD5: ULong,
+    libraries: Map<ModulePath, KotlinLibrary>,
+    dependencyGraph: Map<KotlinLibrary, List<KotlinLibrary>>,
+    icCacheMap: Map<ModulePath, CacheInfo>,
     irFactory: IrFactory,
     mainArguments: List<String>?,
     executor: CacheExecutor
 ): CacheUpdateStatus {
-    val configMD5 = compilerConfiguration.calcMD5()
-    val modulePath = moduleName.toCanonicalPath()
-    val cacheInfo = CacheInfo.load(cachePath) ?: CacheInfo(cachePath, modulePath, 0UL, 0UL, configMD5)
-    val icCacheMap: Map<ModulePath, CacheInfo> = loadCacheInfo(icCachePaths).also {
-        it[modulePath] = cacheInfo
-    }
-
-    val libraries: Map<ModulePath, KotlinLibrary> = loadLibraries(compilerConfiguration, dependencies)
-    val nameToKotlinLibrary: Map<ModuleName, KotlinLibrary> = libraries.values.associateBy { it.moduleName }
-    val dependencyGraph = libraries.values.associateWith {
-        it.manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).map { depName ->
-            nameToKotlinLibrary[depName] ?: error("No Library found for $depName")
-        }
-    }
+    val cacheInfo = icCacheMap[moduleName] ?: error("Cache for $moduleName not found")
 
     val configUpdated = configMD5 != cacheInfo.configHash
     cacheInfo.configHash = configMD5
-    if (checkLibrariesHash(libraries, dependencyGraph, icCacheMap, modulePath) && !configUpdated) {
+    if (checkLibrariesHash(libraries, dependencyGraph, icCacheMap, moduleName) && !configUpdated) {
         return CacheUpdateStatus.FAST_PATH // up-to-date
     }
 
@@ -444,7 +512,7 @@ fun actualizeCacheForModule(
         libraries[lib.toCanonicalPath()]!! to createCacheProvider(cache.path)
     }.toMap()
 
-    val currentModule = libraries[moduleName.toCanonicalPath()] ?: error("No loaded library found for path $moduleName")
+    val currentModule = libraries[moduleName] ?: error("No loaded library found for path $moduleName")
     val persistentCacheConsumer = createCacheConsumer(cachePath)
 
     return actualizeCacheForModule(
