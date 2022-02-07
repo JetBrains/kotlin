@@ -31,5 +31,15 @@ data class CacheInfo(val path: String, val libPath: String, var flatHash: ULong,
             val configHashULong = configHash.toULongOrNull(16) ?: 0UL
             return CacheInfo(path, libPath, flatHash.toULong(16), transHash.toULong(16), configHashULong)
         }
+
+        fun loadOrCreate(
+            path: String,
+            moduleName: String,
+            flatHash: ULong = 0UL,
+            transHash: ULong = 0UL,
+            configHash: ULong = 0UL
+        ): CacheInfo {
+            return load(path) ?: CacheInfo(path, moduleName, flatHash, transHash, configHash)
+        }
     }
 }

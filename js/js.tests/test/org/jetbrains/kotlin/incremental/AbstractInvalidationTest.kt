@@ -17,17 +17,15 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.generateKLib
-import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdateStatus
-import org.jetbrains.kotlin.ir.backend.js.ic.PersistentCacheConsumer
-import org.jetbrains.kotlin.ir.backend.js.ic.actualizeCacheForModule
+import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.prepareAnalyzedSourceModule
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
-import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import java.io.File
 import kotlin.io.path.createTempDirectory
@@ -58,7 +56,8 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         cacheConsumer: PersistentCacheConsumer,
         exportedDeclarations: Set<FqName>,
         mainArguments: List<String>?,
-    ) { }
+    ) {
+    }
 
     private fun initializeStdlibCache() {
         if (stdlibCacheDir != null) return
@@ -67,7 +66,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
 
         val configuration = createConfiguration("stdlib")
 
-        actualizeCacheForModule(
+        actualizeCacheForModuleWithPrepare(
             stdlibKlibPath,
             cacheDir.canonicalPath,
             configuration,
@@ -158,7 +157,17 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
 
                 val moduleCacheDir = resolveModuleCache(module, buildDir)
 
-                buildCachesAndCheck(moduleStep, configuration, moduleSourceDir, outputKlibFile, moduleCacheDir, dependencies, icCaches, dirtyFiles, deletedFiles)
+                buildCachesAndCheck(
+                    moduleStep,
+                    configuration,
+                    moduleSourceDir,
+                    outputKlibFile,
+                    moduleCacheDir,
+                    dependencies,
+                    icCaches,
+                    dirtyFiles,
+                    deletedFiles
+                )
             }
         }
     }
@@ -212,7 +221,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         dependencies.mapTo(dependenciesPaths) { it.canonicalPath }
         dependenciesPaths.add(moduleKlibFile.canonicalPath)
 
-        val updateStatus = actualizeCacheForModule(
+        val updateStatus = actualizeCacheForModuleWithPrepare(
             moduleKlibFile.canonicalPath,
             moduleCacheDir.canonicalPath,
             configuration,
@@ -233,6 +242,41 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             val filePaths = expectedDirtyFiles.joinToString(",", "[", "]")
             "Up to date is not expected for module $moduleKlibFile at step ${moduleStep.id}. Expected dirtyFiles are $filePaths"
         }
+    }
+
+    private fun actualizeCacheForModuleWithPrepare(
+        moduleName: String,
+        cachePath: String,
+        compilerConfiguration: CompilerConfiguration,
+        dependencies: Collection<ModulePath>,
+        icCachePaths: Collection<String>,
+        irFactory: IrFactory,
+        mainArguments: List<String>?,
+        executor: CacheExecutor
+    ): CacheUpdateStatus {
+        val (libraries, dependencyGraph, configMD5) = CacheConfiguration(dependencies, compilerConfiguration)
+
+        val modulePath = moduleName.toCanonicalPath()
+        val icCacheMap: Map<ModulePath, CacheInfo> = loadCacheInfo(icCachePaths).also {
+            it[modulePath] = CacheInfo.loadOrCreate(
+                cachePath,
+                moduleName,
+                configHash = configMD5
+            )
+        }
+
+        return actualizeCacheForModule(
+            moduleName = modulePath,
+            cachePath = cachePath,
+            compilerConfiguration = compilerConfiguration,
+            configMD5 = configMD5,
+            libraries = libraries,
+            dependencyGraph = dependencyGraph,
+            icCacheMap = icCacheMap,
+            irFactory = irFactory,
+            mainArguments = mainArguments,
+            executor = executor
+        )
     }
 
     private fun KotlinCoreEnvironment.createPsiFile(file: File): KtFile {
