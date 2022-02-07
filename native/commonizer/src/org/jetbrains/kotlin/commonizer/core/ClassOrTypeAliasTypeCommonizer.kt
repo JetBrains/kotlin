@@ -30,7 +30,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
     )
 
     private val isMarkedNullableCommonizer = TypeNullabilityCommonizer(typeCommonizer.context)
-    private val platformIntegerCommonizer = PlatformIntegerCommonizer(typeCommonizer)
+    private val platformIntegerCommonizer = PlatformIntegerCommonizer(typeCommonizer, classifiers)
     private val typeDistanceMeasurement = TypeDistanceMeasurement(typeCommonizer.context)
 
     override fun invoke(values: List<CirClassOrTypeAliasType>): CirClassOrTypeAliasType? {
@@ -39,11 +39,16 @@ internal class ClassOrTypeAliasTypeCommonizer(
         val isMarkedNullable = isMarkedNullableCommonizer.commonize(expansions.map { it.isMarkedNullable }) ?: return null
 
         val substitutedTypes = substituteTypesIfNecessary(values)
-            ?: isPlatformIntegerCommonizationEnabled.ifTrue {
-                return platformIntegerCommonizer.commonize(expansions)?.makeNullableIfNecessary(isMarkedNullable)
+
+        if (substitutedTypes == null) {
+            val integerCommonizationResultIfApplicable = isPlatformIntegerCommonizationEnabled.ifTrue {
+                platformIntegerCommonizer(expansions)?.makeNullableIfNecessary(isMarkedNullable)
             } ?: isOptimisticNumberTypeCommonizationEnabled.ifTrue {
-                return OptimisticNumbersTypeCommonizer.commonize(expansions)?.makeNullableIfNecessary(isMarkedNullable)
-            } ?: return null
+                OptimisticNumbersTypeCommonizer.commonize(expansions)?.makeNullableIfNecessary(isMarkedNullable)
+            }
+
+            return integerCommonizationResultIfApplicable
+        }
 
         val classifierId = substitutedTypes.singleDistinctValueOrNull { it.classifierId } ?: return null
 
