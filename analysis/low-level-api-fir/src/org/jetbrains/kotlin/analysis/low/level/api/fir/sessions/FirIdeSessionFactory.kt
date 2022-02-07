@@ -266,7 +266,7 @@ internal object LLFirSessionFactory {
         }
     }
 
-    fun creatLibraryOrLibrarySourceResolvableSession(
+    fun createLibraryOrLibrarySourceResolvableSession(
         project: Project,
         module: KtModule,
         builtinsAndCloneableSession: LLFirBuiltinsAndCloneableSession,
@@ -286,7 +286,6 @@ internal object LLFirSessionFactory {
             is KtLibrarySourceModule -> module.binaryLibrary
             else -> error("Unexpected module ${module::class.simpleName}")
         }
-
 
         val scopeProvider = FirKotlinScopeProvider()
         val firFileBuilder = FirFileBuilder(scopeProvider, firPhaseRunner)

@@ -58,16 +58,18 @@ class LLFirSessionProviderStorage(val project: Project) {
                             configureSession = configureSession,
                         )
                     }
-                    is KtLibraryModule, is KtLibrarySourceModule -> LLFirSessionFactory.creatLibraryOrLibrarySourceResolvableSession(
-                        project,
-                        rootModule,
-                        builtinsAndCloneableSession,
-                        firPhaseRunner,
-                        cache.sessionInvalidator,
-                        builtinTypes,
-                        sessions,
-                        configureSession = configureSession,
-                    )
+                    is KtLibraryModule, is KtLibrarySourceModule -> {
+                        LLFirSessionFactory.createLibraryOrLibrarySourceResolvableSession(
+                            project,
+                            rootModule,
+                            builtinsAndCloneableSession,
+                            firPhaseRunner,
+                            cache.sessionInvalidator,
+                            builtinTypes,
+                            sessions,
+                            configureSession = configureSession,
+                        )
+                    }
                     else -> error("Unexpected ${rootModule::class.simpleName}")
                 }
 
