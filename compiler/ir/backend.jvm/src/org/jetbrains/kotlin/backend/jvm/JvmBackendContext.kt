@@ -157,7 +157,7 @@ class JvmBackendContext(
         }
     }
 
-    internal fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
+    fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol =
         symbolTable.lazyWrapper.referenceClass(descriptor)
 
     internal fun referenceTypeParameter(descriptor: TypeParameterDescriptor): IrTypeParameterSymbol =

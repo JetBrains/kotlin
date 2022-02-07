@@ -286,8 +286,10 @@ open class JvmIrCodegenFactory(
         if (evaluatorFragmentInfoForPsi2Ir != null) {
             context.localDeclarationsLoweringData = mutableMapOf()
         }
+        // todo: pass it here
+        val generationExtensions = IrGenerationExtension.getInstances(state.project)
         val intrinsics by lazy { IrIntrinsicMethods(irModuleFragment.irBuiltins, context.ir.symbols) }
-        context.getIntrinsic = { symbol: IrFunctionSymbol -> intrinsics.getIntrinsic(symbol) }
+        context.getIntrinsic = { symbol: IrFunctionSymbol -> intrinsics.getIntrinsic(symbol) ?: generationExtensions.firstNotNullOfOrNull { it.retrieveIntrinsic(symbol) as? IntrinsicMarker } }
         /* JvmBackendContext creates new unbound symbols, have to resolve them. */
         ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
 
