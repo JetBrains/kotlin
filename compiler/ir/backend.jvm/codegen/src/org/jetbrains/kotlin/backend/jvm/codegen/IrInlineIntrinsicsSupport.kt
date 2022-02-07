@@ -13,14 +13,17 @@ import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceTopLevelFlag
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.render
@@ -33,6 +36,8 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.INT_TYPE
 import org.jetbrains.org.objectweb.asm.Type.VOID_TYPE
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
+import org.jetbrains.org.objectweb.asm.tree.InsnList
+import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 
 class IrInlineIntrinsicsSupport(
     private val context: JvmBackendContext,
@@ -113,7 +118,10 @@ class IrInlineIntrinsicsSupport(
         return classifier != null && JavaToKotlinClassMap.isMutable(classifier.owner.fqNameWhenAvailable?.toUnsafe())
     }
 
-    override fun toKotlinType(type: IrType): KotlinType = type.toIrBasedKotlinType()
+    // TODO: toIrBasedKotlinType gives incorrect result for .toClassDescriptor.classSerializer,
+    // because .unsubstitutedMemberScope does not work correctly
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    override fun toKotlinType(type: IrType): KotlinType = type.toKotlinType()
 
     override fun reportSuspendTypeUnsupported() {
         context.ktDiagnosticReporter.at(reportErrorsOn, containingFile).report(JvmBackendErrors.TYPEOF_SUSPEND_TYPE)
@@ -123,4 +131,23 @@ class IrInlineIntrinsicsSupport(
         context.ktDiagnosticReporter.at(reportErrorsOn, containingFile)
             .report(JvmBackendErrors.TYPEOF_NON_REIFIED_TYPE_PARAMETER_WITH_RECURSIVE_BOUND, typeParameterName.asString())
     }
+
+    override fun applyPluginDefinedReifiedOperationMarker(
+        insn: MethodInsnNode,
+        instructions: InsnList,
+        type: KotlinType,
+        asmType: Type
+    ): Int = ExpressionCodegenExtension.getInstances(context.state.project)
+        .map {
+            it.applyPluginDefinedReifiedOperationMarker(
+                insn,
+                instructions,
+                type,
+                asmType,
+                context.state.typeMapper, // TODO: this typeMapper allows to work with KotlinType/ClassDescriptor, but only if check in it is disabled
+                context.state.typeMapper.typeSystem,
+                context.state.module
+            )
+        }
+        .maxOrNull() ?: -1
 }

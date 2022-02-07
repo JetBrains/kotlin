@@ -70,7 +70,7 @@ public final class IntrinsicsKt : java/lang/Object {
     public final static void test() {
         LABEL (L0)
         LINENUMBER (28)
-          GETSTATIC (Companion, LSimple$Companion;)
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
           INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
           POP
         LABEL (L1)
@@ -79,7 +79,7 @@ public final class IntrinsicsKt : java/lang/Object {
           ISTORE (0)
         LABEL (L2)
         LINENUMBER (44)
-          GETSTATIC (Companion, LSimple$Companion;)
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
           INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
         LABEL (L3)
           POP
@@ -89,8 +89,8 @@ public final class IntrinsicsKt : java/lang/Object {
           ISTORE (0)
         LABEL (L5)
         LINENUMBER (45)
-          GETSTATIC (Companion, LBox$Companion;)
-          GETSTATIC (Companion, LSimple$Companion;)
+          GETSTATIC (Box, Companion, LBox$Companion;)
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
           INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
           INVOKEVIRTUAL (Box$Companion, serializer, (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;)
         LABEL (L6)
@@ -101,8 +101,8 @@ public final class IntrinsicsKt : java/lang/Object {
           ISTORE (0)
         LABEL (L8)
         LINENUMBER (46)
-          GETSTATIC (Companion, LBox$Companion;)
-          GETSTATIC (Companion, LSimple$Companion;)
+          GETSTATIC (Box, Companion, LBox$Companion;)
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
           INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
           INVOKEVIRTUAL (Box$Companion, serializer, (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;)
         LABEL (L9)
@@ -113,20 +113,20 @@ public final class IntrinsicsKt : java/lang/Object {
           ISTORE (0)
         LABEL (L11)
         LINENUMBER (47)
-          NEW
+          NEW (kotlinx/serialization/internal/ArrayListSerializer)
           DUP
-          GETSTATIC (Companion, LSimple$Companion;)
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
           INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
           INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
         LABEL (L12)
           POP
         LABEL (L13)
         LINENUMBER (34)
-          GETSTATIC (Companion, LBox$Companion;)
-          NEW
+          GETSTATIC (Box, Companion, LBox$Companion;)
+          NEW (kotlinx/serialization/internal/ArrayListSerializer)
           DUP
-          GETSTATIC (INSTANCE, LSimple$$serializer;)
-          CHECKCAST
+          GETSTATIC (Simple$$serializer, INSTANCE, LSimple$$serializer;)
+          CHECKCAST (kotlinx/serialization/KSerializer)
           INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
           INVOKEVIRTUAL (Box$Companion, serializer, (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;)
           POP
@@ -136,13 +136,13 @@ public final class IntrinsicsKt : java/lang/Object {
           ISTORE (0)
         LABEL (L15)
         LINENUMBER (48)
-          NEW
+          NEW (kotlinx/serialization/internal/ArrayListSerializer)
           DUP
-          GETSTATIC (Companion, LBox$Companion;)
-          NEW
+          GETSTATIC (Box, Companion, LBox$Companion;)
+          NEW (kotlinx/serialization/internal/ArrayListSerializer)
           DUP
-          GETSTATIC (INSTANCE, LSimple$$serializer;)
-          CHECKCAST
+          GETSTATIC (Simple$$serializer, INSTANCE, LSimple$$serializer;)
+          CHECKCAST (kotlinx/serialization/KSerializer)
           INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
           INVOKEVIRTUAL (Box$Companion, serializer, (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;)
           INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
@@ -150,12 +150,12 @@ public final class IntrinsicsKt : java/lang/Object {
           POP
         LABEL (L17)
         LINENUMBER (38)
-          GETSTATIC (INSTANCE, Lkotlinx/serialization/internal/IntSerializer;)
-          CHECKCAST
+          GETSTATIC (kotlinx/serialization/internal/IntSerializer, INSTANCE, Lkotlinx/serialization/internal/IntSerializer;)
+          CHECKCAST (kotlinx/serialization/KSerializer)
           POP
         LABEL (L18)
         LINENUMBER (40)
-          GETSTATIC (INSTANCE, LSerializableObject;)
+          GETSTATIC (SerializableObject, INSTANCE, LSerializableObject;)
           INVOKEVIRTUAL (SerializableObject, serializer, ()Lkotlinx/serialization/KSerializer;)
           POP
         LABEL (L19)
@@ -164,14 +164,14 @@ public final class IntrinsicsKt : java/lang/Object {
           ISTORE (0)
         LABEL (L20)
         LINENUMBER (49)
-          NEW
+          NEW (kotlinx/serialization/internal/ArrayListSerializer)
           DUP
-          NEW
+          NEW (kotlinx/serialization/internal/ArrayListSerializer)
           DUP
-          NEW
+          NEW (Box$$serializer)
           DUP
-          GETSTATIC (INSTANCE, Lkotlinx/serialization/internal/IntSerializer;)
-          CHECKCAST
+          GETSTATIC (kotlinx/serialization/internal/IntSerializer, INSTANCE, Lkotlinx/serialization/internal/IntSerializer;)
+          CHECKCAST (kotlinx/serialization/KSerializer)
           INVOKESPECIAL (Box$$serializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
           INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
           INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)

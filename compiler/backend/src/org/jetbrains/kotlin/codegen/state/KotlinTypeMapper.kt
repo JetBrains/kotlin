@@ -269,9 +269,10 @@ class KotlinTypeMapper @JvmOverloads constructor(
         signatureVisitor: JvmSignatureWriter? = null,
         mode: TypeMappingMode = TypeMappingMode.DEFAULT
     ): Type {
-        if (isIrBackend) {
-            throw AssertionError("IR backend shouldn't call KotlinTypeMapper.mapType: $type")
-        }
+        // TODO: disabled this check to work with ClassDescriptors in IR backend (when producing KSerializer for them)
+//        if (isIrBackend) {
+//            throw AssertionError("IR backend shouldn't call KotlinTypeMapper.mapType: $type")
+//        }
 
         return mapType(
             type, AsmTypeFactory, mode, typeMappingConfiguration, signatureVisitor

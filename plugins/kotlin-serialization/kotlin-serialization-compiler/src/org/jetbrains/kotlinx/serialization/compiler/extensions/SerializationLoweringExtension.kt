@@ -9,8 +9,13 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
+import org.jetbrains.kotlin.backend.jvm.codegen.*
+import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -20,6 +25,9 @@ import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerialInfoImplJvm
 import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableCompanionIrGenerator
 import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializableIrGenerator
 import org.jetbrains.kotlinx.serialization.compiler.backend.ir.SerializerIrGenerator
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.JvmSerializerIntrinsic
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.JvmSerializerIntrinsic.isSerializerReifiedFunction
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.kSerializerType
 import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
 import java.util.concurrent.ConcurrentHashMap
 
@@ -76,5 +84,31 @@ open class SerializationLoweringExtension @JvmOverloads constructor(
         val serializerClassLowering = SerializerClassLowering(pluginContext, metadataPlugin, moduleFragment)
         for (file in moduleFragment.files)
             serializerClassLowering.runOnFileInOrder(file)
+    }
+
+    override fun retrieveIntrinsic(symbol: IrFunctionSymbol): Any? {
+        val targetFunction = symbol.descriptor // todo: get rid of descriptor
+        if (!isSerializerReifiedFunction(targetFunction)) return null
+        return SerializationIrIntrinsic
+    }
+}
+
+object SerializationIrIntrinsic : IntrinsicMethod() {
+    override fun invoke(
+        expression: IrFunctionAccessExpression,
+        codegen: ExpressionCodegen,
+        data: BlockInfo
+    ): PromisedValue? {
+        with(codegen) {
+            val argument = expression.getTypeArgument(0)!!
+            JvmSerializerIntrinsic.generateSerializerForType(
+                argument.toKotlinType(),
+                mv,
+                codegen.context.state.typeMapper,
+                codegen.context.state.typeMapper.typeSystem,
+                state.module
+            )
+            return MaterialValue(codegen, kSerializerType, expression.type)
+        }
     }
 }
