@@ -5,7 +5,7 @@ apply plugin: 'kotlin-platform-common'
 JvmToolchain.updateJvmTarget(project, "1.8")
 
 dependencies {
-    api RepoDependencies.kotlinStdlib(project, "common")
+    api RepoDependencies.kotlinStdlib(project, "mpp")
     testApi project(":kotlin-test:kotlin-test-common")
 }
 

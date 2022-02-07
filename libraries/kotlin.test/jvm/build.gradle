@@ -16,7 +16,7 @@ sourceSets {
 
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-common')
-    api(RepoDependencies.kotlinStdlib(project))
+    api(RepoDependencies.kotlinStdlib(project, "mpp"))
     testApi(project(":kotlin-test:kotlin-test-junit"))
     testApi('junit:junit:4.13.2')
 }
