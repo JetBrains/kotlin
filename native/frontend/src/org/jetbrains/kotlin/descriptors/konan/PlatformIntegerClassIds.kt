@@ -34,8 +34,8 @@ val ULONG_RANGE_ID = ClassId.fromString("kotlin/ranges/ULongRange")
 val INT_PROGRESSION_ID = ClassId.fromString("kotlin/ranges/IntProgression")
 val LONG_PROGRESSION_ID = ClassId.fromString("kotlin/ranges/LongProgression")
 
-val UINT_PROGRESSION = ClassId.fromString("kotlin/ranges/UIntProgression")
-val ULONG_PROGRESSION = ClassId.fromString("kotlin/ranges/ULongProgression")
+val UINT_PROGRESSION_ID = ClassId.fromString("kotlin/ranges/UIntProgression")
+val ULONG_PROGRESSION_ID = ClassId.fromString("kotlin/ranges/ULongProgression")
 
 val PLATFORM_INT_ID = ClassId.fromString("kotlin/PlatformInt")
 val PLATFORM_UINT_ID = ClassId.fromString("kotlin/PlatformUInt")

@@ -6,32 +6,61 @@
 package org.jetbrains.kotlin.commonizer.hierarchical
 
 import org.jetbrains.kotlin.commonizer.AbstractInlineSourcesCommonizationTest
+import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabledKey
 import org.jetbrains.kotlin.commonizer.PlatformIntegerCommonizationEnabledKey
 import org.jetbrains.kotlin.commonizer.assertCommonized
+import org.jetbrains.kotlin.konan.target.KonanTarget.*
 
 class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommonizationTest() {
-    fun `test signed ints`() {
+    fun `test signed ints without optimistic commonization`() {
         val result = commonize {
-            outputTarget("(a, b)")
+            outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
             setting(PlatformIntegerCommonizationEnabledKey, true)
-            registerFakeStdlibIntegersDependency("(a, b)")
+            setting(OptimisticNumberCommonizationEnabledKey, false)
+            registerFakeStdlibIntegersDependency("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
 
-            "a" withSource """
+            LINUX_ARM64.name withSource """
                 typealias X = Int
                 typealias Y = Long
             """.trimIndent()
 
-            "b" withSource """
+            LINUX_ARM32_HFP.name withSource """
                 typealias X = Long
                 typealias Y = Int
             """.trimIndent()
         }
 
         result.assertCommonized(
-            "(a, b)", """
-            @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
-            typealias X = PlatformInt
-            @UnsafeNumber(["a: kotlin.Long", "b: kotlin.Int"])
+            "(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})", """
+            expect class X : Number
+            typealias Y = PlatformInt
+        """.trimIndent()
+        )
+    }
+
+    fun `test signed ints with optimistic commonization backup`() {
+        val result = commonize {
+            outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
+            setting(PlatformIntegerCommonizationEnabledKey, true)
+            setting(OptimisticNumberCommonizationEnabledKey, true)
+            registerFakeStdlibIntegersDependency("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
+
+            LINUX_ARM64.name withSource """
+                typealias X = Int
+                typealias Y = Long
+            """.trimIndent()
+
+            LINUX_ARM32_HFP.name withSource """
+                typealias X = Long
+                typealias Y = Int
+            """.trimIndent()
+        }
+
+        result.assertCommonized(
+            "(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})", """
+            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.Long", "${LINUX_ARM64.name}: kotlin.Int"])
+            typealias X = Int
+            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.Int", "${LINUX_ARM64.name}: kotlin.Long"])
             typealias Y = PlatformInt
         """.trimIndent()
         )
@@ -39,26 +68,26 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
 
     fun `test unsigned ints`() {
         val result = commonize {
-            outputTarget("(a, b)")
+            outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
             setting(PlatformIntegerCommonizationEnabledKey, true)
-            registerFakeStdlibIntegersDependency("(a, b)")
+            registerFakeStdlibIntegersDependency("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
 
-            "a" withSource """
+            LINUX_ARM64.name withSource """
                 typealias X = UInt
                 typealias Y = ULong
             """.trimIndent()
 
-            "b" withSource """
+            LINUX_ARM32_HFP.name withSource """
                 typealias X = ULong
                 typealias Y = UInt
             """.trimIndent()
         }
 
         result.assertCommonized(
-            "(a, b)", """
-            @UnsafeNumber(["a: kotlin.UInt", "b: kotlin.ULong"])
-            typealias X = PlatformUInt
-            @UnsafeNumber(["a: kotlin.ULong", "b: kotlin.UInt"])
+            "(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})", """
+            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.ULong", "${LINUX_ARM64.name}: kotlin.UInt"])
+            typealias X = UInt
+            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.UInt", "${LINUX_ARM64.name}: kotlin.ULong"])
             typealias Y = PlatformUInt
         """.trimIndent()
         )
@@ -66,11 +95,11 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
 
     fun `test signed vars`() {
         val result = commonize {
-            outputTarget("(a, b)")
+            outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
             setting(PlatformIntegerCommonizationEnabledKey, true)
-            registerFakeStdlibIntegersDependency("(a, b)")
+            registerFakeStdlibIntegersDependency("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
 
-            "a" withSource """
+            LINUX_ARM64.name withSource """
                 import kotlinx.cinterop.*
                 
                 typealias AX = Int
@@ -79,7 +108,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                 typealias Y = LongVarOf<AY>
             """.trimIndent()
 
-            "b" withSource """
+            LINUX_ARM32_HFP.name withSource """
                 import kotlinx.cinterop.*
 
                 typealias AX = Long
@@ -90,16 +119,16 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         }
 
         result.assertCommonized(
-            "(a, b)", """
+            "(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})", """
             import kotlinx.cinterop.*                
             
-            @UnsafeNumber(["a: kotlin.Int", "b: kotlin.Long"])
-            typealias AX = PlatformInt
-            @UnsafeNumber(["a: kotlin.Long", "b: kotlin.Int"])
+            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.Long", "${LINUX_ARM64.name}: kotlin.Int"])
+            typealias AX = Int
+            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.Int", "${LINUX_ARM64.name}: kotlin.Long"])
             typealias AY = PlatformInt
-            @UnsafeNumber(["a: kotlinx.cinterop.IntVarOf", "b: kotlinx.cinterop.LongVarOf"])
-            typealias X = PlatformIntVarOf<AX>
-            @UnsafeNumber(["a: kotlinx.cinterop.LongVarOf", "b: kotlinx.cinterop.IntVarOf"])
+            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlinx.cinterop.LongVarOf", "${LINUX_ARM64.name}: kotlinx.cinterop.IntVarOf"])
+            typealias X = IntVarOf<AX>
+            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlinx.cinterop.IntVarOf", "${LINUX_ARM64.name}: kotlinx.cinterop.LongVarOf"])
             typealias Y = PlatformIntVarOf<AY>
         """.trimIndent()
         )
@@ -107,11 +136,11 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
 
     fun `test unsigned vars`() {
         val result = commonize {
-            outputTarget("(a, b)")
+            outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
             setting(PlatformIntegerCommonizationEnabledKey, true)
-            registerFakeStdlibIntegersDependency("(a, b)")
+            registerFakeStdlibIntegersDependency("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
 
-            "a" withSource """
+            LINUX_ARM64.name withSource """
                 import kotlinx.cinterop.*
                 
                 typealias AX = UInt
@@ -120,7 +149,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                 typealias Y = ULongVarOf<AY>
             """.trimIndent()
 
-            "b" withSource """
+            LINUX_ARM32_HFP.name withSource """
                 import kotlinx.cinterop.*
 
                 typealias AX = ULong
@@ -131,16 +160,16 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         }
 
         result.assertCommonized(
-            "(a, b)", """
+            "(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})", """
             import kotlinx.cinterop.*                
             
-            @UnsafeNumber(["a: kotlin.UInt", "b: kotlin.ULong"])
-            typealias AX = PlatformUInt
-            @UnsafeNumber(["a: kotlin.ULong", "b: kotlin.UInt"])
+            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.ULong", "${LINUX_ARM64.name}: kotlin.UInt"])
+            typealias AX = UInt
+            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.UInt", "${LINUX_ARM64.name}: kotlin.ULong"])
             typealias AY = PlatformUInt
-            @UnsafeNumber(["a: kotlinx.cinterop.UIntVarOf", "b: kotlinx.cinterop.ULongVarOf"])
-            typealias X = PlatformUIntVarOf<AX>
-            @UnsafeNumber(["a: kotlinx.cinterop.ULongVarOf", "b: kotlinx.cinterop.UIntVarOf"])
+            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlinx.cinterop.ULongVarOf", "${LINUX_ARM64.name}: kotlinx.cinterop.UIntVarOf"])
+            typealias X = UIntVarOf<AX>
+            @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlinx.cinterop.UIntVarOf", "${LINUX_ARM64.name}: kotlinx.cinterop.ULongVarOf"])
             typealias Y = PlatformUIntVarOf<AY>
         """.trimIndent()
         )
@@ -148,26 +177,26 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
 
     fun `test signed arrays`() {
         val result = commonize {
-            outputTarget("(a, b)")
+            outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
             setting(PlatformIntegerCommonizationEnabledKey, true)
-            registerFakeStdlibIntegersDependency("(a, b)")
+            registerFakeStdlibIntegersDependency("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
 
-            "a" withSource """
+            LINUX_ARM64.name withSource """
                 typealias X = IntArray
                 typealias Y = LongArray
             """.trimIndent()
 
-            "b" withSource """
+            LINUX_ARM32_HFP.name withSource """
                 typealias X = LongArray
                 typealias Y = IntArray
             """.trimIndent()
         }
 
         result.assertCommonized(
-            "(a, b)", """
+            "(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})", """
             import kotlinx.cinterop.*                
             
-            typealias X = PlatformIntArray
+            expect class X
             typealias Y = PlatformIntArray
         """.trimIndent()
         )
@@ -175,26 +204,26 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
 
     fun `test unsigned arrays`() {
         val result = commonize {
-            outputTarget("(a, b)")
+            outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
             setting(PlatformIntegerCommonizationEnabledKey, true)
-            registerFakeStdlibIntegersDependency("(a, b)")
+            registerFakeStdlibIntegersDependency("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
 
-            "a" withSource """
+            LINUX_ARM64.name withSource """
                 typealias X = UIntArray
                 typealias Y = ULongArray
             """.trimIndent()
 
-            "b" withSource """
+            LINUX_ARM32_HFP.name withSource """
                 typealias X = ULongArray
                 typealias Y = UIntArray
             """.trimIndent()
         }
 
         result.assertCommonized(
-            "(a, b)", """
+            "(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})", """
             import kotlinx.cinterop.*                
             
-            typealias X = PlatformUIntArray
+            expect class X
             typealias Y = PlatformUIntArray
         """.trimIndent()
         )
@@ -202,28 +231,28 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
 
     fun `test signed ranges`() {
         val result = commonize {
-            outputTarget("(a, b)")
+            outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
             setting(PlatformIntegerCommonizationEnabledKey, true)
-            registerFakeStdlibIntegersDependency("(a, b)")
+            registerFakeStdlibIntegersDependency("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
 
-            "a" withSource """
+            LINUX_ARM64.name withSource """
                 import kotlin.ranges.*
                 
                 typealias X = IntRange
                 typealias Y = LongRange
             """.trimIndent()
 
-            "b" withSource """
+            LINUX_ARM32_HFP.name withSource """
                 typealias X = LongRange
                 typealias Y = IntRange
             """.trimIndent()
         }
 
         result.assertCommonized(
-            "(a, b)", """
+            "(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})", """
             import kotlin.ranges.*                
             
-            typealias X = PlatformIntRange
+            expect class X
             typealias Y = PlatformIntRange
         """.trimIndent()
         )
@@ -231,28 +260,28 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
 
     fun `test unsigned ranges`() {
         val result = commonize {
-            outputTarget("(a, b)")
+            outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
             setting(PlatformIntegerCommonizationEnabledKey, true)
-            registerFakeStdlibIntegersDependency("(a, b)")
+            registerFakeStdlibIntegersDependency("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
 
-            "a" withSource """
+            LINUX_ARM64.name withSource """
                 import kotlin.ranges.*
                 
                 typealias X = UIntRange
                 typealias Y = ULongRange
             """.trimIndent()
 
-            "b" withSource """
+            LINUX_ARM32_HFP.name withSource """
                 typealias X = ULongRange
                 typealias Y = UIntRange
             """.trimIndent()
         }
 
         result.assertCommonized(
-            "(a, b)", """
+            "(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})", """
             import kotlin.ranges.*                
             
-            typealias X = PlatformUIntRange
+            expect class X
             typealias Y = PlatformUIntRange
         """.trimIndent()
         )
@@ -260,28 +289,28 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
 
     fun `test signed progressions`() {
         val result = commonize {
-            outputTarget("(a, b)")
+            outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
             setting(PlatformIntegerCommonizationEnabledKey, true)
-            registerFakeStdlibIntegersDependency("(a, b)")
+            registerFakeStdlibIntegersDependency("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
 
-            "a" withSource """
+            LINUX_ARM64.name withSource """
                 import kotlin.ranges.*
                 
                 typealias X = IntProgression
                 typealias Y = LongProgression
             """.trimIndent()
 
-            "b" withSource """
+            LINUX_ARM32_HFP.name withSource """
                 typealias X = LongProgression
                 typealias Y = IntProgression
             """.trimIndent()
         }
 
         result.assertCommonized(
-            "(a, b)", """
+            "(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})", """
             import kotlin.ranges.*                
             
-            typealias X = PlatformIntProgression
+            expect class X
             typealias Y = PlatformIntProgression
         """.trimIndent()
         )
@@ -289,28 +318,28 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
 
     fun `test unsigned progressions`() {
         val result = commonize {
-            outputTarget("(a, b)")
+            outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
             setting(PlatformIntegerCommonizationEnabledKey, true)
-            registerFakeStdlibIntegersDependency("(a, b)")
+            registerFakeStdlibIntegersDependency("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
 
-            "a" withSource """
+            LINUX_ARM64.name withSource """
                 import kotlin.ranges.*
                 
                 typealias X = UIntProgression
                 typealias Y = ULongProgression
             """.trimIndent()
 
-            "b" withSource """
+            LINUX_ARM32_HFP.name withSource """
                 typealias X = ULongProgression
                 typealias Y = UIntProgression
             """.trimIndent()
         }
 
         result.assertCommonized(
-            "(a, b)", """
+            "(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})", """
             import kotlin.ranges.*                
             
-            typealias X = PlatformUIntProgression
+            expect class X
             typealias Y = PlatformUIntProgression
         """.trimIndent()
         )
@@ -318,11 +347,11 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
 
     fun `test platform types in return positions`() {
         val result = commonize {
-            outputTarget("(a, b)")
+            outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
             setting(PlatformIntegerCommonizationEnabledKey, true)
-            registerFakeStdlibIntegersDependency("(a, b)")
+            registerFakeStdlibIntegersDependency("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
 
-            "a" withSource """
+            LINUX_ARM32_HFP.name withSource """
                 import kotlin.ranges.*
                 import kotlinx.cinterop.*
                 
@@ -336,7 +365,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                 fun p(): IntProgression = null!!
             """.trimIndent()
 
-            "b" withSource """
+            LINUX_ARM64.name withSource """
                 import kotlin.ranges.*
                 import kotlinx.cinterop.*
                 
@@ -352,12 +381,14 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         }
 
         result.assertCommonized(
-            "(a, b)", """
+            "(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})", """
             import kotlin.ranges.*
             import kotlinx.cinterop.*
             
             expect class C() {
+                @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlin.Int", "${LINUX_ARM64.name}: kotlin.Long"])
                 val i: PlatformInt
+                @UnsafeNumber(["${LINUX_ARM32_HFP.name}: kotlinx.cinterop.IntVarOf", "${LINUX_ARM64.name}: kotlinx.cinterop.LongVarOf"])
                 fun v(): PlatformIntVarOf<PlatformInt>
                 fun r(): PlatformIntRange
             }
@@ -370,11 +401,11 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
 
     fun `test platform types in signatures`() {
         val result = commonize {
-            outputTarget("(a, b)")
+            outputTarget("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
             setting(PlatformIntegerCommonizationEnabledKey, true)
-            registerFakeStdlibIntegersDependency("(a, b)")
+            registerFakeStdlibIntegersDependency("(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})")
 
-            "a" withSource """
+            LINUX_ARM64.name withSource """
                 import kotlin.ranges.*
                 import kotlinx.cinterop.*
                 
@@ -388,7 +419,7 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
                 fun p(arg: IntProgression) {}
             """.trimIndent()
 
-            "b" withSource """
+            LINUX_ARM32_HFP.name withSource """
                 import kotlin.ranges.*
                 import kotlinx.cinterop.*
                 
@@ -404,12 +435,184 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         }
 
         result.assertCommonized(
-            "(a, b)", """
+            "(${LINUX_ARM64.name}, ${LINUX_ARM32_HFP.name})", """
             import kotlin.ranges.*
             import kotlinx.cinterop.*
             
-            expect class C() {
-            }
+            expect class C()
+        """.trimIndent()
+        )
+    }
+
+    fun `test platform integers in multi-target commonization`() {
+        val intTarget1 = LINUX_ARM32_HFP.name
+        val intTarget2 = LINUX_MIPS32.name
+        val intTarget3 = LINUX_MIPSEL32.name
+        val longTarget1 = LINUX_X64.name
+        val longTarget2 = LINUX_ARM64.name
+        val longTarget3 = MACOS_X64.name
+
+        val outputCommonizerTargets = arrayOf(
+            "($intTarget1, $intTarget2)", "($longTarget1, $longTarget2)", "($intTarget3, $longTarget3)",
+            "($intTarget1, $intTarget2, $intTarget3)", "($longTarget1, $longTarget2, $longTarget3)",
+            "($intTarget1, $intTarget2, $intTarget3, $longTarget1)",
+            "($intTarget1, $intTarget2, $longTarget1, $longTarget2)",
+            "($longTarget1, $longTarget2, $longTarget3, $intTarget1)",
+            "($intTarget1, $intTarget2, $intTarget3, $longTarget1, $longTarget2, $longTarget3)",
+        )
+
+        val result = commonize {
+            setting(PlatformIntegerCommonizationEnabledKey, true)
+            outputTarget(*outputCommonizerTargets)
+            registerFakeStdlibIntegersDependency(*outputCommonizerTargets)
+
+            intTarget1 withSource """
+                import kotlinx.cinterop.*
+                
+                typealias X = Int
+                typealias XV = IntVarOf<X>
+            """.trimIndent()
+
+            intTarget2 withSource """
+                import kotlinx.cinterop.*
+                
+                typealias X = Int
+                typealias XV = IntVarOf<X>
+            """.trimIndent()
+
+            intTarget3 withSource """
+                import kotlinx.cinterop.*
+                
+                typealias X = Int
+                typealias XV = IntVarOf<X>
+            """.trimIndent()
+
+            longTarget1 withSource """
+                import kotlinx.cinterop.*
+                
+                typealias X = Long
+                typealias XV = LongVarOf<X>
+            """.trimIndent()
+
+            longTarget2 withSource """
+                import kotlinx.cinterop.*
+                
+                typealias X = Long
+                typealias XV = LongVarOf<X>
+            """.trimIndent()
+
+            longTarget3 withSource """
+                import kotlinx.cinterop.*
+                
+                typealias X = Long
+                typealias XV = LongVarOf<X>
+            """.trimIndent()
+        }
+
+        result.assertCommonized(
+            "($intTarget1, $intTarget2)", """
+            import kotlinx.cinterop.*
+            
+            typealias X = Int
+            typealias XV = IntVarOf<X>
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "($intTarget1, $intTarget2, $intTarget3)", """
+            import kotlinx.cinterop.*
+            
+            typealias X = Int
+            typealias XV = IntVarOf<X>
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "($longTarget1, $longTarget2)", """
+            import kotlinx.cinterop.*
+            
+            typealias X = Long
+            typealias XV = LongVarOf<X>
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "($longTarget1, $longTarget2, $longTarget3)", """
+            import kotlinx.cinterop.*
+            
+            typealias X = Long
+            typealias XV = LongVarOf<X>
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "($intTarget3, $longTarget3)", """
+            import kotlinx.cinterop.*
+            
+            @UnsafeNumber(["${LINUX_MIPSEL32.name}: kotlin.Int", "${MACOS_X64.name}: kotlin.Long"])
+            typealias X = PlatformInt
+            @UnsafeNumber(["${LINUX_MIPSEL32.name}: kotlinx.cinterop.IntVarOf", "${MACOS_X64.name}: kotlinx.cinterop.LongVarOf"])
+            typealias XV = PlatformIntVarOf<X>
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "($intTarget1, $intTarget2, $longTarget1, $longTarget2)", """
+            import kotlinx.cinterop.*
+            
+            @UnsafeNumber([
+                "${LINUX_ARM32_HFP.name}: kotlin.Int", "${LINUX_ARM64.name}: kotlin.Long", 
+                "${LINUX_MIPS32.name}: kotlin.Int", "${LINUX_X64.name}: kotlin.Long"
+            ])
+            typealias X = PlatformInt
+            @UnsafeNumber([
+                "${LINUX_ARM32_HFP.name}: kotlinx.cinterop.IntVarOf", "${LINUX_ARM64.name}: kotlinx.cinterop.LongVarOf",
+                "${LINUX_MIPS32.name}: kotlinx.cinterop.IntVarOf", "${LINUX_X64.name}: kotlinx.cinterop.LongVarOf"
+            ])
+            typealias XV = PlatformIntVarOf<X>
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "($intTarget1, $intTarget2, $intTarget3, $longTarget1)", """
+            import kotlinx.cinterop.*
+            
+            @UnsafeNumber([
+                "${LINUX_ARM32_HFP.name}: kotlin.Int", "${LINUX_MIPS32.name}: kotlin.Int", 
+                "${LINUX_MIPSEL32.name}: kotlin.Int", "${LINUX_X64.name}: kotlin.Long"
+            ])
+            typealias X = PlatformInt
+            @UnsafeNumber([
+                "${LINUX_ARM32_HFP.name}: kotlinx.cinterop.IntVarOf", "${LINUX_MIPS32.name}: kotlinx.cinterop.IntVarOf", 
+                "${LINUX_MIPSEL32.name}: kotlinx.cinterop.IntVarOf", "${LINUX_X64.name}: kotlinx.cinterop.LongVarOf"
+            ])
+            typealias XV = PlatformIntVarOf<X>
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "($longTarget1, $longTarget2, $longTarget3, $intTarget1)", """
+            import kotlinx.cinterop.*
+            
+            @UnsafeNumber([
+                "${LINUX_ARM32_HFP.name}: kotlin.Int", "${LINUX_ARM64.name}: kotlin.Long", 
+                "${LINUX_X64.name}: kotlin.Long", "${MACOS_X64.name}: kotlin.Long"
+            ])
+            typealias X = PlatformInt
+            @UnsafeNumber([
+                "${LINUX_ARM32_HFP.name}: kotlinx.cinterop.IntVarOf", "${LINUX_ARM64.name}: kotlinx.cinterop.LongVarOf",
+                "${LINUX_X64.name}: kotlinx.cinterop.LongVarOf", "${MACOS_X64.name}: kotlinx.cinterop.LongVarOf" 
+            ])
+            typealias XV = PlatformIntVarOf<X>
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "($intTarget1, $intTarget2, $intTarget3, $longTarget1, $longTarget2, $longTarget3)", """
+            import kotlinx.cinterop.*
+            
+            typealias X = PlatformInt
+            typealias XV = PlatformIntVarOf<X>
         """.trimIndent()
         )
     }
