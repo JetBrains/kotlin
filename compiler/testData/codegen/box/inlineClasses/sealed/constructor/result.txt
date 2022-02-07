@@ -3,13 +3,9 @@
 public final class Result$Ok {
     // source: 'result.kt'
     public static @org.jetbrains.annotations.NotNull method constructor-impl(p0: java.lang.Object): java.lang.Object
-    public method equals(p0: java.lang.Object): boolean
     public static method equals-impl(p0: java.lang.Object, p1: java.lang.Object): boolean
     public final static method equals-impl0(p0: java.lang.Object, p1: java.lang.Object): boolean
-    public final method getValue(): java.lang.Object
-    public method hashCode(): int
     public static method hashCode-impl(p0: java.lang.Object): int
-    public method toString(): java.lang.String
     public static method toString-impl(p0: java.lang.Object): java.lang.String
     public final inner class Result$Ok
 }
