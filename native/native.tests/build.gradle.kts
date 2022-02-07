@@ -123,8 +123,6 @@ fun nativeTest(taskName: String, vararg tags: String) = projectTest(taskName, jU
         TestProperty.CACHE_MODE.setUpFromGradleProperty(this)
         TestProperty.EXECUTION_TIMEOUT.setUpFromGradleProperty(this)
 
-        ignoreFailures = true // Don't fail Gradle task if there are failed tests. Let the subsequent tasks to run as well.
-
         useJUnitPlatform {
             includeTags(*tags)
         }
