@@ -1,0 +1,7 @@
+FILE: 07.safeCalls.kt
+    public? final? fun test_1(x: Int?): R|kotlin/Unit| {
+        x#?.{ $subj$.inc#() }
+    }
+    public? final? fun test_2(x: Int): R|kotlin/Unit| {
+        x#?.{ $subj$.inc#() }
+    }

@@ -1,0 +1,52 @@
+FILE: 03.whenSubjects.kt
+    public? final? fun test_1(x: Any, y: Any): R|kotlin/Unit| {
+        when () {
+            (x# is String) ->  {
+                String(x)
+            }
+            (y# is Int) ->  {
+                String(y)
+            }
+            else ->  {
+                String(nothing)
+            }
+        }
+
+    }
+    public? final? fun test_2(x: Any): R|kotlin/Unit| {
+        when (x#) {
+            ($subj$ is Int) ->  {
+                <strcat>(String(Int: ), x#)
+            }
+            ==($subj$, IntegerLiteral(1)) ->  {
+                String(One)
+            }
+            ==($subj$, Null(null)) ->  {
+                String(null)
+            }
+            else ->  {
+                String(nothing)
+            }
+        }
+
+    }
+    public? final? fun getAny(): Any? {
+        ^getAny Null(null)
+    }
+    public? final? fun test_2(): R|kotlin/Unit| {
+        when (lval y: <implicit> = getAny#()) {
+            ($subj$ is Int) ->  {
+                <strcat>(String(Int: ), y#)
+            }
+            ==($subj$, IntegerLiteral(1)) ->  {
+                String(One)
+            }
+            ==($subj$, Null(null)) ->  {
+                String(null)
+            }
+            else ->  {
+                String(nothing)
+            }
+        }
+
+    }

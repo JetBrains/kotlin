@@ -1,0 +1,16 @@
+FILE: 05.forToWhile.kt
+    public? final? fun takeInt(x: Int): R|kotlin/Unit| {
+    }
+    public? final? fun test(list: List<Int>): R|kotlin/Unit| {
+        println#(String(start))
+         {
+            lval <iterator>: <implicit> = list#.iterator#()
+            while(R|<local>/<iterator>|.hasNext#()) {
+                lval x: <implicit> = R|<local>/<iterator>|.next#()
+                takeInt#(x#)
+            }
+
+        }
+
+        println#(String(end))
+    }

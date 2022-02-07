@@ -25,6 +25,88 @@ public class PsiVisualizerForRawFirDataGenerated extends AbstractPsiVisualizerTe
     }
 
     @Nested
+    @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CompilerCourse {
+        @Test
+        @TestMetadata("01.capturedTypeParameters.kt")
+        public void test01_capturedTypeParameters() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/01.capturedTypeParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("02.enumEntries.kt")
+        public void test02_enumEntries() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/02.enumEntries.kt");
+        }
+
+        @Test
+        @TestMetadata("03.whenSubjects.kt")
+        public void test03_whenSubjects() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/03.whenSubjects.kt");
+        }
+
+        @Test
+        @TestMetadata("04.ifToWhen.kt")
+        public void test04_ifToWhen() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/04.ifToWhen.kt");
+        }
+
+        @Test
+        @TestMetadata("05.forToWhile.kt")
+        public void test05_forToWhile() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/05.forToWhile.kt");
+        }
+
+        @Test
+        @TestMetadata("06.components.kt")
+        public void test06_components() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/06.components.kt");
+        }
+
+        @Test
+        @TestMetadata("07.safeCalls.kt")
+        public void test07_safeCalls() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/07.safeCalls.kt");
+        }
+
+        @Test
+        @TestMetadata("08.binaryOperators.kt")
+        public void test08_binaryOperators() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/08.binaryOperators.kt");
+        }
+
+        @Test
+        @TestMetadata("09.unaryOperators.kt")
+        public void test09_unaryOperators() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/09.unaryOperators.kt");
+        }
+
+        @Test
+        @TestMetadata("10.arrayAccess.kt")
+        public void test10_arrayAccess() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/10.arrayAccess.kt");
+        }
+
+        @Test
+        @TestMetadata("11.labels.kt")
+        public void test11_labels() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/11.labels.kt");
+        }
+
+        @Test
+        @TestMetadata("12.arrayAccessAndSafeCall.kt")
+        public void test12_arrayAccessAndSafeCall() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/12.arrayAccessAndSafeCall.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInCompilerCourse() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations")
     @TestDataPath("$PROJECT_ROOT")
     public class Declarations {

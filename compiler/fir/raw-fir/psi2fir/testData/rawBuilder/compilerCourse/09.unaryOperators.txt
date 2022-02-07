@@ -1,0 +1,16 @@
+FILE: 09.unaryOperators.kt
+    public? final? fun test_1(x: String?): R|kotlin/Unit| {
+        lval s: <implicit> = x#!!
+    }
+    public? final? fun test_2_1(): R|kotlin/Unit| {
+        lvar x: <implicit> = IntegerLiteral(10)
+        lval y: <implicit> = x#++
+    }
+    public? final? fun test_2_2(): R|kotlin/Unit| {
+        lvar x: <implicit> = IntegerLiteral(10)
+        lval y: <implicit> = ++x#
+    }
+    public? final? fun test_3(x: Int): R|kotlin/Unit| {
+        lval a: <implicit> = x#.unaryMinus#()
+        lval b: <implicit> = x#.unaryPlus#()
+    }

@@ -1,0 +1,9 @@
+FILE: 10.arrayAccess.kt
+    public? final? fun test_1(list: MutableList<String>): R|kotlin/Unit| {
+        lval x: <implicit> = list#.get#(IntegerLiteral(10))
+        list#.set#(IntegerLiteral(10), String(hello))
+    }
+    public? final? fun test_2(m: Matrix3<String>): R|kotlin/Unit| {
+        lval x: <implicit> = m#.get#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral(1))
+        m#.set#(IntegerLiteral(1), IntegerLiteral(2), IntegerLiteral(1), String(hello))
+    }

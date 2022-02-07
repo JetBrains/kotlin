@@ -1,0 +1,20 @@
+FILE: 04.ifToWhen.kt
+    public? final? fun test_1(cond: Boolean): R|kotlin/Unit| {
+        when () {
+            cond# ->  {
+                String(then)
+            }
+        }
+
+    }
+    public? final? fun test_2(cond: Boolean): R|kotlin/Unit| {
+        when () {
+            cond# ->  {
+                String(then)
+            }
+            else ->  {
+                String(else)
+            }
+        }
+
+    }

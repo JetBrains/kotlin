@@ -29,6 +29,79 @@ public class RawFirBuilderLazyBodiesTestCaseGenerated extends AbstractRawFirBuil
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
 
+    @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CompilerCourse extends AbstractRawFirBuilderLazyBodiesTestCase {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doRawFirTest, this, testDataFilePath);
+        }
+
+        @TestMetadata("01.capturedTypeParameters.kt")
+        public void test01_capturedTypeParameters() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/01.capturedTypeParameters.kt");
+        }
+
+        @TestMetadata("02.enumEntries.kt")
+        public void test02_enumEntries() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/02.enumEntries.kt");
+        }
+
+        @TestMetadata("03.whenSubjects.kt")
+        public void test03_whenSubjects() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/03.whenSubjects.kt");
+        }
+
+        @TestMetadata("04.ifToWhen.kt")
+        public void test04_ifToWhen() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/04.ifToWhen.kt");
+        }
+
+        @TestMetadata("05.forToWhile.kt")
+        public void test05_forToWhile() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/05.forToWhile.kt");
+        }
+
+        @TestMetadata("06.components.kt")
+        public void test06_components() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/06.components.kt");
+        }
+
+        @TestMetadata("07.safeCalls.kt")
+        public void test07_safeCalls() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/07.safeCalls.kt");
+        }
+
+        @TestMetadata("08.binaryOperators.kt")
+        public void test08_binaryOperators() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/08.binaryOperators.kt");
+        }
+
+        @TestMetadata("09.unaryOperators.kt")
+        public void test09_unaryOperators() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/09.unaryOperators.kt");
+        }
+
+        @TestMetadata("10.arrayAccess.kt")
+        public void test10_arrayAccess() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/10.arrayAccess.kt");
+        }
+
+        @TestMetadata("11.labels.kt")
+        public void test11_labels() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/11.labels.kt");
+        }
+
+        @TestMetadata("12.arrayAccessAndSafeCall.kt")
+        public void test12_arrayAccessAndSafeCall() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse/12.arrayAccessAndSafeCall.kt");
+        }
+
+        public void testAllFilesPresentInCompilerCourse() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/compilerCourse"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+    }
+
     @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

@@ -1,0 +1,42 @@
+FILE: 02.enumEntries.kt
+    public? final? enum class SomeEnum : R|kotlin/Enum<SomeEnum>| {
+        private [ContainingClassKey=SomeEnum] constructor([CorrespondingProperty=/SomeEnum.x] x: String): R|SomeEnum| {
+            super<R|kotlin/Enum<SomeEnum>|>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val x: String = R|<local>/x|
+            public? [ContainingClassKey=SomeEnum] get(): String
+
+        public final static [ContainingClassKey=SomeEnum] enum entry Some: R|SomeEnum| = object : R|SomeEnum| {
+            private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|SomeEnum|>(String(hello))
+            }
+
+            public? open? override fun foo(): R|kotlin/Unit| {
+                println#()
+            }
+
+        }
+
+        public final static [ContainingClassKey=SomeEnum] enum entry Other: R|SomeEnum| = object : R|SomeEnum| {
+            private [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|SomeEnum|>(String(world))
+            }
+
+            public? open? override fun foo(): R|kotlin/Unit| {
+            }
+
+        }
+
+        public? abstract fun foo(): R|kotlin/Unit|
+
+        public final static [ContainingClassKey=SomeEnum] fun values(): R|kotlin/Array<SomeEnum>| {
+        }
+
+        public final static [ContainingClassKey=SomeEnum] fun valueOf(value: R|kotlin/String|): R|SomeEnum| {
+        }
+
+        public final static [ContainingClassKey=SomeEnum] val entries: R|kotlin/enums/EnumEntries<SomeEnum>|
+            public get(): R|kotlin/enums/EnumEntries<SomeEnum>|
+
+    }

@@ -1,0 +1,28 @@
+FILE: 08.binaryOperators.kt
+    public? final? fun test_1(x: Int, y: Int): R|kotlin/Unit| {
+        lval a: <implicit> = x#.plus#(y#)
+    }
+    public? final? fun test_2(b1: Boolean, b2: Boolean): R|kotlin/Unit| {
+        lval and1: <implicit> = b1# && b2#
+        lval or1: <implicit> = b1# || b2#
+        lval and2: <implicit> = b1#.and#(b2#)
+        lval or2: <implicit> = b1#.or#(b2#)
+    }
+    public? final? fun test_3(x: String?): R|kotlin/Unit| {
+        lval s: <implicit> = x# ?: String(hello)
+    }
+    public? final? operator fun A.compareTo(x: A): Int
+    public? final? fun test_4(x: Int, y: Int): R|kotlin/Unit| {
+        lval a: <implicit> = CMP(<, x#.compareTo#(y#))
+    }
+    public? final? fun test_5(x: String, y: String): R|kotlin/Unit| {
+        lval a: <implicit> = ==(x#, y#)
+    }
+    public? final? fun test_6(): R|kotlin/Unit| {
+        lval a: <implicit> = mutableListOf#(String(a))
+        +=(a#, String())
+        lvar b: <implicit> = listOf#(String(a))
+        +=(b#, String())
+        lvar c: <implicit> = mutableListOf#(String(c))
+        +=(c#, String())
+    }

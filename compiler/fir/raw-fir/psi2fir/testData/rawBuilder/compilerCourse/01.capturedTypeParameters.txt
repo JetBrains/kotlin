@@ -1,0 +1,51 @@
+FILE: 01.capturedTypeParameters.kt
+    public? final? class Base<T1> : R|kotlin/Any| {
+        public? [ContainingClassKey=Base] constructor<T1>(): R|Base<T1>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? fun <U> foo(x: T1): U {
+            ^foo Null(null)!!
+        }
+
+        public? final? inner class Inner<T2, T1> : R|kotlin/Any| {
+            public? [ContainingClassKey=Inner] Base<T1>.constructor<T2>(): R|Base.Inner<T2, T1>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? fun <R> bar(x: T1, y: T2): R {
+                ^bar Null(null)!!
+            }
+
+        }
+
+        public? final? class Nested<T3> : R|kotlin/Any| {
+            public? [ContainingClassKey=Nested] constructor<T3>(): R|Base.Nested<T3>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public? final? fun <K> baz(x: T1, y: T3): K {
+                ^baz Null(null)!!
+            }
+
+        }
+
+        public? final? fun functionWithLocals(): R|kotlin/Unit| {
+            local final? fun <U> localFoo(x: T1): U {
+                ^localFoo Null(null)!!
+            }
+
+            local final? class Local<T4, T1> : R|kotlin/Any| {
+                public? [ContainingClassKey=Local] constructor<T4>(): R|Base.Local<T4, T1>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public? final? fun <E> localBar(x: T1, y: T4): E {
+                    ^localBar Null(null)!!
+                }
+
+            }
+
+        }
+
+    }

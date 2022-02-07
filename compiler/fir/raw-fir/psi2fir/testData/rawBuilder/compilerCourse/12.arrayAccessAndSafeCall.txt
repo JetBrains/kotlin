@@ -1,0 +1,17 @@
+FILE: 12.arrayAccessAndSafeCall.kt
+    public? final? fun test_1(): R|kotlin/Unit| {
+        a#?.{ $subj$.f#() }
+        a#?.{ +=($subj$.x#, f#()) }
+        a#?.{ $subj$.f#.get#(i#) }
+        a#?.{ $subj$.f#.set#(i#, g#()) }
+        a#?.{ ArraySet:[$subj$.f#.get#(i#) += g#()] }
+        a#?.{ $subj$.i# }++
+    }
+    public? final? fun test_2(): R|kotlin/Unit| {
+        a#?.{ $subj$.f#() }
+        a#?.{ +=($subj$.x#, f#()) }
+        a#?.{ $subj$.f#.get#(i#) }
+        a#?.{ $subj$.f#.set#(i#, g#()) }
+        a#?.{ ArraySet:[$subj$.f#.get#(i#) += g#()] }
+        a#?.{ $subj$.i# }++
+    }

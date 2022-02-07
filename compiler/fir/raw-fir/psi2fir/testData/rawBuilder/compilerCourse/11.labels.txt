@@ -1,0 +1,39 @@
+FILE: 11.labels.kt
+    public? final? fun test_1(b1: Boolean, b2: Boolean): Int {
+        run#(<L> = run@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            when () {
+                b1# ->  {
+                    ^test_1 IntegerLiteral(10)
+                }
+            }
+
+            when () {
+                b2# ->  {
+                    ^@run String(hello)
+                }
+            }
+
+            String(world)
+        }
+        )
+    }
+    public? final? fun test_2(cond: Boolean?): Int {
+        run#(<L> = l@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            cond#.let#(<L> = m@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                when (it#) {
+                    ==($subj$, Boolean(true)) ->  {
+                        ^@l Unit
+                    }
+                    ==($subj$, Boolean(false)) ->  {
+                        ^@m Unit
+                    }
+                    ==($subj$, Null(null)) ->  {
+                        ^test_2 IntegerLiteral(10)
+                    }
+                }
+
+            }
+            )
+        }
+        )
+    }

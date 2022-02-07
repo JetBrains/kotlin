@@ -1,0 +1,30 @@
+FILE: 06.components.kt
+    public? final? data class Data : R|kotlin/Any| {
+        public? [ContainingClassKey=Data] constructor([CorrespondingProperty=/Data.x] x: Int, [CorrespondingProperty=/Data.s] s: String, [CorrespondingProperty=/Data.b] b: Boolean): R|Data| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ContainingClassKey=Data] get(): Int
+
+        public? final? [IsFromPrimaryConstructor=true] val s: String = R|<local>/s|
+            public? [ContainingClassKey=Data] get(): String
+
+        public? final? [IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
+            public? [ContainingClassKey=Data] get(): Boolean
+
+        public final operator fun component1(): Int
+
+        public final operator fun component2(): String
+
+        public final operator fun component3(): Boolean
+
+        public final fun copy(x: Int = this@R|/Data|.R|/Data.x|, s: String = this@R|/Data|.R|/Data.s|, b: Boolean = this@R|/Data|.R|/Data.b|): R|Data|
+
+    }
+    public? final? fun test(data: Data): R|kotlin/Unit| {
+        lval <destruct>: <implicit> = data#
+        lval x: <implicit> = R|<local>/<destruct>|.component1#()
+        lval s: <implicit> = R|<local>/<destruct>|.component2#()
+        lval b: <implicit> = R|<local>/<destruct>|.component3#()
+    }
