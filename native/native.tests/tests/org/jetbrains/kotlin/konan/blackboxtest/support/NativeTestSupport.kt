@@ -197,15 +197,6 @@ private object NativeTestSupport {
         kotlinNativeTargets: KotlinNativeTargets,
         optimizationMode: OptimizationMode
     ): CacheMode {
-        // TODO: legacy, need to remove it
-        val legacyUseCache = System.getProperty("kotlin.internal.native.test.useCache")?.let(String::toBooleanStrictOrNull)
-        if (legacyUseCache != null) {
-            return if (legacyUseCache)
-                CacheMode.WithStaticCache(kotlinNativeHome, kotlinNativeTargets, optimizationMode, false)
-            else
-                CacheMode.WithoutCache
-        }
-
         val cacheMode = ClassLevelProperty.CACHE_MODE.readValue(
             enforcedProperties,
             CacheMode.Alias.values(),

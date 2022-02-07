@@ -54,7 +54,6 @@ enum class TestProperty(shortName: String) {
     USE_THREAD_STATE_CHECKER("useThreadStateChecker"),
     GC_TYPE("gcType"),
     GC_SCHEDULER("gcScheduler"),
-    USE_CACHE("useCache"), // TODO: legacy, need to remove it
     CACHE_MODE("cacheMode"),
     EXECUTION_TIMEOUT("executionTimeout");
 
@@ -121,7 +120,6 @@ fun nativeTest(taskName: String, vararg tags: String) = projectTest(taskName, jU
         TestProperty.USE_THREAD_STATE_CHECKER.setUpFromGradleProperty(this)
         TestProperty.GC_TYPE.setUpFromGradleProperty(this)
         TestProperty.GC_SCHEDULER.setUpFromGradleProperty(this)
-        TestProperty.USE_CACHE.setUpFromGradleProperty(this)
         TestProperty.CACHE_MODE.setUpFromGradleProperty(this)
         TestProperty.EXECUTION_TIMEOUT.setUpFromGradleProperty(this)
 
