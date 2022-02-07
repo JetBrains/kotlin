@@ -30,7 +30,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(project(":kotlin-stdlib-js-ir"))
+                api(kotlinStdlib("mpp"))
             }
             kotlin.srcDir(commonMainSources.get().destinationDir)
         }
@@ -39,7 +39,7 @@ kotlin {
         }
         val jsMain by getting {
             dependencies {
-                api(project(":kotlin-stdlib-js-ir"))
+//                api(project(":kotlin-stdlib-js-ir"))
             }
             kotlin.srcDir(jsMainSources.get().destinationDir)
         }
