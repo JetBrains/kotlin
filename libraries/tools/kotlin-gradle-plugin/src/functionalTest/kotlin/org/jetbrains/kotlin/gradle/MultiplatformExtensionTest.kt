@@ -98,6 +98,6 @@ fun Project.enableCInteropCommonization(enabled: Boolean = true) {
     propertiesExtension.set(KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION, enabled.toString())
 }
 
-fun Project.enableHierarchicalStructureByDefault() {
-    propertiesExtension.set(KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT, "true")
+fun Project.enableHierarchicalStructureByDefault(enabled: Boolean = true) {
+    propertiesExtension.set(KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT, enabled.toString())
 }

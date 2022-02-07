@@ -250,6 +250,7 @@ open class KotlinMultiplatformPluginWrapper : KotlinBasePluginWrapper() {
     override fun whenBuildEvaluated(project: Project) {
         project.runMissingAndroidTargetProjectConfigurationHealthCheck()
         project.runMissingKotlinTargetsProjectConfigurationHealthCheck()
+        project.runDisabledCInteropCommonizationOnHmppProjectConfigurationHealthCheck()
     }
 }
 
