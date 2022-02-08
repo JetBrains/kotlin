@@ -87,7 +87,7 @@ val Project.cacheRedirectorEnabled
     get() = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false
 
 val Project.compileOnlyTests: Boolean
-    get() = hasProperty("compile-only-tests")
+    get() = hasProperty("test_compile_only")
 
 fun Project.redirectIfEnabled(url: String):String = if (cacheRedirectorEnabled) {
     val base = URL(url)
