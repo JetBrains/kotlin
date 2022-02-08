@@ -37,7 +37,7 @@ interface KotlinVariantCompilationDataInternal<T : KotlinCommonOptions> : Kotlin
                 project.filesProvider {
                     val friendVariants = resolveFriendVariants()
                     val friendModuleClassifiers = friendVariants.map { it.containingModule.moduleClassifier }.toSet()
-                    val artifactView = owner.compileDependenciesConfiguration
+                    owner.compileDependenciesConfiguration
                         .incoming.artifactView { view ->
                             view.componentFilter { id ->
                                 // FIXME rewrite using the proper module resolution after those changes are merged
@@ -45,11 +45,10 @@ interface KotlinVariantCompilationDataInternal<T : KotlinCommonOptions> : Kotlin
                                 asProject?.build?.isCurrentBuild == true &&
                                         asProject.projectPath == owner.project.path
                             }
-                        }.artifacts
-                    artifactView.filter {
-                        // FIXME rewrite using the proper module resolution after those changes are merged
-                        moduleClassifiersFromCapabilities(it.variant.capabilities).any { it in friendModuleClassifiers }
-                    }.map { it.file }
+                        }.artifacts.filter {
+                            // FIXME rewrite using the proper module resolution after those changes are merged
+                            moduleClassifiersFromCapabilities(it.variant.capabilities).any { it in friendModuleClassifiers }
+                        }.map { it.file }
                 }
             )
         }
@@ -72,11 +71,11 @@ interface KotlinVariantCompilationDataInternal<T : KotlinCommonOptions> : Kotlin
                 ?: error("Failed to resolve dependencies of ${owner.containingModule}"))
                 .allDependencyModules
                 .filterIsInstance<KotlinGradleModule>()
-                .filter {
+                .filter { dependencyModule ->
                     // the module comes from the same Gradle project // todo: extend to other friends once supported
-                    it.project == owner.containingModule.project &&
+                    dependencyModule.project == owner.containingModule.project &&
                             // also, important to check that the owner variant really requests this module:
-                            variantResolver.getChosenVariant(owner, it) is VariantResolution.VariantMatch
+                            variantResolver.getChosenVariant(owner, dependencyModule) is VariantResolution.VariantMatch
                 }
 
         val friendVariants = friendModules.map {

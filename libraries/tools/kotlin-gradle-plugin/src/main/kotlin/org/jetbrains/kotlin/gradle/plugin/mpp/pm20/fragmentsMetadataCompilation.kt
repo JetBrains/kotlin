@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
+import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.KotlinModuleFragment
@@ -152,14 +153,12 @@ private fun configureMetadataJarTask(
     }
     module.fragments.all { fragment ->
         allMetadataJar.configure { jar ->
-            val metadataOutput = project.files(Callable {
+            val metadataOutput = project.filesProvider {
                 val compilationData = registry.getForFragmentOrNull(fragment)
-                compilationData?.run {
-                    if (!fragment.isNativeHostSpecific())
-                        project.filesWithUnpackedArchives(compilationData.output.allOutputs, setOf(KLIB_FILE_EXTENSION))
-                    else emptyList<Any>()
-                } ?: emptyList<Any>()
-            })
+                    .takeIf { fragment.isNativeHostSpecific() }
+                    ?: return@filesProvider emptyList<Any>()
+                project.filesWithUnpackedArchives(compilationData.output.allOutputs, setOf(KLIB_FILE_EXTENSION))
+            }
             jar.from(metadataOutput) { spec ->
                 spec.into(fragment.fragmentName)
             }

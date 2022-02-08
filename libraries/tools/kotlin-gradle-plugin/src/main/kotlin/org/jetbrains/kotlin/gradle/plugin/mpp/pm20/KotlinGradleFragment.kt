@@ -90,8 +90,8 @@ open class KotlinGradleFragmentInternal @Inject constructor(
     //       out of the consumer's metadata compilations compile classpath; however, Native variants must expose implementation as API
     //       anyway, so for now all fragments follow that behavior
     override val declaredModuleDependencies: Iterable<KotlinModuleDependency>
-        get() = listOf(apiConfiguration, implementationConfiguration).flatMapTo(mutableSetOf()) {
-            it.allDependencies.map { it.toModuleDependency(project) }
+        get() = listOf(apiConfiguration, implementationConfiguration).flatMapTo(mutableSetOf()) { exportConfiguration ->
+            exportConfiguration.allDependencies.map { dependency -> dependency.toModuleDependency(project) }
         }
 
     override val kotlinSourceRoots: SourceDirectorySet =

@@ -101,11 +101,11 @@ internal fun configureStdlibDefaultDependency(project: Project) = with(project) 
 
     val scopesToHandleConfigurations = listOf(KotlinDependencyScope.API_SCOPE, KotlinDependencyScope.IMPLEMENTATION_SCOPE)
 
-    val ext = topLevelExtension
+    val extension = topLevelExtension
     when {
         project.hasKpmModel -> addStdlibToKpmProject(project)
-        ext is KotlinProjectExtension -> {
-            ext.sourceSets.all { kotlinSourceSet ->
+        extension is KotlinProjectExtension -> {
+            extension.sourceSets.all { kotlinSourceSet ->
                 scopesToHandleConfigurations.forEach { scope ->
                     val scopeConfiguration = project.sourceSetDependencyConfigurationByScope(kotlinSourceSet, scope)
 
