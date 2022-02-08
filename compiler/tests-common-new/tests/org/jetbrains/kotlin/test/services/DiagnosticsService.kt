@@ -19,21 +19,33 @@ class DiagnosticsService(val testServices: TestServices) : TestService {
         )
     }
 
-    private val conditionsPerModule: MutableMap<TestModule, Pair<Condition<String>, Condition<Severity>>> = mutableMapOf()
+    private val conditionsPerModule: MutableMap<TestModule, DiagnosticConditions> = mutableMapOf()
+
+    private data class DiagnosticConditions(
+        val allowedDiagnostics: Set<String>,
+        val disabledDiagnostics: Set<String>,
+        val severityMap: Map<Severity, Boolean>
+    )
 
     fun shouldRenderDiagnostic(module: TestModule, name: String, severity: Severity): Boolean {
-        val (nameCondition, severityCondition) = conditionsPerModule.getOrPut(module) {
+        val conditions = conditionsPerModule.getOrPut(module) {
             computeDiagnosticConditionForModule(module)
         }
-        return severityCondition(severity) && nameCondition(name)
+
+        val severityAllowed = conditions.severityMap.getOrDefault(severity, true)
+
+        return if (severityAllowed) {
+            name !in conditions.disabledDiagnostics || name in conditions.allowedDiagnostics
+        } else {
+            name in conditions.allowedDiagnostics
+        }
     }
 
-    private fun computeDiagnosticConditionForModule(module: TestModule): Pair<Condition<String>, Condition<Severity>> {
+    private fun computeDiagnosticConditionForModule(module: TestModule): DiagnosticConditions {
         val diagnosticsInDirective = module.directives[DiagnosticsDirectives.DIAGNOSTICS]
         val enabledNames = mutableSetOf<String>()
         val disabledNames = mutableSetOf<String>()
-        val enabledSeverities = mutableSetOf<Severity>()
-        val disabledSeverities = mutableSetOf<Severity>()
+        val severityMap = mutableMapOf<Severity, Boolean>()
         for (diagnosticInDirective in diagnosticsInDirective) {
             val enabled = when {
                 diagnosticInDirective.startsWith("+") -> true
@@ -43,23 +55,17 @@ class DiagnosticsService(val testServices: TestServices) : TestService {
             val name = diagnosticInDirective.substring(1)
             val severity = severityNameMapping[name]
             if (severity != null) {
-                val collection = if (enabled) enabledSeverities else disabledSeverities
-                collection += severity
+                severityMap[severity] = enabled
             } else {
                 val collection = if (enabled) enabledNames else disabledNames
                 collection += name
             }
         }
-        return computeCondition(enabledNames, disabledNames) to computeCondition(enabledSeverities, disabledSeverities)
-    }
-
-    private fun <T : Any> computeCondition(enabled: Set<T>, disabled: Set<T>): Condition<T> {
-        if (disabled.isEmpty()) return Conditions.alwaysTrue()
-        var condition = !Conditions.oneOf(disabled)
-        if (enabled.isNotEmpty()) {
-            condition = condition or Conditions.oneOf(enabled)
-        }
-        return condition.cached()
+        return DiagnosticConditions(
+            enabledNames,
+            disabledNames,
+            severityMap
+        )
     }
 }
 
