@@ -9,9 +9,11 @@ import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import java.text.SimpleDateFormat
+import java.util.*
 
-data class CompileStatData(
-    val version: Int = 1,
+//Sensitive data. This object is used directly for statistic via http
+data class CompileStatisticsData(
+    val version: Int = 2,
     val projectName: String?,
     val label: String?,
     val taskName: String?,
@@ -20,21 +22,28 @@ data class CompileStatData(
     val tags: List<String>,
     val changes: List<String>,
     val buildUuid: String = "Unset",
-    val kotlinVersion: String = "0.0.0",
+    val kotlinVersion: String,
     val hostName: String? = "Unset",
-    val timeInMillis: Long,
-    val timestamp: String = formatter.format(timeInMillis),
-    val nonIncrementalAttributes: Map<BuildAttribute, Int>,
-    val buildTimesMs: Map<BuildTime, Long>,
-    val perfData: Map<BuildPerformanceMetric, Long>
+    val finishTime: Long,
+    val timestamp: String = formatter.format(finishTime),
+    val compilerArguments: List<String>,
+    val nonIncrementalAttributes: Set<BuildAttribute>,
+    //TODO think about it,time in milliseconds
+    val buildTimesMetrics: Map<BuildTime, Long>,
+    val performanceMetrics: Map<BuildPerformanceMetric, Long>
 ) {
     companion object {
-        private val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        private val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").also { it.timeZone = TimeZone.getTimeZone("UTC")}
     }
 }
 
-
-interface ReportStatistics {
-    fun report(data: CompileStatData)
+enum class StatTag {
+    ABI_SNAPSHOT,
+    ARTIFACT_TRANSFORM,
+    INCREMENTAL,
+    NON_INCREMENTAL,
+    GRADLE_DEBUG,
+    KOTLIN_DEBUG
 }
+
 

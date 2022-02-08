@@ -14,7 +14,7 @@ import org.gradle.api.services.BuildServiceParameters
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFinishEvent
-import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatData
+import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatisticsData
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatListener.Companion.prepareData
 import java.net.HttpURLConnection
 import java.net.URL
@@ -72,7 +72,7 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
 
     }
 
-    fun report(data: CompileStatData) {
+    fun report(data: CompileStatisticsData) {
         val elapsedTime = measureTimeMillis {
             val connection = URL(parameters.httpSettings.url).openConnection() as HttpURLConnection
 
@@ -97,7 +97,7 @@ abstract class HttpReportService : BuildService<HttpReportService.Parameters>,
                 connection.disconnect()
             }
         }
-        log.debug("Report statistic to elastic search takes $elapsedTime ms")
+        log.debug("Report statistic by http takes $elapsedTime ms")
     }
 
     private fun checkResponseAndLog(connection: HttpURLConnection) {
