@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.sources.kpm
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTargetPreset
@@ -33,11 +32,11 @@ interface SourceSetMappedFragmentLocator {
     }
 }
 
-private class MultiplatformSourceSetMappedFragmentLocator : SourceSetMappedFragmentLocator {
-    override fun locateFragmentForSourceSet(project: Project, sourceSetName: String): SourceSetMappedFragmentLocator.FragmentLocation? {
+internal class MultiplatformSourceSetMappedFragmentLocator : SourceSetMappedFragmentLocator {
+    override fun locateFragmentForSourceSet(project: Project, sourceSetName: String): SourceSetMappedFragmentLocator.FragmentLocation {
         val camelCaseParts = sourceSetName.camelCaseParts()
         if (camelCaseParts.size < 2) {
-            SourceSetMappedFragmentLocator.FragmentLocation(KotlinGradleModule.MAIN_MODULE_NAME, sourceSetName)
+            return SourceSetMappedFragmentLocator.FragmentLocation(KotlinGradleModule.MAIN_MODULE_NAME, sourceSetName)
         }
 
         val androidTarget = when (val ext = project.topLevelExtension) {
@@ -55,7 +54,7 @@ private class MultiplatformSourceSetMappedFragmentLocator : SourceSetMappedFragm
                 if (androidTarget != null && sourceSetName.startsWith(androidTarget.name))
                     androidSourceSetModuleName(androidTarget.name, sourceSetName)
                 else null
-            } ?: candidateModuleNames.firstOrNull { project.kpmModules.findByName(it) != null }
+            } ?: candidateModuleNames.lastOrNull { project.kpmModules.findByName(it) != null }
             ?: KotlinGradleModule.MAIN_MODULE_NAME
 
         val fragmentName =

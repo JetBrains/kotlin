@@ -224,7 +224,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("kotlin.wasm.stability.nowarn") ?: false
 
     val experimentalKpmModelMapping: Boolean
-        get() = booleanProperty("kotlin.kpm.experimentalModelMapping") ?: false
+        get() = booleanProperty(PropertyNames.KOTLIN_KPM_EXPERIMENTAL_MODEL_MAPPING) ?: false
 
     val ignoreDisabledNativeTargets: Boolean?
         get() = booleanProperty(DisabledNativeTargetsReporter.DISABLE_WARNING_PROPERTY_NAME)
@@ -488,6 +488,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT = "kotlin.mpp.hierarchicalStructureSupport"
         const val KOTLIN_NATIVE_DEPENDENCY_PROPAGATION = "kotlin.native.enableDependencyPropagation"
         const val KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION = "kotlin.mpp.enableOptimisticNumberCommonization"
+        const val KOTLIN_KPM_EXPERIMENTAL_MODEL_MAPPING = "kotlin.kpm.experimentalModelMapping"
     }
 
     companion object {
