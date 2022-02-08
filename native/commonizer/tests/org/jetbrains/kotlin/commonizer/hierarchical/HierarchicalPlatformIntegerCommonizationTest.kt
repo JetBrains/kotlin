@@ -436,8 +436,171 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
             import kotlin.ranges.*
             import kotlinx.cinterop.*
             
-            expect class C() {
-            }
+            expect class C()
+        """.trimIndent()
+        )
+    }
+
+    fun `test platform integers in multi-target commonization`() {
+        val intTarget1 = "linux_arm32_hfp"
+        val intTarget2 = "linux_mips32"
+        val intTarget3 = "linux_mipsel32"
+        val longTarget1 = "linux_x64"
+        val longTarget2 = "linux_arm64"
+        val longTarget3 = "macos_x64"
+
+        val outputCommonizerTargets = arrayOf(
+            "($intTarget1, $intTarget2)", "($longTarget1, $longTarget2)", "($intTarget3, $longTarget3)",
+            "($intTarget1, $intTarget2, $intTarget3)", "($longTarget1, $longTarget2, $longTarget3)",
+            "($intTarget1, $intTarget2, $intTarget3, $longTarget1)",
+            "($intTarget1, $intTarget2, $longTarget1, $longTarget2)",
+            "($longTarget1, $longTarget2, $longTarget3, $intTarget1)",
+            "($intTarget1, $intTarget2, $intTarget3, $longTarget1, $longTarget2, $longTarget3)",
+        )
+
+        val result = commonize {
+            setting(PlatformIntegerCommonizationEnabledKey, true)
+            outputTarget(*outputCommonizerTargets)
+            registerFakeStdlibIntegersDependency(*outputCommonizerTargets)
+
+            intTarget1 withSource """
+                import kotlinx.cinterop.*
+                
+                typealias X = Int
+                typealias XV = IntVarOf<X>
+            """.trimIndent()
+
+            intTarget2 withSource """
+                import kotlinx.cinterop.*
+                
+                typealias X = Int
+                typealias XV = IntVarOf<X>
+            """.trimIndent()
+
+            intTarget3 withSource """
+                import kotlinx.cinterop.*
+                
+                typealias X = Int
+                typealias XV = IntVarOf<X>
+            """.trimIndent()
+
+            longTarget1 withSource """
+                import kotlinx.cinterop.*
+                
+                typealias X = Long
+                typealias XV = LongVarOf<X>
+            """.trimIndent()
+
+            longTarget2 withSource """
+                import kotlinx.cinterop.*
+                
+                typealias X = Long
+                typealias XV = LongVarOf<X>
+            """.trimIndent()
+
+            longTarget3 withSource """
+                import kotlinx.cinterop.*
+                
+                typealias X = Long
+                typealias XV = LongVarOf<X>
+            """.trimIndent()
+        }
+
+        result.assertCommonized(
+            "($intTarget1, $intTarget2)", """
+            import kotlinx.cinterop.*
+            
+            typealias X = Int
+            typealias XV = IntVarOf<X>
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "($intTarget1, $intTarget2, $intTarget3)", """
+            import kotlinx.cinterop.*
+            
+            typealias X = Int
+            typealias XV = IntVarOf<X>
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "($longTarget1, $longTarget2)", """
+            import kotlinx.cinterop.*
+            
+            typealias X = Long
+            typealias XV = LongVarOf<X>
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "($longTarget1, $longTarget2, $longTarget3)", """
+            import kotlinx.cinterop.*
+            
+            typealias X = Long
+            typealias XV = LongVarOf<X>
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "($intTarget3, $longTarget3)", """
+            import kotlinx.cinterop.*
+            
+            @UnsafeNumber(["linux_mipsel32: kotlin.Int", "macos_x64: kotlin.Long"])
+            typealias X = PlatformInt
+            @UnsafeNumber(["linux_mipsel32: kotlinx.cinterop.IntVarOf", "macos_x64: kotlinx.cinterop.LongVarOf"])
+            typealias XV = PlatformIntVarOf<X>
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "($intTarget1, $intTarget2, $longTarget1, $longTarget2)", """
+            import kotlinx.cinterop.*
+            
+            @UnsafeNumber(["linux_arm32_hfp: kotlin.Int", "linux_mips32: kotlin.Int", "linux_x64: kotlin.Long", "linux_arm64: kotlin.Long"])
+            typealias X = PlatformInt
+            @UnsafeNumber([
+                "linux_arm32_hfp: kotlinx.cinterop.IntVarOf", "linux_mips32: kotlinx.cinterop.IntVarOf", 
+                "linux_x64: kotlinx.cinterop.LongVarOf", "linux_arm64: kotlinx.cinterop.LongVarOf"
+            ])
+            typealias XV = PlatformIntVarOf<X>
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "($intTarget1, $intTarget2, $intTarget3, $longTarget1)", """
+            import kotlinx.cinterop.*
+            
+            @UnsafeNumber(["linux_arm32_hfp: kotlin.Int", "linux_mips32: kotlin.Int", "linux_mipsel32: kotlin.Int", "linux_x64: kotlin.Long"])
+            typealias X = PlatformInt
+            @UnsafeNumber([
+                "linux_arm32_hfp: kotlinx.cinterop.IntVarOf", "linux_mips32: kotlinx.cinterop.IntVarOf", 
+                "linux_mipsel32: kotlinx.cinterop.IntVarOf", "linux_x64: kotlinx.cinterop.LongVarOf"
+            ])
+            typealias XV = PlatformIntVarOf<X>
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "($longTarget1, $longTarget2, $longTarget3, $intTarget1)", """
+            import kotlinx.cinterop.*
+            
+            @UnsafeNumber(["linux_x64: kotlin.Long", "linux_arm64: kotlin.Long", "macos_x64: kotlin.Long", "linux_arm32_hfp: kotlin.Int"])
+            typealias X = PlatformInt
+            @UnsafeNumber([
+                "linux_x64: kotlinx.cinterop.LongVarOf", "linux_arm64: kotlinx.cinterop.LongVarOf", 
+                "macos_x64: kotlinx.cinterop.LongVarOf", "linux_arm32_hfp: kotlinx.cinterop.IntVarOf"
+            ])
+            typealias XV = PlatformIntVarOf<X>
+        """.trimIndent()
+        )
+
+        result.assertCommonized(
+            "($intTarget1, $intTarget2, $intTarget3, $longTarget1, $longTarget2, $longTarget3)", """
+            import kotlinx.cinterop.*
+            
+            typealias X = PlatformInt
+            typealias XV = PlatformIntVarOf<X>
         """.trimIndent()
         )
     }
