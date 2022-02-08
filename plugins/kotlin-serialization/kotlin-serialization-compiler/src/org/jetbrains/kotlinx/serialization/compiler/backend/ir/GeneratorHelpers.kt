@@ -595,6 +595,7 @@ interface IrBuilderExtension {
 
         val receiver = generateReceiverExpressionForFieldAccess(irAccessor.dispatchReceiverParameter!!.symbol, property)
 
+        val propertyIrType = property.type.toIrType()
         irBody.statements.add(
             IrReturnImpl(
                 startOffset, endOffset, compilerContext.irBuiltIns.nothingType,
@@ -602,10 +603,10 @@ interface IrBuilderExtension {
                 IrGetFieldImpl(
                     startOffset, endOffset,
                     irProperty.backingField?.symbol ?: error("Property expected to have backing field"),
-                    property.type.toIrType(),
+                    propertyIrType,
                     receiver
                 ).let {
-                    if (property.type.toIrType().isKClass()) kClassExprToJClassIfNeeded(startOffset, endOffset, it) else it
+                    if (propertyIrType.isKClass()) kClassExprToJClassIfNeeded(startOffset, endOffset, it) else it
                 }
             )
         )

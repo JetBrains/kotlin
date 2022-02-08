@@ -31,6 +31,7 @@ object SerializationAnnotations {
     // Also implicitly used in kotlin-native.compiler.backend.native/CodeGenerationInfo.kt
     internal val serialInfoFqName = FqName("kotlinx.serialization.SerialInfo")
     internal val inheritableSerialInfoFqName = FqName("kotlinx.serialization.InheritableSerialInfo")
+    internal val metaSerializableAnnotationFqName = FqName("kotlinx.serialization.MetaSerializable")
     internal val encodeDefaultFqName = FqName("kotlinx.serialization.EncodeDefault")
 
     internal val contextualFqName = FqName("kotlinx.serialization.ContextualSerialization") // this one is deprecated
@@ -38,8 +39,6 @@ object SerializationAnnotations {
     internal val contextualOnPropertyFqName = FqName("kotlinx.serialization.Contextual")
     internal val polymorphicFqName = FqName("kotlinx.serialization.Polymorphic")
     internal val additionalSerializersFqName = FqName("kotlinx.serialization.UseSerializers")
-
-    internal val metaSerializableAnnotationFqName = FqName("kotlinx.serialization.MetaSerializable")
 }
 
 object SerialEntityNames {
