@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.SpecialBridgeMethods
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.hasPlatformDependent
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
@@ -31,7 +31,8 @@ private enum class AssertionScope {
     Enabled, Disabled
 }
 
-private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContext) : FileLoweringPass,
+private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContext) :
+    BodyLoweringPass,
     IrElementTransformer<AssertionScope> {
 
     private val isWithUnifiedNullChecks = context.state.unifiedNullChecks
@@ -40,7 +41,9 @@ private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContex
 
     private val specialBridgeMethods = SpecialBridgeMethods(context)
 
-    override fun lower(irFile: IrFile) = irFile.transformChildren(this, AssertionScope.Enabled)
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        irBody.transformChildren(this, AssertionScope.Enabled)
+    }
 
     override fun visitElement(element: IrElement, data: AssertionScope): IrElement =
         super.visitElement(element, AssertionScope.Enabled)

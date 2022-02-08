@@ -4,12 +4,14 @@
  */
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredStatementOrigin
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -30,7 +32,7 @@ val jvmSafeCallFoldingPhase = makeIrFilePhase(
 )
 
 
-class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) : FileLoweringPass {
+class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) : BodyLoweringPass {
     // Overall idea here is to represent (possibly chained) safe calls as an if-expression in the form:
     //      when {
     //          { val tmp = <safe_receiver>; tmp != null } -> <safe_call_result>
@@ -88,8 +90,8 @@ class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) : FileLowe
     // In bytecode this produces a chain of temporary STORE-LOAD and IFNULL checks that can be optimized to a compact sequence
     // of stack operations and IFNULL checks.
 
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(Transformer())
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        irBody.transformChildrenVoid(Transformer())
     }
 
     private val booleanNot = context.irBuiltIns.booleanNotSymbol

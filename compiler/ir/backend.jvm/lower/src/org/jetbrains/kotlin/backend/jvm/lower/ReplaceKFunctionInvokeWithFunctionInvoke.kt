@@ -5,15 +5,12 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
-import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.util.defaultType
@@ -35,9 +32,9 @@ internal val replaceKFunctionInvokeWithFunctionInvokePhase = makeIrFilePhase<Jvm
  * with `SuspendFunction{n}.invoke`. This is needed because normally the type e.g. `kotlin.reflect.KFunction2` is mapped to
  * `kotlin.reflect.KFunction` (a real class, without arity), which doesn't have the corresponding `invoke`.
  */
-private class ReplaceKFunctionInvokeWithFunctionInvoke : FileLoweringPass, IrElementTransformerVoid() {
-    override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(this)
+private class ReplaceKFunctionInvokeWithFunctionInvoke : BodyLoweringPass, IrElementTransformerVoid() {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        irBody.transformChildrenVoid(this)
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
