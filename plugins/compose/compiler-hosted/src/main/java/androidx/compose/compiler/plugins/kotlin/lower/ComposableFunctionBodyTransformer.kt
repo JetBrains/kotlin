@@ -28,6 +28,7 @@ import androidx.compose.compiler.plugins.kotlin.hasExplicitGroupsAnnotation
 import androidx.compose.compiler.plugins.kotlin.hasReadonlyComposableAnnotation
 import androidx.compose.compiler.plugins.kotlin.hasNonRestartableComposableAnnotation
 import androidx.compose.compiler.plugins.kotlin.irTrace
+import androidx.compose.compiler.plugins.kotlin.lower.decoys.DecoyFqNames
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
@@ -2689,6 +2690,7 @@ class ComposableFunctionBodyTransformer(
                 }
             }
             ComposeFqNames.key -> visitKeyCall(expression)
+            DecoyFqNames.key -> visitKeyCall(expression)
             else -> visitNormalComposableCall(expression)
         }
     }
