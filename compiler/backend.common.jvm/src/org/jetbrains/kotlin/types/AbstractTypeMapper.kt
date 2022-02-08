@@ -54,6 +54,10 @@ object AbstractTypeMapper {
         mode: TypeMappingMode = TypeMappingMode.DEFAULT,
         sw: Writer? = null
     ): Type {
+        if (type is DefinitelyNotNullTypeMarker) {
+            return mapType(context, type.original(), mode, sw)
+        }
+
         if (type is SimpleTypeMarker && type.isSuspendFunction()) {
             val argumentsCount = type.argumentsCount()
             val argumentsList = type.asArgumentList()

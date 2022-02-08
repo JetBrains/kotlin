@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
  * `T : Comparable<T>` is replaced by `Comparable<*>`.
  */
 fun IrType.eraseTypeParameters(): IrType = when (this) {
-    is IrErrorType -> this
     is IrSimpleType ->
         when (val owner = classifier.owner) {
             is IrScript -> {
@@ -56,6 +55,10 @@ fun IrType.eraseTypeParameters(): IrType = when (this) {
             }
             else -> error("Unknown IrSimpleType classifier kind: $owner")
         }
+    is IrDefinitelyNotNullType ->
+        this.original.eraseTypeParameters()
+    is IrErrorType ->
+        this
     else -> error("Unknown IrType kind: $this")
 }
 
@@ -83,12 +86,16 @@ val IrTypeParameter.erasedUpperBound: IrClass
     }
 
 val IrType.erasedUpperBound: IrClass
-    get() = when (val classifier = classifierOrNull) {
-        is IrClassSymbol -> classifier.owner
-        is IrTypeParameterSymbol -> classifier.owner.erasedUpperBound
-        is IrScriptSymbol -> classifier.owner.targetClass!!.owner
-        else -> error(render())
-    }
+    get() =
+        if (this is IrDefinitelyNotNullType)
+            this.original.erasedUpperBound
+        else
+            when (val classifier = classifierOrNull) {
+                is IrClassSymbol -> classifier.owner
+                is IrTypeParameterSymbol -> classifier.owner.erasedUpperBound
+                is IrScriptSymbol -> classifier.owner.targetClass!!.owner
+                else -> error(render())
+            }
 
 /**
  * Get the default null/0 value for the type.
