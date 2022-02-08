@@ -78,6 +78,9 @@ class StringSignature private constructor(val value: String, b: StringSignature.
         private fun parseIdentificator(): String {
             return buildString {
                 do {
+                    if (consumeIf2('$', '$')) {
+                        append("\$\$")
+                    }
                     append(value[idx++])
                 } while (idx < value.length && value[idx].isValidId())
             }
@@ -119,8 +122,12 @@ class StringSignature private constructor(val value: String, b: StringSignature.
 
                     do {
                         if (consumeIf(MangleConstant.TYPE_ARGUMENTS.separator)) append(MangleConstant.TYPE_ARGUMENTS.separator)
-                        if (value[idx] == '+' || value[idx] == '-') append(value[idx++])
-                        append(parseType())
+                        if (consumeIf(MangleConstant.STAR_MARK)) {
+                            append(MangleConstant.STAR_MARK)
+                        } else {
+                            if (value[idx] == '+' || value[idx] == '-') append(value[idx++])
+                            append(parseType())
+                        }
                     } while (idx < value.length && value[idx] == MangleConstant.TYPE_ARGUMENTS.separator)
 
                     consume(MangleConstant.TYPE_ARGUMENTS.suffix)
@@ -136,6 +143,13 @@ class StringSignature private constructor(val value: String, b: StringSignature.
         }
 
         private fun parseClassId(): Pair<String, String> {
+
+            if (consumeIf('$')) {
+                return "" to buildString {
+                    append('$')
+                    append(parseNumber())
+                }
+            }
 
             val pkg = buildString {
                 while (idx < value.length && value[idx] != '/') {
@@ -230,11 +244,13 @@ class StringSignature private constructor(val value: String, b: StringSignature.
         }
 
         private fun checkNotEnd() {
-            if (idx == value.length) error("Signature $value is corrupted")
+            if (idx == value.length)
+                error("Signature $value is corrupted")
         }
 
         private fun checkIsOver() {
-            if (idx != value.length) error("Expected to signature \"$value\" is over at #$idx")
+            if (idx != value.length)
+                error("Expected to signature \"$value\" is over at #$idx")
         }
 
         private fun parseLocalMemberSignature(): ParsedSignature.LocalMemberSignature {

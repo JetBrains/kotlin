@@ -40,6 +40,7 @@ class StringSignatureBuilderOverIr(
         if (declaration.isLocal) {
             if (localClassResolver != null) {
                 if (declaration is IrSimpleFunction) {
+                    if (declaration.visibility == DescriptorVisibilities.LOCAL) return true
                     if (declaration.visibility != DescriptorVisibilities.PRIVATE) return false
                 }
             }
@@ -64,6 +65,7 @@ class StringSignatureBuilderOverIr(
                 is IrConstructor -> buildForConstructor(declaration)
                 is IrValueDeclaration -> return null
                 is IrAnonymousInitializer -> return null
+                is IrLocalDelegatedProperty -> return null
                 else -> error("Unexpected type of declaration (${declaration.render()})")
             }
         }
@@ -215,6 +217,7 @@ class StringSignatureBuilderOverIr(
         var isSetter = false
         when (container) {
             is IrClass -> buildForClass(container)
+            is IrTypeAlias -> buildForTypeAlias(container)
             is IrConstructor -> buildForConstructor(container)
             is IrSimpleFunction -> {
                 container.correspondingPropertySymbol?.let {
