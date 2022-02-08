@@ -1827,6 +1827,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/AnnotationLoader.kt");
         }
 
+        @TestMetadata("ArrayListOverrides.kt")
+        public void testArrayListOverrides() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/ArrayListOverrides.kt");
+        }
+
         @TestMetadata("ArrayMap.kt")
         public void testArrayMap() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/ArrayMap.kt");
