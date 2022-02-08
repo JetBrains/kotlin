@@ -268,7 +268,7 @@ class FirCallResolver(
             //     A // should resolved to D.A
             //     A.B // should be resolved to A.B
             // }
-            if (!result.applicability.isSuccess || (isUsedAsReceiver && result.candidates.all { it.symbol is FirRegularClassSymbol })) {
+            if (!result.applicability.isSuccess || (isUsedAsReceiver && result.candidates.all { it.symbol is FirClassifierSymbol })) {
                 components.resolveRootPartOfQualifier(
                     callee, qualifiedAccess.source, qualifiedAccess.typeArguments, nonFatalDiagnosticFromExpression,
                 )?.let { return it }
