@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.assertCast
 import org.jetbrains.kotlin.ir.builders.declarations.IrFunctionBuilder
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -197,7 +196,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                             context.irBuiltIns.unitType, IrStatementOrigin.DESTRUCTURING_DECLARATION
                         )
                         val ktInitializer = d.initializer!!
-                        val initializerExpr = ktInitializer.deparenthesize().accept(statementGenerator, null).assertCast<IrExpression>()
+                        val initializerExpr = ktInitializer.deparenthesize().accept(statementGenerator, null) as IrExpression
                         val containerValue =
                             statementGenerator.scope.createTemporaryVariableInBlock(context, initializerExpr, irBlock, "container")
 
