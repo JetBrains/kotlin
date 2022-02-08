@@ -644,7 +644,7 @@ class ComposerLambdaMemoization(
                 f.correspondingPropertySymbol = p.symbol
                 f.parent = clazz
                 f.initializer = DeclarationIrBuilder(context, clazz.symbol)
-                    .irExprBody(lambdaExpression)
+                    .irExprBody(lambdaExpression.markIsTransformedLambda())
             }
             p.addGetter {
                 returnType = lambdaType
@@ -766,11 +766,11 @@ class ComposerLambdaMemoization(
             }
 
             // block parameter
-            putValueArgument(index, expression)
+            putValueArgument(index, expression.markIsTransformedLambda())
         }
 
         return if (!isJs) {
-            composableLambdaExpression
+            composableLambdaExpression.markHasTransformedLambda()
         } else {
             /*
              * JS doesn't have ability to extend FunctionN types, therefore the lambda call must be
@@ -966,6 +966,25 @@ class ComposerLambdaMemoization(
         // around this call
         context.irTrace.record(
             ComposeWritableSlices.IS_COMPOSABLE_SINGLETON_CLASS,
+            this,
+            true
+        )
+        return this
+    }
+
+    private fun <T : IrAttributeContainer> T.markHasTransformedLambda(): T {
+        // Mark so that the target annotation transformer can find the original lambda
+        context.irTrace.record(
+            ComposeWritableSlices.HAS_TRANSFORMED_LAMBDA,
+            this,
+            true
+        )
+        return this
+    }
+
+    private fun <T : IrAttributeContainer> T.markIsTransformedLambda(): T {
+        context.irTrace.record(
+            ComposeWritableSlices.IS_TRANSFORMED_LAMBDA,
             this,
             true
         )
