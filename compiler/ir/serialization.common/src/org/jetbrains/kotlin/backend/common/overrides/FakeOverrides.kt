@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.backend.common.overrides
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
 import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
@@ -50,9 +51,13 @@ open class FakeOverrideDeclarationTable(
 
 open class FakeOverrideDeclarationTable2 : DeclarationTable2(mutableMapOf(), StringSignatureClashTracker.DEFAULT_TRACKER) {
     private data class LocalKey(val file: IrFile, val sig: StringSignature)
-    private val localClassesMap = mutableMapOf<LocalKey, IrClass>()
+    private val localClassesMap = mutableMapOf<IrClass, LocalKey>()
     override fun assumeDeclarationSignature(clazz: IrClass, stringSignature: StringSignature, file: IrFile) {
-        localClassesMap[LocalKey(file, stringSignature)] = clazz
+        localClassesMap[clazz] = LocalKey(file, stringSignature)
+    }
+
+    override fun localClassComputer(): (IrDeclaration) -> Int = {
+        localClassesMap[it]?.sig?.localIndex() ?: error("Not found for declaration ${it.render()}")
     }
 }
 
@@ -134,6 +139,10 @@ class FakeOverrideBuilder(
         }
         declaration.setter?.let {
             it.correspondingPropertySymbol = tempSymbol
+        }
+
+        if (declaration.parentAsClass.visibility == DescriptorVisibilities.LOCAL) {
+            println(":;;")
         }
 
         val signature = composeSignature(declaration, compatibilityMode)

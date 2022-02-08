@@ -39,7 +39,7 @@ class StringSignatureBuilderOverIr(
         }
         if (declaration.isLocal) {
             if (localClassResolver != null) {
-                if (declaration is IrSimpleFunction) {
+                if (declaration is IrDeclarationWithVisibility) {
                     if (declaration.visibility == DescriptorVisibilities.LOCAL) return true
                     if (declaration.visibility != DescriptorVisibilities.PRIVATE) return false
                 }
@@ -713,18 +713,19 @@ class StringSignatureBuilderOverDescriptors : StringSignatureComposer {
      *   ‘{’ TypeParameter ( ‘;’ TypeParameter )* ‘}’
      */
     private fun StringBuilder.buildTypeParameters(typeParametersContainer: CallableDescriptor) {
-        if (typeParametersContainer.typeParameters.isEmpty()) return
+        val selfTypeParameters = typeParametersContainer.typeParameters.filter { it.containingDeclaration === typeParametersContainer }
+        if (selfTypeParameters.isEmpty()) return
 
-        typeParametersContainer.typeParameters.collectForMangler(this, MangleConstant.TYPE_PARAMETERS) { parameter ->
+        selfTypeParameters.collectForMangler(this, MangleConstant.TYPE_PARAMETERS) { parameter ->
 
-            /**
-             * TypeParameter:
-             *   Variance? ‘<’ UpperBounds ‘>’
-             */
+                /**
+                 * TypeParameter:
+                 *   Variance? ‘<’ UpperBounds ‘>’
+                 */
 
-            buildVariance(parameter.variance)
-            buildUpperBounds(parameter.upperBounds, typeParametersContainer)
-        }
+                buildVariance(parameter.variance)
+                buildUpperBounds(parameter.upperBounds, typeParametersContainer)
+            }
     }
 
     /**

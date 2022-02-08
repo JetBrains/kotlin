@@ -63,6 +63,11 @@ class StringSignature private constructor(val value: String, b: StringSignature.
 
     private fun topLevelPrefix() = StringSignatureParser(value).parseTopLevelPrefix()
 
+    fun localIndex(): Int {
+        assert(isLocal)
+        return Integer.parseInt(value.substring(1))
+    }
+
 
     class StringSignatureParser(private val value: String) {
         private var idx = 0

@@ -117,9 +117,10 @@ open class DeclarationTable2(val table: MutableMap<IrDeclaration, StringSignatur
     private val localDeclarationTable = mutableMapOf<IrDeclaration, Int>()
     private var localCounter = 0
 
-    private val computator = StringSignatureBuilderOverIr {
-        localDeclarationTable.getOrPut(it) { localCounter++ }
-    }
+    protected open fun localClassComputer(): (IrDeclaration) -> Int = { localDeclarationTable.getOrPut(it) { localCounter++ } }
+
+    private val computator = StringSignatureBuilderOverIr(localClassComputer())
+
 
     fun inFile(file: IrFile?, block: () -> Unit) {
         localDeclarationTable.clear()
