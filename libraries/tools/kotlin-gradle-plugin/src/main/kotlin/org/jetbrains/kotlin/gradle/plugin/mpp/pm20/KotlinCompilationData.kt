@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.GradleModuleVariantResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.allDependencyModules
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.disambiguateName
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName

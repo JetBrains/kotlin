@@ -15,6 +15,7 @@ import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.commonizer.util.transitiveClosure
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -69,14 +70,7 @@ interface CompilationDetailsWithRuntime<T : KotlinCommonOptions> : CompilationDe
 }
 
 internal val CompilationDetails<*>.associateWithTransitiveClosure: Iterable<CompilationDetails<*>>
-    get() = mutableSetOf<CompilationDetails<*>>().apply {
-        fun visit(other: CompilationDetails<*>) {
-            if (add(other)) {
-                other.associateCompilations.forEach(::visit)
-            }
-        }
-        associateCompilations.forEach(::visit)
-    }
+    get() = transitiveClosure(this) { associateCompilations }
 
 open class DefaultCompilationDetails<T : KotlinCommonOptions>(
     final override val target: KotlinTarget,

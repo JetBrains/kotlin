@@ -112,14 +112,3 @@ class GradleDependencyGraph(
     override val root: GradleDependencyGraphNode
 ) : DependencyGraphResolution.DependencyGraph(requestingModule, root)
 
-val GradleDependencyGraph.allGraphNodes: Iterable<GradleDependencyGraphNode>
-    get() = mutableSetOf<GradleDependencyGraphNode>().apply {
-        fun visit(node: GradleDependencyGraphNode) {
-            if (add(node))
-                node.dependenciesByFragment.values.flatten().forEach(::visit)
-        }
-        visit(root)
-    }
-
-val GradleDependencyGraph.allDependencyModules: Iterable<KotlinModule>
-    get() = allGraphNodes.map { it.module }.filter { it != root.module }
