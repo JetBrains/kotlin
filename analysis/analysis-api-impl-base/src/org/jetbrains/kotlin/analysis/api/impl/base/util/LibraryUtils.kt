@@ -12,8 +12,16 @@ import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import java.nio.file.Path
 
 object LibraryUtils {
-    fun getAllVirtualFilesFromJar(jar: Path): Collection<VirtualFile> {
-        val jarFileSystem = CoreJarFileSystem()
+    /**
+     * Get all [VirtualFile]s inside the given [jar] (of [Path])
+     *
+     * Note that, if [CoreJarFileSystem] is not given, a fresh instance will be used, which will create fresh instances of [VirtualFile],
+     *   resulting in potential hash mismatch (e.g., if used in scope membership check).
+     */
+    fun getAllVirtualFilesFromJar(
+        jar: Path,
+        jarFileSystem: CoreJarFileSystem = CoreJarFileSystem(),
+    ): Collection<VirtualFile> {
         val root = jarFileSystem.refreshAndFindFileByPath(jar.toAbsolutePath().toString() + JAR_SEPARATOR)!!
 
         val files = mutableSetOf<VirtualFile>()

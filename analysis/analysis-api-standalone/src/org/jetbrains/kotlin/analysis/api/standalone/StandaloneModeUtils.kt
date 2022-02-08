@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.InvalidWayOfUsingAnalysisSession
@@ -81,12 +82,16 @@ public fun configureApplicationEnvironment(app: MockApplication) {
  *    * given [ktFiles] as Kotlin sources
  *    * other Java sources in [compilerConfig] (set via [addJavaSourceRoots])
  *    * JVM class paths in [compilerConfig] (set via [addJvmClasspathRoots]) as library.
+ *
+ *  To make sure the same instance of [CoreJarFileSystem] is used (and thus file lookup in jars is cached),
+ *    pass [jarFileSystem] from [KotlinCoreEnvironment] if available.
  */
 public fun configureProjectEnvironment(
     project: MockProject,
     compilerConfig: CompilerConfiguration,
     ktFiles: List<KtFile>,
     packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
+    jarFileSystem: CoreJarFileSystem = CoreJarFileSystem(),
 ) {
     reRegisterJavaElementFinder(project)
 
@@ -115,7 +120,12 @@ public fun configureProjectEnvironment(
 
     project.picoContainer.registerComponentInstance(
         ProjectStructureProvider::class.qualifiedName,
-        ProjectStructureProviderByCompilerConfiguration(compilerConfig, project, ktFiles)
+        ProjectStructureProviderByCompilerConfiguration(
+            compilerConfig,
+            project,
+            ktFiles,
+            jarFileSystem
+        )
     )
     project.picoContainer.registerComponentInstance(
         KotlinDeclarationProviderFactory::class.qualifiedName,
