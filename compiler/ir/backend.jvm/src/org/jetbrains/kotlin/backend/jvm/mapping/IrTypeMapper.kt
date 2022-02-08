@@ -239,7 +239,7 @@ private class IrTypeCheckerContextForTypeMapping(
     }
 
     override fun SimpleTypeMarker.isSuspendFunction(): Boolean {
-        require(this is IrSimpleType)
+        if (this !is IrSimpleType) return false
         return isSuspendFunctionImpl()
     }
 
