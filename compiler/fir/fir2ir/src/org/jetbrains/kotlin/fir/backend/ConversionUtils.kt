@@ -406,25 +406,33 @@ fun FirTypeScope.processOverriddenFunctionsFromSuperClasses(
     functionSymbol: FirNamedFunctionSymbol,
     containingClass: FirClass,
     processor: (FirNamedFunctionSymbol) -> ProcessorAction
-): ProcessorAction = processDirectOverriddenFunctionsWithBaseScope(functionSymbol) { overridden, baseScope ->
-    if (overridden.containingClass() == containingClass.symbol.toLookupTag()) {
-        baseScope.processOverriddenFunctionsFromSuperClasses(overridden, containingClass, processor)
-    } else {
-        processor(overridden)
+): ProcessorAction =
+    processDirectOverriddenFunctionsWithBaseScope(functionSymbol) { overridden, _ ->
+        val unwrapped = if (overridden.fir.isSubstitutionOverride &&
+            overridden.dispatchReceiverClassOrNull() == containingClass.symbol.toLookupTag()
+        )
+            overridden.originalForSubstitutionOverride!!
+        else
+            overridden
+
+        processor(unwrapped)
     }
-}
 
 fun FirTypeScope.processOverriddenPropertiesFromSuperClasses(
     propertySymbol: FirPropertySymbol,
     containingClass: FirClass,
     processor: (FirPropertySymbol) -> ProcessorAction
-): ProcessorAction = processDirectOverriddenPropertiesWithBaseScope(propertySymbol) { overridden, baseScope ->
-    if (overridden.containingClass() == containingClass.symbol.toLookupTag()) {
-        baseScope.processOverriddenPropertiesFromSuperClasses(overridden, containingClass, processor)
-    } else {
-        processor(overridden)
+): ProcessorAction =
+    processDirectOverriddenPropertiesWithBaseScope(propertySymbol) { overridden, _ ->
+        val unwrapped = if (overridden.fir.isSubstitutionOverride &&
+            overridden.dispatchReceiverClassOrNull() == containingClass.symbol.toLookupTag()
+        )
+            overridden.originalForSubstitutionOverride!!
+        else
+            overridden
+
+        processor(unwrapped)
     }
-}
 
 private fun FirClass.getSuperTypesAsIrClasses(
     declarationStorage: Fir2IrDeclarationStorage
