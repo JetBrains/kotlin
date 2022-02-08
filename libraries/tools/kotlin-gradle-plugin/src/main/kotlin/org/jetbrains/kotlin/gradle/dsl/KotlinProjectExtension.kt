@@ -13,6 +13,7 @@ import org.gradle.api.internal.plugins.DslObject
 import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
@@ -120,7 +121,7 @@ open class KotlinProjectExtension @Inject constructor(project: Project) : Kotlin
         }
 
     internal val kpmModelContainer by lazy {
-        if (PropertiesProvider(project).experimentalKpmModelMapping) {
+        if (project.kotlinPropertiesProvider.experimentalKpmModelMapping) {
             DefaultKpmGradleProjectModelContainer.create(project)
         } else error("Model mapping is not enabled.")
     }

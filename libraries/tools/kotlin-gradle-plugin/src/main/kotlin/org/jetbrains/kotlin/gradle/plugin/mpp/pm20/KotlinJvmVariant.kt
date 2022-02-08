@@ -51,7 +51,7 @@ internal fun KotlinGradleVariant.ownModuleName(): String {
     return filterModuleName("$baseName$suffix")
 }
 
-class KotlinMappedJvmCompilationFactory(
+internal class KotlinMappedJvmCompilationFactory(
     target: KotlinJvmTarget
 ) : KotlinJvmCompilationFactory(target) {
     override fun create(name: String): KotlinJvmCompilation {
