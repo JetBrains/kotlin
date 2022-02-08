@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 public interface KtCallableDeclaration extends KtNamedDeclaration, KtTypeParameterListOwner {
@@ -32,8 +33,11 @@ public interface KtCallableDeclaration extends KtNamedDeclaration, KtTypeParamet
     @Nullable
     KtTypeReference getReceiverTypeReference();
 
+    // Used in siosio.DomaSupport:1.0.6
     @NotNull
-    List<KtContextReceiver> getContextReceivers();
+    default List<KtContextReceiver> getContextReceivers() {
+        return Collections.emptyList();
+    }
 
     @Nullable
     KtTypeReference getTypeReference();
