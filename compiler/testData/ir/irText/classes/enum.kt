@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 enum class TestEnum1 {
     TEST1, TEST2

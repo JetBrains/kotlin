@@ -67,6 +67,13 @@ export default [
         }
     },
     {
+        input: './webpack-5-debug.js',
+        output: {
+            file: 'lib/webpack-5-debug.js',
+            format: 'cjs'
+        }
+    },
+    {
         input: './mocha-kotlin-reporter.js',
         external: ['path', 'util'],
         output: {

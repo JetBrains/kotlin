@@ -1,9 +1,0 @@
-LineBreakpoint created at internalProperty.kt:5
-Run Java
-Connected to the target VM
-internalProperty.kt:5
-Compile bytecode for MyClass().internalVal
-Compile bytecode for MyClass().internalValWithGetter
-Disconnected from the target VM
-
-Process finished with exit code 0

@@ -8,3 +8,7 @@ package org.foo
 fun foo() = "Foo call"
 
 internal fun bar() = "Bar call"
+
+open class Foo {
+    internal fun foo() = 42
+}

@@ -18,11 +18,14 @@ import java.util.*
 
 class FirControlFlowGraphRenderVisitor(
     builder: StringBuilder,
+    private val renderLevels: Boolean = false
 ) : FirVisitorVoid() {
     companion object {
         private const val EDGE = " -> "
         private const val RED = "red"
         private const val BLUE = "blue"
+
+        private val DIGIT_REGEX = """\d""".toRegex()
 
         private val EDGE_STYLE = EnumMap(
             mapOf(
@@ -46,8 +49,12 @@ class FirControlFlowGraphRenderVisitor(
     private val allGraphs = mutableSetOf<ControlFlowGraph>()
 
     override fun visitFile(file: FirFile) {
+        var name = file.name.replace(".", "_")
+        if (DIGIT_REGEX.matches(name.first().toString())) {
+            name = "_$name"
+        }
         printer
-            .println("digraph ${file.name.replace(".", "_")} {")
+            .println("digraph $name {")
             .pushIndent()
             .println("graph [nodesep=3]")
             .println("node [shape=box penwidth=2]")
@@ -81,7 +88,13 @@ class FirControlFlowGraphRenderVisitor(
                 color = BLUE
             }
             val attributes = mutableListOf<String>()
-            attributes += "label=\"${node.render().replace("\"", "")}\""
+            val label = buildString {
+                append(node.render().replace("\"", ""))
+                if (renderLevels) {
+                    append(" [${node.level}]")
+                }
+            }
+            attributes += "label=\"$label\""
 
             fun fillColor(color: String) {
                 attributes += "style=\"filled\""
@@ -143,7 +156,7 @@ class FirControlFlowGraphRenderVisitor(
                 renderEdges(kind)
             }
 
-            if (node is CFGNodeWithCfgOwner<*>) {
+            if (node is CFGNodeWithSubgraphs<*>) {
                 val subNodes = node.subGraphs
                 if (subNodes.isNotEmpty()) {
                     print(

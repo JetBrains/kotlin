@@ -1,0 +1,35 @@
+package
+
+package bar {
+
+    public abstract class Sub</*0*/ T> : foo.Super<T> {
+        public constructor Sub</*0*/ T>()
+        protected abstract override /*1*/ fun doSomething(): kotlin.Unit
+        protected/*protected and package*/ abstract override /*1*/ /*fake_override*/ fun doSomething2(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        protected abstract override /*1*/ fun getName(): kotlin.String
+        protected/*protected and package*/ abstract override /*1*/ /*fake_override*/ fun getName2(): kotlin.String!
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        protected abstract override /*1*/ fun setName(/*0*/ s: kotlin.String): kotlin.Unit
+        protected/*protected and package*/ abstract override /*1*/ /*fake_override*/ fun setName2(/*0*/ s: kotlin.String!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+package foo {
+    public fun test(/*0*/ s: bar.Sub<kotlin.String>): kotlin.Unit
+
+    public abstract class Super</*0*/ T : kotlin.Any!> {
+        public constructor Super</*0*/ T : kotlin.Any!>()
+        protected/*protected and package*/ abstract fun doSomething(): kotlin.Unit
+        protected/*protected and package*/ abstract fun doSomething2(): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        protected/*protected and package*/ abstract fun getName(): kotlin.String!
+        protected/*protected and package*/ abstract fun getName2(): kotlin.String!
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        protected/*protected and package*/ abstract fun setName(/*0*/ s: kotlin.String!): kotlin.Unit
+        protected/*protected and package*/ abstract fun setName2(/*0*/ s: kotlin.String!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+

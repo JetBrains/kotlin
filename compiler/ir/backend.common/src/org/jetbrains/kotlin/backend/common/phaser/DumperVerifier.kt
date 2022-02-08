@@ -1,17 +1,15 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.common.phaser
 
-import org.jetbrains.kotlin.backend.common.CheckDeclarationParentsVisitor
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.IrValidator
-import org.jetbrains.kotlin.backend.common.IrValidatorConfig
+import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.dumpKotlinLike
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -59,8 +57,11 @@ fun <Data, Context> makeVerifyAction(verifier: (Context, Data) -> Unit): Action<
 fun dumpIrElement(actionState: ActionState, data: IrElement, @Suppress("UNUSED_PARAMETER") context: Any?): String {
     val beforeOrAfterStr = actionState.beforeOrAfter.name.toLowerCaseAsciiOnly()
 
-    var dumpText: String = ""
+    var dumpText = ""
     val elementName: String
+
+    val dumpStrategy = System.getProperty("org.jetbrains.kotlin.compiler.ir.dump.strategy")
+    val dump: IrElement.() -> String = if (dumpStrategy == "KotlinLike") IrElement::dumpKotlinLike else IrElement::dump
 
     val dumpOnlyFqName = actionState.config.dumpOnlyFqName
     if (dumpOnlyFqName != null) {
@@ -83,7 +84,7 @@ fun dumpIrElement(actionState: ActionState, data: IrElement, @Suppress("UNUSED_P
         dumpText = data.dump()
     }
 
-    val title = "-- IR for $elementName $beforeOrAfterStr ${actionState.phase.description}\n"
+    val title = "// --- IR for $elementName $beforeOrAfterStr ${actionState.phase.description}\n"
     return title + dumpText
 }
 
@@ -97,7 +98,11 @@ fun <Data, Context> dumpToFile(
         val directoryPath = actionState.config.dumpToDirectory ?: return
         val dumpContent = dumper(actionState, data, context) ?: return
 
-        val directoryFile = File(directoryPath)
+        // TODO in JVM BE most of lowerings run per file and "dump" is called per file,
+        //  so each run of this function overwrites dump written for the previous one.
+        val directoryFile =
+            File(directoryPath +
+                         ((data as? IrModuleFragment)?.let { "/" + it.name.asString().removeSurrounding("<", ">") } ?: ""))
         if (!directoryFile.isDirectory)
             if (!directoryFile.mkdirs())
                 error("Can't create directory for IR dumps at $directoryPath")
@@ -105,7 +110,10 @@ fun <Data, Context> dumpToFile(
         // Make dump files in a directory sorted by ID
         val phaseIdFormatted = "%02d".format(actionState.phaseCount)
 
-        val fileName = "${phaseIdFormatted}_${actionState.phase.name}.$fileExtension"
+        val dumpStrategy = System.getProperty("org.jetbrains.kotlin.compiler.ir.dump.strategy")
+        val extPrefix = if (dumpStrategy == "KotlinLike") "kt." else ""
+
+        val fileName = "${phaseIdFormatted}_${actionState.phase.name}.$extPrefix$fileExtension"
 
         File(directoryFile, fileName).writeText(dumpContent)
     }
@@ -132,7 +140,7 @@ fun <Fragment : IrElement> validationCallback(context: CommonBackendContext, fra
         checkProperties = checkProperties,
     )
     fragment.accept(IrValidator(context, validatorConfig), null)
-    fragment.accept(CheckDeclarationParentsVisitor, null)
+    fragment.checkDeclarationParents()
 }
 
 val validationAction = makeVerifyAction(::validationCallback)

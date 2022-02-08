@@ -1,8 +1,0 @@
-import java.util.Objects.*
-
-// INTENTION_TEXT: "Import members from 'java.util.Objects'"
-// WITH_RUNTIME
-
-fun foo() {
-    equals(null, null)
-}

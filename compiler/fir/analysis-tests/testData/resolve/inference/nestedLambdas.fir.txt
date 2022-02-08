@@ -1,0 +1,32 @@
+FILE: nestedLambdas.kt
+    public final fun <T> myRun(computable: R|() -> T|): R|T| {
+        ^myRun R|kotlin/TODO|()
+    }
+    public abstract interface Inv<W> : R|kotlin/Any| {
+    }
+    public abstract interface MyMap<K, V> : R|kotlin/Any| {
+        public abstract val k: R|K|
+            public get(): R|K|
+
+        public abstract val v: R|V|
+            public get(): R|V|
+
+    }
+    public final val w: R|Inv<kotlin/String>| = R|kotlin/TODO|()
+        public get(): R|Inv<kotlin/String>|
+    public final fun <X, K> R|Inv<X>|.associateBy1(keySelector: R|(X) -> K|): R|MyMap<K, X>| {
+        ^associateBy1 R|kotlin/TODO|()
+    }
+    public final val x: R|MyMap<kotlin/Int, kotlin/String>| = R|/myRun|<R|MyMap<kotlin/Int, kotlin/String>|>(<L> = myRun@fun <anonymous>(): R|MyMap<kotlin/Int, kotlin/String>| <inline=NoInline>  {
+        ^ R|/w|.R|/associateBy1|<R|kotlin/String|, R|kotlin/Int|>(<L> = associateBy1@fun <anonymous>(f: R|kotlin/String|): R|kotlin/Int| <inline=NoInline>  {
+            ^ R|<local>/f|.R|kotlin/String.length|
+        }
+        )
+    }
+    )
+        public get(): R|MyMap<kotlin/Int, kotlin/String>|
+    public final fun foo(m: R|MyMap<kotlin/Int, kotlin/String>|): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/foo|(R|/x|)
+    }

@@ -1,0 +1,35 @@
+FILE: booleanElvisBoundSmartcast.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(b: R|kotlin/Boolean|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val b: R|kotlin/Boolean| = R|<local>/b|
+            public get(): R|kotlin/Boolean|
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun test_1(a: R|A?|): R|kotlin/Unit| {
+        when () {
+            R|<local>/a|?.{ $subj$.R|/A.b| } ?: Boolean(false) ->  {
+                R|<local>/a|.R|/A.foo|()
+            }
+            else ->  {
+                R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()
+            }
+        }
+
+    }
+    public final fun test_2(a: R|A?|): R|kotlin/Unit| {
+        when () {
+            R|<local>/a|?.{ $subj$.R|/A.b| } ?: Boolean(true) ->  {
+                R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()
+            }
+            else ->  {
+                R|<local>/a|.R|/A.foo|()
+            }
+        }
+
+    }

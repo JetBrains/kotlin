@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 
 fun foo() {}
@@ -10,7 +9,7 @@ fun bar(a: Int) {}
 
 fun test() {
     <!NONE_APPLICABLE!>foo<!>(1, 2)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>("")
+    foo(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 
     <!NONE_APPLICABLE!>bar<!>(1, 2)
     <!NONE_APPLICABLE!>bar<!>()

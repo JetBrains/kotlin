@@ -16,4 +16,4 @@
 
 package org.jetbrains.kotlin.js.dce
 
-class DeadCodeEliminationResult(val reachableNodes: Set<Context.Node>, val status: DeadCodeEliminationStatus)
+class DeadCodeEliminationResult(val context: Context?, val reachableNodes: Iterable<Context.Node>, val status: DeadCodeEliminationStatus)

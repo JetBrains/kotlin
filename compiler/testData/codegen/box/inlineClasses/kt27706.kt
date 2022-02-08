@@ -1,7 +1,10 @@
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Z(val x: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val x: Int) {
+    @Suppress("INNER_CLASS_INSIDE_VALUE_CLASS")
     inner class Inner(val z: Z) {
         val xx = x
     }

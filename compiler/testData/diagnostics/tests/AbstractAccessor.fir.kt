@@ -1,21 +1,21 @@
 abstract class My {
     abstract var x: Int
         public get
-        private set
+        <!PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY!>private<!> set
 
     abstract val y: Int
-        protected get
+        <!GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY!>protected<!> get
 
     abstract protected var z: Int
-        internal get
-        private set
+        <!GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY!>internal<!> get
+        <!PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY!>private<!> set
 
     abstract internal val w: Int
-        protected get
+        <!GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY!>protected<!> get
 
     abstract var u: Int
         protected set
 
     open var t: Int = 0
-        private set
+        <!PRIVATE_SETTER_FOR_OPEN_PROPERTY!>private<!> set
 }

@@ -1,0 +1,143 @@
+data class Counter {
+  constructor(i: Int = 0) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var i: Int
+    field = i
+    get
+    set
+
+  operator fun component1(): Int {
+    return <this>.#i
+  }
+
+  fun copy(i: Int = <this>.#i): Counter {
+    return Counter(i = i)
+  }
+
+  override fun toString(): String {
+    return "Counter(" + "i=" + <this>.#i + ")"
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#i.hashCode()
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Counter -> return false
+    }
+    val tmp0_other_with_cast: Counter = other as Counter
+    when {
+      EQEQ(arg0 = <this>.#i, arg1 = tmp0_other_with_cast.#i).not() -> return false
+    }
+    return true
+  }
+
+}
+
+data class CounterConfig {
+  constructor(max: Int = 10) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val max: Int
+    field = max
+    get
+
+  operator fun component1(): Int {
+    return <this>.#max
+  }
+
+  fun copy(max: Int = <this>.#max): CounterConfig {
+    return CounterConfig(max = max)
+  }
+
+  override fun toString(): String {
+    return "CounterConfig(" + "max=" + <this>.#max + ")"
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#max.hashCode()
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is CounterConfig -> return false
+    }
+    val tmp0_other_with_cast: CounterConfig = other as CounterConfig
+    when {
+      EQEQ(arg0 = <this>.#max, arg1 = tmp0_other_with_cast.#max).not() -> return false
+    }
+    return true
+  }
+
+}
+
+class CounterIterator : Iterator<Int> {
+  private /* final field */ val contextReceiverField0: CounterConfig
+  constructor(<this>: CounterConfig, counter: Counter) /* primary */ {
+    super/*Any*/()
+    <this>.#contextReceiverField0 = <this>
+    /* <init>() */
+
+  }
+
+  private val counter: Counter
+    field = counter
+    private get
+
+  override operator fun hasNext(): Boolean {
+    return less(arg0 = <this>.<get-counter>().<get-i>(), arg1 = <this>.#contextReceiverField0.<get-max>())
+  }
+
+  override operator fun next(): Int {
+    return { // BLOCK
+      val tmp0_this: Counter = <this>.<get-counter>()
+      { // BLOCK
+        val tmp1: Int = tmp0_this.<get-i>()
+        tmp0_this.<set-i>(<set-?> = tmp1.inc())
+        tmp1
+      }
+    }
+  }
+
+}
+
+operator fun Counter.iterator(<this>: CounterConfig): CounterIterator {
+  return with<CounterConfig, CounterIterator>(receiver = <this>, block = local fun CounterConfig.<anonymous>(): CounterIterator {
+    return CounterIterator(<this> = $this$with, counter = <this>)
+  }
+)
+}
+
+fun box(): String {
+  var result: Int = 0
+  with<CounterConfig, Unit>(receiver = CounterConfig(), block = local fun CounterConfig.<anonymous>() {
+    { // BLOCK
+      val tmp0_iterator: CounterIterator = Counter().iterator(<this> = $this$with)
+      while (tmp0_iterator.hasNext()) { // BLOCK
+        val i: Int = tmp0_iterator.next()
+        { // BLOCK
+          result = result.plus(other = i)
+        }
+      }
+    }
+  }
+)
+  return when {
+    EQEQ(arg0 = result, arg1 = 45) -> "OK"
+    else -> "fail"
+  }
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,8 +32,9 @@ object JsLibraryUtils {
         return when {
             isZippedKlib(candidate) -> true
             FileUtil.isJarOrZip(candidate) -> isZippedKlibInZip(candidate)
-            !File(candidate, "manifest").isFile -> false
-            !File(candidate, "ir").isDirectory -> false
+            !candidate.resolve("default").isDirectory -> false
+            !candidate.resolve("default").resolve("manifest").isFile -> false
+            !candidate.resolve("default").resolve("ir").isDirectory -> false
             else -> true
         }
     }
@@ -73,10 +74,13 @@ object JsLibraryUtils {
     private fun isZippedKlibInZip(candidate: File): Boolean {
         var manifestFound = false
         var irFound = false
-        for (entry in ZipFile(candidate).entries()) {
-            if (entry.name == "manifest") manifestFound = true
-            if (entry.name == "ir/") irFound = true
+        ZipFile(candidate).use {
+            for (entry in it.entries()) {
+                if (entry.name == "default/manifest") manifestFound = true
+                if (entry.name == "default/ir/") irFound = true
+            }
         }
+
         return manifestFound && irFound
     }
 
@@ -150,7 +154,7 @@ object JsLibraryUtils {
                         val relativePath = getSuggestedPath(entryName) ?: continue
 
                         val stream = zipFile.getInputStream(entry)
-                        val content = FileUtil.loadTextAndClose(stream)
+                        val content = stream.reader().readText()
                         librariesWithoutSourceMaps += JsLibrary(content, relativePath, null, null)
                     }
                     else if (entryName.endsWith(KotlinJavascriptMetadataUtils.JS_MAP_EXT)) {
@@ -166,7 +170,7 @@ object JsLibraryUtils {
                         val zipEntry = possibleMapFiles[it.path]
                         if (zipEntry != null) {
                             val stream = zipFile.getInputStream(zipEntry)
-                            val content = FileUtil.loadTextAndClose(stream)
+                            val content = stream.reader().readText()
                             it.copy(sourceMapContent = content)
                         }
                         else {

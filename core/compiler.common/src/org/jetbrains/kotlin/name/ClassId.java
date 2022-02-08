@@ -20,6 +20,8 @@ import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 /**
  * A class name which is used to uniquely identify a Kotlin class.
  *
@@ -59,6 +61,12 @@ public final class ClassId {
     @NotNull
     public FqName getRelativeClassName() {
         return relativeClassName;
+    }
+
+    @Nullable
+    public ClassId getParentClassId() {
+        if (!isNestedClass()) return null;
+        return new ClassId(packageFqName, relativeClassName.parent(), isLocal());
     }
 
     @NotNull
@@ -105,8 +113,16 @@ public final class ClassId {
 
     @NotNull
     public static ClassId fromString(@NotNull String string, boolean isLocal) {
-        String packageName = StringsKt.substringBeforeLast(string, '/', "").replace('/', '.');
-        String className = StringsKt.substringAfterLast(string, '/', string);
+        int lastSlashIndex = string.lastIndexOf("/");
+        String packageName;
+        String className;
+        if (lastSlashIndex == -1) {
+            packageName = "";
+            className = string;
+        } else {
+            packageName = string.substring(0, lastSlashIndex).replace('/', '.');
+            className = string.substring(lastSlashIndex + 1);
+        }
         return new ClassId(new FqName(packageName), new FqName(className), isLocal);
     }
 
@@ -117,6 +133,12 @@ public final class ClassId {
     public String asString() {
         if (packageFqName.isRoot()) return relativeClassName.asString();
         return packageFqName.asString().replace('.', '/') + "/" + relativeClassName.asString();
+    }
+
+    @NotNull
+    public String asFqNameString() {
+        if (packageFqName.isRoot()) return relativeClassName.asString();
+        return packageFqName.asString() + "." + relativeClassName.asString();
     }
 
     @Override

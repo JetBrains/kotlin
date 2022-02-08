@@ -1,15 +1,17 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
+// IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: IGNORED_IN_JS
-// !LANGUAGE: +InlineClasses
 // IGNORE_BACKEND: JS, JS_IR, NATIVE
 // IGNORE_BACKEND: JS_IR_ES6
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 class CharacterLiteral(private val prefix: NamelessString, private val s: NamelessString) {
     override fun toString(): String = "$prefix'$s'"
 }
 
-inline class NamelessString(val b: ByteArray) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class NamelessString(val b: ByteArray) {
     override fun toString(): String = String(b)
 }
 

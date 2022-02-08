@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.metadata
 
+import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import java.io.File
 
 internal val KotlinCoreEnvironment.destDir: File?
@@ -23,7 +25,7 @@ internal val KotlinCoreEnvironment.destDir: File?
 internal fun runCommonAnalysisForSerialization(
     environment: KotlinCoreEnvironment,
     dependOnBuiltins: Boolean,
-    dependencyContainer: CommonDependenciesContainer?
+    dependencyContainerFactory: () -> CommonDependenciesContainer?
 ): AnalyzerWithCompilerReport? {
     if (environment.destDir == null) {
         val configuration = environment.configuration
@@ -32,10 +34,23 @@ internal fun runCommonAnalysisForSerialization(
         return null
     }
 
-    return runCommonAnalysis(environment, dependOnBuiltins, dependencyContainer)
+    val performanceManager = environment.configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
+
+    var analyzer: AnalyzerWithCompilerReport
+    do {
+        performanceManager.notifyAnalysisStarted()
+        analyzer = runCommonAnalysisIteration(environment, dependOnBuiltins, dependencyContainerFactory())
+        val result = analyzer.analysisResult
+        if (result is AnalysisResult.RetryWithAdditionalRoots) {
+            environment.addKotlinSourceRoots(result.additionalKotlinRoots)
+        }
+        performanceManager.notifyAnalysisFinished()
+    } while (result is AnalysisResult.RetryWithAdditionalRoots)
+
+    return if (analyzer.analysisResult.shouldGenerateCode) analyzer else null
 }
 
-private fun runCommonAnalysis(
+private fun runCommonAnalysisIteration(
     environment: KotlinCoreEnvironment,
     dependOnBuiltins: Boolean,
     dependencyContainer: CommonDependenciesContainer?
@@ -45,12 +60,16 @@ private fun runCommonAnalysis(
     val files = environment.getSourceFiles()
     val moduleName = Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>")
 
-    val analyzer = AnalyzerWithCompilerReport(messageCollector, configuration.languageVersionSettings)
+    val analyzer = AnalyzerWithCompilerReport(
+        messageCollector,
+        configuration.languageVersionSettings,
+        configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+    )
 
     analyzer.analyzeAndReport(files) {
         CommonResolverForModuleFactory.analyzeFiles(
             files, moduleName, dependOnBuiltins, configuration.languageVersionSettings,
-            CommonPlatforms.defaultCommonPlatform,
+            CommonPlatforms.defaultCommonPlatform, CompilerEnvironment,
             dependenciesContainer = dependencyContainer
         ) { content ->
             environment.createPackagePartProvider(content.moduleContentScope)

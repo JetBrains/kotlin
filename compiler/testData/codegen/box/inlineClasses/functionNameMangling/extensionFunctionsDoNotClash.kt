@@ -1,10 +1,15 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Id(val id: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Id(val id: String)
 
-inline class Name(val name: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Name(val name: String)
 
-inline class Password(val password: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Password(val password: String)
 
 fun Id.test() {
     if (id != "OK") throw AssertionError()

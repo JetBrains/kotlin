@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class A {
@@ -6,6 +5,6 @@ class A {
     operator fun set(x: String, value: Int) {}
 
     fun d(x: Int) {
-        <!INAPPLICABLE_CANDIDATE!>this["", 1] = 1<!>
+        this["", <!TOO_MANY_ARGUMENTS!>1<!>] = 1
     }
 }

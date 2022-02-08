@@ -1,9 +1,0 @@
-class A {
-    constructor() {
-        foo()
-    }
-
-    val a<selection>: Int</selection><caret> = 1
-
-    fun foo() {}
-}

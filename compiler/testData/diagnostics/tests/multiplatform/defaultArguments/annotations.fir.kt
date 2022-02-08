@@ -19,7 +19,7 @@ expect annotation class A5(val x: Int = 42, val y: String)
 @A5(0, "")
 fun test() {}
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual annotation class A1(actual val x: Int, actual val y: String)

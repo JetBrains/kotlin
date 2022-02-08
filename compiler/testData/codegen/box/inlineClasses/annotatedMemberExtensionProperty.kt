@@ -1,7 +1,12 @@
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
 @Target(AnnotationTarget.PROPERTY)
 annotation class Anno
 
-inline class Z(val s: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val s: String)
 
 class A {
     @Anno

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -59,12 +60,6 @@ class FunInterfaceDeclarationChecker : DeclarationChecker {
         context: DeclarationCheckerContext,
     ) {
         val ktFunction = abstractMember.source.getPsi() as? KtNamedFunction
-
-        if (abstractMember.isSuspend) {
-            val reportOn = ktFunction?.modifierList?.getModifier(KtTokens.SUSPEND_KEYWORD) ?: funInterfaceKeyword
-            context.trace.report(Errors.FUN_INTERFACE_WITH_SUSPEND_FUNCTION.on(reportOn))
-            return
-        }
 
         if (abstractMember.typeParameters.isNotEmpty()) {
             val reportOn = ktFunction?.typeParameterList ?: ktFunction?.funKeyword ?: funInterfaceKeyword

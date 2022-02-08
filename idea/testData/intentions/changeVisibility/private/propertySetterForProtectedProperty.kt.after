@@ -1,4 +1,0 @@
-class Test {
-    protected var foo: String = ""
-        <caret>private set
-}

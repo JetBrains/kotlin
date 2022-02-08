@@ -13,7 +13,7 @@ class C(val b: B)
 // TESTCASE NUMBER: 1
 fun case1() {
     val flag = A.A1
-    val l0: B = when (flag!!) {
+    val l0: B = when (flag<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) {
         A.A1 -> B()
         A.A2 -> B()
     }
@@ -34,7 +34,7 @@ fun case2() {
 fun case3() {
     val flag = A.A1
 
-    val l1 = when (flag!!) {
+    val l1 = when (flag<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) {
         A.A1 -> B()
         A.A2 -> B()
     }
@@ -68,7 +68,7 @@ fun case5() {
 // TESTCASE NUMBER: 6
 fun case6() {
     val flag: Any = A.A1
-    val l1 = when (flag!!) {
+    val l1 = when (flag<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) {
         A.A1 -> B()
         A.A2 -> B()
         else -> B()
@@ -91,7 +91,7 @@ fun case7() {
 // TESTCASE NUMBER: 8
 fun case8() {
     val flag: Any = A.A1
-    val l1: B = when (flag!!) {
+    val l1: B = when (flag<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>) {
         A.A1 -> B()
         A.A2 -> B()
         else -> B()
@@ -102,10 +102,10 @@ fun case8() {
 // TESTCASE NUMBER: 9
 fun case9() {
     val flag: Any = A.A1
-    val l1 = when (flag) {
+    val l1 = <!NO_ELSE_IN_WHEN!>when<!> (flag) {
         A.A1 -> B()
         A.A2 -> B()
     }
-    val x1 = C(l1)
+    val x1 = C(<!ARGUMENT_TYPE_MISMATCH!>l1<!>)
 }
 

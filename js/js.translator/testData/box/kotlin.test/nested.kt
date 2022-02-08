@@ -20,7 +20,7 @@ class Outer {
         }
 
         inner class Inneer {
-            @Test fun inneerTest() {
+            @Test fun innermostTest() {
                 call(prop + "Inneer")
             }
         }
@@ -68,7 +68,7 @@ fun box() = checkLog {
                 call("propInner")
             }
             suite("Inneer") {
-                test("inneerTest") {
+                test("innermostTest") {
                     call("propInneer")
                 }
             }

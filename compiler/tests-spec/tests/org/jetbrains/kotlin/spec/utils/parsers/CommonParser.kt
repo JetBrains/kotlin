@@ -23,7 +23,7 @@ import java.util.regex.Pattern
 object CommonParser {
     fun String.withUnderscores() = replace(" ", "_")
         .replace(File.separator, "_")
-        .toUpperCase()
+        .uppercase()
 
     fun String.splitByComma() = split(Regex(""",\s*"""))
     fun String.splitByPathSeparator() = split(File.separator)

@@ -1,0 +1,5 @@
+ALL:
+  /B.x: Int
+  C.x: Int
+DIRECT:
+  /B.x: Int

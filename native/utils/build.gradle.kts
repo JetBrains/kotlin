@@ -7,16 +7,26 @@ description = "Kotlin/Native utils"
 
 dependencies {
     compileOnly(kotlinStdlib())
-    compile(project(":kotlin-util-io"))
+    api(project(":kotlin-util-io"))
 
-    testCompile(commonDep("junit:junit"))
+    testImplementation(commonDependency("junit:junit"))
     testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntime(project(":kotlin-reflect"))
+    testImplementation(project(":kotlin-reflect"))
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
+}
+
+tasks {
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions {
+            languageVersion = "1.4"
+            apiVersion = "1.4"
+            freeCompilerArgs += "-Xsuppress-version-warnings"
+        }
+    }
 }
 
 // TODO: this single known external consumer of this artifact is Kotlin/Native backend,

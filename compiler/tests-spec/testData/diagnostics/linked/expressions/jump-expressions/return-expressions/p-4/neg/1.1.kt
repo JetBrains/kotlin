@@ -18,5 +18,5 @@ fun <!IMPLICIT_NOTHING_RETURN_TYPE!>case1<!>(a: Boolean) = run { println("d"); r
 
 // TESTCASE NUMBER: 2
 val <!IMPLICIT_NOTHING_PROPERTY_TYPE!>case2<!>
-get() = run { println("d"); return <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>true<!> }
+get() = run { println("d"); return <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!>true<!> }
 

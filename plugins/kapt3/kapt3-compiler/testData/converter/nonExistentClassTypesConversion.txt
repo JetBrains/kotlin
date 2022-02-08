@@ -77,6 +77,10 @@ public final class Test<G extends java.lang.Object> {
     public java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<java.util.List<ABC>>>>>>>>> o10;
     public java.util.Calendar.Builder p;
 
+    public Test() {
+        super();
+    }
+
     @org.jetbrains.annotations.NotNull()
     public final ABC getA() {
         return null;
@@ -288,10 +292,6 @@ public final class Test<G extends java.lang.Object> {
     public final <T extends java.lang.Object>java.lang.Class<java.lang.Enum<?>> f5(@org.jetbrains.annotations.NotNull()
     MyType<T> $this$f5) {
         return null;
-    }
-
-    public Test() {
-        super();
     }
 }
 

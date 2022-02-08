@@ -26,4 +26,4 @@ val a = A
 val b = B
 val c = A.B
 val d = A.B.A
-val e = B.<!UNRESOLVED_REFERENCE!>A<!>.<!UNRESOLVED_REFERENCE!>B<!>
+val e = B.<!UNRESOLVED_REFERENCE!>A<!>.B

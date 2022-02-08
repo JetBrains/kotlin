@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Direction(private val direction: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Direction(private val direction: Int) {
     fun dx() = dx[direction]
     fun dy() = dy[direction]
 

@@ -12,6 +12,8 @@ fun <T> test6(): kotlin.reflect.KClass<<!UPPER_BOUND_VIOLATED!>T<!>> = T::class
 fun <T> test7(): kotlin.reflect.KClass<*> = T::class
 fun test8() = <!NULLABLE_TYPE_IN_CLASS_LITERAL_LHS!>String?::class<!>
 
+fun <T> test9() where T : Any?, T : Comparable<T> = T::class
+
 fun <T> listOf(e: T): List<T> = null!!
 
 fun <L> locals() {
@@ -20,4 +22,9 @@ fun <L> locals() {
 
     val test3 = L::class
     fun test4() = L::class
+}
+
+class Foo<T> {
+    val p = T::class
+    fun f() = T::class
 }

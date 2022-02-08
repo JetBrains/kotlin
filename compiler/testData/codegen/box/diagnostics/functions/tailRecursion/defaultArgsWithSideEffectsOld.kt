@@ -1,5 +1,6 @@
 // !LANGUAGE: -ProperComputationOrderOfTailrecDefaultParameters
 // TARGET_BACKEND: JVM
+// IGNORE_FIR_DIAGNOSTICS_DIFF
 
 var counter = 0
 fun calc(counter: Int) = if (counter % 2 == 0) "K" else "O"

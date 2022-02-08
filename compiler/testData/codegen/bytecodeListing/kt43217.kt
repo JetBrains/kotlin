@@ -1,5 +1,5 @@
-// FILE: kt43217.kt
 // JVM_TARGET: 1.8
+// FILE: kt43217.kt
 class A {
     private val b =
         object : DoubleExpression() {

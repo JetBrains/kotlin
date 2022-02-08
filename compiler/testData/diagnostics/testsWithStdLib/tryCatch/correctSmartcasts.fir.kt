@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_VALUE -VARIABLE_WITH_REDUNDANT_INITIALIZER
 // SKIP_TXT
 // Related issue: KT-28370
@@ -15,8 +14,8 @@ fun test1(s: String?) {
         catch (e: Exception) {
             requireNotNull(s)
         }
-        t2.<!INAPPLICABLE_CANDIDATE!>not<!>()
-        s.<!INAPPLICABLE_CANDIDATE!>length<!>
+        t2<!UNSAFE_CALL!>.<!>not()
+        s<!UNSAFE_CALL!>.<!>length
     }
 }
 
@@ -74,7 +73,7 @@ fun test5(s: String?) {
     catch (e: ExcB) {
 
     }
-    s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    s<!UNSAFE_CALL!>.<!>length
 }
 
 fun test6(s: String?) {

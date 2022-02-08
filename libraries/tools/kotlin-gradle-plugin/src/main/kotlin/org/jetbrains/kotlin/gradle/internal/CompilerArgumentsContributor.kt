@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.gradle.internal
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.gradle.dsl.Coroutines
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
 import org.jetbrains.kotlin.gradle.dsl.fillDefaultValues
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileArgumentsProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompilerArgumentsProvider
-import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
+import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
 
@@ -53,15 +53,6 @@ internal open class AbstractKotlinCompileArgumentsContributor<T : CommonCompiler
         args: T,
         flags: Collection<CompilerArgumentsConfigurationFlag>
     ) {
-        args.coroutinesState = when (coroutines.get()) {
-            Coroutines.ENABLE -> CommonCompilerArguments.ENABLE
-            Coroutines.WARN -> CommonCompilerArguments.WARN
-            Coroutines.ERROR -> CommonCompilerArguments.ERROR
-            Coroutines.DEFAULT -> CommonCompilerArguments.DEFAULT
-        }
-
-        logger.kotlinDebug { "args.coroutinesState=${args.coroutinesState}" }
-
         if (logger.isDebugEnabled) {
             args.verbose = true
         }
@@ -72,7 +63,7 @@ internal open class AbstractKotlinCompileArgumentsContributor<T : CommonCompiler
     }
 
     internal fun setupPlugins(compilerArgs: T) {
-        compilerArgs.pluginClasspaths = pluginClasspath.toSortedPathsArray()
+        compilerArgs.pluginClasspaths = pluginClasspath.toPathsArray()
         compilerArgs.pluginOptions = pluginOptions.arguments.toTypedArray()
     }
 }
@@ -112,6 +103,50 @@ internal open class KotlinJvmCompilerArgumentsContributor(
         }
         args.destinationAsFile = destinationDir
 
-        kotlinOptions.forEach { it?.updateArguments(args) }
+        warnJdkHomeNotUsed(kotlinOptions)
+
+        kotlinOptions.forEach { it.updateArguments(args) }
+    }
+
+    private fun warnJdkHomeNotUsed(kotlinOptions: List<KotlinJvmOptionsImpl>) {
+        kotlinOptions
+            .firstOrNull {
+                @Suppress("DEPRECATION")
+                it.jdkHome != null
+            }
+            ?.run {
+                logger.warn(
+                    """
+                    'kotlinOptions.jdkHome' is deprecated and will be ignored in Kotlin 1.7! 
+                    
+                    Consider using JavaToolchain on Gradle 6.7+:
+                    kotlin {
+                        jvmToolchain {
+                            languageVersion.set(JavaLanguageVersion.of(<MAJOR_JDK_VERSION>))
+                        }
+                    }
+                    
+                    Or on older versions of Gradle:
+                    - Kotlin DSL:
+                    project.tasks
+                        .withType<UsesKotlinJavaToolchain>()
+                        .configureEach {
+                            it.kotlinJavaToolchain.jdk.use(
+                                "/path/to/your/jdk",
+                                JavaVersion.<JDK_VERSION>
+                            )
+                        }
+                    - Groovy DSL
+                    project.tasks
+                        .withType(UsesKotlinJavaToolchain.class)
+                        .configureEach {
+                             it.kotlinJavaToolchain.jdk.use(
+                                 '/path/to/your/jdk',
+                                 JavaVersion.<JDK_VERSION>
+                             )
+                        }
+                    """.trimIndent()
+                )
+            }
     }
 }

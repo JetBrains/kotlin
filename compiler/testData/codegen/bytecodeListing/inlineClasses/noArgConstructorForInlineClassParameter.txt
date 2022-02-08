@@ -8,6 +8,7 @@ public final class Test {
     public final method getZ-a_XrcN0(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Z {
     // source: 'noArgConstructorForInlineClassParameter.kt'

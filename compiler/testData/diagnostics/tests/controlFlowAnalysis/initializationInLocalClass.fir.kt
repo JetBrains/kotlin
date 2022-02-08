@@ -19,7 +19,7 @@ fun bar() {
         }
     }
     // Ok
-    <!UNINITIALIZED_VARIABLE!>x<!>.length
+    x.length
 }
 
 fun gav() {
@@ -53,13 +53,13 @@ fun gau() {
         }
     }
     // Ok
-    <!UNINITIALIZED_VARIABLE!>x<!>.length
+    x.length
     val y: String
     fun local() {
         object: Any() {
             init {
                 // Error!
-                y = ""
+                <!CAPTURED_VAL_INITIALIZATION!>y<!> = ""
             }
         }
     }
@@ -83,7 +83,7 @@ class My {
     }
 }
 
-val top: Int
+<!MUST_BE_INITIALIZED!>val top: Int<!>
 
 fun init() {
     top = 1

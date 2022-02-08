@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class UInt(val u: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class UInt(val u: Int) {
     override fun toString(): String {
         return "UInt: $u"
     }

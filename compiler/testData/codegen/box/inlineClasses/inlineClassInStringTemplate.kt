@@ -1,9 +1,11 @@
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 import kotlin.test.*
 
-inline class Z(val value: Int)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val value: Int)
 
 fun test1_1(z: Z) = "$z"
 fun test1_2(z: Z) = "$z$z"

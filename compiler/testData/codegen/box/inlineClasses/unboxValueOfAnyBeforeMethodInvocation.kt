@@ -1,9 +1,9 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_COLLECTIONS
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class NullableInt(private val holder: Any?) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class NullableInt(private val holder: Any?) {
     val intValue: Int get() = holder as Int
 }
 

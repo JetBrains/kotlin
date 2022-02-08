@@ -31,14 +31,12 @@ class IrAnonymousInitializerImpl(
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrAnonymousInitializerSymbol,
-    override val isStatic: Boolean = false
+    override val isStatic: Boolean = false,
+    override val factory: IrFactory = IrFactoryImpl,
 ) : IrAnonymousInitializer() {
     init {
         symbol.bind(this)
     }
-
-    override val factory: IrFactory
-        get() = IrFactoryImpl
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()

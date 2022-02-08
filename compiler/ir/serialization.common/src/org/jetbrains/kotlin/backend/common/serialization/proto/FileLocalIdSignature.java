@@ -63,6 +63,11 @@ public final class FileLocalIdSignature extends
             localId_ = input.readInt64();
             break;
           }
+          case 24: {
+            bitField0_ |= 0x00000004;
+            debugInfo_ = input.readInt32();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -127,9 +132,25 @@ public final class FileLocalIdSignature extends
     return localId_;
   }
 
+  public static final int DEBUG_INFO_FIELD_NUMBER = 3;
+  private int debugInfo_;
+  /**
+   * <code>optional int32 debug_info = 3;</code>
+   */
+  public boolean hasDebugInfo() {
+    return ((bitField0_ & 0x00000004) == 0x00000004);
+  }
+  /**
+   * <code>optional int32 debug_info = 3;</code>
+   */
+  public int getDebugInfo() {
+    return debugInfo_;
+  }
+
   private void initFields() {
     container_ = 0;
     localId_ = 0L;
+    debugInfo_ = 0;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -158,6 +179,9 @@ public final class FileLocalIdSignature extends
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       output.writeInt64(2, localId_);
     }
+    if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      output.writeInt32(3, debugInfo_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -174,6 +198,10 @@ public final class FileLocalIdSignature extends
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeInt64Size(2, localId_);
+    }
+    if (((bitField0_ & 0x00000004) == 0x00000004)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeInt32Size(3, debugInfo_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -273,6 +301,8 @@ public final class FileLocalIdSignature extends
       bitField0_ = (bitField0_ & ~0x00000001);
       localId_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000002);
+      debugInfo_ = 0;
+      bitField0_ = (bitField0_ & ~0x00000004);
       return this;
     }
 
@@ -304,6 +334,10 @@ public final class FileLocalIdSignature extends
         to_bitField0_ |= 0x00000002;
       }
       result.localId_ = localId_;
+      if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+        to_bitField0_ |= 0x00000004;
+      }
+      result.debugInfo_ = debugInfo_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -315,6 +349,9 @@ public final class FileLocalIdSignature extends
       }
       if (other.hasLocalId()) {
         setLocalId(other.getLocalId());
+      }
+      if (other.hasDebugInfo()) {
+        setDebugInfo(other.getDebugInfo());
       }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
@@ -412,6 +449,38 @@ public final class FileLocalIdSignature extends
     public Builder clearLocalId() {
       bitField0_ = (bitField0_ & ~0x00000002);
       localId_ = 0L;
+      
+      return this;
+    }
+
+    private int debugInfo_ ;
+    /**
+     * <code>optional int32 debug_info = 3;</code>
+     */
+    public boolean hasDebugInfo() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional int32 debug_info = 3;</code>
+     */
+    public int getDebugInfo() {
+      return debugInfo_;
+    }
+    /**
+     * <code>optional int32 debug_info = 3;</code>
+     */
+    public Builder setDebugInfo(int value) {
+      bitField0_ |= 0x00000004;
+      debugInfo_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>optional int32 debug_info = 3;</code>
+     */
+    public Builder clearDebugInfo() {
+      bitField0_ = (bitField0_ & ~0x00000004);
+      debugInfo_ = 0;
       
       return this;
     }

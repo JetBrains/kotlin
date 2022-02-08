@@ -1,6 +1,6 @@
-// FILE: 1.kt
 // SKIP_INLINE_CHECK_IN: inlineFun$default
-// CHECK_CONTAINS_NO_CALLS: test
+// FILE: 1.kt
+// CHECK_CONTAINS_NO_CALLS: test TARGET_BACKENDS=JS
 package test
 
 //problem in test framework

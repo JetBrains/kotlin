@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 <!ILLEGAL_JVM_NAME!>@JvmName("")<!>
 fun foo(a: Any) {}

@@ -1,0 +1,84 @@
+class Ref {
+  constructor(value: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var value: Int
+    field = value
+    get
+    set
+
+}
+
+interface IHost {
+  fun String.extLength(): Int {
+    return <this>.<get-length>()
+  }
+
+}
+
+fun test1(x: String?): Int? {
+  return { // BLOCK
+    val tmp0_safe_receiver: String? = x
+    when {
+      EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
+      else -> tmp0_safe_receiver.<get-length>()
+    }
+  }
+}
+
+fun test2(x: String?): Int? {
+  return { // BLOCK
+    val tmp1_safe_receiver: String? = x
+    when {
+      EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
+      else -> tmp1_safe_receiver.hashCode()
+    }
+  }
+}
+
+fun test3(x: String?, y: Any?): Boolean? {
+  return { // BLOCK
+    val tmp2_safe_receiver: String? = x
+    when {
+      EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null
+      else -> tmp2_safe_receiver.equals(other = y)
+    }
+  }
+}
+
+fun test4(x: Ref?) {
+  { // BLOCK
+    val tmp3_safe_receiver: Ref? = x
+    when {
+      EQEQ(arg0 = tmp3_safe_receiver, arg1 = null) -> null
+      else -> tmp3_safe_receiver.<set-value>(<set-?> = 0)
+    }
+  } /*~> Unit */
+}
+
+fun IHost.test5(s: String?): Int? {
+  return { // BLOCK
+    val tmp4_safe_receiver: String? = s
+    when {
+      EQEQ(arg0 = tmp4_safe_receiver, arg1 = null) -> null
+      else -> (<this>, tmp4_safe_receiver).extLength()
+    }
+  }
+}
+
+fun Int.foo(): Int {
+  return 239
+}
+
+fun box() {
+  { // BLOCK
+    val tmp5_safe_receiver: Int = 42
+    when {
+      EQEQ(arg0 = tmp5_safe_receiver, arg1 = null) -> null
+      else -> tmp5_safe_receiver.foo()
+    }
+  } /*~> Unit */
+}

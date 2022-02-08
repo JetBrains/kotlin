@@ -2,7 +2,8 @@
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-// TODO KT-34102
+
+/* Associate compilations are not yet supported by the IDE. KT-34102 */
 @file:Suppress("invisible_reference", "invisible_member", "FunctionName")
 package org.jetbrains.kotlin.gradle
 
@@ -18,7 +19,8 @@ import kotlin.test.assertEquals
 class KotlinAndroidDependsOnEdgesTest {
     @Test
     fun `default android source set declares dependsOn commonMain`() {
-        val project = ProjectBuilder.builder().build()
+        val project = createProject()
+
         project.plugins.apply("kotlin-multiplatform")
         project.plugins.apply("android-library")
 
@@ -58,7 +60,7 @@ class KotlinAndroidDependsOnEdgesTest {
 
     @Test
     fun `custom dependsOn edges`() {
-        val project = ProjectBuilder.builder().build()
+        val project = createProject()
         project.plugins.apply("kotlin-multiplatform")
         project.plugins.apply("android-library")
 
@@ -104,6 +106,10 @@ class KotlinAndroidDependsOnEdgesTest {
             "Expected androidAndroidTest to only depend on commonTest"
         )
     }
+
+    private fun createProject() = ProjectBuilder.builder().build()
+        .also { addBuildEventsListenerRegistryMock(it) }
+
 }
 
 private fun Iterable<KotlinSourceSet>.sorted() = this.sortedBy { it.name }

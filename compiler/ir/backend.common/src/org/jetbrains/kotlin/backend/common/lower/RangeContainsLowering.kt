@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.backend.common.lower.loops.*
 import org.jetbrains.kotlin.backend.common.lower.loops.handlers.*
 import org.jetbrains.kotlin.backend.common.lower.matchers.SimpleCalleeMatcher
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
+import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.andand
 import org.jetbrains.kotlin.ir.builders.irBlock
@@ -29,6 +31,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.shallowCopy
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -94,8 +98,8 @@ private class Transformer(
 
         // The HeaderInfoBuilder extracts information (e.g., lower/upper bounds, direction) from the range expression, which is the
         // receiver for the contains() call.
-        val receiver = expression.dispatchReceiver ?: expression.extensionReceiver!!
-        val headerInfo = receiver.accept(headerInfoBuilder, expression)
+        val receiver = expression.dispatchReceiver ?: expression.extensionReceiver
+        val headerInfo = receiver?.accept(headerInfoBuilder, expression)
             ?: return super.visitCall(expression)  // The receiver is not a supported range (or not a range at all).
 
         val argument = expression.getValueArgument(0)!!
@@ -259,20 +263,20 @@ private class Transformer(
                 additionalStatements.addIfNotNull(lowerVar)
                 additionalStatements.addIfNotNull(upperVar)
             }
-            lowerExpression = tmpLowerExpression.copy()
-            upperExpression = tmpUpperExpression.copy()
+            lowerExpression = tmpLowerExpression.shallowCopy()
+            upperExpression = tmpUpperExpression.shallowCopy()
             useLowerClauseOnLeftSide = true
         } else if (lower.canHaveSideEffects && upper.canHaveSideEffects) {
             if (shouldUpperComeFirst) {
                 val (upperVar, tmpUpperExpression) = createTemporaryVariableIfNecessary(upper, "containsUpper")
                 additionalStatements.add(upperVar!!)
                 lowerExpression = lower
-                upperExpression = tmpUpperExpression.copy()
+                upperExpression = tmpUpperExpression.shallowCopy()
                 useLowerClauseOnLeftSide = true
             } else {
                 val (lowerVar, tmpLowerExpression) = createTemporaryVariableIfNecessary(lower, "containsLower")
                 additionalStatements.add(lowerVar!!)
-                lowerExpression = tmpLowerExpression.copy()
+                lowerExpression = tmpLowerExpression.shallowCopy()
                 upperExpression = upper
                 useLowerClauseOnLeftSide = false
             }
@@ -308,27 +312,27 @@ private class Transformer(
             irCall(lowerCompFun).apply {
                 putValueArgument(0, irInt(0))
                 putValueArgument(1, irCall(compareToFun).apply {
-                    dispatchReceiver = argExpression.copy()
+                    dispatchReceiver = argExpression.shallowCopy()
                     putValueArgument(0, lowerExpression)
                 })
             }
         } else {
             irCall(lowerCompFun).apply {
                 putValueArgument(0, lowerExpression)
-                putValueArgument(1, argExpression.copy())
+                putValueArgument(1, argExpression.shallowCopy())
             }
         }
         val upperClause = if (useCompareTo) {
             irCall(upperCompFun).apply {
                 putValueArgument(0, irCall(compareToFun).apply {
-                    dispatchReceiver = argExpression.copy()
+                    dispatchReceiver = argExpression.shallowCopy()
                     putValueArgument(0, upperExpression)
                 })
                 putValueArgument(1, irInt(0))
             }
         } else {
             irCall(upperCompFun).apply {
-                putValueArgument(0, argExpression.copy())
+                putValueArgument(0, argExpression.shallowCopy())
                 putValueArgument(1, upperExpression)
             }
         }
@@ -361,26 +365,28 @@ private class Transformer(
     }
 
     private fun leastCommonPrimitiveNumericType(symbols: Symbols<CommonBackendContext>, t1: IrType, t2: IrType): IrType? {
-        val pt1 = t1.promoteIntegerTypeToIntIfRequired(symbols)
-        val pt2 = t2.promoteIntegerTypeToIntIfRequired(symbols)
+        val primitive1 = t1.getPrimitiveType()
+        val primitive2 = t2.getPrimitiveType()
+        val unsigned1 = t1.getUnsignedType()
+        val unsigned2 = t2.getUnsignedType()
 
         return when {
-            pt1.isDouble() || pt2.isDouble() -> symbols.double
-            pt1.isFloat() || pt2.isFloat() -> symbols.float
-            pt1.isULong() || pt2.isULong() -> symbols.uLong!!
-            pt1.isUInt() || pt2.isUInt() -> symbols.uInt!!
-            pt1.isLong() || pt2.isLong() -> symbols.long
-            pt1.isInt() || pt2.isInt() -> symbols.int
-            pt1.isChar() || pt2.isChar() -> symbols.char
-            else -> error("Unexpected types: t1=${t1.classOrNull?.owner?.name}, t2=${t2.classOrNull?.owner?.name}")
+            primitive1 == PrimitiveType.DOUBLE || primitive2 == PrimitiveType.DOUBLE -> symbols.double
+            primitive1 == PrimitiveType.FLOAT || primitive2 == PrimitiveType.FLOAT -> symbols.float
+            unsigned1 == UnsignedType.ULONG || unsigned2 == UnsignedType.ULONG -> symbols.uLong!!
+            unsigned1.isPromotableToUInt() || unsigned2.isPromotableToUInt() -> symbols.uInt!!
+            primitive1 == PrimitiveType.LONG || primitive2 == PrimitiveType.LONG -> symbols.long
+            primitive1.isPromotableToInt() || primitive2.isPromotableToInt() -> symbols.int
+            primitive1 == PrimitiveType.CHAR || primitive2 == PrimitiveType.CHAR -> symbols.char
+            else -> error("Unexpected types: t1=${t1.render()}, t2=${t2.render()}")
         }.defaultType
     }
 
-    private fun IrType.promoteIntegerTypeToIntIfRequired(symbols: Symbols<CommonBackendContext>): IrType = when {
-        isByte() || isShort() -> symbols.int.defaultType
-        isUByte() || isUShort() -> symbols.uInt!!.defaultType
-        else -> this
-    }
+    private fun PrimitiveType?.isPromotableToInt(): Boolean =
+        this == PrimitiveType.INT || this == PrimitiveType.SHORT || this == PrimitiveType.BYTE
+
+    private fun UnsignedType?.isPromotableToUInt(): Boolean =
+        this == UnsignedType.UINT || this == UnsignedType.USHORT || this == UnsignedType.UBYTE
 }
 
 internal open class RangeHeaderInfoBuilder(context: CommonBackendContext, scopeOwnerSymbol: () -> IrSymbol) :

@@ -1,6 +1,6 @@
 class C {
 
-    fun f (<!UNUSED_PARAMETER!>a<!> : Boolean, <!UNUSED_PARAMETER!>b<!> : Boolean) {
+    fun f (a : Boolean, b : Boolean) {
         b@ while (true)
           <!REDUNDANT_LABEL_WARNING!>a@<!> {
             <!NOT_A_LOOP_LABEL!>break@f<!>
@@ -25,7 +25,7 @@ class C {
         <!NOT_A_LOOP_LABEL!>break@f<!>
     }
 
-    fun containsBreak(a: String?, <!UNUSED_PARAMETER!>b<!>: String?) {
+    fun containsBreak(a: String?, b: String?) {
         while (a == null) {
             break;
         }

@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorFactory
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isConventionCall
+import org.jetbrains.kotlin.resolve.calls.util.isConventionCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
@@ -105,7 +105,8 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
             dynamicType,
             createTypeParameters(propertyDescriptor, call),
             createDynamicDispatchReceiverParameter(propertyDescriptor),
-            null
+            null,
+            emptyList()
         )
 
         val getter = DescriptorFactory.createDefaultGetter(propertyDescriptor, Annotations.EMPTY)
@@ -128,6 +129,7 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
         functionDescriptor.initialize(
             null,
             createDynamicDispatchReceiverParameter(functionDescriptor),
+            emptyList(),
             createTypeParameters(functionDescriptor, call),
             createValueParameters(functionDescriptor, call),
             dynamicType,
@@ -184,9 +186,11 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
             val funLiteral = funLiteralExpr.functionLiteral
 
             val receiverType = funLiteral.receiverTypeReference?.let { dynamicType }
+            val contextReceiversTypes = funLiteral.contextReceivers.map { dynamicType }
+
             val parameterTypes = funLiteral.valueParameters.map { dynamicType }
 
-            return createFunctionType(owner.builtIns, Annotations.EMPTY, receiverType, parameterTypes, null, dynamicType)
+            return createFunctionType(owner.builtIns, Annotations.EMPTY, receiverType, contextReceiversTypes, parameterTypes, null, dynamicType)
         }
 
         for (arg in call.valueArguments) {

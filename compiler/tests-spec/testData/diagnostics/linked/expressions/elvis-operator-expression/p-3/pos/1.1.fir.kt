@@ -27,6 +27,6 @@ fun case3() {
 
 // TESTCASE NUMBER: 4
 fun case4() {
-    val x = null ?: null
+    val x = null <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
 }

@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 import org.jetbrains.kotlin.types.error.ErrorSimpleFunctionDescriptorImpl;
-import org.jetbrains.kotlin.types.refinement.TypeRefinement;
 import org.jetbrains.kotlin.utils.Printer;
 
 import java.util.Collection;
@@ -430,7 +429,8 @@ public class ErrorUtils {
                 SourceElement.NO_SOURCE,
                 false, false, false, false, false, false
         );
-        descriptor.setType(ERROR_PROPERTY_TYPE, Collections.<TypeParameterDescriptor>emptyList(), null, null);
+        descriptor.setType(ERROR_PROPERTY_TYPE, Collections.<TypeParameterDescriptor>emptyList(), null, null,
+                           Collections.<ReceiverParameterDescriptor>emptyList());
 
         return descriptor;
     }
@@ -439,8 +439,7 @@ public class ErrorUtils {
     private static SimpleFunctionDescriptor createErrorFunction(@NotNull ErrorScope ownerScope) {
         ErrorSimpleFunctionDescriptorImpl function = new ErrorSimpleFunctionDescriptorImpl(ERROR_CLASS, ownerScope);
         function.initialize(
-                null,
-                null,
+                null, null, Collections.<ReceiverParameterDescriptor>emptyList(),
                 Collections.<TypeParameterDescriptorImpl>emptyList(), // TODO
                 Collections.<ValueParameterDescriptor>emptyList(), // TODO
                 createErrorType("<ERROR FUNCTION RETURN TYPE>"),

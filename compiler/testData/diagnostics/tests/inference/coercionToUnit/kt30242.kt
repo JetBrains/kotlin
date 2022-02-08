@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // ISSUE: KT-30242
 
@@ -48,7 +47,7 @@ fun bar(block: () -> String) {}
 
 fun test_5(b: Boolean) {
     bar {
-        <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>if (b) {
+        <!TYPE_MISMATCH!>if (b) {
             println("meh")
         }<!>
     }

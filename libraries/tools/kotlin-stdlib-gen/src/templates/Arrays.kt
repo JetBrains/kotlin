@@ -1,4 +1,4 @@
-/*
+ /*
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
@@ -680,7 +680,7 @@ object ArrayOps : TemplateGroupBase() {
                     if (primitive == null)
                         "return this.asDynamic().concat(arrayOf(element))"
                     else
-                        "return plus(${primitive.name.toLowerCase()}ArrayOf(element))"
+                        "return plus(${primitive.name.lowercase()}ArrayOf(element))"
                 }
             }
             on(Platform.Native) {
@@ -920,7 +920,24 @@ object ArrayOps : TemplateGroupBase() {
                     }
                 }
                 on(Backend.Wasm) {
-                    body { """TODO("Wasm stdlib: $signature")""" }
+                    body {
+                        """
+                        AbstractList.checkRangeIndexes(startIndex, endIndex, this.size)
+                        val rangeSize = endIndex - startIndex
+                        AbstractList.checkRangeIndexes(destinationOffset, destinationOffset + rangeSize, destination.size)
+                        
+                        if (this !== destination || destinationOffset <= startIndex) {
+                            for (index in 0 until rangeSize) {
+                                destination[destinationOffset + index] = this[startIndex + index]
+                            }
+                        } else {
+                            for (index in rangeSize - 1 downTo 0) {
+                                destination[destinationOffset + index] = this[startIndex + index]
+                            }
+                        }
+                        return destination
+                        """
+                    }
                 }
             }
         }
@@ -929,7 +946,7 @@ object ArrayOps : TemplateGroupBase() {
     val f_copyOfRangeJvmImpl = fn("copyOfRangeImpl(fromIndex: Int, toIndex: Int)") {
         include(InvariantArraysOfObjects, ArraysOfPrimitives)
         platforms(Platform.JVM)
-    } builderWith { primitive ->
+    } builderWith { _ ->
         since("1.3")
         visibility("internal")
         annotation("@PublishedApi")
@@ -1049,9 +1066,6 @@ object ArrayOps : TemplateGroupBase() {
             return result
             """
         }
-        on(Backend.Wasm) {
-            body { """TODO("Wasm stdlib: $signature")""" }
-        }
     }
 
     val f_copyOf = fn("copyOf()") {
@@ -1160,9 +1174,6 @@ object ArrayOps : TemplateGroupBase() {
             }
             on(Platform.Native) {
                 body { "return this.copyOfNulls(newSize)" }
-                on(Backend.Wasm) {
-                    body { """TODO("Wasm stdlib: $signature")""" }
-                }
             }
         }
         specialFor(ArraysOfPrimitives, InvariantArraysOfObjects) {
@@ -1219,7 +1230,10 @@ object ArrayOps : TemplateGroupBase() {
                         }
                     } else {
                         body {
-                            """if (size > 1) sort { a: T, b: T -> a.compareTo(b) }"""
+                            """
+                            @Suppress("DEPRECATION")
+                            if (size > 1) sort { a: T, b: T -> a.compareTo(b) }
+                            """
                         }
                     }
                 }
@@ -1242,9 +1256,6 @@ object ArrayOps : TemplateGroupBase() {
             }
             on(Platform.Native) {
                 body { """if (size > 1) sortArray(this, 0, size)""" }
-                on(Backend.Wasm) {
-                    body { """TODO("Wasm stdlib: $signature")""" }
-                }
             }
         }
     }
@@ -1267,9 +1278,6 @@ object ArrayOps : TemplateGroupBase() {
         }
         on(Platform.Native) {
             body { """if (size > 1) sortArrayWith(this, 0, size, comparator)""" }
-            on(Backend.Wasm) {
-                body { """TODO("Wasm stdlib: $signature")""" }
-            }
         }
     }
 
@@ -1281,11 +1289,15 @@ object ArrayOps : TemplateGroupBase() {
         returns("Unit")
         doc { "Sorts the array in-place according to the order specified by the given [comparison] function." }
         specialFor(ArraysOfPrimitives) {
+            deprecate(Deprecation("Use other sorting functions from the Standard Library", warningSince = "1.6"))
             inlineOnly()
             signature("sort(noinline comparison: (a: T, b: T) -> Int)")
             body { "asDynamic().sort(comparison)" }
         }
         specialFor(ArraysOfObjects) {
+            deprecate(
+                Deprecation("Use sortWith instead", replaceWith = "this.sortWith(Comparator(comparison))", warningSince = "1.6")
+            )
             appendStableSortNote()
             body { """if (size > 1) sortArrayWith(this, comparison)""" }
         }
@@ -1378,9 +1390,6 @@ object ArrayOps : TemplateGroupBase() {
                 sortArray(this, fromIndex, toIndex)
                 """
             }
-            on(Backend.Wasm) {
-                body { """TODO("Wasm stdlib: $signature")""" }
-            }
         }
         on(Platform.JS) {
             since("1.4")
@@ -1436,9 +1445,6 @@ object ArrayOps : TemplateGroupBase() {
                 AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
                 sortArrayWith(this, fromIndex, toIndex, comparator)
                 """
-            }
-            on(Backend.Wasm) {
-                body { """TODO("Wasm stdlib: $signature")""" }
             }
         }
         on(Platform.JS) {
@@ -1646,7 +1652,13 @@ object ArrayOps : TemplateGroupBase() {
                     "arrayFill(this, fromIndex, toIndex, element)"
                 }
                 on(Backend.Wasm) {
-                    body { """TODO("Wasm stdlib: $signature")""" }
+                    body {
+                        """
+                        for (index in fromIndex..toIndex) {
+                            this[index] = element    
+                        }
+                        """
+                    }
                 }
             }
             on(Platform.Common) {

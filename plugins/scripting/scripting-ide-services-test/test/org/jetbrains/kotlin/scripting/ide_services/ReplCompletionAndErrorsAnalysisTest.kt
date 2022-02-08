@@ -110,6 +110,92 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
     }
 
     @Test
+    fun testFunctionArgumentNames() = test {
+        run {
+            doCompile
+            code = """
+                fun _sf(_someInt: Int = 42, _someString: String = "s") = 1
+                fun String.f(_bar: Int) = _bar
+                class C(val _xyz: Int)
+            """.trimIndent()
+        }
+        run {
+            code = """_sf(_s"""
+            cursor = code.length
+            expect {
+                addCompletion("_sf(", "_sf(Int = ..., String = ...)", "Int", "method")
+                addCompletion("_someInt = ", "_someInt", "Int", "parameter")
+                addCompletion("_someString = ", "_someString", "String", "parameter")
+            }
+        }
+        run {
+            code = """ "my string".f(_b"""
+            cursor = code.length
+            expect {
+                addCompletion("_bar = ", "_bar", "Int", "parameter")
+            }
+        }
+        run {
+            code = "C(_x"
+            cursor = code.length
+            expect {
+                addCompletion("_xyz = ", "_xyz", "Int", "parameter")
+            }
+        }
+    }
+
+    @Test
+    fun testCompletionInsideFunctions() = test {
+        run {
+            val statement = "val a = _f"
+            code = """
+                fun dontCompleteMe(_foo: Int, bar: String) {
+                    val _foo2 = ""
+                    $statement
+                }
+            """.trimIndent()
+            cursor = code.indexOf(statement) + statement.length
+            expect {
+                addCompletion("_foo2", "_foo2", "String", "property")
+                addCompletion("_foo", "_foo", "Int", "parameter")
+            }
+        }
+    }
+
+    @Test
+    fun testDeprecatedCompletion() = test {
+        run {
+            doCompile
+            code = """
+                @Deprecated("deprecated")
+                class Clazz1
+                
+                @Deprecated("deprecated", level=DeprecationLevel.ERROR)
+                class Clazz2
+            """.trimIndent()
+        }
+        run {
+            doComplete
+            code = """
+                @Deprecated("deprecated1", level=DeprecationLevel.WA)
+                class Clazz3
+                
+                @Deprecated("deprecated1", level=kotlin.annotation.AnnotationRetention.SOURCE)
+                class Clazz4
+                
+                Claz
+            """.trimIndent()
+            cursor = code.length
+            expect {
+                addCompletion("Clazz3", "Clazz3", " (Line_2_simplescript)", "class", DeprecationLevel.WARNING)
+                addCompletion("Clazz4", "Clazz4", " (Line_2_simplescript)", "class", DeprecationLevel.WARNING)
+                addCompletion("Clazz1", "Clazz1", " (Line_1_simplescript)", "class", DeprecationLevel.WARNING)
+                addCompletion("Clazz2", "Clazz2", " (Line_1_simplescript)", "class", DeprecationLevel.ERROR)
+            }
+        }
+    }
+
+    @Test
     fun testExtensionMethods() = test {
         run {
             doCompile
@@ -143,7 +229,13 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
             code = "df.fil"
             cursor = 6
             expect {
-                addCompletion("filter { ", "filter(Line_1_simplescript.AClass.() -> ...", "Line_1_simplescript.AClass", "method")
+                completions.check { actual ->
+                    assertEquals(
+                        SourceCodeCompletionVariant(
+                            "filter { ", "filter(Line_1_simplescript.AClass.() -> ...", "Line_1_simplescript.AClass", "method"
+                        ), actual.single { it.tail != "keyword" }
+                    )
+                }
             }
         }
     }
@@ -194,6 +286,20 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
                 addError(1, 22, 1, 26, "The floating-point literal does not conform to the expected type String", "ERROR")
                 addError(2, 14, 2, 19, "Type mismatch: inferred type is String but Int was expected", "ERROR")
                 addError(3, 9, 3, 13, "Unresolved reference: foob", "ERROR")
+            }
+        }
+    }
+
+    @Test
+    fun testIncompleteCode() = test {
+        run {
+            doErrorCheck
+
+            code = "fun g(): Int { return 1"
+
+            expect {
+                addError(1, 24, 1, 24, "Expecting '}'", "ERROR")
+                errors.add(ScriptDiagnostic(ScriptDiagnostic.incompleteCode, "Incomplete code"))
             }
         }
     }
@@ -332,6 +438,39 @@ class ReplCompletionAndErrorsAnalysisTest : TestCase() {
             expect {
                 completions.mode = ComparisonType.INCLUDES
                 addCompletion("kotlin", "kotlin", "package kotlin", "package")
+            }
+        }
+    }
+
+    @Test
+    fun testProtectedInheritedMemberCompletion() = test {
+        run {
+            code = """
+                open class Base {
+                    private val xyz1: Float = 7.0f
+                    protected val xyz2: Int = 42
+                    internal val xyz3: String = ""
+                    public val xyz4: Byte = 8
+                }
+            """.trimIndent()
+            doCompile
+        }
+
+        run {
+            val definition = "val c = x"
+            code = """
+                object : Base() {
+                    fun g() {
+                        $definition
+                    }
+                }
+            """.trimIndent()
+            cursor = code.indexOf(definition) + definition.length
+
+            expect {
+                addCompletion("xyz2", "xyz2", "Int", "property")
+                addCompletion("xyz3", "xyz3", "String", "property")
+                addCompletion("xyz4", "xyz4", "Byte", "property")
             }
         }
     }

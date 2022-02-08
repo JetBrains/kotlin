@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.utils
 
 import java.io.ByteArrayInputStream
 import java.io.ObjectInputStream
+import java.nio.charset.StandardCharsets
 import java.util.*
 
 fun decodePluginOptions(options: String): Map<String, List<String>> {
@@ -36,7 +37,10 @@ fun decodePluginOptions(options: String): Map<String, List<String>> {
         val values = mutableListOf<String>()
 
         repeat(valueCount) {
-            values += ois.readUTF()
+            val size = ois.readInt()
+            val byteArray = ByteArray(size)
+            ois.readFully(byteArray)
+            values += String(byteArray, StandardCharsets.UTF_8)
         }
 
         map[key] = values

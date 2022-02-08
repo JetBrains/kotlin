@@ -31,7 +31,7 @@ open class K : J() {
     private val privateKProp = Unit
 }
 
-class L : K() {
+open class L : K() {
     fun publicLFun() {}
     private fun privateLFun() {}
     val publicLProp = Unit
@@ -43,10 +43,18 @@ inline fun <reified T> test(vararg names: String) {
 }
 
 fun box(): String {
+    class Local : L() {
+        fun publicLocalFun() {}
+        private fun privateLocalFun() {}
+        val publicLocalProp = Unit
+        private var privateLocalProp = Unit
+    }
+
     test<I>("publicStaticI", "publicMemberI", "privateStaticI", "privateMemberI")
     test<J>("publicStaticJ", "publicMemberJ", "privateStaticJ", "privateMemberJ")
     test<K>("publicKFun", "privateKFun", "publicKProp", "privateKProp")
     test<L>("publicLFun", "privateLFun", "publicLProp", "privateLProp")
+    test<Local>("publicLocalFun", "privateLocalFun", "publicLocalProp", "privateLocalProp")
 
     return "OK"
 }

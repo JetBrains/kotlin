@@ -66,7 +66,7 @@ interface JavaModule {
      */
     fun exportsTo(packageFqName: FqName, moduleName: String): Boolean
 
-    data class Root(val file: VirtualFile, val isBinary: Boolean)
+    data class Root(val file: VirtualFile, val isBinary: Boolean, val isBinarySignature: Boolean = false)
 
     class Automatic(override val name: String, override val moduleRoots: List<Root>) : JavaModule {
         override val moduleInfoFile: VirtualFile? get() = null
@@ -81,9 +81,10 @@ interface JavaModule {
     }
 
     class Explicit(
-            val moduleInfo: JavaModuleInfo,
-            override val moduleRoots: List<Root>,
-            override val moduleInfoFile: VirtualFile
+        val moduleInfo: JavaModuleInfo,
+        override val moduleRoots: List<Root>,
+        override val moduleInfoFile: VirtualFile,
+        val isJdkModuleFromCtSym: Boolean = false
     ) : JavaModule {
         override val name: String
             get() = moduleInfo.moduleName

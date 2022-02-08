@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface A<H> {
     fun foo() : Int = 1
     fun foo2() : Int = 1

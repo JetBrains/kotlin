@@ -1,5 +1,6 @@
 package
 
 public inline fun </*0*/ reified T> f(): T
+public inline fun </*0*/ reified T> foo(): kotlin.Unit
 public fun </*0*/ T> id(/*0*/ p: T): T
 public fun </*0*/ A> main(): kotlin.Unit

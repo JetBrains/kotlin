@@ -1,0 +1,8 @@
+fun testAndAnd(d: dynamic): Boolean {
+  return d && d
+}
+
+fun testOrOr(d: dynamic): Boolean {
+  return d || d
+}
+

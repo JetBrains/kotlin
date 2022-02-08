@@ -1,7 +1,8 @@
-// FILE: 1.kt
 // IGNORE_BACKEND: JS
-// WITH_RUNTIME
+// WITH_STDLIB
+// NO_CHECK_LAMBDA_INLINING
 // KJS_WITH_FULL_RUNTIME
+// FILE: 1.kt
 package test
 
 public inline fun <T> T.myalso(block: (T) -> Unit): T {
@@ -14,7 +15,6 @@ public inline fun <T, R : Any> Iterable<T>.mymapNotNull(transform: (T) -> R?): L
 }
 
 // FILE: 2.kt
-// NO_CHECK_LAMBDA_INLINING
 import test.*
 
 var result = -1;

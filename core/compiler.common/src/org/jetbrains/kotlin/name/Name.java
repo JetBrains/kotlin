@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.name;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public final class Name implements Comparable<Name> {
     @NotNull
@@ -43,6 +44,12 @@ public final class Name implements Comparable<Name> {
 
     public boolean isSpecial() {
         return special;
+    }
+
+    @NotNull
+    public String asStringStripSpecialMarkers() {
+        if (isSpecial()) return asString().substring(1, asString().length() - 1);
+        return asString();
     }
 
     @Override
@@ -83,6 +90,12 @@ public final class Name implements Comparable<Name> {
         else {
             return identifier(name);
         }
+    }
+
+    @Nullable
+    public String getIdentifierOrNullIfSpecial() {
+        if (special) return null;
+        return asString();
     }
 
     @Override

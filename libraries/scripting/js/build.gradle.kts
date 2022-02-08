@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    compile(project(":kotlin-scripting-common"))
+    api(project(":kotlin-scripting-common"))
     compileOnly(project(":compiler:backend.js"))
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":js:js.engines"))

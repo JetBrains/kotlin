@@ -7,30 +7,55 @@ package kotlin.js
 
 private external interface Metadata {
     val interfaces: Array<Ctor>
-    val suspendArity: Int?
+    val suspendArity: Array<Int>?
+
+    // This field gives fast access to the prototype of metadata owner (Object.getPrototypeOf())
+    // Can be pre-initialized or lazy initialized and then should be immutable
+    var fastPrototype: Prototype?
+
+    // The hint is used as a sort of flag, pointed to the class or the interface, which is not a parent for metadata owner
+    // Can be mutated quite often
+    var nonParentHint: dynamic
 }
 
 private external interface Ctor {
     val `$metadata$`: Metadata?
-    val prototype: Ctor?
+    val prototype: Prototype?
 }
 
-private fun isInterfaceImpl(ctor: Ctor, iface: dynamic): Boolean {
-    if (ctor === iface) return true
+private external interface Prototype {
+    val constructor: Ctor?
+}
 
-    val metadata = ctor.`$metadata$`
-    if (metadata != null) {
-        val interfaces = metadata.interfaces
+private fun Ctor.getPrototype() = prototype?.let { js("Object").getPrototypeOf(it).unsafeCast<Prototype>() }
+
+private fun isInterfaceImpl(ctor: Ctor, iface: dynamic): Boolean {
+    if (ctor === iface) {
+        return true
+    }
+
+    val superPrototype = ctor.`$metadata$`?.run {
+        if (nonParentHint != null && nonParentHint === iface) {
+            return false
+        }
         for (i in interfaces) {
             if (isInterfaceImpl(i, iface)) {
                 return true
             }
         }
+        if (fastPrototype == null) {
+            fastPrototype = ctor.getPrototype()
+        }
+        fastPrototype
     }
 
-    val superPrototype = if (ctor.prototype != null) js("Object").getPrototypeOf(ctor.prototype) else null
-    val superConstructor: Ctor? = if (superPrototype != null) superPrototype.constructor else null
-    return superConstructor != null && isInterfaceImpl(superConstructor, iface)
+    (superPrototype ?: ctor.getPrototype())?.constructor?.let {
+        if (isInterfaceImpl(it, iface)) {
+            return true
+        }
+        ctor.`$metadata$`?.run { nonParentHint = iface }
+    }
+    return false
 }
 
 internal fun isInterface(obj: dynamic, iface: dynamic): Boolean {
@@ -80,6 +105,20 @@ internal fun isSuspendFunction(obj: dynamic, arity: Int): Boolean {
         return obj.`$arity`.unsafeCast<Int>() === arity
     }
 
+    if (jsTypeOf(obj) == "object" && jsIn("${'$'}metadata${'$'}", obj.constructor)) {
+        @Suppress("IMPLICIT_BOXING_IN_IDENTITY_EQUALS")
+        return obj.constructor.unsafeCast<Ctor>().`$metadata$`?.suspendArity?.let {
+            var result = false
+            for (item in it) {
+                if (arity == item) {
+                    result = true
+                    break
+                }
+            }
+            return result
+        } ?: false
+    }
+
     return false
 }
 
@@ -99,11 +138,11 @@ private fun isJsArray(obj: Any): Boolean {
     return js("Array").isArray(obj).unsafeCast<Boolean>()
 }
 
-internal  fun isArray(obj: Any): Boolean {
+internal fun isArray(obj: Any): Boolean {
     return isJsArray(obj) && !(obj.asDynamic().`$type$`)
 }
 
-internal  fun isArrayish(o: dynamic) =
+internal fun isArrayish(o: dynamic) =
     isJsArray(o) || js("ArrayBuffer").isView(o).unsafeCast<Boolean>()
 
 
@@ -115,7 +154,7 @@ internal fun isChar(@Suppress("UNUSED_PARAMETER") c: Any): Boolean {
 internal fun isBooleanArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "BooleanArray"
 internal fun isByteArray(a: dynamic): Boolean = jsInstanceOf(a, js("Int8Array"))
 internal fun isShortArray(a: dynamic): Boolean = jsInstanceOf(a, js("Int16Array"))
-internal fun isCharArray(a: dynamic): Boolean = isJsArray(a) && a.`$type$` === "CharArray"
+internal fun isCharArray(a: dynamic): Boolean = jsInstanceOf(a, js("Uint16Array")) && a.`$type$` === "CharArray"
 internal fun isIntArray(a: dynamic): Boolean = jsInstanceOf(a, js("Int32Array"))
 internal fun isFloatArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float32Array"))
 internal fun isDoubleArray(a: dynamic): Boolean = jsInstanceOf(a, js("Float64Array"))
@@ -166,9 +205,9 @@ internal fun isComparable(value: dynamic): Boolean {
     var type = jsTypeOf(value)
 
     return type == "string" ||
-           type == "boolean" ||
-           isNumber(value) ||
-           isInterface(value, Comparable::class.js)
+            type == "boolean" ||
+            isNumber(value) ||
+            isInterface(value, Comparable::class.js)
 }
 
 internal fun isCharSequence(value: dynamic): Boolean =

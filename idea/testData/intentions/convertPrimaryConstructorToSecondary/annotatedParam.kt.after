@@ -1,9 +1,0 @@
-annotation class Ann
-
-class AnnotatedParam {
-    constructor(@Ann x: Double) {
-        this.y = x
-    }
-
-    val y: Double
-}

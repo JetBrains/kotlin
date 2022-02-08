@@ -2,11 +2,11 @@
 public final class A {
     // source: 'privateSuspendFun.kt'
     public method <init>(): void
-    synthetic final method foo(p0: java.lang.Object): java.lang.Object
+    private final method foo(p0: java.lang.Object): java.lang.Object
 }
 
 @kotlin.Metadata
 public final class PrivateSuspendFunKt {
     // source: 'privateSuspendFun.kt'
-    synthetic final static method foo(p0: java.lang.Object): java.lang.Object
+    private final static method foo(p0: java.lang.Object): java.lang.Object
 }

@@ -9,17 +9,16 @@ import kotlinx.metadata.*
 import kotlinx.metadata.jvm.*
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.junit.Assert.*
 import org.junit.Test
 import java.net.URLClassLoader
 import kotlin.coroutines.CoroutineContext
 import kotlin.reflect.full.primaryConstructor
-import kotlin.test.assertFailsWith
+import kotlin.test.*
 
 class MetadataSmokeTest {
     private fun Class<*>.readMetadata(): KotlinClassHeader {
         return getAnnotation(Metadata::class.java).run {
-            KotlinClassHeader(kind, metadataVersion, bytecodeVersion, data1, data2, extraString, packageName, extraInt)
+            KotlinClassHeader(kind, metadataVersion, data1, data2, extraString, packageName, extraInt)
         }
     }
 
@@ -75,7 +74,6 @@ class MetadataSmokeTest {
             // Use the created KotlinMetadata instance to write @kotlin.Metadata annotation on the class file
             visitAnnotation("Lkotlin/Metadata;", true).run {
                 visit("mv", header.metadataVersion)
-                visit("bv", header.bytecodeVersion)
                 visit("k", header.kind)
                 visitArray("d1").run {
                     header.data1.forEach { visit(null, it) }
@@ -160,7 +158,6 @@ class MetadataSmokeTest {
             KotlinClassHeader(
                 kind = annotation.kind,
                 metadataVersion = annotation.metadataVersion,
-                bytecodeVersion = annotation.bytecodeVersion,
                 data1 = annotation.data1,
                 data2 = annotation.data2,
                 extraInt = annotation.extraInt,
@@ -215,5 +212,27 @@ class MetadataSmokeTest {
         assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.SyntheticClass.Writer().write(mv) }
 
         KotlinModuleMetadata.Writer().write(mv)
+    }
+
+    @Test
+    fun jvmClassFlags() {
+        // Test that we can (de-)serialize the jvmClassFlags extension. All the flags that currently
+        // exist are controlled by compiler options, so we have to manually create metadata with the
+        // flags set. Since the current flags only apply to interfaces with default functions we modify
+        // the metadata for the kotlin.coroutines.CoroutineContext interface.
+        val jvmClassFlags: Flags = flagsOf(
+            JvmFlag.Class.IS_COMPILED_IN_COMPATIBILITY_MODE,
+            JvmFlag.Class.HAS_METHOD_BODIES_IN_INTERFACE
+        )
+
+        val metadata = CoroutineContext::class.java.readMetadata()
+        val kmClass = (KotlinClassMetadata.read(metadata) as KotlinClassMetadata.Class).toKmClass()
+        kmClass.jvmFlags = jvmClassFlags
+
+        val kmClassCopy = KotlinClassMetadata.Class.Writer()
+            .also { kmClass.accept(it) }
+            .write(metadata.metadataVersion, metadata.extraInt)
+            .toKmClass()
+        assertEquals(kmClassCopy.jvmFlags, jvmClassFlags)
     }
 }

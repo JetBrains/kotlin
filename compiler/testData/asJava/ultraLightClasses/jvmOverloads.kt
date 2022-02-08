@@ -1,7 +1,7 @@
 class C @JvmOverloads constructor(
     val type: String?,
     val p1: Boolean = false,
-    val p2: String = type
+    val p2: String = type!!
 ) {
     @JvmOverloads
     fun foo(x: Int = 1, y: Double, z: String = "") {}

@@ -1,0 +1,126 @@
+FILE: exhaustiveness_sealedClass.kt
+    public sealed class Base : R|kotlin/Any| {
+        protected constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class A : R|Base| {
+            public constructor(): R|Base.A| {
+                super<R|Base|>()
+            }
+
+            public final class B : R|Base| {
+                public constructor(): R|Base.A.B| {
+                    super<R|Base|>()
+                }
+
+            }
+
+        }
+
+    }
+    public final class C : R|Base| {
+        public constructor(): R|C| {
+            super<R|Base|>()
+        }
+
+    }
+    public final fun test_1(e: R|Base|): R|kotlin/Unit| {
+        lval a: R|kotlin/Unit| = when (R|<local>/e|) {
+            ($subj$ is R|Base.A|) ->  {
+                Int(1)
+            }
+            ($subj$ is R|Base.A.B|) ->  {
+                Int(2)
+            }
+        }
+
+        lval b: R|kotlin/Unit| = when (R|<local>/e|) {
+            ($subj$ is R|Base.A|) ->  {
+                Int(1)
+            }
+            ($subj$ is R|Base.A.B|) ->  {
+                Int(2)
+            }
+            ($subj$ is R|kotlin/String|) ->  {
+                Int(3)
+            }
+        }
+
+        lval c: R|kotlin/Int| = when (R|<local>/e|) {
+            ($subj$ is R|Base.A|) ->  {
+                Int(1)
+            }
+            ($subj$ is R|Base.A.B|) ->  {
+                Int(2)
+            }
+            ($subj$ is R|C|) ->  {
+                Int(3)
+            }
+        }
+
+        lval d: R|kotlin/Int| = when (R|<local>/e|) {
+            ($subj$ is R|Base.A|) ->  {
+                Int(1)
+            }
+            else ->  {
+                Int(2)
+            }
+        }
+
+    }
+    public final fun test_2(e: R|Base?|): R|kotlin/Unit| {
+        lval a: R|kotlin/Unit| = when (R|<local>/e|) {
+            ($subj$ is R|Base.A|) ->  {
+                Int(1)
+            }
+            ($subj$ is R|Base.A.B|) ->  {
+                Int(2)
+            }
+            ($subj$ is R|C|) ->  {
+                Int(3)
+            }
+        }
+
+        lval b: R|kotlin/Int| = when (R|<local>/e|) {
+            ($subj$ is R|Base.A|) ->  {
+                Int(1)
+            }
+            ($subj$ is R|Base.A.B|) ->  {
+                Int(2)
+            }
+            ($subj$ is R|C|) ->  {
+                Int(3)
+            }
+            ==($subj$, Null(null)) ->  {
+                Int(4)
+            }
+        }
+
+        lval c: R|kotlin/Int| = when (R|<local>/e|) {
+            ($subj$ is R|Base.A|) ->  {
+                Int(1)
+            }
+            ($subj$ is R|Base.A.B|) ->  {
+                Int(2)
+            }
+            ($subj$ is R|C|) ->  {
+                Int(3)
+            }
+            else ->  {
+                Int(4)
+            }
+        }
+
+    }
+    public final fun test_3(e: R|Base|): R|kotlin/Unit| {
+        lval a: R|kotlin/Int| = when (R|<local>/e|) {
+            ($subj$ is R|Base.A|) || ($subj$ is R|Base.A.B|) ->  {
+                Int(1)
+            }
+            ($subj$ is R|C|) ->  {
+                Int(2)
+            }
+        }
+
+    }

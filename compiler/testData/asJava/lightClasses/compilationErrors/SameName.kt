@@ -13,3 +13,5 @@ class A {
     private val j: String = { "a" }()
     private val j: String = { "b" }()
 }
+
+// FIR_COMPARISON

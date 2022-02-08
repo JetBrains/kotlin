@@ -1,0 +1,1 @@
+actual val sourceSetsAfterWatchosMain: String = "watchosArm32Main"

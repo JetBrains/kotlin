@@ -1,0 +1,100 @@
+FILE: exposedSupertype.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected abstract interface AProtectedI : R|kotlin/Any| {
+        }
+
+        public abstract interface APublicI : R|kotlin/Any| {
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected final class BProtected : R|kotlin/Any| {
+            public constructor(): R|B.BProtected| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final inner class BInner : R|kotlin/Any| {
+            public B.constructor(): R|B.BInner| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    private final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class CPublic : R|kotlin/Any| {
+            public constructor(): R|C.CPublic| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public abstract interface CPublicI : R|kotlin/Any| {
+        }
+
+    }
+    public final class D : R|A| {
+        public constructor(): R|D| {
+            super<R|A|>()
+        }
+
+        public final class Test1 : R|A.AProtectedI| {
+            public constructor(): R|D.Test1| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public abstract interface E : R|kotlin/Any| {
+    }
+    public final class Test2 : R|A.APublicI|, R|B.BInner| {
+        public constructor(): R|Test2| {
+            super<R|B.BInner|>()
+        }
+
+    }
+    public final class Test3 : R|C.CPublicI|, R|C| {
+        public constructor(): R|Test3| {
+            super<R|C|>()
+        }
+
+    }
+    public final class Test4 : R|E|, <ERROR TYPE REF: HIDDEN: A.AProtectedI is invisible> {
+        public constructor(): R|Test4| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Test5 : R|C.CPublicI|, R|B.BInner| {
+        public constructor(): R|Test5| {
+            super<R|B.BInner|>()
+        }
+
+    }
+    public final class Test6 : R|E|, R|C.CPublic| {
+        public constructor(): R|Test6| {
+            super<R|C.CPublic|>()
+        }
+
+    }
+    public final class Test7 : <ERROR TYPE REF: Symbol not found for D.PublicButProtected> {
+        public constructor(): R|Test7| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

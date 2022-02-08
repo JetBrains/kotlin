@@ -50,7 +50,7 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     public void setOutType(KotlinType outType) {
-        assert this.outType == null || TypeUtilsKt.shouldBeSubstituted(this.outType);
+        assert this.outType == null || TypeUtilsKt.shouldBeUpdated(this.outType);
         this.outType = outType;
     }
 
@@ -85,6 +85,12 @@ public abstract class VariableDescriptorImpl extends DeclarationDescriptorNonRoo
     @NotNull
     @Override
     public List<TypeParameterDescriptor> getTypeParameters() {
+        return Collections.emptyList();
+    }
+
+    @NotNull
+    @Override
+    public List<ReceiverParameterDescriptor> getContextReceiverParameters() {
         return Collections.emptyList();
     }
 

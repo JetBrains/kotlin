@@ -1,0 +1,1 @@
+fun clear(byteByffer: java.nio.ByteBuffer) = byteByffer.clear()

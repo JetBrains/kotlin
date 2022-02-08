@@ -1,6 +1,7 @@
-// !LANGUAGE: +InlineClasses
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 class Foo {
     companion object {
@@ -11,7 +12,8 @@ class Foo {
 
 var setterInvoked = 0
 
-inline class Delegate(val ignored: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Delegate(val ignored: Int) {
 
     operator fun getValue(thisRef: Any?, prop: Any?) = Foo.a
 

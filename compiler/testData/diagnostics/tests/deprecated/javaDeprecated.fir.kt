@@ -11,6 +11,6 @@ public class A {
 
 // FILE: B.kt
 
-class B(private <!INAPPLICABLE_CANDIDATE, INAPPLICABLE_CANDIDATE!>@property:Deprecated<!> val foo: String) : A() {
-    override fun getFoo(text: String): String = super.getFoo(text + foo)
+class B(private @property:Deprecated val foo: String) : <!DEPRECATION!>A<!>() {
+    override fun <!OVERRIDE_DEPRECATION!>getFoo<!>(text: String): String = super.<!DEPRECATION!>getFoo<!>(text + <!DEPRECATION!>foo<!>)
 }

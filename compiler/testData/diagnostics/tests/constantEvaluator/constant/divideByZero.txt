@@ -1,0 +1,30 @@
+package
+
+package test {
+    public val prop1: kotlin.Int
+    public val prop10: kotlin.Double = Infinity.toDouble()
+    public val prop11: kotlin.Double = Infinity.toDouble()
+    public val prop12: kotlin.Double = -Infinity.toDouble()
+    public val prop13: kotlin.Float = Infinity.toFloat()
+    public val prop14: kotlin.Float = -Infinity.toFloat()
+    public val prop15: kotlin.Double = NaN.toDouble()
+    public val prop16: kotlin.Float = NaN.toFloat()
+    public val prop17: kotlin.Double = NaN.toDouble()
+    public val prop18: kotlin.Double = NaN.toDouble()
+    public val prop19: kotlin.Float = NaN.toFloat()
+    public val prop2: kotlin.Double = Infinity.toDouble()
+    public val prop20: kotlin.Double = NaN.toDouble()
+    public val prop21: kotlin.Double = NaN.toDouble()
+    public val prop22: kotlin.Float = NaN.toFloat()
+    public val prop23: kotlin.Double = NaN.toDouble()
+    public val prop24: kotlin.Double = NaN.toDouble()
+    public val prop26: kotlin.Double = NaN.toDouble()
+    public val prop27: kotlin.Double = Infinity.toDouble()
+    public val prop3: kotlin.Double = Infinity.toDouble()
+    public val prop4: kotlin.Double = 10.0.toDouble()
+    public val prop5: kotlin.Long
+    public val prop6: kotlin.Double = Infinity.toDouble()
+    public val prop7: kotlin.Double = Infinity.toDouble()
+    public val prop8: kotlin.Double = Infinity.toDouble()
+    public val prop9: kotlin.Double = Infinity.toDouble()
+}

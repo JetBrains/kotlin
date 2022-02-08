@@ -37,3 +37,4 @@ class Class {
 
     lateinit var lateInitVar: String
 }
+

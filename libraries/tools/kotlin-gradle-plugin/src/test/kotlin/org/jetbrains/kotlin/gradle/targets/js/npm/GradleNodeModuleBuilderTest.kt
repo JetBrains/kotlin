@@ -20,7 +20,7 @@ class GradleNodeModuleBuilderTest {
         )
         assertNotNull(packageJson, "package.json should be deserialized")
 
-        with(packageJson!!) {
+        with(packageJson) {
             listOf(
                 dependencies,
                 devDependencies,

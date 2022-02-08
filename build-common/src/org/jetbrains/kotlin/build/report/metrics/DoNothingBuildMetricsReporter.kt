@@ -6,10 +6,16 @@
 package org.jetbrains.kotlin.build.report.metrics
 
 object DoNothingBuildMetricsReporter : BuildMetricsReporter {
-    override fun startMeasure(metric: BuildTime, startNs: Long) {
+    override fun startMeasure(time: BuildTime) {
     }
 
-    override fun endMeasure(metric: BuildTime, endNs: Long) {
+    override fun endMeasure(time: BuildTime) {
+    }
+
+    override fun addTimeMetricNs(time: BuildTime, durationNs: Long) {
+    }
+
+    override fun addMetric(metric: BuildPerformanceMetric, value: Long) {
     }
 
     override fun addAttribute(attribute: BuildAttribute) {
@@ -18,8 +24,9 @@ object DoNothingBuildMetricsReporter : BuildMetricsReporter {
     override fun getMetrics(): BuildMetrics =
         BuildMetrics(
             BuildTimes(),
+            BuildPerformanceMetrics(),
             BuildAttributes()
         )
 
-    override fun addMetrics(metrics: BuildMetrics?) {}
+    override fun addMetrics(metrics: BuildMetrics) {}
 }

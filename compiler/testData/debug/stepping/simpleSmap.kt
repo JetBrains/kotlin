@@ -10,7 +10,7 @@ fun box() {
     }
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:8 box
 // test.kt:4 box
 // test.kt:9 box

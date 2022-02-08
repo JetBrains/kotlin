@@ -145,6 +145,10 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitSuperTypeEntry(specifier, null);
     }
 
+    public void visitContextReceiverList(@NotNull KtContextReceiverList contextReceiverList) {
+        super.visitContextReceiverList(contextReceiverList, null);
+    }
+
     public void visitConstructorDelegationCall(@NotNull KtConstructorDelegationCall call) {
         super.visitConstructorDelegationCall(call, null);
     }
@@ -383,6 +387,10 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
 
     public void visitNullableType(@NotNull KtNullableType nullableType) {
         super.visitNullableType(nullableType, null);
+    }
+
+    public void visitIntersectionType(@NotNull KtIntersectionType intersectionType) {
+        super.visitIntersectionType(intersectionType, null);
     }
 
     public void visitTypeProjection(@NotNull KtTypeProjection typeProjection) {
@@ -969,6 +977,12 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     @Override
     public final Void visitNullableType(@NotNull KtNullableType nullableType, Void data) {
         visitNullableType(nullableType);
+        return null;
+    }
+
+    @Override
+    public Void visitIntersectionType(@NotNull KtIntersectionType intersectionType, Void data) {
+        visitIntersectionType(intersectionType);
         return null;
     }
 

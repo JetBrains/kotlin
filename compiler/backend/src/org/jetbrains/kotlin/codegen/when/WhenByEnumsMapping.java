@@ -32,16 +32,19 @@ public class WhenByEnumsMapping {
     private final String outerClassInternalNameForExpression;
     private final String mappingsClassInternalName;
     private final int fieldNumber;
+    private final boolean isPublicAbi;
 
     public WhenByEnumsMapping(
             @NotNull ClassDescriptor enumClassDescriptor,
             @NotNull String outerClassInternalNameForExpression,
-            int fieldNumber
+            int fieldNumber,
+            boolean isPublicAbi
     ) {
         this.enumClassDescriptor = enumClassDescriptor;
         this.outerClassInternalNameForExpression = outerClassInternalNameForExpression;
         this.mappingsClassInternalName = outerClassInternalNameForExpression + MAPPINGS_CLASS_NAME_POSTFIX;
         this.fieldNumber = fieldNumber;
+        this.isPublicAbi = isPublicAbi;
     }
 
     public int getIndexByEntry(@NotNull EnumValue value) {
@@ -78,6 +81,10 @@ public class WhenByEnumsMapping {
     @NotNull
     public String getMappingsClassInternalName() {
         return mappingsClassInternalName;
+    }
+
+    public boolean isPublicAbi() {
+        return isPublicAbi;
     }
 
     @NotNull

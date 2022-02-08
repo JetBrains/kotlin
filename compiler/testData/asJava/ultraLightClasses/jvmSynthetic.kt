@@ -13,3 +13,4 @@ class A {
         @JvmSynthetic get
         @JvmSynthetic set
 }
+

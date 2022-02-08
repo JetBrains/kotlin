@@ -1,3 +1,4 @@
+// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -DEBUG_INFO_SMARTCAST
 // SKIP_TXT
 
@@ -70,11 +71,11 @@ fun case_5(value_1: Int, value_2: Int, value_3: Boolean?) {
             false -> "2"
             null -> "3"
         }
-        value_1 == 5 -> when (value_3) {
+        value_1 == 5 -> <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_3) {
             true -> "1"
             false -> "2"
         }
-        value_1 == 6 -> when (value_3) {}
+        value_1 == 6 -> <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_3) {}
     }
 }
 

@@ -23,7 +23,9 @@ class CommonNativeIT : BaseGradleIT() {
         libTargets: List<String>,
         appTargets: List<String>
     ) = with(transformProjectWithPluginsDsl(projectName, directoryPrefix = "native-apple-devices-common")) {
-        configureMemoryInGradleProperties()
+        gradleProperties().apply {
+            configureJvmMemory()
+        }
 
         val libCompileTasks = libTargets.map { ":lib:compileKotlin${it.capitalize()}" }
         val appCompileTasks = appTargets.map { ":app:compileKotlin${it.capitalize()}" }
@@ -35,7 +37,7 @@ class CommonNativeIT : BaseGradleIT() {
             assertTasksExecuted(libCompileTasks)
             libTargets.forEach {
                 assertContains("Configuring $it")
-                assertFileExists("lib/build/classes/kotlin/$it/main/lib.klib")
+                assertFileExists("lib/build/classes/kotlin/$it/main/klib/lib.klib")
             }
         }
 
@@ -46,7 +48,7 @@ class CommonNativeIT : BaseGradleIT() {
             assertTasksExecuted(appLinkTestTasks)
 
             appTargets.forEach {
-                assertFileExists("app/build/classes/kotlin/$it/main/app.klib")
+                assertFileExists("app/build/classes/kotlin/$it/main/klib/app.klib")
                 assertFileExists("app/build/bin/$it/debugFramework")
                 assertFileExists("app/build/bin/$it/debugTest")
             }
@@ -66,8 +68,8 @@ class CommonNativeIT : BaseGradleIT() {
     fun testCommonWatchos() {
         doCommonNativeTest(
             "common-watchos",
-            libTargets = listOf("watchosLibArm32", "watchosLibArm64", "watchosLibX86"),
-            appTargets = listOf("watchosArm32", "watchosArm64", "watchosX86")
+            libTargets = listOf("watchosLibArm32", "watchosLibArm64", "watchosLibX64"),
+            appTargets = listOf("watchosArm32", "watchosArm64", "watchosX64")
         )
     }
 

@@ -97,4 +97,5 @@ export function fixMochaTimeout(config) {
 
 export function fixBrowserActivityTimeout(config) {
     config.browserNoActivityTimeout = null
+    config.pingTimeout = 24 * 60 * 60 * 1000
 }

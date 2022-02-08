@@ -1,15 +1,17 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_COLLECTIONS
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Z(val x: Int)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val x: Int)
 
-inline class Z2(val x: Z)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z2(val x: Z)
 
 fun z2(x: Int) = Z2(Z(x))
 
-inline class ZMutableCollection(private val ms: MutableCollection<Z>) : MutableCollection<Z> {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class ZMutableCollection(private val ms: MutableCollection<Z>) : MutableCollection<Z> {
     override fun add(element: Z): Boolean = ms.add(element)
     override fun addAll(elements: Collection<Z>): Boolean = ms.addAll(elements)
     override fun clear() { ms.clear() }
@@ -23,7 +25,8 @@ inline class ZMutableCollection(private val ms: MutableCollection<Z>) : MutableC
     override fun isEmpty(): Boolean = ms.isEmpty()
 }
 
-inline class Z2MutableCollection(private val ms: MutableCollection<Z2>) : MutableCollection<Z2> {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z2MutableCollection(private val ms: MutableCollection<Z2>) : MutableCollection<Z2> {
     override fun add(element: Z2): Boolean = ms.add(element)
     override fun addAll(elements: Collection<Z2>): Boolean = ms.addAll(elements)
     override fun clear() { ms.clear() }

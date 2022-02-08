@@ -4,7 +4,7 @@ version '1.0'
 buildscript {
 	repositories {
 		mavenLocal()
-		jcenter()
+		mavenCentral()
 	}
 	dependencies {
 		classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -15,13 +15,14 @@ apply plugin: 'kotlin-multiplatform'
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
 }
 
 kotlin {
 	// Check the new preset functions:
 	jvm('jvm6') { }
     js('nodeJs')
+    wasm()
     targetFromPreset(presets.jvm, 'jvm6') { println targetName } // access existing target
     
     targets {
@@ -32,6 +33,8 @@ kotlin {
 
         // We use this library in the cinterop test which includes a Windows x86 target.
         fromPreset(presets.mingwX86, 'mingw86')
+        
+        fromPreset(presets.linuxMipsel32, 'linuxMipsel32')
 
         // Check the DSL constructs in the Groovy DSL:
         fromPreset(presets.jvm, 'jvm6') {
@@ -81,7 +84,6 @@ kotlin {
         nodeJsMain {
         	dependencies {
                 api 'org.jetbrains.kotlin:kotlin-stdlib-js'
-        		implementation 'org.jetbrains.kotlinx:kotlinx-html-js:0.6.11'
         	}
         }
     }

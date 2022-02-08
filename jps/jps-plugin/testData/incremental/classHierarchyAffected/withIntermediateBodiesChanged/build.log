@@ -1,0 +1,25 @@
+================ Step #1 =================
+
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/foo/DirectBase.class
+  out/production/module/foo/DirectChild.class
+End of files
+Compiling files:
+  src/direct.kt
+End of files
+Exit code: OK
+------------------------------------------
+
+================ Step #2 =================
+
+Cleaning output files:
+  out/production/module/META-INF/module.kotlin_module
+  out/production/module/foo/ReverseBase.class
+  out/production/module/foo/ReverseChild.class
+End of files
+Compiling files:
+  src/reverse.kt
+End of files
+Exit code: OK
+------------------------------------------

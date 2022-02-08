@@ -1,1 +1,0 @@
-fun DoubleArray.some() = for (element in this) println(element)

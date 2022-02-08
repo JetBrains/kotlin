@@ -16,36 +16,40 @@
 
 package org.jetbrains.kotlin.ir.util
 
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.*
-import org.jetbrains.kotlin.ir.descriptors.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
-import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
+import org.jetbrains.kotlin.resolve.isInlineOrValueClass
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-class DeclarationStubGenerator(
+abstract class DeclarationStubGenerator(
     val moduleDescriptor: ModuleDescriptor,
     val symbolTable: SymbolTable,
-    languageVersionSettings: LanguageVersionSettings,
+    val irBuiltIns: IrBuiltIns,
     val extensions: StubGeneratorExtensions = StubGeneratorExtensions.EMPTY,
 ) : IrProvider {
-    private val lazyTable = symbolTable.lazyWrapper
+    protected val lazyTable = symbolTable.lazyWrapper
+
+    init {
+        extensions.registerDeclarations(symbolTable)
+    }
+
+    val lock: IrLock
+        get() = symbolTable.lock
 
     var unboundSymbolGeneration: Boolean
         get() = lazyTable.stubGenerator != null
@@ -53,40 +57,27 @@ class DeclarationStubGenerator(
             lazyTable.stubGenerator = if (value) this else null
         }
 
-    val typeTranslator =
-        TypeTranslator(
-            lazyTable,
-            languageVersionSettings,
-            moduleDescriptor.builtIns,
-            LazyScopedTypeParametersResolver(lazyTable),
-            true,
-            extensions
-        )
-    private val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, lazyTable)
+    abstract val typeTranslator: TypeTranslator
+    abstract val descriptorFinder: DescriptorByIdSignatureFinder
 
     private val facadeClassMap = mutableMapOf<DeserializedContainerSource, IrClass?>()
 
-    init {
-        typeTranslator.constantValueGenerator = constantValueGenerator
-        constantValueGenerator.typeTranslator = typeTranslator
-    }
-
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
         // Special case: generating field for an already generated property.
-        if (symbol is IrFieldSymbol && (symbol.descriptor as? WrappedPropertyDescriptor)?.isBound() == true) {
-            return generateStubBySymbol(symbol, symbol.descriptor)
-        }
-        val descriptor = if (symbol.descriptor is WrappedDeclarationDescriptor<*>)
-            findDescriptorBySignature(
+        // -- this used to be done via a trick (ab)using WrappedDescriptors. Not clear if this code should ever be invoked,
+        // and if so, how it can be reproduced without them.
+//        if (symbol is IrFieldSymbol && (symbol.descriptor as? WrappedPropertyDescriptor)?.isBound() == true) {
+//            return generateStubBySymbol(symbol, symbol.descriptor)
+//        }
+        val descriptor = if (!symbol.hasDescriptor)
+            descriptorFinder.findDescriptorBySignature(
                 symbol.signature
                     ?: error("Symbol is not public API. Expected signature for symbol: ${symbol.descriptor}")
             )
         else
             symbol.descriptor
         if (descriptor == null) return null
-        return generateStubBySymbol(symbol, descriptor).also {
-            symbol.descriptor.bind(it)
-        }
+        return generateStubBySymbol(symbol, descriptor)
     }
 
     fun generateOrGetEmptyExternalPackageFragmentStub(descriptor: PackageFragmentDescriptor): IrExternalPackageFragment {
@@ -100,9 +91,9 @@ class DeclarationStubGenerator(
     fun generateOrGetFacadeClass(descriptor: DeclarationDescriptor): IrClass? {
         val directMember = descriptor.safeAs<PropertyAccessorDescriptor>()?.correspondingProperty ?: descriptor
         val packageFragment = directMember.containingDeclaration as? PackageFragmentDescriptor ?: return null
-        val containerSource = directMember.safeAs<DescriptorWithContainerSource>()?.containerSource ?: return null
+        val containerSource = extensions.getContainerSource(directMember) ?: return null
         return facadeClassMap.getOrPut(containerSource) {
-            extensions.generateFacadeClass(symbolTable.irFactory, containerSource)?.also { facade ->
+            extensions.generateFacadeClass(symbolTable.irFactory, containerSource, this)?.also { facade ->
                 val packageStub = generateOrGetEmptyExternalPackageFragmentStub(packageFragment)
                 facade.parent = packageStub
                 packageStub.declarations.add(facade)
@@ -144,10 +135,7 @@ class DeclarationStubGenerator(
     private fun computeOrigin(descriptor: DeclarationDescriptor): IrDeclarationOrigin =
         extensions.computeExternalDeclarationOrigin(descriptor) ?: IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
 
-    fun generatePropertyStub(
-        descriptor: PropertyDescriptor,
-        bindingContext: BindingContext? = null
-    ): IrProperty {
+    fun generatePropertyStub(descriptor: PropertyDescriptor): IrProperty {
         val referenced = symbolTable.referenceProperty(descriptor)
         if (referenced.isBound) {
             return referenced.owner
@@ -163,8 +151,9 @@ class DeclarationStubGenerator(
                 descriptor.name, descriptor.visibility, descriptor.modality,
                 descriptor.isVar, descriptor.isConst, descriptor.isLateInit,
                 descriptor.isDelegated, descriptor.isEffectivelyExternal(), descriptor.isExpect,
-                isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE),
-                stubGenerator = this, typeTranslator = typeTranslator, bindingContext = bindingContext
+                isFakeOverride = (origin == IrDeclarationOrigin.FAKE_OVERRIDE)
+                        || descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
+                stubGenerator = this, typeTranslator,
             )
         }
     }
@@ -175,7 +164,9 @@ class DeclarationStubGenerator(
             return referenced.owner
         }
 
-        return symbolTable.declareField(UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(descriptor), descriptor.original, descriptor.type.toIrType()) {
+        return symbolTable.declareField(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(descriptor), descriptor.original, descriptor.type.toIrType()
+        ) {
             IrLazyField(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(descriptor),
                 it, descriptor,
@@ -242,22 +233,26 @@ class DeclarationStubGenerator(
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
 
-    internal fun generateValueParameterStub(descriptor: ValueParameterDescriptor): IrValueParameter = with(descriptor) {
-        symbolTable.irFactory.createValueParameter(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), name, index, type.toIrType(),
-            varargElementType?.toIrType(), isCrossinline, isNoinline, false
+    internal fun generateValueParameterStub(descriptor: ValueParameterDescriptor, index: Int): IrValueParameter = with(descriptor) {
+        IrLazyValueParameter(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, computeOrigin(this), IrValueParameterSymbolImpl(this), this, name, index,
+            type.toIrType(), varargElementType?.toIrType(),
+            isCrossinline = isCrossinline, isNoinline = isNoinline, isHidden = false, isAssignable = false,
+            stubGenerator = this@DeclarationStubGenerator, typeTranslator = typeTranslator
         ).also { irValueParameter ->
             if (descriptor.declaresDefaultValue()) {
-                irValueParameter.defaultValue =
-                    irValueParameter.factory.createExpressionBody(
-                        IrErrorExpressionImpl(
-                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, descriptor.type.toIrType(),
-                            "Stub expression for default value of ${descriptor.name}"
-                        )
-                    )
+                irValueParameter.defaultValue = irValueParameter.createStubDefaultValue()
             }
         }
     }
+
+    // in IR Generator enums also have special handling, but here we have not enough data for it
+    // probably, that is not a problem, because you can't add new enum value to external module
+    private fun getEffectiveModality(classDescriptor: ClassDescriptor): Modality =
+        if (DescriptorUtils.isAnnotationClass(classDescriptor))
+            Modality.OPEN
+        else
+            classDescriptor.modality
 
     fun generateClassStub(descriptor: ClassDescriptor): IrClass {
         val referenceClass = symbolTable.referenceClass(descriptor)
@@ -269,12 +264,12 @@ class DeclarationStubGenerator(
             IrLazyClass(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
                 it, descriptor,
-                descriptor.name, descriptor.kind, descriptor.visibility, descriptor.modality,
+                descriptor.name, descriptor.kind, descriptor.visibility, getEffectiveModality(descriptor),
                 isCompanion = descriptor.isCompanionObject,
                 isInner = descriptor.isInner,
                 isData = descriptor.isData,
                 isExternal = descriptor.isEffectivelyExternal(),
-                isInline = descriptor.isInline,
+                isValue = descriptor.isInlineOrValueClass(),
                 isExpect = descriptor.isExpect,
                 isFun = descriptor.isFun,
                 stubGenerator = this,
@@ -318,7 +313,7 @@ class DeclarationStubGenerator(
     }
 
     internal fun generateOrGetScopedTypeParameterStub(descriptor: TypeParameterDescriptor): IrTypeParameter {
-        val referenced = symbolTable.referenceTypeParameter(descriptor)
+        val referenced = symbolTable.referenceScopedTypeParameter(descriptor)
         if (referenced.isBound) {
             return referenced.owner
         }
@@ -331,7 +326,8 @@ class DeclarationStubGenerator(
                 descriptor.index,
                 descriptor.isReified,
                 descriptor.variance,
-                this, typeTranslator)
+                this, typeTranslator
+            )
         }
     }
 
@@ -348,50 +344,6 @@ class DeclarationStubGenerator(
                 descriptor.name, descriptor.visibility, descriptor.isActual,
                 this, typeTranslator
             )
-        }
-    }
-
-    private fun findDescriptorBySignature(signature: IdSignature): DeclarationDescriptor? = when (signature) {
-            is IdSignature.AccessorSignature -> findDescriptorForAccessorSignature(signature)
-            is IdSignature.PublicSignature -> findDescriptorForPublicSignature(signature)
-            else -> error("only PublicSignature or AccessorSignature should reach this point, got $signature")
-        }
-
-    private fun findDescriptorForAccessorSignature(signature: IdSignature.AccessorSignature): DeclarationDescriptor? {
-        val propertyDescriptor = findDescriptorBySignature(signature.propertySignature) as? PropertyDescriptor ?: return null
-        val shortName = signature.accessorSignature.shortName
-        return propertyDescriptor.accessors.singleOrNull { it.name.asString() == shortName }
-    }
-
-    private fun findDescriptorForPublicSignature(signature: IdSignature.PublicSignature): DeclarationDescriptor? {
-        val packageDescriptor = moduleDescriptor.getPackage(signature.packageFqName())
-        val nameSegments = signature.nameSegments
-        val toplevelDescriptors = packageDescriptor.memberScope.getDescriptorsFiltered { name -> name.asString() == nameSegments.first() }
-        val candidates = nameSegments.drop(1).fold(toplevelDescriptors) { acc, current ->
-            acc.flatMap { container ->
-                val classDescriptor = container as? ClassDescriptor ?: return@flatMap emptyList()
-                classDescriptor.constructors.filter { it.name.asString() == current } +
-                        classDescriptor.unsubstitutedMemberScope.getDescriptorsFiltered { name -> name.asString() == current }
-            }
-        }
-        return candidates.firstOrNull { symbolTable.signaturer.composeSignature(it) == signature }
-    }
-
-    private fun DeclarationDescriptor.bind(declaration: IrDeclaration) {
-        when (this) {
-            is WrappedValueParameterDescriptor -> bind(declaration as IrValueParameter)
-            is WrappedReceiverParameterDescriptor -> bind(declaration as IrValueParameter)
-            is WrappedTypeParameterDescriptor -> bind(declaration as IrTypeParameter)
-            is WrappedVariableDescriptor -> bind(declaration as IrVariable)
-            is WrappedVariableDescriptorWithAccessor -> bind(declaration as IrLocalDelegatedProperty)
-            is WrappedSimpleFunctionDescriptor -> bind(declaration as IrSimpleFunction)
-            is WrappedClassConstructorDescriptor -> bind(declaration as IrConstructor)
-            is WrappedClassDescriptor -> bind(declaration as IrClass)
-            is WrappedEnumEntryDescriptor -> bind(declaration as IrEnumEntry)
-            is WrappedPropertyDescriptor -> (declaration as? IrProperty)?.let { bind(it) }
-            is WrappedTypeAliasDescriptor -> bind(declaration as IrTypeAlias)
-            is WrappedFieldDescriptor -> bind(declaration as IrField)
-            else -> {}
         }
     }
 }

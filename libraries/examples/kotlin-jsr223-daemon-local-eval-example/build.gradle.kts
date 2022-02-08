@@ -19,19 +19,19 @@ val compilerClasspath by configurations.creating {
 }
 
 dependencies {
-    testCompile(kotlinStdlib())
-    testCompile(project(":kotlin-script-runtime"))
-    testCompile(project(":kotlin-script-util"))
-    testCompile(projectRuntimeJar(":kotlin-daemon-client"))
-    testCompile(projectRuntimeJar(":kotlin-daemon-embeddable"))
-    testCompile(projectRuntimeJar(":kotlin-compiler-embeddable"))
-    testCompile(commonDep("junit:junit"))
-    testCompile(project(":kotlin-test:kotlin-test-junit"))
-    testRuntime(project(":kotlin-reflect"))
+    testApi(kotlinStdlib())
+    testApi(project(":kotlin-script-runtime"))
+    testApi(project(":kotlin-script-util"))
+    testApi(project(":kotlin-daemon-client"))
+    testApi(project(":kotlin-daemon-embeddable"))
+    testApi(project(":kotlin-compiler-embeddable"))
+    testApi(commonDependency("junit:junit"))
+    testApi(project(":kotlin-test:kotlin-test-junit"))
+    testRuntimeOnly(project(":kotlin-reflect"))
     compilerClasspath(project(":kotlin-reflect"))
     compilerClasspath(kotlinStdlib())
-    compilerClasspath(commonDep("org.jetbrains.intellij.deps", "trove4j"))
-    compilerClasspath(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
+    compilerClasspath(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
+    compilerClasspath(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
     compilerClasspath(project(":kotlin-compiler-embeddable"))
     compilerClasspath(project(":kotlin-scripting-compiler-embeddable"))
     compilerClasspath(project(":kotlin-scripting-compiler-impl-embeddable"))
@@ -44,7 +44,8 @@ dependencies {
 
 projectTest {
     dependsOn(compilerClasspath)
+    val compilerClasspathProvider = project.provider { compilerClasspath.asPath }
     doFirst {
-        systemProperty("kotlin.compiler.classpath", compilerClasspath.asPath)
+        systemProperty("kotlin.compiler.classpath", compilerClasspathProvider.get())
     }
 }

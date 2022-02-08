@@ -1,3 +1,4 @@
+// SKIP_INLINE_CHECK_IN: inlineFun$default
 // FILE: 1.kt
 package test
 
@@ -11,7 +12,6 @@ inline fun stub() {}
 
 
 // FILE: 2.kt
-// SKIP_INLINE_CHECK_IN: inlineFun$default
 import test.A.ok
 
 inline fun inlineFun(lambda: () -> String = ::ok): String {

@@ -8,7 +8,7 @@ expect object Online: Presence
 expect object Offline: Presence
 
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual typealias Presence = P

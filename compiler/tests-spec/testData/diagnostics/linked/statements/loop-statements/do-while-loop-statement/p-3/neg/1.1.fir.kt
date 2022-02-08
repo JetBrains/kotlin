@@ -5,19 +5,19 @@
 // TESTCASE NUMBER: 1
 fun case1() {
     do {
-    } while ("boo")
+    } while (<!CONDITION_TYPE_MISMATCH!>"boo"<!>)
 }
 
 // TESTCASE NUMBER: 2
 fun case2() {
     val condition: Any = true
     do {
-    } while (condition)
+    } while (<!CONDITION_TYPE_MISMATCH!>condition<!>)
 }
 
 // TESTCASE NUMBER: 3
 fun case3() {
     val condition: Boolean? = true
     do {
-    } while (condition)
+    } while (<!CONDITION_TYPE_MISMATCH!>condition<!>)
 }

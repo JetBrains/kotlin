@@ -1,8 +1,0 @@
-LineBreakpoint created at accessToOverridenPropertyWithBackingField.kt:12
-Run Java
-Connected to the target VM
-accessToOverridenPropertyWithBackingField.kt:12
-Compile bytecode for d.prop
-Disconnected from the target VM
-
-Process finished with exit code 0

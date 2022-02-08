@@ -1,8 +1,9 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: BRIDGE_ISSUES
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class IC(val x: Int)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IC(val x: Int)
 
 interface I<T> {
     fun foo(t: T): T

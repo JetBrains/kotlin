@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 operator fun String.iterator(): IntIterator = object : IntIterator() {
     private var index = 0

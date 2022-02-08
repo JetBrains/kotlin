@@ -1,0 +1,71 @@
+FILE: problems2.kt
+    public final class Interner<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Interner<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final fun find(obj: R|T|): R|kotlin/Int?| {
+            ^find Null(null)
+        }
+
+        public final fun intern(obj: R|T|): R|kotlin/Int?| {
+            ^intern this@R|/Interner|.R|/Interner.find|(R|<local>/obj|)
+        }
+
+    }
+    public final class Externer : R|kotlin/Any| {
+        public constructor(): R|Externer| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final fun find(obj: R|kotlin/Int|): R|kotlin/Int?| {
+            ^find Null(null)
+        }
+
+        public final fun intern(obj: R|kotlin/Int|): R|kotlin/Int?| {
+            ^intern this@R|/Externer|.R|/Externer.find|(R|<local>/obj|)
+        }
+
+    }
+    public abstract interface Some : R|kotlin/Any| {
+        public final data class WithPrimary : R|kotlin/Any| {
+            public constructor(x: R|kotlin/Int|, arr: R|kotlin/Array<kotlin/String>?| = Null(null), s: R|kotlin/String?| = Null(null)): R|Some.WithPrimary| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val x: R|kotlin/Int| = R|<local>/x|
+                public get(): R|kotlin/Int|
+
+            public final val arr: R|kotlin/Array<kotlin/String>?| = R|<local>/arr|
+                public get(): R|kotlin/Array<kotlin/String>?|
+
+            public final val s: R|kotlin/String?| = R|<local>/s|
+                public get(): R|kotlin/String?|
+
+            public final operator fun component1(): R|kotlin/Int|
+
+            public final operator fun component2(): R|kotlin/Array<kotlin/String>?|
+
+            public final operator fun component3(): R|kotlin/String?|
+
+            public final fun copy(x: R|kotlin/Int| = this@R|/Some.WithPrimary|.R|/Some.WithPrimary.x|, arr: R|kotlin/Array<kotlin/String>?| = this@R|/Some.WithPrimary|.R|/Some.WithPrimary.arr|, s: R|kotlin/String?| = this@R|/Some.WithPrimary|.R|/Some.WithPrimary.s|): R|Some.WithPrimary|
+
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|Some|.R|/Some.WithPrimary.WithPrimary|(Int(42), R|kotlin/arrayOf|<R|kotlin/String|>(vararg(String(alpha), String(omega))))
+    }
+    public final class KonanTarget : R|kotlin/Any| {
+        public constructor(name: R|kotlin/String|): R|KonanTarget| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|kotlin/String| = R|<local>/name|
+            public get(): R|kotlin/String|
+
+    }
+    public final val R|KonanTarget|.presetName: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ this@R|/presetName|.R|/KonanTarget.name|
+        }

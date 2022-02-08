@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class MyClass {
     fun f1() {}
 }

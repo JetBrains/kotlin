@@ -1,6 +1,6 @@
-// IGNORE_BACKEND: JVM_IR
-// KOTLIN_CONFIGURATION_FLAGS: +JVM.EMIT_JVM_TYPE_ANNOTATIONS
-// TYPE_ANNOTATIONS
+// IR_DIFFERENCE
+// EMIT_JVM_TYPE_ANNOTATIONS
+// RENDER_ANNOTATIONS
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
 package foo
@@ -26,4 +26,8 @@ class Kotlin {
 
     fun foo4() = { foo2() }()
 
+    fun foo5() {
+        val lambda = { foo2() }
+        lambda()
+    }
 }

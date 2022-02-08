@@ -1,0 +1,18 @@
+FILE: equals.kt
+    public final fun <T> materialize(): R|T| {
+        ^materialize R|kotlin/TODO|()
+    }
+    public final fun main(): R|kotlin/Unit| {
+        when () {
+            ==(String(), R|/materialize|<R|kotlin/Any?|>()) ->  {
+                ^main Unit
+            }
+        }
+
+        when () {
+            ==(R|/materialize|<R|kotlin/Any?|>(), String()) ->  {
+                ^main Unit
+            }
+        }
+
+    }

@@ -1,5 +1,0 @@
-fun test() {
-    // comment1
-    // comment2
-    val foo = 1
-}

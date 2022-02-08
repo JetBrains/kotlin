@@ -1,9 +1,10 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: BOUND_RECEIVER
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 // WITH_REFLECT
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Foo(val x: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Foo(val x: String) {
     fun bar(f: Foo, i: Int): Foo = Foo(x + f.x + i)
 }
 

@@ -5,17 +5,18 @@
 
 package org.jetbrains.kotlin.fir.declarations.synthetic
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyAccessorImpl
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -25,11 +26,11 @@ class FirSyntheticPropertyAccessor(
     val delegate: FirSimpleFunction,
     override val isGetter: Boolean
 ) : FirPropertyAccessor() {
-    override val source: FirSourceElement?
+    override val source: KtSourceElement?
         get() = delegate.source
 
-    override val session: FirSession
-        get() = delegate.session
+    override val moduleData: FirModuleData
+        get() = delegate.moduleData
 
     override val origin: FirDeclarationOrigin
         get() = FirDeclarationOrigin.Synthetic
@@ -43,16 +44,19 @@ class FirSyntheticPropertyAccessor(
     override val status: FirDeclarationStatus
         get() = delegate.status
 
-    override val dispatchReceiverType: ConeKotlinType?
+    override val dispatchReceiverType: ConeSimpleKotlinType?
         get() = delegate.dispatchReceiverType
 
     override val receiverTypeRef: FirTypeRef?
         get() = null
+    
+    override val deprecation: DeprecationsPerUseSite?
+        get() = delegate.deprecation
 
     override val valueParameters: List<FirValueParameter>
         get() = delegate.valueParameters
 
-    override val annotations: List<FirAnnotationCall>
+    override val annotations: List<FirAnnotation>
         get() = delegate.annotations
 
     override val typeParameters: List<FirTypeParameter>
@@ -70,6 +74,9 @@ class FirSyntheticPropertyAccessor(
     override val symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol().apply {
         bind(this@FirSyntheticPropertyAccessor)
     }
+
+    // NB: unused
+    override val propertySymbol: FirPropertySymbol? = null
 
     override val controlFlowGraphReference: FirControlFlowGraphReference? = null
 
@@ -132,6 +139,10 @@ class FirSyntheticPropertyAccessor(
     }
 
     override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
+        throw AssertionError("Mutation of synthetic property accessor isn't supported")
+    }
+
+    override fun replaceDeprecation(newDeprecation: DeprecationsPerUseSite?) {
         throw AssertionError("Mutation of synthetic property accessor isn't supported")
     }
 

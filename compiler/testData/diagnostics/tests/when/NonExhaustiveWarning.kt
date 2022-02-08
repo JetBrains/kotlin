@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// LANGUAGE: +WarnAboutNonExhaustiveWhenOnAlgebraicTypes
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
@@ -15,7 +17,7 @@ enum class X { A, B, C, D }
 
 fun foo(arg: X): String {
     var res = "XXX"
-    <!NON_EXHAUSTIVE_WHEN!>when<!> (arg) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (arg) {
         X.A -> res = "A"
         X.B -> res = "B"
     }

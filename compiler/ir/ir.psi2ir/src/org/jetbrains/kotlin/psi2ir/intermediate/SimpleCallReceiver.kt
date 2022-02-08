@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 
 class SimpleCallReceiver(
-    private val dispatchReceiverValue: IntermediateValue?,
-    private val extensionReceiverValue: IntermediateValue?
+    val dispatchReceiverValue: IntermediateValue?,
+    val extensionReceiverValue: IntermediateValue?,
+    val contextReceiverValues: List<IntermediateValue>
 ) : CallReceiver {
-
-    override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {
-        return withDispatchAndExtensionReceivers(dispatchReceiverValue, extensionReceiverValue)
+    override fun call(builder: CallExpressionBuilder): IrExpression {
+        return builder.withReceivers(dispatchReceiverValue, extensionReceiverValue, contextReceiverValues)
     }
 }

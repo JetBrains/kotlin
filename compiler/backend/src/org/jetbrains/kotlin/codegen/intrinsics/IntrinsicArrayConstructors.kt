@@ -16,10 +16,14 @@
 
 package org.jetbrains.kotlin.codegen.intrinsics
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.inline.ReificationArgument
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Label
@@ -30,6 +34,15 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 internal object IntrinsicArrayConstructors {
+    fun isArrayOf(descriptor: FunctionDescriptor): Boolean =
+        descriptor.name.asString() == "arrayOf" && descriptor.containingDeclaration.isBuiltInsPackage
+
+    fun isEmptyArray(descriptor: FunctionDescriptor): Boolean =
+        descriptor.name.asString() == "emptyArray" && descriptor.containingDeclaration.isBuiltInsPackage
+
+    private val DeclarationDescriptor.isBuiltInsPackage: Boolean
+        get() = this is PackageFragmentDescriptor && fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+
     fun generateArrayConstructorBody(method: Method): MethodNode {
         val node = MethodNode(
             Opcodes.ASM6, Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC or Opcodes.ACC_FINAL, method.name, method.descriptor, null, null

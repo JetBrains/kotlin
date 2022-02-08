@@ -6,7 +6,7 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getP(@Ann @org.jetbrains.annotations.Nullable p0: java.lang.String): java.lang.String
 }
 
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class Ann {
     // source: 'onReceiver.kt'

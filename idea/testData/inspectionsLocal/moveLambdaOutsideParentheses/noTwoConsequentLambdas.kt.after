@@ -1,7 +1,0 @@
-fun bar() {
-    foo { "one" } () { "two" }
-}
-
-fun foo(a: () -> String): (() -> String) -> Unit {
-    return { }
-}

@@ -26,8 +26,8 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.isLocal
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 data class Closure(val capturedValues: List<IrValueSymbol>, val capturedTypeParameters: List<IrTypeParameter>)
@@ -44,7 +44,6 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
     fun getClassClosure(declaration: IrClass) = getClosure(declaration)
 
     private fun getClosure(declaration: IrDeclaration): Closure {
-        closureBuilders.values.forEach { it.processed = false }
         return closureBuilders
             .getOrElse(declaration) { throw AssertionError("No closure builder for passed declaration ${ir2string(declaration)}.") }
             .buildClosure()
@@ -58,24 +57,63 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
         private val potentiallyCapturedTypeParameters = mutableSetOf<IrTypeParameter>()
         private val capturedTypeParameters = mutableSetOf<IrTypeParameter>()
 
-        var processed = false
+        private var closure: Closure? = null
 
         /*
-         * Node's closure = variables captured by the node +
-         *                  closure of all included nodes -
-         *                  variables declared in the node.
+         * This will solve a system of equations for each dependent closure:
+         *
+         *  closure[V] = captured(V) + { closure[U] | U <- included(V) } - declared(V)
+         *
          */
         fun buildClosure(): Closure {
-            includes.forEach { builder ->
-                if (!builder.processed) {
-                    builder.processed = true
-                    val subClosure = builder.buildClosure()
-                    subClosure.capturedValues.filterTo(capturedValues) { isExternal(it.owner) }
-                    subClosure.capturedTypeParameters.filterTo(capturedTypeParameters) { isExternal(it) }
+            closure?.let { return it }
+
+            val work = collectConnectedClosures()
+
+            do {
+                var changes = false
+                for (c in work) {
+                    if (c.updateFromIncluded()) {
+                        changes = true
+                    }
+                }
+            } while (changes)
+
+            for (c in work) {
+                c.closure = Closure(c.capturedValues.toList(), c.capturedTypeParameters.toList())
+            }
+
+            return closure
+                ?: throw AssertionError("Closure should have been built for ${owner.render()}")
+        }
+
+        private fun collectConnectedClosures(): List<ClosureBuilder> {
+            val connected = LinkedHashSet<ClosureBuilder>()
+            fun collectRec(current: ClosureBuilder) {
+                for (included in current.includes) {
+                    if (included.closure == null && connected.add(included)) {
+                        collectRec(included)
+                    }
                 }
             }
-            // TODO: We can save the closure and reuse it.
-            return Closure(capturedValues.toList(), capturedTypeParameters.toList())
+            connected.add(this)
+            collectRec(this)
+            return connected.toList().asReversed()
+        }
+
+        private fun updateFromIncluded(): Boolean {
+            if (closure != null)
+                throw AssertionError("Closure has already been built for ${owner.render()}")
+
+            val capturedValuesBefore = capturedValues.size
+            val capturedTypeParametersBefore = capturedTypeParameters.size
+            for (subClosure in includes) {
+                subClosure.capturedValues.filterTo(capturedValues) { isExternal(it.owner) }
+                subClosure.capturedTypeParameters.filterTo(capturedTypeParameters) { isExternal(it) }
+            }
+
+            return capturedValues.size != capturedValuesBefore ||
+                    capturedTypeParameters.size != capturedTypeParametersBefore
         }
 
 
@@ -139,7 +177,12 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
 
             closureBuilder.declareVariable(this.thisReceiver)
             if (this.isInner) {
-                closureBuilder.declareVariable((this.parent as IrClass).thisReceiver)
+                val receiver = when (val parent = this.parent) {
+                    is IrClass -> parent.thisReceiver
+                    is IrScript -> parent.thisReceiver
+                    else -> error("unexpected parent $parent")
+                }
+                closureBuilder.declareVariable(receiver)
                 includeInParent(closureBuilder)
             }
 
@@ -160,6 +203,7 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
             this.valueParameters.forEach { closureBuilder.declareVariable(it) }
             closureBuilder.declareVariable(this.dispatchReceiverParameter)
             closureBuilder.declareVariable(this.extensionReceiverParameter)
+            closureBuilder.seeType(this.returnType)
 
             if (this is IrConstructor) {
                 val constructedClass = (this.parent as IrClass)
@@ -174,20 +218,18 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
         }
 
     private fun collectPotentiallyCapturedTypeParameters(closureBuilder: ClosureBuilder) {
+        var current = closureBuilder.owner.parentClosureBuilder
+        while (current != null) {
+            val container = current.owner
 
-        fun ClosureBuilder.doCollect() {
-            if (owner !is IrClass) {
-                (owner as? IrTypeParametersContainer)?.let { container ->
-                    for (tp in container.typeParameters) {
-                        closureBuilder.addPotentiallyCapturedTypeParameter(tp)
-                    }
+            if (container is IrTypeParametersContainer) {
+                for (typeParameter in container.typeParameters) {
+                    closureBuilder.addPotentiallyCapturedTypeParameter(typeParameter)
                 }
-
-                owner.parentClosureBuilder?.doCollect()
             }
-        }
 
-        closureBuilder.owner.parentClosureBuilder?.doCollect()
+            current = container.parentClosureBuilder
+        }
     }
 
     private val IrDeclaration.parentClosureBuilder: ClosureBuilder?
@@ -205,7 +247,7 @@ class ClosureAnnotator(irElement: IrElement, declaration: IrDeclaration) {
             else -> null
         }
 
-    private inner class ClosureCollectorVisitor() : IrElementVisitor<Unit, ClosureBuilder?> {
+    private inner class ClosureCollectorVisitor : IrElementVisitor<Unit, ClosureBuilder?> {
 
         override fun visitElement(element: IrElement, data: ClosureBuilder?) {
             element.acceptChildren(this, data)

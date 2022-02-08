@@ -5,15 +5,26 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":generators"))
     implementation(project(":compiler:fir:tree"))
     implementation(project(":compiler:fir:tree:tree-generator"))
+    implementation(project(":compiler:resolution.common"))
     implementation(project(":kotlin-reflect"))
     implementation(project(":kotlin-reflect-api"))
+
+    /*
+     We do not need guava in the generator, but because of a bug in the IJ project importing, we need to have a dependency on intellijCore
+     the same as it is in `:fir:tree:tree-generator` module to the project be imported correctly
+    */
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("com.google.guava:guava"))
+
+    implementation(project(":compiler:psi"))
 }
 
 val writeCopyright by task<tasks.WriteCopyrightToFile> {
-    outputFile = file("$buildDir/copyright/notice.txt")
-    commented = true
+    outputFile.set(file("$buildDir/copyright/notice.txt"))
+    commented.set(true)
 }
 
 application {

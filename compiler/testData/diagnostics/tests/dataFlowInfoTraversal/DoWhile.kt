@@ -7,7 +7,7 @@ fun foo() {
         bar(<!TYPE_MISMATCH!>x<!>)
     } while (x == null)
     bar(<!DEBUG_INFO_SMARTCAST!>x<!>)
-    
+
     val y: Int? = null
     do {
         bar(<!TYPE_MISMATCH!>y<!>)

@@ -1,5 +1,0 @@
-{
-  "mainFile": "foo/MemberEndJava.java",
-  "type": "MOVE_INNER_CLASS",
-  "targetPackage": "bar"
-}

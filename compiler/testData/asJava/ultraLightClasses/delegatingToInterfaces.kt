@@ -17,3 +17,4 @@ class BaseImpl(val x: Int) : Base {
 class Derived(b: Base) : Base by b {
     override fun printMessage() { print("abc") }
 }
+// COMPILATION_ERRORS

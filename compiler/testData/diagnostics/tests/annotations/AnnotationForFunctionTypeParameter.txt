@@ -1,6 +1,7 @@
 package
 
 public fun </*0*/ @A1 @A2(some = 3) @A2 @A1 @A2(some = "Test") T> topFun(): kotlin.Int
+public fun </*0*/ @TA @TPA(some = 3) @TPA @TA @TPA(some = "Test") T> topFunTPA(): kotlin.Int
 
 public final annotation class A1 : kotlin.Annotation {
     public constructor A1()
@@ -25,3 +26,28 @@ public final class SomeClass {
     public final fun </*0*/ @A1 @A2(some = 3) @A2 @A1 @A2(some = "Test") T> method(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public final class SomeClassTPA {
+    public constructor SomeClassTPA()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun </*0*/ @TA @TPA(some = 3) @TPA @TA @TPA(some = "Test") T> method(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class TA : kotlin.Annotation {
+    public constructor TA()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) public final annotation class TPA : kotlin.Annotation {
+    public constructor TPA(/*0*/ some: kotlin.Int = ...)
+    public final val some: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

@@ -1,5 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun getCopyToArray(): Array<Int> = listOf(2, 3, 9).toTypedArray()
 

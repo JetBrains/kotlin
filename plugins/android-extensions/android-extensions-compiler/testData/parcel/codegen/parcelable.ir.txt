@@ -41,7 +41,7 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
           DUP
           INVOKESPECIAL (test/Foo$Creator, <init>, ()V)
           CHECKCAST
-          PUTSTATIC (CREATOR, Landroid/os/Parcelable$Creator;)
+          PUTSTATIC (test/Foo, CREATOR, Landroid/os/Parcelable$Creator;)
           RETURN
     }
 
@@ -58,7 +58,7 @@ public final class test/Foo : java/lang/Object, android/os/Parcelable {
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
           ALOAD (1)
           ALOAD (0)
-          GETFIELD (parcelable, Landroid/os/Parcelable;)
+          GETFIELD (test/Foo, parcelable, Landroid/os/Parcelable;)
           ILOAD (2)
           INVOKEVIRTUAL (android/os/Parcel, writeParcelable, (Landroid/os/Parcelable;I)V)
           RETURN

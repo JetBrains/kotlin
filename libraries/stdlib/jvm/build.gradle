@@ -4,7 +4,8 @@ apply plugin: 'kotlin-platform-jvm'
 
 archivesBaseName = 'kotlin-stdlib'
 
-configureJvm6Project(project)
+JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_6)
+
 configurePublishing(project)
 configureJavadocJar()
 configureSourcesJar()
@@ -38,6 +39,8 @@ sourceSets {
     }
 }
 
+LibrariesCommon.configureJava9Compilation(project, 'kotlin.stdlib', [sourceSets.main.output])
+
 configurations {
     commonSources
     longRunningTestCompile.extendsFrom(testCompile)
@@ -47,6 +50,7 @@ configurations {
         }
     }
     compileOnly.extendsFrom(builtins)
+    testCompileOnly.extendsFrom(builtins)
 }
 
 dependencies {
@@ -54,10 +58,9 @@ dependencies {
 
     commonSources project(path: ":kotlin-stdlib-common", configuration: "sources")
 
-    compile group: 'org.jetbrains', name: 'annotations', version:'13.0'
+    api group: 'org.jetbrains', name: 'annotations', version:'13.0'
 
-    testCompile project(':kotlin-test:kotlin-test-junit')
-    testCompile project(':kotlin-coroutines-experimental-compat')
+    testApi project(':kotlin-test:kotlin-test-junit')
 
     builtins project(':core:builtins')
 }
@@ -90,18 +93,10 @@ task distSourcesJar(type: Jar) {
     }
 }
 
-configureModularJar {
-    dependsOn(jar)
-    manifestAttributes(manifest, project, 'Main', true)
-
-    from zipTree(jar.outputs.files.singleFile)
-}
-
 artifacts {
     archives sourcesJar
     sources sourcesJar
     distSources distSourcesJar
-    archives modularJar
 }
 
 DexMethodCountKt.dexMethodCount(project) { task ->
@@ -112,30 +107,25 @@ DexMethodCountKt.dexMethodCount(project) { task ->
 compileKotlin {
     kotlinOptions {
         freeCompilerArgs = [
-                "-version",
                 "-Xallow-kotlin-package",
-                "-Xallow-result-return-type",
                 "-Xmultifile-parts-inherit",
-                "-Xnormalize-constructor-calls=enable",
-                "-Xopt-in=kotlin.RequiresOptIn",
-                "-Xopt-in=kotlin.ExperimentalMultiplatform",
-                "-Xopt-in=kotlin.contracts.ExperimentalContracts",
-                "-Xinline-classes",
-                "-Xuse-14-inline-classes-mangling-scheme"
+                "-opt-in=kotlin.RequiresOptIn",
+                "-opt-in=kotlin.ExperimentalMultiplatform",
+                "-opt-in=kotlin.contracts.ExperimentalContracts",
+                "-Xuse-14-inline-classes-mangling-scheme",
+                "-Xsuppress-deprecated-jvm-target-warning",
         ]
         moduleName = "kotlin-stdlib"
     }
 }
 
-
-compileJava9Sources(project, 'kotlin.stdlib', [sourceSets.main.output])
-
 compileTestKotlin {
     kotlinOptions {
         freeCompilerArgs += [
-                "-Xopt-in=kotlin.RequiresOptIn",
-                "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
-                "-Xopt-in=kotlin.ExperimentalStdlibApi",
+                "-opt-in=kotlin.RequiresOptIn",
+                "-opt-in=kotlin.ExperimentalUnsignedTypes",
+                "-opt-in=kotlin.ExperimentalStdlibApi",
+                "-Xsuppress-deprecated-jvm-target-warning",
         ]
         // This is needed for JavaTypeTest; typeOf for non-reified type parameters doesn't work otherwise, for implementation reasons.
         freeCompilerArgs.remove("-Xno-optimized-callable-references")
@@ -143,10 +133,10 @@ compileTestKotlin {
 }
 
 compileLongRunningTestKotlin {
-    kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.ExperimentalStdlibApi"
+    kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.ExperimentalStdlibApi"
 }
 
-configureJvmIrBackend(project)
+configureFrontendIr(project)
 
 task longRunningTest(type: Test, dependsOn: longRunningTestClasses) {
     group = "verification"

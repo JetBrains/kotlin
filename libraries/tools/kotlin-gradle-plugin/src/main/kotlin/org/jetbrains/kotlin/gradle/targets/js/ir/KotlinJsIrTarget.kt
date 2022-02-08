@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Compa
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinUsageContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinTargetWithBinaries
-import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.JsAggregatingExecutionSource
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
@@ -25,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import javax.inject.Inject
@@ -72,7 +72,13 @@ constructor(
     }
 
     internal val commonFakeApiElementsConfigurationName: String
-        get() = disambiguateName("commonFakeApiElements")
+        get() = lowerCamelCaseName(
+            if (mixedMode)
+                disambiguationClassifierInPlatform
+            else
+                disambiguationClassifier,
+            "commonFakeApiElements"
+        )
 
     val disambiguationClassifierInPlatform: String?
         get() = if (mixedMode) {
@@ -88,8 +94,8 @@ constructor(
             .get()
 
     private val runTaskName get() = lowerCamelCaseName(disambiguationClassifier, runTaskNameSuffix)
-    val runTask: Task
-        get() = project.tasks.maybeCreate(runTaskName).also {
+    val runTask: TaskProvider<Task>
+        get() = project.locateOrRegisterTask(runTaskName) {
             it.description = "Run js on all configured platforms"
         }
 
@@ -111,6 +117,8 @@ constructor(
                     binary.linkTask.configure {
                         it.kotlinOptions.outputFile = project.buildDir
                             .resolve(COMPILE_SYNC)
+                            .resolve(compilation.name)
+                            .resolve(binary.name)
                             .resolve(npmProject.main)
                             .canonicalPath
 
@@ -221,6 +229,6 @@ constructor(
     private fun KotlinJsOptions.configureCommonJsOptions() {
         moduleKind = "commonjs"
         sourceMap = true
-        sourceMapEmbedSources = null
+        sourceMapEmbedSources = "never"
     }
 }

@@ -52,7 +52,7 @@ class JsErrorExpressionLowering(context: JsIrBackendContext) : ErrorExpressionLo
         return buildThrowError(expression, description)
     }
 
-    private fun buildThrowError(element: IrElement, description: String): IrExpression {
+    private fun buildThrowError(element: IrExpression, description: String): IrExpression {
         require(errorSymbol != null) { "Should be non-null if errors are allowed" }
         return element.run {
             IrCallImpl(startOffset, endOffset, nothingType, errorSymbol, 0, 1, null, null).apply {

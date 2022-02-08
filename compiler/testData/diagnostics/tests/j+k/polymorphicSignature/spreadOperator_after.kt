@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +PolymorphicSignature +ProhibitSpreadOnSignaturePolymorphicCall
 // FULL_JDK
 

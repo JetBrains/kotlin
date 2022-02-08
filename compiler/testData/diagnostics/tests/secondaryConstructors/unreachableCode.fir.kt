@@ -1,5 +1,5 @@
 class A0 {
-    val x: Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val x: Int<!>
     constructor() {
         if (1 == 1) {
             return
@@ -12,7 +12,7 @@ class A0 {
 }
 
 class A1 {
-    val x: Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val x: Int<!>
     constructor() {
         if (1 == 1) {
             return

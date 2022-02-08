@@ -1,7 +1,6 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: PROPERTY_REFERENCES
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -11,7 +10,8 @@ class Foo {
     val b by Delegate(0)
 }
 
-inline class Delegate(val ignored: Int): ReadOnlyProperty<Foo, Int> {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Delegate(val ignored: Int): ReadOnlyProperty<Foo, Int> {
     override fun getValue(thisRef: Foo, property: KProperty<*>): Int {
         return thisRef.a
     }

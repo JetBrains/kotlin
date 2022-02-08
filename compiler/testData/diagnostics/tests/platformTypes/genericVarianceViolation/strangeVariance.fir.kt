@@ -11,8 +11,8 @@ public class A {
 
 fun main(a: A, ml: MutableList<String>, l: List<String>) {
     a.foo(ml)
-    a.foo(l)
+    a.foo(<!ARGUMENT_TYPE_MISMATCH!>l<!>)
 
-    a.bar(ml)
-    a.bar(l)
+    a.bar(<!ARGUMENT_TYPE_MISMATCH!>ml<!>)
+    a.bar(<!ARGUMENT_TYPE_MISMATCH!>l<!>)
 }

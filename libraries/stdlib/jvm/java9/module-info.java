@@ -8,6 +8,7 @@ module kotlin.stdlib {
     exports kotlin.concurrent;
     exports kotlin.contracts;
     exports kotlin.coroutines;
+    exports kotlin.coroutines.cancellation;
     exports kotlin.coroutines.intrinsics;
     exports kotlin.coroutines.jvm.internal;
     exports kotlin.io;

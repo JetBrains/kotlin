@@ -1,5 +1,4 @@
-// COMMON_COROUTINES_TEST
-// WITH_RUNTIME
+// WITH_STDLIB
 
 open class AbstractStuff() {
     inline suspend fun<reified T> hello(value: T): T = println("Hello, ${T::class}").let { value }

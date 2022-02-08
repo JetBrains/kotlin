@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: destructuringAssignmentWithNullabilityAssertionOnExtensionReceiver_lv12.kt
 
 import kotlin.test.*

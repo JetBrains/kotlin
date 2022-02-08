@@ -1,6 +1,0 @@
-{
-  "mainFile": "a/main.kt",
-  "type": "MOVE_PACKAGES",
-  "sourcePackage": "a",
-  "targetPackage": "b"
-}

@@ -16,13 +16,13 @@ fun g() {}
 // for the invoke method bridged to. Therefore, the entry line number for invoke only shows
 // up for JVM_IR.
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:3 box
 // test.kt:4 box
 // test.kt:8 f
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:4 invoke
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:11 g
 // test.kt:4 invoke
 // test.kt:8 f

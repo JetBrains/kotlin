@@ -1,2 +1,0 @@
-Failures detected in FirBodyResolveTransformerAdapter, file: /provideDelegateOnFunctionalTypeWithThis.fir.kt
-Cause: java.lang.ClassCastException: org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl cannot be cast to org.jetbrains.kotlin.fir.types.FirResolvedTypeRef

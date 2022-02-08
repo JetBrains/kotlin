@@ -1,8 +1,11 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
 import kotlin.test.assertEquals
 
-inline class S(val x: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class S(val x: String)
 
 interface IFoo<T> {
     fun memberFun(s1: S, s2: String): String
@@ -13,7 +16,8 @@ interface IFoo<T> {
     fun <X> T.genericMemberExtFun(x: X): String
 }
 
-inline class FooImpl(val xs: Array<String>) : IFoo<S> {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class FooImpl(val xs: Array<String>) : IFoo<S> {
     override fun memberFun(s1: S, s2: String): String = xs[0] + s1.x + s2
     override fun memberFunT(x1: S, x2: String): String = xs[0] + x1.x + x2
     override fun <X> genericMemberFun(x1: S, x2: X): String = xs[0] + x1.x + x2.toString()

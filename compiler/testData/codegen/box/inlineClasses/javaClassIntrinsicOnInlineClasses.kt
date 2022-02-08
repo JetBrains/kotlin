@@ -1,12 +1,21 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 package root
 
-inline class IcInt(val x: Int)
-inline class IcLong(val l: Long)
-inline class IcAny(val a: Any?)
-inline class IcOverIc(val o: IcLong)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IcInt(val x: Int)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IcLong(val l: Long)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IcAny(val a: Any?)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IcOverIc(val o: IcLong)
 
 fun check(c: Class<*>, s: String) {
     if (c.toString() != s) error("Fail, expected: $s, actual: $c")

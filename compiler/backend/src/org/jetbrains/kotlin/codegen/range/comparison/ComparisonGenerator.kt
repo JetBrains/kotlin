@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.codegen.range.comparison
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.range.getRangeOrProgressionElementType
+import org.jetbrains.kotlin.types.getRangeOrProgressionElementType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType

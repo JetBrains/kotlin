@@ -1,9 +1,9 @@
 apply plugin: "kotlin"
 
 dependencies {
-    compile 'com.google.guava:guava:12.0'
-    testCompile 'org.testng:testng:6.8'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation 'com.google.guava:guava:12.0'
+    testImplementation 'org.testng:testng:6.8'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
 test {

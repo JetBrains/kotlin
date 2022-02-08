@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Foo(val x: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Foo(val x: Int) {
     fun empty() = ""
     fun withParam(a: String) = a
     fun withInlineClassParam(f: Foo) = f.toString()

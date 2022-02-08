@@ -1,4 +1,5 @@
-// JAVAC_SKIP
+// FIR_IDENTICAL
+// SKIP_JAVAC
 // FILE: p/Nameless.java
 
 package p;

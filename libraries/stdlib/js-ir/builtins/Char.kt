@@ -1,18 +1,25 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin
 
+// Char is a magic class.
+// Char is defined as a regular class, but we lower it as a value class.
+// See [org.jetbrains.kotlin.ir.backend.js.utils.JsInlineClassesUtils.isClassInlineLike] for explanation.
+
 /**
  * Represents a 16-bit Unicode character.
  * On the JVM, non-nullable values of this type are represented as values of the primitive type `char`.
  */
-// TODO: KT-35100
-//@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
-//public inline class Char internal constructor (val value: Int) : Comparable<Char> {
-public class Char internal constructor(private val value: Int) : Comparable<Char> {
+public /*value*/ class Char
+@kotlin.internal.LowPriorityInOverloadResolution
+internal constructor(private val value: Int) : Comparable<Char> {
+
+    @SinceKotlin("1.5")
+    @WasExperimental(ExperimentalStdlibApi::class)
+    public constructor(code: UShort) : this(code.toInt())
 
     /**
      * Compares this value with the specified value for order.
@@ -29,34 +36,52 @@ public class Char internal constructor(private val value: Int) : Comparable<Char
     /** Subtracts the other Int value from this value resulting a Char. */
     public operator fun minus(other: Int): Char = (value - other).toChar()
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     public operator fun inc(): Char = (value + 1).toChar()
-    /** Decrements this value. */
+
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     public operator fun dec(): Char = (value - 1).toChar()
 
     /** Creates a range from this value to the specified [other] value. */
     public operator fun rangeTo(other: Char): CharRange = CharRange(this, other)
 
     /** Returns the value of this character as a `Byte`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toByte()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     public fun toByte(): Byte = value.toByte()
     /** Returns the value of this character as a `Char`. */
     public fun toChar(): Char = this
     /** Returns the value of this character as a `Short`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toShort()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     public fun toShort(): Short = value.toShort()
     /** Returns the value of this character as a `Int`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     public fun toInt(): Int = value
     /** Returns the value of this character as a `Long`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toLong()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     public fun toLong(): Long = value.toLong()
     /** Returns the value of this character as a `Float`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toFloat()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     public fun toFloat(): Float = value.toFloat()
     /** Returns the value of this character as a `Double`. */
+    @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toDouble()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     public fun toDouble(): Double = value.toDouble()
 
     override fun equals(other: Any?): Boolean {
-        @Suppress("IMPLICIT_BOXING_IN_IDENTITY_EQUALS")
-        if (other === this) return true
         if (other !is Char) return false
-
         return this.value == other.value
     }
 

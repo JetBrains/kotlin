@@ -1,0 +1,2 @@
+error: '-Xjdk-release=9' option conflicts with '-jvm-target 10'. Please remove the '-jvm-target' option
+COMPILATION_ERROR

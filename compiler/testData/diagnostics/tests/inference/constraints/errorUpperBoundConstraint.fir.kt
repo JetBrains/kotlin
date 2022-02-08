@@ -20,7 +20,7 @@ public class Foo {
 // FILE: test.kt
 
 fun test(e: <!UNRESOLVED_REFERENCE!>ErrorType<!>) {
-    Foo.foo {
-        Sam.Result.<!INAPPLICABLE_CANDIDATE!>create<!>(e)
+    Foo.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!> {
+        Sam.Result.create(<!ARGUMENT_TYPE_MISMATCH!>e<!>)
     }
 }

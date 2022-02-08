@@ -1,5 +1,0 @@
-fun `is`() {}
-
-fun main(args: Array<String>) {
-    `is`()
-}

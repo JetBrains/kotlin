@@ -21,6 +21,7 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 interface VarFrame<F : VarFrame<F>> {
     fun mergeFrom(other: F)
+    fun markControlFlowMerge()
     override fun equals(other: Any?): Boolean
     override fun hashCode(): Int
 }
@@ -38,17 +39,17 @@ fun <F : VarFrame<F>> analyze(node: MethodNode, interpreter: BackwardAnalysisInt
     val frames = (1..insnList.size()).map { interpreter.newFrame(node.maxLocals) }.toMutableList()
     val insnArray = insnList.toArray()
 
-    // see Figure 9.16 from Dragon book
     var wereChanges: Boolean
 
     do {
         wereChanges = false
-        for (insn in insnArray) {
-            val index = insnList.indexOf(insn)
+        for (index in insnArray.indices.reversed()) {
+            val insn = insnArray[index]
             val newFrame = interpreter.newFrame(node.maxLocals)
             for (successorIndex in graph.getSuccessorsIndices(insn)) {
                 newFrame.mergeFrom(frames[successorIndex])
             }
+            if (graph.getPredecessorsIndices(insn).size > 1) newFrame.markControlFlowMerge()
 
             interpreter.def(newFrame, insn)
             interpreter.use(newFrame, insn)

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.load.java.descriptors;
 
 import kotlin.Pair;
+import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
@@ -36,6 +37,8 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
     private final boolean isStaticFinal;
     @Nullable
     private final Pair<UserDataKey<?>, ?> singleUserData;
+
+    private KotlinType inType = null;
 
     protected JavaPropertyDescriptor(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -99,7 +102,7 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
     @Override
     public JavaCallableMemberDescriptor enhance(
             @Nullable KotlinType enhancedReceiverType,
-            @NotNull List<ValueParameterData> enhancedValueParametersData,
+            @NotNull List<KotlinType> enhancedValueParameterTypes,
             @NotNull KotlinType enhancedReturnType,
             @Nullable Pair<UserDataKey<?>, ?> additionalUserData
     ) {
@@ -145,8 +148,8 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
 
         enhanced.initialize(newGetter, newSetter, getBackingField(), getDelegateField());
         enhanced.setSetterProjectedOut(isSetterProjectedOut());
-        if (compileTimeInitializer != null) {
-            enhanced.setCompileTimeInitializer(compileTimeInitializer);
+        if (compileTimeInitializerFactory != null) {
+            enhanced.setCompileTimeInitializer(compileTimeInitializer, compileTimeInitializerFactory);
         }
 
         enhanced.setOverriddenDescriptors(getOverriddenDescriptors());
@@ -160,8 +163,8 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
                 enhancedReturnType,
                 getTypeParameters(), // TODO
                 getDispatchReceiverParameter(),
-                enhancedReceiver
-        );
+                enhancedReceiver,
+                CollectionsKt.<ReceiverParameterDescriptor>emptyList());
         return enhanced;
     }
 
@@ -170,6 +173,18 @@ public class JavaPropertyDescriptor extends PropertyDescriptorImpl implements Ja
         KotlinType type = getType();
         return isStaticFinal && ConstUtil.canBeUsedForConstVal(type) &&
                (!TypeEnhancementKt.hasEnhancedNullability(type) || KotlinBuiltIns.isString(type));
+    }
+
+    @Override
+    public void setInType(@NotNull KotlinType inType) {
+        this.inType = inType;
+    }
+
+    @Override
+    public @Nullable KotlinType getInType() {
+        PropertySetterDescriptor setter = getSetter();
+        KotlinType setterType = setter != null ? setter.getValueParameters().get(0).getType() : null;
+        return setterType != null ? setterType : inType;
     }
 
     @Nullable

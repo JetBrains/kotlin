@@ -10,15 +10,16 @@ package kotlin
 import kotlin.contracts.*
 import kotlin.internal.InlineOnly
 import kotlin.jvm.JvmField
+import kotlin.jvm.JvmInline
 import kotlin.jvm.JvmName
 
 /**
  * A discriminated union that encapsulates a successful outcome with a value of type [T]
  * or a failure with an arbitrary [Throwable] exception.
  */
-@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
 @SinceKotlin("1.3")
-public inline class Result<out T> @PublishedApi internal constructor(
+@JvmInline
+public value class Result<out T> @PublishedApi internal constructor(
     @PublishedApi
     internal val value: Any?
 ) : Serializable {

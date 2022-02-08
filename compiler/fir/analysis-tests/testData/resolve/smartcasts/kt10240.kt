@@ -4,7 +4,7 @@ fun a(): Int {
         if (c == null ||
             0 < c // FE 1.0: smart cast impossible, see KT-10240
         ) c = 0
-        return c ?: 0
+        return c <!USELESS_ELVIS!>?: 0<!>
     }
 
     var c: Int = 0

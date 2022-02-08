@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 fun box() : String {
     test {
@@ -8,6 +7,6 @@ fun box() : String {
     return "OK"
 }
 
-inline fun <T> test(p: T) {
+<!NOTHING_TO_INLINE!>inline<!> fun <T> test(p: T) {
     p.toString()
 }

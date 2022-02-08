@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.gradle.report.data
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 
-internal class BuildExecutionData(
+class BuildExecutionData(
     val startParameters: Collection<String>,
-    val failure: Throwable?,
+    val failureMessages: List<String?>,
     val taskExecutionData: Collection<TaskExecutionData>
 ) {
     val aggregatedMetrics by lazy {

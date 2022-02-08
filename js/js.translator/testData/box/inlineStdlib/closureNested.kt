@@ -1,7 +1,7 @@
 // EXPECTED_REACHABLE_NODES: 1283
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: test
+// CHECK_CONTAINS_NO_CALLS: test except=Unit_getInstance
 
 internal fun test(a: Int, b: Int): Int {
     var res = 0

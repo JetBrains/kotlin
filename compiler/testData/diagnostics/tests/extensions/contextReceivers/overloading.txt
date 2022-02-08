@@ -1,0 +1,5 @@
+package
+
+context(kotlin.Int) public fun foo(): kotlin.Int
+context(kotlin.Int, kotlin.String) public fun foo(): kotlin.Int
+public fun test(): kotlin.Unit

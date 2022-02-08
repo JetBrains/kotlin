@@ -1,0 +1,15 @@
+@kotlin.Metadata
+public final class Foo {
+    // source: 'inlineReifiedVisibility.kt'
+    public method <init>(): void
+    public synthetic final method f$main(): void
+    protected synthetic final method g(): void
+    private synthetic final method h(): void
+}
+
+@kotlin.Metadata
+public final class InlineReifiedVisibilityKt {
+    // source: 'inlineReifiedVisibility.kt'
+    public synthetic final static method f(): void
+    private synthetic final static method g(): void
+}

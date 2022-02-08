@@ -17,6 +17,7 @@ public interface IFoo {
     public final inner class IFoo$DefaultImpls
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class L {
     // source: 'defaultInterfaceMethodsInInlineClass.kt'

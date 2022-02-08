@@ -1,4 +1,4 @@
-// !WITH_NEW_INFERENCE
+// FIR_IDENTICAL
 // NI_EXPECTED_FILE
 
 class Outer {
@@ -20,5 +20,5 @@ typealias GIntI = Generic<Int>.Inner
 fun test2(x: Generic<Int>) = x.GI()
 fun <T> test3(x: Generic<T>) = x.GI()
 fun <T> test4(x: Generic<List<T>>) = x.GI()
-fun <T> test5(x: Generic<T>) = <!OI;TYPE_MISMATCH!>x<!>.<!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>GIntI<!>()
+fun <T> test5(x: Generic<T>) = x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>GIntI<!>()
 fun Generic<Int>.test6() = GIntI()

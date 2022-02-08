@@ -13,12 +13,12 @@ abstract class KA : A() {
 
 fun foo(a: A, ka: KA) {
     a.contains("")
-    a.contains(1)
+    a.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     "" in a
-    1 in a
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in a
 
     ka.contains("")
-    ka.contains(1)
+    ka.contains(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
     "" in ka
-    1 in ka
+    <!ARGUMENT_TYPE_MISMATCH!>1<!> in ka
 }

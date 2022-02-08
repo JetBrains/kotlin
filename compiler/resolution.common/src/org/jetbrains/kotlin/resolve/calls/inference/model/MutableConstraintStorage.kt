@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
+import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemUtilContext
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.model.*
@@ -32,12 +33,12 @@ class MutableVariableWithConstraints private constructor(
         }
 
     // see @OnlyInputTypes annotation
-    fun getProjectedInputCallTypes(utilContext: ConstraintSystemUtilContext): Collection<KotlinTypeMarker> {
+    fun getProjectedInputCallTypes(utilContext: ConstraintSystemUtilContext): Collection<Pair<KotlinTypeMarker, ConstraintKind>> {
         return with(utilContext) {
             mutableConstraints
                 .mapNotNullTo(SmartList()) {
                     if (it.position.from is OnlyInputTypeConstraintPosition || it.inputTypePositionBeforeIncorporation != null)
-                        it.type.unCapture()
+                        it.type.unCapture() to it.kind
                     else null
                 }
         }
@@ -47,8 +48,11 @@ class MutableVariableWithConstraints private constructor(
 
     private var simplifiedConstraints: SmartList<Constraint>? = mutableConstraints
 
-    // return new actual constraint, if this constraint is new
-    fun addConstraint(constraint: Constraint): Constraint? {
+    val rawConstraintsCount get() = mutableConstraints.size
+
+    // return new actual constraint, if this constraint is new, otherwise return already existed not redundant constraint
+    // the second element of pair is a flag whether a constraint was added in fact
+    fun addConstraint(constraint: Constraint): Pair<Constraint, Boolean> {
         val isLowerAndFlexibleTypeWithDefNotNullLowerBound = constraint.isLowerAndFlexibleTypeWithDefNotNullLowerBound()
 
         for (previousConstraint in constraints) {
@@ -56,31 +60,48 @@ class MutableVariableWithConstraints private constructor(
                 && previousConstraint.type == constraint.type
                 && previousConstraint.isNullabilityConstraint == constraint.isNullabilityConstraint
             ) {
-                if (newConstraintIsUseless(previousConstraint, constraint)) return null
+                val noNewCustomAttributes = with(context) {
+                    val previousType = previousConstraint.type
+                    val type = constraint.type
+                    (!previousType.hasCustomAttributes() && !type.hasCustomAttributes()) ||
+                            (previousType.getCustomAttributes() == type.getCustomAttributes())
+                }
+
+                if (newConstraintIsUseless(previousConstraint, constraint)) {
+                    // Preserve constraints with different custom type attributes.
+                    // This allows us to union type attributes in NewCommonSuperTypeCalculator.kt
+                    if (noNewCustomAttributes) {
+                        return previousConstraint to false
+                    }
+                }
+
                 val isMatchingForSimplification = when (previousConstraint.kind) {
                     ConstraintKind.LOWER -> constraint.kind.isUpper()
                     ConstraintKind.UPPER -> constraint.kind.isLower()
                     ConstraintKind.EQUALITY -> true
                 }
-                if (isMatchingForSimplification) {
-                    val actualConstraint = Constraint(
-                        ConstraintKind.EQUALITY,
-                        constraint.type,
-                        constraint.position,
-                        constraint.typeHashCode,
-                        derivedFrom = constraint.derivedFrom,
-                        isNullabilityConstraint = false
-                    )
+                if (isMatchingForSimplification && noNewCustomAttributes) {
+                    val actualConstraint = if (constraint.kind != ConstraintKind.EQUALITY) {
+                        Constraint(
+                            ConstraintKind.EQUALITY,
+                            constraint.type,
+                            constraint.position.takeIf { it.from !is DeclaredUpperBoundConstraintPosition<*> }
+                                ?: previousConstraint.position,
+                            constraint.typeHashCode,
+                            derivedFrom = constraint.derivedFrom,
+                            isNullabilityConstraint = false
+                        )
+                    } else constraint
                     mutableConstraints.add(actualConstraint)
                     simplifiedConstraints = null
-                    return actualConstraint
+                    return actualConstraint to true
                 }
             }
 
             if (isLowerAndFlexibleTypeWithDefNotNullLowerBound &&
                 previousConstraint.isStrongerThanLowerAndFlexibleTypeWithDefNotNullLowerBound(constraint)
             ) {
-                return null
+                return previousConstraint to false
             }
         }
 
@@ -93,13 +114,13 @@ class MutableVariableWithConstraints private constructor(
             simplifiedConstraints = null
         }
 
-        return constraint
+        return constraint to true
     }
 
     // This method should be used only for transaction in constraint system
     // shouldRemove should give true only for tail elements
-    internal fun removeLastConstraints(shouldRemove: (Constraint) -> Boolean) {
-        mutableConstraints.trimToSize(mutableConstraints.indexOfLast { !shouldRemove(it) } + 1)
+    internal fun removeLastConstraints(sinceIndex: Int) {
+        mutableConstraints.trimToSize(sinceIndex)
         if (simplifiedConstraints !== mutableConstraints) {
             simplifiedConstraints = null
         }
@@ -117,6 +138,16 @@ class MutableVariableWithConstraints private constructor(
         // Constraints from declared upper bound are quite special -- they aren't considered as a proper ones
         // In other words, user-defined constraints have "higher" priority and here we're trying not to loose them
         if (old.position.from is DeclaredUpperBoundConstraintPosition<*> && new.position.from !is DeclaredUpperBoundConstraintPosition<*>)
+            return false
+
+        /*
+         * We discriminate upper expected type constraints during finding a result type to fix variable (see ResultTypeResolver.kt):
+         * namely, we don't intersect the expected type with other upper constraints' types to prevent cases like this:
+         *  fun <T : String> materialize(): T = null as T
+         *  val bar: Int = materialize() // T is inferred into String & Int without discriminating upper expected type constraints
+         * So here we shouldn't lose upper non-expected type constraints.
+         */
+        if (old.position.from is ExpectedTypeConstraintPosition<*> && new.position.from !is ExpectedTypeConstraintPosition<*> && old.kind.isUpper() && new.kind.isUpper())
             return false
 
         return when (old.kind) {
@@ -196,6 +227,8 @@ class MutableVariableWithConstraints private constructor(
 internal class MutableConstraintStorage : ConstraintStorage {
     override val allTypeVariables: MutableMap<TypeConstructorMarker, TypeVariableMarker> = LinkedHashMap()
     override val notFixedTypeVariables: MutableMap<TypeConstructorMarker, MutableVariableWithConstraints> = LinkedHashMap()
+    override val missedConstraints: MutableList<Pair<IncorporationConstraintPosition, MutableList<Pair<TypeVariableMarker, Constraint>>>> =
+        SmartList()
     override val initialConstraints: MutableList<InitialConstraint> = SmartList()
     override var maxTypeDepthFromInitialConstraints: Int = 1
     override val errors: MutableList<ConstraintSystemError> = SmartList()
@@ -206,4 +239,6 @@ internal class MutableConstraintStorage : ConstraintStorage {
         LinkedHashMap()
     override val builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables: MutableMap<TypeConstructorMarker, KotlinTypeMarker> =
         LinkedHashMap()
+
+    override val constraintsFromAllForkPoints: MutableList<Pair<IncorporationConstraintPosition, ForkPointData>> = SmartList()
 }

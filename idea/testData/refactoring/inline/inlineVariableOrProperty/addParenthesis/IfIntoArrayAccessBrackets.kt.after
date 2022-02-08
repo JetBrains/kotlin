@@ -1,6 +1,0 @@
-import java.util.ArrayList
-
-fun f() {
-    val a = ArrayList<Int>()
-    println(a[if (true) 1 else 2])
-}

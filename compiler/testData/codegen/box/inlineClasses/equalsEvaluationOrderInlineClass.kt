@@ -1,9 +1,12 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: EXCEPTIONS_NOT_IMPLEMENTED
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Inner(val x: Int)
-inline class A(val x: Inner)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Inner(val x: Int)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class A(val x: Inner)
 
 var i = 0
 

@@ -24,7 +24,7 @@ fun box() {
     e.copy()
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:13 box
 // test.kt:3 <init>
 // test.kt:13 box

@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallArgument
-import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.model.SimpleKotlinCallArgument
 import org.jetbrains.kotlin.resolve.calls.model.markCandidateForCompatibilityResolve
 import org.jetbrains.kotlin.types.KotlinType
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 
 object UnitTypeConversions : ParameterTypeConversion {
     override fun conversionDefinitelyNotNeeded(
-        candidate: KotlinResolutionCandidate,
+        candidate: ResolutionCandidate,
         argument: KotlinCallArgument,
         expectedParameterType: UnwrappedType
     ): Boolean {
@@ -28,8 +28,10 @@ object UnitTypeConversions : ParameterTypeConversion {
         if (argument !is SimpleKotlinCallArgument) return true
 
         val receiver = argument.receiver
-        if (receiver.receiverValue.type.hasUnitOrSubtypeReturnType(candidate.csBuilder)) return true
-        if (receiver.typesFromSmartCasts.any { it.hasUnitOrSubtypeReturnType(candidate.csBuilder) }) return true
+        val csBuilder = candidate.getSystem().getBuilder()
+
+        if (receiver.receiverValue.type.hasUnitOrSubtypeReturnType(csBuilder)) return true
+        if (receiver.typesFromSmartCasts.any { it.hasUnitOrSubtypeReturnType(csBuilder) }) return true
 
         if (
             !expectedParameterType.isBuiltinFunctionalType ||
@@ -67,15 +69,16 @@ object UnitTypeConversions : ParameterTypeConversion {
     }
 
     override fun convertParameterType(
-        candidate: KotlinResolutionCandidate,
+        candidate: ResolutionCandidate,
         argument: KotlinCallArgument,
         parameter: ParameterDescriptor,
         expectedParameterType: UnwrappedType
-    ): UnwrappedType? {
+    ): UnwrappedType {
         val nonUnitReturnedParameterType = createFunctionType(
             candidate.callComponents.builtIns,
             expectedParameterType.annotations,
             expectedParameterType.getReceiverTypeFromFunctionType(),
+            expectedParameterType.getContextReceiverTypesFromFunctionType(),
             expectedParameterType.getValueParameterTypesFromFunctionType().map { it.type },
             parameterNames = null,
             candidate.callComponents.builtIns.nullableAnyType,

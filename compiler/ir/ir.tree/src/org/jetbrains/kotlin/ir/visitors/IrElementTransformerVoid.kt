@@ -134,8 +134,24 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
 
     final override fun visitExpression(expression: IrExpression, data: Nothing?): IrExpression = visitExpression(expression)
 
-    open fun <T> visitConst(expression: IrConst<T>) = visitExpression(expression)
-    final override fun <T> visitConst(expression: IrConst<T>, data: Nothing?) = visitConst(expression)
+    open fun visitConst(expression: IrConst<*>) = visitExpression(expression)
+    final override fun visitConst(expression: IrConst<*>, data: Nothing?) = visitConst(expression)
+
+    open fun visitConstantValue(expression: IrConstantValue): IrConstantValue {
+        expression.transformChildren(this, null)
+        return expression
+    }
+
+    final override fun visitConstantValue(expression: IrConstantValue, data: Nothing?) = visitConstantValue(expression)
+
+    open fun visitConstantObject(expression: IrConstantObject) = visitConstantValue(expression)
+    final override fun visitConstantObject(expression: IrConstantObject, data: Nothing?) = visitConstantObject(expression)
+
+    open fun visitConstantPrimitive(expression: IrConstantPrimitive) = visitConstantValue(expression)
+    final override fun visitConstantPrimitive(expression: IrConstantPrimitive, data: Nothing?) = visitConstantPrimitive(expression)
+
+    open fun visitConstantArray(expression: IrConstantArray) = visitConstantValue(expression)
+    final override fun visitConstantArray(expression: IrConstantArray, data: Nothing?) = visitConstantArray(expression)
 
     open fun visitVararg(expression: IrVararg) = visitExpression(expression)
     final override fun visitVararg(expression: IrVararg, data: Nothing?) = visitVararg(expression)
@@ -189,7 +205,7 @@ abstract class IrElementTransformerVoid : IrElementTransformer<Nothing?> {
     open fun visitSetField(expression: IrSetField) = visitFieldAccess(expression)
     final override fun visitSetField(expression: IrSetField, data: Nothing?) = visitSetField(expression)
 
-    open fun visitMemberAccess(expression: IrMemberAccessExpression<*>) = visitExpression(expression)
+    open fun visitMemberAccess(expression: IrMemberAccessExpression<*>) = visitDeclarationReference(expression)
     final override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: Nothing?) = visitMemberAccess(expression)
 
     open fun visitFunctionAccess(expression: IrFunctionAccessExpression) = visitMemberAccess(expression)

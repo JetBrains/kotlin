@@ -4,8 +4,8 @@ open class A {
 
     fun bar(x: B) {
         x.foo() // OK, foo declared in A
-        x.<!HIDDEN!>baz<!>() // Declared in B
-        x.<!HIDDEN!>foobaz<!>() // Declared in B
+        x.<!INVISIBLE_REFERENCE!>baz<!>() // Declared in B
+        x.<!INVISIBLE_REFERENCE!>foobaz<!>() // Declared in B
     }
 }
 

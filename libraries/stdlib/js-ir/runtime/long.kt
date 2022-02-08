@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -135,16 +135,16 @@ public class Long internal constructor(
     /** Multiplies this value by the other value. */
     public inline operator fun times(other: Double): Double = toDouble() * other
 
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public inline operator fun div(other: Byte): Long = div(other.toLong())
 
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public inline operator fun div(other: Short): Long = div(other.toLong())
 
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public inline operator fun div(other: Int): Long = div(other.toLong())
 
-    /** Divides this value by the other value. */
+    /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
     public operator fun div(other: Long): Long = divide(other)
 
     /** Divides this value by the other value. */
@@ -153,34 +153,66 @@ public class Long internal constructor(
     /** Divides this value by the other value. */
     public inline operator fun div(other: Double): Double = toDouble() / other
 
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public inline operator fun rem(other: Byte): Long = rem(other.toLong())
 
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public inline operator fun rem(other: Short): Long = rem(other.toLong())
 
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public inline operator fun rem(other: Int): Long = rem(other.toLong())
 
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public operator fun rem(other: Long): Long = modulo(other)
 
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public inline operator fun rem(other: Float): Float = toFloat() % other
 
-    /** Calculates the remainder of dividing this value by the other value. */
+    /**
+     * Calculates the remainder of truncating division of this value by the other value.
+     *
+     * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+     */
     @SinceKotlin("1.1")
     public inline operator fun rem(other: Double): Double = toDouble() % other
 
-    /** Increments this value. */
+    /**
+     * Returns this value incremented by one.
+     *
+     * @sample samples.misc.Builtins.inc
+     */
     public operator fun inc(): Long = this + 1L
 
-    /** Decrements this value. */
+    /**
+     * Returns this value decremented by one.
+     *
+     * @sample samples.misc.Builtins.dec
+     */
     public operator fun dec(): Long = this - 1L
 
     /** Returns this value. */
@@ -238,6 +270,8 @@ public class Long internal constructor(
     public fun inv(): Long = Long(low.inv(), high.inv())
 
     public override fun toByte(): Byte = low.toByte()
+    @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
+    @DeprecatedSinceKotlin(warningSince = "1.5")
     public override fun toChar(): Char = low.toChar()
     public override fun toShort(): Short = low.toShort()
     public override fun toInt(): Int = low
@@ -245,7 +279,12 @@ public class Long internal constructor(
     public override fun toFloat(): Float = toDouble().toFloat()
     public override fun toDouble(): Double = toNumber()
 
-    // This method is used by `toString()`
+    // This method is used by JavaScript to convert objects of type Long to primitives.
+    // This is essential for the JavaScript interop.
+    // JavaScript functions that expect `number` are imported in Kotlin as expecting `kotlin.Number`
+    // (in our standard library, and also in user projects if they use Dukat for generating external declarations).
+    // Because `kotlin.Number` is a supertype of `Long` too, there has to be a way for JS to know how to handle Longs.
+    // See KT-50202
     @JsName("valueOf")
     internal fun valueOf() = toDouble()
 

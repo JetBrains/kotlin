@@ -26,12 +26,12 @@ public abstract interface Intf {
         private static final int BLACK = 1;
         public static final int WHITE = 2;
 
-        public final int getBLACK() {
-            return 0;
-        }
-
         private Companion() {
             super();
+        }
+
+        public final int getBLACK() {
+            return 0;
         }
     }
 }

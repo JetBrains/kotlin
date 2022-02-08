@@ -1,6 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1375
-// CHECK_CONTAINS_NO_CALLS: testDispatch
-// CHECK_CONTAINS_NO_CALLS: testExtension
+// CHECK_CONTAINS_NO_CALLS: testDispatch except=Unit_getInstance
+// CHECK_CONTAINS_NO_CALLS: testExtension except=Unit_getInstance
 class Bar {
     inline operator fun invoke(f: () -> String) { f() }
 }

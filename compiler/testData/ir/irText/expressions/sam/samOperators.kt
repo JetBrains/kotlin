@@ -1,4 +1,5 @@
 // WITH_JDK
+// TARGET_BACKEND: JVM
 // FILE: samOperators.kt
 fun f() {}
 

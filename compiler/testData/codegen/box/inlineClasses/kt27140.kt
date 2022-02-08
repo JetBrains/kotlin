@@ -1,7 +1,9 @@
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Z(private val i: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(private val i: Int) {
     fun toByteArray() = ByteArray(1) { i.toByte() }
 }
 

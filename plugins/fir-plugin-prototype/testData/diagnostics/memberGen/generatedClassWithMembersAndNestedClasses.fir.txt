@@ -1,0 +1,51 @@
+FILE: generatedClassWithMembersAndNestedClasses.kt
+    package bar
+
+    @R|org/jetbrains/kotlin/fir/plugin/ExternalClassWithNested|() public final class Foo : R|kotlin/Any| {
+        public constructor(): R|bar/Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/ExternalClassWithNested|() public final class Bar : R|kotlin/Any| {
+        public constructor(): R|bar/Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun testConstructor(): R|kotlin/Unit| {
+        lval generatedClass: R|foo/AllOpenGenerated| = R|foo/AllOpenGenerated|()
+    }
+    public final fun testNestedClasses(): R|kotlin/Unit| {
+        lval nestedFoo: R|foo/AllOpenGenerated.NestedFoo| = Q|foo/AllOpenGenerated|.R|foo/AllOpenGenerated.NestedFoo|()
+        R|<local>/nestedFoo|.R|foo/AllOpenGenerated.NestedFoo.materialize|().R|bar/Foo.foo|()
+        lval nestedBar: R|foo/AllOpenGenerated.NestedBar| = Q|foo/AllOpenGenerated|.R|foo/AllOpenGenerated.NestedBar|()
+        R|<local>/nestedBar|.R|foo/AllOpenGenerated.NestedBar.materialize|().R|bar/Bar.bar|()
+    }
+FILE: __GENERATED DECLARATIONS__.kt
+    package foo
+
+    public final class AllOpenGenerated : R|kotlin/Any| {
+        public constructor(): R|foo/AllOpenGenerated|
+
+        public final class NestedFoo : R|kotlin/Any| {
+            public final fun materialize(): R|bar/Foo|
+
+            public constructor(): R|foo/AllOpenGenerated.NestedFoo|
+
+        }
+
+        public final class NestedBar : R|kotlin/Any| {
+            public final fun materialize(): R|bar/Bar|
+
+            public constructor(): R|foo/AllOpenGenerated.NestedBar|
+
+        }
+
+    }

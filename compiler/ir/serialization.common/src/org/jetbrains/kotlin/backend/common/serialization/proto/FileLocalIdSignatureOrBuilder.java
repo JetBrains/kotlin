@@ -24,4 +24,13 @@ public interface FileLocalIdSignatureOrBuilder extends
    * <code>required int64 local_id = 2;</code>
    */
   long getLocalId();
+
+  /**
+   * <code>optional int32 debug_info = 3;</code>
+   */
+  boolean hasDebugInfo();
+  /**
+   * <code>optional int32 debug_info = 3;</code>
+   */
+  int getDebugInfo();
 }

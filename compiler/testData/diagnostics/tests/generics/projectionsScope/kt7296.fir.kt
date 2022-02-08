@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // !CHECK_TYPE
 import java.util.ArrayList
@@ -9,7 +8,7 @@ fun main() {
     val a : ArrayList<ArrayList<String>> = ArrayList()
     val b : ListOfLists<String> = ListOfLists(a)
     val c : ListOfLists<*> = b
-    val d : ArrayList<ArrayList<*>> = c.x
+    val d : ArrayList<ArrayList<*>> = <!INITIALIZER_TYPE_MISMATCH!>c.x<!>
 
-    c.x checkType { <!INAPPLICABLE_CANDIDATE!>_<!><ArrayList<out ArrayList<*>>>() }
+    c.x checkType { _<ArrayList<out ArrayList<*>>>() }
 }

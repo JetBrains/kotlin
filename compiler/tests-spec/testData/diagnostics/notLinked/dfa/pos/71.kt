@@ -44,7 +44,7 @@ fun case_1() {
 fun case_2(): Int {
     fun b(): Int {
         var c: Int? = null
-        if (c == null || 0 < <!SMARTCAST_IMPOSSIBLE, SMARTCAST_IMPOSSIBLE!>c<!>) c = 0
+        if (c == null || 0 < <!SMARTCAST_IMPOSSIBLE!>c<!>) c = 0
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>c<!>
         return c ?: 0
     }

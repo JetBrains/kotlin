@@ -1,5 +1,7 @@
 // !LANGUAGE: +MultiPlatformProjects
-// WITH_RUNTIME
+// IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: default argument mapping in MPP isn't designed yet
+// WITH_STDLIB
 // FILE: common.kt
 
 open class A() {

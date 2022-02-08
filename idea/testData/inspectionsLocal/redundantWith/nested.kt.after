@@ -1,6 +1,0 @@
-// WITH_RUNTIME
-fun test() {
-    <caret>with ("a") {
-        this
-    }
-}

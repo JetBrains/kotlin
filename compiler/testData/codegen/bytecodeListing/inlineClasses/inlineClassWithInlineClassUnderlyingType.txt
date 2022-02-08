@@ -1,3 +1,4 @@
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Z1 {
     // source: 'inlineClassWithInlineClassUnderlyingType.kt'
@@ -16,6 +17,7 @@ public final class Z1 {
     public synthetic final method unbox-impl(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Z2 {
     // source: 'inlineClassWithInlineClassUnderlyingType.kt'

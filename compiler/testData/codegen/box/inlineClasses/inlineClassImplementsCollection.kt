@@ -1,10 +1,13 @@
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class MyUInt(val x: Int)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class MyUInt(val x: Int)
 
-inline class MyUIntArray(private val storage: IntArray) : Collection<MyUInt> {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class MyUIntArray(private val storage: IntArray) : Collection<MyUInt> {
     public override val size: Int get() = storage.size
 
     override operator fun iterator() = TODO()

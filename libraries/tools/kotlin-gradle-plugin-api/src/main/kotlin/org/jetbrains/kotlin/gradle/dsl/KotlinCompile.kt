@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import groovy.lang.Closure
+import org.gradle.api.Action
 import org.gradle.api.Task
 import org.gradle.api.tasks.Internal
 
@@ -17,8 +18,11 @@ interface KotlinCompile<out T : KotlinCommonOptions> : Task {
         kotlinOptions.fn()
     }
 
+    fun kotlinOptions(fn: Action<in T>) {
+        fn.execute(kotlinOptions)
+    }
+
     fun kotlinOptions(fn: Closure<*>) {
-        fn.delegate = kotlinOptions
-        fn.call()
+        project.configure(kotlinOptions, fn)
     }
 }

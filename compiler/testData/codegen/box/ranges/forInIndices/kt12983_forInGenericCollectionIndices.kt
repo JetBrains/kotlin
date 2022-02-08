@@ -1,5 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 abstract class BaseGeneric<T>(val t: T) {
     abstract fun iterate()

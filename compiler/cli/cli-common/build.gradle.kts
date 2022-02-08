@@ -4,14 +4,15 @@ plugins {
 }
 
 dependencies {
-    compile(project(":core:util.runtime"))
-    compile(project(":compiler:config"))
-    compile(project(":compiler:config.jvm"))
-    compile(project(":js:js.config"))
-    compile(project(":native:kotlin-native-utils"))
+    api(project(":core:util.runtime"))
+    api(project(":compiler:config"))
+    api(project(":compiler:config.jvm"))
+    api(project(":js:js.config"))
+    api(project(":native:kotlin-native-utils"))
     compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("com.google.guava:guava"))
+    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 }
 
 sourceSets {

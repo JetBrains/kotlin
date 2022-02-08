@@ -1,0 +1,24 @@
+FILE: main.kt
+    package test
+
+    public final class TestClass : R|kotlin/Any| {
+        public constructor(): R|test/TestClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            <Unresolved name: extensionFun>#()
+        }
+
+    }
+FILE: stdlibExt.kt
+    package kotlin
+
+    public final class MyClass : R|kotlin/Any| {
+        public constructor(): R|kotlin/MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun R|kotlin/MyClass|.extensionFun(): R|kotlin/Unit| {
+    }

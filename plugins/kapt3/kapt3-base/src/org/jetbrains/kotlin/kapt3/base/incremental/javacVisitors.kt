@@ -247,27 +247,3 @@ private class ConstantTreeVisitor(val sourceStructure: SourceFileStructure) : Tr
         sourceStructure.addMentionedConstant(containingClass.qualifiedName.toString(), name.toString())
     }
 }
-
-class GeneratedTypesTaskListener(private val cache: JavaClassCache) : TaskListener {
-
-    override fun started(e: TaskEvent) {
-        // do nothing, we just process on finish
-    }
-
-    override fun finished(e: TaskEvent) {
-        if (e.kind != TaskEvent.Kind.ENTER || cache.isAlreadyProcessed(e.sourceFile.toUri())) return
-
-        val treeVisitor = object : SimpleTreeVisitor<Void, Void>() {
-            override fun visitClass(node: ClassTree, p: Void?): Void? {
-                node as JCTree.JCClassDecl
-                cache.addGeneratedType(node.sym.fullname.toString(), File(e.sourceFile.toUri()))
-
-                node.members.forEach { visit(it, null) }
-                return null
-            }
-        }
-        e.compilationUnit.typeDecls.forEach {
-            it.accept(treeVisitor, null)
-        }
-    }
-}

@@ -1,10 +1,10 @@
 plugins {
-    id("org.jetbrains.kotlin.js") version "<pluginMarkerVersion>"
+    id("org.jetbrains.kotlin.js")
 }
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {

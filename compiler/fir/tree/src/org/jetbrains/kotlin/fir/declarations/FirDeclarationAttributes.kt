@@ -5,16 +5,25 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import org.jetbrains.kotlin.fir.utils.ArrayMap
-import org.jetbrains.kotlin.fir.utils.AttributeArrayOwner
-import org.jetbrains.kotlin.fir.utils.NullableArrayMapAccessor
-import org.jetbrains.kotlin.fir.utils.TypeRegistry
+import org.jetbrains.kotlin.fir.util.ConeTypeRegistry
+import org.jetbrains.kotlin.util.ArrayMap
+import org.jetbrains.kotlin.util.AttributeArrayOwner
+import org.jetbrains.kotlin.util.NullableArrayMapAccessor
+import org.jetbrains.kotlin.util.TypeRegistry
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
 abstract class FirDeclarationDataKey
 
+/**
+ * Please note that FirDeclarationAttributes itself is thread unsafe, so when you read
+ *   or write some attribute you need to ensure that this operation is safe and there
+ *   won't be any race condition. You can achieve this by
+ * - setting attribute to declaration before it's publication (e.g. in scopes)
+ * - setting attribute in one phase and reading it only in following ones (using `ensureResolve` on symbol)
+ * - resetting attribute under lock over specific attribute value
+ */
 class FirDeclarationAttributes : AttributeArrayOwner<FirDeclarationDataKey, Any> {
     override val typeRegistry: TypeRegistry<FirDeclarationDataKey, Any>
         get() = FirDeclarationDataRegistry
@@ -39,10 +48,10 @@ class FirDeclarationAttributes : AttributeArrayOwner<FirDeclarationDataKey, Any>
  *    object SomeKey : FirDeclarationDataKey()
  *    var FirDeclaration.someString: String? by FirDeclarationDataRegistry.data(SomeKey)
  */
-object FirDeclarationDataRegistry : TypeRegistry<FirDeclarationDataKey, Any>() {
-    fun <K : FirDeclarationDataKey, V : Any> data(key: K): ReadWriteProperty<FirDeclaration, V?> {
+object FirDeclarationDataRegistry : ConeTypeRegistry<FirDeclarationDataKey, Any>() {
+    fun <K : FirDeclarationDataKey> data(key: K): DeclarationDataAccessor {
         val kClass = key::class
-        return DeclarationDataAccessor(generateNullableAccessor(kClass), kClass)
+        return DeclarationDataAccessor(generateAnyNullableAccessor(kClass), kClass)
     }
 
     fun <K : FirDeclarationDataKey, V : Any> attributesAccessor(key: K): ReadWriteProperty<FirDeclarationAttributes, V?> {
@@ -50,15 +59,16 @@ object FirDeclarationDataRegistry : TypeRegistry<FirDeclarationDataKey, Any>() {
         return AttributeDataAccessor(generateNullableAccessor(kClass), kClass)
     }
 
-    private class DeclarationDataAccessor<V : Any>(
-        val dataAccessor: NullableArrayMapAccessor<FirDeclarationDataKey, Any, V>,
+    class DeclarationDataAccessor(
+        private val dataAccessor: NullableArrayMapAccessor<FirDeclarationDataKey, Any, *>,
         val key: KClass<out FirDeclarationDataKey>
-    ) : ReadWriteProperty<FirDeclaration, V?> {
-        override fun getValue(thisRef: FirDeclaration, property: KProperty<*>): V? {
-            return dataAccessor.getValue(thisRef.attributes, property)
+    ) {
+        operator fun <V> getValue(thisRef: FirDeclaration, property: KProperty<*>): V? {
+            @Suppress("UNCHECKED_CAST")
+            return dataAccessor.getValue(thisRef.attributes, property) as? V
         }
 
-        override fun setValue(thisRef: FirDeclaration, property: KProperty<*>, value: V?) {
+        operator fun <V> setValue(thisRef: FirDeclaration, property: KProperty<*>, value: V?) {
             thisRef.attributes[key] = value
         }
     }

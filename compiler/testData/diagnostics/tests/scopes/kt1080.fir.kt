@@ -6,9 +6,9 @@ package kt1080
 import reflect.Constructor
 
 import b.*
-import d
+import <!UNRESOLVED_IMPORT!>d<!>
 import d.Test
-import b.d
+import b.<!PACKAGE_CANNOT_BE_IMPORTED!>d<!>
 
 class Some: <!UNRESOLVED_REFERENCE!>Test<!>()
 

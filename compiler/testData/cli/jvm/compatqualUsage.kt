@@ -1,3 +1,3 @@
-fun bar(a: A) {
-    a.foo(null)
+fun bar(b: B) {
+    b.foo(null)
 }

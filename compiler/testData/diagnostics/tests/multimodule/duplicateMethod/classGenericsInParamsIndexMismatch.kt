@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // MODULE: m1
 // FILE: a.kt
 package p
@@ -29,6 +30,6 @@ import p.*
 
 fun <Y, Z> test(b: B<Y, Z>?) {
     if (b is C<Y, Z>) {
-        b<!UNNECESSARY_SAFE_CALL!>?.<!><!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(null)
+        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>b<!UNNECESSARY_SAFE_CALL!>?.<!><!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>(null)<!>
     }
 }

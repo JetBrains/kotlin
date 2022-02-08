@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: JVM
 // StackOverflowError caused by infinite loop in MyObject.writeToParcel
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:JvmName("TestKt")
 package test
@@ -19,5 +19,5 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    readFromParcel<MyObject>(parcel)
+    parcelableCreator<MyObject>().createFromParcel(parcel)
 }

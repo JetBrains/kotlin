@@ -14,24 +14,28 @@ class LighterTreeElementFinderByType(
     private val tree: FlyweightCapableTreeStructure<LighterASTNode>,
     private var types: Collection<IElementType>,
     private var index: Int,
-    private val depth: Int
+    private val depth: Int,
+    private val reverse: Boolean,
 ) {
     fun find(node: LighterASTNode?): LighterASTNode? {
         if (node == null) return null
         return visitNode(node, 0)
     }
 
-    fun visitNode(node: LighterASTNode, currentDepth: Int): LighterASTNode? {
-        if (node.tokenType in types) {
-            if (index == 0) {
-                return node
+    private fun visitNode(node: LighterASTNode, currentDepth: Int): LighterASTNode? {
+        if (currentDepth != 0) {
+            if (node.tokenType in types) {
+                if (index == 0) {
+                    return node
+                }
+                index--
             }
-            index--
         }
 
         if (currentDepth == depth) return null
 
-        for (child in node.getChildren()) {
+        val children = if (reverse) node.getChildren().asReversed() else node.getChildren()
+        for (child in children) {
             val result = visitNode(child, currentDepth + 1)
             if (result != null) return result
         }
@@ -44,4 +48,5 @@ class LighterTreeElementFinderByType(
         tree.getChildren(this, ref)
         return ref.get()?.filterNotNull() ?: emptyList()
     }
+
 }

@@ -1,0 +1,2 @@
+Resolved to:
+0: (in foo) class DD<T, T2>

@@ -1,0 +1,8 @@
+depends = CoreFoundation CoreGraphics CoreText Foundation Security UIKit darwin posix
+language = Objective-C
+package = platform.UserNotificationsUI
+
+modules = UserNotificationsUI
+compilerOpts = -framework UserNotificationsUI
+linkerOpts = -framework UserNotificationsUI
+# Disabled: Not officially available for watchOS.

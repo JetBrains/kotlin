@@ -1,7 +1,0 @@
-pluginManagement {
-    repositories {
-        {{kotlin_plugin_repositories}}
-    }
-}
-
-include ':app'

@@ -1,24 +1,21 @@
 @kotlin.SinceKotlin(version = "1.2")
 public val kotlin.String.Companion.CASE_INSENSITIVE_ORDER: kotlin.Comparator<kotlin.String> { get; }
 
+@kotlin.SinceKotlin(version = "1.5")
+public val kotlin.Char.category: kotlin.text.CharCategory { get; }
+
 public val kotlin.CharSequence.indices: kotlin.ranges.IntRange { get; }
 
 public val kotlin.CharSequence.lastIndex: kotlin.Int { get; }
 
-@kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "Provided for binary compatibility")
-@kotlin.js.JsName(name = "Regex_sb3q2$")
-public fun Regex_0(pattern: kotlin.String, option: kotlin.text.RegexOption): kotlin.text.Regex
-
-@kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "Provided for binary compatibility")
-@kotlin.js.JsName(name = "Regex_61zpoe$")
-public fun Regex_1(pattern: kotlin.String): kotlin.text.Regex
-
 @kotlin.SinceKotlin(version = "1.2")
 @kotlin.Deprecated(message = "Use CharArray.concatToString() instead", replaceWith = kotlin.ReplaceWith(expression = "chars.concatToString()", imports = {}))
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.4")
 public fun String(chars: kotlin.CharArray): kotlin.String
 
 @kotlin.SinceKotlin(version = "1.2")
 @kotlin.Deprecated(message = "Use CharArray.concatToString(startIndex, endIndex) instead", replaceWith = kotlin.ReplaceWith(expression = "chars.concatToString(offset, offset + length)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.4")
 public fun String(chars: kotlin.CharArray, offset: kotlin.Int, length: kotlin.Int): kotlin.String
 
 @kotlin.SinceKotlin(version = "1.1")
@@ -118,6 +115,8 @@ public inline fun <V> kotlin.CharSequence.associateWith(valueSelector: (kotlin.C
 @kotlin.SinceKotlin(version = "1.3")
 public inline fun <V, M : kotlin.collections.MutableMap<in kotlin.Char, in V>> kotlin.CharSequence.associateWithTo(destination: M, valueSelector: (kotlin.Char) -> V): M
 
+@kotlin.Deprecated(message = "Use replaceFirstChar instead.", replaceWith = kotlin.ReplaceWith(expression = "replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public fun kotlin.String.capitalize(): kotlin.String
 
 @kotlin.SinceKotlin(version = "1.2")
@@ -142,6 +141,8 @@ public fun kotlin.CharSequence.commonSuffixWith(other: kotlin.CharSequence, igno
 @kotlin.SinceKotlin(version = "1.2")
 public fun kotlin.String.compareTo(other: kotlin.String, ignoreCase: kotlin.Boolean = ...): kotlin.Int
 
+@kotlin.Deprecated(message = "Use String.plus() instead", replaceWith = kotlin.ReplaceWith(expression = "this + str", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.String.concat(str: kotlin.String): kotlin.String
 
@@ -160,11 +161,19 @@ public operator fun kotlin.CharSequence.contains(other: kotlin.CharSequence, ign
 @kotlin.internal.InlineOnly
 public inline operator fun kotlin.CharSequence.contains(regex: kotlin.text.Regex): kotlin.Boolean
 
+@kotlin.SinceKotlin(version = "1.5")
+public infix fun kotlin.CharSequence?.contentEquals(other: kotlin.CharSequence?): kotlin.Boolean
+
+@kotlin.SinceKotlin(version = "1.5")
+public fun kotlin.CharSequence?.contentEquals(other: kotlin.CharSequence?, ignoreCase: kotlin.Boolean): kotlin.Boolean
+
 @kotlin.internal.InlineOnly
 public inline fun kotlin.CharSequence.count(): kotlin.Int
 
 public inline fun kotlin.CharSequence.count(predicate: (kotlin.Char) -> kotlin.Boolean): kotlin.Int
 
+@kotlin.Deprecated(message = "Use replaceFirstChar instead.", replaceWith = kotlin.ReplaceWith(expression = "replaceFirstChar { it.lowercase() }", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public fun kotlin.String.decapitalize(): kotlin.String
 
 @kotlin.SinceKotlin(version = "1.4")
@@ -182,6 +191,30 @@ public inline fun kotlin.text.StringBuilder.deleteAt(index: kotlin.Int): kotlin.
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun kotlin.text.StringBuilder.deleteRange(startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.text.StringBuilder
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+public fun kotlin.Int.digitToChar(): kotlin.Char
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+public fun kotlin.Int.digitToChar(radix: kotlin.Int): kotlin.Char
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+public fun kotlin.Char.digitToInt(): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+public fun kotlin.Char.digitToInt(radix: kotlin.Int): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+public fun kotlin.Char.digitToIntOrNull(): kotlin.Int?
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+public fun kotlin.Char.digitToIntOrNull(radix: kotlin.Int): kotlin.Int?
 
 public fun kotlin.CharSequence.drop(n: kotlin.Int): kotlin.CharSequence
 
@@ -256,6 +289,14 @@ public fun kotlin.CharSequence.findLastAnyOf(strings: kotlin.collections.Collect
 public fun kotlin.CharSequence.first(): kotlin.Char
 
 public inline fun kotlin.CharSequence.first(predicate: (kotlin.Char) -> kotlin.Boolean): kotlin.Char
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun <R : kotlin.Any> kotlin.CharSequence.firstNotNullOf(transform: (kotlin.Char) -> R?): R
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun <R : kotlin.Any> kotlin.CharSequence.firstNotNullOfOrNull(transform: (kotlin.Char) -> R?): R?
 
 public fun kotlin.CharSequence.firstOrNull(): kotlin.Char?
 
@@ -337,12 +378,30 @@ public inline fun kotlin.text.StringBuilder.insertRange(index: kotlin.Int, value
 
 public fun kotlin.CharSequence.isBlank(): kotlin.Boolean
 
+@kotlin.SinceKotlin(version = "1.5")
+public fun kotlin.Char.isDefined(): kotlin.Boolean
+
+@kotlin.SinceKotlin(version = "1.5")
+public fun kotlin.Char.isDigit(): kotlin.Boolean
+
 @kotlin.internal.InlineOnly
 public inline fun kotlin.CharSequence.isEmpty(): kotlin.Boolean
 
 public fun kotlin.Char.isHighSurrogate(): kotlin.Boolean
 
+@kotlin.SinceKotlin(version = "1.5")
+public fun kotlin.Char.isISOControl(): kotlin.Boolean
+
+@kotlin.SinceKotlin(version = "1.5")
+public fun kotlin.Char.isLetter(): kotlin.Boolean
+
+@kotlin.SinceKotlin(version = "1.5")
+public fun kotlin.Char.isLetterOrDigit(): kotlin.Boolean
+
 public fun kotlin.Char.isLowSurrogate(): kotlin.Boolean
+
+@kotlin.SinceKotlin(version = "1.5")
+public fun kotlin.Char.isLowerCase(): kotlin.Boolean
 
 @kotlin.internal.InlineOnly
 public inline fun kotlin.CharSequence.isNotBlank(): kotlin.Boolean
@@ -357,6 +416,12 @@ public inline fun kotlin.CharSequence?.isNullOrBlank(): kotlin.Boolean
 public inline fun kotlin.CharSequence?.isNullOrEmpty(): kotlin.Boolean
 
 public fun kotlin.Char.isSurrogate(): kotlin.Boolean
+
+@kotlin.SinceKotlin(version = "1.5")
+public fun kotlin.Char.isTitleCase(): kotlin.Boolean
+
+@kotlin.SinceKotlin(version = "1.5")
+public fun kotlin.Char.isUpperCase(): kotlin.Boolean
 
 public fun kotlin.Char.isWhitespace(): kotlin.Boolean
 
@@ -382,6 +447,21 @@ public fun kotlin.CharSequence.lineSequence(): kotlin.sequences.Sequence<kotlin.
 
 public fun kotlin.CharSequence.lines(): kotlin.collections.List<kotlin.String>
 
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Char.lowercase(): kotlin.String
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+@kotlin.internal.InlineOnly
+public inline fun kotlin.String.lowercase(): kotlin.String
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Char.lowercaseChar(): kotlin.Char
+
 public inline fun <R> kotlin.CharSequence.map(transform: (kotlin.Char) -> R): kotlin.collections.List<R>
 
 public inline fun <R> kotlin.CharSequence.mapIndexed(transform: (index: kotlin.Int, kotlin.Char) -> R): kotlin.collections.List<R>
@@ -398,20 +478,24 @@ public inline fun <R : kotlin.Any, C : kotlin.collections.MutableCollection<in R
 
 public inline fun <R, C : kotlin.collections.MutableCollection<in R>> kotlin.CharSequence.mapTo(destination: C, transform: (kotlin.Char) -> R): C
 
+@kotlin.Deprecated(message = "Use Regex.findAll() instead or invoke matches() on String dynamically: this.asDynamic().match(regex)")
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.String.match(regex: kotlin.String): kotlin.Array<kotlin.String>?
 
 @kotlin.internal.InlineOnly
 public inline infix fun kotlin.CharSequence.matches(regex: kotlin.text.Regex): kotlin.Boolean
 
+@kotlin.Deprecated(message = "Use Regex.matches() instead", replaceWith = kotlin.ReplaceWith(expression = "regex.toRegex().matches(this)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.6")
 public fun kotlin.String.matches(regex: kotlin.String): kotlin.Boolean
 
 @kotlin.Deprecated(message = "Use maxOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "this.maxOrNull()", imports = {}))
-@kotlin.DeprecatedSinceKotlin(warningSince = "1.4")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.5", hiddenSince = "1.6", warningSince = "1.4")
 public fun kotlin.CharSequence.max(): kotlin.Char?
 
 @kotlin.Deprecated(message = "Use maxByOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "this.maxByOrNull(selector)", imports = {}))
-@kotlin.DeprecatedSinceKotlin(warningSince = "1.4")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.5", hiddenSince = "1.6", warningSince = "1.4")
 public inline fun <R : kotlin.Comparable<R>> kotlin.CharSequence.maxBy(selector: (kotlin.Char) -> R): kotlin.Char?
 
 @kotlin.SinceKotlin(version = "1.4")
@@ -461,18 +545,18 @@ public inline fun <R> kotlin.CharSequence.maxOfWithOrNull(comparator: kotlin.Com
 public fun kotlin.CharSequence.maxOrNull(): kotlin.Char?
 
 @kotlin.Deprecated(message = "Use maxWithOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "this.maxWithOrNull(comparator)", imports = {}))
-@kotlin.DeprecatedSinceKotlin(warningSince = "1.4")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.5", hiddenSince = "1.6", warningSince = "1.4")
 public fun kotlin.CharSequence.maxWith(comparator: kotlin.Comparator<in kotlin.Char>): kotlin.Char?
 
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.CharSequence.maxWithOrNull(comparator: kotlin.Comparator<in kotlin.Char>): kotlin.Char?
 
 @kotlin.Deprecated(message = "Use minOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "this.minOrNull()", imports = {}))
-@kotlin.DeprecatedSinceKotlin(warningSince = "1.4")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.5", hiddenSince = "1.6", warningSince = "1.4")
 public fun kotlin.CharSequence.min(): kotlin.Char?
 
 @kotlin.Deprecated(message = "Use minByOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "this.minByOrNull(selector)", imports = {}))
-@kotlin.DeprecatedSinceKotlin(warningSince = "1.4")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.5", hiddenSince = "1.6", warningSince = "1.4")
 public inline fun <R : kotlin.Comparable<R>> kotlin.CharSequence.minBy(selector: (kotlin.Char) -> R): kotlin.Char?
 
 @kotlin.SinceKotlin(version = "1.4")
@@ -522,7 +606,7 @@ public inline fun <R> kotlin.CharSequence.minOfWithOrNull(comparator: kotlin.Com
 public fun kotlin.CharSequence.minOrNull(): kotlin.Char?
 
 @kotlin.Deprecated(message = "Use minWithOrNull instead.", replaceWith = kotlin.ReplaceWith(expression = "this.minWithOrNull(comparator)", imports = {}))
-@kotlin.DeprecatedSinceKotlin(warningSince = "1.4")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.5", hiddenSince = "1.6", warningSince = "1.4")
 public fun kotlin.CharSequence.minWith(comparator: kotlin.Comparator<in kotlin.Char>): kotlin.Char?
 
 @kotlin.SinceKotlin(version = "1.4")
@@ -659,6 +743,20 @@ public fun kotlin.String.replaceFirst(oldChar: kotlin.Char, newChar: kotlin.Char
 
 public fun kotlin.String.replaceFirst(oldValue: kotlin.String, newValue: kotlin.String, ignoreCase: kotlin.Boolean = ...): kotlin.String
 
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+@kotlin.OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName(name = "replaceFirstCharWithChar")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.String.replaceFirstChar(transform: (kotlin.Char) -> kotlin.Char): kotlin.String
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+@kotlin.OverloadResolutionByLambdaReturnType
+@kotlin.jvm.JvmName(name = "replaceFirstCharWithCharSequence")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.String.replaceFirstChar(transform: (kotlin.Char) -> kotlin.CharSequence): kotlin.String
+
 public fun kotlin.String.replaceIndent(newIndent: kotlin.String = ...): kotlin.String
 
 public fun kotlin.String.replaceIndentByMargin(newIndent: kotlin.String = ..., marginPrefix: kotlin.String = ...): kotlin.String
@@ -698,16 +796,6 @@ public inline fun <R> kotlin.CharSequence.scan(initial: R, operation: (acc: R, k
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <R> kotlin.CharSequence.scanIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.Char) -> R): kotlin.collections.List<R>
 
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use runningReduce instead.", replaceWith = kotlin.ReplaceWith(expression = "runningReduce(operation)", imports = {}))
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
-public inline fun kotlin.CharSequence.scanReduce(operation: (acc: kotlin.Char, kotlin.Char) -> kotlin.Char): kotlin.collections.List<kotlin.Char>
-
-@kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Use runningReduceIndexed instead.", replaceWith = kotlin.ReplaceWith(expression = "runningReduceIndexed(operation)", imports = {}))
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
-public inline fun kotlin.CharSequence.scanReduceIndexed(operation: (index: kotlin.Int, acc: kotlin.Char, kotlin.Char) -> kotlin.Char): kotlin.collections.List<kotlin.Char>
-
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline operator fun kotlin.text.StringBuilder.set(index: kotlin.Int, value: kotlin.Char): kotlin.Unit
@@ -743,6 +831,11 @@ public inline fun kotlin.CharSequence.split(regex: kotlin.text.Regex, limit: kot
 public fun kotlin.CharSequence.splitToSequence(vararg delimiters: kotlin.String, ignoreCase: kotlin.Boolean = ..., limit: kotlin.Int = ...): kotlin.sequences.Sequence<kotlin.String>
 
 public fun kotlin.CharSequence.splitToSequence(vararg delimiters: kotlin.Char, ignoreCase: kotlin.Boolean = ..., limit: kotlin.Int = ...): kotlin.sequences.Sequence<kotlin.String>
+
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+@kotlin.internal.InlineOnly
+public inline fun kotlin.CharSequence.splitToSequence(regex: kotlin.text.Regex, limit: kotlin.Int = ...): kotlin.sequences.Sequence<kotlin.String>
 
 public fun kotlin.CharSequence.startsWith(char: kotlin.Char, ignoreCase: kotlin.Boolean = ...): kotlin.Boolean
 
@@ -789,8 +882,12 @@ public fun kotlin.String.substringBeforeLast(delimiter: kotlin.Char, missingDeli
 
 public fun kotlin.String.substringBeforeLast(delimiter: kotlin.String, missingDelimiterValue: kotlin.String = ...): kotlin.String
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.CharSequence.sumBy(selector: (kotlin.Char) -> kotlin.Int): kotlin.Int
 
+@kotlin.Deprecated(message = "Use sumOf instead.", replaceWith = kotlin.ReplaceWith(expression = "this.sumOf(selector)", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 public inline fun kotlin.CharSequence.sumByDouble(selector: (kotlin.Char) -> kotlin.Double): kotlin.Double
 
 @kotlin.SinceKotlin(version = "1.4")
@@ -811,17 +908,17 @@ public inline fun kotlin.CharSequence.sumOf(selector: (kotlin.Char) -> kotlin.In
 @kotlin.internal.InlineOnly
 public inline fun kotlin.CharSequence.sumOf(selector: (kotlin.Char) -> kotlin.Long): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfUInt")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.CharSequence.sumOf(selector: (kotlin.Char) -> kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.4")
+@kotlin.SinceKotlin(version = "1.5")
 @kotlin.OverloadResolutionByLambdaReturnType
 @kotlin.jvm.JvmName(name = "sumOfULong")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.CharSequence.sumOf(selector: (kotlin.Char) -> kotlin.ULong): kotlin.ULong
 
@@ -841,6 +938,12 @@ public inline fun kotlin.CharSequence.takeWhile(predicate: (kotlin.Char) -> kotl
 
 public inline fun kotlin.String.takeWhile(predicate: (kotlin.Char) -> kotlin.Boolean): kotlin.String
 
+@kotlin.SinceKotlin(version = "1.5")
+public fun kotlin.Char.titlecase(): kotlin.String
+
+@kotlin.SinceKotlin(version = "1.5")
+public fun kotlin.Char.titlecaseChar(): kotlin.Char
+
 @kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
 @kotlin.internal.InlineOnly
@@ -848,6 +951,12 @@ public inline fun kotlin.String.toBoolean(): kotlin.Boolean
 
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.String?.toBoolean(): kotlin.Boolean
+
+@kotlin.SinceKotlin(version = "1.5")
+public fun kotlin.String.toBooleanStrict(): kotlin.Boolean
+
+@kotlin.SinceKotlin(version = "1.5")
+public fun kotlin.String.toBooleanStrictOrNull(): kotlin.Boolean?
 
 public fun kotlin.String.toByte(): kotlin.Byte
 
@@ -907,9 +1016,13 @@ public fun kotlin.String.toLongOrNull(): kotlin.Long?
 @kotlin.SinceKotlin(version = "1.1")
 public fun kotlin.String.toLongOrNull(radix: kotlin.Int): kotlin.Long?
 
+@kotlin.Deprecated(message = "Use lowercaseChar() instead.", replaceWith = kotlin.ReplaceWith(expression = "lowercaseChar()", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Char.toLowerCase(): kotlin.Char
 
+@kotlin.Deprecated(message = "Use lowercase() instead.", replaceWith = kotlin.ReplaceWith(expression = "lowercase()", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.String.toLowerCase(): kotlin.String
 
@@ -950,89 +1063,93 @@ public fun kotlin.Long.toString(radix: kotlin.Int): kotlin.String
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Short.toString(radix: kotlin.Int): kotlin.String
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.UByte.toString(radix: kotlin.Int): kotlin.String
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.UInt.toString(radix: kotlin.Int): kotlin.String
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.ULong.toString(radix: kotlin.Int): kotlin.String
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.UShort.toString(radix: kotlin.Int): kotlin.String
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.String.toUByte(): kotlin.UByte
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.String.toUByte(radix: kotlin.Int): kotlin.UByte
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.String.toUByteOrNull(): kotlin.UByte?
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.String.toUByteOrNull(radix: kotlin.Int): kotlin.UByte?
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.String.toUInt(): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.String.toUInt(radix: kotlin.Int): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.String.toUIntOrNull(): kotlin.UInt?
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.String.toUIntOrNull(radix: kotlin.Int): kotlin.UInt?
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.String.toULong(): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.String.toULong(radix: kotlin.Int): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.String.toULongOrNull(): kotlin.ULong?
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.String.toULongOrNull(radix: kotlin.Int): kotlin.ULong?
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.String.toUShort(): kotlin.UShort
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.String.toUShort(radix: kotlin.Int): kotlin.UShort
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.String.toUShortOrNull(): kotlin.UShort?
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun kotlin.String.toUShortOrNull(radix: kotlin.Int): kotlin.UShort?
 
+@kotlin.Deprecated(message = "Use uppercaseChar() instead.", replaceWith = kotlin.ReplaceWith(expression = "uppercaseChar()", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Char.toUpperCase(): kotlin.Char
 
+@kotlin.Deprecated(message = "Use uppercase() instead.", replaceWith = kotlin.ReplaceWith(expression = "uppercase()", imports = {}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.internal.InlineOnly
 public inline fun kotlin.String.toUpperCase(): kotlin.String
 
@@ -1079,6 +1196,20 @@ public inline fun kotlin.String.trimStart(predicate: (kotlin.Char) -> kotlin.Boo
 
 public fun kotlin.String.trimStart(vararg chars: kotlin.Char): kotlin.String
 
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Char.uppercase(): kotlin.String
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+@kotlin.internal.InlineOnly
+public inline fun kotlin.String.uppercase(): kotlin.String
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+public fun kotlin.Char.uppercaseChar(): kotlin.Char
+
 @kotlin.SinceKotlin(version = "1.2")
 public fun kotlin.CharSequence.windowed(size: kotlin.Int, step: kotlin.Int = ..., partialWindows: kotlin.Boolean = ...): kotlin.collections.List<kotlin.String>
 
@@ -1109,6 +1240,76 @@ public interface Appendable {
     public abstract fun append(value: kotlin.CharSequence?): kotlin.text.Appendable
 
     public abstract fun append(value: kotlin.CharSequence?, startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.text.Appendable
+}
+
+@kotlin.SinceKotlin(version = "1.5")
+public final enum class CharCategory : kotlin.Enum<kotlin.text.CharCategory> {
+    enum entry UNASSIGNED
+
+    enum entry UPPERCASE_LETTER
+
+    enum entry LOWERCASE_LETTER
+
+    enum entry TITLECASE_LETTER
+
+    enum entry MODIFIER_LETTER
+
+    enum entry OTHER_LETTER
+
+    enum entry NON_SPACING_MARK
+
+    enum entry ENCLOSING_MARK
+
+    enum entry COMBINING_SPACING_MARK
+
+    enum entry DECIMAL_DIGIT_NUMBER
+
+    enum entry LETTER_NUMBER
+
+    enum entry OTHER_NUMBER
+
+    enum entry SPACE_SEPARATOR
+
+    enum entry LINE_SEPARATOR
+
+    enum entry PARAGRAPH_SEPARATOR
+
+    enum entry CONTROL
+
+    enum entry FORMAT
+
+    enum entry PRIVATE_USE
+
+    enum entry SURROGATE
+
+    enum entry DASH_PUNCTUATION
+
+    enum entry START_PUNCTUATION
+
+    enum entry END_PUNCTUATION
+
+    enum entry CONNECTOR_PUNCTUATION
+
+    enum entry OTHER_PUNCTUATION
+
+    enum entry MATH_SYMBOL
+
+    enum entry CURRENCY_SYMBOL
+
+    enum entry MODIFIER_SYMBOL
+
+    enum entry OTHER_SYMBOL
+
+    enum entry INITIAL_QUOTE_PUNCTUATION
+
+    enum entry FINAL_QUOTE_PUNCTUATION
+
+    public final val code: kotlin.String { get; }
+
+    public final operator fun contains(char: kotlin.Char): kotlin.Boolean
+
+    public companion object of CharCategory {
+    }
 }
 
 @kotlin.SinceKotlin(version = "1.4")
@@ -1211,17 +1412,29 @@ public final class Regex {
 
     public final fun findAll(input: kotlin.CharSequence, startIndex: kotlin.Int = ...): kotlin.sequences.Sequence<kotlin.text.MatchResult>
 
+    @kotlin.SinceKotlin(version = "1.5")
+    @kotlin.ExperimentalStdlibApi
+    public final fun matchAt(input: kotlin.CharSequence, index: kotlin.Int): kotlin.text.MatchResult?
+
     public final fun matchEntire(input: kotlin.CharSequence): kotlin.text.MatchResult?
 
     public final infix fun matches(input: kotlin.CharSequence): kotlin.Boolean
 
-    public final inline fun replace(input: kotlin.CharSequence, transform: (kotlin.text.MatchResult) -> kotlin.CharSequence): kotlin.String
+    @kotlin.SinceKotlin(version = "1.5")
+    @kotlin.ExperimentalStdlibApi
+    public final fun matchesAt(input: kotlin.CharSequence, index: kotlin.Int): kotlin.Boolean
+
+    public final fun replace(input: kotlin.CharSequence, transform: (kotlin.text.MatchResult) -> kotlin.CharSequence): kotlin.String
 
     public final fun replace(input: kotlin.CharSequence, replacement: kotlin.String): kotlin.String
 
     public final fun replaceFirst(input: kotlin.CharSequence, replacement: kotlin.String): kotlin.String
 
     public final fun split(input: kotlin.CharSequence, limit: kotlin.Int = ...): kotlin.collections.List<kotlin.String>
+
+    @kotlin.SinceKotlin(version = "1.6")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+    public final fun splitToSequence(input: kotlin.CharSequence, limit: kotlin.Int = ...): kotlin.sequences.Sequence<kotlin.String>
 
     public open override fun toString(): kotlin.String
 
@@ -1422,6 +1635,11 @@ public object Typography {
 
     public const final val leftDoubleQuote: kotlin.Char = \u201C ('“') { get; }
 
+    @kotlin.SinceKotlin(version = "1.6")
+    public const final val leftGuillemet: kotlin.Char = \u00AB ('«') { get; }
+
+    @kotlin.Deprecated(message = "This constant has a typo in the name. Use leftGuillemet instead.", replaceWith = kotlin.ReplaceWith(expression = "Typography.leftGuillemet", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.6")
     public const final val leftGuillemete: kotlin.Char = \u00AB ('«') { get; }
 
     public const final val leftSingleQuote: kotlin.Char = \u2018 ('‘') { get; }
@@ -1458,6 +1676,11 @@ public object Typography {
 
     public const final val rightDoubleQuote: kotlin.Char = \u201D ('”') { get; }
 
+    @kotlin.SinceKotlin(version = "1.6")
+    public const final val rightGuillemet: kotlin.Char = \u00BB ('»') { get; }
+
+    @kotlin.Deprecated(message = "This constant has a typo in the name. Use rightGuillemet instead.", replaceWith = kotlin.ReplaceWith(expression = "Typography.rightGuillemet", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.6")
     public const final val rightGuillemete: kotlin.Char = \u00BB ('»') { get; }
 
     public const final val rightSingleQuote: kotlin.Char = \u2019 ('’') { get; }

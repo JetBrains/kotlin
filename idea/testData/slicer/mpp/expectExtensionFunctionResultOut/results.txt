@@ -1,8 +1,0 @@
-6 val result = <bold>1</bold>.foo() (in bar())
-3 	expect fun <bold>Any</bold>.foo(): Any (in foo() on Any)
-1 		actual fun <bold>Any</bold>.foo(): Any { (in foo() on Any)
-2 			return <bold>this</bold> (in foo() on Any)
-1 				actual <bold>fun Any.foo(): Any</bold> {
-6 					val result = 1.<bold>foo()</bold> (in bar())
-6 						<bold>val result</bold> = 1.foo() (in bar())
-7 							println(<bold>result</bold>) (in bar())

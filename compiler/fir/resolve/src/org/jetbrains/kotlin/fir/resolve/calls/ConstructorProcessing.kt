@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructorCopy
-import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolved
+import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
@@ -117,7 +117,7 @@ private fun FirTypeAliasSymbol.findSAMConstructorForTypeAlias(
 
     if (type.typeArguments.isEmpty()) return samConstructorForClass
 
-    val namedSymbol = samConstructorForClass.symbol as? FirNamedFunctionSymbol ?: return null
+    val namedSymbol = samConstructorForClass.symbol
 
     val substitutor = prepareSubstitutorForTypeAliasConstructors(
         type,
@@ -154,7 +154,7 @@ private fun prepareSubstitutorForTypeAliasConstructors(
         it as? ConeKotlinType ?: return null
     }
     return substitutorByMap(
-        expandedClass.typeParameters.map { it.symbol }.zip(resultingTypeArguments).toMap()
+        expandedClass.typeParameters.map { it.symbol }.zip(resultingTypeArguments).toMap(), session
     )
 }
 
@@ -170,13 +170,15 @@ private fun processConstructors(
         if (matchedSymbol != null) {
             val scope = when (matchedSymbol) {
                 is FirTypeAliasSymbol -> {
-                    matchedSymbol.ensureResolved(FirResolvePhase.TYPES, session)
+                    matchedSymbol.ensureResolved(FirResolvePhase.TYPES)
                     val type = matchedSymbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
                     val basicScope = type.scope(session, bodyResolveComponents.scopeSession, FakeOverrideTypeCalculator.DoNothing)
 
                     val outerType = bodyResolveComponents.outerClassManager.outerType(type)
 
-                    if (basicScope != null && (matchedSymbol.fir.typeParameters.isNotEmpty() || outerType != null)) {
+                    if (basicScope != null &&
+                        (matchedSymbol.fir.typeParameters.isNotEmpty() || outerType != null || type.typeArguments.isNotEmpty())
+                    ) {
                         TypeAliasConstructorsSubstitutingScope(
                             matchedSymbol,
                             basicScope,
@@ -184,10 +186,13 @@ private fun processConstructors(
                         )
                     } else basicScope
                 }
-                is FirClassSymbol ->
-                    (matchedSymbol.fir as FirClass<*>).scopeForClass(
+                is FirClassSymbol -> {
+                    val firClass = matchedSymbol.fir as FirClass
+                    if (firClass.classKind == ClassKind.INTERFACE) null
+                    else firClass.scopeForClass(
                         substitutor, session, bodyResolveComponents.scopeSession
                     )
+                }
             }
 
             //TODO: why don't we use declared member scope at this point?
@@ -207,10 +212,6 @@ private class TypeAliasConstructorsSubstitutingScope(
     private val delegatingScope: FirScope,
     private val outerType: ConeClassLikeType?,
 ) : FirScope() {
-
-    init {
-        require(outerType != null || typeAliasSymbol.fir.typeParameters.isNotEmpty())
-    }
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
         delegatingScope.processDeclaredConstructors wrapper@{ originalConstructorSymbol ->
@@ -252,7 +253,3 @@ private class TypeAliasConstructorsSubstitutingScope(
         }
     }
 }
-
-private object TypeAliasConstructorKey : FirDeclarationDataKey()
-
-var FirConstructor.originalConstructorIfTypeAlias: FirConstructor? by FirDeclarationDataRegistry.data(TypeAliasConstructorKey)

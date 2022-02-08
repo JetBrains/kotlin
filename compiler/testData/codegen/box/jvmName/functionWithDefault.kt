@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @JvmName("bar")
 fun foo(x: String = (object {}).javaClass.enclosingMethod.name) = x

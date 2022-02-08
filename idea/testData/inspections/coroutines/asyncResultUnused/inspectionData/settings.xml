@@ -1,3 +1,0 @@
-<inspection_tool class="DeferredResultUnused" enabled="true" level="WARNING" enabled_by_default="true">
-    <option name="standardOnly" value="false" />
-</inspection_tool>

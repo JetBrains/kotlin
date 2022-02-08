@@ -1,4 +1,9 @@
-inline class R(val x: Any)
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class R(val x: Any)
 
 fun useR(r: R) {
     if (r.x as String != "OK") throw AssertionError("$r")

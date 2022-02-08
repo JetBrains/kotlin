@@ -4,6 +4,7 @@ public interface A {
     public abstract method foo(p0: java.lang.Object): void
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Foo {
     // source: 'noBridgesForErasedInlineClass.kt'

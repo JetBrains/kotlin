@@ -177,13 +177,13 @@ public final class IrLocalDelegatedProperty extends
   public static final int DELEGATE_FIELD_NUMBER = 3;
   private org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
    */
   public boolean hasDelegate() {
     return ((bitField0_ & 0x00000004) == 0x00000004);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
    */
   public org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable getDelegate() {
     return delegate_;
@@ -240,17 +240,15 @@ public final class IrLocalDelegatedProperty extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!hasDelegate()) {
-      memoizedIsInitialized = 0;
-      return false;
-    }
     if (!getBase().isInitialized()) {
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!getDelegate().isInitialized()) {
-      memoizedIsInitialized = 0;
-      return false;
+    if (hasDelegate()) {
+      if (!getDelegate().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
     }
     if (hasGetter()) {
       if (!getGetter().isInitialized()) {
@@ -497,17 +495,15 @@ public final class IrLocalDelegatedProperty extends
         
         return false;
       }
-      if (!hasDelegate()) {
-        
-        return false;
-      }
       if (!getBase().isInitialized()) {
         
         return false;
       }
-      if (!getDelegate().isInitialized()) {
-        
-        return false;
+      if (hasDelegate()) {
+        if (!getDelegate().isInitialized()) {
+          
+          return false;
+        }
       }
       if (hasGetter()) {
         if (!getGetter().isInitialized()) {
@@ -637,19 +633,19 @@ public final class IrLocalDelegatedProperty extends
 
     private org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable.getDefaultInstance();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
      */
     public boolean hasDelegate() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
      */
     public org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable getDelegate() {
       return delegate_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
      */
     public Builder setDelegate(org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable value) {
       if (value == null) {
@@ -661,7 +657,7 @@ public final class IrLocalDelegatedProperty extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
      */
     public Builder setDelegate(
         org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable.Builder builderForValue) {
@@ -671,7 +667,7 @@ public final class IrLocalDelegatedProperty extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
      */
     public Builder mergeDelegate(org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable value) {
       if (((bitField0_ & 0x00000004) == 0x00000004) &&
@@ -686,7 +682,7 @@ public final class IrLocalDelegatedProperty extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable delegate = 3;</code>
      */
     public Builder clearDelegate() {
       delegate_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable.getDefaultInstance();

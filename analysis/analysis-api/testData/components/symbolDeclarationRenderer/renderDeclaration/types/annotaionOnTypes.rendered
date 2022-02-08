@@ -1,0 +1,12 @@
+@Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
+annotation class A1
+
+@Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
+annotation class A2 {
+  constructor(value: String)
+
+  val value: String
+}
+
+fun x(): @A1 @A2(value = "LIST") List<@A2(value = "INT") Int>
+

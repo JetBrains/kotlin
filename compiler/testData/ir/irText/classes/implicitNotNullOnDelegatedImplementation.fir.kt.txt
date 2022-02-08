@@ -1,0 +1,123 @@
+interface IFoo {
+  abstract fun foo(): String
+
+}
+
+class K1 : JFoo {
+  constructor() /* primary */ {
+    super/*JFoo*/()
+    /* <init>() */
+
+  }
+
+}
+
+class K2 : JFoo {
+  constructor() /* primary */ {
+    super/*JFoo*/()
+    /* <init>() */
+
+  }
+
+  override fun foo(): String {
+    return super.foo() /*!! String */
+  }
+
+}
+
+class K3 : JUnrelatedFoo, IFoo {
+  constructor() /* primary */ {
+    super/*JUnrelatedFoo*/()
+    /* <init>() */
+
+  }
+
+}
+
+class K4 : JUnrelatedFoo, IFoo {
+  constructor() /* primary */ {
+    super/*JUnrelatedFoo*/()
+    /* <init>() */
+
+  }
+
+  override fun foo(): @FlexibleNullability String? {
+    return super.foo()
+  }
+
+}
+
+class TestJFoo : IFoo {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun foo(): String {
+    return <this>.#<$$delegate_0>.foo() /*!! String */
+  }
+
+  local /* final field */ val <$$delegate_0>: JFoo = JFoo()
+
+}
+
+class TestK1 : IFoo {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun foo(): String {
+    return <this>.#<$$delegate_0>.foo() /*!! String */
+  }
+
+  local /* final field */ val <$$delegate_0>: K1 = K1()
+
+}
+
+class TestK2 : IFoo {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun foo(): String {
+    return <this>.#<$$delegate_0>.foo()
+  }
+
+  local /* final field */ val <$$delegate_0>: K2 = K2()
+
+}
+
+class TestK3 : IFoo {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun foo(): String {
+    return <this>.#<$$delegate_0>.foo()
+  }
+
+  local /* final field */ val <$$delegate_0>: K3 = K3()
+
+}
+
+class TestK4 : IFoo {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun foo(): String {
+    return <this>.#<$$delegate_0>.foo() /*!! String */
+  }
+
+  local /* final field */ val <$$delegate_0>: K4 = K4()
+
+}

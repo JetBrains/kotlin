@@ -1,0 +1,55 @@
+FILE: simple.kt
+    package foo
+
+    public abstract interface MyInterface : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/MyInterfaceSupertype|() public abstract class AbstractClass : R|kotlin/Any|, R|foo/MyInterface| {
+        public constructor(): R|foo/AbstractClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/MyInterfaceSupertype|() public final class FinalClassWithOverride : R|kotlin/Any|, R|foo/MyInterface| {
+        public constructor(): R|foo/FinalClassWithOverride| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/MyInterfaceSupertype|() public final class FinalClassWithoutOverride : R|kotlin/Any|, R|foo/MyInterface| {
+        public constructor(): R|foo/FinalClassWithoutOverride| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class NotAnnotatedWithOverride : R|kotlin/Any| {
+        public constructor(): R|foo/NotAnnotatedWithOverride| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/MyInterfaceSupertype|() public final class AnnotatedClassWithExplicitInheritance : R|foo/MyInterface| {
+        public constructor(): R|foo/AnnotatedClassWithExplicitInheritance| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun test_1(x: R|foo/AbstractClass|): R|kotlin/Unit| {
+        R|<local>/x|.R|foo/MyInterface.foo|()
+    }
+    public final fun test_2(x: R|foo/FinalClassWithOverride|): R|kotlin/Unit| {
+        R|<local>/x|.R|foo/FinalClassWithOverride.foo|()
+    }
+    public final fun test_3(x: R|foo/FinalClassWithoutOverride|): R|kotlin/Unit| {
+        R|<local>/x|.R|foo/MyInterface.foo|()
+    }

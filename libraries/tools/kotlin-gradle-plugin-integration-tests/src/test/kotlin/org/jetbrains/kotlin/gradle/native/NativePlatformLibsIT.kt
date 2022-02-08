@@ -12,13 +12,15 @@ import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.extractNativ
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
+import org.jetbrains.kotlin.konan.CompilerVersion
+import org.jetbrains.kotlin.konan.CompilerVersionImpl
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
-import org.junit.Assume
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.*
+import org.junit.rules.TemporaryFolder
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class NativePlatformLibsIT : BaseGradleIT() {
@@ -30,6 +32,16 @@ class NativePlatformLibsIT : BaseGradleIT() {
             // This test class causes build timeouts on Windows CI machines.
             // We temporary disable it for windows until a proper fix is found.
             Assume.assumeFalse(HostManager.hostIsMingw)
+        }
+
+        @field:ClassRule
+        @JvmField
+        val tempDir = TemporaryFolder()
+
+        @JvmStatic
+        @AfterClass
+        fun deleteTempDir() {
+            tempDir.delete()
         }
     }
 
@@ -47,22 +59,43 @@ class NativePlatformLibsIT : BaseGradleIT() {
                     "kotlin.$it()"
                 }
             )
-            configureMemoryInGradleProperties()
+            gradleProperties().apply {
+                configureJvmMemory()
+            }
+        }
+
+    private fun CompilerVersion.isAtLeast(compilerVersion: CompilerVersion): Boolean {
+        if (this.major != compilerVersion.major) return this.major > compilerVersion.major
+        if (this.minor != compilerVersion.minor) return this.minor > compilerVersion.minor
+        if (this.maintenance != compilerVersion.maintenance) return this.maintenance > compilerVersion.maintenance
+        if (this.meta.ordinal != compilerVersion.meta.ordinal) return this.meta.ordinal > compilerVersion.meta.ordinal
+        return this.build >= compilerVersion.build
+    }
+
+    private fun simpleOsName(compilerVersion: CompilerVersion): String =
+        if (compilerVersion.isAtLeast(CompilerVersionImpl(major = 1, minor = 5, maintenance = 30, build = 1466))) {
+            HostManager.platformName()
+        } else {
+            HostManager.simpleOsName()
         }
 
     private fun deleteInstalledCompilers() {
         // Clean existing installation directories.
-        val osName = HostManager.simpleOsName()
-        val oldCompilerDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-$osName-$oldCompilerVersion")
-        val currentCompilerDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-$osName-$currentCompilerVersion")
+        val oldOsName = simpleOsName(CompilerVersion.fromString(oldCompilerVersion))
+        val currentOsName = simpleOsName(currentCompilerVersion)
+        val oldCompilerDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-$oldOsName-$oldCompilerVersion")
+        val currentCompilerDir = DependencyDirectories.localKonanDir.resolve("kotlin-native-$currentOsName-$currentCompilerVersion")
 
         for (compilerDirectory in listOf(oldCompilerDir, currentCompilerDir)) {
             compilerDirectory.deleteRecursively()
         }
     }
 
-    private fun Project.buildWithLightDist(vararg tasks: String, check: CompiledProject.() -> Unit) =
-        build(*tasks, "-Pkotlin.native.distribution.type=light", check = check)
+    private fun Project.buildWithLightDist(
+        vararg tasks: String,
+        options: BuildOptions = defaultBuildOptions(),
+        check: CompiledProject.() -> Unit
+    ) = build(*tasks, "-Pkotlin.native.distribution.type=light", options = options, check = check)
 
     @Test
     fun testNoGenerationForOldCompiler() = with(platformLibrariesProject("linuxX64")) {
@@ -73,7 +106,8 @@ class NativePlatformLibsIT : BaseGradleIT() {
         build("tasks", "-Pkotlin.native.version=$oldCompilerVersion") {
             assertSuccessful()
             assertContains("Unpack Kotlin/Native compiler to ")
-            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-(macos|linux|windows)".toRegex())
+            val osName = simpleOsName(CompilerVersion.fromString(oldCompilerVersion))
+            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-$osName".toRegex())
             assertNotContains("Generate platform libraries for ")
         }
     }
@@ -85,7 +119,8 @@ class NativePlatformLibsIT : BaseGradleIT() {
         // Check that a prebuilt distribution is used by default.
         build("assemble") {
             assertSuccessful()
-            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-prebuilt-(macos|linux|windows)".toRegex())
+            val osName = simpleOsName(currentCompilerVersion)
+            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-prebuilt-$osName".toRegex())
             assertNotContains("Generate platform libraries for ")
         }
     }
@@ -96,7 +131,9 @@ class NativePlatformLibsIT : BaseGradleIT() {
 
         val rootProject = Project("native-platform-libraries").apply {
             embedProject(Project("native-platform-libraries"), renameTo = "subproject")
-            configureMemoryInGradleProperties()
+            gradleProperties().apply {
+                configureJvmMemory()
+            }
             gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
             gradleBuildScript().appendText("\nkotlin.linuxX64()\n")
@@ -107,7 +144,8 @@ class NativePlatformLibsIT : BaseGradleIT() {
             // Check that platform libraries are correctly generated for both root project and a subproject.
             buildWithLightDist("assemble") {
                 assertSuccessful()
-                assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-(macos|linux|windows)".toRegex())
+                val osName = simpleOsName(currentCompilerVersion)
+                assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-$osName".toRegex())
                 assertContains("Generate platform libraries for linux_x64")
                 assertContains("Generate platform libraries for linux_arm64")
             }
@@ -125,7 +163,7 @@ class NativePlatformLibsIT : BaseGradleIT() {
         deleteInstalledCompilers()
 
         val unsupportedTarget = when {
-            HostManager.hostIsMac -> KonanTarget.MINGW_X64
+            HostManager.hostIsMac -> KonanTarget.LINUX_MIPSEL32
             else -> KonanTarget.IOS_X64
         }
 
@@ -137,23 +175,32 @@ class NativePlatformLibsIT : BaseGradleIT() {
 
     @Test
     fun testRerunGeneratorIfCacheKindChanged() {
-        // Currently we can generate caches only for macos_x64 and ios_x64.
-        Assume.assumeTrue(HostManager.hostIsMac)
+        // There are no cacheable targets on MinGW for now.
+        Assume.assumeFalse(HostManager.hostIsMingw)
 
         deleteInstalledCompilers()
 
-        with(platformLibrariesProject("iosX64")) {
-            // Build Mac libraries without caches.
-            buildWithLightDist("tasks") {
-                assertSuccessful()
-                assertContains("Generate platform libraries for ios_x64")
-            }
+        fun buildPlatformLibrariesWithoutAndWithCaches(target: KonanTarget) {
+            val presetName = target.presetName
+            val targetName = target.name
+            with(platformLibrariesProject(presetName)) {
+                // Build libraries without caches.
+                buildWithLightDist("tasks") {
+                    assertSuccessful()
+                    assertContains("Generate platform libraries for $targetName")
+                }
 
-            // Change cache kind and check that platform libraries generator was executed.
-            buildWithLightDist("tasks", "-Pkotlin.native.cacheKind=static") {
-                assertSuccessful()
-                assertContains("Precompile platform libraries for ios_x64 (precompilation: static)")
+                // Change cache kind and check that platform libraries generator was executed.
+                buildWithLightDist("tasks", "-Pkotlin.native.cacheKind.$presetName=static") {
+                    assertSuccessful()
+                    assertContains("Precompile platform libraries for $targetName (precompilation: static)")
+                }
             }
+        }
+        when {
+            HostManager.host == KonanTarget.MACOS_ARM64 -> buildPlatformLibrariesWithoutAndWithCaches(KonanTarget.IOS_ARM64)
+            HostManager.host == KonanTarget.MACOS_X64 -> buildPlatformLibrariesWithoutAndWithCaches(KonanTarget.IOS_X64)
+            HostManager.hostIsLinux -> buildPlatformLibrariesWithoutAndWithCaches(KonanTarget.LINUX_X64)
         }
     }
 
@@ -163,7 +210,8 @@ class NativePlatformLibsIT : BaseGradleIT() {
 
         build("assemble", "-Pkotlin.native.distribution.type=prebuilt") {
             assertSuccessful()
-            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-prebuilt-(macos|linux|windows)".toRegex())
+            val osName = simpleOsName(currentCompilerVersion)
+            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-prebuilt-$osName".toRegex())
             assertNotContains("Generate platform libraries for ")
         }
     }
@@ -174,19 +222,22 @@ class NativePlatformLibsIT : BaseGradleIT() {
             assertSuccessful()
             assertContains("Warning: Project property 'kotlin.native.restrictedDistribution' is deprecated. Please use 'kotlin.native.distribution.type=light' instead")
 
+            val osName = simpleOsName(CompilerVersion.fromString(oldCompilerVersion))
+            val regex = "Kotlin/Native distribution: .*kotlin-native-restricted-$osName".toRegex()
             // Restricted distribution is available for Mac hosts only.
             if (HostManager.hostIsMac) {
-                assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-restricted-(macos|linux|windows)".toRegex())
+                assertContainsRegex(regex)
             } else {
-                assertNotContains("Kotlin/Native distribution: .*kotlin-native-restricted-(macos|linux|windows)".toRegex())
+                assertNotContains(regex)
             }
         }
 
         // We allow using this deprecated property for 1.4 too. Just download the distribution without platform libs in this case.
         build("tasks", "-Pkotlin.native.restrictedDistribution=true") {
             assertSuccessful()
+            val osName = simpleOsName(currentCompilerVersion)
             assertContains("Warning: Project property 'kotlin.native.restrictedDistribution' is deprecated. Please use 'kotlin.native.distribution.type=light' instead")
-            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-(macos|linux|windows)".toRegex())
+            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-$osName".toRegex())
         }
     }
 
@@ -194,17 +245,21 @@ class NativePlatformLibsIT : BaseGradleIT() {
     fun testSettingDistributionTypeForOldCompiler() = with(platformLibrariesProject("linuxX64")) {
         build("tasks", "-Pkotlin.native.distribution.type=prebuilt", "-Pkotlin.native.version=$oldCompilerVersion") {
             assertSuccessful()
-            assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-(macos|linux|windows)".toRegex())
+            val osName = simpleOsName(CompilerVersion.fromString(oldCompilerVersion))
+            val regex = "Kotlin/Native distribution: .*kotlin-native-$osName".toRegex()
+            assertContainsRegex(regex)
         }
 
         build("tasks", "-Pkotlin.native.distribution.type=light", "-Pkotlin.native.version=$oldCompilerVersion") {
             assertSuccessful()
 
+            val osName = simpleOsName(CompilerVersion.fromString(oldCompilerVersion))
+            val regex = "Kotlin/Native distribution: .*kotlin-native-restricted-$osName".toRegex()
             // Restricted distribution is available for Mac hosts only.
             if (HostManager.hostIsMac) {
-                assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-restricted-(macos|linux|windows)".toRegex())
+                assertContainsRegex(regex)
             } else {
-                assertNotContains("Kotlin/Native distribution: .*kotlin-native-restricted-(macos|linux|windows)".toRegex())
+                assertNotContains(regex)
             }
         }
     }
@@ -235,6 +290,52 @@ class NativePlatformLibsIT : BaseGradleIT() {
             assertSuccessful()
             assertContains("Unpack Kotlin/Native compiler to ")
             assertContains("Generate platform libraries for linux_x64")
+        }
+    }
+
+    @Test
+    fun `check offline mode is propagated to the platform libs generator`() = with(platformLibrariesProject("linuxX64")) {
+        deleteInstalledCompilers()
+
+        // Install the compiler at the first time. Don't build to reduce execution time.
+        buildWithLightDist("tasks") {
+            assertSuccessful()
+            assertContains("Generate platform libraries for linux_x64")
+        }
+
+        deleteInstalledCompilers()
+
+        // Check that --offline works when all the dependencies are already downloaded:
+        val buildOptionsOffline = defaultBuildOptions()
+            .let { it.copy(freeCommandLineArgs = it.freeCommandLineArgs + "--offline") }
+
+        buildWithLightDist("tasks", options = buildOptionsOffline) {
+            assertSuccessful()
+            assertContains("Generate platform libraries for linux_x64")
+        }
+
+        // Check that --offline fails when there are no downloaded dependencies:
+        run {
+            val customKonanDataDir = tempDir.newFolder()
+            val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.withCustomKonanDataDir(customKonanDataDir)
+
+            buildWithLightDist("tasks", options = buildOptionsOfflineWithCustomKonanDataDir) {
+                assertFailed()
+                assertContains("Generate platform libraries for linux_x64")
+            }
+        }
+
+        // The build above have extracted the cached compiler to the custom KONAN_DATA_DIR; remove it:
+        run {
+            val customKonanDataDir = tempDir.newFolder()
+            val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.withCustomKonanDataDir(customKonanDataDir)
+            // Check that the compiler is not extracted if it is not cached:
+            buildWithLightDist("tasks", "-Pkotlin.native.version=1.6.20-M1-9999", options = buildOptionsOfflineWithCustomKonanDataDir) {
+                assertFailed()
+                assertNotContains("Generate platform libraries for linux_x64")
+            }
+
+            assertTrue(customKonanDataDir.listFiles().isNullOrEmpty())
         }
     }
 }

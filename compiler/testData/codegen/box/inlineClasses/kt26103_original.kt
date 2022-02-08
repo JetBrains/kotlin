@@ -1,7 +1,9 @@
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Foo<T>(val x: Int)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Foo<T>(val x: Int)
 
 class Bar(val y: Foo<Any>)
 

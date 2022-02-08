@@ -151,29 +151,35 @@ private fun classFileToString(classFile: File): String {
     val traceVisitor = TraceClassVisitor(PrintWriter(out))
     ClassReader(classFile.readBytes()).accept(traceVisitor, 0)
 
-    val classHeader = LocalFileKotlinClass.create(classFile)?.classHeader
+    val classHeader = LocalFileKotlinClass.create(classFile)?.classHeader ?: return ""
+    if (!classHeader.metadataVersion.isCompatible()) {
+        error("Incompatible class ($classHeader): $classFile")
+    }
 
-    val annotationDataEncoded = classHeader?.data
-    if (annotationDataEncoded != null) {
-        ByteArrayInputStream(BitEncoding.decodeBytes(annotationDataEncoded)).use {
-            input ->
+    when (classHeader.kind) {
+        KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.CLASS, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
+            ByteArrayInputStream(BitEncoding.decodeBytes(classHeader.data!!)).use { input ->
+                out.write("\n------ string table types proto -----\n${DebugJvmProtoBuf.StringTableTypes.parseDelimitedFrom(input)}")
 
-            out.write("\n------ string table types proto -----\n${DebugJvmProtoBuf.StringTableTypes.parseDelimitedFrom(input)}")
-
-            if (!classHeader.metadataVersion.isCompatible()) {
-                error("Incompatible class ($classHeader): $classFile")
-            }
-
-            when (classHeader.kind) {
-                KotlinClassHeader.Kind.FILE_FACADE ->
-                    out.write("\n------ file facade proto -----\n${DebugProtoBuf.Package.parseFrom(input, getExtensionRegistry())}")
-                KotlinClassHeader.Kind.CLASS ->
-                    out.write("\n------ class proto -----\n${DebugProtoBuf.Class.parseFrom(input, getExtensionRegistry())}")
-                KotlinClassHeader.Kind.MULTIFILE_CLASS_PART ->
-                    out.write("\n------ multi-file part proto -----\n${DebugProtoBuf.Package.parseFrom(input, getExtensionRegistry())}")
-                else -> throw IllegalStateException()
+                when (classHeader.kind) {
+                    KotlinClassHeader.Kind.FILE_FACADE ->
+                        out.write("\n------ file facade proto -----\n${DebugProtoBuf.Package.parseFrom(input, getExtensionRegistry())}")
+                    KotlinClassHeader.Kind.CLASS ->
+                        out.write("\n------ class proto -----\n${DebugProtoBuf.Class.parseFrom(input, getExtensionRegistry())}")
+                    KotlinClassHeader.Kind.MULTIFILE_CLASS_PART ->
+                        out.write("\n------ multi-file part proto -----\n${DebugProtoBuf.Package.parseFrom(input, getExtensionRegistry())}")
+                    else -> error(classHeader.kind)
+                }
             }
         }
+        KotlinClassHeader.Kind.MULTIFILE_CLASS -> {
+            out.write("\n------ multi-file facade data -----\n")
+            out.write(classHeader.data!!.joinToString("\n"))
+        }
+        KotlinClassHeader.Kind.SYNTHETIC_CLASS -> {
+            // Synthetic class has no metadata, thus there can be no differences in it.
+        }
+        KotlinClassHeader.Kind.UNKNOWN -> error("Should not meet unknown classes here: $classFile")
     }
 
     return out.toString()

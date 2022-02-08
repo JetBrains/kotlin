@@ -1,0 +1,21 @@
+FILE: notASupertype.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun f(): R|kotlin/Unit| {
+        }
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        public final fun g(): R|kotlin/Unit| {
+            this@R|/B|.super<<ERROR TYPE REF: Not a super type>>.<Unresolved name: f>#()
+            this@R|/B|.super<R|A|>.R|/A.f|()
+        }
+
+    }

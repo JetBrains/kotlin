@@ -1,0 +1,20 @@
+FILE: classWithCompanionObject.kt
+    @R|org/jetbrains/kotlin/fir/plugin/CompanionWithFoo|() public final class SomeClass : R|kotlin/Any| {
+        public constructor(): R|SomeClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            public final fun foo(): R|kotlin/Int|
+
+            public constructor(): R|SomeClass.Companion|
+
+        }
+
+    }
+    public final fun takeInt(x: R|kotlin/Int|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/takeInt|(Q|SomeClass|.R|/SomeClass.Companion.foo|())
+        R|/takeInt|(Q|SomeClass.Companion|.R|/SomeClass.Companion.foo|())
+    }

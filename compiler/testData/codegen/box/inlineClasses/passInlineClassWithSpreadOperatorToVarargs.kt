@@ -1,8 +1,9 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: SPREAD_OPERATOR
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class UInt(val value: Int)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class UInt(val value: Int)
 
 fun <T> last(vararg e: T): T = e[e.size - 1]
 fun <T> first(vararg e: T): T = e[0]

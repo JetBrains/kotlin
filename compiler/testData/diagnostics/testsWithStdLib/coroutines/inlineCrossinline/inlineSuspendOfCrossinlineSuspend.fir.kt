@@ -1,9 +1,8 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -NOTHING_TO_INLINE
-// COMMON_COROUTINES_TEST
 // SKIP_TXT
 // WITH_COROUTINES
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 import helpers.*
 
 interface SuspendRunnable {
@@ -25,7 +24,7 @@ suspend inline fun test(crossinline c: suspend () -> Unit) {
         }
     }
     val l: suspend () -> Unit = { c() }
-    c.startCoroutine(EmptyContinuation)
+    c.<!USAGE_IS_NOT_INLINABLE!>startCoroutine<!>(EmptyContinuation)
 }
 
 fun builder(c: suspend () -> Unit) {}

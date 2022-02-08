@@ -18,10 +18,10 @@
 
 package kotlin.reflect.jvm
 
+import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import java.lang.reflect.*
 import kotlin.reflect.*
-import kotlin.reflect.javaType as stdlibJavaType
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.functions
 import kotlin.reflect.full.memberProperties
@@ -29,7 +29,7 @@ import kotlin.reflect.jvm.internal.KPackageImpl
 import kotlin.reflect.jvm.internal.KTypeImpl
 import kotlin.reflect.jvm.internal.asKCallableImpl
 import kotlin.reflect.jvm.internal.asKPropertyImpl
-import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClass
+import kotlin.reflect.javaType as stdlibJavaType
 
 // Kotlin reflection -> Java reflection
 
@@ -128,7 +128,7 @@ val Method.kotlinFunction: KFunction<*>?
                 companion.functions.firstOrNull {
                     val m = it.javaMethod
                     m != null && m.name == this.name &&
-                            m.parameterTypes!!.contentEquals(this.parameterTypes) && m.returnType == this.returnType
+                            m.parameterTypes.contentEquals(this.parameterTypes) && m.returnType == this.returnType
                 }?.let { return it }
             }
         }

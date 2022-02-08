@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 data class SomeObject(val n: SomeObject?) {
     fun doSomething() {}
     fun next(): SomeObject? = n    
@@ -14,5 +13,5 @@ fun list(start: SomeObject): SomeObject {
         e.doSomething()
         e = e.next()
     }
-    return e
+    return <!RETURN_TYPE_MISMATCH!>e<!>
 }

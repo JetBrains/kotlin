@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.FqNameEqualityChecker
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 
 fun IrClassifierSymbol.superTypes(): List<IrType> = when (this) {
     is IrClassSymbol -> owner.superTypes
@@ -21,22 +20,21 @@ fun IrClassifierSymbol.superTypes(): List<IrType> = when (this) {
     else -> emptyList()
 }
 
-fun IrClassifierSymbol.isSubtypeOfClass(superClass: IrClassSymbol): Boolean {
-    if (FqNameEqualityChecker.areEqual(this, superClass)) return true
-    return superTypes().any { it.isSubtypeOfClass(superClass) }
-}
+fun IrClassifierSymbol.isSubtypeOfClass(superClass: IrClassSymbol): Boolean =
+    FqNameEqualityChecker.areEqual(this, superClass) || isStrictSubtypeOfClass(superClass)
 
-fun IrType.isSubtypeOfClass(superClass: IrClassSymbol): Boolean {
-    if (this !is IrSimpleType) return false
-    return classifier.isSubtypeOfClass(superClass)
-}
+fun IrClassifierSymbol.isStrictSubtypeOfClass(superClass: IrClassSymbol): Boolean =
+    superTypes().any { it.isSubtypeOfClass(superClass) }
 
-fun IrType.isSubtypeOf(superType: IrType, irBuiltIns: IrBuiltIns): Boolean {
-    return AbstractTypeChecker.isSubtypeOf(IrTypeCheckerContext(irBuiltIns) as AbstractTypeCheckerContext, this, superType)
-}
+fun IrType.isSubtypeOfClass(superClass: IrClassSymbol): Boolean =
+    this is IrSimpleType && classifier.isSubtypeOfClass(superClass)
+
+fun IrType.isSubtypeOf(superType: IrType, typeSystem: IrTypeSystemContext): Boolean =
+    AbstractTypeChecker.isSubtypeOf(createIrTypeCheckerState(typeSystem), this, superType)
 
 fun IrType.isNullable(): Boolean =
     when (this) {
+        is IrDefinitelyNotNullType -> false
         is IrSimpleType -> when (val classifier = classifier) {
             is IrClassSymbol -> hasQuestionMark
             is IrTypeParameterSymbol -> hasQuestionMark || classifier.owner.superTypes.any(IrType::isNullable)

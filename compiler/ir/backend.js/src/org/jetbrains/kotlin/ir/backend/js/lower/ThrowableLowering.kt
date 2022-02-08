@@ -28,7 +28,7 @@ class ThrowableLowering(
 
     private val throwableConstructors = context.throwableConstructors
     private val newThrowableFunction = context.newThrowableSymbol
-    private val jsUndefined = context.intrinsics.jsUndefined.symbol
+    private val jsUndefined = context.intrinsics.jsUndefined
 
     fun nullValue(): IrExpression = IrConstImpl.constNull(UNDEFINED_OFFSET, UNDEFINED_OFFSET, nothingNType)
     fun undefinedValue(): IrExpression = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, nothingNType, jsUndefined, 0, 0)

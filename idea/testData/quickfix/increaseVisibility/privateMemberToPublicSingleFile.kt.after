@@ -1,6 +1,0 @@
-// "Make 'x' public" "true"
-class First(val x: Int)
-
-class Second(f: First) {
-    val y = f.x
-}

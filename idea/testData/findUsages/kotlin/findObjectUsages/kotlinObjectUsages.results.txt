@@ -1,3 +1,0 @@
-Receiver 7 println("foo = ${O.foo}")
-Usage in import 3 import server.O
-Value read 8 val obj = O

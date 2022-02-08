@@ -19,11 +19,12 @@ package org.jetbrains.kotlin.asJava.classes
 import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.asJava.builder.LightClassData
+import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 class KtLightClassForInterfaceDefaultImpls(classOrObject: KtClassOrObject)
-    : KtLightClassForSourceDeclaration(classOrObject) {
+    : KtLightClassForSourceDeclaration(classOrObject, JvmDefaultMode.DEFAULT) {
     override fun getQualifiedName(): String? = containingClass?.qualifiedName?.let { it + ".${JvmAbi.DEFAULT_IMPLS_CLASS_NAME}" }
 
     override fun getName() = JvmAbi.DEFAULT_IMPLS_CLASS_NAME
@@ -54,7 +55,7 @@ class KtLightClassForInterfaceDefaultImpls(classOrObject: KtClassOrObject)
         throw IncorrectOperationException("Impossible to rename DefaultImpls")
     }
 
-    override fun getContainingClass() = KtLightClassForSourceDeclaration.create(classOrObject)
+    override fun getContainingClass() = KtLightClassForSourceDeclaration.create(classOrObject, JvmDefaultMode.DEFAULT)
 
     override fun getOwnInnerClasses() = emptyList<PsiClass>()
 }

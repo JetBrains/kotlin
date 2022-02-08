@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.Name
 
-private inline fun <Psi, Java> Array<Psi>.convert(factory: (Psi) -> Java): List<Java> =
+inline fun <Psi, Java> Array<Psi>.convert(factory: (Psi) -> Java): List<Java> =
         when (size) {
             0 -> emptyList()
             1 -> listOf(factory(first()))
             else -> map(factory)
         }
 
-private fun <Psi, Java> Collection<Psi>.convert(factory: (Psi) -> Java): List<Java> =
+fun <Psi, Java> Collection<Psi>.convert(factory: (Psi) -> Java): List<Java> =
         when (size) {
             0 -> emptyList()
             1 -> listOf(factory(first()))

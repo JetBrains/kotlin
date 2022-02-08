@@ -1,0 +1,36 @@
+package
+
+public fun test_1(/*0*/ x: InterfaceThenClass, /*1*/ s: kotlin.String?): kotlin.Unit
+public fun test_2(/*0*/ x: ClassThenInterface, /*1*/ s: kotlin.String?): kotlin.Unit
+
+public final class ClassThenInterface : KotlinBase, JavaBase {
+    public constructor ClassThenInterface()
+    public open override /*2*/ /*fake_override*/ fun delete(/*0*/ s: kotlin.String): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class InterfaceThenClass : JavaBase, KotlinBase {
+    public constructor InterfaceThenClass()
+    public open override /*2*/ /*fake_override*/ fun delete(/*0*/ s: kotlin.String!): kotlin.Unit
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface JavaBase {
+    public abstract fun delete(/*0*/ s: kotlin.String!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public abstract class KotlinBase {
+    public constructor KotlinBase()
+    public open fun delete(/*0*/ s: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

@@ -7,21 +7,21 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
+import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.isPure
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 class JsBlockDecomposerLowering(val context: JsIrBackendContext) : AbstractBlockDecomposerLowering(context) {
     override fun unreachableExpression(): IrExpression =
-        JsIrBuilder.buildCall(context.intrinsics.unreachable.symbol, context.irBuiltIns.nothingType)
+        JsIrBuilder.buildCall(context.intrinsics.unreachable, context.irBuiltIns.nothingType)
 }
 
 abstract class AbstractBlockDecomposerLowering(
@@ -72,9 +72,7 @@ abstract class AbstractBlockDecomposerLowering(
                     val lastStatement = newBody.statements.last()
                     val actualParent = if (newBody.statements.size > 1 || lastStatement !is IrReturn || lastStatement.value != expression) {
                         expression = JsIrBuilder.buildCall(initFunction.symbol, expression.type)
-                        stageController.unrestrictDeclarationListsAccess {
-                            (container.parent as IrDeclarationContainer).declarations += initFunction
-                        }
+                        (container.parent as IrDeclarationContainer).declarations += initFunction
                         initFunction
                     } else {
                         container
@@ -346,7 +344,7 @@ class BlockDecomposerTransformer(
 
                 val newLoopCondition = newCondition.statements.last() as IrExpression
                 val newLoopBody = IrBlockImpl(
-                    newCondition.startOffset,
+                    newBody?.startOffset ?: newCondition.startOffset,
                     newBody?.endOffset ?: newCondition.endOffset,
                     newBody?.type ?: unitType
                 ).apply {
@@ -519,7 +517,7 @@ class BlockDecomposerTransformer(
                     compositesLeft == 0 -> value
                     index == 0 && dontDetachFirstArgument -> value
                     value == null -> value
-                    value.isPure(false) -> value
+                    value.isPure(anyVariable = false, context = context) -> value
                     else -> {
                         // TODO: do not wrap if value is pure (const, variable, etc)
                         val irVar = makeTempVar(value.type, value)
@@ -620,11 +618,17 @@ class BlockDecomposerTransformer(
             )
 
             expression.receiver = newArguments[0]
-                ?: error("No new receiver in destructured composite for:\n${expression.dump()}")
+                ?: compilationException(
+                    "No new receiver in destructured composite",
+                    expression
+                )
 
             for (i in expression.arguments.indices) {
                 expression.arguments[i] = newArguments[i + 1]
-                    ?: error("No argument #$i in destructured composite for:\n${expression.dump()}")
+                    ?: compilationException(
+                        "No argument #$i in destructured composite",
+                        expression
+                    )
             }
 
             newStatements.add(expression)

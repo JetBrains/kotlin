@@ -85,12 +85,16 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         return generateClassOrObjectDeclaration(syntheticDeclaration)
     }
 
-    fun generateClassMemberDeclaration(ktDeclaration: KtDeclaration, irClass: IrClass): IrDeclaration? =
+    fun generateClassMemberDeclaration(
+        ktDeclaration: KtDeclaration,
+        irClass: IrClass,
+        ktClassOrObject: KtPureClassOrObject
+    ): IrDeclaration? =
         when (ktDeclaration) {
             is KtAnonymousInitializer ->
                 AnonymousInitializerGenerator(this).generateAnonymousInitializerDeclaration(ktDeclaration, irClass)
             is KtSecondaryConstructor ->
-                FunctionGenerator(this).generateSecondaryConstructor(ktDeclaration)
+                FunctionGenerator(this).generateSecondaryConstructor(ktDeclaration, ktClassOrObject)
             is KtEnumEntry ->
                 generateEnumEntryDeclaration(ktDeclaration)
             else ->

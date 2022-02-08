@@ -1,0 +1,7 @@
+fun primitive(vararg a: kotlin.Int)
+
+fun nullablePrimitive(vararg b: kotlin.Float?)
+
+fun nonPrimitive(vararg c: kotlin.Any)
+
+fun error(vararg d: Unresolved)

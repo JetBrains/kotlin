@@ -33,7 +33,7 @@ data class KotlinWebpackCssSupport(
         }
 
     private fun singleRuleError(): Nothing {
-        throw error("CSS mode shortcut can be applied only with one css rule")
+        error("CSS mode shortcut can be applied only with one css rule")
     }
 }
 

@@ -4,6 +4,8 @@ public open class A {
     public constructor A()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open fun nonStatic1(): kotlin.Unit
+    public/*package*/ open fun nonStatic2(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
@@ -15,6 +17,8 @@ public open class B : A {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open override /*1*/ /*fake_override*/ fun nonStatic1(): kotlin.Unit
+    public/*package*/ open override /*1*/ /*fake_override*/ fun nonStatic2(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
@@ -36,6 +40,8 @@ public final class E : A {
     public constructor E()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open override /*1*/ /*fake_override*/ fun nonStatic1(): kotlin.Unit
+    public/*package*/ open override /*1*/ /*fake_override*/ fun nonStatic2(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -43,6 +49,8 @@ public final class F : B {
     public constructor F()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open override /*1*/ /*fake_override*/ fun nonStatic1(): kotlin.Unit
+    public/*package*/ open override /*1*/ /*fake_override*/ fun nonStatic2(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -50,6 +58,8 @@ public final class Q : A {
     public constructor Q()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open override /*1*/ /*fake_override*/ fun nonStatic1(): kotlin.Unit
+    public/*package*/ open override /*1*/ /*fake_override*/ fun nonStatic2(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -57,5 +67,8 @@ public final class Z : A {
     public constructor Z()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open override /*1*/ /*fake_override*/ fun nonStatic1(): kotlin.Unit
+    public/*package*/ open override /*1*/ /*fake_override*/ fun nonStatic2(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

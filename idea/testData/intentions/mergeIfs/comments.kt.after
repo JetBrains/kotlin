@@ -1,9 +1,0 @@
-fun foo() {
-    // comment 1
-    /* comment 2 */
-    /* comment 3 */
-    <caret>if (true && false) {
-        // comment 4
-        foo()
-    }
-}

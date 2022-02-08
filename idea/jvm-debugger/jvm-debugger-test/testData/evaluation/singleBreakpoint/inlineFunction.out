@@ -1,9 +1,0 @@
-LineBreakpoint created at inlineFunction.kt:8
-Run Java
-Connected to the target VM
-inlineFunction.kt:8
-Compile bytecode for myFun { 1 }
-Compile bytecode for foo()
-Disconnected from the target VM
-
-Process finished with exit code 0

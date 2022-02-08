@@ -13,5 +13,5 @@ fun case1() {
     val a3 = A(-1)
     val a4 = A(-3)
 
-    val x = (a3 > a4)
+    val x = (a3 <!OPERATOR_MODIFIER_REQUIRED!>><!> a4)
 }

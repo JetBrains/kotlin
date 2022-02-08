@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package extendFunctionClass
 
 <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class A<!> : Function1<Int, Int> {

@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.util
@@ -29,6 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.ReturnTypeIsNotInitializedException
+import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.Variance
@@ -38,7 +28,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 fun IrElement.render() =
     accept(RenderIrElementVisitor(), null)
 
-class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrElementVisitor<String, Nothing?> {
+class RenderIrElementVisitor(private val normalizeNames: Boolean = false, private val verboseErrorTypes: Boolean = true) : IrElementVisitor<String, Nothing?> {
     private val nameMap: MutableMap<IrVariableSymbol, String> = mutableMapOf()
     private var temporaryIndex: Int = 0
 
@@ -65,9 +55,16 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
         }
         append(annotationClassName)
 
+        if (irAnnotation.typeArgumentsCount != 0) {
+            (0 until irAnnotation.typeArgumentsCount).joinTo(this, ", ", "<", ">") { i ->
+                irAnnotation.getTypeArgument(i)?.let { renderType(it) } ?: "null"
+            }
+        }
+
         if (irAnnotation.valueArgumentsCount == 0) return
 
         val valueParameterNames = irAnnotation.getValueParameterNamesForDebug()
+
         var first = true
         append("(")
         for (i in 0 until irAnnotation.valueArgumentsCount) {
@@ -114,7 +111,9 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
         when (this) {
             is IrDynamicType -> "dynamic"
 
-            is IrErrorType -> "IrErrorType"
+            is IrErrorType -> "IrErrorType(${if (verboseErrorTypes) originalKotlinType else null})"
+
+            is IrDefinitelyNotNullType -> "{${original.render()} & Any}"
 
             is IrSimpleType -> buildTrimEnd {
                 append(classifier.renderClassifierFqn())
@@ -476,7 +475,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
             "inner".takeIf { isInner },
             "data".takeIf { isData },
             "external".takeIf { isExternal },
-            "inline".takeIf { isInline },
+            "value".takeIf { isValue },
             "expect".takeIf { isExpect },
             "fun".takeIf { isFun }
         )
@@ -561,7 +560,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
     override fun visitExpression(expression: IrExpression, data: Nothing?): String =
         "? ${expression::class.java.simpleName} type=${expression.type.render()}"
 
-    override fun <T> visitConst(expression: IrConst<T>, data: Nothing?): String =
+    override fun visitConst(expression: IrConst<*>, data: Nothing?): String =
         "CONST ${expression.kind} type=${expression.type.render()} value=${expression.value?.escapeIfRequired()}"
 
     private fun Any.escapeIfRequired() =
@@ -578,7 +577,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
         "SPREAD_ELEMENT"
 
     override fun visitBlock(expression: IrBlock, data: Nothing?): String =
-        "BLOCK type=${expression.type.render()} origin=${expression.origin}"
+        "${if (expression is IrReturnableBlock) "RETURNABLE_" else ""}BLOCK type=${expression.type.render()} origin=${expression.origin}"
 
     override fun visitComposite(expression: IrComposite, data: Nothing?): String =
         "COMPOSITE type=${expression.type.render()} origin=${expression.origin}"
@@ -655,6 +654,9 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
                 "type=${expression.type.render()} origin=${expression.origin} " +
                 "reflectionTarget=${renderReflectionTarget(expression)}"
 
+    override fun visitRawFunctionReference(expression: IrRawFunctionReference, data: Nothing?): String =
+        "RAW_FUNCTION_REFERENCE '${expression.symbol.renderReference()}' type=${expression.type.render()}"
+
     private fun renderReflectionTarget(expression: IrFunctionReference) =
         if (expression.symbol == expression.reflectionTarget)
             "<same>"
@@ -726,6 +728,16 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false) : IrEl
 
     override fun visitErrorCallExpression(expression: IrErrorCallExpression, data: Nothing?): String =
         "ERROR_CALL '${expression.description}' type=${expression.type.render()}"
+
+    override fun visitConstantArray(expression: IrConstantArray, data: Nothing?): String =
+        "CONSTANT_ARRAY type=${expression.type.render()}"
+
+    override fun visitConstantObject(expression: IrConstantObject, data: Nothing?): String =
+        "CONSTANT_OBJECT type=${expression.type.render()} constructor=${expression.constructor.renderReference()}"
+
+    override fun visitConstantPrimitive(expression: IrConstantPrimitive, data: Nothing?): String =
+        "CONSTANT_PRIMITIVE type=${expression.type.render()}"
+
 
     private val descriptorRendererForErrorDeclarations = DescriptorRenderer.ONLY_NAMES_WITH_SHORT_TYPES
 }

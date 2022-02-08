@@ -1,0 +1,3 @@
+expression: xy
+expected type: (kotlin.Int) -> kotlin.String
+functionClassKind: KFunction

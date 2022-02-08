@@ -1,4 +1,3 @@
-// !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
 fun interface KRunnable {
     fun run()
 }
@@ -53,26 +52,25 @@ fun test6(a: Any) {
     run1(a)
 }
 
-// TODO see KT-36013
-//fun test7(a: (Int) -> Int) {
-//    a as () -> Unit
-//    run1(a)
-//}
-//
-//fun <T : (Int) -> Int> test7a(a: T) {
-//    a as () -> Unit
-//    run1(a)
-//}
-//
-//fun <T> test7b(a: T) where T : (Int) -> Int, T : () -> Unit {
-//    run1(a)
-//}
-//
-//interface Unrelated
-//
-//fun <T> test7c(a: T) where T : Unrelated, T : () -> Unit {
-//    run1(a)
-//}
+fun test7(a: (Int) -> Int) {
+    a as () -> Unit
+    run1(a)
+}
+
+fun <T : (Int) -> Int> test7a(a: T) {
+    a as () -> Unit
+    run1(a)
+}
+
+fun <T> test7b(a: T) where T : (Int) -> Unit, T : () -> Unit {
+    run1(a)
+}
+
+interface Unrelated
+
+fun <T> test7c(a: T) where T : Unrelated, T : () -> Unit {
+    run1(a)
+}
 
 fun test8(a: () -> Unit) {
     run1(id(a))

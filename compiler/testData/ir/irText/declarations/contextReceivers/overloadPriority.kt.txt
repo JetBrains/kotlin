@@ -1,0 +1,23 @@
+class Context {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun f(<this>: Context): String {
+  return TODO()
+}
+
+fun f(): Any {
+  return TODO()
+}
+
+fun test() {
+  with<Context, Int>(receiver = Context(), block = local fun Context.<anonymous>(): Int {
+    return f(<this> = $this$with).<get-length>()
+  }
+) /*~> Unit */
+}

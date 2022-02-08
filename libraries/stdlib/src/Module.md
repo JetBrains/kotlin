@@ -59,6 +59,10 @@ Experimental APIs, subject to change in future versions of Kotlin.
 
 IO API for working with files and streams.
 
+# Package kotlin.io.path
+
+Convenient extensions for working with file system using [java.nio.file.Path][java.nio.file.Path].
+
 # Package kotlin.js
 
 Functions and other APIs specific to the JavaScript platform.
@@ -137,7 +141,7 @@ Functions for working with text and regular expressions.
 
 # Package kotlin.time
 
-Experimental API for representing [Duration][kotlin.time.Duration] values and measuring time intervals.
+API for representing [Duration][kotlin.time.Duration] values and experimental API for measuring time intervals.
 
 # Package org.khronos.webgl
 

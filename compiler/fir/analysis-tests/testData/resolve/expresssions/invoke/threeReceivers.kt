@@ -1,7 +1,7 @@
 
 
 class Bar {
-    fun FooBar.invoke(): Bar = this
+    fun FooBar.invoke(): Bar = <!RETURN_TYPE_MISMATCH!>this<!>
 }
 
 class Buz
@@ -17,6 +17,6 @@ class Foo {
         // this@Foo is dispatch receiver of foobar
         // Foo/foobar is dispatch receiver of invoke
         // this@chk is extension receiver of invoke
-        buz.<!UNRESOLVED_REFERENCE!>foobar<!>()
+        buz.<!FUNCTION_EXPECTED!>foobar<!>()
     }
 }

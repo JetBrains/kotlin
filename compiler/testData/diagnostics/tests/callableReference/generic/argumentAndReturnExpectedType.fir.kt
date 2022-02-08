@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_VARIABLE, -UNUSED_PARAMETER
 
@@ -16,9 +15,9 @@ fun test1() {
     bar("", 1, ::foo).checkType { _<Pair<String, Int>>() }
     bar("", 1, ::fooReturnInt).checkType { _<Pair<String, Int>>() }
     bar("", 1, ::fooTakeString).checkType { _<Pair<String, Int>>() }
-    bar("", "", ::fooReturnInt).checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Pair<String, Any>>() }
+    bar("", "", ::fooReturnInt).checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Pair<String, Any>>() }
 
-    val x: String = bar("", "", ::fooReturnInt)
+    val x: String = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>bar("", "", ::fooReturnInt)<!>
 
     baz(Int::toString, ::foo).checkType { _<Pair<Int, String>>() }
 }
@@ -27,9 +26,9 @@ fun <T> listOf(): List<T> = TODO()
 fun <T> setOf(): Set<T> = TODO()
 
 fun <T> test2(x: T) {
-    bar(x, x, ::foo).checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Pair<T, T>>() }
+    bar(x, x, ::foo).checkType { _<Pair<T, T>>() }
     bar(x, 1, ::foo).checkType { _<Pair<T, Int>>() }
-    bar(1, x, ::foo).checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Pair<Int, T>>() }
+    bar(1, x, ::foo).checkType { _<Pair<Int, T>>() }
 
     bar(listOf<T>(), setOf<T>(), ::foo).checkType { _<Pair<List<T>, Set<T>>> () }
     bar(listOf<T>(), 1, ::foo).checkType { _<Pair<List<T>, Int>>() }

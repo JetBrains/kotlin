@@ -1,0 +1,38 @@
+FILE: newSupertype.kt
+    package foo
+
+    public abstract interface MyInterface : R|kotlin/Any| {
+        public open fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/MyInterfaceSupertype|() public final class FinalClassWithOverride : R|kotlin/Any|, R|foo/MyInterface| {
+        public constructor(): R|foo/FinalClassWithOverride| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/MyInterfaceSupertype|() public final class AnnotatedClassWithExplicitInheritance : R|foo/MyInterface| {
+        public constructor(): R|foo/AnnotatedClassWithExplicitInheritance| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun test(x: R|foo/MyInterface|): R|kotlin/Unit| {
+        R|<local>/x|.R|foo/MyInterface.foo|()
+    }
+    public final fun box(): R|kotlin/String| {
+        lval x: R|foo/FinalClassWithOverride| = R|foo/FinalClassWithOverride.FinalClassWithOverride|()
+        R|<local>/x|.R|foo/FinalClassWithOverride.foo|()
+        R|foo/test|(R|<local>/x|)
+        lval y: R|foo/AnnotatedClassWithExplicitInheritance| = R|foo/AnnotatedClassWithExplicitInheritance.AnnotatedClassWithExplicitInheritance|()
+        R|<local>/y|.R|foo/AnnotatedClassWithExplicitInheritance.foo|()
+        R|foo/test|(R|<local>/y|)
+        ^box String(OK)
+    }

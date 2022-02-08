@@ -8,6 +8,6 @@ class A {
 
 class B() {
     init {
-        A().<!HIDDEN!>a<!> = "Hello"
+        A().<!INVISIBLE_REFERENCE!>a<!> = "Hello"
     }
 }

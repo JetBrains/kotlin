@@ -1,9 +1,0 @@
-fun test(n: Int) {
-    val a: String
-    <caret>a = if (n == 1)
-        "one"
-    else if (n == 2)
-        "two"
-    else
-        "three"
-}

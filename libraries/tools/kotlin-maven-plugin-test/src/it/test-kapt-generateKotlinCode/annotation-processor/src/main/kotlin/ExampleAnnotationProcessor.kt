@@ -31,8 +31,8 @@ class ExampleAnnotationProcessor : AbstractProcessor() {
 
             if (kotlinGenerated != null && element.kind == ElementKind.CLASS) {
                 File(kotlinGenerated, "$simpleName.kt").writer().buffered().use {
-                    it.appendln("package $packageName")
-                    it.appendln("fun $simpleName.customToString() = \"$simpleName: \" + toString()")
+                    it.appendLine("package $packageName")
+                    it.appendLine("fun $simpleName.customToString() = \"$simpleName: \" + toString()")
                 }
             }
         }

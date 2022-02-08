@@ -10,28 +10,41 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenEvaluated
+import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 
 open class KotlinJsIrTargetPreset(
     project: Project,
-    kotlinPluginVersion: String
+    isWasm: Boolean,
 ) : KotlinOnlyTargetPreset<KotlinJsIrTarget, KotlinJsIrCompilation>(
-    project,
-    kotlinPluginVersion
+    project
 ) {
     internal var mixedMode: Boolean? = null
 
     open val isMpp: Boolean
         get() = true
 
-    override val platformType: KotlinPlatformType
-        get() = KotlinPlatformType.js
+    override val platformType: KotlinPlatformType =
+        if (isWasm)
+            KotlinPlatformType.wasm
+        else
+            KotlinPlatformType.js
 
     override fun instantiateTarget(name: String): KotlinJsIrTarget {
+        if (platformType == KotlinPlatformType.wasm && !PropertiesProvider(project).wasmStabilityNoWarn) {
+            project.logger.warn(
+                """
+                    New 'wasm' target is Work-in-Progress and is subject to change without notice.
+                """.trimIndent()
+            )
+        }
+
         return project.objects.newInstance(KotlinJsIrTarget::class.java, project, platformType, mixedMode).apply {
             this.isMpp = this@KotlinJsIrTargetPreset.isMpp
             if (!mixedMode) {
-                project.whenEvaluated {
+                project.runProjectConfigurationHealthCheckWhenEvaluated {
                     if (!isBrowserConfigured && !isNodejsConfigured) {
                         project.logger.warn(
                             """
@@ -47,15 +60,27 @@ open class KotlinJsIrTargetPreset(
                             """.trimIndent()
                         )
                     }
+                    val buildStatsService = KotlinBuildStatsService.getInstance()
+                    when {
+                        isBrowserConfigured && isNodejsConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "both")
+                        isBrowserConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "browser")
+                        isNodejsConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "nodejs")
+                        !isBrowserConfigured && !isNodejsConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "none")
+                    }
+                    Unit
                 }
             }
         }
     }
 
     override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget> =
-        KotlinJsIrTargetConfigurator(kotlinPluginVersion)
+        KotlinJsIrTargetConfigurator()
 
-    override fun getName(): String = PRESET_NAME
+    override fun getName(): String = when (platformType) {
+        KotlinPlatformType.wasm -> WASM_PRESET_NAME
+        KotlinPlatformType.js -> JS_PRESET_NAME
+        else -> error("Unsupported platform type")
+    }
 
     //TODO[Ilya Goncharov] remove public morozov
     public override fun createCompilationFactory(
@@ -64,19 +89,19 @@ open class KotlinJsIrTargetPreset(
         KotlinJsIrCompilationFactory(project, forTarget)
 
     companion object {
-        val PRESET_NAME = lowerCamelCaseName(
+        val JS_PRESET_NAME = lowerCamelCaseName(
             "js",
             KotlinJsCompilerType.IR.lowerName
         )
+        private const val WASM_PRESET_NAME = "wasm"
     }
 }
 
 class KotlinJsIrSingleTargetPreset(
-    project: Project,
-    kotlinPluginVersion: String
+    project: Project
 ) : KotlinJsIrTargetPreset(
     project,
-    kotlinPluginVersion
+    isWasm = false,
 ) {
     override val isMpp: Boolean
         get() = false
@@ -93,5 +118,5 @@ class KotlinJsIrSingleTargetPreset(
     }
 
     override fun createKotlinTargetConfigurator(): KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget> =
-        KotlinJsIrTargetConfigurator(kotlinPluginVersion)
+        KotlinJsIrTargetConfigurator()
 }

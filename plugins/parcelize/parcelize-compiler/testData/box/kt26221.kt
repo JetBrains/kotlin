@@ -1,6 +1,6 @@
 // IGNORE_BACKEND: JVM
 // Fails with a VerifyError in Foo.writeToParcel
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:JvmName("TestKt")
 package test
@@ -30,7 +30,7 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val foo2 = readFromParcel<Foo>(parcel)
+    val foo2 = parcelableCreator<Foo>().createFromParcel(parcel)
     assert(foo2.values.size() == 1)
     assert(foo2.values.get(1) != null) // SparseArray.contains was only added in Android R
     assert(foo2.values.get(1).size() == 1)

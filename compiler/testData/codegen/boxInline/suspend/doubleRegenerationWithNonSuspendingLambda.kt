@@ -1,7 +1,6 @@
-// FILE: test.kt
-// COMMON_COROUTINES_TEST
-// WITH_RUNTIME
 // WITH_COROUTINES
+// WITH_STDLIB
+// FILE: test.kt
 
 interface Flow<T> {
     abstract suspend fun collect(collector: FlowCollector<T>)
@@ -30,9 +29,7 @@ inline fun <reified R> Flow<*>.filterIsInstance(): Flow<R> =
     filter { it is R } as Flow<R>
 
 // FILE: box.kt
-// COMMON_COROUTINES_TEST
-
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import helpers.*
 
 fun builder(c: suspend () -> Unit) {

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun testVarargOfNothing(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> v: Nothing) {}

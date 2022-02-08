@@ -1,3 +1,4 @@
+// NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 
 inline fun calc(s: (Int) -> Int, noinline p: (Int) -> Int) : Int {
@@ -9,7 +10,6 @@ inline fun extensionLambda(noinline bar: Int.() -> Int) = 10.bar()
 
 // FILE: 2.kt
 
-//NO_CHECK_LAMBDA_INLINING
 fun test1(): Int {
     return calc( { l: Int -> 2*l},  { l: Int -> 4*l})
 }

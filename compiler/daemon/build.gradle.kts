@@ -8,21 +8,21 @@ plugins {
 val ktorExcludesForDaemon : List<Pair<String, String>> by rootProject.extra
 
 dependencies {
-    compile(commonDep("org.fusesource.jansi", "jansi"))
-    compile(commonDep("org.jline", "jline"))
+    api(commonDependency("org.fusesource.jansi", "jansi"))
+    api(commonDependency("org.jline", "jline"))
 
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":compiler:cli-js"))
     compileOnly(project(":compiler:incremental-compilation-impl"))
     compileOnly(project(":daemon-common-new"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("trove4j") }
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
 
     runtimeOnly(project(":kotlin-reflect"))
 
     embedded(project(":daemon-common")) { isTransitive = false }
-    api(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
+    api(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
         isTransitive = false
     }
 }
@@ -39,3 +39,11 @@ runtimeJar()
 sourcesJar()
 
 javadocJar()
+
+tasks {
+    val compileKotlin by existing(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
+        kotlinOptions {
+            freeCompilerArgs += "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi"
+        }
+    }
+}

@@ -4,5 +4,5 @@ fun <T> foo(t: T, t1: T) {}
 
 fun test() {
     //no type inference error
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(<!UNRESOLVED_REFERENCE!>aaab<!>, <!UNRESOLVED_REFERENCE!>bbb<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>aaab<!>, <!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>bbb<!>)
 }

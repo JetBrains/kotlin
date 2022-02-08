@@ -1,5 +1,4 @@
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// !WITH_NEW_INFERENCE
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
@@ -229,11 +228,11 @@ fun case_7(value_1: String?) {
     }
     when {
         value_1.case_7_10() == null -> println(value_1)
-        <!OI;DEBUG_INFO_CONSTANT!>value_1<!>.case_7_10() != null -> println(<!DEBUG_INFO_CONSTANT!>value_1<!>)
+        value_1.case_7_10() != null -> println(<!DEBUG_INFO_CONSTANT!>value_1<!>)
     }
     when {
         value_1.case_7_11() != null -> println(value_1)
-        <!OI;DEBUG_INFO_CONSTANT!>value_1<!>.case_7_11() == null -> println(<!DEBUG_INFO_CONSTANT!>value_1<!>)
+        value_1.case_7_11() == null -> println(<!DEBUG_INFO_CONSTANT!>value_1<!>)
     }
 }
 

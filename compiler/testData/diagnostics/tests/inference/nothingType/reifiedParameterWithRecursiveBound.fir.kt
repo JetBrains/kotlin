@@ -28,7 +28,7 @@ inline fun <reified T : In<T>> testIn(): T {
 // Unexpected behaviour
 inline fun <reified T : Out<T>> testOut(): T {
     return try {
-        outBound()
+        <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>outBound<!>()
     } catch (ex: Exception) {
         throw Exception()
     }

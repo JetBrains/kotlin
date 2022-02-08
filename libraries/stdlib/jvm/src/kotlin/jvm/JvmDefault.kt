@@ -31,6 +31,7 @@ import kotlin.internal.RequireKotlinVersionKind
 @SinceKotlin("1.2")
 @RequireKotlin("1.2.40", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
+@Deprecated("Switch to new -Xjvm-default modes: `all` or `all-compatibility`")
 annotation class JvmDefault
 
 /**
@@ -47,3 +48,16 @@ annotation class JvmDefault
 @RequireKotlin("1.4", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
 @Target(AnnotationTarget.CLASS)
 annotation class JvmDefaultWithoutCompatibility
+
+/**
+ * Forces the compiler to generate compatibility accessors for the annotated interface in the `DefaultImpls` class.
+ * Please note that if an interface is annotated with this annotation for binary compatibility, public derived Kotlin interfaces should also be annotated with it,
+ * because their `DefaultImpls` methods will be used to access implementations from the `DefaultImpls` class of the original interface.
+ *
+ * Used only with `-Xjvm-default=all`. For more details refer to `-Xjvm-default` documentation.
+ */
+@SinceKotlin("1.6")
+@RequireKotlin("1.6", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS)
+annotation class JvmDefaultWithCompatibility

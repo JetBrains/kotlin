@@ -1,10 +1,9 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 // NI_EXPECTED_FILE
 import kotlin.reflect.KProperty
 
 var a: Int by A()
-var a1 by A()
+var a1 by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>A()<!>
 
 var b: Int by B()
 

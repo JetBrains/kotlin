@@ -1,2 +1,0 @@
-//class
-protected interface Test {}

@@ -1,5 +1,4 @@
 // !LANGUAGE: -ProhibitOperatorMod
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 object OldMod {
@@ -10,5 +9,5 @@ object RemExtension
 operator fun RemExtension.rem(x: Int) {}
 
 fun foo() {
-    OldMod <!INAPPLICABLE_CANDIDATE!>%<!> 123
+    OldMod <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>%<!> 123
 }

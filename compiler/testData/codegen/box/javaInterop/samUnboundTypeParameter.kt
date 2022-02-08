@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: Base.java
 import java.lang.Runnable;
 import java.lang.IllegalStateException;

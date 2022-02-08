@@ -17,38 +17,21 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.GradleException
-import org.gradle.api.Task
-import org.gradle.api.tasks.TaskInputs
-import org.gradle.api.tasks.TaskOutputs
+import org.gradle.api.Project
+import org.gradle.api.file.ArchiveOperations
+import org.gradle.api.file.CopySpec
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.file.FileTree
+import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.internal.tasks.testing.TestDescriptorInternal
+import org.gradle.api.tasks.WorkResult
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.api.tasks.testing.TestDescriptor
 import org.gradle.util.GradleVersion
 import java.io.File
+import java.io.Serializable
 
-const val minSupportedGradleVersion = "5.3"
-
-internal val Task.inputsCompatible: TaskInputs get() = inputs
-
-internal val Task.outputsCompatible: TaskOutputs get() = outputs
-
-private val propertyMethod by lazy {
-    TaskInputs::class.java.methods.first {
-        it.name == "property" && it.parameterTypes.contentEquals(arrayOf(String::class.java, Any::class.java))
-    }
-}
-
-internal fun TaskInputs.propertyCompatible(name: String, value: Any) {
-    propertyMethod(this, name, value)
-}
-
-private val inputsDirMethod by lazy {
-    TaskInputs::class.java.methods.first {
-        it.name == "dir" && it.parameterTypes.contentEquals(arrayOf(Any::class.java))
-    }
-}
-
-internal fun TaskInputs.dirCompatible(dirPath: Any) {
-    inputsDirMethod(this, dirPath)
-}
+const val minSupportedGradleVersion = "6.7.1"
 
 internal fun checkGradleCompatibility(
     withComponent: String = "the Kotlin Gradle plugin",
@@ -65,3 +48,54 @@ internal fun checkGradleCompatibility(
 
 internal val AbstractArchiveTask.archivePathCompatible: File
     get() = archiveFile.get().asFile
+
+internal class ArchiveOperationsCompat(@Transient private val project: Project) : Serializable {
+    private val archiveOperations: Any? = try {
+        (project as ProjectInternal).services.get(ArchiveOperations::class.java)
+    } catch (e: NoClassDefFoundError) {
+        // Gradle version < 6.6
+        null
+    }
+
+    fun zipTree(obj: Any): FileTree {
+        return when (archiveOperations) {
+            is ArchiveOperations -> archiveOperations.zipTree(obj)
+            else -> project.zipTree(obj)
+        }
+    }
+
+    fun tarTree(obj: Any): FileTree {
+        return when (archiveOperations) {
+            is ArchiveOperations -> archiveOperations.tarTree(obj)
+            else -> project.tarTree(obj)
+        }
+    }
+}
+
+internal class FileSystemOperationsCompat(@Transient private val project: Project) : Serializable {
+    private val fileSystemOperations: Any? = try {
+        (project as ProjectInternal).services.get(FileSystemOperations::class.java)
+    } catch (e: NoClassDefFoundError) {
+        // Gradle version < 6.0
+        null
+    }
+
+    fun copy(action: (CopySpec) -> Unit): WorkResult? {
+        return when (fileSystemOperations) {
+            is FileSystemOperations -> fileSystemOperations.copy(action)
+            else -> project.copy(action)
+        }
+    }
+}
+
+// Gradle dropped out getOwnerBuildOperationId. Workaround to build correct plugin for Gradle < 6.8
+// See https://github.com/gradle/gradle/commit/0296f4441ae69ad608cfef6a90fef3fdf314fa2c
+internal interface LegacyTestDescriptorInternal : TestDescriptor {
+    override fun getParent(): TestDescriptorInternal?
+
+    fun getId(): Any?
+
+    fun getOwnerBuildOperationId(): Any?
+
+    fun getClassDisplayName(): String?
+}

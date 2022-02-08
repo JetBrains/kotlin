@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -48,7 +50,11 @@ object MissingDependencySupertypeChecker {
                 descriptor.dispatchReceiverParameter?.declaration, reportOn,
                 context.trace, context.missingSupertypesResolver
             )
-            if (descriptor !is ConstructorDescriptor && descriptor !is FakeCallableDescriptorForObject && !errorReported) {
+
+            val eagerChecksAllowed = context.languageVersionSettings.getFlag(AnalysisFlags.extendedCompilerChecks)
+            val unresolvedLazySupertypesByDefault = descriptor is ConstructorDescriptor || descriptor is FakeCallableDescriptorForObject
+
+            if (eagerChecksAllowed || !unresolvedLazySupertypesByDefault && !errorReported) {
                 // The constructed class' own supertypes are not resolved after constructor call,
                 // so its containing declaration should not be checked.
                 // Dispatch receiver is checked before for case of inner class constructor call.

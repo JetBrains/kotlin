@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Type
+import org.jetbrains.kotlin.types.*
 
 abstract class PrimitiveNumberRangeIntrinsicRangeValue(
     rangeCall: ResolvedCall<out CallableDescriptor>
@@ -131,7 +132,7 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
                 if (isProhibitedCharConstEndValue(step, endCharValue))
                     null
                 else
-                    createConstBoundedIntForLoopGenerator(codegen, forExpression, startValue, endCharValue.toInt(), step, isStartInclusive)
+                    createConstBoundedIntForLoopGenerator(codegen, forExpression, startValue, endCharValue.code, step, isStartInclusive)
             }
 
             is LongValue -> {

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // See EA-73584
 data class<!SYNTAX!><!> {
 

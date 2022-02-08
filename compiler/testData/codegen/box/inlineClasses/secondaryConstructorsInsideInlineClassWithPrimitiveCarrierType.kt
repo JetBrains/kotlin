@@ -1,13 +1,16 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 var global = "wrong"
 
-inline class Foo(val x: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Foo(val x: Int) {
     constructor(y: String) : this(y.length)
 
     constructor(z: Long) : this(z.toInt() + 1)
 
-    @Suppress("SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_INLINE_CLASS")
+    @Suppress("SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS")
     constructor(other: Char) : this(other.toInt().toString()) {
         global = "OK"
     }

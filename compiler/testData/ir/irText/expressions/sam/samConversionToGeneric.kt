@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: samConversionToGeneric.kt
 
 fun test1() = J<String> { x -> x }

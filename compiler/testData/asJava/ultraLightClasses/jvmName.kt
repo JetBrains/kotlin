@@ -22,3 +22,4 @@ class C {
     @JvmName("fooInt")
     fun foo(x: List<Int>) {}
 }
+

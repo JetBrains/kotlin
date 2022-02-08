@@ -1,0 +1,20 @@
+FILE: notIsNullOrEmpty.kt
+    public final fun test_1(s: R|kotlin/String?|): R|kotlin/Unit| {
+        when () {
+            R|<local>/s|.R|kotlin/text/isNullOrEmpty|().R|kotlin/Boolean.not|() ->  {
+                R|<local>/s|.R|kotlin/String.length|
+            }
+        }
+
+    }
+    public final fun test_2(s: R|kotlin/String?|): R|kotlin/Unit| {
+        when () {
+            R|<local>/s|.R|kotlin/text/isNullOrEmpty|() ->  {
+                R|<local>/s|.<Inapplicable(UNSAFE_CALL): kotlin/String.length>#
+            }
+            else ->  {
+                R|<local>/s|.R|kotlin/String.length|
+            }
+        }
+
+    }

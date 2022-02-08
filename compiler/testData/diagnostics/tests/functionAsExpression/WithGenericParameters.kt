@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_ANONYMOUS_PARAMETER
 
 interface A
@@ -12,8 +11,8 @@ fun fun_with_where() = fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> T.(t: T): T whe
 
 fun outer() {
     devNull(fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!>() {})
-    devNull(fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> <!NI;UNRESOLVED_REFERENCE!>T<!>.() {})
-    devNull(fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> (): <!NI;UNRESOLVED_REFERENCE!>T<!> = null!!)
-    devNull(fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> (t: <!NI;UNRESOLVED_REFERENCE!>T<!>) {})
+    devNull(fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> <!UNRESOLVED_REFERENCE!>T<!>.() {})
+    devNull(fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> (): <!UNRESOLVED_REFERENCE!>T<!> = null!!)
+    devNull(fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> (t: <!UNRESOLVED_REFERENCE!>T<!>) {})
     devNull(fun <!TYPE_PARAMETERS_NOT_ALLOWED!><T><!> () where T:A {})
 }

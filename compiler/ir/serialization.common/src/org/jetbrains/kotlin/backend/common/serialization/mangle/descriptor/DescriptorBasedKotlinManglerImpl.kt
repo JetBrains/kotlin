@@ -9,35 +9,27 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.types.KotlinType
 
 abstract class DescriptorBasedKotlinManglerImpl : AbstractKotlinMangler<DeclarationDescriptor>(), KotlinMangler.DescriptorMangler {
-    private fun withMode(mode: MangleMode, descriptor: DeclarationDescriptor): String =
-        getMangleComputer(mode).computeMangle(descriptor)
+    private fun withMode(mode: MangleMode, compatibleMode: Boolean, descriptor: DeclarationDescriptor): String =
+        getMangleComputer(mode, compatibleMode).computeMangle(descriptor)
 
-    override fun ClassDescriptor.mangleEnumEntryString(): String = withMode(MangleMode.FQNAME, this)
+    override fun ClassDescriptor.mangleEnumEntryString(compatibleMode: Boolean): String = withMode(MangleMode.FQNAME, compatibleMode, this)
 
-    override fun ClassDescriptor.isExportEnumEntry(): Boolean =
-        getExportChecker().check(this, SpecialDeclarationType.ENUM_ENTRY)
+    override fun PropertyDescriptor.mangleFieldString(compatibleMode: Boolean): String = mangleString(compatibleMode)
 
-    override fun PropertyDescriptor.isExportField(): Boolean = false
+    override fun DeclarationDescriptor.mangleString(compatibleMode: Boolean): String = withMode(MangleMode.FULL, compatibleMode, this)
 
-    override fun PropertyDescriptor.mangleFieldString(): String = error("Fields supposed to be non-exporting")
+    override fun DeclarationDescriptor.signatureString(compatibleMode: Boolean): String = withMode(MangleMode.SIGNATURE, compatibleMode, this)
 
-    override val DeclarationDescriptor.mangleString: String
-        get() = withMode(MangleMode.FULL, this)
+    override fun DeclarationDescriptor.fqnString(compatibleMode: Boolean): String = withMode(MangleMode.FQNAME, compatibleMode, this)
 
-    override val DeclarationDescriptor.signatureString: String
-        get() = withMode(MangleMode.SIGNATURE, this)
-
-    override val DeclarationDescriptor.fqnString: String
-        get() = withMode(MangleMode.FQNAME, this)
-
-    override fun DeclarationDescriptor.isExported(): Boolean = getExportChecker().check(this, SpecialDeclarationType.REGULAR)
+    override fun DeclarationDescriptor.isExported(compatibleMode: Boolean): Boolean = getExportChecker(compatibleMode).check(this, SpecialDeclarationType.REGULAR)
 }
 
 class Ir2DescriptorManglerAdapter(private val delegate: DescriptorBasedKotlinManglerImpl) : AbstractKotlinMangler<IrDeclaration>(),
@@ -45,31 +37,26 @@ class Ir2DescriptorManglerAdapter(private val delegate: DescriptorBasedKotlinMan
     override val manglerName: String
         get() = delegate.manglerName
 
-    override fun IrDeclaration.isExported(): Boolean {
+    override fun IrDeclaration.isExported(compatibleMode: Boolean): Boolean {
+        return delegate.run { descriptor.isExported(compatibleMode) }
+    }
+
+    override fun IrDeclaration.mangleString(compatibleMode: Boolean): String {
         return when (this) {
-            is IrAnonymousInitializer -> false
-            is IrEnumEntry -> delegate.run { descriptor.isExportEnumEntry() }
-            is IrField -> delegate.run { descriptor.isExportField() }
-            else -> delegate.run { descriptor.isExported() }
+            is IrEnumEntry -> delegate.run { descriptor.mangleEnumEntryString(compatibleMode) }
+            is IrField -> delegate.run { descriptor.mangleFieldString(compatibleMode) }
+            else -> delegate.run { descriptor.mangleString(compatibleMode) }
         }
     }
 
-    override val IrDeclaration.mangleString: String
-        get() {
-            return when (this) {
-                is IrEnumEntry -> delegate.run { descriptor.mangleEnumEntryString() }
-                is IrField -> delegate.run { descriptor.mangleFieldString() }
-                else -> delegate.run { descriptor.mangleString }
-            }
-        }
+    override fun IrDeclaration.signatureString(compatibleMode: Boolean): String = delegate.run { descriptor.signatureString(compatibleMode) }
 
-    override val IrDeclaration.signatureString: String
-        get() = delegate.run { descriptor.signatureString }
+    override fun IrDeclaration.fqnString(compatibleMode: Boolean): String = delegate.run { descriptor.fqnString(compatibleMode) }
 
-    override val IrDeclaration.fqnString: String
-        get() = delegate.run { descriptor.fqnString }
+    override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<IrDeclaration> =
+        error("Should not have been reached")
 
-    override fun getExportChecker() = error("Should not have been reached")
-
-    override fun getMangleComputer(mode: MangleMode): KotlinMangleComputer<IrDeclaration> = error("Should not have been reached")
+    override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<IrDeclaration> {
+        error("Should not be called")
+    }
 }

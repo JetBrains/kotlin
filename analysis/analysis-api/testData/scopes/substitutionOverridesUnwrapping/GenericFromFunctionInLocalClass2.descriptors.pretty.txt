@@ -1,0 +1,11 @@
+fun noGenerics()
+
+fun withOuter(): Outer?
+
+fun withOuterAndOwn(t: test.SomeClass): Outer?
+
+open operator fun equals(other: kotlin.Any?): kotlin.Boolean
+
+open fun hashCode(): kotlin.Int
+
+open fun toString(): kotlin.String

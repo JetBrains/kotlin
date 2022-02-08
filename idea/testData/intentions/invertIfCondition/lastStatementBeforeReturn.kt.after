@@ -1,8 +1,0 @@
-fun foo(p: Boolean): Boolean {
-    val x = 2
-    <caret>if (x <= 1) return p
-    bar()
-    return p
-}
-
-fun bar(){}

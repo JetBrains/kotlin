@@ -131,7 +131,7 @@ class ClassTranslator private constructor(
         if (classDeclaration is KtClassOrObject) {
             when {
                 descriptor.isData -> JsDataClassGenerator(classDeclaration, context).generate()
-                descriptor.isInline -> JsInlineClassGenerator(classDeclaration, context).generate()
+                descriptor.isInline || descriptor.isValue -> JsInlineClassGenerator(classDeclaration, context).generate()
             }
         }
 

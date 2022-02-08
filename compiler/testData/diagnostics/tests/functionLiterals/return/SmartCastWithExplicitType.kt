@@ -5,7 +5,7 @@ val a : (Int?) -> Int = l@ {
     5
 }
 
-fun <R> let(<!UNUSED_PARAMETER!>f<!>: (Int?) -> R): R = null!!
+fun <R> let(f: (Int?) -> R): R = null!!
 
 val b: Int = let {
     if (it != null) return@let <!DEBUG_INFO_SMARTCAST!>it<!>

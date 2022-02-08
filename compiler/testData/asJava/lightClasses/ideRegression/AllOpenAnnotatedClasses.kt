@@ -24,3 +24,5 @@ class C {
 }
 
 // LAZINESS:NoLaziness
+// SKIP_SANITY_TEST
+// COMPILATION_ERRORS

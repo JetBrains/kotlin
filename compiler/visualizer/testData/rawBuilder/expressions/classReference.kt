@@ -1,5 +1,4 @@
-// FIR_IGNORE
-//WITH_RUNTIME
+// WITH_STDLIB
 package test
 
 class A
@@ -8,21 +7,21 @@ fun test() {
 //  class A
 //  │
     A::class
-//  package test
+//  class A
 //  │
     test.A::class
 //  constructor A()
 //  │
     A()::class
 
-//  class A  val <T> reflect/KClass<A>.java: java/lang/Class<A>
+//  class A  val <T> reflect/KClass<T>.java: java/lang/Class<T>
 //  │        │
     A::class.java
-//  package test  val <T> reflect/KClass<A>.java: java/lang/Class<A>
+//  class A       val <T> reflect/KClass<T>.java: java/lang/Class<T>
 //  │             │
     test.A::class.java
 //  constructor A()
-//  │          val <T> reflect/KClass<out A>.java: java/lang/Class<out A>
+//  │          val <T> reflect/KClass<T>.java: java/lang/Class<T>
 //  │          │
     A()::class.java
 }

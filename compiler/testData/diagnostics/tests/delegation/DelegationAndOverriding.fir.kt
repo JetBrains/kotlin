@@ -5,11 +5,11 @@ interface T {
     val v : Int
 }
 
-open class Br(t : T) : T {
+open <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Br<!>(t : T) : T {
 
 }
 
-class Br3(t : T) : Br(t) {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Br3<!>(t : T) : Br(t) {
 
 }
 
@@ -25,7 +25,7 @@ interface G<T> {
     fun foo(t : T) : T
 }
 
-class GC() : G<Int> {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class GC<!>() : G<Int> {
 
 }
 

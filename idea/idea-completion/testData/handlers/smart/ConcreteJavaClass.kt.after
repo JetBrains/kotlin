@@ -1,7 +1,0 @@
-import java.io.File
-
-open class A<T : Any>(val javaClass: Class<T>?)
-
-class B : A<java.io.File>(File::class.java)<caret>
-
-// ELEMENT: File

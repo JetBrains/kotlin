@@ -1,5 +1,4 @@
 // !LANGUAGE: -ProhibitOperatorMod
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class OldAndNew {
@@ -30,7 +29,7 @@ fun test() {
     oldAndNew %= 1
 
     val onlyOld = OnlyOld()
-    <!INAPPLICABLE_CANDIDATE!>onlyOld %= 1<!>
+    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>onlyOld %= 1<!>
 
     val onlyNew = OnlyNew()
     onlyNew %= 1

@@ -1,18 +1,19 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_TEXT
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 import kotlin.test.*
 
-inline class TestUIntArrayW(val x: UIntArray)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class TestUIntArrayW(val x: UIntArray)
 
-inline class InlineCharArray(val x: CharArray) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class InlineCharArray(val x: CharArray) {
     override fun toString(): String = x.contentToString()
 }
 
-inline class TestInlineCharArrayW(val x: InlineCharArray)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class TestInlineCharArrayW(val x: InlineCharArray)
 
 fun box(): String {
     val t1 = TestUIntArrayW(UIntArray(1)).toString()

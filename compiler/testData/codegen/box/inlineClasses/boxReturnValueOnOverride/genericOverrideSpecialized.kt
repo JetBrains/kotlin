@@ -1,3 +1,7 @@
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
 interface GFoo<out T> {
     fun foo(): T
 }
@@ -8,7 +12,8 @@ interface IBar {
 
 interface SFooBar : GFoo<IBar>
 
-inline class X(val x: String) : IBar {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class X(val x: String) : IBar {
     override fun bar(): String = x
 }
 

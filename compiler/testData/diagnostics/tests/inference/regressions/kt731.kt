@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 
 //KT-731 Missing error from type inference
@@ -16,6 +15,6 @@ fun <T, G> A<T>.foo(x: (T)-> G): G {
 
 fun main() {
     val a = A(1)
-    val t: String = <!NI;TYPE_MISMATCH!>a.<!OI;TYPE_INFERENCE_EXPECTED_TYPE_MISMATCH!>foo({p -> <!TYPE_MISMATCH!>p<!>})<!><!>
+    val t: String = <!TYPE_MISMATCH!>a.foo({p -> <!TYPE_MISMATCH!>p<!>})<!>
     checkSubtype<String>(t)
 }

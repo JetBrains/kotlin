@@ -23,6 +23,12 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 fun ProtoBuf.Class.supertypes(typeTable: TypeTable): List<ProtoBuf.Type> =
     supertypeList.takeIf(Collection<*>::isNotEmpty) ?: supertypeIdList.map { typeTable[it] }
 
+fun ProtoBuf.Class.inlineClassUnderlyingType(typeTable: TypeTable): ProtoBuf.Type? = when {
+    hasInlineClassUnderlyingType() -> inlineClassUnderlyingType
+    hasInlineClassUnderlyingTypeId() -> typeTable[inlineClassUnderlyingTypeId]
+    else -> null
+}
+
 fun ProtoBuf.Type.Argument.type(typeTable: TypeTable): ProtoBuf.Type? = when {
     hasType() -> type
     hasTypeId() -> typeTable[typeId]

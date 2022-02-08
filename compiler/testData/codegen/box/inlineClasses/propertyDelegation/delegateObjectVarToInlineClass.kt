@@ -1,6 +1,6 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: PROPERTY_REFERENCES
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 object Foo {
     var a: Int = 42
@@ -9,7 +9,8 @@ object Foo {
 
 var setterInvoked = 0
 
-inline class Delegate(val ignored: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Delegate(val ignored: Int) {
 
     operator fun getValue(thisRef: Any?, prop: Any?) = Foo.a
 

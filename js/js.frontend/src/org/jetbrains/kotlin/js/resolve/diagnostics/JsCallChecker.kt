@@ -167,7 +167,7 @@ private fun String.offsetOf(position: CodePosition): Int {
         i++
         offsetInLine++
 
-        if (isEndOfLine(c.toInt())) {
+        if (isEndOfLine(c.code)) {
             offsetInLine = 0
             lineCount++
             assert(lineCount <= position.line)

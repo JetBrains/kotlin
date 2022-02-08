@@ -54,10 +54,10 @@ fun <V : Value> Frame<V>.peekWords(size1: Int, size2: Int): List<V>? {
 }
 
 class SavedStackDescriptor(
-    val savedValues: List<BasicValue>,
+    val savedValues: List<FixStackValue>,
     val firstLocalVarIndex: Int
 ) {
-    private val savedValuesSize = savedValues.fold(0, { size, value -> size + value.size })
+    private val savedValuesSize = savedValues.fold(0) { size, value -> size + value.size }
     val firstUnusedLocalVarIndex = firstLocalVarIndex + savedValuesSize
 
     override fun toString(): String =
@@ -88,13 +88,13 @@ fun restoreStackWithReturnValue(
     methodNode: MethodNode,
     nodeToReplace: AbstractInsnNode,
     savedStackDescriptor: SavedStackDescriptor,
-    returnValue: BasicValue,
+    returnValue: FixStackValue,
     returnValueLocalVarIndex: Int
 ) {
     with(methodNode.instructions) {
-        insertBefore(nodeToReplace, VarInsnNode(returnValue.type.getOpcode(Opcodes.ISTORE), returnValueLocalVarIndex))
+        insertBefore(nodeToReplace, VarInsnNode(returnValue.storeOpcode, returnValueLocalVarIndex))
         generateLoadInstructions(methodNode, nodeToReplace, savedStackDescriptor)
-        insertBefore(nodeToReplace, VarInsnNode(returnValue.type.getOpcode(Opcodes.ILOAD), returnValueLocalVarIndex))
+        insertBefore(nodeToReplace, VarInsnNode(returnValue.loadOpcode, returnValueLocalVarIndex))
         remove(nodeToReplace)
     }
 }
@@ -102,10 +102,7 @@ fun restoreStackWithReturnValue(
 fun generateLoadInstructions(methodNode: MethodNode, location: AbstractInsnNode, savedStackDescriptor: SavedStackDescriptor) {
     var localVarIndex = savedStackDescriptor.firstLocalVarIndex
     for (value in savedStackDescriptor.savedValues) {
-        methodNode.instructions.insertBefore(
-            location,
-            VarInsnNode(value.type.getOpcode(Opcodes.ILOAD), localVarIndex)
-        )
+        methodNode.instructions.insertBefore(location, VarInsnNode(value.loadOpcode, localVarIndex))
         localVarIndex += value.size
     }
 }
@@ -114,10 +111,7 @@ fun generateStoreInstructions(methodNode: MethodNode, location: AbstractInsnNode
     var localVarIndex = savedStackDescriptor.firstUnusedLocalVarIndex
     for (value in savedStackDescriptor.savedValues.asReversed()) {
         localVarIndex -= value.size
-        methodNode.instructions.insertBefore(
-            location,
-            VarInsnNode(value.type.getOpcode(Opcodes.ISTORE), localVarIndex)
-        )
+        methodNode.instructions.insertBefore(location, VarInsnNode(value.storeOpcode, localVarIndex))
     }
 }
 
@@ -146,10 +140,10 @@ fun replaceAlwaysTrueIfeqWithGoto(methodNode: MethodNode, node: AbstractInsnNode
     }
 }
 
-fun replaceMarkerWithPops(methodNode: MethodNode, node: AbstractInsnNode, expectedStackSize: Int, stackContent: List<BasicValue>) {
+fun replaceMarkerWithPops(methodNode: MethodNode, node: AbstractInsnNode, expectedStackSize: Int, stackContent: List<FixStackValue>) {
     with(methodNode.instructions) {
         for (stackValue in stackContent.subList(expectedStackSize, stackContent.size)) {
-            insert(node, getPopInstruction(stackValue))
+            insert(node, InsnNode(stackValue.popOpcode))
         }
         remove(node)
     }

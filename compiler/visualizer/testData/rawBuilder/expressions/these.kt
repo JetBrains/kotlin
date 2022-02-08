@@ -1,4 +1,3 @@
-// FIR_IGNORE
 class Some {
 //                 Int
 //                 │ Int
@@ -30,7 +29,7 @@ class Some {
 fun Some.extension() = this.bar()
 
 fun test(some: Some): Int {
-//         fun <T, R> with<Some, Int>(Some, Some.() -> Int): Int
+//         fun <T, R> with<Some, Int>(T, T.() -> R): R
 //         │    test.some: Some
 //         │    │     with@0
 //         │    │     │

@@ -1,4 +1,0 @@
-fun main(args: Array<String>) {
-    val list1 = emptyList<String>()
-    val list2: List<String> = emptyList()
-}

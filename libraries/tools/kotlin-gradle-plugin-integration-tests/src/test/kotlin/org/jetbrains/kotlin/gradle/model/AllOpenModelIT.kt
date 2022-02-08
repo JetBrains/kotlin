@@ -5,29 +5,40 @@
 
 package org.jetbrains.kotlin.gradle.model
 
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.junit.Test
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.DisplayName
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-class AllOpenModelIT : BaseGradleIT() {
-    @Test
-    fun testAllOpenSimple() {
-        val project = Project("allOpenSimple")
-        val allOpenModel = project.getModels(AllOpen::class.java).getModel(":")!!
-        assertEquals(1L, allOpenModel.modelVersion)
-        assertEquals("allOpenSimple", allOpenModel.name)
-        assertEquals(1, allOpenModel.annotations.size)
-        assertTrue(allOpenModel.annotations.contains("lib.AllOpen"))
-        assertTrue(allOpenModel.presets.isEmpty())
+@DisplayName("'all-open' plugin model validity")
+@OtherGradlePluginTests
+class AllOpenModelIT : KGPBaseTest() {
+
+    @DisplayName("Valid model is available when plugin is applied")
+    @GradleTest
+    fun testAllOpenSimple(gradleVersion: GradleVersion) {
+        project("allOpenSimple", gradleVersion) {
+            getModels<AllOpen> {
+                with(getModel(":")!!) {
+                    assertEquals(1L, modelVersion)
+                    assertEquals("allOpenSimple", name)
+                    assertEquals(1, annotations.size)
+                    assertTrue(annotations.contains("lib.AllOpen"))
+                    assertTrue(presets.isEmpty())
+                }
+            }
+        }
     }
 
-    @Test
-    fun testNonAllOpenProjects() {
-        val project = Project("kotlinProject")
-        val model = project.getModels(AllOpen::class.java).getModel(":")
-
-        assertNull(model)
+    @DisplayName("Model is not available when plugin is not applied")
+    @GradleTest
+    fun testNonAllOpenProjects(gradleVersion: GradleVersion) {
+        project("kotlinProject", gradleVersion) {
+            getModels<AllOpen> {
+                assertNull(getModel(":"))
+            }
+        }
     }
 }

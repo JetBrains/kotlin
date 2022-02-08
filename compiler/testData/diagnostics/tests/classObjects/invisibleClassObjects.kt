@@ -48,4 +48,4 @@ fun test() {
     a.C.<!INVISIBLE_MEMBER!>baz<!>()
 }
 
-fun f(<!UNUSED_PARAMETER!>unused<!>: Any) {}
+fun f(unused: Any) {}

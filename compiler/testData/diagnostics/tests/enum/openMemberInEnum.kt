@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 enum class EnumWithOpenMembers {
     E1 {
         override fun foo() = 1

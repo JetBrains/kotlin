@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 
 import kotlin.contracts.*
 
@@ -14,7 +14,7 @@ inline fun case_1(block: () -> Unit) {
 inline fun case_2(block: () -> Unit) {
     10 - 1
     contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
     }
     return block()
 }
@@ -23,7 +23,7 @@ inline fun case_2(block: () -> Unit) {
 inline fun case_3(block: () -> Unit) {
     throw Exception()
     contract {
-        callsInPlace(block, InvocationKind.UNKNOWN)
+        callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.UNKNOWN)
     }
     return block()
 }
@@ -35,7 +35,7 @@ inline fun case_3(block: () -> Unit) {
 inline fun case_4(block: () -> Unit) {
     .0009
     return contract {
-        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+        callsInPlace(<!USAGE_IS_NOT_INLINABLE!>block<!>, InvocationKind.EXACTLY_ONCE)
     }
 }
 
@@ -47,7 +47,7 @@ fun case_5(value_1: Int?) {
     println("!")
     contract {
         returns(true) implies (value_1 != null)
-    } as ContractBuilder
+    } <!CAST_NEVER_SUCCEEDS!>as<!> ContractBuilder
 }
 
 /*
@@ -93,6 +93,6 @@ fun case_9(number: Int?): Boolean {
     val value_1 = number != null
     contract {
         returns(false) implies (value_1)
-    } as ContractBuilder
+    } <!CAST_NEVER_SUCCEEDS!>as<!> ContractBuilder
     return number == null
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: File1.kt
 package pack1
 

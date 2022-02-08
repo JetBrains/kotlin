@@ -12,4 +12,3 @@ inline fun foo(f: () -> String = { bar() }) = f()
 fun box(): String {
     return foo()
 }
-

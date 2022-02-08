@@ -11,5 +11,5 @@ val b/*: () -> Int */ = l@ {
 }
 
 val c/*: () -> Unit */ = l@ {
-    if (flag) <!UNUSED_EXPRESSION!>4<!>
+    if (flag) 4
 }

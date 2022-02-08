@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.Tcl
+modules = Tcl
+compilerOpts = -framework Tcl
+linkerOpts = -framework Tcl
+#Disabled: Unavailable

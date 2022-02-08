@@ -1,8 +1,5 @@
+// -- Module: <m1> --
 package
-
-package bar {
-    public fun box(): kotlin.Unit
-}
 
 package foo {
 
@@ -23,3 +20,11 @@ package foo {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+
+// -- Module: <m2> --
+package
+
+package bar {
+    public fun box(): kotlin.Unit
+}
+

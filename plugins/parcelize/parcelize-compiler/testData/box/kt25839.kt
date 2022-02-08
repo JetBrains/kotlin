@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:JvmName("TestKt")
 package test
@@ -11,7 +11,7 @@ import android.os.Parcelable
 class User : Parcelable
 
 @Parcelize
-class User2() : Parcelable
+class <!PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY!>User2<!>() : Parcelable
 
 fun box() = parcelTest { parcel ->
     val user = User()
@@ -24,6 +24,6 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    readFromParcel<User>(parcel)
-    readFromParcel<User2>(parcel)
+    parcelableCreator<User>().createFromParcel(parcel)
+    parcelableCreator<User2>().createFromParcel(parcel)
 }

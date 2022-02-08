@@ -12,6 +12,7 @@
 /android-studio/sdk
 out/
 /tmp
+/intellij
 workspace.xml
 *.versionsBackup
 /idea/testData/debugger/tinyApp/classes*
@@ -25,6 +26,7 @@ build/
 !**/test/**/build
 *.iml
 !**/testData/**/*.iml
+.idea/remote-targets.xml
 .idea/libraries/Gradle*.xml
 .idea/libraries/Maven*.xml
 .idea/artifacts/PILL_*.xml
@@ -32,6 +34,8 @@ build/
 .idea/modules
 .idea/runConfigurations/JPS_*.xml
 .idea/runConfigurations/PILL_*.xml
+.idea/runConfigurations/_FP_*.xml
+.idea/runConfigurations/_MT_*.xml
 .idea/libraries
 .idea/modules.xml
 .idea/gradle.xml
@@ -53,8 +57,12 @@ build/
 .idea/artifacts/kotlin_stdlib_js_ir_*
 .idea/artifacts/kotlin_test_js_ir_*
 .idea/artifacts/kotlin_stdlib_wasm_*
+.idea/artifacts/kotlinx_atomicfu_runtime_*
+.idea/artifacts/kotlinx_cli_jvm_*
 .idea/jarRepositories.xml
-kotlin-ultimate/
+.idea/csv-plugin.xml
+.idea/libraries-with-intellij-classes.xml
+.idea/misc.xml
 node_modules/
 .rpt2_cache/
 libraries/tools/kotlin-test-js-runner/lib/
@@ -62,3 +70,6 @@ local.properties
 buildSrcTmp/
 distTmp/
 outTmp/
+/test.output
+/kotlin-native/dist
+kotlin-ide/

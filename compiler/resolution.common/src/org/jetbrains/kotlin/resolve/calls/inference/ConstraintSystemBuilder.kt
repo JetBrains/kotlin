@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.resolve.calls.inference
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.types.model.*
 
 interface ConstraintSystemOperation {
     val hasContradiction: Boolean
     fun registerVariable(variable: TypeVariableMarker)
     fun markPostponedVariable(variable: TypeVariableMarker)
+    fun markCouldBeResolvedWithUnrestrictedBuilderInference()
     fun unmarkPostponedVariable(variable: TypeVariableMarker)
     fun removePostponedVariables()
 
@@ -45,6 +47,8 @@ interface ConstraintSystemOperation {
     fun getProperSuperTypeConstructors(type: KotlinTypeMarker): List<TypeConstructorMarker>
 
     fun addOtherSystem(otherSystem: ConstraintStorage)
+
+    val errors: List<ConstraintSystemError>
 }
 
 interface ConstraintSystemBuilder : ConstraintSystemOperation {
@@ -82,4 +86,31 @@ private fun ConstraintSystemBuilder.addConstraintIfCompatible(
         }
     }
     !hasContradiction
+}
+
+fun ConstraintSystemBuilder.isSubtypeConstraintCompatible(
+    lowerType: KotlinTypeMarker,
+    upperType: KotlinTypeMarker,
+    position: ConstraintPosition
+): Boolean = isConstraintCompatible(lowerType, upperType, position, ConstraintKind.LOWER)
+
+private fun ConstraintSystemBuilder.isConstraintCompatible(
+    lowerType: KotlinTypeMarker,
+    upperType: KotlinTypeMarker,
+    position: ConstraintPosition,
+    kind: ConstraintKind
+): Boolean {
+    var isCompatible = false
+    runTransaction {
+        if (!hasContradiction) {
+            when (kind) {
+                ConstraintKind.LOWER -> addSubtypeConstraint(lowerType, upperType, position)
+                ConstraintKind.UPPER -> addSubtypeConstraint(upperType, lowerType, position)
+                ConstraintKind.EQUALITY -> addEqualityConstraint(lowerType, upperType, position)
+            }
+        }
+        isCompatible = !hasContradiction
+        false
+    }
+    return isCompatible
 }

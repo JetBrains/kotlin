@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 var longWords = 0
 val smallWords = hashSetOf<String>()

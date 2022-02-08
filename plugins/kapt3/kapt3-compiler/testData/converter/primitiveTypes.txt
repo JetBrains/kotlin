@@ -2,6 +2,8 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class PrimitiveTypes {
+    @org.jetbrains.annotations.NotNull()
+    public static final PrimitiveTypes INSTANCE = null;
     public static final boolean booleanFalse = false;
     public static final boolean booleanTrue = true;
     public static final int int0 = 0;
@@ -36,8 +38,10 @@ public final class PrimitiveTypes {
     public static final java.lang.String stringQuotes = "quotes \" \'\'quotes";
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String stringRN = "\r\n";
-    @org.jetbrains.annotations.NotNull()
-    public static final PrimitiveTypes INSTANCE = null;
+
+    private PrimitiveTypes() {
+        super();
+    }
 
     public final float getFloatMaxValue() {
         return 0.0F;
@@ -69,9 +73,5 @@ public final class PrimitiveTypes {
 
     public final double getDoubleNegativeInfinity() {
         return 0.0;
-    }
-
-    private PrimitiveTypes() {
-        super();
     }
 }

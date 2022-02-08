@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.model.*
@@ -19,11 +21,13 @@ class PostponedArgumentInputTypesResolver(
     private val resultTypeResolver: ResultTypeResolver,
     private val variableFixationFinder: VariableFixationFinder,
     private val resolutionTypeSystemContext: ConstraintSystemUtilContext,
+    private val languageVersionSettings: LanguageVersionSettings,
 ) {
     private class ParameterTypesInfo(
         val parametersFromDeclaration: List<KotlinTypeMarker?>?,
         val parametersFromDeclarationOfRelatedLambdas: Set<List<KotlinTypeMarker?>>?,
         val parametersFromConstraints: Set<List<TypeWithKind>>?,
+        val annotations: List<AnnotationMarker>?,
         val isExtensionFunction: Boolean,
         val isSuspend: Boolean,
         val isNullable: Boolean
@@ -37,7 +41,7 @@ class PostponedArgumentInputTypesResolver(
     private fun Context.findFunctionalTypesInConstraints(
         variable: VariableWithConstraints,
         variableDependencyProvider: TypeVariableDependencyInformationProvider
-    ): List<TypeWithKind>? {
+    ): List<TypeWithKind> {
         fun List<Constraint>.extractFunctionalTypes() = mapNotNull { constraint ->
             TypeWithKind(constraint.type.getFunctionalTypeFromSupertypes(), constraint.kind)
         }
@@ -57,30 +61,39 @@ class PostponedArgumentInputTypesResolver(
         argument: PostponedAtomWithRevisableExpectedType,
         postponedArguments: List<PostponedAtomWithRevisableExpectedType>,
         variableDependencyProvider: TypeVariableDependencyInformationProvider
-    ): ParameterTypesInfo? = with(resolutionTypeSystemContext) {
+    ): ParameterTypesInfo? {
         val expectedType = argument.expectedType ?: return null
         val variableWithConstraints = notFixedTypeVariables[expectedType.typeConstructor()] ?: return null
         val functionalTypesFromConstraints = findFunctionalTypesInConstraints(variableWithConstraints, variableDependencyProvider)
 
         // Don't create functional expected type for further error reporting about a different number of arguments
-        if (functionalTypesFromConstraints != null && functionalTypesFromConstraints.distinctBy { it.type.argumentsCount() }.size > 1)
+        if (functionalTypesFromConstraints.distinctBy { it.type.argumentsCount() }.size > 1)
             return null
 
         val parameterTypesFromDeclaration =
             if (argument is LambdaWithTypeVariableAsExpectedTypeMarker) argument.parameterTypesFromDeclaration else null
 
-        val parameterTypesFromConstraints = functionalTypesFromConstraints?.mapTo(SmartSet.create()) { typeWithKind ->
+        val parameterTypesFromConstraints = functionalTypesFromConstraints.mapTo(SmartSet.create()) { typeWithKind ->
             typeWithKind.type.extractArgumentsForFunctionalTypeOrSubtype().map {
                 // We should use opposite kind as lambda's parameters are contravariant
                 TypeWithKind(it, typeWithKind.direction.opposite())
             }
         }
 
-        // An extension function flag can only come from a declaration of anonymous function: `select({ this + it }, fun Int.(x: Int) = 10)`
-        val (parameterTypesFromDeclarationOfRelatedLambdas, isThereExtensionFunctionAmongRelatedLambdas) =
-            getDeclaredParametersFromRelatedLambdas(argument, postponedArguments, variableDependencyProvider)
+        val annotations = functionalTypesFromConstraints.map { it.type.getAttributes() }.flatten().distinct()
 
-        val extensionFunctionTypePresentInConstraints = functionalTypesFromConstraints?.any { it.type.isExtensionFunctionType() } == true
+        val extensionFunctionTypePresentInConstraints = functionalTypesFromConstraints.any { it.type.isExtensionFunctionType() }
+
+        // An extension function flag can only come from a declaration of anonymous function: `select({ this + it }, fun Int.(x: Int) = 10)`
+        val (parameterTypesFromDeclarationOfRelatedLambdas, isThereExtensionFunctionAmongRelatedLambdas, maxParameterCount) =
+            computeParameterInfoFromRelatedLambdas(
+                argument,
+                postponedArguments,
+                variableDependencyProvider,
+                extensionFunctionTypePresentInConstraints,
+                parameterTypesFromConstraints,
+                parameterTypesFromDeclaration,
+            )
 
         var isSuspend = false
         var isNullable = false
@@ -92,22 +105,47 @@ class PostponedArgumentInputTypesResolver(
                 if (isSuspend && !isNullable) break
             }
         }
+
+        val isLambda = with(resolutionTypeSystemContext) {
+            argument.isLambda()
+        }
+
+        val isExtensionFunction = isThereExtensionFunctionAmongRelatedLambdas || extensionFunctionTypePresentInConstraints
         return ParameterTypesInfo(
-            parameterTypesFromDeclaration,
+            if (parameterTypesFromDeclaration != null && isLambda &&
+                parameterTypesFromDeclaration.size + 1 == maxParameterCount &&
+                isExtensionFunction && considerExtensionReceiverFromConstrainsInLambda()
+            )
+                listOf(null) + parameterTypesFromDeclaration
+            else
+                parameterTypesFromDeclaration,
             parameterTypesFromDeclarationOfRelatedLambdas,
             parameterTypesFromConstraints,
-            isExtensionFunction = isThereExtensionFunctionAmongRelatedLambdas || extensionFunctionTypePresentInConstraints,
+            annotations = annotations,
+            isExtensionFunction,
             isSuspend = isSuspend,
             isNullable = isNullable
         )
     }
 
-    private fun Context.getDeclaredParametersFromRelatedLambdas(
+    // Components:
+    // 1. Set of List of known parameter types (some of them aligned with null-prefix for absent extension receiver)
+    // 2. isAnyFunctionExpressionWithReceiver
+    // 3. maxParameterCount
+    private fun Context.computeParameterInfoFromRelatedLambdas(
         argument: PostponedAtomWithRevisableExpectedType,
         postponedArguments: List<PostponedAtomWithRevisableExpectedType>,
-        dependencyProvider: TypeVariableDependencyInformationProvider
-    ): Pair<Set<List<KotlinTypeMarker?>>?, Boolean> = with(resolutionTypeSystemContext) {
-        val parameterTypesFromDeclarationOfRelatedLambdas = postponedArguments
+        dependencyProvider: TypeVariableDependencyInformationProvider,
+        extensionFunctionTypePresentInConstraints: Boolean,
+        parameterTypesFromConstraints: Set<List<TypeWithKind>>?,
+        parameterTypesFromDeclaration: List<KotlinTypeMarker?>?,
+    ): Triple<Set<List<KotlinTypeMarker?>>?, Boolean, Int> = with(resolutionTypeSystemContext) {
+        var isAnyFunctionExpressionWithReceiver = false
+
+        // For each lambda/function expression:
+        // - First component: list of parameter types (for lambdas, it doesn't include receiver)
+        // - Second component: is lambda
+        val parameterTypesFromDeclarationOfRelatedLambdas: List<Pair<List<KotlinTypeMarker?>, Boolean>> = postponedArguments
             .mapNotNull { anotherArgument ->
                 when {
                     anotherArgument !is LambdaWithTypeVariableAsExpectedTypeMarker -> null
@@ -119,18 +157,46 @@ class PostponedArgumentInputTypesResolver(
                         val areTypeVariablesRelated = dependencyProvider.areVariablesDependentShallowly(
                             argumentExpectedTypeConstructor, anotherArgumentExpectedTypeConstructor
                         )
-                        val isAnonymousExtensionFunction = anotherArgument.isFunctionExpressionWithReceiver()
+                        isAnyFunctionExpressionWithReceiver =
+                            isAnyFunctionExpressionWithReceiver or anotherArgument.isFunctionExpressionWithReceiver()
+
                         val parameterTypesFromDeclarationOfRelatedLambda = anotherArgument.parameterTypesFromDeclaration
 
                         if (areTypeVariablesRelated && parameterTypesFromDeclarationOfRelatedLambda != null) {
-                            parameterTypesFromDeclarationOfRelatedLambda to isAnonymousExtensionFunction
+                            Pair(parameterTypesFromDeclarationOfRelatedLambda, anotherArgument.isLambda())
                         } else null
                     }
                 }
             }
 
-        return parameterTypesFromDeclarationOfRelatedLambdas.run { mapTo(SmartSet.create()) { it.first } to any { it.second } }
+        val declaredParameterTypes = mutableSetOf<List<KotlinTypeMarker?>>()
+
+        val maxParameterCount = maxOf(
+            parameterTypesFromConstraints?.map { it.size }?.maxOrNull() ?: 0,
+            parameterTypesFromDeclarationOfRelatedLambdas.map { it.first.size }.maxOrNull() ?: 0,
+            parameterTypesFromDeclaration?.size ?: 0
+        )
+
+        val isFeatureEnabled =
+            considerExtensionReceiverFromConstrainsInLambda()
+
+        parameterTypesFromDeclarationOfRelatedLambdas.mapTo(declaredParameterTypes) { (types, isLambda) ->
+            if (
+                isFeatureEnabled && isLambda &&
+                (extensionFunctionTypePresentInConstraints || isAnyFunctionExpressionWithReceiver) &&
+                types.size + 1 == maxParameterCount
+            )
+                listOf(null) + types
+            else
+                types
+        }
+
+        return Triple(declaredParameterTypes, isAnyFunctionExpressionWithReceiver, maxParameterCount)
     }
+
+    private fun considerExtensionReceiverFromConstrainsInLambda() =
+        resolutionTypeSystemContext.isForcedConsiderExtensionReceiverFromConstrainsInLambda ||
+                languageVersionSettings.supportsFeature(LanguageFeature.ConsiderExtensionReceiverFromConstrainsInLambda)
 
     private fun Context.createTypeVariableForReturnType(argument: PostponedAtomWithRevisableExpectedType): TypeVariableMarker =
         with(resolutionTypeSystemContext) {
@@ -297,7 +363,7 @@ class PostponedArgumentInputTypesResolver(
          *
          * TODO: regarding anonymous functions: see info about need for analysis in partial mode in `collectParameterTypesAndBuildNewExpectedTypes`
          */
-        if (areAllParameterTypesSpecified && !isExtensionFunction && !argument.isAnonymousFunction())
+        if (areAllParameterTypesSpecified && !isExtensionFunction && !argument.isFunctionExpression())
             return null
 
         val allParameterTypes =
@@ -344,7 +410,8 @@ class PostponedArgumentInputTypesResolver(
                 shouldDiscriminateExtensionFunctionAnnotation -> false
                 argument.isFunctionExpressionWithReceiver() -> true
                 else -> parameterTypesInfo.isExtensionFunction
-            }
+            },
+            attributes = parameterTypesInfo.annotations
         )
 
         getBuilder().addSubtypeConstraint(
@@ -354,7 +421,11 @@ class PostponedArgumentInputTypesResolver(
         )
 
         if (pathFromRelatedTopLevelVariable != null && relatedTopLevelVariable != null) {
-            getBuilder().putBuiltFunctionalExpectedTypeForPostponedArgument(relatedTopLevelVariable, pathFromRelatedTopLevelVariable, newExpectedType)
+            getBuilder().putBuiltFunctionalExpectedTypeForPostponedArgument(
+                relatedTopLevelVariable,
+                pathFromRelatedTopLevelVariable,
+                newExpectedType
+            )
         } else {
             getBuilder().putBuiltFunctionalExpectedTypeForPostponedArgument(expectedTypeConstructor, newExpectedType)
         }
@@ -384,13 +455,14 @@ class PostponedArgumentInputTypesResolver(
              *
              * TODO: investigate why we can't do it for anonymous functions in full mode always (see `diagnostics/tests/resolve/resolveWithSpecifiedFunctionLiteralWithId.kt`)
              */
-            if (completionMode == ConstraintSystemCompletionMode.PARTIAL && !argument.isAnonymousFunction())
+            if (completionMode == ConstraintSystemCompletionMode.PARTIAL && !argument.isFunctionExpression())
                 return@any false
             if (argument.revisedExpectedType != null) return@any false
             val parameterTypesInfo =
                 c.extractParameterTypesInfo(argument, postponedArguments, dependencyProvider) ?: return@any false
             val newExpectedType =
-                c.buildNewFunctionalExpectedType(argument, parameterTypesInfo, dependencyProvider, topLevelTypeVariables) ?: return@any false
+                c.buildNewFunctionalExpectedType(argument, parameterTypesInfo, dependencyProvider, topLevelTypeVariables)
+                    ?: return@any false
 
             argument.reviseExpectedType(newExpectedType)
 
@@ -433,7 +505,10 @@ class PostponedArgumentInputTypesResolver(
     private fun getDeclaredParametersConsideringExtensionFunctionsPresence(parameterTypesInfo: ParameterTypesInfo): List<KotlinTypeMarker?>? =
         with(parameterTypesInfo) {
 
-            if (parametersFromConstraints.isNullOrEmpty() || parametersFromDeclaration.isNullOrEmpty())
+            // If the feature is enabled, null for extension parameter has been added in different place already
+            if (considerExtensionReceiverFromConstrainsInLambda() ||
+                parametersFromConstraints.isNullOrEmpty() || parametersFromDeclaration.isNullOrEmpty()
+            )
                 parametersFromDeclaration
             else {
                 val oneLessParameterInDeclarationThanInConstraints =
@@ -483,7 +558,11 @@ class PostponedArgumentInputTypesResolver(
         val relatedVariables = type.extractArgumentsForFunctionalTypeOrSubtype()
             .flatMap { getAllDeeplyRelatedTypeVariables(it, dependencyProvider) }
         val variableForFixation = variableFixationFinder.findFirstVariableForFixation(
-            this@fixNextReadyVariableForParameterType, relatedVariables, postponedArguments, ConstraintSystemCompletionMode.FULL, topLevelType
+            this@fixNextReadyVariableForParameterType,
+            relatedVariables,
+            postponedArguments,
+            ConstraintSystemCompletionMode.FULL,
+            topLevelType
         )
 
         if (variableForFixation == null || !variableForFixation.hasProperConstraint)

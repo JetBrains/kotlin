@@ -1,0 +1,70 @@
+class Value<T : Any?> {
+  constructor(value: T = null as T, text: String? = null) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var value: T
+    field = value
+    get
+    set
+
+  var text: String?
+    field = text
+    get
+    set
+
+}
+
+val <T : Any?> Value<T>.additionalText: Int /* by */
+  field = DVal(kmember = Value::text)
+  get(): Int {
+    return #additionalText$delegate.getValue(t = <this>, p = ::additionalText/*</* null */>()*/)
+  }
+
+val <T : Any?> Value<T>.additionalValue: Int /* by */
+  field = DVal(kmember = Value::value)
+  get(): Int {
+    return #additionalValue$delegate.getValue(t = <this>, p = ::additionalValue/*</* null */>()*/)
+  }
+
+class DVal {
+  constructor(kmember: Any) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val kmember: Any
+    field = kmember
+    get
+
+  operator fun getValue(t: Any?, p: Any): Int {
+    return 42
+  }
+
+}
+
+var recivier: Any?
+  field = "fail"
+  get
+  set
+
+var value2: Any?
+  field = "fail2"
+  get
+  set
+
+var <T : Any?> T.bar: T
+  get(): T {
+    return <this>
+  }
+  set(value: T) {
+    <set-recivier>(<set-?> = <this>)
+    <set-value2>(<set-?> = value)
+  }
+
+val barRef: KMutableProperty1<String?, String?>
+  field = ::bar/*<String?>()*/
+  get

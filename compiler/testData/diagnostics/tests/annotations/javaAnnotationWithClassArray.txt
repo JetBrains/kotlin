@@ -1,0 +1,38 @@
+package
+
+@Ann(value = X::class) @AnnRaw(value = X::class) public fun test(): kotlin.Unit
+
+public final annotation class Ann : kotlin.Annotation {
+    public constructor Ann(/*0*/ value: kotlin.reflect.KClass<*>)
+    public final val value: kotlin.reflect.KClass<*>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class AnnRaw : kotlin.Annotation {
+    public constructor AnnRaw(/*0*/ value: kotlin.reflect.KClass<(raw) kotlin.Any>)
+    public final val value: kotlin.reflect.KClass<(raw) kotlin.Any>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class Utils {
+    public constructor Utils()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun foo(/*0*/ value: java.lang.Class<(raw) kotlin.Any!>!): kotlin.Unit
+    public open fun fooRaw(/*0*/ value: java.lang.Class<*>!): kotlin.Unit
+}
+
+public final class X {
+    public constructor X()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

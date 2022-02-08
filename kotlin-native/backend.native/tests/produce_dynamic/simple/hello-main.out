@@ -1,0 +1,20 @@
+Hello, dynamic!
+Base.foo
+Base.fooParam: a 1 q
+Child.fooParam: b 2 null
+Child.fooParam: c 3 null
+Impl1.I: d 4 Impl1
+Impl2.I: e 5 Impl2
+String is Kotlin/Native nullable is Hi null is OK
+RO property is 42
+RW property is 239
+enum100 = 100
+enum42 = 42
+object = 42
+singleton = I am single
+mutable = foo
+topLevel = 777 3
+IsInstance1 = PASS
+IsInstance2 = PASS
+getVector128 = (1, 2, 3, 4)
+Error handler: kotlin.Error: Expected error

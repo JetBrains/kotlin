@@ -1,4 +1,4 @@
-@Target(AnnotationTarget.EXPRESSION)
+@Target(AnnotationTarget.EXPRESSION, AnnotationTarget.LOCAL_VARIABLE)
 @Retention(AnnotationRetention.SOURCE)
 annotation class Ann
 
@@ -12,7 +12,7 @@ fun foo(arg: Int): Int {
     return 42
 }
 
-data class Two(x: Int, y: Int)
+data class Two(val x: Int, val y: Int)
 
 fun bar(two: Two) {
     val (@Ann x, @Ann y) = two

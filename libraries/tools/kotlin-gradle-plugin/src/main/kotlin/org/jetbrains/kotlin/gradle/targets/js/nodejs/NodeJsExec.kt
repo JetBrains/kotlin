@@ -21,6 +21,7 @@ constructor(
     @Internal
     override val compilation: KotlinJsCompilation
 ) : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), RequiresNpmDependencies {
+    @Transient
     @get:Internal
     lateinit var nodeJs: NodeJsRootExtension
 
@@ -33,9 +34,13 @@ constructor(
     }
 
     @Input
+    var nodeArgs: MutableList<String> = mutableListOf()
+
+    @Input
     var sourceMapStackTraces = true
 
     @Optional
+    @PathSensitive(PathSensitivity.ABSOLUTE)
     @InputFile
     val inputFileProperty: RegularFileProperty = project.newFileProperty()
 
@@ -44,20 +49,22 @@ constructor(
         get() = true
 
     @get:Internal
-    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
-        get() = mutableSetOf<RequiredKotlinJsDependency>().also {
+    override val requiredNpmDependencies: Set<RequiredKotlinJsDependency> by lazy {
+        mutableSetOf<RequiredKotlinJsDependency>().also {
             if (sourceMapStackTraces) {
                 it.add(nodeJs.versions.sourceMapSupport)
             }
         }
+    }
 
     override fun exec() {
+        val newArgs = mutableListOf<String>()
+        newArgs.addAll(nodeArgs)
         if (inputFileProperty.isPresent) {
-            val newArgs = mutableListOf<String>()
             newArgs.add(inputFileProperty.asFile.get().canonicalPath)
-            args?.let { newArgs.addAll(it) }
-            args = newArgs
         }
+        args?.let { newArgs.addAll(it) }
+        args = newArgs
 
         if (sourceMapStackTraces) {
             val sourceMapSupportArgs = mutableListOf(

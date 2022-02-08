@@ -1,6 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: KOTLIN_TEST_LIB
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.test.*
 
 class Value(val x: Int) : Comparable<Value> {

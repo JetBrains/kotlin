@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.checkers
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -13,10 +12,13 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.script.loadScriptingPlugin
-import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.Directives
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.KotlinBaseTest
+import org.jetbrains.kotlin.test.TestFiles
 import org.jetbrains.kotlin.test.TestFiles.TestFileFactory
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
-import java.util.*
 
 abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : KotlinBaseTest.TestFile> :
     KotlinBaseTest<F>() {
@@ -27,9 +29,9 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
     public override fun setUp() {
         super.setUp()
         // TODO: do not create temporary directory for tests without Java sources
-        javaFilesDir = KotlinTestUtils.tmpDir("java-files")
+        javaFilesDir = KtTestUtil.tmpDir("java-files")
         if (isKotlinSourceRootNeeded()) {
-            kotlinSourceRoot = KotlinTestUtils.tmpDir("kotlin-src")
+            kotlinSourceRoot = KtTestUtil.tmpDir("kotlin-src")
         }
     }
 
@@ -42,13 +44,16 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
     protected fun createEnvironment(
         file: File,
         files: List<F>,
-        additionalClasspath: File? = null
+        additionalClasspath: File? = null,
+        usePsiClassFilesReading: Boolean = true,
+        excludeNonTypeUseJetbrainsAnnotations: Boolean = false
     ): KotlinCoreEnvironment {
+        val defaultClasspath = getClasspath(file, excludeNonTypeUseJetbrainsAnnotations)
         val configuration = createConfiguration(
             extractConfigurationKind(files),
             getTestJdkKind(files),
             backend,
-            if (additionalClasspath == null) getClasspath(file) else getClasspath(file) + additionalClasspath,
+            if (additionalClasspath == null) defaultClasspath else defaultClasspath + additionalClasspath,
             if (isJavaSourceRootNeeded()) listOf(javaFilesDir) else emptyList(),
             files
         )
@@ -59,9 +64,9 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
             configuration.addKotlinSourceRoot(kotlinSourceRoot!!.path)
         }
 
-        // Currently, we're testing IDE behavior when generating the .txt files for comparison, but this can be changed.
+        // Currently, by default, we're testing IDE behavior when generating the .txt files for comparison, but this can be changed.
         // The main difference is the fact that the new class file reading implementation doesn't load parameter names from JDK classes.
-        configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, true)
+        configuration.put(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING, usePsiClassFilesReading)
 
         updateConfiguration(configuration)
         return createForTests(testRootDisposable, configuration, getEnvironmentConfigFiles())
@@ -77,21 +82,15 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
         setupEnvironment(environment)
     }
 
-    private fun getClasspath(file: File): List<File> {
+    private fun getClasspath(file: File, excludeNonTypeUseJetbrainsAnnotations: Boolean): List<File> {
         val result: MutableList<File> = ArrayList()
-        result.add(KotlinTestUtils.getAnnotationsJar())
+        if (!excludeNonTypeUseJetbrainsAnnotations) {
+            result.add(KtTestUtil.getAnnotationsJar())
+        }
         result.addAll(getExtraClasspath())
         val fileText = file.readText(Charsets.UTF_8)
-        if (InTextDirectivesUtils.isDirectiveDefined(fileText, "ANDROID_ANNOTATIONS")) {
-            result.add(ForTestCompileRuntime.androidAnnotationsForTests())
-        }
         if (InTextDirectivesUtils.isDirectiveDefined(fileText, "STDLIB_JDK8")) {
             result.add(ForTestCompileRuntime.runtimeJarForTestsWithJdk8())
-        }
-        if (StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString() == coroutinesPackage ||
-            fileText.contains(StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString())
-        ) {
-            result.add(ForTestCompileRuntime.coroutinesCompatForTests())
         }
         return result
     }
@@ -109,7 +108,7 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
     @Throws(Exception::class)
     public override fun doTest(filePath: String) {
         val file = createTestFileFromPath(filePath)
-        val expectedText = KotlinTestUtils.doLoadFile(file)
+        val expectedText = KtTestUtil.doLoadFile(file)
         //TODO: move to proper tests
         if (InTextDirectivesUtils.isDirectiveDefined(expectedText, "// SKIP_JAVAC")) return
         super.doTest(file.path)
@@ -130,7 +129,7 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
                 fileName: String,
                 text: String,
                 directives: Directives
-            ): F? {
+            ): F {
                 if (fileName.endsWith(".java")) {
                     writeSourceFile(fileName, text, javaFilesDir)
                 }
@@ -140,7 +139,7 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
                 return createTestFile(module, fileName, text, directives)
             }
 
-            override fun createModule(name: String, dependencies: List<String>, friends: List<String>): M? {
+            override fun createModule(name: String, dependencies: List<String>, friends: List<String>, abiVersions: List<Int>): M? {
                 val module = createTestModule(name, dependencies, friends)
                 val oldValue = modules.put(name, ModuleAndDependencies(module, dependencies, friends))
                 assert(oldValue == null) { "Module $name declared more than once" }
@@ -149,10 +148,10 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
 
             private fun writeSourceFile(fileName: String, content: String, targetDir: File) {
                 val tmpFile = File(targetDir, fileName)
-                KotlinTestUtils.mkdirs(tmpFile.parentFile)
+                KtTestUtil.mkdirs(tmpFile.parentFile)
                 tmpFile.writeText(content, Charsets.UTF_8)
             }
-        }, coroutinesPackage)
+        })
     }
 
     companion object {

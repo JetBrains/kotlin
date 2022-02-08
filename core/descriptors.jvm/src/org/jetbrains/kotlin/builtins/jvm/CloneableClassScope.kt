@@ -21,7 +21,7 @@ class CloneableClassScope(
     override fun computeDeclaredFunctions(): List<FunctionDescriptor> = listOf(
         SimpleFunctionDescriptorImpl.create(containingClass, Annotations.EMPTY, CLONE_NAME, DECLARATION, SourceElement.NO_SOURCE).apply {
             initialize(
-                null, containingClass.thisAsReceiverParameter, emptyList(), emptyList(), containingClass.builtIns.anyType,
+                null, containingClass.thisAsReceiverParameter, emptyList(), emptyList(), emptyList(), containingClass.builtIns.anyType,
                 Modality.OPEN, DescriptorVisibilities.PROTECTED
             )
         }

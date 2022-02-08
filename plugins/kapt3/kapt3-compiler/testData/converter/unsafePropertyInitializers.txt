@@ -3,9 +3,13 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class Boo {
     @org.jetbrains.annotations.NotNull()
-    private static final java.lang.String z = null;
-    @org.jetbrains.annotations.NotNull()
     public static final Boo INSTANCE = null;
+    @org.jetbrains.annotations.NotNull()
+    private static final java.lang.String z = null;
+
+    private Boo() {
+        super();
+    }
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getZ() {
@@ -16,10 +20,6 @@ public final class Boo {
     public final java.lang.String foo() {
         return null;
     }
-
-    private Boo() {
-        super();
-    }
 }
 
 ////////////////////
@@ -29,6 +29,8 @@ import java.lang.System;
 
 @kotlin.Metadata()
 public final class Foo {
+    @org.jetbrains.annotations.NotNull()
+    public static final Foo INSTANCE = null;
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String aString = "foo";
     public static final int aInt = 3;
@@ -50,8 +52,10 @@ public final class Foo {
     private static final java.lang.String j = null;
     @org.jetbrains.annotations.NotNull()
     private static final java.lang.String k = null;
-    @org.jetbrains.annotations.NotNull()
-    public static final Foo INSTANCE = null;
+
+    private Foo() {
+        super();
+    }
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getBString() {
@@ -113,10 +117,6 @@ public final class Foo {
     public final java.lang.String getK() {
         return null;
     }
-
-    private Foo() {
-        super();
-    }
 }
 
 ////////////////////
@@ -151,6 +151,10 @@ public final class HavingState {
     private final java.lang.Class<State> javaClass = null;
     @org.jetbrains.annotations.NotNull()
     private final kotlin.reflect.KClass<? extends java.lang.Object> anonymous = null;
+
+    public HavingState() {
+        super();
+    }
 
     @org.jetbrains.annotations.NotNull()
     public final State getState() {
@@ -210,10 +214,6 @@ public final class HavingState {
     @org.jetbrains.annotations.NotNull()
     public final kotlin.reflect.KClass<? extends java.lang.Object> getAnonymous() {
         return null;
-    }
-
-    public HavingState() {
-        super();
     }
 }
 

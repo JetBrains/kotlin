@@ -8,22 +8,30 @@ package org.jetbrains.kotlin.fir.analysis.extensions
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
-import org.jetbrains.kotlin.fir.extensions.AbstractFirAdditionalCheckersExtension
+import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
+import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionPointName
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
+import kotlin.reflect.KClass
 
-abstract class FirAdditionalCheckersExtension(session: FirSession) : AbstractFirAdditionalCheckersExtension(session) {
+abstract class FirAdditionalCheckersExtension(session: FirSession) : FirExtension(session) {
     companion object {
         val NAME = FirExtensionPointName("ExtensionCheckers")
     }
 
     open val declarationCheckers: DeclarationCheckers = DeclarationCheckers.EMPTY
     open val expressionCheckers: ExpressionCheckers = ExpressionCheckers.EMPTY
+    open val typeCheckers: TypeCheckers = TypeCheckers.EMPTY
 
     final override val name: FirExtensionPointName
         get() = NAME
+
+    fun interface Factory : FirExtension.Factory<FirAdditionalCheckersExtension>
+
+    final override val extensionType: KClass<out FirExtension>
+        get() = FirAdditionalCheckersExtension::class
 }
 
 val FirExtensionService.additionalCheckers: List<FirAdditionalCheckersExtension> by FirExtensionService.registeredExtensions(
-    AbstractFirAdditionalCheckersExtension::class
+    FirAdditionalCheckersExtension::class
 )

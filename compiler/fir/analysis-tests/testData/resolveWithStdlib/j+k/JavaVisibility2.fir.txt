@@ -1,0 +1,67 @@
+FILE: k.kt
+    package k
+
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|k/A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val p1: R|kotlin/Int| = Q|j/JavaPackageLocal|.<HIDDEN: j/JavaPackageLocal.javaPPackage is invisible>#
+            public get(): R|kotlin/Int|
+
+        public final val p2: R|kotlin/Int| = Q|j/JavaProtected|.<HIDDEN: j/JavaProtected.javaPProtectedStatic is invisible>#
+            public get(): R|kotlin/Int|
+
+        public final val p3: R|kotlin/Int| = R|j/JavaProtected.JavaProtected|().<HIDDEN: j/JavaProtected.javaPProtectedPackage is invisible>#
+            public get(): R|kotlin/Int|
+
+        public final fun test(): R|kotlin/Unit| {
+            Q|j/JavaProtected|.<HIDDEN: j/JavaProtected.javaMProtectedStatic is invisible>#()
+            Q|j/JavaPackageLocal|.<HIDDEN: j/JavaPackageLocal.javaMPackage is invisible>#()
+        }
+
+    }
+    public final class B : R|j/JavaProtected| {
+        public constructor(): R|k/B| {
+            super<R|j/JavaProtected|>()
+        }
+
+        public final val p1: R|kotlin/Int| = Q|j/JavaPackageLocal|.<HIDDEN: j/JavaPackageLocal.javaPPackage is invisible>#
+            public get(): R|kotlin/Int|
+
+        public final val p2: R|kotlin/Int| = Q|j/JavaProtected|.R|j/JavaProtected.javaPProtectedStatic|
+            public get(): R|kotlin/Int|
+
+        public final val p3: R|kotlin/Int| = this@R|k/B|.R|j/JavaProtected.javaPProtectedPackage|
+            public get(): R|kotlin/Int|
+
+        public final fun test(): R|kotlin/Unit| {
+            Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic|()
+            Q|j/JavaPackageLocal|.<HIDDEN: j/JavaPackageLocal.javaMPackage is invisible>#()
+        }
+
+    }
+FILE: j.kt
+    package j
+
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|j/C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val p1: R|kotlin/Int| = Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaPPackage|
+            public get(): R|kotlin/Int|
+
+        public final val p2: R|kotlin/Int| = Q|j/JavaProtected|.R|j/JavaProtected.javaPProtectedStatic|
+            public get(): R|kotlin/Int|
+
+        public final val p3: R|kotlin/Int| = R|j/JavaProtected.JavaProtected|().R|j/JavaProtected.javaPProtectedPackage|
+            public get(): R|kotlin/Int|
+
+        public final fun test(): R|kotlin/Unit| {
+            Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic|()
+            Q|j/JavaProtected|.R|j/JavaProtected.javaMProtectedStatic|()
+            Q|j/JavaPackageLocal|.R|j/JavaPackageLocal.javaMPackage|()
+        }
+
+    }

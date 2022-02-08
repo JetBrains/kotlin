@@ -1,9 +1,8 @@
-// FILE: inlined.kt
-// COMMON_COROUTINES_TEST
-// WITH_RUNTIME
+// CHECK_STATE_MACHINE
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
-// CHECK_STATE_MACHINE
+// WITH_STDLIB
+// FILE: inlined.kt
 
 interface SuspendRunnable {
     suspend fun run1()
@@ -26,9 +25,7 @@ suspend inline fun crossinlineMe(crossinline c1: suspend () -> Unit, crossinline
 }
 
 // FILE: inlineSite.kt
-// COMMON_COROUTINES_TEST
-
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import helpers.*
 
 fun builder(c: suspend () -> Unit) {

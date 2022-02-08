@@ -1,0 +1,104 @@
+@kotlin.Metadata
+public final class BinaryDivExpr {
+    // source: 'BinaryOperators.kt'
+    public method <init>(@org.jetbrains.annotations.NotNull p0: Expr, @org.jetbrains.annotations.NotNull p1: Expr): void
+}
+
+@kotlin.Metadata
+public abstract class BinaryExpr {
+    // source: 'BinaryOperators.kt'
+    private final @org.jetbrains.annotations.NotNull field arg1: Expr
+    private final @org.jetbrains.annotations.NotNull field arg2: Expr
+    private method <init>(p0: Expr, p1: Expr): void
+    public synthetic method <init>(p0: Expr, p1: Expr, p2: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @org.jetbrains.annotations.NotNull method getArg1(): Expr
+    public final @org.jetbrains.annotations.NotNull method getArg2(): Expr
+    permittedSubclass: BinaryDivExpr
+    permittedSubclass: BinaryMinusExpr
+    permittedSubclass: BinaryMulExpr
+    permittedSubclass: BinaryPlusExpr
+}
+
+@kotlin.Metadata
+public final class BinaryMinusExpr {
+    // source: 'BinaryOperators.kt'
+    public method <init>(@org.jetbrains.annotations.NotNull p0: Expr, @org.jetbrains.annotations.NotNull p1: Expr): void
+}
+
+@kotlin.Metadata
+public final class BinaryMulExpr {
+    // source: 'BinaryOperators.kt'
+    public method <init>(@org.jetbrains.annotations.NotNull p0: Expr, @org.jetbrains.annotations.NotNull p1: Expr): void
+}
+
+@kotlin.Metadata
+public final class BinaryPlusExpr {
+    // source: 'BinaryOperators.kt'
+    public method <init>(@org.jetbrains.annotations.NotNull p0: Expr, @org.jetbrains.annotations.NotNull p1: Expr): void
+}
+
+@kotlin.Metadata
+public final class DoubleExpr {
+    // source: 'Literals.kt'
+    private final field value: double
+    public method <init>(p0: double): void
+    public final method getValue(): double
+}
+
+@kotlin.Metadata
+public interface Expr {
+    // source: 'Expr.kt'
+    permittedSubclass: BinaryExpr
+    permittedSubclass: DoubleExpr
+    permittedSubclass: IntExpr
+    permittedSubclass: ParensExpr
+    permittedSubclass: UnaryExpr
+    permittedSubclass: VarExpr
+}
+
+@kotlin.Metadata
+public final class IntExpr {
+    // source: 'Literals.kt'
+    private final field value: int
+    public method <init>(p0: int): void
+    public final method getValue(): int
+}
+
+@kotlin.Metadata
+public final class ParensExpr {
+    // source: 'Expr.kt'
+    private final @org.jetbrains.annotations.NotNull field arg: Expr
+    public method <init>(@org.jetbrains.annotations.NotNull p0: Expr): void
+    public final @org.jetbrains.annotations.NotNull method getArg(): Expr
+}
+
+@kotlin.Metadata
+public abstract class UnaryExpr {
+    // source: 'UnaryOperators.kt'
+    private final @org.jetbrains.annotations.NotNull field arg: Expr
+    private method <init>(p0: Expr): void
+    public synthetic method <init>(p0: Expr, p1: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @org.jetbrains.annotations.NotNull method getArg(): Expr
+    permittedSubclass: UnaryMinusExpr
+    permittedSubclass: UnaryPlusExpr
+}
+
+@kotlin.Metadata
+public final class UnaryMinusExpr {
+    // source: 'UnaryOperators.kt'
+    public method <init>(@org.jetbrains.annotations.NotNull p0: Expr): void
+}
+
+@kotlin.Metadata
+public final class UnaryPlusExpr {
+    // source: 'UnaryOperators.kt'
+    public method <init>(@org.jetbrains.annotations.NotNull p0: Expr): void
+}
+
+@kotlin.Metadata
+public final class VarExpr {
+    // source: 'Expr.kt'
+    private final @org.jetbrains.annotations.NotNull field name: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final @org.jetbrains.annotations.NotNull method getName(): java.lang.String
+}

@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class S(val string: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class S(val string: String)
 
 class Test(val s: S) {
     constructor(x: String, s: S) : this(S(x + s.string))

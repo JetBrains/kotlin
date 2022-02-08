@@ -1,3 +1,0 @@
-class A {
-    public operator fun plus(other: A): A = A()
-}

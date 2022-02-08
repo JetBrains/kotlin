@@ -1,0 +1,35 @@
+FILE: propertyWithFunctionalType.kt
+    public abstract interface B : R|kotlin/Any| {
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final fun <T> property(initialValue: R|T|): R|kotlin/properties/ReadWriteProperty<A, T>| {
+            ^property Null(null)!!
+        }
+
+        public final var conventer: R|(B) -> B|by this@R|/A|.R|/A.property|<R|(B) -> B|>(property@fun <anonymous>(it: R|B|): R|B| <inline=NoInline>  {
+            ^ R|<local>/it|
+        }
+        )
+            public get(): R|(B) -> B| {
+                ^ this@R|/A|.D|/A.conventer|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|(B) -> B|>|(this@R|/A|, ::R|/A.conventer|)
+            }
+            public set(<set-?>: R|(B) -> B|): R|kotlin/Unit| {
+                this@R|/A|.D|/A.conventer|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/A|, ::R|/A.conventer|, R|<local>/conventer|)
+            }
+
+        public final var conventerWithExpectedType: R|(B) -> B|by this@R|/A|.R|/A.property|<R|(B) -> B|>(property@fun <anonymous>(it: R|B|): R|B| <inline=NoInline>  {
+            ^ R|<local>/it|
+        }
+        )
+            public get(): R|(B) -> B| {
+                ^ this@R|/A|.D|/A.conventerWithExpectedType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|Stub (chain inference): TypeVariable(_T)|>|(this@R|/A|, ::R|/A.conventerWithExpectedType|)
+            }
+            public set(<set-?>: R|(B) -> B|): R|kotlin/Unit| {
+                this@R|/A|.D|/A.conventerWithExpectedType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(this@R|/A|, ::R|/A.conventerWithExpectedType|, R|<local>/conventerWithExpectedType|)
+            }
+
+    }

@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor;
-import org.jetbrains.kotlin.types.refinement.TypeRefinement;
 import org.jetbrains.kotlin.utils.SmartSet;
 
 import java.util.*;
@@ -49,7 +48,7 @@ public class TypeUtils {
 
         @NotNull
         @Override
-        public SimpleType replaceAnnotations(@NotNull Annotations newAnnotations) {
+        public SimpleType replaceAttributes(@NotNull TypeAttributes newAttributes) {
             throw new IllegalStateException(name);
         }
 
@@ -222,7 +221,7 @@ public class TypeUtils {
     ) {
         List<TypeProjection> arguments = getDefaultTypeProjections(typeConstructor.getParameters());
         return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-                Annotations.Companion.getEMPTY(),
+                TypeAttributes.Companion.getEmpty(),
                 typeConstructor,
                 arguments,
                 false,
@@ -302,6 +301,11 @@ public class TypeUtils {
         }
         if (isTypeParameter(type)) {
             return hasNullableSuperType(type);
+        }
+        if (type instanceof AbstractStubType) {
+            NewTypeVariableConstructor typeVariableConstructor = (NewTypeVariableConstructor) ((AbstractStubType) type).getOriginalTypeVariable();
+            TypeParameterDescriptor typeParameter = typeVariableConstructor.getOriginalTypeParameter();
+            return typeParameter == null || hasNullableSuperType(typeParameter.getDefaultType());
         }
 
         TypeConstructor constructor = type.getConstructor();
@@ -443,7 +447,8 @@ public class TypeUtils {
 
         FlexibleType flexibleType = unwrappedType instanceof FlexibleType ? (FlexibleType) unwrappedType : null;
         if (flexibleType != null
-            && (contains(flexibleType.getLowerBound(), isSpecialType, visited) || contains(flexibleType.getUpperBound(), isSpecialType, visited))) {
+            && (contains(flexibleType.getLowerBound(), isSpecialType, visited)
+                || contains(flexibleType.getUpperBound(), isSpecialType, visited))) {
             return true;
         }
 
@@ -462,7 +467,8 @@ public class TypeUtils {
         }
 
         for (TypeProjection projection : type.getArguments()) {
-            if (!projection.isStarProjection() && contains(projection.getType(), isSpecialType, visited)) return true;
+            if (projection.isStarProjection()) continue;
+            if (contains(projection.getType(), isSpecialType, visited)) return true;
         }
         return false;
     }

@@ -9,7 +9,7 @@ fun <T> copyWhenGreater(list: List<T>, threshold: T): List<String>
 //         │    │        copyWhenGreater.<anonymous>.it: T
 //         │    │        │  fun (Comparable<T>).compareTo(T): Int
 //         │    │        │  │ copyWhenGreater.threshold: T
-//         │    │        │  │ │           fun <T, R> collections/Iterable<T>.map<T, String>((T) -> String): collections/List<String>
+//         │    │        │  │ │           fun <T, R> collections/Iterable<T>.map<T, String>((T) -> R): collections/List<R>
 //         │    │        │  │ │           │     copyWhenGreater.<anonymous>.it: T
 //         │    │        │  │ │           │     │  fun (Any).toString(): String
 //         │    │        │  │ │           │     │  │
@@ -18,11 +18,11 @@ fun <T> copyWhenGreater(list: List<T>, threshold: T): List<String>
 
 fun main() {
 //      collections/List<String>
-//      │      fun <T> collections/listOf<String>(vararg String): collections/List<String>
+//      │      fun <T> collections/listOf<String>(vararg T): collections/List<T>
 //      │      │
     val list = listOf("1", "2", "3")
 //      collections/List<String>
-//      │      fun <T : CharSequence> copyWhenGreater<String>(collections/List<String>, String): collections/List<String> where T : Comparable<String>
+//      │      fun <T : CharSequence> copyWhenGreater<String>(collections/List<T>, T): collections/List<String> where T : Comparable<T>
 //      │      │               val main.list: collections/List<String>
 //      │      │               │
     val copy = copyWhenGreater(list, "2")

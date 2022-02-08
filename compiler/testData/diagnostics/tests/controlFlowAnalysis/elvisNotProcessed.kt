@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // See KT-8277
 // NI_EXPECTED_FILE
 
@@ -12,16 +11,16 @@ else {
 }
 
 val ww = if (true) {
-    <!OI;TYPE_MISMATCH!>{ true }<!> <!USELESS_ELVIS!>?: null!!<!>
+    { true } <!USELESS_ELVIS!>?: null!!<!>
 }
 else if (true) {
-    <!OI;TYPE_MISMATCH!>{ true }<!> <!USELESS_ELVIS!>?: null!!<!>
+    { true } <!USELESS_ELVIS!>?: null!!<!>
 }
 else {
     null!!
 }
 
-val <!OI;IMPLICIT_NOTHING_PROPERTY_TYPE!>n<!> = null ?: (null ?: <!OI;TYPE_MISMATCH!>{ true }<!>)
+val n = null ?: (null ?: { true })
 
 fun l(): (() -> Boolean)? = null
 
@@ -34,6 +33,6 @@ val bbb = null ?: ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>)
 val bbbb = ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>) ?: ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>)
 
 fun f(x : Long?): Long {
-    var a = x ?: (<!OI;TYPE_MISMATCH!>fun() {}<!> <!USELESS_ELVIS!>?: <!OI;TYPE_MISMATCH!>fun() {}<!><!>)
-    return <!NI;TYPE_MISMATCH, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>
+    var a = x ?: (fun() {} <!USELESS_ELVIS!>?: fun() {}<!>)
+    return <!TYPE_MISMATCH!>a<!>
 }

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotate
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.File
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
@@ -132,7 +133,7 @@ class ScriptGenTest : CodegenTestCase() {
             add(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, NO_PARAM_SCRIPT_DEFINITION)
             put(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, true)
 
-            addKotlinSourceRoots(sourcePaths.map { "${KotlinTestUtils.getTestDataPathBase()}/codegen/$it" })
+            addKotlinSourceRoots(sourcePaths.map { "${KtTestUtil.getTestDataPathBase()}/codegen/$it" })
             addJvmClasspathRoots(additionalDependencies)
         }
         loadScriptingPlugin(configuration)

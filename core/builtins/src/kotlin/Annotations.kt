@@ -97,6 +97,10 @@ public enum class DeprecationLevel {
 @MustBeDocumented
 public annotation class ExtensionFunctionType
 
+@Target(TYPE)
+@MustBeDocumented
+public annotation class ContextFunctionTypeParams(val count: Int)
+
 /**
  * Annotates type arguments of functional type and holds corresponding parameter name specified by the user in type declaration (if any).
  */

@@ -1,4 +1,3 @@
-// FIR_IGNORE
 interface Base {
     fun printMessage()
     fun printMessageLine()
@@ -36,7 +35,7 @@ fun main() {
     Derived(b).printMessage()
 //  constructor Derived(Base)
 //  │       val main.b: BaseImpl
-//  │       │  fun (Derived).printMessageLine(): Unit
+//  │       │  fun (Base).printMessageLine(): Unit
 //  │       │  │
     Derived(b).printMessageLine()
 }

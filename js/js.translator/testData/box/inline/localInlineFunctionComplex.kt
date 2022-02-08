@@ -1,7 +1,7 @@
 // EXPECTED_REACHABLE_NODES: 1291
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: add
+// CHECK_CONTAINS_NO_CALLS: addToState
 
 internal data class State(var count: Int = 0)
 
@@ -11,7 +11,7 @@ internal inline fun repeatAction(times: Int, action: () -> Unit) {
     }
 }
 
-internal fun add(state: State, a: Int, b: Int): Int {
+internal fun addToState(state: State, a: Int, b: Int): Int {
     inline fun inc(a: Int): Int {
         return a + 1
     }
@@ -38,7 +38,7 @@ internal fun add(state: State, a: Int, b: Int): Int {
 }
 
 fun box(): String {
-    assertEquals(20, add(State(), 4, 5))
+    assertEquals(20, addToState(State(), 4, 5))
 
     return "OK"
 }

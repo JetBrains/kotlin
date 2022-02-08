@@ -1,3 +1,0 @@
-[NotNull Values]
-3 	open class A(<bold>var n: Int</bold>) { (in A)
-3 		open class A(<bold>var n: Int</bold>) { (in A)

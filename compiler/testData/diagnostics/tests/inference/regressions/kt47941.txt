@@ -1,0 +1,33 @@
+package
+
+public fun </*0*/ K> foo(/*0*/ y: kotlin.collections.List<K?>, /*1*/ x: Inv<in K?>, /*2*/ p: (Inv<K?>, K?) -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ M> materialize(): M
+public fun </*0*/ T : Metric?> register(/*0*/ name: kotlin.String, /*1*/ metric: T): T?
+
+public final class Counter : Metric {
+    public constructor Counter()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Gauge</*0*/ T> : Metric {
+    public constructor Gauge</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv</*0*/ L> {
+    public constructor Inv</*0*/ L>(/*0*/ x: L)
+    public final var x: L
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public sealed interface Metric {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

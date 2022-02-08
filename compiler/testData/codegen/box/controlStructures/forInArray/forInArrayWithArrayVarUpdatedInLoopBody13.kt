@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // See https://youtrack.jetbrains.com/issue/KT-21354
 

@@ -1,5 +1,0 @@
-fun main(args: Array<String>) {
-    println(3)
-    println(5)
-    println(3 + 5)
-}

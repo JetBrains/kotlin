@@ -2,15 +2,12 @@ description 'Kotlin Script Runtime'
 
 apply plugin: 'kotlin'
 
-configureJvm6Project(project)
+JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_6)
+
 configurePublishing(project)
 
 dependencies {
     compileOnly kotlinStdlib()
-}
-
-configurations {
-    mainJar
 }
 
 sourceSets {
@@ -25,19 +22,15 @@ jar {
     manifestAttributes(manifest, project, 'Main')
 }
 
-artifacts {
-    mainJar jar
-}
-
 configureSourcesJar()
 configureJavadocJar()
 
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [
-            "-Xallow-kotlin-package",
-            "-Xnormalize-constructor-calls=enable",
+        "-Xallow-kotlin-package",
+        "-Xsuppress-deprecated-jvm-target-warning",
     ]
     kotlinOptions.moduleName = project.name
 }
 
-configureJvmIrBackend(project)
+configureFrontendIr(project)

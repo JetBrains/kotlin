@@ -1,3 +1,4 @@
+// LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION
 
 fun t1() : Int{
@@ -68,12 +69,12 @@ fun t5() : Int {
     return 1
     <!UNREACHABLE_CODE!>2<!>
   }
-  while (<!UNREACHABLE_CODE!>1 > 2<!>)
+  while (<!NON_TRIVIAL_BOOLEAN_CONSTANT, UNREACHABLE_CODE!>1 > 2<!>)
   <!UNREACHABLE_CODE!>return 1<!>
 }
 
 fun t6() : Int {
-  while (1 > 2) {
+  while (<!NON_TRIVIAL_BOOLEAN_CONSTANT!>1 > 2<!>) {
     return 1
     <!UNREACHABLE_CODE!>2<!>
   }
@@ -81,7 +82,7 @@ fun t6() : Int {
 }
 
 fun t6break() : Int {
-  while (1 > 2) {
+  while (<!NON_TRIVIAL_BOOLEAN_CONSTANT!>1 > 2<!>) {
     break
     <!UNREACHABLE_CODE!>2<!>
   }

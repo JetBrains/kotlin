@@ -13,14 +13,16 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 class WasmModuleFragmentGenerator(
     backendContext: WasmBackendContext,
-    wasmModuleFragment: WasmCompiledModuleFragment
+    wasmModuleFragment: WasmCompiledModuleFragment,
+    allowIncompleteImplementations: Boolean,
 ) {
     private val declarationGenerator =
         DeclarationGenerator(
             WasmModuleCodegenContextImpl(
                 backendContext,
-                wasmModuleFragment
-            )
+                wasmModuleFragment,
+            ),
+            allowIncompleteImplementations
         )
 
     fun generateModule(irModuleFragment: IrModuleFragment) {

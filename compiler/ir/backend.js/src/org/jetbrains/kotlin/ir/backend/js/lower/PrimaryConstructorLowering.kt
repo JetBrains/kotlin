@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
 // Create primary constructor if it doesn't exist
-class PrimaryConstructorLowering(context: JsCommonBackendContext) : DeclarationTransformer {
+class PrimaryConstructorLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
 
     private var IrClass.syntheticPrimaryConstructor by context.mapping.classToSyntheticPrimaryConstructor
 
@@ -43,13 +43,10 @@ class PrimaryConstructorLowering(context: JsCommonBackendContext) : DeclarationT
     private val unitType = context.irBuiltIns.unitType
 
     private fun createPrimaryConstructor(irClass: IrClass): IrConstructor {
-        // TODO better API for declaration creation. This case doesn't fit the usual transformFlat-like API.
-        val declaration = stageController.unrestrictDeclarationListsAccess {
-            irClass.addConstructor {
-                origin = SYNTHETIC_PRIMARY_CONSTRUCTOR
-                isPrimary = true
-                visibility = DescriptorVisibilities.PRIVATE
-            }
+        val declaration = irClass.addConstructor {
+            origin = SYNTHETIC_PRIMARY_CONSTRUCTOR
+            isPrimary = true
+            visibility = DescriptorVisibilities.PRIVATE
         }
 
         declaration.body = irClass.run {

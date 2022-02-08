@@ -1,4 +1,0 @@
-// "Replace annotation with kotlin.annotation.MustBeDocumented" "true"
-
-@MustBeDocumented<caret>
-annotation class Foo

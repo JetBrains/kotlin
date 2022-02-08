@@ -1,0 +1,24 @@
+KtKotlinPropertySymbol:
+  callableIdIfNonLocal: test/MyInterface.withOwnGeneric_InterfaceWithValBase
+  name: withOwnGeneric_InterfaceWithValBase
+  origin: LIBRARY
+
+KtKotlinPropertySymbol:
+  callableIdIfNonLocal: test/Inheritor.withOwnAndOuterGenericAsTypeBound_InterfaceWithValBase
+  name: withOwnAndOuterGenericAsTypeBound_InterfaceWithValBase
+  origin: SOURCE
+
+KtFunctionSymbol:
+  callableIdIfNonLocal: kotlin/Any.equals
+  name: equals
+  origin: LIBRARY
+
+KtFunctionSymbol:
+  callableIdIfNonLocal: kotlin/Any.hashCode
+  name: hashCode
+  origin: LIBRARY
+
+KtFunctionSymbol:
+  callableIdIfNonLocal: kotlin/Any.toString
+  name: toString
+  origin: LIBRARY

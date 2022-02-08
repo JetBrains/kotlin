@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 package uninitialized_reassigned_variables
 
 fun doSmth(s: String) {}
@@ -39,7 +38,7 @@ fun t1(b : Boolean) {
         return;
     }
     doSmth(i)
-    if (i is Int) {
+    if (<!USELESS_IS_CHECK!>i is Int<!>) {
         return;
     }
 }
@@ -55,7 +54,7 @@ fun t2() {
 class A() {}
 
 fun t4(a: A) {
-    a = A()
+    <!VAL_REASSIGNMENT!>a<!> = A()
 }
 
 // ------------------------------------------------
@@ -63,7 +62,7 @@ fun t4(a: A) {
 
 fun t1() {
     val a : Int = 1
-    a = 2
+    <!VAL_REASSIGNMENT!>a<!> = 2
 
     var b : Int = 1
     b = 3
@@ -83,24 +82,24 @@ enum class ProtocolState {
 
 fun t3() {
    val x: ProtocolState = ProtocolState.WAITING
-   x = x.signal()
-   x = x.signal() //repeat for x
+   <!VAL_REASSIGNMENT!>x<!> = x.signal()
+   <!VAL_REASSIGNMENT!>x<!> = x.signal() //repeat for x
 }
 
 fun t4() {
     val x = 1
-    <!VARIABLE_EXPECTED!>x<!> += 2
+    <!VAL_REASSIGNMENT!>x<!> += 2
     val y = 3
-    <!VARIABLE_EXPECTED!>y<!> *= 4
+    <!VAL_REASSIGNMENT!>y<!> *= 4
     var z = 5
     z -= y
 }
 
 fun t5() {
     for (i in 0..2) {
-        <!VARIABLE_EXPECTED!>i<!> += 1
+        <!VAL_REASSIGNMENT!>i<!> += 1
         fun t5() {
-            <!VARIABLE_EXPECTED!>i<!> += 3
+            <!VAL_REASSIGNMENT!>i<!> += 3
         }
     }
 }
@@ -159,7 +158,7 @@ class AnonymousInitializers(var a: String, val b: String) {
         }
     }
 
-    val o: String
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val o: String<!>
     init {
         if (1 < 3) {
             o = "a"
@@ -189,14 +188,14 @@ class AnonymousInitializers(var a: String, val b: String) {
 }
 
 fun reassignFunParams(a: Int) {
-    a = 1
+    <!VAL_REASSIGNMENT!>a<!> = 1
 }
 
 open class Open(a: Int, w: Int) {}
 
 class LocalValsVsProperties(val a: Int, w: Int) : Open(a, w) {
     val x : Int
-    val y : Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y : Int<!>
     init {
         x = 1
         val b = x
@@ -213,7 +212,7 @@ class LocalValsVsProperties(val a: Int, w: Int) : Open(a, w) {
     var xx = w
     var yy : Int
     init {
-        <!VARIABLE_EXPECTED!>w<!> += 1
+        <!VAL_REASSIGNMENT!>w<!> += 1
         yy = w
     }
 }
@@ -265,7 +264,7 @@ class ClassObject() {
 fun foo() {
     val a = object {
         val x : Int
-        val y : Int
+        <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y : Int<!>
         val z : Int
         init {
             x = 1
@@ -279,11 +278,11 @@ fun foo() {
 }
 
 class TestObjectExpression() {
-    val a : Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val a : Int<!>
     fun foo() {
         val a = object {
             val x : Int
-            val y : Int
+            <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y : Int<!>
             init {
                 if (true)
                     x = 12
@@ -306,7 +305,7 @@ class TestObjectExpression() {
 
 object TestObjectDeclaration {
     val x : Int
-    val y : Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val y : Int<!>
     init {
         x = 1
     }
@@ -326,7 +325,7 @@ fun func() {
     val a = object {
         val x = b
         init {
-            b = 4
+            <!VAL_REASSIGNMENT!>b<!> = 4
         }
     }
 }

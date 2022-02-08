@@ -1,9 +1,0 @@
-// MOVE: down
-val t = baz(
-        a,
-        b,
-        c
-) {
-    val w = ""
-    <caret>val v = ""
-}

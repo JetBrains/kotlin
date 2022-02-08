@@ -1,20 +1,21 @@
 // !CHECK_TYPE
+// WITH_EXTENDED_CHECKERS
 
 package a
 
-import java.util.Iterator
-import java.lang.Comparable as Comp
+import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.util.Iterator<!>
+import <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Comparable<!> as Comp
 
 import checkSubtype
 
-fun bar(any: Any): java.lang.Iterable<Int>? {
-    val a: java.lang.Comparable<String>? = null
-    val b: Iterable<Integer>
-    val c : Iterator<String>? = null
+fun bar(any: Any): <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Iterable<Int><!>? {
+    val <!UNUSED_VARIABLE!>a<!>: <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Comparable<String><!>? = null
+    val <!UNUSED_VARIABLE!>b<!>: Iterable<<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Integer<!>>
+    val <!UNUSED_VARIABLE!>c<!> : <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Iterator<String><!>? = null
 
-    if (any is Iterator<*>) {
-        checkSubtype<Iterator<*>>(any)
+    if (any is <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Iterator<*><!>) {
+        checkSubtype<<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Iterator<*><!>>(any)
     }
-    any as Iterator<*>
+    any as <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Iterator<*><!>
     return null
 }

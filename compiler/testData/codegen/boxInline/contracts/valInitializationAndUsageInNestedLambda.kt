@@ -1,4 +1,5 @@
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// NO_CHECK_LAMBDA_INLINING
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 // IGNORE_BACKEND: NATIVE
 
 // FILE: 1.kt
@@ -15,7 +16,6 @@ public inline fun <R> myrun(block: () -> R): R {
 }
 
 // FILE: 2.kt
-// NO_CHECK_LAMBDA_INLINING
 
 import test.*
 

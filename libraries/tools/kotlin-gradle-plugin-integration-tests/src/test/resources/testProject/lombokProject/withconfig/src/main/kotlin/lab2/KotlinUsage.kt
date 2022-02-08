@@ -1,0 +1,16 @@
+package lab2
+
+fun main() {
+    val obj = SomePojo()
+    obj.name = "test"
+    val s: String = obj.name
+    obj.age = 12
+    val v = obj.human
+    obj.human = !v
+    println(obj)
+
+    val manualPojo = ManualPojo()
+
+    val foo: String? = manualPojo.getFoo()
+    val res: Any? = manualPojo.someMethod()
+}

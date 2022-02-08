@@ -6,9 +6,9 @@ open class WithDeprecatedCtor(val x: Int) {
     constructor() : this(0)
 }
 
-typealias DeprecatedClassAlias = DeprecatedClass
+typealias DeprecatedClassAlias = <!DEPRECATION!>DeprecatedClass<!>
 typealias WithDeprecatedCtorAlias = WithDeprecatedCtor
-typealias ArrayListOfDeprecatedClass = ArrayList<DeprecatedClass>
+typealias ArrayListOfDeprecatedClass = ArrayList<<!DEPRECATION!>DeprecatedClass<!>>
 
 class Test1 : DeprecatedClassAlias()
 

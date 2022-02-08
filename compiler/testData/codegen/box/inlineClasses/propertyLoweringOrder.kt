@@ -1,6 +1,10 @@
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 // FILE: 1.kt
 
-inline class A(val x: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class A(val x: String)
 
 fun accessProperty(y: B): A {
     y.a = A("OK")

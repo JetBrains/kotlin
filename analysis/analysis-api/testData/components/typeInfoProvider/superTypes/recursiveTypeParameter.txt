@@ -1,0 +1,13 @@
+[direct super types]
+Foo<T>
+
+[approximated direct super types]
+Foo<T>
+
+[all super types]
+Foo<T>
+kotlin.Any
+
+[approximated all super types]
+Foo<T>
+kotlin.Any

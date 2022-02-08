@@ -1,9 +1,0 @@
-package a
-
-import a.b.foo
-
-class Goo {
-    fun x() {
-        foo()
-    }
-}

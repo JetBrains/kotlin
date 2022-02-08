@@ -1,5 +1,5 @@
-data class A(val x: <!UNRESOLVED_REFERENCE!>Set<CLassNotFound><!> = setOf()) {
-    fun with(x: <!UNRESOLVED_REFERENCE!>Set<CLassNotFound>?<!> = null) {
+data class A(val x: Set<<!UNRESOLVED_REFERENCE!>CLassNotFound<!>> = setOf()) {
+    fun with(x: Set<<!UNRESOLVED_REFERENCE!>CLassNotFound<!>>? = null) {
         A(x ?: this.x)
     }
 }

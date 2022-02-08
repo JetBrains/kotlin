@@ -5,55 +5,70 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildDefaultSetterValueParameter
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(FirImplementationDetail::class)
 abstract class FirDefaultPropertyAccessor(
-    source: FirSourceElement?,
-    session: FirSession,
+    source: KtSourceElement?,
+    moduleData: FirModuleData,
     origin: FirDeclarationOrigin,
     propertyTypeRef: FirTypeRef,
     valueParameters: MutableList<FirValueParameter>,
+    propertySymbol: FirPropertySymbol,
     isGetter: Boolean,
     visibility: Visibility,
+    modality: Modality = Modality.FINAL,
+    effectiveVisibility: EffectiveVisibility? = null,
     symbol: FirPropertyAccessorSymbol
 ) : FirPropertyAccessorImpl(
     source,
-    session,
-    resolvePhase = FirResolvePhase.RAW_FIR,
+    moduleData,
+    resolvePhase = if (effectiveVisibility != null) FirResolvePhase.BODY_RESOLVE else FirResolvePhase.TYPES,
     origin,
     FirDeclarationAttributes(),
+    status = if (effectiveVisibility == null)
+        FirDeclarationStatusImpl(visibility, modality)
+    else
+        FirResolvedDeclarationStatusImpl(visibility, modality, effectiveVisibility),
     propertyTypeRef,
-    valueParameters,
-    body = null,
-    FirDeclarationStatusImpl(visibility, Modality.FINAL),
+    deprecation = null,
     containerSource = null,
     dispatchReceiverType = null,
+    valueParameters,
+    body = null,
     contractDescription = FirEmptyContractDescription,
     symbol,
+    propertySymbol,
     isGetter,
     annotations = mutableListOf(),
     typeParameters = mutableListOf(),
 ) {
-    override var resolvePhase = FirResolvePhase.BODY_RESOLVE
+    override var resolvePhase
+        get() = if (status is FirResolvedDeclarationStatus) FirResolvePhase.BODY_RESOLVE else FirResolvePhase.TYPES
+        set(_) {}
+
+    override val dispatchReceiverType: ConeSimpleKotlinType?
+        get() = propertySymbol?.dispatchReceiverType
 
     final override var body: FirBlock?
         get() = null
@@ -61,62 +76,81 @@ abstract class FirDefaultPropertyAccessor(
 
     companion object {
         fun createGetterOrSetter(
-            source: FirSourceElement?,
-            session: FirSession,
+            source: KtSourceElement?,
+            moduleData: FirModuleData,
             origin: FirDeclarationOrigin,
             propertyTypeRef: FirTypeRef,
             visibility: Visibility,
-            isGetter: Boolean
+            propertySymbol: FirPropertySymbol,
+            isGetter: Boolean,
+            parameterAnnotations: List<FirAnnotation> = emptyList(),
         ): FirDefaultPropertyAccessor {
             return if (isGetter) {
-                FirDefaultPropertyGetter(source, session, origin, propertyTypeRef, visibility)
+                FirDefaultPropertyGetter(source, moduleData, origin, propertyTypeRef, visibility, propertySymbol, Modality.FINAL)
             } else {
-                FirDefaultPropertySetter(source, session, origin, propertyTypeRef, visibility)
+                FirDefaultPropertySetter(
+                    source, moduleData, origin, propertyTypeRef, visibility, propertySymbol, Modality.FINAL,
+                    parameterAnnotations = parameterAnnotations
+                )
             }
         }
     }
 }
 
 class FirDefaultPropertyGetter(
-    source: FirSourceElement?,
-    session: FirSession,
+    source: KtSourceElement?,
+    moduleData: FirModuleData,
     origin: FirDeclarationOrigin,
     propertyTypeRef: FirTypeRef,
     visibility: Visibility,
+    propertySymbol: FirPropertySymbol,
+    modality: Modality = Modality.FINAL,
+    effectiveVisibility: EffectiveVisibility? = null,
     symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol()
 ) : FirDefaultPropertyAccessor(
     source,
-    session,
+    moduleData,
     origin,
     propertyTypeRef,
     valueParameters = mutableListOf(),
+    propertySymbol,
     isGetter = true,
     visibility = visibility,
+    modality = modality,
+    effectiveVisibility = effectiveVisibility,
     symbol = symbol
 )
 
 class FirDefaultPropertySetter(
-    source: FirSourceElement?,
-    session: FirSession,
+    source: KtSourceElement?,
+    moduleData: FirModuleData,
     origin: FirDeclarationOrigin,
     propertyTypeRef: FirTypeRef,
     visibility: Visibility,
-    symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol()
+    propertySymbol: FirPropertySymbol,
+    modality: Modality = Modality.FINAL,
+    effectiveVisibility: EffectiveVisibility? = null,
+    symbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
+    parameterAnnotations: List<FirAnnotation> = emptyList(),
 ) : FirDefaultPropertyAccessor(
     source,
-    session,
+    moduleData,
     origin,
     FirImplicitUnitTypeRef(source),
     valueParameters = mutableListOf(
         buildDefaultSetterValueParameter builder@{
-            this@builder.source = source
-            this@builder.session = session
+            this@builder.source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
+            this@builder.moduleData = moduleData
             this@builder.origin = origin
             this@builder.returnTypeRef = propertyTypeRef
-            this@builder.symbol = FirVariableSymbol(CallableId(FqName.ROOT, Name.special("<default-setter-parameter>")))
+            this@builder.symbol = FirValueParameterSymbol(StandardNames.DEFAULT_VALUE_PARAMETER)
+            this@builder.annotations += parameterAnnotations
         }
     ),
+    propertySymbol,
     isGetter = false,
-    visibility,
-    symbol
+    visibility = visibility,
+    modality = modality,
+    effectiveVisibility = effectiveVisibility,
+    symbol = symbol
 )

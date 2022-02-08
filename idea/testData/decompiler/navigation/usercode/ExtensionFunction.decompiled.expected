@@ -1,2 +1,0 @@
-MainKt.class
-public inline fun <T> T.<1>filter(predicate: (T) -> kotlin.Boolean): T? { /* compiled code */ }

@@ -1,0 +1,9 @@
+FILE: sealedClassConstructorCall.kt
+    public sealed class A : R|kotlin/Any| {
+        protected constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final val b: R|A| = <HIDDEN: /A.A is invisible>#()
+        public get(): R|A|

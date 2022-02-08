@@ -17,8 +17,8 @@ android {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile project(":libJvmClassesOnly")
-    compile project(":libAndroid")
-    compile project(":libAndroidClassesOnly")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation project(":libJvmClassesOnly")
+    implementation project(":libAndroid")
+    implementation project(":libAndroidClassesOnly")
 }

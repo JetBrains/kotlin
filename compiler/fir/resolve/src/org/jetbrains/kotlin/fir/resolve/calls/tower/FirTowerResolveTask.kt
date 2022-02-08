@@ -5,25 +5,21 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
-import org.jetbrains.kotlin.fir.asReversedFrozen
+import org.jetbrains.kotlin.fir.util.asReversedFrozen
+import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
-import org.jetbrains.kotlin.fir.resolve.FirTowerDataContext
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
-import java.util.*
-
 
 internal class TowerDataElementsForName(
     name: Name,
@@ -49,6 +45,9 @@ internal class TowerDataElementsForName(
             towerDataElement.implicitReceiver?.let { receiver -> IndexedValue(index, receiver) }
         }
     }
+
+    val emptyScopes = mutableSetOf<FirScope>()
+    val implicitReceiverValuesWithEmptyScopes = mutableSetOf<ImplicitReceiverValue<*>>()
 }
 
 internal abstract class FirBaseTowerResolveTask(
@@ -79,11 +78,11 @@ internal abstract class FirBaseTowerResolveTask(
 
     protected fun FirScope.toScopeTowerLevel(
         extensionReceiver: ReceiverValue? = null,
-        extensionsOnly: Boolean = false,
-        includeInnerConstructors: Boolean = true
+        withHideMembersOnly: Boolean = false,
+        includeInnerConstructors: Boolean = extensionReceiver != null,
     ): ScopeTowerLevel = ScopeTowerLevel(
         session, components, this,
-        extensionReceiver, extensionsOnly, includeInnerConstructors
+        extensionReceiver, withHideMembersOnly, includeInnerConstructors
     )
 
     protected fun ReceiverValue.toMemberScopeTowerLevel(
@@ -106,7 +105,7 @@ internal abstract class FirBaseTowerResolveTask(
 
         for ((depth, lexical) in towerDataElementsForName.nonLocalTowerDataElements.withIndex()) {
             if (!lexical.isLocal && lexical.scope != null) {
-                onScope(lexical.scope, parentGroup.NonLocal(depth))
+                onScope(lexical.scope!!, parentGroup.NonLocal(depth))
             }
 
             val receiver = lexical.implicitReceiver
@@ -139,8 +138,7 @@ internal abstract class FirBaseTowerResolveTask(
             towerLevel
         )
         if (collector.isSuccess()) onSuccessfulLevel(finalGroup)
-        return result == ProcessorAction.NONE
-
+        return result == ProcessResult.SCOPE_EMPTY
     }
 }
 
@@ -164,16 +162,8 @@ internal open class FirTowerResolveTask(
     ) {
         val qualifierReceiver = createQualifierReceiver(resolvedQualifier, session, components.scopeSession)
 
-        when {
-            info.isPotentialQualifierPart -> {
-                processClassifierScope(info, qualifierReceiver, prioritized = true)
-                processQualifierScopes(info, qualifierReceiver)
-            }
-            else -> {
-                processQualifierScopes(info, qualifierReceiver)
-                processClassifierScope(info, qualifierReceiver, prioritized = false)
-            }
-        }
+        processQualifierScopes(info, qualifierReceiver)
+        processClassifierScope(info, qualifierReceiver)
 
         if (resolvedQualifier.symbol != null) {
             val typeRef = resolvedQualifier.typeRef
@@ -210,7 +200,7 @@ internal open class FirTowerResolveTask(
     }
 
     private suspend fun processClassifierScope(
-        info: CallInfo, qualifierReceiver: QualifierReceiver?, prioritized: Boolean
+        info: CallInfo, qualifierReceiver: QualifierReceiver?
     ) {
         if (qualifierReceiver == null) return
         if (info.callKind != CallKind.CallableReference &&
@@ -218,10 +208,9 @@ internal open class FirTowerResolveTask(
             qualifierReceiver.classSymbol != qualifierReceiver.originalSymbol
         ) return
         val scope = qualifierReceiver.classifierScope() ?: return
-        val group = if (prioritized) TowerGroup.ClassifierPrioritized else TowerGroup.Classifier
         processLevel(
             scope.toScopeTowerLevel(includeInnerConstructors = false), info,
-            group
+            TowerGroup.Classifier
         )
     }
 
@@ -397,12 +386,14 @@ internal open class FirTowerResolveTask(
         depth: Int?,
         explicitReceiverKind: ExplicitReceiverKind,
         parentGroup: TowerGroup
-    ) = processLevel(
-        topLevelScope.toScopeTowerLevel(
-            extensionReceiver = receiverValue, extensionsOnly = true
-        ),
-        info,
-        parentGroup.TopPrioritized(index).let { if (depth != null) it.Implicit(depth) else it },
-        explicitReceiverKind,
-    )
+    ) {
+        processLevel(
+            topLevelScope.toScopeTowerLevel(
+                extensionReceiver = receiverValue, withHideMembersOnly = true
+            ),
+            info,
+            parentGroup.TopPrioritized(index).let { if (depth != null) it.Implicit(depth) else it },
+            explicitReceiverKind,
+        )
+    }
 }

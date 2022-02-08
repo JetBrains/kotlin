@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import java.util.HashMap
 
 private fun <A> unaryOperation(
@@ -33,8 +34,8 @@ private val STRING = CompileTimeType<String>()
 private val ANY = CompileTimeType<Any>()
 
 
-private val emptyBinaryFun: Function2<BigInteger, BigInteger, BigInteger> = { <!UNUSED_ANONYMOUS_PARAMETER!>a<!>, <!UNUSED_ANONYMOUS_PARAMETER!>b<!> -> BigInteger("0") }
-private val emptyUnaryFun: Function1<Long, Long> = { <!UNUSED_ANONYMOUS_PARAMETER!>a<!> -> 1.toLong() }
+private val emptyBinaryFun: Function2<BigInteger, BigInteger, BigInteger> = { a, b -> BigInteger("0") }
+private val emptyUnaryFun: Function1<Long, Long> = { a -> 1.toLong() }
 
 private val unaryOperations: HashMap<UnaryOperationKey<*>, Pair<Function1<Any?, Any>, Function1<Long, Long>>>
         = hashMapOf<UnaryOperationKey<*>, Pair<Function1<Any?, Any>, Function1<Long, Long>>>(
@@ -42,38 +43,38 @@ private val unaryOperations: HashMap<UnaryOperationKey<*>, Pair<Function1<Any?, 
         unaryOperation(BYTE, "toInt", { a -> a.toInt() }, emptyUnaryFun),
         unaryOperation(BYTE, "minus", { a -> a.unaryMinus() }, { a -> a.unaryMinus() }),
         unaryOperation(BYTE, "minus", { a -> a.unaryMinus() }, { a -> a.unaryMinus() }),
-        unaryOperation(BYTE, "toChar", { a -> a.toChar() }, emptyUnaryFun),
+        unaryOperation(BYTE, "toChar", { a -> a.<!DEPRECATION!>toChar<!>() }, emptyUnaryFun),
         unaryOperation(BYTE, "toLong", { a -> a.toLong() }, emptyUnaryFun),
         unaryOperation(BYTE, "plus", { a -> a.unaryPlus() }, emptyUnaryFun),
         unaryOperation(BYTE, "toFloat", { a -> a.toFloat() }, emptyUnaryFun),
         unaryOperation(BYTE, "toDouble", { a -> a.toDouble() }, emptyUnaryFun),
         unaryOperation(BYTE, "toShort", { a -> a.toShort() }, emptyUnaryFun),
         unaryOperation(BYTE, "toByte", { a -> a.toByte() }, emptyUnaryFun),
-        unaryOperation(CHAR, "toInt", { a -> a.toInt() }, emptyUnaryFun),
+        unaryOperation(CHAR, "toInt", { a -> a.<!DEPRECATION!>toInt<!>() }, emptyUnaryFun),
         unaryOperation(CHAR, "toChar", { a -> a.toChar() }, emptyUnaryFun),
-        unaryOperation(CHAR, "toLong", { a -> a.toLong() }, emptyUnaryFun),
-        unaryOperation(CHAR, "toFloat", { a -> a.toFloat() }, emptyUnaryFun),
-        unaryOperation(CHAR, "toDouble", { a -> a.toDouble() }, emptyUnaryFun),
-        unaryOperation(CHAR, "toShort", { a -> a.toShort() }, emptyUnaryFun),
-        unaryOperation(CHAR, "toByte", { a -> a.toByte() }, emptyUnaryFun),
+        unaryOperation(CHAR, "toLong", { a -> a.<!DEPRECATION!>toLong<!>() }, emptyUnaryFun),
+        unaryOperation(CHAR, "toFloat", { a -> a.<!DEPRECATION!>toFloat<!>() }, emptyUnaryFun),
+        unaryOperation(CHAR, "toDouble", { a -> a.<!DEPRECATION!>toDouble<!>() }, emptyUnaryFun),
+        unaryOperation(CHAR, "toShort", { a -> a.<!DEPRECATION!>toShort<!>() }, emptyUnaryFun),
+        unaryOperation(CHAR, "toByte", { a -> a.<!DEPRECATION!>toByte<!>() }, emptyUnaryFun),
         unaryOperation(DOUBLE, "toInt", { a -> a.toInt() }, emptyUnaryFun),
         unaryOperation(DOUBLE, "minus", { a -> a.unaryMinus() }, emptyUnaryFun),
-        unaryOperation(DOUBLE, "toChar", { a -> a.toChar() }, emptyUnaryFun),
+        unaryOperation(DOUBLE, "toChar", { a -> a.<!DEPRECATION!>toChar<!>() }, emptyUnaryFun),
         unaryOperation(DOUBLE, "toLong", { a -> a.toLong() }, emptyUnaryFun),
         unaryOperation(DOUBLE, "plus", { a -> a.unaryPlus() }, emptyUnaryFun),
         unaryOperation(DOUBLE, "toFloat", { a -> a.toFloat() }, emptyUnaryFun),
         unaryOperation(DOUBLE, "toDouble", { a -> a.toDouble() }, emptyUnaryFun),
-        unaryOperation(DOUBLE, "toShort", { a -> a.<!DEPRECATION!>toShort<!>() }, emptyUnaryFun),
-        unaryOperation(DOUBLE, "toByte", { a -> a.<!DEPRECATION!>toByte<!>() }, emptyUnaryFun),
+        unaryOperation(DOUBLE, "toShort", { a -> a.<!DEPRECATION_ERROR!>toShort<!>() }, emptyUnaryFun),
+        unaryOperation(DOUBLE, "toByte", { a -> a.<!DEPRECATION_ERROR!>toByte<!>() }, emptyUnaryFun),
         unaryOperation(FLOAT, "toInt", { a -> a.toInt() }, emptyUnaryFun),
         unaryOperation(FLOAT, "minus", { a -> a.unaryMinus() }, emptyUnaryFun),
-        unaryOperation(FLOAT, "toChar", { a -> a.toChar() }, emptyUnaryFun),
+        unaryOperation(FLOAT, "toChar", { a -> a.<!DEPRECATION!>toChar<!>() }, emptyUnaryFun),
         unaryOperation(FLOAT, "toLong", { a -> a.toLong() }, emptyUnaryFun),
         unaryOperation(FLOAT, "plus", { a -> a.unaryPlus() }, emptyUnaryFun),
         unaryOperation(FLOAT, "toFloat", { a -> a.toFloat() }, emptyUnaryFun),
         unaryOperation(FLOAT, "toDouble", { a -> a.toDouble() }, emptyUnaryFun),
-        unaryOperation(FLOAT, "toShort", { a -> a.<!DEPRECATION!>toShort<!>() }, emptyUnaryFun),
-        unaryOperation(FLOAT, "toByte", { a -> a.<!DEPRECATION!>toByte<!>() }, emptyUnaryFun),
+        unaryOperation(FLOAT, "toShort", { a -> a.<!DEPRECATION_ERROR!>toShort<!>() }, emptyUnaryFun),
+        unaryOperation(FLOAT, "toByte", { a -> a.<!DEPRECATION_ERROR!>toByte<!>() }, emptyUnaryFun),
         unaryOperation(INT, "plus", { a -> a.unaryPlus() }, emptyUnaryFun),
         unaryOperation(INT, "toShort", { a -> a.toShort() }, emptyUnaryFun),
         unaryOperation(INT, "toByte", { a -> a.toByte() }, emptyUnaryFun),
@@ -90,13 +91,13 @@ private val unaryOperations: HashMap<UnaryOperationKey<*>, Pair<Function1<Any?, 
         unaryOperation(LONG, "inv", { a -> a.inv() }, emptyUnaryFun),
         unaryOperation(LONG, "toInt", { a -> a.toInt() }, emptyUnaryFun),
         unaryOperation(LONG, "minus", { a -> a.unaryMinus() }, { a -> a.unaryMinus() }),
-        unaryOperation(LONG, "toChar", { a -> a.toChar() }, emptyUnaryFun),
+        unaryOperation(LONG, "toChar", { a -> a.<!DEPRECATION!>toChar<!>() }, emptyUnaryFun),
         unaryOperation(LONG, "toLong", { a -> a.toLong() }, emptyUnaryFun),
         unaryOperation(LONG, "toDouble", { a -> a.toDouble() }, emptyUnaryFun),
         unaryOperation(LONG, "toFloat", { a -> a.toFloat() }, emptyUnaryFun),
         unaryOperation(SHORT, "toInt", { a -> a.toInt() }, emptyUnaryFun),
         unaryOperation(SHORT, "minus", { a -> a.unaryMinus() }, { a -> a.unaryMinus() }),
-        unaryOperation(SHORT, "toChar", { a -> a.toChar() }, emptyUnaryFun),
+        unaryOperation(SHORT, "toChar", { a -> a.<!DEPRECATION!>toChar<!>() }, emptyUnaryFun),
         unaryOperation(SHORT, "toLong", { a -> a.toLong() }, emptyUnaryFun),
         unaryOperation(SHORT, "plus", { a -> a.unaryPlus() }, emptyUnaryFun),
         unaryOperation(SHORT, "toFloat", { a -> a.toFloat() }, emptyUnaryFun),

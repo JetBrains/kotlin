@@ -1,0 +1,5 @@
+expression: { a: Int ->
+    val b = 1
+    a + b
+}
+expected type: kotlin/Function1<kotlin/Int, kotlin/Int>

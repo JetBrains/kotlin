@@ -1,7 +1,7 @@
 package example.library
 
 import org.w3c.dom.Text
-import kotlin.browser.*
+import kotlinx.browser.*
 
 public class Counter(val el: Text) {
     fun step(n: Int) {

@@ -25,23 +25,20 @@ import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForDeserialize
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.JvmNames.JVM_MULTIFILE_CLASS_SHORT
+import org.jetbrains.kotlin.name.JvmNames.JVM_NAME_SHORT
+import org.jetbrains.kotlin.name.JvmNames.JVM_PACKAGE_NAME_SHORT
+import org.jetbrains.kotlin.name.JvmNames.MULTIFILE_PART_NAME_DELIMITER
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 object JvmFileClassUtil {
     val JVM_NAME: FqName = FqName("kotlin.jvm.JvmName")
     val JVM_NAME_SHORT: String = JVM_NAME.shortName().asString()
-
-    val JVM_MULTIFILE_CLASS: FqName = FqName("kotlin.jvm.JvmMultifileClass")
-    val JVM_MULTIFILE_CLASS_SHORT = JVM_MULTIFILE_CLASS.shortName().asString()
-
-    val JVM_PACKAGE_NAME: FqName = FqName("kotlin.jvm.JvmPackageName")
-    private val JVM_PACKAGE_NAME_SHORT = JVM_PACKAGE_NAME.shortName().asString()
-
-    private const val MULTIFILE_PART_NAME_DELIMITER = "__"
 
     fun getPartFqNameForDeserialized(descriptor: DeserializedMemberDescriptor): FqName =
         descriptor.getImplClassNameForDeserialized()?.fqNameForTopLevelClassMaybeWithDollars
@@ -98,10 +95,14 @@ object JvmFileClassUtil {
             it.calleeExpression?.constructorReferenceExpression?.getReferencedName() == shortName
         }
 
-    private fun getLiteralStringFromAnnotation(annotation: KtAnnotationEntry): String? {
-        val argumentExpression = annotation.valueArguments.firstOrNull()?.getArgumentExpression() ?: return null
-        val stringTemplate = argumentExpression as? KtStringTemplateExpression ?: return null
-        val singleEntry = stringTemplate.entries.singleOrNull() as? KtLiteralStringTemplateEntry ?: return null
+    fun getLiteralStringFromAnnotation(annotation: KtAnnotationEntry): String? {
+        val stringTemplateExpression = annotation.valueArguments.firstOrNull()?.run {
+            when (this) {
+                is KtValueArgument -> stringTemplateExpression
+                else -> getArgumentExpression().safeAs<KtStringTemplateExpression>()
+            }
+        } ?: return null
+        val singleEntry = stringTemplateExpression.entries.singleOrNull() as? KtLiteralStringTemplateEntry ?: return null
         return singleEntry.text
     }
 }
@@ -133,7 +134,7 @@ val KtFile.javaFileFacadeFqName: FqName
 private val LOG = Logger.getInstance("JvmFileClassUtil")
 
 fun KtDeclaration.isInsideJvmMultifileClassFile() =
-    JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(containingKtFile, JvmFileClassUtil.JVM_MULTIFILE_CLASS_SHORT) != null
+    JvmFileClassUtil.findAnnotationEntryOnFileNoResolve(containingKtFile, JVM_MULTIFILE_CLASS_SHORT) != null
 
 fun DeclarationDescriptor.isTopLevelInJvmMultifileClass(): Boolean {
     if (containingDeclaration !is PackageFragmentDescriptor) return false

@@ -30,7 +30,13 @@ val propertyWithBackingField = 3.14
 @delegate:CommonAnnotation("field")
 val propertyWithDelegateField: Int by lazy { 42 }
 
-val <@JvmAnnotation("type-parameter") @CommonAnnotation("type-parameter") T : CharSequence> @receiver:JvmAnnotation("receiver") @receiver:CommonAnnotation("receiver") T.propertyWithExtensionReceiver: Int
+val <
+        @JvmAnnotation("type-parameter")
+        @CommonAnnotation("type-parameter")
+        T : CharSequence>
+        @receiver:JvmAnnotation("receiver")
+        @receiver:CommonAnnotation("receiver")
+        T.propertyWithExtensionReceiver: Int
     get() = length
 
 @JvmAnnotation("function")
@@ -39,7 +45,15 @@ fun function1(@JvmAnnotation("parameter") @CommonAnnotation("parameter") text: S
 
 @JvmAnnotation("function")
 @CommonAnnotation("function")
-fun <@JvmAnnotation("type-parameter") @CommonAnnotation("type-parameter") Q : @JvmAnnotation("type1") @CommonAnnotation("type1") Number> @receiver:JvmAnnotation("receiver") @receiver:CommonAnnotation("receiver") Q.function2(): @JvmAnnotation("type2") @CommonAnnotation("type2") Q = this
+fun <
+        @JvmAnnotation("type-parameter")
+        @CommonAnnotation("type-parameter")
+        Q : @JvmAnnotation("type1")
+        @CommonAnnotation("type1")
+        Number>
+        @receiver:JvmAnnotation("receiver")
+        @receiver:CommonAnnotation("receiver")
+        Q.function2(): @JvmAnnotation("type2") @CommonAnnotation("type2") Q = this
 
 @JvmAnnotation("class")
 @CommonAnnotation("class")

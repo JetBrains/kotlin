@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.checkers
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.serialization.NonStableParameterNamesSerializationTest
 import org.jetbrains.kotlin.storage.StorageManager
@@ -30,6 +32,7 @@ import org.jetbrains.kotlin.test.KlibTestUtil
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
+@OptIn(ObsoleteTestInfrastructure::class)
 class InteropFunctionsWithNonStableParameterNamesDiagnosticsTest : AbstractDiagnosticsTest() {
     private lateinit var klibFile: File
 
@@ -59,15 +62,16 @@ class InteropFunctionsWithNonStableParameterNamesDiagnosticsTest : AbstractDiagn
         jvmTarget: JvmTarget
     ): AnalysisResult {
         return CommonResolverForModuleFactory.analyzeFiles(
-            files = files,
-            moduleName = moduleContext.module.name,
+            files,
+            moduleContext.module.name,
             dependOnBuiltIns = true,
-            languageVersionSettings = languageVersionSettings,
-            targetPlatform = CommonPlatforms.defaultCommonPlatform,
+            languageVersionSettings,
+            CommonPlatforms.defaultCommonPlatform,
+            CompilerEnvironment,
             capabilities = mapOf(
 //                MODULE_FILES to files
             ),
-            dependenciesContainer = CommonDependenciesContainerImpl(moduleContext.module.allDependencyModules)
+            CommonDependenciesContainerImpl(moduleContext.module.allDependencyModules)
         ) { content ->
             environment.createPackagePartProvider(content.moduleContentScope)
         }

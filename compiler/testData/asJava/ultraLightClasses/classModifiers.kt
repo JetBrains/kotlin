@@ -2,7 +2,7 @@
 package pkg
 
 open class Open {
-  private class Private: Open {}
+  private class Private: Open() {}
   protected inner class Private2 {}
   internal class StaticInternal {}
 }

@@ -1,0 +1,12 @@
+class C {
+  constructor() {
+    this/*C*/(x = 0)
+  }
+
+  constructor(x: Int) {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}

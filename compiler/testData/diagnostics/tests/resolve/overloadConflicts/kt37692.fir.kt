@@ -10,5 +10,5 @@ infix fun <T : Comparable<T>, S : T?> Bar<in S>.test(t: T) { }
 infix fun <T : Comparable<T>, S : T?> Bar<in S>.test(other: Bar<in S>) {}
 
 fun checkFunctions(exp1: Foo<Int?>, exp2: Foo<Int>) {
-    exp1.<!AMBIGUITY!>test<!>(exp2)
+    exp1.<!OVERLOAD_RESOLUTION_AMBIGUITY!>test<!>(exp2)
 }

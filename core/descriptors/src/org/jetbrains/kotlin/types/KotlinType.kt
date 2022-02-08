@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeArgumentListMarker
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 /**
  * [KotlinType] has only two direct subclasses: [WrappedType] and [UnwrappedType].
@@ -52,6 +51,9 @@ sealed class KotlinType : Annotated, KotlinTypeMarker {
     abstract val arguments: List<TypeProjection>
     abstract val isMarkedNullable: Boolean
     abstract val memberScope: MemberScope
+    abstract val attributes: TypeAttributes
+    override val annotations: Annotations
+        get() = attributes.annotations
 
     abstract fun unwrap(): UnwrappedType
 
@@ -75,7 +77,8 @@ sealed class KotlinType : Annotated, KotlinTypeMarker {
     abstract fun refine(kotlinTypeRefiner: KotlinTypeRefiner): KotlinType
 
     @TypeRefinement
-    open val hasNotTrivialRefinementFactory: Boolean get() = false
+    open val hasNotTrivialRefinementFactory: Boolean
+        get() = false
 
     /* '0' means "hashCode wasn't computed"
 
@@ -124,11 +127,11 @@ abstract class WrappedType : KotlinType() {
     open fun isComputed(): Boolean = true
     protected abstract val delegate: KotlinType
 
-    override val annotations: Annotations get() = delegate.annotations
     override val constructor: TypeConstructor get() = delegate.constructor
     override val arguments: List<TypeProjection> get() = delegate.arguments
     override val isMarkedNullable: Boolean get() = delegate.isMarkedNullable
     override val memberScope: MemberScope get() = delegate.memberScope
+    override val attributes: TypeAttributes get() = delegate.attributes
 
     final override fun unwrap(): UnwrappedType {
         var result = delegate
@@ -159,7 +162,7 @@ abstract class WrappedType : KotlinType() {
  * todo: specify what happens with internal structure when we apply some [TypeSubstitutor]
  */
 sealed class UnwrappedType : KotlinType() {
-    abstract fun replaceAnnotations(newAnnotations: Annotations): UnwrappedType
+    abstract fun replaceAttributes(newAttributes: TypeAttributes): UnwrappedType
     abstract fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType
 
     final override fun unwrap(): UnwrappedType = this
@@ -174,7 +177,7 @@ sealed class UnwrappedType : KotlinType() {
  * Or more precisely, all instances are subclasses of [SimpleType] or [WrappedType] (which contains [SimpleType] inside).
  */
 abstract class SimpleType : UnwrappedType(), SimpleTypeMarker, TypeArgumentListMarker {
-    abstract override fun replaceAnnotations(newAnnotations: Annotations): SimpleType
+    abstract override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType
     abstract override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType
 
     @TypeRefinement
@@ -208,7 +211,7 @@ abstract class FlexibleType(val lowerBound: SimpleType, val upperBound: SimpleTy
 
     abstract fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions): String
 
-    override val annotations: Annotations get() = delegate.annotations
+    override val attributes: TypeAttributes get() = delegate.attributes
     override val constructor: TypeConstructor get() = delegate.constructor
     override val arguments: List<TypeProjection> get() = delegate.arguments
     override val isMarkedNullable: Boolean get() = delegate.isMarkedNullable

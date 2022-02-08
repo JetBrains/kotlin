@@ -1,38 +1,37 @@
-// !WITH_NEW_INFERENCE
-// FILE: b.kt
+// FILE: a.kt
 package outer
 
 fun Int?.optint() : Unit {}
 val Int?.optval : Unit get() = Unit
 
-fun <T: Any, E> T.foo(<!UNUSED_PARAMETER!>x<!> : E, y : A) : T   {
+fun <T: Any, E> T.foo(x : E, y : A) : T   {
   y.plus(1)
   y plus 1
   y + 1.0
 
-  this<!UNNECESSARY_SAFE_CALL!>?.<!>minus<T>(this)
+  <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>this<!UNNECESSARY_SAFE_CALL!>?.<!>minus<T>(this)<!>
 
   return this
 }
 
 class A
 
-infix operator fun A.plus(<!UNUSED_PARAMETER!>a<!> : Any) {
+infix operator fun A.plus(a : Any) {
 
   1.foo()
-  true.<!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>
+  true.<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>foo<!>(<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>
 
-  <!UNUSED_EXPRESSION!>1<!>
+  1
 }
 
-operator fun A.plus(<!UNUSED_PARAMETER!>a<!> : Int) {
-  <!UNUSED_EXPRESSION!>1<!>
+operator fun A.plus(a : Int) {
+  1
 }
 
-operator fun <T> T.minus(<!UNUSED_PARAMETER!>t<!> : T) : Int = 1
+operator fun <T> T.minus(t : T) : Int = 1
 
 fun test() {
-  val <!UNUSED_VARIABLE!>y<!> = 1.abs
+  val y = 1.abs
 }
 val Int.abs : Int
   get() = if (this > 0) this else -this;
@@ -46,15 +45,15 @@ package null_safety
 
 import outer.*
 
-        fun parse(<!UNUSED_PARAMETER!>cmd<!>: String): Command? { return null  }
+        fun parse(cmd: String): Command? { return null  }
         class Command() {
         //  fun equals(other : Any?) : Boolean
           val foo : Int = 0
         }
 
-        fun Any.<!EXTENSION_SHADOWED_BY_MEMBER!>equals<!>(<!UNUSED_PARAMETER!>other<!> : Any?) : Boolean = true
-        fun Any?.equals1(<!UNUSED_PARAMETER!>other<!> : Any?) : Boolean = true
-        fun Any.equals2(<!UNUSED_PARAMETER!>other<!> : Any?) : Boolean = true
+        fun Any.<!EXTENSION_SHADOWED_BY_MEMBER!>equals<!>(other : Any?) : Boolean = true
+        fun Any?.equals1(other : Any?) : Boolean = true
+        fun Any.equals2(other : Any?) : Boolean = true
 
         fun main() {
 
@@ -70,7 +69,7 @@ import outer.*
             command?.equals1(null)
 
             val c = Command()
-            c<!UNNECESSARY_SAFE_CALL!>?.<!>equals2(null)
+            <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>c<!UNNECESSARY_SAFE_CALL!>?.<!>equals2(null)<!>
 
-            if (command == null) <!UNUSED_EXPRESSION!>1<!>
+            if (command == null) 1
         }

@@ -1,0 +1,8 @@
+STEP 0:
+    dependencies: stdlib
+    dirty: l1.kt
+STEP 1:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.1 -> l1.kt
+    dirty: l1.kt

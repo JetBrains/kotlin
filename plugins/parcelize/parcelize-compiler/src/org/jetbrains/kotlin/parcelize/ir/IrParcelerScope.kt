@@ -13,9 +13,8 @@ import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.parcelize.ParcelizeAnnotationChecker
-import org.jetbrains.kotlin.parcelize.TYPE_PARCELER_FQ_NAMES
-import org.jetbrains.kotlin.parcelize.WRITE_WITH_FQ_NAMES
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.TYPE_PARCELER_FQ_NAMES
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_WITH_FQ_NAMES
 
 // Keep track of all custom parcelers which are currently in scope.
 // Note that custom parcelers are resolved in *reverse* lexical order.

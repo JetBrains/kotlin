@@ -1,8 +1,0 @@
-fun foo() {
-    try {
-        "aaa"
-        "aaa"
-    } finally {
-        <caret>
-    }
-}

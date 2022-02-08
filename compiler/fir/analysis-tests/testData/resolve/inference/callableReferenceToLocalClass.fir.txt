@@ -1,0 +1,18 @@
+FILE: callableReferenceToLocalClass.kt
+    public final fun <T, R> R|kotlin/collections/List<T>|.myMap(block: R|(T) -> R|): R|kotlin/collections/List<R>| {
+        ^myMap Null(null)!!
+    }
+    public final fun test_1(): R|kotlin/Unit| {
+        local final class Data : R|kotlin/Any| {
+            public constructor(x: R|kotlin/Int|): R|Data| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val x: R|kotlin/Int| = R|<local>/x|
+                public get(): R|kotlin/Int|
+
+        }
+
+        lval datas: R|kotlin/collections/List<Data>| = Null(null)!!
+        lval xs: R|kotlin/collections/List<kotlin/Int>| = R|<local>/datas|.R|/myMap|<R|Data|, R|kotlin/Int|>(Q|Data|::R|<local>/x|)
+    }

@@ -25,7 +25,8 @@ import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.JUnit4Assertions;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.utils.StringsKt;
 import org.jetbrains.org.objectweb.asm.ClassReader;
 import org.jetbrains.org.objectweb.asm.ClassVisitor;
@@ -156,9 +157,10 @@ public class OuterClassGenTest extends CodegenTestCase {
 
     private void doTest(@NotNull String classFqName, @NotNull String javaClassName, @NotNull String testDataFile) {
         File javaOut = CodegenTestUtil.compileJava(
-                Collections.singletonList(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + testDataFile + ".java"),
+                Collections.singletonList(KtTestUtil.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + testDataFile + ".java"),
                 Collections.emptyList(),
-                Collections.emptyList()
+                Collections.emptyList(),
+                JUnit4Assertions.INSTANCE
         );
 
         String javaClassPath = javaClassName.replace('.', File.separatorChar) + ".class";

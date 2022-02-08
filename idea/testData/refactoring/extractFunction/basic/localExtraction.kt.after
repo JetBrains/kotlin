@@ -1,6 +1,0 @@
-fun foo(a: Int): Int {
-    // SIBLING:
-    fun i() = a + 10
-
-    return i()
-}

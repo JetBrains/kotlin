@@ -1,8 +1,0 @@
-<node text="B.B(String)  ()" base="true">
-    <node text="JJ.JJ()  ()"/>
-    <node text="JJ.test()  ()"/>
-    <node text="B.B()  ()"/>
-    <node text="A.A(Int)  ()"/>
-    <node text="C  ()"/>
-    <node text="test()  ()"/>
-</node>

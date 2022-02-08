@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Z(val value: Int)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val value: Int)
 
 fun eq(a: Z?, b: Z) = a == b
 

@@ -1,9 +1,18 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class InlineNotNullPrimitive(val x: Int)
-inline class InlineNullablePrimitive(val x: Int?)
-inline class InlineNotNullReference(val a: Any)
-inline class InlineNullableReference(val a: Any?)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class InlineNotNullPrimitive(val x: Int)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class InlineNullablePrimitive(val x: Int?)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class InlineNotNullReference(val a: Any)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class InlineNullableReference(val a: Any?)
 
 fun test1(a: InlineNotNullPrimitive) {
     val a0 = a

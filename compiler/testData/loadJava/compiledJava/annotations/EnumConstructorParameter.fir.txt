@@ -1,6 +1,6 @@
-public final enum class EnumConstructorParameter : R|kotlin/Enum<ft<@FlexibleNullability test/EnumConstructorParameter, test/EnumConstructorParameter?>!>| {
-    public final static enum entry INSTANCE: R|@FlexibleNullability test/EnumConstructorParameter|
-    private constructor(@R|test/EnumConstructorParameter.Anno|(String(string)) s: R|ft<@FlexibleNullability kotlin/String, kotlin/String?>!|): R|test/EnumConstructorParameter|
+public final enum class EnumConstructorParameter : R|kotlin/Enum<ft<test/EnumConstructorParameter, test/EnumConstructorParameter?>>| {
+    public final static enum entry INSTANCE: R|@EnhancedNullability test/EnumConstructorParameter|
+    private constructor(@R|test/EnumConstructorParameter.Anno|(value = String(string)) s: R|ft<kotlin/String, kotlin/String?>|): R|test/EnumConstructorParameter|
 
     private constructor(x: R|kotlin/Int|): R|test/EnumConstructorParameter|
 
@@ -10,4 +10,8 @@ public final enum class EnumConstructorParameter : R|kotlin/Enum<ft<@FlexibleNul
     public final static fun valueOf(value: R|kotlin/String|): R|test/EnumConstructorParameter| {
     }
 
+    public final annotation class Anno : R|kotlin/Annotation| {
+        public constructor(value: R|kotlin/String|): R|test/EnumConstructorParameter.Anno|
+
+    }
 }

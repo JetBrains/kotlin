@@ -15,6 +15,7 @@ public class Flags {
 
     // Types
     public static final BooleanFlagField SUSPEND_TYPE = FlagField.booleanFirst();
+    public static final BooleanFlagField DEFINITELY_NOT_NULL_TYPE = FlagField.booleanAfter(SUSPEND_TYPE);
 
     // Common for declarations
 
@@ -29,8 +30,8 @@ public class Flags {
     public static final BooleanFlagField IS_DATA = FlagField.booleanAfter(IS_INNER);
     public static final BooleanFlagField IS_EXTERNAL_CLASS = FlagField.booleanAfter(IS_DATA);
     public static final BooleanFlagField IS_EXPECT_CLASS = FlagField.booleanAfter(IS_EXTERNAL_CLASS);
-    public static final BooleanFlagField IS_INLINE_CLASS = FlagField.booleanAfter(IS_EXPECT_CLASS);
-    public static final BooleanFlagField IS_FUN_INTERFACE = FlagField.booleanAfter(IS_INLINE_CLASS);
+    public static final BooleanFlagField IS_VALUE_CLASS = FlagField.booleanAfter(IS_EXPECT_CLASS);
+    public static final BooleanFlagField IS_FUN_INTERFACE = FlagField.booleanAfter(IS_VALUE_CLASS);
 
     // Constructors
 
@@ -85,8 +86,8 @@ public class Flags {
 
     // ---
 
-    public static int getTypeFlags(boolean isSuspend) {
-        return SUSPEND_TYPE.toFlags(isSuspend);
+    public static int getTypeFlags(boolean isSuspend, boolean isDefinitelyNotNull) {
+        return SUSPEND_TYPE.toFlags(isSuspend) | DEFINITELY_NOT_NULL_TYPE.toFlags(isDefinitelyNotNull);
     }
 
     public static int getClassFlags(
@@ -98,7 +99,7 @@ public class Flags {
             boolean isData,
             boolean isExternal,
             boolean isExpect,
-            boolean isInline,
+            boolean isValue,
             boolean isFun
     ) {
         return HAS_ANNOTATIONS.toFlags(hasAnnotations)
@@ -109,7 +110,7 @@ public class Flags {
                | IS_DATA.toFlags(isData)
                | IS_EXTERNAL_CLASS.toFlags(isExternal)
                | IS_EXPECT_CLASS.toFlags(isExpect)
-               | IS_INLINE_CLASS.toFlags(isInline)
+               | IS_VALUE_CLASS.toFlags(isValue)
                | IS_FUN_INTERFACE.toFlags(isFun)
                 ;
     }

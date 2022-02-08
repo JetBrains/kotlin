@@ -1,5 +1,4 @@
 // !LANGUAGE: +NewInference
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 
 fun takeArray(array: Array<String>) {}
@@ -10,7 +9,7 @@ fun test() {
     takeArray([""])
     val v = [""]
     [""]
-    [1, 2, 3].<!UNRESOLVED_REFERENCE!>size<!>
+    [1, 2, 3].size
 }
 
 fun baz(arg: Array<Int> = []) {

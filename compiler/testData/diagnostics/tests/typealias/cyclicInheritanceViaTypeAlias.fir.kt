@@ -1,7 +1,7 @@
-class A : B() {
+class A : <!CYCLIC_INHERITANCE_HIERARCHY!>B<!>() {
     open class Nested<T>
 }
 
-typealias ANested<T> = A.Nested<T>
+typealias ANested<T> = <!RECURSIVE_TYPEALIAS_EXPANSION!>A.Nested<T><!>
 
-open class B : ANested<Int>()
+open class B : <!CYCLIC_INHERITANCE_HIERARCHY, UNRESOLVED_REFERENCE!>ANested<Int><!>()

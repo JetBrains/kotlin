@@ -49,3 +49,9 @@ class CheckerSinkImpl(
     override val needYielding: Boolean
         get() = stopOnFirstError && !candidate.isSuccessful
 }
+
+fun CheckerSink.reportDiagnosticIfNotNull(diagnostic: ResolutionDiagnostic?) {
+    if (diagnostic != null) {
+        reportDiagnostic(diagnostic)
+    }
+}

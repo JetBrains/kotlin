@@ -17,7 +17,7 @@ import kotlin.contracts.*
  * @sample samples.collections.Arrays.Transformations.flattenArray
  */
 public fun <T> Array<out Array<out T>>.flatten(): List<T> {
-    val result = ArrayList<T>(sumBy { it.size })
+    val result = ArrayList<T>(sumOf { it.size })
     for (element in this) {
         result.addAll(element)
     }

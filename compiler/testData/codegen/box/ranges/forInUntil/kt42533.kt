@@ -1,7 +1,5 @@
 // IGNORE_BACKEND: JVM
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
-// IGNORE_BACKEND_FIR: JVM_IR
+// WITH_STDLIB
 
 fun box(): String {
     // These should all be empty progressions

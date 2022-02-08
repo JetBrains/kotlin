@@ -1,0 +1,182 @@
+KtValueParameterSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  hasDefaultValue: false
+  isExtension: false
+  isVararg: false
+  name: a
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Int
+  symbolKind: LOCAL
+  deprecationStatus: null
+
+KtLocalVariableSymbol:
+  callableIdIfNonLocal: null
+  isExtension: false
+  isVal: true
+  name: b
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Int
+  symbolKind: LOCAL
+  deprecationStatus: null
+
+KtAnonymousFunctionSymbol:
+  callableIdIfNonLocal: null
+  hasStableParameterNames: true
+  isExtension: false
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Int
+  symbolKind: LOCAL
+  valueParameters: [
+    KtValueParameterSymbol(a)
+  ]
+  deprecationStatus: null
+
+KtLocalVariableSymbol:
+  callableIdIfNonLocal: null
+  isExtension: false
+  isVal: true
+  name: lam1
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Function1<kotlin/Int, kotlin/Int>
+  symbolKind: LOCAL
+  deprecationStatus: null
+
+KtValueParameterSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  hasDefaultValue: false
+  isExtension: false
+  isVararg: false
+  name: a
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Int
+  symbolKind: LOCAL
+  deprecationStatus: null
+
+KtLocalVariableSymbol:
+  callableIdIfNonLocal: null
+  isExtension: false
+  isVal: true
+  name: c
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Int
+  symbolKind: LOCAL
+  deprecationStatus: null
+
+KtAnonymousFunctionSymbol:
+  callableIdIfNonLocal: null
+  hasStableParameterNames: true
+  isExtension: false
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Int
+  symbolKind: LOCAL
+  valueParameters: [
+    KtValueParameterSymbol(a)
+  ]
+  deprecationStatus: null
+
+KtLocalVariableSymbol:
+  callableIdIfNonLocal: null
+  isExtension: false
+  isVal: true
+  name: lam2
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Function1<kotlin/Int, kotlin/Int>
+  symbolKind: LOCAL
+  deprecationStatus: null
+
+KtLocalVariableSymbol:
+  callableIdIfNonLocal: null
+  isExtension: false
+  isVal: true
+  name: b
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Int
+  symbolKind: LOCAL
+  deprecationStatus: null
+
+KtAnonymousFunctionSymbol:
+  callableIdIfNonLocal: null
+  hasStableParameterNames: true
+  isExtension: false
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Int
+  symbolKind: LOCAL
+  valueParameters: [
+    KtValueParameterSymbol(it)
+  ]
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /foo
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: foo
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Unit
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  deprecationStatus: null
+
+KtValueParameterSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  hasDefaultValue: false
+  isExtension: false
+  isVararg: false
+  name: lmbd
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Function1<kotlin/Int, kotlin/Int>
+  symbolKind: LOCAL
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /bar
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: true
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: bar
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Unit
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol(lmbd)
+  ]
+  visibility: Private
+  deprecationStatus: null

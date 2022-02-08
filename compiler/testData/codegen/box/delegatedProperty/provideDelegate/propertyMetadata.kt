@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.test.*
 import kotlin.reflect.KProperty

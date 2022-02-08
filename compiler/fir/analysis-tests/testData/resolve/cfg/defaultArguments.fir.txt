@@ -1,0 +1,10 @@
+FILE: defaultArguments.kt
+    public final fun foo(): R|kotlin/Int| {
+        ^foo Int(1)
+    }
+    public final fun test(x: R|kotlin/Any|, y: R|kotlin/String| = (R|<local>/x| as R|kotlin/String|), z: R|kotlin/Int| = R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+        ^ R|/foo|()
+    }
+    )): R|kotlin/Unit| {
+        R|/foo|()
+    }

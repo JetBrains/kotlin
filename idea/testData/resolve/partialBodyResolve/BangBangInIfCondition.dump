@@ -1,9 +1,0 @@
-Resolve target: value-parameter p: kotlin.Boolean? smart-cast to kotlin.Boolean
-----------------------------------------------
-fun foo(p: Boolean?, p1: Any?) {
-    if (p!!) {
-        /* STATEMENT DELETED: print(p1!!.hashCode()) */
-    }
-
-    <caret>p.hashCode()
-}

@@ -1,0 +1,1 @@
+interface MutableEntry<K, V> : kotlin.collections.Map.Entry<K, V>

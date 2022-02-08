@@ -1,0 +1,85 @@
+// FILE: 1.kt
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+test/_1Kt$inlineMe2$2
+*L
+1#1,23:1
+*E
+
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+test/_1Kt$inlineMe1$2
+*L
+1#1,23:1
+*E
+
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+test/_1Kt$inlineMe1$2$run$1
+*L
+1#1,23:1
+*E
+
+// FILE: 2.kt
+SMAP
+2.kt
+Kotlin
+*S Kotlin
+*F
++ 1 2.kt
+_2Kt$box$1
++ 2 1.kt
+test/_1Kt
+*L
+1#1,51:1
+12#2,5:52
+19#2,3:57
+*S KotlinDebug
+*F
++ 1 2.kt
+_2Kt$box$1
+*L
+41#1:52,5
+44#1:57,3
+*E
+
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+test/_1Kt$inlineMe2$2
++ 2 2.kt
+_2Kt$box$1
+*L
+1#1,23:1
+45#2,2:24
+*E
+
+SMAP
+1.kt
+Kotlin
+*S Kotlin
+*F
++ 1 1.kt
+test/_1Kt$inlineMe1$2
++ 2 2.kt
+_2Kt$box$1
+*L
+1#1,23:1
+42#2,2:24
+*E
+

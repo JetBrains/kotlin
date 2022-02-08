@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // !DIAGNOSTICS: -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_VARIABLE
 // JAVAC_EXPECTED_FILE
@@ -33,5 +32,5 @@ fun foo() {
 
     val csIt: Iterator<CharSequence> = A<String>().iterator()
 
-    commonSupertype(A<String>().iterator(), A<Int>().iterator()).checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><A<out Any>.MyIt>() }
+    commonSupertype(A<String>().iterator(), A<Int>().iterator()).checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><A<out Any>.MyIt>() }
 }

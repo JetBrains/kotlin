@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.incremental
 
 import com.intellij.util.io.DataExternalizer
+import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.incremental.js.IrTranslationResultValue
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
@@ -47,6 +49,7 @@ open class IncrementalJsCache(
         private const val INLINE_FUNCTIONS = "inline-functions"
         private const val HEADER_FILE_NAME = "header.meta"
         private const val PACKAGE_META_FILE = "packages-meta"
+        private const val SOURCE_TO_JS_OUTPUT = "source-to-js-output"
 
         fun hasHeaderFile(cachesDir: File) = File(cachesDir, HEADER_FILE_NAME).exists()
     }
@@ -59,6 +62,7 @@ open class IncrementalJsCache(
     private val irTranslationResults = registerMap(IrTranslationResultMap(IR_TRANSLATION_RESULT_MAP.storageFile, pathConverter))
     private val inlineFunctions = registerMap(InlineFunctionsMap(INLINE_FUNCTIONS.storageFile, pathConverter))
     private val packageMetadata = registerMap(PackageMetadataMap(PACKAGE_META_FILE.storageFile))
+    private val sourceToJsOutputsMap = registerMap(SourceToJsOutputMap(SOURCE_TO_JS_OUTPUT.storageFile, pathConverter))
 
     private val dirtySources = hashSetOf<File>()
 
@@ -74,6 +78,7 @@ open class IncrementalJsCache(
 
     override fun markDirty(removedAndCompiledSources: Collection<File>) {
         removedAndCompiledSources.forEach { sourceFile ->
+            sourceToJsOutputsMap.remove(sourceFile)
             // The common prefix of all FQN parents has to be the file package
             sourceToClassesMap[sourceFile].map { it.parentOrNull()?.asString() ?: "" }.minByOrNull { it.length }?.let {
                 packageMetadata.remove(it)
@@ -94,6 +99,10 @@ open class IncrementalJsCache(
         }
     }
 
+    fun getOutputsBySource(sourceFile: File): Collection<File> {
+        return sourceToJsOutputsMap.get(sourceFile)
+    }
+
     fun compareAndUpdate(incrementalResults: IncrementalResultsConsumerImpl, changesCollector: ChangesCollector) {
         val translatedFiles = incrementalResults.packageParts
 
@@ -108,7 +117,7 @@ open class IncrementalJsCache(
                 registerOutputForFile(srcFile, classId.asSingleFqName())
 
                 if (protoData is ClassProtoData) {
-                    addToClassStorage(protoData.proto, protoData.nameResolver, srcFile)
+                    addToClassStorage(protoData, srcFile)
                 }
             }
 
@@ -128,8 +137,8 @@ open class IncrementalJsCache(
         }
 
         for ((srcFile, irData) in incrementalResults.irFileData) {
-            val (fileData, types, signatures, strings, declarations, bodies, fqn) = irData
-            irTranslationResults.put(srcFile, fileData, types, signatures, strings, declarations, bodies, fqn)
+            val (fileData, types, signatures, strings, declarations, bodies, fqn, debugInfos) = irData
+            irTranslationResults.put(srcFile, fileData, types, signatures, strings, declarations, bodies, fqn, debugInfos)
         }
     }
 
@@ -174,6 +183,17 @@ open class IncrementalJsCache(
                 }
             }
         }
+
+    fun updateSourceToOutputMap(
+        generatedFiles: Iterable<GeneratedFile>,
+    ) {
+        for (generatedFile in generatedFiles) {
+            for (source in generatedFile.sourceFiles) {
+                if (dirtySources.contains(source))
+                    sourceToJsOutputsMap.add(source, generatedFile.outputFile)
+            }
+        }
+    }
 }
 
 private object TranslationResultValueExternalizer : DataExternalizer<TranslationResultValue> {
@@ -214,17 +234,20 @@ private class TranslationResultMap(
     override fun dumpValue(value: TranslationResultValue): String =
         "Metadata: ${value.metadata.md5()}, Binary AST: ${value.binaryAst.md5()}, InlineData: ${value.inlineData.md5()}"
 
+    @Synchronized
     fun put(sourceFile: File, newMetadata: ByteArray, newBinaryAst: ByteArray, newInlineData: ByteArray) {
         storage[pathConverter.toPath(sourceFile)] =
             TranslationResultValue(metadata = newMetadata, binaryAst = newBinaryAst, inlineData = newInlineData)
     }
 
+    @Synchronized
     operator fun get(sourceFile: File): TranslationResultValue? =
         storage[pathConverter.toPath(sourceFile)]
 
     fun keys(): Collection<File> =
         storage.keys.map { pathConverter.toFile(it) }
 
+    @Synchronized
     fun remove(sourceFile: File, changesCollector: ChangesCollector) {
         val path = pathConverter.toPath(sourceFile)
         val protoBytes = storage[path]!!.metadata
@@ -246,6 +269,7 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         output.writeArray(value.declarations)
         output.writeArray(value.bodies)
         output.writeArray(value.fqn)
+        value.debugInfo?.let { output.writeArray(it) }
     }
 
     private fun DataOutput.writeArray(array: ByteArray) {
@@ -260,6 +284,17 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         return filedata
     }
 
+    private fun DataInput.readArrayOrNull(): ByteArray? {
+        try {
+            val dataSize = readInt()
+            val filedata = ByteArray(dataSize)
+            readFully(filedata)
+            return filedata
+        } catch (e: Throwable) {
+            return null
+        }
+    }
+
     override fun read(input: DataInput): IrTranslationResultValue {
         val fileData = input.readArray()
         val types = input.readArray()
@@ -268,8 +303,9 @@ private object IrTranslationResultValueExternalizer : DataExternalizer<IrTransla
         val declarations = input.readArray()
         val bodies = input.readArray()
         val fqn = input.readArray()
+        val debugInfos = input.readArrayOrNull()
 
-        return IrTranslationResultValue(fileData, types, signatures, strings, declarations, bodies, fqn)
+        return IrTranslationResultValue(fileData, types, signatures, strings, declarations, bodies, fqn, debugInfos)
     }
 }
 
@@ -294,10 +330,11 @@ private class IrTranslationResultMap(
         newStrings: ByteArray,
         newDeclarations: ByteArray,
         newBodies: ByteArray,
-        fqn: ByteArray
+        fqn: ByteArray,
+        debugInfos: ByteArray?
     ) {
         storage[pathConverter.toPath(sourceFile)] =
-            IrTranslationResultValue(newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn)
+            IrTranslationResultValue(newFiledata, newTypes, newSignatures, newStrings, newDeclarations, newBodies, fqn, debugInfos)
     }
 
     operator fun get(sourceFile: File): IrTranslationResultValue? =
@@ -326,7 +363,7 @@ private class ProtoDataProvider(private val serializerProtocol: SerializerExtens
         proto.`package`.apply {
             val packageNameId = getExtensionOrNull(serializerProtocol.packageFqName)
             val packageFqName = packageNameId?.let { FqName(nameResolver.getPackageFqName(it)) } ?: FqName.ROOT
-            val packagePartClassId = ClassId(packageFqName, Name.identifier(sourceFile.nameWithoutExtension.capitalize() + "Kt"))
+            val packagePartClassId = ClassId(packageFqName, Name.identifier(sourceFile.nameWithoutExtension.capitalizeAsciiOnly() + "Kt"))
             classes[packagePartClassId] = PackagePartProtoData(this, nameResolver, packageFqName)
         }
 
@@ -347,7 +384,7 @@ fun getProtoData(sourceFile: File, metadata: ByteArray): Map<ClassId, ProtoData>
 
     proto.`package`.apply {
         val packageFqName = getExtensionOrNull(JsProtoBuf.packageFqName)?.let(nameResolver::getPackageFqName)?.let(::FqName) ?: FqName.ROOT
-        val packagePartClassId = ClassId(packageFqName, Name.identifier(sourceFile.nameWithoutExtension.capitalize() + "Kt"))
+        val packagePartClassId = ClassId(packageFqName, Name.identifier(sourceFile.nameWithoutExtension.capitalizeAsciiOnly() + "Kt"))
         classes[packagePartClassId] = PackagePartProtoData(this, nameResolver, packageFqName)
     }
 
@@ -358,6 +395,7 @@ private class InlineFunctionsMap(
     storageFile: File,
     private val pathConverter: FileToPathConverter
 ) : BasicStringMap<Map<String, Long>>(storageFile, StringToLongMapExternalizer) {
+    @Synchronized
     fun process(srcFile: File, newMap: Map<String, Long>, changesCollector: ChangesCollector) {
         val key = pathConverter.toPath(srcFile)
         val oldMap = storage[key] ?: emptyMap()
@@ -375,6 +413,7 @@ private class InlineFunctionsMap(
         }
     }
 
+    @Synchronized
     fun remove(sourceFile: File) {
         storage.remove(pathConverter.toPath(sourceFile))
     }

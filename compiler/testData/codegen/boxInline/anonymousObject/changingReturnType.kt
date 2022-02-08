@@ -1,3 +1,4 @@
+// NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 
 package test
@@ -21,7 +22,6 @@ inline fun<reified Self : Entity> Self.directed(): Task<Self> =
 
 // FILE: 2.kt
 
-//NO_CHECK_LAMBDA_INLINING
 //KT-7490
 import test.*
 

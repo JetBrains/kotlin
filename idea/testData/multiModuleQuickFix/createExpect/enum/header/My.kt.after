@@ -1,6 +1,0 @@
-// My: to be implemented
-// DISABLE-ERRORS
-expect enum class My {
-    FIRST, SECOND, LAST;
-
-}

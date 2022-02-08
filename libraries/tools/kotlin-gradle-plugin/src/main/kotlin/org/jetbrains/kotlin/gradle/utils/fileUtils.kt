@@ -26,8 +26,8 @@ internal fun Iterable<File>.pathsAsStringRelativeTo(base: File): String =
 internal fun File.relativeToRoot(project: Project): String =
     relativeOrCanonical(project.rootProject.rootDir)
 
-internal fun Iterable<File>.toSortedPathsArray(): Array<String> =
-    map { it.canonicalPath }.toTypedArray().also { Arrays.sort(it) }
+internal fun Iterable<File>.toPathsArray(): Array<String> =
+    map { it.canonicalPath }.toTypedArray()
 
 internal fun newTmpFile(prefix: String, suffix: String? = null, directory: File? = null, deleteOnExit: Boolean = true): File =
     (if (directory == null) Files.createTempFile(prefix, suffix) else Files.createTempFile(directory.toPath(), prefix, suffix))

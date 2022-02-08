@@ -1,48 +1,21 @@
 import kotlinx.benchmark.gradle.benchmark
 
-val benchmarks_version = "0.2.0-dev-7"
-buildscript {
-    val benchmarks_version = "0.2.0-dev-7"
-
-    repositories {
-        val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
-        if (cacheRedirectorEnabled) {
-            maven("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlinx")
-        } else {
-            maven("https://dl.bintray.com/kotlin/kotlinx")
-        }
-    }
-    dependencies {
-        classpath("org.jetbrains.kotlinx:kotlinx.benchmark.gradle:$benchmarks_version")
-    }
-}
-
-apply(plugin = "kotlinx.benchmark")
+val benchmarks_version = "0.3.1"
 
 plugins {
     java
     kotlin("jvm")
-}
-
-repositories {
-    val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
-    if (cacheRedirectorEnabled) {
-        maven("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlinx")
-   } else {
-        maven("https://dl.bintray.com/kotlin/kotlinx")
-    }
+    id("org.jetbrains.kotlinx.benchmark") version "0.3.1"
 }
 
 dependencies {
-    compile(kotlinStdlib())
-    compile(project(":compiler:frontend"))
-    compile(projectTests(":compiler:tests-common"))
-    compile(project(":compiler:cli"))
-    compile(intellijCoreDep()) { includeJars("intellij-core") }
-    compile(jpsStandalone()) { includeJars("jps-model") }
-    compile(intellijPluginDep("java"))
-    compile(intellijDep()) { includeIntellijCoreJarDependencies(project) }
-    compile("org.jetbrains.kotlinx:kotlinx.benchmark.runtime-jvm:$benchmarks_version")
+    api(kotlinStdlib())
+    api(project(":compiler:frontend"))
+    api(projectTests(":compiler:tests-common"))
+    api(project(":compiler:cli"))
+    api(intellijCore())
+    api(jpsModel())
+    api("org.jetbrains.kotlinx:kotlinx-benchmark-runtime:$benchmarks_version")
 }
 
 sourceSets {
@@ -92,25 +65,27 @@ benchmark {
     }
 }
 
-tasks.named("classes") {
-    doLast {
-        tasks.named("mainBenchmarkJar", Zip::class.java) {
-            isZip64 = true
-            archiveName = "benchmarks.jar"
-        }
-        listOf("mainBenchmark", "mainFirBenchmark", "mainNiBenchmark").forEach {
-            tasks.named(it, JavaExec::class.java) {
-                systemProperty("idea.home.path", intellijRootDir().canonicalPath)
-            }
-        }
-    }
+tasks.matching { it is Zip && it.name == "mainBenchmarkJar" }.configureEach {
+    this as Zip
+    isZip64 = true
+    archiveFileName.set("benchmarks.jar")
+}
+
+val benchmarkTasks = listOf("mainBenchmark", "mainFirBenchmark", "mainNiBenchmark")
+tasks.matching { it is JavaExec && it.name in benchmarkTasks }.configureEach {
+    this as JavaExec
+    dependsOn(":createIdeaHomeForTests")
+    systemProperty("idea.home.path", ideaHomePathForTests().canonicalPath)
+    systemProperty("idea.use.native.fs.for.win", false)
 }
 
 tasks.register<JavaExec>("runBenchmark") {
+    dependsOn(":createIdeaHomeForTests")
+
     // jmhArgs example: -PjmhArgs='CommonCalls -p size=500 -p isIR=true -p useNI=true -f 1'
     val jmhArgs = if (project.hasProperty("jmhArgs")) project.property("jmhArgs").toString() else ""
     val resultFilePath = "$buildDir/benchmarks/jmh-result.json"
-    val ideaHome = intellijRootDir().canonicalPath
+    val ideaHome = ideaHomePathForTests().canonicalPath
 
     val benchmarkJarPath = "$buildDir/benchmarks/main/jars/benchmarks.jar"
     args = mutableListOf("-Didea.home.path=$ideaHome", benchmarkJarPath, "-rf", "json", "-rff", resultFilePath) + jmhArgs.split("\\s".toRegex())

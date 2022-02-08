@@ -1,0 +1,2 @@
+expression: fd
+expected type: kotlin/Int

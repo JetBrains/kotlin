@@ -107,7 +107,7 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
     }
 
     private fun makeConfiguration() = KotlinTestUtils.newConfiguration(
-            ConfigurationKind.ALL, TestJdkKind.FULL_JDK, File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-stdlib.jar"), tmpdir
+        ConfigurationKind.ALL, TestJdkKind.FULL_JDK, File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-stdlib.jar"), tmpdir
     ).also {
         loadScriptingPlugin(it)
     }

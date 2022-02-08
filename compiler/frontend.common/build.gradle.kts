@@ -4,9 +4,10 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:config"))
-    compile(project(":compiler:container"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    api(project(":compiler:config"))
+    api(project(":compiler:container"))
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("com.google.guava:guava"))
 }
 
 sourceSets {

@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.resolve.calls.inference
 
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
+import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 interface NewConstraintSystem {
     val hasContradiction: Boolean
@@ -21,4 +23,8 @@ interface NewConstraintSystem {
 
     fun asConstraintSystemCompleterContext(): ConstraintSystemCompletionContext
     fun asPostponedArgumentsAnalyzerContext(): PostponedArgumentsAnalyzerContext
+    fun processForkConstraints()
 }
+
+typealias ForkPointData = List<ConstraintsFromSingleFork>
+typealias ConstraintsFromSingleFork = Set<Pair<TypeVariableMarker, Constraint>>

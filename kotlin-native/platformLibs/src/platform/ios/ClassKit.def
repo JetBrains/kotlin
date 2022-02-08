@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation CoreGraphics Foundation Security darwin posix
+language = Objective-C
+package = platform.ClassKit
+modules = ClassKit
+
+compilerOpts = -framework ClassKit
+linkerOpts = -framework ClassKit

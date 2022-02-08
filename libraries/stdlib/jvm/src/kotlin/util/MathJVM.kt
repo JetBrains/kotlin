@@ -1085,7 +1085,7 @@ public actual inline fun Float.withSign(sign: Int): Float = nativeMath.copySign(
  * Special Cases:
  *   - `NaN.ulp` is `NaN`
  *   - `x.ulp` is `+Inf` when `x` is `+Inf` or `-Inf`
- *   - `0.0.ulp` is `Float.NIN_VALUE`
+ *   - `0.0.ulp` is `Float.MIN_VALUE`
  */
 @SinceKotlin("1.2")
 @InlineOnly

@@ -1,4 +1,5 @@
-// WITH_RUNTIME
+// LANGUAGE: -SafeCallsAreAlwaysNullable
+// WITH_STDLIB
 
 /*
  * KOTLIN CODEGEN BOX SPEC TEST (POSITIVE)

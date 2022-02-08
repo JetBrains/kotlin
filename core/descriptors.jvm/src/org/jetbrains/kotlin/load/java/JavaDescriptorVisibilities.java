@@ -33,7 +33,12 @@ public class JavaDescriptorVisibilities {
     @NotNull
     public static final DescriptorVisibility PACKAGE_VISIBILITY = new DelegatedDescriptorVisibility(JavaVisibilities.PackageVisibility.INSTANCE) {
         @Override
-        public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(
+                @Nullable ReceiverValue receiver,
+                @NotNull DeclarationDescriptorWithVisibility what,
+                @NotNull DeclarationDescriptor from,
+                boolean useSpecialRulesForPrivateSealedConstructors
+        ) {
             return areInSamePackage(what, from);
         }
     };
@@ -41,7 +46,12 @@ public class JavaDescriptorVisibilities {
     @NotNull
     public static final DescriptorVisibility PROTECTED_STATIC_VISIBILITY = new DelegatedDescriptorVisibility(JavaVisibilities.ProtectedStaticVisibility.INSTANCE) {
         @Override
-        public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(
+                @Nullable ReceiverValue receiver,
+                @NotNull DeclarationDescriptorWithVisibility what,
+                @NotNull DeclarationDescriptor from,
+                boolean useSpecialRulesForPrivateSealedConstructors
+        ) {
             return isVisibleForProtectedAndPackage(receiver, what, from);
         }
     };
@@ -49,7 +59,12 @@ public class JavaDescriptorVisibilities {
     @NotNull
     public static final DescriptorVisibility PROTECTED_AND_PACKAGE = new DelegatedDescriptorVisibility(JavaVisibilities.ProtectedAndPackage.INSTANCE) {
         @Override
-        public boolean isVisible(@Nullable ReceiverValue receiver, @NotNull DeclarationDescriptorWithVisibility what, @NotNull DeclarationDescriptor from) {
+        public boolean isVisible(
+                @Nullable ReceiverValue receiver,
+                @NotNull DeclarationDescriptorWithVisibility what,
+                @NotNull DeclarationDescriptor from,
+                boolean useSpecialRulesForPrivateSealedConstructors
+        ) {
             return isVisibleForProtectedAndPackage(receiver, what, from);
         }
     };
@@ -63,7 +78,7 @@ public class JavaDescriptorVisibilities {
             return true;
         }
 
-        return DescriptorVisibilities.PROTECTED.isVisible(receiver, what, from);
+        return DescriptorVisibilities.PROTECTED.isVisible(receiver, what, from, false);
     }
 
     private static boolean areInSamePackage(@NotNull DeclarationDescriptor first, @NotNull DeclarationDescriptor second) {

@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation CoreGraphics Foundation Security darwin posix
+language = Objective-C
+package = platform.FileProvider
+modules = FileProvider
+
+compilerOpts = -framework FileProvider
+linkerOpts = -framework FileProvider

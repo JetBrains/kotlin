@@ -26,48 +26,45 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
-import org.jetbrains.kotlin.test.ConfigurationKind
-import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.test.MockLibraryUtil
-import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
-import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
+import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
 import java.io.File
 
 class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
     companion object {
-        private val TEST_DATA_PATH = "compiler/testData/loadJavaPackageAnnotations/"
+        private const val TEST_DATA_PATH = "compiler/testData/loadJavaPackageAnnotations/"
     }
 
     private fun doTest(useJavac: Boolean, configurator: (CompilerConfiguration) -> Unit) {
         val configuration = KotlinTestUtils.newConfiguration(
-                ConfigurationKind.ALL, TestJdkKind.FULL_JDK, KotlinTestUtils.getAnnotationsJar()
+            ConfigurationKind.ALL, TestJdkKind.FULL_JDK, KtTestUtil.getAnnotationsJar()
         ).apply {
             if (useJavac) {
                 put(JVMConfigurationKeys.USE_JAVAC, true)
             }
             languageVersionSettings = LanguageVersionSettingsImpl(
-                    LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(JvmAnalysisFlags.javaTypeEnhancementState to JavaTypeEnhancementState.STRICT)
+                LanguageVersion.LATEST_STABLE,
+                ApiVersion.LATEST_STABLE,
+                mapOf(JvmAnalysisFlags.javaTypeEnhancementState to JavaTypeEnhancementState.DEFAULT)
             )
             configurator(this)
         }
-        val environment =
-                KotlinCoreEnvironment.createForTests(
-                        testRootDisposable,
-                        configuration,
-                        EnvironmentConfigFiles.JVM_CONFIG_FILES
-                ).apply {
-                    if (useJavac) {
-                        registerJavac()
-                    }
-                }
+        val environment = KotlinCoreEnvironment.createForTests(
+            testRootDisposable,
+            configuration,
+            EnvironmentConfigFiles.JVM_CONFIG_FILES
+        ).apply {
+            if (useJavac) {
+                registerJavac()
+            }
+        }
         val moduleDescriptor = JvmResolveUtil.analyze(environment).moduleDescriptor
 
-        val packageFragmentDescriptor =
-                moduleDescriptor.getPackage(FqName("test")).fragments
-                        .singleOrNull {
-                            it.getMemberScope().getContributedClassifier(Name.identifier("A"), NoLookupLocation.FROM_TEST) != null
-                        }.let { assertInstanceOf(it, LazyJavaPackageFragment::class.java) }
+        val packageFragmentDescriptor = moduleDescriptor.getPackage(FqName("test")).fragments
+            .singleOrNull { it.getMemberScope().getContributedClassifier(Name.identifier("A"), NoLookupLocation.FROM_TEST) != null }
+            .let { assertInstanceOf(it, LazyJavaPackageFragment::class.java) }
 
         val annotation = packageFragmentDescriptor.annotations.findAnnotation(FqName("test.Ann"))
         assertNotNull(annotation)
@@ -107,5 +104,5 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
     }
 
     private fun prepareJar() =
-            MockLibraryUtil.compileJavaFilesLibraryToJar(TEST_DATA_PATH, "result.jar")
+        MockLibraryUtilExt.compileJavaFilesLibraryToJar(TEST_DATA_PATH, "result.jar")
 }

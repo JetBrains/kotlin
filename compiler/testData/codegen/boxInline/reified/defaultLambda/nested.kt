@@ -1,7 +1,8 @@
+// SKIP_INLINE_CHECK_IN: inlineFun$default
+// WITH_STDLIB
+// NO_CHECK_LAMBDA_INLINING
 // TARGET_BACKEND: JVM
 // FILE: 1.kt
-// SKIP_INLINE_CHECK_IN: inlineFun$default
-// WITH_RUNTIME
 package test
 
 inline fun <reified T> inlineFun(p: String, lambda: () -> String = { { p + T::class.java.simpleName } () }): String {
@@ -9,7 +10,6 @@ inline fun <reified T> inlineFun(p: String, lambda: () -> String = { { p + T::cl
 }
 
 // FILE: 2.kt
-//NO_CHECK_LAMBDA_INLINING
 import test.*
 
 class K

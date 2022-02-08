@@ -1,0 +1,100 @@
+object X1 {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var x1: Int
+    field = 0
+    get
+    set
+
+  object X2 {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    var x2: Int
+      field = 0
+      get
+      set
+
+    object X3 {
+      private constructor() /* primary */ {
+        super/*Any*/()
+        /* <init>() */
+
+      }
+
+      var x3: Int
+        field = 0
+        get
+        set
+
+    }
+
+  }
+
+}
+
+fun test1(a: IntArray) {
+  var i: Int = 0
+  val <array>: IntArray = a
+  val <index0>: Int = { // BLOCK
+    val <unary>: Int = i
+    i = <unary>.inc()
+    <unary>
+  }
+  val <unary>: Int = <array>.get(index = <index0>)
+  <array>.set(index = <index0>, value = <unary>.inc())
+  <unary> /*~> Unit */
+}
+
+fun test2() {
+  val <receiver>: X1 = X1
+  val <unary>: Int = <receiver>.<get-x1>()
+  <receiver>.<set-x1>(<set-?> = <unary>.inc())
+  <unary> /*~> Unit */
+  val <receiver>: X2 = X2
+  val <unary>: Int = <receiver>.<get-x2>()
+  <receiver>.<set-x2>(<set-?> = <unary>.inc())
+  <unary> /*~> Unit */
+  val <receiver>: X3 = X3
+  val <unary>: Int = <receiver>.<get-x3>()
+  <receiver>.<set-x3>(<set-?> = <unary>.inc())
+  <unary> /*~> Unit */
+}
+
+class B {
+  constructor(s: Int = 0) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var s: Int
+    field = s
+    get
+    set
+
+}
+
+object Host {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  operator fun B.plusAssign(b: B) {
+    <this>.<set-s>(<set-?> = <this>.<get-s>().plus(other = b.<get-s>()))
+  }
+
+}
+
+fun Host.test3(v: B) {
+  (<this>, v).plusAssign(b = B(s = 1000))
+}

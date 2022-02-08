@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.jvm.abi
 
-import com.intellij.openapi.util.io.systemIndependentPath
 import org.jetbrains.kotlin.codegen.BytecodeListingTextCollectingVisitor
 import org.jetbrains.kotlin.incremental.isClassFile
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
@@ -21,14 +20,15 @@ abstract class AbstractJvmAbiContentTest : BaseJvmAbiTest() {
             val visitor = BytecodeListingTextCollectingVisitor(
                 filter = BytecodeListingTextCollectingVisitor.Filter.EMPTY,
                 withSignatures = false,
-                api = Opcodes.API_VERSION
+                api = Opcodes.API_VERSION,
+                sortDeclarations = false, // Declaration order matters for the ABI
             )
             reader.accept(visitor, 0)
             classToBytecode[classFile] = visitor.text
         }
 
         val actual = classToBytecode.entries
-            .sortedBy { it.key.relativeTo(baseDir).systemIndependentPath }
+            .sortedBy { it.key.relativeTo(baseDir).invariantSeparatorsPath }
             .joinToString("\n") { it.value }
         val signaturesFile = testDir.resolve("signatures.txt")
         if (!signaturesFile.exists()) {

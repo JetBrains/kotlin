@@ -1,6 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !RENDER_DIAGNOSTICS_MESSAGES
-// !WITH_NEW_INFERENCE
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS)
 annotation class A
@@ -14,5 +13,5 @@ class C<T> {
 class Out<out F>
 
 fun test(a: C<out CharSequence>, y: Out<CharSequence>) {
-    a <!INAPPLICABLE_CANDIDATE!>+<!> y
+    a + <!ARGUMENT_TYPE_MISMATCH!>y<!>
 }

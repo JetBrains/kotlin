@@ -1,0 +1,17 @@
+FILE: kt50875.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    @R|kotlin/Suppress|(names = vararg(String(INVISIBLE_MEMBER), String(INVISIBLE_REFERENCE))) public final fun <K> checkNotNull(x: R|K?|, y: R|K|): R|@Exact K| {
+        ^checkNotNull R|<local>/x| ?: R|<local>/y|
+    }
+    public final fun test_1(any: R|kotlin/Any|, a: R|A|, nullableA: R|A?|): R|kotlin/Unit| {
+        lvar x: R|kotlin/Any| = R|<local>/any|
+        R|<local>/x| = R|/checkNotNull|<R|kotlin/Any|>(R|<local>/nullableA|, R|<local>/a|)
+        R|<local>/x|.<Unresolved name: foo>#()
+        R|<local>/x| = R|<local>/nullableA| ?: R|<local>/a|
+        R|<local>/x|.<Unresolved name: foo>#()
+        R|<local>/x| = R|<local>/nullableA| ?: ^test_1 Unit
+        R|<local>/x|.R|/A.foo|()
+    }

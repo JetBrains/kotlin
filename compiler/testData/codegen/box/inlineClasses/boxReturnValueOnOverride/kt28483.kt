@@ -1,4 +1,9 @@
-inline class ResultOrClosed(val x: Any?)
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class ResultOrClosed(val x: Any?)
 
 interface A<T> {
     fun foo(): T

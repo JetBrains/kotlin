@@ -1,8 +1,4 @@
-// !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
-// TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND_FIR: JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun interface Fn<T, R> {
     fun run(s: String, i: Int, t: T): R

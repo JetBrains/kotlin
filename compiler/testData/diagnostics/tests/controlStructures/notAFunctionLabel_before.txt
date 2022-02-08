@@ -9,6 +9,7 @@ public fun testLambdaLabel(): () -> kotlin.Unit
 public fun testLambdaMultipleLabels1(): () -> kotlin.Unit
 public fun testLambdaMultipleLabels2(): () -> kotlin.Unit
 public fun testLoopLabelInReturn(/*0*/ xs: kotlin.collections.List<kotlin.Int>): kotlin.Unit
+public fun testMultipleLabelsWithNestedLambda(): kotlin.Unit
 public fun testParenthesizedLambdaLabel(): () -> kotlin.Unit
 public fun testValLabelInReturn(): kotlin.Unit
 
@@ -18,3 +19,4 @@ public fun testValLabelInReturn(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

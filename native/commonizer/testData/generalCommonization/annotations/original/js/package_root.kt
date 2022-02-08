@@ -30,7 +30,13 @@ val propertyWithBackingField = 3.14
 @delegate:CommonAnnotation("field")
 val propertyWithDelegateField: Int by lazy { 42 }
 
-val <@JsAnnotation("type-parameter") @CommonAnnotation("type-parameter") T : CharSequence> @receiver:JsAnnotation("receiver") @receiver:CommonAnnotation("receiver") T.propertyWithExtensionReceiver: Int
+val <
+        @JsAnnotation("type-parameter")
+        @CommonAnnotation("type-parameter")
+        T : CharSequence>
+        @receiver:JsAnnotation("receiver")
+        @receiver:CommonAnnotation("receiver")
+        T.propertyWithExtensionReceiver: Int
     get() = length
 
 @JsAnnotation("function")
@@ -39,7 +45,14 @@ fun function1(@JsAnnotation("parameter") @CommonAnnotation("parameter") text: St
 
 @JsAnnotation("function")
 @CommonAnnotation("function")
-fun <@JsAnnotation("type-parameter") @CommonAnnotation("type-parameter") Q : @JsAnnotation("type1") @CommonAnnotation("type1") Number> @receiver:JsAnnotation("receiver") @receiver:CommonAnnotation("receiver") Q.function2(): @JsAnnotation("type2") @CommonAnnotation("type2") Q = this
+fun <
+        @JsAnnotation("type-parameter")
+        @CommonAnnotation("type-parameter")
+        Q : @JsAnnotation("type1")
+        @CommonAnnotation("type1") Number>
+        @receiver:JsAnnotation("receiver")
+        @receiver:CommonAnnotation("receiver")
+        Q.function2(): @JsAnnotation("type2") @CommonAnnotation("type2") Q = this
 
 @JsAnnotation("class")
 @CommonAnnotation("class")

@@ -1,7 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: NULLABLE_BOX_FUNCTION
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 val targetNameLists: Map<String, String> = mapOf("1"         to "OK")
 

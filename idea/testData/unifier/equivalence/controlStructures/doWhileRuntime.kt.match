@@ -1,9 +1,0 @@
-do {
-        println((t))
-        t++
-    } while (t != (a + b))
-
-do {
-        println(t)
-        t++
-    } while (t != a + b)

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 enum class EnumClass {
     E1 {
         override fun foo() = 1

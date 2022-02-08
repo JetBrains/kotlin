@@ -1,12 +1,12 @@
+// IGNORE_BACKEND: WASM
+// WASM_MUTE_REASON: NESTED_OBJECT_INIT
 // IGNORE_BACKEND: NATIVE
-// IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 class Controller {
     suspend fun suspendHere(): String = suspendCoroutineUninterceptedOrReturn { x ->

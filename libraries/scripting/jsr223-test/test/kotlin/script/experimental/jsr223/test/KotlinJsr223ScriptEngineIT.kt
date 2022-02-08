@@ -6,9 +6,18 @@
 package kotlin.script.experimental.jsr223.test
 
 import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
+import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.scripting.compiler.plugin.runAndCheckResults
+import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
+import java.io.File
+import java.lang.management.ManagementFactory
+import java.nio.file.Files.createTempDirectory
+import java.nio.file.Files.createTempFile
 import javax.script.*
 import kotlin.script.experimental.jvmhost.jsr223.KotlinJsr223ScriptEngineImpl
 
@@ -17,6 +26,12 @@ private const val KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY = "kotlin.jsr2
 
 @Suppress("unused") // accessed from the tests below
 val shouldBeVisibleFromRepl = 7
+
+@Suppress("unused") // accessed from the tests below
+fun callLambda(x: Int, aFunction: (Int) -> Int): Int = aFunction.invoke(x)
+
+@Suppress("unused") // accessed from the tests below
+inline fun inlineCallLambda(x: Int, aFunction: (Int) -> Int): Int = aFunction.invoke(x)
 
 class KotlinJsr223ScriptEngineIT {
 
@@ -64,6 +79,29 @@ class KotlinJsr223ScriptEngineIT {
         val res2 = engine.eval("x + 2")
         Assert.assertEquals(5, res2)
     }
+
+    @Test
+    @Ignore // Probably not possible to make it sensible on CI and with parallel run, so leaving it here for manual testing only
+    fun testMemory() {
+        val memoryMXBean = ManagementFactory.getMemoryMXBean()!!
+        var prevMem = memoryMXBean.getHeapMemoryUsage().getUsed()
+        for (i in 1..10) {
+            with(ScriptEngineManager().getEngineByExtension("kts")) {
+                val res1 = eval("val x = 3")
+                Assert.assertNull(res1)
+                val res2 = eval("x + 2")
+                Assert.assertEquals(5, res2)
+            }
+            System.gc()
+            val curMem = memoryMXBean.getHeapMemoryUsage().getUsed()
+            if (i > 3 && curMem > prevMem) {
+                Assert.assertTrue("Memory leak: iter: $i prev: $prevMem, cur: $curMem", (curMem - prevMem) < 1024*1024 )
+            }
+            println("${curMem/1024/1024}Mb")
+            prevMem = curMem
+        }
+    }
+
 
     @Test
     fun testIncomplete() {
@@ -168,6 +206,18 @@ obj
         Assert.assertNull(res1)
         val res2 = comp2.eval()
         Assert.assertEquals(5, res2)
+    }
+
+    @Test
+    fun testSimpleCompilableWithBindings() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")
+        engine.put("z", 33)
+        val comp = (engine as Compilable).compile("val x = 10 + bindings[\"z\"] as Int\nx + 20")
+        val res1 = comp.eval()
+        Assert.assertEquals(63, res1)
+        engine.put("z", 44)
+        val res2 = comp.eval()
+        Assert.assertEquals(74, res2)
     }
 
     @Test
@@ -298,6 +348,30 @@ obj
     }
 
     @Test
+    fun testResolveFromContextLambda() {
+        val scriptEngine = ScriptEngineManager().getEngineByExtension("kts")!!
+
+        val script1 = """
+            kotlin.script.experimental.jsr223.test.callLambda(4) { x -> 
+                x % aValue
+            }
+        """
+
+        val script2 = """
+            kotlin.script.experimental.jsr223.test.inlineCallLambda(5) { x ->
+                x % aValue
+            }
+        """
+
+        scriptEngine.put("aValue", 3)
+
+        val res1 = scriptEngine.eval(script1)
+        Assert.assertEquals(1, res1)
+        val res2 = scriptEngine.eval(script2)
+        Assert.assertEquals(2, res2)
+    }
+
+    @Test
     fun testResolveFromContextDirectExperimental() {
         val prevProp = System.setProperty(KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY, "true")
         try {
@@ -307,6 +381,55 @@ obj
         } finally {
             if (prevProp == null) System.clearProperty(KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY)
             else System.setProperty(KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY, prevProp)
+        }
+    }
+
+    @Test
+    fun testInliningInJdk171() {
+        val jdk17 = try {
+            KtTestUtil.getJdk17Home()
+        } catch (_: NoClassDefFoundError) {
+            println("IGNORED: Test infrastructure doesn't work yet with embeddable compiler")
+            return
+        }
+        val javaExe = if (System.getProperty("os.name").contains("windows", ignoreCase = true)) "java.exe" else "java"
+        val runtime = File(jdk17, "bin" + File.separator + javaExe)
+
+        val tempDir = createTempDirectory(KotlinJsr223ScriptEngineIT::class.simpleName!!)
+        try {
+            val outJar = createTempFile(tempDir, "inlining17", ".jar").toFile()
+            val compileCp = System.getProperty("testCompilationClasspath")!!.split(File.pathSeparator).map(::File)
+            Assert.assertTrue(
+                "Expecting \"testCompilationClasspath\" property to contain stdlib jar:\n$compileCp",
+                compileCp.any { it.name.startsWith("kotlin-stdlib") }
+            )
+            val paths = PathUtil.kotlinPathsForDistDirectory
+            runAndCheckResults(
+                listOf(
+                    runtime.absolutePath,
+                    "-cp", paths.compilerClasspath.joinToString(File.pathSeparator),
+                    K2JVMCompiler::class.java.name,
+                    "-no-stdlib",
+                    "-cp", compileCp.joinToString(File.pathSeparator) { it.path },
+                    "-d", outJar.absolutePath,
+                    "-jvm-target", "17",
+                    "libraries/scripting/jsr223-test/testData/testJsr223Inlining.kt"
+                ),
+                additionalEnvVars = listOf("JAVA_HOME" to jdk17.absolutePath)
+            )
+
+            val runtimeCp = System.getProperty("testJsr223RuntimeClasspath")!!.split(File.pathSeparator).map(::File) + outJar
+            Assert.assertTrue(
+                "Expecting \"testJsr223RuntimeClasspath\" property to contain JSR223 jar:\n$runtimeCp",
+                runtimeCp.any { it.name.startsWith("kotlin-scripting-jsr223") }
+            )
+
+            runAndCheckResults(
+                listOf(runtime.absolutePath, "-cp", runtimeCp.joinToString(File.pathSeparator) { it.path }, "TestJsr223InliningKt"),
+                listOf("OK")
+            )
+        } finally {
+            tempDir.toFile().deleteRecursively()
         }
     }
 }

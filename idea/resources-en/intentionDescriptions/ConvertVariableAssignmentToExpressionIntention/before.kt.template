@@ -1,4 +1,0 @@
-var x = 5
-fun foo() {
-    <spot>x = 10</spot>
-}

@@ -3,7 +3,7 @@ import java.util.*
 fun use() {
     val x: String? = "x"
     Optional.of(x)
-        // OTHER_ERROR
+        // UNSAFE_CALL_ERROR
         // ORIGINAL:    fun <T : Any!> of(T): Optional<T> defined in java.util.Optional
         // SUBSTITUTED: fun <T : Any!> of(String): Optional<String> defined in java.util.Optional
 

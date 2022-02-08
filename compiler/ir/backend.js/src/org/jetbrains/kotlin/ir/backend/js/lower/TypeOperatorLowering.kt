@@ -6,17 +6,20 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.compilationException
+import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrArithBuilder
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.isPure
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -47,6 +50,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val isInterfaceSymbol get() = context.intrinsics.isInterfaceSymbol
     private val isArraySymbol get() = context.intrinsics.isArraySymbol
     private val isSuspendFunctionSymbol = context.intrinsics.isSuspendFunctionSymbol
+
     //    private val isCharSymbol get() = context.intrinsics.isCharSymbol
     private val isObjectSymbol get() = context.intrinsics.isObjectSymbol
 
@@ -209,12 +213,53 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 }
             }
 
+            /**
+             * The general logic for generating a runtime type check is as follows:
+             * ```
+             *               ┌─────────────────────────────┬───────────────────────────────┐
+             *               │         to non-null         │          to nullable          │
+             * ┌─────────────╋━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┻━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+             * │             ┃                      instanceof check                       │
+             * │from non-null┃                             OR                              │
+             * │             ┃                       advanced check                        │
+             * ├─────────────╋─────────────────────────────┬───────────────────────────────┤
+             * │             ┃      instanceof check       │ null check + instanceof check │
+             * │from nullable┃             OR              │              OR               │
+             * │             ┃ null check + advanced check │  null check + advanced check  │
+             * └─────────────┻─────────────────────────────┴───────────────────────────────┘
+             * ```
+             * Note: advanced check is performed when casting to primitive types, array types, function types, or interfaces.
+             *
+             * If we statically know that this is an upcast, we try to generate no checks.
+             * In this case, the following logic is applied:
+             * ```
+             *               ┌─────────────┬─────────────┐
+             *               │ to non-null │ to nullable │
+             * ┌─────────────╋━━━━━━━━━━━━━┻━━━━━━━━━━━━━┫
+             * │from non-null┃           true            │
+             * ├─────────────╋─────────────┬─────────────┤
+             * │from nullable┃ null check  │    true     │
+             * └─────────────┻─────────────┴─────────────┘
+             * ```
+             */
             private fun generateTypeCheck(argument: () -> IrExpression, toType: IrType): IrExpression {
                 val toNotNullable = toType.makeNotNull()
                 val argumentInstance = argument()
-                val instanceCheck = generateTypeCheckNonNull(argumentInstance, toNotNullable)
-                val isFromNullable = argumentInstance.type.isNullable()
+                val fromType = argumentInstance.type
+                val fromNotNullable = fromType.makeNotNull()
+
+                val isFromNullable = fromType.isNullable()
                 val isToNullable = toType.isNullable()
+
+                if (fromNotNullable !is IrDynamicType && fromNotNullable.isSubtypeOf(toNotNullable, context.typeSystem)) {
+                    // This is an upcast
+                    return when {
+                        isFromNullable && !isToNullable -> calculator.run { not(nullCheck(argument())) }
+                        else -> IrConstImpl.constTrue(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.booleanType)
+                    }
+                }
+
+                val instanceCheck = generateTypeCheckNonNull(argumentInstance, toNotNullable)
                 val isNativeCheck = !advancedCheckRequired(toNotNullable)
 
                 return when {
@@ -261,7 +306,11 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
             private fun generateTypeCheckWithTypeParameter(argument: IrExpression, toType: IrType): IrExpression {
                 val typeParameterSymbol =
-                    (toType.classifierOrNull as? IrTypeParameterSymbol) ?: error("expected type parameter, but $toType")
+                    (toType.classifierOrNull as? IrTypeParameterSymbol)
+                        ?: compilationException(
+                            "expected type parameter, but $toType",
+                            argument
+                        )
 
                 val typeParameter = typeParameterSymbol.owner
 
@@ -269,8 +318,9 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 // assert(!typeParameter.isReified) { "reified parameters have to be lowered before" }
 
                 return typeParameter.superTypes.fold<IrType, IrExpression?>(null) { r, t ->
-                    require(argument is IrExpressionWithCopy) { "Not a copyable expression: ${argument.render()}" }
-                    val check = generateTypeCheckNonNull(argument.copy(), t.makeNotNull())
+                    val copy = argument.shallowCopyOrNull()
+                        ?: argument.deepCopyWithSymbols()
+                    val check = generateTypeCheckNonNull(copy, t.makeNotNull())
 
                     if (r == null) {
                         check
@@ -357,7 +407,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 val toType = expression.typeOperand
 
                 fun maskOp(arg: IrExpression, mask: IrExpression, shift: IrConst<*>) = calculator.run {
-                    shr(shl(and(arg, mask), shift), shift.copy())
+                    shr(shl(and(arg, mask), shift), shift.shallowCopy())
                 }
 
                 val newStatements = mutableListOf<IrStatement>()
@@ -369,7 +419,10 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                     toType.isLong() -> JsIrBuilder.buildCall(context.intrinsics.jsToLong).apply {
                         putValueArgument(0, argument())
                     }
-                    else -> error("Unreachable execution (coercion to non-Integer type")
+                    else -> compilationException(
+                        "Unreachable execution (coercion to non-Integer type)",
+                        expression
+                    )
                 }
 
                 newStatements += if (isNullable) JsIrBuilder.buildIfElse(toType, nullCheck(argument()), litNull, casted) else casted

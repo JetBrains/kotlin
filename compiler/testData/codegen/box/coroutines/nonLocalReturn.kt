@@ -1,5 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.coroutines.*
 
 suspend fun coroutineScope(c: suspend () -> Unit) {
@@ -18,7 +17,9 @@ suspend fun whatever() = coroutineScope {
 }
 
 fun builder(c: suspend () -> Unit) {
-    c.startCoroutine(Continuation(EmptyCoroutineContext) {})
+    c.startCoroutine(Continuation(EmptyCoroutineContext) {
+        it.getOrThrow()
+    })
 }
 
 fun box(): String {

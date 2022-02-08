@@ -9,7 +9,7 @@ option optimize_for = LITE_RUNTIME;
 
 message FileEntry {
   required string name = 1;
-  repeated int32 line_start_offsets = 2 [packed=true];
+  repeated int32 line_start_offset = 2 [packed=true];
 }
 
 message IrFile {
@@ -18,12 +18,12 @@ message IrFile {
   repeated int32 fq_name = 3 [packed=true];
   repeated IrConstructorCall annotation = 4;
   repeated int64 explicitly_exported_to_compiler = 5 [packed=true];
-  repeated Actual actuals = 6;
+  repeated Actual actual = 6;
 }
 
 /* ------ IdSignature -------------------------------------------- */
 
-message PublicIdSignature {
+message CommonIdSignature {
   repeated int32 package_fq_name = 1 [packed=true];
   repeated int32 declaration_fq_name = 2 [packed = true];
   optional int64 member_uniq_id = 3;
@@ -40,14 +40,31 @@ message AccessorIdSignature {
 message FileLocalIdSignature {
   required int32 container = 1;
   required int64 local_id = 2;
+  optional int32 debug_info = 3;
 }
 
+message CompositeSignature {
+  required int32 container_sig = 1;
+  required int32 inner_sig = 2;
+}
+
+message LocalSignature {
+  repeated int32 local_fq_name = 1 [packed=true];
+  optional int64 local_hash = 2;
+  optional int32 debug_info = 3;
+}
+
+message FileSignature {}
+
 message IdSignature {
-  oneof idsig {
-    PublicIdSignature public_sig = 1;
+  oneof idSig {
+    CommonIdSignature public_sig = 1;
     FileLocalIdSignature private_sig = 2;
     AccessorIdSignature accessor_sig = 3;
     int32 scoped_local_sig = 4;
+    CompositeSignature composite_sig = 5;
+    LocalSignature local_sig = 6;
+    FileSignature file_sig = 7;
   }
 }
 
@@ -82,6 +99,11 @@ message IrDynamicType {
   repeated IrConstructorCall annotation = 1;
 }
 
+message IrDefinitelyNotNullType {
+  // In fact that is an `IntersectionType` so let represent it as it. In future it could be easy to support general case
+  repeated int32 types = 1 [packed=true];
+}
+
 message IrErrorType {
   repeated IrConstructorCall annotation = 1;
 }
@@ -91,6 +113,7 @@ message IrType {
     IrSimpleType simple = 1;
     IrDynamicType dynamic = 2;
     IrErrorType error = 3;
+    IrDefinitelyNotNullType dnn = 4;
   }
 }
 
@@ -125,13 +148,14 @@ message IrConstructorCall {
   required int64 symbol = 1;
   required int32 constructor_type_arguments_count = 2;
   required MemberAccessCommon member_access = 3;
+  optional int32 origin_name = 4;
 }
 
 message IrFunctionReference {
   required int64 symbol = 1;
   optional int32 origin_name = 2;
   required MemberAccessCommon member_access = 3;
-  optional int64 reflectionTargetSymbol = 4;
+  optional int64 reflection_target_symbol = 4;
 }
 
 message IrLocalDelegatedPropertyReference {
@@ -316,7 +340,7 @@ message IrErrorCallExpression {
 /* ------ Dynamic expression --------------------------------------------- */
 
 message IrDynamicMemberExpression {
-  required int32 memberName = 1;
+  required int32 member_name = 1;
   required IrExpression receiver = 2;
 }
 
@@ -415,6 +439,7 @@ enum IrTypeOperator {
   NOT_INSTANCEOF = 8;
   SAM_CONVERSION = 9;
   IMPLICIT_DYNAMIC_CAST = 10;
+  REINTERPRET_CAST = 11;
 }
 
 
@@ -444,6 +469,7 @@ message IrFunctionBase {
   repeated IrTypeParameter type_parameter = 3;
   optional IrValueParameter dispatch_receiver = 4;
   optional IrValueParameter extension_receiver = 5;
+  optional int32 context_receiver_parameters_count = 8;
   repeated IrValueParameter value_parameter = 6;
   optional int32 body = 7;
 }
@@ -467,7 +493,7 @@ message IrField {
 message IrLocalDelegatedProperty {
   required IrDeclarationBase base = 1;
   required int64 name_type = 2;
-  required IrVariable delegate = 3;
+  optional IrVariable delegate = 3;
   optional IrFunction getter = 4;
   optional IrFunction setter = 5;
 }
@@ -482,7 +508,7 @@ message IrProperty {
 
 message IrVariable {
   required IrDeclarationBase base = 1;
-  required int64 name_type =2;
+  required int64 name_type = 2;
   optional IrExpression initializer = 3;
 }
 
@@ -506,6 +532,8 @@ message IrClass {
   repeated IrTypeParameter type_parameter = 4;
   repeated IrDeclaration declaration = 5;
   repeated int32 super_type = 6 [packed=true];
+  optional IrInlineClassRepresentation inline_class_representation = 7;
+  repeated int64 sealed_subclass = 8 [packed=true];
 }
 
 message IrTypeAlias {
@@ -587,4 +615,9 @@ message IrStatement {
     IrCatch catch = 6;
     IrSyntheticBody synthetic_body = 7;
   }
+}
+
+message IrInlineClassRepresentation {
+  required int32 underlying_property_name = 1;
+  required int32 underlying_property_type = 2;
 }

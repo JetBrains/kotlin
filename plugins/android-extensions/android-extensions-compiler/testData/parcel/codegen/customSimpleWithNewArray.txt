@@ -39,7 +39,7 @@ public final class User$Creator : java/lang/Object, android/os/Parcelable$Creato
 
     public final User[] newArray(int size) {
         LABEL (L0)
-          GETSTATIC (Companion, LUser$Companion;)
+          GETSTATIC (User, Companion, LUser$Companion;)
           ILOAD (1)
           INVOKEVIRTUAL (User$Companion, newArray, (I)[LUser;)
           ARETURN

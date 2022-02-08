@@ -6,11 +6,11 @@ open class A {
 }
 
 class B: A() {
-    <!NO_TAIL_CALLS_FOUND!>tailrec override fun foo(x: Int)<!> {
+    <!NO_TAIL_CALLS_FOUND!>tailrec<!> override fun foo(x: Int) {
         foo()
     }
 
-    <!NO_TAIL_CALLS_FOUND!>tailrec override fun gav(y: Int, z: Int)<!> {
+    <!NO_TAIL_CALLS_FOUND!>tailrec<!> override fun gav(y: Int, z: Int) {
         gav(y)
     }
 
@@ -26,7 +26,7 @@ class C: A() {
         gav(y - 1, z - 1)
     }
 
-    tailrec fun bar(<!UNUSED_PARAMETER!>y<!>: Int = 1, z: Int = 2) {
+    tailrec fun bar(y: Int = 1, z: Int = 2) {
         bar(z)
     }
 }

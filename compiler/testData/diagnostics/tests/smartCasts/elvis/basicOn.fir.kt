@@ -11,13 +11,13 @@ interface Order {
 fun foo(o: Any) {
     val order = o as? Order
     if (order?.expired ?: false) {
-        order.<!INAPPLICABLE_CANDIDATE!>doSomething<!>()
+        order.doSomething()
     }
     else {
 
     }
     if (order?.notExpired() ?: false) {
-        order.<!INAPPLICABLE_CANDIDATE!>doSomething<!>()
+        order.doSomething()
     }
 }
 
@@ -27,24 +27,24 @@ fun bar(o: Any) {
 
     }
     else {
-        order!!.doSomething()
+        order<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.doSomething()
     }
     if (order?.notExpired() ?: true) {
 
     }
     else {
-        order!!.doSomething()
+        order<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>.doSomething()
     }
 }
 
 fun baz(o: Boolean?) {
     if (o ?: false) {
-        o.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+        o<!UNSAFE_CALL!>.<!>hashCode()
     }
     if (o ?: true) {
 
     }
     else {
-        o.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+        o<!UNSAFE_CALL!>.<!>hashCode()
     }
 }

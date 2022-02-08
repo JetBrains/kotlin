@@ -1,6 +1,6 @@
-// FILE: test.kt
-// WITH_RUNTIME
 // WITH_COROUTINES
+// WITH_STDLIB
+// FILE: test.kt
 
 var result = "Fail"
 

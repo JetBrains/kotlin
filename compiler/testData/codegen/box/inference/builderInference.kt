@@ -1,6 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
-// !LANGUAGE: +NewInference
+// WITH_STDLIB
 // ISSUE: KT-33545
 
 import kotlin.experimental.ExperimentalTypeInference

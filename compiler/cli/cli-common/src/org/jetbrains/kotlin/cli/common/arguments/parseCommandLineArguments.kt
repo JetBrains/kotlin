@@ -54,6 +54,8 @@ data class ArgumentParseErrors(
 
     var argumentWithoutValue: String? = null,
 
+    var booleanArgumentWithValue: String? = null,
+
     val argfileErrors: MutableList<String> = SmartList(),
 
     // Reports from internal arguments parsers
@@ -85,29 +87,20 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(args
             return true
         }
 
-        val deprecatedName = argument.deprecatedName.takeUnless(String::isEmpty)
-        if (deprecatedName == arg) {
+        val deprecatedName = argument.deprecatedName
+        if (deprecatedName.isNotEmpty() && (deprecatedName == arg || arg.startsWith("$deprecatedName="))) {
             errors.deprecatedArguments[deprecatedName] = argument.value
             return true
         }
 
-        if (argument.isAdvanced) {
-            if (argument.value == arg) {
-                if (property.returnType.classifier != Boolean::class) {
-                    errors.extraArgumentsPassedInObsoleteForm.add(arg)
-                }
-                return true
+        if (argument.value == arg) {
+            if (argument.isAdvanced && property.returnType.classifier != Boolean::class) {
+                errors.extraArgumentsPassedInObsoleteForm.add(arg)
             }
-
-            if (deprecatedName != null && arg.startsWith("$deprecatedName=")) {
-                errors.deprecatedArguments[deprecatedName] = argument.value
-                return true
-            }
-
-            return arg.startsWith(argument.value + "=")
+            return true
         }
 
-        return argument.value == arg
+        return arg.startsWith(argument.value + "=")
     }
 
     val freeArgs = ArrayList<String>()
@@ -159,11 +152,20 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(args
 
         val (property, argument) = argumentField
         val value: Any = when {
-            argumentField.property.returnType.classifier == Boolean::class -> true
-            argument.isAdvanced && arg.startsWith(argument.value + "=") -> {
+            argumentField.property.returnType.classifier == Boolean::class -> {
+                if (arg.startsWith(argument.value + "=")) {
+                    // Can't use toBooleanStrict yet because this part of the compiler is used in Gradle and needs API version 1.4.
+                    when (arg.substring(argument.value.length + 1)) {
+                        "true" -> true
+                        "false" -> false
+                        else -> true.also { errors.booleanArgumentWithValue = arg }
+                    }
+                } else true
+            }
+            arg.startsWith(argument.value + "=") -> {
                 arg.substring(argument.value.length + 1)
             }
-            argument.isAdvanced && arg.startsWith(argument.deprecatedName + "=") -> {
+            arg.startsWith(argument.deprecatedName + "=") -> {
                 arg.substring(argument.deprecatedName.length + 1)
             }
             i == args.size -> {
@@ -212,6 +214,9 @@ fun validateArguments(errors: ArgumentParseErrors?): String? {
     if (errors == null) return null
     if (errors.argumentWithoutValue != null) {
         return "No value passed for argument ${errors.argumentWithoutValue}"
+    }
+    errors.booleanArgumentWithValue?.let { arg ->
+        return "No value expected for boolean argument ${arg.substringBefore('=')}. Please remove the value: $arg"
     }
     if (errors.unknownArgs.isNotEmpty()) {
         return "Invalid argument: ${errors.unknownArgs.first()}"

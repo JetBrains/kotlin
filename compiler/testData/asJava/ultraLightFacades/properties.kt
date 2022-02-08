@@ -75,3 +75,4 @@ val x: String = ""
 	get;
 var x: String = ""
 	private set;
+// COMPILATION_ERRORS

@@ -10,7 +10,7 @@ fun test(x: List<Int>, y: List<String>) {
     A("", x) // inferred as Any!
     A("", y)
 
-    <!INAPPLICABLE_CANDIDATE!>A<!><String>("", x)
+    A<String>("", <!ARGUMENT_TYPE_MISMATCH!>x<!>)
 
     A<Any>("", x)
     A<String>("", y)

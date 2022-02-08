@@ -26,7 +26,8 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.parcelize.RAW_VALUE_ANNOTATION_FQ_NAMES
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.PARCELABLE_FQN
+import org.jetbrains.kotlin.parcelize.ParcelizeNames.RAW_VALUE_ANNOTATION_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.findAnyAnnotation
 import org.jetbrains.kotlin.parcelize.hasAnyAnnotation
 import org.jetbrains.kotlin.parcelize.isParcelize
@@ -65,8 +66,8 @@ interface ParcelSerializer {
 
     companion object {
         private val WRITE_WITH_FQ_NAMES = listOf(
-            FqName(kotlinx.parcelize.WriteWith::class.java.name),
-            @Suppress("DEPRECATION") FqName(kotlinx.android.parcel.WriteWith::class.java.name),
+            FqName("kotlinx.parcelize.WriteWith"),
+            FqName("kotlinx.android.parcel.WriteWith"),
         )
 
         private fun KotlinTypeMapper.mapTypeSafe(type: KotlinType, forceBoxed: Boolean) = when {
@@ -100,11 +101,12 @@ interface ParcelSerializer {
             findCustomParcelerType(type)?.let { return TypeParcelerParcelSerializer(asmType, it, context.typeMapper) }
 
             return when {
+                // Somewhat inconsistently, there are no `Parcel.writeShortArray/createShortArray` methods,
+                // so we need to exclude "[S" here.
                 asmType.descriptor == "[I"
                         || asmType.descriptor == "[Z"
                         || asmType.descriptor == "[B"
                         || asmType.descriptor == "[C"
-                        || asmType.descriptor == "[S"
                         || asmType.descriptor == "[D"
                         || asmType.descriptor == "[F"
                         || asmType.descriptor == "[J"
@@ -146,6 +148,10 @@ interface ParcelSerializer {
                         wrapToNullAwareIfNeeded(type, BoxedPrimitiveTypeParcelSerializer.forUnboxedType(asmType))
                     else
                         PrimitiveTypeParcelSerializer.getInstance(asmType)
+                }
+
+                asmType.isUnsigned() -> {
+                    ParcelSerializerStub(asmType, type)
                 }
 
                 asmType.isString() -> {
@@ -422,6 +428,12 @@ interface ParcelSerializer {
             else -> false
         }
 
+        private fun Type.isUnsigned(): Boolean = when (descriptor) {
+            "Lkotlin/UByte;", "Lkotlin/UShort;", "Lkotlin/UInt;", "Lkotlin/ULong;",
+            "Lkotlin/UByteArray;", "Lkotlin/UShortArray;", "Lkotlin/UIntArray;", "Lkotlin/ULongArray;" -> true
+            else -> false
+        }
+
         private fun Type.isBoxedPrimitive(): Boolean = when (this.descriptor) {
             "Ljava/lang/Boolean;",
             "Ljava/lang/Character;",
@@ -437,7 +449,7 @@ interface ParcelSerializer {
     }
 }
 
-internal fun KotlinType.isParcelable() = matchesFqNameWithSupertypes("android.os.Parcelable")
+internal fun KotlinType.isParcelable() = matchesFqNameWithSupertypes(PARCELABLE_FQN.asString())
 
 private fun KotlinType.matchesFqName(fqName: String): Boolean {
     return this.constructor.declarationDescriptor?.fqNameSafe?.asString() == fqName

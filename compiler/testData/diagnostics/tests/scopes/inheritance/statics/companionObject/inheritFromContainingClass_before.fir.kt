@@ -1,5 +1,4 @@
 // !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 // FILE: J.java
@@ -12,14 +11,14 @@ open class A<T> : J() {
     init {
         foo()
         bar()
-        val a: Int = baz()
+        val a: Int = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>baz()<!>
         val b: T = baz()
     }
 
     fun test1() {
         foo()
         bar()
-        val a: Int = baz()
+        val a: Int = <!INITIALIZER_TYPE_MISMATCH, TYPE_MISMATCH!>baz()<!>
         val b: T = baz()
     }
 

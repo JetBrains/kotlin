@@ -1,1 +1,0 @@
-class TestClass(vararg var <caret>words: String)

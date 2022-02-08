@@ -1,4 +1,3 @@
-
 fun useUnit(fn: () -> Unit) {
     fn.invoke()
 }

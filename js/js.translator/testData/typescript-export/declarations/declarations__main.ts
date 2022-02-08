@@ -22,6 +22,13 @@ import _valCustomWithField = JS_TESTS.foo._valCustomWithField;
 import A4 = JS_TESTS.foo.A4;
 import O = JS_TESTS.foo.O;
 import takesO = JS_TESTS.foo.takesO;
+import KT_37829 = JS_TESTS.foo.KT_37829;
+import TestSealed = JS_TESTS.foo.TestSealed;
+import TestAbstract = JS_TESTS.foo.TestAbstract;
+import TestDataClass = JS_TESTS.foo.TestDataClass;
+import TestEnumClass = JS_TESTS.foo.TestEnumClass;
+import TestInterfaceImpl = JS_TESTS.foo.TestInterfaceImpl;
+import processInterface = JS_TESTS.foo.processInterface;
 
 function assert(condition: boolean) {
     if (!condition) {
@@ -91,6 +98,47 @@ function box(): string {
     assert(O.x === 10);
     assert(O.foo() === 20);
     assert(takesO(O) === 30);
+
+    assert(KT_37829.Companion.x == 10);
+
+    assert(new TestSealed.AA().name == "AA");
+    assert(new TestSealed.AA().bar() == "bar");
+    assert(new TestSealed.BB().name == "BB");
+    assert(new TestSealed.BB().baz() == "baz");
+
+    assert(new TestAbstract.AA().name == "AA");
+    assert(new TestAbstract.AA().bar() == "bar");
+    assert(new TestAbstract.BB().name == "BB");
+    assert(new TestAbstract.BB().baz() == "baz");
+
+    assert(new TestDataClass.Nested().prop == "hello");
+
+    assert(TestEnumClass.A.foo == 0)
+    assert(TestEnumClass.B.foo == 1)
+    assert(TestEnumClass.A.bar("aBar") == "aBar")
+    assert(TestEnumClass.B.bar("bBar") == "bBar")
+    assert(TestEnumClass.A.bay() == "A")
+    assert(TestEnumClass.B.bay() == "B")
+    assert(TestEnumClass.A.constructorParameter == "aConstructorParameter")
+    assert(TestEnumClass.B.constructorParameter == "bConstructorParameter")
+
+    assert(TestEnumClass.valueOf("A") === TestEnumClass.A)
+    assert(TestEnumClass.valueOf("B") === TestEnumClass.B)
+
+    assert(TestEnumClass.values().indexOf(TestEnumClass.A) != -1)
+    assert(TestEnumClass.values().indexOf(TestEnumClass.B) != -1)
+
+    assert(TestEnumClass.A.name === "A")
+    assert(TestEnumClass.B.name === "B")
+    assert(TestEnumClass.A.ordinal === 0)
+    assert(TestEnumClass.B.ordinal === 1)
+
+    assert(new TestEnumClass.Nested().prop == "hello2")
+
+    assert(processInterface(new TestInterfaceImpl("bar")) == "Owner TestInterfaceImpl has value 'bar'")
+
+    // @ts-expect-error "Just test that this code will throw compilation error for a user"
+    assert(processInterface({ value: "bar", getOwnerName: () => "RandomObject" }) == "Owner RandomObject has value 'bar'")
 
     return "OK";
 }

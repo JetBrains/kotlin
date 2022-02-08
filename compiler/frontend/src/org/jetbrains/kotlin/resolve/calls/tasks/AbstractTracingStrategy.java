@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemStatus;
@@ -115,8 +115,8 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     }
 
     @Override
-    public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> descriptors) {
-        trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(reference, descriptors));
+    public <D extends CallableDescriptor> void ambiguity(@NotNull BindingTrace trace, @NotNull Collection<? extends ResolvedCall<D>> resolvedCalls) {
+        trace.report(OVERLOAD_RESOLUTION_AMBIGUITY.on(reference, resolvedCalls));
     }
 
     @Override
@@ -140,6 +140,11 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
     @Override
     public void abstractSuperCall(@NotNull BindingTrace trace) {
         trace.report(ABSTRACT_SUPER_CALL.on(reference));
+    }
+
+    @Override
+    public void abstractSuperCallWarning(@NotNull BindingTrace trace) {
+        trace.report(ABSTRACT_SUPER_CALL_WARNING.on(reference));
     }
 
     @Override
@@ -271,7 +276,7 @@ public abstract class AbstractTracingStrategy implements TracingStrategy {
         }
         else if (status.hasTypeParameterWithUnsatisfiedOnlyInputTypesError()) {
             //todo
-            return TYPE_INFERENCE_ONLY_INPUT_TYPES.on(reference, data.descriptor.getTypeParameters().get(0));
+            return TYPE_INFERENCE_ONLY_INPUT_TYPES.getErrorFactory().on(reference, data.descriptor.getTypeParameters().get(0));
         }
         else {
             assert status.hasUnknownParameters();

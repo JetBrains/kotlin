@@ -1,8 +1,9 @@
+// FIR_IDENTICAL
 package test
 
 class B {
     class B {
-      fun foo(<!UNUSED_PARAMETER!>b<!>: B.C) {
+      fun foo(b: B.C) {
       }
       class C {
       }

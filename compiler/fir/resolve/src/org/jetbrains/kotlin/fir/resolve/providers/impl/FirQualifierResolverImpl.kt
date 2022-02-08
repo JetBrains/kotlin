@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
+import org.jetbrains.kotlin.fir.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.fir.resolve.FirQualifierResolver
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.types.FirQualifierPart
 import org.jetbrains.kotlin.name.ClassId
@@ -18,18 +19,22 @@ import org.jetbrains.kotlin.name.FqName
 class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver() {
 
     override fun resolveSymbolWithPrefix(parts: List<FirQualifierPart>, prefix: ClassId): FirClassifierSymbol<*>? {
-        val symbolProvider = session.firSymbolProvider
+        val symbolProvider = session.symbolProvider
 
         val fqName = ClassId(
             prefix.packageFqName,
             parts.drop(1).fold(prefix.relativeClassName) { result, suffix -> result.child(suffix.name) },
             false
         )
-        return symbolProvider.getClassLikeSymbolByFqName(fqName)
+        return symbolProvider.getClassLikeSymbolByClassId(fqName)
     }
 
     override fun resolveSymbol(parts: List<FirQualifierPart>): FirClassifierSymbol<*>? {
-        val firProvider = session.firSymbolProvider
+        if (parts.firstOrNull()?.name?.asString() == ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE) {
+            return resolveSymbol(parts.drop(1))
+        }
+
+        val firProvider = session.symbolProvider
 
         if (parts.isNotEmpty()) {
             val lastPart = mutableListOf<FirQualifierPart>()
@@ -40,7 +45,7 @@ class FirQualifierResolverImpl(val session: FirSession) : FirQualifierResolver()
                 firstPart.removeAt(firstPart.lastIndex)
 
                 val fqName = ClassId(firstPart.toFqName(), lastPart.toFqName(), false)
-                val foundSymbol = firProvider.getClassLikeSymbolByFqName(fqName)
+                val foundSymbol = firProvider.getClassLikeSymbolByClassId(fqName)
                 if (foundSymbol != null) {
                     return foundSymbol
                 }

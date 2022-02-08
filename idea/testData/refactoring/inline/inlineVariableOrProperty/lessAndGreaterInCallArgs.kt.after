@@ -1,3 +1,0 @@
-fun f(a : (Any, Any) -> Unit, b : Int, c : Int, d : Int, e : Int, f : Int) {
-    a((b < c), d > (e + f))
-}

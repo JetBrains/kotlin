@@ -38,7 +38,7 @@ fun testStarProjection() = BiParam(
     intersect(First, Second),
     makeStarProjection()
 )
-fun testErrorType() = <!INAPPLICABLE_CANDIDATE!>BiParam<!>(
+fun testErrorType() = BiParam(
     intersect(First, Second),
-    <!UNRESOLVED_REFERENCE!>unresolved<!>
+    <!ARGUMENT_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>unresolved<!>
 )

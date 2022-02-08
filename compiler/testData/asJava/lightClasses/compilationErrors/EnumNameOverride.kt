@@ -9,3 +9,5 @@ interface Bar : Foo {
 }
 
 enum class EnumNameOverride : Bar
+
+// FIR_COMPARISON

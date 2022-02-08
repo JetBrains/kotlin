@@ -35,6 +35,7 @@ internal class JvmClassExtension : JvmClassExtensionVisitor(), KmClassExtension 
     val localDelegatedProperties: MutableList<KmProperty> = ArrayList(0)
     var moduleName: String? = null
     var anonymousObjectOriginName: String? = null
+    var jvmFlags: Flags = 0
 
     override fun visitLocalDelegatedProperty(flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags): KmPropertyVisitor =
         KmProperty(flags, name, getterFlags, setterFlags).also { localDelegatedProperties.add(it) }
@@ -47,6 +48,10 @@ internal class JvmClassExtension : JvmClassExtensionVisitor(), KmClassExtension 
         this.anonymousObjectOriginName = internalName
     }
 
+    override fun visitJvmFlags(flags: Flags) {
+        this.jvmFlags = flags
+    }
+
     override fun accept(visitor: KmClassExtensionVisitor) {
         require(visitor is JvmClassExtensionVisitor)
         localDelegatedProperties.forEach {
@@ -54,6 +59,7 @@ internal class JvmClassExtension : JvmClassExtensionVisitor(), KmClassExtension 
         }
         moduleName?.let(visitor::visitModuleName)
         anonymousObjectOriginName?.let(visitor::visitAnonymousObjectOriginName)
+        jvmFlags.takeIf { it != 0 }?.let(visitor::visitJvmFlags)
         visitor.visitEnd()
     }
 }
@@ -105,6 +111,7 @@ internal class JvmPropertyExtension : JvmPropertyExtensionVisitor(), KmPropertyE
     var getterSignature: JvmMethodSignature? = null
     var setterSignature: JvmMethodSignature? = null
     var syntheticMethodForAnnotations: JvmMethodSignature? = null
+    var syntheticMethodForDelegate: JvmMethodSignature? = null
 
     override fun visit(
         jvmFlags: Flags,
@@ -122,10 +129,15 @@ internal class JvmPropertyExtension : JvmPropertyExtensionVisitor(), KmPropertyE
         this.syntheticMethodForAnnotations = signature
     }
 
+    override fun visitSyntheticMethodForDelegate(signature: JvmMethodSignature?) {
+        this.syntheticMethodForDelegate = signature
+    }
+
     override fun accept(visitor: KmPropertyExtensionVisitor) {
         require(visitor is JvmPropertyExtensionVisitor)
         visitor.visit(jvmFlags, fieldSignature, getterSignature, setterSignature)
         visitor.visitSyntheticMethodForAnnotations(syntheticMethodForAnnotations)
+        visitor.visitSyntheticMethodForDelegate(syntheticMethodForDelegate)
         visitor.visitEnd()
     }
 }
@@ -173,20 +185,6 @@ internal class JvmTypeExtension : JvmTypeExtensionVisitor(), KmTypeExtension {
         require(visitor is JvmTypeExtensionVisitor)
         visitor.visit(isRaw)
         annotations.forEach(visitor::visitAnnotation)
-        visitor.visitEnd()
-    }
-}
-
-internal class JvmTypeAliasExtension : JvmTypeAliasExtensionVisitor(), KmTypeAliasExtension {
-    override fun accept(visitor: KmTypeAliasExtensionVisitor) {
-        require(visitor is JvmTypeAliasExtensionVisitor)
-        visitor.visitEnd()
-    }
-}
-
-internal class JvmValueParameterExtension : JvmValueParameterExtensionVisitor(), KmValueParameterExtension {
-    override fun accept(visitor: KmValueParameterExtensionVisitor) {
-        require(visitor is JvmValueParameterExtensionVisitor)
         visitor.visitEnd()
     }
 }

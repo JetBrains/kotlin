@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.resolve
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
@@ -13,32 +14,31 @@ import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.resolve.diagnostics.*
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
-import org.jetbrains.kotlin.resolve.deprecation.CoroutineCompatibilitySupport
 import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
 object JsPlatformConfigurator : PlatformConfiguratorBase(
-        DynamicTypesAllowed(),
-        additionalDeclarationCheckers = listOf(
-            NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(),
-            JsNameChecker, JsModuleChecker, JsExternalFileChecker,
-            JsExternalChecker, JsInheritanceChecker, JsMultipleInheritanceChecker,
-            JsRuntimeAnnotationChecker,
-            JsDynamicDeclarationChecker,
-            JsExportAnnotationChecker,
-            JsExportDeclarationChecker
-        ),
-        additionalCallCheckers = listOf(
-                JsModuleCallChecker,
-                JsDynamicCallChecker,
-                JsDefinedExternallyCallChecker,
-        ),
-        identifierChecker = JsIdentifierChecker
+    DynamicTypesAllowed(),
+    additionalDeclarationCheckers = listOf(
+        NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(),
+        JsNameChecker, JsModuleChecker, JsExternalFileChecker,
+        JsExternalChecker, JsInheritanceChecker, JsMultipleInheritanceChecker,
+        JsRuntimeAnnotationChecker,
+        JsDynamicDeclarationChecker,
+        JsExportAnnotationChecker,
+        JsExportDeclarationChecker
+    ),
+    additionalCallCheckers = listOf(
+        JsModuleCallChecker,
+        JsDynamicCallChecker,
+        JsDefinedExternallyCallChecker,
+    ),
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useInstance(NameSuggestion())
         container.useImpl<JsCallChecker>()
         container.useImpl<JsTypeSpecificityComparator>()
         container.useImpl<JsNameClashChecker>()
+        container.useImpl<JsIdentifierChecker>()
         container.useImpl<JsNameCharsChecker>()
         container.useImpl<JsBuiltinNameClashChecker>()
         container.useInstance(JsModuleClassLiteralChecker)
@@ -48,7 +48,6 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         container.useInstance(ExtensionFunctionToExternalIsInlinable)
         container.useInstance(JsQualifierChecker)
         container.useInstance(JsNativeDiagnosticSuppressor)
-        container.useInstance(CoroutineCompatibilitySupport.DISABLED)
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {

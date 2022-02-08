@@ -1,11 +1,15 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: PROPERTY_REFERENCES
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Z(val x: Int)
-inline class L(val x: Long)
-inline class S(val x: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val x: Int)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class L(val x: Long)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class S(val x: String)
 
 val Z.xx get() = x
 val L.xx get() = x

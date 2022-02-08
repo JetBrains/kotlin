@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.IrNamer
@@ -117,101 +116,15 @@ fun buildCrossModuleReferenceInfo(modules: Iterable<IrModuleFragment>): CrossMod
     return CrossModuleReferenceInfoImpl(map)
 }
 
-@OptIn(ObsoleteDescriptorBasedAPI::class)
-fun breakCrossModuleFieldAccess(
-    context: JsIrBackendContext,
-    modules: Iterable<IrModuleFragment>
-) {
-    val fieldToGetter = mutableMapOf<IrField, IrSimpleFunction>()
-
-    fun IrField.getter(): IrSimpleFunction {
-        return fieldToGetter.getOrPut(this) {
-            val fieldName = name
-            val getter = context.irFactory.buildFun {
-                name = Name.identifier("get-$fieldName")
-                returnType = type
-            }
-            getter.body = factory.createBlockBody(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
-                    IrReturnImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, getter.symbol,
-                        IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol, type)
-                    )
-                )
-            )
-            getter.parent = parent
-            (parent as IrDeclarationContainer).declarations += getter
-
-            getter
-        }
-    }
-
-    val fieldToSetter = mutableMapOf<IrField, IrSimpleFunction>()
-
-    fun IrField.setter(): IrSimpleFunction {
-        return fieldToSetter.getOrPut(this) {
-            val fieldName = name
-            val setter = context.irFactory.buildFun {
-                name = Name.identifier("set-$fieldName")
-                returnType = context.irBuiltIns.unitType
-            }
-
-            val param = setter.addValueParameter("value", type)
-
-            setter.body = factory.createBlockBody(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
-                    IrSetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol, type).apply {
-                        value = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, param.symbol)
-                    }
-                )
-            )
-            setter.parent = parent
-            (parent as IrDeclarationContainer).declarations += setter
-
-            setter
-        }
-    }
-
-    modules.reversed().forEach { module ->
-
-        val moduleFields = module.files.flatMap { it.declarations.filterIsInstance<IrField>() }.toSet()
-
-        fun IrField.transformAccess(fn: IrField.() -> IrCall): IrCall? {
-            if (parent !is IrPackageFragment || isEffectivelyExternal() || this in moduleFields) return null
-            return fn()
-        }
-
-        module.transformChildrenVoid(object : IrElementTransformerVoid() {
-
-            override fun visitGetField(expression: IrGetField): IrExpression {
-                expression.transformChildrenVoid(this)
-
-                return expression.symbol.owner.transformAccess {
-                    val getter = getter()
-                    IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, getter.returnType, getter.symbol, getter.typeParameters.size, getter.valueParameters.size)
-                } ?: expression
-            }
-
-            override fun visitSetField(expression: IrSetField): IrExpression {
-                expression.transformChildrenVoid(this)
-
-                return expression.symbol.owner.transformAccess {
-                    val setter = setter()
-                    IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, setter.returnType, setter.symbol, setter.typeParameters.size, setter.valueParameters.size).apply {
-                        putValueArgument(0, expression.value)
-                    }
-                } ?: expression
-            }
-        })
-    }
-}
-
 val IrModuleFragment.safeName: String
+    get() = name.asString().safeModuleName
+
+val String.safeModuleName: String
     get() {
-        var result = name.asString()
+        var result = this
 
         if (result.startsWith('<')) result = result.substring(1)
         if (result.endsWith('>')) result = result.substring(0, result.length - 1)
 
-        return sanitizeName("kotlin-$result")
+        return sanitizeName("kotlin_$result", false)
     }

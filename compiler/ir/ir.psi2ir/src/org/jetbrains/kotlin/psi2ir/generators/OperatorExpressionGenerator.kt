@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
-import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
@@ -45,7 +45,11 @@ import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonInfo
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.intersectTypes
-import org.jetbrains.kotlin.types.typeUtil.*
+import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
+import org.jetbrains.kotlin.types.typeUtil.makeNullable
+import kotlin.collections.contains
+import kotlin.collections.set
 
 
 class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
@@ -205,7 +209,7 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         // Infer type for elvis manually. Take into account possibly nested elvises.
         val rightType = getResultTypeForElvis(binaryExpression.right!!).unwrap()
         val leftType = getResultTypeForElvis(binaryExpression.left!!).unwrap()
-        val leftNNType = intersectTypes(listOf(leftType, context.builtIns.anyType))
+        val leftNNType = intersectTypes(listOf(leftType, (context.irBuiltIns as IrBuiltInsOverDescriptors).any))
         return NewCommonSuperTypeCalculator.commonSuperType(listOf(rightType, leftNNType))
     }
 
@@ -432,7 +436,9 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         return memberScope.findSingleFunction(Name.identifier("to$targetTypeName"))
     }
 
-    private val primitiveTypeMapping = context.irBuiltIns.run { primitiveTypes.zip(primitiveIrTypes).toMap() }
+    private val primitiveTypeMapping: Map<SimpleType, IrType> =
+        (context.irBuiltIns as IrBuiltInsOverDescriptors).run { primitiveTypes.zip(primitiveIrTypes).toMap() }
+
     private fun kotlinTypeToIrType(kotlinType: KotlinType?) = kotlinType?.let { primitiveTypeMapping[it] }
 
     private fun generateComparisonOperator(ktExpression: KtBinaryExpression, origin: IrStatementOrigin): IrExpression {
@@ -497,7 +503,8 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
 
         val argumentType = context.bindingContext.getType(ktArgument)
             ?: throw AssertionError("No type for !! argument")
-        val expressionType = argumentType.makeNotNullable()
+
+        val expressionType = context.extensions.enhancedNullability.stripEnhancedNullability(argumentType.makeNotNullable())
 
         val checkNotNull = context.irBuiltIns.checkNotNullSymbol.descriptor
         val checkNotNullSubstituted =
@@ -507,24 +514,34 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
                 )
             ) ?: throw AssertionError("Substitution failed for $checkNotNull: T=$argumentType")
 
+        val expressionIrType = expressionType.toIrType()
+
         val checkNotNullSymbol = context.irBuiltIns.checkNotNullSymbol
         return IrCallImpl.fromSymbolDescriptor(
             ktOperator.startOffsetSkippingComments, ktOperator.endOffset,
-            expressionType.toIrType(),
+            expressionIrType,
             checkNotNullSymbol,
             origin = origin
         ).apply {
             context.callToSubstitutedDescriptorMap[this] = checkNotNullSubstituted
-            putTypeArgument(0, argumentType.toIrType().makeNotNull())
+            putTypeArgument(0, expressionIrType)
             putValueArgument(0, irArgument)
         }
     }
 
-    private fun generateBinaryOperatorAsCall(expression: KtBinaryExpression, origin: IrStatementOrigin?): IrExpression =
-        if (isDynamicBinaryOperator(expression))
-            generateDynamicBinaryExpression(expression)
-        else
-            generateCall(getResolvedCall(expression)!!, expression, origin)
+    private fun generateBinaryOperatorAsCall(expression: KtBinaryExpression, origin: IrStatementOrigin?): IrExpression {
+        if (isDynamicBinaryOperator(expression)) {
+            return generateDynamicBinaryExpression(expression)
+        }
+        val callBuilder = statementGenerator.pregenerateCall(getResolvedCall(expression)!!)
+        return CallGenerator(statementGenerator).generateFunctionCall(
+            callBuilder.descriptor as? FunctionDescriptor
+                ?: throw AssertionError("Operator call resolved to a non-function: ${callBuilder.descriptor}"),
+            expression.startOffsetSkippingComments, expression.endOffset,
+            origin,
+            callBuilder
+        )
+    }
 
     private fun generatePrefixOperatorAsCall(expression: KtPrefixExpression, origin: IrStatementOrigin): IrExpression {
         val resolvedCall = getResolvedCall(expression)!!

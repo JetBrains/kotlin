@@ -1,5 +1,0 @@
-fun foo() {
-    if (a) <caret>bar1() else {
-        bar2()
-    }
-}

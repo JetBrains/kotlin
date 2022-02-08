@@ -62,7 +62,7 @@ class InlinePlatformCompatibilityChecker(val jvmTarget: JvmTarget, languageVersi
 
         val propertyOrFun = DescriptorUtils.getDirectMember(resultingDescriptor)
 
-        val compilingBytecodeVersion = jvmTarget.bytecodeVersion
+        val compilingBytecodeVersion = jvmTarget.majorVersion
         if (!properError) {
             val inliningBytecodeVersion = getBytecodeVersionIfDeserializedDescriptor(propertyOrFun, false)
             if (inliningBytecodeVersion != null && compilingBytecodeVersion < inliningBytecodeVersion) {

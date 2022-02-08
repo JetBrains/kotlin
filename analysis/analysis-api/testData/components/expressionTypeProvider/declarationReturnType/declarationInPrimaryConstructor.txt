@@ -1,0 +1,4 @@
+Foo@(1,1)
+  Foo@(1,13) : Foo<T>
+    t@(1,14) : T
+    i@(1,24) : kotlin.Int

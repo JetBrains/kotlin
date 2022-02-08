@@ -43,7 +43,7 @@ abstract class ConstantValue<out T>(open val value: T) {
 
     override fun toString(): String = value.toString()
 
-    open fun stringTemplateValue(): String = value.toString()
+    open fun boxedValue(): Any? = value
 }
 
 abstract class IntegerValueConstant<out T> protected constructor(value: T) : ConstantValue<T>(value)
@@ -55,12 +55,14 @@ class AnnotationValue(value: AnnotationDescriptor) : ConstantValue<AnnotationDes
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitAnnotationValue(this, data)
 }
 
-class ArrayValue(
-        value: List<ConstantValue<*>>,
-        private val computeType: (ModuleDescriptor) -> KotlinType
+open class ArrayValue(
+    value: List<ConstantValue<*>>,
+    private val computeType: (ModuleDescriptor) -> KotlinType
 ) : ConstantValue<List<ConstantValue<*>>>(value) {
     override fun getType(module: ModuleDescriptor): KotlinType = computeType(module).also { type ->
-        assert(KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type)) { "Type should be an array, but was $type: $value" }
+        assert(KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isPrimitiveArray(type) || KotlinBuiltIns.isUnsignedArrayType(type)) {
+            "Type should be an array, but was $type: $value"
+        }
     }
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitArrayValue(this, data)
@@ -83,7 +85,7 @@ class CharValue(value: Char) : IntegerValueConstant<Char>(value) {
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D) = visitor.visitCharValue(this, data)
 
-    override fun toString() = "\\u%04X ('%s')".format(value.toInt(), getPrintablePart(value))
+    override fun toString() = "\\u%04X ('%s')".format(value.code, getPrintablePart(value))
 
     private fun getPrintablePart(c: Char): String = when (c) {
         '\b' -> "\\b"
@@ -126,7 +128,11 @@ class EnumValue(val enumClassId: ClassId, val enumEntryName: Name) : ConstantVal
 }
 
 abstract class ErrorValue : ConstantValue<Unit>(Unit) {
-    @Deprecated("Should not be called, for this is not a real value, but a indication of an error")
+    init {
+        Unit
+    }
+
+    @Deprecated("Should not be called, for this is not a real value, but an indication of an error")
     override val value: Unit
         get() = throw UnsupportedOperationException()
 
@@ -174,7 +180,7 @@ class KClassValue(value: Value) : ConstantValue<KClassValue.Value>(value) {
     constructor(classId: ClassId, arrayDimensions: Int) : this(ClassLiteralValue(classId, arrayDimensions))
 
     override fun getType(module: ModuleDescriptor): KotlinType =
-        KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, module.builtIns.kClass, listOf(TypeProjectionImpl(getArgumentType(module))))
+        KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, module.builtIns.kClass, listOf(TypeProjectionImpl(getArgumentType(module))))
 
     fun getArgumentType(module: ModuleDescriptor): KotlinType {
         when (value) {
@@ -267,7 +273,7 @@ class UByteValue(byteValue: Byte) : UnsignedValueConstant<Byte>(byteValue) {
 
     override fun toString() = "$value.toUByte()"
 
-    override fun stringTemplateValue(): String = (value.toInt() and 0xFF).toString()
+    override fun boxedValue(): Any = value.toUByte()
 }
 
 class UShortValue(shortValue: Short) : UnsignedValueConstant<Short>(shortValue) {
@@ -280,7 +286,7 @@ class UShortValue(shortValue: Short) : UnsignedValueConstant<Short>(shortValue) 
 
     override fun toString() = "$value.toUShort()"
 
-    override fun stringTemplateValue(): String = (value.toInt() and 0xFFFF).toString()
+    override fun boxedValue(): Any = value.toUShort()
 }
 
 class UIntValue(intValue: Int) : UnsignedValueConstant<Int>(intValue) {
@@ -293,7 +299,7 @@ class UIntValue(intValue: Int) : UnsignedValueConstant<Int>(intValue) {
 
     override fun toString() = "$value.toUInt()"
 
-    override fun stringTemplateValue(): String = (value.toLong() and 0xFFFFFFFFL).toString()
+    override fun boxedValue(): Any = value.toUInt()
 }
 
 class ULongValue(longValue: Long) : UnsignedValueConstant<Long>(longValue) {
@@ -306,12 +312,5 @@ class ULongValue(longValue: Long) : UnsignedValueConstant<Long>(longValue) {
 
     override fun toString() = "$value.toULong()"
 
-    override fun stringTemplateValue(): String {
-        if (value >= 0) return value.toString()
-
-        val div10 = (value ushr 1) / 5
-        val mod10 = value - 10 * div10
-
-        return "$div10$mod10"
-    }
+    override fun boxedValue(): Any = value.toULong()
 }

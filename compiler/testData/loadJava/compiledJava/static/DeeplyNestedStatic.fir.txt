@@ -1,4 +1,14 @@
 public open class DeeplyNestedStatic : R|kotlin/Any| {
     public constructor(): R|test/DeeplyNestedStatic|
 
+    public open class Foo : R|kotlin/Any| {
+        public constructor(): R|test/DeeplyNestedStatic.Foo|
+
+        public open class Bar : R|kotlin/Any| {
+            public open static fun method(): R|kotlin/Unit|
+
+            public constructor(): R|test/DeeplyNestedStatic.Foo.Bar|
+
+        }
+    }
 }

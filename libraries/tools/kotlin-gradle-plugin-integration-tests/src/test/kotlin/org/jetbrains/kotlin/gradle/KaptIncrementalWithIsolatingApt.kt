@@ -5,228 +5,468 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.JavaVersion
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.incapt.IncrementalAggregatingReferencingClasspathProcessor
+import org.jetbrains.kotlin.gradle.incapt.IncrementalBinaryIsolatingProcessor
 import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessor
-import org.jetbrains.kotlin.gradle.util.modify
-import org.junit.Assert.assertEquals
-import org.junit.Assume
-import org.junit.Test
+import org.jetbrains.kotlin.gradle.incapt.IncrementalProcessorReferencingClasspath
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.DisabledOnOs
+import org.junit.jupiter.api.condition.OS
 import test.kt33617.MyClass
 import java.io.File
+import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.*
+import kotlin.test.assertEquals
 
+@DisplayName("Kapt incremental tests with isolating apt")
 class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
 
-    override fun getProject() =
-        Project(
-            "kaptIncrementalCompilationProject",
-            GradleVersionRequired.None
-        ).apply {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(
+        incremental = true,
+        kaptOptions = super.defaultBuildOptions.kaptOptions!!.copy(
+            verbose = true,
+            useWorkers = true,
+            incrementalKapt = true,
+            includeCompileClasspath = false
+        )
+    )
+
+    override fun KGPBaseTest.kaptProject(
+        gradleVersion: GradleVersion,
+        buildOptions: BuildOptions,
+        buildJdk: File?,
+        test: TestProject.() -> Unit
+    ): TestProject {
+        return project(PROJECT_NAME, gradleVersion, buildOptions = buildOptions, buildJdk = buildJdk) {
             setupIncrementalAptProject("ISOLATING")
-        }
 
-    override fun defaultBuildOptions(): BuildOptions =
-        super.defaultBuildOptions().copy(
-            incremental = true,
-            kaptOptions = KaptOptions(
-                verbose = true,
-                useWorkers = true,
-                incrementalKapt = true,
-                includeCompileClasspath = false
-            )
-        )
-
-    @Test
-    fun testIncrementalChanges() {
-        val project = getProject()
-
-        project.build("clean", "build") {
-            assertSuccessful()
-        }
-
-        project.projectFile("useB.kt").modify { current -> "$current\nfun otherFunction() {}" }
-        project.build("build") {
-            assertSuccessful()
-
-            assertEquals(
-                setOf(
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
-                ), getProcessedSources(output)
-            )
-        }
-
-        project.projectFile("B.kt").modify { current ->
-            val lastBrace = current.lastIndexOf("}")
-            current.substring(0, lastBrace) + "fun anotherFun() {}\n }"
-        }
-        project.build("build") {
-            assertSuccessful()
-            assertEquals(
-                setOf(
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/B.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/bar/UseBKt.java").canonicalPath,
-                    fileInWorkingDir("build/tmp/kapt3/stubs/main/error/NonExistentClass.java").canonicalPath
-                ),
-                getProcessedSources(output)
-            )
+            test(this)
         }
     }
 
-    @Test
-    fun testChangingAnnotationProcessorClasspath() {
-        val project = getProject()
+    @DisplayName("Incremental changes")
+    @GradleTest
+    fun testIncrementalChanges(gradleVersion: GradleVersion) {
+        kaptProject(gradleVersion) {
+            build("clean", "assemble")
 
-        project.build("clean", "build") {
-            assertSuccessful()
-        }
-
-        project.gradleBuildScript().appendText(
-            """
-            
-            dependencies {
-                kapt 'com.google.guava:guava:12.0'
+            javaSourcesDir().resolve("bar/useB.kt").modify { current -> "$current\nfun otherFunction() {}" }
+            build("assemble") {
+                assertEquals(
+                    setOf(
+                        "$KAPT3_STUBS_PATH/bar/UseBKt.java",
+                        "$KAPT3_STUBS_PATH/error/NonExistentClass.java"
+                    )
+                        .map { projectPath.resolve(it).toRealPath().toString() }
+                        .toSet(),
+                    getProcessedSources(output)
+                )
             }
-        """.trimIndent()
-        )
-        project.build("build") {
-            assertSuccessful()
-            assertContains("Unable to use existing data, re-initializing classpath information for KAPT.")
+
+            javaSourcesDir().resolve("bar/B.kt").modify { current ->
+                val lastBrace = current.lastIndexOf("}")
+                current.substring(0, lastBrace) + "fun anotherFun() {}\n }"
+            }
+            build("assemble") {
+                assertEquals(
+                    setOf(
+                        "$KAPT3_STUBS_PATH/bar/B.java",
+                        "$KAPT3_STUBS_PATH/bar/UseBKt.java",
+                        "$KAPT3_STUBS_PATH/error/NonExistentClass.java",
+                    )
+                        .map { projectPath.resolve(it).toRealPath().toString() }
+                        .toSet(),
+                    getProcessedSources(output)
+                )
+            }
         }
     }
 
-    @Test
-    fun testUnchangedAnnotationProcessorClasspathButContentChanged() {
-        val project = getProject()
-        val processorJar = project.projectDir.resolve("processor.jar").also {
-            ZipOutputStream(it.outputStream()).use {
-                // create an empty jar
-            }
-        }
-        project.gradleBuildScript().appendText(
-            """
-            
-            dependencies {
-                kapt files("processor.jar")
-            }
-        """.trimIndent()
-        )
+    @DisplayName("On changing annotation processor classpath")
+    @GradleTest
+    fun testChangingAnnotationProcessorClasspath(gradleVersion: GradleVersion) {
+        kaptProject(gradleVersion) {
+            build("clean", "assemble")
 
-        project.build("clean", "build") {
-            assertSuccessful()
-        }
+            buildGradle.append(
+                """
+    
+                    dependencies {
+                        kapt 'com.google.guava:guava:12.0'
+                    }
+                    """.trimIndent()
+            )
 
-        ZipOutputStream(processorJar.outputStream()).use {
-            it.putNextEntry(ZipEntry("resource.txt"))
-            it.closeEntry()
-        }
-        project.build("build") {
-            assertSuccessful()
-            assertContains("Unable to use existing data, re-initializing classpath information for KAPT.")
+            build("assemble") {
+                assertOutputContains("The input changes require a full rebuild for incremental task ':kaptKotlin'.")
+            }
         }
     }
 
-    @Test
-    fun testNonIncrementalWithUnrecognizedInputs() {
-        val project = getProject()
-
-        val additionalInputs = project.projectDir.resolve("additionalInputs").also { it.mkdirs() }
-        project.gradleBuildScript().appendText(
-            """
-            
-            tasks.whenTaskAdded {
-                if (it.name == "kaptKotlin") {
-                  it.getInputs().files("${additionalInputs.invariantSeparatorsPath}")
+    @DisplayName("On unchanged annotation processor classpath, but processor itself is updated")
+    @GradleTest
+    fun testUnchangedAnnotationProcessorClasspathButContentChanged(gradleVersion: GradleVersion) {
+        kaptProject(gradleVersion) {
+            val processorJar = projectPath.resolve("processor.jar").also {
+                ZipOutputStream(it.outputStream()).use {
+                    // create an empty jar
                 }
             }
-        """.trimIndent()
-        )
 
-        project.build("clean", "build") {
-            assertSuccessful()
-        }
+            buildGradle.append(
+                """
+    
+                    dependencies {
+                        kapt files("processor.jar")
+                    }
+                    """.trimIndent()
+            )
 
-        additionalInputs.resolve("layout.xml").createNewFile()
-        project.build("build") {
-            assertSuccessful()
-            assertContains("Incremental annotation processing (apt mode): false")
+            build("clean", "assemble")
+
+            ZipOutputStream(processorJar.outputStream()).use {
+                it.putNextEntry(ZipEntry("resource.txt"))
+                it.closeEntry()
+            }
+
+            build("assemble") {
+                assertOutputContains("The input changes require a full rebuild for incremental task ':kaptKotlin'.")
+            }
         }
     }
 
-    /** Regression test for https://youtrack.jetbrains.com/issue/KT-33617. */
-    @Test
-    fun testSourcesInCompileClasspathJars() {
-        val javaHome = File(System.getProperty("jdk9Home")!!)
-        Assume.assumeTrue("JDK 9 isn't available", javaHome.isDirectory)
-        val options = defaultBuildOptions().copy(javaHome = javaHome)
-
-        val project = getProject()
-        // create jar with .class and .java file for the same type
-        ZipOutputStream(project.projectDir.resolve("lib-with-sources.jar").outputStream()).use {
-            it.putNextEntry(ZipEntry("test/kt33617/MyClass.class"))
-            MyClass::class.java.classLoader.getResourceAsStream("test/kt33617/MyClass.class").use { input ->
-                it.write(input!!.readBytes())
-            }
-            it.closeEntry()
-
-            it.putNextEntry(ZipEntry("test/kt33617/MyClass.java"))
-            it.write(
+    @DisplayName("Runs non-incrementally on unrecognized inputs")
+    @GradleTest
+    fun testNonIncrementalWithUnrecognizedInputs(gradleVersion: GradleVersion) {
+        kaptProject(gradleVersion) {
+            val additionalInputs = projectPath.resolve("additionalInputs").also { it.createDirectories() }
+            buildGradle.appendText(
                 """
-                package test.kt33617;
-                public class MyClass {}
-            """.trimIndent().toByteArray(Charsets.UTF_8)
+    
+                    tasks.whenTaskAdded {
+                        if (it.name == "kaptKotlin") {
+                          it.getInputs().files("${additionalInputs.invariantSeparatorsPathString}")
+                        }
+                    }
+                    """.trimIndent()
             )
-            it.closeEntry()
-        }
-        project.gradleBuildScript().appendText(
-            """
-                
-            dependencies {
-                implementation files('lib-with-sources.jar')
-            }
-        """.trimIndent()
-        )
-        project.projectFile("useB.kt").modify { current -> "$current\nfun otherFunction(param: test.kt33617.MyClass) {}" }
 
-        project.build("clean", "kaptKotlin", options = options) {
-            assertSuccessful()
+            build("clean", "assemble")
+
+            additionalInputs.resolve("layout.xml").createFile()
+            build("assemble") {
+                assertOutputContains("Incremental annotation processing (apt mode): false")
+            }
+        }
+    }
+
+    @DisplayName("KT-33617: sources in compile classpath jars")
+    @JdkVersions(versions = [JavaVersion.VERSION_1_9])
+    @GradleWithJdkTest
+    fun testSourcesInCompileClasspathJars(gradleVersion: GradleVersion, jdk: JdkVersions.ProvidedJdk) {
+        kaptProject(gradleVersion, buildJdk = jdk.location) {
+            // create jar with .class and .java file for the same type
+            ZipOutputStream(projectPath.resolve("lib-with-sources.jar").outputStream()).use {
+                it.putNextEntry(ZipEntry("test/kt33617/MyClass.class"))
+                MyClass::class.java.classLoader.getResourceAsStream("test/kt33617/MyClass.class").use { input ->
+                    it.write(input!!.readBytes())
+                }
+                it.closeEntry()
+
+                it.putNextEntry(ZipEntry("test/kt33617/MyClass.java"))
+                it.write(
+                    """
+                        package test.kt33617;
+                        public class MyClass {}
+                        """.trimIndent().toByteArray(Charsets.UTF_8)
+                )
+                it.closeEntry()
+            }
+
+            buildGradle.append(
+                """
+    
+                    dependencies {
+                        implementation files('lib-with-sources.jar')
+                    }
+                    """.trimIndent()
+            )
+            javaSourcesDir().resolve("bar/useB.kt").modify { current ->
+                "$current\nfun otherFunction(param: test.kt33617.MyClass) {}"
+            }
+
+            build("clean", "kaptKotlin")
+        }
+    }
+
+    @DisplayName("KT-42182: generated sources are updated on classpath changes")
+    @GradleTest
+    fun testGeneratedSourcesImpactedByClasspathChanges(gradleVersion: GradleVersion) {
+        project(PROJECT_NAME, gradleVersion) {
+            setupIncrementalAptProject(
+                "ISOLATING",
+                procClass = IncrementalProcessorReferencingClasspath::class.java
+            )
+
+            settingsGradle.append("\ninclude ':', ':lib'")
+
+            val classpathTypeSource = subProject("lib").run {
+                projectPath.createDirectory()
+                buildGradle.writeText(
+                    """
+                    plugins {
+                        id 'java'
+                    }
+                    """.trimIndent()
+                )
+                val source = javaSourcesDir()
+                    .resolve(
+                        IncrementalProcessorReferencingClasspath.CLASSPATH_TYPE
+                            .replace(".", "/") + ".java"
+                    )
+                source.parent.createDirectories()
+
+                source.writeText(
+                    """
+                    package ${IncrementalProcessorReferencingClasspath.CLASSPATH_TYPE.substringBeforeLast(".")};
+                    public class ${IncrementalProcessorReferencingClasspath.CLASSPATH_TYPE.substringAfterLast(".")} {}
+                    """.trimIndent()
+                )
+                return@run source
+            }
+
+            buildGradle.appendText(
+                """
+
+                dependencies {
+                    implementation project(':lib')
+                }
+                """.trimIndent()
+            )
+
+            val annotatedKotlinStubs = listOf(
+                "$KAPT3_STUBS_PATH/foo/A.java",
+                "$KAPT3_STUBS_PATH/bar/B.java",
+                "$KAPT3_STUBS_PATH/bar/UseBKt.java",
+                "$KAPT3_STUBS_PATH/baz/UtilKt.java",
+                "$KAPT3_STUBS_PATH/baz/UtilKt.java",
+                "$KAPT3_STUBS_PATH/error/NonExistentClass.java"
+            )
+
+            val allKotlinStubs = annotatedKotlinStubs + listOf(
+                "$KAPT3_STUBS_PATH/delegate/Delegate.java",
+                "$KAPT3_STUBS_PATH/delegate/Usage.java"
+            )
+
+            build("clean", "assemble") {
+                assertEquals(
+                    allKotlinStubs
+                        .plus("src/main/java/foo/JavaClass.java")
+                        .map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
+                    getProcessedSources(output)
+                )
+            }
+
+            // change type that all generated sources reference
+            classpathTypeSource.writeText(
+                classpathTypeSource.readText().replace("}", "int i = 10;\n}")
+            )
+            build("assemble") {
+                assertEquals(
+                    annotatedKotlinStubs.map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
+                    getProcessedSources(output)
+                )
+            }
+        }
+    }
+
+    @DisplayName("KT-34340: origins in classpath")
+    @GradleTest
+    @DisabledOnOs(OS.WINDOWS, disabledReason = "https://youtrack.jetbrains.com/issue/KTI-405")
+    fun testIsolatingWithOriginsInClasspath(gradleVersion: GradleVersion) {
+        project(
+            "kaptIncrementalWithParceler",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = TestVersions.AGP.AGP_42)
+        ) {
+            build("clean", ":mylibrary:assembleDebug")
+
+            subProject("baseLibrary")
+                .javaSourcesDir()
+                .resolve("com/example/lib2/basemodule/BaseClassParcel.java")
+                .modify { current ->
+                    current.replace("protected FieldClassParcel", "private FieldClassParcel")
+                }
+
+            build(":mylibrary:assembleDebug") {
+                assertEquals(
+                    listOf(
+                        "mylibrary/src/main/java/com/example/lib/ExampleParcel.java",
+                        "baseLibrary/src/main/java/com/example/lib2/basemodule/BaseClassParcel.java",
+                    ).map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
+                    getProcessedSources(output)
+                )
+            }
+        }
+    }
+
+    /**
+     * Make sure that changes to classpath can cause types to be reprocessed (i.e types in generated .class files that contain annotations
+     * claimed by annotation processors).
+     */
+    @DisplayName("Changed types causing incremental compilation")
+    @GradleTest
+    fun testClasspathChangesCauseTypesToBeReprocessed(gradleVersion: GradleVersion) {
+        project(PROJECT_NAME, gradleVersion) {
+            setupIncrementalAptProject(
+                Pair("ISOLATING", IncrementalBinaryIsolatingProcessor::class.java),
+                Pair("AGGREGATING", IncrementalAggregatingReferencingClasspathProcessor::class.java),
+            )
+
+            settingsGradle.append("\ninclude ':', ':lib'\n")
+            val classpathTypeSource = subProject("lib").run {
+                projectPath.createDirectories()
+
+                buildGradle.writeText(
+                    """
+                    plugins {
+                        id 'java'
+                    }
+                    
+                    """.trimIndent()
+                )
+                val source = javaSourcesDir()
+                    .resolve(
+                        IncrementalAggregatingReferencingClasspathProcessor.CLASSPATH_TYPE
+                            .replace(".", "/") + ".java"
+                    )
+                source.parent.createDirectories()
+
+                source.writeText(
+                    """
+                    package ${IncrementalAggregatingReferencingClasspathProcessor.CLASSPATH_TYPE.substringBeforeLast(".")};
+                    public class ${IncrementalAggregatingReferencingClasspathProcessor.CLASSPATH_TYPE.substringAfterLast(".")} {}
+                    """.trimIndent()
+                )
+                return@run source
+            }
+
+            buildGradle.append(
+                """
+
+                dependencies {
+                    implementation project(':lib')
+                }
+                """.trimIndent()
+            )
+
+            // Remove all sources, and add only 1 source file
+            javaSourcesDir().deleteRecursively()
+            with(javaSourcesDir().resolve("example/A.kt")) {
+                parent.createDirectories()
+                writeText(
+                    """
+                    package example
+                    
+                    annotation class ExampleAnnotation
+                    @ExampleAnnotation
+                    class A
+                    """.trimIndent()
+                )
+            }
+
+            val allKotlinStubs = setOf(
+                "build/tmp/kapt3/stubs/main/example/ExampleAnnotation.java",
+                "build/tmp/kapt3/stubs/main/example/A.java",
+                "build/tmp/kapt3/stubs/main/error/NonExistentClass.java"
+            )
+
+            build("clean", "assemble") {
+                assertEquals(
+                    allKotlinStubs.map { projectPath.resolve(it).toRealPath().toString() }.toSet(),
+                    getProcessedSources(output)
+                )
+                assertFileInProjectExists("build/generated/source/kapt/main/com/example/AggGenerated.java")
+            }
+
+            // change type that the aggregated generated source reference
+            classpathTypeSource.writeText(classpathTypeSource.readText().replace("}", "int i = 10;\n}"))
+            build("assemble") {
+                assertEquals(emptySet(), getProcessedSources(output))
+                assertEquals(setOf("example.AGenerated"), getProcessedTypes(output))
+                assertFileInProjectExists("build/generated/source/kapt/main/com/example/AggGenerated.java")
+            }
         }
     }
 }
 
 private const val patternApt = "Processing java sources with annotation processors:"
 fun getProcessedSources(output: String): Set<String> {
-    val logging = output.lines().single { it.contains(patternApt) }
-    val indexOf = logging.indexOf(patternApt) + patternApt.length
-    return logging.drop(indexOf).split(",").map { it.trim() }.filter { !it.isEmpty() }.toSet()
+    return output.lines().filter { it.contains(patternApt) }.flatMapTo(HashSet()) { logging ->
+        val indexOf = logging.indexOf(patternApt) + patternApt.length
+        logging.drop(indexOf).split(",").map { it.trim() }.filter { it.isNotEmpty() }.toSet()
+    }
 }
 
-fun BaseGradleIT.Project.setupIncrementalAptProject(procType: String, buildFile: File = projectDir.resolve("build.gradle")) {
-    setupWorkingDir()
+private const val patternClassesApt = "Processing types with annotation processors: "
+fun getProcessedTypes(output: String): Set<String> {
+    return output.lines().filter { it.contains(patternClassesApt) }.flatMapTo(HashSet()) { logging ->
+        val indexOf = logging.indexOf(patternClassesApt) + patternClassesApt.length
+        logging.drop(indexOf).split(",").map { it.trim() }.filter { it.isNotEmpty() }.toSet()
+    }
+}
+
+fun TestProject.setupIncrementalAptProject(
+    procType: String,
+    buildFile: Path = buildGradle,
+    procClass: Class<*> = IncrementalProcessor::class.java
+) {
+    setupIncrementalAptProject(procType to procClass, buildFile = buildFile)
+}
+
+@OptIn(ExperimentalPathApi::class)
+fun TestProject.setupIncrementalAptProject(
+    vararg processors: Pair<String, Class<*>>,
+    buildFile: Path = buildGradle
+) {
     val content = buildFile.readText()
-    val processorPath = generateProcessor(procType)
+    val processorPath = generateProcessor(*processors)
 
     val updatedContent = content.replace(
-        Regex("^\\s*kapt\\s\"org\\.jetbrain.*$", RegexOption.MULTILINE),
+        Regex("^\\s*kapt\\s\"org\\.jetbrains\\.kotlin.*$", RegexOption.MULTILINE),
         "    kapt files(\"${processorPath.invariantSeparatorsPath}\")"
     )
     buildFile.writeText(updatedContent)
 }
 
-fun BaseGradleIT.Project.generateProcessor(procType: String): File {
-    val processorPath = projectDir.resolve("incrementalProcessor.jar")
+fun TestProject.generateProcessor(
+    vararg processors: Pair<String, Class<*>>
+): File {
+    val processorPath = projectPath.resolve("incrementalProcessor.jar").toFile()
 
     ZipOutputStream(processorPath.outputStream()).use {
-        val path = IncrementalProcessor::class.java.name.replace(".", "/") + ".class"
-        val inputStream = IncrementalProcessor::class.java.classLoader.getResourceAsStream(path)
-        it.putNextEntry(ZipEntry(path))
-        it.write(inputStream.readBytes())
-        it.closeEntry()
+        for ((_, procClass) in processors) {
+            val path = procClass.name.replace(".", "/") + ".class"
+            procClass.classLoader.getResourceAsStream(path).use { inputStream ->
+                it.putNextEntry(ZipEntry(path))
+                it.write(inputStream!!.readBytes())
+                it.closeEntry()
+            }
+        }
         it.putNextEntry(ZipEntry("META-INF/gradle/incremental.annotation.processors"))
-        it.write("${IncrementalProcessor::class.java.name},$procType".toByteArray())
+        it.write(processors.joinToString("\n") { (procType, procClass) ->
+            "${procClass.name},$procType"
+        }.toByteArray())
         it.closeEntry()
         it.putNextEntry(ZipEntry("META-INF/services/javax.annotation.processing.Processor"))
-        it.write(IncrementalProcessor::class.java.name.toByteArray())
+        it.write(processors.joinToString("\n") { (_, procClass) ->
+            procClass.name
+        }.toByteArray())
         it.closeEntry()
     }
     return processorPath

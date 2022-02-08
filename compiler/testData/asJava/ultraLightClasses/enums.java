@@ -26,17 +26,17 @@ public enum Color /* Color*/ {
 public enum ProtocolState /* ProtocolState*/ {
   WAITING {
      WAITING();//  .ctor()
-  
+
     @org.jetbrains.annotations.NotNull()
     public ProtocolState signal();//  signal()
-  
+
   },
   TALKING {
      TALKING();//  .ctor()
-  
+
     @org.jetbrains.annotations.NotNull()
     public ProtocolState signal();//  signal()
-  
+
   };
 
   @org.jetbrains.annotations.NotNull()
@@ -47,9 +47,9 @@ public enum ProtocolState /* ProtocolState*/ {
 
 
   class TALKING ...
-  
+
     class WAITING ...
-  
+
   }
 
 public static final class WAITING /* ProtocolState.WAITING*/ extends ProtocolState {
@@ -68,44 +68,47 @@ public static final class TALKING /* ProtocolState.TALKING*/ extends ProtocolSta
 
 }
 
-public enum IntArithmetics /* IntArithmetics*/ {
+public enum IntArithmetics /* IntArithmetics*/ implements java.util.function.BinaryOperator<java.lang.Integer>, java.util.function.IntBinaryOperator {
   PLUS {
      PLUS();//  .ctor()
-  
-    public int apply(int, int);//  apply(int, int)
-  
+
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.Integer apply(int, int);//  apply(int, int)
+
   },
   TIMES {
      TIMES();//  .ctor()
-  
-    public int apply(int, int);//  apply(int, int)
-  
+
+    @org.jetbrains.annotations.NotNull()
+    public java.lang.Integer apply(int, int);//  apply(int, int)
+
   };
 
-  @org.jetbrains.annotations.NotNull()
-  public IntArithmetics applyAsInt(int, int);//  applyAsInt(int, int)
-
   private  IntArithmetics();//  .ctor()
+
+  public int applyAsInt(int, int);//  applyAsInt(int, int)
 
 
 
   class PLUS ...
-  
+
     class TIMES ...
-  
+
   }
 
 public static final class PLUS /* IntArithmetics.PLUS*/ extends IntArithmetics {
    PLUS();//  .ctor()
 
-  public int apply(int, int);//  apply(int, int)
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.Integer apply(int, int);//  apply(int, int)
 
 }
 
 public static final class TIMES /* IntArithmetics.TIMES*/ extends IntArithmetics {
    TIMES();//  .ctor()
 
-  public int apply(int, int);//  apply(int, int)
+  @org.jetbrains.annotations.NotNull()
+  public java.lang.Integer apply(int, int);//  apply(int, int)
 
 }
 

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 class Immutable(val x: String?) {
     fun foo(): String {
         if (x != null) return x
@@ -8,7 +7,7 @@ class Immutable(val x: String?) {
 
 class Mutable(var y: String?) {
     fun foo(): String {
-        if (y != null) return y
+        if (y != null) return <!SMARTCAST_IMPOSSIBLE!>y<!>
         return ""
     }
 }

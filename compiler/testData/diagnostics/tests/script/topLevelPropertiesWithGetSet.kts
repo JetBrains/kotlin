@@ -6,9 +6,9 @@ val String.testExtVal: Int get() = 42
 
 val String.testExtValNoType get() = 42
 
-var testVar: Int get() = 42; set(<!UNUSED_PARAMETER!>value<!>) {}
+var testVar: Int get() = 42; set(value) {}
 
-var String.testExtVar: Int get() = 42; set(<!UNUSED_PARAMETER!>value<!>) {}
+var String.testExtVar: Int get() = 42; set(value) {}
 
 val testValLineBreak: Int
 get() = 42
@@ -24,11 +24,11 @@ get() = 42
 
 var testVarLineBreak: Int
 get() = 42
-set(<!UNUSED_PARAMETER!>value<!>) {}
+set(value) {}
 
 var String.testExtVarLineBreak: Int
 get() = 42
-set(<!UNUSED_PARAMETER!>value<!>) {}
+set(value) {}
 
 <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var testVarLineBreakSemi: Int<!>;
 <!UNRESOLVED_REFERENCE!>get<!>() = 42

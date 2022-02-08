@@ -19,54 +19,7 @@ object GenerateSteppedRangesCodegenTestData {
     private val KT_34166_AFFECTED_FILENAMES = setOf("illegalStepZero.kt", "illegalStepNegative.kt", "illegalStepNonConst.kt")
 
     private val JVM_IR_FAILING_FOR_UNSIGNED_FILENAMES = setOf<String>()
-    private val USE_OLD_MANGLING_SCHEME = setOf(
-        "minValueToMaxValueStepMaxValue.kt",
-        "zeroToMaxValueStepMaxValue.kt",
-        "emptyDownto.kt",
-        "emptyProgression.kt",
-        "emptyProgressionToMinValue.kt",
-        "illegalStepNegative.kt",
-        "illegalStepNonConst.kt",
-        "illegalStepThenLegalStep.kt",
-        "illegalStepZero.kt",
-        "inexactSteppedDownTo.kt",
-        "legalStepThenIllegalStep.kt",
-        "maxValueToMinValueStepMaxValue.kt",
-        "maxValueToOneStepMaxValue.kt",
-        "maxValueToZeroStepMaxValue.kt",
-        "mixedTypeStep.kt",
-        "oneElementDownTo.kt",
-        "openRange.kt",
-        "overflowZeroDownToMaxValue.kt",
-        "overflowZeroToMinValue.kt",
-        "progressionToNonConst.kt",
-        "reversedBackSequence.kt",
-        "reversedEmptyBackSequence.kt",
-        "reversedInexactSteppedDownTo.kt",
-        "reversedThenStep.kt",
-        "reversedThenStepThenReversed.kt",
-        "reversedThenStepThenReversedThenStep.kt",
-        "simpleDownTo.kt",
-        "simpleSteppedDownTo.kt",
-        "singleElementStepTwo.kt",
-        "stepNonConst.kt",
-        "stepOne.kt",
-        "stepOneThenStepOne.kt",
-        "stepThenReversed.kt",
-        "stepThenReversedThenStep.kt",
-        "stepThenReversedThenStepThenReversed.kt",
-        "stepThenSameStep.kt",
-        "stepToOutsideRange.kt",
-        "stepToSameLast.kt",
-        "stepToSameLastThenStepOne.kt",
-        "stepToSameLastThenStepToSameLast.kt",
-        "stepToSameLastThenStepToSmallerLast.kt",
-        "stepToSmallerLast.kt",
-        "stepToSmallerLastThenStepOne.kt",
-        "stepToSmallerLastThenStepToSameLast.kt",
-        "stepToSmallerLastThenStepToSmallerLast.kt",
-        "unsignedRangeIterator.kt",
-    )
+    private val USE_OLD_MANGLING_SCHEME = emptySet<String>()
 
     private enum class Type(val type: String, val isLong: Boolean = false, val isUnsigned: Boolean = false) {
         INT("Int"),
@@ -224,9 +177,7 @@ object GenerateSteppedRangesCodegenTestData {
                 if (shouldIgnoreForJvmIR) {
                     println("// IGNORE_BACKEND: JVM_IR")
                 }
-                println("// DONT_TARGET_EXACT_BACKEND: WASM")
-                println("// KJS_WITH_FULL_RUNTIME")
-                println("// WITH_RUNTIME")
+                println("// WITH_STDLIB")
                 if (asLiteral && KT_34166_AFFECTED_FILENAMES.contains(fileName)) {
                     println(KT_34166_HEADER)
                 }
@@ -289,7 +240,7 @@ object GenerateSteppedRangesCodegenTestData {
 
     private fun PrintWriter.printTestForFunctionAndType(builder: TestBuilder, function: Function, type: Type, asLiteral: Boolean) {
         val shouldFail = (builder.expectedValuesOrFailIfNull == null)
-        val listVarName = type.type.toLowerCase() + "List"
+        val listVarName = type.type.lowercase() + "List"
         if (shouldFail) {
             println("    assertFailsWith<IllegalArgumentException> {")
         } else {
@@ -300,7 +251,7 @@ object GenerateSteppedRangesCodegenTestData {
         if (asLiteral) {
             println("$indent    for (i in ${builder.buildFullLiteral(type, function)}) {")
         } else {
-            val progressionVarName = type.type.toLowerCase() + "Progression"
+            val progressionVarName = type.type.lowercase() + "Progression"
             println("$indent    val $progressionVarName = ${builder.buildRangeOnlyExpression(type, function)}")
             println("$indent    for (i in ${builder.buildOnTopOfRangeOnlyVariable(progressionVarName, type)}) {")
         }

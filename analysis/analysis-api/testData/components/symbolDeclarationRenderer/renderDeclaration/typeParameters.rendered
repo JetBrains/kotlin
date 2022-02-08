@@ -1,0 +1,18 @@
+interface List<out T : Any> {
+  infix fun concat(other: List<T>): List<T>
+
+  operator fun get(index: Int): T
+}
+
+typealias StringList = List<out String>
+
+typealias AnyList = List<*>
+
+abstract class AbstractList<out T : Any> : List<T>
+
+class SomeList : AbstractList<Int> {
+  override infix fun concat(other: List<Int>): List<Int>
+
+  override operator fun get(index: Int): Int
+}
+

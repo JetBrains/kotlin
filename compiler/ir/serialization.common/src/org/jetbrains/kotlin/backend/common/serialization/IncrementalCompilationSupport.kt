@@ -6,14 +6,18 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeserializedDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSymbolOwner
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.IrLibrary
+import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.*
 
@@ -34,10 +38,17 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
         return reader.tableItemBytes(index)
     }
 
+    private inline fun <R : IrArrayReader?> Array<R?>.itemNullableBytes(fileIndex: Int, index: Int, factory: () -> R): ByteArray? {
+        val reader = this[fileIndex] ?: factory().also { this[fileIndex] = it }
+
+        return reader?.tableItemBytes(index)
+    }
+
     private val indexedDeclarations = arrayOfNulls<DeclarationIrTableMemoryReader>(icData.size)
     private val indexedTypes = arrayOfNulls<IrArrayMemoryReader>(icData.size)
     private val indexedSignatures = arrayOfNulls<IrArrayMemoryReader>(icData.size)
     private val indexedStrings = arrayOfNulls<IrArrayMemoryReader>(icData.size)
+    private val indexedDebugInfos = arrayOfNulls<IrArrayMemoryReader?>(icData.size)
     private val indexedBodies = arrayOfNulls<IrArrayMemoryReader>(icData.size)
 
     override fun irDeclaration(index: Int, fileIndex: Int): ByteArray =
@@ -65,9 +76,24 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
             IrArrayMemoryReader(icData[fileIndex].bodies)
         }
 
+    override fun debugInfo(index: Int, fileIndex: Int): ByteArray? =
+        indexedDebugInfos.itemNullableBytes(fileIndex, index) {
+            icData[fileIndex].debugInfo?.let { IrArrayMemoryReader(it) }
+        }
+
     override fun file(index: Int): ByteArray = icData[index].fileData
 
     override fun fileCount(): Int = icData.size
+
+    override fun types(fileIndex: Int): ByteArray = icData[fileIndex].types
+
+    override fun signatures(fileIndex: Int): ByteArray = icData[fileIndex].signatures
+
+    override fun strings(fileIndex: Int): ByteArray = icData[fileIndex].strings
+
+    override fun declarations(fileIndex: Int): ByteArray = icData[fileIndex].declarations
+
+    override fun bodies(fileIndex: Int): ByteArray = icData[fileIndex].bodies
 }
 
 class CurrentModuleWithICDeserializer(
@@ -76,7 +102,7 @@ class CurrentModuleWithICDeserializer(
     private val irBuiltIns: IrBuiltIns,
     icData: List<SerializedIrFile>,
     icReaderFactory: (IrLibrary) -> IrModuleDeserializer) :
-    IrModuleDeserializer(delegate.moduleDescriptor) {
+    IrModuleDeserializer(delegate.moduleDescriptor, KotlinAbiVersion.CURRENT) {
 
     private val dirtyDeclarations = mutableMapOf<IdSignature, IrSymbol>()
     private val icKlib = ICKotlinLibrary(icData)
@@ -127,6 +153,8 @@ class CurrentModuleWithICDeserializer(
         icDeserializer.init(delegate)
     }
 
+    override fun toString(): String = "Incremental Cache Klib"
+
     override val klib: IrLibrary
         get() = icDeserializer.klib
 
@@ -134,6 +162,10 @@ class CurrentModuleWithICDeserializer(
         get() = delegate.moduleFragment
     override val moduleDependencies: Collection<IrModuleDeserializer>
         get() = delegate.moduleDependencies
-    override val isCurrent: Boolean
-        get() = delegate.isCurrent
+    override val kind: IrModuleDeserializerKind
+        get() = delegate.kind
+
+    override fun fileDeserializers(): Collection<IrFileDeserializer> {
+        return delegate.fileDeserializers()
+    }
 }

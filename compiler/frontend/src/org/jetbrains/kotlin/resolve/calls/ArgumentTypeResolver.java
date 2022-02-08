@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode;
+import org.jetbrains.kotlin.resolve.calls.util.ResolveArgumentsMode;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
@@ -44,10 +44,11 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.psi.KtPsiUtil.getLastElementDeparenthesized;
 import static org.jetbrains.kotlin.resolve.BindingContextUtils.getRecordedTypeInfo;
-import static org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
+import static org.jetbrains.kotlin.resolve.calls.util.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.DEPENDENT;
 import static org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT;
 import static org.jetbrains.kotlin.types.TypeUtils.DONT_CARE;
@@ -334,7 +335,7 @@ public class ArgumentTypeResolver {
         }
 
         return FunctionTypesKt.createFunctionType(
-                builtIns, Annotations.Companion.getEMPTY(), null, Collections.emptyList(), null, TypeUtils.DONT_CARE
+                builtIns, Annotations.Companion.getEMPTY(), null, Collections.emptyList(), Collections.emptyList(), null, TypeUtils.DONT_CARE
         );
     }
 
@@ -372,7 +373,7 @@ public class ArgumentTypeResolver {
             return expectedTypeIsUnknown
                    ? functionPlaceholders.createFunctionPlaceholderType(Collections.emptyList(), /* hasDeclaredArguments = */ false)
                    : FunctionTypesKt.createFunctionType(
-                           builtIns, Annotations.Companion.getEMPTY(), null, Collections.emptyList(), null, DONT_CARE
+                           builtIns, Annotations.Companion.getEMPTY(), null, Collections.emptyList(), Collections.emptyList(), null, DONT_CARE
                    );
         }
         List<KtParameter> valueParameters = function.getValueParameters();
@@ -391,11 +392,14 @@ public class ArgumentTypeResolver {
         KotlinType returnType = resolveTypeRefWithDefault(function.getTypeReference(), scope, temporaryTrace, DONT_CARE);
         assert returnType != null;
         KotlinType receiverType = resolveTypeRefWithDefault(function.getReceiverTypeReference(), scope, temporaryTrace, null);
+        List<KotlinType> contextReceiversTypes = function.getContextReceivers().stream().map(contextReceiver ->
+            resolveTypeRefWithDefault(contextReceiver.typeReference(), scope, temporaryTrace, null)
+        ).collect(Collectors.toList());
 
         return expectedTypeIsUnknown && isFunctionLiteral
                ? functionPlaceholders.createFunctionPlaceholderType(parameterTypes, /* hasDeclaredArguments = */ true)
                : FunctionTypesKt.createFunctionType(
-                       builtIns, Annotations.Companion.getEMPTY(), receiverType, parameterTypes, parameterNames, returnType, suspendFunctionTypeExpected
+                       builtIns, Annotations.Companion.getEMPTY(), receiverType, contextReceiversTypes, parameterTypes, parameterNames, returnType, suspendFunctionTypeExpected
                );
     }
 

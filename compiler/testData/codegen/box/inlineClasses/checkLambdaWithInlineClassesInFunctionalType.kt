@@ -1,7 +1,11 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class UInt(val value: Int)
-inline class ULong(val value: Long)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class UInt(val value: Int)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class ULong(val value: Long)
 
 fun foo(u: UInt, f: (UInt) -> ULong): ULong = f(u)
 inline fun inlinedFoo(u: UInt, f: (UInt) -> ULong): ULong = f(u)

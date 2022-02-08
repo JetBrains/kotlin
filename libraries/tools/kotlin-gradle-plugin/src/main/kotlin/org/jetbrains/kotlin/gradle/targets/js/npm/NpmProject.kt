@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import java.io.File
+import java.io.Serializable
 
 val KotlinJsCompilation.npmProject: NpmProject
     get() = NpmProject(this)
@@ -24,15 +25,19 @@ val KotlinJsCompilation.npmProject: NpmProject
  *
  * More info can be obtained from [KotlinCompilationNpmResolution], which is available after project resolution (after [KotlinNpmInstallTask] execution).
  */
-open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
-    val name: String
-        get() = buildNpmProjectName()
+open class NpmProject(@Transient val compilation: KotlinJsCompilation) : Serializable {
+    val compilationName = compilation.disambiguatedName
 
-    val nodeJs
-        get() = NodeJsRootPlugin.apply(project.rootProject)
+    val name: String by lazy {
+        buildNpmProjectName()
+    }
 
-    val dir: File
-        get() = nodeJs.projectPackagesDir.resolve(name)
+    @Transient
+    val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+
+    val dir: File by lazy {
+        nodeJs.projectPackagesDir.resolve(name)
+    }
 
     val target: KotlinJsTargetDsl
         get() = compilation.target as KotlinJsTargetDsl
@@ -46,14 +51,15 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
     val packageJsonFile: File
         get() = dir.resolve(PACKAGE_JSON)
 
-    val prePackageJsonFile: File
-        get() = dir.resolve(PRE_PACKAGE_JSON)
-
     val packageJsonTaskName: String
         get() = compilation.disambiguateName("packageJson")
 
     val packageJsonTask: KotlinPackageJsonTask
         get() = project.tasks.getByName(packageJsonTaskName) as KotlinPackageJsonTask
+
+    val packageJsonTaskPath by lazy {
+        packageJsonTask.path
+    }
 
     val dist: File
         get() = dir.resolve(DIST_FOLDER)
@@ -61,8 +67,9 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
     val main: String
         get() = "$DIST_FOLDER/$name.js"
 
-    val externalsDirRoot: File
-        get() = project.buildDir.resolve("externals").resolve(name)
+    val externalsDirRoot by lazy {
+        project.buildDir.resolve("externals").resolve(name)
+    }
 
     val externalsDir: File
         get() = externalsDirRoot.resolve("src")
@@ -72,8 +79,9 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
 
     internal val modules = NpmProjectModules(dir)
 
-    private val rootNodeModules: NpmProjectModules?
-        get() = NpmProjectModules(nodeJs.rootPackageDir)
+    private val nodeExecutable by lazy {
+        nodeJs.requireConfigured().nodeExecutable
+    }
 
     fun useTool(
         exec: ExecSpec,
@@ -82,7 +90,7 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
         args: List<String>
     ) {
         exec.workingDir = dir
-        exec.executable = nodeJs.requireConfigured().nodeExecutable
+        exec.executable = nodeExecutable
         exec.args = nodeArgs + require(tool) + args
     }
 
@@ -90,7 +98,7 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
      * Require [request] nodejs module and return canonical path to it's main js file.
      */
     fun require(request: String): String {
-        nodeJs.npmResolutionManager.requireAlreadyInstalled(project)
+//        nodeJs.npmResolutionManager.requireAlreadyInstalled(project)
         return modules.require(request)
     }
 
@@ -127,6 +135,12 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
 
         val targetName = if (target.name.isNotEmpty() && target.name.toLowerCase() != "js") {
             target.name
+                .replace(DECAMELIZE_REGEX) {
+                    it.groupValues
+                        .drop(1)
+                        .joinToString(prefix = "-", separator = "-")
+                }
+                .toLowerCase()
         } else null
 
         return sequenceOf(
@@ -143,8 +157,9 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) {
 
     companion object {
         const val PACKAGE_JSON = "package.json"
-        const val PRE_PACKAGE_JSON = "pre-package.json"
         const val NODE_MODULES = "node_modules"
         const val DIST_FOLDER = "kotlin"
+
+        private val DECAMELIZE_REGEX = "([A-Z])".toRegex()
     }
 }

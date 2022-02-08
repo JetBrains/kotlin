@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.name.Name;
             @NotNull Kind kind,
             @NotNull JavaMethodDescriptor declaration
     ) {
-        super(containingDeclaration, original, declaration.getAnnotations(), declaration.getName(), kind, declaration.getSource());
+        super(containingDeclaration, original, declaration.getAnnotations(), declaration.getName(), kind, declaration.getSource(), false);
         this.declaration = declaration;
         setParameterNamesStatus(declaration.hasStableParameterNames(), declaration.hasSynthesizedParameterNames());
     }

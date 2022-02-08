@@ -26,7 +26,7 @@ class SuspensionPointInsideMutexLockChecker : CallChecker {
         if (descriptor !is FunctionDescriptor || !descriptor.isSuspend) return
 
         val enclosingSuspendFunctionSource =
-            findEnclosingSuspendFunction(context, resolvedCall.call.callElement)?.source?.getPsi() ?: return
+            findEnclosingSuspendFunction(context)?.source?.getPsi() ?: return
 
         // Search for `synchronized` call
         var parent = reportOn

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class LazyExplicitImportScope(
+    private val languageVersionSettings: LanguageVersionSettings,
     private val packageOrClassDescriptor: DeclarationDescriptor,
     private val packageFragmentForVisibilityCheck: PackageFragmentDescriptor?,
     private val declaredName: Name,
@@ -148,6 +150,8 @@ class LazyExplicitImportScope(
         else -> null
     }
 
-    private fun <D : CallableMemberDescriptor> Collection<D>.choseOnlyVisibleOrAll() =
-        filter { isVisible(it, packageFragmentForVisibilityCheck, position = QualifierPosition.IMPORT) }.takeIf { it.isNotEmpty() } ?: this
+    private fun <D : CallableMemberDescriptor> Collection<D>.choseOnlyVisibleOrAll(): Collection<D> =
+        filter { isVisible(it, packageFragmentForVisibilityCheck, position = QualifierPosition.IMPORT, languageVersionSettings) }
+            .takeIf { it.isNotEmpty() }
+            ?: this
 }

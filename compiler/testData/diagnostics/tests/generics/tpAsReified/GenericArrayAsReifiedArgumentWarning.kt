@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: -ProhibitNonReifiedArraysAsReifiedTypeArguments
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 

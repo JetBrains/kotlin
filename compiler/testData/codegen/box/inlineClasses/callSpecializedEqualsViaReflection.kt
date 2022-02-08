@@ -1,10 +1,15 @@
 // WITH_REFLECT
 // FULL_JDK
 // TARGET_BACKEND: JVM
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
+// WITH_STDLIB
 
 import java.lang.reflect.InvocationTargetException
 
-inline class Simple(val x: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Simple(val x: String) {
     fun somethingWeird() {}
 }
 

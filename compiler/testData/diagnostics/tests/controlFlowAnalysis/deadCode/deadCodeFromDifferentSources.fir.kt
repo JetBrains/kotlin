@@ -1,17 +1,17 @@
 package c
 
 fun test1() {
-    val r: Nothing = null!!
+    <!UNREACHABLE_CODE!>val <!UNUSED_VARIABLE!>r<!>: Nothing =<!> null!!
 }
 
 fun test2(a: A) {
     a + a
-    bar()
+    <!UNREACHABLE_CODE!>bar()<!>
 }
 
 fun test3() {
     null!!
-    bar()
+    <!UNREACHABLE_CODE!>bar()<!>
 }
 
 fun throwNPE(): Nothing = null!!

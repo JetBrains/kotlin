@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun readLine() = "x"
 
 fun foo() {

@@ -24,7 +24,6 @@ import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
@@ -37,7 +36,7 @@ import java.util.List;
 
 public class DiagnosticUtils {
     @NotNull
-    private static final Comparator<TextRange> TEXT_RANGE_COMPARATOR = (o1, o2) -> {
+    public static final Comparator<TextRange> TEXT_RANGE_COMPARATOR = (o1, o2) -> {
         if (o1.getStartOffset() != o2.getStartOffset()) {
             return o1.getStartOffset() - o2.getStartOffset();
         }
@@ -88,6 +87,11 @@ public class DiagnosticUtils {
     public static PsiDiagnosticUtils.LineAndColumnRange getLineAndColumnRange(@NotNull Diagnostic diagnostic) {
         PsiFile file = diagnostic.getPsiFile();
         List<TextRange> textRanges = diagnostic.getTextRanges();
+        return getLineAndColumnRange(file, textRanges);
+    }
+
+    @NotNull
+    public static PsiDiagnosticUtils.LineAndColumnRange getLineAndColumnRange(PsiFile file, List<TextRange> textRanges) {
         if (textRanges.isEmpty()) return PsiDiagnosticUtils.LineAndColumnRange.NONE;
         TextRange firstRange = firstRange(textRanges);
         return getLineAndColumnRangeInPsiFile(file, firstRange);
@@ -124,8 +128,10 @@ public class DiagnosticUtils {
     public static List<Diagnostic> sortedDiagnostics(@NotNull Collection<Diagnostic> diagnostics) {
         List<Diagnostic> result = Lists.newArrayList(diagnostics);
         result.sort((d1, d2) -> {
-            String path1 = d1.getPsiFile().getViewProvider().getVirtualFile().getPath();
-            String path2 = d2.getPsiFile().getViewProvider().getVirtualFile().getPath();
+            PsiFile file1 = d1.getPsiFile();
+            PsiFile file2 = d2.getPsiFile();
+            String path1 = file1.getViewProvider().getVirtualFile().getPath();
+            String path2 = file2.getViewProvider().getVirtualFile().getPath();
             if (!path1.equals(path2)) return path1.compareTo(path2);
 
             TextRange range1 = firstRange(d1.getTextRanges());

@@ -18,7 +18,12 @@ abstract class BinaryVersion(private vararg val numbers: Int) {
     val major: Int = numbers.getOrNull(0) ?: UNKNOWN
     val minor: Int = numbers.getOrNull(1) ?: UNKNOWN
     val patch: Int = numbers.getOrNull(2) ?: UNKNOWN
-    val rest: List<Int> = if (numbers.size > 3) numbers.asList().subList(3, numbers.size).toList() else emptyList()
+    val rest: List<Int> = if (numbers.size > 3) {
+        if (numbers.size > MAX_LENGTH)
+            throw IllegalArgumentException("BinaryVersion with length more than $MAX_LENGTH are not supported. Provided length ${numbers.size}.")
+        else
+            numbers.asList().subList(3, numbers.size).toList()
+    } else emptyList()
 
     abstract fun isCompatible(): Boolean
 
@@ -48,6 +53,19 @@ abstract class BinaryVersion(private vararg val numbers: Int) {
         return this.patch >= patch
     }
 
+    fun isAtMost(version: BinaryVersion): Boolean =
+        isAtMost(version.major, version.minor, version.patch)
+
+    fun isAtMost(major: Int, minor: Int, patch: Int): Boolean {
+        if (this.major < major) return true
+        if (this.major > major) return false
+
+        if (this.minor < minor) return true
+        if (this.minor > minor) return false
+
+        return this.patch <= patch
+    }
+
     override fun toString(): String {
         val versions = toArray().takeWhile { it != UNKNOWN }
         return if (versions.isEmpty()) "unknown" else versions.joinToString(".")
@@ -67,6 +85,7 @@ abstract class BinaryVersion(private vararg val numbers: Int) {
     }
 
     companion object {
+        const val MAX_LENGTH = 1024
         private const val UNKNOWN = -1
 
         @JvmStatic

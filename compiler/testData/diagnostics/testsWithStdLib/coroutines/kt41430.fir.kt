@@ -1,4 +1,4 @@
-// ISSUE: KT-41430
+// ISSUE: KT-41430, KT-47830
 
 class A
 
@@ -8,7 +8,7 @@ fun test_1(list: List<Set<A>>) {
 
 fun test_2(list: List<Set<A>>) {
     sequence<A> {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableSet<A>")!>list.flatMapTo(mutableSetOf()) { it }<!>
+        list.flatMapTo(mutableSetOf()) { it }
     }
 }
 

@@ -1,0 +1,38 @@
+FILE: classWithGeneratedMembersAndNestedClass.kt
+    @R|org/jetbrains/kotlin/fir/plugin/NestedClassAndMaterializeMember|() public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class MyNested : R|kotlin/Any| {
+            public constructor(): R|Foo.MyNested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final val result: R|kotlin/String| = String(OK)
+            public get(): R|kotlin/String|
+
+        public final fun materialize(): R|Foo|
+
+        public final class Nested : R|kotlin/Any| {
+            public constructor(): R|Foo.Nested|
+
+        }
+
+    }
+    public final class Bar : R|kotlin/Any| {
+        public constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun test(foo: R|Foo|): R|kotlin/String| {
+        lval foo2: R|Foo| = R|<local>/foo|.R|/Foo.materialize|()
+        lval nested: R|Foo.Nested| = Q|Foo|.R|/Foo.Nested|()
+        ^test R|<local>/foo2|.R|/Foo.result|
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box R|/test|(R|/Foo.Foo|())
+    }

@@ -9,7 +9,7 @@ public final annotation class Anno : R|kotlin/Annotation| {
 public abstract interface T : R|kotlin/Any| {
     @R|test/Anno|(s = String(foo)) public abstract fun foo(): R|kotlin/Array<kotlin/Array<kotlin/Array<test/T>>>|
 
-    public abstract val bar: R|kotlin/Array<kotlin/Array<kotlin/BooleanArray>>|
+    @PROPERTY:R|test/Anno|(s = String(bar)) public abstract val bar: R|kotlin/Array<kotlin/Array<kotlin/BooleanArray>>|
         public get(): R|kotlin/Array<kotlin/Array<kotlin/BooleanArray>>|
 
 }

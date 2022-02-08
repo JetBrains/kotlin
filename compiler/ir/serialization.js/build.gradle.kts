@@ -3,13 +3,15 @@ plugins {
     id("jps-compatible")
 }
 
-// Please make sure this module doesn't depend on `backend.js` (neither directly, nor transitively)
 dependencies {
-    compile(project(":compiler:ir.psi2ir"))
-    compile(project(":compiler:ir.serialization.common"))
-    compile(project(":js:js.frontend"))
+    api(project(":compiler:ir.psi2ir"))
+    api(project(":compiler:ir.serialization.common"))
+    api(project(":js:js.frontend"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    implementation(project(":compiler:ir.backend.common"))
+    compileOnly(project(":kotlin-reflect-api"))
+
+    compileOnly(intellijCore())
 }
 
 sourceSets {

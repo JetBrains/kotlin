@@ -29,7 +29,7 @@ fun box(): String {
     return "OK"
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:24 box
 // test.kt:15 box
 // test.kt:16 box

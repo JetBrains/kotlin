@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.android.synthetic.test
 
 import com.intellij.mock.MockProject
-import com.intellij.testFramework.registerServiceInstance
 import kotlinx.android.extensions.CacheImplementation
 import org.jetbrains.kotlin.android.synthetic.AndroidConfigurationKeys
 import org.jetbrains.kotlin.android.synthetic.AndroidExtensionPropertiesComponentContainerContributor

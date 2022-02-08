@@ -4,10 +4,12 @@
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_MINIFICATION
 // SKIP_NODE_JS
+// INFER_MAIN_MODULE
 
 // TODO fix statics export in DCE-driven mode
 // SKIP_DCE_DRIVEN
 
+// MODULE: JS_TESTS
 // FILE: f1.kt
 
 @file:JsExport

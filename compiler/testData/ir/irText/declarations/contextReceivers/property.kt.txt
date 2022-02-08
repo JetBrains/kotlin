@@ -1,0 +1,14 @@
+interface A {
+  abstract fun a(): Int
+
+}
+
+interface B {
+  abstract fun b(): Int
+
+}
+
+val c: Int
+  get(<this>: A, <this>: B): Int {
+    return <this>.a().plus(other = <this> /*as B */.b())
+  }

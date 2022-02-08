@@ -1,6 +1,0 @@
-8 override val foo = <bold>2</bold> (in B.foo)
-8 	override <bold>val foo</bold> = 2 (in B)
-16 		val x = a.<bold>foo</bold> (in test(A, B,…))
-16 			<bold>val x</bold> = a.foo (in test(A, B,…))
-17 		val y = b.<bold>foo</bold> (in test(A, B,…))
-17 			<bold>val y</bold> = b.foo (in test(A, B,…))

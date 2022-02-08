@@ -1,56 +1,58 @@
-<!CONFLICTING_OVERLOADS!>fun test(x: Int) {}<!>
+// FIR_IDE_IGNORE
 
-<!CONFLICTING_OVERLOADS!>fun test(y: Int) {}<!>
+<!CONFLICTING_OVERLOADS!>fun test(x: Int)<!> {}
+
+<!CONFLICTING_OVERLOADS!>fun test(y: Int)<!> {}
 
 fun test() {}
 
 fun test(z: Int, c: Char) {}
 
-<!REDECLARATION!>open class A {
+open class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
     open fun rest(s: String) {}
 
     open val u = 20
-}<!>
+}
 
-<!REDECLARATION!>class A {
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>A<!> {
 
-}<!>
+}
 
-<!REDECLARATION!>class B : A {
-    <!CONFLICTING_OVERLOADS!>override fun rest(s: String) {}<!>
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!> : <!FINAL_SUPERTYPE, SUPERTYPE_NOT_INITIALIZED!>A<!> {
+    <!CONFLICTING_OVERLOADS!><!NOTHING_TO_OVERRIDE!>override<!> fun rest(s: String)<!> {}
 
-    <!CONFLICTING_OVERLOADS!>fun rest(s: String) {}<!>
+    <!CONFLICTING_OVERLOADS!>fun rest(s: String)<!> {}
 
     fun rest(l: Long) {}
 
-    override val u = 310
-}<!>
+    <!NOTHING_TO_OVERRIDE!>override<!> val u = 310
+}
 
-<!REDECLARATION!>interface B<!>
+interface <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>
 
-<!REDECLARATION!>enum class B<!>
+enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>
 
-<!REDECLARATION!>val u = 10<!>
-<!REDECLARATION!>val u = 20<!>
+val <!REDECLARATION!>u<!> = 10
+val <!REDECLARATION!>u<!> = 20
 
-<!REDECLARATION!>typealias TA = A<!>
-<!REDECLARATION!>typealias TA = B<!>
+typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TA<!> = A
+typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TA<!> = B
 
 typealias BA = A
 
-fun <T> kek(t: T) where T : (String) -> Any?, T : Char {}
-fun <T> kek(t: T) where T : () -> Boolean, T : String {}
-fun <T : Int> kek(t: T) {}
+fun <<!CONFLICTING_UPPER_BOUNDS!>T<!>> kek(t: T) where T : (String) -> Any?, T : <!FINAL_UPPER_BOUND!>Char<!> {}
+fun <<!CONFLICTING_UPPER_BOUNDS!>T<!>> kek(t: T) where T : () -> Boolean, T : <!FINAL_UPPER_BOUND!>String<!> {}
+fun <T : <!FINAL_UPPER_BOUND!>Int<!>> kek(t: T) {}
 
 fun lol(a: Array<Int>) {}
 fun lol(a: Array<Boolean>) {}
 
-<!CONFLICTING_OVERLOADS!>fun <T> mem(t: T) where T : () -> Boolean, T : String {}<!>
-<!CONFLICTING_OVERLOADS!>fun <T> mem(t: T) where T : String, T : () -> Boolean {}<!>
+<!CONFLICTING_OVERLOADS!>fun <<!CONFLICTING_UPPER_BOUNDS!>T<!>> mem(t: T)<!> where T : () -> Boolean, T : <!FINAL_UPPER_BOUND!>String<!> {}
+<!CONFLICTING_OVERLOADS!>fun <<!CONFLICTING_UPPER_BOUNDS!>T<!>> mem(t: T)<!> where T : <!FINAL_UPPER_BOUND!>String<!>, T : () -> Boolean {}
 
 class M {
     companion <!REDECLARATION!>object<!> {}
-    <!REDECLARATION!>val Companion = object : Any {}<!>
+    val <!REDECLARATION!>Companion<!> = object : Any {}
 }
 
 fun B.foo() {}
@@ -59,10 +61,10 @@ class L {
     fun B.foo() {}
 }
 
-fun mest()
+fun mest() {}
 
 class mest
 
-fun() {}
+<!FUNCTION_DECLARATION_WITH_NO_NAME!>fun()<!> {}
 
-private fun() {}
+<!FUNCTION_DECLARATION_WITH_NO_NAME!>private fun()<!> {}

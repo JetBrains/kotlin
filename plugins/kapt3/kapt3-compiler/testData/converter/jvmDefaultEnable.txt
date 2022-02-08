@@ -5,6 +5,7 @@ public abstract interface Foo {
 
     public abstract void foo();
 
+    @kotlin.jvm.JvmDefault()
     public default void foo2(int a) {
     }
 

@@ -10,23 +10,28 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.inference.*
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.AbstractTypeMapper
 import org.jetbrains.kotlin.types.TypeMappingContext
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
@@ -36,6 +41,7 @@ import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Type
 
 class FirJvmTypeMapper(val session: FirSession) : TypeMappingContext<JvmSignatureWriter>, FirSessionComponent {
@@ -50,8 +56,11 @@ class FirJvmTypeMapper(val session: FirSession) : TypeMappingContext<JvmSignatur
         return typeConstructor.classId.asString().replace(".", "$").replace("/", ".")
     }
 
-    override fun JvmSignatureWriter.writeGenericType(type: SimpleTypeMarker, asmType: Type, mode: TypeMappingMode) {
-        if (type !is ConeClassLikeType) return
+    override fun getScriptInternalName(typeConstructor: TypeConstructorMarker): String =
+        TODO("Not yet implemented")
+
+    override fun JvmSignatureWriter.writeGenericType(type: KotlinTypeMarker, asmType: Type, mode: TypeMappingMode) {
+        if (type !is ConeKotlinType) return
         if (skipGenericSignature() || hasNothingInNonContravariantPosition(type) || type.typeArguments.isEmpty()) {
             writeAsmType(asmType)
             return
@@ -86,12 +95,23 @@ class FirJvmTypeMapper(val session: FirSession) : TypeMappingContext<JvmSignatur
         typeContext.hasNothingInNonContravariantPosition(type)
     }
 
-    private fun ConeClassLikeType.buildPossiblyInnerType(): PossiblyInnerConeType? =
-        buildPossiblyInnerType(lookupTag.toSymbol(session) as? FirRegularClassSymbol?, 0)
+    private fun ConeKotlinType.buildPossiblyInnerType(): PossiblyInnerConeType? {
+        if (this !is ConeClassLikeType) return null
+
+        return when (val symbol = lookupTag.toSymbol(session)) {
+            is FirRegularClassSymbol -> buildPossiblyInnerType(symbol, 0)
+            is FirTypeAliasSymbol -> {
+                val expandedType = fullyExpandedType(session) as? ConeClassLikeType
+                val classSymbol = expandedType?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol
+                classSymbol?.let { expandedType.buildPossiblyInnerType(it, 0) }
+            }
+            else -> null
+        }
+    }
 
     private fun ConeClassLikeType.parentClassOrNull(): FirRegularClassSymbol? {
         val parentClassId = classId?.outerClassId ?: return null
-        return session.firSymbolProvider.getClassLikeSymbolByFqName(parentClassId) as? FirRegularClassSymbol?
+        return session.symbolProvider.getClassLikeSymbolByClassId(parentClassId) as? FirRegularClassSymbol?
     }
 
     private fun ConeClassLikeType.buildPossiblyInnerType(classifier: FirRegularClassSymbol?, index: Int): PossiblyInnerConeType? {
@@ -180,10 +200,16 @@ val FirSession.jvmTypeMapper: FirJvmTypeMapper by FirSession.sessionComponentAcc
 class ConeTypeSystemCommonBackendContextForTypeMapping(
     val context: ConeTypeContext
 ) : TypeSystemCommonBackendContext by context, TypeSystemCommonBackendContextForTypeMapping {
-    private val symbolProvider = context.session.firSymbolProvider
+    private val session = context.session
+    private val symbolProvider = session.symbolProvider
 
     override fun TypeConstructorMarker.isTypeParameter(): Boolean {
         return this is ConeTypeParameterLookupTag
+    }
+
+    override fun TypeConstructorMarker.asTypeParameter(): TypeParameterMarker {
+        require(isTypeParameter())
+        return this as ConeTypeParameterLookupTag
     }
 
     override fun TypeConstructorMarker.defaultType(): ConeSimpleKotlinType {
@@ -191,7 +217,7 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
         return when (this) {
             is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isNullable = false)
             is ConeClassLikeLookupTag -> {
-                val symbol = symbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol
+                val symbol = toSymbol(session) as? FirRegularClassSymbol
                     ?: error("Class for $this not found")
                 symbol.fir.defaultType()
             }
@@ -199,9 +225,11 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
         }
     }
 
+    override fun TypeConstructorMarker.isScript(): Boolean = false
+
     override fun SimpleTypeMarker.isSuspendFunction(): Boolean {
         require(this is ConeSimpleKotlinType)
-        return isSuspendFunctionType(context.session)
+        return isSuspendFunctionType(session)
     }
 
     override fun SimpleTypeMarker.isKClass(): Boolean {
@@ -223,22 +251,22 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
 
     override fun TypeParameterMarker.representativeUpperBound(): ConeKotlinType {
         require(this is ConeTypeParameterLookupTag)
-        val bounds = this.typeParameterSymbol.fir.bounds.map { it.coneType }
+        val bounds = this.typeParameterSymbol.resolvedBounds.map { it.coneType }
         return bounds.firstOrNull {
-            val classId = it.classId ?: return@firstOrNull false
-            val classSymbol = symbolProvider.getClassLikeSymbolByFqName(classId) as? FirRegularClassSymbol ?: return@firstOrNull false
+            val classSymbol = it.safeAs<ConeClassLikeType>()?.fullyExpandedType(session)
+                ?.lookupTag?.toSymbol(session) as? FirRegularClassSymbol ?: return@firstOrNull false
             val kind = classSymbol.fir.classKind
             kind != ClassKind.INTERFACE && kind != ClassKind.ANNOTATION_CLASS
         } ?: bounds.first()
     }
 
     override fun continuationTypeConstructor(): ConeClassLikeLookupTag {
-        return symbolProvider.getClassLikeSymbolByFqName(StandardClassIds.Continuation)?.toLookupTag()
+        return symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.Continuation)?.toLookupTag()
             ?: error("Continuation class not found")
     }
 
     override fun functionNTypeConstructor(n: Int): TypeConstructorMarker {
-        return symbolProvider.getClassLikeSymbolByFqName(StandardClassIds.FunctionN(n))?.toLookupTag()
+        return symbolProvider.getClassLikeSymbolByClassId(StandardClassIds.FunctionN(n))?.toLookupTag()
             ?: error("Function$n class not found")
     }
 }

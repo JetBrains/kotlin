@@ -1,0 +1,27 @@
+FILE: errCallable.kt
+    public final class Your : R|kotlin/Any| {
+        public constructor(): R|Your| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class Nested : R|kotlin/Any| {
+            public constructor(): R|Your.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class My : R|kotlin/Any| {
+        public constructor(): R|My| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            lval x: <ERROR TYPE REF: Unresolved reference: Nested> = ::<Unresolved reference: Nested>#
+        }
+
+    }
+    public final fun R|Your|.foo(): R|kotlin/Unit| {
+        lval x: <ERROR TYPE REF: Unresolved reference: Nested> = ::<Unresolved reference: Nested>#
+    }

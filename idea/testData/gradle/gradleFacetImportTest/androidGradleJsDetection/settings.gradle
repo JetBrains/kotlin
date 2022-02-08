@@ -1,3 +1,0 @@
-rootProject.name = "android-js-test"
-include ':android-module'
-include ':js-module'

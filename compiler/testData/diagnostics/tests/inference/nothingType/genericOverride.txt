@@ -1,0 +1,19 @@
+package
+
+public fun error(/*0*/ s: kotlin.String): kotlin.Nothing
+
+public interface A {
+    public abstract fun a(): A
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class A1 : A {
+    public constructor A1()
+    public open override /*1*/ fun a(): kotlin.Nothing
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    @kotlin.Suppress(names = {"UNCHECKED_CAST"}) private final fun </*0*/ V : A> test(): V?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

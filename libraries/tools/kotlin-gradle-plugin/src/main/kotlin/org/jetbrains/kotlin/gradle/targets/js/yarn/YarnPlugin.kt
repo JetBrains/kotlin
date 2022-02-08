@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.implementing
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
@@ -26,27 +29,103 @@ open class YarnPlugin : Plugin<Project> {
         val yarnRootExtension = this.extensions.create(YarnRootExtension.YARN, YarnRootExtension::class.java, this)
         val nodeJs = NodeJsRootPlugin.apply(this)
 
-        registerTask<YarnSetupTask>(YarnSetupTask.NAME) {
+        val setupTask = registerTask<YarnSetupTask>(YarnSetupTask.NAME) {
             it.dependsOn(nodeJs.nodeJsSetupTaskProvider)
+
+            it.configuration = provider {
+                this.project.configurations.detachedConfiguration(this.project.dependencies.create(it.ivyDependency))
+                    .also { conf -> conf.isTransitive = false }
+            }
         }
 
         val rootClean = project.rootProject.tasks.named(BasePlugin.CLEAN_TASK_NAME)
 
         val rootPackageJson = tasks.register(RootPackageJsonTask.NAME, RootPackageJsonTask::class.java) { task ->
+            task.dependsOn(nodeJs.npmCachesSetupTaskProvider)
             task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
             task.description = "Create root package.json"
 
             task.mustRunAfter(rootClean)
         }
 
-        tasks.named(KotlinNpmInstallTask.NAME).configure {
+        configureRequiresNpmDependencies(project, rootPackageJson)
+
+        val kotlinNpmInstall = tasks.named(KotlinNpmInstallTask.NAME)
+        kotlinNpmInstall.configure {
             it.dependsOn(rootPackageJson)
+            it.dependsOn(setupTask)
+            it.inputs.property("ignoreScripts", { yarnRootExtension.ignoreScripts })
         }
 
         tasks.register("yarn" + CleanDataTask.NAME_SUFFIX, CleanDataTask::class.java) {
             it.cleanableStoreProvider = provider { yarnRootExtension.requireConfigured().cleanableStore }
             it.description = "Clean unused local yarn version"
         }
+
+        val packageJsonUmbrella = nodeJs
+            .packageJsonUmbrellaTaskProvider
+
+        yarnRootExtension.rootPackageJsonTaskProvider.configure {
+            it.dependsOn(packageJsonUmbrella)
+        }
+
+        val storeYarnLock = tasks.register("kotlinStoreYarnLock", YarnLockCopyTask::class.java) {
+            it.dependsOn(kotlinNpmInstall)
+            it.inputFile.set(nodeJs.rootPackageDir.resolve("yarn.lock"))
+            it.outputDirectory.set(yarnRootExtension.lockFileDirectory)
+            it.fileName.set(yarnRootExtension.lockFileName)
+        }
+
+        val restoreYarnLock = tasks.register("kotlinRestoreYarnLock", YarnLockCopyTask::class.java) {
+            val lockFile = yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName)
+            it.inputFile.set(yarnRootExtension.lockFileDirectory.resolve(yarnRootExtension.lockFileName))
+            it.outputDirectory.set(nodeJs.rootPackageDir)
+            it.fileName.set("yarn.lock")
+            it.onlyIf {
+                lockFile.exists()
+            }
+        }
+
+        kotlinNpmInstall.configure {
+            it.dependsOn(restoreYarnLock)
+            it.finalizedBy(storeYarnLock)
+        }
+    }
+
+    // Yes, we need to break Task Configuration Avoidance here
+    // In case when we need to create package.json's files and execute kotlinNpmInstall,
+    // We need to configure all RequiresNpmDependencies tasks to install them,
+    // Because we need to persist yarn.lock
+    // We execute this block in configure phase of rootPackageJson to be sure,
+    // That Task Configuration Avoidance will not be broken for tasks not related with NPM installing
+    // https://youtrack.jetbrains.com/issue/KT-48241
+    private fun configureRequiresNpmDependencies(
+        project: Project,
+        rootPackageJson: TaskProvider<RootPackageJsonTask>
+    ) {
+        val fn: (Project) -> Unit = {
+            it.tasks.implementing(RequiresNpmDependencies::class)
+                .forEach {}
+        }
+        rootPackageJson.configure {
+            project.allprojects
+                .forEach { project ->
+                    if (it.state.executed) {
+                        fn(project)
+                    }
+                }
+        }
+
+        project.allprojects
+            .forEach {
+                if (!it.state.executed) {
+                    it.afterEvaluate { project ->
+                        rootPackageJson.configure {
+                            fn(project)
+                        }
+                    }
+                }
+            }
     }
 
     companion object {

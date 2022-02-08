@@ -1,3 +1,4 @@
+// LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 fun x(): Boolean { return true }
 
 public fun foo(p: String?): Int {
@@ -7,5 +8,5 @@ public fun foo(p: String?): Int {
         if (x()) break
     }
     // Smart cast should not work in this case, see KT-6284
-    return p.<!INAPPLICABLE_CANDIDATE!>length<!>
+    return p<!UNSAFE_CALL!>.<!>length
 }

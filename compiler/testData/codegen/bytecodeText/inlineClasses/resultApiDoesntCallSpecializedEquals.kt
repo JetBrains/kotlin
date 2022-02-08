@@ -1,5 +1,5 @@
 // !API_VERSION: 1.3
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: test.kt
 fun test() {
     val result = Result.success("yes!")

@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation Foundation Security darwin posix
+language = Objective-C
+package = platform.UserNotifications
+modules = UserNotifications
+
+compilerOpts = -framework UserNotifications
+linkerOpts = -framework UserNotifications

@@ -6,40 +6,43 @@
 package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirScope {
     open fun processClassifiersByNameWithSubstitution(
         name: Name,
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
-    ) {}
+    ) {
+    }
 
     open fun processFunctionsByName(
         name: Name,
-        processor: (FirFunctionSymbol<*>) -> Unit
-    ) {}
+        processor: (FirNamedFunctionSymbol) -> Unit
+    ) {
+    }
 
     open fun processPropertiesByName(
         name: Name,
         processor: (FirVariableSymbol<*>) -> Unit
-    ) {}
+    ) {
+    }
 
     open fun processDeclaredConstructors(
         processor: (FirConstructorSymbol) -> Unit
-    ) {}
+    ) {
+    }
 
     open fun mayContainName(name: Name) = true
+
+    open val scopeOwnerLookupNames: List<String> get() = emptyList()
 }
 
 fun FirScope.getSingleClassifier(name: Name): FirClassifierSymbol<*>? = mutableListOf<FirClassifierSymbol<*>>().apply {
     processClassifiersByName(name, this::add)
 }.singleOrNull()
 
-fun FirScope.getFunctions(name: Name): List<FirFunctionSymbol<*>> = mutableListOf<FirFunctionSymbol<*>>().apply {
+fun FirScope.getFunctions(name: Name): List<FirNamedFunctionSymbol> = mutableListOf<FirNamedFunctionSymbol>().apply {
     processFunctionsByName(name, this::add)
 }
 
@@ -52,12 +55,29 @@ fun FirScope.getDeclaredConstructors(): List<FirConstructorSymbol> = mutableList
 }
 
 fun FirTypeScope.processOverriddenFunctionsAndSelf(
-    functionSymbol: FirFunctionSymbol<*>,
-    processor: (FirFunctionSymbol<*>) -> ProcessorAction
+    functionSymbol: FirNamedFunctionSymbol,
+    processor: (FirNamedFunctionSymbol) -> ProcessorAction
 ): ProcessorAction {
     if (!processor(functionSymbol)) return ProcessorAction.STOP
 
-    return processOverriddenFunctions(functionSymbol, processor)
+    return processOverriddenFunctions(functionSymbol, processor = processor)
+}
+
+fun FirTypeScope.processOverriddenPropertiesAndSelf(
+    propertySymbol: FirPropertySymbol,
+    processor: (FirPropertySymbol) -> ProcessorAction
+): ProcessorAction {
+    if (!processor(propertySymbol)) return ProcessorAction.STOP
+
+    return processOverriddenProperties(propertySymbol, processor = processor)
+}
+
+fun List<FirTypeScope>.processOverriddenPropertiesAndSelf(
+    propertySymbol: FirPropertySymbol,
+    processor: (FirPropertySymbol) -> ProcessorAction
+) {
+    if (!processor(propertySymbol)) return
+    processOverriddenProperties(propertySymbol, processor)
 }
 
 enum class ProcessorAction {

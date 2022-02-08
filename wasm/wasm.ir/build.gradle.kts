@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     implementation(kotlinStdlib())
-    testImplementation(commonDep("junit:junit"))
+    testImplementation(commonDependency("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testImplementation(projectTests(":compiler:tests-common"))
@@ -60,7 +60,7 @@ sourceSets {
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
     kotlinOptions.freeCompilerArgs += listOf(
-        "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
+        "-opt-in=kotlin.ExperimentalUnsignedTypes",
         "-Xskip-prerelease-check"
     )
 }

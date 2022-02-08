@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.utils
 
 import java.io.File
 import java.lang.IllegalStateException
+import com.intellij.openapi.util.SystemInfo
 
 interface KotlinPaths {
     val homePath: File
@@ -65,6 +66,9 @@ interface KotlinPaths {
     val noArgPluginJarPath: File
         get() = jar(Jar.NoArgPlugin)
 
+    val lombokPluginJarPath: File
+        get() = jar(Jar.LombokPlugin)
+
 //    @Deprecated("Obsolete API", ReplaceWith("jar(KotlinPaths.Jars.samWithReceiver)"))
     val samWithReceiverJarPath: File
         get() = jar(Jar.SamWithReceiver)
@@ -83,6 +87,8 @@ interface KotlinPaths {
 
     enum class Jar(val baseName: String) {
         StdLib(PathUtil.KOTLIN_JAVA_STDLIB_NAME),
+        StdLibJdk7(PathUtil.KOTLIN_JAVA_RUNTIME_JDK7_NAME),
+        StdLibJdk8(PathUtil.KOTLIN_JAVA_RUNTIME_JDK8_NAME),
         Reflect(PathUtil.KOTLIN_JAVA_REFLECT_NAME),
         ScriptRuntime(PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_NAME),
         KotlinTest(PathUtil.KOTLIN_TEST_NAME),
@@ -90,6 +96,7 @@ interface KotlinPaths {
         JsKotlinTest(PathUtil.KOTLIN_TEST_JS_NAME),
         AllOpenPlugin(PathUtil.ALLOPEN_PLUGIN_NAME),
         NoArgPlugin(PathUtil.NOARG_PLUGIN_NAME),
+        LombokPlugin(PathUtil.LOMBOK_PLUGIN_NAME),
         SamWithReceiver(PathUtil.SAM_WITH_RECEIVER_PLUGIN_NAME),
         SerializationPlugin(PathUtil.SERIALIZATION_PLUGIN_NAME),
         Trove4j(PathUtil.TROVE4J_NAME),
@@ -106,17 +113,25 @@ interface KotlinPaths {
     // TODO: Maybe we need separate classpaths for compilers with and without the daemon
     enum class ClassPaths(val contents: List<Jar> = emptyList()) {
         Empty(),
-        Compiler(Jar.Compiler, Jar.StdLib, Jar.Reflect, Jar.ScriptRuntime, Jar.Trove4j, Jar.KotlinDaemon),
+        StdLib(Jar.StdLib, gen = {
+            when {
+                SystemInfo.isJavaVersionAtLeast(1, 8, 0) -> listOf(Jar.StdLibJdk7, Jar.StdLibJdk8)
+                SystemInfo.isJavaVersionAtLeast(1, 7, 0) -> listOf(Jar.StdLibJdk7)
+                else -> emptyList()
+            }
+        }),
+        Compiler(StdLib, Jar.Compiler, Jar.Reflect, Jar.ScriptRuntime, Jar.Trove4j, Jar.KotlinDaemon),
         CompilerWithScripting(Compiler, Jar.ScriptingPlugin, Jar.ScriptingImpl, Jar.ScriptingLib, Jar.ScriptingJvmLib),
-        MainKts(Jar.MainKts, Jar.ScriptRuntime, Jar.StdLib, Jar.Reflect)
+        MainKts(StdLib, Jar.MainKts, Jar.ScriptRuntime, Jar.Reflect)
         ;
 
         constructor(vararg jars: Jar) : this(jars.asList())
         constructor(baseClassPath: ClassPaths, vararg jars: Jar) : this(baseClassPath.contents + jars)
+        constructor(vararg jars: Jar, gen: () -> List<Jar>) : this(jars.asList() + gen())
     }
 
     fun jar(jar: Jar): File
-    
+
     fun sourcesJar(jar: Jar): File?
 
     fun classPath(jars: Sequence<Jar>): List<File> = jars.map(this::jar).toList()

@@ -60,11 +60,44 @@ public interface C1</*0*/ T> : B<T>, A<kotlin.Any> {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
+public abstract class C2</*0*/ T3, /*1*/ T4> : I0<T3, T4> {
+    public constructor C2</*0*/ T3, /*1*/ T4>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class C3 : TA<I2, I3> /* = C2<I3, I2> */, I0<I3, I2> {
+    public constructor C3()
+    public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
 public interface D : C<kotlin.Boolean>, B<kotlin.Double> {
     public open override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public interface I0</*0*/ T1, /*1*/ T2> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface I2 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface I3 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+public typealias TA</*0*/ T5, /*1*/ T6> = C2<T6, T5>
 
 package sx2 {
 
@@ -173,3 +206,4 @@ package x3 {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }
+

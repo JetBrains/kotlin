@@ -1,9 +1,9 @@
 FILE: labelForInfix.kt
     public? final? fun main(): R|kotlin/Unit| {
-        foo@fun <implicit>.<anonymous>(): <implicit> {
+        foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             length#
         }
-        .foo#(foo@fun <implicit>.<anonymous>(): <implicit> {
+        .foo#(foo@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             bar#()
         }
         )

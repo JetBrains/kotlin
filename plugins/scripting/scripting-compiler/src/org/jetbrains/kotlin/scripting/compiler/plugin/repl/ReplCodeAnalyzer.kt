@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.descriptors.ClassDescriptorWithResolutionScopes
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PackageViewDescriptorFactory
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.*
 import org.jetbrains.kotlin.resolve.scopes.ImportingScope
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.resolve.scopes.utils.replaceImportingScopes
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ReplPackageViewDescriptorFactory
 import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
 import kotlin.script.experimental.api.SourceCode
 import kotlin.script.experimental.jvm.util.CompiledHistoryItem
@@ -65,7 +67,8 @@ open class ReplCodeAnalyzerBase(
             environment.configuration,
             environment::createPackagePartProvider,
             { _, _ -> ScriptMutableDeclarationProviderFactory() },
-            implicitsResolutionFilter = implicitsResolutionFilter
+            implicitsResolutionFilter = implicitsResolutionFilter,
+            moduleCapabilities = mapOf(PackageViewDescriptorFactory.CAPABILITY to ReplPackageViewDescriptorFactory)
         )
 
         this.module = container.get()
@@ -97,12 +100,20 @@ open class ReplCodeAnalyzerBase(
 
     fun reset(): List<SourceCodeByReplLine> = replState.reset()
 
-    fun analyzeReplLine(psiFile: KtFile, codeLine: ReplCodeLine): ReplLineAnalysisResult {
+    protected fun prepareForAnalyze(
+        psiFile: KtFile,
+        priority: Int
+    ) {
         topDownAnalysisContext.scripts.clear()
         trace.clearDiagnostics()
 
-        psiFile.script!!.putUserData(ScriptPriorities.PRIORITY_KEY, codeLine.no)
+        val script = psiFile.script!!
 
+        script.putUserData(ScriptPriorities.PRIORITY_KEY, priority)
+    }
+
+    fun analyzeReplLine(psiFile: KtFile, codeLine: ReplCodeLine): ReplLineAnalysisResult {
+        prepareForAnalyze(psiFile, codeLine.no)
         return doAnalyze(psiFile, emptyList(), codeLine.toSourceCode())
     }
 
@@ -112,11 +123,7 @@ open class ReplCodeAnalyzerBase(
         codeLine: SourceCode,
         priority: Int
     ): ReplLineAnalysisResult {
-        topDownAnalysisContext.scripts.clear()
-        trace.clearDiagnostics()
-
-        psiFile.script!!.putUserData(ScriptPriorities.PRIORITY_KEY, priority)
-
+        prepareForAnalyze(psiFile, priority)
         return doAnalyze(psiFile, importedScripts, codeLine.addNo(priority))
     }
 

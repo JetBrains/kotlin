@@ -1,8 +1,12 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class InlineFloat(val data: Float)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class InlineFloat(val data: Float)
 
-inline class InlineDouble(val data: Double)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class InlineDouble(val data: Double)
 
 fun box(): String {
     if (InlineFloat(0.0f) == InlineFloat(-0.0f)) throw AssertionError()

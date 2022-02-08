@@ -14,7 +14,7 @@ public interface JavaInterface {
 // FILE: 1.kt
 
 interface KotlinInterface : JavaInterface {
-    @JvmDefault
+    @<!DEPRECATION!>JvmDefault<!>
     override fun test() {}
 
     override fun testForNonDefault() {}

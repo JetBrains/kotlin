@@ -1,0 +1,19 @@
+Diagnostics from elements:
+  for PSI element of type KtNameReferenceExpression at (6,5-8)
+    NONE_APPLICABLE      text ranges: [(89,92)]
+      PSI: KtNameReferenceExpression at (6,5-8)
+  for PSI element of type KtNameReferenceExpression at (7,5-8)
+    NONE_APPLICABLE      text ranges: [(100,103)]
+      PSI: KtNameReferenceExpression at (7,5-8)
+  for PSI element of type KtNameReferenceExpression at (8,5-8)
+    NONE_APPLICABLE      text ranges: [(115,118)]
+      PSI: KtNameReferenceExpression at (8,5-8)
+  for PSI element of type KtConstantExpression at (5,9-10)
+    TOO_MANY_ARGUMENTS      text ranges: [(82,83)]
+      PSI: KtConstantExpression at (5,9-10)
+  for PSI element of type KtParameter at (2,9-18)
+    UNUSED_PARAMETER      text ranges: [(21,22)]
+      PSI: KtParameter at (2,9-18)
+  for PSI element of type KtParameter at (3,9-22)
+    UNUSED_PARAMETER      text ranges: [(43,44)]
+      PSI: KtParameter at (3,9-22)

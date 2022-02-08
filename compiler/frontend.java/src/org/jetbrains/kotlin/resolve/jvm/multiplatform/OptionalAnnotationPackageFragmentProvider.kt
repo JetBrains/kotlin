@@ -83,6 +83,10 @@ class OptionalAnnotationPackageFragmentProvider(
     override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) =
         packageFragments.addIfNotNull(packages[fqName])
 
+    override fun isEmpty(fqName: FqName): Boolean =
+        !packages.containsKey(fqName)
+
+    @Deprecated("for usages use #packageFragments(FqName) at final point, for impl use #collectPackageFragments(FqName, MutableCollection<PackageFragmentDescriptor>)")
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> =
         packages[fqName]?.let(::listOf).orEmpty()
 

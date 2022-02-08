@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: KotlinFile.kt
 fun foo(javaClass: JavaClass) {
     javaClass.getSomething()<!UNSAFE_CALL!>.<!>length

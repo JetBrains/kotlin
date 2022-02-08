@@ -15,6 +15,7 @@ import org.gradle.api.artifacts.transform.TransformAction
 import org.gradle.api.artifacts.transform.TransformOutputs
 import org.gradle.api.artifacts.transform.TransformParameters
 import org.gradle.api.attributes.Attribute
+import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
@@ -61,7 +63,7 @@ class ScriptingGradleSubplugin : Plugin<Project> {
                     if (task !is KaptGenerateStubsTask) {
 
                         try {
-                            val discoveryClasspathConfigurationName = getDiscoveryClasspathConfigurationName(task.sourceSetName)
+                            val discoveryClasspathConfigurationName = getDiscoveryClasspathConfigurationName(task.sourceSetName.get())
                             val discoveryClasspathConfiguration = project.configurations.findByName(discoveryClasspathConfigurationName)
                             when {
                                 discoveryClasspathConfiguration == null ->
@@ -69,7 +71,7 @@ class ScriptingGradleSubplugin : Plugin<Project> {
                                 discoveryClasspathConfiguration.allDependencies.isEmpty() -> {
                                     // skip further checks - user did not configured any discovery sources
                                 }
-                                else -> configureScriptsExtensions(project, javaPluginConvention, task.sourceSetName)
+                                else -> configureScriptsExtensions(project, javaPluginConvention, task.sourceSetName.get())
                             }
                         } catch (e: IllegalStateException) {
                             project.logger.warn("$SCRIPTING_LOG_PREFIX applied in the non-supported environment (error received: ${e.message})")
@@ -153,10 +155,10 @@ private fun configureDiscoveryTransformation(
 
 internal abstract class DiscoverScriptExtensionsTransformAction : TransformAction<TransformParameters.None> {
     @get:InputArtifact
-    abstract val inputArtifact: File
+    abstract val inputArtifact: Provider<FileSystemLocation>
 
     override fun transform(outputs: TransformOutputs) {
-        val input = inputArtifact
+        val input = inputArtifact.get().asFile
 
         val definitions =
             ScriptDefinitionsFromClasspathDiscoverySource(
@@ -211,7 +213,7 @@ private fun Configuration.discoverScriptExtensionsFiles() =
 
 class ScriptingKotlinGradleSubplugin :
     KotlinCompilerPluginSupportPlugin,
-    @Suppress("DEPRECATION") // implementing to fix KT-39809
+    @Suppress("DEPRECATION_ERROR") // implementing to fix KT-39809
     KotlinGradleSubplugin<KotlinCompile> {
     companion object {
         const val SCRIPTING_ARTIFACT_NAME = "kotlin-scripting-compiler-embeddable"
@@ -222,7 +224,7 @@ class ScriptingKotlinGradleSubplugin :
         val LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION = "script-resolver-environment"
     }
 
-    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true
+    override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = kotlinCompilation !is AbstractKotlinNativeCompilation
 
     override fun applyToCompilation(
         kotlinCompilation: KotlinCompilation<*>

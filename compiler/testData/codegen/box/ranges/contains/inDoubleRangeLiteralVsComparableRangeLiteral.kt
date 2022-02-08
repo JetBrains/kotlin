@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 val DOUBLE_RANGE = 0.0 .. -0.0
 

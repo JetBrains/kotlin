@@ -1,5 +1,0 @@
-annot()
-@foo
-fun foo() {
-}
-

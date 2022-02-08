@@ -18,7 +18,7 @@ function configureTimeouts(injector) {
         webServer.timeout = 0
     }
     const socketServer = injector.get('socketServer');
-    if (socketServer) {
+    if (socketServer && typeof socketServer.set === 'function') {
         // Disable socket.io heartbeat (ping) to avoid browser disconnecting when debugging tests,
         // because no ping requests are sent when test execution is suspended on a breakpoint.
         // Default values are not enough for suspended execution:

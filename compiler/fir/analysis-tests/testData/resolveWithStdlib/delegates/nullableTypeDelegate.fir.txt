@@ -1,0 +1,32 @@
+FILE: nullableTypeDelegate.kt
+    public abstract interface ReadWriteProperty<R, T> : R|kotlin/Any| {
+        public abstract operator fun getValue(thisRef: R|R|, prop: R|kotlin/Any|): R|T|
+
+        public abstract operator fun setValue(thisRef: R|R|, prop: R|kotlin/Any|, value: R|T|): R|kotlin/Unit|
+
+    }
+    public abstract interface Delegate<R, T> : R|ReadWriteProperty<R, T>| {
+    }
+    public abstract interface DatabaseEntity : R|kotlin/Any| {
+    }
+    public final fun <Self : R|DatabaseEntity|, Target : R|DatabaseEntity|> R|Self|.directed(clazz: R|java/lang/Class<Target>|): R|Delegate<Self, Target?>| {
+        ^directed Null(null)!!
+    }
+    public final class MyClassSome : R|DatabaseEntity| {
+        public constructor(): R|MyClassSome| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var other: R|MyClassSome?|by this@R|/MyClassSome|.R|/directed|<R|MyClassSome|, R|MyClassSome|>(<getClass>(Q|MyClassSome|).R|kotlin/jvm/java|<R|MyClassSome|>)
+            public get(): R|MyClassSome?| {
+                ^ this@R|/MyClassSome|.D|/MyClassSome.other|.R|SubstitutionOverride</Delegate.getValue: R|Stub (chain inference): TypeVariable(_Target)?|>|(this@R|/MyClassSome|, ::R|/MyClassSome.other|)
+            }
+            public set(<set-?>: R|MyClassSome?|): R|kotlin/Unit| {
+                this@R|/MyClassSome|.D|/MyClassSome.other|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/MyClassSome|, ::R|/MyClassSome.other|, R|<local>/other|)
+            }
+
+        public final fun set(link: R|MyClassSome?|): R|kotlin/Unit| {
+            this@R|/MyClassSome|.R|/MyClassSome.other| = R|<local>/link|
+        }
+
+    }

@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// !DIAGNOSTICS: -UNUSED_PARAMETER -EXPERIMENTAL_IS_NOT_ENABLED
+// !DIAGNOSTICS: -UNUSED_PARAMETER -OPT_IN_IS_NOT_ENABLED
 // ISSUE: KT-41164
 
 import kotlin.experimental.ExperimentalTypeInference
@@ -17,7 +17,7 @@ fun <T> myEmptyFlow(): MyFlow<T> = null!!
 
 fun test(): MyFlow<Int> {
     return select(
-        <!DEBUG_INFO_EXPRESSION_TYPE("MyFlow<kotlin.Any?>")!>myCallbackFlow <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<MyProducerScope<kotlin.Any?>, kotlin.Unit>")!>{
+        <!DEBUG_INFO_EXPRESSION_TYPE("MyFlow<kotlin.Int>")!>myCallbackFlow <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Function1<MyProducerScope<kotlin.Int>, kotlin.Unit>")!>{
             myAwaitClose {}
         }<!><!>,
         myEmptyFlow()

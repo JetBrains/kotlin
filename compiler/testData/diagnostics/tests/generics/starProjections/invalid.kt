@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // FILE: main.kt
@@ -17,7 +16,7 @@ fun main(a: A<*>, j: JavaClass<*>, i2: Inv2<*>) {
     j.foo() checkType { _<Any?>() }
     i2.x checkType { _<Any?>() }
 
-    j.bar(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>, <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2<!>, <!NI;TYPE_MISMATCH, OI;TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS!>Any()<!>)
+    j.bar(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>, <!CONSTANT_EXPECTED_TYPE_MISMATCH!>2<!>, <!TYPE_MISMATCH!>Any()<!>)
     j.bar(null)
 }
 

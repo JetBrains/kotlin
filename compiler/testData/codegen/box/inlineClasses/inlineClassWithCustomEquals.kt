@@ -1,11 +1,15 @@
 // IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: not supported in JVM
 // IGNORE_BACKEND: JVM
 // IGNORE_BACKEND: JVM_IR
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-@file:Suppress("RESERVED_MEMBER_INSIDE_INLINE_CLASS")
+@file:Suppress("RESERVED_MEMBER_INSIDE_VALUE_CLASS")
 
-inline class Z(val data: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val data: Int) {
     override fun equals(other: Any?): Boolean =
         other is Z &&
                 data % 256 == other.data % 256

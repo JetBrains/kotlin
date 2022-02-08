@@ -1,0 +1,50 @@
+package
+
+public fun test(): kotlin.Unit
+public fun testJava(/*0*/ appender: JavaWriterAppender): kotlin.Unit
+
+public open class JavaWriterAppender {
+    public constructor JavaWriterAppender()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public/*package*/ open fun </*0*/ B : JavaWriterAppender.Builder1<B!>!> intersectTwoSelfTypes(): B! where B : JavaWriterAppender.Builder2<B!>!
+    public/*package*/ open fun </*0*/ B : JavaWriterAppender.Builder1<B!>!> newBuilder(): B!
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public/*package*/ open inner class Builder1</*0*/ B : JavaWriterAppender.Builder1<B!>!> {
+        public/*package*/ constructor Builder1</*0*/ B : JavaWriterAppender.Builder1<B!>!>()
+        public/*package*/ open fun asBuilder(): B!
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public/*package*/ interface Builder2</*0*/ K : JavaWriterAppender.Builder2<K!>!> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+public object WriterAppender {
+    private constructor WriterAppender()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun </*0*/ B : WriterAppender.Builder1<B>> intersectTwoSelfTypes(): B where B : WriterAppender.Builder2<B>
+    public final fun </*0*/ B : WriterAppender.Builder1<B>> newBuilder(): B
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class Builder1</*0*/ B : WriterAppender.Builder1<B>> {
+        public constructor Builder1</*0*/ B : WriterAppender.Builder1<B>>()
+        public final fun asBuilder(): B
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public interface Builder2</*0*/ K : WriterAppender.Builder2<K>> {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

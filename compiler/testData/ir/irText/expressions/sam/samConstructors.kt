@@ -1,4 +1,5 @@
 // WITH_JDK
+// TARGET_BACKEND: JVM
 fun test1() = Runnable { }
 
 fun test2(a: () -> Unit) = Runnable(a)

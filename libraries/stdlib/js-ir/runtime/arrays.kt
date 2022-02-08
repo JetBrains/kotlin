@@ -34,10 +34,11 @@ internal fun booleanArray(size: Int): BooleanArray = withType("BooleanArray", fi
 
 internal fun booleanArrayOf(arr: Array<Boolean>): BooleanArray = withType("BooleanArray", arr.asDynamic().slice()).unsafeCast<BooleanArray>()
 
-//internal fun charArray(size: Int): CharArray = withType("CharArray", fillArrayVal(Array<Int>(size), 0)).unsafeCast<CharArray>()
-internal fun charArray(size: Int): CharArray = withType("CharArray", fillArrayVal(Array<Char>(size), Char(0))).unsafeCast<CharArray>()
+@Suppress("UNUSED_PARAMETER")
+internal fun charArray(size: Int): CharArray = withType("CharArray", js("new Uint16Array(size)")).unsafeCast<CharArray>()
 
-internal fun charArrayOf(arr: Array<Char>): CharArray = withType("CharArray", arr.asDynamic().slice()).unsafeCast<CharArray>()
+@Suppress("UNUSED_PARAMETER")
+internal fun charArrayOf(arr: Array<Char>): CharArray = withType("CharArray", js("new Uint16Array(arr)")).unsafeCast<CharArray>()
 
 internal fun longArray(size: Int): LongArray = withType("LongArray", fillArrayVal(Array<Long>(size), 0L)).unsafeCast<LongArray>()
 

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package foo
 
 val Int.<!REDECLARATION!>foo<!>: Int get() = 2

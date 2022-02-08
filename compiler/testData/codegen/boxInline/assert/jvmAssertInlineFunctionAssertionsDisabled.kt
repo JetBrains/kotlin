@@ -1,7 +1,7 @@
-// KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
-// FILE: inline.kt
-// WITH_RUNTIME
 // FULL_JDK
+// WITH_STDLIB
+// ASSERTIONS_MODE: jvm
+// FILE: inline.kt
 // TARGET_BACKEND: JVM
 
 package test

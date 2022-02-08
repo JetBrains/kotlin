@@ -2,7 +2,8 @@ description = 'Kotlin annotations for JVM'
 
 apply plugin: 'kotlin'
 
-configureJvm6Project(project)
+JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_6)
+
 configurePublishing(project)
 
 sourceSets {
@@ -20,17 +21,11 @@ dependencies {
 configureSourcesJar()
 configureJavadocJar()
 
-tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
-    kotlinOptions.jdkHome = JDK_16
-    kotlinOptions.jvmTarget = 1.6
-}
-
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [
             "-Xallow-kotlin-package",
-            "-Xnormalize-constructor-calls=enable",
     ]
     kotlinOptions.moduleName = project.name
 }
 
-configureJvmIrBackend(project)
+configureFrontendIr(project)

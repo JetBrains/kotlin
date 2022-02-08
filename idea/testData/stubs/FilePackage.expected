@@ -1,6 +1,0 @@
-PsiJetFileStubImpl[package=some.test]
-  PACKAGE_DIRECTIVE
-    DOT_QUALIFIED_EXPRESSION
-      REFERENCE_EXPRESSION[referencedName=some]
-      REFERENCE_EXPRESSION[referencedName=test]
-  IMPORT_LIST

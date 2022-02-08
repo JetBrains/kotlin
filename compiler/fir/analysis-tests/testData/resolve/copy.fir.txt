@@ -1,0 +1,25 @@
+FILE: copy.kt
+    public final data class Some : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|, y: R|kotlin/String|): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+        public final val y: R|kotlin/String| = R|<local>/y|
+            public get(): R|kotlin/String|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final operator fun component2(): R|kotlin/String|
+
+        public final fun copy(x: R|kotlin/Int| = this@R|/Some|.R|/Some.x|, y: R|kotlin/String| = this@R|/Some|.R|/Some.y|): R|Some|
+
+    }
+    public final fun test(some: R|Some|): R|kotlin/Unit| {
+        lval other: R|Some| = R|<local>/some|.R|/Some.copy|(y = String(123))
+        lval another: R|Some| = R|<local>/some|.R|/Some.copy|(x = Int(123))
+        lval same: R|Some| = R|<local>/some|.R|/Some.copy|()
+        lval different: R|Some| = R|<local>/some|.R|/Some.copy|(Int(456), String(456))
+    }

@@ -7,14 +7,16 @@ package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.model.Element
-
+import org.jetbrains.kotlin.util.SmartPrinter
+import org.jetbrains.kotlin.util.withIndent
 import java.io.File
-import java.io.PrintWriter
 
-fun printVisitor(elements: List<Element>, generationPath: File) {
+fun printVisitor(elements: List<Element>, generationPath: File, visitSuperTypeByDefault: Boolean): GeneratedFile {
+    val className = if (visitSuperTypeByDefault) "FirDefaultVisitor" else "FirVisitor"
     val dir = File(generationPath, VISITOR_PACKAGE.replace(".", "/"))
-    dir.mkdirs()
-    File(dir, "FirVisitor.kt").useSmartPrinter {
+    val file = File(dir, "$className.kt")
+    val stringBuilder = StringBuilder()
+    SmartPrinter(stringBuilder).apply {
         printCopyright()
         println("package $VISITOR_PACKAGE")
         println()
@@ -22,28 +24,49 @@ fun printVisitor(elements: List<Element>, generationPath: File) {
         println()
         printGeneratedMessage()
 
-        println("abstract class FirVisitor<out R, in D> {")
+        print("abstract class $className<out R, in D> ")
+        if (visitSuperTypeByDefault) {
+            print(": FirVisitor<R, D>() ")
+        }
+        println("{")
 
         pushIndent()
-        println("abstract fun visitElement(element: FirElement, data: D): R\n")
+        if (!visitSuperTypeByDefault) {
+            println("abstract fun visitElement(element: FirElement, data: D): R\n")
+        }
         for (element in elements) {
-            if (element == AbstractFirTreeBuilder.baseFirElement) continue
+            if (element == AbstractFirTreeBuilder.baseFirElement ||
+                visitSuperTypeByDefault && (element.parents.size != 1 || element.parents.single().name == "Element")
+            ) continue
             with(element) {
                 val varName = safeDecapitalizedName
-                println("open fun ${typeParameters}visit$name($varName: $typeWithArguments, data: D): R${multipleUpperBoundsList()} = visitElement($varName, data)")
+                if (visitSuperTypeByDefault) {
+                    print("override")
+                } else {
+                    print("open")
+                }
+                print(" fun ${typeParameters}visit$name($varName: $typeWithArguments, data: D): R${multipleUpperBoundsList()} = visit")
+                if (visitSuperTypeByDefault) {
+                    print(parents.single().name)
+                } else {
+                    print("Element")
+                }
+                println("($varName, data)")
                 println()
             }
         }
         popIndent()
         println("}")
     }
+    return GeneratedFile(file, stringBuilder.toString())
 }
 
 
-fun printVisitorVoid(elements: List<Element>, generationPath: File) {
+fun printVisitorVoid(elements: List<Element>, generationPath: File): GeneratedFile {
     val dir = File(generationPath, VISITOR_PACKAGE.replace(".", "/"))
-    dir.mkdirs()
-    File(dir, "FirVisitorVoid.kt").useSmartPrinter {
+    val file = File(dir, "FirVisitorVoid.kt")
+    val stringBuilder = StringBuilder()
+    SmartPrinter(stringBuilder).apply {
         printCopyright()
         println("package $VISITOR_PACKAGE")
         println()
@@ -83,4 +106,35 @@ fun printVisitorVoid(elements: List<Element>, generationPath: File) {
         }
         println("}")
     }
+    return GeneratedFile(file, stringBuilder.toString())
+}
+
+fun printDefaultVisitorVoid(elements: List<Element>, generationPath: File): GeneratedFile {
+    val className = "FirDefaultVisitorVoid"
+    val dir = File(generationPath, VISITOR_PACKAGE.replace(".", "/"))
+    val file = File(dir, "$className.kt")
+    val stringBuilder = StringBuilder()
+    SmartPrinter(stringBuilder).apply {
+        printCopyright()
+        println("package $VISITOR_PACKAGE")
+        println()
+        elements.forEach { println("import ${it.fullQualifiedName}") }
+        println()
+        printGeneratedMessage()
+
+        println("abstract class $className : FirVisitorVoid() {")
+
+        pushIndent()
+        for (element in elements) {
+            if (element == AbstractFirTreeBuilder.baseFirElement || element.parents.size != 1 || element.parents.single().name == "Element") continue
+            with(element) {
+                val varName = safeDecapitalizedName
+                println("override fun ${typeParameters}visit$name($varName: $typeWithArguments)${multipleUpperBoundsList()} = visit${parents.first().name}($varName)")
+                println()
+            }
+        }
+        popIndent()
+        println("}")
+    }
+    return GeneratedFile(file, stringBuilder.toString())
 }

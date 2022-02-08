@@ -13,7 +13,7 @@ interface Your<R> {
 
 object My : Your<Double> {
     fun <T> T.bar() {}
-    fun baz()
+    <!NON_ABSTRACT_FUNCTION_WITH_NO_BODY!>fun baz()<!>
     fun Boolean.gau() {}
 }
 

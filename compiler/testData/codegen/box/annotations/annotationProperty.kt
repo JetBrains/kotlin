@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @Target(AnnotationTarget.PROPERTY)
 annotation class Anno(val value: String)

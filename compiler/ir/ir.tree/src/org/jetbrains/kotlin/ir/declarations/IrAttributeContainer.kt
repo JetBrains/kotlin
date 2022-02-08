@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,10 +16,4 @@ interface IrAttributeContainer : IrElement {
      * it shouldn't be needed to call this more than once to find the original attribute owner.
      */
     var attributeOwnerId: IrAttributeContainer
-}
-
-fun <D : IrAttributeContainer> D.copyAttributes(other: IrAttributeContainer?): D = apply {
-    if (other != null) {
-        attributeOwnerId = other.attributeOwnerId
-    }
 }

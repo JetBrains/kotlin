@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.test.DummyTraces
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
+import org.jetbrains.kotlin.types.TypeAttributes
 import java.util.regex.Pattern
 
 class ConstraintSystemTestData(
@@ -65,9 +66,9 @@ class ConstraintSystemTestData(
         val matcher = INTEGER_VALUE_TYPE_PATTERN.matcher(name)
         if (matcher.find()) {
             val number = matcher.group(1)!!
-            val parameters = CompileTimeConstant.Parameters(false, false, false, false, false, false, false)
+            val parameters = CompileTimeConstant.Parameters(false, false, false, false, false, false, false, false)
             return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-                Annotations.EMPTY,
+                TypeAttributes.Empty,
                 IntegerValueTypeConstructor(number.toLong(), functionFoo.module, parameters),
                 listOf(),
                 false,

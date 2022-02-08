@@ -1,0 +1,134 @@
+data class Result {
+  constructor(i: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var i: Int
+    field = i
+    get
+    set
+
+  operator fun component1(): Int {
+    return <this>.#i
+  }
+
+  fun copy(i: Int = <this>.#i): Result {
+    return Result(i = i)
+  }
+
+  override fun toString(): String {
+    return "Result(" + "i=" + <this>.#i + ")"
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#i.hashCode()
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is Result -> return false
+    }
+    val tmp0_other_with_cast: Result = other as Result
+    when {
+      EQEQ(arg0 = <this>.#i, arg1 = tmp0_other_with_cast.#i).not() -> return false
+    }
+    return true
+  }
+
+}
+
+var operationScore: Int
+  field = 0
+  get
+  set
+
+operator fun Result.plus(<this>: Int, other: Result): Result {
+  { // BLOCK
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = <this>))
+  }
+  return Result(i = <this>.<get-i>().plus(other = other.<get-i>()))
+}
+
+operator fun Result.plusAssign(<this>: Int, other: Result) {
+  { // BLOCK
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = <this>))
+  }
+  { // BLOCK
+    val tmp0_this: Result = <this>
+    tmp0_this.<set-i>(<set-?> = tmp0_this.<get-i>().plus(other = other.<get-i>()))
+  }
+}
+
+operator fun Result.minus(<this>: Int, other: Result): Result {
+  { // BLOCK
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = <this>))
+  }
+  return Result(i = <this>.<get-i>().minus(other = other.<get-i>()))
+}
+
+operator fun Result.minusAssign(<this>: Int, other: Result) {
+  { // BLOCK
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = <this>))
+  }
+  { // BLOCK
+    val tmp0_this: Result = <this>
+    tmp0_this.<set-i>(<set-?> = tmp0_this.<get-i>().minus(other = other.<get-i>()))
+  }
+}
+
+operator fun Result.times(<this>: Int, other: Result): Result {
+  { // BLOCK
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = <this>))
+  }
+  return Result(i = <this>.<get-i>().times(other = other.<get-i>()))
+}
+
+operator fun Result.timesAssign(<this>: Int, other: Result) {
+  { // BLOCK
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = <this>))
+  }
+  { // BLOCK
+    val tmp0_this: Result = <this>
+    tmp0_this.<set-i>(<set-?> = tmp0_this.<get-i>().times(other = other.<get-i>()))
+  }
+}
+
+operator fun Result.div(<this>: Int, other: Result): Result {
+  { // BLOCK
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = <this>))
+  }
+  return Result(i = <this>.<get-i>().div(other = other.<get-i>()))
+}
+
+operator fun Result.divAssign(<this>: Int, other: Result) {
+  { // BLOCK
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = <this>))
+  }
+  { // BLOCK
+    val tmp0_this: Result = <this>
+    tmp0_this.<set-i>(<set-?> = tmp0_this.<get-i>().div(other = other.<get-i>()))
+  }
+}
+
+fun box(): String {
+  val result: Result = Result(i = 0)
+  with<Int, Unit>(receiver = 1, block = local fun Int.<anonymous>() {
+    result.plusAssign(<this> = $this$with, other = Result(i = 1).plus(<this> = $this$with, other = Result(i = 1)))
+    result.minusAssign(<this> = $this$with, other = Result(i = 1).minus(<this> = $this$with, other = Result(i = 0)))
+    result.timesAssign(<this> = $this$with, other = Result(i = 1).times(<this> = $this$with, other = Result(i = 2)))
+    result.divAssign(<this> = $this$with, other = Result(i = 4).div(<this> = $this$with, other = Result(i = 2)))
+  }
+)
+  return when {
+    when {
+      EQEQ(arg0 = result.<get-i>(), arg1 = 1) -> EQEQ(arg0 = <get-operationScore>(), arg1 = 8)
+      else -> false
+    } -> "OK"
+    else -> "fail"
+  }
+}

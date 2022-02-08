@@ -6,14 +6,15 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class ExceptionHelperCallsTransformer(private val context: JsIrBackendContext) : CallsTransformer {
 
+    // TODO: move symbol resolve into context
     private fun referenceFunction(fqn: FqName) =
         context.getFunctions(fqn).singleOrNull()?.let {
             context.symbolTable.referenceSimpleFunction(it)
@@ -24,7 +25,8 @@ class ExceptionHelperCallsTransformer(private val context: JsIrBackendContext) :
         context.irBuiltIns.throwCceSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("THROW_CCE"))),
         context.irBuiltIns.throwIseSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("THROW_ISE"))),
         context.irBuiltIns.illegalArgumentExceptionSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("THROW_IAE"))),
-        context.irBuiltIns.noWhenBranchMatchedExceptionSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("noWhenBranchMatchedException")))
+        context.irBuiltIns.noWhenBranchMatchedExceptionSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("noWhenBranchMatchedException"))),
+        context.irBuiltIns.linkageErrorSymbol to context.intrinsics.linkageErrorSymbol
     )
 
     override fun transformFunctionAccess(call: IrFunctionAccessExpression, doNotIntrinsify: Boolean) =

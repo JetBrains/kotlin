@@ -1,9 +1,12 @@
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class A(val a: Any)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class A(val a: Any)
 
-inline class NA(val b: Any?)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class NA(val b: Any?)
 
 fun box(): String {
     val ns1 = NA(A("abc"))

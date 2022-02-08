@@ -1,4 +1,6 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 fun <T> underlying(a: IC): T = bar(a) {
     it.value as T
@@ -28,7 +30,8 @@ fun <T, R> bar(value: T, f: FunIFace<T, R>): R {
     return f.call(value)
 }
 
-inline class IC(val value: Any) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IC(val value: Any) {
     fun <T> dispatchValue(): T = value as T
 }
 

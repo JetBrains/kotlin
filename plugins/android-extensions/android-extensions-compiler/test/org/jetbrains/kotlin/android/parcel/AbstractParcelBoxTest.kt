@@ -28,23 +28,19 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
     companion object {
         val LIBRARY_KT = File("plugins/android-extensions/android-extensions-compiler/testData/parcel/boxLib.kt")
 
-        private val androidPluginPath: String by lazy {
-            System.getProperty("ideaSdk.androidPlugin.path")?.takeIf { File(it).isDirectory }
-                ?: throw RuntimeException("Unable to get a valid path from 'ideaSdk.androidPlugin.path' property, please point it to the Idea android plugin location")
+        private fun String.withoutAndroidPrefix(): String = removePrefix("studio.android.sdktools.")
+
+        private fun getLayoutLibFile(property: String): File {
+            val layoutLibFile = File(System.getProperty(property))
+            if (!layoutLibFile.isFile) {
+                error("Can't find jar file in $property system property")
+            }
+            return layoutLibFile
         }
 
-        val layoutlibJar: File by lazy {
-            File(androidPluginPath).listFiles { _, name ->
-                name.startsWith("layoutlib-") && name.endsWith(".jar")
-                        && !name.startsWith("layoutlib-api-") && !name.startsWith("layoutlib-loader")
-            }?.firstOrNull() ?: error("Unable to locate layoutlib jar in '$androidPluginPath'")
-        }
+        val layoutlibJar: File by lazy { getLayoutLibFile("layoutLib.path") }
 
-        val layoutlibApiJar: File by lazy {
-            File(androidPluginPath).listFiles { _, name ->
-                name.startsWith("layoutlib-api-") && name.endsWith(".jar")
-            }?.firstOrNull() ?: error("Unable to locate layoutlib-api jar in '$androidPluginPath'")
-        }
+        val layoutlibApiJar: File by lazy { getLayoutLibFile("layoutLibApi.path") }
 
         private val JUNIT_GENERATED_TEST_CLASS_BYTES by lazy { constructSyntheticTestClass() }
         private const val JUNIT_GENERATED_TEST_CLASS_FQNAME = "test.JunitTest"
@@ -109,11 +105,6 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
         }
     }
 
-    private val androidPluginPath: String by lazy {
-        System.getProperty("ideaSdk.androidPlugin.path")?.takeIf { File(it).isDirectory }
-            ?: throw RuntimeException("Unable to get a valid path from 'ideaSdk.androidPlugin.path' property, please point it to the Idea android plugin location")
-    }
-
     private fun getClasspathForTest(): List<File> {
         val kotlinRuntimeJar = PathUtil.kotlinPathsForIdeaPlugin.stdlibPath
 
@@ -162,9 +153,15 @@ abstract class AbstractParcelBoxTest : CodegenTestCase() {
                 JUNIT_GENERATED_TEST_CLASS_FQNAME
             ).start()
 
+            val out = process.inputStream.bufferedReader().lineSequence().joinToString("\n")
+            val err = process.errorStream.bufferedReader().lineSequence().joinToString("\n")
+
             process.waitFor(3, TimeUnit.MINUTES)
-            println(process.inputStream.bufferedReader().lineSequence().joinToString("\n"))
+
             if (process.exitValue() != 0) {
+                println(out)
+                println(err)
+
                 throw AssertionError("Process exited with exit code ${process.exitValue()} \n" + classFileFactory.createText())
             }
         } finally {

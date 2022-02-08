@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.resolve.calls.tower.ImplicitsExtensionsResolutionFil
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
-import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
 
 class IdeLikeReplCodeAnalyzer(
     private val environment: KotlinCoreEnvironment,
@@ -44,11 +43,7 @@ class IdeLikeReplCodeAnalyzer(
         importedScripts: List<KtFile>,
         priority: Int
     ): ReplLineAnalysisResultWithStateless {
-        topDownAnalysisContext.scripts.clear()
-        trace.clearDiagnostics()
-
-        psiFile.script!!.putUserData(ScriptPriorities.PRIORITY_KEY, priority)
-
+        prepareForAnalyze(psiFile, priority)
         return doStatelessAnalyze(psiFile, importedScripts)
     }
 

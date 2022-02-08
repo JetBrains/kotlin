@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.ir.expressions.impl
 
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
-import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.getPrimitiveType
+import org.jetbrains.kotlin.ir.types.isMarkedNullable
 
 class IrConstImpl<T>(
     override val startOffset: Int,
@@ -28,15 +30,6 @@ class IrConstImpl<T>(
     override val kind: IrConstKind<T>,
     override val value: T
 ) : IrConst<T>() {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitConst(this, data)
-
-    override fun copy(): IrConst<T> =
-        IrConstImpl(startOffset, endOffset, type, kind, value)
-
-    override fun copyWithOffsets(startOffset: Int, endOffset: Int) =
-        IrConstImpl(startOffset, endOffset, type, kind, value)
-
     companion object {
         fun string(startOffset: Int, endOffset: Int, type: IrType, value: String): IrConstImpl<String> =
             IrConstImpl(startOffset, endOffset, type, IrConstKind.String, value)
@@ -74,16 +67,22 @@ class IrConstImpl<T>(
         fun short(startOffset: Int, endOffset: Int, type: IrType, value: Short): IrConstImpl<Short> =
             IrConstImpl(startOffset, endOffset, type, IrConstKind.Short, value)
 
-        fun defaultValueForType(startOffset: Int, endOffset: Int, type: IrType) = when {
-            type.isFloat() -> float(startOffset, endOffset, type, 0.0F)
-            type.isDouble() -> double(startOffset, endOffset, type, 0.0)
-            type.isBoolean() -> boolean(startOffset, endOffset, type, false)
-            type.isByte() -> byte(startOffset, endOffset, type, 0)
-            type.isChar() -> char(startOffset, endOffset, type, 0.toChar())
-            type.isShort() -> short(startOffset, endOffset, type, 0)
-            type.isInt() -> int(startOffset, endOffset, type, 0)
-            type.isLong() -> long(startOffset, endOffset, type, 0)
-            else -> constNull(startOffset, endOffset, type)
+        fun defaultValueForType(startOffset: Int, endOffset: Int, type: IrType): IrConstImpl<*> {
+            if (type.isMarkedNullable()) return constNull(startOffset, endOffset, type)
+            return when (type.getPrimitiveType()) {
+                PrimitiveType.BOOLEAN -> boolean(startOffset, endOffset, type, false)
+                PrimitiveType.CHAR -> char(startOffset, endOffset, type, 0.toChar())
+                PrimitiveType.BYTE -> byte(startOffset, endOffset, type, 0)
+                PrimitiveType.SHORT -> short(startOffset, endOffset, type, 0)
+                PrimitiveType.INT -> int(startOffset, endOffset, type, 0)
+                PrimitiveType.FLOAT -> float(startOffset, endOffset, type, 0.0F)
+                PrimitiveType.LONG -> long(startOffset, endOffset, type, 0)
+                PrimitiveType.DOUBLE -> double(startOffset, endOffset, type, 0.0)
+                else -> constNull(startOffset, endOffset, type)
+            }
         }
     }
 }
+
+fun <T> IrConst<T>.copyWithOffsets(startOffset: Int, endOffset: Int) =
+    IrConstImpl(startOffset, endOffset, type, kind, value)

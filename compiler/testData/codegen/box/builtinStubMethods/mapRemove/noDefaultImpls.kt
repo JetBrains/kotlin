@@ -2,7 +2,7 @@
 // SKIP_JDK6
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
-// WITH_RUNTIME
+// WITH_STDLIB
 // FULL_JDK
 
 // There should be no DefaultImpls method for MutableMap.remove(K;V)

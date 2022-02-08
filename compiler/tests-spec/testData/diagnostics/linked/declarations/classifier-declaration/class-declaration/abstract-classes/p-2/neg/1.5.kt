@@ -36,7 +36,7 @@ import base.*
 
 // TESTCASE NUMBER: 1
 
-<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>class Case1<!> : BaseJava() {}
+<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>class Case1<!> : BaseJava() {}
 
 fun case1() {
     val v = Case1()
@@ -48,7 +48,7 @@ fun case1() {
 */
 abstract class AbstractClassCase2 : BaseJava() {}
 
-<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>class Case2<!> : AbstractClassCase2() {}
+<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>class Case2<!> : AbstractClassCase2() {}
 
 fun case2() {
     val v = Case2()

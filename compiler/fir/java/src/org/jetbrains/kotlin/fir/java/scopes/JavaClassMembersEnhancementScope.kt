@@ -5,55 +5,37 @@
 
 package org.jetbrains.kotlin.fir.java.scopes
 
-import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.initialSignatureAttr
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
-import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
-import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptorReplacingKotlinToJava
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembers
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
-import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.ERASED_COLLECTION_PARAMETER_SIGNATURES
-import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.ERASED_VALUE_PARAMETERS_SHORT_NAMES
-import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.Companion.ERASED_VALUE_PARAMETERS_SIGNATURES
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class JavaClassMembersEnhancementScope(
     session: FirSession,
     private val owner: FirRegularClassSymbol,
     private val useSiteMemberScope: JavaClassUseSiteMemberScope,
 ) : FirTypeScope() {
-    private val overriddenFunctions = mutableMapOf<FirFunctionSymbol<*>, Collection<FirFunctionSymbol<*>>>()
-    private val overriddenProperties = mutableMapOf<FirPropertySymbol, Collection<FirPropertySymbol>>()
+    private val enhancedToOriginalFunctions = mutableMapOf<FirNamedFunctionSymbol, FirNamedFunctionSymbol>()
+    private val enhancedToOriginalProperties = mutableMapOf<FirPropertySymbol, FirPropertySymbol>()
 
-    private val overrideBindCache = mutableMapOf<Name, Map<FirCallableSymbol<*>?, List<FirCallableSymbol<*>>>>()
     private val signatureEnhancement = FirSignatureEnhancement(owner.fir, session) {
-        overriddenMembers(name)
+        overriddenMembers()
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         useSiteMemberScope.processPropertiesByName(name) process@{ original ->
             val enhancedPropertySymbol = signatureEnhancement.enhancedProperty(original, name)
-            val originalFir = original.fir
-            if (originalFir is FirProperty && enhancedPropertySymbol is FirPropertySymbol) {
-                val enhancedProperty = enhancedPropertySymbol.fir
-                overriddenProperties[enhancedPropertySymbol] =
-                    originalFir
-                        .overriddenMembers(enhancedProperty.name)
-                        .mapNotNull { it.symbol as? FirPropertySymbol }
+            if (original is FirPropertySymbol && enhancedPropertySymbol is FirPropertySymbol) {
+                enhancedToOriginalProperties[enhancedPropertySymbol] = original
             }
 
             processor(enhancedPropertySymbol)
@@ -62,118 +44,27 @@ class JavaClassMembersEnhancementScope(
         return super.processPropertiesByName(name, processor)
     }
 
-    private fun FirSimpleFunction.changeSignatureIfErasedValueParameter(): FirSimpleFunction {
-        val typeParameters = owner.fir.typeParameters
-        if (typeParameters.isEmpty() || name !in ERASED_VALUE_PARAMETERS_SHORT_NAMES) {
-            return this
-        }
-        val jvmDescriptor = this.computeJvmDescriptorReplacingKotlinToJava().replace(
-            "kotlin/collections/Collection",
-            "java/util/Collection"
-        )
-        if (ERASED_VALUE_PARAMETERS_SIGNATURES.none { it.endsWith(jvmDescriptor) }) {
-            return this
-        }
-        val superClassIds = listOfNotNull(symbol.callableId.classId) +
-                lookupSuperTypes(owner, lookupInterfaces = true, deep = true, useSiteSession = session).map { it.lookupTag.classId }
-        for (superClassId in superClassIds) {
-            val javaClassId = JavaToKotlinClassMap.mapKotlinToJava(superClassId.asSingleFqName().toUnsafe()) ?: superClassId
-            val newParameterTypes: List<ConeKotlinType?> = when (val fqJvmDescriptor = "${javaClassId.asString()}.$jvmDescriptor") {
-                in ERASED_COLLECTION_PARAMETER_SIGNATURES -> {
-                    valueParameters.map {
-                        val typeParameter = typeParameters.first()
-                        ConeClassLikeLookupTagImpl(ClassId.topLevel(StandardNames.FqNames.collection)).constructClassType(
-                            arrayOf(
-                                ConeTypeParameterLookupTag(typeParameter.symbol).constructType(emptyArray(), isNullable = false)
-                            ), isNullable = false
-                        )
-                    }
-                }
-                in ERASED_VALUE_PARAMETERS_SIGNATURES -> {
-                    val specialSignatureInfo = SpecialGenericSignatures.getSpecialSignatureInfo(fqJvmDescriptor)
-                    if (!specialSignatureInfo.isObjectReplacedWithTypeParameter) {
-                        return this
-                    }
-                    valueParameters.mapIndexed { i, valueParameter ->
-                        val classLikeType =
-                            valueParameter.returnTypeRef.coneTypeSafe<ConeKotlinType>()?.lowerBoundIfFlexible().safeAs<ConeClassLikeType>()
-                        if (classLikeType?.lookupTag?.classId == StandardClassIds.Any) {
-                            val typeParameterIndex = if (name.asString() == "containsValue") 1 else i
-                            val typeParameter = typeParameters.getOrNull(typeParameterIndex) ?: typeParameters.first()
-                            val type = ConeTypeParameterLookupTag(typeParameter.symbol).constructType(
-                                emptyArray(), valueParameter.returnTypeRef.isMarkedNullable == true
-                            )
-                            if (valueParameter.returnTypeRef.coneType is ConeFlexibleType) {
-                                ConeFlexibleType(
-                                    type.withAttributes(
-                                        type.attributes.withFlexibleUnless {
-                                            it.hasEnhancedNullability
-                                        }
-                                    ),
-                                    type.withNullability(ConeNullability.NULLABLE)
-                                )
-                            } else {
-                                type
-                            }
-                        } else {
-                            null
-                        }
-                    }
-                }
-                else -> {
-                    continue
-                }
-            }
-            if (newParameterTypes.none { it != null }) {
-                return this
-            }
-
-            return FirFakeOverrideGenerator.createCopyForFirFunction(
-                FirNamedFunctionSymbol(symbol.callableId),
-                this,
-                session,
-                FirDeclarationOrigin.Enhancement,
-                newParameterTypes = valueParameters.zip(newParameterTypes).map { (valueParameter, newType) ->
-                    newType ?: valueParameter.returnTypeRef.coneType
-                },
-                newDispatchReceiverType = dispatchReceiverType,
-            )
-
-        }
-        return this
-    }
-
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         useSiteMemberScope.processFunctionsByName(name) process@{ original ->
             val symbol = signatureEnhancement.enhancedFunction(original, name)
-            val enhancedFunction = (symbol.fir as? FirSimpleFunction)?.changeSignatureIfErasedValueParameter()
+            val enhancedFunction = (symbol.fir as? FirSimpleFunction)
             val enhancedFunctionSymbol = enhancedFunction?.symbol ?: symbol
 
-            val originalFunction = original.fir as? FirSimpleFunction
-
-            overriddenFunctions[enhancedFunctionSymbol] =
-                if (enhancedFunction != null && originalFunction != null)
-                    originalFunction
-                        .overriddenMembers(enhancedFunction.name)
-                        .mapNotNull { it.symbol as? FirFunctionSymbol<*> }
-                else
-                    emptyList()
-
-            processor(enhancedFunctionSymbol)
+            if (enhancedFunctionSymbol is FirNamedFunctionSymbol) {
+                enhancedToOriginalFunctions[enhancedFunctionSymbol] = original
+                processor(enhancedFunctionSymbol)
+            }
         }
 
         return super.processFunctionsByName(name, processor)
     }
 
-    private fun FirCallableMemberDeclaration<*>.overriddenMembers(name: Name): List<FirCallableMemberDeclaration<*>> {
-        val backMap = overrideBindCache.getOrPut(name) {
-            useSiteMemberScope.bindOverrides(name)
-            useSiteMemberScope
-                .overrideByBase
-                .toList()
-                .groupBy({ (_, key) -> key }, { (value) -> value })
-        }
-        return backMap[this.symbol]?.map { it.fir as FirCallableMemberDeclaration<*> } ?: emptyList()
+    private fun FirCallableDeclaration.overriddenMembers(): List<FirCallableDeclaration> {
+        return when (val symbol = this.symbol) {
+            is FirNamedFunctionSymbol -> useSiteMemberScope.getDirectOverriddenMembers(symbol)
+            is FirPropertySymbol -> useSiteMemberScope.getDirectOverriddenProperties(symbol)
+            else -> emptyList()
+        }.map { it.fir }
     }
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
@@ -188,21 +79,35 @@ class JavaClassMembersEnhancementScope(
     }
 
     override fun processDirectOverriddenFunctionsWithBaseScope(
-        functionSymbol: FirFunctionSymbol<*>,
-        processor: (FirFunctionSymbol<*>, FirTypeScope) -> ProcessorAction
+        functionSymbol: FirNamedFunctionSymbol,
+        processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction =
         doProcessDirectOverriddenCallables(
-            functionSymbol, processor, overriddenFunctions, useSiteMemberScope,
-            FirTypeScope::processDirectOverriddenFunctionsWithBaseScope
+            functionSymbol, processor, enhancedToOriginalFunctions, FirTypeScope::processDirectOverriddenFunctionsWithBaseScope
         )
 
     override fun processDirectOverriddenPropertiesWithBaseScope(
         propertySymbol: FirPropertySymbol,
         processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction
     ): ProcessorAction = doProcessDirectOverriddenCallables(
-        propertySymbol, processor, overriddenProperties, useSiteMemberScope,
-        FirTypeScope::processDirectOverriddenPropertiesWithBaseScope
+        propertySymbol, processor, enhancedToOriginalProperties, FirTypeScope::processDirectOverriddenPropertiesWithBaseScope
     )
+
+    private fun <S : FirCallableSymbol<*>> doProcessDirectOverriddenCallables(
+        callableSymbol: S,
+        processor: (S, FirTypeScope) -> ProcessorAction,
+        enhancedToOriginalMap: Map<S, S>,
+        processDirectOverriddenCallables: FirTypeScope.(S, (S, FirTypeScope) -> ProcessorAction) -> ProcessorAction
+    ): ProcessorAction {
+        val unwrappedSymbol = if (callableSymbol.origin == FirDeclarationOrigin.RenamedForOverride) {
+            @Suppress("UNCHECKED_CAST")
+            callableSymbol.fir.initialSignatureAttr?.symbol as? S ?: callableSymbol
+        } else {
+            callableSymbol
+        }
+        val original = enhancedToOriginalMap[unwrappedSymbol] ?: return ProcessorAction.NONE
+        return useSiteMemberScope.processDirectOverriddenCallables(original, processor)
+    }
 
     override fun getCallableNames(): Set<Name> {
         return useSiteMemberScope.getCallableNames()
@@ -214,5 +119,9 @@ class JavaClassMembersEnhancementScope(
 
     override fun mayContainName(name: Name): Boolean {
         return useSiteMemberScope.mayContainName(name)
+    }
+
+    override fun toString(): String {
+        return "Java enhancement scope for ${owner.classId}"
     }
 }

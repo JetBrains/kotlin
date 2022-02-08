@@ -64,5 +64,5 @@ fun test(m1: M1) {
     d(m1.d)
     e(m1.e)
     f(m1.f)
-    <!INAPPLICABLE_CANDIDATE!>g<!>(m1.g)
+    g(<!ARGUMENT_TYPE_MISMATCH!>m1.g<!>)
 }

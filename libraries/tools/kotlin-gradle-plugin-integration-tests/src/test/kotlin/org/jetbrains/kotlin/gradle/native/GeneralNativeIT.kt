@@ -6,24 +6,25 @@
 package org.jetbrains.kotlin.gradle.native
 
 import com.intellij.testFramework.TestDataFile
+import org.gradle.util.GradleVersion
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
+import org.jetbrains.kotlin.gradle.chooseWrapperVersionOrFinishTest
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_DISABLE_WARNING_PROPERTY_NAME
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_PROPERTY_WARNING
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_WARNING
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
-import org.jetbrains.kotlin.gradle.util.isWindows
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
-import org.junit.Assume
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.*
+import org.junit.rules.TemporaryFolder
 import java.io.File
 import java.util.*
 import kotlin.test.assertEquals
@@ -41,34 +42,48 @@ internal object MPPNativeTargets {
     val unsupported = when {
         HostManager.hostIsMingw -> listOf("macos64")
         HostManager.hostIsLinux -> listOf("macos64", "mingw64")
-        HostManager.hostIsMac -> listOf("mingw64")
+        HostManager.hostIsMac -> listOf("linuxMipsel32")
         else -> error("Unknown host")
     }
 
     val supported = listOf("linux64", "macos64", "mingw64").filter { !unsupported.contains(it) }
 }
 
-internal fun BaseGradleIT.transformNativeTestProject(projectName: String, wrapperVersion: GradleVersionRequired = defaultGradleVersion, directoryPrefix: String? = null): BaseGradleIT.Project {
+internal fun BaseGradleIT.transformNativeTestProject(
+    projectName: String,
+    wrapperVersion: GradleVersionRequired = defaultGradleVersion,
+    directoryPrefix: String? = null
+): BaseGradleIT.Project {
     val project = Project(projectName, wrapperVersion, directoryPrefix = directoryPrefix)
     project.setupWorkingDir()
     project.configureSingleNativeTarget()
-    project.configureMemoryInGradleProperties()
+    project.gradleProperties().apply {
+        configureJvmMemory()
+        disableKotlinNativeCaches()
+    }
     return project
 }
 
-internal fun BaseGradleIT.transformNativeTestProjectWithPluginDsl(projectName: String, wrapperVersion: GradleVersionRequired = defaultGradleVersion, directoryPrefix: String? = null): BaseGradleIT.Project {
+internal fun BaseGradleIT.transformNativeTestProjectWithPluginDsl(
+    projectName: String,
+    wrapperVersion: GradleVersionRequired = defaultGradleVersion,
+    directoryPrefix: String? = null
+): BaseGradleIT.Project {
     val project = transformProjectWithPluginsDsl(projectName, wrapperVersion, directoryPrefix = directoryPrefix)
     project.configureSingleNativeTarget()
-    project.configureMemoryInGradleProperties()
+    project.gradleProperties().apply {
+        configureJvmMemory()
+        disableKotlinNativeCaches()
+    }
     return project
 }
 
-internal fun BaseGradleIT.Project.configureMemoryInGradleProperties() {
-    val file = projectDir.resolve("gradle.properties")
-    if (file.exists()) {
-        file.createNewFile()
-    }
-    file.appendText("\norg.gradle.jvmargs=-Xmx1g\n")
+internal fun File.configureJvmMemory() {
+    appendText("\norg.gradle.jvmargs=-Xmx1g\n")
+}
+
+internal fun File.disableKotlinNativeCaches() {
+    appendText("\nkotlin.native.cacheKind=none\n")
 }
 
 private const val SINGLE_NATIVE_TARGET_PLACEHOLDER = "<SingleNativeTarget>"
@@ -82,6 +97,13 @@ private fun BaseGradleIT.Project.configureSingleNativeTarget(preset: String = Ho
             }
         }
 }
+
+internal fun BaseGradleIT.BuildOptions.withCustomKonanDataDir(
+    customKonanDataDir: File
+) = this.copy(
+    customEnvironmentVariables = this.customEnvironmentVariables +
+            ("KONAN_DATA_DIR" to customKonanDataDir.absolutePath)
+)
 
 class GeneralNativeIT : BaseGradleIT() {
 
@@ -164,7 +186,7 @@ class GeneralNativeIT : BaseGradleIT() {
 
         val klibPrefix = CompilerOutputKind.LIBRARY.prefix(HostManager.host)
         val klibSuffix = CompilerOutputKind.LIBRARY.suffix(HostManager.host)
-        val klibPath = "${targetClassesDir("host")}${klibPrefix}native-library$klibSuffix"
+        val klibPath = "${targetClassesDir("host")}${klibPrefix}/klib/native-library$klibSuffix"
 
         val linkTasks = listOf(
             ":linkDebugSharedHost",
@@ -202,6 +224,89 @@ class GeneralNativeIT : BaseGradleIT() {
             assertTasksUpToDate(linkTasks.drop(1))
             assertTasksUpToDate(klibTask)
             assertTasksExecuted(linkTasks[0])
+        }
+    }
+
+    @Test
+    fun testCanProvideNativeFrameworkArtifact() = with(
+        transformNativeTestProjectWithPluginDsl("frameworks", directoryPrefix = "native-binaries")
+    ) {
+        Assume.assumeTrue(HostManager.hostIsMac)
+
+        gradleBuildScript().appendText(
+            """
+            val frameworkTargets = Attribute.of(
+                "org.jetbrains.kotlin.native.framework.targets",
+                Set::class.java
+            )
+            val kotlinNativeBuildTypeAttribute = Attribute.of(
+                "org.jetbrains.kotlin.native.build.type",
+                String::class.java
+            )
+                 
+            fun validateConfiguration(conf: Configuration, targets: Set<String>, expectedBuildType: String) {
+                if (conf.artifacts.files.count() != 1 || conf.artifacts.files.singleFile.name != "main.framework") {
+                    throw IllegalStateException("No single artifact with proper name \"main.framework\"")
+                }
+                val confTargets = conf.attributes.getAttribute(frameworkTargets)!!
+                val buildType = conf.attributes.getAttribute(kotlinNativeBuildTypeAttribute)!!
+                if (confTargets.size != targets.size || !confTargets.containsAll(targets)) {
+                    throw IllegalStateException("Framework has incorrect attributes. Expected targets: \"${'$'}targets\", actual: \"${'$'}confTargets\"")
+                }
+                if (buildType != expectedBuildType) {
+                   throw IllegalStateException("Framework has incorrect attributes. Expected build type: \"${'$'}expectedBuildType\", actual: \"${'$'}buildType\"")
+                }
+            }
+            
+            tasks.register("validateThinArtifacts") {
+                doLast {
+                    val targets = listOf("ios" to "ios_arm64", "iosSim" to "ios_x64")
+                    val buildTypes = listOf("release", "debug")
+                    targets.forEach { (name, target) ->
+                        buildTypes.forEach { buildType ->
+                            val conf = project.configurations.getByName("main${'$'}{buildType.capitalize()}Framework${'$'}{name.capitalize()}")
+                            validateConfiguration(conf, setOf(target), buildType.toUpperCase())
+                        }
+                    }
+                }
+            }
+            
+            tasks.register("validateFatArtifacts") {
+                doLast {
+                    val buildTypes = listOf("release", "debug")
+                    buildTypes.forEach { buildType ->
+                        val conf = project.configurations.getByName("main${'$'}{buildType.capitalize()}FrameworkIosFat")
+                        validateConfiguration(conf, setOf("ios_x64", "ios_arm64"), buildType.toUpperCase())
+                    }
+                }
+            }
+            
+            tasks.register("validateCustomAttributesSetting") {
+                doLast {
+                    val conf = project.configurations.getByName("customReleaseFrameworkIos")
+                    val attr1Value = conf.attributes.getAttribute(disambiguation1Attribute)
+                    if (attr1Value != "someValue") {
+                        throw IllegalStateException("myDisambiguation1Attribute has incorrect value. Expected: \"someValue\", actual: \"${'$'}attr1Value\"")
+                    }
+                    val attr2Value = conf.attributes.getAttribute(disambiguation2Attribute)
+                    if (attr2Value != "someValue2") {
+                       throw IllegalStateException("myDisambiguation2Attribute has incorrect value. Expected: \"someValue2\", actual: \"${'$'}attr2Value\"")
+                    }
+                }
+            }
+        """.trimIndent()
+        )
+
+        build(":validateThinArtifacts") {
+            assertSuccessful()
+        }
+
+        build(":validateFatArtifacts") {
+            assertSuccessful()
+        }
+
+        build(":validateCustomAttributesSetting") {
+            assertSuccessful()
         }
     }
 
@@ -262,17 +367,17 @@ class GeneralNativeIT : BaseGradleIT() {
             fileInWorkingDir(headerPaths[0]).readText().contains("+ (int32_t)exported")
 
             // Check that by default release frameworks have bitcode embedded.
-            checkNativeCommandLineArguments(":linkMainReleaseFrameworkIos") { arguments ->
+            withNativeCommandLineArguments(":linkMainReleaseFrameworkIos") { arguments ->
                 assertTrue("-Xembed-bitcode" in arguments)
                 assertTrue("-opt" in arguments)
             }
             // Check that by default debug frameworks have bitcode marker embedded.
-            checkNativeCommandLineArguments(":linkMainDebugFrameworkIos") { arguments ->
+            withNativeCommandLineArguments(":linkMainDebugFrameworkIos") { arguments ->
                 assertTrue("-Xembed-bitcode-marker" in arguments)
                 assertTrue("-g" in arguments)
             }
             // Check that bitcode can be disabled by setting custom compiler options
-            checkNativeCommandLineArguments(":linkCustomDebugFrameworkIos") { arguments ->
+            withNativeCommandLineArguments(":linkCustomDebugFrameworkIos") { arguments ->
                 assertTrue(arguments.containsSequentially("-linker-option", "-L."))
                 assertTrue("-Xtime" in arguments)
                 assertTrue("-Xstatic-framework" in arguments)
@@ -280,7 +385,7 @@ class GeneralNativeIT : BaseGradleIT() {
                 assertFalse("-Xembed-bitcode" in arguments)
             }
             // Check that bitcode is disabled for iOS simulator.
-            checkNativeCommandLineArguments(":linkMainReleaseFrameworkIosSim", ":linkMainDebugFrameworkIosSim") { arguments ->
+            withNativeCommandLineArguments(":linkMainReleaseFrameworkIosSim", ":linkMainDebugFrameworkIosSim") { arguments ->
                 assertFalse("-Xembed-bitcode" in arguments)
                 assertFalse("-Xembed-bitcode-marker" in arguments)
             }
@@ -419,7 +524,7 @@ class GeneralNativeIT : BaseGradleIT() {
     ) {
         build(":compileKotlinHost") {
             assertSuccessful()
-            checkNativeCommandLineArguments(":compileKotlinHost") { arguments ->
+            withNativeCommandLineArguments(":compileKotlinHost") { arguments ->
                 assertFalse("-verbose" in arguments)
             }
         }
@@ -433,7 +538,7 @@ class GeneralNativeIT : BaseGradleIT() {
         )
         build(":compileKotlinHost") {
             assertSuccessful()
-            checkNativeCommandLineArguments(":compileKotlinHost") { arguments ->
+            withNativeCommandLineArguments(":compileKotlinHost") { arguments ->
                 assertTrue("-verbose" in arguments)
             }
         }
@@ -490,15 +595,20 @@ class GeneralNativeIT : BaseGradleIT() {
 
     @Test
     fun testNativeTests() = with(transformNativeTestProject("native-tests")) {
-        val testTasks = listOf("hostTest", "iosTest")
         val hostTestTask = "hostTest"
+        val testTasks = listOf(hostTestTask, "iosTest", "iosArm64Test")
 
-        val suffix = if (isWindows) "exe" else "kexe"
+        val testsToExecute = mutableListOf(":$hostTestTask")
+        when (HostManager.host) {
+            KonanTarget.MACOS_X64 -> testsToExecute.add(":iosTest")
+            KonanTarget.MACOS_ARM64 -> testsToExecute.add(":iosArm64Test")
+            else -> {}
+        }
+        val testsToSkip = testTasks.map { ":$it" } - testsToExecute
 
+        val suffix = HostManager.host.family.exeSuffix
         val defaultOutputFile = "build/bin/host/debugTest/test.$suffix"
         val anotherOutputFile = "build/bin/host/anotherDebugTest/another.$suffix"
-
-        val hostIsMac = HostManager.hostIsMac
 
         build("tasks") {
             assertSuccessful()
@@ -516,12 +626,6 @@ class GeneralNativeIT : BaseGradleIT() {
             assertNoSuchFile(anotherOutputFile)
         }
 
-        val testsToExecute = mutableListOf(":$hostTestTask")
-        if (hostIsMac) {
-            testsToExecute.add(":iosTest")
-        }
-        val testsToSkip = testTasks.map { ":$it" } - testsToExecute
-
         // Store currently booted simulators to check that they don't leak (MacOS only).
         val bootedSimulatorsBefore = getBootedSimulators(projectDir)
 
@@ -538,11 +642,47 @@ class GeneralNativeIT : BaseGradleIT() {
             assertFileExists(defaultOutputFile)
         }
 
+        checkTestsUpToDate(testsToExecute, testsToSkip)
+
         // Check simulator process leaking.
         val bootedSimulatorsAfter = getBootedSimulators(projectDir)
         assertEquals(bootedSimulatorsBefore, bootedSimulatorsAfter)
 
         // Check the case with failed tests.
+        checkFailedTests(hostTestTask, testsToExecute, testsToSkip)
+
+        build("linkAnotherDebugTestHost") {
+            assertSuccessful()
+            assertFileExists(anotherOutputFile)
+        }
+    }
+
+    private fun Project.checkTestsUpToDate(testsToExecute: List<String>, testsToSkip: List<String>) {
+        // Check that test tasks are up-to-date on second run
+        build("check") {
+            assertSuccessful()
+
+            assertTasksUpToDate(*testsToExecute.toTypedArray())
+            assertTasksSkipped(*testsToSkip.toTypedArray())
+        }
+
+        // Check that setting new value to tracked environment variable triggers tests rerun
+        build("check", options = defaultBuildOptions().copy(androidHome = projectDir)) {
+            assertSuccessful()
+
+            assertTasksExecuted(*testsToExecute.toTypedArray())
+            assertTasksSkipped(*testsToSkip.toTypedArray())
+        }
+
+        build("check", options = defaultBuildOptions().copy(androidHome = projectDir)) {
+            assertSuccessful()
+
+            assertTasksUpToDate(*testsToExecute.toTypedArray())
+            assertTasksSkipped(*testsToSkip.toTypedArray())
+        }
+    }
+
+    private fun Project.checkFailedTests(hostTestTask: String, testsToExecute: List<String>, testsToSkip: List<String>) {
         projectDir.resolve("src/commonTest/kotlin/test.kt").appendText(
             """
                 @Test
@@ -573,14 +713,14 @@ class GeneralNativeIT : BaseGradleIT() {
             assertTasksSkipped(*testsToSkip.toTypedArray())
 
 
-            fun assertStacktrace(taskName: String) {
+            fun assertStacktrace(taskName: String, targetName: String) {
                 val testReport = projectDir.resolve("build/test-results/$taskName/TEST-org.foo.test.TestKt.xml")
                 val stacktrace = SAXBuilder().build(testReport).rootElement
                     .getChildren("testcase")
-                    .single { it.getAttribute("name").value == "fail" }
+                    .single { it.getAttribute("name").value == "fail" || it.getAttribute("name").value == "fail[$targetName]" }
                     .getChild("failure")
                     .text
-                assertTrue(stacktrace.contains("""at org\.foo\.test#fail\(.*test\.kt:24\)""".toRegex()))
+                assertTrue(stacktrace.contains("""at org\.foo\.test#fail\(.*test\.kt:29\)""".toRegex()))
             }
 
             fun assertTestResultsAnyOf(
@@ -595,23 +735,44 @@ class GeneralNativeIT : BaseGradleIT() {
                 }
             }
 
-            assertTestResults("testProject/native-tests/TEST-TestKt.xml", hostTestTask)
-            // K/N doesn't report line numbers correctly on Linux (see KT-35408).
-            // TODO: Uncomment when this is fixed.
-            //assertStacktrace(hostTestTask)
-            if (hostIsMac) {
-                assertTestResultsAnyOf(
-                    "testProject/native-tests/TEST-TestKt.xml",
-                    "testProject/native-tests/TEST-TestKt-IOSsim.xml",
-                    "iosTest"
+            // Gradle 6.6+ slightly changed format of xml test results
+            // If, in the test project, preset name was updated,
+            // update accordingly test result output for Gradle6.6+
+            val testGradleVersion = project.chooseWrapperVersionOrFinishTest()
+            val expectedHostTestResult: String
+            val expectedIOSTestResults: List<String>
+            if (GradleVersion.version(testGradleVersion) < GradleVersion.version("6.6")) {
+                expectedHostTestResult = "testProject/native-tests/TEST-TestKt_pre6.6.xml"
+                expectedIOSTestResults = listOf(
+                    "testProject/native-tests/TEST-TestKt_pre6.6.xml",
+                    "testProject/native-tests/TEST-TestKt-iOSsim_pre6.6.xml",
                 )
-                assertStacktrace("iosTest")
+            } else {
+                expectedHostTestResult = "testProject/native-tests/TEST-TestKt.xml"
+                expectedIOSTestResults = listOf(
+                    "testProject/native-tests/TEST-TestKt-iOSsim.xml",
+                    "testProject/native-tests/TEST-TestKt-iOSArm64sim.xml",
+                )
             }
-        }
 
-        build("linkAnotherDebugTestHost") {
-            assertSuccessful()
-            assertFileExists(anotherOutputFile)
+            assertTestResults(expectedHostTestResult, hostTestTask)
+            // K/N doesn't report line numbers correctly on Linux (see KT-35408).
+            // TODO: Move assertStacktrace(hostTestTask, "host") out of if clause
+            if (HostManager.hostIsMac) {
+                assertStacktrace(hostTestTask, "host")
+                val testTarget = when (HostManager.host) {
+                    KonanTarget.MACOS_ARM64 -> "iosArm64"
+                    KonanTarget.MACOS_X64 -> "ios"
+                    else -> throw IllegalStateException("Unsupported host: ${HostManager.host}")
+                }
+                val testTask = "${testTarget}Test"
+                assertTestResultsAnyOf(
+                    expectedIOSTestResults[0],
+                    expectedIOSTestResults[1],
+                    testTask
+                )
+                assertStacktrace(testTask, testTarget)
+            }
         }
     }
 
@@ -672,15 +833,19 @@ class GeneralNativeIT : BaseGradleIT() {
     @Test
     fun testCinterop() = with(transformNativeTestProjectWithPluginDsl("native-cinterop")) {
         fun libraryFiles(projectName: String, cinteropName: String) = listOf(
-            "$projectName/build/classes/kotlin/host/main/${projectName}-cinterop-$cinteropName.klib",
-            "$projectName/build/classes/kotlin/host/main/${projectName}.klib",
-            "$projectName/build/classes/kotlin/host/test/${projectName}_test.klib",
+            "$projectName/build/classes/kotlin/host/main/cinterop/${projectName}-cinterop-$cinteropName.klib",
+            "$projectName/build/classes/kotlin/host/main/klib/${projectName}.klib",
+            "$projectName/build/classes/kotlin/host/test/klib/${projectName}_test.klib",
         )
 
-        build(":projectLibrary:build") {
+        // Enable info log to see cinterop environment variables.
+        build(":projectLibrary:build", "--info") {
             assertSuccessful()
             assertTasksExecuted(":projectLibrary:cinteropAnotherNumberHost")
             libraryFiles("projectLibrary", "anotherNumber").forEach { assertFileExists(it) }
+            withNativeCustomEnvironment(":projectLibrary:cinteropAnotherNumberHost", toolName = "cinterop") { env ->
+                assertEquals("1", env["LIBCLANG_DISABLE_CRASH_RECOVERY"])
+            }
         }
 
         build(":publishedLibrary:build", ":publishedLibrary:publish") {
@@ -710,7 +875,7 @@ class GeneralNativeIT : BaseGradleIT() {
         }
 
         // Check that changing K/N version lead to tasks rerun
-        build(*compileTasksArray, "-Porg.jetbrains.kotlin.native.version=1.4.20-dev-16314") {
+        build(*compileTasksArray, "-Porg.jetbrains.kotlin.native.version=1.5.30") {
             assertSuccessful()
             assertTasksExecuted(compileTasks)
         }
@@ -753,16 +918,22 @@ class GeneralNativeIT : BaseGradleIT() {
                 assertNotContains(NO_NATIVE_STDLIB_PROPERTY_WARNING)
             }
 
-            build("tasks", "-Pkotlin.native.version=1.3-eap-10779") {
+            build("tasks", "-Pkotlin.native.version=1.5.20-dev-5613") {
                 assertSuccessful()
-                assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-(macos|linux|windows)-1\\.3-eap-10779".toRegex())
+                assertContainsRegex(
+                    "Kotlin/Native distribution: .*kotlin-native-prebuilt-(macos|linux|windows)-1\\.5\\.20-dev-5613"
+                        .toRegex()
+                )
                 assertNotContains("Project property 'org.jetbrains.kotlin.native.version' is deprecated")
             }
 
             // Deprecated property
-            build("tasks", "-Porg.jetbrains.kotlin.native.version=1.3-eap-10779") {
+            build("tasks", "-Porg.jetbrains.kotlin.native.version=1.5.20-dev-5613") {
                 assertSuccessful()
-                assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-(macos|linux|windows)-1\\.3-eap-10779".toRegex())
+                assertContainsRegex(
+                    "Kotlin/Native distribution: .*kotlin-native-prebuilt-(macos|linux|windows)-1\\.5\\.20-dev-5613"
+                        .toRegex()
+                )
                 assertContains("Project property 'org.jetbrains.kotlin.native.version' is deprecated")
             }
         }
@@ -803,21 +974,21 @@ class GeneralNativeIT : BaseGradleIT() {
 
     @Test
     fun testNativeArgsWithSpaces() = with(transformNativeTestProject("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
-        val compilcatedDirectoryName = if (HostManager.hostIsMingw) {
+        val complicatedDirectoryName = if (HostManager.hostIsMingw) {
             // Windows doesn't allow creating a file with " in its name.
             "path with spaces"
         } else {
             "path with spaces and \""
         }
 
-        val fileWithSpacesInPath = projectDir.resolve("src/commonMain/kotlin/$compilcatedDirectoryName")
+        val fileWithSpacesInPath = projectDir.resolve("src/commonMain/kotlin/$complicatedDirectoryName")
             .apply { mkdirs() }
             .resolve("B.kt")
         fileWithSpacesInPath.writeText("fun foo() = 42")
 
         build("compileKotlin${nativeHostTargetName.capitalize()}") {
             assertSuccessful()
-            checkNativeCommandLineArguments(":compileKotlin${nativeHostTargetName.capitalize()}") { arguments ->
+            withNativeCommandLineArguments(":compileKotlin${nativeHostTargetName.capitalize()}") { arguments ->
                 val escapedQuotedPath =
                     "\"${fileWithSpacesInPath.absolutePath.replace("\\", "\\\\").replace("\"", "\\\"")}\""
                 assertTrue(
@@ -833,14 +1004,240 @@ class GeneralNativeIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testBinaryOptionsDSL() = with(transformNativeTestProjectWithPluginDsl("executables", directoryPrefix = "native-binaries")) {
+        gradleBuildScript().appendText(
+            """
+                kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
+                    binaries.all { binaryOptions["memoryModel"] = "experimental" }
+                }
+            """.trimIndent()
+        )
+        build(":linkDebugExecutableHost") {
+            assertSuccessful()
+            withNativeCommandLineArguments(":linkDebugExecutableHost") {
+                assertTrue(it.contains("-Xbinary=memoryModel=experimental"))
+            }
+        }
+    }
+
+    @Test
+    fun testBinaryOptionsProperty() = with(transformNativeTestProjectWithPluginDsl("executables", directoryPrefix = "native-binaries")) {
+        build(":linkDebugExecutableHost", "-Pkotlin.native.binary.memoryModel=experimental") {
+            assertSuccessful()
+            withNativeCommandLineArguments(":linkDebugExecutableHost") {
+                assertTrue(it.contains("-Xbinary=memoryModel=experimental"))
+            }
+        }
+    }
+
+    @Test
+    fun testBinaryOptionsPriority() = with(transformNativeTestProjectWithPluginDsl("executables", directoryPrefix = "native-binaries")) {
+        gradleBuildScript().appendText(
+            """
+                kotlin.targets.withType(org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget::class.java) {
+                    binaries.all { binaryOptions["memoryModel"] = "experimental" }
+                }
+            """.trimIndent()
+        )
+        build(":linkDebugExecutableHost", "-Pkotlin.native.binary.memoryModel=strict") {
+            assertSuccessful()
+            withNativeCommandLineArguments(":linkDebugExecutableHost") {
+                // Options set in the DSL have higher priority than options set in project properties.
+                assertTrue(it.contains("-Xbinary=memoryModel=experimental"))
+            }
+        }
+    }
+
+    @Test
+    fun testCinteropConfigurationsVariantAwareResolution() = with(transformNativeTestProjectWithPluginDsl("native-cinterop")) {
+        build(":publishedLibrary:publish") {
+            assertSuccessful()
+        }
+
+        fun CompiledProject.assertVariantInDependencyInsight(variantName: String) {
+            try {
+                assertContains("variant \"$variantName\" [")
+            } catch (originalError: AssertionError) {
+                val matchedVariants = Regex("variant \"(.*?)\" \\[").findAll(output).toList()
+                throw AssertionError(
+                    "Expected variant $variantName. " +
+                            if (matchedVariants.isNotEmpty())
+                                "Matched instead: " + matchedVariants.joinToString { it.groupValues[1] }
+                            else "No match.",
+                    originalError
+                )
+            }
+        }
+
+        build(":dependencyInsight", "--configuration", "hostTestTestNumberCInterop", "--dependency", "org.example:publishedLibrary") {
+            assertSuccessful()
+            assertVariantInDependencyInsight("hostApiElements-published")
+        }
+
+        gradleBuildScript("projectLibrary").appendText(
+            "\n" + """
+            configurations.create("ktlint") {
+                def bundlingAttribute = Attribute.of("org.gradle.dependency.bundling", String)
+                attributes.attribute(bundlingAttribute, "external")
+            }
+        """.trimIndent()
+        )
+
+        build(":dependencyInsight", "--configuration", "hostTestTestNumberCInterop", "--dependency", ":projectLibrary") {
+            assertSuccessful()
+            assertVariantInDependencyInsight("hostCInteropApiElements")
+        }
+        build(":dependencyInsight", "--configuration", "hostCompileKlibraries", "--dependency", ":projectLibrary") {
+            assertSuccessful()
+            assertVariantInDependencyInsight("hostApiElements")
+        }
+    }
+
+    @Test
+    fun `check offline mode is propagated to the compiler`() = with(
+        transformNativeTestProjectWithPluginDsl(
+            "executables",
+            directoryPrefix = "native-binaries"
+        )
+    ) {
+        val buildOptions = defaultBuildOptions()
+
+        val linkTask = ":linkDebugExecutableHost"
+        val compileTask = ":compileKotlinHost"
+
+        build(linkTask, options = buildOptions) {
+            assertSuccessful()
+        }
+
+        // Check that --offline works when all the dependencies are already downloaded:
+        val buildOptionsOffline = buildOptions.copy(freeCommandLineArgs = buildOptions.freeCommandLineArgs + "--offline")
+
+        build("clean", linkTask, options = buildOptionsOffline) {
+            assertSuccessful()
+            withNativeCommandLineArguments(compileTask, linkTask) {
+                assertTrue(it.contains("-Xoverride-konan-properties=airplaneMode=true"))
+            }
+        }
+
+        // Check that --offline fails when there are no downloaded dependencies:
+        run {
+            val customKonanDataDir = tempDir.newFolder()
+            val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.withCustomKonanDataDir(customKonanDataDir)
+
+            build("clean", linkTask, options = buildOptionsOfflineWithCustomKonanDataDir) {
+                assertFailed()
+                assertTasksNotExecuted(listOf(linkTask))
+            }
+
+            checkNoDependenciesDownloaded(customKonanDataDir)
+        }
+
+        // Check that the compiler is not extracted if it is not cached:
+        run {
+            val customKonanDataDir = tempDir.newFolder()
+            val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.withCustomKonanDataDir(customKonanDataDir)
+            build(
+                "clean", linkTask, "-Pkotlin.native.version=1.6.20-M1-9999",
+                options = buildOptionsOfflineWithCustomKonanDataDir
+            ) {
+                assertFailed()
+                assertTasksNotExecuted(listOf(linkTask, compileTask))
+            }
+
+            assertTrue(customKonanDataDir.listFiles().isNullOrEmpty())
+        }
+    }
+
+    private fun checkNoDependenciesDownloaded(customKonanDataDir: File) {
+        // Check that no files have actually been downloaded or extracted,
+        // except for maybe the compiler itself, which can be extracted from the Gradle cache
+        // (see NativeCompilerDownloader, it uses regular dependency resolution,
+        // so supports --offline properly by default).
+        val cacheDirName = "cache"
+        val dependenciesDirName = "dependencies"
+
+        fun assertDirectoryHasNothingButMaybe(directory: File, vararg names: String) {
+            assertEquals(emptyList(), directory.listFiles().orEmpty().map { it.name } - names)
+        }
+
+        assertDirectoryHasNothingButMaybe(File(customKonanDataDir, cacheDirName), ".lock")
+        assertDirectoryHasNothingButMaybe(File(customKonanDataDir, dependenciesDirName), ".extracted")
+
+        val customKonanDataDirFiles = customKonanDataDir.listFiles().orEmpty().map { it.name } - setOf(cacheDirName, dependenciesDirName)
+        if (customKonanDataDirFiles.isNotEmpty()) {
+            assertEquals(1, customKonanDataDirFiles.size, message = customKonanDataDirFiles.toString())
+            assertTrue(customKonanDataDirFiles.single().startsWith("kotlin-native-"), message = customKonanDataDirFiles.single())
+        }
+    }
+
+    @Test
+    fun `check offline mode is propagated to the cinterop`() = with(transformNativeTestProjectWithPluginDsl("native-cinterop")) {
+        val buildOptions = defaultBuildOptions()
+        val cinteropTask = ":projectLibrary:cinteropAnotherNumberHost"
+
+        build(cinteropTask, options = buildOptions) {
+            assertSuccessful()
+        }
+
+        // Check that --offline works when all the dependencies are already downloaded:
+        val buildOptionsOffline = buildOptions.copy(freeCommandLineArgs = buildOptions.freeCommandLineArgs + "--offline")
+
+        build("clean", cinteropTask, options = buildOptionsOffline) {
+            assertSuccessful()
+            withNativeCommandLineArguments(cinteropTask, toolName = "cinterop") {
+                assertTrue(it.containsSequentially("-Xoverride-konan-properties", "airplaneMode=true"))
+            }
+        }
+
+        // Check that --offline fails when there are no downloaded dependencies:
+        run {
+            val customKonanDataDir = tempDir.newFolder()
+            val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.withCustomKonanDataDir(customKonanDataDir)
+
+            build("clean", cinteropTask, options = buildOptionsOfflineWithCustomKonanDataDir) {
+                assertFailed()
+            }
+
+            checkNoDependenciesDownloaded(customKonanDataDir)
+        }
+
+        // Check that the compiler is not extracted if it is not cached:
+        run {
+            val customKonanDataDir = tempDir.newFolder()
+            val buildOptionsOfflineWithCustomKonanDataDir = buildOptionsOffline.withCustomKonanDataDir(customKonanDataDir)
+
+            build(
+                "clean", cinteropTask, "-Pkotlin.native.version=1.6.20-M1-9999",
+                options = buildOptionsOfflineWithCustomKonanDataDir
+            ) {
+                assertFailed()
+                assertTasksNotExecuted(listOf(cinteropTask))
+            }
+
+            assertTrue(customKonanDataDir.listFiles().isNullOrEmpty())
+        }
+    }
+
     companion object {
         fun List<String>.containsSequentially(vararg elements: String): Boolean {
             check(elements.isNotEmpty())
             return Collections.indexOfSubList(this, elements.toList()) != -1
         }
 
-        fun CompiledProject.extractNativeCommandLineArguments(taskPath: String? = null, toolName: String): List<String> {
-            val arguments = output.lineSequence()
+        private enum class NativeToolSettingsKind(val title: String) {
+            COMPILER_CLASSPATH("Classpath"),
+            COMMAND_LINE_ARGUMENTS("Arguments"),
+            CUSTOM_ENV_VARIABLES("Custom ENV variables")
+        }
+
+        private fun CompiledProject.extractNativeToolSettings(
+            toolName: String,
+            taskPath: String?,
+            settingsKind: NativeToolSettingsKind
+        ): Sequence<String> {
+            val settingsPrefix = "${settingsKind.title} = ["
+            val settings = output.lineSequence()
                 .run {
                     if (taskPath != null) dropWhile { "Executing actions for task '$taskPath'" !in it }.drop(1) else this
                 }
@@ -851,22 +1248,58 @@ class GeneralNativeIT : BaseGradleIT() {
                 .drop(1)
                 .dropWhile {
                     check(taskPath == null || "Executing actions for task" !in it) { "Unexpected log line with new Gradle task: $it" }
-                    "Arguments = [" !in it
+                    settingsPrefix !in it
                 }
 
-            val argumentsHeader = arguments.firstOrNull()
-            check(argumentsHeader != null && "Arguments = [" in argumentsHeader) { "No arguments in $argumentsHeader" }
+            val settingsHeader = settings.firstOrNull()
+            check(settingsHeader != null && settingsPrefix in settingsHeader) {
+                "Cannot find setting '${settingsKind.title}' for task ${taskPath}"
+            }
 
-            return if (argumentsHeader.trimEnd().endsWith(']'))
-                emptyList() // no arguments
+            return if (settingsHeader.trimEnd().endsWith(']'))
+                emptySequence() // No parameters.
             else
-                arguments.drop(1).map { it.trim() }.takeWhile { it != "]" }.toList()
+                settings.drop(1).map { it.trim() }.takeWhile { it != "]" }
         }
 
-        fun CompiledProject.checkNativeCommandLineArguments(
+        fun CompiledProject.extractNativeCommandLineArguments(taskPath: String? = null, toolName: String): List<String> =
+            extractNativeToolSettings(toolName, taskPath, NativeToolSettingsKind.COMMAND_LINE_ARGUMENTS).toList()
+
+        fun CompiledProject.extractNativeCompilerClasspath(taskPath: String? = null, toolName: String): List<String> =
+            extractNativeToolSettings(toolName, taskPath, NativeToolSettingsKind.COMPILER_CLASSPATH).toList()
+
+        fun CompiledProject.extractNativeCustomEnvironment(taskPath: String? = null, toolName: String): Map<String, String> =
+            extractNativeToolSettings(toolName, taskPath, NativeToolSettingsKind.CUSTOM_ENV_VARIABLES).map {
+                val (key, value) = it.split("=")
+                key.trim() to value.trim()
+            }.toMap()
+
+        fun CompiledProject.withNativeCommandLineArguments(
             vararg taskPaths: String,
             toolName: String = "konanc",
             check: (List<String>) -> Unit
         ) = taskPaths.forEach { taskPath -> check(extractNativeCommandLineArguments(taskPath, toolName)) }
+
+        fun CompiledProject.withNativeCompilerClasspath(
+            vararg taskPaths: String,
+            toolName: String = "konanc",
+            check: (List<String>) -> Unit
+        ) = taskPaths.forEach { taskPath -> check(extractNativeCompilerClasspath(taskPath, toolName)) }
+
+        fun CompiledProject.withNativeCustomEnvironment(
+            vararg taskPaths: String,
+            toolName: String = "konanc",
+            check: (Map<String, String>) -> Unit
+        ) = taskPaths.forEach { taskPath -> check(extractNativeCustomEnvironment(taskPath, toolName)) }
+
+        @field:ClassRule
+        @JvmField
+        val tempDir = TemporaryFolder()
+
+        @JvmStatic
+        @AfterClass
+        fun deleteTempDir() {
+            tempDir.delete()
+        }
     }
 }

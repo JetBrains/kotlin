@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 package a
 
 interface A
@@ -6,7 +5,7 @@ interface A
 fun <T> emptyList(): List<T> = throw Exception()
 
 fun test1() {
-    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyList<!>()
 }
 
 //--------------
@@ -14,7 +13,7 @@ fun test1() {
 fun <T: A> emptyListOfA(): List<T> = throw Exception()
 
 fun test2() {
-    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyListOfA<!>()
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyListOfA<!>()
 }
 
 //--------------
@@ -22,7 +21,7 @@ fun test2() {
 fun <T: A, R: T> emptyStrangeMap(): Map<T, R> = throw Exception()
 
 fun test3() {
-    <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyStrangeMap<!>()
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>emptyStrangeMap<!>()
 }
 
 //--------------

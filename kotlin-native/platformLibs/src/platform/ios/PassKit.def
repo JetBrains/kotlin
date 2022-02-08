@@ -1,0 +1,7 @@
+depends = AddressBook CFNetwork Contacts CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security UIKit UserNotifications darwin posix
+language = Objective-C
+package = platform.PassKit
+modules = PassKit
+
+compilerOpts = -framework PassKit
+linkerOpts = -framework PassKit

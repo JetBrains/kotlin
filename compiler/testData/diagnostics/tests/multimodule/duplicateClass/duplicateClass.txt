@@ -19,7 +19,6 @@ package p {
     }
 }
 
-
 // -- Module: <m2> --
 package
 
@@ -35,8 +34,8 @@ package p {
     }
 }
 
-
 // -- Module: <m3> --
 package
 
 public fun test(): kotlin.Unit
+

@@ -3,20 +3,13 @@ plugins {
     id("jps-compatible")
 }
 
-repositories {
-    maven(url = "https://dl.bintray.com/kotlin/kotlinx")
-}
-
 dependencies {
-    api(project(":core:compiler.common"))
-    api(project(":compiler:resolution.common"))
-    api(project(":compiler:fir:cones"))
-    api(project(":compiler:fir:tree"))
-    api(kotlinxCollectionsImmutable())
+    api(project(":compiler:fir:providers"))
+    api(project(":compiler:fir:semantics"))
     implementation(project(":core:util.runtime"))
 
     compileOnly(project(":kotlin-reflect-api"))
-    compileOnly(intellijCoreDep()) { includeJars("guava", rootProject = rootProject) }
+    compileOnly(commonDependency("com.google.guava:guava"))
 }
 
 sourceSets {

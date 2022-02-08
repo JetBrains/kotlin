@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 public class X {
     public var x : String? = null
     private var y: String? = "abc"

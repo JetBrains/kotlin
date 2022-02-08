@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,8 @@ package test.time
 
 import kotlin.test.*
 import kotlin.time.*
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.nanoseconds
 
 class TimeMarkTest {
 
@@ -19,7 +21,11 @@ class TimeMarkTest {
             assertEquals(!hasPassed, this.hasNotPassedNow(), "Expected mark in the future")
             assertEquals(hasPassed, this.hasPassedNow(), "Expected mark in the past")
 
-            assertEquals(!hasPassed, this.elapsedNow() < Duration.ZERO, "Mark elapsed: ${this.elapsedNow()}, expected hasPassed: $hasPassed")
+            assertEquals(
+                !hasPassed,
+                this.elapsedNow() < Duration.ZERO,
+                "Mark elapsed: ${this.elapsedNow()}, expected hasPassed: $hasPassed"
+            )
         }
 
         val mark = timeSource.markNow()

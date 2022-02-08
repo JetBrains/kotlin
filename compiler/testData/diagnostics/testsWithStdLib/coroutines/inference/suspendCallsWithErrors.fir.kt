@@ -1,6 +1,5 @@
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// !OPT_IN: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 // NI_EXPECTED_FILE
 
 @file:OptIn(ExperimentalTypeInference::class)
@@ -16,9 +15,9 @@ fun <S> generate(@BuilderInference g: suspend Controller<S>.() -> Unit): S = TOD
 class A
 
 val test1 = generate {
-    yield(A)
+    yield(<!NO_COMPANION_OBJECT!>A<!>)
 }
 
 val test2: Int = generate {
-    yield(A())
+    yield(<!ARGUMENT_TYPE_MISMATCH!>A()<!>)
 }

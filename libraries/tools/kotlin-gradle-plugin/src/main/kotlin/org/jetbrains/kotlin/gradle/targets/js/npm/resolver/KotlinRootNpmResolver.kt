@@ -6,36 +6,55 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.resolver
 
 import org.gradle.api.Project
-import org.gradle.api.Task
+import org.gradle.api.logging.Logger
+import org.gradle.api.provider.Provider
+import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatRootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.npm.CompositeNodeModulesCache
-import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModulesCache
-import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
-import org.jetbrains.kotlin.gradle.targets.js.npm.PackageJsonUpToDateCheck
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
+import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.plugins.RootResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnResolution
 import org.jetbrains.kotlin.gradle.targets.js.yarn.toVersionString
-import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.utils.ArchiveOperationsCompat
+import org.jetbrains.kotlin.gradle.utils.FileSystemOperationsCompat
+import org.jetbrains.kotlin.gradle.utils.unavailableValueError
 
 /**
  * See [KotlinNpmResolutionManager] for details about resolution process.
+ *
+ * This class contains many transient properties to deduplicate data when configuration cache is used.
+ * Regularly tasks share the same instance of this class, but with configuration cache each task that holds a reference to the instance will
+ * create an own copy. We use build services as a single storage for the heavy state of this class.
  */
 internal class KotlinRootNpmResolver internal constructor(
-    val nodeJs: NodeJsRootExtension,
+    @Transient
+    val nodeJs: NodeJsRootExtension?,
     val forceFullResolve: Boolean
 ) {
-    val rootProject: Project
-        get() = nodeJs.rootProject
+    private val nodeJs_
+        get() = nodeJs ?: unavailableValueError("nodeJs")
 
-    val plugins = mutableListOf<RootResolverPlugin>().also {
-        it.add(DukatRootResolverPlugin(this))
+    private val rootProject: Project?
+        get() = nodeJs?.rootProject
+
+    private val rootProject_: Project
+        get() = rootProject ?: unavailableValueError("rootProject")
+
+    private val rootProjectName by lazy {
+        rootProject_.name
+    }
+
+    private val rootProjectVersion by lazy {
+        rootProject_.version.toString()
     }
 
     enum class State {
@@ -44,30 +63,149 @@ internal class KotlinRootNpmResolver internal constructor(
         INSTALLED
     }
 
+    @Transient
     @Volatile
-    private var state: State = State.CONFIGURING
+    private var state_: State? = State.CONFIGURING
 
-    val gradleNodeModules = GradleNodeModulesCache(nodeJs)
-    val compositeNodeModules = CompositeNodeModulesCache(nodeJs)
-    val packageJsonUmbrella = rootProject.registerTask(PACKAGE_JSON_UMBRELLA_TASK_NAME, Task::class.java) {}
-    val projectResolvers = mutableMapOf<Project, KotlinProjectNpmResolver>()
+    private var state
+        get() = state_ ?: resolverStateHolder.get().state
+        set(value) {
+            if (state_ != null) {
+                state_ = value
+            } else {
+                resolverStateHolder.get().state = value
+            }
+        }
+
+    private val archiveOperations by lazy { ArchiveOperationsCompat(rootProject_) }
+    private val fs by lazy { FileSystemOperationsCompat(rootProject_) }
+
+    internal val gradleNodeModulesProvider: Provider<GradleNodeModulesCache> =
+        rootProject_
+            .gradle.sharedServices.registerIfAbsent("gradle-node-modules", GradleNodeModulesCache::class.java) {
+                it.parameters.cacheDir.set(nodeJs_.nodeModulesGradleCacheDir)
+                it.parameters.rootProjectDir.set(rootProject_.projectDir)
+            }
+
+    val gradleNodeModules: GradleNodeModulesCache
+        get() = gradleNodeModulesProvider.get().also {
+            it.archiveOperations = archiveOperations
+            it.fs = fs
+        }
+
+    internal val compositeNodeModulesProvider: Provider<CompositeNodeModulesCache> =
+        rootProject_
+            .gradle.sharedServices.registerIfAbsent("composite-node-modules", CompositeNodeModulesCache::class.java) {
+                it.parameters.cacheDir.set(nodeJs_.nodeModulesGradleCacheDir)
+                it.parameters.rootProjectDir.set(rootProject_.projectDir)
+            }
+
+    val compositeNodeModules: CompositeNodeModulesCache
+        get() = compositeNodeModulesProvider.get()
+
+    @Transient
+    private val plugins_: MutableList<RootResolverPlugin>? = mutableListOf<RootResolverPlugin>().also {
+        it.add(DukatRootResolverPlugin(forceFullResolve))
+    }
+
+    @Transient
+    private val projectResolvers_: MutableMap<String, KotlinProjectNpmResolver>? = mutableMapOf()
+
+    @Transient
+    private val yarnEnvironment_: Provider<YarnEnv>? = rootProject_.provider {
+        YarnPlugin.apply(rootProject_).requireConfigured()
+    }
+
+    @Transient
+    private val npmEnvironment_: Provider<NpmEnvironment>? = rootProject_.provider {
+        nodeJs_.asNpmEnvironment
+    }
+
+    @Transient
+    private val yarnResolutions_: Provider<List<YarnResolution>>? = rootProject_.provider {
+        YarnPlugin.apply(rootProject_).resolutions
+    }
+
+    @Transient
+    private val taskRequirements_: TasksRequirements? = nodeJs_.taskRequirements
+
+    private val resolverStateHolder by lazy {
+        rootProject_.gradle.sharedServices.registerIfAbsent(
+            KotlinRootNpmResolverStateHolder::class.qualifiedName,
+            KotlinRootNpmResolverStateHolder::class.java
+        ) { service ->
+            service.parameters.plugins.set(plugins_)
+            service.parameters.projectResolvers.set(projectResolvers_)
+            service.parameters.packageManager.set(nodeJs_.packageManager)
+            service.parameters.yarnEnvironment.set(yarnEnvironment_?.get())
+            service.parameters.npmEnvironment.set(npmEnvironment_?.get())
+            service.parameters.yarnResolutions.set(yarnResolutions_?.get())
+            service.parameters.taskRequirements.set(taskRequirements_)
+            service.parameters.packageJsonHandlers.set(compilations.associate { compilation ->
+                "${compilation.project.path}:${compilation.disambiguatedName}" to compilation.packageJsonHandlers
+            }.filter { it.value.isNotEmpty() })
+        }
+    }
+
+    private val configurationCacheProjectResolvers: MutableMap<String, KotlinProjectNpmResolver>
+        get() {
+            val stateHolder = resolverStateHolder.get()
+            val projResolvers = stateHolder.parameters.projectResolvers.get()
+            if (stateHolder.initialized) return projResolvers
+            projResolvers.forEach { (_, value) ->
+                value.resolver = this
+                value.compilationResolvers.forEach { compResolver ->
+                    compResolver.rootResolver = this
+                }
+            }
+            stateHolder.initialized = true
+            return projResolvers
+        }
+
+    val plugins
+        get() = plugins_ ?: resolverStateHolder.get().parameters.plugins.get()
+
+    private val projectResolvers
+        get() = projectResolvers_ ?: configurationCacheProjectResolvers
+
+    private val packageManager
+        get() = nodeJs?.packageManager ?: resolverStateHolder.get().parameters.packageManager.get()
+
+    private val yarnEnvironment
+        get() = yarnEnvironment_?.get() ?: resolverStateHolder.get().parameters.yarnEnvironment.get()
+
+    private val npmEnvironment
+        get() = npmEnvironment_?.get() ?: resolverStateHolder.get().parameters.npmEnvironment.get()
+
+    private val yarnResolutions
+        get() = yarnResolutions_?.get() ?: resolverStateHolder.get().parameters.yarnResolutions.get()
+
+    internal val taskRequirements
+        get() = taskRequirements_ ?: resolverStateHolder.get().parameters.taskRequirements.get()
+
+    internal val mayBeUpToDateTasksRegistry =
+        MayBeUpToDatePackageJsonTasksRegistry.registerIfAbsent(rootProject_)
 
     fun alreadyResolvedMessage(action: String) = "Cannot $action. NodeJS projects already resolved."
 
-    @Synchronized
     fun addProject(target: Project) {
-        check(state == State.CONFIGURING) { alreadyResolvedMessage("add new project: $target") }
-        projectResolvers[target] = KotlinProjectNpmResolver(target, this)
+        synchronized(projectResolvers) {
+            check(state == State.CONFIGURING) { alreadyResolvedMessage("add new project: $target") }
+            projectResolvers[target.path] = KotlinProjectNpmResolver(target, this)
+        }
     }
 
-    operator fun get(project: Project) = projectResolvers[project] ?: error("$project is not configured for JS usage")
+    operator fun get(projectPath: String) = projectResolvers[projectPath] ?: error("$projectPath is not configured for JS usage")
 
     val compilations: Collection<KotlinJsCompilation>
         get() = projectResolvers.values.flatMap { it.compilationResolvers.map { it.compilation } }
 
+    internal fun getPackageJsonHandlers(projectPath: String, compilationDisambiguatedName: String): List<PackageJson.() -> Unit> =
+        resolverStateHolder.get().parameters.packageJsonHandlers.get()["$projectPath:$compilationDisambiguatedName"] ?: emptyList()
+
     fun findDependentResolver(src: Project, target: Project): List<KotlinCompilationNpmResolver>? {
         // todo: proper finding using KotlinTargetComponent.findUsageContext
-        val targetResolver = this[target]
+        val targetResolver = this[target.path]
         val mainCompilations = targetResolver.compilationResolvers.filter { it.compilation.isMain() }
 
         return if (mainCompilations.isNotEmpty()) {
@@ -96,8 +234,8 @@ internal class KotlinRootNpmResolver internal constructor(
     /**
      * Don't use directly, use [KotlinNpmResolutionManager.installIfNeeded] instead.
      */
-    internal fun prepareInstallation(): Installation {
-        synchronized(this@KotlinRootNpmResolver) {
+    internal fun prepareInstallation(logger: Logger): Installation {
+        synchronized(projectResolvers) {
             check(state == State.CONFIGURING) {
                 "Projects must be configuring"
             }
@@ -109,14 +247,18 @@ internal class KotlinRootNpmResolver internal constructor(
             val allNpmPackages = projectResolutions.values.flatMap { it.npmProjects }
 
             gradleNodeModules.close()
+            compositeNodeModules.close()
 
-            val yarn = YarnPlugin.apply(rootProject)
-
-            nodeJs.packageManager.prepareRootProject(
+            packageManager.prepareRootProject(
                 rootProject,
+                npmEnvironment,
+                rootProjectName,
+                rootProjectVersion,
+                logger,
                 allNpmPackages,
-                yarn.resolutions
-                    .associate { it.path to it.toVersionString() }
+                yarnResolutions
+                    .associate { it.path to it.toVersionString() },
+                forceFullResolve
             )
 
             return Installation(
@@ -125,15 +267,17 @@ internal class KotlinRootNpmResolver internal constructor(
         }
     }
 
-    open inner class Installation(val projectResolutions: Map<Project, KotlinProjectNpmResolution>) {
-        operator fun get(project: Project) =
+    open inner class Installation(val projectResolutions: Map<String, KotlinProjectNpmResolution>) {
+        operator fun get(project: String) =
             projectResolutions[project] ?: KotlinProjectNpmResolution.empty(project)
 
         internal fun install(
             forceUpToDate: Boolean,
-            args: List<String>
+            args: List<String>,
+            services: ServiceRegistry,
+            logger: Logger
         ): KotlinRootNpmResolution {
-            synchronized(this@KotlinRootNpmResolver) {
+            synchronized(projectResolvers) {
                 check(state == State.PROJECTS_CLOSED) {
                     "Projects must be closed"
                 }
@@ -143,23 +287,14 @@ internal class KotlinRootNpmResolver internal constructor(
                     .values
                     .flatMap { it.npmProjects }
 
-                // we need manual up-to-date checking to avoid call package manager during
-                // idea import if nothing was changed
-                // we should call it even kotlinNpmInstall task is up-to-date (skipPackageManager is true)
-                // because our upToDateChecks saves state for next execution
-                val upToDateChecks = allNpmPackages.map {
-                    PackageJsonUpToDateCheck(it.npmProject)
-                }
-                val upToDate = forceUpToDate || upToDateChecks.all { it.upToDate }
-
-                nodeJs.packageManager.resolveRootProject(
-                    nodeJs.rootProject,
+                packageManager.resolveRootProject(
+                    services,
+                    logger,
+                    npmEnvironment,
+                    yarnEnvironment,
                     allNpmPackages,
-                    upToDate,
                     args
                 )
-
-                upToDateChecks.forEach { it.commit() }
 
                 return KotlinRootNpmResolution(rootProject, projectResolutions)
             }

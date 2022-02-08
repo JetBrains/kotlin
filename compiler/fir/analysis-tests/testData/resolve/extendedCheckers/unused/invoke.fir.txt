@@ -1,0 +1,12 @@
+FILE: invoke.kt
+    public final fun foo(): R|kotlin/Int| {
+        lval x: R|() -> kotlin/Int| = fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(4)
+        }
+
+        lval y: R|() -> kotlin/Int| = fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ Int(2)
+        }
+
+        ^foo Int(10).R|kotlin/Int.times|(R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Int|>|()).R|kotlin/Int.plus|(R|<local>/y|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Int|>|())
+    }

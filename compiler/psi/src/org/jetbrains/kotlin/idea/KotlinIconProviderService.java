@@ -13,11 +13,18 @@ import javax.swing.*;
 
 public abstract class KotlinIconProviderService {
     public abstract Icon getFileIcon();
+    public abstract Icon getBuiltInFileIcon();
+
     public abstract Icon getLightVariableIcon(@NotNull PsiModifierListOwner element, int flags);
 
     public static class CompilerKotlinFileIconProviderService extends KotlinIconProviderService {
         @Override
         public Icon getFileIcon() {
+            return null;
+        }
+
+        @Override
+        public Icon getBuiltInFileIcon() {
             return null;
         }
 

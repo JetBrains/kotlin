@@ -1,0 +1,4 @@
+package
+
+public const val cacheSize: kotlin.Long = 16384
+public fun foo(/*0*/ ttlMillis: kotlin.Long = ...): kotlin.Unit

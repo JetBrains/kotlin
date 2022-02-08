@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.ideaExt.idea
+
 description = "Parcelize compiler plugin"
 
 plugins {
@@ -7,9 +9,11 @@ plugins {
 
 val robolectricClasspath by configurations.creating
 val parcelizeRuntimeForTests by configurations.creating
+val layoutLib by configurations.creating
+val layoutLibApi by configurations.creating
 
 dependencies {
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    testApi(intellijCore())
 
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:plugin-api"))
@@ -19,39 +23,63 @@ dependencies {
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:backend.jvm"))
     compileOnly(project(":compiler:ir.tree.impl"))
-    compileOnly(project(":plugins:parcelize:parcelize-runtime"))
-    compileOnly(project(":kotlin-android-extensions-runtime"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 
-    testCompile(project(":compiler:util"))
-    testCompile(project(":compiler:backend"))
-    testCompile(project(":compiler:ir.backend.common"))
-    testCompile(project(":compiler:backend.jvm"))
-    testCompile(project(":compiler:cli"))
-    testCompile(project(":plugins:parcelize:parcelize-runtime"))
-    testCompile(project(":kotlin-android-extensions-runtime"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(project(":kotlin-test:kotlin-test-jvm"))
-    testCompile(commonDep("junit:junit"))
+    testApiJUnit5()
 
-    testRuntime(intellijPluginDep("junit"))
+    testApi(project(":compiler:util"))
+    testApi(project(":compiler:backend"))
+    testApi(project(":compiler:ir.backend.common"))
+    testApi(project(":compiler:backend.jvm"))
+    testApi(project(":compiler:cli"))
+    testApi(project(":plugins:parcelize:parcelize-runtime"))
+    testApi(project(":kotlin-android-extensions-runtime"))
+    testApi(project(":kotlin-test:kotlin-test-jvm"))
 
-    robolectricClasspath(commonDep("org.robolectric", "robolectric"))
+    testApi(projectTests(":compiler:tests-common-new"))
+    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
+
+    // FIR dependencies
+    testApi(project(":compiler:fir:checkers"))
+    testApi(project(":compiler:fir:checkers:checkers.jvm"))
+    testApi(project(":plugins:parcelize:parcelize-compiler:parcelize-fir"))
+    testRuntimeOnly(project(":compiler:fir:fir-serialization"))
+
+    testCompileOnly(project(":kotlin-reflect-api"))
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":core:descriptors.runtime"))
+
+    testApi(commonDependency("junit:junit"))
+
+    robolectricClasspath(commonDependency("org.robolectric", "robolectric"))
     robolectricClasspath("org.robolectric:android-all:4.4_r1-robolectric-1")
     robolectricClasspath(project(":plugins:parcelize:parcelize-runtime")) { isTransitive = false }
     robolectricClasspath(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
 
-    embedded(project(":plugins:parcelize:parcelize-runtime")) { isTransitive = false }
-    embedded(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
-
     parcelizeRuntimeForTests(project(":plugins:parcelize:parcelize-runtime")) { isTransitive = false }
     parcelizeRuntimeForTests(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
+
+    layoutLib("org.jetbrains.intellij.deps.android.tools:layoutlib:26.5.0") { isTransitive = false }
+    layoutLibApi("com.android.tools.layoutlib:layoutlib-api:26.5.0") { isTransitive = false }
 }
+
+val generationRoot = projectDir.resolve("tests-gen")
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {
+        projectDefault()
+        this.java.srcDir(generationRoot.name)
+    }
+}
+
+if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
+    apply(plugin = "idea")
+    idea {
+        this.module.generatedSourceDirs.add(generationRoot)
+    }
 }
 
 runtimeJar()
@@ -60,17 +88,24 @@ sourcesJar()
 
 testsJar()
 
-projectTest {
+projectTest(jUnitMode = JUnitMode.JUnit5) {
+    useJUnitPlatform()
     dependsOn(parcelizeRuntimeForTests)
     dependsOn(":dist")
     workingDir = rootDir
     useAndroidJar()
+
+    val parcelizeRuntimeForTestsProvider = project.provider { parcelizeRuntimeForTests.asPath }
+    val robolectricClasspathProvider = project.provider { robolectricClasspath.asPath }
     doFirst {
-        systemProperty("parcelizeRuntime.classpath", parcelizeRuntimeForTests.asPath)
-        val androidPluginPath = File(intellijRootDir(), "plugins/android/lib").canonicalPath
-        systemProperty("ideaSdk.androidPlugin.path", androidPluginPath)
-        systemProperty("robolectric.classpath", robolectricClasspath.asPath)
+        systemProperty("parcelizeRuntime.classpath", parcelizeRuntimeForTestsProvider.get())
+        systemProperty("robolectric.classpath", robolectricClasspathProvider.get())
+        systemProperty("layoutLib.path", layoutLib.singleFile.canonicalPath)
+        systemProperty("layoutLibApi.path", layoutLibApi.singleFile.canonicalPath)
+    }
+    doLast {
+        println(filter)
+        println(filter.excludePatterns)
+        println(filter.includePatterns)
     }
 }
-
-apply(from = "$rootDir/gradle/kotlinPluginPublication.gradle.kts")

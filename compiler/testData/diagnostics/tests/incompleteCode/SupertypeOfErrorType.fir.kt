@@ -21,4 +21,4 @@ fun bar(i: Int, a: <!UNRESOLVED_REFERENCE!>U<!>) {
 }
 
 //from standard library
-public inline fun <T> comparator(fn: (T,T) -> Int): Comparator<T> {}
+public inline fun <T> comparator(fn: (T,T) -> Int): Comparator<T> {<!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>

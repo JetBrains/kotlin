@@ -1,2 +1,12 @@
 public abstract interface InheritVarargInteger : R|kotlin/Any| {
+    public abstract interface Sub : R|test/InheritVarargInteger.Super| {
+        public abstract fun foo(p: R|ft<kotlin/Array<ft<kotlin/Int, kotlin/Int?>>, kotlin/Array<out ft<kotlin/Int, kotlin/Int?>>?>|): R|kotlin/Unit|
+
+    }
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun foo(vararg p: R|ft<kotlin/Array<ft<kotlin/Int, kotlin/Int?>>, kotlin/Array<out ft<kotlin/Int, kotlin/Int?>>?>|): R|kotlin/Unit|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
 }

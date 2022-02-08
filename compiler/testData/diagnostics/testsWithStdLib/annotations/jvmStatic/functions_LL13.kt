@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // !LANGUAGE: +JvmStaticInInterface
 class A {
@@ -28,7 +29,7 @@ class A {
 
 interface B {
     companion object {
-        <!JVM_STATIC_IN_INTERFACE_1_6!>@JvmStatic fun a1()<!> {
+        @JvmStatic fun a1() {
 
         }
     }

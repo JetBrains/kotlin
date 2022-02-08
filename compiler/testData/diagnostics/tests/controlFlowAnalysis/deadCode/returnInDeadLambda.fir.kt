@@ -2,10 +2,10 @@
 inline fun myRun(b: () -> Unit) = b()
 
 fun foo() {
-    var a: Int
+    <!CAN_BE_VAL!>var<!> <!UNUSED_VARIABLE!>a<!>: Int
     return
 
-    myRun {
+    <!UNREACHABLE_CODE!>myRun {
         return
-    }
+    }<!>
 }

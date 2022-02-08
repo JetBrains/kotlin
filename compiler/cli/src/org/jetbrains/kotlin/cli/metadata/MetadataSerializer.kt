@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.metadata
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -39,14 +40,18 @@ open class MetadataSerializer(
     protected var totalFiles = 0
 
     fun serialize(environment: KotlinCoreEnvironment) {
-        val analyzer = runCommonAnalysisForSerialization(environment, dependOnOldBuiltIns, dependencyContainer = null)
+        val performanceManager = environment.configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
+
+        val analyzer = runCommonAnalysisForSerialization(environment, dependOnOldBuiltIns, dependencyContainerFactory = { null })
 
         if (analyzer == null || analyzer.hasErrors()) return
 
         val (bindingContext, moduleDescriptor) = analyzer.analysisResult
 
+        performanceManager.notifyGenerationStarted()
         val destDir = checkNotNull(environment.destDir)
         performSerialization(environment.getSourceFiles(), bindingContext, moduleDescriptor, destDir, environment.project)
+        performanceManager.notifyGenerationFinished()
     }
 
     protected open fun performSerialization(
@@ -131,7 +136,7 @@ open class MetadataSerializer(
         private val extension = createSerializerExtension()
 
         fun run() {
-            val serializer = DescriptorSerializer.createTopLevel(extension)
+            val serializer = DescriptorSerializer.createTopLevel(extension, project)
             serializeClasses(classes, serializer, project)
             serializeMembers(members, serializer)
             serializeStringTable()

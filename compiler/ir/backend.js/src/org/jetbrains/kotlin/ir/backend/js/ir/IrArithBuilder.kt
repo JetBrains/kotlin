@@ -16,7 +16,7 @@ class JsIrArithBuilder(val context: JsIrBackendContext) {
     val symbols = context.ir.symbols
 
     private fun buildBinaryOperator(name: Name, l: IrExpression, r: IrExpression): IrExpression {
-        val symbol = context.getOperatorByName(name, l.type as IrSimpleType)
+        val symbol = context.getOperatorByName(name, l.type as IrSimpleType, r.type as IrSimpleType)
         return JsIrBuilder.buildCall(symbol!!).apply {
             dispatchReceiver = l
             putValueArgument(0, r)
@@ -24,7 +24,7 @@ class JsIrArithBuilder(val context: JsIrBackendContext) {
     }
 
     private fun buildUnaryOperator(name: Name, v: IrExpression): IrExpression {
-        val symbol = context.getOperatorByName(name, v.type as IrSimpleType)!!
+        val symbol = context.getOperatorByName(name, v.type as IrSimpleType, null)!!
         return JsIrBuilder.buildCall(symbol).apply { dispatchReceiver = v }
     }
 

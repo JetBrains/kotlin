@@ -1,1 +1,0 @@
-Variable test uses class NestedClass which will be inaccessible after move

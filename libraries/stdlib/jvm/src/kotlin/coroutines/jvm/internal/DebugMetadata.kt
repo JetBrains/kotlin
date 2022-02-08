@@ -60,8 +60,7 @@ private object ModuleNameRetriever {
 
     private val notOnJava9 = Cache(null, null, null)
 
-    @JvmField
-    var cache: Cache? = null
+    private var cache: Cache? = null
 
     fun getModuleName(continuation: BaseContinuationImpl): String? {
         val cache = this.cache ?: buildCache(continuation)

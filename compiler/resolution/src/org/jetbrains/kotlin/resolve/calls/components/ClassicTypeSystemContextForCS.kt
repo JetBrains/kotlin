@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
 import org.jetbrains.kotlin.resolve.calls.inference.components.EmptySubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
@@ -14,13 +16,14 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImp
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.ClassicTypeSystemContext
-import org.jetbrains.kotlin.types.checker.NewCapturedType
-import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
+import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 
-class ClassicTypeSystemContextForCS(override val builtIns: KotlinBuiltIns) : TypeSystemInferenceExtensionContextDelegate,
+class ClassicTypeSystemContextForCS(
+    override val builtIns: KotlinBuiltIns,
+    val kotlinTypeRefiner: KotlinTypeRefiner
+) : TypeSystemInferenceExtensionContextDelegate,
     ClassicTypeSystemContext,
     BuiltInsProvider {
 
@@ -41,7 +44,7 @@ class ClassicTypeSystemContextForCS(override val builtIns: KotlinBuiltIns) : Typ
         captureStatus: CaptureStatus
     ): CapturedTypeMarker {
         require(lowerType is UnwrappedType?, lowerType::errorMessage)
-        require(constructorProjection is TypeProjectionImpl, constructorProjection::errorMessage)
+        require(constructorProjection is TypeProjectionBase, constructorProjection::errorMessage)
 
         @Suppress("UNCHECKED_CAST")
         val newCapturedTypeConstructor = NewCapturedTypeConstructor(
@@ -49,7 +52,7 @@ class ClassicTypeSystemContextForCS(override val builtIns: KotlinBuiltIns) : Typ
             constructorSupertypes as List<UnwrappedType>
         )
         return NewCapturedType(
-            CaptureStatus.FOR_INCORPORATION,
+            captureStatus,
             newCapturedTypeConstructor,
             lowerType = lowerType
         )
@@ -73,8 +76,18 @@ class ClassicTypeSystemContextForCS(override val builtIns: KotlinBuiltIns) : Typ
         }
     }
 
-    override fun createStubType(typeVariable: TypeVariableMarker): StubTypeMarker {
-        return StubType(typeVariable.freshTypeConstructor() as TypeConstructor, typeVariable.defaultType().isMarkedNullable())
+    override fun createStubTypeForBuilderInference(typeVariable: TypeVariableMarker): StubTypeMarker {
+        return StubTypeForBuilderInference(
+            typeVariable.freshTypeConstructor() as NewTypeVariableConstructor,
+            typeVariable.defaultType().isMarkedNullable()
+        )
+    }
+
+    override fun createStubTypeForTypeVariablesInSubtyping(typeVariable: TypeVariableMarker): StubTypeMarker {
+        return StubTypeForTypeVariablesInSubtyping(
+            typeVariable.freshTypeConstructor() as NewTypeVariableConstructor,
+            typeVariable.defaultType().isMarkedNullable()
+        )
     }
 
     override fun TypeConstructorMarker.isTypeVariable(): Boolean {
@@ -84,6 +97,15 @@ class ClassicTypeSystemContextForCS(override val builtIns: KotlinBuiltIns) : Typ
     override fun TypeVariableTypeConstructorMarker.isContainedInInvariantOrContravariantPositions(): Boolean {
         require(this is TypeVariableTypeConstructor)
         return isContainedInInvariantOrContravariantPositions
+    }
+
+    override fun newTypeCheckerState(errorTypesEqualToAnything: Boolean, stubTypesEqualToAnything: Boolean): TypeCheckerState {
+        return createClassicTypeCheckerState(
+            errorTypesEqualToAnything,
+            stubTypesEqualToAnything,
+            typeSystemContext = this,
+            kotlinTypeRefiner = kotlinTypeRefiner
+        )
     }
 }
 
@@ -97,7 +119,8 @@ private inline fun Any?.errorMessage(): String {
 @Suppress("FunctionName")
 fun NewConstraintSystemImpl(
     constraintInjector: ConstraintInjector,
-    builtIns: KotlinBuiltIns
+    builtIns: KotlinBuiltIns,
+    kotlinTypeRefiner: KotlinTypeRefiner
 ): NewConstraintSystemImpl {
-    return NewConstraintSystemImpl(constraintInjector, ClassicTypeSystemContextForCS(builtIns))
+    return NewConstraintSystemImpl(constraintInjector, ClassicTypeSystemContextForCS(builtIns, kotlinTypeRefiner))
 }

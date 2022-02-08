@@ -1,7 +1,0 @@
-PsiJetFileStubImpl[package=test.testing]
-  PACKAGE_DIRECTIVE
-    DOT_QUALIFIED_EXPRESSION
-      REFERENCE_EXPRESSION[referencedName=test]
-      REFERENCE_EXPRESSION[referencedName=testing]
-  IMPORT_LIST
-  PROPERTY[fqName=test.testing.some, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=some]

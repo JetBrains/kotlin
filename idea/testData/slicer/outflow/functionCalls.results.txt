@@ -1,4 +1,0 @@
-3 <bold>fun foo(n: Int)</bold> = n + 1
-3 	int x = FunctionCallsKt.<bold>foo</bold>(2);
-6 	val x = <bold>foo(1)</bold> (in test(Int))
-6 		<bold>val x</bold> = foo(1) (in test(Int))

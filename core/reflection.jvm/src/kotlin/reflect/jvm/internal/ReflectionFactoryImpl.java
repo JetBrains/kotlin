@@ -16,6 +16,7 @@
 
 package kotlin.reflect.jvm.internal;
 
+import kotlin.SinceKotlin;
 import kotlin.jvm.internal.*;
 import kotlin.reflect.*;
 import kotlin.reflect.full.KClassifiers;
@@ -128,9 +129,11 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
         List<KTypeParameter> typeParameters;
         if (container instanceof KClass) {
             typeParameters = ((KClass<?>) container).getTypeParameters();
-        } else if (container instanceof KCallable) {
+        }
+        else if (container instanceof KCallable) {
             typeParameters = ((KCallable<?>) container).getTypeParameters();
-        } else {
+        }
+        else {
             throw new IllegalArgumentException("Type parameter container must be a class or a callable: " + container);
         }
         for (KTypeParameter typeParameter : typeParameters) {
@@ -142,6 +145,21 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
     @Override
     public void setUpperBounds(KTypeParameter typeParameter, List<KType> bounds) {
         // Do nothing. KTypeParameterImpl implementation will load upper bounds from the metadata.
+    }
+
+    // @Override // JPS
+    public KType platformType(KType lowerBound, KType upperBound) {
+        return TypeOfImplKt.createPlatformKType(lowerBound, upperBound);
+    }
+
+    // @Override // JPS
+    public KType mutableCollectionType(KType type) {
+        return TypeOfImplKt.createMutableCollectionKType(type);
+    }
+
+    // @Override // JPS
+    public KType nothingType(KType type) {
+        return TypeOfImplKt.createNothingType(type);
     }
 
     // Misc

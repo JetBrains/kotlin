@@ -10,6 +10,7 @@ import org.gradle.process.ProcessForkOptions
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor.Companion.TC_PROJECT_PROPERTY
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
@@ -19,13 +20,22 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
+import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import java.io.File
 
-class KotlinMocha(override val compilation: KotlinJsCompilation) :
+class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, private val basePath: String) :
     KotlinJsTestFramework {
+    @Transient
     private val project: Project = compilation.target.project
-    private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
-    private val versions = nodeJs.versions
+    private val npmProject = compilation.npmProject
+    private val versions = NodeJsRootPlugin.apply(project.rootProject).versions
+    private val isTeamCity by lazy {
+        if (isConfigurationCacheAvailable(project.gradle)) {
+            project.providers.gradleProperty(TC_PROJECT_PROPERTY).forUseAtConfigurationTime().isPresent
+        } else {
+            project.hasProperty(TC_PROJECT_PROPERTY)
+        }
+    }
 
     override val settingsState: String
         get() = "mocha"
@@ -34,11 +44,16 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) :
         get() = setOf(
             versions.kotlinJsTestRunner,
             versions.mocha,
-            versions.sourceMapSupport
+            versions.sourceMapSupport,
+            versions.formatUtil
         )
+
+    override fun getPath() = "$basePath:kotlinMocha"
 
     // https://mochajs.org/#-timeout-ms-t-ms
     var timeout: String = DEFAULT_TIMEOUT
+
+    private val platformType = compilation.platformType
 
     override fun createTestExecutionSpec(
         task: KotlinJsTest,
@@ -52,10 +67,8 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) :
             prependSuiteName = true,
             stackTraceParser = ::parseNodeJsStackTraceAsJvm,
             ignoreOutOfRootNodes = true,
-            escapeTCMessagesInLog = project.hasProperty(TC_PROJECT_PROPERTY)
+            escapeTCMessagesInLog = isTeamCity
         )
-
-        val npmProject = compilation.npmProject
 
         val cliArgs = KotlinTestRunnerCliArgs(
             include = task.includePatterns,
@@ -64,9 +77,7 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) :
 
         val mocha = npmProject.require("mocha/bin/mocha")
 
-        val file = task.nodeModulesToLoad
-            .map { npmProject.require(it) }
-            .single()
+        val file = task.inputFileProperty.get().asFile.toString()
 
         val adapter = createAdapterJs(file)
 
@@ -86,6 +97,9 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) :
             } else {
                 addAll(cliArg(TIMEOUT_ARG, timeout))
             }
+            if (platformType == KotlinPlatformType.wasm) {
+                addAll(cliArg("-n", "experimental-wasm-typed-funcref,experimental-wasm-gc,experimental-wasm-eh"))
+            }
         }
 
         return TCServiceMessagesTestExecutionSpec(
@@ -103,8 +117,6 @@ class KotlinMocha(override val compilation: KotlinJsCompilation) :
     private fun createAdapterJs(
         file: String
     ): File {
-        val npmProject = compilation.npmProject
-
         val adapterJs = npmProject.dir.resolve(ADAPTER_NODEJS)
         adapterJs.printWriter().use { writer ->
             val adapter = npmProject.require("kotlin-test-js-runner/kotlin-test-nodejs-runner.js")

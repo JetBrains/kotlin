@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.load.java.toDescriptorVisibility
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.resolve.constants.StringValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
@@ -67,6 +68,10 @@ class LazyJavaClassDescriptor(
         }
     }
 
+    val moduleAnnotations by lazy {
+        classId?.let { outerContext.components.javaModuleResolver.getAnnotationsForModuleOwnerOfClass(it) }
+    }
+
     private val kind = when {
         jClass.isAnnotationType -> ClassKind.ANNOTATION_CLASS
         jClass.isInterface -> ClassKind.INTERFACE
@@ -76,13 +81,19 @@ class LazyJavaClassDescriptor(
 
     private val modality =
         if (jClass.isAnnotationType || jClass.isEnum) Modality.FINAL
-        else Modality.convertFromFlags(jClass.isAbstract || jClass.isInterface, !jClass.isFinal)
+        else Modality.convertFromFlags(
+            sealed = jClass.isSealed,
+            abstract = jClass.isSealed || jClass.isAbstract || jClass.isInterface,
+            open = !jClass.isFinal
+        )
 
     private val visibility = jClass.visibility
     private val isInner = jClass.outerClass != null && !jClass.isStatic
 
     override fun getKind() = kind
     override fun getModality() = modality
+
+    override fun isRecord(): Boolean = jClass.isRecord
 
     // To workaround a problem with Scala compatibility (KT-9700),
     // we consider private visibility of a Java top level class as package private
@@ -105,6 +116,7 @@ class LazyJavaClassDescriptor(
     override fun isExpect() = false
     override fun isActual() = false
     override fun isFun() = false
+    override fun isValue() = false
 
     private val typeConstructor = LazyJavaClassTypeConstructor()
     override fun getTypeConstructor(): TypeConstructor = typeConstructor
@@ -177,7 +189,16 @@ class LazyJavaClassDescriptor(
     fun wasScopeContentRequested() =
         getUnsubstitutedMemberScope().wasContentRequested() || staticScope.wasContentRequested()
 
-    override fun getSealedSubclasses(): Collection<ClassDescriptor> = emptyList()
+    override fun getSealedSubclasses(): Collection<ClassDescriptor> = if (modality == Modality.SEALED) {
+        val attributes = TypeUsage.COMMON.toAttributes()
+        jClass.permittedTypes.mapNotNull {
+            c.typeResolver.transformJavaType(it, attributes).constructor.declarationDescriptor as? ClassDescriptor
+        }
+    } else {
+        emptyList()
+    }
+
+    override fun getInlineClassRepresentation(): InlineClassRepresentation<SimpleType>? = null
 
     override fun toString() = "Lazy Java class ${this.fqNameUnsafe}"
 
@@ -197,16 +218,18 @@ class LazyJavaClassDescriptor(
 
             for (javaType in javaTypes) {
                 val kotlinType = c.typeResolver.transformJavaType(javaType, TypeUsage.SUPERTYPE.toAttributes())
-                if (kotlinType.constructor.declarationDescriptor is NotFoundClasses.MockClassDescriptor) {
+                val enhancedKotlinType = c.components.signatureEnhancement.enhanceSuperType(kotlinType, c)
+
+                if (enhancedKotlinType.constructor.declarationDescriptor is NotFoundClasses.MockClassDescriptor) {
                     incomplete.add(javaType)
                 }
 
-                if (kotlinType.constructor == purelyImplementedSupertype?.constructor) {
+                if (enhancedKotlinType.constructor == purelyImplementedSupertype?.constructor) {
                     continue
                 }
 
-                if (!KotlinBuiltIns.isAnyOrNullableAny(kotlinType)) {
-                    result.add(kotlinType)
+                if (!KotlinBuiltIns.isAnyOrNullableAny(enhancedKotlinType)) {
+                    result.add(enhancedKotlinType)
                 }
             }
 
@@ -258,7 +281,7 @@ class LazyJavaClassDescriptor(
                 else -> return null
             }
 
-            return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, classDescriptor, parametersAsTypeProjections)
+            return KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, classDescriptor, parametersAsTypeProjections)
         }
 
         private fun getPurelyImplementsFqNameFromAnnotation(): FqName? {

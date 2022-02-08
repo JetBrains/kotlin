@@ -1,0 +1,86 @@
+FILE: localClassesWithImplicit.kt
+    public final inline fun <T> myRun(block: R|() -> T|): R|T| {
+        ^myRun R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|()
+    }
+    public final fun test(a: R|kotlin/Any|, b: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/a| !is R|kotlin/String|) ->  {
+                ^test Unit
+            }
+        }
+
+        local final class A : R|kotlin/Any| {
+            public constructor(): R|A| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Int| {
+                ^foo R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
+                    R|<local>/a|.R|kotlin/String.length|
+                    ^ when () {
+                        (R|<local>/b| is R|kotlin/String|) ->  {
+                            R|<local>/b|.R|kotlin/String.length|
+                            this@R|/A|.R|<local>/bar|()
+                        }
+                        else ->  {
+                            Int(1)
+                        }
+                    }
+
+                }
+                )
+            }
+
+            public final fun bar(): R|kotlin/Int| {
+                ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
+                    R|<local>/b|.<Unresolved name: length>#
+                    R|<local>/a|.R|kotlin/String.length|
+                    ^ this@R|/A|.R|<local>/baz|()
+                }
+                )
+            }
+
+            public final fun baz(): R|kotlin/Int| {
+                ^baz Int(1)
+            }
+
+        }
+
+        lval x: R|<anonymous>| = object : R|kotlin/Any| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Int| {
+                ^foo R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
+                    R|<local>/a|.R|kotlin/String.length|
+                    ^ when () {
+                        (R|<local>/b| is R|kotlin/String|) ->  {
+                            R|<local>/b|.R|kotlin/String.length|
+                            this@R|/<anonymous>|.R|/<anonymous>.bar|()
+                        }
+                        else ->  {
+                            Int(1)
+                        }
+                    }
+
+                }
+                )
+            }
+
+            public final fun bar(): R|kotlin/Int| {
+                ^bar R|/myRun|<R|kotlin/Int|>(<L> = myRun@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=UNKNOWN>  {
+                    R|<local>/a|.R|kotlin/String.length|
+                    R|<local>/b|.<Unresolved name: length>#
+                    ^ this@R|/<anonymous>|.R|/<anonymous>.baz|()
+                }
+                )
+            }
+
+            public final fun baz(): R|kotlin/Int| {
+                ^baz Int(1)
+            }
+
+        }
+
+    }

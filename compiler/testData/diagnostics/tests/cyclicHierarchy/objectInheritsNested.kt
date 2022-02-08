@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // As in KT-18514
 object A : <!CYCLIC_INHERITANCE_HIERARCHY!>A.I<!> {
     interface I

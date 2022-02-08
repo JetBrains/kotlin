@@ -1,6 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// IGNORE_BACKEND: JVM_IR
-
 interface I
 
 inline class ICI(val i: I): I

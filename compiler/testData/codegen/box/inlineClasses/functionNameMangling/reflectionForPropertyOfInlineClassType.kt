@@ -1,10 +1,11 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: PROPERTY_REFERENCES
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
 import kotlin.test.*
 
-inline class S(val string: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class S(val string: String)
 
 var prop = S("")
 

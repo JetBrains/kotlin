@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.mainKts.test
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
 import org.jetbrains.kotlin.mainKts.impl.Directories
 import org.jetbrains.kotlin.mainKts.MainKtsScript
+import org.jetbrains.kotlin.mainKts.SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME
 import org.jetbrains.kotlin.scripting.compiler.plugin.assertTrue
 import org.junit.Assert
 import org.junit.Assert.assertEquals
@@ -69,7 +70,8 @@ class MainKtsTest {
 
         val resultValue = resOk.valueOrThrow().returnValue
         assertTrue(resultValue is ResultValue.Value) { "Result value should be of type Value" }
-        assertEquals("John Smith", (resultValue as ResultValue.Value).value)
+        val value = (resultValue as ResultValue.Value).value!!
+        assertEquals("MimeTypedResult", value::class.simpleName)
     }
 
 //    @Test
@@ -121,6 +123,19 @@ class MainKtsTest {
     }
 
     @Test
+    fun testDuplicateImportError() {
+        val res = evalFile(File("$TEST_DATA_ROOT/import-duplicate-test.main.kts"))
+        assertFailed("Duplicate imports:", res)
+    }
+
+    @Test
+    fun testCyclicImportError() {
+        val res = evalFile(File("$TEST_DATA_ROOT/import-cycle-1.main.kts"))
+        // TODO: the second error is due to the late cycle detection, see TODO in makeCompiledScript$makeOtherScripts
+        assertFailedAny("Unable to handle recursive script dependencies", "is already bound", res = res)
+    }
+
+    @Test
     fun testCompilerOptions() {
 
         val out = captureOut {
@@ -130,6 +145,65 @@ class MainKtsTest {
         }.lines()
 
         Assert.assertEquals(listOf("Hi from sub", "Hi from super", "Hi from random"), out)
+    }
+
+    @Test
+    fun testScriptFileLocationDefaultVariable() {
+        val resOk = evalFile(File("$TEST_DATA_ROOT/script-file-location-default.main.kts"))
+        assertSucceeded(resOk)
+        val resultValue = resOk.valueOrThrow().returnValue
+        assertTrue(resultValue is ResultValue.Value) { "Result value should be of type Value" }
+        val value = (resultValue as ResultValue.Value).value!!
+        assertEquals("String", value::class.simpleName)
+        val expectedPathSuffix = "libraries/tools/kotlin-main-kts-test/testData/script-file-location-default.main.kts"
+        val actualPath = (value as String).replace("\\", "/")
+        assertTrue(actualPath.endsWith(expectedPathSuffix)) { "Script file path does not end with expected path" }
+    }
+
+    @Test
+    fun testScriptFileLocationCustomizedVariable() {
+        val resOk = evalFile(File("$TEST_DATA_ROOT/script-file-location-customized.main.kts"))
+        assertSucceeded(resOk)
+        val resultValue = resOk.valueOrThrow().returnValue
+        assertTrue(resultValue is ResultValue.Value) { "Result value should be of type Value" }
+        val value = (resultValue as ResultValue.Value).value!!
+        assertEquals("String", value::class.simpleName)
+        val expectedPathSuffix = "libraries/tools/kotlin-main-kts-test/testData/script-file-location-customized.main.kts"
+        val actualPath = (value as String).replace("\\", "/")
+        assertTrue(actualPath.endsWith(expectedPathSuffix)) { "Script file path does not end with expected path" }
+    }
+
+    @Test
+    fun testScriptFileLocationWithImportedScript() {
+        val resOk = evalFile(File("$TEST_DATA_ROOT/script-file-location-with-imported-file.main.kts"))
+        assertSucceeded(resOk)
+        val resultValue = resOk.valueOrThrow().returnValue
+        assertTrue(resultValue is ResultValue.Value) { "Result value should be of type Value" }
+        val value = (resultValue as ResultValue.Value).value!!
+        assertEquals("Array", value::class.simpleName)
+        val expectedSelfPathSuffix = "libraries/tools/kotlin-main-kts-test/testData/script-file-location-with-imported-file.main.kts"
+        val expectedImportedPathSuffix = "libraries/tools/kotlin-main-kts-test/testData/script-file-location-helper-imported-file.main.kts"
+        val actualPathSelf = (value as Array<*>)[0].toString().replace("\\", "/")
+        val actualPathImported = value[1].toString().replace("\\", "/")
+        assertTrue(actualPathSelf.endsWith(expectedSelfPathSuffix)) { "Script file path does not end with expected path" }
+        assertTrue(actualPathImported.endsWith(expectedImportedPathSuffix)) { "Script file path does not end with expected path" }
+    }
+
+    @Test
+    fun testScriptFileLocationDefaultVariableNotAvailableIfScriptFileVariableCustomized() {
+        val resFailed = evalFile(File("$TEST_DATA_ROOT/script-file-location-customized-default-not-available.main.kts"))
+        assertFailed("Unresolved reference: $SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME", resFailed)
+    }
+
+    @Test
+    fun testScriptFileLocationDefaultVariableRedefinition() {
+        val resOk = evalFile(File("$TEST_DATA_ROOT/script-file-location-redefine-variable.kts"))
+        assertSucceeded(resOk)
+        val resultValue = resOk.valueOrThrow().returnValue
+        assertTrue(resultValue is ResultValue.Value) { "Result value should be of type Value" }
+        val value = (resultValue as ResultValue.Value).value!!
+        assertEquals("String", value::class.simpleName)
+        assertEquals("success", value)
     }
 
     private fun assertIsJava6Bytecode(res: ResultWithDiagnostics<EvaluationResult>) {
@@ -155,11 +229,26 @@ class MainKtsTest {
     }
 
     private fun assertFailed(expectedError: String, res: ResultWithDiagnostics<EvaluationResult>) {
+        assertFailedAny(expectedError, res = res)
+    }
+
+    private fun assertFailedAny(vararg expectedErrors: String, res: ResultWithDiagnostics<EvaluationResult>) {
+        val reports = res.reports.map { diag ->
+            diag.message +
+                    generateSequence(diag.exception) { it.cause }
+                        .filter { !(it.message != null && diag.message.contains(it.message!!)) }
+                        .joinToString("\n  Caused by: ", "\n  ") { it.message ?: it.toString() }
+        }
+        val expected = when (expectedErrors.size) {
+            0 -> ""
+            1 -> " with the message \"${expectedErrors[0]}\""
+            else -> " with any of the messages: ${expectedErrors.joinToString("\", \"", "\"", "\";")}"
+        }
         Assert.assertTrue(
-            "test failed - expecting a failure with the message \"$expectedError\" but received " +
+            "test failed - expecting a failure$expected but received " +
                     (if (res is ResultWithDiagnostics.Failure) "failure" else "success") +
-                    ":\n  ${res.reports.joinToString("\n  ") { it.message + if (it.exception == null) "" else ": ${it.exception}" }}",
-            res is ResultWithDiagnostics.Failure && res.reports.any { it.message.contains("$expectedError") }
+                    ":\n  ${reports.joinToString("\n  ")}",
+            res is ResultWithDiagnostics.Failure && reports.any { report -> expectedErrors.any { report.contains(it) } }
         )
     }
 

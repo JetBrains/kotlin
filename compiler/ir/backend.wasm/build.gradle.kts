@@ -4,25 +4,22 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:util"))
-    compile(project(":compiler:frontend"))
-    compile(project(":compiler:backend-common"))
-    compile(project(":compiler:ir.tree"))
-    compile(project(":compiler:ir.psi2ir"))
-    compile(project(":compiler:ir.backend.common"))
-    compile(project(":compiler:ir.serialization.common"))
-    compile(project(":compiler:ir.serialization.js"))
-    compile(project(":compiler:ir.tree.persistent"))
-    compile(project(":js:js.ast"))
-    compile(project(":js:js.frontend"))
-    compile(project(":compiler:backend.js"))
-    compile(project(":wasm:wasm.ir"))
+    api(project(":compiler:util"))
+    api(project(":compiler:frontend"))
+    api(project(":compiler:backend-common"))
+    api(project(":compiler:ir.tree"))
+    api(project(":compiler:ir.backend.common"))
+    api(project(":compiler:ir.serialization.common"))
+    api(project(":compiler:ir.serialization.js"))
+    api(project(":js:js.ast"))
+    api(project(":js:js.frontend"))
+    api(project(":compiler:backend.js"))
+    api(project(":wasm:wasm.ir"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
-

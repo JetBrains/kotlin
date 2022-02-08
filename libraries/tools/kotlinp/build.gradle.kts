@@ -7,31 +7,27 @@ plugins {
     kotlin("jvm")
 }
 
-val kotlinpAsmVersion = "7.0.1"
-
+val kotlinpAsmVersion = "9.0"
 val shadows by configurations.creating
-
-repositories {
-    maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
-}
 
 dependencies {
     compileOnly(project(":kotlinx-metadata"))
     compileOnly(project(":kotlinx-metadata-jvm"))
-    compile("org.jetbrains.intellij.deps:asm-all:$kotlinpAsmVersion")
+
+    implementation("org.jetbrains.intellij.deps:asm-all:$kotlinpAsmVersion")
+
+    testApi(intellijCore())
 
     testCompileOnly(project(":kotlinx-metadata"))
     testCompileOnly(project(":kotlinx-metadata-jvm"))
-    testCompile(commonDep("junit:junit"))
-    testCompile(projectTests(":generators:test-generator"))
 
-    testRuntime(project(":kotlinx-metadata-jvm", configuration = "runtime"))
+    testImplementation(commonDependency("junit:junit"))
+    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(projectTests(":generators:test-generator"))
 
-    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    testRuntimeOnly(project(":kotlinx-metadata-jvm"))
 
-    testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency", "platform-objectSerializer") }
-
-    shadows(project(":kotlinx-metadata-jvm", configuration = "runtime"))
+    shadows(project(":kotlinx-metadata-jvm"))
     shadows("org.jetbrains.intellij.deps:asm-all:$kotlinpAsmVersion")
 }
 
@@ -68,6 +64,6 @@ tasks {
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
-        freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
+        freeCompilerArgs += listOf("-opt-in=kotlin.RequiresOptIn")
     }
 }

@@ -1,12 +1,17 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: PROPERTY_REFERENCES
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
 import kotlin.test.assertEquals
 
-inline class Z(internal val x: Int)
-inline class L(internal val x: Long)
-inline class S(internal val x: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(internal val x: Int)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class L(internal val x: Long)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class S(internal val x: String)
 
 fun box(): String {
     assertEquals(42, Z::x.get(Z(42)))

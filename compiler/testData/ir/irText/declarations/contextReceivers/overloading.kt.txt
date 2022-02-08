@@ -1,0 +1,14 @@
+fun foo(<this>: Int, <this>: String): Int {
+  return <this>.plus(other = 42)
+}
+
+fun foo(<this>: Int): Int {
+  return <this>.plus(other = 42)
+}
+
+fun test() {
+  with<Int, Int>(receiver = 42, block = local fun Int.<anonymous>(): Int {
+    return foo(<this> = $this$with)
+  }
+) /*~> Unit */
+}

@@ -2,7 +2,7 @@
 class A() {
   fun foo() : Unit {
     this@A
-    <!UNRESOLVED_LABEL!>this@a<!>
+    this<!UNRESOLVED_LABEL!>@a<!>
     this
   }
 

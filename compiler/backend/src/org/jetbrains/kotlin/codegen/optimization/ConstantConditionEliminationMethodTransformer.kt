@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.optimization
 import org.jetbrains.kotlin.codegen.inline.insnText
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
+import org.jetbrains.kotlin.codegen.optimization.common.removeAll
 import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
@@ -31,14 +32,27 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 
 class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
-    private val deadCodeElimination = DeadCodeEliminationMethodTransformer()
 
     override fun transform(internalClassName: String, methodNode: MethodNode) {
+        if (!methodNode.hasOptimizableConditions()) {
+            return
+        }
         do {
             val changes = ConstantConditionsOptimization(internalClassName, methodNode).run()
-            if (changes) deadCodeElimination.transform(internalClassName, methodNode)
         } while (changes)
     }
+
+    private fun MethodNode.hasOptimizableConditions(): Boolean {
+        val insns = instructions.toArray()
+        return insns.any { it.isIntJump() } && insns.any { it.isIntConst() }
+    }
+
+    private fun AbstractInsnNode.isIntConst() =
+        opcode in Opcodes.ICONST_M1..Opcodes.ICONST_5 || opcode == Opcodes.BIPUSH || opcode == Opcodes.SIPUSH ||
+                (opcode == Opcodes.LDC && this is LdcInsnNode && cst is Int)
+
+    private fun AbstractInsnNode.isIntJump() =
+        opcode in Opcodes.IFEQ..Opcodes.IFLE || opcode in Opcodes.IF_ICMPEQ..Opcodes.IF_ICMPLE
 
     private class ConstantConditionsOptimization(val internalClassName: String, val methodNode: MethodNode) {
         fun run(): Boolean {
@@ -49,16 +63,32 @@ class ConstantConditionEliminationMethodTransformer : MethodTransformer() {
 
         private fun collectRewriteActions(): List<() -> Unit> =
             arrayListOf<() -> Unit>().also { actions ->
+                val deadCode = ArrayList<AbstractInsnNode>()
+
                 val frames = analyze(internalClassName, methodNode, ConstantPropagationInterpreter())
                 val insns = methodNode.instructions.toArray()
+
                 for (i in frames.indices) {
-                    val frame = frames[i] ?: continue
-                    val insn = insns[i] as? JumpInsnNode ?: continue
+                    val insn = insns[i]
+                    val frame = frames[i]
+
+                    if (frame == null && insn !is LabelNode) {
+                        deadCode.add(insn)
+                        continue
+                    }
+
+                    if (insn !is JumpInsnNode) continue
                     when (insn.opcode) {
                         in Opcodes.IFEQ..Opcodes.IFLE ->
                             tryRewriteComparisonWithZero(insn, frame, actions)
                         in Opcodes.IF_ICMPEQ..Opcodes.IF_ICMPLE ->
                             tryRewriteBinaryComparison(insn, frame, actions)
+                    }
+                }
+
+                if (deadCode.isNotEmpty()) {
+                    actions.add {
+                        methodNode.instructions.removeAll(deadCode)
                     }
                 }
             }

@@ -1,5 +1,0 @@
-fun a(x: Int) {}
-fun b() {
-    val x = 1
-    a(x)
-}

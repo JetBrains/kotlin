@@ -1,0 +1,58 @@
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class AllOpen {
+    // source: 'annotationMembers.kt'
+}
+
+@kotlin.Metadata
+public final class MyComponent$Companion {
+    // source: 'annotationMembers.kt'
+    synthetic final static field $$INSTANCE: MyComponent$Companion
+    private final static field staticProperty: int
+    static method <clinit>(): void
+    private method <init>(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method getStaticProperty$annotations(): void
+    public final method getStaticProperty(): int
+    public final @kotlin.jvm.JvmStatic method staticFun(): void
+    public final inner class MyComponent$Companion
+}
+
+@AllOpen
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class MyComponent {
+    // source: 'annotationMembers.kt'
+    public final static @org.jetbrains.annotations.NotNull field Companion: MyComponent$Companion
+    static method <clinit>(): void
+    public static method getStaticProperty(): int
+    public abstract method index(): int
+    public abstract method name(): java.lang.String
+    public static @kotlin.jvm.JvmStatic method staticFun(): void
+    public final inner class MyComponent$Companion
+}
+
+@kotlin.Metadata
+public final class Plain$Companion {
+    // source: 'annotationMembers.kt'
+    synthetic final static field $$INSTANCE: Plain$Companion
+    private final static field staticProperty: int
+    static method <clinit>(): void
+    private method <init>(): void
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method getStaticProperty$annotations(): void
+    public final method getStaticProperty(): int
+    public final @kotlin.jvm.JvmStatic method staticFun(): void
+    public final inner class Plain$Companion
+}
+
+@java.lang.annotation.Retention
+@kotlin.Metadata
+public annotation class Plain {
+    // source: 'annotationMembers.kt'
+    public final static @org.jetbrains.annotations.NotNull field Companion: Plain$Companion
+    static method <clinit>(): void
+    public static method getStaticProperty(): int
+    public abstract method index(): int
+    public abstract method name(): java.lang.String
+    public static @kotlin.jvm.JvmStatic method staticFun(): void
+    public final inner class Plain$Companion
+}

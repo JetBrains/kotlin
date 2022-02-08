@@ -1,0 +1,16 @@
+FILE: complexLambdaWithTypeVariableAsExpectedType.kt
+    public final fun <T> id(x: R|T|): R|T| {
+        ^id R|<local>/x|
+    }
+    public final fun <K> select(x: R|K|, y: R|K|): R|K| {
+        ^select R|kotlin/TODO|()
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/select|<R|(kotlin/Int) -> kotlin/Any|>(R|/id|<R|(kotlin/Int) -> kotlin/Int|>(<L> = id@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <inline=NoInline>  {
+            ^ R|<local>/it|.R|kotlin/Int.inv|()
+        }
+        ), R|/id|<R|(kotlin/Int) -> kotlin/Unit|>(<L> = id@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=NoInline>  {
+            ^@id Unit
+        }
+        ))
+    }

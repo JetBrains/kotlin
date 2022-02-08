@@ -1,0 +1,13 @@
+@kotlin.Metadata
+public final class C {
+    // source: 'classAnyOverride.kt'
+    public method <init>(): void
+    public synthetic bridge method foo(): java.lang.Object
+    public @org.jetbrains.annotations.NotNull method foo-d1pmJ48(): java.lang.Object
+}
+
+@kotlin.Metadata
+public interface I {
+    // source: 'classAnyOverride.kt'
+    public abstract @org.jetbrains.annotations.NotNull method foo(): java.lang.Object
+}

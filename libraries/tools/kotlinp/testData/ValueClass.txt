@@ -1,0 +1,91 @@
+// A.class
+// ------------------------------------------
+// requires language version 1.3.0 (level=ERROR)
+public final value class A : kotlin/Any {
+
+  // requires language version 1.3.0 (level=ERROR)
+  // signature: constructor-impl(Ljava/lang/Integer;)Ljava/lang/Integer;
+  public constructor(i: kotlin/Int?)
+
+  // signature: equals-impl(Ljava/lang/Integer;Ljava/lang/Object;)Z
+  public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+  // signature: hashCode-impl(Ljava/lang/Integer;)I
+  public open /* synthesized */ fun hashCode(): kotlin/Int
+
+  // signature: toString-impl(Ljava/lang/Integer;)Ljava/lang/String;
+  public open /* synthesized */ fun toString(): kotlin/String
+
+  // field: i:Ljava/lang/Integer;
+  private final val i: kotlin/Int?
+    private final get
+
+  // underlying property: i
+
+  // underlying type: kotlin/Int?
+
+  // module name: test-module
+}
+// B.class
+// ------------------------------------------
+// requires language version 1.3.0 (level=ERROR)
+public final value class B : kotlin/Any {
+
+  // requires language version 1.3.0 (level=ERROR)
+  // requires language version 1.3.0 (level=ERROR)
+  // signature: constructor-impl(Lkotlin/jvm/functions/Function1;)Lkotlin/jvm/functions/Function1;
+  public constructor(f: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>)
+
+  // signature: equals-impl(Lkotlin/jvm/functions/Function1;Ljava/lang/Object;)Z
+  public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+  // signature: hashCode-impl(Lkotlin/jvm/functions/Function1;)I
+  public open /* synthesized */ fun hashCode(): kotlin/Int
+
+  // signature: toString-impl(Lkotlin/jvm/functions/Function1;)Ljava/lang/String;
+  public open /* synthesized */ fun toString(): kotlin/String
+
+  // requires language version 1.3.0 (level=ERROR)
+  // field: f:Lkotlin/jvm/functions/Function1;
+  private final val f: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>
+    private final get
+
+  // underlying property: f
+
+  // underlying type: suspend kotlin/Function1<kotlin/coroutines/Continuation<kotlin/Unit>, kotlin/Any?>
+
+  // module name: test-module
+}
+// Z.class
+// ------------------------------------------
+// requires language version 1.3.0 (level=ERROR)
+public final value class Z : kotlin/Any {
+
+  // requires language version 1.3.0 (level=ERROR)
+  // signature: constructor-impl(Ljava/lang/String;)Ljava/lang/String;
+  public constructor(s: kotlin/String)
+
+  // signature: equals-impl(Ljava/lang/String;Ljava/lang/Object;)Z
+  public open /* synthesized */ operator fun equals(other: kotlin/Any?): kotlin/Boolean
+
+  // signature: hashCode-impl(Ljava/lang/String;)I
+  public open /* synthesized */ fun hashCode(): kotlin/Int
+
+  // signature: toString-impl(Ljava/lang/String;)Ljava/lang/String;
+  public open /* synthesized */ fun toString(): kotlin/String
+
+  // field: s:Ljava/lang/String;
+  // getter: getS()Ljava/lang/String;
+  public final val s: kotlin/String
+    public final get
+
+  // underlying property: s
+
+  // underlying type: kotlin/String
+
+  // module name: test-module
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+}

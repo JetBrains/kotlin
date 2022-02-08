@@ -29,9 +29,8 @@ val ScriptCompilationConfigurationKeys.ide
 
 val IdeScriptCompilationConfigurationKeys.dependenciesSources by PropertiesCollection.key<List<ScriptDependency>>()
 
-@Suppress("RemoveExplicitTypeArguments")
 val IdeScriptCompilationConfigurationKeys.acceptedLocations
-        by PropertiesCollection.key<List<ScriptAcceptedLocation>>(
+        by PropertiesCollection.key(
             listOf(
                 ScriptAcceptedLocation.Sources,
                 ScriptAcceptedLocation.Tests

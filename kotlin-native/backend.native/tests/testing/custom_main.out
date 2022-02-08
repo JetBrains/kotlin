@@ -1,0 +1,17 @@
+Custom main
+Starting testing
+Starting iteration: 1
+Starting test suite: kotlin.test.tests.Custom_mainKt
+Starting test case: test (kotlin.test.tests.Custom_mainKt)
+test
+Passed: test (kotlin.test.tests.Custom_mainKt)
+Test suite finished: kotlin.test.tests.Custom_mainKt
+Iteration finished: 1
+Starting iteration: 2
+Starting test suite: kotlin.test.tests.Custom_mainKt
+Starting test case: test (kotlin.test.tests.Custom_mainKt)
+test
+Passed: test (kotlin.test.tests.Custom_mainKt)
+Test suite finished: kotlin.test.tests.Custom_mainKt
+Iteration finished: 2
+Testing finished

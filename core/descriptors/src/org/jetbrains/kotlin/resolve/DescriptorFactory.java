@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.*;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ContextClassReceiver;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ContextReceiver;
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.Variance;
@@ -35,10 +37,14 @@ import static org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt.getB
 
 public class DescriptorFactory {
     private static class DefaultClassConstructorDescriptor extends ClassConstructorDescriptorImpl {
-        public DefaultClassConstructorDescriptor(@NotNull ClassDescriptor containingClass, @NotNull SourceElement source) {
+        public DefaultClassConstructorDescriptor(
+                @NotNull ClassDescriptor containingClass,
+                @NotNull SourceElement source,
+                boolean freedomForSealedInterfacesSupported
+        ) {
             super(containingClass, null, Annotations.Companion.getEMPTY(), true, Kind.DECLARATION, source);
             initialize(Collections.<ValueParameterDescriptor>emptyList(),
-                       getDefaultConstructorVisibility(containingClass));
+                       getDefaultConstructorVisibility(containingClass, freedomForSealedInterfacesSupported));
         }
     }
 
@@ -130,7 +136,11 @@ public class DescriptorFactory {
             @NotNull ClassDescriptor containingClass,
             @NotNull SourceElement source
     ) {
-        return new DefaultClassConstructorDescriptor(containingClass, source);
+        /*
+         * Language version settings are needed here only for computing default visibility of constructors of sealed classes
+         *   Since object can not be sealed class it's OK to pass default settings here
+         */
+        return new DefaultClassConstructorDescriptor(containingClass, source, false);
     }
 
     @NotNull
@@ -138,7 +148,7 @@ public class DescriptorFactory {
         SimpleFunctionDescriptorImpl values =
                 SimpleFunctionDescriptorImpl.create(enumClass, Annotations.Companion.getEMPTY(), ENUM_VALUES,
                                                     CallableMemberDescriptor.Kind.SYNTHESIZED, enumClass.getSource());
-        return values.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
+        return values.initialize(null, null, Collections.<ReceiverParameterDescriptor>emptyList(), Collections.<TypeParameterDescriptor>emptyList(),
                                  Collections.<ValueParameterDescriptor>emptyList(),
                                  getBuiltIns(enumClass).getArrayType(Variance.INVARIANT, enumClass.getDefaultType()),
                                  Modality.FINAL, DescriptorVisibilities.PUBLIC);
@@ -157,7 +167,7 @@ public class DescriptorFactory {
                 null,
                 enumClass.getSource()
         );
-        return valueOf.initialize(null, null, Collections.<TypeParameterDescriptor>emptyList(),
+        return valueOf.initialize(null, null, Collections.<ReceiverParameterDescriptor>emptyList(), Collections.<TypeParameterDescriptor>emptyList(),
                                   Collections.singletonList(parameterDescriptor), enumClass.getDefaultType(),
                                   Modality.FINAL, DescriptorVisibilities.PUBLIC);
     }
@@ -184,5 +194,27 @@ public class DescriptorFactory {
         return receiverParameterType == null
                ? null
                : new ReceiverParameterDescriptorImpl(owner, new ExtensionReceiver(owner, receiverParameterType, null), annotations);
+    }
+
+    @Nullable
+    public static ReceiverParameterDescriptor createContextReceiverParameterForCallable(
+            @NotNull CallableDescriptor owner,
+            @Nullable KotlinType receiverParameterType,
+            @NotNull Annotations annotations
+    ) {
+        return receiverParameterType == null
+               ? null
+               : new ReceiverParameterDescriptorImpl(owner, new ContextReceiver(owner, receiverParameterType, null), annotations);
+    }
+
+    @Nullable
+    public static ReceiverParameterDescriptor createContextReceiverParameterForClass(
+            @NotNull ClassDescriptor owner,
+            @Nullable KotlinType receiverParameterType,
+            @NotNull Annotations annotations
+    ) {
+        return receiverParameterType == null
+               ? null
+               : new ReceiverParameterDescriptorImpl(owner, new ContextClassReceiver(owner, receiverParameterType, null), annotations);
     }
 }

@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 class Test {
     lateinit var someRunnable: Runnable
     init {

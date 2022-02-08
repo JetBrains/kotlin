@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 
 val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>T : K<!>, K> K.a: Int get() = 4
 

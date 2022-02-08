@@ -3,13 +3,13 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 dependencies {
-    compile "frankiesardo:icepick:3.2.0"
+    implementation "frankiesardo:icepick:3.2.0"
     kapt "frankiesardo:icepick-processor:3.2.0"
 
-    compile 'org.parceler:parceler-api:1.1.5'
+    implementation 'org.parceler:parceler-api:1.1.5'
     kapt 'org.parceler:parceler:1.1.5'
 
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
 android {

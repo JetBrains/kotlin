@@ -1,8 +1,12 @@
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Foo(val arg: Int)
-inline class AsAny(val arg: Any)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Foo(val arg: Int)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class AsAny(val arg: Any)
 
 fun box(): String {
     val arr = arrayOf(Foo(1), Foo(2))

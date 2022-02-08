@@ -1,3 +1,0 @@
-fun ff() {
-    val copy: List<Int> = ArrayList(listOf())
-}

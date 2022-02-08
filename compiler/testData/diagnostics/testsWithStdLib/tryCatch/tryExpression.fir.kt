@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // SKIP_TXT
 
 class ExcA : Exception()
@@ -27,9 +26,9 @@ fun test1(): Map<Int, Int> = run {
 }
 
 fun test2(): Map<Int, Int> = run {
-    try {
+    <!ARGUMENT_TYPE_MISMATCH!>try {
         emptyMap()
     } catch (e: ExcA) {
         mapOf("" to "")
-    }
+    }<!>
 }

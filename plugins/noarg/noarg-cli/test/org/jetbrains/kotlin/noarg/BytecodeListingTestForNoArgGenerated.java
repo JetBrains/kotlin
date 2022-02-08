@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.noarg;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
 
@@ -21,16 +23,21 @@ import java.util.regex.Pattern;
 @RunWith(JUnit3RunnerWithInners.class)
 public class BytecodeListingTestForNoArgGenerated extends AbstractBytecodeListingTestForNoArg {
     private void runTest(String testDataFilePath) throws Exception {
-        KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
     }
 
     public void testAllFilesPresentInBytecodeListing() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/noarg-cli/testData/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/noarg/noarg-cli/testData/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
     }
 
     @TestMetadata("annoOnNotClass.kt")
     public void testAnnoOnNotClass() throws Exception {
         runTest("plugins/noarg/noarg-cli/testData/bytecodeListing/annoOnNotClass.kt");
+    }
+
+    @TestMetadata("constructorVisibility.kt")
+    public void testConstructorVisibility() throws Exception {
+        runTest("plugins/noarg/noarg-cli/testData/bytecodeListing/constructorVisibility.kt");
     }
 
     @TestMetadata("defaultParameters.kt")
@@ -41,6 +48,11 @@ public class BytecodeListingTestForNoArgGenerated extends AbstractBytecodeListin
     @TestMetadata("inherited.kt")
     public void testInherited() throws Exception {
         runTest("plugins/noarg/noarg-cli/testData/bytecodeListing/inherited.kt");
+    }
+
+    @TestMetadata("nestedClass.kt")
+    public void testNestedClass() throws Exception {
+        runTest("plugins/noarg/noarg-cli/testData/bytecodeListing/nestedClass.kt");
     }
 
     @TestMetadata("noNoArg.kt")

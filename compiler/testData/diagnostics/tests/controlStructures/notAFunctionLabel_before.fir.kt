@@ -31,7 +31,7 @@ fun testAnnotatedLambdaLabel() =
 
 fun testLambdaMultipleLabels1() =
     lambda1@ lambda2@ {
-        return@lambda1
+        <!NOT_A_FUNCTION_LABEL!>return@lambda1<!>
     }
 
 fun testLambdaMultipleLabels2() =
@@ -46,17 +46,26 @@ fun testAnonymousFunctionLabel() =
 
 fun testLoopLabelInReturn(xs: List<Int>) {
     L@ for (x in xs) {
-        if (x > 0) return@L
+        if (x > 0) <!NOT_A_FUNCTION_LABEL!>return@L<!>
     }
 }
 
 fun testValLabelInReturn() {
-    L@ val fn = { return@L }
+    L@ val fn = { <!NOT_A_FUNCTION_LABEL!>return@L<!> }
     fn()
 }
 
 fun testHighOrderFunctionCallLabelInReturn() {
     L@ run {
-        return@L
+        <!NOT_A_FUNCTION_LABEL!>return@L<!>
+    }
+}
+
+fun testMultipleLabelsWithNestedLambda() {
+    l1@ l2@{
+        {
+            <!NOT_A_FUNCTION_LABEL!>return@l1<!>
+        }
+        return@l2
     }
 }

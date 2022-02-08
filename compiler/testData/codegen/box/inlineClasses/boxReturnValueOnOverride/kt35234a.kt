@@ -1,9 +1,9 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_TEXT
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class NumberInlineClass(val value: Double)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class NumberInlineClass(val value: Double)
 
 interface TypeAdapter<FROM, TO> {
     fun decode(string: FROM): TO

@@ -1,0 +1,6 @@
+KT element: KtNameReferenceExpression
+FIR element: FirResolvedNamedReferenceImpl
+FIR source kind: ReferenceInAtomicQualifiedAccess
+
+FIR element rendered:
+R|<local>/i|

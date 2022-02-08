@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+
 annotation class Anno1
 enum class Colors { WHITE, BLACK }
 annotation class Anno2(

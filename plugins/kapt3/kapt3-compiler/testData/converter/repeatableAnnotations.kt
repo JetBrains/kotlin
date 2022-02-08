@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // FILE: lib/Anno.java
 package lib;
 public @interface Anno {
@@ -15,7 +16,7 @@ public class R {
 }
 
 // FILE: test.kt
-// WITH_RUNTIME
+// WITH_STDLIB
 import lib.Anno
 import kotlin.reflect.KClass
 

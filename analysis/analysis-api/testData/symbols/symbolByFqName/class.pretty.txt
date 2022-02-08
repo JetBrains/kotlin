@@ -1,0 +1,1 @@
+interface Lazy<out T>

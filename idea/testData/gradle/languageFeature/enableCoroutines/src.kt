@@ -1,2 +1,0 @@
-suspend fun foo() {
-}

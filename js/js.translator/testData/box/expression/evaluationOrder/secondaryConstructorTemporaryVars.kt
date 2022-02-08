@@ -1,5 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1285
-// HAS_NO_CAPTURED_VARS: function=A_init except=Kotlin;A;equals
+// HAS_NO_CAPTURED_VARS: function=A_init except=Kotlin;A;equals TARGET_BACKENDS=JS
+// TODO: Enable this when KT-***** is resolved. // HAS_NO_CAPTURED_VARS: function=A_init_$Init$ except=A;equals IGNORED_BACKENDS=JS
 
 class A() {
     var y: String? = null

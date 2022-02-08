@@ -1,4 +1,0 @@
-// FIX: Remove braces
-class C {
-    fun f4() = "single-expression function which returns lambda"
-}

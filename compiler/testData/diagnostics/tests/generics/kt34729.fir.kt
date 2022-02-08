@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !LANGUAGE: +NewInference
 
@@ -14,6 +13,6 @@ fun <T : ILength> bar(a: (Int) -> T) {
 }
 
 fun test() {
-    foo<String> { }
-    bar<Impl> { }
+    foo<String> <!ARGUMENT_TYPE_MISMATCH!>{ }<!>
+    bar<Impl> <!ARGUMENT_TYPE_MISMATCH!>{ }<!>
 }

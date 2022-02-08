@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class UInt(val value: Int)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class UInt(val value: Int)
 
 fun <T> takeVarargs(vararg e: T): T {
     return e[e.size - 1]

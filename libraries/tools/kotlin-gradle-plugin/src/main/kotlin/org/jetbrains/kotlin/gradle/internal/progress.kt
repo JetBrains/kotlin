@@ -5,18 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import org.gradle.api.Project
-import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.internal.logging.events.ProgressStartEvent
 import org.gradle.internal.logging.progress.ProgressLogger
+import org.gradle.internal.service.ServiceRegistry
 
-fun <T> Project.operation(
+fun <T> ServiceRegistry.operation(
     description: String,
     initialStatus: String? = null,
     body: ProgressLogger.() -> T
 ): T {
-    val services = (project as ProjectInternal).services
-    val progressFactory = services.get(org.gradle.internal.logging.progress.ProgressLoggerFactory::class.java)
+    val progressFactory = get(org.gradle.internal.logging.progress.ProgressLoggerFactory::class.java)
     val operation = progressFactory.newOperation(ProgressStartEvent.BUILD_OP_CATEGORY)
     operation.start(description, initialStatus)
     try {

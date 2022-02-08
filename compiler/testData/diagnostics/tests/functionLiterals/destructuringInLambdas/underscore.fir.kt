@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 data class A(val x: Int, val y: String)
@@ -8,39 +7,39 @@ fun foo(block: (A) -> Unit) { }
 
 fun bar() {
     foo { (_, b) ->
-        _.hashCode()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
         b checkType { _<String>() }
     }
 
     foo { (a, _) ->
         a checkType { _<Int>() }
-        _.hashCode()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
     }
 
     foo { (_, _) ->
-        _.hashCode()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
     }
 
     foo { (_: Int, b: String) ->
-        _.hashCode()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
         b checkType { _<String>() }
     }
 
     foo { (a: Int, _: String) ->
         a checkType { _<Int>() }
-        _.hashCode()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
     }
 
     foo { (_: Int, _: String) ->
-        _.hashCode()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
     }
 
     foo { (_, _): A ->
-        _.hashCode()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
     }
 
     foo { (`_`, _) ->
-        _ checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Int>() }
+        _ checkType { _<Int>() }
     }
 
     foo { (_, `_`) ->
@@ -52,12 +51,12 @@ fun bar() {
     }
 
     foo { (_: String, b) ->
-        _.hashCode()
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
         b checkType { _<String>() }
     }
 
-    foo { (_, b): B ->
-        _.hashCode()
-        b checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Short>() }
-    }
+    foo <!ARGUMENT_TYPE_MISMATCH!>{ (_, b): B ->
+        <!UNRESOLVED_REFERENCE!>_<!>.hashCode()
+        b checkType { _<Short>() }
+    }<!>
 }

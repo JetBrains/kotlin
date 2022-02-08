@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // SKIP_TXT
 
 class ExcA : Exception()
@@ -6,7 +5,7 @@ class ExcA : Exception()
 class ExcB : Exception()
 
 fun test2() {
-    val s: String? = try {
+    val s: String? = <!INITIALIZER_TYPE_MISMATCH!>try {
         ""
     }
     catch (e: ExcA) {
@@ -14,8 +13,8 @@ fun test2() {
     }
     catch (e: ExcB) {
         10
-    }
-    s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    }<!>
+    s<!UNSAFE_CALL!>.<!>length
 }
 
 fun test3() {
@@ -28,7 +27,7 @@ fun test3() {
     catch (e: ExcB) {
         return
     }
-    s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    s<!UNSAFE_CALL!>.<!>length
 }
 
 fun test4() {
@@ -41,7 +40,7 @@ fun test4() {
     finally {
         ""
     }
-    s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    s<!UNSAFE_CALL!>.<!>length
 }
 
 fun test5() {
@@ -54,7 +53,7 @@ fun test5() {
     finally {
         return
     }
-    s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    s<!UNSAFE_CALL!>.<!>length
 }
 
 fun test6() {
@@ -67,7 +66,7 @@ fun test6() {
     catch (e: ExcB) {
         return
     }
-    s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    s<!UNSAFE_CALL!>.<!>length
 }
 
 fun test7() {
@@ -80,7 +79,7 @@ fun test7() {
     catch (e: ExcB) {
         ""
     }
-    s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    s<!UNSAFE_CALL!>.<!>length
 }
 
 fun test8() {
@@ -89,7 +88,7 @@ fun test8() {
     } catch (e: ExcA) {
         null
     }
-    s.<!INAPPLICABLE_CANDIDATE!>length<!>
+    s<!UNSAFE_CALL!>.<!>length
 }
 
 fun test9() {

@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraintTypeInferenceOracle
 import org.jetbrains.kotlin.resolve.calls.inference.model.Constraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
-import org.jetbrains.kotlin.resolve.calls.model.KotlinResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtom
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.UnwrappedType
@@ -24,7 +24,7 @@ typealias CsCompleterContext = ConstraintSystemCompletionContext
 class CompletionModeCalculator {
     companion object {
         fun computeCompletionMode(
-            candidate: KotlinResolutionCandidate,
+            candidate: ResolutionCandidate,
             expectedType: UnwrappedType?,
             returnType: UnwrappedType?,
             trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
@@ -43,7 +43,7 @@ class CompletionModeCalculator {
             if (returnType == null) return ConstraintSystemCompletionMode.PARTIAL
 
             // Full if return type for call has no type variables
-            if (csBuilder.isProperType(returnType)) return ConstraintSystemCompletionMode.FULL
+            if (getSystem().getBuilder().isProperType(returnType)) return ConstraintSystemCompletionMode.FULL
 
             // For nested call with variables in return type check possibility of full completion
             return CalculatorForNestedCall(
@@ -53,7 +53,7 @@ class CompletionModeCalculator {
     }
 
     private class CalculatorForNestedCall(
-        private val candidate: KotlinResolutionCandidate,
+        private val candidate: ResolutionCandidate,
         private val returnType: UnwrappedType?,
         private val csCompleterContext: CsCompleterContext,
         private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,

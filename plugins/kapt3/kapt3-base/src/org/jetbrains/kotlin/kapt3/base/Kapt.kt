@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.base.kapt3.*
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
 import org.jetbrains.kotlin.kapt3.base.util.info
+import org.jetbrains.kotlin.kapt3.util.doOpenInternalPackagesIfRequired
 import kotlin.system.measureTimeMillis
 
 object Kapt {
@@ -24,6 +25,7 @@ object Kapt {
     @JvmStatic
     @Suppress("unused")
     fun kapt(options: KaptOptions): Boolean {
+        doOpenInternalPackagesIfRequired()
         val logger = WriterBackedKaptLogger(options[KaptFlag.VERBOSE])
 
         if (!Kapt.checkJavacComponentsAccess(logger)) {
@@ -42,7 +44,11 @@ object Kapt {
             val processors = processorLoader.loadProcessors(findClassLoaderWithJavac())
 
             val annotationProcessingTime = measureTimeMillis {
-                kaptContext.doAnnotationProcessing(javaSourceFiles, processors.processors)
+                kaptContext.doAnnotationProcessing(
+                    javaSourceFiles,
+                    processors.processors,
+                    binaryTypesToReprocess = collectAggregatedTypes(kaptContext.sourcesToReprocess)
+                )
             }
 
             logger.info { "Annotation processing took $annotationProcessingTime ms" }

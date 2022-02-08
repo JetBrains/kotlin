@@ -27,7 +27,7 @@ class FacadeCache(private val project: Project) {
     private inner class FacadeCacheData {
         val cache = object : SLRUCache<FacadeCacheKey, ValueWrapper>(20, 30) {
             override fun createValue(key: FacadeCacheKey): ValueWrapper =
-                KtLightClassForFacade.createForFacadeNoCache(key.fqName, key.searchScope, project)
+                KtLightClassForFacadeImpl.createForFacadeNoCache(key.fqName, key.searchScope, project)
                     ?.let { ValueWrapper(it) }
                     ?: ValueWrapper.Null
         }

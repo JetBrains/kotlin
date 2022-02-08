@@ -1,8 +1,5 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_COLLECTIONS
-// KJS_WITH_FULL_RUNTIME
 // !LANGUAGE: +VariableDeclarationInWhenSubject
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun sparse(x: Int): Int {
     return when (val xx = (x % 4) * 100) {

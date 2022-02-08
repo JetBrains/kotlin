@@ -10,7 +10,7 @@ public final class MembersReferenceOuterTP<P> : R|kotlin/Any| {
         public final val <Q : R|P|> R|Q|.w: R|Q|
             public get(): R|Q|
 
-        public constructor(): R|test/MembersReferenceOuterTP.Inner<P>|
+        public test/MembersReferenceOuterTP<P>.constructor(): R|test/MembersReferenceOuterTP.Inner<P>|
 
     }
 

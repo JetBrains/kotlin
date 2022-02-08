@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 package d
 
 <!WRONG_MODIFIER_TARGET!>abstract<!> val a : Int = 1

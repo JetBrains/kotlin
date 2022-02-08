@@ -31,11 +31,11 @@ class SafeCallReceiver(
     val startOffset: Int,
     val endOffset: Int,
     val extensionReceiver: IntermediateValue?,
+    val contextReceivers: List<IntermediateValue>,
     val dispatchReceiver: IntermediateValue?,
     val isStatement: Boolean
 ) : CallReceiver {
-
-    override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {
+    override fun call(builder: CallExpressionBuilder): IrExpression {
         val irTmp = generator.scope.createTemporaryVariable(extensionReceiver?.load() ?: dispatchReceiver!!.load(), "safe_receiver")
         val safeReceiverValue = VariableLValue(generator.context, irTmp)
 
@@ -49,7 +49,7 @@ class SafeCallReceiver(
             extensionReceiverValue = null
         }
 
-        val irResult = withDispatchAndExtensionReceivers(dispatchReceiverValue, extensionReceiverValue)
+        val irResult = builder.withReceivers(dispatchReceiverValue, extensionReceiverValue, contextReceivers)
 
         val resultType = if (isStatement) generator.context.irBuiltIns.unitType else irResult.type.makeNullable()
 
@@ -77,8 +77,10 @@ fun IrExpression.safeCallOnDispatchReceiver(
     SafeCallReceiver(
         generator, startOffset, endOffset,
         extensionReceiver = null,
+        contextReceivers = emptyList(),
         dispatchReceiver = OnceExpressionValue(this),
         isStatement = false
-    ).call { dispatchReceiverValue, _ ->
+    ).call { dispatchReceiverValue, _, contextReceiverValues ->
+        assert(contextReceiverValues.isEmpty()) { "Context receivers in numeric promotion" }
         ifNotNull(dispatchReceiverValue!!.load())
     }

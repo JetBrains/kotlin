@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// WITH_EXTENDED_CHECKERS
 // JAVAC_EXPECTED_FILE
 // KT-498 Very strange error in the type checker
 

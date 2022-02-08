@@ -1,3 +1,4 @@
+// COMPARE_WITH_LIGHT_TREE
 package foo
 
 class X {}

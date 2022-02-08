@@ -1,6 +1,0 @@
-interface A {
-}
-
-interface Z {
-    fun foo()
-}

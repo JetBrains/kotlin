@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Coll {
   operator fun iterator(): It? = null
 }

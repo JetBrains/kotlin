@@ -1,7 +1,12 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class InlineNotNullPrimitive(val x: Int)
-inline class InlineNotNullReference(val y: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class InlineNotNullPrimitive(val x: Int)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class InlineNotNullReference(val y: String)
 
 fun <T> testNotNullPrimitive(a: Any, b: T, c: InlineNotNullPrimitive, d: InlineNotNullPrimitive?) {}
 fun <T> testNotNullReference(a: Any, b: T, c: InlineNotNullReference, d: InlineNotNullReference?) {}

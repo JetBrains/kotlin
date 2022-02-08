@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.resolve.calls.tower.shouldStopResolve
 
 open class CandidateCollector(
     val components: BodyResolveComponents,
@@ -48,7 +49,7 @@ open class CandidateCollector(
     fun bestCandidates(): List<Candidate> = candidates
 
     fun shouldStopAtTheLevel(group: TowerGroup): Boolean =
-        isSuccess() && bestGroup < group
+        currentApplicability.shouldStopResolve && bestGroup < group
 
     fun isSuccess(): Boolean {
         return currentApplicability.isSuccess

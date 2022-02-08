@@ -1,10 +1,9 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
+// IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: IGNORED_IN_JS
-// IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // TODO: muted automatically, investigate should it be ran for JS or not
-// DONT_RUN_GENERATED_CODE: JS
 // IGNORE_BACKEND: JS
+// IGNORE_FIR_DIAGNOSTICS_DIFF
 
 tailrec fun badTails(x : Int) : Int {
     if (x < 50 && x != 10 && x > 0) {

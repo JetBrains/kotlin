@@ -1,6 +1,5 @@
-// !WITH_NEW_INFERENCE
 fun foo(): Int {
     var i: Int? = 42
     i = null
-    return i <!NONE_APPLICABLE!>+<!> 1
+    return <!RETURN_TYPE_MISMATCH, TYPE_MISMATCH!>i + 1<!>
 }

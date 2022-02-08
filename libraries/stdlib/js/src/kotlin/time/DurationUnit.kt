@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.time
 
-@SinceKotlin("1.3")
-@ExperimentalTime
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalTime::class)
 public actual enum class DurationUnit(internal val scale: Double) {
     /**
      * Time unit representing one nanosecond, which is 1/1000 of a microsecond.
@@ -39,7 +39,6 @@ public actual enum class DurationUnit(internal val scale: Double) {
 }
 
 @SinceKotlin("1.3")
-@ExperimentalTime
 internal actual fun convertDurationUnit(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double {
     val sourceCompareTarget = sourceUnit.scale.compareTo(targetUnit.scale)
     return when {
@@ -48,4 +47,33 @@ internal actual fun convertDurationUnit(value: Double, sourceUnit: DurationUnit,
         else -> value
     }
 }
+
+@SinceKotlin("1.5")
+internal actual fun convertDurationUnitOverflow(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long {
+    val sourceCompareTarget = sourceUnit.scale.compareTo(targetUnit.scale)
+    return when {
+        sourceCompareTarget > 0 -> value * (sourceUnit.scale / targetUnit.scale).toLong()
+        sourceCompareTarget < 0 -> value / (targetUnit.scale / sourceUnit.scale).toLong()
+        else -> value
+    }
+}
+
+@SinceKotlin("1.5")
+internal actual fun convertDurationUnit(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long {
+    val sourceCompareTarget = sourceUnit.scale.compareTo(targetUnit.scale)
+    return when {
+        sourceCompareTarget > 0 -> {
+            val scale = (sourceUnit.scale / targetUnit.scale).toLong()
+            val result = value * scale
+            when {
+                result / scale == value -> result
+                value > 0 -> Long.MAX_VALUE
+                else -> Long.MIN_VALUE
+            }
+        }
+        sourceCompareTarget < 0 -> value / (targetUnit.scale / sourceUnit.scale).toLong()
+        else -> value
+    }
+}
+
 

@@ -10,11 +10,14 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.types.ConstantValueKind
 
 class ConeEffectExtractor(
     private val session: FirSession,
@@ -103,9 +106,23 @@ class ConeEffectExtractor(
             else -> return null
         }
         val const = equalityOperatorCall.arguments[1] as? FirConstExpression<*> ?: return null
-        if (const.kind != FirConstKind.Null) return null
+        if (const.kind != ConstantValueKind.Null) return null
         val arg = equalityOperatorCall.arguments[0].accept(this, null) as? ConeValueParameterReference ?: return null
         return ConeIsNullPredicate(arg, isNegated)
+    }
+
+    override fun visitExpressionWithSmartcast(
+        expressionWithSmartcast: FirExpressionWithSmartcast,
+        data: Nothing?
+    ): ConeContractDescriptionElement? {
+        return expressionWithSmartcast.originalExpression.accept(this, data)
+    }
+
+    override fun visitExpressionWithSmartcastToNull(
+        expressionWithSmartcastToNull: FirExpressionWithSmartcastToNull,
+        data: Nothing?
+    ): ConeContractDescriptionElement? {
+        return expressionWithSmartcastToNull.originalExpression.accept(this, data)
     }
 
     override fun visitQualifiedAccessExpression(
@@ -121,6 +138,13 @@ class ConeEffectExtractor(
         return toValueParameterReference(type, index, name)
     }
 
+    override fun visitPropertyAccessExpression(
+        propertyAccessExpression: FirPropertyAccessExpression,
+        data: Nothing?
+    ): ConeContractDescriptionElement? {
+        return visitQualifiedAccessExpression(propertyAccessExpression, data)
+    }
+
     private fun toValueParameterReference(
         type: ConeKotlinType,
         index: Int,
@@ -133,12 +157,16 @@ class ConeEffectExtractor(
         }
     }
 
+    private fun FirContractDescriptionOwner.isAccessorOf(declaration: FirDeclaration): Boolean {
+        return declaration is FirProperty && (declaration.getter == this || declaration.setter == this)
+    }
+
     override fun visitThisReceiverExpression(
         thisReceiverExpression: FirThisReceiverExpression,
         data: Nothing?
     ): ConeContractDescriptionElement? {
         val declaration = thisReceiverExpression.calleeReference.boundSymbol?.fir ?: return null
-        return if (declaration == owner) {
+        return if (declaration == owner || owner.isAccessorOf(declaration)) {
             val type = thisReceiverExpression.typeRef.coneType
             toValueParameterReference(type, -1, "this")
         } else {
@@ -148,8 +176,8 @@ class ConeEffectExtractor(
 
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Nothing?): ConeContractDescriptionElement? {
         return when (constExpression.kind) {
-            FirConstKind.Null -> ConeConstantReference.NULL
-            FirConstKind.Boolean -> when (constExpression.value as Boolean) {
+            ConstantValueKind.Null -> ConeConstantReference.NULL
+            ConstantValueKind.Boolean -> when (constExpression.value as Boolean) {
                 true -> ConeBooleanConstantReference.TRUE
                 false -> ConeBooleanConstantReference.FALSE
             }

@@ -4,6 +4,10 @@ import java.lang.System;
 public final class CrashMe {
     private final int resources = 1;
 
+    public CrashMe() {
+        super();
+    }
+
     public final int getResources() {
         return 0;
     }
@@ -11,9 +15,5 @@ public final class CrashMe {
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getResources() {
         return null;
-    }
-
-    public CrashMe() {
-        super();
     }
 }

@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Foo(val x: Int) : Comparable<Foo> {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Foo(val x: Int) : Comparable<Foo> {
     override fun compareTo(other: Foo): Int {
         return 10
     }

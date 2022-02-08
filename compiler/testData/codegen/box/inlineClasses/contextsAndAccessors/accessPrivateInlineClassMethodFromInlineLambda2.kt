@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class R(private val r: Long) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class R(private val r: Long) {
     fun test() = run { ok() }
 
     private fun ok() = "OK"

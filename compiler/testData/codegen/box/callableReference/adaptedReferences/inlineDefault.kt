@@ -1,13 +1,9 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_TEXT
-// !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 inline fun foo(mkString: () -> String): String =
         mkString()
 
 fun bar (xs: CharArray = charArrayOf('O','K')) =
-        String(xs)
+        xs.concatToString()
 
 fun box(): String = foo(::bar)

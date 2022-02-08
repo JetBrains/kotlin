@@ -2,22 +2,22 @@
 
 fun unreachable0() {
     return
-    return todo()
+    <!UNREACHABLE_CODE!>return todo()<!>
 }
 
 fun unreachable2() {
     return
-    val a = todo()
+    <!UNREACHABLE_CODE!>val <!UNUSED_VARIABLE!>a<!> = todo()<!>
 }
 
 fun unreachable3() {
     return
-    bar(todo())
+    <!UNREACHABLE_CODE!>bar(todo())<!>
 }
 
 fun unreachable4(array: Array<Any>) {
     return
-    array[todo()]
+    <!UNREACHABLE_CODE!>array[todo()]<!>
 }
 
 fun bar(a: Any) {}

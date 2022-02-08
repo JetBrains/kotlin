@@ -2,13 +2,11 @@ description = 'Kotlin Test Common'
 
 apply plugin: 'kotlin-platform-common'
 
-configurePublishing(project)
-
-jvmTarget = "1.6"
+JvmToolchain.updateJvmTarget(project, "1.6")
 
 dependencies {
-    compile kotlinStdlib("common")
-    testCompile project(":kotlin-test:kotlin-test-annotations-common")
+    api kotlinStdlib("common")
+    testApi project(":kotlin-test:kotlin-test-annotations-common")
 }
 
 jar {
@@ -19,14 +17,14 @@ configureSourcesJar()
 configureJavadocJar()
 
 tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinCompile) {
-    kotlinOptions.freeCompilerArgs += "-Xallow-kotlin-package"
+    kotlinOptions.freeCompilerArgs += ["-Xallow-kotlin-package", "-opt-in=kotlin.RequiresOptIn"]
 }
 
 compileKotlinCommon {
     kotlinOptions {
         freeCompilerArgs += [
                 "-module-name", project.name,
-                "-Xopt-in=kotlin.contracts.ExperimentalContracts",
+                "-opt-in=kotlin.contracts.ExperimentalContracts",
         ]
     }
 }

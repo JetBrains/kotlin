@@ -19,7 +19,7 @@ fun foo(): String? {
         if (true)
             return@run
         else
-            if (true) <!UNUSED_EXPRESSION!>42<!>
+            if (true) 42
     }
 
     run {

@@ -9,12 +9,12 @@ class CustomDelegate {
     operator fun getValue(thisRef: Any?, prop: KProperty<*>): String = prop.name
 }
 
-public class A(@param:Ann @Ann val x: Int, @param: RepeatableAnn @Ann val y: Int) {
+public class A(@param:Ann <!REPEATED_ANNOTATION!>@Ann<!> val x: Int, @param: RepeatableAnn @Ann val y: Int) {
 
     @field:Ann @property:Ann @RepeatableAnn @property:RepeatableAnn
     val a: Int = 0
 
-    @Ann @field:Ann @property:Ann
+    @Ann @field:Ann <!REPEATED_ANNOTATION!>@property:Ann<!>
     val b: Int = 0
 
     @field:RepeatableAnn @field:RepeatableAnn
@@ -45,15 +45,15 @@ annotation class fieldOrPropAnn
 @Target(AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.VALUE_PARAMETER)
 annotation class getSetAndParamAnn
 
-public class B(@param:fieldOrPropAnn @fieldOrPropAnn val x: Int,
-               @property:fieldOrPropAnn @fieldOrPropAnn val y: Int) {
+public class B(<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@param:fieldOrPropAnn<!> @fieldOrPropAnn val x: Int,
+               @property:fieldOrPropAnn <!REPEATED_ANNOTATION!>@fieldOrPropAnn<!> val y: Int) {
     @fieldOrPropAnn @field:fieldOrPropAnn
     val z: Int = 42
 
-    @getSetAndParamAnn
+    <!WRONG_ANNOTATION_TARGET!>@getSetAndParamAnn<!>
     @setparam:getSetAndParamAnn
     var w: Int
-        @getSetAndParamAnn @get:getSetAndParamAnn get() = 0
+        @getSetAndParamAnn <!REPEATED_ANNOTATION!>@get:getSetAndParamAnn<!> get() = 0
         // See KT-15470: fake INAPPLICABLE_TARGET_ON_PROPERTY
-        @getSetAndParamAnn @set:getSetAndParamAnn set(arg) {}
+        @getSetAndParamAnn <!INAPPLICABLE_TARGET_ON_PROPERTY, REPEATED_ANNOTATION!>@set:getSetAndParamAnn<!> set(arg) {}
 }

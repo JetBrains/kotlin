@@ -1,4 +1,4 @@
-// !WITH_NEW_INFERENCE
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 import kotlin.reflect.KCallable
@@ -11,7 +11,7 @@ class Foo {
     }
 
     fun foo() {
-        <!NI;NONE_APPLICABLE, OI;OVERLOAD_RESOLUTION_AMBIGUITY!>installRoute<!><Any>(::route)
+        <!NONE_APPLICABLE!>installRoute<!><Any>(::route)
     }
 
 }

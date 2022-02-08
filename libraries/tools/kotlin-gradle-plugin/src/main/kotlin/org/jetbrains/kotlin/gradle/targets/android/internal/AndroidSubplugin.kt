@@ -19,6 +19,7 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.model.builder.KotlinAndroidExtensionModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -48,16 +49,13 @@ class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private v
     }
 
     private fun addAndroidExtensionsRuntime(project: Project) {
-        val kotlinPluginVersion = project.getKotlinPluginVersion() ?: run {
-            project.logger.error("Kotlin plugin should be enabled before 'kotlin-android-extensions'")
-            return
-        }
+        val kotlinPluginVersion = project.getKotlinPluginVersion()
 
         project.configurations.all { configuration ->
             val name = configuration.name
             if (name != "implementation" && name != "compile") return@all
 
-            val androidPluginVersion = loadAndroidPluginVersion() ?: return@all
+            androidPluginVersion ?: return@all
             val requiredConfigurationName = when {
                 compareVersionNumbers(androidPluginVersion, "2.5") > 0 -> "implementation"
                 else -> "compile"
@@ -76,7 +74,7 @@ class AndroidExtensionsSubpluginIndicator @Inject internal constructor(private v
 
 class AndroidSubplugin :
     KotlinCompilerPluginSupportPlugin,
-    @Suppress("DEPRECATION") // implementing to fix KT-39809
+    @Suppress("DEPRECATION_ERROR") // implementing to fix KT-39809
     KotlinGradleSubplugin<AbstractCompile>
 {
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {
@@ -118,7 +116,7 @@ class AndroidSubplugin :
 
         val mainSourceSet = sourceSets.getByName("main")
         val manifestFile = mainSourceSet.manifest.srcFile
-        val applicationPackage = getApplicationPackageFromManifest(manifestFile) ?: run {
+        val applicationPackage = getApplicationPackage(androidExtension, manifestFile) ?: run {
             project.logger.warn(
                 "Application package name is not present in the manifest file (${manifestFile.absolutePath})"
             )
@@ -138,7 +136,7 @@ class AndroidSubplugin :
                 )
             )
             kotlinCompilation.compileKotlinTaskProvider.configure {
-                it.inputs.files(getLayoutDirectories(project, sourceSet.res.srcDirs)).withPathSensitivity(PathSensitivity.RELATIVE)
+                it.source(getLayoutDirectories(project, sourceSet.res.srcDirs))
             }
         }
 
@@ -184,7 +182,7 @@ class AndroidSubplugin :
         )
 
         val mainSourceSet = androidExtension.sourceSets.getByName("main")
-        pluginOptions += SubpluginOption("package", getApplicationPackage(project, mainSourceSet))
+        pluginOptions += SubpluginOption("package", getApplicationPackage(androidExtension, project, mainSourceSet))
 
         fun addVariant(name: String, resDirectories: FileCollection) {
             val optionValue = lazy {
@@ -203,7 +201,16 @@ class AndroidSubplugin :
             )
 
             kotlinCompile.configure {
-                it.inputs.files(getLayoutDirectories(project, resDirectories)).withPathSensitivity(PathSensitivity.RELATIVE)
+                it.inputs.files(getLayoutDirectories(project, resDirectories))
+                    .withPathSensitivity(PathSensitivity.RELATIVE)
+                    .withPropertyName("androidExtensionLayoutsFrom$name")
+                    .run {
+                        if (GradleVersion.current() >= GradleVersion.version("6.8")) {
+                            ignoreEmptyDirectories()
+                        } else {
+                            this!!
+                        }
+                    }
             }
         }
 
@@ -263,9 +270,9 @@ class AndroidSubplugin :
         return project.files(Callable { lazyFiles.value })
     }
 
-    private fun getApplicationPackage(project: Project, mainSourceSet: AndroidSourceSet): String {
+    private fun getApplicationPackage(androidExtension: BaseExtension, project: Project, mainSourceSet: AndroidSourceSet): String {
         val manifestFile = mainSourceSet.manifest.srcFile
-        val applicationPackage = getApplicationPackageFromManifest(manifestFile)
+        val applicationPackage = getApplicationPackage(androidExtension, manifestFile)
 
         if (applicationPackage == null) {
             project.logger.warn(
@@ -279,7 +286,34 @@ class AndroidSubplugin :
         }
     }
 
-    private fun getApplicationPackageFromManifest(manifestFile: File): String? {
+    private fun getApplicationPackage(androidExtension: BaseExtension, manifestFile: File): String? {
+        // Starting AGP 7 the package can be set via the DSL namespace value:
+        //
+        // android {
+        //   namespace "com.example"
+        // }
+        //
+        // instead of via the "package" attribute in the manifest file.
+        //
+        // Starting AGP 8, the package *must* be set via the DSL and the manifest file
+        // attribute cannot be used.
+        //
+        // See https://issuetracker.google.com/issues/172361895
+        //
+        // Therefore, we try to get the package from there first. Since we support AGP versions
+        // prior to AGP 7, we need to reflectively find and call it.
+        try {
+            val method = androidExtension.javaClass.getDeclaredMethod("getNamespace")
+            val result = method.invoke(androidExtension)
+            if (result is String && result.isNotEmpty()) {
+                return result
+            }
+        } catch (e: ReflectiveOperationException) {
+            // Ignore and try parsing manifest.
+        }
+
+        // Didn't find the namespace getter, or it was not set. Try parsing the
+        // manifest to find the "package" attribute from there.
         try {
             return manifestFile.parseXml().documentElement.getAttribute("package")
         } catch (e: Exception) {

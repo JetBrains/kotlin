@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_VARIABLE, -UNUSED_PARAMETER
 
 fun foo(i: Int) {}
@@ -11,7 +10,7 @@ fun test() {
     val x2: (Int) -> Unit = baz(id(::foo), ::foo)
     val x3: (Int) -> Unit = baz(id(::foo), id(id(::foo)))
     val x4: (String) -> Unit = baz(id(::foo), id(id(::foo)))
-    val x5: (Double) -> Unit = baz(id(::<!NI;CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY, OI;NONE_APPLICABLE!>foo<!>), id(id(::<!NI;CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY, OI;NONE_APPLICABLE!>foo<!>)))
+    val x5: (Double) -> Unit = baz(id(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>foo<!>), id(id(::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>foo<!>)))
 
 
     id<(Int) -> Unit>(id(id(::foo)))

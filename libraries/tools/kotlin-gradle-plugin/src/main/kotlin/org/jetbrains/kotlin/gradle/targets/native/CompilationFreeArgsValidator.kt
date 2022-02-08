@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.native
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.utils.appendLine
 
 internal object CompilationFreeArgsValidator : AggregateReporter() {
 
@@ -66,24 +67,24 @@ internal object CompilationFreeArgsValidator : AggregateReporter() {
         }
 
         val message = buildString {
-            appendln()
-            appendln("The following free compiler arguments must be specified for a binary instead of a compilation:")
+            appendLine()
+            appendLine("The following free compiler arguments must be specified for a binary instead of a compilation:")
             incorrectArgs.forEach { (project, reports) ->
-                appendln("* In project '${project.path}':".withIndent(1))
+                appendLine("* In project '${project.path}':".withIndent(1))
                 val groupedReports = reports
                     .groupBy { it.target }
                     .toSortedMap(compareBy { it.name })
                 groupedReports.forEach { (target, reports) ->
-                    appendln("* In target '${target.name}':".withIndent(2))
+                    appendLine("* In target '${target.name}':".withIndent(2))
                     reports.forEach {
-                        appendln(
+                        appendLine(
                             "* Compilation: '${it.compilation.name}', arguments: [${it.incorrectArgs.joinToString()}]".withIndent(3)
                         )
                     }
                 }
             }
-            appendln()
-            appendln(
+            appendLine()
+            appendLine(
                 """
                 Please move them into final binary declarations. E.g. binaries.executable { freeCompilerArgs += "..." }
                 See more about final binaries: https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#building-final-native-binaries.

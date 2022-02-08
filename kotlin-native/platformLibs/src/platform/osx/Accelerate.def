@@ -1,0 +1,7 @@
+depends = ApplicationServices CFNetwork CoreFoundation CoreGraphics CoreServices CoreText CoreVideo DiskArbitration IOKit IOSurface ImageIO Security darwin libkern osx posix
+language = Objective-C
+package = platform.Accelerate
+modules = Accelerate
+
+compilerOpts = -framework Accelerate
+linkerOpts = -framework Accelerate

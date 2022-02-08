@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Relevant {
     companion object {
         val value = ""

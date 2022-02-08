@@ -9,13 +9,7 @@ import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 
 interface ResolutionAnchorProvider {
-    fun getResolutionAnchor(moduleDescriptor: ModuleDescriptor): ModuleDescriptor? = null
-
-    companion object {
-        val Default: ResolutionAnchorProvider = object : ResolutionAnchorProvider {
-            override fun getResolutionAnchor(moduleDescriptor: ModuleDescriptor): ModuleDescriptor? = null
-        }
-    }
+    fun getResolutionAnchor(moduleDescriptor: ModuleDescriptor): ModuleDescriptor?
 }
 
 val RESOLUTION_ANCHOR_PROVIDER_CAPABILITY = ModuleCapability<ResolutionAnchorProvider>("ResolutionAnchorProvider")

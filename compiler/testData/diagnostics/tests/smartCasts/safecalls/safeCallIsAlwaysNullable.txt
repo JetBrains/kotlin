@@ -1,0 +1,12 @@
+package
+
+public fun takeInt(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun test_1(/*0*/ a: A): kotlin.Unit
+public fun test_2(/*0*/ a: A?): kotlin.Unit
+
+public interface A {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun foo(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

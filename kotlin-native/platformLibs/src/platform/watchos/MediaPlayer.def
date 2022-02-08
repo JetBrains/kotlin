@@ -1,0 +1,7 @@
+depends = AVFoundation CoreAudio CoreAudioTypes CoreFoundation CoreGraphics CoreMedia CoreVideo Foundation Security darwin posix
+language = Objective-C
+package = platform.MediaPlayer
+modules = MediaPlayer
+
+compilerOpts = -framework MediaPlayer
+linkerOpts = -framework MediaPlayer

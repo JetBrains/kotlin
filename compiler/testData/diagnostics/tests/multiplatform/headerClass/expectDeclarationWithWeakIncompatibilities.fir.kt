@@ -12,17 +12,17 @@ expect val s: String
 
 expect open class Foo3
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 
 // FILE: jvm.kt
 
 interface Foo1
-actual interface Foo2
+<!ACTUAL_WITHOUT_EXPECT!>actual interface Foo2<!>
 
-actual var s: String = "value"
+<!ACTUAL_WITHOUT_EXPECT!>actual var s: String = "value"<!>
 
 fun foo2(): Int = 0
 
-<!REDECLARATION!>actual class Foo3<!>
+<!ACTUAL_WITHOUT_EXPECT!>actual class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo3<!><!>
 
-<!REDECLARATION!>class Foo3<!>
+class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>Foo3<!>

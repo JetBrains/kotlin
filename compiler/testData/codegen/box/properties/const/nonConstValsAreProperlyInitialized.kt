@@ -1,6 +1,5 @@
-// !LANGUAGE: +NoConstantValueAttributeForNonConstVals +JvmFieldInInterface
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.test.assertEquals
 

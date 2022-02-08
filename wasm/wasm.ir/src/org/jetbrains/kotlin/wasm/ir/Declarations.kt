@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.wasm.ir
 
 class WasmModule(
     val functionTypes: List<WasmFunctionType> = emptyList(),
-    val structs: List<WasmStructDeclaration> = emptyList(),
+    val gcTypes: List<WasmTypeDeclaration> = emptyList(),
 
     val importsInOrder: List<WasmNamedModuleField> = emptyList(),
     val importedFunctions: List<WasmFunction.Imported> = emptyList(),
     val importedMemories: List<WasmMemory> = emptyList(),
     val importedTables: List<WasmTable> = emptyList(),
     val importedGlobals: List<WasmGlobal> = emptyList(),
+    val importedTags: List<WasmTag> = emptyList(),
 
     val definedFunctions: List<WasmFunction.Defined> = emptyList(),
     val tables: List<WasmTable> = emptyList(),
@@ -22,6 +23,7 @@ class WasmModule(
     val globals: List<WasmGlobal> = emptyList(),
     val exports: List<WasmExport<*>> = emptyList(),
     val elements: List<WasmElement> = emptyList(),
+    val tags: List<WasmTag> = emptyList(),
 
     val startFunction: WasmFunction? = null,
 
@@ -76,7 +78,7 @@ class WasmData(
 ) : WasmNamedModuleField()
 
 class WasmTable(
-    val limits: WasmLimits = WasmLimits(1u, null),
+    var limits: WasmLimits = WasmLimits(1u, null),
     val elementType: WasmType,
     val importPair: WasmImportPair? = null
 ) : WasmNamedModuleField() {
@@ -100,6 +102,15 @@ class WasmElement(
         object Passive : Mode()
         class Active(val table: WasmTable, val offset: List<WasmInstr>) : Mode()
         object Declarative : Mode()
+    }
+}
+
+class WasmTag(
+    val type: WasmFunctionType,
+    val importPair: WasmImportPair? = null
+) : WasmNamedModuleField() {
+    init {
+        assert(type.resultTypes.isEmpty()) { "Must have empty return as per current spec" }
     }
 }
 
@@ -128,6 +139,7 @@ sealed class WasmExport<T : WasmNamedModuleField>(
     class Table(name: String, field: WasmTable) : WasmExport<WasmTable>(name, field, 0x1, "table")
     class Memory(name: String, field: WasmMemory) : WasmExport<WasmMemory>(name, field, 0x2, "memory")
     class Global(name: String, field: WasmGlobal) : WasmExport<WasmGlobal>(name, field, 0x3, "global")
+    class Tag(name: String, field: WasmTag) : WasmExport<WasmTag>(name, field, 0x4, "tag")
 }
 
 sealed class WasmTypeDeclaration(
@@ -143,6 +155,11 @@ class WasmFunctionType(
 class WasmStructDeclaration(
     name: String,
     val fields: List<WasmStructFieldDeclaration>
+) : WasmTypeDeclaration(name)
+
+class WasmArrayDeclaration(
+    name: String,
+    val field: WasmStructFieldDeclaration
 ) : WasmTypeDeclaration(name)
 
 class WasmStructFieldDeclaration(

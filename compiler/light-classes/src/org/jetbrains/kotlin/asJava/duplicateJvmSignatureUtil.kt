@@ -24,13 +24,12 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.classes.safeIsScript
 import org.jetbrains.kotlin.diagnostics.Diagnostic
-import org.jetbrains.kotlin.diagnostics.DiagnosticFactory.cast
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 
@@ -90,8 +89,7 @@ fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostic
         return null
     }
 
-    val result = doGetDiagnostics()
-    if (result == null) return null
+    val result = doGetDiagnostics() ?: return null
 
     return FilteredJvmDiagnostics(result, otherDiagnostics)
 }
@@ -111,7 +109,7 @@ class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnosti
     }
 
     override fun forElement(psiElement: PsiElement): Collection<Diagnostic> {
-        fun Diagnostic.data() = cast(this, jvmDiagnosticFactories).a
+        fun Diagnostic.data() = DiagnosticFactory.cast(this, jvmDiagnosticFactories).a
         val (conflicting, other) = jvmDiagnostics.forElement(psiElement).partition { it.factory in jvmDiagnosticFactories }
         if (alreadyReported(psiElement)) {
             // CONFLICTING_OVERLOADS already reported, no need to duplicate it
@@ -125,22 +123,19 @@ class FilteredJvmDiagnostics(val jvmDiagnostics: Diagnostics, val otherDiagnosti
             val diagnostics = it.value
             if (diagnostics.size <= 1) {
                 filtered.addAll(diagnostics)
-            }
-            else {
+            } else {
                 filtered.addAll(
-                        diagnostics.filter {
-                            me ->
-                            diagnostics.none {
-                                other ->
-                                me != other && (
-                                        // in case of implementation copied from a super trait there will be both diagnostics on the same signature
-                                        other.factory == ErrorsJvm.CONFLICTING_JVM_DECLARATIONS && (me.factory == ACCIDENTAL_OVERRIDE ||
-                                                                                                    me.factory == CONFLICTING_INHERITED_JVM_DECLARATIONS)
-                                        // there are paris of corresponding signatures that frequently clash simultaneously: multifile class & part, trait and trait-impl
-                                        || other.data().higherThan(me.data())
-                                        )
-                            }
+                    diagnostics.filter { me ->
+                        diagnostics.none { other ->
+                            me != other && (
+                                    // in case of implementation copied from a super trait there will be both diagnostics on the same signature
+                                    other.factory == CONFLICTING_JVM_DECLARATIONS && (me.factory == ACCIDENTAL_OVERRIDE ||
+                                            me.factory == CONFLICTING_INHERITED_JVM_DECLARATIONS)
+                                            // there are paris of corresponding signatures that frequently clash simultaneously: multifile class & part, trait and trait-impl
+                                            || other.data().higherThan(me.data())
+                                    )
                         }
+                    }
                 )
             }
         }

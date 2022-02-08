@@ -41,6 +41,7 @@ inline class Z(@get:AGet val x: Int) : IFoo {
     override val overridingVal: Int
         get() = x
 
+    @Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
     @A @get:AGet @set:ASet @setparam:ASetParam
     override var overridingVar: Int
         get() = x
@@ -50,6 +51,7 @@ inline class Z(@get:AGet val x: Int) : IFoo {
     override val @receiver:AReceiver String.overridingExtVal: Int
         get() = x
 
+    @Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
     @A @get:AGet @set:ASet @setparam:ASetParam
     override var @receiver:AReceiver String.overridingExtVar: Int
         get() = x
@@ -64,6 +66,7 @@ inline class Z(@get:AGet val x: Int) : IFoo {
     @A @get:AGet
     val nonOverridingVal: Int get() = x
 
+    @Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
     @A @get:AGet @set:ASet @setparam:ASetParam
     var nonOverridingVar: Int
         get() = x
@@ -73,6 +76,7 @@ inline class Z(@get:AGet val x: Int) : IFoo {
     val @receiver:AReceiver String.nonOverridingExtVal: Int
         get() = x
 
+    @Suppress("RESERVED_VAR_PROPERTY_OF_VALUE_CLASS")
     @A @get:AGet @set:ASet @setparam:ASetParam
     var @receiver:AReceiver String.nonOverridingExtVar: Int
         get() = x

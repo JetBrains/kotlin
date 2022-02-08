@@ -1,7 +1,0 @@
-open class A(a: Int) {
-    // INFO: {"checked": "true"}
-    val n: Int = a + 1
-}
-
-class B(a: Int): A(a) {
-}

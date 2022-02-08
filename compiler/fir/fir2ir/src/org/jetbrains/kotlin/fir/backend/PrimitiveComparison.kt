@@ -9,9 +9,8 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.expressions.FirComparisonExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class PrimitiveConeNumericComparisonInfo(
     val comparisonType: ConeClassLikeType,
@@ -43,17 +42,17 @@ private fun leastCommonPrimitiveNumericType(t1: ConeClassLikeType, t2: ConeClass
     val pt2 = t2.promoteIntegerTypeToIntIfRequired()
 
     return when {
-        pt1.isDouble() || pt2.isDouble() -> PrimitiveTypes.Double
-        pt1.isFloat() || pt2.isFloat() -> PrimitiveTypes.Float
-        pt1.isLong() || pt2.isLong() -> PrimitiveTypes.Long
-        pt1.isInt() || pt2.isInt() -> PrimitiveTypes.Int
+        pt1.isDouble() || pt2.isDouble() -> StandardTypes.Double
+        pt1.isFloat() || pt2.isFloat() -> StandardTypes.Float
+        pt1.isLong() || pt2.isLong() -> StandardTypes.Long
+        pt1.isInt() || pt2.isInt() -> StandardTypes.Int
         else -> error("Unexpected types: t1=$t1, t2=$t2")
     }
 }
 
 private fun ConeClassLikeType.promoteIntegerTypeToIntIfRequired(): ConeClassLikeType =
     when (lookupTag.classId) {
-        StandardClassIds.Byte, StandardClassIds.Short -> PrimitiveTypes.Int
+        StandardClassIds.Byte, StandardClassIds.Short -> StandardTypes.Int
         StandardClassIds.Long, StandardClassIds.Int, StandardClassIds.Float, StandardClassIds.Double, StandardClassIds.Char -> this
         else -> error("Primitive number type expected: $this")
     }
@@ -61,7 +60,7 @@ private fun ConeClassLikeType.promoteIntegerTypeToIntIfRequired(): ConeClassLike
 private fun ConeKotlinType.getPrimitiveTypeOrSupertype(): ConeClassLikeType? =
     when {
         this is ConeTypeParameterType ->
-            this.lookupTag.typeParameterSymbol.fir.bounds.firstNotNullResult {
+            this.lookupTag.typeParameterSymbol.fir.bounds.firstNotNullOfOrNull {
                 it.coneType.getPrimitiveTypeOrSupertype()
             }
         this is ConeClassLikeType && isPrimitiveNumberType() ->

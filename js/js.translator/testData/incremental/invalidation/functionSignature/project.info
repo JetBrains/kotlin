@@ -1,0 +1,36 @@
+MODULES: lib1, main
+
+STEP 0:
+    libs: lib1, main
+STEP 1:
+    libs: lib1, main
+STEP 2:
+    libs: lib1, main
+STEP 3:
+    libs: lib1, main
+STEP 4:
+    libs: lib1, main
+STEP 5:
+    libs: lib1, main
+STEP 6:
+    libs: lib1, main
+STEP 7:
+    libs: lib1, main
+STEP 8:
+    libs: lib1, main
+STEP 9:
+    libs: lib1, main
+STEP 10:
+    libs: lib1, main
+STEP 11:
+    libs: lib1, main
+STEP 12:
+    libs: lib1, main
+STEP 13:
+    libs: lib1, main
+STEP 14:
+    libs: lib1, main
+STEP 15:
+    libs: lib1, main
+STEP 16:
+    libs: lib1, main

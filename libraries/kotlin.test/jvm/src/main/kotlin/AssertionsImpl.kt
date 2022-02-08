@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,8 @@
 
 package kotlin.test
 
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 import kotlin.internal.*
 import kotlin.reflect.*
 
@@ -51,6 +53,43 @@ fun <T : Throwable> assertFailsWithNoInline(exceptionClass: KClass<T>, block: ()
 fun <T : Throwable> assertFailsWithNoInline(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T =
     assertFailsWith(exceptionClass, message, block)
 
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@JvmName("assertTrue")
+fun assertTrueNoInline(message: String? = null, block: () -> Boolean) {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    assertTrue(block(), message)
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@JvmName("assertFalse")
+fun assertFalseNoInline(message: String? = null, block: () -> Boolean) {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    assertFalse(block(), message)
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@JvmName("assertNotNull")
+fun <T : Any, R> assertNotNullNoInline(actual: T?, message: String? = null, block: (T) -> R) {
+    contract { returns() implies (actual != null) }
+    asserter.assertNotNull(message, actual)
+    if (actual != null) {
+        block(actual)
+    }
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@JvmName("expect")
+fun <T> expectNoInline(expected: T, block: () -> T) {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    assertEquals(expected, block())
+}
+
+@Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+@JvmName("expect")
+fun <T> expectNoInline(expected: T, message: String?, block: () -> T) {
+    contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+    assertEquals(expected, block(), message)
+}
 
 /**
  * Takes the given [block] of test code and _doesn't_ execute it.

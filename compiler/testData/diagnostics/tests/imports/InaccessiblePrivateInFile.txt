@@ -1,0 +1,58 @@
+// -- Module: <m1> --
+package
+
+package api {
+
+    public interface ApplicabilityResult {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        public object Inapplicable : api.ApplicabilityResult {
+            private constructor Inapplicable()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+        }
+    }
+
+    public interface ArgumentMapping {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public abstract fun highlightingApplicabilities(): api.ApplicabilityResult
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+// -- Module: <m2> --
+package
+
+package impl {
+
+    private final data class ApplicabilityResult {
+        public constructor ApplicabilityResult(/*0*/ applicable: kotlin.Boolean)
+        public final val applicable: kotlin.Boolean
+        public final operator /*synthesized*/ fun component1(): kotlin.Boolean
+        public final /*synthesized*/ fun copy(/*0*/ applicable: kotlin.Boolean = ...): impl.ApplicabilityResult
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    public final class NullArgumentMapping : api.ArgumentMapping {
+        public constructor NullArgumentMapping()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ fun highlightingApplicabilities(): api.ApplicabilityResult
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public final class PositionalArgumentMapping : api.ArgumentMapping {
+        public constructor PositionalArgumentMapping()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ fun highlightingApplicabilities(): api.ApplicabilityResult
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+

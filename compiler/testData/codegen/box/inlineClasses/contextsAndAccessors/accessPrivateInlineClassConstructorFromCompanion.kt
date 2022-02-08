@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Composed(val s: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Composed(val s: String) {
     private constructor(s1: String, s2: String) : this(s1 + s2)
 
     companion object {

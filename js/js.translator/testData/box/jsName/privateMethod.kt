@@ -7,7 +7,7 @@ object A {
 }
 
 fun test() = js("""
-return JS_TESTS.A.js_f(23);
+return main.A.js_f(23);
 """)
 
 fun box(): String {

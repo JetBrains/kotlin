@@ -1,6 +1,6 @@
 // "Annotate containing class with ''@Parcelize''" "true"
 // ERROR: Class 'Foo' should be annotated with '@Parcelize'
-// WITH_RUNTIME
+// WITH_STDLIB
 
 package com.myapp.activity
 

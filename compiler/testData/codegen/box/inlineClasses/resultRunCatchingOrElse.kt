@@ -1,6 +1,11 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: EXCEPTIONS_NOT_IMPLEMENTED
-inline class Result<out T>(val value: Any?) {
+// IGNORE_BACKEND: WASM
+// WASM_MUTE_REASON: TYPE_ISSUES
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Result<out T>(val value: Any?) {
     fun exceptionOrNull(): Throwable? =
         when (value) {
             is Failure -> value.exception

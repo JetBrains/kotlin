@@ -1,8 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_COLLECTIONS
-// !LANGUAGE: +NewInference
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 fun test(foo: MutableList<String>?): List<String> {
     val bar = foo ?: listOf()

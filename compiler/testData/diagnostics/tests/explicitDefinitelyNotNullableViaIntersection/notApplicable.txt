@@ -1,0 +1,15 @@
+package
+
+public fun </*0*/ F> bar1(/*0*/ x: F?): kotlin.Unit
+public fun </*0*/ F> bar10(/*0*/ x: F & Any): kotlin.Unit
+public fun </*0*/ F> bar11(/*0*/ x: kotlin.Double): kotlin.Unit
+public fun </*0*/ F> bar2(/*0*/ x: F): kotlin.Unit
+public fun </*0*/ F> bar3(/*0*/ x: F?): kotlin.Unit
+public fun </*0*/ F> bar4(/*0*/ x: F?): kotlin.Unit
+public fun </*0*/ F> bar5(/*0*/ x: F): kotlin.Unit
+public fun </*0*/ F> bar6(/*0*/ x: F): kotlin.Unit
+public fun </*0*/ F> bar7(/*0*/ x: F & Any): kotlin.Unit
+public fun </*0*/ F> bar8(/*0*/ x: F & Any.() -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ T : kotlin.Any> foo(/*0*/ x: T, /*1*/ y: kotlin.collections.List<kotlin.String>): kotlin.Unit
+public fun </*0*/ F> F & Any.bar9(/*0*/ x: () -> kotlin.Unit): kotlin.Unit
+

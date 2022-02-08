@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.serialization
 
 import org.jetbrains.kotlin.config.AnalysisFlag
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -32,11 +33,12 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
         analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap(),
         fqNamesWithRequirements: List<String>,
         fqNamesWithoutRequirement: List<String> = emptyList(),
-        shouldBeSingleRequirement: Boolean = true
+        shouldBeSingleRequirement: Boolean = true,
+        specificFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap()
     ) {
         compileFiles(
             listOf(File("compiler/testData/versionRequirement/${getTestName(true)}.kt")),
-            tmpdir, customLanguageVersion, analysisFlags
+            tmpdir, customLanguageVersion, analysisFlags, specificFeatures
         )
         val module = loadModule(tmpdir)
 
@@ -116,7 +118,8 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
         files: List<File>,
         outputDirectory: File,
         languageVersion: LanguageVersion,
-        analysisFlags: Map<AnalysisFlag<*>, Any?>
+        analysisFlags: Map<AnalysisFlag<*>, Any?>,
+        specificFeatures: Map<LanguageFeature, LanguageFeature.State>
     )
 
     protected abstract fun loadModule(directory: File): ModuleDescriptor
@@ -135,6 +138,28 @@ abstract class AbstractVersionRequirementTest : TestCaseWithTmpdir() {
                 "test.async4",
                 "test.asyncVal"
             )
+        )
+    }
+
+    fun testDefinitelyNotNull() {
+        doTest(
+            VersionRequirement.Version(1, 7), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
+            customLanguageVersion = LanguageVersion.KOTLIN_1_7,
+            fqNamesWithRequirements = listOf(
+                "test.A.foo",
+                "test.A.w",
+                "test.B.<init>",
+                "test.bar1",
+                "test.bar2",
+                "test.nn",
+                "test.Outer.R1",
+                "test.Outer.R2",
+                "test.Alias",
+            ),
+            fqNamesWithoutRequirement = listOf(
+                "test.Outer",
+                "test.Outer.W",
+            ),
         )
     }
 

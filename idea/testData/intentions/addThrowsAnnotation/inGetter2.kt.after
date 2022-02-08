@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-
-@get:Throws(RuntimeException::class, Exception::class)
-val a: String
-    get() = throw Exception()

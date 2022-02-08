@@ -25,7 +25,7 @@ abstract class AbstractArgumentParsingTest : TestCase() {
         val before = sections.single { it.name == "before" }
 
         val messageCollector = TestMessageCollector()
-        val transformedArgs = transformArgs(before.content.split(LINE_SEPARATOR), messageCollector, isTest = true)
+        val transformedArgs = transformArgs(before.content.lines(), messageCollector, isTest = true)
         val actualAfter = if (messageCollector.hasErrors()) messageCollector.toString() else transformedArgs.joinToString(LINE_SEPARATOR)
         val actual = sections.replacingSection("after", actualAfter).render()
 

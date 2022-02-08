@@ -74,7 +74,6 @@ package p {
     }
 }
 
-
 // -- Module: <m2> --
 package
 
@@ -144,8 +143,8 @@ package p {
     }
 }
 
-
 // -- Module: <m3> --
 package
 
 public fun test(/*0*/ m1: p.M1): kotlin.Unit
+

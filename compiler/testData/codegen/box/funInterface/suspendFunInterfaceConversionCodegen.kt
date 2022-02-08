@@ -1,8 +1,5 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: COROUTINES
-// !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
 // WITH_COROUTINES
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import helpers.*
 import kotlin.coroutines.*

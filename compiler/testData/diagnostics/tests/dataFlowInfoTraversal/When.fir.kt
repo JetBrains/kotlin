@@ -11,7 +11,7 @@ fun foo() {
     }
 
     when (x) {
-        0 -> { if (x == null) return }
+        0 -> { if (<!SENSELESS_COMPARISON!>x == null<!>) return }
         else -> { if (x == null) return }
     }
     bar(x)

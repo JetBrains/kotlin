@@ -13,6 +13,7 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
 
     // User environment
     GRADLE_VERSION(OVERRIDE, COMPONENT_VERSION),
+    PROJECT_PATH(OVERRIDE, ANONYMIZE_IN_IDE),
 
     OS_TYPE(OVERRIDE, SAFE),
 
@@ -42,7 +43,12 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
     KOTLIN_API_VERSION(OVERRIDE, COMPONENT_VERSION),
     JS_GENERATE_EXECUTABLE_DEFAULT(CONCAT, SAFE),
     JS_TARGET_MODE(CONCAT, SAFE),
+    JS_OUTPUT_GRANULARITY(OVERRIDE, SAFE),
 
     // Compiler parameters
     JVM_DEFAULTS(CONCAT, SAFE),
+    USE_OLD_BACKEND(CONCAT, SAFE),
+    USE_FIR(CONCAT, SAFE),
+
+    JS_PROPERTY_LAZY_INITIALIZATION(CONCAT, SAFE),
 }

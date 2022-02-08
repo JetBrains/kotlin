@@ -1,7 +1,9 @@
+// IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: don't support legacy feature
 // !LANGUAGE: -ProhibitAssigningSingleElementsToVarargsInNamedForm
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 annotation class Ann(vararg val p: Int)
 

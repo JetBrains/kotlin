@@ -1,5 +1,0 @@
-// "Add arrayOf wrapper" "true"
-
-annotation class ArrAnn(val value: Array<String>)
-
-@ArrAnn(arrayOf("123")) class My

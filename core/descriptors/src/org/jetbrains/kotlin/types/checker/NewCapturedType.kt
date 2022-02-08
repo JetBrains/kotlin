@@ -23,11 +23,29 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructor
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.FlexibleTypeBoundsChecker.areTypesMayBeLowerAndUpperBoundsOfSameFlexibleTypeByMutability
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.CapturedTypeMarker
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.types.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+
+private class CapturedArguments(val capturedArguments: List<TypeProjection>, private val originalType: KotlinType) {
+    fun isSuitableForType(type: KotlinType): Boolean {
+        val areArgumentsMatched = type.arguments.withIndex().all { (i, typeArgumentsType) ->
+            originalType.arguments.size > i && typeArgumentsType == originalType.arguments[i]
+        }
+
+        if (!areArgumentsMatched) return false
+
+        val areConstructorsMatched = originalType.constructor == type.constructor
+                || areTypesMayBeLowerAndUpperBoundsOfSameFlexibleTypeByMutability(originalType, type)
+
+        if (!areConstructorsMatched) return false
+
+        return true
+    }
+}
 
 // null means that type should be leaved as is
 fun prepareArgumentTypeRegardingCaptureTypes(argumentType: UnwrappedType): UnwrappedType? {
@@ -42,33 +60,44 @@ fun captureFromExpression(type: UnwrappedType): UnwrappedType? {
     }
 
     /*
-     * We capture intersection types in two stages:
-     * capture type arguments for each component and replace it in the original type after that.
-     * This is to substitute captured types into flexible types properly:
-     * we should have the same captured types both for lower bound and for upper one.
-     *
-     * Example:
-     *  The original type: ({Comparable<*> & java.io.Serializable}..{Comparable<*>? & java.io.Serializable?})
-     *  Result of capturing arguments by components: [[CapturedType(*)], null]
-     *  The resulting type: ({Comparable<CapturedType(*)> & java.io.Serializable}..{Comparable<CapturedType(*)>? & java.io.Serializable?})
+     * We capture arguments in the intersection types in specific way:
+     *  1) Firstly, we create captured arguments for all type arguments grouped by a type constructor* and a type argument's type.
+     *      It means, that we create only one captured argument for two types `Foo<*>` and `Foo<*>?` within a flexible type, for instance.
+     *      * In addition to grouping by type constructors, we look at possibility locating of two types in different bounds of the same flexible type.
+     *        This is necessary in order to create the same captured arguments,
+     *        for example, for `MutableList` in the lower bound of the flexible type and for `List` in the upper one.
+     *        Example: MutableList<*>..List<*>? -> MutableList<Captured1(*)>..List<Captured2(*)>?, Captured1(*) and Captured2(*) are the same.
+     *  2) Secondly, we replace type arguments with captured arguments by given a type constructor and type arguments.
      */
-    val capturedArgumentsByComponents = captureArgumentsForIntersectionType(typeConstructor) ?: return null
+    val capturedArgumentsByComponents = captureArgumentsForIntersectionType(type) ?: return null
 
-    fun replaceArgumentsByComponents(typeToReplace: UnwrappedType) =
-        typeToReplace.constructor.supertypes.mapIndexed { i, componentType ->
-            val capturedArguments = capturedArgumentsByComponents[i] ?: return@mapIndexed componentType.asSimpleType()
-            componentType.unwrap().replaceArguments(capturedArguments)
+    // We reuse `TypeToCapture` for some types, suitability to reuse defines by `isSuitableForType`
+    fun findCorrespondingCapturedArgumentsForType(type: KotlinType) =
+        capturedArgumentsByComponents.find { typeToCapture -> typeToCapture.isSuitableForType(type) }?.capturedArguments
+
+    fun replaceArgumentsWithCapturedArgumentsByIntersectionComponents(typeToReplace: UnwrappedType): List<SimpleType> {
+        return if (typeToReplace.constructor is IntersectionTypeConstructor) {
+            typeToReplace.constructor.supertypes.map { componentType ->
+                val capturedArguments = findCorrespondingCapturedArgumentsForType(componentType)
+                    ?: return@map componentType.asSimpleType()
+                componentType.unwrap().replaceArguments(capturedArguments)
+            }
+        } else {
+            val capturedArguments = findCorrespondingCapturedArgumentsForType(typeToReplace)
+                ?: return listOf(typeToReplace.asSimpleType())
+            listOf(typeToReplace.unwrap().replaceArguments(capturedArguments))
         }
+    }
 
     return if (type is FlexibleType) {
-        val lowerIntersectedType =
-            intersectTypes(replaceArgumentsByComponents(type.lowerBound)).makeNullableAsSpecified(type.lowerBound.isMarkedNullable)
-        val upperIntersectedType =
-            intersectTypes(replaceArgumentsByComponents(type.upperBound)).makeNullableAsSpecified(type.upperBound.isMarkedNullable)
+        val lowerIntersectedType = intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type.lowerBound))
+            .makeNullableAsSpecified(type.lowerBound.isMarkedNullable)
+        val upperIntersectedType = intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type.upperBound))
+            .makeNullableAsSpecified(type.upperBound.isMarkedNullable)
 
         KotlinTypeFactory.flexibleType(lowerIntersectedType, upperIntersectedType)
     } else {
-        intersectTypes(replaceArgumentsByComponents(type)).makeNullableAsSpecified(type.isMarkedNullable)
+        intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(type)).makeNullableAsSpecified(type.isMarkedNullable)
     }
 }
 
@@ -76,15 +105,29 @@ fun captureFromExpression(type: UnwrappedType): UnwrappedType? {
 internal fun captureFromArguments(type: SimpleType, status: CaptureStatus) =
     captureArguments(type, status)?.let { type.replaceArguments(it) }
 
-private fun captureArgumentsForIntersectionType(typeConstructor: TypeConstructor): List<List<TypeProjection>?>? {
+private fun captureArgumentsForIntersectionType(type: KotlinType): List<CapturedArguments>? {
+    // It's possible to have one of the bounds as non-intersection type
+    fun getTypesToCapture(type: KotlinType) =
+        if (type.constructor is IntersectionTypeConstructor) type.constructor.supertypes else listOf(type)
+
+    val filteredTypesToCapture =
+        if (type is FlexibleType) {
+            val typesToCapture = getTypesToCapture(type.lowerBound) + getTypesToCapture(type.upperBound)
+            typesToCapture.distinctBy { (FlexibleTypeBoundsChecker.getBaseBoundFqNameByMutability(it) ?: it.constructor) to it.arguments }
+        } else type.constructor.supertypes
+
     var changed = false
-    val capturedArgumentsByComponents = typeConstructor.supertypes.map { supertype ->
-        captureArguments(supertype.unwrap(), CaptureStatus.FROM_EXPRESSION)?.apply { changed = true }
+
+    val capturedArgumentsByTypes = filteredTypesToCapture.mapNotNull { typeToCapture ->
+        val capturedArguments = captureArguments(typeToCapture.unwrap(), CaptureStatus.FROM_EXPRESSION)
+            ?: return@mapNotNull null
+        changed = true
+        CapturedArguments(capturedArguments, originalType = typeToCapture)
     }
 
     if (!changed) return null
 
-    return capturedArgumentsByComponents
+    return capturedArgumentsByTypes
 }
 
 private fun captureFromArguments(type: UnwrappedType, status: CaptureStatus): UnwrappedType? {
@@ -101,7 +144,7 @@ private fun captureFromArguments(type: UnwrappedType, status: CaptureStatus): Un
 }
 
 private fun UnwrappedType.replaceArguments(arguments: List<TypeProjection>) =
-    KotlinTypeFactory.simpleType(annotations, constructor, arguments, isMarkedNullable)
+    KotlinTypeFactory.simpleType(attributes, constructor, arguments, isMarkedNullable)
 
 private fun captureArguments(type: UnwrappedType, status: CaptureStatus): List<TypeProjection>? {
     if (type.arguments.size != type.constructor.parameters.size) return null
@@ -130,11 +173,11 @@ private fun captureArguments(type: UnwrappedType, status: CaptureStatus): List<T
 
         if (oldProjection.projectionKind == Variance.INVARIANT) continue
         val capturedTypeSupertypes = type.constructor.parameters[index].upperBounds.mapTo(mutableListOf()) {
-            NewKotlinTypeChecker.Default.transformToNewType(substitutor.safeSubstitute(it, Variance.INVARIANT).unwrap())
+            KotlinTypePreparator.Default.prepareType(substitutor.safeSubstitute(it, Variance.INVARIANT).unwrap())
         }
 
         if (!oldProjection.isStarProjection && oldProjection.projectionKind == Variance.OUT_VARIANCE) {
-            capturedTypeSupertypes += NewKotlinTypeChecker.Default.transformToNewType(oldProjection.type.unwrap())
+            capturedTypeSupertypes += KotlinTypePreparator.Default.prepareType(oldProjection.type.unwrap())
         }
 
         val capturedType = newProjection.type as NewCapturedType
@@ -156,7 +199,7 @@ class NewCapturedType(
     val captureStatus: CaptureStatus,
     override val constructor: NewCapturedTypeConstructor,
     val lowerType: UnwrappedType?, // todo check lower type for nullable captured types
-    override val annotations: Annotations = Annotations.EMPTY,
+    override val attributes: TypeAttributes = TypeAttributes.Empty,
     override val isMarkedNullable: Boolean = false,
     val isProjectionNotNull: Boolean = false
 ) : SimpleType(), CapturedTypeMarker {
@@ -169,11 +212,11 @@ class NewCapturedType(
     override val memberScope: MemberScope // todo what about foo().bar() where foo() return captured type?
         get() = ErrorUtils.createErrorScope("No member resolution should be done on captured type!", true)
 
-    override fun replaceAnnotations(newAnnotations: Annotations) =
-        NewCapturedType(captureStatus, constructor, lowerType, newAnnotations, isMarkedNullable)
+    override fun replaceAttributes(newAttributes: TypeAttributes): SimpleType =
+        NewCapturedType(captureStatus, constructor, lowerType, newAttributes, isMarkedNullable, isProjectionNotNull)
 
     override fun makeNullableAsSpecified(newNullability: Boolean) =
-        NewCapturedType(captureStatus, constructor, lowerType, annotations, newNullability)
+        NewCapturedType(captureStatus, constructor, lowerType, attributes, newNullability)
 
     @TypeRefinement
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) =
@@ -181,7 +224,7 @@ class NewCapturedType(
             captureStatus,
             constructor.refine(kotlinTypeRefiner),
             lowerType?.let { kotlinTypeRefiner.refineType(it).unwrap() },
-            annotations,
+            attributes,
             isMarkedNullable
         )
 }

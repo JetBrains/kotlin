@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 
 interface G<T> {
     fun build(): G<T>
@@ -12,5 +11,5 @@ fun <V, T : V?> G<T>.foo(vararg values: V2<V?>) = build()
 fun forReference(ref: Any?) {}
 
 fun test() {
-    forReference(G<Int?>::<!NI;CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY, OI;CANNOT_COMPLETE_RESOLVE!>foo<!>)
+    forReference(G<Int?>::<!CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY!>foo<!>)
 }

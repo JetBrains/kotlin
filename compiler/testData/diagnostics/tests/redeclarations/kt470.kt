@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 val <!REDECLARATION!>a<!> : Int = 1
 val <!REDECLARATION!>a<!> : Int = 1
 val <!REDECLARATION!>a<!> : Int = 1

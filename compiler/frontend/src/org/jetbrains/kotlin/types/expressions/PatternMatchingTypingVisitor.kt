@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
-import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.RttiOperation
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT
 import org.jetbrains.kotlin.resolve.calls.smartcasts.*
 import org.jetbrains.kotlin.resolve.calls.util.CallMaker
+import org.jetbrains.kotlin.resolve.checkers.ConfusingWhenBranchSyntaxChecker
 import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonCallChecker
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.*
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.containsError
+import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import java.util.*
 
 class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTypingInternals) : ExpressionTypingVisitor(facade) {
@@ -59,6 +60,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             val newDataFlowInfo = conditionInfo.and(typeInfo.dataFlowInfo)
             context.trace.record(BindingContext.DATAFLOW_INFO_AFTER_CONDITION, expression, newDataFlowInfo)
         }
+
+        expression.reportDeprecatedDefinitelyNotNullSyntax(expression.typeReference, contextWithExpectedType)
 
         val resultTypeInfo = components.dataFlowAnalyzer.checkType(
             typeInfo.replaceType(components.builtIns.booleanType),
@@ -146,7 +149,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                     )
                 }
 
-            override fun getCalleeExpressionForSpecialCall(): KtExpression? =
+            override fun getCalleeExpressionForSpecialCall(): KtExpression =
                 variable
 
             override val valueExpression: KtExpression?
@@ -212,7 +215,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
 
         val possibleTypesForSubject =
             subject.typeInfo?.dataFlowInfo?.getStableTypes(subject.dataFlowValue, components.languageVersionSettings)
-                    ?: emptySet()
+                ?: emptySet()
         checkSmartCastsInSubjectIfRequired(expression, contextBeforeSubject, subject.type, possibleTypesForSubject)
 
         val dataFlowInfoForEntries = analyzeConditionsInWhenEntries(expression, contextAfterSubject, subject)
@@ -247,6 +250,8 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         val branchesType = branchesTypeInfo.type ?: return noTypeInfo(resultDataFlowInfo)
         val resultType = components.dataFlowAnalyzer.checkType(branchesType, expression, contextWithExpectedType)
 
+        ConfusingWhenBranchSyntaxChecker.check(expression, contextWithExpectedType.languageVersionSettings, trace)
+
         return createTypeInfo(resultType, resultDataFlowInfo, branchesTypeInfo.jumpOutPossible, contextWithExpectedType.dataFlowInfo)
     }
 
@@ -262,7 +267,6 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             )
         } else {
             val illegalDeclarationString = when {
-                subjectVariable is KtDestructuringDeclaration -> "destructuring declaration"
                 subjectVariable.isVar -> "var"
                 subjectVariable.initializer == null -> "variable without initializer"
                 subjectVariable.hasDelegateExpression() -> "delegated property"
@@ -271,7 +275,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             }
 
             if (illegalDeclarationString != null) {
-                trace.report(Errors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT.on(subjectVariable, illegalDeclarationString))
+                trace.report(ILLEGAL_DECLARATION_IN_WHEN_SUBJECT.on(subjectVariable, illegalDeclarationString))
             }
         }
 
@@ -279,7 +283,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             ExpressionTypingUtils.newWritableScopeImpl(contextBeforeSubject, LexicalScopeKind.WHEN, components.overloadChecker)
 
         val (typeInfo, descriptor) =
-                components.localVariableResolver.process(subjectVariable, contextBeforeSubject, contextBeforeSubject.scope, facade)
+            components.localVariableResolver.process(subjectVariable, contextBeforeSubject, contextBeforeSubject.scope, facade)
 
         scopeWithSubjectVariable.addVariableDescriptor(descriptor)
 
@@ -386,12 +390,11 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
                     entryTypeInfo.dataFlowInfo
                 }
 
-            currentDataFlowInfo =
-                    when {
-                        entryType != null && KotlinBuiltIns.isNothing(entryType) -> currentDataFlowInfo
-                        currentDataFlowInfo != null -> currentDataFlowInfo.or(entryDataFlowInfo)
-                        else -> entryDataFlowInfo
-                    }
+            currentDataFlowInfo = when {
+                entryType != null && KotlinBuiltIns.isNothing(entryType) -> currentDataFlowInfo
+                currentDataFlowInfo != null -> currentDataFlowInfo.or(entryDataFlowInfo)
+                else -> entryDataFlowInfo
+            }
 
             jumpOutPossible = jumpOutPossible or entryTypeInfo.jumpOutPossible
         }
@@ -636,14 +639,18 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         if (!subjectType.containsError() && !TypeUtils.isNullableType(subjectType) && targetType.isMarkedNullable) {
             val element = typeReferenceAfterIs.typeElement
             assert(element is KtNullableType) { "element must be instance of " + KtNullableType::class.java.name }
-            context.trace.report(Errors.USELESS_NULLABLE_CHECK.on(element as KtNullableType))
+            context.trace.report(USELESS_NULLABLE_CHECK.on(element as KtNullableType))
         }
-        checkTypeCompatibility(context, targetType, subjectType, typeReferenceAfterIs)
+        val typesAreCompatible = checkTypeCompatibility(context, targetType, subjectType, typeReferenceAfterIs)
 
-        detectRedundantIs(context, subjectType, targetType, isCheck, negated, subjectDataFlowValue)
+        detectRedundantIs(context, subjectType, targetType, isCheck, negated, subjectDataFlowValue, typesAreCompatible)
+
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProperCheckAnnotationsTargetInTypeUsePositions)) {
+            components.annotationChecker.check(typeReferenceAfterIs, context.trace)
+        }
 
         if (CastDiagnosticsUtil.isCastErased(subjectType, targetType, KotlinTypeChecker.DEFAULT)) {
-            context.trace.report(Errors.CANNOT_CHECK_FOR_ERASED.on(typeReferenceAfterIs, targetType))
+            context.trace.report(CANNOT_CHECK_FOR_ERASED.on(typeReferenceAfterIs, targetType))
         }
         return context.dataFlowInfo.let {
             ConditionalDataFlowInfo(it.establishSubtyping(subjectDataFlowValue, targetType, components.languageVersionSettings), it)
@@ -656,14 +663,26 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         targetType: KotlinType,
         isCheck: KtElement,
         negated: Boolean,
-        subjectDataFlowValue: DataFlowValue
+        subjectDataFlowValue: DataFlowValue,
+        typesAreCompatible: Boolean
     ) {
         if (subjectType.containsError() || targetType.containsError()) return
 
         val possibleTypes =
             DataFlowAnalyzer.getAllPossibleTypes(subjectType, context, subjectDataFlowValue, context.languageVersionSettings)
+
+        if (typesAreCompatible && !targetType.isError) {
+            val nonTrivialTypes = possibleTypes.filterNot { it.isAnyOrNullableAny() }
+                .takeIf { it.isNotEmpty() }
+                ?: possibleTypes
+
+            if (nonTrivialTypes.none { CastDiagnosticsUtil.isCastPossible(it, targetType, components.platformToKotlinClassMapper) }) {
+                context.trace.report(USELESS_IS_CHECK.on(isCheck, negated))
+            }
+        }
+
         if (CastDiagnosticsUtil.isRefinementUseless(possibleTypes, targetType, false)) {
-            context.trace.report(Errors.USELESS_IS_CHECK.on(isCheck, !negated))
+            context.trace.report(USELESS_IS_CHECK.on(isCheck, !negated))
         }
     }
 
@@ -677,11 +696,11 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         type: KotlinType,
         subjectType: KotlinType,
         reportErrorOn: KtElement
-    ) {
+    ): Boolean {
         // TODO : Take smart casts into account?
         if (TypeIntersector.isIntersectionEmpty(type, subjectType)) {
             context.trace.report(INCOMPATIBLE_TYPES.on(reportErrorOn, type, subjectType))
-            return
+            return false
         }
 
         checkEnumsForCompatibility(context, reportErrorOn, subjectType, type)
@@ -690,5 +709,6 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
         if (KotlinBuiltIns.isNullableNothing(type) && !TypeUtils.isNullableType(subjectType)) {
             context.trace.report(SENSELESS_NULL_IN_WHEN.on(reportErrorOn))
         }
+        return true
     }
 }

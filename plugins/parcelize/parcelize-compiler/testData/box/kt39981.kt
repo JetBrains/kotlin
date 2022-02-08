@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:JvmName("TestKt")
 package test
@@ -16,6 +16,6 @@ import android.os.Parcelable
     }
 }
 
-fun box() = parcelTest { parcel ->
+fun box() = parcelTest {
     TestParcel()
 }

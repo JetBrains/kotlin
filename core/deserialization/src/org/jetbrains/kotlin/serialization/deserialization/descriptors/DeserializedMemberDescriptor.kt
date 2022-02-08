@@ -34,14 +34,6 @@ interface DeserializedMemberDescriptor : DeserializedDescriptor, MemberDescripto
     // Information about the origin of this callable's container (class or package part on JVM) or null if there's no such information.
     // TODO: merge with sourceElement of containingDeclaration
     override val containerSource: DeserializedContainerSource?
-
-    val coroutinesExperimentalCompatibilityMode: CoroutinesCompatibilityMode
-
-    enum class CoroutinesCompatibilityMode {
-        COMPATIBLE,
-        NEEDS_WRAPPER,
-        INCOMPATIBLE
-    }
 }
 
 interface DeserializedCallableMemberDescriptor : DeserializedMemberDescriptor, CallableMemberDescriptor
@@ -64,34 +56,6 @@ class DeserializedSimpleFunctionDescriptor(
         source ?: SourceElement.NO_SOURCE
     ) {
 
-    override var coroutinesExperimentalCompatibilityMode = DeserializedMemberDescriptor.CoroutinesCompatibilityMode.COMPATIBLE
-        private set
-
-    fun initialize(
-            extensionReceiverParameter: ReceiverParameterDescriptor?,
-            dispatchReceiverParameter: ReceiverParameterDescriptor?,
-            typeParameters: List<TypeParameterDescriptor>,
-            unsubstitutedValueParameters: List<ValueParameterDescriptor>,
-            unsubstitutedReturnType: KotlinType?,
-            modality: Modality?,
-            visibility: DescriptorVisibility,
-            userDataMap: Map<out CallableDescriptor.UserDataKey<*>, *>,
-            isExperimentalCoroutineInReleaseEnvironment: DeserializedMemberDescriptor.CoroutinesCompatibilityMode
-    ): SimpleFunctionDescriptorImpl {
-        return super.initialize(
-            extensionReceiverParameter,
-            dispatchReceiverParameter,
-            typeParameters,
-            unsubstitutedValueParameters,
-            unsubstitutedReturnType,
-            modality,
-            visibility,
-            userDataMap
-        ).also {
-            this.coroutinesExperimentalCompatibilityMode = isExperimentalCoroutineInReleaseEnvironment
-        }
-    }
-
     override fun createSubstitutedCopy(
         newOwner: DeclarationDescriptor,
         original: FunctionDescriptor?,
@@ -105,7 +69,6 @@ class DeserializedSimpleFunctionDescriptor(
             proto, nameResolver, typeTable, versionRequirementTable, containerSource, source
         ).also {
             it.setHasStableParameterNames(hasStableParameterNames())
-            it.coroutinesExperimentalCompatibilityMode = coroutinesExperimentalCompatibilityMode
         }
     }
 }
@@ -133,20 +96,6 @@ class DeserializedPropertyDescriptor(
     containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE,
     isLateInit, isConst, isExpect, false, isExternal, isDelegated
 ) {
-    override var coroutinesExperimentalCompatibilityMode = DeserializedMemberDescriptor.CoroutinesCompatibilityMode.COMPATIBLE
-        private set
-
-    fun initialize(
-        getter: PropertyGetterDescriptorImpl?,
-        setter: PropertySetterDescriptor?,
-        backingField: FieldDescriptor?,
-        delegateField: FieldDescriptor?,
-        isExperimentalCoroutineInReleaseEnvironment: DeserializedMemberDescriptor.CoroutinesCompatibilityMode
-    ) {
-        super.initialize(getter, setter, backingField, delegateField)
-            .also { this.coroutinesExperimentalCompatibilityMode = isExperimentalCoroutineInReleaseEnvironment }
-    }
-
     override fun createSubstitutedCopy(
             newOwner: DeclarationDescriptor,
             newModality: Modality,
@@ -180,9 +129,6 @@ class DeserializedClassConstructorDescriptor(
 ) : DeserializedCallableMemberDescriptor,
     ClassConstructorDescriptorImpl(containingDeclaration, original, annotations, isPrimary, kind, source ?: SourceElement.NO_SOURCE) {
 
-    override var coroutinesExperimentalCompatibilityMode = DeserializedMemberDescriptor.CoroutinesCompatibilityMode.COMPATIBLE
-        internal set
-
     override fun createSubstitutedCopy(
         newOwner: DeclarationDescriptor,
         original: FunctionDescriptor?,
@@ -196,7 +142,6 @@ class DeserializedClassConstructorDescriptor(
             proto, nameResolver, typeTable, versionRequirementTable, containerSource, source
         ).also {
             it.setHasStableParameterNames(hasStableParameterNames())
-            it.coroutinesExperimentalCompatibilityMode = coroutinesExperimentalCompatibilityMode
         }
     }
 
@@ -229,14 +174,10 @@ class DeserializedTypeAliasDescriptor(
     private lateinit var typeConstructorParameters: List<TypeParameterDescriptor>
     private lateinit var defaultTypeImpl: SimpleType
 
-    override var coroutinesExperimentalCompatibilityMode = DeserializedMemberDescriptor.CoroutinesCompatibilityMode.COMPATIBLE
-        private set
-
     fun initialize(
         declaredTypeParameters: List<TypeParameterDescriptor>,
         underlyingType: SimpleType,
-        expandedType: SimpleType,
-        isExperimentalCoroutineInReleaseEnvironment: DeserializedMemberDescriptor.CoroutinesCompatibilityMode
+        expandedType: SimpleType
     ) {
         initialize(declaredTypeParameters)
         this.underlyingType = underlyingType
@@ -244,7 +185,6 @@ class DeserializedTypeAliasDescriptor(
         typeConstructorParameters = computeConstructorTypeParameters()
         defaultTypeImpl = computeDefaultType()
         constructors = getTypeAliasConstructors()
-        this.coroutinesExperimentalCompatibilityMode = isExperimentalCoroutineInReleaseEnvironment
     }
 
     override val classDescriptor: ClassDescriptor?
@@ -261,8 +201,7 @@ class DeserializedTypeAliasDescriptor(
         substituted.initialize(
             declaredTypeParameters,
             substitutor.safeSubstitute(underlyingType, Variance.INVARIANT).asSimpleType(),
-            substitutor.safeSubstitute(expandedType, Variance.INVARIANT).asSimpleType(),
-            coroutinesExperimentalCompatibilityMode
+            substitutor.safeSubstitute(expandedType, Variance.INVARIANT).asSimpleType()
         )
 
         return substituted

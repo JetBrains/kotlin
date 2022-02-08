@@ -1,10 +1,7 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
-
 import helpers.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import kotlin.properties.Delegates
 
 class Pipe {

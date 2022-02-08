@@ -1,5 +1,0 @@
-package foo.bar
-
-fun f() {
-    println(239)
-}

@@ -1,9 +1,8 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
-// COMMON_COROUTINES_TEST
 // WITH_COROUTINES
 // SKIP_TXT
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 import helpers.*
 
 // Function is NOT suspend
@@ -22,13 +21,13 @@ inline fun test(crossinline c: () -> Unit) {
         }
     }
     val l = { c() }
-    c.<!UNRESOLVED_REFERENCE!>startCoroutine<!>(EmptyContinuation)
+    c.<!USAGE_IS_NOT_INLINABLE!>startCoroutine<!>(EmptyContinuation)
 }
 
 suspend fun calculate() = "OK"
 
 fun box() {
     test {
-        calculate()
+        <!ILLEGAL_SUSPEND_FUNCTION_CALL!>calculate<!>()
     }
 }

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
+@file:Suppress("PackageDirectoryMismatch")
 package org.jetbrains.kotlin.generators.arguments.test
 
-import com.intellij.testFramework.UsefulTestCase
 import junit.framework.TestCase
 import org.jetbrains.kotlin.generators.arguments.generateKotlinGradleOptions
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.utils.Printer
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -26,7 +27,7 @@ import java.io.PrintStream
 
 class GenerateKotlinGradleOptionsTest : TestCase() {
     fun testKotlinGradleOptionsAreUpToDate() {
-        fun getPrinter(file: File, fn: Printer.()->Unit) {
+        fun getPrinter(file: File, fn: Printer.() -> Unit) {
             val bytesOut = ByteArrayOutputStream()
 
             PrintStream(bytesOut).use {
@@ -35,7 +36,7 @@ class GenerateKotlinGradleOptionsTest : TestCase() {
             }
 
             val upToDateContent = bytesOut.toString()
-            UsefulTestCase.assertSameLinesWithFile(file.absolutePath, upToDateContent)
+            KtUsefulTestCase.assertSameLinesWithFile(file.absolutePath, upToDateContent)
         }
 
         generateKotlinGradleOptions(::getPrinter)

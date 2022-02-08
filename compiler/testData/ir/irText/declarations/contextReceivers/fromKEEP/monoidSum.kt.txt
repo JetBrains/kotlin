@@ -1,0 +1,62 @@
+interface Semigroup<T : Any?> {
+  abstract infix fun T.combine(other: T): T
+
+}
+
+interface Monoid<T : Any?> : Semigroup<T> {
+  abstract val unit: T
+    abstract get
+
+}
+
+object IntMonoid : Monoid<Int> {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override infix fun Int.combine(other: Int): Int {
+    return <this>.plus(other = other)
+  }
+
+  override val unit: Int
+    field = 0
+    override get
+
+}
+
+object StringMonoid : Monoid<String> {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override infix fun String.combine(other: String): String {
+    return <this>.plus(other = other)
+  }
+
+  override val unit: String
+    field = ""
+    override get
+
+}
+
+fun <T : Any?> List<T>.sum(<this>: Monoid<T>): T {
+  return <this>.fold<T, T>(initial = <this>.<get-unit>(), operation = local fun <anonymous>(acc: T, e: T): T {
+    return (<this>, acc).combine(other = e)
+  }
+)
+}
+
+fun box(): String {
+  with<IntMonoid, Int>(receiver = IntMonoid, block = local fun IntMonoid.<anonymous>(): Int {
+    return listOf<Int>(elements = [1, 2, 3]).sum<Int>(<this> = $this$with)
+  }
+) /*~> Unit */
+  return with<StringMonoid, String>(receiver = StringMonoid, block = local fun StringMonoid.<anonymous>(): String {
+    return listOf<String>(elements = ["O", "K"]).sum<String>(<this> = $this$with)
+  }
+)
+}

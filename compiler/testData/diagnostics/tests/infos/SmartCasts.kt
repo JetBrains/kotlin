@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 open class A() {
   fun foo() {}
 }
@@ -89,17 +88,17 @@ fun f13(a : A?) {
   }
   else {
     a?.foo()
-    <!UNRESOLVED_REFERENCE!>c<!>.<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
+    <!UNRESOLVED_REFERENCE!>c<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>()
   }
 
   a?.foo()
   if (!(a is B)) {
     a?.foo()
-    <!UNRESOLVED_REFERENCE!>c<!>.<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
+    <!UNRESOLVED_REFERENCE!>c<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>()
   }
   else {
     <!DEBUG_INFO_SMARTCAST!>a<!>.foo()
-    <!UNRESOLVED_REFERENCE!>c<!>.<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
+    <!UNRESOLVED_REFERENCE!>c<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>()
   }
 
   a?.foo()
@@ -109,7 +108,7 @@ fun f13(a : A?) {
   }
   else {
     a?.foo()
-    <!UNRESOLVED_REFERENCE!>c<!>.<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>bar<!>()
+    <!UNRESOLVED_REFERENCE!>c<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>bar<!>()
   }
 
   if (!(a is B) || !(a is C)) {
@@ -154,23 +153,23 @@ fun illegalWhenBlock(a: Any): Int {
 <!NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY!>}<!>
 fun declarations(a: Any?) {
     if (a is String) {
-       val <!UNUSED_VARIABLE!>p4<!>: String = <!DEBUG_INFO_SMARTCAST!>a<!>
+       val p4: String = <!DEBUG_INFO_SMARTCAST!>a<!>
     }
     if (a is String?) {
         if (a != null) {
-            val <!UNUSED_VARIABLE!>s<!>: String = <!DEBUG_INFO_SMARTCAST!>a<!>
+            val s: String = <!DEBUG_INFO_SMARTCAST!>a<!>
         }
     }
     if (a != null) {
         if (a is String?) {
-            val <!UNUSED_VARIABLE!>s<!>: String = <!DEBUG_INFO_SMARTCAST!>a<!>
+            val s: String = <!DEBUG_INFO_SMARTCAST!>a<!>
         }
     }
 }
 fun vars(a: Any?) {
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>b<!>: Int = 0
     if (a is Int) {
-        <!UNUSED_VALUE!>b =<!> <!DEBUG_INFO_SMARTCAST!>a<!>
+        b = <!DEBUG_INFO_SMARTCAST!>a<!>
     }
 }
 fun returnFunctionLiteralBlock(a: Any?): Function0<Int> {
@@ -199,10 +198,10 @@ fun mergeSmartCasts(a: Any?) {
     is String, is Any -> a.<!UNRESOLVED_REFERENCE!>compareTo<!>("")
   }
   if (a is String && <!USELESS_IS_CHECK!>a is Any<!>) {
-    val <!UNUSED_VARIABLE!>i<!>: Int = <!DEBUG_INFO_SMARTCAST!>a<!>.compareTo("")
+    val i: Int = <!DEBUG_INFO_SMARTCAST!>a<!>.compareTo("")
   }
   if (a is String && <!DEBUG_INFO_SMARTCAST!>a<!>.compareTo("") == 0) {}
-  if (a is String || a.<!UNRESOLVED_REFERENCE!>compareTo<!>("") <!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>==<!> 0) {}
+  if (a is String || a.<!UNRESOLVED_REFERENCE!>compareTo<!>("") <!DEBUG_INFO_MISSING_UNRESOLVED!>==<!> 0) {}
 }
 
 //mutability
@@ -210,10 +209,10 @@ fun f(): String {
     var a: Any = 11
     if (a is String) {
         // a is a string, despite of being a variable
-        val <!UNUSED_VARIABLE!>i<!>: String = <!DEBUG_INFO_SMARTCAST!>a<!>
+        val i: String = <!DEBUG_INFO_SMARTCAST!>a<!>
         <!DEBUG_INFO_SMARTCAST!>a<!>.compareTo("f")
         // Beginning from here a is captured in a closure but nobody modifies it
-        val <!UNUSED_VARIABLE!>f<!>: Function0<String> = { <!DEBUG_INFO_SMARTCAST!>a<!> }
+        val f: Function0<String> = { <!DEBUG_INFO_SMARTCAST!>a<!> }
         return <!DEBUG_INFO_SMARTCAST!>a<!>
     }
     return ""

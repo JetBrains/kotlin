@@ -16,16 +16,16 @@ import java.lang.System;
 @kotlin.Metadata()
 public final class Simple {
 
+    public Simple() {
+        super();
+    }
+
     @MyAnnotation()
     public final void myMethod() {
     }
 
     public final int heavyMethod() {
         return 0;
-    }
-
-    public Simple() {
-        super();
     }
 }
 

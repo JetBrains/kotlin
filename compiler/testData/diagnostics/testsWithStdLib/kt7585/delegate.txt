@@ -63,14 +63,23 @@ public interface Other {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public/*package*/ open class Properties {
-    public/*package*/ constructor Properties()
+public open class Properties {
+    public constructor Properties()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
     public/*package*/ open fun </*0*/ T : kotlin.Any!> calcVal(/*0*/ initializer: (() -> T!)!): Val<T!>!
+}
+
+public open class Val</*0*/ T : kotlin.Any!> {
+    public/*package*/ constructor Val</*0*/ T : kotlin.Any!>(/*0*/ initializer: (() -> T!)!)
+    public/*package*/ final var initializer: (() -> T!)!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public/*package*/ open operator fun getValue(/*0*/ instance: kotlin.Any!, /*1*/ metadata: kotlin.Any!): T!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
 public open class Wrapper</*0*/ out T : Base> {

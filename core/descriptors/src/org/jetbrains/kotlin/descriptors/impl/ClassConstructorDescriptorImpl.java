@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.types.TypeSubstitutor;
 
 import java.util.Collection;
@@ -31,8 +32,6 @@ public class ClassConstructorDescriptorImpl extends FunctionDescriptorImpl imple
 
     protected final boolean isPrimary;
 
-    private static final Name NAME = Name.special("<init>");
-
     protected ClassConstructorDescriptorImpl(
             @NotNull ClassDescriptor containingDeclaration,
             @Nullable ConstructorDescriptor original,
@@ -41,7 +40,7 @@ public class ClassConstructorDescriptorImpl extends FunctionDescriptorImpl imple
             @NotNull Kind kind,
             @NotNull SourceElement source
     ) {
-        super(containingDeclaration, original, annotations, NAME, kind, source);
+        super(containingDeclaration, original, annotations, SpecialNames.INIT, kind, source);
         this.isPrimary = isPrimary;
     }
 
@@ -71,7 +70,7 @@ public class ClassConstructorDescriptorImpl extends FunctionDescriptorImpl imple
             @NotNull List<TypeParameterDescriptor> typeParameterDescriptors
     ) {
         super.initialize(
-                null, calculateDispatchReceiverParameter(),
+                null, calculateDispatchReceiverParameter(), calculateContextReceiverParameters(),
                 typeParameterDescriptors,
                 unsubstitutedValueParameters, null,
                 Modality.FINAL, visibility);
@@ -96,6 +95,15 @@ public class ClassConstructorDescriptorImpl extends FunctionDescriptorImpl imple
             }
         }
         return null;
+    }
+
+    @NotNull
+    private List<ReceiverParameterDescriptor> calculateContextReceiverParameters() {
+        ClassDescriptor classDescriptor = getContainingDeclaration();
+        if (!classDescriptor.getContextReceivers().isEmpty()) {
+            return classDescriptor.getContextReceivers();
+        }
+        return Collections.emptyList();
     }
 
     @NotNull

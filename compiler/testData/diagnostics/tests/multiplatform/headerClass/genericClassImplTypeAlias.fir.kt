@@ -14,7 +14,7 @@ expect interface C8<J>
 expect interface C9<K>
 expect interface C10<L>
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual typealias C1 = String

@@ -10,8 +10,9 @@ plugins {
 
 dependencies {
     api(project(":core:compiler.common"))
+    api(kotlinxCollectionsImmutable())
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 }
 
 sourceSets {

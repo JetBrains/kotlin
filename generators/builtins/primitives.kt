@@ -1,26 +1,26 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.generators.builtins.ranges
+package org.jetbrains.kotlin.generators.builtins.numbers
 
 import org.jetbrains.kotlin.generators.builtins.PrimitiveType
+import org.jetbrains.kotlin.generators.builtins.convert
 import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.BuiltInsSourceGenerator
+import org.jetbrains.kotlin.generators.builtins.printDoc
 import java.io.PrintWriter
 
 class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     companion object {
-        internal val binaryOperators: Map<String, String> = mapOf(
-            "plus" to "Adds the other value to this value.",
-            "minus" to "Subtracts the other value from this value.",
-            "times" to "Multiplies this value by the other value.",
-            "div" to "Divides this value by the other value.",
-            "rem" to "Calculates the remainder of dividing this value by the other value."
+        internal val binaryOperators: List<String> = listOf(
+            "plus",
+            "minus",
+            "times",
+            "div",
+            "rem",
         )
-        internal val unaryOperators: Map<String, String> = mapOf(
-            "inc" to "Increments this value.",
-            "dec" to "Decrements this value.",
+        internal val unaryPlusMinusOperators: Map<String, String> = mapOf(
             "unaryPlus" to "Returns this value.",
             "unaryMinus" to "Returns the negative of this value.")
         internal val shiftOperators: Map<String, String> = mapOf(
@@ -43,6 +43,49 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
                 * Note that only the $bitsUsed lowest-order bits of the [bitCount] are used as the shift distance.
                 * The shift distance actually used is therefore always in the range `0..${kind.bitSize - 1}`.
                 """
+        }
+
+        internal fun incDecOperatorsDoc(name: String): String {
+            val diff = if (name == "inc") "incremented" else "decremented"
+
+            return """
+                /**
+                 * Returns this value $diff by one.
+                 *
+                 * @sample samples.misc.Builtins.$name
+                 */
+                """
+        }
+
+        internal fun binaryOperatorDoc(operator: String, operand1: PrimitiveType, operand2: PrimitiveType): String = when (operator) {
+            "plus" -> "Adds the other value to this value."
+            "minus" -> "Subtracts the other value from this value."
+            "times" -> "Multiplies this value by the other value."
+            "div" -> {
+                if (operand1.isIntegral && operand2.isIntegral)
+                    "Divides this value by the other value, truncating the result to an integer that is closer to zero."
+                else
+                    "Divides this value by the other value."
+            }
+            "floorDiv" ->
+                "Divides this value by the other value, flooring the result to an integer that is closer to negative infinity."
+            "rem" -> {
+                """
+                Calculates the remainder of truncating division of this value by the other value.
+                
+                The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
+                """.trimIndent()
+            }
+            "mod" -> {
+                """
+                Calculates the remainder of flooring division of this value by the other value.
+
+                The result is either zero or has the same sign as the _divisor_ and has the absolute value less than the absolute value of the divisor.
+                """.trimIndent() + if (operand1.isFloatingPoint)
+                    "\n\n" + "If the result cannot be represented exactly, it is rounded to the nearest representable number. In this case the absolute value of the result can be less than or _equal to_ the absolute value of the divisor."
+                else ""
+            }
+            else -> error("No documentation for operator $operator")
         }
     }
     private val typeDescriptions: Map<PrimitiveType, String> = mapOf(
@@ -152,7 +195,7 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     private fun generateDoc(kind: PrimitiveType) {
         out.println("/**")
         out.println(" * Represents a ${typeDescriptions[kind]}.")
-        out.println(" * On the JVM, non-nullable values of this type are represented as values of the primitive type `${kind.name.toLowerCase()}`.")
+        out.println(" * On the JVM, non-nullable values of this type are represented as values of the primitive type `${kind.name.lowercase()}`.")
         out.println(" */")
     }
 
@@ -172,16 +215,16 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     }
 
     private fun generateBinaryOperators(thisKind: PrimitiveType) {
-        for ((name, doc) in binaryOperators) {
-            generateOperator(name, doc, thisKind)
+        for (name in binaryOperators) {
+            generateOperator(name, thisKind)
         }
     }
 
-    private fun generateOperator(name: String, doc: String, thisKind: PrimitiveType) {
+    private fun generateOperator(name: String, thisKind: PrimitiveType) {
         for (otherKind in PrimitiveType.onlyNumeric) {
             val returnType = getOperatorReturnType(thisKind, otherKind)
 
-            out.println("    /** $doc */")
+            out.printDoc(binaryOperatorDoc(name, thisKind, otherKind), "    ")
             when (name) {
                 "rem" ->
                     out.println("    @SinceKotlin(\"1.1\")")
@@ -206,9 +249,14 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     }
 
     private fun generateUnaryOperators(kind: PrimitiveType) {
-        for ((name, doc) in unaryOperators) {
-            val returnType = if (kind in listOf(PrimitiveType.SHORT, PrimitiveType.BYTE, PrimitiveType.CHAR) &&
-                                 name in listOf("unaryPlus", "unaryMinus")) "Int" else kind.capitalized
+        for (name in listOf("inc", "dec")) {
+            out.println(incDecOperatorsDoc(name).replaceIndent("    "))
+            out.println("    public operator fun $name(): ${kind.capitalized}")
+            out.println()
+        }
+
+        for ((name, doc) in unaryPlusMinusOperators) {
+            val returnType = if (kind in listOf(PrimitiveType.SHORT, PrimitiveType.BYTE, PrimitiveType.CHAR)) "Int" else kind.capitalized
             out.println("    /** $doc */")
             out.println("    public operator fun $name(): $returnType")
         }
@@ -361,8 +409,12 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     }
 
     private fun generateConversions(kind: PrimitiveType) {
-        fun isConversionDeprecated(otherKind: PrimitiveType): Boolean {
+        fun isFpToIntConversionDeprecated(otherKind: PrimitiveType): Boolean {
             return kind in PrimitiveType.floatingPoint && otherKind in listOf(PrimitiveType.BYTE, PrimitiveType.SHORT)
+        }
+
+        fun isCharConversionDeprecated(otherKind: PrimitiveType): Boolean {
+            return kind != PrimitiveType.INT && otherKind == PrimitiveType.CHAR
         }
 
         val thisName = kind.capitalized
@@ -389,20 +441,127 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             }
             out.println(doc)
 
-            if (isConversionDeprecated(otherKind)) {
+            if (isFpToIntConversionDeprecated(otherKind)) {
                 out.println("    @Deprecated(\"Unclear conversion. To achieve the same result convert to Int explicitly and then to $otherName.\", ReplaceWith(\"toInt().to$otherName()\"))")
+                out.println("    @DeprecatedSinceKotlin(warningSince = \"1.3\", errorSince = \"1.5\")")
+            }
+            if (isCharConversionDeprecated(otherKind)) {
+                out.println("    @Deprecated(\"Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.\", ReplaceWith(\"this.toInt().toChar()\"))")
+                out.println("    @DeprecatedSinceKotlin(warningSince = \"1.5\")")
             }
 
             out.println("    public override fun to$otherName(): $otherName")
         }
     }
-
-    private fun maxByDomainCapacity(type1: PrimitiveType, type2: PrimitiveType): PrimitiveType
-            = if (type1.ordinal > type2.ordinal) type1 else type2
-
-    private fun getOperatorReturnType(kind1: PrimitiveType, kind2: PrimitiveType): PrimitiveType {
-        require(kind1 != PrimitiveType.BOOLEAN) { "kind1 must not be BOOLEAN" }
-        require(kind2 != PrimitiveType.BOOLEAN) { "kind2 must not be BOOLEAN" }
-        return maxByDomainCapacity(maxByDomainCapacity(kind1, kind2), PrimitiveType.INT)
-    }
 }
+
+class GenerateFloorDivMod(out: PrintWriter) : BuiltInsSourceGenerator(out) {
+
+    override fun getMultifileClassName() = "NumbersKt"
+    override fun generateBody() {
+        out.println("import kotlin.math.sign")
+        out.println()
+
+        val integerTypes = PrimitiveType.integral intersect PrimitiveType.onlyNumeric
+        for (thisType in integerTypes) {
+            for (otherType in integerTypes) {
+                generateFloorDiv(thisType, otherType)
+                generateMod(thisType, otherType)
+            }
+        }
+
+        val fpTypes = PrimitiveType.floatingPoint
+        for (thisType in fpTypes) {
+            for (otherType in fpTypes) {
+                generateFpMod(thisType, otherType)
+            }
+        }
+
+    }
+
+
+    private fun generateFloorDiv(thisKind: PrimitiveType, otherKind: PrimitiveType) {
+        val returnType = getOperatorReturnType(thisKind, otherKind)
+        val returnTypeName = returnType.capitalized
+        out.printDoc(GeneratePrimitives.binaryOperatorDoc("floorDiv", thisKind, otherKind), "")
+        out.println("""@SinceKotlin("1.5")""")
+        out.println("@kotlin.internal.InlineOnly")
+        val declaration = "public inline fun ${thisKind.capitalized}.floorDiv(other: ${otherKind.capitalized}): $returnTypeName"
+        if (thisKind == otherKind && thisKind >= PrimitiveType.INT) {
+            out.println(
+                """
+                    $declaration {
+                        var q = this / other
+                        if (this xor other < 0 && q * other != this) q-- 
+                        return q
+                    }
+                """.trimIndent()
+            )
+        } else {
+            out.println("$declaration = ")
+            out.println("    ${
+                convert("this", thisKind, returnType)}.floorDiv(${convert("other", otherKind, returnType)})")
+        }
+        out.println()
+    }
+
+    private fun generateMod(thisKind: PrimitiveType, otherKind: PrimitiveType) {
+        val operationType = getOperatorReturnType(thisKind, otherKind)
+        val returnType = otherKind
+        out.printDoc(GeneratePrimitives.binaryOperatorDoc("mod", thisKind, otherKind),"")
+        out.println("""@SinceKotlin("1.5")""")
+        out.println("@kotlin.internal.InlineOnly")
+        val declaration = "public inline fun ${thisKind.capitalized}.mod(other: ${otherKind.capitalized}): ${returnType.capitalized}"
+        if (thisKind == otherKind && thisKind >= PrimitiveType.INT) {
+            out.println(
+                """
+                    $declaration {
+                        val r = this % other
+                        return r + (other and (((r xor other) and (r or -r)) shr ${operationType.bitSize - 1}))
+                    }
+                """.trimIndent()
+            )
+        } else {
+            out.println("$declaration = ")
+            out.println("    " + convert(
+                "${convert("this", thisKind, operationType)}.mod(${convert("other", otherKind, operationType)})",
+                operationType, returnType
+            ))
+        }
+        out.println()
+    }
+
+    private fun generateFpMod(thisKind: PrimitiveType, otherKind: PrimitiveType) {
+        val operationType = getOperatorReturnType(thisKind, otherKind)
+        out.printDoc(GeneratePrimitives.binaryOperatorDoc("mod", thisKind, otherKind), "")
+        out.println("""@SinceKotlin("1.5")""")
+        out.println("@kotlin.internal.InlineOnly")
+        val declaration = "public inline fun ${thisKind.capitalized}.mod(other: ${otherKind.capitalized}): ${operationType.capitalized}"
+        if (thisKind == otherKind && thisKind >= PrimitiveType.INT) {
+            out.println(
+                """
+                    $declaration {
+                        val r = this % other
+                        return if (r != ${convert("0.0", PrimitiveType.DOUBLE, operationType)} && r.sign != other.sign) r + other else r
+                    }
+                """.trimIndent()
+            )
+        } else {
+            out.println("$declaration = ")
+            out.println("    ${convert("this", thisKind, operationType)}.mod(${convert("other", otherKind, operationType)})")
+        }
+        out.println()
+    }
+
+}
+
+
+private fun maxByDomainCapacity(type1: PrimitiveType, type2: PrimitiveType): PrimitiveType
+        = if (type1.ordinal > type2.ordinal) type1 else type2
+
+private fun getOperatorReturnType(kind1: PrimitiveType, kind2: PrimitiveType): PrimitiveType {
+    require(kind1 != PrimitiveType.BOOLEAN) { "kind1 must not be BOOLEAN" }
+    require(kind2 != PrimitiveType.BOOLEAN) { "kind2 must not be BOOLEAN" }
+    return maxByDomainCapacity(maxByDomainCapacity(kind1, kind2), PrimitiveType.INT)
+}
+

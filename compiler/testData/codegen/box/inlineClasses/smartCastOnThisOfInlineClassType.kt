@@ -1,4 +1,6 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 interface IBase {
     fun testDefault1() = if (this is B) this.foo() else "fail"
@@ -10,7 +12,8 @@ interface IFoo : IBase {
     fun testDefault2() = if (this is B) this.foo() else "fail"
 }
 
-inline class B(val x: String) : IFoo {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class B(val x: String) : IFoo {
     override fun foo() = x
 }
 

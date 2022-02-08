@@ -1,11 +1,15 @@
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Z(val int: Int)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val int: Int)
 
-inline class Str(val string: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Str(val string: String)
 
-inline class NStr(val string: String?)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class NStr(val string: String?)
 
 fun fooZ(x: Z) = x
 

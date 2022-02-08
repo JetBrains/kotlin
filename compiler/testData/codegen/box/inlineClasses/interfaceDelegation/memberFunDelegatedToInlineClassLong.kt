@@ -1,12 +1,15 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
 import kotlin.test.assertEquals
 
 interface IFoo {
     fun foo(s: String): String
 }
 
-inline class Z(val x: Long) : IFoo {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val x: Long) : IFoo {
     override fun foo(s: String): String = x.toString() + s
 }
 

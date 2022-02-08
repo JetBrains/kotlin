@@ -2,7 +2,9 @@
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_MINIFICATION
 // SKIP_NODE_JS
+// INFER_MAIN_MODULE
 
+// MODULE: JS_TESTS
 // FILE: file1.kt
 package foo
 
@@ -27,6 +29,9 @@ fun _fun() = 10
 class Class
 
 external interface ExternalInterface
+
+@JsName("bbb")
+fun zzz(x: Int = 10) {}
 
 // FILE: file2.kt
 

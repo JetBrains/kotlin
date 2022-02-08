@@ -1,0 +1,12 @@
+FILE: typeDepthForTypeAlias.kt
+    public final typealias SymbolToTransformer = R|kotlin/collections/MutableMap<kotlin/Int, kotlin/Function1<kotlin/String, kotlin/Double>>|
+    public final fun R|SymbolToTransformer|.add(): R|kotlin/Unit| {
+    }
+    public final fun foo(symbolToTransformer: R|SymbolToTransformer|): R|kotlin/Unit| {
+        R|<local>/symbolToTransformer|.R|/myApply|<R|kotlin/collections/MutableMap<kotlin/Int, kotlin/Function1<kotlin/String, kotlin/Double>>|>(<L> = myApply@fun R|kotlin/collections/MutableMap<kotlin/Int, kotlin/Function1<kotlin/String, kotlin/Double>>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            this@R|special/anonymous|.R|/add|()
+        }
+        )
+    }
+    public final fun <T> R|T|.myApply(x: R|T.() -> kotlin/Unit|): R|kotlin/Unit| {
+    }

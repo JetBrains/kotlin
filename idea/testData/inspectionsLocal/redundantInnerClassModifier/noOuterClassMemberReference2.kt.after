@@ -1,9 +1,0 @@
-fun foo() {}
-
-class A {
-    class B {
-        fun b() {
-            foo()
-        }
-    }
-}

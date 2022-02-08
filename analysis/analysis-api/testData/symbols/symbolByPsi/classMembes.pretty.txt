@@ -1,0 +1,5 @@
+class A {
+  val a: kotlin.Int
+
+  fun x(): kotlin.Int
+}

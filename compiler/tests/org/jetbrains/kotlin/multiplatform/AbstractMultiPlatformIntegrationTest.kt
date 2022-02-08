@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import java.io.File
 import java.nio.file.Files
@@ -40,12 +41,10 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
         val common2Src = File(root, "common2.kt").takeIf(File::exists)
         val jvm2Src = File(root, "jvm2.kt").takeIf(File::exists)
 
-        val tmpdir = KotlinTestUtils.tmpDir(getTestName(true))
+        val tmpdir = KtTestUtil.tmpDir(getTestName(true))
 
-        val optionalStdlibCommon =
-            if (InTextDirectivesUtils.isDirectiveDefined(commonSrc.readText(), "WITH_RUNTIME"))
-                arrayOf("-cp", findStdlibCommon().absolutePath)
-            else emptyArray()
+        val withStdlib = InTextDirectivesUtils.isDirectiveDefined(commonSrc.readText(), "WITH_STDLIB")
+        val optionalStdlibCommon = if (withStdlib) arrayOf("-cp", findStdlibCommon().absolutePath) else emptyArray()
 
         val commonDest = File(tmpdir, "common").absolutePath
         val jvmDest = File(tmpdir, "jvm").absolutePath.takeIf { jvmSrc != null }

@@ -1,3 +1,4 @@
+// !LANGUAGE: -ForbidUsingExtensionPropertyTypeParameterInDelegate
 import kotlin.reflect.KProperty1
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty

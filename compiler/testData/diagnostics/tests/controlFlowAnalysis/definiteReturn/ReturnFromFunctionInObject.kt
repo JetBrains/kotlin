@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 interface X {
     fun f(): Boolean
 }

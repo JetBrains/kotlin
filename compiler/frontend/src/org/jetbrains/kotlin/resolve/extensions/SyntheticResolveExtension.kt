@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
 import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 import java.util.*
 
@@ -80,7 +79,7 @@ interface SyntheticResolveExtension {
                     }
 
                 override fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor): Name? =
-                    instances.firstNotNullResult { withLinkageErrorLogger(it) { getSyntheticCompanionObjectNameIfNeeded(thisDescriptor) } }
+                    instances.firstNotNullOfOrNull { withLinkageErrorLogger(it) { getSyntheticCompanionObjectNameIfNeeded(thisDescriptor) } }
 
                 override fun addSyntheticSupertypes(thisDescriptor: ClassDescriptor, supertypes: MutableList<KotlinType>) =
                     instances.forEach { withLinkageErrorLogger(it) { addSyntheticSupertypes(thisDescriptor, supertypes) } }
@@ -145,6 +144,7 @@ interface SyntheticResolveExtension {
 
     fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> = emptyList()
 
+    @Suppress("DEPRECATION")
     @JvmDefault
     fun getSyntheticPropertiesNames(thisDescriptor: ClassDescriptor): List<Name> = emptyList()
 
@@ -155,6 +155,7 @@ interface SyntheticResolveExtension {
      * or null in case it needs to run resolution and inference and/or it is very costly.
      * Override this method if resolution started to fail with recursion.
      */
+    @Suppress("DEPRECATION")
     @JvmDefault
     fun getPossibleSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name>? = getSyntheticNestedClassNames(thisDescriptor)
 

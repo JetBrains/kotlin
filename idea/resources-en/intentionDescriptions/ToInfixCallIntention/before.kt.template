@@ -1,3 +1,0 @@
-fun foo(x: Foo) {
-  <spot>x.foo(1)</spot>
-}

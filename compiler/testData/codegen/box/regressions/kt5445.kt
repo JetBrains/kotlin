@@ -1,13 +1,13 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: 1.kt
 
 package test2
 
 import test.A
 
-public fun box(): String {
+fun box(): String {
     return B().test(B())
 }
 

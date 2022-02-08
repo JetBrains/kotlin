@@ -19,16 +19,22 @@ package org.jetbrains.kotlin.resolve.calls.components
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.types.KotlinType
 
 class TypeArgumentsToParametersMapper {
 
-    sealed class TypeArgumentsMapping(val diagnostics: List<KotlinCallDiagnostic>) {
+    sealed class TypeArgumentsMapping(val diagnostics: List<KotlinCallDiagnostic>) :
+        Iterable<Map.Entry<TypeParameterDescriptor, KotlinType?>> {
 
         abstract fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): TypeArgument
 
         object NoExplicitArguments : TypeArgumentsMapping(emptyList()) {
+            private val emptyIterator = mapOf<Nothing, Nothing>().iterator()
+
             override fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): TypeArgument =
                 TypeArgumentPlaceholder
+
+            override fun iterator() = emptyIterator
         }
 
         class TypeArgumentsMappingImpl(
@@ -37,6 +43,8 @@ class TypeArgumentsToParametersMapper {
         ) : TypeArgumentsMapping(diagnostics) {
             override fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): TypeArgument =
                 typeParameterToArgumentMap[typeParameterDescriptor] ?: TypeArgumentPlaceholder
+
+            override fun iterator() = typeParameterToArgumentMap.mapValues { (it.value as? SimpleTypeArgument)?.type }.iterator()
         }
     }
 

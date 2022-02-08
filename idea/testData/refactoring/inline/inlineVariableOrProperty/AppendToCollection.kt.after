@@ -1,3 +1,0 @@
-fun foo(list: MutableList<Int>) {
-    list += 10
-}

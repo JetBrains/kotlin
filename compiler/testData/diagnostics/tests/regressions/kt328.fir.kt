@@ -1,4 +1,4 @@
-// !WITH_NEW_INFERENCE
+// COMPARE_WITH_LIGHT_TREE
 //KT-328 Local function in function literals cause exceptions
 
 fun bar1() = {
@@ -25,5 +25,5 @@ val z = z
 fun block(f : () -> Unit) = f()
 
 fun bar3() = block{ <!UNRESOLVED_REFERENCE!>foo3<!>() // <-- missing closing curly bracket
-fun foo3() = block{ bar3() }<!SYNTAX!><!>
+fun foo3() = block{ bar3() }<!SYNTAX{PSI}!><!>
 

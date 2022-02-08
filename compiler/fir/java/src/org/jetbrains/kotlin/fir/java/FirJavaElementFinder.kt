@@ -20,18 +20,24 @@ import com.intellij.util.ArrayUtil
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.firProvider
+import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.resolveSupertypesInTheAir
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker
 
@@ -40,17 +46,23 @@ class FirJavaElementFinder(
     project: Project
 ) : PsiElementFinder(), KotlinFinderMarker {
     private val psiManager = PsiManager.getInstance(project)
-    private val firProvider = session.firProvider
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private val firProviders: List<FirProvider> = buildList {
+        add(session.firProvider)
+        session.collectAllDependentSourceSessions().mapTo(this) { it.firProvider }
+    }
 
     override fun findPackage(qualifiedName: String): PsiPackage? {
-        if (firProvider.symbolProvider.getPackage(FqName(qualifiedName)) == null) return null
+        if (firProviders.none { it.symbolProvider.getPackage(FqName(qualifiedName)) != null }) return null
         return PsiPackageImpl(psiManager, qualifiedName)
     }
 
     override fun getClasses(psiPackage: PsiPackage, scope: GlobalSearchScope): Array<PsiClass> {
-        return firProvider.getClassNamesInPackage(FqName(psiPackage.qualifiedName))
-            .mapNotNull { findClass(psiPackage.qualifiedName + "." + it.identifier, scope) }
-            .toTypedArray()
+        return firProviders.flatMap { firProvider ->
+            firProvider.getClassNamesInPackage(FqName(psiPackage.qualifiedName))
+                .mapNotNull { findClass(psiPackage.qualifiedName + "." + it.identifier, scope) }
+        }.toTypedArray()
     }
 
     override fun findClasses(qualifiedName: String, scope: GlobalSearchScope): Array<PsiClass> {
@@ -59,15 +71,25 @@ class FirJavaElementFinder(
 
     override fun findClass(qualifiedName: String, scope: GlobalSearchScope): PsiClass? {
         if (qualifiedName.endsWith(".")) return null
-        val classId = ClassId.topLevel(FqName(qualifiedName))
 
-        val firClass =
-            firProvider.getFirClassifierByFqName(classId) as? FirRegularClass
-                ?: return null
+        val fqName = FqName(qualifiedName)
 
-        val fileStub = createJavaFileStub(classId.packageFqName, psiManager)
+        for (topLevelClass in generateSequence(fqName) { it.parentOrNull() }) {
+            if (topLevelClass.isRoot) break
+            val classId = ClassId.topLevel(topLevelClass)
 
-        return buildStub(firClass, fileStub).psi
+            val firClass = firProviders.firstNotNullOfOrNull { it.getFirClassifierByFqName(classId) as? FirRegularClass } ?: continue
+
+            val fileStub = createJavaFileStub(classId.packageFqName, psiManager)
+            val topLevelResult = buildStub(firClass, fileStub).psi
+            val tail = fqName.tail(topLevelClass).pathSegments()
+
+            return tail.fold(topLevelResult) { psiClass, segment ->
+                psiClass.findInnerClassByName(segment.identifier, false) ?: return null
+            }
+        }
+
+        return null
     }
 
     private fun buildStub(firClass: FirRegularClass, parent: StubElement<*>): PsiClassStub<*> {
@@ -91,7 +113,7 @@ class FirJavaElementFinder(
         )
 
         val superTypeRefs = when {
-            firClass.resolvePhase > FirResolvePhase.SUPER_TYPES -> firClass.superTypeRefs
+            firClass.superTypeRefs.all { it is FirResolvedTypeRef } -> firClass.superTypeRefs
             else -> firClass.resolveSupertypesInTheAir(session)
         }
 
@@ -104,6 +126,28 @@ class FirJavaElementFinder(
         return stub
     }
 
+}
+
+private fun FirSession.collectAllDependentSourceSessions(): List<FirSession> {
+    val result = mutableListOf<FirSession>()
+    collectAllDependentSourceSessionsTo(result)
+    return result
+}
+
+private fun FirSession.collectAllDependentSourceSessionsTo(destination: MutableList<FirSession>) {
+    val moduleData = moduleData
+    collectAllDependentSourceSessionsTo(destination, moduleData.dependencies)
+    collectAllDependentSourceSessionsTo(destination, moduleData.friendDependencies)
+    collectAllDependentSourceSessionsTo(destination, moduleData.dependsOnDependencies)
+}
+
+private fun collectAllDependentSourceSessionsTo(destination: MutableList<FirSession>, dependencies: Collection<FirModuleData>) {
+    for (dependency in dependencies) {
+        val dependencySession = dependency.session
+        if (dependencySession.kind != FirSession.Kind.Source) continue
+        destination += dependencySession
+        dependencySession.collectAllDependentSourceSessionsTo(destination)
+    }
 }
 
 private fun FirRegularClass.packFlags(): Int {
@@ -222,7 +266,7 @@ private fun ConeKotlinType.mapToCanonicalString(session: FirSession): String {
 
 private fun ConeClassLikeType.mapToCanonicalString(session: FirSession): String {
     return when (this) {
-        is ConeClassErrorType -> ERROR_TYPE_STUB
+        is ConeErrorType -> ERROR_TYPE_STUB
         else -> fullyExpandedType(session).mapToCanonicalNoExpansionString(session)
     }
 }
@@ -241,9 +285,7 @@ private fun ConeClassLikeType.mapToCanonicalNoExpansionString(session: FirSessio
         } + "[]"
     }
 
-    val context = ConeTypeCheckerContext(isErrorTypeEqualsToAnything = false, isStubTypeEqualsToAnything = true, session = session)
-
-    with(context) {
+    with(session.typeContext) {
         val typeConstructor = typeConstructor()
         typeConstructor.getPrimitiveType()?.let { return JvmPrimitiveType.get(it).wrapperFqName.asString() }
         typeConstructor.getPrimitiveArrayType()?.let { return JvmPrimitiveType.get(it).javaKeywordName + "[]" }

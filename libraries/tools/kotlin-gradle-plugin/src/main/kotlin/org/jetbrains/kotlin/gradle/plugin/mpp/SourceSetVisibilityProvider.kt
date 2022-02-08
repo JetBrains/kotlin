@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleModuleIdentifier
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import java.io.File
 
@@ -55,7 +56,8 @@ internal class SourceSetVisibilityProvider(
     ): SourceSetVisibilityResult {
         val compilations = CompilationSourceSetUtil.compilationsBySourceSets(project).getValue(visibleFrom)
 
-        val mppModuleIdentifier = ModuleIds.fromComponent(project, resolvedRootMppDependency ?: resolvedMetadataDependency)
+        val component = resolvedRootMppDependency ?: resolvedMetadataDependency
+        val mppModuleIdentifier = component.toSingleModuleIdentifier()
 
         val firstConfigurationByVariant = mutableMapOf<String, Configuration>()
 
@@ -111,7 +113,7 @@ internal class SourceSetVisibilityProvider(
 
                 someVariantByHostSpecificSourceSet.entries.mapNotNull { (sourceSetName, variantName) ->
                     val configuration = firstConfigurationByVariant.getValue(variantName)
-                    resolvedVariantsProvider.getMetadataArtifactByRootModule(mppModuleIdentifier, configuration)
+                    resolvedVariantsProvider.getHostSpecificMetadataArtifactByRootModule(mppModuleIdentifier, configuration)
                         ?.let { sourceSetName to it }
                 }.toMap()
             }
@@ -123,7 +125,7 @@ internal class SourceSetVisibilityProvider(
     }
 }
 
-private fun kotlinVariantNameFromPublishedVariantName(resolvedToVariantName: String): String =
+internal fun kotlinVariantNameFromPublishedVariantName(resolvedToVariantName: String): String =
     originalVariantNameFromPublished(resolvedToVariantName) ?: resolvedToVariantName
 
 private fun Project.resolvableConfigurationFromCompilationByScope(

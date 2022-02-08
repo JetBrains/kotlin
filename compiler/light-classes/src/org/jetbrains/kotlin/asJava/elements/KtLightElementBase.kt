@@ -23,11 +23,15 @@ import com.intellij.psi.impl.light.LightElement
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtElement
 
-abstract class KtLightElementBase(private val parent: PsiElement) : LightElement(parent.manager, KotlinLanguage.INSTANCE) {
+abstract class KtLightElementBase(private var parent: PsiElement) : LightElement(parent.manager, KotlinLanguage.INSTANCE) {
     override fun toString() = "${this.javaClass.simpleName} of $parent"
     override fun getParent(): PsiElement = parent
 
     abstract val kotlinOrigin: KtElement?
+
+    internal fun setParent(newParent: PsiElement) {
+        parent = newParent
+    }
 
     override fun getText() = kotlinOrigin?.text ?: ""
     override fun getTextRange() = kotlinOrigin?.textRange ?: TextRange.EMPTY_RANGE
@@ -40,6 +44,13 @@ abstract class KtLightElementBase(private val parent: PsiElement) : LightElement
     override fun getPresentation() = (kotlinOrigin ?: this).let { ItemPresentationProviders.getItemPresentation(it) }
     override fun isValid() = parent.isValid && (kotlinOrigin?.isValid != false)
     override fun findElementAt(offset: Int) = kotlinOrigin?.findElementAt(offset)
-    override fun isEquivalentTo(another: PsiElement?): Boolean =
-        super.isEquivalentTo(another) || kotlinOrigin?.isEquivalentTo(another) == true
+    override fun isEquivalentTo(another: PsiElement?): Boolean {
+        if (super.isEquivalentTo(another)) {
+            return true
+        }
+
+        val origin = kotlinOrigin ?: return false
+        return origin.isEquivalentTo(another) ||
+                (another is KtLightElementBase && origin.isEquivalentTo(another.kotlinOrigin))
+    }
 }

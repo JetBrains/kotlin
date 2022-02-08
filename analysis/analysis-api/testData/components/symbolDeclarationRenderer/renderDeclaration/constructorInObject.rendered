@@ -1,0 +1,12 @@
+object A
+
+enum class B {
+  X
+}
+
+class C {
+  companion object
+}
+
+val anonObject: Any
+

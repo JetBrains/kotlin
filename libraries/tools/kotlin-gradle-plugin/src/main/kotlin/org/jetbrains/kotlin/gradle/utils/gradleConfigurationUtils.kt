@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
-import java.lang.RuntimeException
+import org.gradle.api.artifacts.Configuration
 
 fun Project.addExtendsFromRelation(extendingConfigurationName: String, extendsFromConfigurationName: String, forced: Boolean = true) {
     if (extendingConfigurationName == extendsFromConfigurationName) return
@@ -16,4 +17,9 @@ fun Project.addExtendsFromRelation(extendingConfigurationName: String, extendsFr
         else return
 
     extending.extendsFrom(configurations.getByName(extendsFromConfigurationName))
+}
+
+fun NamedDomainObjectProvider<Configuration>.extendsFrom(other: NamedDomainObjectProvider<Configuration>) {
+    if (name == other.name) return
+    configure { extending -> extending.extendsFrom(other.get()) }
 }

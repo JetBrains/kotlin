@@ -1,0 +1,14 @@
+@kotlin.Metadata
+public final enum class test/E {
+    // source: 'test.kt'
+    public final enum static field A: test.E
+    public final enum static field B: test.E
+    public static method values(): test.E[]
+    public static method valueOf(p0: java.lang.String): test.E
+}
+@kotlin.Metadata
+public final class test/Test {
+    // source: 'test.kt'
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method anonymousWhenMapping(@org.jetbrains.annotations.NotNull p0: test.E): java.lang.String
+}

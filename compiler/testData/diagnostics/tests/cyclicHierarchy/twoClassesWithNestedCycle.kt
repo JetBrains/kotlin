@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 open class A : <!CYCLIC_INHERITANCE_HIERARCHY!>B.BB<!>() {
     open class AA
 }

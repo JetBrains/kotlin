@@ -1,9 +1,0 @@
-class FunOwner<T> {
-    fun callMe0() {}
-    fun callMe1(t: T) {}
-}
-
-fun <T, X> callFun(owner: FunOwner<T>, t: T, x: X) {
-    owner.callMe0()
-    owner.callMe1(t)
-}

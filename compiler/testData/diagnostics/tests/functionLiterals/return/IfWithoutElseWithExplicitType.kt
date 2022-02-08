@@ -18,5 +18,5 @@ val d: () -> Int = l@ {
 }
 
 val e: () -> Int = l@ {
-    <!TYPE_MISMATCH!>if (flag) <!UNUSED_EXPRESSION!>4<!><!>
+    <!TYPE_MISMATCH!>if (flag) 4<!>
 }

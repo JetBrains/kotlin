@@ -1,1 +1,0 @@
-class VarargVal(vararg val param: String)

@@ -12,5 +12,5 @@ public fun foo(xx: Any): Int {
         y.length
     } while (true)
     // We could have smart cast here but with break it's hard to detect
-    return x.<!UNRESOLVED_REFERENCE!>length<!>()
+    return x.<!FUNCTION_EXPECTED!>length<!>()
 }

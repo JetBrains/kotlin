@@ -1,9 +1,8 @@
-// FILE: inlined.kt
-// COMMON_COROUTINES_TEST
-// WITH_RUNTIME
+// CHECK_STATE_MACHINE
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
-// CHECK_STATE_MACHINE
+// WITH_STDLIB
+// FILE: inlined.kt
 
 suspend inline fun crossinlineMe(crossinline c: suspend () -> Unit) {
     c()
@@ -11,10 +10,8 @@ suspend inline fun crossinlineMe(crossinline c: suspend () -> Unit) {
 }
 
 // FILE: inlineSite.kt
-// COMMON_COROUTINES_TEST
-
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 import helpers.*
 
 fun builder(c: suspend () -> Unit) {

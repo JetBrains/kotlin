@@ -1,0 +1,18 @@
+interface SomeInterface {
+  val bar: Boolean
+
+  fun foo(x: Int, y: String): String
+}
+
+class SomeClass : SomeInterface {
+  override var bar: Boolean
+
+  private val baz: Int
+
+  lateinit var fau: Double
+
+  override fun foo(x: Int, y: String): String
+}
+
+inline class InlineClass
+

@@ -1,0 +1,24 @@
+package
+
+package test {
+    public val b1: kotlin.Byte = -1
+    public val b2: kotlin.Int = -1
+    public val b3: kotlin.Long = -1
+    public val b4: kotlin.Short = -1
+    public val i1: kotlin.Byte = -1
+    public val i2: kotlin.Int = -1
+    public val i3: kotlin.Long = -1
+    public val i4: kotlin.Short = -1
+    public val l1: kotlin.Long = -1.toLong()
+    public val l2: kotlin.Byte = -1.toLong()
+    public val l3: kotlin.Int = -1.toLong()
+    public val l4: kotlin.Short = -1.toLong()
+    public val p1: kotlin.Int = -1
+    public val p2: kotlin.Long = -1.toLong()
+    public val p3: kotlin.Byte = -1.toByte()
+    public val p4: kotlin.Short = -1.toShort()
+    public val s1: kotlin.Byte = -1
+    public val s2: kotlin.Int = -1
+    public val s3: kotlin.Long = -1
+    public val s4: kotlin.Short = -1
+}

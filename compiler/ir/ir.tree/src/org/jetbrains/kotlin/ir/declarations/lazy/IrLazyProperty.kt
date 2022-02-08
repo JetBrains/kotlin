@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.declarations.lazy
 
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -15,8 +15,6 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.hasBackingField
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 
@@ -39,7 +37,6 @@ class IrLazyProperty(
     override val isFakeOverride: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
-    bindingContext: BindingContext? = null
 ) : IrProperty(), IrLazyDeclarationBase {
     init {
         symbol.bind(this)
@@ -50,9 +47,10 @@ class IrLazyProperty(
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
     private val hasBackingField: Boolean =
-        descriptor.hasBackingField(bindingContext) || stubGenerator.extensions.isPropertyWithPlatformField(descriptor)
+        descriptor.compileTimeInitializer != null || descriptor.getter == null ||
+                stubGenerator.extensions.isPropertyWithPlatformField(descriptor)
 
-    override var backingField: IrField? by lazyVar {
+    override var backingField: IrField? by lazyVar(stubGenerator.lock) {
         if (hasBackingField) {
             stubGenerator.generateFieldStub(descriptor).apply {
                 correspondingPropertySymbol = this@IrLazyProperty.symbol
@@ -60,15 +58,23 @@ class IrLazyProperty(
         } else null
     }
 
-    override var getter: IrSimpleFunction? by lazyVar {
-        descriptor.getter?.let { stubGenerator.generateFunctionStub(it, createPropertyIfNeeded = false) }?.apply {
-            correspondingPropertySymbol = this@IrLazyProperty.symbol
+    override var getter: IrSimpleFunction? by lazyVar(stubGenerator.lock) {
+        descriptor.getter?.let {
+            stubGenerator.generateFunctionStub(it, createPropertyIfNeeded = false)
+                .apply { correspondingPropertySymbol = this@IrLazyProperty.symbol }
         }
     }
 
-    override var setter: IrSimpleFunction? by lazyVar {
-        descriptor.setter?.let { stubGenerator.generateFunctionStub(it, createPropertyIfNeeded = false) }?.apply {
-            correspondingPropertySymbol = this@IrLazyProperty.symbol
+    override var setter: IrSimpleFunction? by lazyVar(stubGenerator.lock) {
+        descriptor.setter?.let {
+            stubGenerator.generateFunctionStub(it, createPropertyIfNeeded = false)
+                .apply { correspondingPropertySymbol = this@IrLazyProperty.symbol }
+        }
+    }
+
+    override var overriddenSymbols: List<IrPropertySymbol> by lazyVar(stubGenerator.lock) {
+        descriptor.overriddenDescriptors.mapTo(ArrayList()) {
+            stubGenerator.generatePropertyStub(it.original).symbol
         }
     }
 

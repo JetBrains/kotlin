@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.isAtLeast
+import org.jetbrains.kotlin.gradle.plugin.mpp.nativeUseEmbeddableCompilerJar
+import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyString
@@ -33,8 +35,15 @@ internal val Project.konanVersion: CompilerVersion
     get() = PropertiesProvider(this).nativeVersion?.let { CompilerVersion.fromString(it) }
         ?: NativeCompilerDownloader.DEFAULT_KONAN_VERSION
 
-internal val Project.konanCacheKind: NativeCacheKind
-    get() = PropertiesProvider(this).nativeCacheKind
+internal fun Project.getKonanCacheKind(target: KonanTarget): NativeCacheKind {
+    val commonCacheKind = PropertiesProvider(this).nativeCacheKind
+    val targetCacheKind = PropertiesProvider(this).nativeCacheKindForTarget(target)
+    return when {
+        targetCacheKind != null -> targetCacheKind
+        commonCacheKind != null -> commonCacheKind
+        else -> KonanPropertiesBuildService.registerIfAbsent(gradle).get().defaultCacheKindForTarget(target)
+    }
+}
 
 internal abstract class KotlinNativeToolRunner(
     protected val toolName: String,
@@ -62,14 +71,23 @@ internal abstract class KotlinNativeToolRunner(
         }
 
         listOfNotNull(
-                if (konanHomeRequired) "konan.home" to project.konanHome else null,
-                MessageRenderer.PROPERTY_KEY to MessageRenderer.GRADLE_STYLE.name
+            if (konanHomeRequired) "konan.home" to project.konanHome else null,
+            MessageRenderer.PROPERTY_KEY to MessageRenderer.GRADLE_STYLE.name
         ).toMap()
     }
 
     final override val classpath by lazy {
-        project.fileTree("${project.konanHome}/konan/lib/").apply { include("*.jar") }.toSet()
+        project.files(
+            project.kotlinNativeCompilerJar,
+            "${project.konanHome}/konan/lib/trove4j.jar"
+        ).files
     }
+
+    private val Project.kotlinNativeCompilerJar: String
+        get() = if (nativeUseEmbeddableCompilerJar)
+            "$konanHome/konan/lib/kotlin-native-compiler-embeddable.jar"
+        else
+            "$konanHome/konan/lib/kotlin-native.jar"
 
     final override fun checkClasspath() =
         check(classpath.isNotEmpty()) {
@@ -80,7 +98,10 @@ internal abstract class KotlinNativeToolRunner(
             """.trimIndent()
         }
 
-    final override val isolatedClassLoaderCacheKey get() = project.konanHome
+    data class IsolatedClassLoaderCacheKey(val classpath: Set<java.io.File>)
+
+    // TODO: can't we use this for other implementations too?
+    final override val isolatedClassLoaderCacheKey get() = IsolatedClassLoaderCacheKey(classpath)
 
     override fun transformArgs(args: List<String>) = listOf(toolName) + args
 
@@ -92,11 +113,13 @@ internal abstract class AbstractKotlinNativeCInteropRunner(toolName: String, pro
     override val mustRunViaExec get() = true
 
     override val execEnvironment by lazy {
-        val llvmExecutablesPath = llvmExecutablesPath
-        if (llvmExecutablesPath != null)
-            super.execEnvironment + ("PATH" to "$llvmExecutablesPath;${System.getenv("PATH")}")
-        else
-            super.execEnvironment
+        val result = mutableMapOf<String, String>()
+        result.putAll(super.execEnvironment)
+        result["LIBCLANG_DISABLE_CRASH_RECOVERY"] = "1"
+        llvmExecutablesPath?.let {
+            result["PATH"] = "$it;${System.getenv("PATH")}"
+        }
+        result
     }
 
     private val llvmExecutablesPath: String? by lazy {
@@ -117,7 +140,26 @@ internal abstract class AbstractKotlinNativeCInteropRunner(toolName: String, pro
 }
 
 /** Kotlin/Native C-interop tool runner */
-internal class KotlinNativeCInteropRunner(project: Project) : AbstractKotlinNativeCInteropRunner("cinterop", project)
+internal class KotlinNativeCInteropRunner private constructor(project: Project) : AbstractKotlinNativeCInteropRunner("cinterop", project) {
+    interface ExecutionContext {
+        val project: Project
+        fun runWithContext(action: () -> Unit)
+    }
+
+    override val defaultArguments: List<String>
+        get() = mutableListOf<String>().apply {
+            if (project.gradle.startParameter.isOffline) {
+                addAll(listOf("-Xoverride-konan-properties", "airplaneMode=true"))
+            }
+        }
+
+    companion object {
+        fun ExecutionContext.run(args: List<String>) {
+            val runner = KotlinNativeCInteropRunner(project)
+            runWithContext { runner.run(args) }
+        }
+    }
+}
 
 /** Kotlin/Native compiler runner */
 internal class KotlinNativeCompilerRunner(project: Project) : KotlinNativeToolRunner("konanc", project) {
@@ -140,17 +182,25 @@ internal class KotlinNativeCompilerRunner(project: Project) : KotlinNativeToolRu
 
         return listOf(toolName, "@${argFile.absolutePath}")
     }
-}
 
-/** Klib management tool runner */
-internal class KotlinNativeKlibRunner(project: Project) : KotlinNativeToolRunner("klib", project) {
-    override val mustRunViaExec get() = project.disableKonanDaemon
+    override val defaultArguments: List<String>
+        get() = mutableListOf<String>().apply {
+            if (project.gradle.startParameter.isOffline) {
+                add("-Xoverride-konan-properties=airplaneMode=true")
+            }
+        }
 }
 
 /** Platform libraries generation tool. Runs the cinterop tool under the hood. */
 internal class KotlinNativeLibraryGenerationRunner(project: Project) :
-    AbstractKotlinNativeCInteropRunner("generatePlatformLibraries", project)
-{
+    AbstractKotlinNativeCInteropRunner("generatePlatformLibraries", project) {
     // The library generator works for a long time so enabling C2 can improve performance.
     override val disableC2: Boolean = false
+
+    override val defaultArguments: List<String>
+        get() = mutableListOf<String>().apply {
+            if (project.gradle.startParameter.isOffline) {
+                addAll(listOf("-Xoverride-konan-properties", "airplaneMode=true"))
+            }
+        }
 }

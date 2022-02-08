@@ -1,3 +1,0 @@
-package java.io
-
-val f = File()

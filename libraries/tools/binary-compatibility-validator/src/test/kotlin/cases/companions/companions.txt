@@ -27,7 +27,6 @@ protected final class cases/companions/PublicClasses$AbstractProtectedCompanion$
 }
 
 public final class cases/companions/PublicClasses$InternalCompanion {
-	public static final field Companion Lcases/companions/PublicClasses$InternalCompanion$Companion;
 	public fun <init> ()V
 }
 
@@ -52,7 +51,6 @@ public final class cases/companions/PublicInterfaces {
 }
 
 public abstract interface class cases/companions/PublicInterfaces$PrivateCompanion {
-	public static final synthetic field Companion Lcases/companions/PublicInterfaces$PrivateCompanion$Companion;
 }
 
 public abstract interface class cases/companions/PublicInterfaces$PublicCompanion {

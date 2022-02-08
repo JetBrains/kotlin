@@ -1,7 +1,0 @@
-fun<T> f(klass: Class<Array<T>>) {
-}
-
-fun g() {
-    f<String>(Array<String>::class.java)<caret>
-}
-// ELEMENT: Array

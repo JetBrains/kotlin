@@ -1,6 +1,0 @@
-fun foo(x: Outer.Nested) {
-}
-
-fun bar() {
-    foo(Outer.Nested { <caret> })
-}

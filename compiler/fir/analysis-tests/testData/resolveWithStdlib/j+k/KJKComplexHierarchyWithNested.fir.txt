@@ -1,0 +1,45 @@
+FILE: K1.kt
+    public final class KSub : R|J1| {
+        public constructor(): R|KSub| {
+            super<R|J1|>()
+        }
+
+    }
+    public final fun main(k: R|KSub|, vString: R|SuperClass.NestedInSuperClass<kotlin/String>|, vInt: R|SuperClass.NestedInSuperClass<kotlin/Int>|): R|kotlin/Unit| {
+        R|<local>/k|.R|/J1.getImpl|().R|SubstitutionOverride</J1.NestedIImpl.nestedI: R|kotlin/Unit|>|(R|<local>/vString|)
+        R|<local>/k|.R|/J1.getImpl|().<Inapplicable(INAPPLICABLE): /J1.NestedIImpl.nestedI>#(R|<local>/vInt|)
+        R|<local>/k|.R|/J1.getNestedSubClass|().R|SubstitutionOverride</J1.NestedSubClass.nested: R|kotlin/Unit|>|(String())
+        R|<local>/k|.R|/J1.getNestedSubClass|().<Inapplicable(INAPPLICABLE): /J1.NestedSubClass.nested>#(Int(1))
+    }
+FILE: K2.kt
+    public open class KFirst : R|SuperClass<kotlin/String>|, R|SuperI<kotlin/Int>| {
+        public constructor(): R|KFirst| {
+            super<R|SuperClass<kotlin/String>|>()
+        }
+
+    }
+FILE: K3.kt
+    public abstract class SuperClass<T> : R|kotlin/Any| {
+        public constructor<T>(): R|SuperClass<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open inner class NestedInSuperClass<T> : R|kotlin/Any| {
+            public SuperClass<T>.constructor(): R|SuperClass.NestedInSuperClass<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun nested(x: R|T|): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    public abstract interface SuperI<E> : R|kotlin/Any| {
+        public abstract interface NestedInI<F> : R|kotlin/Any| {
+            public open fun nestedI(f: R|F|): R|kotlin/Unit| {
+            }
+
+        }
+
+    }

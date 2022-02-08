@@ -10,18 +10,20 @@ import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
 import java.lang.IllegalArgumentException
+import java.lang.IllegalStateException
 import java.net.URI
-import java.util.regex.Pattern
 
+/**
+ * Stores type information about processed and generated sources. For .java files a fine-grained type information
+ * exists i.e we know all referenced types. For .class files we only know which type is defined in the .class file.
+ */
 class JavaClassCache() : Serializable {
     private var sourceCache = mutableMapOf<URI, SourceFileStructure>()
-
-    /** Record these separately because we only need to know where each generated type is coming from. */
-    private var generatedTypes = mutableMapOf<File, MutableList<String>>()
 
     /** Map from types to files they are mentioned in. */
     @Transient
     private var dependencyCache = mutableMapOf<String, MutableSet<URI>>()
+
     @Transient
     private var nonTransitiveCache = mutableMapOf<String, MutableSet<URI>>()
 
@@ -29,21 +31,20 @@ class JavaClassCache() : Serializable {
         sourceCache[sourceStructure.sourceFile] = sourceStructure
     }
 
-    fun addGeneratedType(type: String, generatedFile: File) {
-        val typesInFile = generatedTypes[generatedFile] ?: ArrayList(1)
-        typesInFile.add(type)
-        generatedTypes[generatedFile] = typesInFile
-    }
-
-    fun invalidateGeneratedTypes(files: List<File>): Set<String> {
-        return files.mapNotNull { generatedTypes.remove(it) }.flatten().toSet()
+    /** Returns all types defined in these files. */
+    fun getTypesForFiles(files: Collection<File>): Set<String> {
+        val typesFromFiles = HashSet<String>(files.size)
+        for (file in files) {
+            sourceCache[file.toURI()]?.getDeclaredTypes()?.let {
+                typesFromFiles.addAll(it)
+            }
+        }
+        return typesFromFiles
     }
 
     private fun readObject(input: ObjectInputStream) {
         @Suppress("UNCHECKED_CAST")
         sourceCache = input.readObject() as MutableMap<URI, SourceFileStructure>
-        @Suppress("UNCHECKED_CAST")
-        generatedTypes = input.readObject() as MutableMap<File, MutableList<String>>
 
         dependencyCache = HashMap(sourceCache.size * 4)
         for (sourceInfo in sourceCache.values) {
@@ -71,7 +72,6 @@ class JavaClassCache() : Serializable {
 
     private fun writeObject(output: ObjectOutputStream) {
         output.writeObject(sourceCache)
-        output.writeObject(generatedTypes)
     }
 
     fun isAlreadyProcessed(sourceFile: URI): Boolean {
@@ -84,8 +84,7 @@ class JavaClassCache() : Serializable {
             return true
         }
         return try {
-            val fileFromUri = File(sourceFile)
-            sourceCache.containsKey(sourceFile) || generatedTypes.containsKey(fileFromUri)
+            sourceCache.containsKey(sourceFile)
         } catch (e: IllegalArgumentException) {
             // unable to create File instance, avoid processing these files
             true
@@ -96,89 +95,66 @@ class JavaClassCache() : Serializable {
     internal fun getStructure(sourceFile: File) = sourceCache[sourceFile.toURI()]
 
     /**
-     * Invalidate cache entries for the specified files, and any files that depend on the changed ones. It returns the set of files that
-     * should be re-processed.
-     * */
-    fun invalidateEntriesForChangedFiles(changes: Changes): SourcesToReprocess {
-        val allDirtyFiles = mutableSetOf<URI>()
-        var currentDirtyFiles = changes.sourceChanges.map { it.toURI() }.toMutableSet()
-
-        for (classpathFqName in changes.dirtyFqNamesFromClasspath) {
-            nonTransitiveCache[classpathFqName]?.let {
-                allDirtyFiles.addAll(it)
+     * Compute the list of types that are impacted by source changes i.e [Changes.sourceChanges] and [Changes.dirtyFqNamesFromClasspath]
+     * i.e classpath changes. The search is transitive, if a file is impacted, all files referencing types defined in that file are
+     * also considered impacted. Only original sources and generated sources are reported as impacted (final result does not contain
+     * classpath types).
+     */
+    fun getAllImpactedTypes(changes: Changes): MutableSet<String> {
+        fun findImpactedTypes(changedType: String, transitiveDeps: MutableSet<String>, nonTransitiveDeps: MutableSet<String>) {
+            dependencyCache[changedType]?.let { impactedSources ->
+                impactedSources.forEach {
+                    transitiveDeps.addAll(sourceCache.getValue(it).getDeclaredTypes())
+                }
             }
-
-            dependencyCache[classpathFqName]?.let {
-                currentDirtyFiles.addAll(it)
+            nonTransitiveCache[changedType]?.let { impactedSources ->
+                impactedSources.forEach {
+                    nonTransitiveDeps.addAll(sourceCache.getValue(it).getDeclaredTypes())
+                }
             }
         }
 
         val allDirtyTypes = mutableSetOf<String>()
+        var currentDirtyTypes = getTypesForFiles(changes.sourceChanges).toMutableSet()
 
-        while (currentDirtyFiles.isNotEmpty()) {
+        changes.dirtyFqNamesFromClasspath.forEach { classpathChange ->
+            findImpactedTypes(classpathChange, currentDirtyTypes, allDirtyTypes)
+        }
 
-            val nextRound = mutableSetOf<URI>()
-            for (dirtyFile in currentDirtyFiles) {
-                allDirtyFiles.add(dirtyFile)
-
-                val structure = sourceCache.remove(dirtyFile) ?: continue
-                val dirtyTypes = structure.getDeclaredTypes()
-                allDirtyTypes.addAll(dirtyTypes)
-
-                dirtyTypes.forEach { type ->
-                    nonTransitiveCache[type]?.let {
-                        allDirtyFiles.addAll(it)
-                    }
-
-                    dependencyCache[type]?.let {
-                        nextRound.addAll(it)
-                    }
-                }
+        while (currentDirtyTypes.isNotEmpty()) {
+            val nextRound = mutableSetOf<String>()
+            for (dirtyType in currentDirtyTypes) {
+                allDirtyTypes.add(dirtyType)
+                findImpactedTypes(dirtyType, nextRound, allDirtyTypes)
             }
 
-            currentDirtyFiles = nextRound.filter { !allDirtyFiles.contains(it) }.toMutableSet()
+            currentDirtyTypes = nextRound.filterTo(HashSet()) { it !in allDirtyTypes }
         }
-
-        return SourcesToReprocess.Incremental(allDirtyFiles.map { File(it) }, allDirtyTypes)
-    }
-
-    /**
-     * For aggregating annotation processors, we always need to reprocess all files annotated with an annotation claimed by the aggregating
-     * annotation processor. This search is not transitive.
-     */
-    fun invalidateEntriesAnnotatedWith(annotations: Set<String>): Set<File> {
-        val patterns: List<Pattern> = if ("*" in annotations) {
-            // optimize this case - create only one pattern
-            listOf(Pattern.compile(".*"))
-        } else {
-            annotations.map {
-                Pattern.compile(
-                    // These are already valid import statements, otherwise run fails when loading the annotation processor.
-                    // Handles structure; TypeName [.*] e.g. org.jetbrains.annotations.NotNull and org.jetbrains.annotations.*
-                    it.replace(".", "\\.").replace("*", ".+")
-                )
-            }
-        }
-        val matchesAnyPattern = { name: String -> patterns.any { it.matcher(name).matches() } }
-
-        val toReprocess = mutableSetOf<URI>()
-
-        for (cacheEntry in sourceCache) {
-            if (cacheEntry.value.getMentionedAnnotations().any(matchesAnyPattern)) {
-                toReprocess.add(cacheEntry.key)
-            }
-        }
-
-        toReprocess.forEach {
-            sourceCache.remove(it)
-        }
-
-        return toReprocess.map { File(it) }.toSet()
+        return allDirtyTypes
     }
 
     internal fun invalidateAll() {
         sourceCache.clear()
-        generatedTypes.clear()
+    }
+
+    fun getSourceForType(type: String): File {
+        sourceCache.forEach { (fileUri, typeInfo) ->
+            if (type in typeInfo.getDeclaredTypes()) {
+                return File(fileUri)
+            }
+        }
+        throw IllegalStateException("Unable to find source file for type $type")
+    }
+
+    fun invalidateDataForTypes(impactedTypes: MutableSet<String>) {
+        val allSources = mutableSetOf<URI>()
+        sourceCache.forEach { (fileUri, typeInfo) ->
+            if (typeInfo.getDeclaredTypes().any { it in impactedTypes }) {
+                allSources.add(fileUri)
+            }
+        }
+
+        allSources.forEach { sourceCache.remove(it) }
     }
 }
 

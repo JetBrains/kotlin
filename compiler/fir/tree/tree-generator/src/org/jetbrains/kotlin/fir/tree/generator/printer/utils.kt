@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
-import org.jetbrains.kotlin.fir.tree.generator.compositeTransformResultType
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
 import org.jetbrains.kotlin.fir.tree.generator.firImplementationDetailType
 import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
+import java.io.File
+
+class GeneratedFile(val file: File, val newText: String)
 
 enum class ImportKind(val postfix: String) {
     Element(""), Implementation(".impl"), Builder(".builder")
@@ -48,11 +51,8 @@ fun Implementation.collectImports(base: List<String> = emptyList(), kind: Import
 
 fun Element.collectImports(): List<String> {
     val baseTypes = parents.mapTo(mutableListOf()) { it.fullQualifiedName }
+    baseTypes += AbstractFirTreeBuilder.baseFirElement.fullQualifiedName
     baseTypes += parentsArguments.values.flatMap { it.values }.mapNotNull { it.fullQualifiedName }
-    val isBaseFirElement = this == AbstractFirTreeBuilder.baseFirElement
-    if (isBaseFirElement) {
-        baseTypes += compositeTransformResultType.fullQualifiedName!!
-    }
     if (needPureAbstractElement) {
         baseTypes += pureAbstractElementType.fullQualifiedName!!
     }
@@ -67,7 +67,11 @@ private fun Element.collectImportsInternal(base: List<String>, kind: ImportKind)
             allFields.flatMap { it.overridenTypes.mapNotNull { it.fullQualifiedName } } +
             allFields.flatMap { it.arguments.mapNotNull { it.fullQualifiedName } } +
             typeArguments.flatMap { it.upperBounds.mapNotNull { it.fullQualifiedName } }
-    return fqns.filterRedundantImports(packageName, kind)
+    val result = fqns.filterRedundantImports(packageName, kind)
+    if (allFields.any { it.name == "source" && it.withReplace }) {
+        return (result + "org.jetbrains.kotlin.fir.FirImplementationDetail").distinct()
+    }
+    return result
 }
 
 private fun List<String>.filterRedundantImports(
@@ -82,14 +86,14 @@ private fun List<String>.filterRedundantImports(
 
 
 val KindOwner.needPureAbstractElement: Boolean
-    get() = (kind != Implementation.Kind.Interface) && !allParents.any { it.kind == Implementation.Kind.AbstractClass }
+    get() = (kind != Kind.Interface && kind != Kind.SealedInterface) && !allParents.any { it.kind == Kind.AbstractClass || it.kind == Kind.SealedClass }
 
 
 val Field.isVal: Boolean get() = this is FieldList || (this is FieldWithDefault && origin is FieldList) || !isMutable
 
 
 fun Field.transformFunctionDeclaration(returnType: String): String {
-    return transformFunctionDeclaration(name.capitalize(), returnType)
+    return transformFunctionDeclaration(name.replaceFirstChar(Char::uppercaseChar), returnType)
 }
 
 fun transformFunctionDeclaration(transformName: String, returnType: String): String {
@@ -97,7 +101,7 @@ fun transformFunctionDeclaration(transformName: String, returnType: String): Str
 }
 
 fun Field.replaceFunctionDeclaration(overridenType: Importable? = null, forceNullable: Boolean = false): String {
-    val capName = name.capitalize()
+    val capName = name.replaceFirstChar(Char::uppercaseChar)
     val type = overridenType?.typeWithArguments ?: typeWithArguments
 
     val typeWithNullable = if (forceNullable && !type.endsWith("?")) "$type?" else type
@@ -123,13 +127,13 @@ fun Element.multipleUpperBoundsList(): String {
     } ?: " "
 }
 
-fun Implementation.Kind?.braces(): String = when (this) {
-    Implementation.Kind.Interface -> ""
-    Implementation.Kind.OpenClass, Implementation.Kind.AbstractClass -> "()"
+fun Kind?.braces(): String = when (this) {
+    Kind.Interface, Kind.SealedInterface -> ""
+    Kind.OpenClass, Kind.AbstractClass, Kind.SealedClass -> "()"
     else -> throw IllegalStateException(this.toString())
 }
 
-val Element.safeDecapitalizedName: String get() = if (name == "Class") "klass" else name.decapitalize()
+val Element.safeDecapitalizedName: String get() = if (name == "Class") "klass" else name.replaceFirstChar(Char::lowercaseChar)
 
 val Importable.typeWithArguments: String
     get() = when (this) {

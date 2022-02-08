@@ -1,7 +1,7 @@
 // !LANGUAGE: +MultiPlatformProjects
-// !USE_EXPERIMENTAL: kotlin.ExperimentalMultiplatform
+// !OPT_IN: kotlin.ExperimentalMultiplatform
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: common.kt
 
 @OptionalExpectation

@@ -1,11 +1,9 @@
 declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
+    const __doNotImplementIt: unique symbol
+    type __doNotImplementIt = typeof __doNotImplementIt
     namespace foo {
         interface ExportedInternalInterface {
-        }
-    }
-    namespace foo {
-        interface FileLevelExportedExternalInterface {
         }
     }
     namespace foo {
@@ -13,7 +11,11 @@ declare namespace JS_TESTS {
         function exportedFun(): number;
         class ExportedClass {
             constructor();
-            readonly value: number;
+            get value(): number;
+        }
+    }
+    namespace foo {
+        interface FileLevelExportedExternalInterface {
         }
     }
     namespace foo {
@@ -21,7 +23,7 @@ declare namespace JS_TESTS {
         function fileLevelExportedFun(): number;
         class FileLevelExportedClass {
             constructor();
-            readonly value: number;
+            get value(): number;
         }
     }
 }

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 
 fun <T> magic(): T = null!!
@@ -15,11 +14,11 @@ class Q {
     private var y = foo<String>()()
 
     fun bar() {
-        x = y
+        x = <!ASSIGNMENT_TYPE_MISMATCH!>y<!>
         x = foo<CharSequence>()()
         y = foo<String>()()
 
-        x.prop.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><CharSequence>() }
-        y.prop.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><String>() }
+        x.prop.checkType { _<CharSequence>() }
+        y.prop.checkType { _<String>() }
     }
 }

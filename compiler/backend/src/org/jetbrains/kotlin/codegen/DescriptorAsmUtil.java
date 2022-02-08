@@ -61,7 +61,8 @@ import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineOnlyPrivateInBytecode;
 import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineWithReified;
-import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE;
+import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmSyntheticAnnotation;
 import static org.jetbrains.kotlin.types.TypeUtils.isNullableType;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
@@ -137,13 +138,6 @@ public class DescriptorAsmUtil {
         return boxedPrimitiveType != null ? boxedPrimitiveType : type;
     }
 
-    public static boolean isPrimitiveNumberClassDescriptor(DeclarationDescriptor descriptor) {
-        if (!(descriptor instanceof ClassDescriptor)) {
-            return false;
-        }
-        return isPrimitiveClass((ClassDescriptor) descriptor) && !isBoolean((ClassDescriptor) descriptor);
-    }
-
     public static boolean isAbstractMethod(FunctionDescriptor functionDescriptor, OwnerKind kind, JvmDefaultMode jvmDefaultMode) {
         return (functionDescriptor.getModality() == Modality.ABSTRACT ||
                 (isJvmInterface(functionDescriptor.getContainingDeclaration()) && !JvmAnnotationUtilKt
@@ -216,7 +210,7 @@ public class DescriptorAsmUtil {
     private static boolean isInlineClassWrapperConstructor(@NotNull FunctionDescriptor functionDescriptor, @Nullable OwnerKind kind) {
         if (!(functionDescriptor instanceof ConstructorDescriptor)) return false;
         ClassDescriptor classDescriptor = ((ConstructorDescriptor) functionDescriptor).getConstructedClass();
-        return classDescriptor.isInline() && kind == OwnerKind.IMPLEMENTATION;
+        return InlineClassesUtilsKt.isInlineClass(classDescriptor) && kind == OwnerKind.IMPLEMENTATION;
     }
 
     public static int getCommonCallableFlags(FunctionDescriptor functionDescriptor, @NotNull GenerationState state) {
@@ -231,9 +225,7 @@ public class DescriptorAsmUtil {
         int flags = getVisibilityAccessFlag(functionDescriptor, kind);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);
-        if (deprecationResolver.isDeprecatedHidden(functionDescriptor) ||
-            isInlineWithReified(functionDescriptor) ||
-            functionDescriptor.isSuspend() && functionDescriptor.getVisibility().equals(DescriptorVisibilities.PRIVATE)) {
+        if (deprecationResolver.isDeprecatedHidden(functionDescriptor) || isInlineWithReified(functionDescriptor)) {
             flags |= ACC_SYNTHETIC;
         }
         return flags;
@@ -368,6 +360,18 @@ public class DescriptorAsmUtil {
             return ACC_PRIVATE;
         }
 
+        // Sealed class constructors should be ACC_PRIVATE.
+        // In 1.4 and before, sealed class constructors had PRIVATE visibility, and were represented as private methods in bytecode.
+        // In 1.5 (+AllowSealedInheritorsInDifferentFilesOfSamePackage), sealed class constructors became INTERNAL,
+        // but still should be represented as private methods in bytecode in order to prevent inheriting from sealed classes on JVM.
+        if (memberDescriptor instanceof ConstructorDescriptor &&
+            !(memberDescriptor instanceof AccessorForConstructorDescriptor) &&
+            isSealedClass(((ConstructorDescriptor) memberDescriptor).getConstructedClass()) &&
+            memberDescriptor.getVisibility() != DescriptorVisibilities.PUBLIC
+        ) {
+            return ACC_PRIVATE;
+        }
+
         if (isInlineOnlyPrivateInBytecode(memberDescriptor)) {
             return ACC_PRIVATE;
         }
@@ -412,10 +416,6 @@ public class DescriptorAsmUtil {
 
         if (!DescriptorVisibilities.isPrivate(memberVisibility)) {
             return null;
-        }
-
-        if (memberDescriptor instanceof FunctionDescriptor && ((FunctionDescriptor) memberDescriptor).isSuspend()) {
-            return NO_FLAG_PACKAGE_PRIVATE;
         }
 
         if (memberDescriptor instanceof AccessorForCompanionObjectInstanceFieldDescriptor) {
@@ -559,7 +559,7 @@ public class DescriptorAsmUtil {
         if (receiverKotlinType.isMarkedNullable()) return null;
 
         DeclarationDescriptor receiverTypeDescriptor = receiverKotlinType.getConstructor().getDeclarationDescriptor();
-        assert receiverTypeDescriptor instanceof ClassDescriptor && ((ClassDescriptor) receiverTypeDescriptor).isInline() :
+        assert receiverTypeDescriptor != null && InlineClassesUtilsKt.isInlineClass(receiverTypeDescriptor) :
                 "Inline class type expected: " + receiverKotlinType;
         ClassDescriptor receiverClassDescriptor = (ClassDescriptor) receiverTypeDescriptor;
         FunctionDescriptor toStringDescriptor = receiverClassDescriptor.getUnsubstitutedMemberScope()
@@ -892,5 +892,20 @@ public class DescriptorAsmUtil {
         OwnerKind kind = context.getContextKind();
         //Trait always should have this descriptor
         return kind != OwnerKind.DEFAULT_IMPLS && isStaticMethod(kind, descriptor) ? 0 : 1;
+    }
+
+    public static boolean isHiddenConstructor(FunctionDescriptor descriptor) {
+        if (!(descriptor instanceof ClassConstructorDescriptor)) return false;
+
+        ClassConstructorDescriptor classConstructorDescriptor = (ClassConstructorDescriptor) descriptor;
+        if (InlineClassManglingRulesKt.shouldHideConstructorDueToInlineClassTypeValueParameters(descriptor)) {
+            return true;
+        }
+        if (isSealedClass(classConstructorDescriptor.getConstructedClass()) &&
+            classConstructorDescriptor.getVisibility() != DescriptorVisibilities.PUBLIC
+        ) {
+            return true;
+        }
+        return false;
     }
 }

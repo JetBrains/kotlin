@@ -8,22 +8,16 @@ package org.jetbrains.kotlin.pill
 import org.gradle.api.Project
 import java.io.File
 
-object EmbeddedComponents {
-    lateinit var CONFIGURATION_NAME: String
-}
-
 @Suppress("unused")
 object PillImporter {
     private val TASKS = mapOf(
-            "pill" to JpsCompatiblePluginTasks::pill,
-            "unpill" to JpsCompatiblePluginTasks::unpill
+        "pill" to JpsCompatiblePluginTasks::pill,
+        "unpill" to JpsCompatiblePluginTasks::unpill
     )
 
     @JvmStatic
-    fun run(rootProject: Project, taskName: String, platformDir: File, resourcesDir: File, embeddedConfigurationName: String) {
-        EmbeddedComponents.CONFIGURATION_NAME = embeddedConfigurationName
-
-        val tasks = JpsCompatiblePluginTasks(rootProject, platformDir, resourcesDir)
+    fun run(rootProject: Project, taskName: String, platformDir: File, resourcesDir: File, isIdePluginAttached: Boolean) {
+        val tasks = JpsCompatiblePluginTasks(rootProject, platformDir, resourcesDir, isIdePluginAttached)
         val task = TASKS[taskName] ?: error("Unknown task $taskName, available tasks: " + TASKS.keys.joinToString())
         task(tasks)
     }

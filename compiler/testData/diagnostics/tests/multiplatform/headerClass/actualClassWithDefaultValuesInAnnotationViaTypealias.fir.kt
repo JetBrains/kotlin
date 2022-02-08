@@ -10,13 +10,13 @@ expect annotation class Foo5()
 expect annotation class Foo6()
 expect annotation class Foo7()
 
-@Foo1
+@<!UNRESOLVED_REFERENCE!>Foo1<!>
 fun foo() {}
 
 @Foo5
 fun bar() {}
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 
 // FILE: Bar1.java
 
@@ -45,4 +45,4 @@ actual annotation class Foo5
 
 actual annotation class Foo6(val s: String = "value")
 
-actual typealias Foo7 = Bar2
+actual typealias <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo7<!> = Bar2

@@ -85,11 +85,12 @@ public open external class MediaKeyMessageEvent : org.w3c.dom.events.Event {
 }
 
 public external interface MediaKeyMessageEventInit : org.w3c.dom.EventInit {
-    public open var message: org.khronos.webgl.ArrayBuffer? { get; set; }
+    public abstract var message: org.khronos.webgl.ArrayBuffer? { get; set; }
 
-    public open var messageType: org.w3c.dom.encryptedmedia.MediaKeyMessageType? { get; set; }
+    public abstract var messageType: org.w3c.dom.encryptedmedia.MediaKeyMessageType? { get; set; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface MediaKeyMessageType {
     public companion object of MediaKeyMessageType {
     }
@@ -121,11 +122,13 @@ public abstract external class MediaKeySession : org.w3c.dom.events.EventTarget 
     public final fun update(response: dynamic): kotlin.js.Promise<kotlin.Unit>
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface MediaKeySessionType {
     public companion object of MediaKeySessionType {
     }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface MediaKeyStatus {
     public companion object of MediaKeyStatus {
     }
@@ -181,6 +184,7 @@ public abstract external class MediaKeys {
     public final fun setServerCertificate(serverCertificate: dynamic): kotlin.js.Promise<kotlin.Boolean>
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface MediaKeysRequirement {
     public companion object of MediaKeysRequirement {
     }

@@ -6,12 +6,12 @@ class A {
             if (1 < 2)
                 return@inner
             else
-            return@outer
+            <!RETURN_NOT_ALLOWED!>return@outer<!>
         }
         if (1 < 2)
-            return@A
+            <!RETURN_NOT_ALLOWED!>return@A<!>
         else if (2 < 3)
-            return@inner
+            <!RETURN_NOT_ALLOWED!>return@inner<!>
         return@outer
     }
 }

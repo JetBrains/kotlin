@@ -52,4 +52,32 @@ class Regexps {
         val names = matches.map { it.groupValues[1] }.joinToString()
         assertPrints(names, "Alice, Bob, Eve")
     }
+
+    @Sample
+    fun splitToSequence() {
+        val colors = "green, red , brown&blue, orange, pink&green"
+        val regex = "[,\\s]+".toRegex()
+
+        val mixedColor = regex.splitToSequence(colors)
+            .onEach { println(it) }
+            .firstOrNull { it.contains('&') }
+
+        assertPrints(mixedColor, "brown&blue")
+    }
+
+    @Sample
+    fun matchesAt() {
+        val releaseText = "Kotlin 1.5.30 is released!"
+        val versionRegex = "\\d[.]\\d[.]\\d+".toRegex()
+        assertPrints(versionRegex.matchesAt(releaseText, 0), "false")
+        assertPrints(versionRegex.matchesAt(releaseText, 7), "true")
+    }
+
+    @Sample
+    fun matchAt() {
+        val releaseText = "Kotlin 1.5.30 is released!"
+        val versionRegex = "\\d[.]\\d[.]\\d+".toRegex()
+        assertPrints(versionRegex.matchAt(releaseText, 0), "null")
+        assertPrints(versionRegex.matchAt(releaseText, 7)?.value, "1.5.30")
+    }
 }

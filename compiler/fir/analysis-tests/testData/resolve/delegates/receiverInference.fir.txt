@@ -1,0 +1,37 @@
+FILE: receiverInference.kt
+    public abstract interface XEntity : R|kotlin/Any| {
+    }
+    public final class Provider<out R> : R|kotlin/Any| {
+        public constructor<out R>(): R|Provider<R>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun provideDelegate(thisRef: R|XEntity|, prop: R|kotlin/Any|): R|R| {
+            ^provideDelegate Null(null)!!
+        }
+
+    }
+    public final class Prop<E, V> : R|kotlin/Any| {
+        public constructor<E, V>(): R|Prop<E, V>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun getValue(receiver: R|E|, prop: R|kotlin/Any|): R|V| {
+            ^getValue Null(null)!!
+        }
+
+    }
+    public final fun <R : R|XEntity|, V> mkProp(): R|Provider<Prop<R, V>>| {
+        ^mkProp R|/Provider.Provider|<R|Prop<R, V>|>()
+    }
+    public final class MyEnt : R|XEntity| {
+        public constructor(): R|MyEnt| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val d: R|kotlin/String|by R|/mkProp|<R|MyEnt|, R|kotlin/String|>().R|SubstitutionOverride</Provider.provideDelegate: R|Prop<Stub (chain inference): TypeVariable(_R), Stub (chain inference): TypeVariable(_V)>|>|(this@R|/MyEnt|, ::R|/MyEnt.d|)
+            public get(): R|kotlin/String| {
+                ^ this@R|/MyEnt|.D|/MyEnt.d|.R|SubstitutionOverride</Prop.getValue: R|Stub (chain inference): TypeVariable(_V)|>|(this@R|/MyEnt|, ::R|/MyEnt.d|)
+            }
+
+    }

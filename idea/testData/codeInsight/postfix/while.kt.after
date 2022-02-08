@@ -1,5 +1,0 @@
-fun foo(x: Boolean) {
-    while (x) {
-        <caret>
-    }
-}

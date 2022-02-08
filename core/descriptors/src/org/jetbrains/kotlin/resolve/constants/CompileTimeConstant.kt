@@ -21,16 +21,15 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
-import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.*
 
 interface CompileTimeConstant<out T> {
     val isError: Boolean
         get() = false
 
     val parameters: CompileTimeConstant.Parameters
+
+    val moduleDescriptor: ModuleDescriptor
 
     fun toConstantValue(expectedType: KotlinType): ConstantValue<T>
 
@@ -46,6 +45,8 @@ interface CompileTimeConstant<out T> {
 
     val isUnsignedNumberLiteral: Boolean get() = parameters.isUnsignedNumberLiteral
 
+    val hasIntegerLiteralType: Boolean
+
     data class Parameters(
         val canBeUsedInAnnotation: Boolean,
         val isPure: Boolean,
@@ -56,7 +57,8 @@ interface CompileTimeConstant<out T> {
         val usesVariableAsConstant: Boolean,
         val usesNonConstValAsConstant: Boolean,
         // `isConvertableConstVal` means that this is `const val` that has `ImplicitIntegerCoercion` annotation
-        val isConvertableConstVal: Boolean
+        val isConvertableConstVal: Boolean,
+        val dontCreateILT: Boolean
     )
 
     override fun equals(other: Any?): Boolean
@@ -65,14 +67,15 @@ interface CompileTimeConstant<out T> {
 }
 
 class TypedCompileTimeConstant<out T>(
-        val constantValue: ConstantValue<T>,
-        module: ModuleDescriptor,
-        override val parameters: CompileTimeConstant.Parameters
+    val constantValue: ConstantValue<T>,
+    override val moduleDescriptor: ModuleDescriptor,
+    override val parameters: CompileTimeConstant.Parameters
 ) : CompileTimeConstant<T> {
+
     override val isError: Boolean
         get() = constantValue is ErrorValue
 
-    val type: KotlinType = constantValue.getType(module)
+    val type: KotlinType = constantValue.getType(moduleDescriptor)
 
     override fun toConstantValue(expectedType: KotlinType): ConstantValue<T> = constantValue
 
@@ -90,6 +93,9 @@ class TypedCompileTimeConstant<out T>(
         result = 31 * result + type.hashCode()
         return result
     }
+
+    override val hasIntegerLiteralType: Boolean
+        get() = false
 }
 
 fun createIntegerValueTypeConstant(
@@ -107,6 +113,7 @@ fun hasUnsignedTypesInModuleDependencies(module: ModuleDescriptor): Boolean {
 
 class UnsignedErrorValueTypeConstant(
     private val value: Number,
+    override val moduleDescriptor: ModuleDescriptor,
     override val parameters: CompileTimeConstant.Parameters
 ) : CompileTimeConstant<Unit> {
     val errorValue = ErrorValue.ErrorValueWithMessage(
@@ -120,11 +127,14 @@ class UnsignedErrorValueTypeConstant(
     override fun equals(other: Any?) = other is UnsignedErrorValueTypeConstant && value == other.value
 
     override fun hashCode() = value.hashCode()
+
+    override val hasIntegerLiteralType: Boolean
+        get() = false
 }
 
 class IntegerValueTypeConstant(
     private val value: Number,
-    module: ModuleDescriptor,
+    override val moduleDescriptor: ModuleDescriptor,
     override val parameters: CompileTimeConstant.Parameters,
     private val newInferenceEnabled: Boolean,
     val convertedFromSigned: Boolean = false
@@ -139,7 +149,8 @@ class IntegerValueTypeConstant(
                 isUnsignedLongNumberLiteral = parameters.isUnsignedLongNumberLiteral,
                 usesVariableAsConstant = parameters.usesVariableAsConstant,
                 usesNonConstValAsConstant = parameters.usesNonConstValAsConstant,
-                isConvertableConstVal = parameters.isConvertableConstVal
+                isConvertableConstVal = parameters.isConvertableConstVal,
+                dontCreateILT = false
             )
 
             return IntegerValueTypeConstant(value, module, newParameters, newInferenceEnabled, convertedFromSigned = true)
@@ -153,7 +164,8 @@ class IntegerValueTypeConstant(
                 isUnsignedLongNumberLiteral = parameters.isUnsignedLongNumberLiteral,
                 usesVariableAsConstant = parameters.usesVariableAsConstant,
                 usesNonConstValAsConstant = parameters.usesNonConstValAsConstant,
-                isConvertableConstVal = parameters.isConvertableConstVal
+                isConvertableConstVal = parameters.isConvertableConstVal,
+                dontCreateILT = false
             )
 
             return IntegerValueTypeConstant(value, module, newParameters, newInferenceEnabled, convertedFromSigned = true)
@@ -162,9 +174,9 @@ class IntegerValueTypeConstant(
 
     private val typeConstructor =
         if (newInferenceEnabled) {
-            IntegerLiteralTypeConstructor(value.toLong(), module, parameters)
+            IntegerLiteralTypeConstructor(value.toLong(), moduleDescriptor, parameters)
         } else {
-            IntegerValueTypeConstructor(value.toLong(), module, parameters)
+            IntegerValueTypeConstructor(value.toLong(), moduleDescriptor, parameters)
         }
 
     override fun toConstantValue(expectedType: KotlinType): ConstantValue<Number> {
@@ -185,7 +197,7 @@ class IntegerValueTypeConstant(
     }
 
     val unknownIntegerType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-        Annotations.EMPTY, typeConstructor, emptyList(), false,
+        TypeAttributes.Empty, typeConstructor, emptyList(), false,
         ErrorUtils.createErrorScope("Scope for number value type ($typeConstructor)", true)
     )
 
@@ -202,4 +214,6 @@ class IntegerValueTypeConstant(
 
     override fun hashCode() = 31 * value.hashCode() + parameters.hashCode()
 
+    override val hasIntegerLiteralType: Boolean
+        get() = true
 }

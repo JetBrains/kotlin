@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import com.intellij.openapi.util.SystemInfo
-import org.gradle.api.GradleException
-import org.gradle.api.file.FileCollection
-import org.gradle.api.tasks.Classpath
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.incremental.IncrementalTaskInputs
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.*
+import org.gradle.work.InputChanges
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
@@ -21,58 +20,69 @@ import org.jetbrains.kotlin.gradle.internal.kapt.incremental.KaptIncrementalChan
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
-import org.jetbrains.kotlin.gradle.plugin.PLUGIN_CLASSPATH_CONFIGURATION_NAME
-import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
-import org.jetbrains.kotlin.gradle.tasks.GradleCompileTaskProvider
-import org.jetbrains.kotlin.gradle.utils.getValue
-import org.jetbrains.kotlin.gradle.utils.optionalProvider
-import org.jetbrains.kotlin.gradle.utils.toSortedPathsArray
+import org.jetbrains.kotlin.gradle.report.ReportingSettings
+import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import java.io.File
+import javax.inject.Inject
 
-abstract class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<K2JVMCompilerArguments> {
+abstract class KaptWithKotlincTask @Inject constructor(
+    objectFactory: ObjectFactory
+) : KaptTask(objectFactory),
+    CompilerArgumentAwareWithInput<K2JVMCompilerArguments>,
+    CompileUsingKotlinDaemonWithNormalization {
+
+    class Configurator(kotlinCompileTask: KotlinCompile): KaptTask.Configurator<KaptWithKotlincTask>(kotlinCompileTask) {
+        override fun configure(task: KaptWithKotlincTask) {
+            super.configure(task)
+            task.pluginClasspath.from(kotlinCompileTask.pluginClasspath)
+            task.compileKotlinArgumentsContributor.set(
+                task.project.provider { kotlinCompileTask.compilerArgumentsContributor }
+            )
+            task.javaPackagePrefix.set(task.project.provider { kotlinCompileTask.javaPackagePrefix })
+            task.reportingSettings.set(task.project.provider { kotlinCompileTask.reportingSettings() })
+        }
+    }
+
     @get:Internal
     internal val pluginOptions = CompilerPluginOptions()
 
     @get:Classpath
-    @get:InputFiles
-    @Suppress("unused")
-    internal val kotlinTaskPluginClasspaths
-        get() = kotlinCompileTask.pluginClasspath
-
-    @get:Classpath
-    @get:InputFiles
-    val pluginClasspath: FileCollection
-        get() = project.configurations.getByName(PLUGIN_CLASSPATH_CONFIGURATION_NAME)
+    abstract val pluginClasspath: ConfigurableFileCollection
 
     @get:Internal
-    val taskProvider = GradleCompileTaskProvider(this)
+    val taskProvider: Provider<GradleCompileTaskProvider> = objectFactory.property(
+        objectFactory.newInstance<GradleCompileTaskProvider>(project.gradle, this, project)
+    )
 
     override fun createCompilerArgs(): K2JVMCompilerArguments = K2JVMCompilerArguments()
 
-    private val compileKotlinArgumentsContributor by project.provider {
-        kotlinCompileTask.compilerArgumentsContributor
-    }
+    abstract override val kotlinDaemonJvmArguments: ListProperty<String>
+
+    @get:Internal
+    internal abstract val compileKotlinArgumentsContributor: Property<CompilerArgumentsContributor<K2JVMCompilerArguments>>
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        compileKotlinArgumentsContributor.contributeArguments(
+        compileKotlinArgumentsContributor.get().contributeArguments(
             args, compilerArgumentsConfigurationFlags(
                 defaultsOnly,
             ignoreClasspathResolutionErrors
         ))
 
-        args.pluginClasspaths = pluginClasspath.toSortedPathsArray()
+        args.pluginClasspaths = pluginClasspath.toPathsArray()
 
         val pluginOptionsWithKapt: CompilerPluginOptions = pluginOptions.withWrappedKaptOptions(
             withApClasspath = kaptClasspath,
             changedFiles = changedFiles,
             classpathChanges = classpathChanges,
-            compiledSourcesDir = compiledSources,
+            compiledSourcesDir = compiledSources.toList(),
             processIncrementally = processIncrementally
         )
 
         args.pluginOptions = (pluginOptionsWithKapt.arguments + args.pluginOptions!!).toTypedArray()
-
-        args.verbose = project.hasProperty("kapt.verbose") && project.property("kapt.verbose").toString().toBoolean() == true
+        args.verbose = verbose.get()
     }
 
     /**
@@ -83,15 +93,15 @@ abstract class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<
     private var classpathChanges: List<String> = emptyList()
     private var processIncrementally = false
 
-    private val javaPackagePrefix by project.optionalProvider { kotlinCompileTask.javaPackagePrefix }
-    private val reportingSettings by project.provider { kotlinCompileTask.reportingSettings }
+    private val javaPackagePrefix = objectFactory.property(String::class.java)
+    private val reportingSettings = objectFactory.property(ReportingSettings::class.java)
 
     @TaskAction
-    fun compile(inputs: IncrementalTaskInputs) {
+    fun compile(inputChanges: InputChanges) {
         logger.debug("Running kapt annotation processing using the Kotlin compiler")
         checkAnnotationProcessorClasspath()
 
-        val incrementalChanges = getIncrementalChanges(inputs)
+        val incrementalChanges = getIncrementalChanges(inputChanges)
         if (incrementalChanges is KaptIncrementalChanges.Known) {
             changedFiles = incrementalChanges.changedSources.toList()
             classpathChanges = incrementalChanges.changedClasspathJvmNames.toList()
@@ -103,25 +113,27 @@ abstract class KaptWithKotlincTask : KaptTask(), CompilerArgumentAwareWithInput<
         val messageCollector = GradlePrintingMessageCollector(GradleKotlinLogger(logger), args.allWarningsAsErrors)
         val outputItemCollector = OutputItemsCollectorImpl()
         val environment = GradleCompilerEnvironment(
-            compilerClasspath, messageCollector, outputItemCollector,
-            reportingSettings = reportingSettings,
+            compilerClasspath.files.toList(), messageCollector, outputItemCollector,
+            reportingSettings = reportingSettings.get(),
             outputFiles = allOutputFiles()
         )
-        if (environment.toolsJar == null && !isAtLeastJava9) {
-            throw GradleException("Could not find tools.jar in system classpath, which is required for kapt to work")
-        }
 
-        val compilerRunner = GradleCompilerRunner(taskProvider)
+        val compilerRunner = GradleCompilerRunner(
+            taskProvider.get(),
+            defaultKotlinJavaToolchain.get().currentJvmJdkToolsJar.orNull,
+            normalizedKotlinDaemonJvmArguments.orNull,
+            metrics.get(),
+            compilerExecutionStrategy.get(),
+        )
         compilerRunner.runJvmCompilerAsync(
             sourcesToCompile = emptyList(),
             commonSources = emptyList(),
-            javaSourceRoots = javaSourceRoots,
-            javaPackagePrefix = javaPackagePrefix,
+            javaSourceRoots = source.files,
+            javaPackagePrefix = javaPackagePrefix.orNull,
             args = args,
-            environment = environment
+            environment = environment,
+            jdkHome = defaultKotlinJavaToolchain.get().providedJvm.get().javaHome,
+            null
         )
     }
-
-    private val isAtLeastJava9: Boolean
-        get() = SystemInfo.isJavaVersionAtLeast(9, 0, 0)
 }

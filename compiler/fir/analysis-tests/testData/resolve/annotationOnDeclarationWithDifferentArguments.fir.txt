@@ -1,0 +1,54 @@
+FILE: annotationOnDeclarationWithDifferentArguments.kt
+    public final enum class SomeEnum : R|kotlin/Enum<SomeEnum>| {
+        private constructor(): R|SomeEnum| {
+            super<R|kotlin/Enum<SomeEnum>|>()
+        }
+
+        public final static enum entry A: R|SomeEnum|
+        public final static enum entry B: R|SomeEnum|
+        public final static fun values(): R|kotlin/Array<SomeEnum>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|SomeEnum| {
+        }
+
+    }
+    public final annotation class MyAnnotation : R|kotlin/Annotation| {
+        public constructor(intValue: R|kotlin/Int|, stringValue: R|kotlin/String|, enumValue: R|SomeEnum|, kClasses: R|kotlin/Array<out kotlin/reflect/KClass<*>>|, annotation: R|MyOtherAnnotation|): R|MyAnnotation| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val intValue: R|kotlin/Int| = R|<local>/intValue|
+            public get(): R|kotlin/Int|
+
+        public final val stringValue: R|kotlin/String| = R|<local>/stringValue|
+            public get(): R|kotlin/String|
+
+        public final val enumValue: R|SomeEnum| = R|<local>/enumValue|
+            public get(): R|SomeEnum|
+
+        public final val kClasses: R|kotlin/Array<out kotlin/reflect/KClass<*>>| = R|<local>/kClasses|
+            public get(): R|kotlin/Array<out kotlin/reflect/KClass<*>>|
+
+        public final val annotation: R|MyOtherAnnotation| = R|<local>/annotation|
+            public get(): R|MyOtherAnnotation|
+
+    }
+    public final annotation class MyOtherAnnotation : R|kotlin/Annotation| {
+        public constructor(intValue: R|kotlin/Int|, stringValue: R|kotlin/String|): R|MyOtherAnnotation| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val intValue: R|kotlin/Int| = R|<local>/intValue|
+            public get(): R|kotlin/Int|
+
+        public final val stringValue: R|kotlin/String| = R|<local>/stringValue|
+            public get(): R|kotlin/String|
+
+    }
+    public final const val constInt: R|kotlin/Int| = Int(10)
+        public get(): R|kotlin/Int|
+    public final const val constString: R|kotlin/String| = String()
+        public get(): R|kotlin/String|
+    @R|MyAnnotation|(intValue = Int(10), stringValue = R|/constString|, enumValue = Q|SomeEnum|.R|/SomeEnum.A|, kClasses = <implicitArrayOf>(<getClass>(Q|kotlin/String|), <getClass>(R|/constString|)), annotation = R|/MyOtherAnnotation.MyOtherAnnotation|(intValue = R|/constInt|, stringValue = String(hello))) public final fun foo(): R|kotlin/Unit| {
+    }

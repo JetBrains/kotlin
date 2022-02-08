@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class ULong(val l: Long)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class ULong(val l: Long)
 
 fun nonLocal(): ULong? {
     val u1 = ULong(1)

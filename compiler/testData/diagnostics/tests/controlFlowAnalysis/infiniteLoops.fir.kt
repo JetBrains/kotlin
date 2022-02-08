@@ -1,3 +1,4 @@
+// LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 fun unreachable() {}
 
 fun a() {

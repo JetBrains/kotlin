@@ -29,16 +29,10 @@ internal class KTypeImpl(
 
         val args =
             if (arguments.isEmpty()) ""
-            else arguments.joinToString(", ", "<", ">") { it.asString() }
+            else arguments.joinToString(", ", "<", ">")
         val nullable = if (isMarkedNullable) "?" else ""
 
         return classifierName + args + nullable
-    }
-
-    // TODO: this should be the implementation of KTypeProjection.toString, see KT-30071
-    private fun KTypeProjection.asString(): String {
-        if (variance == null) return "*"
-        return variance.prefixString() + type.toString()
     }
 }
 
@@ -48,10 +42,3 @@ internal object DynamicKType : KType {
     override val isMarkedNullable: Boolean = false
     override fun toString(): String = "dynamic"
 }
-
-internal fun KVariance.prefixString() =
-    when (this) {
-        KVariance.INVARIANT -> ""
-        KVariance.IN -> "in "
-        KVariance.OUT -> "out "
-    }

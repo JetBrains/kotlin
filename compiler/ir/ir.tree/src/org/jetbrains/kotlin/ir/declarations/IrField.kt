@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,15 +16,14 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 abstract class IrField :
     IrDeclarationBase(),
-    IrSymbolDeclaration<IrFieldSymbol>,
-    IrDeclarationWithName, IrDeclarationWithVisibility, IrDeclarationParent, IrMetadataSourceOwner {
+    IrPossiblyExternalDeclaration, IrDeclarationWithVisibility, IrDeclarationParent, IrMetadataSourceOwner {
 
     @ObsoleteDescriptorBasedAPI
     abstract override val descriptor: PropertyDescriptor
+    abstract override val symbol: IrFieldSymbol
 
     abstract var type: IrType
     abstract val isFinal: Boolean
-    abstract val isExternal: Boolean
     abstract val isStatic: Boolean
 
     abstract var initializer: IrExpressionBody?

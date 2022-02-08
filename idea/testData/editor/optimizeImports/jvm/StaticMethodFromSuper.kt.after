@@ -1,5 +1,0 @@
-class B : Thread() {
-    init {
-        currentThread()
-    }
-}

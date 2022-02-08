@@ -1,6 +1,7 @@
+// COMPARE_WITH_LIGHT_TREE
 package toplevelObjectDeclarations
 
-  open class Foo(<!UNUSED_PARAMETER!>y<!> : Int) {
+  open class Foo(y : Int) {
     open fun foo() : Int = 1
   }
 

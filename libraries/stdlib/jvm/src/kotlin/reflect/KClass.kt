@@ -134,6 +134,12 @@ public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedEleme
     public val isFun: Boolean
 
     /**
+     * `true` if this class is a value class.
+     */
+    @SinceKotlin("1.5")
+    public val isValue: Boolean
+
+    /**
      * Returns `true` if this [KClass] instance represents the same Kotlin class as the class represented by [other].
      * On JVM this means that all of the following conditions are satisfied:
      *

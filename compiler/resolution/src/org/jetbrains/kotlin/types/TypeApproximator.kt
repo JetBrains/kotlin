@@ -20,9 +20,16 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.components.ClassicTypeSystemContextForCS
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 
-class TypeApproximator(builtIns: KotlinBuiltIns) : AbstractTypeApproximator(ClassicTypeSystemContextForCS(builtIns)) {
-    fun approximateDeclarationType(baseType: KotlinType, local: Boolean, languageVersionSettings: LanguageVersionSettings): UnwrappedType {
+class TypeApproximator(
+    builtIns: KotlinBuiltIns,
+    languageVersionSettings: LanguageVersionSettings,
+) : AbstractTypeApproximator(
+        ClassicTypeSystemContextForCS(builtIns, KotlinTypeRefiner.Default),
+        languageVersionSettings
+) {
+    fun approximateDeclarationType(baseType: KotlinType, local: Boolean): UnwrappedType {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return baseType.unwrap()
 
         val configuration = if (local) TypeApproximatorConfiguration.LocalDeclaration else TypeApproximatorConfiguration.PublicDeclaration
@@ -38,5 +45,7 @@ class TypeApproximator(builtIns: KotlinBuiltIns) : AbstractTypeApproximator(Clas
     // resultType <: type
     fun approximateToSubType(type: UnwrappedType, conf: TypeApproximatorConfiguration): UnwrappedType? =
         super.approximateToSubType(type, conf) as UnwrappedType?
-}
 
+    fun approximateTo(type: UnwrappedType, conf: TypeApproximatorConfiguration, toSuperType: Boolean): UnwrappedType? =
+        if (toSuperType) approximateToSuperType(type, conf) else approximateToSubType(type, conf)
+}

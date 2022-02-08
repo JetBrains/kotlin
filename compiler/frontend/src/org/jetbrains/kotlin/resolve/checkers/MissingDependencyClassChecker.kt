@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.checkers.isComputingDeferredType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 import org.jetbrains.kotlin.types.KotlinType
@@ -58,8 +59,11 @@ object MissingDependencyClassChecker : CallChecker {
             if (source.isPreReleaseInvisible) {
                 return PRE_RELEASE_CLASS.on(reportOn, source.presentableString)
             }
-            if (source.isInvisibleIrDependency) {
-                return IR_COMPILED_CLASS.on(reportOn, source.presentableString)
+            if (source.abiStability == DeserializedContainerAbiStability.FIR_UNSTABLE) {
+                return FIR_COMPILED_CLASS.on(reportOn, source.presentableString)
+            }
+            if (source.abiStability == DeserializedContainerAbiStability.IR_UNSTABLE) {
+                return IR_WITH_UNSTABLE_ABI_COMPILED_CLASS.on(reportOn, source.presentableString)
             }
         }
 

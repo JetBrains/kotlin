@@ -1,10 +1,11 @@
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// !OPT_IN: kotlin.RequiresOptIn
 // FILE: api.kt
 
 package api
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
 annotation class ExperimentalAPI
 
 @ExperimentalAPI
@@ -51,7 +52,7 @@ package usage3
 import api.*
 
 fun use1() {
-    C.D.E.F()
+    C.D.<!OPT_IN_USAGE!>E<!>.<!OPT_IN_USAGE!>F<!>()
 }
 
-fun use2(f: C.D.E.F) = f.hashCode()
+fun use2(f: <!OPT_IN_USAGE!>C.D.E.F<!>) = <!OPT_IN_USAGE!>f<!>.<!OPT_IN_USAGE!>hashCode<!>()

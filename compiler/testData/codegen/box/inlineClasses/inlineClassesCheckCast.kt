@@ -1,7 +1,12 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class AsAny<T>(val x: Any?)
-inline class AsInt(val x: Int)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class AsAny<T>(val x: Any?)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class AsInt(val x: Int)
 
 inline fun <reified T> Any?.checkcast(): T = this as T
 

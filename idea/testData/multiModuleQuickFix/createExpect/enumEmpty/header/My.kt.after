@@ -1,8 +1,0 @@
-// My: to be implemented
-// DISABLE-ERRORS
-expect enum class My {
-    ;
-
-    fun getHello(): String
-
-}

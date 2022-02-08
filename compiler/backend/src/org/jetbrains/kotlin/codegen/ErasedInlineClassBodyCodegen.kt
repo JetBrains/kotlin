@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
+import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.Synthetic
@@ -55,6 +56,13 @@ class ErasedInlineClassBodyCodegen(
         generateUnboxMethod()
         generateFunctionsFromAny()
         generateSpecializedEqualsStub()
+        generateJvmInlineAnnotation()
+    }
+
+    private fun generateJvmInlineAnnotation() {
+        if (descriptor.isInline) {
+            v.newAnnotation(JVM_INLINE_ANNOTATION_FQ_NAME.topLevelClassAsmType().descriptor, true).visitEnd()
+        }
     }
 
     private fun generateFunctionsFromAny() {
@@ -64,7 +72,7 @@ class ErasedInlineClassBodyCodegen(
     }
 
     private fun generateUnboxMethod() {
-        val boxMethodDescriptor = InlineClassDescriptorResolver.createBoxFunctionDescriptor(descriptor) ?: return
+        val boxMethodDescriptor = InlineClassDescriptorResolver.createBoxFunctionDescriptor(descriptor)
 
         functionCodegen.generateMethod(
             Synthetic(null, boxMethodDescriptor), boxMethodDescriptor, object : FunctionGenerationStrategy.CodegenBased(state) {
@@ -95,7 +103,7 @@ class ErasedInlineClassBodyCodegen(
     }
 
     private fun generateSpecializedEqualsStub() {
-        val specializedEqualsDescriptor = InlineClassDescriptorResolver.createSpecializedEqualsDescriptor(descriptor) ?: return
+        val specializedEqualsDescriptor = InlineClassDescriptorResolver.createSpecializedEqualsDescriptor(descriptor)
 
         functionCodegen.generateMethod(
             Synthetic(null, specializedEqualsDescriptor), specializedEqualsDescriptor, object : FunctionGenerationStrategy.CodegenBased(state) {

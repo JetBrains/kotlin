@@ -1,0 +1,10 @@
+package
+
+public fun main(): kotlin.Unit
+
+public open class J1</*0*/ @io.reactivex.rxjava3.annotations.NonNull T : kotlin.Any!> {
+    public constructor J1</*0*/ @io.reactivex.rxjava3.annotations.NonNull T : kotlin.Any!>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

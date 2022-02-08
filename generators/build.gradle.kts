@@ -8,7 +8,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-fun extraSourceSet(name: String, extendMain: Boolean = true): Pair<SourceSet, Configuration> {
+fun extraSourceSet(name: String, extendMain: Boolean = true, jpsKind: String? = null): Pair<SourceSet, Configuration> {
     val sourceSet = sourceSets.create(name) {
         java.srcDir(name)
     }
@@ -18,65 +18,69 @@ fun extraSourceSet(name: String, extendMain: Boolean = true): Pair<SourceSet, Co
         configurations[sourceSet.runtimeOnlyConfigurationName]
             .extendsFrom(configurations.runtimeClasspath.get())
     }
+    if (jpsKind != null) {
+        // For Pill
+        sourceSet.extra["jpsKind"] = jpsKind
+    }
     return sourceSet to api
 }
 
 val (builtinsSourceSet, builtinsApi) = extraSourceSet("builtins", extendMain = false)
 val (evaluateSourceSet, evaluateApi) = extraSourceSet("evaluate")
 val (interpreterSourceSet, interpreterApi) = extraSourceSet("interpreter")
+val (protobufSourceSet, protobufApi) = extraSourceSet("protobuf")
+val (protobufCompareSourceSet, protobufCompareApi) = extraSourceSet("protobufCompare", jpsKind = SourceSet.TEST_SOURCE_SET_NAME)
+val (wasmSourceSet, wasmApi) = extraSourceSet("wasm")
 
 dependencies {
-    // for GeneratorsFileUtil
-    compile(kotlinStdlib("jdk8"))
-    compile(intellijDep()) { includeJars("util") }
+    api(kotlinStdlib("jdk8"))
+    api(intellijPlatformUtil()) {
+        exclude(module = "annotations")
+    }
 
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
     evaluateApi(project(":core:deserialization"))
+    wasmApi(project(":wasm:wasm.ir"))
+    wasmApi(kotlinStdlib())
     interpreterApi(project(":compiler:ir.tree"))
     interpreterApi(project(":compiler:ir.tree.impl"))
+    interpreterApi(project(":compiler:ir.psi2ir"))
+    protobufApi(kotlinStdlib())
+    protobufCompareApi(projectTests(":kotlin-build-common"))
 
-    testCompile(builtinsSourceSet.output)
-    testCompile(evaluateSourceSet.output)
-    testCompile(interpreterSourceSet.output)
+    testApi(builtinsSourceSet.output)
+    testApi(evaluateSourceSet.output)
+    testApi(interpreterSourceSet.output)
+    testApi(protobufSourceSet.output)
+    testApi(protobufCompareSourceSet.output)
 
-    testCompile(projectTests(":compiler:cli"))
-    testCompile(projectTests(":idea:idea-maven"))
-    testCompile(projectTests(":idea:idea-fir"))
-    testCompile(projectTests(":idea:idea-fir-performance-tests"))
-    testCompile(projectTests(":idea:idea-frontend-fir"))
-    testCompile(projectTests(":idea:idea-frontend-fir:idea-fir-low-level-api"))
-    testCompile(projectTests(":j2k"))
-    testCompile(projectTests(":nj2k"))
-    if (Ide.IJ()) {
-        testCompile(projectTests(":libraries:tools:new-project-wizard:new-project-wizard-cli"))
-        testCompile(projectTests(":idea:idea-new-project-wizard"))
-    }
-    testCompile(projectTests(":idea:idea-android"))
-    testCompile(projectTests(":idea:performanceTests"))
-    testCompile(projectTests(":idea:scripting-support"))
-    testCompile(projectTests(":jps-plugin"))
-    testCompile(projectTests(":plugins:jvm-abi-gen"))
-    testCompile(projectTests(":plugins:android-extensions-compiler"))
-    testCompile(projectTests(":plugins:android-extensions-ide"))
-    testCompile(projectTests(":plugins:parcelize:parcelize-compiler"))
-    testCompile(projectTests(":plugins:parcelize:parcelize-ide"))
-    testCompile(projectTests(":kotlin-annotation-processing"))
-    testCompile(projectTests(":kotlin-annotation-processing-cli"))
-    testCompile(projectTests(":kotlin-allopen-compiler-plugin"))
-    testCompile(projectTests(":kotlin-noarg-compiler-plugin"))
-    testCompile(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
-    testCompile(projectTests(":kotlinx-serialization-compiler-plugin"))
-    testCompile(projectTests(":plugins:fir:fir-plugin-prototype"))
-    testCompile(projectTests(":idea:jvm-debugger:jvm-debugger-test"))
-    testCompile(projectTests(":generators:test-generator"))
-    testCompile(projectTests(":idea"))
+    testApi(projectTests(":compiler:cli"))
+    testApi(projectTests(":compiler:incremental-compilation-impl"))
+    testApi(projectTests(":plugins:jvm-abi-gen"))
+    testApi(projectTests(":plugins:android-extensions-compiler"))
+    testApi(projectTests(":plugins:parcelize:parcelize-compiler"))
+    testApi(projectTests(":kotlin-annotation-processing"))
+    testApi(projectTests(":kotlin-annotation-processing-cli"))
+    testApi(projectTests(":kotlin-allopen-compiler-plugin"))
+    testApi(projectTests(":kotlin-noarg-compiler-plugin"))
+    testApi(projectTests(":plugins:lombok:lombok-compiler-plugin"))
+    testApi(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
+    testApi(projectTests(":kotlinx-serialization-compiler-plugin"))
+    testApi(projectTests(":kotlinx-atomicfu-compiler-plugin"))
+    testApi(projectTests(":plugins:fir-plugin-prototype"))
+    testApi(projectTests(":plugins:fir-plugin-prototype:fir-plugin-ic-test"))
+    testApi(projectTests(":generators:test-generator"))
     testCompileOnly(project(":kotlin-reflect-api"))
-    testRuntime(intellijDep()) { includeJars("idea_rt") }
-    testRuntime(project(":kotlin-reflect"))
+    testImplementation(project(":kotlin-reflect"))
+    testImplementation(projectTests(":compiler:test-infrastructure-utils"))
+    testImplementation(projectTests(":compiler:test-infrastructure"))
+    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(projectTests(":js:js.tests"))
+    testApiJUnit5()
 
     if (Ide.IJ()) {
         testCompileOnly(jpsBuildTest())
-        testCompile(jpsBuildTest())
+        testApi(jpsBuildTest())
     }
 }
 
@@ -85,10 +89,12 @@ projectTest(parallel = true) {
     workingDir = rootDir
 }
 
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateTestsKt")
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateTestsKt") {
+    dependsOn(":generators:analysis-api-generator:generateFrontendApiTests")
+}
 
-val generateProtoBuf by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufKt")
-val generateProtoBufCompare by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufCompare")
+val generateProtoBuf by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufKt", protobufSourceSet)
+val generateProtoBufCompare by generator("org.jetbrains.kotlin.generators.protobuf.GenerateProtoBufCompare", protobufCompareSourceSet)
 
 val generateGradleOptions by generator("org.jetbrains.kotlin.generators.arguments.GenerateGradleOptionsKt")
 val generateKeywordStrings by generator("org.jetbrains.kotlin.generators.frontend.GenerateKeywordStrings")
@@ -96,5 +102,6 @@ val generateKeywordStrings by generator("org.jetbrains.kotlin.generators.fronten
 val generateBuiltins by generator("org.jetbrains.kotlin.generators.builtins.generateBuiltIns.GenerateBuiltInsKt", builtinsSourceSet)
 val generateOperationsMap by generator("org.jetbrains.kotlin.generators.evaluate.GenerateOperationsMapKt", evaluateSourceSet)
 val generateInterpreterMap by generator("org.jetbrains.kotlin.generators.interpreter.GenerateInterpreterMapKt", interpreterSourceSet)
+val generateWasmIntrinsics by generator("org.jetbrains.kotlin.generators.wasm.WasmIntrinsicGeneratorKt", wasmSourceSet)
 
 testsJar()

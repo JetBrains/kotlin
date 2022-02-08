@@ -1,2 +1,12 @@
 public abstract interface InheritedSameAdapters : R|kotlin/Any| {
+    public abstract interface Sub : R|test/InheritedSameAdapters.Super1|, R|test/InheritedSameAdapters.Super2| {
+    }
+    public abstract interface Super1 : R|kotlin/Any| {
+        public abstract fun foo(r: R|ft<java/lang/Runnable, java/lang/Runnable?>|): R|kotlin/Unit|
+
+    }
+    public abstract interface Super2 : R|kotlin/Any| {
+        public abstract fun foo(r: R|ft<java/lang/Runnable, java/lang/Runnable?>|): R|kotlin/Unit|
+
+    }
 }

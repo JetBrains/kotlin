@@ -1,2 +1,0 @@
-val foo: Int
-    get() = 1

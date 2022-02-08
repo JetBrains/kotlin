@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.test.assertEquals
 
@@ -12,7 +12,7 @@ fun box() : String {
     assertEquals(1.toByte(), foo(1L) { x -> x!!.toByte() })
     assertEquals(1.toShort(), foo(1L) { x -> x!!.toShort() })
     assertEquals('a'.toDouble(), foo('a') { x -> x!!.toDouble() })
-    assertEquals(1.0.toByte(), foo(1.0) { x -> x!!.toByte() })
+    assertEquals(1.0.toInt(), foo(1.0) { x -> x!!.toInt() })
 
     return "OK"
 }

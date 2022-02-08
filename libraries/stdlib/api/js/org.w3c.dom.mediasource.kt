@@ -15,11 +15,13 @@ public val org.w3c.dom.mediasource.AppendMode.Companion.SEQUENCE: org.w3c.dom.me
 @kotlin.internal.InlineOnly
 public inline operator fun org.w3c.dom.mediasource.SourceBufferList.get(index: kotlin.Int): org.w3c.dom.mediasource.SourceBuffer?
 
+@kotlin.js.JsName(name = "null")
 public external interface AppendMode {
     public companion object of AppendMode {
     }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface EndOfStreamError {
     public companion object of EndOfStreamError {
     }
@@ -57,6 +59,7 @@ public open external class MediaSource : org.w3c.dom.events.EventTarget, org.w3c
     }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface ReadyState {
     public companion object of ReadyState {
     }

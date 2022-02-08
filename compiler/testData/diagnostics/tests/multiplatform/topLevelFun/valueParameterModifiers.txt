@@ -10,7 +10,6 @@ public expect inline fun f6(/*0*/ crossinline s: () -> kotlin.String): kotlin.Un
 public expect fun f7(/*0*/ x: kotlin.Any): kotlin.Unit
 public expect fun f8(/*0*/ vararg x: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.Unit
 
-
 // -- Module: <m2-jvm> --
 package
 
@@ -22,3 +21,4 @@ public actual inline fun f5(/*0*/ crossinline s: () -> kotlin.String): kotlin.Un
 public actual inline fun f6(/*0*/ s: () -> kotlin.String): kotlin.Unit
 public actual fun f7(/*0*/ vararg x: kotlin.Any /*kotlin.Array<out kotlin.Any>*/): kotlin.Unit
 public actual fun f8(/*0*/ x: kotlin.Any): kotlin.Unit
+

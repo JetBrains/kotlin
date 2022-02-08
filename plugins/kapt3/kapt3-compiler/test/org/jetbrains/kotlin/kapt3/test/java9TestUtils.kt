@@ -18,28 +18,20 @@ package org.jetbrains.kotlin.kapt3.test
 
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.util.SystemInfoRt
-import org.jetbrains.kotlin.kapt3.base.util.isJava11OrLater
 import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import java.net.URL
 import java.net.URLClassLoader
 import java.util.concurrent.TimeUnit
 
 interface CustomJdkTestLauncher {
-    fun doTestWithJdk9(mainClass: Class<*>, arg: String) {
-        // Already under Java 9
+    fun doTestWithJdk11(mainClass: Class<*>, vararg args: String) {
         if (isJava9OrLater()) return
-
-        doTestCustomJdk(mainClass, arg, KotlinTestUtils.getJdk9Home())
+        doTestCustomJdk(mainClass, KtTestUtil.getJdk11Home(), *args)
     }
 
-    fun doTestWithJdk11(mainClass: Class<*>, arg: String) {
-        if (isJava9OrLater()) return
-        KotlinTestUtils.getJdk11Home()?.let { doTestCustomJdk(mainClass, arg, it) }
-    }
-
-    private fun doTestCustomJdk(mainClass: Class<*>, arg: String, javaHome: File) {
+    private fun doTestCustomJdk(mainClass: Class<*>, javaHome: File, vararg args: String) {
         //TODO unmute after investigation (tests are failing on TeamCity)
         if (SystemInfoRt.isWindows) return
 
@@ -49,7 +41,7 @@ interface CustomJdkTestLauncher {
         val currentJavaHome = System.getProperty("java.home")
 
         val classpath = collectClasspath(AbstractClassFileToSourceStubConverterTest::class.java.classLoader)
-            .filter { it.protocol.toLowerCase() == "file" && it.path != null && !it.path.startsWith(currentJavaHome) }
+            .filter { it.protocol.lowercase() == "file" && it.path != null && !it.path.startsWith(currentJavaHome) }
             .map { it.path }
 
         val command = arrayOf(
@@ -60,16 +52,21 @@ interface CustomJdkTestLauncher {
             "-classpath",
             classpath.joinToString(File.pathSeparator),
             mainClass.name,
-            arg
+            *args
         )
 
-        println("Process arguments: [${command.joinToString()}]")
-
-        val process = ProcessBuilder(*command).inheritIO().start()
-
+        val process = ProcessBuilder(*command).start()
+        val stdout = process.inputStream.bufferedReader().use { it.readText() }
+        val stderr = process.errorStream.bufferedReader().use { it.readText() }
         process.waitFor(3, TimeUnit.MINUTES)
-        if (process.exitValue() != 0) {
-            throw AssertionError("Java $javaHome test process exited with exit code ${process.exitValue()} \n")
+
+        val exitCode = process.exitValue()
+        if (exitCode != 0) {
+            throw AssertionError(
+                "Java $javaHome test process exited with exit code $exitCode\n\n" +
+                        "--- STDOUT ---\n$stdout\n\n" +
+                        "--- STDERR ---\n$stderr"
+            )
         }
     }
 
@@ -78,5 +75,4 @@ interface CustomJdkTestLauncher {
         is ClassLoader -> collectClasspath(classLoader.parent)
         else -> emptyList()
     }
-
 }

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations
+import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.types.*
@@ -32,6 +32,19 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
         return null
     }
 
+    private fun substituteTypeEnhancement(
+        enhancementType: KotlinType,
+        keepAnnotation: Boolean,
+        runCapturedChecks: Boolean
+    ) = when (val type = enhancementType.unwrap()) {
+        is SimpleType -> substitute(type, keepAnnotation, runCapturedChecks) ?: enhancementType
+        is FlexibleType -> {
+            val substitutedLowerBound = substitute(type.lowerBound, keepAnnotation, runCapturedChecks) ?: type.lowerBound
+            val substitutedUpperBound = substitute(type.upperBound, keepAnnotation, runCapturedChecks) ?: type.upperBound
+            KotlinTypeFactory.flexibleType(substitutedLowerBound.lowerIfFlexible(), substitutedUpperBound.upperIfFlexible())
+        }
+    }
+
     private fun substitute(type: UnwrappedType, keepAnnotation: Boolean, runCapturedChecks: Boolean): UnwrappedType? =
         when (type) {
             is SimpleType -> substitute(type, keepAnnotation, runCapturedChecks)
@@ -40,6 +53,10 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
             } else {
                 val lowerBound = substitute(type.lowerBound, keepAnnotation, runCapturedChecks)
                 val upperBound = substitute(type.upperBound, keepAnnotation, runCapturedChecks)
+                val enhancement = if (type is TypeWithEnhancement) {
+                    substituteTypeEnhancement(type.enhancement, keepAnnotation, runCapturedChecks)
+                } else null
+
                 if (lowerBound == null && upperBound == null) {
                     null
                 } else {
@@ -47,7 +64,7 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
                     KotlinTypeFactory.flexibleType(
                         lowerBound?.lowerIfFlexible() ?: type.lowerBound,
                         upperBound?.upperIfFlexible() ?: type.upperBound
-                    ).inheritEnhancement(type)
+                    ).wrapEnhancement(if (enhancement is TypeWithEnhancement) enhancement.enhancement else enhancement)
                 }
             }
         }
@@ -87,19 +104,19 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
 
             val innerType = capturedType.lowerType ?: capturedType.constructor.projection.type.unwrap()
             val substitutedInnerType = substitute(innerType, keepAnnotation, runCapturedChecks = false)
+            val substitutedSuperTypes =
+                capturedType.constructor.supertypes.map { substitute(it, keepAnnotation, runCapturedChecks = false) ?: it }
 
             if (substitutedInnerType != null) {
-                if (innerType is StubType || substitutedInnerType is StubType) {
-                    return NewCapturedType(
+                return if (substitutedInnerType.isCaptured()) substitutedInnerType else {
+                    NewCapturedType(
                         capturedType.captureStatus,
                         NewCapturedTypeConstructor(
                             TypeProjectionImpl(typeConstructor.projection.projectionKind, substitutedInnerType),
                             typeParameter = typeConstructor.typeParameter
-                        ),
+                        ).also { it.initializeSupertypes(substitutedSuperTypes) },
                         lowerType = if (capturedType.lowerType != null) substitutedInnerType else null
                     )
-                } else {
-                    throwExceptionAboutInvalidCapturedSubstitution(capturedType, innerType, substitutedInnerType)
                 }
             }
 
@@ -130,7 +147,9 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
         // simple classifier type
         var replacement = substituteNotNullTypeWithConstructor(typeConstructor) ?: return null
         if (keepAnnotation) {
-            replacement = replacement.replaceAnnotations(CompositeAnnotations(replacement.annotations, type.annotations))
+            replacement = replacement.replaceAttributes(
+                replacement.attributes.add(type.attributes)
+            )
         }
         if (type.isMarkedNullable) {
             replacement = replacement.makeNullableAsSpecified(true)
@@ -138,7 +157,7 @@ interface NewTypeSubstitutor : TypeSubstitutorMarker {
         if (type.isDefinitelyNotNullType) {
             replacement = replacement.makeDefinitelyNotNullOrNotNull()
         }
-        if (type is CustomTypeVariable) {
+        if (type is CustomTypeParameter) {
             replacement = type.substitutionResult(replacement).unwrap()
         }
 

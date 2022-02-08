@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: A.java
 
 // It's supposed that there is no JSR-305 annotation in classpath

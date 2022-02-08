@@ -1,3 +1,0 @@
-[kotlinPrivatePropertyUsages.0.kt] Value read 12 override fun processRequest() = "foo" + foo
-[kotlinPrivatePropertyUsages.0.kt] Value read 8 open fun processRequest() = foo
-[kotlinPrivatePropertyUsages.1.kt] Value read 5 println(Server().foo)

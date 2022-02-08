@@ -1,6 +1,6 @@
 // !LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FULL_JDK
 // JVM_TARGET: 1.8
 

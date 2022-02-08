@@ -1,4 +1,0 @@
-package
-
-public val barException: [ERROR : Type for kotlin.Exception("bar")]
-public val fooException: java.lang.Exception

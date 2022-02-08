@@ -5,16 +5,18 @@
 
 package org.jetbrains.kotlin.descriptors
 
-import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL
-import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME_RELEASE
+import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.sure
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 fun ModuleDescriptor.resolveClassByFqName(fqName: FqName, lookupLocation: LookupLocation): ClassDescriptor? {
     if (fqName.isRoot) return null
@@ -27,19 +29,15 @@ fun ModuleDescriptor.resolveClassByFqName(fqName: FqName, lookupLocation: Lookup
             ?.getContributedClassifier(fqName.shortName(), lookupLocation) as? ClassDescriptor
 }
 
-fun ModuleDescriptor.findContinuationClassDescriptorOrNull(lookupLocation: LookupLocation, releaseCoroutines: Boolean) =
-    if (releaseCoroutines)
-        resolveClassByFqName(CONTINUATION_INTERFACE_FQ_NAME_RELEASE, lookupLocation)
-    else
-        resolveClassByFqName(CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL, lookupLocation)
+fun ModuleDescriptor.findContinuationClassDescriptorOrNull(lookupLocation: LookupLocation): ClassDescriptor? =
+    resolveClassByFqName(CONTINUATION_INTERFACE_FQ_NAME, lookupLocation)
 
-fun ModuleDescriptor.findContinuationClassDescriptor(lookupLocation: LookupLocation, releaseCoroutines: Boolean) =
-    findContinuationClassDescriptorOrNull(lookupLocation, releaseCoroutines).sure { "Continuation interface is not found" }
+fun ModuleDescriptor.findContinuationClassDescriptor(lookupLocation: LookupLocation) =
+    findContinuationClassDescriptorOrNull(lookupLocation).sure { "Continuation interface is not found" }
 
-fun ModuleDescriptor.getContinuationOfTypeOrAny(kotlinType: KotlinType, isReleaseCoroutines: Boolean) =
+fun ModuleDescriptor.getContinuationOfTypeOrAny(kotlinType: KotlinType) =
     module.findContinuationClassDescriptorOrNull(
-        NoLookupLocation.FROM_DESERIALIZATION,
-        isReleaseCoroutines
+        NoLookupLocation.FROM_DESERIALIZATION
     )?.defaultType?.let {
         KotlinTypeFactory.simpleType(
             it,
@@ -55,4 +53,36 @@ fun DeclarationDescriptor.isTopLevelInPackage(name: String, packageName: String)
     return packageName == packageFqName
 }
 
+fun DeclarationDescriptor.isTopLevelInPackage() = containingDeclaration is PackageFragmentDescriptor
+
+fun DeclarationDescriptor.getTopLevelContainingClassifier(): ClassifierDescriptor? {
+    val containingDeclaration = containingDeclaration
+
+    if (containingDeclaration == null || this is PackageFragmentDescriptor) return null
+
+    return if (!containingDeclaration.isTopLevelInPackage()) {
+        containingDeclaration.getTopLevelContainingClassifier()
+    } else if (containingDeclaration is ClassifierDescriptor) {
+        containingDeclaration
+    } else null
+}
+
 fun CallableDescriptor.isSupportedForCallableReference() = this is PropertyDescriptor || this is FunctionDescriptor
+
+@OptIn(ExperimentalContracts::class)
+fun DeclarationDescriptor.isSealed(): Boolean {
+    contract {
+        returns(true) implies (this@isSealed is ClassDescriptor)
+    }
+    return DescriptorUtils.isSealedClass(this)
+}
+
+fun DeclarationDescriptor.containingPackage(): FqName? {
+    var container = containingDeclaration
+    while (true) {
+        if (container == null || container is PackageFragmentDescriptor) break
+        container = container.containingDeclaration
+    }
+    require(container is PackageFragmentDescriptor?)
+    return container?.fqName
+}

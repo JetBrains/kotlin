@@ -1,6 +1,0 @@
-// NAME_COUNT_TO_USE_STAR_IMPORT: 1
-package foo
-
-import bar.*
-
-fun foo(p: Class1): Class2 { }

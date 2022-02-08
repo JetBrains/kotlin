@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun box(): String {
     if (UInt::class.javaPrimitiveType != null) throw AssertionError()

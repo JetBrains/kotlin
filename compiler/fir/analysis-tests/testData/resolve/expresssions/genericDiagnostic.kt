@@ -1,5 +1,5 @@
-// FILE: Element.java
 // FULL_JDK
+// FILE: Element.java
 
 public interface Element {}
 

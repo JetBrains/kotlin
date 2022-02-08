@@ -10,7 +10,7 @@ class Outer<T> {
 
 fun test1() {
     Outer<Int>().Inner<String>().getOuter().useOuterParam(22)
-    Outer<Int>().Inner<String>().getOuter().<!INAPPLICABLE_CANDIDATE!>useOuterParam<!>("")
+    Outer<Int>().Inner<String>().getOuter().useOuterParam(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 }
 
 

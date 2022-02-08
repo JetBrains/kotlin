@@ -1,0 +1,98 @@
+<Y:Ljava/lang/Object;>Ljava/lang/Object;
+public final class foo/B : java/lang/Object {
+    public void <init>()
+}
+
+public abstract interface foo/ClassTypeAnn : java/lang/Object, java/lang/annotation/Annotation {
+    public abstract java.lang.String name()
+}
+
+<Z:Ljava/lang/Object;>Ljava/lang/Object;
+public abstract interface foo/Generic : java/lang/Object {
+
+}
+
+<Z:Ljava/lang/Object;>Ljava/lang/Object;
+public final class foo/GenericClass : java/lang/Object {
+    public void <init>()
+}
+
+public final class foo/Kotlin : java/lang/Object {
+    public void <init>()
+
+    <Y:Ljava/lang/Object;T:Lfoo/GenericClass<TY;>;>()V
+    public final void genericClassBound()
+      @Lfoo/TypeParameterAnn;([name="Y"]) : METHOD_TYPE_PARAMETER 0, null
+      @Lfoo/TypeParameterAnn;([name="T"]) : METHOD_TYPE_PARAMETER 1, null
+      @Lfoo/TypeAnn;([name="Generic"]) : METHOD_TYPE_PARAMETER_BOUND 1, 0, null
+      @Lfoo/TypeAnn;([name="Generic Argument"]) : METHOD_TYPE_PARAMETER_BOUND 1, 0, 0;
+      @Lfoo/TypeAnnBinary;([]) : METHOD_TYPE_PARAMETER_BOUND 1, 0, null // invisible
+      @Lfoo/TypeAnnBinary;([]) : METHOD_TYPE_PARAMETER_BOUND 1, 0, 0; // invisible
+
+    <Y:Ljava/lang/Object;T::Lfoo/Generic<TY;>;>()V
+    public final void genericInterfaceBound()
+      @Lfoo/TypeParameterAnn;([name="Y"]) : METHOD_TYPE_PARAMETER 0, null
+      @Lfoo/TypeParameterAnn;([name="T"]) : METHOD_TYPE_PARAMETER 1, null
+      @Lfoo/TypeAnn;([name="Generic"]) : METHOD_TYPE_PARAMETER_BOUND 1, 1, null
+      @Lfoo/TypeAnn;([name="Generic Argument"]) : METHOD_TYPE_PARAMETER_BOUND 1, 1, 0;
+      @Lfoo/TypeAnnBinary;([]) : METHOD_TYPE_PARAMETER_BOUND 1, 1, null // invisible
+      @Lfoo/TypeAnnBinary;([]) : METHOD_TYPE_PARAMETER_BOUND 1, 1, 0; // invisible
+
+    <T:Ljava/lang/Object;>(TT;)TT;
+    public final java.lang.Object genericParameterAndReturn(java.lang.Object s)
+      @Lfoo/TypeAnn;([name="2"]) : METHOD_RETURN, null
+      @Lfoo/TypeParameterAnn;([name="TP"]) : METHOD_TYPE_PARAMETER 0, null
+      @Lfoo/TypeAnn;([name="1"]) : METHOD_FORMAL_PARAMETER 0, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_RETURN, null // invisible
+      @Lfoo/TypeAnnBinary;([]) : METHOD_FORMAL_PARAMETER 0, null // invisible
+
+    <T:Ljava/lang/Object;T2:Ljava/lang/Object;>()V
+    public final void typeParameter()
+      @Lfoo/TypeParameterAnn;([name="TP1"]) : METHOD_TYPE_PARAMETER 0, null
+      @Lfoo/TypeParameterAnn;([name="TP2"]) : METHOD_TYPE_PARAMETER 1, null
+      @Lfoo/TypeParameterAnnBinary;([]) : METHOD_TYPE_PARAMETER 0, null // invisible
+      @Lfoo/TypeParameterAnnBinary;([]) : METHOD_TYPE_PARAMETER 1, null // invisible
+
+    <Y:Ljava/lang/Object;T::TY;>()V
+    public final void typeParameterTypeParameterBound()
+      @Lfoo/TypeParameterAnn;([name="Y"]) : METHOD_TYPE_PARAMETER 0, null
+      @Lfoo/TypeParameterAnn;([name="T"]) : METHOD_TYPE_PARAMETER 1, null
+      @Lfoo/TypeAnn;([name="Y as Bound"]) : METHOD_TYPE_PARAMETER_BOUND 1, 0, null
+      @Lfoo/TypeAnnBinary;([]) : METHOD_TYPE_PARAMETER_BOUND 1, 0, null // invisible
+
+    <Y:Ljava/lang/Object;T:Ljava/lang/Object;:Lfoo/Generic<TY;>;>()V
+    public final void whereClause()
+      @Lfoo/TypeParameterAnn;([name="Y"]) : METHOD_TYPE_PARAMETER 0, null
+      @Lfoo/TypeParameterAnn;([name="T"]) : METHOD_TYPE_PARAMETER 1, null
+      @Lfoo/TypeAnn;([name="Generic"]) : METHOD_TYPE_PARAMETER_BOUND 1, 1, null
+      @Lfoo/TypeAnn;([name="Generic Argument"]) : METHOD_TYPE_PARAMETER_BOUND 1, 1, 0;
+      @Lfoo/ClassTypeAnn;([name="Any"]) : METHOD_TYPE_PARAMETER_BOUND 1, 0, null
+
+    <T:Ljava/lang/Object;:Lfoo/Generic<Ljava/lang/String;>;>()V
+    public final void whereClauseWithAnnotation()
+      @Lfoo/TypeParameterAnn;([name="T"]) : METHOD_TYPE_PARAMETER 0, null
+}
+
+public abstract interface foo/TypeAnn : java/lang/Object, java/lang/annotation/Annotation {
+    public abstract java.lang.String name()
+}
+
+public abstract interface foo/TypeAnnBinary : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface foo/TypeAnnSource : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface foo/TypeParameterAnn : java/lang/Object, java/lang/annotation/Annotation {
+    public abstract java.lang.String name()
+}
+
+public abstract interface foo/TypeParameterAnnBinary : java/lang/Object, java/lang/annotation/Annotation {
+
+}
+
+public abstract interface foo/TypeParameterAnnSource : java/lang/Object, java/lang/annotation/Annotation {
+
+}

@@ -10,11 +10,11 @@ fun case1(case: Case1) {
     //to (1.1)
     case.<!DEBUG_INFO_CALL("fqName: boo; typeCall: extension function")!>boo(1)<!>
     //(1.1) return type is String
-    case.boo(1)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.boo(1)<!>
     //to (1.1)
     case.<!DEBUG_INFO_CALL("fqName: boo; typeCall: extension function")!>boo(x = 1)<!>
     //(1.1) return type is String
-    case.boo(x = 1)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.boo(x = 1)<!>
 
 }
 
@@ -35,11 +35,11 @@ fun case2(case: Case2) {
     //to (1.1)
     case.<!DEBUG_INFO_CALL("fqName: Case2.boo; typeCall: function")!>boo(1, 2)<!>
     //(1.1) return type is String
-    case.boo(1, 2)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.boo(1, 2)<!>
     //to (1.1)
     case.<!DEBUG_INFO_CALL("fqName: Case2.boo; typeCall: function")!>boo(x = 1, y = 2)<!>
     //(1.1) return type is String
-    case.boo(x = 1, y = 2)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.boo(x = 1, y = 2)<!>
 }
 
 // TESTCASE NUMBER: 3
@@ -52,11 +52,11 @@ fun case3(case: Case3) {
     //to (1.1)
     case.<!DEBUG_INFO_CALL("fqName: Case3.boo; typeCall: function")!>boo(1, 2)<!>
     //(1.1) return type is String
-    case.boo(1, 2)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.boo(1, 2)<!>
     //to (1.1)
     case.<!DEBUG_INFO_CALL("fqName: Case3.boo; typeCall: function")!>boo(x = 1, y = 2)<!>
     //(1.1) return type is String
-    case.boo(x = 1, y = 2)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.boo(x = 1, y = 2)<!>
 }
 
 // TESTCASE NUMBER: 4
@@ -71,11 +71,11 @@ fun case4(case: Case4) {
     //to (1.1)
     case.<!DEBUG_INFO_CALL("fqName: Case4.plus; typeCall: operator function")!>plus(1)<!>
     //(1.1) return type is String
-    case.plus(1)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.plus(1)<!>
     //to (1.1)
     case.<!DEBUG_INFO_CALL("fqName: Case4.plus; typeCall: operator function")!>plus(x = 1)<!>
     //(1.1) return type is String
-    case.plus(x = 1)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.plus(x = 1)<!>
     //as operator call case + 1
     //to (1.1)
     <!DEBUG_INFO_CALL("fqName: Case4.plus; typeCall: operator function")!>case+1<!>
@@ -91,7 +91,7 @@ class Case5 {
 
     fun case(list: List<Int>) {
         list.<!DEBUG_INFO_CALL("fqName: Case5.foo; typeCall: extension function")!>foo(1)<!>
-        list.foo(1)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>list.foo(1)<!>
     }
 }
 
@@ -103,7 +103,7 @@ class Case6 {
 
     fun case(list: List<Int>) {
         list.<!DEBUG_INFO_CALL("fqName: Case6.foo; typeCall: extension function")!>foo(1)<!>
-        list.foo(1)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>list.foo(1)<!>
     }
 }
 
@@ -115,7 +115,7 @@ class Case7 {
 
     fun case(list: List<Short>) {
         list.<!DEBUG_INFO_CALL("fqName: Case7.foo; typeCall: extension function")!>foo(1, 1)<!>
-        list.foo(1, 1)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>list.foo(1, 1)<!>
     }
 }
 
@@ -127,7 +127,7 @@ class Case8() {
 
 fun testcase8(case: Case8) {
     case.<!DEBUG_INFO_CALL("fqName: Case8.foo; typeCall: function")!>foo(1, 1)<!>
-    case.foo(1, 1)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.foo(1, 1)<!>
 }
 
 // TESTCASE NUMBER: 9
@@ -138,7 +138,7 @@ class Case9() {
 
 fun testcase9(case: Case9) {
     case.<!DEBUG_INFO_CALL("fqName: Case9.xoo; typeCall: function")!>xoo(1, 1)<!>
-    case.xoo(1, 1)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.xoo(1, 1)<!>
 }
 
 // TESTCASE NUMBER: 10
@@ -149,7 +149,7 @@ class Case10() {
 
 fun testcase10(case: Case10) {
     case.<!DEBUG_INFO_CALL("fqName: Case10.xoo; typeCall: function")!>xoo(1, 1)<!>
-    case.<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>xoo(1, 1)<!>
+    case.xoo(1, 1)
 }
 
 // TESTCASE NUMBER: 11
@@ -160,5 +160,5 @@ class Case11() {
 
 fun testcase11(case: Case11) {
     case.<!DEBUG_INFO_CALL("fqName: Case11.xoo; typeCall: function")!>xoo(1, 1)<!>
-    case.xoo(1, 1)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>case.xoo(1, 1)<!>
 }

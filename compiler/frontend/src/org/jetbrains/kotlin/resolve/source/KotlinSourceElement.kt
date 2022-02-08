@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.source
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtPureElement
@@ -24,5 +23,3 @@ import org.jetbrains.kotlin.psi.KtPureElement
 class KotlinSourceElement(override val psi: KtElement) : PsiSourceElement
 
 fun KtPureElement?.toSourceElement(): SourceElement = if (this == null) SourceElement.NO_SOURCE else KotlinSourceElement(psiOrParent)
-
-fun SourceElement.getPsi(): PsiElement? = (this as? PsiSourceElement)?.psi

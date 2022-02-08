@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.codegen.range.forLoop.ForInSimpleProgressionLoopGene
 import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.KtForExpression
-import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
-import org.jetbrains.kotlin.resolve.calls.callUtil.getReceiverExpression
+import org.jetbrains.kotlin.resolve.calls.util.getFirstArgumentExpression
+import org.jetbrains.kotlin.resolve.calls.util.getReceiverExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 
 class DownToProgressionRangeValue(rangeCall: ResolvedCall<out CallableDescriptor>) :

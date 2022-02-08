@@ -1,0 +1,36 @@
+@kotlin.Metadata
+public final class DifferentCasesKt {
+    // source: 'differentCases.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Test$DefaultImpls {
+    // source: 'differentCases.kt'
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getProp(@org.jetbrains.annotations.NotNull p0: Test): java.lang.String
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method getVarProp(@org.jetbrains.annotations.NotNull p0: Test): java.lang.String
+    public deprecated static @java.lang.Deprecated method setVarProp(@org.jetbrains.annotations.NotNull p0: Test, @org.jetbrains.annotations.NotNull p1: java.lang.String): void
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: Test): java.lang.String
+    public final inner class Test$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface Test {
+    // source: 'differentCases.kt'
+    public synthetic static method access$getProp$jd(p0: Test): java.lang.String
+    public synthetic static method access$getVarProp$jd(p0: Test): java.lang.String
+    public synthetic static method access$setVarProp$jd(p0: Test, p1: java.lang.String): void
+    public synthetic static method access$test$jd(p0: Test): java.lang.String
+    public @org.jetbrains.annotations.NotNull method getProp(): java.lang.String
+    public @org.jetbrains.annotations.NotNull method getVarProp(): java.lang.String
+    private method privateFun(): java.lang.String
+    public method setVarProp(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public @org.jetbrains.annotations.NotNull method test(): java.lang.String
+    public final inner class Test$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class TestClass {
+    // source: 'differentCases.kt'
+    public method <init>(): void
+}

@@ -1,17 +1,19 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: BOUND_RECEIVER
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Z(val x: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val x: Int) {
     fun test() = x
 }
 
-inline class L(val x: Long) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class L(val x: Long) {
     fun test() = x
 }
 
-inline class S(val x: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class S(val x: String) {
     fun test() = x
 }
 

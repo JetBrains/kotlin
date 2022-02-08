@@ -1,3 +1,5 @@
+// !DIAGNOSTICS: +UNUSED_VALUE, +UNUSED_CHANGED_VALUE, +UNUSED_PARAMETER, +UNUSED_VARIABLE
+
 package unused_variables
 
 fun testSimpleCases() {

@@ -34,7 +34,8 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.*;
+import static org.jetbrains.kotlin.codegen.AsmUtil.correctElementType;
+import static org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive;
 import static org.jetbrains.kotlin.codegen.DescriptorAsmUtil.*;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
@@ -84,7 +85,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         String toStringMethodDesc = getToStringDesc();
         MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), toStringMethodName, toStringMethodDesc, null, null);
 
-        if (!isInErasedInlineClass && classDescriptor.isInline()) {
+        if (!isInErasedInlineClass && InlineClassesUtilsKt.isInlineClass(classDescriptor)) {
             FunctionCodegen.generateMethodInsideInlineClassWrapper(methodOrigin, function, classDescriptor, mv, typeMapper);
             return;
         }
@@ -161,7 +162,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         String hashCodeMethodDesc = getHashCodeDesc();
         MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), hashCodeMethodName, hashCodeMethodDesc, null, null);
 
-        if (!isInErasedInlineClass && classDescriptor.isInline()) {
+        if (!isInErasedInlineClass && InlineClassesUtilsKt.isInlineClass(classDescriptor)) {
             FunctionCodegen.generateMethodInsideInlineClassWrapper(methodOrigin, function, classDescriptor, mv, typeMapper);
             return;
         }
@@ -233,7 +234,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
         String equalsMethodDesc = getEqualsDesc();
         MethodVisitor mv = v.newMethod(methodOrigin, getAccess(), equalsMethodName, equalsMethodDesc, null, null);
 
-        if (!isInErasedInlineClass && classDescriptor.isInline()) {
+        if (!isInErasedInlineClass && InlineClassesUtilsKt.isInlineClass(classDescriptor)) {
             FunctionCodegen.generateMethodInsideInlineClassWrapper(methodOrigin, function, classDescriptor, mv, typeMapper);
             return;
         }
@@ -306,7 +307,7 @@ public class FunctionsFromAnyGeneratorImpl extends FunctionsFromAnyGenerator {
 
             iv.load(secondParameterIndex, OBJECT_TYPE);
             iv.checkcast(wrapperType);
-            StackValue.unboxInlineClass(wrapperType, wrapperKotlinType, iv);
+            StackValue.unboxInlineClass(wrapperType, wrapperKotlinType, iv, typeMapper);
             iv.store(unboxedValueIndex, underlyingType.getType());
 
             return unboxedValueIndex;

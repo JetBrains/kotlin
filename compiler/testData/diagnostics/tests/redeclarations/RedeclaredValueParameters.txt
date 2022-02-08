@@ -1,0 +1,5 @@
+package
+
+public fun main(): kotlin.Unit
+public fun test(/*0*/ a: kotlin.Int, /*1*/ a: kotlin.String): kotlin.Unit
+public fun test2(/*0*/ block: (kotlin.Int, kotlin.String) -> kotlin.Unit): kotlin.Unit

@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 
 // TESTCASE NUMBER: 1, 2
 @Target(AnnotationTarget.TYPE)
@@ -10,7 +9,7 @@ annotation class Ann(val x: Int)
  * UNEXPECTED BEHAVIOUR
  */
 fun case_1(a: Any) {
-    if (a is @Ann(unresolved_reference) String) return
+    if (a is @Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) String) return
 }
 
 /*
@@ -18,7 +17,7 @@ fun case_1(a: Any) {
  * UNEXPECTED BEHAVIOUR
  */
 fun case_2(a: Any) {
-    a as @Ann(unresolved_reference) String // OK, no error in IDE and in the compiler
+    a as @Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) String // OK, no error in IDE and in the compiler
 }
 
 /*
@@ -28,10 +27,10 @@ fun case_2(a: Any) {
 fun case_3_1(a: Any) {}
 
 fun case_3_2(a: Any) {
-    case_3_1(a as @Ann(unresolved_reference) String) // OK, no error in IDE and in the compiler
+    case_3_1(a as @Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) String) // OK, no error in IDE and in the compiler
 }
 
 // TESTCASE NUMBER: 4
 fun case_4(a: Any) {
-    val x = a as @Ann(unresolved_reference) String // ERROR, has error in IDE and in the compiler
+    val x = a as @Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) String // ERROR, has error in IDE and in the compiler
 }

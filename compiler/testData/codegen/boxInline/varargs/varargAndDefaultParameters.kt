@@ -15,4 +15,3 @@ fun box(): String {
         this + "K"
     }
 }
-

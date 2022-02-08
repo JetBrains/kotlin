@@ -1,2 +1,24 @@
 public abstract interface LoadIterableWithPropagation : R|kotlin/Any| {
+    public abstract interface LoadIterable<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any| {
+        @R|kotlin/annotations/jvm/Mutable|() public abstract fun getIterable(): R|ft<kotlin/collections/MutableIterable<ft<T, T?>>, kotlin/collections/MutableIterable<ft<T, T?>>?>|
+
+        public abstract fun setIterable(@R|kotlin/annotations/jvm/Mutable|() Iterable: R|ft<kotlin/collections/MutableIterable<ft<T, T?>>, kotlin/collections/MutableIterable<ft<T, T?>>?>|): R|kotlin/Unit|
+
+        @R|kotlin/annotations/jvm/ReadOnly|() public abstract fun getReadOnlyIterable(): R|ft<kotlin/collections/Iterable<ft<T, T?>>, kotlin/collections/Iterable<ft<T, T?>>?>|
+
+        public abstract fun setReadOnlyIterable(@R|kotlin/annotations/jvm/ReadOnly|() Iterable: R|ft<kotlin/collections/Iterable<ft<T, T?>>, kotlin/collections/Iterable<ft<T, T?>>?>|): R|kotlin/Unit|
+
+    }
+    public open class LoadIterableImpl<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|kotlin/Any|, R|test/LoadIterableWithPropagation.LoadIterable<ft<T, T?>>| {
+        public open fun getIterable(): R|ft<kotlin/collections/MutableIterable<ft<T, T?>>, kotlin/collections/MutableIterable<ft<T, T?>>?>|
+
+        public open fun setIterable(Iterable: R|ft<kotlin/collections/MutableIterable<ft<T, T?>>, kotlin/collections/MutableIterable<ft<T, T?>>?>|): R|kotlin/Unit|
+
+        public open fun getReadOnlyIterable(): R|ft<kotlin/collections/Iterable<ft<T, T?>>, kotlin/collections/Iterable<ft<T, T?>>?>|
+
+        public open fun setReadOnlyIterable(Iterable: R|ft<kotlin/collections/Iterable<ft<T, T?>>, kotlin/collections/Iterable<ft<T, T?>>?>|): R|kotlin/Unit|
+
+        public constructor<T : R|ft<kotlin/Any, kotlin/Any?>|>(): R|test/LoadIterableWithPropagation.LoadIterableImpl<T>|
+
+    }
 }

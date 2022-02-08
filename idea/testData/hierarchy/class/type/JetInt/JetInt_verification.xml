@@ -1,5 +1,0 @@
-<node text="Object (java.lang)">
-  <node text="Number (java.lang)">
-    <node text="Integer (java.lang)" base="true"/>
-  </node>
-</node>

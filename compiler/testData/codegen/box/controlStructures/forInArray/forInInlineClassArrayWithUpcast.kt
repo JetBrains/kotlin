@@ -1,8 +1,5 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: UNSIGNED_ARRAYS
 // !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 
 fun box(): String {
     testForInUIntArrayWithUpcactToAny()

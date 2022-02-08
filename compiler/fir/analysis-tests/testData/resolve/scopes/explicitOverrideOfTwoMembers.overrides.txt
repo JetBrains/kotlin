@@ -1,0 +1,8 @@
+C:
+  [Source]: public abstract override fun foo(): R|kotlin/Any| from Use site scope of /C [id: 0]
+    [Source]: public abstract fun foo(): R|kotlin/Any| from Use site scope of /A [id: 1]
+    [Source]: public abstract fun foo(): R|kotlin/Any| from Use site scope of /B [id: 2]
+  [Source]: public abstract override val x: R|kotlin/Any| from Use site scope of /C [id: 0]
+    [Source]: public abstract val x: R|kotlin/Any| from Use site scope of /A [id: 1]
+    [Source]: public abstract val x: R|kotlin/Any| from Use site scope of /B [id: 2]
+

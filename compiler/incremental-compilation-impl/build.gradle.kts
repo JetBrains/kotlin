@@ -5,31 +5,30 @@ plugins {
 }
 
 dependencies {
-    compile(project(":core:descriptors"))
-    compile(project(":core:descriptors.jvm"))
-    compile(project(":core:deserialization"))
-    compile(project(":compiler:util"))
-    compile(project(":compiler:frontend"))
-    compile(project(":compiler:frontend.java"))
-    compile(project(":compiler:cli"))
-    compile(project(":compiler:cli-js"))
-    compile(project(":kotlin-build-common"))
-    compile(project(":daemon-common"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    api(project(":core:descriptors"))
+    api(project(":core:descriptors.jvm"))
+    api(project(":core:deserialization"))
+    api(project(":compiler:util"))
+    api(project(":compiler:frontend"))
+    api(project(":compiler:frontend.java"))
+    api(project(":compiler:cli"))
+    api(project(":compiler:cli-js"))
+    api(project(":kotlin-build-common"))
+    api(project(":daemon-common"))
+    implementation(commonDependency("com.google.code.gson:gson"))
+    compileOnly(intellijCore())
 
-    testCompile(commonDep("junit:junit"))
-    testCompile(project(":kotlin-test:kotlin-test-junit"))
-    testCompile(kotlinStdlib())
-    testCompile(projectTests(":kotlin-build-common"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompile(intellijDep()) { includeJars("log4j", "jdom") }
+    testApi(commonDependency("junit:junit"))
+    testApi(project(":kotlin-test:kotlin-test-junit"))
+    testApi(kotlinStdlib())
+    testApi(projectTests(":kotlin-build-common"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(intellijCore())
+    testApi(commonDependency("org.jetbrains.intellij.deps:log4j"))
+    testApi(commonDependency("org.jetbrains.intellij.deps:jdom"))
 
-    if (Platform.P192.orHigher()) {
-        testRuntime(intellijDep()) { includeJars("lz4-java", rootProject = rootProject) }
-    } else {
-        testRuntime(intellijDep()) { includeJars("lz4-1.3.0") }
-    }
+    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(project(":core:descriptors.runtime"))
 }
 
 sourceSets {
@@ -47,7 +46,7 @@ projectTest("testJvmICWithJdk11", parallel = true) {
     filter {
         includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerTestGenerated*")
     }
-    executable = "${rootProject.extra["JDK_11"]}/bin/java"
+    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11))
 }
 
 testsJar()

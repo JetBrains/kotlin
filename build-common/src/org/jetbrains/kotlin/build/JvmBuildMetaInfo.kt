@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.build
 
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmBytecodeBinaryVersion
+import org.jetbrains.kotlin.load.kotlin.JvmBytecodeBinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 
 /**
@@ -27,9 +27,6 @@ data class JvmBuildMetaInfo(
     override val compilerBuildVersion: String,
     override val languageVersionString: String,
     override val apiVersionString: String,
-    override val coroutinesEnable: Boolean,
-    override val coroutinesWarn: Boolean,
-    override val coroutinesError: Boolean,
     override val multiplatformEnable: Boolean,
     override val metadataVersionMajor: Int,
     override val metadataVersionMinor: Int,
@@ -47,9 +44,6 @@ data class JvmBuildMetaInfo(
             compilerBuildVersion: String,
             languageVersionString: String,
             apiVersionString: String,
-            coroutinesEnable: Boolean,
-            coroutinesWarn: Boolean,
-            coroutinesError: Boolean,
             multiplatformEnable: Boolean,
             ownVersion: Int,
             coroutinesVersion: Int,
@@ -62,9 +56,6 @@ data class JvmBuildMetaInfo(
                 compilerBuildVersion = compilerBuildVersion,
                 languageVersionString = languageVersionString,
                 apiVersionString = apiVersionString,
-                coroutinesEnable = coroutinesEnable,
-                coroutinesWarn = coroutinesWarn,
-                coroutinesError = coroutinesError,
                 multiplatformEnable = multiplatformEnable,
                 metadataVersionMajor = metadataVersion.major,
                 metadataVersionMinor = metadataVersion.minor,

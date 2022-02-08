@@ -1,8 +1,11 @@
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
 import kotlin.test.assertEquals
 
-inline class Z(val x: Int)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val x: Int)
 
 class Outer(val z1: Z) {
     inner class Inner(val z2: Z)

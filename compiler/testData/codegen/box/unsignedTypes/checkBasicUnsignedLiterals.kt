@@ -1,6 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
-// IGNORE_BACKEND_FIR: JVM_IR
+// WITH_STDLIB
 
 fun box(): String {
     val good = 42.toUInt()

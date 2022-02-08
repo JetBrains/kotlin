@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.daemon.experimental.CompileServiceServerSideImpl
 import org.jetbrains.kotlin.daemon.loggerCompatiblePath
 import org.jetbrains.kotlin.integration.KotlinIntegrationTestBase
 import org.jetbrains.kotlin.test.IgnoreAll
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.runner.RunWith
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -36,7 +36,9 @@ import java.util.*
 import java.util.logging.LogManager
 import java.util.logging.Logger
 import kotlin.concurrent.schedule
-import kotlin.io.path.*
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.createTempFile
+import kotlin.io.path.deleteIfExists
 
 @OptIn(ExperimentalPathApi::class)
 @RunWith(IgnoreAll::class)
@@ -364,7 +366,7 @@ class ConnectionsTest : KotlinIntegrationTestBase() {
                                 CompileService.NO_SESSION,
                                 arrayOf(
                                     "-include-runtime",
-                                    File(KotlinTestUtils.getTestDataPathBase() + "/integration/smoke/helloApp", "hello.kt").absolutePath,
+                                    File(KtTestUtil.getTestDataPathBase() + "/integration/smoke/helloApp", "hello.kt").absolutePath,
                                     "-d",
                                     jar
                                 ),

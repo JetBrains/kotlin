@@ -1,4 +1,14 @@
-// WITH_RUNTIME
+// WITH_STDLIB
+
+// IMPORTANT!
+// Please, when your changes cause failures in bytecodeText tests for 'for' loops,
+// examine the resulting bytecode shape carefully.
+// Range and progression-based loops generated with Kotlin compiler should be
+// as close as possible to Java counter loops ('for (int i = a; i < b; ++i) { ... }').
+// Otherwise it may result in performance regression due to missing HotSpot optimizations.
+// Run Kotlin compiler benchmarks (https://github.com/Kotlin/kotlin-benchmarks)
+// with compiler built from your changes if you are not sure.
+
 const val M = UInt.MAX_VALUE
 
 fun f(a: UInt): Int {
@@ -8,9 +18,6 @@ fun f(a: UInt): Int {
     }
     return n
 }
-
-// JVM non-IR uses while.
-// JVM IR uses if + do-while.
 
 // 0 iterator
 // 0 getStart
@@ -27,7 +34,13 @@ fun f(a: UInt): Int {
 // 1 IF
 
 // JVM_IR_TEMPLATES
-// 2 INVOKESTATIC kotlin/UnsignedKt.uintCompare
+// 1 INVOKESTATIC kotlin/UnsignedKt.uintCompare
 // 1 IFGE
-// 1 IFLT
-// 2 IF
+// 1 IF
+
+// JVM_IR_TEMPLATES
+// 5 ILOAD
+// 4 ISTORE
+// 0 IADD
+// 0 ISUB
+// 2 IINC

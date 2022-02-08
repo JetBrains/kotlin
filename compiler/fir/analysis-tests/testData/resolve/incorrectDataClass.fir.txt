@@ -1,0 +1,17 @@
+FILE: incorrectDataClass.kt
+    public final data class Foo : R|kotlin/Any| {
+        public constructor(a: R|kotlin/Int|, b: R|kotlin/Int|): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val b: R|kotlin/Int| = R|<local>/b|
+            public get(): R|kotlin/Int|
+
+        public final val c: R|kotlin/Int| = Int(4)
+            public get(): R|kotlin/Int|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(b: R|kotlin/Int| = this@R|/Foo|.R|/Foo.b|): R|Foo|
+
+    }

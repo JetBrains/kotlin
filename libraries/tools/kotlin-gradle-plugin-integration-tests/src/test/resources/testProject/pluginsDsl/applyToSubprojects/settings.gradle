@@ -3,6 +3,10 @@ pluginManagement {
         maven { url '<mavenLocalUrl>' }
         gradlePluginPortal()
     }
+
+    plugins {
+        id "org.jetbrains.kotlin.test.fixes.android" version "$test_fixes_version"
+    }
 }
 
 include 'subproject'

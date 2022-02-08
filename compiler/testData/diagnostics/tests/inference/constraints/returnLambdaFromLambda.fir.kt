@@ -3,7 +3,7 @@
 fun testLambda() {
     val basicTest: (Int) -> Int = myRun {
         val x: Any? = null
-        if (x is String) return@myRun { it -> x.length <!AMBIGUITY!>+<!> it }
+        if (x is String) return@myRun { it -> x.length + it }
         if (x !is Int) return@myRun { it -> it }
 
         { it -> x + it }

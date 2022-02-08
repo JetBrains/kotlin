@@ -22,7 +22,7 @@ abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val
 
         fun generateBooleanFields(vararg names: String) {
             names.forEach {
-                +booleanField("is${it.capitalize()}")
+                +booleanField("is${it.replaceFirstChar(Char::uppercaseChar)}")
             }
         }
 
@@ -75,6 +75,10 @@ abstract class AbstractFieldConfigurator<T : AbstractFirTreeBuilder>(private val
 
         fun shouldBeAnInterface() {
             element.kind = Implementation.Kind.Interface
+        }
+
+        fun shouldBeAbstractClass() {
+            element.kind = Implementation.Kind.AbstractClass
         }
     }
 

@@ -17,14 +17,14 @@ class SomeClass {
     val withoutType: LambdaWithReceiver
         get() = when (e) {
             E.VALUE -> { param ->
-                <!INAPPLICABLE_CANDIDATE!>method<!>(param)
+                <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>method<!>(param)
             }
         }
 
     val withExplicitType: LambdaWithReceiver
         get() = when (e) {
             E.VALUE -> { param: Parameter ->
-                <!INAPPLICABLE_CANDIDATE!>method<!>(param)
+                <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>method<!>(param)
             }
         }
 }

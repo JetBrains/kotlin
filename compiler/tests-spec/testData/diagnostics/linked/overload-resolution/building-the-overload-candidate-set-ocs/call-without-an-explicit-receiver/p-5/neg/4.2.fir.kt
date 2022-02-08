@@ -16,8 +16,8 @@ interface I
 class B : I
 
 fun case1(){
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>A()<!>
-    <!DEBUG_INFO_CALL("fqName: lib.case1.A.invoke; typeCall: variable&invoke")!>A()<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!><!OPERATOR_MODIFIER_REQUIRED!>A<!>()<!>
+    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!><!OPERATOR_MODIFIER_REQUIRED!>A<!>()<!>
 }
 
 // FILE: Lib.kt

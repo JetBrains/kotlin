@@ -1,3 +1,0 @@
-expect class Foo {
-    operator fun unaryMinus()
-}

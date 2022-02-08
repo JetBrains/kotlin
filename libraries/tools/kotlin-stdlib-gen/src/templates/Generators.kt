@@ -369,8 +369,9 @@ object Generators : TemplateGroupBase() {
 
     private fun elementsConversionClause(elements: Family) =
             """
-            The [elements] ${elements.doc.collection} may be converted to a [HashSet] to speed up the operation, thus the elements are required to have
-            a correct and stable implementation of `hashCode()` that doesn't change between successive invocations.
+            Before Kotlin 1.6, the [elements] ${elements.doc.collection} may have been converted to a [HashSet] to speed up the operation, thus the elements were required to have
+            a correct and stable implementation of `hashCode()` that didn't change between successive invocations. 
+            On JVM, you can enable this behavior back with the system property `kotlin.collections.convert_arg_to_set_in_removeAll` set to `true`.
             """
 
     val f_minus_iterable = fn("minus(elements: Iterable<T>)") {
@@ -455,7 +456,7 @@ object Generators : TemplateGroupBase() {
         body {
             """
             if (elements.isEmpty()) return this.toList()
-            val other = elements.toHashSet()
+            val other = elements.convertToSetForSetOperation()
             return this.filterNot { it in other }
             """
         }
@@ -491,7 +492,7 @@ object Generators : TemplateGroupBase() {
                 if (elements.isEmpty()) return this
                 return object: Sequence<T> {
                     override fun iterator(): Iterator<T> {
-                        val other = elements.toHashSet()
+                        val other = elements.convertToSetForSetOperation()
                         return this@minus.filterNot { it in other }.iterator()
                     }
                 }
@@ -513,7 +514,7 @@ object Generators : TemplateGroupBase() {
         specialFor(Sets, Sequences) { returns("SELF") }
         body {
             """
-            val other = elements.toHashSet()
+            val other = elements.convertToSetForSetOperation()
             if (other.isEmpty())
                 return this.toList()
 
@@ -552,7 +553,7 @@ object Generators : TemplateGroupBase() {
                 """
                 return object: Sequence<T> {
                     override fun iterator(): Iterator<T> {
-                        val other = elements.toHashSet()
+                        val other = elements.convertToSetForSetOperation()
                         if (other.isEmpty())
                             return this@minus.iterator()
                         else

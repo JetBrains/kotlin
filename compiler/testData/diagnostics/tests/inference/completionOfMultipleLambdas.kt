@@ -11,7 +11,7 @@ fun test() {
     <!DEBUG_INFO_EXPRESSION_TYPE("(A, A) -> kotlin.Unit")!>select3(
         { a: A, b: A -> Unit },
         { b, a -> Unit },
-        <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>{<!> <!UNRESOLVED_REFERENCE!>it<!>; Unit }
+        <!TYPE_MISMATCH!><!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>{<!> <!UNRESOLVED_REFERENCE!>it<!>; Unit }<!>
     )<!>
 }
 

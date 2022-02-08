@@ -37,20 +37,20 @@ fun foo(
         cs: Collection<String>, ca: Collection<Any?>
 ) {
     a.containsAll(cs)
-    a.<!INAPPLICABLE_CANDIDATE!>containsAll<!>(ca)
+    a.containsAll(<!ARGUMENT_TYPE_MISMATCH!>ca<!>)
 
     b.containsAll(cs)
-    b.containsAll(ca)
+    b.containsAll(<!ARGUMENT_TYPE_MISMATCH!>ca<!>)
 
     ic.containsAll(cs)
-    ic.containsAll(ca)
+    ic.containsAll(<!ARGUMENT_TYPE_MISMATCH!>ca<!>)
 
     ka.containsAll(cs)
-    ka.<!INAPPLICABLE_CANDIDATE!>containsAll<!>(ca)
+    ka.containsAll(<!ARGUMENT_TYPE_MISMATCH!>ca<!>)
 
     kb.containsAll(cs)
-    kb.containsAll(ca)
+    kb.containsAll(<!ARGUMENT_TYPE_MISMATCH!>ca<!>)
 
     al.containsAll(cs)
-    al.<!INAPPLICABLE_CANDIDATE!>containsAll<!>(ca)
+    al.containsAll(<!ARGUMENT_TYPE_MISMATCH!>ca<!>)
 }

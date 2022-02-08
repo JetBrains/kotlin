@@ -1,0 +1,17 @@
+FILE: runOnIntegerLiteral.kt
+    public final class TestInitValInLambdaCalledOnce : R|kotlin/Any| {
+        public constructor(): R|TestInitValInLambdaCalledOnce| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        init {
+            Int(1).R|kotlin/run|<R|kotlin/Int|, R|kotlin/Unit|>(<L> = run@fun R|kotlin/Int|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                this@R|/TestInitValInLambdaCalledOnce|.R|/TestInitValInLambdaCalledOnce.x| = Int(0)
+            }
+            )
+        }
+
+    }

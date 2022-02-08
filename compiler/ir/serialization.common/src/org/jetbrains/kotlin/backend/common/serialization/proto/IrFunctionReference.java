@@ -160,16 +160,16 @@ public final class IrFunctionReference extends
     return memberAccess_;
   }
 
-  public static final int REFLECTIONTARGETSYMBOL_FIELD_NUMBER = 4;
+  public static final int REFLECTION_TARGET_SYMBOL_FIELD_NUMBER = 4;
   private long reflectionTargetSymbol_;
   /**
-   * <code>optional int64 reflectionTargetSymbol = 4;</code>
+   * <code>optional int64 reflection_target_symbol = 4;</code>
    */
   public boolean hasReflectionTargetSymbol() {
     return ((bitField0_ & 0x00000008) == 0x00000008);
   }
   /**
-   * <code>optional int64 reflectionTargetSymbol = 4;</code>
+   * <code>optional int64 reflection_target_symbol = 4;</code>
    */
   public long getReflectionTargetSymbol() {
     return reflectionTargetSymbol_;
@@ -568,19 +568,19 @@ public final class IrFunctionReference extends
 
     private long reflectionTargetSymbol_ ;
     /**
-     * <code>optional int64 reflectionTargetSymbol = 4;</code>
+     * <code>optional int64 reflection_target_symbol = 4;</code>
      */
     public boolean hasReflectionTargetSymbol() {
       return ((bitField0_ & 0x00000008) == 0x00000008);
     }
     /**
-     * <code>optional int64 reflectionTargetSymbol = 4;</code>
+     * <code>optional int64 reflection_target_symbol = 4;</code>
      */
     public long getReflectionTargetSymbol() {
       return reflectionTargetSymbol_;
     }
     /**
-     * <code>optional int64 reflectionTargetSymbol = 4;</code>
+     * <code>optional int64 reflection_target_symbol = 4;</code>
      */
     public Builder setReflectionTargetSymbol(long value) {
       bitField0_ |= 0x00000008;
@@ -589,7 +589,7 @@ public final class IrFunctionReference extends
       return this;
     }
     /**
-     * <code>optional int64 reflectionTargetSymbol = 4;</code>
+     * <code>optional int64 reflection_target_symbol = 4;</code>
      */
     public Builder clearReflectionTargetSymbol() {
       bitField0_ = (bitField0_ & ~0x00000008);

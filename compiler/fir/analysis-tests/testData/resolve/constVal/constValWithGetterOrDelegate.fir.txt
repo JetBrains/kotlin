@@ -1,0 +1,33 @@
+FILE: constValWithGetterOrDelegate.kt
+    public final const val f: R|kotlin/Int| = Int(24)
+        public get(): R|kotlin/Int|
+    public final const val l: R|kotlin/Int| = Int(3)
+        public get(): R|kotlin/Int|
+    public final const val k: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+    public final const val t: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(24)
+        }
+    public final class Test : R|kotlin/Any| {
+        public constructor(): R|Test| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun getValue(nothing: R|kotlin/Nothing?|, property: R|kotlin/reflect/KProperty<*>|): R|kotlin/Int| {
+            ^getValue Int(123)
+        }
+
+    }
+    public final const val delegated: R|kotlin/Int|by R|/Test.Test|()
+        public get(): R|kotlin/Int| {
+            ^ D|/delegated|.R|/Test.getValue|(Null(null), ::R|/delegated|)
+        }
+    public final const val e: R|kotlin/Boolean|
+        public get(): R|kotlin/Boolean| {
+            ^ Boolean(false)
+        }
+    public final const val property: R|kotlin/String| = String(123)
+        public get(): R|kotlin/String| {
+            ^ F|/property|.R|kotlin/String.plus|(String( 123 123))
+        }

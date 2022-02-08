@@ -15,5 +15,5 @@ class B : A() {
 }
 
 fun test(b: B) {
-    b.<!HIDDEN!>foo<!>("")
+    b.<!INVISIBLE_REFERENCE!>foo<!>("")
 }

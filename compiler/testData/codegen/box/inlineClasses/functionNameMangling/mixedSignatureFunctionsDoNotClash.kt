@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Id(val id: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Id(val id: String)
 
 fun test(id: Id, str: String) {
     if (id.id != "OK" && str != "1") throw AssertionError()

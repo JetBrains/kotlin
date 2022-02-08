@@ -1,9 +1,9 @@
 // FILE: f.kt
 class A() {
   fun foo() : Unit {
-    <!UNUSED_EXPRESSION!>this@A<!>
+    this@A
     this<!UNRESOLVED_REFERENCE!>@a<!>
-    <!UNUSED_EXPRESSION!>this<!>
+    this
   }
 
   val x = this@A.<!DEBUG_INFO_LEAKING_THIS!>foo<!>()

@@ -5,88 +5,63 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state
 
-import org.jetbrains.kotlin.ir.interpreter.getCorrectReceiverByFunction
-import org.jetbrains.kotlin.ir.interpreter.getLastOverridden
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.interpreter.fqName
+import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
+import org.jetbrains.kotlin.ir.interpreter.stack.Field
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.util.overrides
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 
-internal abstract class Complex(override val irClass: IrClass, override val fields: MutableList<Variable>) : State {
-    var superClass: Complex? = null
-    var subClass: Complex? = null
-    val interfaces: MutableList<Complex> = mutableListOf() // filled lazily, as needed
-    override val typeArguments: MutableList<Variable> = mutableListOf()
-    var outerClass: Variable? = null
+internal interface Complex : State {
+    var superWrapperClass: Wrapper?
+    var outerClass: Field?
 
-    fun setSuperClassInstance(superClass: Complex) {
-        if (this.irClass == superClass.irClass) {
-            // if superClass is just secondary constructor instance, then copy properties that isn't already present in instance
-            superClass.fields.forEach { if (!this.contains(it)) fields.add(it) }
-            this.superClass = superClass.superClass
-            superClass.superClass?.subClass = this
-        } else {
-            this.superClass = superClass
-            superClass.subClass = this
-        }
-    }
+    fun irClassFqName() = irClass.fqName
 
-    fun getOriginal(): Complex {
-        return subClass?.getOriginal() ?: this
-    }
-
-    fun irClassFqName(): String {
-        return irClass.fqNameForIrSerialization.toString()
-    }
-
-    private fun contains(variable: Variable) = fields.any { it.symbol == variable.symbol }
-
-    private fun getIrFunction(symbol: IrFunctionSymbol): IrFunction? {
+    private fun getIrFunctionFromGivenClass(irClass: IrClass, owner: IrFunction): IrFunction? {
         val propertyGetters = irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.getter }
+        val propertySetters = irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.setter }
         val functions = irClass.declarations.filterIsInstance<IrFunction>()
-        return (propertyGetters + functions).firstOrNull {
-            if (it is IrSimpleFunction) it.overrides(symbol.owner as IrSimpleFunction) else it == symbol.owner
-        }
-    }
-
-    private fun getThisOrSuperReceiver(superIrClass: IrClass?): Complex? {
-        return when {
-            superIrClass == null -> this.getOriginal()
-            superIrClass.isInterface -> Common(superIrClass).apply {
-                interfaces.add(this)
-                this.subClass = this@Complex
+        return (propertyGetters + propertySetters + functions).firstOrNull {
+            when {
+                it is IrSimpleFunction && owner is IrSimpleFunction -> it.overrides(owner) || owner.overrides(it)
+                else -> it == owner
             }
-            else -> this.superClass
         }
     }
 
-    protected fun getOverridden(owner: IrSimpleFunction, qualifier: State?): IrSimpleFunction {
-        if (!owner.isFakeOverride) return owner
-        if (qualifier == null || qualifier is ExceptionState || (qualifier as? Complex)?.superClass == null) {
-            return owner.getLastOverridden() as IrSimpleFunction
-        }
-
-        val overriddenOwner = owner.overriddenSymbols.single().owner
-        return when {
-            overriddenOwner.body != null -> overriddenOwner
-            else -> getOverridden(overriddenOwner, qualifier.superClass!!)
-        }
+    fun getRealFunction(owner: IrSimpleFunction): IrSimpleFunction {
+        return owner.resolveFakeOverride() as IrSimpleFunction
     }
 
     override fun getIrFunctionByIrCall(expression: IrCall): IrFunction? {
-        val receiver = getThisOrSuperReceiver(expression.superQualifierSymbol?.owner) ?: return null
+        val receiver = expression.superQualifierSymbol?.owner ?: irClass
+        val irFunction = getIrFunctionFromGivenClass(receiver, expression.symbol.owner) ?: return null
+        return (irFunction as IrSimpleFunction).resolveFakeOverride()
+    }
 
-        val irFunction = receiver.getIrFunction(expression.symbol) ?: return null
-
-        return when (irFunction.body) {
-            null -> getOverridden(irFunction as IrSimpleFunction, this.getCorrectReceiverByFunction(irFunction))
-            else -> irFunction
+    fun loadOuterClassesInto(callStack: CallStack, receiver: IrValueSymbol? = null) {
+        fun <T> List<T>.takeFromEndWhile(predicate: (T) -> Boolean): List<T> {
+            val list = mutableListOf<T>()
+            for (i in this.lastIndex downTo 0) {
+                if (!predicate(this[i]))
+                    break
+                list.add(this[i])
+            }
+            return list
         }
+
+        generateSequence(outerClass) { (it.second as? Complex)?.outerClass }
+            .toList()
+            .takeFromEndWhile { receiver == null || it.first != receiver } // only state's below receiver must be loaded on stack
+            .forEach { (symbol, state) ->
+                callStack.storeState(symbol, state)
+                (state as? StateWithClosure)?.let { callStack.loadUpValues(it) }
+            }
     }
 }

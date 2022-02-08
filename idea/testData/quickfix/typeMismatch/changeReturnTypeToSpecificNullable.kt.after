@@ -1,6 +1,0 @@
-// "Change return type of enclosing function 'foo' to 'Int?'" "true"
-
-fun foo(): Int? {
-    val n: Int? = 1
-    return n
-}

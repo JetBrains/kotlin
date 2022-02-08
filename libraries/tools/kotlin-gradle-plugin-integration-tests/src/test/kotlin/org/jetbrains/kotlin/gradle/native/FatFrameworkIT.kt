@@ -5,15 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.native
 
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.GradleVersionRequired
+import org.jetbrains.kotlin.gradle.*
+import org.jetbrains.kotlin.gradle.embedProject
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
-import org.jetbrains.kotlin.gradle.util.checkedReplace
-import org.jetbrains.kotlin.gradle.util.modify
-import org.jetbrains.kotlin.gradle.util.runProcess
+import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.Assume
 import org.junit.BeforeClass
+import org.junit.Ignore
 import org.junit.Test
 import kotlin.test.assertTrue
 
@@ -51,12 +50,12 @@ class FatFrameworkIT : BaseGradleIT() {
             gradleBuildScript().modify {
                 it.checkedReplace("iosArm32()", "watchosArm32()")
                     .checkedReplace("iosArm64()", "watchosArm64()")
-                    .checkedReplace("iosX64()", "watchosX86()")
+                    .checkedReplace("iosX64()", "watchosX64()")
             }
 
             build("fat") {
                 checkSmokeBuild(
-                    archs = listOf("x86", "arm64", "arm32"),
+                    archs = listOf("x64", "arm64", "arm32"),
                     targetPrefix = "watchos",
                     expectedPlistPlatform = "WatchOS"
                 )
@@ -64,7 +63,7 @@ class FatFrameworkIT : BaseGradleIT() {
                 val binary = fileInWorkingDir("build/fat-framework/smoke.framework/smoke")
                 with(runProcess(listOf("file", binary.absolutePath), projectDir)) {
                     assertTrue(isSuccessful)
-                    assertTrue(output.contains("\\(for architecture i386\\):\\s+Mach-O dynamically linked shared library i386".toRegex()))
+                    assertTrue(output.contains("\\(for architecture x86_64\\):\\s+Mach-O 64-bit dynamically linked shared library x86_64".toRegex()))
                     assertTrue(output.contains("\\(for architecture armv7k\\):\\s+Mach-O dynamically linked shared library arm_v7k".toRegex()))
                     assertTrue(output.contains("\\(for architecture arm64_32\\):\\s+Mach-O dynamically linked shared library arm64_32_v8".toRegex()))
                 }
@@ -144,6 +143,68 @@ class FatFrameworkIT : BaseGradleIT() {
                 assertContains("Cannot add a binary with platform family 'osx' to the fat framework")
             }
         }
+    }
+
+    @Test
+    fun testCustomName() {
+        with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
+            gradleBuildScript().modify {
+                it.addBeforeSubstring("baseName = \"custom\"\n","from(frameworksToMerge)")
+            }
+
+            build("fat") {
+                val binary = fileInWorkingDir("build/fat-framework/custom.framework/custom")
+                with(runProcess(listOf("otool", "-D", binary.absolutePath), project.projectDir)) {
+                    assertSuccessful()
+                    assertTrue { output.lines().any { it.contains("@rpath/custom.framework/custom") } }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun testDifferentTypes() {
+        with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
+            gradleBuildScript().modify {
+                it.checkedReplace("iosArm32()", "iosArm32{binaries.framework {isStatic = true}}")
+                    .checkedReplace("iosArm64()", "iosArm64{binaries.framework {isStatic = false}}")
+                    .checkedReplace("iosX64()", "iosX64{binaries.framework {isStatic = false}}")
+                    .addBeforeSubstring("//", "binaries.framework(listOf(DEBUG))")
+            }
+            build("fat") {
+                assertFailed()
+                assertContains("All input frameworks must be either static or dynamic")
+            }
+        }
+    }
+
+    @Test
+    fun testAllStatic() {
+        with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
+            gradleBuildScript().modify {
+                it.checkedReplace("iosArm32()", "iosArm32{binaries.framework {isStatic = true}}")
+                    .checkedReplace("iosArm64()", "iosArm64{binaries.framework {isStatic = true}}")
+                    .checkedReplace("iosX64()", "iosX64{binaries.framework {isStatic = true}}")
+                    .addBeforeSubstring("//", "binaries.framework(listOf(DEBUG))")
+            }
+            build("fat") {
+                assertSuccessful()
+            }
+        }
+    }
+
+    /**
+     * Test that the configurations exposing the frameworks don't interfere with variant-aware dependency resolution
+     */
+    @Ignore("Fails due to KT-50925")
+    @Test
+    fun testDependencyResolution() = with(transformProjectWithPluginsDsl("smoke", directoryPrefix = "native-fat-framework")) {
+        setupWorkingDir()
+        val nestedProjectName = "nested"
+        embedProject(this, nestedProjectName)
+        gradleBuildScript(nestedProjectName).modify { it.replace(".version(\"$KOTLIN_VERSION\")", "") }
+        gradleBuildScript().appendText("dependencies { \"commonMainImplementation\"(project(\":$nestedProjectName\")) }")
+        testResolveAllConfigurations()
     }
 
     companion object {

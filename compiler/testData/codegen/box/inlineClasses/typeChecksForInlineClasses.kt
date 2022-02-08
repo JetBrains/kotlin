@@ -1,12 +1,16 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class AsAny(val a: Any?) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class AsAny(val a: Any?) {
     fun myEq(other: Any?): Boolean {
         return other is AsAny && other.a == a
     }
 }
 
-inline class AsInt(val a: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class AsInt(val a: Int) {
     fun myEq(other: Any?): Boolean {
         return other is AsInt && other.a == a
     }

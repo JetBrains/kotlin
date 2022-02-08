@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -84,14 +84,14 @@ public class TestTimeSource : AbstractLongTimeSource(unit = DurationUnit.NANOSEC
      * @throws IllegalStateException when the reading value overflows as the result of this operation.
      */
     public operator fun plusAssign(duration: Duration) {
-        val delta = duration.toDouble(unit)
-        val longDelta = delta.toLong()
+        val longDelta = duration.toLong(unit)
         reading = if (longDelta != Long.MIN_VALUE && longDelta != Long.MAX_VALUE) {
             // when delta fits in long, add it as long
             val newReading = reading + longDelta
             if (reading xor longDelta >= 0 && reading xor newReading < 0) overflow(duration)
             newReading
         } else {
+            val delta = duration.toDouble(unit)
             // when delta is greater than long, add it as double
             val newReading = reading + delta
             if (newReading > Long.MAX_VALUE || newReading < Long.MIN_VALUE) overflow(duration)
@@ -103,23 +103,3 @@ public class TestTimeSource : AbstractLongTimeSource(unit = DurationUnit.NANOSEC
         throw IllegalStateException("TestTimeSource will overflow if its reading ${reading}ns is advanced by $duration.")
     }
 }
-
-@SinceKotlin("1.3")
-@ExperimentalTime
-@Deprecated("Use TimeSource.Monotonic instead.", ReplaceWith("TimeSource.Monotonic", "kotlin.time.TimeSource"), DeprecationLevel.ERROR)
-public typealias MonoClock = TimeSource.Monotonic
-
-@SinceKotlin("1.3")
-@ExperimentalTime
-@Deprecated("Use AbstractLongTimeSource instead.", ReplaceWith("AbstractLongTimeSource", "kotlin.time.AbstractLongTimeSource"), DeprecationLevel.ERROR)
-public typealias AbstractLongClock = AbstractLongTimeSource
-
-@SinceKotlin("1.3")
-@ExperimentalTime
-@Deprecated("Use AbstractDoubleTimeSource instead.", ReplaceWith("AbstractDoubleTimeSource", "kotlin.time.AbstractDoubleTimeSource"), DeprecationLevel.ERROR)
-public typealias AbstractDoubleClock = AbstractDoubleTimeSource
-
-@SinceKotlin("1.3")
-@ExperimentalTime
-@Deprecated("Use TestTimeSource instead.", ReplaceWith("TestTimeSource", "kotlin.time.TestTimeSource"), DeprecationLevel.ERROR)
-public typealias TestClock = TestTimeSource

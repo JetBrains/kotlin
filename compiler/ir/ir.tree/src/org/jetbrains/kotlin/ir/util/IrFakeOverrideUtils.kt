@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val IrDeclaration.isReal: Boolean get() = !isFakeOverride
@@ -30,70 +31,74 @@ val IrFunction.target: IrFunction get() = when (this) {
     else -> error(this)
 }
 
-fun IrSimpleFunction.collectRealOverrides(
-    toSkip: (IrSimpleFunction) -> Boolean = { false },
-    filter: (IrOverridableMember) -> Boolean = { false }
-): Set<IrSimpleFunction> {
+fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.collectRealOverrides(
+    toSkip: (T) -> Boolean = { false },
+    filter: (T) -> Boolean = { false }
+): Set<T> {
     if (isReal && !toSkip(this)) return setOf(this)
 
+    @Suppress("UNCHECKED_CAST")
     return this.overriddenSymbols
-        .map { it.owner }
-        .collectAndFilterRealOverrides(
-            {
-                require(it is IrSimpleFunction) { "Expected IrSimpleFunction: ${it.render()}" }
-                toSkip(it)
-            },
-            filter
-        )
-        .map { it as IrSimpleFunction }
-        .toSet()
+        .map { it.owner as T }
+        .collectAndFilterRealOverrides(toSkip, filter)
 }
 
-fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(
-    toSkip: (IrOverridableMember) -> Boolean = { false },
-    filter: (IrOverridableMember) -> Boolean = { false }
-): Set<IrOverridableMember> {
+fun <S : IrSymbol, T : IrOverridableDeclaration<S>> Collection<T>.collectAndFilterRealOverrides(
+    toSkip: (T) -> Boolean = { false },
+    filter: (T) -> Boolean = { false }
+): Set<T> {
 
-    val visited = mutableSetOf<IrOverridableMember>()
-    val realOverrides = mutableSetOf<IrOverridableMember>()
+    val visited = mutableSetOf<T>()
+    val realOverrides = mutableMapOf<Any, T>()
 
-    fun overriddenSymbols(declaration: IrOverridableMember) = when (declaration) {
-        is IrSimpleFunction -> declaration.overriddenSymbols
-        is IrProperty -> (declaration.getter ?: declaration.setter)
-            ?.overriddenSymbols?.mapNotNull { it.owner.correspondingPropertySymbol }
-            ?: emptyList()
-        else -> error("Unexpected overridable member: ${declaration.render()}")
-    }
+    /*
+        Due to IR copying in performByIrFile, overrides should only be distinguished up to their signatures.
+     */
+    fun T.toKey(): Any = symbol.signature ?: this
 
-    fun collectRealOverrides(member: IrOverridableMember) {
+    fun collectRealOverrides(member: T) {
         if (!visited.add(member) || filter(member)) return
 
         if (member.isReal && !toSkip(member)) {
-            realOverrides += member
+            realOverrides[member.toKey()] = member
         } else {
-            overriddenSymbols(member).forEach { collectRealOverrides(it.owner as IrOverridableMember) }
+            @Suppress("UNCHECKED_CAST")
+            member.overriddenSymbols.forEach { collectRealOverrides(it.owner as T) }
         }
     }
 
     this.forEach { collectRealOverrides(it) }
 
-    fun excludeRepeated(member: IrOverridableMember) {
+    fun excludeRepeated(member: T) {
         if (!visited.add(member)) return
 
-        overriddenSymbols(member).forEach {
-            realOverrides.remove(it.owner)
-            excludeRepeated(it.owner as IrOverridableMember)
+        member.overriddenSymbols.forEach {
+            @Suppress("UNCHECKED_CAST")
+            val owner = it.owner as T
+            realOverrides.remove(owner.toKey())
+            excludeRepeated(owner)
         }
     }
 
     visited.clear()
-    realOverrides.toList().forEach { excludeRepeated(it) }
+    realOverrides.toList().forEach { excludeRepeated(it.second) }
 
-    return realOverrides
+    return realOverrides.values.toSet()
+}
+
+@Suppress("UNCHECKED_CAST")
+fun Collection<IrOverridableMember>.collectAndFilterRealOverrides(): Set<IrOverridableMember> = when {
+    all { it is IrSimpleFunction } -> (this as Collection<IrSimpleFunction>).collectAndFilterRealOverrides()
+    all { it is IrProperty } -> (this as Collection<IrProperty>).collectAndFilterRealOverrides()
+    else -> error("all members should be of the same kind, got ${map { it.render() }}")
 }
 
 // TODO: use this implementation instead of any other
-fun IrSimpleFunction.resolveFakeOverride(allowAbstract: Boolean = false, toSkip: (IrSimpleFunction) -> Boolean = { false }): IrSimpleFunction? {
+fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverride(
+    allowAbstract: Boolean = false,
+    toSkip: (T) -> Boolean = { false }
+): T? {
+    if (!isFakeOverride && !toSkip(this)) return this
     return if (allowAbstract) {
         val reals = collectRealOverrides(toSkip)
         if (reals.isEmpty()) error("No real overrides for ${this.render()}")

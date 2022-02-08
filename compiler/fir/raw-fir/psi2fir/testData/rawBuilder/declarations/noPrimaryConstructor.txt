@@ -1,14 +1,14 @@
 FILE: noPrimaryConstructor.kt
     public? final? class NoPrimary : R|kotlin/Any| {
         public? final? val x: String
-            public? get(): String
+            [ContainingClassKey=NoPrimary] public? get(): String
 
-        public? constructor(x: String): R|NoPrimary| {
+        public? [ContainingClassKey=NoPrimary] constructor(x: String): R|NoPrimary| {
             super<R|kotlin/Any|>()
             this#.x# = x#
         }
 
-        public? constructor(): R|NoPrimary| {
+        public? [ContainingClassKey=NoPrimary] constructor(): R|NoPrimary| {
             this<R|NoPrimary|>(String())
         }
 

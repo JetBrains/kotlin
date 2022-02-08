@@ -1,0 +1,111 @@
+FILE: inlineClassDeclaration.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner inline class B : R|kotlin/Any| {
+            public A.constructor(x: R|kotlin/Int|): R|A.B| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val x: R|kotlin/Int| = R|<local>/x|
+                public get(): R|kotlin/Int|
+
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            local final inline class C : R|kotlin/Any| {
+                public constructor(x: R|kotlin/Int|): R|A.C| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public final val x: R|kotlin/Int| = R|<local>/x|
+                    public get(): R|kotlin/Int|
+
+            }
+
+        }
+
+        public final inner inline class D : R|kotlin/Any| {
+            public A.constructor(x: R|kotlin/Int|): R|A.D| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val x: R|kotlin/Int| = R|<local>/x|
+                public get(): R|kotlin/Int|
+
+        }
+
+    }
+    public open inline class NotFinalClass1 : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|NotFinalClass1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+    }
+    public abstract inline class NotFinalClass2 : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|NotFinalClass2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+    }
+    public sealed inline class NotFinalClass3 : R|kotlin/Any| {
+        protected constructor(x: R|kotlin/Int|): R|NotFinalClass3| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+    }
+    public final inline class CloneableClass1 : R|kotlin/Cloneable| {
+        public constructor(x: R|kotlin/Int|): R|CloneableClass1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+    }
+    public final inline class CloneableClass2 : R|java/lang/Cloneable| {
+        public constructor(x: R|kotlin/Int|): R|CloneableClass2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+    }
+    public open class Test : R|kotlin/Any| {
+        public constructor(): R|Test| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final inline class ExtendTest : R|Test| {
+        public constructor(x: R|kotlin/Int|): R|ExtendTest| {
+            super<R|Test|>()
+        }
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+    }
+    public final inline class ImplementByDelegation : R|kotlin/Comparable<kotlin/Int>| {
+        public constructor(x: R|kotlin/Int|): R|ImplementByDelegation| {
+            super<R|kotlin/Any|>()
+        }
+
+        local final field <$$delegate_0>: R|kotlin/Comparable<kotlin/Int>| = R|<local>/x|
+
+        public final val x: R|kotlin/Int| = R|<local>/x|
+            public get(): R|kotlin/Int|
+
+    }

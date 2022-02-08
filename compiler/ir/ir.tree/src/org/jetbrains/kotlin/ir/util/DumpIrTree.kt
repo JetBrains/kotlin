@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.SourceManager
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -27,29 +27,64 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.Printer
 
-fun IrElement.dump(normalizeNames: Boolean = false): String =
+fun IrElement.dump(normalizeNames: Boolean = false, stableOrder: Boolean = false): String =
     try {
         StringBuilder().also { sb ->
-            accept(DumpIrTreeVisitor(sb, normalizeNames), "")
+            accept(DumpIrTreeVisitor(sb, normalizeNames, stableOrder), "")
         }.toString()
     } catch (e: Exception) {
         "(Full dump is not available: ${e.message})\n" + render()
     }
 
 fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, normalizeNames: Boolean = false): String {
+    if (shouldSkipDump()) return ""
     val sb = StringBuilder()
     accept(DumpTreeFromSourceLineVisitor(fileEntry, lineNumber, sb, normalizeNames), null)
     return sb.toString()
 }
 
+private fun IrFile.shouldSkipDump(): Boolean {
+    val entry = fileEntry as? NaiveSourceBasedFileEntryImpl ?: return false
+    return entry.lineStartOffsetsAreEmpty
+}
+
 class DumpIrTreeVisitor(
     out: Appendable,
-    normalizeNames: Boolean = false
+    normalizeNames: Boolean = false,
+    private val stableOrder: Boolean = false
 ) : IrElementVisitor<Unit, String> {
 
     private val printer = Printer(out, "  ")
-    private val elementRenderer = RenderIrElementVisitor(normalizeNames)
+    private val elementRenderer = RenderIrElementVisitor(normalizeNames, !stableOrder)
     private fun IrType.render() = elementRenderer.renderType(this)
+
+    private fun List<IrDeclaration>.ordered(): List<IrDeclaration> {
+        if (!stableOrder) return this
+
+        val strictOrder = mutableMapOf<IrDeclaration, Int>()
+
+        var idx = 0
+
+        forEach {
+            if (it is IrProperty && it.backingField != null && !it.isConst) {
+                strictOrder[it] = idx++
+            }
+            if (it is IrAnonymousInitializer) {
+                strictOrder[it] = idx++
+            }
+        }
+
+        return sortedWith { a, b ->
+            val strictA = strictOrder[a] ?: Int.MAX_VALUE
+            val strictB = strictOrder[b] ?: Int.MAX_VALUE
+
+            if (strictA == strictB) {
+                val rA = a.render()
+                val rB = b.render()
+                rA.compareTo(rB)
+            } else strictA - strictB
+        }
+    }
 
     override fun visitElement(element: IrElement, data: String) {
         element.dumpLabeledElementWith(data) {
@@ -66,19 +101,26 @@ class DumpIrTreeVisitor(
         }
     }
 
+    override fun visitExternalPackageFragment(declaration: IrExternalPackageFragment, data: String) {
+        declaration.dumpLabeledElementWith(data) {
+            declaration.declarations.ordered().dumpElements()
+        }
+    }
+
     override fun visitFile(declaration: IrFile, data: String) {
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
-            declaration.declarations.dumpElements()
+            declaration.declarations.ordered().dumpElements()
         }
     }
 
     override fun visitClass(declaration: IrClass, data: String) {
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
+            declaration.sealedSubclasses.dumpItems("sealedSubclasses") { it.dump() }
             declaration.thisReceiver?.accept(this, "\$this")
             declaration.typeParameters.dumpElements()
-            declaration.declarations.dumpElements()
+            declaration.declarations.ordered().dumpElements()
         }
     }
 
@@ -99,11 +141,15 @@ class DumpIrTreeVisitor(
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
             declaration.correspondingPropertySymbol?.dumpInternal("correspondingProperty")
-            declaration.overriddenSymbols.dumpItems<IrSymbol>("overridden") {
-                it.dump()
-            }
+            declaration.overriddenSymbols.dumpItems("overridden") { it.dump() }
             declaration.typeParameters.dumpElements()
             declaration.dispatchReceiverParameter?.accept(this, "\$this")
+
+            val contextReceiverParametersCount = declaration.contextReceiverParametersCount
+            if (contextReceiverParametersCount > 0) {
+                printer.println("contextReceiverParametersCount: $contextReceiverParametersCount")
+            }
+
             declaration.extensionReceiverParameter?.accept(this, "\$receiver")
             declaration.valueParameters.dumpElements()
             declaration.body?.accept(this, "")
@@ -136,6 +182,7 @@ class DumpIrTreeVisitor(
     override fun visitProperty(declaration: IrProperty, data: String) {
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)
+            declaration.overriddenSymbols.dumpItems("overridden") { it.dump() }
             declaration.backingField?.accept(this, "")
             declaration.getter?.accept(this, "")
             declaration.setter?.accept(this, "")
@@ -309,6 +356,22 @@ class DumpIrTreeVisitor(
         }
     }
 
+    override fun visitConstantArray(expression: IrConstantArray, data: String) {
+        expression.dumpLabeledElementWith(data) {
+            for ((i, value) in expression.elements.withIndex()) {
+                value.accept(this, i.toString())
+            }
+        }
+    }
+
+    override fun visitConstantObject(expression: IrConstantObject, data: String) {
+        expression.dumpLabeledElementWith(data) {
+            for ((index, argument) in expression.valueArguments.withIndex()) {
+                argument.accept(this, expression.constructor.owner.valueParameters[index].name.toString())
+            }
+        }
+    }
+
     private inline fun IrElement.dumpLabeledElementWith(label: String, body: () -> Unit) {
         printer.println(accept(elementRenderer, null).withLabel(label))
         indented(body)
@@ -355,7 +418,7 @@ class DumpIrTreeVisitor(
 }
 
 class DumpTreeFromSourceLineVisitor(
-    val fileEntry: SourceManager.FileEntry,
+    val fileEntry: IrFileEntry,
     private val lineNumber: Int,
     out: Appendable,
     normalizeNames: Boolean = false

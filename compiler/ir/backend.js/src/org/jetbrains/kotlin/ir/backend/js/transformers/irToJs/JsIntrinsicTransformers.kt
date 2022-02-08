@@ -1,25 +1,25 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
+import org.jetbrains.kotlin.ir.backend.js.utils.getClassRef
+import org.jetbrains.kotlin.ir.backend.js.utils.invokeFunForLambda
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.getInlineClassBackingField
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.js.backend.ast.*
 
 typealias IrCallTransformer = (IrCall, context: JsGenerationContext) -> JsExpression
@@ -56,6 +56,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             prefixOp(intrinsics.jsPrefixDec, JsUnaryOperator.DEC)
             postfixOp(intrinsics.jsPostfixDec, JsUnaryOperator.DEC)
 
+            prefixOp(intrinsics.jsDelete, JsUnaryOperator.DELETE)
+
             binOp(intrinsics.jsPlus, JsBinaryOperator.ADD)
             binOp(intrinsics.jsMinus, JsBinaryOperator.SUB)
             binOp(intrinsics.jsMult, JsBinaryOperator.MUL)
@@ -79,6 +81,8 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             binOp(intrinsics.jsInstanceOf, JsBinaryOperator.INSTANCEOF)
 
+            binOp(intrinsics.jsIn, JsBinaryOperator.INOP)
+
             prefixOp(intrinsics.jsTypeOf, JsUnaryOperator.TYPEOF)
 
             add(intrinsics.jsObjectCreate) { call, context ->
@@ -89,20 +93,16 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.jsClass) { call, context ->
-                val classifier: IrClassifierSymbol = call.getTypeArgument(0)!!.classifierOrFail
-                val owner = classifier.owner
-
-                when {
-                    owner is IrClass && owner.isEffectivelyExternal() ->
-                        context.getRefForExternalClass(owner)
-
-                    else ->
-                        context.getNameForStaticDeclaration(owner as IrDeclarationWithName).makeRef()
-                }
+                val typeArgument = call.getTypeArgument(0)
+                typeArgument?.getClassRef(context)
+                    ?: compilationException(
+                        "Type argument of jsClass must be statically known class",
+                        typeArgument
+                    )
             }
 
             add(intrinsics.jsNewTarget) { _, _ ->
-                JsNameRef(JsName("target"), JsNameRef(JsName("new")))
+                JsNameRef(JsName("target", false), JsNameRef(JsName("new", false)))
             }
 
             add(intrinsics.jsOpenInitializerBox) { call, context ->
@@ -119,34 +119,15 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             }
 
             add(intrinsics.es6DefaultType) { call, context ->
-                val classifier: IrClassifierSymbol = call.getTypeArgument(0)!!.classifierOrFail
-                val owner = classifier.owner
-
-                when {
-                    owner is IrClass && owner.isEffectivelyExternal() ->
-                        context.getRefForExternalClass(owner)
-
-                    else ->
-                        context.getNameForStaticDeclaration(owner as IrDeclarationWithName).makeRef()
-                }
+                val typeArgument = call.getTypeArgument(0)!!
+                typeArgument.getClassRef(context)
             }
 
-            addIfNotNull(intrinsics.jsCode) { _, _ -> error("Should not be called") }
-
-            add(intrinsics.jsGetContinuation) { _, context: JsGenerationContext ->
-                context.continuation
-            }
-
-            add(backendContext.ir.symbols.returnIfSuspended) { call, context ->
-                val args = translateCallArguments(call, context)
-                args[0]
-            }
-
-            add(intrinsics.jsCoroutineContext) { _, context: JsGenerationContext ->
-                val contextGetter = backendContext.coroutineGetContext
-                val getterName = context.getNameForStaticFunction(contextGetter.owner)
-                val continuation = context.continuation
-                JsInvocation(JsNameRef(getterName, continuation))
+            addIfNotNull(intrinsics.jsCode) { call, _ ->
+                compilationException(
+                    "Should not be called",
+                    call
+                )
             }
 
             add(intrinsics.jsArrayLength) { call, context ->
@@ -171,6 +152,17 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
 
             add(intrinsics.arrayLiteral) { call, context ->
                 translateCallArguments(call, context).single()
+            }
+
+            for (intrinsic in arrayOf(
+                intrinsics.jsArrayLike2Array,
+                intrinsics.jsSliceArrayLikeFromIndex,
+                intrinsics.jsSliceArrayLikeFromIndexToIndex
+            )) {
+                add(intrinsic) { call, context ->
+                    val args = translateCallArguments(call, context)
+                    JsInvocation(JsNameRef(Namer.CALL_FUNCTION, JsNameRef(Namer.SLICE_FUNCTION, JsArrayLiteral())), args)
+                }
             }
 
             add(intrinsics.jsArraySlice) { call, context ->
@@ -238,6 +230,25 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             add(intrinsics.jsUndefined) { _, _ ->
                 JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(1))
             }
+
+            val suspendInvokeTransform: (IrCall, JsGenerationContext) -> JsExpression = { call, context: JsGenerationContext ->
+                // Because it is intrinsic, we know everything about this function
+                // There is callable reference as extension receiver
+                val invokeFun = invokeFunForLambda(call)
+
+                val jsInvokeFunName = context.getNameForMemberFunction(invokeFun)
+
+                val jsExtensionReceiver = call.extensionReceiver?.accept(IrElementToJsExpressionTransformer(), context)!!
+                val args = translateCallArguments(call, context)
+
+                JsInvocation(JsNameRef(jsInvokeFunName, jsExtensionReceiver), args)
+            }
+
+            add(intrinsics.jsInvokeSuspendSuperType, suspendInvokeTransform)
+            add(intrinsics.jsInvokeSuspendSuperTypeWithReceiver, suspendInvokeTransform)
+            add(intrinsics.jsInvokeSuspendSuperTypeWithReceiverAndParam, suspendInvokeTransform)
+
+            add(intrinsics.jsArguments) { _, _ -> Namer.ARGUMENTS }
         }
     }
 

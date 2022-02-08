@@ -148,6 +148,17 @@ inline fun<T, R> Iterable<T>.mapSuccess(body: (T) -> ResultWithDiagnostics<R>): 
     }
 
 /**
+ * maps transformation ([body]) over iterable merging diagnostics
+ * return failure with merged diagnostics after first failed transformation
+ * and success with merged diagnostics and list of not null results if all transformations succeeded
+ */
+inline fun<T, R> Iterable<T>.mapNotNullSuccess(body: (T) -> ResultWithDiagnostics<R?>): ResultWithDiagnostics<List<R>> =
+    mapSuccessImpl(body) { results, r ->
+        if (r != null)
+            results.add(r)
+    }
+
+/**
  * maps transformation ([body]) over iterable merging diagnostics and flatten the results
  * return failure with merged diagnostics after first failed transformation
  * and success with merged diagnostics and list of results if all transformations succeeded

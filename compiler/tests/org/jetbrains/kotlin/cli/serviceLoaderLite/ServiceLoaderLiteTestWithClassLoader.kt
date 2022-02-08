@@ -21,8 +21,7 @@ class ServiceLoaderLiteTestWithClassLoader : AbstractServiceLoaderLiteTest() {
     inner class InnerComponent : Intf
 
     fun testClassloader1() {
-        @Suppress("RemoveExplicitTypeArguments")
-        val entries = arrayOf(impls<Intf>(Component1::class, Component2::class), clazz<Component1>(), clazz<Component2>())
+        val entries = arrayOf(impls(Component1::class, Component2::class), clazz<Component1>(), clazz<Component2>())
 
         classLoaderTest("test", *entries) { classLoader ->
             val impls = ServiceLoaderLite.loadImplementations<Intf>(classLoader)
@@ -62,8 +61,7 @@ class ServiceLoaderLiteTestWithClassLoader : AbstractServiceLoaderLiteTest() {
     }
 
     fun testInterface() {
-        @Suppress("RemoveExplicitTypeArguments")
-        classLoaderTest("test", impls<Intf>(Intf::class), clazz<Intf>()) { classLoader ->
+        classLoaderTest("test", impls(Intf::class), clazz<Intf>()) { classLoader ->
             assertThrows<InstantiationException> {
                 ServiceLoaderLite.loadImplementations<Intf>(classLoader)
             }

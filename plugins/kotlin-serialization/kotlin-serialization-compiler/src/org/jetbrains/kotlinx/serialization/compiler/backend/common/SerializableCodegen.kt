@@ -1,26 +1,17 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.common
 
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
+import org.jetbrains.kotlin.resolve.isInlineClass
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 abstract class SerializableCodegen(
@@ -34,9 +25,12 @@ abstract class SerializableCodegen(
         generateSyntheticMethods()
     }
 
+    private inline fun ClassDescriptor.shouldHaveSpecificSyntheticMethods(functionPresenceChecker: () -> FunctionDescriptor?) =
+        !isInlineClass() && (isAbstractOrSealedSerializableClass() || functionPresenceChecker() != null)
+
     private fun generateSyntheticInternalConstructor() {
         val serializerDescriptor = serializableDescriptor.classSerializer ?: return
-        if (serializableDescriptor.isAbstractSerializableClass() || serializableDescriptor.isSealedSerializableClass() || SerializerCodegen.getSyntheticLoadMember(serializerDescriptor) != null) {
+        if (serializableDescriptor.shouldHaveSpecificSyntheticMethods { SerializerCodegen.getSyntheticLoadMember(serializerDescriptor) }) {
             val constrDesc = serializableDescriptor.secondaryConstructors.find(ClassConstructorDescriptor::isSerializationCtor) ?: return
             generateInternalConstructor(constrDesc)
         }
@@ -44,8 +38,16 @@ abstract class SerializableCodegen(
 
     private fun generateSyntheticMethods() {
         val serializerDescriptor = serializableDescriptor.classSerializer ?: return
-        if (serializableDescriptor.isAbstractSerializableClass() || serializableDescriptor.isSealedSerializableClass() || SerializerCodegen.getSyntheticSaveMember(serializerDescriptor) != null) {
-            val func = KSerializerDescriptorResolver.createWriteSelfFunctionDescriptor(serializableDescriptor)
+        if (serializableDescriptor.shouldHaveSpecificSyntheticMethods { SerializerCodegen.getSyntheticSaveMember(serializerDescriptor) }) {
+            val func =
+                serializableDescriptor.unsubstitutedMemberScope.getContributedFunctions(
+                    Name.identifier(SerialEntityNames.WRITE_SELF_NAME.toString()),
+                    NoLookupLocation.FROM_BACKEND
+                ).singleOrNull { function ->
+                    function.kind == CallableMemberDescriptor.Kind.SYNTHESIZED &&
+                            function.modality == Modality.FINAL &&
+                            function.returnType?.isUnit() ?: false
+                } ?: return
             generateWriteSelfMethod(func)
         }
     }

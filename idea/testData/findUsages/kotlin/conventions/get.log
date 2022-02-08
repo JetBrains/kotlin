@@ -1,6 +1,0 @@
-Checked type of b
-Resolved B(1)[2]
-Searched references to B
-Searched references to b in non-Java files
-Used plain search of B.get(i: Int) in LocalSearchScope:
-    CLASS:B

@@ -48,7 +48,6 @@ public final expect annotation class A5 : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-
 // -- Module: <m2-jvm> --
 package
 
@@ -103,3 +102,4 @@ public actual typealias A2 = J2
 public actual typealias A3 = J3
 public actual typealias A4 = J4
 public actual typealias A5 = J5
+

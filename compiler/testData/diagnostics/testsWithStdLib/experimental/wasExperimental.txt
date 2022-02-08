@@ -7,7 +7,7 @@ public fun use1(/*0*/ c1: NewClassExperimentalInThePast, /*1*/ t1: TypeAliasToNe
 @kotlin.OptIn(markerClass = {Marker::class}) public fun use2(/*0*/ c2: NewClassExperimentalInThePast, /*1*/ t2: TypeAliasToNewClass /* = NewClassExperimentalInThePast */): kotlin.Unit
 @Marker public fun use3(/*0*/ c3: NewClassExperimentalInThePast, /*1*/ t3: TypeAliasToNewClass /* = NewClassExperimentalInThePast */): kotlin.Unit
 
-@kotlin.RequiresOptIn public final annotation class Marker : kotlin.Annotation {
+@kotlin.RequiresOptIn @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class Marker : kotlin.Annotation {
     public constructor Marker()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -5,10 +5,10 @@ import JavaClass
 
 fun foo(javaClass: JavaClass) {
     javaClass.somethingPublic
-    javaClass.<!HIDDEN!>somethingProtected<!>
-    javaClass.<!HIDDEN!>somethingPrivate<!>
-    javaClass.<!HIDDEN!>somethingPackage<!>
-    javaClass.somethingPublic = 1
+    javaClass.<!INVISIBLE_REFERENCE!>somethingProtected<!>
+    javaClass.<!INVISIBLE_REFERENCE!>somethingPrivate<!>
+    javaClass.<!INVISIBLE_REFERENCE!>somethingPackage<!>
+    <!INVISIBLE_SETTER!>javaClass.somethingPublic<!> = 1
 }
 
 // FILE: JavaClass.java

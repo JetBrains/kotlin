@@ -30,4 +30,7 @@ interface ESExpressionVisitor<out T> {
     fun visitConstant(esConstant: ESConstant): T
 
     fun visitReceiver(esReceiver: ESReceiver): T
+
+    // ESLambda is invisible in this module
+    fun visitLambda(lambda: ESValue): T
 }

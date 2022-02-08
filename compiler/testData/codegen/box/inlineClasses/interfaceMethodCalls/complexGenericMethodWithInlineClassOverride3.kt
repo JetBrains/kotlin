@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class A(val s: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class A(val s: String)
 
 interface B<T> {
     fun f(x: T): T

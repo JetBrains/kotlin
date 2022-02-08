@@ -8,14 +8,49 @@ package kotlin.script.experimental.jvmhost.test
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmReplCompilerBase
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplCodeAnalyzerBase
 import org.junit.Assert
 import org.junit.Test
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.declaredMemberProperties
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.BasicJvmReplEvaluator
-import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.impl.KJvmCompiledModuleInMemory
+import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
+import kotlin.script.experimental.jvm.updateClasspath
+import kotlin.script.experimental.jvm.util.classpathFromClass
+import kotlin.script.experimental.jvmhost.createJvmScriptDefinitionFromTemplate
+import kotlin.script.experimental.util.LinkedSnippet
+import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
 class ReplTest : TestCase() {
+
+    @Test
+    fun testDecompiledReflection() {
+        checkEvaluateInRepl(
+            sequenceOf(
+                "val x = 1",
+            ),
+            sequenceOf(null),
+            compiledSnippetChecker = { linkedSnippet ->
+                val snippet = linkedSnippet.get()
+                val module = snippet.getCompiledModule() as KJvmCompiledModuleInMemory
+
+                val classLoader = module.createClassLoader(ClassLoader.getSystemClassLoader())
+                val kClass = classLoader.loadClass(snippet.scriptClassFQName).kotlin
+                val constructor = kClass.constructors.single()
+                val scriptInstance = constructor.call(emptyArray<Any>())
+
+                @Suppress("UNCHECKED_CAST")
+                val xProp = kClass.declaredMemberProperties.first { it.name == "x" } as KProperty1<Any, Any>
+                val xValue = xProp.get(scriptInstance)
+
+                assertEquals(1, xValue)
+
+            }
+        )
+    }
 
     @Test
     fun testCompileAndEval() {
@@ -143,6 +178,21 @@ class ReplTest : TestCase() {
     }
 
     @Test
+    // TODO: make it covering more cases
+    fun testIrReceiverOvewrite() {
+        checkEvaluateInRepl(
+            sequenceOf(
+                "fun f(a: String) = a",
+                "f(\"x\")"
+            ),
+            sequenceOf(
+                null,
+                "x"
+            )
+        )
+    }
+
+    @Test
     fun testNoEvaluationError() {
         checkEvaluateInReplDiags(
             sequenceOf(
@@ -191,14 +241,82 @@ class ReplTest : TestCase() {
         )
     }
 
+    @Test
+    fun testAddNewAnnotationHandler() {
+        val replCompiler = KJvmReplCompilerBase<ReplCodeAnalyzerBase>()
+        val replEvaluator = BasicJvmReplEvaluator()
+        val compilationConfiguration = ScriptCompilationConfiguration().with {
+            updateClasspath(classpathFromClass<NewAnn>())
+        }
+        val evaluationConfiguration = ScriptEvaluationConfiguration()
+
+        val res0 = runBlocking {
+            replCompiler.compile("1".toScriptSource("Line_0.kts"), compilationConfiguration).onSuccess {
+                replEvaluator.eval(it, evaluationConfiguration)
+            }
+        }
+        assertTrue(
+            "Expecting 1 got $res0",
+            res0 is ResultWithDiagnostics.Success && (res0.value.get().result as ResultValue.Value).value == 1
+        )
+
+        var handlerInvoked = false
+
+        val compilationConfiguration2 = compilationConfiguration.with {
+            refineConfiguration {
+//                defaultImports(NewAnn::class) // TODO: fix support for default imports
+                onAnnotations<NewAnn> {
+                    handlerInvoked = true
+                    it.compilationConfiguration.asSuccess()
+                }
+            }
+        }
+
+        val res1 = runBlocking {
+            replCompiler.compile(
+                "@file:kotlin.script.experimental.jvmhost.test.NewAnn()\n2".toScriptSource("Line_1.kts"),
+                compilationConfiguration2
+            ).onSuccess {
+                replEvaluator.eval(it, evaluationConfiguration)
+            }
+        }
+        assertTrue(
+            "Expecting 2 got $res1",
+            res1 is ResultWithDiagnostics.Success && (res1.value.get().result as ResultValue.Value).value == 2
+        )
+
+        assertTrue("Refinement handler on annotation is not invoked", handlerInvoked)
+    }
+
+    @Test
+    fun testDefinitionWithConstructorArgs() {
+        val scriptDef = createJvmScriptDefinitionFromTemplate<ScriptTemplateWithArgs>(
+            evaluation = {
+                constructorArgs(arrayOf("a"))
+            }
+        )
+
+        checkEvaluateInRepl(
+            sequenceOf(
+                "args[0]",
+                "res0+args[0]",
+                "res1+args[0]"
+            ),
+            sequenceOf("a", "aa", "aaa"),
+            scriptDef.compilationConfiguration,
+            scriptDef.evaluationConfiguration
+        )
+    }
+
     companion object {
         private fun evaluateInRepl(
             snippets: Sequence<String>,
             compilationConfiguration: ScriptCompilationConfiguration = simpleScriptCompilationConfiguration,
             evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
-            limit: Int = 0
+            limit: Int = 0,
+            compiledSnippetChecker: CompiledSnippetChecker = {},
         ): Sequence<ResultWithDiagnostics<EvaluatedSnippet>> {
-            val replCompiler = KJvmReplCompilerBase.create(defaultJvmScriptingHostConfiguration)
+            val replCompiler = KJvmReplCompilerBase<ReplCodeAnalyzerBase>()
             val replEvaluator = BasicJvmReplEvaluator()
             val currentEvalConfig = evaluationConfiguration ?: ScriptEvaluationConfiguration()
             val snipetsLimited = if (limit == 0) snippets else snippets.take(limit)
@@ -207,6 +325,7 @@ class ReplTest : TestCase() {
                     snippetText.toScriptSource("Line_$snippetNo.${compilationConfiguration[ScriptCompilationConfiguration.fileExtension]}")
                 runBlocking { replCompiler.compile(snippetSource, compilationConfiguration) }
                     .onSuccess {
+                        compiledSnippetChecker(it)
                         runBlocking { replEvaluator.eval(it, currentEvalConfig) }
                     }
                     .onSuccess {
@@ -221,10 +340,17 @@ class ReplTest : TestCase() {
             compilationConfiguration: ScriptCompilationConfiguration = simpleScriptCompilationConfiguration,
             evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
             limit: Int = 0,
-            ignoreDiagnostics: Boolean = false
+            ignoreDiagnostics: Boolean = false,
+            compiledSnippetChecker: CompiledSnippetChecker = {}
         ) {
             val expectedIter = (if (limit == 0) expected else expected.take(limit)).iterator()
-            evaluateInRepl(snippets, compilationConfiguration, evaluationConfiguration, limit).forEachIndexed { index, res ->
+            evaluateInRepl(
+                snippets,
+                compilationConfiguration,
+                evaluationConfiguration,
+                limit,
+                compiledSnippetChecker
+            ).forEachIndexed { index, res ->
                 val expectedRes = expectedIter.next()
                 when {
                     res is ResultWithDiagnostics.Failure && expectedRes is ResultWithDiagnostics.Failure -> {
@@ -289,9 +415,16 @@ class ReplTest : TestCase() {
             expected: Sequence<Any?>,
             compilationConfiguration: ScriptCompilationConfiguration = simpleScriptCompilationConfiguration,
             evaluationConfiguration: ScriptEvaluationConfiguration? = simpleScriptEvaluationConfiguration,
-            limit: Int = 0
+            limit: Int = 0,
+            compiledSnippetChecker: CompiledSnippetChecker = {}
         ) = checkEvaluateInReplDiags(
-            snippets, expected.map { ResultWithDiagnostics.Success(it) }, compilationConfiguration, evaluationConfiguration, limit, true
+            snippets,
+            expected.map { ResultWithDiagnostics.Success(it) },
+            compilationConfiguration,
+            evaluationConfiguration,
+            limit,
+            true,
+            compiledSnippetChecker
         )
 
         class TestReceiver(
@@ -300,3 +433,8 @@ class ReplTest : TestCase() {
         )
     }
 }
+
+@Target(AnnotationTarget.FILE)
+annotation class NewAnn
+
+typealias CompiledSnippetChecker = (LinkedSnippet<KJvmCompiledScript>) -> Unit

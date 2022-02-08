@@ -1,0 +1,93 @@
+FILE: smartcastsFromEquals_sameModule.kt
+    public final class Final<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Final<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open class Base<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Base<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Derived<T> : R|Base<T>| {
+        public constructor<T>(): R|Derived<T>| {
+            super<R|Base<T>|>()
+        }
+
+    }
+    public final class FinalWithOverride<T> : R|kotlin/Any| {
+        public constructor<T>(): R|FinalWithOverride<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            ^equals ===(this@R|/FinalWithOverride|, R|<local>/other|)
+        }
+
+    }
+    public final fun testFinal(x: R|Final<*>|, y: R|Final<kotlin/Int>|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/x|, R|<local>/y|) ->  {
+                R|/takeIntFinal|(R|<local>/x|)
+            }
+        }
+
+        when () {
+            ===(R|<local>/x|, R|<local>/y|) ->  {
+                R|/takeIntFinal|(R|<local>/x|)
+            }
+        }
+
+    }
+    public final fun testBase(x: R|Base<*>|, y: R|Base<kotlin/Int>|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/x|, R|<local>/y|) ->  {
+                <Inapplicable(INAPPLICABLE): /takeIntBase>#(R|<local>/x|)
+            }
+        }
+
+        when () {
+            ===(R|<local>/x|, R|<local>/y|) ->  {
+                R|/takeIntBase|(R|<local>/x|)
+            }
+        }
+
+    }
+    public final fun testDerived(x: R|Derived<*>|, y: R|Derived<kotlin/Int>|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/x|, R|<local>/y|) ->  {
+                R|/takeIntDerived|(R|<local>/x|)
+            }
+        }
+
+        when () {
+            ===(R|<local>/x|, R|<local>/y|) ->  {
+                R|/takeIntDerived|(R|<local>/x|)
+            }
+        }
+
+    }
+    public final fun testFinalWithOverride(x: R|FinalWithOverride<*>|, y: R|FinalWithOverride<kotlin/Int>|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/x|, R|<local>/y|) ->  {
+                <Inapplicable(INAPPLICABLE): /takeIntFinalWithOverride>#(R|<local>/x|)
+            }
+        }
+
+        when () {
+            ===(R|<local>/x|, R|<local>/y|) ->  {
+                R|/takeIntFinalWithOverride|(R|<local>/x|)
+            }
+        }
+
+    }
+    public final fun takeIntFinal(x: R|Final<kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun takeIntBase(x: R|Base<kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun takeIntDerived(x: R|Derived<kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun takeIntFinalWithOverride(x: R|FinalWithOverride<kotlin/Int>|): R|kotlin/Unit| {
+    }

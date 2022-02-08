@@ -1,10 +1,14 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Augmented(val x: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Augmented(val x: Int) {
     override fun toString(): String = (x + 1).toString()
 }
 
-inline class AsAny(val a: Any) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class AsAny(val a: Any) {
     override fun toString(): String = "AsAny: $a"
 }
 

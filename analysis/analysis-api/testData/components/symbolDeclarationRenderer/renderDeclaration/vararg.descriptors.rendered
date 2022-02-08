@@ -1,0 +1,7 @@
+@Target(allowedTargets = [kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS, kotlin.annotation.AnnotationTarget.VALUE_PARAMETER, kotlin.annotation.AnnotationTarget.TYPE])
+annotation class base
+
+fun foo1(vararg ints: Int)
+
+fun foo2(@base vararg ints: @base Int)
+

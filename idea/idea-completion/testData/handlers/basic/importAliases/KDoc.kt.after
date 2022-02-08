@@ -1,9 +1,0 @@
-// FIR_COMPARISON
-import java.sql.Date as SqlDate
-
-/**
- * [SqlDate<caret>]
- */
-fun foo(){}
-
-// ELEMENT: SqlDate

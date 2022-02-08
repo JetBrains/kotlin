@@ -1,0 +1,39 @@
+FILE: bareWithSubjectTypeAlias.kt
+    public sealed class A<out T> : R|kotlin/Any| {
+        protected constructor<out T>(): R|A<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class B<out T1> : R|A<T1>| {
+            public constructor<out T1>(x: R|T1|): R|A.B<T1>| {
+                super<R|A<T1>|>()
+            }
+
+            public final val x: R|T1| = R|<local>/x|
+                public get(): R|T1|
+
+        }
+
+        public final class C<out T2> : R|A<T2>| {
+            public constructor<out T2>(y: R|T2|): R|A.C<T2>| {
+                super<R|A<T2>|>()
+            }
+
+            public final val y: R|T2| = R|<local>/y|
+                public get(): R|T2|
+
+        }
+
+    }
+    public final typealias TA = R|A<kotlin/CharSequence>|
+    public final fun bar(): R|TA| {
+        ^bar R|kotlin/TODO|()
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        when (lval a: R|TA| = R|/bar|()) {
+            ($subj$ is R|A.B<kotlin/CharSequence>|) ->  {
+                R|<local>/a|.R|SubstitutionOverride</A.B.x: R|kotlin/CharSequence|>|.R|kotlin/CharSequence.length|
+            }
+        }
+
+    }

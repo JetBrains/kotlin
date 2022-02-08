@@ -1,4 +1,4 @@
-class A
+open class A
 
 class B: A() {
     fun act() {
@@ -7,7 +7,7 @@ class B: A() {
         <!UNRESOLVED_REFERENCE!>invoke<!>()
 
         <!SUPER_IS_NOT_AN_EXPRESSION!>super<!> {
-            println(<!ILLEGAL_CONST_EXPRESSION!>'weird'<!>)
+            <!UNRESOLVED_REFERENCE!>println<!>(<!TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL!>'weird'<!>)
         }
     }
 }

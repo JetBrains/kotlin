@@ -1,0 +1,10 @@
+@kotlin.Metadata
+public final class a {
+    // source: 'kt43519.kt'
+}
+
+@kotlin.Metadata
+synthetic final class a__Kt43519Kt {
+    // source: 'kt43519.kt'
+    public native final static method externalFun(): long
+}

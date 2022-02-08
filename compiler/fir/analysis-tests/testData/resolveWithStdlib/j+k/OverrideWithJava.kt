@@ -14,7 +14,7 @@ public class A {
 
 class B : A() {
     override fun foo(): B = this
-    fun bar(): B = this // Here we should have "missing override" but no ambiguity
+    fun <!VIRTUAL_MEMBER_HIDDEN!>bar<!>(): B = this // Here we should have "missing override" but no ambiguity
 
     fun test() {
         foo()

@@ -1,10 +1,13 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 interface Base {
     fun result(): Int
 }
 
-inline class Inlined(val x: Int) : Base {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Inlined(val x: Int) : Base {
     override fun result(): Int = x
 }
 

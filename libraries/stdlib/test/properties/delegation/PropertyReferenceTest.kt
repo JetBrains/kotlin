@@ -8,6 +8,7 @@ package test.properties.delegation.references
 import kotlin.reflect.*
 import kotlin.test.*
 import kotlin.internal.*
+import kotlin.native.concurrent.ThreadLocal
 import kotlin.random.*
 
 open class Data(val stringVal: String, var intVar: Int, var builderVar: StringBuilder = StringBuilder("default"))
@@ -16,25 +17,33 @@ var Data.displacedVar: Int
     get() = intVar + 2
     set(value) { intVar = value - 2 }
 
+@ThreadLocal
 val data = Data("bound string", 42)
 
 val topVal: Double get() = 3.14
+@ThreadLocal
 var topVar: ULong = 0xFFFFUL
 
 // top-level properties
 
 // val to bound val
+@ThreadLocal
 val tlValBoundVal by data::stringVal
 // val to bound var
+@ThreadLocal
 val tlValBoundVar by data::intVar
 // var to bound var
+@ThreadLocal
 var tlVarBoundVar by data::intVar
 
 // val to top-level val
+@ThreadLocal
 val tlValTopLevelVal by ::topVal
 // val to top-level var
+@ThreadLocal
 val tlValTopLevelVar by ::topVar
 // var to top-level var
+@ThreadLocal
 var tlVarTopLevelVar by ::topVar
 
 // member properties
@@ -73,36 +82,50 @@ class DataExt : Data("member string", -1) {
 
 // extension properties
 // val to bound val
+@ThreadLocal
 val Data.extValBoundVal by data::stringVal
 // val to bound var
+@ThreadLocal
 val Data.extValBoundVar by data::intVar
 // var to bound var
+@ThreadLocal
 var Data.extVarBoundVar by data::intVar
 
 // val to top-level val
+@ThreadLocal
 val Data.extValTopLevelVal by ::topVal
 // val to top-level var
+@ThreadLocal
 val Data.extValTopLevelVar by ::topVar
 // var to top-level var
+@ThreadLocal
 var Data.extVarTopLevelVar by ::topVar
 
 // val to member val
+@ThreadLocal
 val Data.extValMemberVal by Data::stringVal
 // val to member var
+@ThreadLocal
 val Data.extValMemberVar by Data::intVar
 // var to member var
+@ThreadLocal
 var Data.extVarMemberVar by Data::intVar
 
 // val to extension val
+@ThreadLocal
 val Data.extValExtVal by Data::formattedVal
 // val to extension var
+@ThreadLocal
 val Data.extValExtVar by Data::displacedVar
 // var to extension var
+@ThreadLocal
 var Data.extVarExtVar by Data::displacedVar
 
 
 // covariance
+@ThreadLocal
 val covariantVal: Number by ::topVal
+@ThreadLocal
 val Data.extCovariantVal: CharSequence by Data::builderVar
 
 

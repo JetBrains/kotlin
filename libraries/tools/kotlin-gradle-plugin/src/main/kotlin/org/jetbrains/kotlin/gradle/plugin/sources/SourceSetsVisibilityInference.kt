@@ -140,7 +140,7 @@ internal fun checkSourceSetVisibilityRequirements(
         val inferredVisibility =
             getVisibleSourceSetsFromAssociateCompilations(compilationsBySourceSet[sourceSet].orEmpty())
 
-        val requiredButNotVisible = requiredVisibility - inferredVisibility - sourceSet.getSourceSetHierarchy()
+        val requiredButNotVisible = requiredVisibility - inferredVisibility - sourceSet.withAllDependsOnSourceSets()
 
         if (requiredButNotVisible.isNotEmpty()) {
             val compilations = compilationsBySourceSet.getValue(sourceSet)

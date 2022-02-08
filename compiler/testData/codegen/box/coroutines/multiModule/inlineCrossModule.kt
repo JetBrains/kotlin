@@ -1,14 +1,12 @@
 // IGNORE_BACKEND: NATIVE
 // WITH_COROUTINES
-// WITH_RUNTIME
-// COMMON_COROUTINES_TEST
-
+// WITH_STDLIB
 // MODULE: lib(support)
 // FILE: lib.kt
 
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 suspend inline fun <R> inlined(
     crossinline step: suspend () -> R
@@ -19,14 +17,12 @@ suspend fun <R> notInlined(
 ): R = block()
 
 // MODULE: main(lib, support)
-// FILE: main.kt
 // WITH_COROUTINES
-// WITH_RUNTIME
-// COMMON_COROUTINES_TEST
-
+// WITH_STDLIB
+// FILE: main.kt
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 var result = "FAIL"
 

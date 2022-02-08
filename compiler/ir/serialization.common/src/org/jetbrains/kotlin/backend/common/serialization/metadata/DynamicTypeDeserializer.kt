@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization.metadata
 
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.serialization.deserialization.DYNAMIC_TYPE_DESERIALIZER_ID
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.types.createDynamicType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 object DynamicTypeDeserializer : FlexibleTypeDeserializer {
-    const val id = "kotlin.DynamicType"
+    const val id = DYNAMIC_TYPE_DESERIALIZER_ID
 
     override fun create(proto: ProtoBuf.Type, flexibleId: String, lowerBound: SimpleType, upperBound: SimpleType): KotlinType {
         if (flexibleId != id) return ErrorUtils.createErrorType("Unexpected id: $flexibleId. ($lowerBound..$upperBound)")

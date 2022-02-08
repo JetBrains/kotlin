@@ -1,0 +1,2 @@
+
+fun qux() = foo()

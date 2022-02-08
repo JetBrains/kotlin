@@ -26,7 +26,7 @@ fun case1() {
     <!DEBUG_INFO_CALL("fqName: kotlin.text.Regex.<init>; typeCall: function")!>Regex("")<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib1.kt
 package libCase1
 class Regex(pattern: String)
 
@@ -46,7 +46,7 @@ fun case2() {
     <!DEBUG_INFO_CALL("fqName: kotlin.text.Regex.<init>; typeCall: function")!>Regex("")<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib2.kt
 package libCase2
 //fun Regex(pattern: String) {}
 
@@ -54,7 +54,7 @@ object Regex {
     operator fun invoke(s: String) {}
 }
 
-// FILE: Lib1.kt
+// FILE: Lib11.kt
 package lib1Case2
 
 enum class Regex{
@@ -79,7 +79,7 @@ fun case3() {
     <!DEBUG_INFO_CALL("fqName: kotlin.text.Regex.<init>; typeCall: function")!>Regex("")<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib3.kt
 package libCase3
 
 enum class Regex{
@@ -106,11 +106,11 @@ fun case4() {
     <!DEBUG_INFO_CALL("fqName: kotlin.text.Regex.<init>; typeCall: function")!>Regex("")<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib4.kt
 package libCase4
 class Regex(pattern: String) {}
 
-// FILE: Lib1.kt
+// FILE: Lib12.kt
 package lib1Case4
 
 enum class Regex{

@@ -1,0 +1,2 @@
+Test fails because FirPredicateBasedProvider doesn't search for annotated declarations in binary dependencies
+  which came from previous compilation round, so plugin can not generate all what it wants

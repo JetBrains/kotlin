@@ -30,10 +30,15 @@ import java.io.InputStream
 
 class CliVirtualFileFinder(
     private val index: JvmDependenciesIndex,
-    private val scope: GlobalSearchScope
+    private val scope: GlobalSearchScope,
+    private val enableSearchInCtSym: Boolean
 ) : VirtualFileFinder() {
     override fun findVirtualFileWithHeader(classId: ClassId): VirtualFile? =
-        findBinaryClass(classId, classId.relativeClassName.asString().replace('.', '$') + ".class")
+        findBinaryOrSigClass(classId)
+
+    override fun findSourceOrBinaryVirtualFile(classId: ClassId) =
+        findBinaryOrSigClass(classId)
+            ?: findSourceClass(classId, classId.relativeClassName.asString() + ".java")
 
     override fun findMetadata(classId: ClassId): InputStream? {
         assert(!classId.isNestedClass) { "Nested classes are not supported here: $classId" }
@@ -61,8 +66,25 @@ class CliVirtualFileFinder(
         return findBinaryClass(classId, BuiltInSerializerProtocol.getBuiltInsFileName(packageFqName))?.inputStream
     }
 
-    private fun findBinaryClass(classId: ClassId, fileName: String): VirtualFile? =
-        index.findClass(classId, acceptedRootTypes = JavaRoot.OnlyBinary) { dir, _ ->
+    private fun findClass(classId: ClassId, fileName: String, rootType: Set<JavaRoot.RootType>) =
+        index.findClass(classId, acceptedRootTypes = rootType) { dir, _ ->
             dir.findChild(fileName)?.takeIf(VirtualFile::isValid)
         }?.takeIf { it in scope }
+
+    private fun findSigFileIfEnabled(
+        dir: VirtualFile,
+        simpleName: String
+    ) = if (enableSearchInCtSym) dir.findChild("$simpleName.sig") else null
+
+    private fun findBinaryOrSigClass(classId: ClassId, simpleName: String, rootType: Set<JavaRoot.RootType>) =
+        index.findClass(classId, acceptedRootTypes = rootType) { dir, _ ->
+            val file = dir.findChild("$simpleName.class") ?: findSigFileIfEnabled(dir, simpleName)
+            if (file != null && file.isValid) file else null
+        }?.takeIf { it in scope }
+
+    private fun findBinaryOrSigClass(classId: ClassId) =
+        findBinaryOrSigClass(classId, classId.relativeClassName.asString().replace('.', '$'), JavaRoot.OnlyBinary)
+
+    private fun findBinaryClass(classId: ClassId, fileName: String) = findClass(classId, fileName, JavaRoot.OnlyBinary)
+    private fun findSourceClass(classId: ClassId, fileName: String) = findClass(classId, fileName, JavaRoot.OnlySource)
 }

@@ -1,0 +1,43 @@
+FILE: hideBySeverity.kt
+    public abstract class StoredPropertyBase<T> : R|kotlin/properties/ReadWriteProperty<BaseState, T>| {
+        public constructor<T>(): R|StoredPropertyBase<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract class StoredPropertyDerived<T> : R|StoredPropertyBase<T>| {
+        public constructor<T>(): R|StoredPropertyDerived<T>| {
+            super<R|StoredPropertyBase<T>|>()
+        }
+
+        public final operator fun provideDelegate(thisRef: R|kotlin/Any|, property: R|kotlin/reflect/KProperty<*>|): R|StoredPropertyBase<T>| {
+            ^provideDelegate this@R|/StoredPropertyDerived|
+        }
+
+    }
+    public abstract class BaseState : R|kotlin/Any| {
+        public constructor(): R|BaseState| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected abstract fun <PROPERTY_TYPE> propertyDerived(initialValue: R|PROPERTY_TYPE|): R|StoredPropertyDerived<PROPERTY_TYPE>|
+
+        protected abstract fun <PROPERTY_TYPE> propertyBase(initialValue: R|PROPERTY_TYPE|): R|StoredPropertyBase<PROPERTY_TYPE>|
+
+    }
+    public abstract class Some : R|BaseState| {
+        public constructor(): R|Some| {
+            super<R|BaseState|>()
+        }
+
+        public final val hideBySeverityDerived: R|kotlin/collections/MutableSet<kotlin/Int>|by this@R|/Some|.R|/BaseState.propertyDerived|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>()).R|SubstitutionOverride</StoredPropertyDerived.provideDelegate: R|StoredPropertyBase<Stub (chain inference): TypeVariable(_PROPERTY_TYPE)>|>|(this@R|/Some|, ::R|/Some.hideBySeverityDerived|)
+            public get(): R|kotlin/collections/MutableSet<kotlin/Int>| {
+                ^ this@R|/Some|.D|/Some.hideBySeverityDerived|.R|SubstitutionOverride</StoredPropertyBase.getValue: R|Stub (chain inference): TypeVariable(_PROPERTY_TYPE)|>|(this@R|/Some|, ::R|/Some.hideBySeverityDerived|)
+            }
+
+        public final val hideBySeverityBase: R|kotlin/collections/MutableSet<kotlin/Int>|by this@R|/Some|.R|/BaseState.propertyBase|<R|kotlin/collections/MutableSet<kotlin/Int>|>(R|kotlin/collections/mutableSetOf|<R|kotlin/Int|>())
+            public get(): R|kotlin/collections/MutableSet<kotlin/Int>| {
+                ^ this@R|/Some|.D|/Some.hideBySeverityBase|.R|SubstitutionOverride</StoredPropertyBase.getValue: R|Stub (chain inference): TypeVariable(_PROPERTY_TYPE)|>|(this@R|/Some|, ::R|/Some.hideBySeverityBase|)
+            }
+
+    }

@@ -32,6 +32,7 @@ open class ProcessorLoader(private val options: KaptOptions, private val logger:
                 addAll(options.compileClasspath)
             }
         }
+
         val classLoader = URLClassLoader(classpath.map { it.toURI().toURL() }.toTypedArray(), parentClassLoader)
         this.annotationProcessingClassLoader = classLoader
 
@@ -74,7 +75,7 @@ open class ProcessorLoader(private val options: KaptOptions, private val logger:
         }
     }
 
-    open fun doLoadProcessors(classpath: LinkedHashSet<File>, classLoader: URLClassLoader): List<Processor> {
+    open fun doLoadProcessors(classpath: LinkedHashSet<File>, classLoader: ClassLoader): List<Processor> {
         val processorNames = mutableSetOf<String>()
 
         fun processSingleInput(input: InputStream) {
@@ -119,8 +120,17 @@ open class ProcessorLoader(private val options: KaptOptions, private val logger:
     }
 
     private fun tryLoadProcessor(fqName: String, classLoader: ClassLoader): Processor? {
+        val providedClassloader = options.processingClassLoader?.takeIf { !options.separateClassloaderForProcessors.contains(fqName) }
+        val classLoaderToUse = if (providedClassloader != null) {
+            logger.info { "Use provided ClassLoader for processor '$fqName'" }
+            providedClassloader
+        } else {
+            logger.info { "Use own ClassLoader for processor '$fqName'" }
+            classLoader
+        }
+
         val annotationProcessorClass = try {
-            Class.forName(fqName, true, classLoader)
+            Class.forName(fqName, true, classLoaderToUse)
         } catch (e: Throwable) {
             logger.warn("Can't find annotation processor class $fqName: ${e.message}")
             return null

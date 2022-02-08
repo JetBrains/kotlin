@@ -1,0 +1,242 @@
+FILE: nullability.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+        public abstract fun getA(): R|A|
+
+    }
+    public abstract interface MyData : R|kotlin/Any| {
+        public abstract val s: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public abstract fun fs(): R|kotlin/Int|
+
+    }
+    public abstract interface Q : R|kotlin/Any| {
+        public abstract val data: R|MyData?|
+            public get(): R|MyData?|
+
+        public abstract fun fdata(): R|MyData?|
+
+    }
+    public final class QImpl : R|Q| {
+        public constructor(data: R|MyData?|): R|QImpl| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override val data: R|MyData?| = R|<local>/data|
+            public get(): R|MyData?|
+
+        public final override fun fdata(): R|MyData?| {
+            ^fdata Null(null)
+        }
+
+    }
+    public final class QImplMutable : R|Q| {
+        public constructor(data: R|MyData?|): R|QImplMutable| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override var data: R|MyData?| = R|<local>/data|
+            public get(): R|MyData?|
+            public set(value: R|MyData?|): R|kotlin/Unit|
+
+        public final override fun fdata(): R|MyData?| {
+            ^fdata Null(null)
+        }
+
+    }
+    public final class QImplWithCustomGetter : R|Q| {
+        public constructor(): R|QImplWithCustomGetter| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override val data: R|MyData?|
+            public get(): R|MyData?| {
+                ^ Null(null)
+            }
+
+        public final override fun fdata(): R|MyData?| {
+            ^fdata Null(null)
+        }
+
+    }
+    public final fun test_1(x: R|A?|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/x|.R|/A.foo|()
+            }
+            else ->  {
+                R|<local>/x|.<Inapplicable(UNSAFE_CALL): /A.foo>#()
+            }
+        }
+
+        R|<local>/x|.<Inapplicable(UNSAFE_CALL): /A.foo>#()
+    }
+    public final fun test_2(x: R|A?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/x|, Null(null)) ->  {
+                R|<local>/x|.<Inapplicable(UNSAFE_CALL): /A.foo>#()
+            }
+            else ->  {
+                R|<local>/x|.R|/A.foo|()
+            }
+        }
+
+        R|<local>/x|.<Inapplicable(UNSAFE_CALL): /A.foo>#()
+    }
+    public final fun test_3(x: R|A?|): R|kotlin/Unit| {
+        R|<local>/x| ?: ^test_3 Unit
+        R|<local>/x|.R|/A.foo|()
+    }
+    public final fun test_4(x: R|A?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/x|?.{ $subj$.R|/A.getA|() }, Null(null)) ->  {
+                ^test_4 Unit
+            }
+        }
+
+        R|<local>/x|.R|/A.foo|()
+    }
+    public final fun test_5(q: R|Q?|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/q|?.{ $subj$.R|/Q.data| }?.{ $subj$.R|/MyData.s| }?.{ $subj$.R|kotlin/Int.inc|() }, Null(null)) ->  {
+                R|<local>/q|.R|/Q.data|
+                R|<local>/q|.R|/Q.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#
+                R|<local>/q|.R|/Q.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#.R|kotlin/Int.inc|()
+            }
+        }
+
+    }
+    public final fun test_6(q: R|Q?|): R|kotlin/Unit| {
+        R|<local>/q|?.{ $subj$.R|/Q.data| }?.{ $subj$.R|/MyData.s| }?.{ $subj$.R|kotlin/Int.inc|() } ?: ^test_6 Unit
+        R|<local>/q|.R|/Q.data|
+        R|<local>/q|.R|/Q.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#
+        R|<local>/q|.R|/Q.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#.R|kotlin/Int.inc|()
+    }
+    public final fun test_7(q: R|Q?|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/q|?.{ $subj$.R|/Q.fdata|() }?.{ $subj$.R|/MyData.fs|() }?.{ $subj$.R|kotlin/Int.inc|() }, Null(null)) ->  {
+                R|<local>/q|.R|/Q.fdata|()
+                R|<local>/q|.R|/Q.fdata|().<Inapplicable(UNSAFE_CALL): /MyData.fs>#()
+                R|<local>/q|.R|/Q.fdata|().<Inapplicable(UNSAFE_CALL): /MyData.fs>#().R|kotlin/Int.inc|()
+            }
+        }
+
+    }
+    public final fun test_8(b: R|kotlin/Boolean?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/b|, Boolean(true)) ->  {
+                R|<local>/b|.R|kotlin/Boolean.not|()
+            }
+        }
+
+    }
+    public final fun test_9(a: R|kotlin/Int|, b: R|kotlin/Int?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/a|, R|<local>/b|) ->  {
+                R|<local>/b|.R|kotlin/Int.inc|()
+            }
+        }
+
+        R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Int.inc>#()
+        when () {
+            ===(R|<local>/a|, R|<local>/b|) ->  {
+                R|<local>/b|.R|kotlin/Int.inc|()
+            }
+        }
+
+        R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Int.inc>#()
+        when () {
+            ==(R|<local>/b|, R|<local>/a|) ->  {
+                R|<local>/b|.R|kotlin/Int.inc|()
+            }
+        }
+
+        R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Int.inc>#()
+        when () {
+            ===(R|<local>/b|, R|<local>/a|) ->  {
+                R|<local>/b|.R|kotlin/Int.inc|()
+            }
+        }
+
+        R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Int.inc>#()
+    }
+    public final fun test_10(a: R|kotlin/Int?|, b: R|kotlin/Int?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/a|, R|<local>/b|) ->  {
+                R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Int.inc>#()
+            }
+        }
+
+        R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Int.inc>#()
+        when () {
+            ===(R|<local>/a|, R|<local>/b|) ->  {
+                R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Int.inc>#()
+            }
+        }
+
+        R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Int.inc>#()
+        when () {
+            ==(R|<local>/b|, R|<local>/a|) ->  {
+                R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Int.inc>#()
+            }
+        }
+
+        R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Int.inc>#()
+        when () {
+            ===(R|<local>/b|, R|<local>/a|) ->  {
+                R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Int.inc>#()
+            }
+        }
+
+        R|<local>/b|.<Inapplicable(UNSAFE_CALL): kotlin/Int.inc>#()
+    }
+    public final fun test_11(q: R|QImpl?|, q2: R|QImpl|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/q|?.{ $subj$.R|/QImpl.data| }?.{ $subj$.R|/MyData.s| }?.{ $subj$.R|kotlin/Int.inc|() }, Null(null)) ->  {
+                R|<local>/q|.R|/QImpl.data|
+                R|<local>/q|.R|/QImpl.data|.R|/MyData.s|
+                R|<local>/q|.R|/QImpl.data|.R|/MyData.s|.R|kotlin/Int.inc|()
+                R|<local>/q2|.R|/QImpl.data|
+                R|<local>/q2|.R|/QImpl.data|.<Inapplicable(UNSAFE_CALL): /MyData.s>#
+                R|<local>/q2|.R|/QImpl.data|.<Inapplicable(UNSAFE_CALL): /MyData.s>#.R|kotlin/Int.inc|()
+                when () {
+                    !=(R|<local>/q2|.R|/QImpl.data|, Null(null)) ->  {
+                        R|<local>/q2|.R|/QImpl.data|.R|/MyData.s|
+                        R|<local>/q2|.R|/QImpl.data|.R|/MyData.s|.R|kotlin/Int.inc|()
+                    }
+                }
+
+            }
+        }
+
+    }
+    public final fun test_12(q: R|QImplWithCustomGetter?|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/q|?.{ $subj$.R|/QImplWithCustomGetter.data| }?.{ $subj$.R|/MyData.s| }?.{ $subj$.R|kotlin/Int.inc|() }, Null(null)) ->  {
+                R|<local>/q|.R|/QImplWithCustomGetter.data|
+                R|<local>/q|.R|/QImplWithCustomGetter.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#
+                R|<local>/q|.R|/QImplWithCustomGetter.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#.R|kotlin/Int.inc|()
+            }
+        }
+
+    }
+    public final fun test_13(q: R|QImplMutable?|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/q|?.{ $subj$.R|/QImplMutable.data| }?.{ $subj$.R|/MyData.s| }?.{ $subj$.R|kotlin/Int.inc|() }, Null(null)) ->  {
+                R|<local>/q|.R|/QImplMutable.data|
+                R|<local>/q|.R|/QImplMutable.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#
+                R|<local>/q|.R|/QImplMutable.data|.<Inapplicable(UNSTABLE_SMARTCAST): /MyData.s>#.R|kotlin/Int.inc|()
+            }
+        }
+
+    }
+    public final fun test_14(q: R|Q|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/q|.R|/Q.data|, Null(null)) ->  {
+                R|<local>/q|.R|/Q.data|.<Inapplicable(UNSAFE_CALL): /MyData.s>#
+            }
+        }
+
+    }

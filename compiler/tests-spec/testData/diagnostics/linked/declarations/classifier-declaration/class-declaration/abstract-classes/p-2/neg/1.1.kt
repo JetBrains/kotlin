@@ -81,7 +81,7 @@ class ImplBaseCase2() : Base() {
     }
 }
 
-// FILE: TestCase.kt
+// FILE: TestCase3.kt
 // TESTCASE NUMBER: 3
 
 package testPackCase3
@@ -120,7 +120,7 @@ fun case3() {
     }
 }
 
-// FILE: TestCase.kt
+// FILE: TestCase4.kt
 // TESTCASE NUMBER: 4
 package testPackCase4
 <!REDUNDANT_MODIFIER!>open<!> abstract class Base {

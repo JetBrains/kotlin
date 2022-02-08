@@ -20,7 +20,8 @@ class GradleBuildMetricsData : Serializable {
 data class TaskData(
     val path: String,
     val typeFqName: String,
-    val timeMetrics: Map<String, Long>,
+    val buildTimesMs: Map<String, Long>,
+    val performanceMetrics: Map<String, Long>,
     val buildAttributes: Map<String, Int>,
     val didWork: Boolean
 ) : Serializable {

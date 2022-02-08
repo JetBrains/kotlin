@@ -1,3 +1,7 @@
+// IGNORE_BACKEND: WASM
+// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: NATIVE
 // FILE: DiagnosticFactory0.java
 
 import org.jetbrains.annotations.NotNull;
@@ -10,9 +14,6 @@ public class DiagnosticFactory0<E> {
 }
 
 // FILE: test.kt
-// DONT_TARGET_EXACT_BACKEND: WASM
-// IGNORE_BACKEND: JS
-// IGNORE_BACKEND: JS_IR
 
 class SimpleDiagnostic<E>(val element: E)
 interface KtAnnotationEntry

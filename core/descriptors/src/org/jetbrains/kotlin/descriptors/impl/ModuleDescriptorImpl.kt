@@ -23,9 +23,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.storage.StorageManager
-import org.jetbrains.kotlin.types.checker.REFINER_CAPABILITY
-import org.jetbrains.kotlin.types.checker.Ref
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.utils.sure
 
 class ModuleDescriptorImpl @JvmOverloads constructor(
@@ -38,14 +35,14 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     override val stableName: Name? = null,
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {
     private val capabilities: Map<ModuleCapability<*>, Any?>
+    private val packageViewDescriptorFactory: PackageViewDescriptorFactory
 
     init {
         if (!moduleName.isSpecial) {
             throw IllegalArgumentException("Module name must be special: $moduleName")
         }
-        this.capabilities = capabilities.toMutableMap()
-        @OptIn(TypeRefinement::class)
-        this.capabilities[REFINER_CAPABILITY] = Ref(null)
+        this.capabilities = capabilities
+        packageViewDescriptorFactory = getCapability(PackageViewDescriptorFactory.CAPABILITY) ?: PackageViewDescriptorFactory.Default
     }
 
     private var dependencies: ModuleDependencies? = null
@@ -59,12 +56,12 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
 
     override fun assertValid() {
         if (!isValid) {
-            throw InvalidModuleException("Accessing invalid module descriptor $this")
+            moduleInvalidated()
         }
     }
 
-    private val packages = storageManager.createMemoizedFunction<FqName, PackageViewDescriptor> { fqName: FqName ->
-        LazyPackageViewDescriptorImpl(this, fqName, storageManager)
+    private val packages = storageManager.createMemoizedFunction { fqName: FqName ->
+        packageViewDescriptorFactory.compute(this, fqName, storageManager)
     }
 
     @Deprecated("This method is not going to be supported. Please do not use it")
@@ -93,15 +90,19 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     private val packageFragmentProviderForWholeModuleWithDependencies by lazy {
         val moduleDependencies = dependencies.sure { "Dependencies of module $id were not set before querying module content" }
         val dependenciesDescriptors = moduleDependencies.allDependencies
-        assert(this in dependenciesDescriptors) { "Module $id is not contained in his own dependencies, this is probably a misconfiguration" }
+        assertValid()
+        assert(this in dependenciesDescriptors) { "Module $id is not contained in its own dependencies, this is probably a misconfiguration" }
         dependenciesDescriptors.forEach { dependency ->
             assert(dependency.isInitialized) {
                 "Dependency module ${dependency.id} was not initialized by the time contents of dependent module ${this.id} were queried"
             }
         }
-        CompositePackageFragmentProvider(dependenciesDescriptors.map {
-            it.packageFragmentProviderForModuleContent!!
-        })
+        CompositePackageFragmentProvider(
+            dependenciesDescriptors.map {
+                it.packageFragmentProviderForModuleContent!!
+            },
+            "CompositeProvider@ModuleDescriptor for $name"
+        )
     }
 
     private val isInitialized: Boolean

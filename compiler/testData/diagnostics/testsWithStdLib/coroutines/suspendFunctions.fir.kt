@@ -1,8 +1,6 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
-// !WITH_NEW_INFERENCE
-// COMMON_COROUTINES_TEST
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 
 class Controller {
     suspend fun noParams() {
@@ -23,7 +21,7 @@ fun test() {
     builder {
         noParams()
         yieldString("abc") checkType { _<Unit>() }
-        <!INAPPLICABLE_CANDIDATE!>yieldString<!>(1) checkType { _<Unit>() }
+        yieldString(<!ARGUMENT_TYPE_MISMATCH!>1<!>) checkType { _<Unit>() }
 
         await<String> { "123" } checkType { _<String>() }
 
@@ -38,7 +36,7 @@ fun test() {
         severalParams("", 89) checkType { _<Double>() }
 
         // TODO: should we allow somehow to call with passing continuation explicitly?
-        <!INAPPLICABLE_CANDIDATE!>severalParams<!>("", 89, 6.9) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Unit>() }
-        <!INAPPLICABLE_CANDIDATE!>severalParams<!>("", 89, this as Continuation<Double>) checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Unit>() }
+        severalParams("", 89, <!TOO_MANY_ARGUMENTS!>6.9<!>) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Unit>() }
+        severalParams("", 89, <!TOO_MANY_ARGUMENTS!>this <!CAST_NEVER_SUCCEEDS!>as<!> Continuation<Double><!>) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Unit>() }
     }
 }

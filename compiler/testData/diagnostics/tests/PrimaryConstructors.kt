@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class X {
   <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val x : Int<!>
 }

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirPureAbstractElement
 
 fun <T : FirElement, D> T.transformSingle(transformer: FirTransformer<D>, data: D): T {
-    return (this as FirPureAbstractElement).transform<T, D>(transformer, data).single
+    return (this as FirPureAbstractElement).transform<T, D>(transformer, data)
 }
 
 fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransformer<D>, data: D) {
@@ -17,20 +17,9 @@ fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransfor
     while (iterator.hasNext()) {
         val next = iterator.next() as FirPureAbstractElement
         val result = next.transform<T, D>(transformer, data)
-        if (result.isSingle) {
-            iterator.set(result.single)
-        } else {
-            val resultIterator = result.list.listIterator()
-            if (!resultIterator.hasNext()) {
-                iterator.remove()
-            } else {
-                iterator.set(resultIterator.next())
-            }
-            while (resultIterator.hasNext()) {
-                iterator.add(resultIterator.next())
-            }
+        if (result !== next) {
+            iterator.set(result)
         }
-
     }
 }
 
@@ -48,7 +37,17 @@ inline fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirT
             is TransformData.Data<D> -> data.value
             TransformData.Nothing -> continue
         }
-        val result = next.transform<T, D>(transformer, data).single
-        iterator.set(result)
+        val result = next.transform<T, D>(transformer, data)
+        if (result !== next) {
+            iterator.set(result)
+        }
     }
+}
+
+fun <R, D> List<FirElement>.acceptAllElements(visitor: FirVisitor<R, D>, data: D) {
+    forEach { it.accept(visitor, data) }
+}
+
+fun List<FirElement>.acceptAllElements(visitor: FirVisitorVoid) {
+    forEach { it.accept(visitor) }
 }

@@ -41,7 +41,6 @@ org.jetbrains.kotlin.idea.spring.tests.references.SpringReferenceNavigationTestG
 org.jetbrains.kotlin.idea.stubs.MultiFileHighlightingTestGenerated.testTopLevelMembersReference, Always red,,
 org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.AnonymousClass.testKt_13146,,,
 org.jetbrains.kotlin.j2k.JavaToKotlinConverterSingleFileTestGenerated.Issues.testKt_807,,,
-org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.testMixedInheritance, Different clean up,,
 org.jetbrains.kotlin.psi.injection.StringInterpolationInjectionTest.testInterpolationSimpleName, Stable failure during run may work in debug,,
 org.jetbrains.kotlin.shortenRefs.ShortenRefsTestGenerated.testExtensionForObject2, Always red,,
 org.jetbrains.kotlin.util.KotlinVersionsTest.testVersionsAreConsistent, KT-35567,,
@@ -55,7 +54,6 @@ org.jetbrains.kotlin.idea.decompiler.navigation.NavigateJavaToLibrarySourceTestG
 org.jetbrains.kotlin.idea.navigation.GotoWithMultipleLibrariesTest.testOneHasSourceAndOneDoesNot,,, FLAKY
 org.jetbrains.kotlin.idea.navigation.GotoWithMultipleLibrariesTest.testOneHasSourceAndManyDoNot,,, FLAKY
 org.jetbrains.kotlin.idea.navigation.GotoWithMultipleLibrariesTest.testSeveralWithSource,,, FLAKY
-org.jetbrains.kotlin.idea.resolve.ReferenceResolveTestGenerated.DelegatedPropertyAccessors.InStandardLibrary.testNotNull,,,
 org.jetbrains.kotlin.tools.projectWizard.wizard.ProjectTemplateNewWizardProjectImportTestGenerated.GradleGroovy.testMultiplatformApplication,,,
 org.jetbrains.kotlin.tools.projectWizard.wizard.ProjectTemplateNewWizardProjectImportTestGenerated.GradleKts.testMultiplatformApplication,,,
 org.jetbrains.kotlin.gradle.NewMultiplatformIT.testJavaSupportInJvmTargets,,,
@@ -80,3 +78,9 @@ org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.Facades.test
 org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.CompilationErrors.testActualTypeAliasCustomJvmPackageName, Invalid behavior of old lightclasses in common tests,,
 org.jetbrains.kotlin.idea.caches.resolve.IdeLightClassTestGenerated.CompilationErrors.testJvmPackageName, Invalid behavior of old lightclasses in common tests,,
 org.jetbrains.uast.test.kotlin.SimpleKotlinRenderLogTest.testReceiverFun, Analysing of facade annotation with receiver site is broken (connected with KT-40403),,
+org.jetbrains.kotlin.checkers.FirKotlinHighlightingPassTestGenerated.Regression.testJet53,,, FLAKY
+org.jetbrains.kotlin.checkers.FirKotlinHighlightingPassTestGenerated.Checker.testResolveTypeInAnnotationArgumentRuntime,,, FLAKY
+org.jetbrains.kotlin.idea.caches.resolve.MultiModuleHighlightingTest.testLanguageVersionsViaFacets,,, FLAKY
+org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.SamConversions.testMethodAdded, KT-44844 fixed in IDEA 212,,
+org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.SamConversions.testMethodAddedSamAdapter, KT-44844 fixed in IDEA 212,,
+org.jetbrains.kotlin.jps.build.IncrementalJvmJpsTestGenerated.WithJava.JavaUsedInKotlin.SamConversions.testMethodAddDefault, KT-44844 fixed in IDEA 212,,

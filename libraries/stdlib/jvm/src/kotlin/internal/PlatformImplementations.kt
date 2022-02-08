@@ -49,7 +49,7 @@ internal open class PlatformImplementations {
 @JvmField
 internal val IMPLEMENTATIONS: PlatformImplementations = run {
     val version = getJavaVersion()
-    if (version >= 0x10008) {
+    if (version >= 0x10008 || version < 0x10000) {
         try {
             return@run castToBaseType<PlatformImplementations>(Class.forName("kotlin.internal.jdk8.JDK8PlatformImplementations").newInstance())
         } catch (e: ClassNotFoundException) { }
@@ -58,7 +58,7 @@ internal val IMPLEMENTATIONS: PlatformImplementations = run {
         } catch (e: ClassNotFoundException) { }
     }
 
-    if (version >= 0x10007) {
+    if (version >= 0x10007 || version < 0x10000) {
         try {
             return@run castToBaseType<PlatformImplementations>(Class.forName("kotlin.internal.jdk7.JDK7PlatformImplementations").newInstance())
         } catch (e: ClassNotFoundException) { }
@@ -77,7 +77,10 @@ private inline fun <reified T : Any> castToBaseType(instance: Any): T {
     } catch (e: ClassCastException) {
         val instanceCL = instance.javaClass.classLoader
         val baseTypeCL = T::class.java.classLoader
-        throw ClassCastException("Instance classloader: $instanceCL, base type classloader: $baseTypeCL").initCause(e)
+        if (instanceCL != baseTypeCL) {
+            throw ClassNotFoundException("Instance class was loaded from a different classloader: $instanceCL, base type classloader: $baseTypeCL", e)
+        }
+        throw e
     }
 }
 

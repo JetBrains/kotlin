@@ -60,11 +60,11 @@ fun case_5(value_1: Int, value_2: Int, value_3: Boolean?) {
             false -> "2"
             null -> "3"
         }
-        value_1 == 5 -> when (value_3) {
+        value_1 == 5 -> <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_3) {
             true -> "1"
             false -> "2"
         }
-        value_1 == 6 -> when (value_3) {}
+        value_1 == 6 -> <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_3) {}
     }
 }
 
@@ -122,7 +122,7 @@ fun case_10(value_1: Int, value_2: String?, value_3: String?) {
     when {
         value_1 == 1 -> value_2 ?: true
         value_1 == 2 -> value_2 ?: value_3 ?: true
-        value_1 == 3 -> value_2!! ?: true
+        value_1 == 3 -> value_2!! <!USELESS_ELVIS!>?: true<!>
     }
 }
 
@@ -140,8 +140,8 @@ fun case_12(value_1: Int, value_2: Collection<Int>, value_3: Collection<Int>?) {
     when {
         value_1 == 1 -> value_2 as List<Int>
         value_1 == 2 -> value_2 as? List<Int>
-        value_1 == 3 -> value_3 as? MutableMap<Int, Int>
-        value_1 == 4 -> (value_2 as? Map<Int, Int>) as MutableMap<Int, Int>
+        value_1 == 3 -> value_3 <!UNCHECKED_CAST!>as? MutableMap<Int, Int><!>
+        value_1 == 4 -> (value_2 <!UNCHECKED_CAST!>as? Map<Int, Int><!>) as MutableMap<Int, Int>
     }
 }
 

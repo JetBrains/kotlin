@@ -3,12 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-interface Window {
-    __karma__: {
-        config: {
-            args: string[]
-        },
-        result: (result: BrowserResult) => void
+import {KotlinTestRunner} from "./src/KotlinTestRunner";
+
+declare global {
+    interface Window {
+        __karma__: {
+            config: {
+                args: string[]
+            },
+            result: (result: BrowserResult) => void
+        }
+
+        kotlinTest: {
+            adapterTransformer: (current: KotlinTestRunner) => KotlinTestRunner
+        }
     }
 }
 

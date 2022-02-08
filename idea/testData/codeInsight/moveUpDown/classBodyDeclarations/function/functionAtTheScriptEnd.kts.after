@@ -1,4 +1,0 @@
-// MOVE: up
-
-<caret>fun test1() {}
-fun test() {}

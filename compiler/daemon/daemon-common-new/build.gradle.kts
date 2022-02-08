@@ -8,13 +8,10 @@ val ktorExcludesForDaemon: List<Pair<String, String>> by rootProject.extra
 
 dependencies {
     compileOnly(project(":daemon-common"))
-    compile(kotlinStdlib())
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
-    compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
-        isTransitive = false
-    }
-    compile(commonDep("io.ktor", "ktor-network")) {
+    api(kotlinStdlib())
+    compileOnly(intellijCore())
+    api(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    api(commonDependency("io.ktor", "ktor-network")) {
         ktorExcludesForDaemon.forEach { (group, module) ->
             exclude(group = group, module = module)
         }
@@ -24,4 +21,12 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" {}
+}
+
+tasks {
+    val compileKotlin by existing(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
+        kotlinOptions {
+            freeCompilerArgs += "-opt-in=kotlinx.coroutines.DelicateCoroutinesApi"
+        }
+    }
 }

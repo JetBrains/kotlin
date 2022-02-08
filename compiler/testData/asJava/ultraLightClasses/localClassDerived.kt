@@ -6,3 +6,5 @@ class Boo {
         class LocalClassDerived : LocalClassBase
     }
 }
+
+// COMPILATION_ERRORS

@@ -5,50 +5,76 @@
 
 package org.jetbrains.kotlin.ir.interpreter.state
 
-import org.jetbrains.kotlin.ir.interpreter.isInterface
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.interpreter.createCall
+import org.jetbrains.kotlin.ir.interpreter.fqName
+import org.jetbrains.kotlin.ir.interpreter.stack.Field
+import org.jetbrains.kotlin.ir.interpreter.stack.Fields
+import org.jetbrains.kotlin.ir.interpreter.stack.Variable
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.isNullableAny
+import org.jetbrains.kotlin.ir.util.nameForIrSerialization
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
+import org.jetbrains.kotlin.name.Name
 
-internal class Common private constructor(
-    override val irClass: IrClass, override val fields: MutableList<Variable>
-) : Complex(irClass, fields) {
+internal class Common private constructor(override val irClass: IrClass, override val fields: Fields) : Complex, StateWithClosure {
+    override val upValues: MutableMap<IrSymbol, Variable> = mutableMapOf()
+    override var superWrapperClass: Wrapper? = null
+    override var outerClass: Field? = null
 
-    constructor(irClass: IrClass) : this(irClass, mutableListOf())
+    constructor(irClass: IrClass) : this(irClass, mutableMapOf())
 
-    fun setSuperClassRecursive() {
-        var thisClass: Common? = this
-        while (thisClass != null) {
-            val superClass = thisClass.irClass.superTypes.filterNot { it.isInterface() }.singleOrNull()
-            val superClassOwner = superClass?.classOrNull?.owner
-            val superClassState = superClassOwner?.let { Common(it) }
-            superClassState?.let { thisClass!!.setSuperClassInstance(it) }
-
-            if (superClass == null && thisClass.irClass.superTypes.isNotEmpty()) {
-                // cover the case when super type implement an interface and so doesn't have explicit any as super class
-                thisClass.setSuperClassInstance(Common(getAnyClassRecursive()))
-            }
-            thisClass = superClassState
+    // This method is used to get correct java method name
+    private fun getKotlinName(declaringClassName: String, methodName: String): String {
+        return when {
+            // TODO see specialBuiltinMembers.kt
+            //"kotlin.collections.Map.<get-entries>" -> "entrySet"
+            //"kotlin.collections.Map.<get-keys>" -> "keySet"
+            declaringClassName == "java.lang.CharSequence" && methodName == "charAt" -> "get"
+            //"kotlin.collections.MutableList.removeAt" -> "remove"
+            else -> methodName
         }
     }
 
-    private fun getAnyClassRecursive(): IrClass {
-        var owner = irClass.superTypes.first().classOrNull!!.owner
-        while (owner.superTypes.isNotEmpty()) owner = owner.superTypes.first().classOrNull!!.owner
-        return owner
+    fun getIrFunction(method: java.lang.reflect.Method): IrFunction? {
+        val methodName = getKotlinName(method.declaringClass.name, method.name)
+        return when (val declaration = irClass.declarations.singleOrNull { it.nameForIrSerialization.asString() == methodName }) {
+            is IrProperty -> declaration.getter
+            else -> declaration as? IrFunction
+        }
     }
 
-    fun getToStringFunction(): IrFunction {
-        return irClass.declarations.filterIsInstance<IrFunction>()
-            .filter { it.name.asString() == "toString" }
-            .first { it.valueParameters.isEmpty() }
-            .let { getOverridden(it as IrSimpleFunction, this) }
+    fun getEqualsFunction(): IrSimpleFunction {
+        return irClass.declarations
+            .filterIsInstance<IrSimpleFunction>()
+            .single {
+                it.name == Name.identifier("equals") && it.dispatchReceiverParameter != null
+                        && it.valueParameters.size == 1 && it.valueParameters[0].type.isNullableAny()
+            }
+            .let { it.resolveFakeOverride() as IrSimpleFunction }
+    }
+
+    fun getHashCodeFunction(): IrSimpleFunction {
+        return irClass.declarations.filterIsInstance<IrSimpleFunction>()
+            .single { it.name.asString() == "hashCode" && it.valueParameters.isEmpty() }
+            .let { it.resolveFakeOverride() as IrSimpleFunction }
+    }
+
+    fun getToStringFunction(): IrSimpleFunction {
+        return irClass.declarations.filterIsInstance<IrSimpleFunction>()
+            .single { it.name.asString() == "toString" && it.valueParameters.isEmpty() }
+            .let { it.resolveFakeOverride() as IrSimpleFunction }
+    }
+
+    fun createToStringIrCall(): IrCall {
+        return getToStringFunction().createCall()
     }
 
     override fun toString(): String {
-        return "Common(obj='${irClass.fqNameForIrSerialization}', super=$superClass, values=$fields)"
+        return "Common(obj='${irClass.fqName}', values=$fields)"
     }
 }

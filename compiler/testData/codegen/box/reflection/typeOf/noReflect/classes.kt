@@ -1,7 +1,5 @@
-// !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
-// !LANGUAGE: +NewInference
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 package test
 

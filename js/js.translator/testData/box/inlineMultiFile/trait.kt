@@ -9,8 +9,6 @@ package foo
 
 import test.*
 
-// CHECK_CONTAINS_NO_CALLS: testClassObject
-
 internal fun testFinalInline(): String {
     return Z().finalInline({"final"})
 }

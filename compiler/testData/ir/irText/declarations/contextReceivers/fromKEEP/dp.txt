@@ -1,0 +1,83 @@
+FILE fqName:<root> fileName:/dp.kt
+  CLASS CLASS name:View modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.View
+    CONSTRUCTOR visibility:public <> () returnType:<root>.View [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:View modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    PROPERTY name:coefficient visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:coefficient type:kotlin.Int visibility:private [final]
+        EXPRESSION_BODY
+          CONST Int type=kotlin.Int value=42
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-coefficient> visibility:public modality:FINAL <> ($this:<root>.View) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:coefficient visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.View
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-coefficient> (): kotlin.Int declared in <root>.View'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:coefficient type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              receiver: GET_VAR '<this>: <root>.View declared in <root>.View.<get-coefficient>' type=<root>.View origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  PROPERTY name:dp visibility:public modality:FINAL [val]
+    FUN name:<get-dp> visibility:public modality:FINAL <> ($receiver:kotlin.Int, <this>:<root>.View) returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:dp visibility:public modality:FINAL [val]
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
+      VALUE_PARAMETER name:<this> index:0 type:<root>.View
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public final fun <get-dp> (<this>: <root>.View): kotlin.Int declared in <root>'
+          CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=MUL
+            $this: CALL 'public final fun <get-coefficient> (): kotlin.Int declared in <root>.View' type=kotlin.Int origin=GET_PROPERTY
+              $this: GET_VAR '<this>: <root>.View declared in <root>.<get-dp>' type=<root>.View origin=null
+            other: GET_VAR '<this>: kotlin.Int declared in <root>.<get-dp>' type=kotlin.Int origin=null
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.Nothing origin=null
+        <T>: <root>.View
+        <R>: kotlin.Nothing
+        receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.View' type=<root>.View origin=null
+        block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<<root>.View, kotlin.Nothing> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.View) returnType:kotlin.Nothing
+            $receiver: VALUE_PARAMETER name:$this$with type:<root>.View
+            BLOCK_BODY
+              WHEN type=kotlin.Unit origin=IF
+                BRANCH
+                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    arg0: CALL 'public final fun map <T, R> (transform: kotlin.Function1<T of kotlin.collections.CollectionsKt.map, R of kotlin.collections.CollectionsKt.map>): kotlin.collections.List<R of kotlin.collections.CollectionsKt.map> [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.Int> origin=null
+                      <T>: kotlin.Int
+                      <R>: kotlin.Int
+                      $receiver: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.CollectionsKt.listOf): kotlin.collections.List<T of kotlin.collections.CollectionsKt.listOf> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.Int> origin=null
+                        <T>: kotlin.Int
+                        elements: VARARG type=kotlin.Array<out kotlin.Int> varargElementType=kotlin.Int
+                          CONST Int type=kotlin.Int value=1
+                          CONST Int type=kotlin.Int value=2
+                          CONST Int type=kotlin.Int value=10
+                      transform: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Int> origin=LAMBDA
+                        FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Int
+                          VALUE_PARAMETER name:it index:0 type:kotlin.Int
+                          BLOCK_BODY
+                            RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Int declared in <root>.box.<anonymous>'
+                              CALL 'public final fun <get-dp> (<this>: <root>.View): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
+                                $receiver: GET_VAR 'it: kotlin.Int declared in <root>.box.<anonymous>.<anonymous>' type=kotlin.Int origin=null
+                                <this>: GET_VAR '$this$with: <root>.View declared in <root>.box.<anonymous>' type=<root>.View origin=null
+                    arg1: CALL 'public final fun listOf <T> (vararg elements: T of kotlin.collections.CollectionsKt.listOf): kotlin.collections.List<T of kotlin.collections.CollectionsKt.listOf> declared in kotlin.collections.CollectionsKt' type=kotlin.collections.List<kotlin.Int> origin=null
+                      <T>: kotlin.Int
+                      elements: VARARG type=kotlin.Array<out kotlin.Int> varargElementType=kotlin.Int
+                        CONST Int type=kotlin.Int value=42
+                        CONST Int type=kotlin.Int value=84
+                        CONST Int type=kotlin.Int value=420
+                  then: BLOCK type=kotlin.Unit origin=null
+                    RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+                      CONST String type=kotlin.String value="OK"
+              RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+                CONST String type=kotlin.String value="fail"

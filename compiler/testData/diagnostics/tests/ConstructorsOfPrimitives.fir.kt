@@ -1,10 +1,10 @@
 fun test() {
-    <!INAPPLICABLE_CANDIDATE!>Double<!>()
-    <!INAPPLICABLE_CANDIDATE!>Float<!>()
-    <!INAPPLICABLE_CANDIDATE!>Long<!>()
-    <!INAPPLICABLE_CANDIDATE!>Int<!>()
-    <!INAPPLICABLE_CANDIDATE!>Short<!>()
-    <!INAPPLICABLE_CANDIDATE!>Byte<!>()
-    <!HIDDEN!>Char<!>()
-    <!INAPPLICABLE_CANDIDATE!>Boolean<!>()
+    Double(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    Float(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    Long(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    Int(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    Short(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    Byte(<!NO_VALUE_FOR_PARAMETER!>)<!>
+    <!INVISIBLE_REFERENCE!>Char<!>()
+    Boolean(<!NO_VALUE_FOR_PARAMETER!>)<!>
 }

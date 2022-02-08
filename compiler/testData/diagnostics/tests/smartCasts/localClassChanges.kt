@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun trans(n: Int, f: () -> Boolean) = if (f()) n else null
 
 fun foo() {

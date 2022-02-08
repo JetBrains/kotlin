@@ -1,3 +1,0 @@
-package
-
-public fun foo(): [ERROR : Error function type]

@@ -1,0 +1,26 @@
+FILE: nestedClassInAnnotationArgument.kt
+    public final annotation class Ann : R|kotlin/Annotation| {
+        public constructor(kClass: R|kotlin/reflect/KClass<*>|): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val kClass: R|kotlin/reflect/KClass<*>| = R|<local>/kClass|
+            public get(): R|kotlin/reflect/KClass<*>|
+
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|Ann|(kClass = <getClass>(Q|A.EmptyList|)) public final fun foo(): R|kotlin/Unit| {
+        }
+
+        public final object EmptyList : R|kotlin/Any| {
+            private constructor(): R|A.EmptyList| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

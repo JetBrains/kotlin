@@ -18,19 +18,17 @@ import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorBase;
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl;
+import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl;
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.psi.synthetics.SyntheticClassOrObjectDescriptor;
-import org.jetbrains.kotlin.resolve.BindingContext;
-import org.jetbrains.kotlin.resolve.BindingTrace;
-import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
-import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext;
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity;
@@ -42,6 +40,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProv
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.StaticScopeForKotlinEnum;
+import org.jetbrains.kotlin.resolve.scopes.receivers.ContextClassReceiver;
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
@@ -50,10 +49,8 @@ import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static kotlin.collections.CollectionsKt.firstOrNull;
 import static org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE;
@@ -87,6 +84,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final boolean isExpect;
     private final boolean isActual;
     private final boolean isFun;
+    private final boolean isValue;
 
     private final Annotations annotations;
     private final Annotations danglingAnnotations;
@@ -105,6 +103,8 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     private final NotNullLazyValue<LexicalScope> scopeForInitializerResolution;
 
     private final NotNullLazyValue<Collection<ClassDescriptor>> sealedSubclasses;
+
+    private final NotNullLazyValue<List<ReceiverParameterDescriptor>> contextReceivers;
 
     public LazyClassDescriptor(
             @NotNull LazyClassContext c,
@@ -129,7 +129,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
         StorageManager storageManager = c.getStorageManager();
 
-        this.scopesHolderForClass = createMemberScope(c, this.declarationProvider);
+        this.scopesHolderForClass = createScopesHolderForClass(c, this.declarationProvider);
         this.kind = classLikeInfo.getClassKind();
         this.staticScope = kind == ClassKind.ENUM_CLASS ? new StaticScopeForKotlinEnum(storageManager, this) : MemberScope.Empty.INSTANCE;
 
@@ -160,6 +160,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                         containingDeclaration instanceof ClassDescriptor && ((ClassDescriptor) containingDeclaration).isExpect();
 
         this.isFun = modifierList != null && PsiUtilsKt.hasFunModifier(modifierList);
+        this.isValue = modifierList != null && PsiUtilsKt.hasValueModifier(modifierList);
 
         // Annotation entries are taken from both own annotations (if any) and object literal annotations (if any)
         List<KtAnnotationEntry> annotationEntries = new ArrayList<>();
@@ -253,10 +254,32 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
             List<KtTypeParameter> typeParameters = typeParameterList.getParameters();
             if (typeParameters.isEmpty()) return Collections.emptyList();
 
+            boolean supportClassTypeParameterAnnotations = c.getLanguageVersionSettings().supportsFeature(LanguageFeature.ClassTypeParameterAnnotations);
             List<TypeParameterDescriptor> parameters = new ArrayList<>(typeParameters.size());
-
+            
             for (int i = 0; i < typeParameters.size(); i++) {
-                parameters.add(new LazyTypeParameterDescriptor(c, this, typeParameters.get(i), i));
+                KtTypeParameter parameter = typeParameters.get(i);
+                Annotations lazyAnnotations;
+                if (supportClassTypeParameterAnnotations) {
+                    lazyAnnotations = new LazyAnnotations(
+                            new LazyAnnotationsContext(
+                                    c.getAnnotationResolver(),
+                                    storageManager,
+                                    c.getTrace()
+                            ) {
+                                @NotNull
+                                @Override
+                                public LexicalScope getScope() {
+                                    return getOuterScope();
+                                }
+                            },
+                            parameter.getAnnotationEntries()
+                    );
+                } else {
+                    lazyAnnotations = Annotations.Companion.getEMPTY();
+                }
+
+                parameters.add(new LazyTypeParameterDescriptor(c, this, parameter, lazyAnnotations, i));
             }
 
             return parameters;
@@ -268,8 +291,33 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 )
         );
 
-        // TODO: only consider classes from the same file, not the whole package fragment
-        this.sealedSubclasses = storageManager.createLazyValue(() -> DescriptorUtilsKt.computeSealedSubclasses(this));
+        boolean freedomForSealedInterfacesSupported = c.getLanguageVersionSettings().supportsFeature(LanguageFeature.AllowSealedInheritorsInDifferentFilesOfSamePackage);
+        this.sealedSubclasses =
+            storageManager.createLazyValue(() -> {
+                if (getModality() == Modality.SEALED) {
+                    return c.getSealedClassInheritorsProvider().computeSealedSubclasses(this, freedomForSealedInterfacesSupported);
+                }
+                else {
+                    return Collections.emptyList();
+                }
+            });
+        this.contextReceivers = storageManager.createLazyValue(() -> {
+            if (classOrObject == null) {
+                return CollectionsKt.emptyList();
+            }
+            return classOrObject.getContextReceivers().stream()
+                    .map(KtContextReceiver::typeReference)
+                    .filter(Objects::nonNull)
+                    .map(typeReference -> {
+                        KotlinType kotlinType =
+                                c.getTypeResolver().resolveType(getScopeForClassHeaderResolution(), typeReference, c.getTrace(), true);
+                        return DescriptorFactory.createContextReceiverParameterForClass(
+                                this,
+                                kotlinType,
+                                Annotations.Companion.getEMPTY()
+                        );
+            }).collect(Collectors.toList());
+        });
     }
 
     private static boolean isIllegalInner(@NotNull DeclarationDescriptor descriptor) {
@@ -291,7 +339,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
                 CallableMemberDescriptor.Kind.SYNTHESIZED, SourceElement.NO_SOURCE
         ) {
             {
-                initialize(null, null, Collections.emptyList(), Collections.emptyList(),
+                initialize(null, null, CollectionsKt.emptyList(), Collections.emptyList(), Collections.emptyList(),
                            null, Modality.FINAL, DescriptorVisibilities.PRIVATE);
             }
 
@@ -312,23 +360,22 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
 
     // NOTE: Called from constructor!
     @NotNull
-    protected ScopesHolderForClass<LazyClassMemberScope> createMemberScope(
+    protected ScopesHolderForClass<LazyClassMemberScope> createScopesHolderForClass(
             @NotNull LazyClassContext c,
             @NotNull ClassMemberDeclarationProvider declarationProvider
     ) {
         return ScopesHolderForClass.Companion.create(
                 this,
                 c.getStorageManager(),
-                c.getKotlinTypeChecker().getKotlinTypeRefiner(),
-                kotlinTypeRefiner -> {
+                c.getKotlinTypeCheckerOfOwnerModule().getKotlinTypeRefiner(),
+                kotlinTypeRefinerForDependentModule -> {
                     LazyClassMemberScope scopeForDeclaredMembers =
-                            !kotlinTypeRefiner.isRefinementNeededForModule(c.getModuleDescriptor())
+                            !kotlinTypeRefinerForDependentModule.isRefinementNeededForModule(c.getModuleDescriptor())
                                 ? null
-                            // TODO: or kotlinTypeRefiner.getModuleDescriptor()
-                                : scopesHolderForClass.getScope(c.getKotlinTypeChecker().getKotlinTypeRefiner());
+                                : scopesHolderForClass.getScope(c.getKotlinTypeCheckerOfOwnerModule().getKotlinTypeRefiner()); // essentially, a scope for owner-module
 
                     return new LazyClassMemberScope(
-                            c, declarationProvider, this, c.getTrace(), kotlinTypeRefiner,
+                            c, declarationProvider, this, c.getTrace(), kotlinTypeRefinerForDependentModule,
                             scopeForDeclaredMembers
                     );
                 }
@@ -403,6 +450,12 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Override
     public Collection<ClassConstructorDescriptor> getConstructors() {
         return ((LazyClassMemberScope) getUnsubstitutedMemberScope()).getConstructors();
+    }
+
+    @NotNull
+    @Override
+    public List<ReceiverParameterDescriptor> getContextReceivers() {
+        return contextReceivers.invoke();
     }
 
     @Override
@@ -552,6 +605,11 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         return isFun;
     }
 
+    @Override
+    public boolean isValue() {
+        return isValue;
+    }
+
     @NotNull
     @Override
     public Annotations getAnnotations() {
@@ -567,6 +625,25 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     @Override
     public Collection<ClassDescriptor> getSealedSubclasses() {
         return sealedSubclasses.invoke();
+    }
+
+    @Nullable
+    @Override
+    public InlineClassRepresentation<SimpleType> getInlineClassRepresentation() {
+        if (!InlineClassesUtilsKt.isInlineClass(this)) return null;
+
+        ClassConstructorDescriptor constructor = getUnsubstitutedPrimaryConstructor();
+        if (constructor != null) {
+            ValueParameterDescriptor parameter = firstOrNull(constructor.getValueParameters());
+            if (parameter != null) {
+                return new InlineClassRepresentation<>(parameter.getName(), (SimpleType) parameter.getType());
+            }
+        }
+
+        // Don't crash on invalid code.
+        return new InlineClassRepresentation<>(
+                SpecialNames.SAFE_IDENTIFIER_FOR_NO_NAME, c.getModuleDescriptor().getBuiltIns().getAnyType()
+        );
     }
 
     @Override
@@ -591,6 +668,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         ForceResolveUtil.forceResolveAllContents(getDescriptorsForExtraCompanionObjects());
         ForceResolveUtil.forceResolveAllContents(getUnsubstitutedMemberScope());
         ForceResolveUtil.forceResolveAllContents(getTypeConstructor());
+        ForceResolveUtil.forceResolveAllContents(this.getContextReceivers());
     }
 
     // Note: headers of member classes' members are not resolved
@@ -620,6 +698,7 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
         }
         getUnsubstitutedPrimaryConstructor();
         getVisibility();
+        getContextReceivers();
     }
 
     @NotNull

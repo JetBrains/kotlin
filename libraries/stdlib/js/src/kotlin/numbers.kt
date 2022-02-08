@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -59,9 +59,8 @@ public actual fun Int.countOneBits(): Int {
  */
 @SinceKotlin("1.4")
 @WasExperimental(ExperimentalStdlibApi::class)
-@Suppress("DEPRECATION_ERROR")
 @kotlin.internal.InlineOnly
-public actual inline fun Int.countLeadingZeroBits(): Int = kotlin.js.Math.clz32(this)
+public actual inline fun Int.countLeadingZeroBits(): Int = JsMath.clz32(this)
 
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Int] number.
@@ -101,8 +100,8 @@ public actual fun Int.takeLowestOneBit(): Int =
  * Rotating by a multiple of [Int.SIZE_BITS] (32) returns the same number, or more generally
  * `number.rotateLeft(n) == number.rotateLeft(n % 32)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.rotateLeft(bitCount: Int): Int =
     shl(bitCount) or ushr(Int.SIZE_BITS - bitCount)
 
@@ -117,8 +116,8 @@ public actual fun Int.rotateLeft(bitCount: Int): Int =
  * Rotating by a multiple of [Int.SIZE_BITS] (32) returns the same number, or more generally
  * `number.rotateRight(n) == number.rotateRight(n % 32)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Int.rotateRight(bitCount: Int): Int =
     shl(Int.SIZE_BITS - bitCount) or ushr(bitCount)
 
@@ -187,8 +186,8 @@ public actual fun Long.takeLowestOneBit(): Long =
  * Rotating by a multiple of [Long.SIZE_BITS] (64) returns the same number, or more generally
  * `number.rotateLeft(n) == number.rotateLeft(n % 64)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual fun Long.rotateLeft(bitCount: Int): Long {
     if ((bitCount and 31) != 0) {
         val low = this.low
@@ -212,7 +211,7 @@ public actual fun Long.rotateLeft(bitCount: Int): Long {
  * Rotating by a multiple of [Long.SIZE_BITS] (64) returns the same number, or more generally
  * `number.rotateRight(n) == number.rotateRight(n % 64)`
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public actual inline fun Long.rotateRight(bitCount: Int): Long = rotateLeft(-bitCount)

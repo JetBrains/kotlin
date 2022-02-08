@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -NOTHING_TO_INLINE -UNUSED_PARAMETER
 
 interface IBase {
@@ -34,12 +35,12 @@ class CDerived : IBase {
 
 open class COpen : IBase {
     <!OVERRIDE_BY_INLINE!>override inline final fun foo()<!> {}
-    <!DECLARATION_CANT_BE_INLINED!>override inline fun bar()<!> {}
+    override <!DECLARATION_CANT_BE_INLINED!>inline<!> fun bar() {}
     <!OVERRIDE_BY_INLINE!>override inline final fun <<!REIFIED_TYPE_PARAMETER_IN_OVERRIDE!>reified<!> T> qux(x: T)<!> {}
 
     open class COpenNested : IBase {
         <!OVERRIDE_BY_INLINE!>override inline final fun foo()<!> {}
-        <!DECLARATION_CANT_BE_INLINED!>override inline fun bar()<!> {}
+        override <!DECLARATION_CANT_BE_INLINED!>inline<!> fun bar() {}
         <!OVERRIDE_BY_INLINE!>override inline final fun <<!REIFIED_TYPE_PARAMETER_IN_OVERRIDE!>reified<!> T> qux(x: T)<!> {}
     }
 
@@ -52,7 +53,7 @@ open class COpen : IBase {
     fun aMethod() {
         open class COpenLocal : IBase {
             <!OVERRIDE_BY_INLINE!>override inline final fun foo()<!> {}
-            <!DECLARATION_CANT_BE_INLINED!>override inline fun bar()<!> {}
+            override <!DECLARATION_CANT_BE_INLINED!>inline<!> fun bar() {}
             <!OVERRIDE_BY_INLINE!>override inline final fun <<!REIFIED_TYPE_PARAMETER_IN_OVERRIDE!>reified<!> T> qux(x: T)<!> {}
         }
     }

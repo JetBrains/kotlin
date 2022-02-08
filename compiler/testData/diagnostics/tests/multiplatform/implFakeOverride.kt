@@ -7,7 +7,7 @@ expect class Foo {
     fun bar(): String
 }
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 open class Bar {

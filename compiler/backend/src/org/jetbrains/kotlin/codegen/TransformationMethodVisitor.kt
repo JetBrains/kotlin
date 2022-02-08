@@ -16,16 +16,13 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.codegen.inline.nodeText
+import org.jetbrains.kotlin.codegen.inline.wrapWithMaxLocalCalc
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.util.Textifier
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
-
-import java.util.ArrayList
-
-import org.jetbrains.kotlin.codegen.inline.nodeText
-import org.jetbrains.kotlin.codegen.inline.wrapWithMaxLocalCalc
 
 abstract class TransformationMethodVisitor(
     private val delegate: MethodVisitor,

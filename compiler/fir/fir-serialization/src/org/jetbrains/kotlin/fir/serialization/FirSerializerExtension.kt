@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
-import org.jetbrains.kotlin.fir.types.ConeKotlinErrorType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
@@ -28,14 +28,14 @@ abstract class FirSerializerExtension {
     open fun shouldSerializeTypeAlias(typeAlias: FirTypeAlias): Boolean = true
     open fun shouldUseTypeTable(): Boolean = false
     open fun shouldUseNormalizedVisibility(): Boolean = false
-    open fun shouldSerializeFunction(function: FirFunction<*>): Boolean = false
+    open fun shouldSerializeFunction(function: FirFunction): Boolean = false
     open fun shouldSerializeProperty(property: FirProperty): Boolean = false
 
     open fun serializePackage(packageFqName: FqName, proto: ProtoBuf.Package.Builder) {
     }
 
     open fun serializeClass(
-        klass: FirClass<*>,
+        klass: FirClass,
         proto: ProtoBuf.Class.Builder,
         versionRequirementTable: MutableVersionRequirementTable,
         childSerializer: FirElementSerializer
@@ -50,7 +50,7 @@ abstract class FirSerializerExtension {
     }
 
     open fun serializeFunction(
-        function: FirFunction<*>,
+        function: FirFunction,
         proto: ProtoBuf.Function.Builder,
         versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: FirElementSerializer
@@ -74,7 +74,7 @@ abstract class FirSerializerExtension {
     open fun serializeFlexibleType(type: ConeFlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {
     }
 
-    open fun serializeType(type: FirTypeRef, proto: ProtoBuf.Type.Builder) {
+    open fun serializeTypeAnnotation(annotation: FirAnnotation, proto: ProtoBuf.Type.Builder) {
     }
 
     open fun serializeTypeParameter(typeParameter: FirTypeParameter, proto: ProtoBuf.TypeParameter.Builder) {
@@ -83,7 +83,7 @@ abstract class FirSerializerExtension {
     open fun serializeTypeAlias(typeAlias: FirTypeAlias, proto: ProtoBuf.TypeAlias.Builder) {
     }
 
-    open fun serializeErrorType(type: ConeKotlinErrorType, builder: ProtoBuf.Type.Builder) {
+    open fun serializeErrorType(type: ConeErrorType, builder: ProtoBuf.Type.Builder) {
         throw IllegalStateException("Cannot serialize error type: $type")
     }
 
@@ -91,7 +91,7 @@ abstract class FirSerializerExtension {
         get() = null
 
     interface ClassMembersProducer {
-        fun getCallableMembers(klass: FirClass<*>): Collection<FirCallableMemberDeclaration<*>>
+        fun getCallableMembers(klass: FirClass): Collection<FirCallableDeclaration>
     }
 
 }

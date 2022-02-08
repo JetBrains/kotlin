@@ -19,6 +19,9 @@ interface KotlinJvmBinaryClass {
      */
     val location: String
 
+    val containingLibrary: String?
+        get() = null
+
     fun loadClassAnnotations(visitor: AnnotationVisitor, cachedContents: ByteArray?)
 
     fun visitMembers(visitor: MemberVisitor, cachedContents: ByteArray?)
@@ -41,18 +44,20 @@ interface KotlinJvmBinaryClass {
 
     interface MethodAnnotationVisitor : AnnotationVisitor {
         fun visitParameterAnnotation(index: Int, classId: ClassId, source: SourceElement): AnnotationArgumentVisitor?
+
+        fun visitAnnotationMemberDefaultValue(): AnnotationArgumentVisitor?
     }
 
     interface AnnotationArgumentVisitor {
         fun visit(name: Name?, value: Any?)
 
-        fun visitClassLiteral(name: Name, value: ClassLiteralValue)
+        fun visitClassLiteral(name: Name?, value: ClassLiteralValue)
 
-        fun visitEnum(name: Name, enumClassId: ClassId, enumEntryName: Name)
+        fun visitEnum(name: Name?, enumClassId: ClassId, enumEntryName: Name)
 
-        fun visitAnnotation(name: Name, classId: ClassId): AnnotationArgumentVisitor?
+        fun visitAnnotation(name: Name?, classId: ClassId): AnnotationArgumentVisitor?
 
-        fun visitArray(name: Name): AnnotationArrayArgumentVisitor?
+        fun visitArray(name: Name?): AnnotationArrayArgumentVisitor?
 
         fun visitEnd()
     }
@@ -63,6 +68,8 @@ interface KotlinJvmBinaryClass {
         fun visitEnum(enumClassId: ClassId, enumEntryName: Name)
 
         fun visitClassLiteral(value: ClassLiteralValue)
+
+        fun visitAnnotation(classId: ClassId): AnnotationArgumentVisitor?
 
         fun visitEnd()
     }

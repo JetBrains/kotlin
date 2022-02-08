@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.pill.PillExtension
 import java.lang.reflect.Modifier
 import java.net.URLClassLoader
 
@@ -7,15 +6,15 @@ plugins {
     id("jps-compatible")
 }
 
-pill {
-    variant = PillExtension.Variant.FULL
+repositories {
+    gradlePluginPortal()
 }
 
 dependencies {
     compileOnly(kotlin("stdlib", embeddedKotlinVersion))
     compileOnly(gradleApi())
     compileOnly(gradleKotlinDsl())
-    compileOnly("com.github.jengelman.gradle.plugins:shadow:${rootProject.extra["versions.shadow"]}")
+    compileOnly("gradle.plugin.com.github.johnrengelman:shadow:${rootProject.extra["versions.shadow"]}")
 }
 
 sourceSets {
@@ -33,7 +32,9 @@ fun runPillTask(taskName: String) {
 
     val platformDir = IntellijRootUtils.getIntellijRootDir(project)
     val resourcesDir = File(project.projectDir, "resources")
-    runMethod.invoke(null, project.rootProject, taskName, platformDir, resourcesDir, EmbeddedComponents.CONFIGURATION_NAME)
+    val isIdePluginAttached = project.rootProject.intellijSdkVersionForIde() != null
+
+    runMethod.invoke(null, project.rootProject, taskName, platformDir, resourcesDir, isIdePluginAttached)
 }
 
 val jar: Jar by tasks

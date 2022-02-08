@@ -8,14 +8,17 @@ package org.jetbrains.kotlin.js.translate.declaration;
 import com.intellij.psi.PsiElement;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor;
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils;
 import org.jetbrains.kotlin.js.translate.utils.UtilsKt;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtParameter;
-import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
+import org.jetbrains.kotlin.resolve.source.PsiSourceElementKt;
 
 import java.util.List;
 
@@ -42,7 +45,7 @@ abstract class JsEqualsHashcodeToStringGenerator extends DataClassMethodGenerato
             JsName name = context.getNameForDescriptor(classProperties.get(i));
             JsExpression literal = new JsStringLiteral((i == 0 ? (getClassDescriptor().getName() + "(") : ", ") + printName + "=");
             JsExpression expr = new JsInvocation(context.namer().kotlin("toString"), new JsNameRef(name, new JsThisRef()));
-            PsiElement source = KotlinSourceElementKt.getPsi(classProperties.get(i).getSource());
+            PsiElement source = PsiSourceElementKt.getPsi(classProperties.get(i).getSource());
             JsExpression component = JsAstUtils.sum(literal, expr).source(source);
             if (result == null) {
                 result = component;
@@ -79,7 +82,7 @@ abstract class JsEqualsHashcodeToStringGenerator extends DataClassMethodGenerato
             JsExpression assignment = JsAstUtils.assignment(new JsNameRef(varName),
                                                             new JsBinaryOperation(JsBinaryOperator.BIT_OR, newHashValue,
                                                                                   new JsIntLiteral(0)));
-            statements.add(assignment.source(KotlinSourceElementKt.getPsi(prop.getSource())).makeStmt());
+            statements.add(assignment.source(PsiSourceElementKt.getPsi(prop.getSource())).makeStmt());
         }
 
         JsReturn returnStatement = new JsReturn(new JsNameRef(varName));
@@ -106,7 +109,7 @@ abstract class JsEqualsHashcodeToStringGenerator extends DataClassMethodGenerato
         JsExpression fieldChain = null;
         for (PropertyDescriptor prop : classProperties) {
             JsName name = context.getNameForDescriptor(prop);
-            PsiElement source = KotlinSourceElementKt.getPsi(prop.getSource());
+            PsiElement source = PsiSourceElementKt.getPsi(prop.getSource());
             JsExpression next = new JsInvocation(context.namer().kotlin("equals"),
                                                  new JsNameRef(name, new JsThisRef()),
                                                  new JsNameRef(name, new JsNameRef(paramName))).source(source);

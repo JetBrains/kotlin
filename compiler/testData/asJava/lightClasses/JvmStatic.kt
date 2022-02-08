@@ -1,5 +1,5 @@
 // A
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class A {
     companion object {
@@ -15,3 +15,5 @@ class A {
         }
     }
 }
+
+// FIR_COMPARISON

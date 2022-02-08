@@ -17,9 +17,11 @@
 package org.jetbrains.kotlin.incremental.storage
 
 import com.intellij.util.io.DataExternalizer
+import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
 import com.intellij.util.io.PersistentHashMap
 import java.io.File
+import java.io.IOException
 
 
 class NonCachingLazyStorage<K, V>(
@@ -27,10 +29,8 @@ class NonCachingLazyStorage<K, V>(
     private val keyDescriptor: KeyDescriptor<K>,
     private val valueExternalizer: DataExternalizer<V>
 ) : LazyStorage<K, V> {
-    @Volatile
     private var storage: PersistentHashMap<K, V>? = null
 
-    @Synchronized
     private fun getStorageIfExists(): PersistentHashMap<K, V>? {
         if (storage != null) return storage
 
@@ -42,7 +42,6 @@ class NonCachingLazyStorage<K, V>(
         return null
     }
 
-    @Synchronized
     private fun getStorageOrCreateNew(): PersistentHashMap<K, V> {
         if (storage == null) {
             storage = createMap()
@@ -52,22 +51,28 @@ class NonCachingLazyStorage<K, V>(
     }
 
     override val keys: Collection<K>
+        @Synchronized
         get() = getStorageIfExists()?.allKeysWithExistingMapping ?: listOf()
 
+    @Synchronized
     override operator fun contains(key: K): Boolean =
         getStorageIfExists()?.containsMapping(key) ?: false
 
+    @Synchronized
     override operator fun get(key: K): V? =
         getStorageIfExists()?.get(key)
 
+    @Synchronized
     override operator fun set(key: K, value: V) {
         getStorageOrCreateNew().put(key, value)
     }
 
+    @Synchronized
     override fun remove(key: K) {
         getStorageIfExists()?.remove(key)
     }
 
+    @Synchronized
     override fun append(key: K, value: V) {
         getStorageOrCreateNew().appendData(key) { dataOutput -> valueExternalizer.save(dataOutput, value) }
     }
@@ -76,11 +81,12 @@ class NonCachingLazyStorage<K, V>(
     override fun clean() {
         try {
             storage?.close()
-        } catch (ignored: Throwable) {
+        } finally {
+            storage = null
+            if (!IOUtil.deleteAllFilesStartingWith(storageFile)) {
+                throw IOException("Could not delete internal storage: ${storageFile.absolutePath}")
+            }
         }
-
-        PersistentHashMap.deleteFilesStartingWith(storageFile)
-        storage = null
     }
 
     @Synchronized
@@ -98,7 +104,11 @@ class NonCachingLazyStorage<K, V>(
 
     @Synchronized
     override fun close() {
-        storage?.close()
+        try {
+            storage?.close()
+        } finally {
+            storage = null
+        }
     }
 
     private fun createMap(): PersistentHashMap<K, V> =

@@ -1,8 +1,0 @@
-fun foo() {
-    var a: String
-    if () {
-        a.capitalize()
-    }
-
-    a.charAt(1)
-}

@@ -1,6 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !RENDER_DIAGNOSTICS_MESSAGES
-// !WITH_NEW_INFERENCE
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.CLASS)
 annotation class A
@@ -14,5 +13,5 @@ class C<T> {
 class Out<out F>
 
 fun test(a: C<out CharSequence>, y: Out<CharSequence>) {
-    a + <!NI;TYPE_MISMATCH("Out<Nothing>", "Out<CharSequence>"), OI;TYPE_MISMATCH_DUE_TO_TYPE_PROJECTIONS("Out<Nothing>", "Out<CharSequence>", "C<out CharSequence>", "public final operator fun plus(x: Out<T>): C<T> defined in C")!>y<!>
+    a + <!TYPE_MISMATCH("Out<Nothing>; Out<CharSequence>")!>y<!>
 }

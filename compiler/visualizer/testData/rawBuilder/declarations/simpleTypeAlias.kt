@@ -2,6 +2,6 @@ interface B
 
 typealias C = B
 
-//        C /* = B */
+//        B
 //        │
 class D : C

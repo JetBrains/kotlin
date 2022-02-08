@@ -1,8 +1,0 @@
-LineBreakpoint created at annotationValue.kt:10
-Run Java
-Connected to the target VM
-annotationValue.kt:10
-Compile bytecode for (SomeClass::class.java.annotations[0] as Anno).value
-Disconnected from the target VM
-
-Process finished with exit code 0

@@ -4,7 +4,7 @@ FILE: functionWithBothOldAndNewSyntaxContractDescription.kt
             returnsNotNull#()
         >
      {
-        contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> {
+        contract#(<L> = contract@fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
             returns#().implies#(!=(s#, Null(null)))
         }
         )

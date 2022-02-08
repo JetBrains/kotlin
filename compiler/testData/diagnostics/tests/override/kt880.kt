@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-880 Overload resolution ambiguity
 
 public interface I {

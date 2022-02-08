@@ -1,9 +1,0 @@
-package buz
-
-import foo.foobarbuz
-
-fun foo() {
-    FooBar.foobarbuz()
-}
-
-// ELEMENT: foobarbuz

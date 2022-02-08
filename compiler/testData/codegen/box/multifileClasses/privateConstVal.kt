@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: foo.kt
 @file:JvmName("Util")
 @file:JvmMultifileClass

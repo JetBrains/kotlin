@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,16 +12,17 @@ import org.jetbrains.kotlin.backend.common.ScopeWithIr
 import org.jetbrains.kotlin.backend.common.ir.addFakeOverrides
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.isHashCode
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
@@ -32,7 +33,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.ir.util.functions
 
 abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     // SAM wrappers are cached, either in the file class (if it exists), or in a top-level enclosing class.
@@ -223,18 +223,22 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             extensionReceiverParameter = superMethod.extensionReceiverParameter?.copyTo(this)
             valueParameters = superMethod.valueParameters.map { it.copyTo(this) }
             body = context.createIrBuilder(symbol).irBlockBody {
-                +irReturn(irCall(wrappedFunctionClass.functions.single { it.name == OperatorNameConventions.INVOKE }).apply {
-                    dispatchReceiver = irGetField(irGet(dispatchReceiverParameter!!), field)
-                    extensionReceiverParameter?.let { putValueArgument(0, irGet(it)) }
-                    valueParameters.forEachIndexed { i, parameter -> putValueArgument(extensionReceiversCount + i, irGet(parameter)) }
-                })
+                +irReturn(
+                    irCall(
+                        wrappedFunctionClass.functions.single { it.name == OperatorNameConventions.INVOKE }.symbol,
+                        superMethod.returnType
+                    ).apply {
+                        dispatchReceiver = irGetField(irGet(dispatchReceiverParameter!!), field)
+                        extensionReceiverParameter?.let { putValueArgument(0, irGet(it)) }
+                        valueParameters.forEachIndexed { i, parameter -> putValueArgument(extensionReceiversCount + i, irGet(parameter)) }
+                    })
             }
         }
 
         if (superType.needEqualsHashCodeMethods)
             generateEqualsHashCode(subclass, superType, field)
 
-        subclass.addFakeOverrides(context.irBuiltIns)
+        subclass.addFakeOverrides(context.typeSystem)
 
         return subclass
     }
@@ -274,8 +278,9 @@ class SamEqualsHashCodeMethodsGenerator(
 
     fun generate() {
         generateGetFunctionDelegate()
-        generateEquals()
-        generateHashCode()
+        val anyGenerator = MethodsFromAnyGeneratorForLowerings(context, klass, IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION)
+        generateEquals(anyGenerator)
+        generateHashCode(anyGenerator)
     }
 
     private fun generateGetFunctionDelegate() {
@@ -287,17 +292,9 @@ class SamEqualsHashCodeMethodsGenerator(
         }
     }
 
-    private fun generateEquals() {
-        klass.addFunction("equals", builtIns.booleanType).apply {
-            overriddenSymbols = klass.superTypes.mapNotNull {
-                it.getClass()?.functions?.singleOrNull {
-                    it.name.asString() == "equals" &&
-                            it.extensionReceiverParameter == null &&
-                            it.valueParameters.singleOrNull()?.type == builtIns.anyNType
-                }?.symbol
-            }
-
-            val other = addValueParameter("other", builtIns.anyNType)
+    private fun generateEquals(anyGenerator: MethodsFromAnyGeneratorForLowerings) {
+        anyGenerator.createEqualsMethodDeclaration().apply {
+            val other = valueParameters[0]
             body = context.createIrBuilder(symbol).run {
                 irExprBody(
                     irIfThenElse(
@@ -323,16 +320,9 @@ class SamEqualsHashCodeMethodsGenerator(
         }
     }
 
-    private fun generateHashCode() {
-        klass.addFunction("hashCode", builtIns.intType).apply {
-
-            fun isHashCode(function: IrSimpleFunction) =
-                function.name.asString() == "hashCode" && function.extensionReceiverParameter == null && function.valueParameters.isEmpty()
-
-            overriddenSymbols = klass.superTypes.mapNotNull {
-                it.getClass()?.functions?.singleOrNull(::isHashCode)?.symbol
-            }
-            val hashCode = builtIns.anyClass.owner.functions.single(::isHashCode).symbol
+    private fun generateHashCode(anyGenerator: MethodsFromAnyGeneratorForLowerings) {
+        anyGenerator.createHashCodeMethodDeclaration().apply {
+            val hashCode = context.irBuiltIns.functionClass.owner.functions.single { it.isHashCode() }.symbol
             body = context.createIrBuilder(symbol).run {
                 irExprBody(
                     irCall(hashCode).also {

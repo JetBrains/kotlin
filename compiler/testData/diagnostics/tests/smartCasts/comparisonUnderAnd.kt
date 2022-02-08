@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 fun foo(x : String?, y : String?) {
     if (y != null && x == y) {
         // Both not null
@@ -16,12 +15,12 @@ fun foo(x : String?, y : String?) {
     else {
         // y == null but x != y
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
-        <!OI;DEBUG_INFO_CONSTANT!>y<!><!UNSAFE_CALL!>.<!>length
+        y<!UNSAFE_CALL!>.<!>length
     }
     if (y == null && x != <!DEBUG_INFO_CONSTANT!>y<!>) {
         // y == null but x != y
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
-        <!OI;DEBUG_INFO_CONSTANT!>y<!><!UNSAFE_CALL!>.<!>length
+        y<!UNSAFE_CALL!>.<!>length
     }
     else {
         x<!UNSAFE_CALL!>.<!>length

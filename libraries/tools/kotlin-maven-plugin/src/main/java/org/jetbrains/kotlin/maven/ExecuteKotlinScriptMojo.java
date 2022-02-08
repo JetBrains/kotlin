@@ -247,7 +247,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
     }
 
     private List<File> getThisPluginDependencies() {
-        return plugin.getDependencies().stream().map(this::getDependencyFile).collect(Collectors.toList());
+        return plugin.getArtifacts().stream().map(this::getArtifactFile).collect(Collectors.toList());
     }
 
     private File getThisPluginAsDependency() {

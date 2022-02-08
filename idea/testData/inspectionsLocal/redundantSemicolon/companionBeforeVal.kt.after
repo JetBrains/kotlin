@@ -1,7 +1,0 @@
-class Test {
-    companion object
-
-    val bar = 1
-}
-
-fun Test.Companion.foo() {}

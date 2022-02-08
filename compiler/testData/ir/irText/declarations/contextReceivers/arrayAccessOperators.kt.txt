@@ -1,0 +1,78 @@
+data class MyContainer {
+  constructor(s: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var s: String
+    field = s
+    get
+    set
+
+  operator fun component1(): String {
+    return <this>.#s
+  }
+
+  fun copy(s: String = <this>.#s): MyContainer {
+    return MyContainer(s = s)
+  }
+
+  override fun toString(): String {
+    return "MyContainer(" + "s=" + <this>.#s + ")"
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#s.hashCode()
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is MyContainer -> return false
+    }
+    val tmp0_other_with_cast: MyContainer = other as MyContainer
+    when {
+      EQEQ(arg0 = <this>.#s, arg1 = tmp0_other_with_cast.#s).not() -> return false
+    }
+    return true
+  }
+
+}
+
+operator fun MyContainer.get(<this>: Int, index: Int): String? {
+  return when {
+    when {
+      EQEQ(arg0 = index, arg1 = 0) -> EQEQ(arg0 = <this>, arg1 = 42)
+      else -> false
+    } -> <this>.<get-s>()
+    else -> null
+  }
+}
+
+operator fun MyContainer.set(<this>: Int, index: Int, value: String) {
+  when {
+    when {
+      EQEQ(arg0 = index, arg1 = 0).not() -> true
+      else -> EQEQ(arg0 = <this>, arg1 = 42).not()
+    } -> return Unit
+  }
+  <this>.<set-s>(<set-?> = value)
+}
+
+fun box(): String {
+  return with<Int, String>(receiver = 42, block = local fun Int.<anonymous>(): String {
+    val myContainer: MyContainer = MyContainer(s = "fail")
+    myContainer.set(<this> = $this$with, index = 0, value = "OK")
+    return { // BLOCK
+      val tmp0_elvis_lhs: String? = myContainer.get(<this> = $this$with, index = 0)
+      when {
+        EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> "fail"
+        else -> tmp0_elvis_lhs
+      }
+    }
+  }
+)
+}

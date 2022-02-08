@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class A(val s: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class A(val s: String)
 
 abstract class B<T, U> {
     abstract fun f(x: T, y: U): String

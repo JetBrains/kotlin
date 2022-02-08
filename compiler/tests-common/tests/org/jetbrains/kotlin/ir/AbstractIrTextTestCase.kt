@@ -1,44 +1,32 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir
 
 import com.intellij.openapi.util.text.StringUtil
 import junit.framework.TestCase
+import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.cli.js.loadPluginsForTests
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.scripting.compiler.plugin.loadScriptConfiguration
+import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
+import org.jetbrains.kotlin.scripting.js.loadScriptConfiguration
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.util.JUnit4Assertions
+import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import org.jetbrains.kotlin.utils.rethrow
 import java.io.File
 import java.util.regex.Pattern
@@ -67,10 +55,11 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
         val mangler = JsManglerDesc
         val signaturer = IdSignatureDescriptor(mangler)
 
-        val stubGenerator = DeclarationStubGenerator(
+        val stubGenerator = DeclarationStubGeneratorImpl(
             irModule.descriptor,
             SymbolTable(signaturer, IrFactoryImpl), // TODO
-            myEnvironment.configuration.languageVersionSettings
+            irModule.irBuiltins,
+            DescriptorByIdSignatureFinderImpl(irModule.descriptor, mangler)
         )
 
         val path = wholeFile.path
@@ -128,6 +117,18 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
             val copiedTrees = irFileCopy.dumpTreesFromLineNumber(irTreeFileLabel.lineNumber, normalizeNames = true)
             TestCase.assertEquals("IR dump mismatch after deep copy with symbols", actualTrees, copiedTrees)
             verify(irFileCopy)
+
+            if (!testFile.directives.contains("SKIP_KT_DUMP")) {
+                val kotlinLikeDump = irFile.dumpKotlinLike(
+                    KotlinLikeDumpOptions(
+                        printFileName = false,
+                        printFilePath = false,
+                        printFakeOverridesStrategy = FakeOverridesStrategy.NONE
+                    )
+                )
+                val kotlinLikeDumpExpectedFile = irTreeFileLabel.expectedTextFile.withReplacedExtensionOrNull(".txt", ".kt.txt")!!
+                KotlinTestUtils.assertEqualsToFile(kotlinLikeDumpExpectedFile, kotlinLikeDump)
+            }
         }
 
         try {
@@ -139,192 +140,7 @@ abstract class AbstractIrTextTestCase : AbstractIrGeneratorTestCase() {
     }
 
     private fun verify(irFile: IrFile) {
-        IrVerifier().verifyWithAssert(irFile)
-    }
-
-    private class IrVerifier : IrElementVisitorVoid {
-        private val errors = ArrayList<String>()
-
-        private val symbolForDeclaration = HashMap<IrElement, IrSymbol>()
-
-        val hasErrors get() = errors.isNotEmpty()
-
-        val errorsAsMessage get() = errors.joinToString(prefix = "IR verifier errors:\n", separator = "\n")
-
-        private fun error(message: String) {
-            errors.add(message)
-        }
-
-        private inline fun require(condition: Boolean, message: () -> String) {
-            if (!condition) {
-                errors.add(message())
-            }
-        }
-
-        private val elementsAreUniqueChecker = object : IrElementVisitorVoid {
-            private val elements = HashSet<IrElement>()
-
-            override fun visitElement(element: IrElement) {
-                require(elements.add(element)) { "Non-unique element: ${element.render()}" }
-                element.acceptChildrenVoid(this)
-            }
-        }
-
-        fun verifyWithAssert(irFile: IrFile) {
-            irFile.acceptChildrenVoid(this)
-            irFile.acceptChildrenVoid(elementsAreUniqueChecker)
-            TestCase.assertFalse(errorsAsMessage + "\n\n\n" + irFile.dump(), hasErrors)
-        }
-
-        override fun visitElement(element: IrElement) {
-            element.acceptChildrenVoid(this)
-        }
-
-        @OptIn(ObsoleteDescriptorBasedAPI::class)
-        override fun visitDeclaration(declaration: IrDeclarationBase) {
-            if (declaration is IrSymbolOwner) {
-                declaration.symbol.checkBinding("decl", declaration)
-
-                require(declaration.symbol.owner == declaration) {
-                    "Symbol is not bound to declaration: ${declaration.render()}"
-                }
-            }
-
-            val containingDeclarationDescriptor = declaration.descriptor.containingDeclaration
-            if (containingDeclarationDescriptor != null) {
-                val parent = declaration.parent
-                if (parent is IrDeclaration) {
-                    require(parent.descriptor == containingDeclarationDescriptor) {
-                        "In declaration ${declaration.descriptor}: " +
-                                "Mismatching parent descriptor (${parent.descriptor}) " +
-                                "and containing declaration descriptor ($containingDeclarationDescriptor)"
-                    }
-                }
-            }
-        }
-
-        override fun visitProperty(declaration: IrProperty) {
-            visitDeclaration(declaration)
-
-            require((declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) == declaration.isFakeOverride) {
-                "${declaration.render()}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
-            }
-        }
-
-        @OptIn(ObsoleteDescriptorBasedAPI::class)
-        override fun visitFunction(declaration: IrFunction) {
-            visitDeclaration(declaration)
-
-            val functionDescriptor = declaration.descriptor
-
-            checkTypeParameters(functionDescriptor, declaration, functionDescriptor.typeParameters)
-
-            val expectedDispatchReceiver = functionDescriptor.dispatchReceiverParameter
-            val actualDispatchReceiver = declaration.dispatchReceiverParameter?.descriptor
-            require(expectedDispatchReceiver == actualDispatchReceiver) {
-                "$functionDescriptor: Dispatch receiver parameter mismatch: " +
-                        "expected $expectedDispatchReceiver, actual $actualDispatchReceiver"
-
-            }
-
-            val expectedExtensionReceiver = functionDescriptor.extensionReceiverParameter
-            val actualExtensionReceiver = declaration.extensionReceiverParameter?.descriptor
-            require(expectedExtensionReceiver == actualExtensionReceiver) {
-                "$functionDescriptor: Extension receiver parameter mismatch: " +
-                        "expected $expectedExtensionReceiver, actual $actualExtensionReceiver"
-
-            }
-
-            val declaredValueParameters = declaration.valueParameters.map { it.descriptor }
-            val actualValueParameters = functionDescriptor.valueParameters
-            if (declaredValueParameters.size != actualValueParameters.size) {
-                error("$functionDescriptor: Value parameters mismatch: $declaredValueParameters != $actualValueParameters")
-            } else {
-                declaredValueParameters.zip(actualValueParameters).forEach { (declaredValueParameter, actualValueParameter) ->
-                    require(declaredValueParameter == actualValueParameter) {
-                        "$functionDescriptor: Value parameters mismatch: $declaredValueParameter != $actualValueParameter"
-                    }
-                }
-            }
-        }
-
-        override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-            visitFunction(declaration)
-
-            require((declaration.origin == IrDeclarationOrigin.FAKE_OVERRIDE) == declaration.isFakeOverride) {
-                "${declaration.render()}: origin: ${declaration.origin}; isFakeOverride: ${declaration.isFakeOverride}"
-            }
-        }
-
-        override fun visitDeclarationReference(expression: IrDeclarationReference) {
-            expression.symbol.checkBinding("ref", expression)
-        }
-
-        override fun visitFunctionReference(expression: IrFunctionReference) {
-            expression.symbol.checkBinding("ref", expression)
-        }
-
-        override fun visitPropertyReference(expression: IrPropertyReference) {
-            expression.field?.checkBinding("field", expression)
-            expression.getter?.checkBinding("getter", expression)
-            expression.setter?.checkBinding("setter", expression)
-        }
-
-        override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference) {
-            expression.delegate.checkBinding("delegate", expression)
-            expression.getter.checkBinding("getter", expression)
-            expression.setter?.checkBinding("setter", expression)
-        }
-
-        private fun IrSymbol.checkBinding(kind: String, irElement: IrElement) {
-            if (!isBound) {
-                error("${javaClass.simpleName} descriptor is unbound @$kind ${irElement.render()}")
-            } else {
-                val irDeclaration = owner as? IrDeclaration
-                if (irDeclaration != null) {
-                    try {
-                        irDeclaration.parent
-                    } catch (e: Throwable) {
-                        error("Referenced declaration has no parent: ${irDeclaration.render()}")
-                    }
-                }
-            }
-
-            val otherSymbol = symbolForDeclaration.getOrPut(owner) { this }
-            if (this != otherSymbol) {
-                error("Multiple symbols for descriptor of @$kind ${irElement.render()}")
-            }
-        }
-
-        @OptIn(ObsoleteDescriptorBasedAPI::class)
-        override fun visitClass(declaration: IrClass) {
-            visitDeclaration(declaration)
-
-            checkTypeParameters(declaration.descriptor, declaration, declaration.descriptor.declaredTypeParameters)
-        }
-
-        @ObsoleteDescriptorBasedAPI
-        private fun checkTypeParameters(
-            descriptor: DeclarationDescriptor,
-            declaration: IrTypeParametersContainer,
-            expectedTypeParameters: List<TypeParameterDescriptor>
-        ) {
-            val declaredTypeParameters = declaration.typeParameters.map { it.descriptor }
-
-            if (declaredTypeParameters.size != expectedTypeParameters.size) {
-                error("$descriptor: Type parameters mismatch: $declaredTypeParameters != $expectedTypeParameters")
-            } else {
-                declaredTypeParameters.zip(expectedTypeParameters).forEach { (declaredTypeParameter, expectedTypeParameter) ->
-                    require(declaredTypeParameter == expectedTypeParameter) {
-                        "$descriptor: Type parameters mismatch: $declaredTypeParameter != $expectedTypeParameter"
-                    }
-                }
-            }
-        }
-
-        override fun visitTypeOperator(expression: IrTypeOperatorCall) {
-            expression.typeOperandClassifier.checkBinding("type operand", expression)
-        }
+        IrVerifier(JUnit4Assertions).verifyWithAssert(irFile)
     }
 
     internal class Expectations(val regexps: List<RegexpInText>, val irTreeFileLabels: List<IrTreeFileLabel>)

@@ -1,6 +1,0 @@
-// WITH_RUNTIME
-
-fun <T : Thread> foo(t: T) {
-    t.isDaemon = true
-}
-

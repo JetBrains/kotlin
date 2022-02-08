@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.types.upperIfFlexible
 import org.jetbrains.org.objectweb.asm.Type
@@ -51,7 +52,7 @@ class CallBasedArgumentGenerator(
         callGenerator.putValueIfNeeded(
             getJvmKotlinType(i),
             StackValue.createDefaultValue(valueParameterTypes[i]),
-            ValueKind.DEFAULT_PARAMETER,
+            if (InlineUtil.isInlineParameter(valueParameters[i])) ValueKind.DEFAULT_INLINE_PARAMETER else ValueKind.DEFAULT_PARAMETER,
             i
         )
     }
@@ -70,12 +71,6 @@ class CallBasedArgumentGenerator(
         // while its lower bound may be Nothing-typed after approximation
         val lazyVararg = codegen.genVarargs(argument, valueParameters[i].type.upperIfFlexible())
         callGenerator.putValueIfNeeded(getJvmKotlinType(i), lazyVararg, ValueKind.GENERAL_VARARG, i)
-    }
-
-    override fun generateDefaultJava(i: Int, argument: DefaultValueArgument) {
-        val argumentValue = valueParameters[i].findJavaDefaultArgumentValue(valueParameterTypes[i], codegen.typeMapper)
-
-        callGenerator.putValueIfNeeded(getJvmKotlinType(i), argumentValue)
     }
 
     override fun reorderArgumentsIfNeeded(args: List<ArgumentAndDeclIndex>) {

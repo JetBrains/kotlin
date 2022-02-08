@@ -1,6 +1,0 @@
-// MOVE: down
-class A(
-        a: Int,
-        d: Int,
-        <caret>b: Int, c: Int,
-)

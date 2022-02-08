@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -24,12 +25,13 @@ private val USE_NI = System.getProperty("fir.bench.oldfe.ni", "true") == "true"
 class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     private var totalTime = 0L
     private var files = 0
+    private var lines = 0
+    private var measure = FirResolveBench.Measure()
 
     private val times = mutableListOf<Long>()
 
-    private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment) {
-        val project = environment.project
-
+    private fun runAnalysis(environment: KotlinCoreEnvironment) {
+        val vmBefore = vmStateSnapshot()
         val time = measureNanoTime {
             try {
                 KotlinToJVMBytecodeCompiler.analyze(environment)
@@ -42,9 +44,16 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
                 throw e
             }
         }
+        val vmAfter = vmStateSnapshot()
 
-        files += environment.getSourceFiles().size
+        val psiFiles = environment.getSourceFiles()
+        files += psiFiles.size
+        lines += psiFiles.sumOf { StringUtil.countNewLines(it.text) }
         totalTime += time
+        measure.time += time
+        measure.vmCounters += vmAfter - vmBefore
+        measure.files += psiFiles.size
+
         println("Time is ${time * 1e-6} ms")
     }
 
@@ -71,6 +80,10 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
                 configuration.languageVersionSettings.apiVersion,
                 specificFeatures = mapOf(
                     LanguageFeature.NewInference to if (USE_NI) LanguageFeature.State.ENABLED else LanguageFeature.State.DISABLED
+                ),
+                analysisFlags = mapOf(
+                    AnalysisFlags.skipPrereleaseCheck to true,
+                    AnalysisFlags.optIn to moduleData.optInAnnotations
                 )
             )
 
@@ -98,17 +111,25 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         })
         val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
-        runAnalysis(moduleData, environment)
+        runAnalysis(environment)
 
         Disposer.dispose(disposable)
         return ProcessorAction.NEXT
     }
 
-
     override fun afterPass(pass: Int) {}
-    override fun beforePass(pass: Int) {}
+
+    override fun beforePass(pass: Int) {
+        measure = FirResolveBench.Measure()
+        files = 0
+        lines = 0
+        totalTime = 0
+    }
 
     fun testTotalKotlin() {
+
+        isolate()
+
         writeMessageToLog("use_ni: $USE_NI")
 
         for (i in 0 until PASSES) {

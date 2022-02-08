@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 import kotlin.test.*
 
 val pUnit = Unit
@@ -10,6 +10,7 @@ fun box(): String {
     assertEquals(null, pNUnit!!::class.javaPrimitiveType)
 
     assertEquals(null, Unit::class.javaPrimitiveType)
+    @Suppress("TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR")
     assertEquals(java.lang.Void.TYPE, Nothing::class.javaPrimitiveType)
 
     return "OK"

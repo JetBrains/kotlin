@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-
 var longCompareToInvocations = 0
 var doubleCompareToInvocations = 0
 

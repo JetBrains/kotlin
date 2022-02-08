@@ -214,6 +214,12 @@ public abstract class JsVisitorWithContext {
     public void endVisit(@NotNull JsSingleLineComment x, @NotNull JsContext ctx) {
     }
 
+    public void endVisit(@NotNull JsExport x, @NotNull JsContext ctx) {
+    }
+
+    public void endVisit(@NotNull JsImport x, @NotNull JsContext ctx) {
+    }
+
     public void endVisit(@NotNull JsWhile x, @NotNull JsContext ctx) {
         endVisit((JsLoop) x, ctx);
     }
@@ -395,6 +401,14 @@ public abstract class JsVisitorWithContext {
     }
 
     public boolean visit(@NotNull JsSingleLineComment x, @NotNull JsContext ctx) {
+        return true;
+    }
+
+    public boolean visit(@NotNull JsExport x, @NotNull JsContext ctx) {
+        return true;
+    }
+
+    public boolean visit(@NotNull JsImport x, @NotNull JsContext ctx) {
         return true;
     }
 

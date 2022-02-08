@@ -9,9 +9,12 @@ import groovy.lang.Closure
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.UnknownTaskException
+import org.gradle.api.artifacts.Dependency
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.execution.TaskExecutionListener
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Property
@@ -22,8 +25,10 @@ import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.KotlinCompilationsModuleGroups
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
-import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
+import org.jetbrains.kotlin.gradle.plugin.sources.withAllDependsOnSourceSets
+import org.jetbrains.kotlin.gradle.plugin.sources.resolveAllDependsOnSourceSets
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.*
@@ -40,10 +45,21 @@ internal fun KotlinCompilation<*>.composeName(prefix: String? = null, suffix: St
 internal fun KotlinCompilation<*>.isMain(): Boolean =
     name == KotlinCompilation.MAIN_COMPILATION_NAME
 
+/**
+ * see https://youtrack.jetbrains.com/issue/KT-45412
+ * Some implementations of [KotlinCompilation] are not including their [KotlinCompilation.defaultSourceSet] into [kotlinSourceSet]s
+ * This helper function might disappear in the future, once the behaviour of those [KotlinCompilation] implementations is streamlined.
+ * @return [KotlinCompilation.kotlinSourceSets] + [KotlinCompilation.defaultSourceSet]
+ */
+internal val KotlinCompilation<*>.kotlinSourceSetsIncludingDefault: Set<KotlinSourceSet> get() = kotlinSourceSets + defaultSourceSet
+
 abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     target: KotlinTarget,
+    override val compilationPurpose: String
+) : KotlinCompilation<T>, HasKotlinDependencies, KotlinCompilationData<T> {
+
     override val compilationName: String
-) : KotlinCompilation<T>, HasKotlinDependencies {
+        get() = compilationPurpose
 
     override fun kotlinOptions(configure: T.() -> Unit) =
         configure(kotlinOptions)
@@ -68,7 +84,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     override val kotlinSourceSets: MutableSet<KotlinSourceSet> = mutableSetOf()
 
     override val allKotlinSourceSets: Set<KotlinSourceSet>
-        get() = kotlinSourceSets.flatMapTo(mutableSetOf()) { it.getSourceSetHierarchy() }
+        get() = kotlinSourceSets + kotlinSourceSets.resolveAllDependsOnSourceSets()
 
     override val defaultSourceSetName: String
         get() = lowerCamelCaseName(
@@ -76,7 +92,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
             when {
                 isMain() && target is KotlinMetadataTarget ->
                     KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME // corner case: main compilation of the metadata target compiles commonMain
-                else -> compilationName
+                else -> compilationPurpose
             }
         )
 
@@ -91,23 +107,13 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
             Callable { target.project.buildDir.resolve("processedResources/${target.targetName}/$name") })
     }
 
-    open fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) {
-        fun AbstractKotlinCompile<*>.configureAction() {
-            source(sourceSet.kotlin)
-            sourceFilesExtensions(sourceSet.customSourceFilesExtensions)
-            commonSourceSet += project.files(Callable {
-                if (addAsCommonSources.value) sourceSet.kotlin else emptyList<Any>()
-            })
-        }
-
-        target.project.tasks
-            // To configure a task that may have not yet been created at this point, use 'withType-matching-configureEach`:
-            .withType(AbstractKotlinCompile::class.java)
-            .matching { it.name == compileKotlinTaskName }
-            .configureEach { compileKotlinTask ->
-                compileKotlinTask.configureAction()
-            }
-    }
+    open fun addSourcesToCompileTask(sourceSet: KotlinSourceSet, addAsCommonSources: Lazy<Boolean>) =
+        addSourcesToKotlinCompileTask(
+            project,
+            compileKotlinTaskName,
+            sourceSet.customSourceFilesExtensions,
+            addAsCommonSources
+        ) { sourceSet.kotlin }
 
     internal fun addExactSourceSetsEagerly(sourceSets: Set<KotlinSourceSet>) {
         with(target.project) {
@@ -148,7 +154,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     final override fun source(sourceSet: KotlinSourceSet) {
         if (kotlinSourceSets.add(sourceSet)) {
             target.project.whenEvaluated {
-                addExactSourceSetsEagerly(sourceSet.getSourceSetHierarchy())
+                addExactSourceSetsEagerly(sourceSet.withAllDependsOnSourceSets())
             }
         }
     }
@@ -156,20 +162,20 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     override val compileDependencyConfigurationName: String
         get() = lowerCamelCaseName(
             target.disambiguationClassifier,
-            compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }.orEmpty(),
+            compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME }.orEmpty(),
             "compileClasspath"
         )
 
     override val compileKotlinTaskName: String
         get() = lowerCamelCaseName(
             "compile",
-            compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+            compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
             "Kotlin",
             target.targetName
         )
 
     override val compileAllTaskName: String
-        get() = lowerCamelCaseName(target.disambiguationClassifier, compilationName, "classes")
+        get() = lowerCamelCaseName(target.disambiguationClassifier, compilationPurpose, "classes")
 
     override lateinit var compileDependencyFiles: FileCollection
 
@@ -191,7 +197,25 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     override fun dependencies(configureClosure: Closure<Any?>) =
         dependencies f@{ ConfigureUtil.configure(configureClosure, this@f) }
 
-    override fun toString(): String = "compilation '$compilationName' ($target)"
+    override fun toString(): String = "compilation '$compilationPurpose' ($target)"
+
+    internal val friendArtifactsTask: TaskProvider<AbstractArchiveTask>? by lazy {
+        if (associateWithTransitiveClosure.any { it.isMain() }) {
+            val archiveTasks = target.project.tasks.withType(AbstractArchiveTask::class.java)
+            if (!archiveTasks.isEmpty()) {
+                try {
+                    archiveTasks.named(target.artifactsTaskName)
+                } catch (e: UnknownTaskException) {
+                    // Native tasks does not extend AbstractArchiveTask
+                    null
+                }
+            } else {
+                null
+            }
+        } else {
+            null
+        }
+    }
 
     /**
      * If a compilation is aware of its associate compilations' outputs being added to the classpath in a transformed or packaged way,
@@ -199,21 +223,26 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
      */
     internal open val friendArtifacts: FileCollection
         get() = with(target.project) {
-            if (associateWithTransitiveClosure.any { it.isMain() }) {
+            val friendArtifactsTaskProvider = friendArtifactsTask
+            if (friendArtifactsTaskProvider != null) {
                 // In case the main artifact is transitively added to the test classpath via a test dependency on another module
                 // that depends on this module's production part, include the main artifact in the friend artifacts, lazily:
                 files(
-                    provider {
-                        listOfNotNull(
-                            tasks.withType(AbstractArchiveTask::class.java).findByName(target.artifactsTaskName)?.archivePathCompatible
-                        )
+                    Callable {
+                        friendArtifactsTaskProvider.flatMap { it.archiveFile }
                     }
                 )
             } else files()
         }
 
+    override val friendPaths: Iterable<FileCollection>
+        get() = mutableListOf<FileCollection>().also { allCollections ->
+            associateWithTransitiveClosure.forEach { allCollections.add(it.output.classesDirs) }
+            allCollections.add(friendArtifacts)
+        }
+
     override val moduleName: String
-        get() = KotlinCompilationsModuleGroups.getModuleLeaderCompilation(this).takeIf { it != this }?.ownModuleName ?: ownModuleName
+        get() = KotlinCompilationsModuleGroups.getModuleLeaderCompilation(this).takeIf { it != this }?.ownModuleName() ?: ownModuleName
 
     override fun associateWith(other: KotlinCompilation<*>) {
         require(other.target == target) { "Only associations between compilations of a single target are supported" }
@@ -225,38 +254,127 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
         KotlinCompilationsModuleGroups.unionModules(this, other)
     }
 
-    protected open fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
-        target.project.dependencies.run {
-            val project = target.project
-
-            add(
-                compileDependencyConfigurationName,
-                project.files(Callable { other.output.classesDirs }, Callable { other.compileDependencyFiles })
-            )
-
-            if (this@AbstractKotlinCompilation is KotlinCompilationToRunnableFiles<*>) {
-                add(runtimeDependencyConfigurationName, project.files(Callable { other.output.allOutputs }))
-                if (other is KotlinCompilationToRunnableFiles<*>) {
-                    add(runtimeDependencyConfigurationName, project.files(Callable { other.runtimeDependencyFiles }))
+    /**
+     * Adds `allDependencies` of configurations mentioned in `configurationNames` to configuration named [this] in
+     * a lazy manner
+     */
+    private fun String.addAllDependenciesFromOtherConfigurations(project: Project, vararg configurationNames: String) {
+        project.configurations.named(this).configure { receiverConfiguration ->
+            receiverConfiguration.dependencies.addAllLater(
+                project.objects.listProperty(Dependency::class.java).apply {
+                    set(
+                        project.provider {
+                            configurationNames
+                                .map { project.configurations.getByName(it) }
+                                .flatMap { it.allDependencies }
+                        }
+                    )
                 }
-            }
+            )
         }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    protected open fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
+        /*
+          we add dependencies to compileDependencyConfiguration ('compileClasspath' usually) and runtimeDependency
+          ('runtimeClasspath') instead of modifying respective api/implementation/compileOnly/runtimeOnly configs
+
+          This is needed because api/implementation/compileOnly/runtimeOnly are used in IDE Import and will leak
+          to dependencies of IDE modules. But they are not needed here, because IDE resolution works inherently
+          transitively and symbols from associated compilation will be resolved from source sets of associated
+          compilation itself (moreover, direct dependencies are not equivalent to transitive ones because of
+          resolution order - e.g. in case of FQNs clash, so it's even harmful)
+        */
+        project.dependencies.add(compileOnlyConfigurationName, project.files(Callable { other.output.classesDirs }))
+        project.dependencies.add(runtimeOnlyConfigurationName, project.files(Callable { other.output.allOutputs }))
+
+        compileDependencyConfigurationName.addAllDependenciesFromOtherConfigurations(
+            project,
+            other.apiConfigurationName,
+            other.implementationConfigurationName,
+            other.compileOnlyConfigurationName
+        )
+
+        runtimeDependencyConfigurationName?.addAllDependenciesFromOtherConfigurations(
+            project,
+            other.apiConfigurationName,
+            other.implementationConfigurationName,
+            other.runtimeOnlyConfigurationName
+        )
     }
 
     private val _associateWith: MutableSet<AbstractKotlinCompilation<*>> = mutableSetOf()
 
     override val associateWith: List<KotlinCompilation<*>>
         get() = Collections.unmodifiableList(_associateWith.toList())
+
+    override val project: Project
+        get() = target.project
+
+    override val owner: KotlinTarget
+        get() = target
+
+    override val compilationClassifier: String?
+        get() = target.disambiguationClassifier
+
+    override val kotlinSourceDirectoriesByFragmentName: Map<String, SourceDirectorySet>
+        get() = defaultSourceSet.withAllDependsOnSourceSets().associate { it.name to it.kotlin }
+
+    override val languageSettings: LanguageSettingsBuilder
+        get() = defaultSourceSet.languageSettings
+
+    override val platformType: KotlinPlatformType
+        get() = target.platformType
+
+    override val ownModuleName: String
+        get() = ownModuleName()
 }
 
-internal val KotlinCompilation<*>.ownModuleName: String
-    get() {
-        val project = target.project
-        val baseName = project.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName
-            ?: project.name
-        val suffix = if (isMain()) "" else "_$compilationName"
-        return filterModuleName("$baseName$suffix")
+internal fun addCommonSourcesToKotlinCompileTask(
+    project: Project,
+    taskName: String,
+    sourceFileExtensions: Iterable<String>,
+    sources: () -> Any
+) = addSourcesToKotlinCompileTask(project, taskName, sourceFileExtensions, lazyOf(true), sources)
+
+// FIXME this function dangerously ignores an incorrect type of the task (e.g. if the actual task is a K/N one); consider reporting a failure
+internal fun addSourcesToKotlinCompileTask(
+    project: Project,
+    taskName: String,
+    sourceFileExtensions: Iterable<String>,
+    addAsCommonSources: Lazy<Boolean> = lazyOf(false),
+    /** Evaluated as project.files(...) */
+    sources: () -> Any
+) {
+    fun AbstractKotlinCompile<*>.configureAction() {
+        // In this call, the super-implementation of `source` adds the directories files to the roots of the union file tree,
+        // so it's OK to pass just the source roots.
+        source(Callable(sources))
+        sourceFilesExtensions.addAll(sourceFileExtensions)
+
+        // The `commonSourceSet` is passed to the compiler as-is, converted with toList
+        commonSourceSet.from(
+            Callable<Any> { if (addAsCommonSources.value) sources else emptyList<Any>() }
+        )
     }
+
+    project.tasks
+        // To configure a task that may have not yet been created at this point, use 'withType-matching-configureEach`:
+        .withType(AbstractKotlinCompile::class.java)
+        .matching { it.name == taskName }
+        .configureEach { compileKotlinTask ->
+            compileKotlinTask.configureAction()
+        }
+}
+
+private fun KotlinCompilation<*>.ownModuleName(): String {
+    val project = target.project
+    val baseName = project.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName
+        ?: project.name
+    val suffix = if (isMain()) "" else "_$compilationName"
+    return filterModuleName("$baseName$suffix")
+}
 
 internal val KotlinCompilation<*>.associateWithTransitiveClosure: Iterable<KotlinCompilation<*>>
     get() = mutableSetOf<KotlinCompilation<*>>().apply {
@@ -275,7 +393,7 @@ abstract class AbstractKotlinCompilationToRunnableFiles<T : KotlinCommonOptions>
     override val runtimeDependencyConfigurationName: String
         get() = lowerCamelCaseName(
             target.disambiguationClassifier,
-            compilationName.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
+            compilationPurpose.takeIf { it != KotlinCompilation.MAIN_COMPILATION_NAME },
             "runtimeClasspath"
         )
 
@@ -307,6 +425,10 @@ internal object CompilationSourceSetUtil {
         return ext.get(EXT_NAME) as Property<CompilationsBySourceSet>
     }
 
+    // FIXME: the results include the compilations of the metadata target; the callers should care about filtering them out
+    //        if they need only the platform compilations
+    // TODO: create a separate util function: `platformCompilationsBySourceSets`
+    // TODO: visit all call sites, check if they handle the metadata compilations correctly
     fun compilationsBySourceSets(project: Project): CompilationsBySourceSet {
         val compilationNamesBySourceSetName = getOrCreateProperty(project) {
             var shouldFinalizeValue = false
@@ -362,5 +484,5 @@ internal object CompilationSourceSetUtil {
 
 private val invalidModuleNameCharactersRegex = """[\\/\r\n\t]""".toRegex()
 
-private fun filterModuleName(moduleName: String): String =
+internal fun filterModuleName(moduleName: String): String =
     moduleName.replace(invalidModuleNameCharactersRegex, "_")

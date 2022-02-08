@@ -1,7 +1,0 @@
-class C {
-    init {
-        <caret>
-    }
-}
-
-// ELEMENT: init

@@ -1,13 +1,11 @@
 // TARGET_BACKEND: JVM
-// KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
-// WITH_RUNTIME
+// ASSERTIONS_MODE: jvm
+// WITH_STDLIB
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
-
 package suspendFunctionAssertionsEnabled
 
 import helpers.*
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 
 class Checker {
     suspend fun check() {

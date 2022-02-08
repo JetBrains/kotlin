@@ -1,12 +1,16 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class AsInt(val value: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class AsInt(val value: Int) {
     override fun toString(): String {
         return "asInt: ${value.toString()}"
     }
 }
 
-inline class AsAny(val value: Any) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class AsAny(val value: Any) {
     override fun toString(): String {
         return "asAny: ${value.toString()}"
     }

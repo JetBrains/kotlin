@@ -1,2 +1,18 @@
 public abstract interface ArraysInSubtypes : R|kotlin/Any| {
+    public abstract interface Sub<T : R|ft<kotlin/Any, kotlin/Any?>|> : R|test/ArraysInSubtypes.Super| {
+        public abstract fun array(): R|ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>|
+
+        public abstract fun listOfArray(): R|ft<kotlin/collections/MutableList<out ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>>, kotlin/collections/List<out ft<kotlin/Array<ft<kotlin/String, kotlin/String?>>, kotlin/Array<out ft<kotlin/String, kotlin/String?>>?>>?>|
+
+        public abstract fun objArray(): R|ft<kotlin/Array<ft<T, T?>>, kotlin/Array<out ft<T, T?>>?>|
+
+    }
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun array(): R|ft<kotlin/Array<ft<kotlin/CharSequence, kotlin/CharSequence?>>, kotlin/Array<out ft<kotlin/CharSequence, kotlin/CharSequence?>>?>|
+
+        public abstract fun listOfArray(): R|ft<kotlin/collections/MutableList<out ft<kotlin/Array<ft<kotlin/CharSequence, kotlin/CharSequence?>>, kotlin/Array<out ft<kotlin/CharSequence, kotlin/CharSequence?>>?>>, kotlin/collections/List<out ft<kotlin/Array<ft<kotlin/CharSequence, kotlin/CharSequence?>>, kotlin/Array<out ft<kotlin/CharSequence, kotlin/CharSequence?>>?>>?>|
+
+        public abstract fun objArray(): R|ft<kotlin/Array<ft<kotlin/Any, kotlin/Any?>>, kotlin/Array<out ft<kotlin/Any, kotlin/Any?>>?>|
+
+    }
 }

@@ -1,0 +1,30 @@
+FILE: lambdaInLhsOfTypeOperatorCall.kt
+    public final fun foo(b: R|B<kotlin/Int, kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun test_1(b: R|B<kotlin/String, kotlin/Number>|): R|kotlin/Unit| {
+        R|/foo|((R|<local>/b|.R|/myMap|<R|kotlin/String|, R|kotlin/Int|, R|kotlin/Number|>(<L> = myMap@fun <anonymous>(it: R|B<kotlin/String, kotlin/Number>|): R|kotlin/Int| <inline=NoInline>  {
+            ^ R|<local>/it|.R|SubstitutionOverride</B.k: R|kotlin/String|>|.R|kotlin/String.length|
+        }
+        ) as R|B<kotlin/Int, kotlin/Int>|))
+    }
+    public final fun test_2(s: R|kotlin/String|): R|kotlin/Unit| {
+        lval func: R|B<kotlin/Int, kotlin/Int>| = (fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+            ^ R|<local>/s|.R|kotlin/String.length|
+        }
+         as R|B<kotlin/Int, kotlin/Int>|)
+    }
+    public final class B<out K, V> : R|kotlin/Any| {
+        public constructor<out K, V>(k: R|K|, v: R|V|): R|B<K, V>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val k: R|K| = R|<local>/k|
+            public get(): R|K|
+
+        public final val v: R|V| = R|<local>/v|
+            public get(): R|V|
+
+    }
+    public final fun <X, R, V> R|B<X, V>|.myMap(transform: R|(B<X, V>) -> R|): R|B<R, V>| {
+        ^myMap R|kotlin/TODO|()
+    }

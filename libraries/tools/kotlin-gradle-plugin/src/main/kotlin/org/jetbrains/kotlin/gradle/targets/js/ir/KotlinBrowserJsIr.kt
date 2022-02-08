@@ -10,6 +10,8 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
+import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
 import java.io.File
@@ -34,6 +37,10 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     private val webpackTaskConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
     private val runTaskConfigurations: MutableList<KotlinWebpack.() -> Unit> = mutableListOf()
 
+    private val propertiesProvider = PropertiesProvider(project)
+    private val webpackMajorVersion
+        get() = propertiesProvider.webpackMajorVersion
+
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
 
@@ -45,10 +52,10 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     override fun commonWebpackConfig(body: KotlinWebpackConfig.() -> Unit) {
         webpackTaskConfigurations.add {
-            webpackConfigAppliers.add(body)
+            webpackConfigApplier(body)
         }
         runTaskConfigurations.add {
-            webpackConfigAppliers.add(body)
+            webpackConfigApplier(body)
         }
         testTask {
             onTestFrameworkSet {
@@ -96,16 +103,30 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 ) { task ->
                     val entryFileProvider = binary.linkSyncTask.map {
                         it.destinationDir
-                            .resolve(binary.linkTask.get().outputFile.name)
+                            .resolve(binary.linkTask.get().outputFileProperty.get().name)
                     }
 
-                    task.bin = "webpack-dev-server/bin/webpack-dev-server.js"
+                    webpackMajorVersion.choose(
+                        { task.args.add(0, "serve") },
+                        { task.bin = "webpack-dev-server/bin/webpack-dev-server.js" }
+                    )()
                     task.description = "start ${mode.name.toLowerCase()} webpack dev server"
 
-                    task.devServer = KotlinWebpackConfig.DevServer(
-                        open = true,
-                        contentBase = listOf(compilation.output.resourcesDir.canonicalPath)
-                    )
+                    webpackMajorVersion.choose(
+                        {
+                            task.devServer = KotlinWebpackConfig.DevServer(
+                                open = true,
+                                static = mutableListOf(compilation.output.resourcesDir.canonicalPath)
+                            )
+                        },
+                        {
+                            task.devServer = KotlinWebpackConfig.DevServer(
+                                open = true,
+                                contentBase = mutableListOf(compilation.output.resourcesDir.canonicalPath)
+                            )
+                        }
+                    )()
+
 
                     task.outputs.upToDateWhen { false }
 
@@ -120,9 +141,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
                 if (mode == KotlinJsBinaryMode.DEVELOPMENT) {
                     target.runTask.dependsOn(runTask)
-                    commonRunTask.configure {
-                        it.dependsOn(runTask)
-                    }
+                    commonRunTask.dependsOn(runTask)
                 }
             }
     }
@@ -163,7 +182,7 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 ) { task ->
                     val entryFileProvider = binary.linkSyncTask.map {
                         it.destinationDir
-                            .resolve(binary.linkTask.get().outputFile.name)
+                            .resolve(binary.linkTask.get().outputFileProperty.get().name)
                     }
 
                     task.description = "build webpack ${mode.name.toLowerCase()} bundle"
@@ -249,6 +268,20 @@ open class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     ): T = when (kind) {
         KotlinJsBinaryMode.PRODUCTION -> releaseValue
         KotlinJsBinaryMode.DEVELOPMENT -> debugValue
+    }
+
+    override fun addLinkOptions(compilation: KotlinJsIrCompilation) {
+        if (compilation.platformType != KotlinPlatformType.wasm)
+            return
+
+        // Wasm requires different kinds of launchers for browser and nodejs. This might change in the future.
+        compilation.binaries
+            .withType(JsIrBinary::class.java)
+            .all {
+                it.linkTask.configure { linkTask ->
+                    linkTask.kotlinOptions.freeCompilerArgs += "-Xwasm-launcher=esm"
+                }
+            }
     }
 
     companion object {

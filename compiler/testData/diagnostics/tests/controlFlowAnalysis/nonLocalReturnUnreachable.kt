@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !WITH_NEW_INFERENCE
 // See also KT-5198 / KT-10186
 
 inline fun doCall(f: () -> Unit) = f()

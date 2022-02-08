@@ -1,4 +1,4 @@
-// !WITH_NEW_INFERENCE
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 interface A
@@ -12,7 +12,7 @@ class Cls {
 
     fun test(s: String) {
         if (s.ext is B)
-            take(<!OI;SMARTCAST_IMPOSSIBLE!>s.ext<!>)
+            take(s.ext)
     }
 }
 

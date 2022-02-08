@@ -1,0 +1,1 @@
+Serializer.kt should be also marked as dirty, because it's content depends on declarations which are annotated with @Serializable

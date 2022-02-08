@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestMessageCollector
+import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
 import java.io.File
+import java.nio.file.Files
 import kotlin.reflect.KClass
 import kotlin.script.experimental.annotations.KotlinScript
 import kotlin.script.experimental.api.*
@@ -42,6 +44,19 @@ class ScriptCliCompilationTest : TestCase() {
     fun testSimpleScript() {
         val out = checkRun("hello.kts")
         Assert.assertEquals("Hello from basic script!", out)
+    }
+
+    fun testEmptyScript() {
+        val emptyFile = Files.createTempFile("empty",".kts").toFile()
+        try {
+            Assert.assertTrue(
+                "Script file is not empty",
+                emptyFile.exists() && emptyFile.isFile && emptyFile.length() == 0L
+            )
+            checkRun(emptyFile)
+        } finally {
+            emptyFile.delete()
+        }
     }
 
     fun testSimpleScriptWithArgs() {
@@ -67,6 +82,7 @@ class ScriptCliCompilationTest : TestCase() {
         val collector = TestMessageCollector()
 
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.FULL_JDK).apply {
+            updateWithBaseCompilerArguments()
             put(MESSAGE_COLLECTOR_KEY, collector)
             if (scriptDef != null) {
                 val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
@@ -90,9 +106,16 @@ class ScriptCliCompilationTest : TestCase() {
         args: List<String> = emptyList(),
         scriptDef: KClass<*>? = null,
         classpath: List<File> = emptyList()
+    ): String = checkRun(File(testDataPath, scriptFileName), args, scriptDef, classpath)
+
+    private fun checkRun(
+        scriptFile: File,
+        args: List<String> = emptyList(),
+        scriptDef: KClass<*>? = null,
+        classpath: List<File> = emptyList()
     ): String =
         captureOut {
-            val res = runCompiler(File(testDataPath, scriptFileName), args, scriptDef, classpath)
+            val res = runCompiler(scriptFile, args, scriptDef, classpath)
             val resMessage = lazy {
                 "Compilation results:\n" + res.second.toString()
             }

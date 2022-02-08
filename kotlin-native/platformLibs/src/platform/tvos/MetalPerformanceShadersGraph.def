@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation CoreGraphics Foundation IOSurface Metal MetalPerformanceShaders Security darwin posix
+language = Objective-C
+package = platform.MetalPerformanceShadersGraph
+
+modules.tvos_arm64 = MetalPerformanceShadersGraph
+compilerOpts.tvos_arm64 = -framework MetalPerformanceShadersGraph
+linkerOpts.tvos_arm64 = -framework MetalPerformanceShadersGraph

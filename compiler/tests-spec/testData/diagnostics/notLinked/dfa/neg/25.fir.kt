@@ -17,8 +17,8 @@ fun case_1() {
     val x: ClassWithEqualsOverride? = null
     val y = ClassWithEqualsOverride()
     if (y == x) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithEqualsOverride & ClassWithEqualsOverride?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithEqualsOverride & ClassWithEqualsOverride?")!>x<!>.fun_1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithEqualsOverride? & ClassWithEqualsOverride")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithEqualsOverride? & ClassWithEqualsOverride")!>x<!>.fun_1()
     }
 }
 
@@ -32,8 +32,8 @@ fun case_2() {
     val y: ClassWithEqualsOverride? = ClassWithEqualsOverride()
     if (y != null) {
         if (y == x) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithEqualsOverride & ClassWithEqualsOverride?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithEqualsOverride & ClassWithEqualsOverride?")!>x<!>.fun_1()
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithEqualsOverride? & ClassWithEqualsOverride")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithEqualsOverride? & ClassWithEqualsOverride")!>x<!>.fun_1()
         }
     }
 }
@@ -47,7 +47,7 @@ fun case_3() {
     val x: ClassWithEqualsOverride? = null
     val y: ClassWithEqualsOverride? = ClassWithEqualsOverride()
     if (y!! == x) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithEqualsOverride & ClassWithEqualsOverride?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithEqualsOverride & ClassWithEqualsOverride?")!>x<!>.fun_1()
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithEqualsOverride? & ClassWithEqualsOverride")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ClassWithEqualsOverride? & ClassWithEqualsOverride")!>x<!>.fun_1()
     }
 }

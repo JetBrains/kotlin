@@ -1,3 +1,0 @@
-@file:Some()
-
-package test

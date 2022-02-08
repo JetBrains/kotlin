@@ -6,11 +6,11 @@ infix fun Int.good(x: Int) {}
 
 <!INAPPLICABLE_INFIX_MODIFIER!>infix fun baz(x: Int, y: Int) {}<!>
 
-infix class A
+<!WRONG_MODIFIER_TARGET!>infix<!> class A
 
-infix typealias B = A
+<!WRONG_MODIFIER_TARGET!>infix<!> typealias B = A
 
-infix val x = 1
+<!WRONG_MODIFIER_TARGET!>infix<!> val x = 1
 
 class C {
     infix fun good(x: Int) {}

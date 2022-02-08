@@ -1,11 +1,12 @@
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// FIR_IDE_IGNORE
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
 
 // TESTCASE NUMBER: 1
 fun case_1(value_1: EnumClass?) {
     val value_2: Int
 
-    when (value_1) {
+    <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_1) {
         EnumClass.NORTH -> funWithExactlyOnceCallsInPlace { value_2 = 1 }
         EnumClass.SOUTH -> funWithExactlyOnceCallsInPlace { value_2 = 2 }
         EnumClass.EAST -> funWithExactlyOnceCallsInPlace { value_2 = 4 }
@@ -34,7 +35,7 @@ fun case_2(value_1: Any?) {
 
 // TESTCASE NUMBER: 3
 class case_3(value_1: Any?) {
-    var value_2: Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var value_2: Int<!>
 
     init {
         if (value_1 is String) {
@@ -121,7 +122,7 @@ fun case_8() {
     funWithExactlyOnceCallsInPlace outer@ {
         funWithAtMostOnceCallsInPlace {
             funWithUnknownCallsInPlace {
-                x = 42
+                <!VAL_REASSIGNMENT!>x<!> = 42
             }
             return@outer
         }

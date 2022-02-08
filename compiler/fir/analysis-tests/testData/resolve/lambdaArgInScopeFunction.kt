@@ -21,7 +21,7 @@ fun case1(kotlinClass: KotlinClass?) {
         {it}
     }
 
-    lambda.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Function1<Unit, KotlinClass?>>() }
+    lambda.checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Function1<Unit, KotlinClass?>>() }
 }
 // TESTCASE NUMBER: 2
 fun case2(kotlinClass: KotlinClass) {
@@ -36,5 +36,5 @@ fun case2(kotlinClass: KotlinClass) {
         {it}
     }
 
-    lambda.checkType { <!INAPPLICABLE_CANDIDATE!>_<!><Function1<Unit, KotlinClass?>>() }
+    lambda.checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Function1<Unit, KotlinClass?>>() }
 }

@@ -1,9 +1,0 @@
-// MOVE: down
-fun wrap() {
-    /*
-        comment1
-        comment1
-     */
-    val b = 42
-    <caret>fun nested() {}
-}

@@ -1,3 +1,0 @@
-[NotNull Values]
-8 	<bold>val x</bold> = "".extensionFun() (in foo())
-8 		<bold>val x</bold> = "".extensionFun() (in foo())

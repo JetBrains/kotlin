@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS:-UNUSED_PARAMETER
 
 // KT-9883 prohibit using spread operator for nullable value
@@ -30,9 +29,9 @@ fun baz(s: String) {}
 fun getArr(): Array<String>? = null
 
 fun f() {
-    A().foo(1, *args)
-    <!INAPPLICABLE_CANDIDATE!>bar<!>(2, *args)
-    <!INAPPLICABLE_CANDIDATE!>baz<!>(*args)
+    A().foo(1, <!SPREAD_OF_NULLABLE!>*<!>args)
+    bar(2, <!SPREAD_OF_NULLABLE!>*<!><!ARGUMENT_TYPE_MISMATCH!>args<!>)
+    baz(<!NON_VARARG_SPREAD, SPREAD_OF_NULLABLE!>*<!><!ARGUMENT_TYPE_MISMATCH!>args<!>)
 }
 
 fun g(args: Array<String>?) {
@@ -49,18 +48,18 @@ class B {
 
 fun h(b: B) {
     if (b.args != null) {
-        A().foo(1, *b.args)
+        A().foo(1, <!SPREAD_OF_NULLABLE!>*<!>b.args)
     }
 }
 
 fun k() {
-    A().foo(1, *getArr())
-    <!INAPPLICABLE_CANDIDATE!>bar<!>(2, *getArr())
-    <!INAPPLICABLE_CANDIDATE!>baz<!>(*getArr())
+    A().foo(1, <!SPREAD_OF_NULLABLE!>*<!>getArr())
+    bar(2, <!SPREAD_OF_NULLABLE!>*<!><!ARGUMENT_TYPE_MISMATCH!>getArr()<!>)
+    baz(<!NON_VARARG_SPREAD, SPREAD_OF_NULLABLE!>*<!><!ARGUMENT_TYPE_MISMATCH!>getArr()<!>)
 }
 
 fun invokeTest(goodArgs: Array<String>) {
     J.staticFun(*goodArgs)
-    J.staticFun(*args)
-    J.staticFun(*args ?: null)
+    J.staticFun(<!SPREAD_OF_NULLABLE!>*<!>args)
+    J.staticFun(<!SPREAD_OF_NULLABLE!>*<!>args <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>)
 }

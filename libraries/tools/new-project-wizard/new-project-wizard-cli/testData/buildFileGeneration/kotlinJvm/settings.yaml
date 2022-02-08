@@ -1,8 +1,0 @@
-kotlin:
-  projectKind: Singleplatform
-  modules:
-    - type:
-        targetJvmVersion: "1.6"
-        name: JVM Module
-        testFramework: JUNIT4
-      name: nya

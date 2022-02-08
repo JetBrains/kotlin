@@ -5,14 +5,14 @@
 
 package org.jetbrains.kotlin.fir.backend
 
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.fir.types.CompilerConeAttributes
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 class Fir2IrBuiltIns(
@@ -23,29 +23,36 @@ class Fir2IrBuiltIns(
         provider?.initComponents(components)
     }
 
-    private val extensionFunctionTypeAnnotationSymbol by lazy {
-        annotationSymbolById(CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID)
-    }
-
-    internal fun extensionFunctionTypeAnnotationConstructorCall(): IrConstructorCall =
-        extensionFunctionTypeAnnotationSymbol!!.toConstructorCall()
-
     private val enhancedNullabilityAnnotationSymbol by lazy {
-        annotationSymbolById(CompilerConeAttributes.EnhancedNullability.ANNOTATION_CLASS_ID)
+        annotationSymbolById(StandardClassIds.Annotations.EnhancedNullability)
     }
 
     internal fun enhancedNullabilityAnnotationConstructorCall(): IrConstructorCall? =
         enhancedNullabilityAnnotationSymbol?.toConstructorCall()
 
     private val flexibleNullabilityAnnotationSymbol by lazy {
-        annotationSymbolById(CompilerConeAttributes.FlexibleNullability.ANNOTATION_CLASS_ID)
+        annotationSymbolById(StandardClassIds.Annotations.FlexibleNullability)
     }
 
     internal fun flexibleNullabilityAnnotationConstructorCall(): IrConstructorCall? =
         flexibleNullabilityAnnotationSymbol?.toConstructorCall()
 
+    private val extensionFunctionTypeAnnotationSymbol by lazy {
+        annotationSymbolById(StandardClassIds.Annotations.ExtensionFunctionType)
+    }
+
+    internal fun extensionFunctionTypeAnnotationConstructorCall(): IrConstructorCall? =
+        extensionFunctionTypeAnnotationSymbol?.toConstructorCall()
+
+    private val rawTypeAnnotationSymbol by lazy {
+        annotationSymbolById(StandardClassIds.Annotations.RawTypeAnnotation)
+    }
+
+    internal fun rawTypeAnnotationConstructorCall(): IrConstructorCall? =
+        rawTypeAnnotationSymbol?.toConstructorCall()
+
     private fun annotationSymbolById(id: ClassId): IrClassSymbol? =
-        provider?.getClassSymbolById(id) ?: session.firSymbolProvider.getClassLikeSymbolByFqName(id)?.toSymbol(
+        provider?.getClassSymbolById(id) ?: session.symbolProvider.getClassLikeSymbolByClassId(id)?.toSymbol(
             session, classifierStorage, ConversionTypeContext.DEFAULT
         ) as? IrClassSymbol
 

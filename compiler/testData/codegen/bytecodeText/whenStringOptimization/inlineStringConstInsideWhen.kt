@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 const val y = "cde"
 
 fun foo(x : String) : String {

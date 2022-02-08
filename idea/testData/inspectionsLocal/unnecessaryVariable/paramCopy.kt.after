@@ -1,3 +1,0 @@
-fun sqr(arg: Int): Int {
-    return arg * arg
-}

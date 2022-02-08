@@ -103,4 +103,6 @@ class JvmPackageScope(
     override fun recordLookup(name: Name, location: LookupLocation) {
         c.components.lookupTracker.record(location, packageFragment, name)
     }
+
+    override fun toString(): String = "scope for $packageFragment"
 }

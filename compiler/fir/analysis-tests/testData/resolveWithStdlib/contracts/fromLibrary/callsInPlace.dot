@@ -263,27 +263,27 @@ digraph callsInPlace_kt {
             87 [label="Postponed enter to lambda"];
             subgraph cluster_24 {
                 color=blue
-                94 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-                subgraph cluster_25 {
-                    color=blue
-                    95 [label="Enter block"];
-                    96 [label="Const: String(test_6_1)"];
-                    97 [label="Exit block"];
-                }
-                98 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
-            }
-            88 [label="Postponed exit from lambda"];
-            89 [label="Postponed enter to lambda"];
-            subgraph cluster_26 {
-                color=blue
                 99 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
-                subgraph cluster_27 {
+                subgraph cluster_25 {
                     color=blue
                     100 [label="Enter block"];
                     101 [label="Const: String(test_6_2)"];
                     102 [label="Exit block"];
                 }
                 103 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
+            }
+            88 [label="Postponed exit from lambda"];
+            89 [label="Postponed enter to lambda"];
+            subgraph cluster_26 {
+                color=blue
+                94 [label="Enter function anonymousFunction" style="filled" fillcolor=red];
+                subgraph cluster_27 {
+                    color=blue
+                    95 [label="Enter block"];
+                    96 [label="Const: String(test_6_1)"];
+                    97 [label="Exit block"];
+                }
+                98 [label="Exit function anonymousFunction" style="filled" fillcolor=red];
             }
             90 [label="Postponed exit from lambda"];
             91 [label="Function call: R|/myRun|(...)"];
@@ -293,13 +293,13 @@ digraph callsInPlace_kt {
     }
     85 -> {86};
     86 -> {87};
-    87 -> {94};
+    87 -> {99};
     87 -> {88} [color=red];
-    87 -> {94} [style=dashed];
+    87 -> {99} [style=dashed];
     88 -> {89};
-    89 -> {99};
+    89 -> {94};
     89 -> {90} [color=red];
-    89 -> {99} [style=dashed];
+    89 -> {94} [style=dashed];
     90 -> {91};
     91 -> {92};
     92 -> {93};
@@ -307,13 +307,13 @@ digraph callsInPlace_kt {
     95 -> {96};
     96 -> {97};
     97 -> {98};
-    98 -> {88} [color=green];
+    98 -> {90} [color=green];
     98 -> {94} [color=green style=dashed];
     99 -> {103 100};
     100 -> {101};
     101 -> {102};
     102 -> {103};
-    103 -> {90} [color=green];
+    103 -> {88} [color=green];
     103 -> {99} [color=green style=dashed];
 
     subgraph cluster_28 {

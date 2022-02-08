@@ -24,10 +24,10 @@ fun test() {
 
     val a: Any? = null
 
-    if (platformNN != null) {}
-    if (null != platformNN) {}
-    if (platformNN == null) {}
-    if (null == platformNN) {}
+    if (<!SENSELESS_COMPARISON!>platformNN != null<!>) {}
+    if (<!SENSELESS_COMPARISON!>null != platformNN<!>) {}
+    if (<!SENSELESS_COMPARISON!>platformNN == null<!>) {}
+    if (<!SENSELESS_COMPARISON!>null == platformNN<!>) {}
 
     if (a != null && platformNN != a) {}
 

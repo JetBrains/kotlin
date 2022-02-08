@@ -1,4 +1,6 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 fun <T> underlying(a: IC): T = bar(a, object : IFace<IC, T> {
     override fun call(ic: IC): T = (ic.value as FooHolder).value as T
@@ -32,7 +34,8 @@ interface Foo
 
 class FooHolder(val value: Any): Foo
 
-inline class IC(val value: FooHolder): Foo {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IC(val value: FooHolder): Foo {
     fun <T> dispatchValue(): T = (value as FooHolder).value as T
 }
 

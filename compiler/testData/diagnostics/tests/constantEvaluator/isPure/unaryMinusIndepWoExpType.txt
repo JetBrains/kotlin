@@ -1,0 +1,9 @@
+package
+
+package test {
+    public val p1: kotlin.Int = -1
+    public val p2: kotlin.Long = -1.toLong()
+    public val p3: kotlin.Int = -1
+    public val p4: kotlin.Int = -1
+    public val p5: kotlin.Int = -1
+}

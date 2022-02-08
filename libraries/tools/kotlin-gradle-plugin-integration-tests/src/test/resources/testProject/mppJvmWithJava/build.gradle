@@ -1,29 +1,19 @@
-apply plugin: 'kotlin-multiplatform'
-apply plugin: 'maven-publish'
-
-buildscript {
-    repositories {
-        mavenLocal()
-        google()
-        jcenter()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-        classpath "com.android.tools.build:gradle:$android_tools_version"
-    }
+plugins {
+    id 'org.jetbrains.kotlin.multiplatform'
+    id 'maven-publish'
 }
 
 repositories {
     mavenLocal()
     google()
-    jcenter()
+    mavenCentral()
 }
 
 kotlin {
     jvm("jvmWithJava") {
         withJava()
 
-        compilations.all {
+        compilations.configureEach {
             kotlinOptions.jvmTarget = "1.8"
         }
     }
@@ -35,7 +25,7 @@ allprojects {
     repositories {
         mavenLocal()
         google()
-        jcenter()
+        mavenCentral()
     }
 }
 

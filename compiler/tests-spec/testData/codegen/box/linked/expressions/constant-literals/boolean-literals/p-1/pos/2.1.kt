@@ -18,6 +18,7 @@ internal open class A: `true`() {
     val x2 = false
 }
 
+@Target(AnnotationTarget.CLASS, AnnotationTarget.TYPE)
 annotation class `false`(val x2: Boolean)
 
 @`false`(false) internal class B: @`false`(false) A() {}

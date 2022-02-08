@@ -1,4 +1,9 @@
-inline class Z(val s: String) {
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val s: String) {
     val Int.s: Int get() = 42
 }
 

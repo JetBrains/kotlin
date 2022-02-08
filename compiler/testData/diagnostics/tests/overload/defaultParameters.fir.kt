@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 
@@ -55,5 +54,5 @@ fun test() {
 
     withGenericDefaults("")
 
-    <!AMBIGUITY!>wrong<!>(null!!)
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>wrong<!>(null!!)
 }

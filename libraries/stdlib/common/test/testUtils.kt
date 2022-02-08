@@ -17,3 +17,7 @@ public expect fun testOnJs(action: () -> Unit)
 public expect val isFloat32RangeEnforced: Boolean
 
 public expect val supportsSuppressedExceptions: Boolean
+
+public expect val supportsNamedCapturingGroup: Boolean
+
+public expect val regexSplitUnicodeCodePointHandling: Boolean

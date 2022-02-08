@@ -19,4 +19,5 @@ package org.jetbrains.kotlin.load.java.descriptors;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 
 public interface JavaClassDescriptor extends ClassDescriptor {
+    boolean isRecord();
 }

@@ -1,0 +1,3 @@
+package
+
+context([ERROR : No type element]) public fun foo(): kotlin.Unit

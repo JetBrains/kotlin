@@ -1,0 +1,7 @@
+depends = CoreFoundation Foundation Security darwin posix
+language = Objective-C
+package = platform.PushKit
+modules = PushKit
+
+compilerOpts = -framework PushKit
+linkerOpts = -framework PushKit

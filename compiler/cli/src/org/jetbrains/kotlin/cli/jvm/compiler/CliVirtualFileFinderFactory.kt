@@ -24,9 +24,9 @@ import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 
 // TODO: create different JvmDependenciesIndex instances for different sets of source roots to improve performance
-class CliVirtualFileFinderFactory(private val index: JvmDependenciesIndex) : VirtualFileFinderFactory {
-    override fun create(scope: GlobalSearchScope): VirtualFileFinder = CliVirtualFileFinder(index, scope)
+class CliVirtualFileFinderFactory(private val index: JvmDependenciesIndex, private val enableSearchInCtSym: Boolean) : VirtualFileFinderFactory {
+    override fun create(scope: GlobalSearchScope): VirtualFileFinder = CliVirtualFileFinder(index, scope, enableSearchInCtSym)
 
     override fun create(project: Project, module: ModuleDescriptor): VirtualFileFinder =
-        CliVirtualFileFinder(index, GlobalSearchScope.allScope(project))
+        CliVirtualFileFinder(index, GlobalSearchScope.allScope(project), enableSearchInCtSym)
 }

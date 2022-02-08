@@ -5,7 +5,7 @@ var x
         q checkType { _<Int>() }
     }
 
-var noSetter
+<!MUST_BE_INITIALIZED!>var noSetter<!>
     get() = 1
 
 
@@ -14,8 +14,8 @@ fun foo() {
     noSetter checkType { _<Int>() }
 
     x = 1
-    x = ""
+    x = <!ASSIGNMENT_TYPE_MISMATCH!>""<!>
 
     noSetter = 2
-    noSetter = ""
+    noSetter = <!ASSIGNMENT_TYPE_MISMATCH!>""<!>
 }

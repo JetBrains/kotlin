@@ -1,4 +1,4 @@
-<!DIRECTIVES("WITH_RUNTIME")!>
+<!DIRECTIVES("WITH_STDLIB")!>
 
 fun f1(<!ELEMENT(1)!>: Boolean, <!ELEMENT(2)!>: Boolean) = <!ELEMENT(1)!> && !!!<!ELEMENT(2)!>
 

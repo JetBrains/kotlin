@@ -19,7 +19,7 @@ import org.jetbrains.org.objectweb.asm.tree.*
 
 object TypeIntrinsics {
     @JvmStatic
-    fun instanceOf(v: InstructionAdapter, jetType: KotlinType, boxedAsmType: Type, isReleaseCoroutines: Boolean) {
+    fun instanceOf(v: InstructionAdapter, jetType: KotlinType, boxedAsmType: Type) {
         val functionTypeArity = getFunctionTypeArity(jetType)
         if (functionTypeArity >= 0) {
             v.iconst(functionTypeArity)
@@ -27,28 +27,26 @@ object TypeIntrinsics {
             return
         }
 
-        if (isReleaseCoroutines) {
-            val suspendFunctionTypeArity = getSuspendFunctionTypeArity(jetType)
-            if (suspendFunctionTypeArity >= 0) {
-                val notSuspendLambda = Label()
-                val end = Label()
+        val suspendFunctionTypeArity = getSuspendFunctionTypeArity(jetType)
+        if (suspendFunctionTypeArity >= 0) {
+            val notSuspendLambda = Label()
+            val end = Label()
 
-                with(v) {
-                    dup()
-                    instanceOf(AsmTypes.SUSPEND_FUNCTION_TYPE)
-                    ifeq(notSuspendLambda)
-                    iconst(suspendFunctionTypeArity + 1)
-                    typeIntrinsic(IS_FUNCTON_OF_ARITY_METHOD_NAME, IS_FUNCTON_OF_ARITY_DESCRIPTOR)
-                    goTo(end)
+            with(v) {
+                dup()
+                instanceOf(AsmTypes.SUSPEND_FUNCTION_TYPE)
+                ifeq(notSuspendLambda)
+                iconst(suspendFunctionTypeArity + 1)
+                typeIntrinsic(IS_FUNCTON_OF_ARITY_METHOD_NAME, IS_FUNCTON_OF_ARITY_DESCRIPTOR)
+                goTo(end)
 
-                    mark(notSuspendLambda)
-                    pop()
-                    iconst(0)
+                mark(notSuspendLambda)
+                pop()
+                iconst(0)
 
-                    mark(end)
-                }
-                return
+                mark(end)
             }
+            return
         }
 
         val isMutableCollectionMethodName = getIsMutableCollectionMethodName(jetType)

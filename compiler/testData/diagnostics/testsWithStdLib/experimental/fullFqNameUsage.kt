@@ -1,9 +1,10 @@
 // FIR_IDENTICAL
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// !OPT_IN: kotlin.RequiresOptIn
 
 package test.abc
 
 @RequiresOptIn
+@Retention(AnnotationRetention.BINARY)
 annotation class E
 
 @OptIn(test.abc.E::class)

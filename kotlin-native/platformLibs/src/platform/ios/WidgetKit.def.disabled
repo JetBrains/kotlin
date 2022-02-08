@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.WidgetKit
+modules = WidgetKit
+compilerOpts = -framework WidgetKit
+linkerOpts = -framework WidgetKit
+#Disabled: Swift-only framework

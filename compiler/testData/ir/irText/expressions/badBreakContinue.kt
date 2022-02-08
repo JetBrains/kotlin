@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 // !IGNORE_ERRORS
 
 fun test1() {

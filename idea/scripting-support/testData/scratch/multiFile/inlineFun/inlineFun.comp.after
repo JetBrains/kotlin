@@ -1,5 +1,0 @@
-// REPL_MODE: false
-
-import inlineFun.*
-
-foo { 1 + 3 }         // RESULT: 4

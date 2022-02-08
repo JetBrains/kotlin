@@ -1,0 +1,7 @@
+# Trust mimalloc to be thread safe.
+race:^mi_
+race:^_mi_
+
+# Spin lock on a volatile int in initialization of globals
+# TODO: Remove when volatile int is replaced with a C++ atomic.
+race:CallInitGlobalPossiblyLock

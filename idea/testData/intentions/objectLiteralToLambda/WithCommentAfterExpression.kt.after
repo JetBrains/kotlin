@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-
-val r = Runnable {
-    TODO("not implemented") //To change body ...
-}

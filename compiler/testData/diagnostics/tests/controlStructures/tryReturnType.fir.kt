@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 package a
 
 fun foo() : Int {
@@ -6,15 +5,15 @@ fun foo() : Int {
         doSmth()
     }
     catch (e: Exception) {
-        return ""
+        return <!RETURN_TYPE_MISMATCH!>""<!>
     }
     finally {
-        return ""
+        return <!RETURN_TYPE_MISMATCH!>""<!>
     }
 }
 
 fun bar() : Int =
-    try {
+    <!RETURN_TYPE_MISMATCH!>try {
         doSmth()
     }
     catch (e: Exception) {
@@ -22,7 +21,7 @@ fun bar() : Int =
     }
     finally {
         ""
-    }
+    }<!>
 
 
 fun doSmth() {}

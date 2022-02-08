@@ -1,5 +1,0 @@
-fun foo(f: () -> Unit) {}
-
-fun test() {
-    foo /* c1 */ { /* c2 */ } /* c3 */
-}

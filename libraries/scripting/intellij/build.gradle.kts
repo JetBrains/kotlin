@@ -4,13 +4,11 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.8"
-
 dependencies {
-    compile(project(":kotlin-script-runtime"))
-    compile(kotlinStdlib())
-    compile(project(":kotlin-scripting-common"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    api(project(":kotlin-script-runtime"))
+    api(kotlinStdlib())
+    api(project(":kotlin-scripting-common"))
+    compileOnly(intellijCore())
 }
 
 sourceSets {
@@ -25,3 +23,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
 publish()
 
 standardPublicJars()
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions.freeCompilerArgs += "-Xjvm-default=compatibility"
+}

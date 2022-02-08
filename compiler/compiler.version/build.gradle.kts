@@ -5,8 +5,9 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
-javaHome = rootProject.extra["JDK_16"] as String
+// This module does not apply Kotlin plugin, so we are setting toolchain via
+// java extension
+configureJavaOnlyToolchain(JdkMajorVersion.JDK_1_6)
 
 val kotlinVersion: String by rootProject.extra
 
@@ -19,14 +20,10 @@ sourceSets {
     "test" {}
 }
 
-tasks.withType<JavaCompile> {
-    sourceCompatibility = "1.6"
-    targetCompatibility = "1.6"
-}
-
 tasks.named<ProcessResources>("processResources") {
-    inputs.property("compilerVersion", kotlinVersion)
+    val kotlinVersionLocal = kotlinVersion
+    inputs.property("compilerVersion", kotlinVersionLocal)
     filesMatching("META-INF/compiler.version") {
-        filter<ReplaceTokens>("tokens" to mapOf("snapshot" to kotlinVersion))
+        filter<ReplaceTokens>("tokens" to mapOf("snapshot" to kotlinVersionLocal))
     }
 }

@@ -1,0 +1,4 @@
+expression: {
+    val (a, b) = listOf(1, 2)
+}
+expected type: kotlin/Function0<kotlin/Unit>

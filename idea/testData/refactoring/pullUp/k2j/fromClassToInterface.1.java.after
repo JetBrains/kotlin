@@ -1,8 +1,0 @@
-import org.jetbrains.annotations.NotNull;
-
-interface I {
-
-    boolean foo(int n);
-
-    void bar(@NotNull String s);
-}

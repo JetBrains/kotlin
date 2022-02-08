@@ -1,7 +1,0 @@
-fun Int.foo(b: Int) {
-
-}
-
-fun bar() {
-    10.foo(b = 2)
-}

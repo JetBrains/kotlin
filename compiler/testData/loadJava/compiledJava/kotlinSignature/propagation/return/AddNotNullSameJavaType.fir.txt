@@ -1,2 +1,12 @@
 public abstract interface AddNotNullSameJavaType : R|kotlin/Any| {
+    public abstract interface Sub : R|test/AddNotNullSameJavaType.Super| {
+        @R|org/jetbrains/annotations/NotNull|() public abstract fun foo(): R|@EnhancedNullability kotlin/CharSequence|
+
+    }
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun foo(): R|ft<kotlin/CharSequence, kotlin/CharSequence?>|
+
+        public abstract fun dummy(): R|kotlin/Unit|
+
+    }
 }

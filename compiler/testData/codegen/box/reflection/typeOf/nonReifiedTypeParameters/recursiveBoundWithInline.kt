@@ -1,5 +1,4 @@
-// !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
-// TODO: it should target all backends, but now it's possible to have only one .fial file per test file,
+// TODO: it should target all backends, but now it's possible to have only one .fail file per test file,
 //  so we can't define different messages for different test suites/runners.
 // TARGET_BACKEND: JS
 // KJS_WITH_FULL_RUNTIME

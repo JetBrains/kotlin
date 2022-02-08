@@ -37,6 +37,9 @@ public interface ScriptDescriptor extends ClassDescriptor {
     @Nullable
     PropertyDescriptor getResultValue();
 
+    @Nullable
+    ValueParameterDescriptor getEarlierScriptsConstructorParameter();
+
     @NotNull
     List<ValueParameterDescriptor> getExplicitConstructorParameters();
 
@@ -45,4 +48,6 @@ public interface ScriptDescriptor extends ClassDescriptor {
 
     @NotNull
     List<ValueParameterDescriptor> getScriptProvidedPropertiesParameters();
+
+    boolean isReplScript();
 }

@@ -1,12 +1,6 @@
-apply plugin: 'kotlin'
-apply plugin: 'jps-compatible'
-
-configurePublishing(project)
-
-compileJava {
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-    options.fork = false
+plugins {
+    id "gradle-plugin-common-configuration"
+    id "jps-compatible"
 }
 
 pill {
@@ -14,33 +8,16 @@ pill {
 }
 
 dependencies {
-    compile project(':kotlin-gradle-plugin-api')
-    compile project(':kotlin-gradle-plugin-model')
+    api project(':kotlin-gradle-plugin-api')
+    api project(':kotlin-gradle-plugin-model')
 
-    compile kotlinStdlib()
     compileOnly project(':compiler')
     compileOnly project(':kotlin-sam-with-receiver-compiler-plugin')
 
-    compileOnly gradleApi()
-
-    testCompile gradleApi()
-    testCompile "junit:junit:4.12"
+    testApi gradleApi()
+    testApi DependenciesKt.commonDependency(project, "junit")
 
     embedded(project(":kotlin-sam-with-receiver-compiler-plugin")) { transitive = false }
 }
 
-tasks.withType(project.compileKotlin.class) {
-    kotlinOptions.languageVersion = "1.3"
-    kotlinOptions.apiVersion = "1.3"
-    kotlinOptions.freeCompilerArgs += ["-Xskip-prerelease-check"]
-}
-
-jar {
-    manifestAttributes(manifest, project)
-}
-
 ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDefaultJarDepsToShadedCompiler(project, {}), {})
-configureSourcesJar()
-configureJavadocJar()
-
-test.executable = "${JDK_18}/bin/java"

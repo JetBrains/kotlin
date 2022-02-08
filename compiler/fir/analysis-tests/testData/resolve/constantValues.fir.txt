@@ -1,0 +1,101 @@
+FILE: constantValues.kt
+    public abstract class ConstantValue<out T> : R|kotlin/Any| {
+        public constructor<out T>(value: R|T|): R|ConstantValue<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open val value: R|T| = R|<local>/value|
+            public get(): R|T|
+
+    }
+    public final data class ClassLiteralValue : R|kotlin/Any| {
+        public constructor(classId: R|ClassId|, arrayNestedness: R|kotlin/Int|): R|ClassLiteralValue| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val classId: R|ClassId| = R|<local>/classId|
+            public get(): R|ClassId|
+
+        public final val arrayNestedness: R|kotlin/Int| = R|<local>/arrayNestedness|
+            public get(): R|kotlin/Int|
+
+        public final operator fun component1(): R|ClassId|
+
+        public final operator fun component2(): R|kotlin/Int|
+
+        public final fun copy(classId: R|ClassId| = this@R|/ClassLiteralValue|.R|/ClassLiteralValue.classId|, arrayNestedness: R|kotlin/Int| = this@R|/ClassLiteralValue|.R|/ClassLiteralValue.arrayNestedness|): R|ClassLiteralValue|
+
+    }
+    public final class ClassId : R|kotlin/Any| {
+        public constructor(): R|ClassId| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class KotlinType : R|kotlin/Any| {
+        public constructor(): R|KotlinType| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class KClassValue : R|ConstantValue<KClassValue.Value>| {
+        public constructor(value: R|KClassValue.Value|): R|KClassValue| {
+            super<R|ConstantValue<KClassValue.Value>|>(R|<local>/value|)
+        }
+
+        public sealed class Value : R|kotlin/Any| {
+            protected constructor(): R|KClassValue.Value| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final data class NormalClass : R|KClassValue.Value| {
+                public constructor(value: R|ClassLiteralValue|): R|KClassValue.Value.NormalClass| {
+                    super<R|KClassValue.Value|>()
+                }
+
+                public final val value: R|ClassLiteralValue| = R|<local>/value|
+                    public get(): R|ClassLiteralValue|
+
+                public final val classId: R|ClassId|
+                    public get(): R|ClassId|
+
+                public final val arrayDimensions: R|kotlin/Int|
+                    public get(): R|kotlin/Int|
+
+                public final operator fun component1(): R|ClassLiteralValue|
+
+                public final fun copy(value: R|ClassLiteralValue| = this@R|/KClassValue.Value.NormalClass|.R|/KClassValue.Value.NormalClass.value|): R|KClassValue.Value.NormalClass|
+
+            }
+
+            public final data class LocalClass : R|KClassValue.Value| {
+                public constructor(type: R|KotlinType|): R|KClassValue.Value.LocalClass| {
+                    super<R|KClassValue.Value|>()
+                }
+
+                public final val type: R|KotlinType| = R|<local>/type|
+                    public get(): R|KotlinType|
+
+                public final operator fun component1(): R|KotlinType|
+
+                public final fun copy(type: R|KotlinType| = this@R|/KClassValue.Value.LocalClass|.R|/KClassValue.Value.LocalClass.type|): R|KClassValue.Value.LocalClass|
+
+            }
+
+        }
+
+        public final fun getArgumentType(): R|KotlinType| {
+            when (this@R|/KClassValue|.R|SubstitutionOverride</KClassValue.value: R|KClassValue.Value|>|) {
+                ($subj$ is R|KClassValue.Value.LocalClass|) ->  {
+                    ^getArgumentType this@R|/KClassValue|.R|SubstitutionOverride</KClassValue.value: R|KClassValue.Value|>|.R|/KClassValue.Value.LocalClass.type|
+                }
+                ($subj$ is R|KClassValue.Value.NormalClass|) ->  {
+                    lval <destruct>: R|ClassLiteralValue| = this@R|/KClassValue|.R|SubstitutionOverride</KClassValue.value: R|KClassValue.Value|>|.R|/KClassValue.Value.NormalClass.value|
+                    lval classId: R|ClassId| = R|<local>/<destruct>|.R|/ClassLiteralValue.component1|()
+                    lval arrayDimensions: R|kotlin/Int| = R|<local>/<destruct>|.R|/ClassLiteralValue.component2|()
+                }
+            }
+
+        }
+
+    }

@@ -1,7 +1,0 @@
-import kotlin.random.Random
-
-// MyGenerator: to be implemented
-actual class MyGenerator actual constructor(r: Random) {
-    actual val i: Int
-        get() = TODO("Not yet implemented")
-}

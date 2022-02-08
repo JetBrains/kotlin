@@ -4,23 +4,28 @@ plugins {
 }
 
 dependencies {
-    compile(project(":kotlin-annotations-jvm"))
-    compile(project(":core:descriptors"))
-    compile(project(":core:deserialization"))
-    compile(project(":compiler:util"))
-    compile(project(":compiler:config"))
-    compile(project(":compiler:container"))
-    compile(project(":compiler:resolution"))
-    compile(project(":compiler:psi"))
-    compile(project(":compiler:frontend.common"))
-    compile(project(":kotlin-script-runtime"))
-    compile(commonDep("io.javaslang","javaslang"))
-    api(project(":core:compiler.common.jvm"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("trove4j", "guava", rootProject = rootProject) }
+    api(project(":kotlin-annotations-jvm"))
+    api(project(":core:descriptors"))
+    api(project(":core:deserialization"))
+    api(project(":compiler:util"))
+    api(project(":compiler:config"))
+    api(project(":compiler:container"))
+    api(project(":compiler:resolution"))
+    api(project(":compiler:psi"))
+    api(project(":compiler:frontend.common"))
+    api(project(":compiler:frontend.common-psi"))
+    api(project(":kotlin-script-runtime"))
+    api(commonDependency("io.javaslang","javaslang"))
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+    compileOnly(commonDependency("com.google.guava:guava"))
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" {}
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions.freeCompilerArgs += "-Xjvm-default=compatibility"
 }

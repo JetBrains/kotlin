@@ -16,13 +16,18 @@
 
 package org.jetbrains.kotlin.android.synthetic.test
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.codegen.AbstractBytecodeTextTest
+import org.jetbrains.kotlin.codegen.checkGeneratedTextAgainstExpectedOccurrences
+import org.jetbrains.kotlin.codegen.readExpectedOccurrences
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.util.JUnit4Assertions
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTest() {
     private fun createAndroidAPIEnvironment(path: String) {
         return createEnvironmentForConfiguration(KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.ANDROID_API), path)
@@ -34,12 +39,12 @@ abstract class AbstractAndroidBytecodeShapeTest : AbstractBytecodeTextTest() {
         addAndroidExtensionsRuntimeLibrary(myEnvironment)
     }
 
-    override fun doTest(path: String) {
-        val fileName = path + getTestName(true) + ".kt"
-        createAndroidAPIEnvironment(path)
+    override fun doTest(filePath: String) {
+        val fileName = filePath + getTestName(true) + ".kt"
+        createAndroidAPIEnvironment(filePath)
         loadFileByFullPath(fileName)
         val expected = readExpectedOccurrences(fileName)
         val actual = generateToText()
-        checkGeneratedTextAgainstExpectedOccurrences(actual, expected, TargetBackend.ANY, true)
+        checkGeneratedTextAgainstExpectedOccurrences(actual, expected, TargetBackend.ANY, true, JUnit4Assertions)
     }
 }

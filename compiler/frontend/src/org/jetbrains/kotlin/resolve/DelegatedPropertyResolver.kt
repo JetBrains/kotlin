@@ -18,12 +18,14 @@ import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext.*
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.getCall
+import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.checkers.OperatorCallChecker
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemCompleter
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.calls.tower.PSICallResolver
+import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.ScopeUtils
@@ -94,10 +97,14 @@ class DelegatedPropertyResolver(
             delegateExpression, property, variableDescriptor, initializerScope, trace, outerDataFlowInfo, inferenceSession
         )
 
-        resolveProvideDelegateMethod(variableDescriptor, delegateExpression, byExpressionType, trace, initializerScope, outerDataFlowInfo)
+        resolveProvideDelegateMethod(
+            variableDescriptor, delegateExpression, byExpressionType, trace, initializerScope, outerDataFlowInfo, inferenceSession
+        )
         val delegateType = getResolvedDelegateType(variableDescriptor, delegateExpression, byExpressionType, trace)
 
-        resolveGetValueMethod(variableDescriptor, delegateExpression, delegateType, trace, initializerScope, outerDataFlowInfo)
+        resolveGetValueMethod(
+            variableDescriptor, delegateExpression, delegateType, trace, initializerScope, outerDataFlowInfo, inferenceSession
+        )
         if (property.isVar) {
             resolveSetValueMethod(variableDescriptor, delegateExpression, delegateType, trace, initializerScope, outerDataFlowInfo)
         }
@@ -123,9 +130,12 @@ class DelegatedPropertyResolver(
         byExpressionType: KotlinType,
         trace: BindingTrace,
         initializerScope: LexicalScope,
-        dataFlowInfo: DataFlowInfo
+        dataFlowInfo: DataFlowInfo,
+        inferenceSession: InferenceSession
     ): KotlinType? {
-        resolveProvideDelegateMethod(variableDescriptor, delegateExpression, byExpressionType, trace, initializerScope, dataFlowInfo)
+        resolveProvideDelegateMethod(
+            variableDescriptor, delegateExpression, byExpressionType, trace, initializerScope, dataFlowInfo, inferenceSession
+        )
         val delegateType = getResolvedDelegateType(variableDescriptor, delegateExpression, byExpressionType, trace)
         resolveGetSetValueMethod(variableDescriptor, delegateExpression, delegateType, trace, initializerScope, dataFlowInfo, true)
 
@@ -142,10 +152,12 @@ class DelegatedPropertyResolver(
         delegateType: KotlinType,
         trace: BindingTrace,
         initializerScope: LexicalScope,
-        dataFlowInfo: DataFlowInfo
+        dataFlowInfo: DataFlowInfo,
+        inferenceSession: InferenceSession
     ) {
-        val returnType =
-            getGetValueMethodReturnType(variableDescriptor, delegateExpression, delegateType, trace, initializerScope, dataFlowInfo)
+        val returnType = getGetValueMethodReturnType(
+            variableDescriptor, delegateExpression, delegateType, trace, initializerScope, dataFlowInfo, inferenceSession
+        )
         val propertyType = variableDescriptor.type
 
         /* Do not check return type of get() method of delegate for properties with DeferredType because property type is taken from it */
@@ -288,7 +300,8 @@ class DelegatedPropertyResolver(
         byExpressionType: KotlinType,
         trace: BindingTrace,
         initializerScope: LexicalScope,
-        dataFlowInfo: DataFlowInfo
+        dataFlowInfo: DataFlowInfo,
+        inferenceSession: InferenceSession
     ) {
         if (!isOperatorProvideDelegateSupported) return
         if (trace.bindingContext.get(PROVIDE_DELEGATE_CALL, propertyDescriptor) != null) return
@@ -297,7 +310,7 @@ class DelegatedPropertyResolver(
 
         val provideDelegateResults = getProvideDelegateMethod(
             propertyDescriptor, byExpression, byExpressionType,
-            traceForProvideDelegate, initializerScope, dataFlowInfo
+            traceForProvideDelegate, initializerScope, dataFlowInfo, inferenceSession
         )
         if (!provideDelegateResults.isSuccess) {
             val call = traceForProvideDelegate.bindingContext.get(PROVIDE_DELEGATE_CALL, propertyDescriptor)
@@ -421,7 +434,8 @@ class DelegatedPropertyResolver(
         delegateExpressionType: KotlinType,
         trace: BindingTrace,
         initializerScope: LexicalScope,
-        dataFlowInfo: DataFlowInfo
+        dataFlowInfo: DataFlowInfo,
+        inferenceSession: InferenceSession?
     ): OverloadResolutionResults<FunctionDescriptor> {
         val context = ExpressionTypingContext.newContext(
             trace,
@@ -429,7 +443,8 @@ class DelegatedPropertyResolver(
             dataFlowInfo,
             NO_EXPECTED_TYPE,
             languageVersionSettings,
-            dataFlowValueFactory
+            dataFlowValueFactory,
+            inferenceSession
         )
         return getProvideDelegateMethod(propertyDescriptor, delegateExpression, delegateExpressionType, context)
     }
@@ -526,6 +541,21 @@ class DelegatedPropertyResolver(
         return delegateType
     }
 
+    private fun completeNotComputedDelegateType(trace: BindingTrace, traceToResolveDelegatedProperty: TemporaryBindingTrace) {
+        val ranIntoRecursionDiagnostic = traceToResolveDelegatedProperty.bindingContext.diagnostics.find {
+            it.factory == TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.errorFactory
+                    || it.factory == TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.warningFactory
+        }
+        if (ranIntoRecursionDiagnostic != null) {
+            trace.report(
+                TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.on(
+                    languageVersionSettings,
+                    ranIntoRecursionDiagnostic.psiElement as KtExpression
+                )
+            )
+        }
+    }
+
     private fun resolveWithNewInference(
         delegateExpression: KtExpression,
         variableDescriptor: VariableDescriptorWithAccessors,
@@ -545,7 +575,11 @@ class DelegatedPropertyResolver(
             traceToResolveDelegatedProperty, false, delegateExpression, ContextDependency.DEPENDENT
         )
 
-        var delegateType = delegateTypeInfo.type ?: return null
+        var delegateType = delegateTypeInfo.type ?: run {
+            completeNotComputedDelegateType(trace, traceToResolveDelegatedProperty)
+            return null
+        }
+
         var delegateDataFlow = delegateTypeInfo.dataFlowInfo
 
         val delegateTypeConstructor = delegateType.constructor
@@ -567,7 +601,8 @@ class DelegatedPropertyResolver(
             val delegateTypeWithoutNonFixedVariables = nonFixedVariablesToStubTypesSubstitutor.safeSubstitute(delegateType.unwrap())
 
             val contextForProvideDelegate = createContextForProvideDelegateMethod(
-                scopeForDelegate, delegateDataFlow, traceForProvideDelegate, InferenceSessionForExistingCandidates(substitutionMap != null)
+                scopeForDelegate, delegateDataFlow, traceForProvideDelegate,
+                InferenceSessionForExistingCandidates(substitutionMap != null, inferenceSession)
             )
 
             val provideDelegateResults = getProvideDelegateMethod(
@@ -589,7 +624,7 @@ class DelegatedPropertyResolver(
         return inferDelegateTypeFromGetSetValueMethods(
             delegateExpression, variableDescriptor, scopeForDelegate,
             traceToResolveDelegatedProperty, delegateType, delegateTypeForProperType,
-            delegateDataFlow
+            delegateDataFlow, inferenceSession
         )
     }
 
@@ -632,18 +667,19 @@ class DelegatedPropertyResolver(
         trace: TemporaryBindingTrace,
         delegateType: KotlinType,
         delegateTypeForProperType: KotlinType?,
-        delegateDataFlow: DataFlowInfo
+        delegateDataFlow: DataFlowInfo,
+        inferenceSession: InferenceSession
     ): UnwrappedType {
         val expectedType = if (variableDescriptor.type !is DeferredType) variableDescriptor.type.unwrap() else null
-        val inferenceSession = DelegatedPropertyInferenceSession(
+        val newInferenceSession = DelegateInferenceSession(
             variableDescriptor, expectedType, psiCallResolver,
             postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter,
-            callComponents, builtIns
+            callComponents, builtIns, inferenceSession
         )
 
         val receiver = createReceiverForGetSetValueMethods(delegateExpression, delegateType, trace)
         val context = createContextForGetSetValueMethods(
-            variableDescriptor, scopeForDelegate, delegateDataFlow, trace, inferenceSession
+            variableDescriptor, scopeForDelegate, delegateDataFlow, trace, newInferenceSession
         )
 
         fun recordResolvedDelegateOrReportError(
@@ -678,8 +714,10 @@ class DelegatedPropertyResolver(
             )
         }
 
-        val resolutionCallbacks = psiCallResolver.createResolutionCallbacks(trace, inferenceSession, context = null)
-        val resolutionResults = inferenceSession.resolveCandidates(resolutionCallbacks)
+        val call = CallMaker.makeCall(delegateExpression, receiver)
+        val resolutionContext = BasicCallResolutionContext.create(context, call, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS)
+        val resolutionCallbacks = psiCallResolver.createResolutionCallbacks(trace, newInferenceSession, resolutionContext)
+        val resolutionResults = newInferenceSession.resolveCandidates(resolutionCallbacks)
 
         for ((name, isGet) in listOf(OperatorNameConventions.GET_VALUE to true, OperatorNameConventions.SET_VALUE to false)) {
             val result = resolutionResults.firstOrNull {
@@ -779,7 +817,8 @@ class DelegatedPropertyResolver(
             if (isOperatorProvideDelegateSupported) {
                 val provideDelegateResults = getProvideDelegateMethod(
                     variableDescriptor, delegateExpression, byExpressionType,
-                    traceToResolveConventionMethods, scopeForDelegate, dataFlowInfo
+                    traceToResolveConventionMethods, scopeForDelegate,
+                    dataFlowInfo, null // it's used only from the old type inference
                 )
                 if (conventionMethodFound(provideDelegateResults)) {
                     val provideDelegateDescriptor = provideDelegateResults.resultingDescriptor

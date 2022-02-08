@@ -28,7 +28,7 @@ public final class InlineMutableSet {
     public method clear(): void
     public static method clear-impl(p0: java.util.Set): void
     public static method constructor-impl(p0: java.util.Set): java.util.Set
-    public synthetic bridge method contains(p0: java.lang.Object): boolean
+    public bridge final method contains(p0: java.lang.Object): boolean
     public method contains-jHY5zpA(p0: int): boolean
     public static method contains-jHY5zpA(p0: java.util.Set, p1: int): boolean
     public method containsAll(p0: java.util.Collection): boolean

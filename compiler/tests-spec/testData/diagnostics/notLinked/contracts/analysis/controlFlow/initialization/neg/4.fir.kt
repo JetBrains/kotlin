@@ -1,4 +1,5 @@
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// FIR_IDE_IGNORE
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
 
 // TESTCASE NUMBER: 1
@@ -79,7 +80,7 @@ fun case_5() {
         value_1.inc()
     }
     funWithUnknownCallsInPlace {
-        value_1 = 1
+        <!VAL_REASSIGNMENT!>value_1<!> = 1
     }
     <!UNINITIALIZED_VARIABLE!>value_1<!>.dec()
 }

@@ -19,38 +19,49 @@ object KotlinUsages {
     const val KOTLIN_API = "kotlin-api"
     const val KOTLIN_RUNTIME = "kotlin-runtime"
     const val KOTLIN_METADATA = "kotlin-metadata"
+    const val KOTLIN_CINTEROP = "kotlin-cinterop"
+    const val KOTLIN_SOURCES = "kotlin-sources"
 
     val values = setOf(KOTLIN_API, KOTLIN_RUNTIME)
 
     private val jvmPlatformTypes: Set<KotlinPlatformType> = setOf(jvm, androidJvm)
 
-    internal fun consumerApiUsage(target: KotlinTarget) = target.project.usageByName(
-        when (target.platformType) {
+    internal fun consumerApiUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
+        when (platformType) {
             in jvmPlatformTypes -> JAVA_API
             else -> KOTLIN_API
         }
     )
 
-    internal fun consumerRuntimeUsage(target: KotlinTarget) = target.project.usageByName(
-        when (target.platformType) {
+    internal fun consumerApiUsage(target: KotlinTarget): Usage =
+        consumerApiUsage(target.project, target.platformType)
+
+    internal fun consumerRuntimeUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
+        when (platformType) {
             in jvmPlatformTypes -> JAVA_RUNTIME
             else -> KOTLIN_RUNTIME
         }
     )
 
-    internal fun producerApiUsage(target: KotlinTarget) = target.project.usageByName(
-        when (target.platformType) {
+    internal fun consumerRuntimeUsage(target: KotlinTarget) = consumerRuntimeUsage(target.project, target.platformType)
+
+    internal fun producerApiUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
+        when (platformType) {
             in jvmPlatformTypes -> "java-api-jars"
             else -> KOTLIN_API
         }
     )
 
-    internal fun producerRuntimeUsage(target: KotlinTarget) = target.project.usageByName(
-        when (target.platformType) {
+    internal fun producerApiUsage(target: KotlinTarget) = producerApiUsage(target.project, target.platformType)
+
+    internal fun producerRuntimeUsage(project: Project, platformType: KotlinPlatformType) = project.usageByName(
+        when (platformType) {
             in jvmPlatformTypes -> "java-runtime-jars"
             else -> KOTLIN_RUNTIME
         }
     )
+
+    internal fun producerRuntimeUsage(target: KotlinTarget) = producerRuntimeUsage(target.project, target.platformType)
 
     private class KotlinJavaRuntimeJarsCompatibility : AttributeCompatibilityRule<Usage> {
         // When Gradle resolves a plain old JAR dependency with no metadata attached, the Usage attribute of that dependency
@@ -80,6 +91,29 @@ object KotlinUsages {
         }
     }
 
+    private class KotlinCinteropCompatibility : AttributeCompatibilityRule<Usage> {
+        private val compatibleProducerValues = setOf(KOTLIN_API, JAVA_API, JAVA_RUNTIME)
+        override fun execute(details: CompatibilityCheckDetails<Usage>) = with(details) {
+            if (consumerValue?.name == KOTLIN_CINTEROP && producerValue?.name in compatibleProducerValues) {
+                compatible()
+            }
+        }
+    }
+
+    private class KotlinCinteropDisambiguation : AttributeDisambiguationRule<Usage> {
+        override fun execute(details: MultipleCandidatesDetails<Usage?>) = details.run {
+            if (consumerValue?.name == KOTLIN_CINTEROP) {
+                val candidateNames = candidateValues.map { it?.name }
+                when {
+                    KOTLIN_CINTEROP in candidateNames -> chooseCandidateByName(KOTLIN_CINTEROP)
+                    KOTLIN_API in candidateNames -> chooseCandidateByName(KOTLIN_API)
+                    JAVA_API in candidateNames -> chooseCandidateByName(JAVA_API)
+                    else -> Unit
+                }
+            }
+        }
+    }
+
     private class KotlinMetadataDisambiguation : AttributeDisambiguationRule<Usage> {
         override fun execute(details: MultipleCandidatesDetails<Usage>) = details.run {
             if (consumerValue?.name == KOTLIN_METADATA) {
@@ -95,8 +129,6 @@ object KotlinUsages {
     private class KotlinUsagesDisambiguation : AttributeDisambiguationRule<Usage> {
         override fun execute(details: MultipleCandidatesDetails<Usage?>) = with(details) {
             val candidateNames = candidateValues.map { it?.name }.toSet()
-
-            fun chooseCandidateByName(name: String?): Unit = closestMatch(candidateValues.single { it?.name == name }!!)
 
             // if both API and runtime artifacts are chosen according to the compatibility rules, then
             // the consumer requested nothing specific, so provide them with the runtime variant, which is more complete:
@@ -125,10 +157,17 @@ object KotlinUsages {
         }
     }
 
+    private fun MultipleCandidatesDetails<Usage?>.chooseCandidateByName(name: String?): Unit {
+        closestMatch(candidateValues.single { it?.name == name }!!)
+    }
+
     internal fun setupAttributesMatchingStrategy(project: Project, attributesSchema: AttributesSchema) {
         attributesSchema.attribute(USAGE_ATTRIBUTE) { strategy ->
             strategy.compatibilityRules.add(KotlinJavaRuntimeJarsCompatibility::class.java)
             strategy.disambiguationRules.add(KotlinUsagesDisambiguation::class.java)
+
+            strategy.compatibilityRules.add(KotlinCinteropCompatibility::class.java)
+            strategy.disambiguationRules.add(KotlinCinteropDisambiguation::class.java)
 
             if (project.isKotlinGranularMetadataEnabled) {
                 strategy.compatibilityRules.add(KotlinMetadataCompatibility::class.java)

@@ -21,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.name.SpecialNames;
 import org.jetbrains.kotlin.types.KotlinType;
 
 import java.util.Collection;
@@ -67,7 +68,7 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
             @NotNull Annotations annotations
     ) {
         return new ValueParameterDescriptorImpl(
-                setterDescriptor, null, 0, annotations, Name.special("<set-?>"), type,
+                setterDescriptor, null, 0, annotations, SpecialNames.IMPLICIT_SET_PARAMETER, type,
                 /* declaresDefaultValue = */ false,
                 /* isCrossinline = */ false,
                 /* isNoinline = */ false,

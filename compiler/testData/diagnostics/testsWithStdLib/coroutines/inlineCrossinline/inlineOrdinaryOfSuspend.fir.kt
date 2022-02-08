@@ -1,9 +1,8 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -NOTHING_TO_INLINE -UNUSED_PARAMETER
-// COMMON_COROUTINES_TEST
 // SKIP_TXT
 // WITH_COROUTINES
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 import helpers.*
 
 interface SuspendRunnable {
@@ -18,15 +17,15 @@ interface SuspendRunnable {
 // It is NOT possible to call startCoroutine on the parameter
 // suspend calls possible inside lambda matching to the parameter
 
-inline fun test(c: suspend () -> Unit) {
-    c()
+inline fun test(<!INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED!>c: suspend () -> Unit<!>) {
+    <!ILLEGAL_SUSPEND_FUNCTION_CALL!>c<!>()
     val o = object: SuspendRunnable {
         override suspend fun run() {
             c()
         }
     }
     val l: suspend () -> Unit = { c() }
-    c.startCoroutine(EmptyContinuation)
+    c.<!USAGE_IS_NOT_INLINABLE!>startCoroutine<!>(EmptyContinuation)
 }
 
 fun builder(c: suspend () -> Unit) {}

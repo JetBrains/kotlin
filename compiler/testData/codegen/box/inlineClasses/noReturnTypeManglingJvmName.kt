@@ -1,8 +1,10 @@
-// !LANGUAGE: +InlineClasses -MangleClassMembersReturningInlineClasses
-// WITH_RUNTIME
+// !LANGUAGE: +InlineClasses -MangleClassMembersReturningInlineClasses +ValueClasses
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
+// WORKS_WHEN_VALUE_CLASS
 
-inline class S(val x: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class S(val x: String)
 
 class Test {
     @Suppress("INAPPLICABLE_JVM_NAME")

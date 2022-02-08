@@ -18,10 +18,10 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 class StarProjectionImpl(
     private val typeParameter: TypeParameterDescriptor
@@ -39,20 +39,44 @@ class StarProjectionImpl(
 
     @TypeRefinement
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): TypeProjection = this
+
+    override fun replaceType(type: KotlinType): TypeProjection {
+        throw UnsupportedOperationException("Replacing type for star projection is unsupported")
+    }
 }
 
-fun TypeParameterDescriptor.starProjectionType(): KotlinType {
-    val classDescriptor = this.containingDeclaration as ClassifierDescriptorWithTypeParameters
-    val typeParameters = classDescriptor.typeConstructor.parameters.map { it.typeConstructor }
-    return TypeSubstitutor.create(
-        object : TypeConstructorSubstitution() {
-            override fun get(key: TypeConstructor) =
-                if (key in typeParameters)
-                    TypeUtils.makeStarProjection(key.declarationDescriptor as TypeParameterDescriptor)
-                else null
+private fun buildStarProjectionTypeByTypeParameters(
+    typeParameters: List<TypeConstructor>,
+    upperBounds: List<KotlinType>,
+    builtIns: KotlinBuiltIns
+) = TypeSubstitutor.create(
+    object : TypeConstructorSubstitution() {
+        override fun get(key: TypeConstructor) =
+            if (key in typeParameters)
+                TypeUtils.makeStarProjection(key.declarationDescriptor as TypeParameterDescriptor)
+            else null
 
+    }
+).substitute(upperBounds.first(), Variance.OUT_VARIANCE) ?: builtIns.defaultBound
+
+fun TypeParameterDescriptor.starProjectionType(): KotlinType {
+    return when (val descriptor = this.containingDeclaration) {
+        is ClassifierDescriptorWithTypeParameters -> {
+            buildStarProjectionTypeByTypeParameters(
+                typeParameters = descriptor.typeConstructor.parameters.map { it.typeConstructor },
+                upperBounds,
+                builtIns
+            )
         }
-    ).substitute(this.upperBounds.first(), Variance.OUT_VARIANCE) ?: builtIns.defaultBound
+        is FunctionDescriptor -> {
+            buildStarProjectionTypeByTypeParameters(
+                typeParameters = descriptor.typeParameters.map { it.typeConstructor },
+                upperBounds,
+                builtIns
+            )
+        }
+        else -> throw IllegalArgumentException("Unsupported descriptor type to build star projection type based on type parameters of it")
+    }
 }
 
 // It should only be used in rare cases when type parameter for the relevant argument is not available
@@ -69,4 +93,8 @@ class StarProjectionForAbsentTypeParameter(
 
     @TypeRefinement
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): TypeProjection = this
+
+    override fun replaceType(type: KotlinType): TypeProjection {
+        throw UnsupportedOperationException("Replacing type for star projection is unsupported")
+    }
 }

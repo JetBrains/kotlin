@@ -1,6 +1,0 @@
-import java.io.File
-import java.util.TreeMap
-
-class A {
-    val x = TreeMap<List<File>, String>()
-}

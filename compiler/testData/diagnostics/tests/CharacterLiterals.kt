@@ -1,4 +1,4 @@
-fun test(<!UNUSED_PARAMETER!>c<!> : Char) {
+fun test(c : Char) {
   test(<!EMPTY_CHARACTER_LITERAL!>''<!>)
   test('a')
   test(<!TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL!>'aa'<!>)

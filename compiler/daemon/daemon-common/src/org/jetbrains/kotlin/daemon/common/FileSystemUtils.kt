@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.daemon.common
 
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 
 enum class OSKind {
@@ -25,7 +27,7 @@ enum class OSKind {
     Unknown;
 
     companion object {
-        val current: OSKind = System.getProperty("os.name").toLowerCase().let {
+        val current: OSKind = CompilerSystemProperties.OS_NAME.safeValue.toLowerCaseAsciiOnly().let {
             when {
                 // partly taken from http://www.code4copy.com/java/post/detecting-os-type-in-java
                 it.startsWith("windows") -> Windows
@@ -56,8 +58,8 @@ private fun String?.orDefault(v: String): String =
 
 object FileSystem {
 
-    val userHomePath: String get() = System.getProperty("user.home")
-    val tempPath: String get() = System.getProperty("java.io.tmpdir")
+    val userHomePath: String get() = CompilerSystemProperties.USER_HOME.safeValue
+    val tempPath: String get() = CompilerSystemProperties.TMP_DIR.safeValue
 
     val logFilesPath: String get() = tempPath
 

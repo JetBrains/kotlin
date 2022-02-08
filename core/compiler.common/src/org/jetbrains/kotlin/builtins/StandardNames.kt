@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,19 +16,27 @@ import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 
 @Suppress("Reformat")
 object StandardNames {
+    @JvmField val BACKING_FIELD = Name.identifier("field")
+
+    @JvmField val DEFAULT_VALUE_PARAMETER = Name.identifier("value")
+
     @JvmField val ENUM_VALUES = Name.identifier("values")
 
     @JvmField val ENUM_VALUE_OF = Name.identifier("valueOf")
 
-    @JvmField val COROUTINES_PACKAGE_FQ_NAME_RELEASE = FqName("kotlin.coroutines")
+    @JvmField val DATA_CLASS_COPY = Name.identifier("copy")
 
-    @JvmField val COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL = COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("experimental"))
+    @JvmField val HASHCODE_NAME = Name.identifier("hashCode")
 
-    @JvmField val COROUTINES_INTRINSICS_PACKAGE_FQ_NAME_EXPERIMENTAL = COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("intrinsics"))
+    @JvmField val CHAR_CODE = Name.identifier("code")
 
-    @JvmField val CONTINUATION_INTERFACE_FQ_NAME_EXPERIMENTAL = COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.child(Name.identifier("Continuation"))
+    @JvmField val COROUTINES_PACKAGE_FQ_NAME = FqName("kotlin.coroutines")
 
-    @JvmField val CONTINUATION_INTERFACE_FQ_NAME_RELEASE = COROUTINES_PACKAGE_FQ_NAME_RELEASE.child(Name.identifier("Continuation"))
+    @JvmField val COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME = FqName("kotlin.coroutines.jvm.internal")
+
+    @JvmField val COROUTINES_INTRINSICS_PACKAGE_FQ_NAME = FqName("kotlin.coroutines.intrinsics")
+
+    @JvmField val CONTINUATION_INTERFACE_FQ_NAME = COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("Continuation"))
 
     @JvmField val RESULT_FQ_NAME = FqName("kotlin.Result")
 
@@ -58,6 +66,8 @@ object StandardNames {
     @JvmField
     val TEXT_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("text"))
 
+    val KOTLIN_INTERNAL_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
+
     @JvmField
     val BUILT_INS_PACKAGE_FQ_NAMES = setOf(
         BUILT_INS_PACKAGE_FQ_NAME,
@@ -65,8 +75,8 @@ object StandardNames {
         RANGES_PACKAGE_FQ_NAME,
         ANNOTATION_PACKAGE_FQ_NAME,
         KOTLIN_REFLECT_FQ_NAME,
-        BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal")),
-        COROUTINES_PACKAGE_FQ_NAME_RELEASE
+        KOTLIN_INTERNAL_FQ_NAME,
+        COROUTINES_PACKAGE_FQ_NAME
     )
 
     object FqNames {
@@ -104,13 +114,18 @@ object StandardNames {
         @JvmField val deprecationLevel: FqName = fqName("DeprecationLevel")
         @JvmField val replaceWith: FqName = fqName("ReplaceWith")
         @JvmField val extensionFunctionType: FqName = fqName("ExtensionFunctionType")
+        @JvmField val contextFunctionTypeParams: FqName = fqName("ContextFunctionTypeParams")
         @JvmField val parameterName: FqName = fqName("ParameterName")
+        @JvmField val parameterNameClassId: ClassId = ClassId.topLevel(parameterName)
         @JvmField val annotation: FqName = fqName("Annotation")
         @JvmField val target: FqName = annotationName("Target")
+        @JvmField val targetClassId: ClassId = ClassId.topLevel(target)
         @JvmField val annotationTarget: FqName = annotationName("AnnotationTarget")
         @JvmField val annotationRetention: FqName = annotationName("AnnotationRetention")
         @JvmField val retention: FqName = annotationName("Retention")
+        @JvmField val retentionClassId: ClassId = ClassId.topLevel(retention)
         @JvmField val repeatable: FqName = annotationName("Repeatable")
+        @JvmField val repeatableClassId: ClassId = ClassId.topLevel(repeatable)
         @JvmField val mustBeDocumented: FqName = annotationName("MustBeDocumented")
         @JvmField val unsafeVariance: FqName = fqName("UnsafeVariance")
         @JvmField val publishedApi: FqName = fqName("PublishedApi")
@@ -153,6 +168,10 @@ object StandardNames {
         @JvmField val uShort: ClassId = ClassId.topLevel(uShortFqName)
         @JvmField val uInt: ClassId = ClassId.topLevel(uIntFqName)
         @JvmField val uLong: ClassId = ClassId.topLevel(uLongFqName)
+        @JvmField val uByteArrayFqName: FqName = fqName("UByteArray")
+        @JvmField val uShortArrayFqName: FqName = fqName("UShortArray")
+        @JvmField val uIntArrayFqName: FqName = fqName("UIntArray")
+        @JvmField val uLongArrayFqName: FqName = fqName("ULongArray")
 
         @JvmField val primitiveTypeShortNames: Set<Name> = newHashSetWithExpectedSize<Name>(PrimitiveType.values().size).apply {
             PrimitiveType.values().mapTo(this) { it.typeName }
@@ -231,7 +250,7 @@ object StandardNames {
 
     @JvmStatic
     fun getSuspendFunctionClassId(parameterCount: Int): ClassId {
-        return ClassId(COROUTINES_PACKAGE_FQ_NAME_RELEASE, Name.identifier(getSuspendFunctionName(parameterCount)))
+        return ClassId(COROUTINES_PACKAGE_FQ_NAME, Name.identifier(getSuspendFunctionName(parameterCount)))
     }
 
     @JvmStatic

@@ -1,4 +1,5 @@
-// WITH_RUNTIME
+// IGNORE_BACKEND: JVM_IR
+// WITH_STDLIB
 
 interface Parceler<T>
 

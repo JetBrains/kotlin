@@ -1,3 +1,0 @@
-[NotNull Values]
-5 	<bold>fun bar(a: Int): Int</bold> = foo(a) { if (it > 0) it else return 0 }
-5 		<bold>fun bar(a: Int): Int</bold> = foo(a) { if (it > 0) it else return 0 }

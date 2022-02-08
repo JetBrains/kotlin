@@ -105,12 +105,12 @@ public inline fun maxOf(a: kotlin.Short, b: kotlin.Short, c: kotlin.Short): kotl
 @kotlin.SinceKotlin(version = "1.4")
 public fun maxOf(a: kotlin.Short, vararg other: kotlin.Short): kotlin.Short
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun maxOf(a: kotlin.UByte, b: kotlin.UByte): kotlin.UByte
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun maxOf(a: kotlin.UByte, b: kotlin.UByte, c: kotlin.UByte): kotlin.UByte
 
@@ -118,12 +118,12 @@ public inline fun maxOf(a: kotlin.UByte, b: kotlin.UByte, c: kotlin.UByte): kotl
 @kotlin.ExperimentalUnsignedTypes
 public fun maxOf(a: kotlin.UByte, vararg other: kotlin.UByte): kotlin.UByte
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun maxOf(a: kotlin.UInt, b: kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun maxOf(a: kotlin.UInt, b: kotlin.UInt, c: kotlin.UInt): kotlin.UInt
 
@@ -131,12 +131,12 @@ public inline fun maxOf(a: kotlin.UInt, b: kotlin.UInt, c: kotlin.UInt): kotlin.
 @kotlin.ExperimentalUnsignedTypes
 public fun maxOf(a: kotlin.UInt, vararg other: kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun maxOf(a: kotlin.ULong, b: kotlin.ULong): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun maxOf(a: kotlin.ULong, b: kotlin.ULong, c: kotlin.ULong): kotlin.ULong
 
@@ -144,12 +144,12 @@ public inline fun maxOf(a: kotlin.ULong, b: kotlin.ULong, c: kotlin.ULong): kotl
 @kotlin.ExperimentalUnsignedTypes
 public fun maxOf(a: kotlin.ULong, vararg other: kotlin.ULong): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun maxOf(a: kotlin.UShort, b: kotlin.UShort): kotlin.UShort
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun maxOf(a: kotlin.UShort, b: kotlin.UShort, c: kotlin.UShort): kotlin.UShort
 
@@ -240,12 +240,12 @@ public inline fun minOf(a: kotlin.Short, b: kotlin.Short, c: kotlin.Short): kotl
 @kotlin.SinceKotlin(version = "1.4")
 public fun minOf(a: kotlin.Short, vararg other: kotlin.Short): kotlin.Short
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun minOf(a: kotlin.UByte, b: kotlin.UByte): kotlin.UByte
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun minOf(a: kotlin.UByte, b: kotlin.UByte, c: kotlin.UByte): kotlin.UByte
 
@@ -253,12 +253,12 @@ public inline fun minOf(a: kotlin.UByte, b: kotlin.UByte, c: kotlin.UByte): kotl
 @kotlin.ExperimentalUnsignedTypes
 public fun minOf(a: kotlin.UByte, vararg other: kotlin.UByte): kotlin.UByte
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun minOf(a: kotlin.UInt, b: kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun minOf(a: kotlin.UInt, b: kotlin.UInt, c: kotlin.UInt): kotlin.UInt
 
@@ -266,12 +266,12 @@ public inline fun minOf(a: kotlin.UInt, b: kotlin.UInt, c: kotlin.UInt): kotlin.
 @kotlin.ExperimentalUnsignedTypes
 public fun minOf(a: kotlin.UInt, vararg other: kotlin.UInt): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun minOf(a: kotlin.ULong, b: kotlin.ULong): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun minOf(a: kotlin.ULong, b: kotlin.ULong, c: kotlin.ULong): kotlin.ULong
 
@@ -279,12 +279,12 @@ public inline fun minOf(a: kotlin.ULong, b: kotlin.ULong, c: kotlin.ULong): kotl
 @kotlin.ExperimentalUnsignedTypes
 public fun minOf(a: kotlin.ULong, vararg other: kotlin.ULong): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 public fun minOf(a: kotlin.UShort, b: kotlin.UShort): kotlin.UShort
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun minOf(a: kotlin.UShort, b: kotlin.UShort, c: kotlin.UShort): kotlin.UShort
 

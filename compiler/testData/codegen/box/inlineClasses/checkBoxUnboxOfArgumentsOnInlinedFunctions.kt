@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Foo(val value: Int)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Foo(val value: Int)
 
 fun <T> id(x: T): T = x
 inline fun <T> inlinedId(x: T): T = x

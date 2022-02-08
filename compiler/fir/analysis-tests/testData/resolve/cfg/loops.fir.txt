@@ -1,0 +1,79 @@
+FILE: loops.kt
+    public final fun testWhile(b: R|kotlin/Boolean|, x: R|kotlin/Any?|): R|kotlin/Unit| {
+        while(R|<local>/b|) {
+            lval y: R|kotlin/Boolean| = (R|<local>/x| is R|kotlin/String|)
+        }
+
+        (R|<local>/x| is R|kotlin/String|)
+    }
+    public final fun testDoWhile(b: R|kotlin/Boolean|, x: R|kotlin/Any?|): R|kotlin/Unit| {
+        do {
+            lval y: R|kotlin/Boolean| = (R|<local>/x| is R|kotlin/String|)
+        }
+        while(R|<local>/b|)
+        (R|<local>/x| is R|kotlin/String|)
+    }
+    public final fun testFor(x: R|kotlin/Any?|): R|kotlin/Unit| {
+         {
+            lval <iterator>: R|kotlin/collections/IntIterator| = Int(0).R|kotlin/Int.rangeTo|(Int(5)).R|kotlin/ranges/IntProgression.iterator|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/IntIterator.hasNext: R|kotlin/Boolean|>|()) {
+                lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
+                lval y: R|kotlin/Boolean| = (R|<local>/x| is R|kotlin/String|)
+            }
+
+        }
+
+        (R|<local>/x| is R|kotlin/String|)
+    }
+    public final fun testWhileTrue(): R|kotlin/Unit| {
+        while(Boolean(true)) {
+            Int(1)
+        }
+
+        Int(1)
+    }
+    public final fun testWhileTrueWithBreak(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        while(Boolean(true)) {
+            when () {
+                R|<local>/b| ->  {
+                    break@@@[Boolean(true)]
+                }
+            }
+
+        }
+
+        Int(1)
+    }
+    public final fun testWhileFalse(): R|kotlin/Unit| {
+        while(Boolean(false)) {
+            Int(1)
+        }
+
+        Int(1)
+    }
+    public final fun testDoWhileTrue(): R|kotlin/Unit| {
+        do {
+            Int(1)
+        }
+        while(Boolean(true))
+        Int(1)
+    }
+    public final fun testDoWhileTrueWithBreak(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        do {
+            when () {
+                R|<local>/b| ->  {
+                    break@@@[Boolean(true)]
+                }
+            }
+
+        }
+        while(Boolean(true))
+        Int(1)
+    }
+    public final fun testDoWhileFalse(): R|kotlin/Unit| {
+        do {
+            Int(1)
+        }
+        while(Boolean(false))
+        Int(1)
+    }

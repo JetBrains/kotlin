@@ -27,6 +27,10 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.record
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
+import org.jetbrains.kotlin.load.java.possibleGetMethodNames
+import org.jetbrains.kotlin.load.java.setMethodName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -73,11 +77,8 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor, SyntheticPropert
                 .firstOrNull { originalGetterOrSetter == it.getMethod || originalGetterOrSetter == it.setMethod }
         }
 
-        fun propertyNamesByAccessorName(name: Name): List<Name> = listOfNotNull(
-            propertyNameByGetMethodName(name),
-            propertyNameBySetMethodName(name, withIsPrefix = true),
-            propertyNameBySetMethodName(name, withIsPrefix = false)
-        )
+        fun propertyNamesByAccessorName(name: Name): List<Name> =
+            org.jetbrains.kotlin.load.java.propertyNamesByAccessorName(name)
 
         fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, syntheticScope: SyntheticScope) =
             findByGetterOrSetter(getterOrSetter,
@@ -86,13 +87,14 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor, SyntheticPropert
                                  })
 
         fun propertyNameByGetMethodName(methodName: Name): Name? = org.jetbrains.kotlin.load.java.propertyNameByGetMethodName(methodName)
-
-        fun propertyNameBySetMethodName(methodName: Name, withIsPrefix: Boolean): Name? =
-            org.jetbrains.kotlin.load.java.propertyNameBySetMethodName(methodName, withIsPrefix)
     }
 }
 
-class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val lookupTracker: LookupTracker) : SyntheticScope.Default() {
+class JavaSyntheticPropertiesScope(
+    storageManager: StorageManager,
+    private val lookupTracker: LookupTracker,
+    private val supportJavaRecords: Boolean,
+) : SyntheticScope.Default() {
     private val syntheticPropertyInClass =
         storageManager.createMemoizedFunction<Pair<ClassDescriptor, Name>, SyntheticPropertyHolder> { pair ->
             syntheticPropertyInClassNotCached(pair.first, pair.second)
@@ -113,36 +115,47 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
     }
 
     private fun syntheticPropertyInClassNotCached(ownerClass: ClassDescriptor, name: Name): SyntheticPropertyHolder {
+        val forBean = syntheticPropertyHolderForBeanConvention(name, ownerClass)
+        if (forBean.descriptor != null) return forBean
 
-        fun result(descriptor: PropertyDescriptor?, getterNames: List<Name>, setterName: Name? = null): SyntheticPropertyHolder {
-            if (lookupTracker === LookupTracker.DO_NOTHING) {
-                return if (descriptor == null) SyntheticPropertyHolder.EMPTY else SyntheticPropertyHolder(descriptor, emptyList())
-            }
+        if (!ownerClass.isRecord()) return forBean
 
-            val names = ArrayList<Name>(getterNames.size + (setterName?.let { 1 } ?: 0))
+        val propertyForComponent = syntheticPropertyDescriptorForRecordComponent(name, ownerClass)
 
-            names.addAll(getterNames)
-            names.addIfNotNull(setterName)
+        return createSyntheticPropertyHolder(propertyForComponent, forBean.lookedNames, name)
+    }
 
-            return SyntheticPropertyHolder(descriptor, names)
+    private fun createSyntheticPropertyHolder(
+        descriptor: PropertyDescriptor?,
+        lookedNames: List<Name>,
+        additionalName: Name? = null
+    ): SyntheticPropertyHolder {
+        if (lookupTracker === LookupTracker.DO_NOTHING) {
+            return if (descriptor == null) SyntheticPropertyHolder.EMPTY else SyntheticPropertyHolder(descriptor, emptyList())
         }
 
-        if (name.isSpecial) return SyntheticPropertyHolder.EMPTY
+        val names = ArrayList<Name>(lookedNames.size + (additionalName?.let { 1 } ?: 0))
 
-        val identifier = name.identifier
-        if (identifier.isEmpty()) return SyntheticPropertyHolder.EMPTY
+        names.addAll(lookedNames)
+        names.addIfNotNull(additionalName)
 
-        val firstChar = identifier[0]
-        if (!firstChar.isJavaIdentifierStart() || firstChar in 'A'..'Z') return SyntheticPropertyHolder.EMPTY
+        return SyntheticPropertyHolder(descriptor, names)
+    }
+
+    private fun syntheticPropertyHolderForBeanConvention(
+        name: Name,
+        ownerClass: ClassDescriptor
+    ): SyntheticPropertyHolder {
+        val possibleGetMethodNames = possibleGetMethodNames(name)
+        if (possibleGetMethodNames.isEmpty()) return SyntheticPropertyHolder.EMPTY
 
         val memberScope = ownerClass.unsubstitutedMemberScope
 
-        val possibleGetMethodNames = possibleGetMethodNames(name)
         val getMethod = possibleGetMethodNames
             .flatMap { memberScope.getContributedFunctions(it, NoLookupLocation.FROM_SYNTHETIC_SCOPE) }
             .singleOrNull {
                 it.hasJavaOriginInHierarchy() && isGoodGetMethod(it)
-            } ?: return result(null, possibleGetMethodNames)
+            } ?: return createSyntheticPropertyHolder(null, possibleGetMethodNames)
 
 
         val setMethodName = setMethodName(getMethod.name)
@@ -152,7 +165,27 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
         val propertyType = getMethod.returnType!!
 
         val descriptor = MyPropertyDescriptor.create(ownerClass, getMethod.original, setMethod?.original, name, propertyType)
-        return result(descriptor, possibleGetMethodNames, setMethodName)
+        return createSyntheticPropertyHolder(descriptor, possibleGetMethodNames, setMethodName)
+    }
+
+    private fun syntheticPropertyDescriptorForRecordComponent(
+        name: Name,
+        ownerClass: ClassDescriptor
+    ): PropertyDescriptor? {
+        if (!supportJavaRecords) return null
+
+        val componentLikeMethod =
+            ownerClass.unsubstitutedMemberScope
+                .getContributedFunctions(name, NoLookupLocation.FROM_SYNTHETIC_SCOPE)
+                .singleOrNull(this::isGoodGetMethod) ?: return null
+
+        if (componentLikeMethod !is JavaMethodDescriptor || !componentLikeMethod.isForRecordComponent) {
+            return null
+        }
+
+        val propertyType = componentLikeMethod.returnType!!
+
+        return MyPropertyDescriptor.create(ownerClass, componentLikeMethod.original, null, name, propertyType)
     }
 
     private fun isGoodGetMethod(descriptor: FunctionDescriptor): Boolean {
@@ -249,14 +282,23 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
         if (classifier is ClassDescriptor) {
             for (descriptor in classifier.unsubstitutedMemberScope.getContributedDescriptors(DescriptorKindFilter.FUNCTIONS)) {
                 if (descriptor is FunctionDescriptor) {
-                    val propertyName = SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(descriptor.getName()) ?: continue
-                    addIfNotNull(syntheticPropertyInClass(Pair(classifier, propertyName)).descriptor)
+                    val propertyName = SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(descriptor.getName())
+                    if (propertyName != null) {
+                        addIfNotNull(syntheticPropertyInClass(Pair(classifier, propertyName)).descriptor)
+                    }
+
+                    if (classifier.isRecord()) {
+                        addIfNotNull(syntheticPropertyInClass(Pair(classifier, descriptor.name)).descriptor)
+                    }
                 }
             }
         } else {
             type.supertypes.forEach { collectSyntheticProperties(it.constructor, processedTypes) }
         }
     }
+
+    private fun ClassifierDescriptor.isRecord() =
+        this is JavaClassDescriptor && isRecord
 
     private fun SmartList<PropertyDescriptor>?.add(property: PropertyDescriptor?): SmartList<PropertyDescriptor>? {
         if (property == null) return this
@@ -280,15 +322,15 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
     }
 
     private class MyPropertyDescriptor(
-            containingDeclaration: DeclarationDescriptor,
-            original: PropertyDescriptor?,
-            annotations: Annotations,
-            modality: Modality,
-            visibility: DescriptorVisibility,
-            isVar: Boolean,
-            name: Name,
-            kind: CallableMemberDescriptor.Kind,
-            source: SourceElement
+        containingDeclaration: DeclarationDescriptor,
+        original: PropertyDescriptor?,
+        annotations: Annotations,
+        modality: Modality,
+        visibility: DescriptorVisibility,
+        isVar: Boolean,
+        name: Name,
+        kind: CallableMemberDescriptor.Kind,
+        source: SourceElement
     ) : SyntheticJavaPropertyDescriptor, PropertyDescriptorImpl(
         containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, source,
         /* lateInit = */ false, /* isConst = */ false, /* isExpect = */ false, /* isActual = */ false, /* isExternal = */ false,
@@ -333,7 +375,7 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
                 val receiverType = typeSubstitutor.safeSubstitute(ownerClass.defaultType, Variance.INVARIANT)
                 descriptor.setType(
                     propertyType, typeParameters, null,
-                    DescriptorFactory.createExtensionReceiverParameterForCallable(descriptor, receiverType, Annotations.EMPTY)
+                    DescriptorFactory.createExtensionReceiverParameterForCallable(descriptor, receiverType, Annotations.EMPTY), emptyList()
                 )
 
                 val getter = PropertyGetterDescriptorImpl(
@@ -374,13 +416,13 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
         }
 
         override fun createSubstitutedCopy(
-                newOwner: DeclarationDescriptor,
-                newModality: Modality,
-                newVisibility: DescriptorVisibility,
-                original: PropertyDescriptor?,
-                kind: CallableMemberDescriptor.Kind,
-                newName: Name,
-                source: SourceElement
+            newOwner: DeclarationDescriptor,
+            newModality: Modality,
+            newVisibility: DescriptorVisibility,
+            original: PropertyDescriptor?,
+            kind: CallableMemberDescriptor.Kind,
+            newName: Name,
+            source: SourceElement
         ): PropertyDescriptorImpl {
             return MyPropertyDescriptor(newOwner, this, annotations, newModality, newVisibility, isVar, newName, kind, this.source).apply {
                 getMethod = this@MyPropertyDescriptor.getMethod
@@ -407,37 +449,6 @@ class JavaSyntheticPropertiesScope(storageManager: StorageManager, private val l
             descriptor.getMethod = getMethod.substitute(classParametersSubstitutor) ?: return null
             descriptor.setMethod = setMethod?.substitute(classParametersSubstitutor)
             return descriptor
-        }
-    }
-
-    companion object {
-        fun possibleGetMethodNames(propertyName: Name): List<Name> {
-            val result = ArrayList<Name>(3)
-            val identifier = propertyName.identifier
-
-            if (JvmAbi.startsWithIsPrefix(identifier)) {
-                result.add(propertyName)
-            }
-
-            val capitalize1 = identifier.capitalizeAsciiOnly()
-            val capitalize2 = identifier.capitalizeFirstWord(asciiOnly = true)
-            result.add(Name.identifier("get" + capitalize1))
-            if (capitalize2 != capitalize1) {
-                result.add(Name.identifier("get" + capitalize2))
-            }
-
-            return result
-                .filter { SyntheticJavaPropertyDescriptor.propertyNameByGetMethodName(it) == propertyName } // don't accept "uRL" for "getURL" etc
-        }
-
-        fun setMethodName(getMethodName: Name): Name {
-            val identifier = getMethodName.identifier
-            val prefix = when {
-                identifier.startsWith("get") -> "get"
-                identifier.startsWith("is") -> "is"
-                else -> throw IllegalArgumentException()
-            }
-            return Name.identifier("set" + identifier.removePrefix(prefix))
         }
     }
 }

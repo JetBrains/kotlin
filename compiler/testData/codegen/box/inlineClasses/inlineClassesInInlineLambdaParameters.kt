@@ -1,7 +1,12 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Z(val int: Int)
-inline class L(val long: Long)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val int: Int)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class L(val long: Long)
 
 inline fun <T, R> s0(x: T, fn: (Int, T) -> R) = fn(0, x)
 

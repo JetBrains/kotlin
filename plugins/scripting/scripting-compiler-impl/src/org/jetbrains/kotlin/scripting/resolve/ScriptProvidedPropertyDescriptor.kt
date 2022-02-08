@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.scripting.resolve
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 
 class ScriptProvidedPropertyDescriptor(
@@ -24,7 +21,7 @@ class ScriptProvidedPropertyDescriptor(
     null,
     Annotations.EMPTY,
     Modality.FINAL,
-    DescriptorVisibilities.PRIVATE,
+    DescriptorVisibilities.PUBLIC,
     isVar,
     name,
     CallableMemberDescriptor.Kind.SYNTHESIZED,
@@ -33,59 +30,8 @@ class ScriptProvidedPropertyDescriptor(
     /* isDelegated = */ false
 ) {
     init {
-        setType(typeDescriptor.defaultType, emptyList(), receiver, null)
-        initialize(
-            makePropertyGetterDescriptor(),
-            if (!isVar) null else makePropertySetterDescriptor()
-        )
+        setType(typeDescriptor.defaultType, emptyList(), receiver, null, emptyList())
+        // TODO: consider delegation instead
+        initialize(null, null, null, null)
     }
 }
-
-private fun PropertyDescriptorImpl.makePropertyGetterDescriptor() =
-    PropertyGetterDescriptorImpl(
-        this,
-        Annotations.EMPTY,
-        this.modality,
-        this.visibility,
-        /* isDefault = */
-        false, /* isExternal = */
-        false, /* isInline = */
-        false,
-        this.kind,
-        null,
-        SourceElement.NO_SOURCE
-    ).also {
-        it.initialize(returnType)
-    }
-
-private fun PropertyDescriptorImpl.makePropertySetterDescriptor() =
-    PropertySetterDescriptorImpl(
-        this,
-        Annotations.EMPTY,
-        this.modality,
-        this.visibility,
-        /* isDefault = */
-        false, /* isExternal = */
-        false, /* isInline = */
-        false,
-        this.kind,
-        null,
-        SourceElement.NO_SOURCE
-    ).also {
-        it.initialize(
-            ValueParameterDescriptorImpl(
-                this,
-                null,
-                0,
-                Annotations.EMPTY,
-                Name.special("<set-?>"),
-                returnType,
-                /* declaresDefaultValue = */
-                false, /* isCrossinline = */
-                false, /* isNoinline = */
-                false,
-                null,
-                SourceElement.NO_SOURCE
-            )
-        )
-    }

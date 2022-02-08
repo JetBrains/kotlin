@@ -12,7 +12,7 @@ class UpToDateIT : BaseGradleIT() {
         testMutations(
             *propertyMutationChain(
                 "compileKotlin.kotlinOptions.languageVersion",
-                "null", "'1.3'", "'1.2'", "null"
+                "null", "'1.5'", "'1.4'", "null"
             )
         )
     }
@@ -22,7 +22,7 @@ class UpToDateIT : BaseGradleIT() {
         testMutations(
             *propertyMutationChain(
                 "compileKotlin.kotlinOptions.apiVersion",
-                "null", "'1.3'", "'1.2'", "null"
+                "null", "'1.5'", "'1.4'", "null"
             )
         )
     }
@@ -79,15 +79,15 @@ class UpToDateIT : BaseGradleIT() {
 
         override fun initProject(project: Project) = with(project) {
             buildGradle.appendText(
-                "\nafterEvaluate { println 'compiler_cp=' + compileKotlin.getComputedCompilerClasspath\$kotlin_gradle_plugin() }"
+                "\nafterEvaluate { println 'compiler_cp=' + compileKotlin.getDefaultCompilerClasspath\$kotlin_gradle_plugin().toList() }"
             )
             build("clean") { originalCompilerCp = "compiler_cp=\\[(.*)]".toRegex().find(output)!!.groupValues[1].split(", ") }
             buildGradle.appendText("""${'\n'}
                 // Add Kapt to the project to test its input checks as well:
                 apply plugin: 'kotlin-kapt'
-                compileKotlin.compilerClasspath = files($originalPaths).toList()
+                compileKotlin.getDefaultCompilerClasspath${'$'}kotlin_gradle_plugin().setFrom(files($originalPaths).toList())
                 afterEvaluate {
-                    kaptGenerateStubsKotlin.compilerClasspath = files($originalPaths).toList()
+                    kaptGenerateStubsKotlin.getDefaultCompilerClasspath${'$'}kotlin_gradle_plugin().setFrom(files($originalPaths).toList())
                 }
             """.trimIndent())
         }
@@ -115,8 +115,7 @@ class UpToDateIT : BaseGradleIT() {
         override fun initProject(project: Project) = with(project) {
             buildGradle.appendText(
                 "\n" + """
-                buildscript { dependencies { classpath "org.jetbrains.kotlin:kotlin-allopen:${'$'}kotlin_version" } }
-                apply plugin: "kotlin-allopen"
+                plugins.apply("org.jetbrains.kotlin.plugin.allopen")
                 allOpen { annotation("allopen.Foo"); annotation("allopen.Bar") }
             """.trimIndent()
             )

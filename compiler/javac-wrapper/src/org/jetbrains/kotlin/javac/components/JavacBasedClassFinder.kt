@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.javac.components
 
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.AbstractJavaClassFinder
@@ -25,20 +26,23 @@ import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 
 class JavacBasedClassFinder : AbstractJavaClassFinder() {
-
     private lateinit var javac: JavacWrapper
 
-    override fun initialize(trace: BindingTrace, codeAnalyzer: KotlinCodeAnalyzer, languageVersionSettings: LanguageVersionSettings) {
+    override fun initialize(
+        trace: BindingTrace,
+        codeAnalyzer: KotlinCodeAnalyzer,
+        languageVersionSettings: LanguageVersionSettings,
+        jvmTarget: JvmTarget,
+    ) {
         javac = JavacWrapper.getInstance(project)
-        super.initialize(trace, codeAnalyzer, languageVersionSettings)
+        super.initialize(trace, codeAnalyzer, languageVersionSettings, jvmTarget)
     }
 
     override fun findClass(request: JavaClassFinder.Request) =
         // TODO: reuse previouslyFoundClassFileContent if it's possible in javac
         javac.findClass(request.classId, javaSearchScope)
 
-    override fun findPackage(fqName: FqName) = javac.findPackage(fqName, javaSearchScope)
+    override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean) = javac.findPackage(fqName, javaSearchScope)
 
     override fun knownClassNamesInPackage(packageFqName: FqName) = javac.knownClassNamesInPackage(packageFqName)
-
 }

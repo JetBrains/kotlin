@@ -127,10 +127,19 @@ open class SpecialGenericSignatures {
 
         val ORIGINAL_SHORT_NAMES: List<Name> = NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.keys.map { it.name }
 
-        val JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP: Map<Name, List<Name>> =
+        val JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP: Map<Name, Name> =
             NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.entries
                 .map { Pair(it.key.name, it.value) }
-                .groupBy({ it.second }, { it.first })
+                .associateBy({ it.second }, { it.first })
+
+        fun getBuiltinFunctionNamesByJvmName(name: Name): Name? =
+            JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP[name]
+
+        val Name.sameAsBuiltinMethodWithErasedValueParameters: Boolean
+            get() = this in ERASED_VALUE_PARAMETERS_SHORT_NAMES
+
+        val Name.sameAsRenamedInJvmBuiltin: Boolean
+            get() = this in ORIGINAL_SHORT_NAMES
 
     }
 }

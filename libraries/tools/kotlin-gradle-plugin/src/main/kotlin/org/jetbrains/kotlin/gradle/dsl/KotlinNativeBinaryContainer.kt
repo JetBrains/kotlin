@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
-import org.gradle.api.*
+import org.gradle.api.DomainObjectSet
+import org.gradle.api.Named
+import org.gradle.api.NamedDomainObjectSet
+import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -51,7 +54,7 @@ open class KotlinNativeBinaryContainer @Inject constructor(
             "Binary $name has incorrect outputKind or build type.\n" +
                     "Expected: ${buildType.getName()} $classifier. Actual: ${binary.buildType.getName()} ${binary.outputKind.taskNameClassifier}."
         }
-        return binary as T
+        return binary
     }
 
     private inline fun <reified T : NativeBinary> findBinary(
@@ -156,6 +159,14 @@ open class KotlinNativeBinaryContainer @Inject constructor(
 
         internal fun generateBinaryName(prefix: String, buildType: NativeBuildType, outputKindClassifier: String) =
             lowerCamelCaseName(prefix, buildType.getName(), outputKindClassifier)
+
+        internal fun extractPrefixFromBinaryName(name: String, buildType: NativeBuildType, outputKindClassifier: String): String {
+            val suffix = lowerCamelCaseName(buildType.getName(), outputKindClassifier)
+            return if (name == suffix)
+                ""
+            else
+                name.substringBeforeLast(suffix.capitalize())
+        }
 
         // TODO: Remove in 1.3.50.
         private val GET_TEST_DEPRECATION_WARNING = """

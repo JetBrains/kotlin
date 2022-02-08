@@ -1,3 +1,5 @@
+// LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
+// IGNORE_FIR_DIAGNOSTICS
 var field: Int = 0
 
 fun next(): Int {

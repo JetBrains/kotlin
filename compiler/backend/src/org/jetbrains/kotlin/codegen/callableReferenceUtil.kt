@@ -94,7 +94,8 @@ fun InstructionAdapter.generateClosureFieldsInitializationFromParameters(
 }
 
 fun computeExpectedNumberOfReceivers(referencedFunction: FunctionDescriptor, isBound: Boolean): Int {
-    val receivers = (if (referencedFunction.dispatchReceiverParameter != null) 1 else 0) +
+    val receivers = referencedFunction.contextReceiverParameters.size +
+            (if (referencedFunction.dispatchReceiverParameter != null) 1 else 0) +
             (if (referencedFunction.extensionReceiverParameter != null) 1 else 0) -
             (if (isBound) 1 else 0)
 

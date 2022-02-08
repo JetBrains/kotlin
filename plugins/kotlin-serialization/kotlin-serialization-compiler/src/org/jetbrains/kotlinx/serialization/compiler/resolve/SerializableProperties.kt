@@ -7,15 +7,17 @@ package org.jetbrains.kotlinx.serialization.compiler.resolve
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtDeclarationWithInitializer
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.hasBackingField
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SERIALIZABLE_PROPERTIES
-import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginMetadataExtensions
 
@@ -48,10 +50,15 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
             .filter { it.kind == CallableMemberDescriptor.Kind.DECLARATION }
             .filter(::isPropSerializable)
             .map { prop ->
+                val declaresDefaultValue = prop.declaresDefaultValue()
                 SerializableProperty(
                     prop,
                     primaryConstructorProperties[prop] ?: false,
                     prop.hasBackingField(bindingContext) || (prop is DeserializedPropertyDescriptor && prop.backingField != null) // workaround for TODO in .hasBackingField
+                            // workaround for overridden getter (val) and getter+setter (var) - in this case hasBackingField returning false
+                            // but initializer presents only for property with backing field
+                            || declaresDefaultValue,
+                    declaresDefaultValue
                 )
             }
             .filterNot { it.transient }
@@ -66,7 +73,7 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
             .let { unsort(serializableClass, it) }
 
         isExternallySerializable =
-            serializableClass.isSerializableEnum() || primaryConstructorParameters.size == primaryConstructorProperties.size
+            serializableClass.isInternallySerializableEnum() || primaryConstructorParameters.size == primaryConstructorProperties.size
 
     }
 
@@ -85,6 +92,54 @@ class SerializableProperties(private val serializableClass: ClassDescriptor, val
     val primaryConstructorWithDefaults = serializableClass.unsubstitutedPrimaryConstructor
         ?.original?.valueParameters?.any { it.declaresDefaultValue() } ?: false
 }
+
+fun PropertyDescriptor.declaresDefaultValue(): Boolean{
+    when (val declaration = this.source.getPsi()) {
+        is KtDeclarationWithInitializer -> return declaration.initializer != null
+        is KtParameter -> return declaration.defaultValue != null
+        is Any -> return false // Not-null check
+    }
+    // PSI is null, property is from another module
+    if (this !is DeserializedPropertyDescriptor) return false
+    val myClassCtor = (this.containingDeclaration as? ClassDescriptor)?.unsubstitutedPrimaryConstructor ?: return false
+    // If property is a constructor parameter, check parameter default value
+    // (serializable classes always have parameters-as-properties, so no name clash here)
+    if (myClassCtor.valueParameters.find { it.name == this.name }?.declaresDefaultValue() == true) return true
+    // If it is a body property, then it is likely to have initializer when getter is not specified
+    // note this approach is not working well if we have smth like `get() = field`, but such cases on cross-module boundaries
+    // should be very marginal. If we want to solve them, we need to add protobuf metadata extension.
+    if (getter?.isDefault == true) return true
+    return false
+}
+
+
+internal val SerializableProperties.goldenMask: Int
+    get() {
+        var goldenMask = 0
+        var requiredBit = 1
+        for (property in serializableProperties) {
+            if (!property.optional) {
+                goldenMask = goldenMask or requiredBit
+            }
+            requiredBit = requiredBit shl 1
+        }
+        return goldenMask
+    }
+
+internal val SerializableProperties.goldenMaskList: List<Int>
+    get() {
+        val maskSlotCount = serializableProperties.bitMaskSlotCount()
+        val goldenMaskList = MutableList(maskSlotCount) { 0 }
+
+        for (i in serializableProperties.indices) {
+            if (!serializableProperties[i].optional) {
+                val slotNumber = i / 32
+                val bitInSlot = i % 32
+                goldenMaskList[slotNumber] = goldenMaskList[slotNumber] or (1 shl bitInSlot)
+            }
+        }
+        return goldenMaskList
+    }
 
 internal fun List<SerializableProperty>.bitMaskSlotCount() = size / 32 + 1
 internal fun bitMaskSlotAt(propertyIndex: Int) = propertyIndex / 32

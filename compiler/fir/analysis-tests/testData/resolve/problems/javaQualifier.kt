@@ -12,6 +12,6 @@ public class W {
 // FILE: main.kt
 fun main() {
     W.E().length // ambiguity in old FE, resolved to static method in FIR
-    W.E.length // resolved to static field in FIR and old FE
-    W.E.<!UNRESOLVED_REFERENCE!>w<!> // resolved to static field in FE
+    W.E.<!UNRESOLVED_REFERENCE!>length<!> // resolved with error to the class W.E in FIR and old FE
+    W.E.w // resolved to static field W.e.W in FE
 }

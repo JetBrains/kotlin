@@ -20,6 +20,10 @@ inline fun buzz(): Int {
     return o.f()
 }
 
+fun overloadedFun(i: Int) = i + 1
+
+fun overloadedFun(s: String) = s + "!"
+
 // FILE: lib.js
 
 function bar() {
@@ -46,6 +50,12 @@ fun box(): String {
 
     val e = lib.callFoo()
     if (e != 23) return "fail: inline function calling another function: $e"
+
+    val f = lib.overloadedFun(1)
+    if (f != 2) return "fail: overloadedFun(Int): $f"
+
+    val g = lib.overloadedFun("A")
+    if (g != "A!") return "fail: overloadedFun(String): $f"
 
     return "OK"
 }

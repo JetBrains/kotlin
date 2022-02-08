@@ -1,7 +1,7 @@
 expect fun foo1()
-expect val bar1 = 42
+expect val bar1 = <!EXPECTED_PROPERTY_INITIALIZER!>42<!>
 expect class Baz1
 
 actual fun foo2() = 42
-actual val bar2: Int
+<!MUST_BE_INITIALIZED!>actual val bar2: Int<!>
 actual interface Baz2

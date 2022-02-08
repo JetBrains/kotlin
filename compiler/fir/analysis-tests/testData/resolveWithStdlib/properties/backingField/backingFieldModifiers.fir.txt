@@ -1,0 +1,35 @@
+FILE: backingFieldModifiers.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/Number|
+            private <explicit backing field>: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Number|
+
+        public final val b: R|kotlin/Number|
+            private <explicit backing field>: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Number|
+
+        public final val c: R|kotlin/Number|
+            private <explicit backing field>: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Number|
+
+        public final val d: R|kotlin/Number|
+            private <explicit backing field>: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Number|
+
+        public final val e: R|kotlin/Number|
+            private <explicit backing field>: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Number|
+
+        public final val f: R|kotlin/Number|
+            private <explicit backing field>: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Number|
+
+        public final val g: R|kotlin/Number|
+            private <explicit backing field>: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Number|
+
+    }

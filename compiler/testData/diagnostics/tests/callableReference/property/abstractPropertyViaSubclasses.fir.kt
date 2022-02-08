@@ -22,15 +22,15 @@ fun test() {
     val base = Base::x
     checkSubtype<KProperty1<Base, Any>>(base)
     checkSubtype<Any>(base.get(A()))
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Number>(base.get(B()))
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(base.get(C()))
+    checkSubtype<Number>(<!ARGUMENT_TYPE_MISMATCH!>base.get(B())<!>)
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>base.get(C())<!>)
 
     val a = A::x
     checkSubtype<KProperty1<A, String>>(a)
     checkSubtype<String>(a.get(A()))
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Number>(a.<!INAPPLICABLE_CANDIDATE!>get<!>(B()))
+    checkSubtype<Number>(<!ARGUMENT_TYPE_MISMATCH!>a.get(<!ARGUMENT_TYPE_MISMATCH!>B()<!>)<!>)
 
     val b = B::x
     checkSubtype<KProperty1<B, Number>>(b)
-    <!INAPPLICABLE_CANDIDATE!>checkSubtype<!><Int>(b.get(C()))
+    checkSubtype<Int>(<!ARGUMENT_TYPE_MISMATCH!>b.get(C())<!>)
 }

@@ -51,18 +51,25 @@ fun cannotBe() {
     <!VARIABLE_EXPECTED!>5<!> = 34
 }
 
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.EXPRESSION)
+annotation class Ann
+
 fun canBe(i0: Int, j: Int) {
     var i = i0
-    (<!VARIABLE_EXPECTED!>label@ i<!>) = 34
+    (label@ i) = 34
 
-    (<!VARIABLE_EXPECTED!>label@ j<!>) = 34 //repeat for j
+    (label@ <!VAL_REASSIGNMENT!>j<!>) = 34 //repeat for j
 
     val a = A()
-    (<!VARIABLE_EXPECTED!>l@ a.a<!>) = 3894
+    (l@ a.a) = 3894
+
+    @Ann
+    l@ (i) = 123
 }
 
 fun canBe2(j: Int) {
-    (<!VARIABLE_EXPECTED!>label@ j<!>) = 34
+    (label@ <!VAL_REASSIGNMENT!>j<!>) = 34
 }
 
 class A() {
@@ -78,10 +85,13 @@ class Test() {
         (f@ <!VARIABLE_EXPECTED!>getInt()<!>) += 343
 
         <!VARIABLE_EXPECTED!>1<!>++
-        (r@ <!VARIABLE_EXPECTED!>1<!>)++
+        (r@ <!VARIABLE_EXPECTED!>1<!>)--
 
         <!VARIABLE_EXPECTED!>getInt()<!>++
-        (m@ <!VARIABLE_EXPECTED!>getInt()<!>)++
+        (m@ <!VARIABLE_EXPECTED!>getInt()<!>)--
+
+        ++<!VARIABLE_EXPECTED!>2<!>
+        --(r@ <!VARIABLE_EXPECTED!>2<!>)
 
         this<!UNRESOLVED_REFERENCE!>++<!>
 
@@ -89,6 +99,9 @@ class Test() {
         s += "ss"
         s += this
         s += (a@ 2)
+
+        @Ann
+        l@ (<!VARIABLE_EXPECTED!>1<!>) = 123
     }
 
     fun testIncompleteSyntax() {
@@ -103,32 +116,38 @@ class Test() {
         a += 34
         (l@ a) += 34
 
-        <!VARIABLE_EXPECTED!>b<!> += 34
+        <!VAL_REASSIGNMENT!>b<!> += 34
 
         a++
-        (l@ a)++
+        (@Ann l@ a)--
         (a)++
+        --a
+        ++(@Ann l@ a)
+        --(a)
     }
 
     fun testVariables1() {
         val b: Int = 34
 
-        (l@ <!VARIABLE_EXPECTED!>b<!>) += 34
+        (l@ <!VAL_REASSIGNMENT!>b<!>) += 34
         //repeat for b
-        (<!VARIABLE_EXPECTED!>b<!>) += 3
+        (<!VAL_REASSIGNMENT!>b<!>) += 3
     }
 
     fun testArrays(a: Array<Int>, ab: Ab) {
         a[3] = 4
         a[4]++
         a[6] += 43
+        @Ann
+        a[7] = 7
+        (@Ann l@ (a))[8] = 8
 
         ab.getArray()[54] = 23
         ab.getArray()[54]++
 
         (f@ a)[3] = 4
 
-        <!UNRESOLVED_REFERENCE!>this[54] = 34<!>
+        this<!NO_SET_METHOD!>[54]<!> = 34
     }
 }
 

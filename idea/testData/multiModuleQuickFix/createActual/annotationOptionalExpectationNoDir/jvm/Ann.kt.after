@@ -1,3 +1,0 @@
-package kotlin
-
-actual annotation class Ann

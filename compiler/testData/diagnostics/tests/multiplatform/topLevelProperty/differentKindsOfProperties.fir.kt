@@ -14,11 +14,11 @@ expect var varWithGetSet: String
     get set
 
 expect var varWithPlatformGetSet: String
-    expect get
-    expect set
+    <!WRONG_MODIFIER_TARGET!>expect<!> get
+    <!WRONG_MODIFIER_TARGET!>expect<!> set
 
-expect val backingFieldVal: String = "no"
-expect var backingFieldVar: String = "no"
+expect val backingFieldVal: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!>
+expect var backingFieldVar: String = <!EXPECTED_PROPERTY_INITIALIZER!>"no"<!>
 
 expect val customAccessorVal: String
     get() = "no"
@@ -26,15 +26,15 @@ expect var customAccessorVar: String
     get() = "no"
     set(value) {}
 
-expect const val constVal: Int
+expect <!CONST_VAL_WITHOUT_INITIALIZER!>const<!> val constVal: Int
 
-expect lateinit var lateinitVar: String
+expect <!EXPECTED_LATEINIT_PROPERTY!>lateinit<!> var lateinitVar: String
 
-expect val delegated: String by Delegate
+expect val delegated: String by <!EXPECTED_DELEGATED_PROPERTY!>Delegate<!>
 object Delegate { operator fun getValue(x: Any?, y: Any?): String = "" }
 
 fun test(): String {
-    expect val localVariable: String
+    <!WRONG_MODIFIER_TARGET!>expect<!> val localVariable: String
     localVariable = "no"
     return localVariable
 }

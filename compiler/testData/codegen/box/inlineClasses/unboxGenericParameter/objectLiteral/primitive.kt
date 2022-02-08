@@ -1,4 +1,6 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 fun <T> underlying(a: IC): T = bar(a, object : IFace<IC, T> {
     override fun call(ic: IC): T = ic.value as T
@@ -28,7 +30,8 @@ fun <T> IC.extensionValue(): T = value as T
 
 fun <T> normalValue(ic: IC): T = ic.value as T
 
-inline class IC(val value: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IC(val value: Int) {
     fun <T> dispatchValue(): T = value as T
 }
 

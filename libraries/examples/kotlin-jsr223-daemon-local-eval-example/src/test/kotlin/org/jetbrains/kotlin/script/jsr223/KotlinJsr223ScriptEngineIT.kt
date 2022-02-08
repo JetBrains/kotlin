@@ -22,10 +22,7 @@ import org.junit.Assert
 import org.junit.Test
 import java.lang.management.ManagementFactory
 import java.util.concurrent.TimeUnit
-import javax.script.Invocable
-import javax.script.ScriptEngine
-import javax.script.ScriptEngineManager
-import javax.script.SimpleBindings
+import javax.script.*
 
 class KotlinJsr223DaemonCompileScriptEngineIT {
 
@@ -92,7 +89,7 @@ obj
 //        assertThrows(NoSuchMethodException::class.java) {
 //            invocator!!.invokeMethod(res1, "fn", 3)
 //        }
-        val res3 = invocator!!.invokeMethod(res1, "fn1", 3)
+        val res3 = invocator.invokeMethod(res1, "fn1", 3)
         Assert.assertEquals(6, res3)
     }
 
@@ -126,6 +123,17 @@ obj
         Assert.assertEquals(7, res3)
     }
 
+    @Test
+    fun testSimpleCompilableWithBindings() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")
+        engine.put("z", 33)
+        val comp = (engine as Compilable).compile("val x = 10 + bindings[\"z\"] as Int\nx + 20")
+        val res1 = comp.eval()
+        Assert.assertEquals(63, res1)
+        engine.put("z", 44)
+        val res2 = comp.eval()
+        Assert.assertEquals(74, res2)
+    }
 
     // Note: the test is flaky, because it is statistical and the thresholds are not big enough.
     // Therefore it was decided to disable it, but leave in the code in order to be able to quickly check overheads when needed.
@@ -142,10 +150,10 @@ obj
         val times = generateSequence {
             val t0 = mxBeans.threadCpuTime()
 
-            val res1 = engine.eval(script)
+            engine.eval(script)
             val t1 = mxBeans.threadCpuTime()
 
-            val res2 = engine.eval("eval(\"\"\"$script\"\"\", bnd)")
+            engine.eval("eval(\"\"\"$script\"\"\", bnd)")
             val t2 = mxBeans.threadCpuTime()
 
             Triple(t1 - t0, t2 - t1, t2 - t1)

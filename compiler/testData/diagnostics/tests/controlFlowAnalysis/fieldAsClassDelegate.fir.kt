@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // See KT-15566
 // NI_EXPECTED_FILE
 
@@ -29,7 +28,7 @@ private fun <T> lazy(init: () -> T): <!UNRESOLVED_REFERENCE!>kotlin.Lazy<T><!> {
 }
 
 object DefaultHttpClientWithBy : HttpClient by client {
-    val client by <!UNRESOLVED_REFERENCE!>lazy { HttpClientImpl() }<!>
+    val client by lazy { HttpClientImpl() }
 }
 
 object DefaultFqHttpClient : HttpClient by DefaultFqHttpClient.client {

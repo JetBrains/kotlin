@@ -1,0 +1,16 @@
+FILE: byteArray.kt
+    package Test
+
+    public abstract interface ByteArray : R|kotlin/Any| {
+        public abstract val array: R|Test/ByteArray|
+            public get(): R|Test/ByteArray|
+
+    }
+FILE: main.kt
+    package use
+
+    public abstract interface My : R|kotlin/Any| {
+        public abstract val array: R|kotlin/ByteArray|
+            public get(): R|kotlin/ByteArray|
+
+    }

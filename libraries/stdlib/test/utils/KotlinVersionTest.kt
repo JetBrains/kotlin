@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,7 +20,7 @@ class KotlinVersionTest {
         val anotherCurrent = KotlinVersion.CURRENT.run { KotlinVersion(major, minor, patch) }
         assertEquals(KotlinVersion.CURRENT, anotherCurrent)
         assertEquals(KotlinVersion.CURRENT.hashCode(), anotherCurrent.hashCode())
-        assertEquals(0, KotlinVersion.CURRENT.compareTo(anotherCurrent))
+        assertEquals(0, KotlinVersion.CURRENT compareTo anotherCurrent)
     }
 
     @Test fun componentValidation() {

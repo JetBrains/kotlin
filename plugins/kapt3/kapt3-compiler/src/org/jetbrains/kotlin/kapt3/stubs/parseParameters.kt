@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.kapt3.stubs
 
-import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.kapt3.util.isAbstract
 import org.jetbrains.kotlin.kapt3.util.isEnum
 import org.jetbrains.kotlin.kapt3.util.isJvmOverloadsGenerated
@@ -25,7 +25,6 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AnnotationNode
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
-import java.util.*
 
 internal class ParameterInfo(
     val flags: Long,
@@ -35,7 +34,11 @@ internal class ParameterInfo(
     val invisibleAnnotations: List<AnnotationNode>?
 )
 
-internal fun MethodNode.getParametersInfo(containingClass: ClassNode, isInnerClassMember: Boolean): List<ParameterInfo> {
+internal fun MethodNode.getParametersInfo(
+    containingClass: ClassNode,
+    isInnerClassMember: Boolean,
+    originalDescriptor: CallableDescriptor
+): List<ParameterInfo> {
     val localVariables = this.localVariables ?: emptyList()
     val parameters = this.parameters ?: emptyList()
     val isStatic = isStatic(access)
@@ -67,10 +70,8 @@ internal fun MethodNode.getParametersInfo(containingClass: ClassNode, isInnerCla
 
         // @JvmOverloads constructors and ordinary methods don't have "this" local variable
         name = name ?: localVariables.getOrNull(index + localVariableIndexOffset)?.name
-                ?: "p${index - startParameterIndex}"
-
-        // Property setters has bad parameter names
-        if (name.startsWith("<") && name.endsWith(">")) {
+                ?: originalDescriptor.valueParameters.getOrNull(index)?.name?.identifierOrNullIfSpecial
+        if (name == null || name.startsWith("<") && name.endsWith(">")) {
             name = "p${index - startParameterIndex}"
         }
 

@@ -5,11 +5,11 @@ interface A {
 }
 
 interface B : A {
-    <!CONFLICTING_OVERLOADS!>suspend override fun foo() {
+    <!CONFLICTING_OVERLOADS!>suspend override fun foo()<!> {
 
-    }<!>
+    }
 
-    <!CONFLICTING_OVERLOADS!>override fun foo() {
+    <!CONFLICTING_OVERLOADS!>override fun foo()<!> {
 
-    }<!>
+    }
 }

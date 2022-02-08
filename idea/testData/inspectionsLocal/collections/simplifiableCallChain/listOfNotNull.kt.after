@@ -1,4 +1,0 @@
-// WITH_RUNTIME
-
-val s: String? = null
-val x = <caret>listOfNotNull(s)

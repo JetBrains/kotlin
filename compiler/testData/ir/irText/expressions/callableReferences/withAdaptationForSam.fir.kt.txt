@@ -1,0 +1,18 @@
+fun interface IFoo {
+  abstract fun foo(i: Int)
+
+}
+
+fun useFoo(foo: IFoo) {
+}
+
+fun withVararg(vararg xs: Int): Int {
+  return 42
+}
+
+fun test() {
+  useFoo(foo = local fun withVararg(p0: Int) {
+    withVararg(xs = [p0])
+  }
+ /*-> IFoo */)
+}

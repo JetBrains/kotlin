@@ -29,3 +29,4 @@ private class Private {
     override val overridesNothing: Boolean
         get() = false
 }
+// COMPILATION_ERRORS

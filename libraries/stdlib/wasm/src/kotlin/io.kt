@@ -7,14 +7,20 @@ package kotlin.io
 
 import kotlin.wasm.internal.*
 
+@JsFun("(error) => console.error(\">>>  \" + error)")
+internal external fun printError(error: String?): Unit
+
+@JsFun("(message) => console.log(\">>>  \" + message)")
+private external fun printlnImpl(error: String?): Unit
+
 /** Prints the line separator to the standard output stream. */
 public actual fun println() {
-    println("")
+    printlnImpl("")
 }
 
 /** Prints the given [message] and the line separator to the standard output stream. */
 public actual fun println(message: Any?) {
-    printlnImpl(message.toString())
+    printlnImpl(message?.toString())
 }
 
 /** Prints the given [message] to the standard output stream. */
@@ -23,9 +29,10 @@ public actual fun print(message: Any?) {
     println(message)
 }
 
+@SinceKotlin("1.6")
+public actual fun readln(): String = throw UnsupportedOperationException("readln is not supported in Kotlin/WASM")
+
+@SinceKotlin("1.6")
+public actual fun readlnOrNull(): String? = throw UnsupportedOperationException("readlnOrNull is not supported in Kotlin/WASM")
 
 internal actual interface Serializable
-
-@WasmImport("runtime", "println")
-private fun printlnImpl(message: String): Unit =
-    implementedAsIntrinsic

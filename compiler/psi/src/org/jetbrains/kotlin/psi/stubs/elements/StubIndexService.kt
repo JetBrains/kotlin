@@ -67,7 +67,7 @@ open class StubIndexService protected constructor() {
     open fun deserializeFileStub(dataStream: StubInputStream): KotlinFileStub {
         val packageFqNameAsString = dataStream.readName()
         val isScript = dataStream.readBoolean()
-        return KotlinFileStubImpl(null, packageFqNameAsString!!, isScript)
+        return KotlinFileStubImpl(null, packageFqNameAsString!!.string, isScript)
     }
 
     companion object {

@@ -22,6 +22,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.light.LightJavaModule
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.cli.common.config.ContentRoot
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -29,14 +30,15 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
+import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRootBase
+import org.jetbrains.kotlin.cli.jvm.config.JvmContentRootBase
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.JavaModuleGraph
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
+import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
 import org.jetbrains.kotlin.resolve.jvm.modules.KOTLIN_STDLIB_MODULE_NAME
@@ -49,12 +51,16 @@ class ClasspathRootsResolver(
     private val psiManager: PsiManager,
     private val messageCollector: MessageCollector?,
     private val additionalModules: List<String>,
-    private val contentRootToVirtualFile: (JvmContentRoot) -> VirtualFile?,
+    private val contentRootToVirtualFile: (JvmContentRootBase) -> VirtualFile?,
     private val javaModuleFinder: CliJavaModuleFinder,
     private val requireStdlibModule: Boolean,
-    private val outputDirectory: VirtualFile?
+    private val outputDirectory: VirtualFile?,
+    private val javaFileManager: KotlinCliJavaFileManager,
+    private val jdkRelease: Int?
 ) {
     val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
+
+    private val searchScope = GlobalSearchScope.allScope(psiManager.project)
 
     data class RootsAndModules(val roots: List<JavaRoot>, val modules: List<JavaModule>)
 
@@ -66,11 +72,11 @@ class ClasspathRootsResolver(
         val jvmModulePathRoots = mutableListOf<VirtualFile>()
 
         for (contentRoot in contentRoots) {
-            if (contentRoot !is JvmContentRoot) continue
+            if (contentRoot !is JvmContentRootBase) continue
             val root = contentRootToVirtualFile(contentRoot) ?: continue
             when (contentRoot) {
                 is JavaSourceRoot -> javaSourceRoots += RootWithPrefix(root, contentRoot.packagePrefix)
-                is JvmClasspathRoot -> jvmClasspathRoots += root
+                is JvmClasspathRootBase -> jvmClasspathRoots += root
                 is JvmModulePathRoot -> jvmModulePathRoots += root
                 else -> error("Unknown root type: $contentRoot")
             }
@@ -119,8 +125,15 @@ class ClasspathRootsResolver(
                 modules += module
             }
         }
-
-        addModularRoots(modules, result)
+        if (jdkRelease == null || jdkRelease >= 9) {
+            addModularRoots(modules, result)
+        } else {
+            //TODO: see also `addJvmSdkRoots` usages, some refactoring is required with moving such logic into one place
+            val listFoldersForRelease = javaModuleFinder.listFoldersForRelease
+            listFoldersForRelease.forEach {
+                result += JavaRoot(it, JavaRoot.RootType.BINARY_SIG)
+            }
+        }
 
         return RootsAndModules(result, modules)
     }
@@ -151,16 +164,14 @@ class ClasspathRootsResolver(
 
     private fun modularBinaryRoot(root: VirtualFile): JavaModule? {
         val isJar = root.fileSystem.protocol == StandardFileSystems.JAR_PROTOCOL
-        val manifest: Attributes? by lazy(NONE) { readManifestAttributes(root) }
+        val manifest = lazy(NONE) { readManifestAttributes(root) }
 
         val moduleInfoFile =
             root.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)
-                ?: root.takeIf { isJar }?.findFileByRelativePath(MULTI_RELEASE_MODULE_INFO_CLS_FILE)?.takeIf {
-                    manifest?.getValue(IS_MULTI_RELEASE)?.equals("true", ignoreCase = true) == true
-                }
+                ?: if (isJar) tryLoadVersionSpecificModuleInfo(root, manifest) else null
 
         if (moduleInfoFile != null) {
-            val moduleInfo = JavaModuleInfo.read(moduleInfoFile) ?: return null
+            val moduleInfo = JavaModuleInfo.read(moduleInfoFile, javaFileManager, searchScope) ?: return null
             return JavaModule.Explicit(moduleInfo, listOf(JavaModule.Root(root, isBinary = true)), moduleInfoFile)
         }
 
@@ -168,7 +179,7 @@ class ClasspathRootsResolver(
         if (isJar) {
             val moduleRoot = listOf(JavaModule.Root(root, isBinary = true))
 
-            val automaticModuleName = manifest?.getValue(AUTOMATIC_MODULE_NAME)
+            val automaticModuleName = manifest.value?.getValue(AUTOMATIC_MODULE_NAME)
             if (automaticModuleName != null) {
                 return JavaModule.Automatic(automaticModuleName, moduleRoot)
             }
@@ -182,6 +193,23 @@ class ClasspathRootsResolver(
             return JavaModule.Automatic(moduleName, moduleRoot)
         }
 
+        return null
+    }
+
+    private fun tryLoadVersionSpecificModuleInfo(root: VirtualFile, manifest: Lazy<Attributes?>): VirtualFile? {
+        val versionsDir = root.findChild("META-INF")?.findChild("versions") ?: return null
+
+        val isMultiReleaseJar = manifest.value?.getValue(IS_MULTI_RELEASE)?.equals("true", ignoreCase = true)
+        if (isMultiReleaseJar != true) return null
+
+        val versions = versionsDir.children.filter {
+            val version = it.name.toIntOrNull()
+            version != null && version >= 9
+        }.sortedBy { it.name.toInt() }
+        for (version in versions) {
+            val file = version.findChild(PsiJavaModule.MODULE_INFO_CLS_FILE)
+            if (file != null) return file
+        }
         return null
     }
 
@@ -257,8 +285,13 @@ class ClasspathRootsResolver(
             if (module == null) {
                 report(ERROR, "Module $moduleName cannot be found in the module graph")
             } else {
-                for ((root, isBinary) in module.moduleRoots) {
-                    result.add(JavaRoot(root, if (isBinary) JavaRoot.RootType.BINARY else JavaRoot.RootType.SOURCE))
+                module.moduleRoots.mapTo(result) { (root, isBinary, isBinarySignature) ->
+                    val type = when {
+                        isBinarySignature -> JavaRoot.RootType.BINARY_SIG
+                        isBinary -> JavaRoot.RootType.BINARY
+                        else -> JavaRoot.RootType.SOURCE
+                    }
+                    JavaRoot(root, type)
                 }
             }
         }
@@ -318,7 +351,6 @@ class ClasspathRootsResolver(
     }
 
     private companion object {
-        const val MULTI_RELEASE_MODULE_INFO_CLS_FILE = "META-INF/versions/9/${PsiJavaModule.MODULE_INFO_CLS_FILE}"
         const val AUTOMATIC_MODULE_NAME = "Automatic-Module-Name"
         const val IS_MULTI_RELEASE = "Multi-Release"
     }

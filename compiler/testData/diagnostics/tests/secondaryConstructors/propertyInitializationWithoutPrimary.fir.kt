@@ -5,7 +5,7 @@ class A {
     val z: Int
     val v = -1
 
-    val uninitialized: Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val uninitialized: Int<!>
     val overinitialized: Int
 
     constructor() {

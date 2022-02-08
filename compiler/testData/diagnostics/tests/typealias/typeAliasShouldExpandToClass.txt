@@ -10,9 +10,11 @@ public final class Outer {
     public typealias ToTypeParam3</*0*/ T1, /*1*/ T2> = Outer.ToTypeParam2<T1>
     public typealias ToTypeParam4 = Outer.ToTypeParam1<kotlin.Any>
 }
+public typealias Dyn = [ERROR : dynamic type in wrong context]
 public typealias ToFun1 = () -> kotlin.Unit
 public typealias ToFun2</*0*/ T> = (T) -> kotlin.Unit
 public typealias ToTypeParam1</*0*/ T> = T
 public typealias ToTypeParam2</*0*/ T> = ToTypeParam1<T>
 public typealias ToTypeParam3</*0*/ T1, /*1*/ T2> = ToTypeParam2<T1>
 public typealias ToTypeParam4 = ToTypeParam1<kotlin.Any>
+

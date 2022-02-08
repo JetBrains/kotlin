@@ -1,0 +1,8 @@
+interface IFace<T> {
+  fun getStatus(arg: T): Boolean
+}
+
+class Some
+
+private fun resolve(): IFace<Some>
+

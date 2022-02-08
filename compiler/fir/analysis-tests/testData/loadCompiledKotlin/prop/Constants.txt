@@ -40,6 +40,6 @@ public final const val s: R|kotlin/Short| = Short(20000)
 public final const val s1: R|kotlin/Short| = Short(1)
     public get(): R|kotlin/Short|
 
-public final const val str: R|kotlin/String|
+public final const val str: R|kotlin/String| = String(:))
     public get(): R|kotlin/String|
 

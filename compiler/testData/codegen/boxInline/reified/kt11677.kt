@@ -1,7 +1,7 @@
+// WITH_REFLECT
+// FULL_JDK
 // TARGET_BACKEND: JVM
 // FILE: 1.kt
-// FULL_JDK
-// WITH_REFLECT
 
 package test
 

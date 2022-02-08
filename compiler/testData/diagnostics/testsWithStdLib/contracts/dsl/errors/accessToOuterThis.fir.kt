@@ -1,5 +1,5 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect +AllowContractsForNonOverridableMembers
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -SENSELESS_COMPARISON
 
 import kotlin.contracts.*
@@ -10,19 +10,19 @@ class Foo {
     inner class Bar {
         fun good() {
             contract {
-                returns() implies (<!UNRESOLVED_LABEL!>this@Bar<!> != null)
+                <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (this<!UNRESOLVED_LABEL!>@Bar<!> != null)<!>
             }
         }
 
         fun badOuter() {
             contract {
-                returns() implies (<!UNRESOLVED_LABEL!>this@Foo<!> != null)
+                <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (this<!UNRESOLVED_LABEL!>@Foo<!> != null)<!>
             }
         }
 
         fun badInner() {
             contract {
-                returns() implies (this != null)
+                <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (this != null)<!>
             }
         }
 
@@ -34,7 +34,7 @@ class Foo {
 
         fun A?.badWithReceiver() {
             contract {
-                returns() implies (<!UNRESOLVED_LABEL!>this@Bar<!> != null)
+                <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (this<!UNRESOLVED_LABEL!>@Bar<!> != null)<!>
             }
         }
     }

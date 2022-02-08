@@ -1,6 +1,8 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
+// WORKS_WHEN_VALUE_CLASS
 
+// LANGUAGE: +ValueClasses
 // FILE: JavaClass.java
 
 public class JavaClass {
@@ -9,10 +11,17 @@ public class JavaClass {
 
 // FILE: test.kt
 
-inline class IcInt(val i: Int)
-inline class IcLong(val l: Long)
-inline class IcAny(val a: Any?)
-inline class IcOverIc(val o: IcInt)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IcInt(val i: Int)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IcLong(val l: Long)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IcAny(val a: Any?)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IcOverIc(val o: IcInt)
 
 fun box(): String {
     val i = IcInt(1)

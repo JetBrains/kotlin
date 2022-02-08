@@ -108,7 +108,7 @@ public final class DClassConstuctors {
     public final inner class DClassConstuctors$InnerClass
 }
 
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class DefRes {
     // source: 'jvmOverloadsAndParametersAnnotations.kt'
@@ -133,13 +133,13 @@ public final class JvmOverloadsAndParametersAnnotationsKt {
     public final static @kotlin.jvm.JvmOverloads method showSnackbarNoExtension(@StringRes p0: int, p1: int): void
 }
 
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class LongRes {
     // source: 'jvmOverloadsAndParametersAnnotations.kt'
 }
 
-@java.lang.annotation.Retention
+@java.lang.annotation.Retention(value=RUNTIME)
 @kotlin.Metadata
 public annotation class StringRes {
     // source: 'jvmOverloadsAndParametersAnnotations.kt'

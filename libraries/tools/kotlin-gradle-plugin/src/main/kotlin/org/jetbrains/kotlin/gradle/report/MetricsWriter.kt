@@ -15,13 +15,13 @@ import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionDataProcessor
 import java.io.File
 import java.io.ObjectOutputStream
+import java.io.Serializable
 
 internal class MetricsWriter(
     private val outputFile: File,
-    private val log: Logger
-) : BuildExecutionDataProcessor {
-    override fun process(build: BuildExecutionData) {
-        if (build.failure != null) return
+) : BuildExecutionDataProcessor, Serializable {
+    override fun process(build: BuildExecutionData, log: Logger) {
+        if (build.failureMessages.isNotEmpty()) return
 
         try {
             outputFile.parentFile?.apply { mkdirs() }
@@ -35,17 +35,14 @@ internal class MetricsWriter(
             }
 
             for (data in build.taskExecutionData) {
-                val path = data.task.path
-                val type = data.task::class.java.canonicalName
-                val buildTimes = data.buildMetrics.buildTimes.asMap().mapKeys { (k, _) -> k.name }
-                val buildAttributes = data.buildMetrics.buildAttributes.asMap().mapKeys { (k, _) -> k.name }
-                buildMetricsData.taskData[path] =
+                buildMetricsData.taskData[data.taskPath] =
                     TaskData(
-                        path = path,
-                        typeFqName = type,
-                        timeMetrics = buildTimes,
-                        buildAttributes = buildAttributes,
-                        didWork = data.task.didWork
+                        path = data.taskPath,
+                        typeFqName = data.type,
+                        buildTimesMs = data.buildMetrics.buildTimes.asMapMs().mapKeys { it.key.name },
+                        performanceMetrics = data.buildMetrics.buildPerformanceMetrics.asMap().mapKeys { it.key.name },
+                        buildAttributes = data.buildMetrics.buildAttributes.asMap().mapKeys { it.key.name },
+                        didWork = data.didWork
                     )
             }
 

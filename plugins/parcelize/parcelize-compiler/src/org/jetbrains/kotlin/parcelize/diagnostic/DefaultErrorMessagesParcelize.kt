@@ -43,7 +43,7 @@ object DefaultErrorMessagesParcelize : DefaultErrorMessages.Extension {
 
         MAP.put(
             ErrorsParcelize.PARCELABLE_SHOULD_BE_INSTANTIABLE,
-            "'Parcelable' should not be a 'sealed' or 'abstract' class"
+            "'Parcelable' should not be an 'abstract' class"
         )
 
         MAP.put(
@@ -132,7 +132,7 @@ object DefaultErrorMessagesParcelize : DefaultErrorMessages.Extension {
 
         MAP.put(
             ErrorsParcelize.INAPPLICABLE_IGNORED_ON_PARCEL_CONSTRUCTOR_PROPERTY,
-            "'@IgnoredOnParcel' is inapplicable to properties declared in the primary constructor"
+            "'@IgnoredOnParcel' is inapplicable to properties without default value declared in the primary constructor"
         )
 
         MAP.put(

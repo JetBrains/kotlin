@@ -9,7 +9,7 @@ enum class B(val x: Int) {
 }
 
 enum class C(val x: Int) {
-    C1(<!UNINITIALIZED_VARIABLE!>SUM<!>),
+    C1(<!UNINITIALIZED_ENUM_COMPANION_WARNING, UNINITIALIZED_VARIABLE!>SUM<!>),
     C2(1);
 
     companion object {
@@ -27,11 +27,12 @@ enum class Fruit(personal: Int) {
     }
 
     val score = personal + <!UNINITIALIZED_VARIABLE!>common<!>
+    val score2 = { personal + common }()
 }
 
 // Another example from KT-11769
 enum class EnumCompanion1(val x: Int) {
-    INSTANCE(<!UNINITIALIZED_ENUM_COMPANION!>Companion<!>.foo()),
+    INSTANCE(<!UNINITIALIZED_ENUM_COMPANION, UNINITIALIZED_ENUM_COMPANION_WARNING!>Companion<!>.foo()),
     ANOTHER(foo());
 
     companion object {
@@ -52,4 +53,29 @@ enum class EnumCompanion3(val x: Int) {
     ANOTHER(EnumCompanion2.foo());
 
     companion object
+}
+
+interface ExtractableCodeDescriptor {
+    fun isInterface(): Boolean
+}
+
+enum class ExtractionTarget(val targetName: String) {
+    FUNCTION("function") {
+        override fun isAvailable(descriptor: ExtractableCodeDescriptor) = true
+    },
+
+    LAZY_PROPERTY("lazy property") {
+        override fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean {
+            // Should not report UNINITIALIZED_ENUM_COMPANION
+            return checkNotTrait(descriptor)
+        }
+    };
+
+    abstract fun isAvailable(descriptor: ExtractableCodeDescriptor): Boolean
+
+    companion object {
+        fun checkNotTrait(descriptor: ExtractableCodeDescriptor): Boolean {
+            return !descriptor.isInterface()
+        }
+    }
 }

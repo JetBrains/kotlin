@@ -34,13 +34,16 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         JvmFieldApplicabilityChecker(),
         TypeParameterBoundIsNotArrayChecker(),
         JvmSyntheticApplicabilityChecker(),
+        JvmInlineApplicabilityChecker(),
         StrictfpApplicabilityChecker(),
         JvmAnnotationsTargetNonExistentAccessorChecker(),
+        SuspendInFunInterfaceChecker(),
         BadInheritedJavaSignaturesChecker,
         JvmMultifileClassStateChecker,
-        SynchronizedOnInlineMethodChecker,
         DefaultCheckerInTailrec,
         FunctionDelegateMemberNameClashChecker,
+        ClassInheritsJavaSealedClassChecker,
+        JavaOverrideWithWrongNullabilityOverrideChecker,
     ),
 
     additionalCallCheckers = listOf(
@@ -55,11 +58,12 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         RuntimeAssertionsOnExtensionReceiverCallChecker,
         ApiVersionIsAtLeastArgumentsChecker,
         InconsistentOperatorFromJavaCallChecker,
-        PolymorphicSignatureCallChecker
+        PolymorphicSignatureCallChecker,
+        SamInterfaceConstructorReferenceCallChecker,
+        EnumDeclaringClassDeprecationChecker,
     ),
 
     additionalTypeCheckers = listOf(
-        JavaNullabilityChecker(),
         RuntimeAssertionsTypeChecker,
         JavaGenericVarianceViolationTypeChecker,
         JavaTypeAccessibilityChecker(),
@@ -72,9 +76,9 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
     ),
 
     additionalAnnotationCheckers = listOf(
-        RepeatableAnnotationChecker,
         FileClassAnnotationsChecker,
-        ExplicitMetadataChecker
+        ExplicitMetadataChecker,
+        SynchronizedAnnotationOnLambdaChecker,
     ),
 
     additionalClashResolvers = listOf(
@@ -94,8 +98,9 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
     declarationReturnTypeSanitizer = JvmDeclarationReturnTypeSanitizer
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
+        container.useImpl<WarningAwareUpperBoundChecker>()
+        container.useImpl<JavaNullabilityChecker>()
         container.useImpl<JvmStaticChecker>()
-        container.useImpl<JvmStaticInPrivateCompanionChecker>()
         container.useImpl<JvmReflectionAPICallChecker>()
         container.useImpl<JavaSyntheticScopes>()
         container.useImpl<SamConversionResolverImpl>()
@@ -106,8 +111,11 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         container.useImpl<JvmModuleAccessibilityChecker.ClassifierUsage>()
         container.useImpl<JvmTypeSpecificityComparatorDelegate>()
         container.useImpl<JvmPlatformOverloadsSpecificityComparator>()
-        container.useImpl<JvmDefaultSuperCallChecker>()
         container.useImpl<JvmSamConversionOracle>()
+        container.useImpl<JvmAdditionalClassPartsProvider>()
+        container.useImpl<JvmRecordApplicabilityChecker>()
+        container.useImpl<JvmPlatformAnnotationFeaturesSupport>()
+
         container.useInstance(FunctionWithBigAritySupport.LanguageVersionDependent)
         container.useInstance(GenericArrayClassLiteralSupport.Enabled)
         container.useInstance(JavaActualAnnotationArgumentExtractor())
@@ -116,5 +124,6 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
         super.configureModuleDependentCheckers(container)
         container.useImpl<ExpectedActualDeclarationChecker>()
+        container.useImpl<RepeatableAnnotationChecker>()
     }
 }

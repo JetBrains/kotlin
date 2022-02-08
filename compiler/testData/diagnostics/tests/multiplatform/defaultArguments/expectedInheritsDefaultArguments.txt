@@ -21,7 +21,6 @@ public interface Foo {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-
 // -- Module: <m2-jvm> --
 package
 
@@ -45,3 +44,4 @@ public interface Foo {
     public abstract fun ok(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.String = ...): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

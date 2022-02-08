@@ -1,0 +1,20 @@
+FILE: incorrectSmartcastToNothing.kt
+    public final val cache: R|java/io/File?| = R|java/io/File.File|(String(foo))
+        public get(): R|java/io/File?|
+    public final fun test(cacheExtSetting: R|kotlin/String?|): R|kotlin/Unit| {
+        lval cacheBaseDir: R|java/io/File?| = when () {
+            ==(R|<local>/cacheExtSetting|, Null(null)) ->  {
+                R|/cache|?.{ $subj$.R|kotlin/let|<R|java/io/File|, R|java/io/File|>(<L> = let@fun <anonymous>(it: R|java/io/File|): R|java/io/File| <inline=Inline, kind=EXACTLY_ONCE>  {
+                    ^ R|java/io/File.File|(R|<local>/it|, String(main.kts.compiled.cache))
+                }
+                ) }
+            }
+            R|<local>/cacheExtSetting|.R|kotlin/text/isBlank|() ->  {
+                Null(null)
+            }
+            else ->  {
+                R|java/io/File.File|(R|<local>/cacheExtSetting|)
+            }
+        }
+
+    }

@@ -1,7 +1,7 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: EXCEPTIONS_NOT_IMPLEMENTED
-// WITH_RUNTIME
+// WITH_STDLIB
+
 // FILE: lateinit.kt
+
 private lateinit var s: String
 
 object C {

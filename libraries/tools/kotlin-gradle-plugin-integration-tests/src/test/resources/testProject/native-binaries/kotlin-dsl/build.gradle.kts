@@ -4,7 +4,12 @@ plugins {
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
+}
+
+// KT-45801
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile>().configureEach {
+    kotlinOptions
 }
 
 kotlin {

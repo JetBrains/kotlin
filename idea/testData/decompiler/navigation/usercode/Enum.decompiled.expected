@@ -1,9 +1,0 @@
-Color.class
-public final enum class <1><2>Color private constructor(rgb: kotlin.Int) : kotlin.Enum<testData.libraries.Color> {
-    <3>RED,
-
-    GREEN,
-
-    BLUE;
-
-    public final val <4>rgb: kotlin.Int /* compiled code */

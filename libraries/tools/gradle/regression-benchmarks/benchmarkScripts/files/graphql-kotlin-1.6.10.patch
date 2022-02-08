@@ -1,0 +1,38 @@
+diff --git a/gradle.properties b/gradle.properties
+index c230ac55..0709e478 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -15,7 +15,7 @@ org.gradle.jvmargs=-Xmx2g -XX:MaxPermSize=512m -XX:+HeapDumpOnOutOfMemoryError
+ 
+ # dependencies
+ kotlinJvmVersion = 1.8
+-kotlinVersion = 1.5.31
++kotlinVersion = 1.6.10
+ kotlinCoroutinesVersion = 1.5.2
+ kotlinxSerializationVersion = 1.3.0
+ 
+diff --git a/servers/graphql-kotlin-spring-server/src/main/kotlin/com/expediagroup/graphql/server/spring/execution/SpringDataFetcher.kt b/servers/graphql-kotlin-spring-server/src/main/kotlin/com/expediagroup/graphql/server/spring/execution/SpringDataFetcher.kt
+index 871ffd39..c886f705 100644
+--- a/servers/graphql-kotlin-spring-server/src/main/kotlin/com/expediagroup/graphql/server/spring/execution/SpringDataFetcher.kt
++++ b/servers/graphql-kotlin-spring-server/src/main/kotlin/com/expediagroup/graphql/server/spring/execution/SpringDataFetcher.kt
+@@ -38,7 +38,6 @@ open class SpringDataFetcher(
+     private val applicationContext: ApplicationContext
+ ) : FunctionDataFetcher(target, fn, objectMapper) {
+ 
+-    @ExperimentalStdlibApi
+     override fun mapParameterToValue(param: KParameter, environment: DataFetchingEnvironment): Pair<KParameter, Any?>? =
+         if (param.hasAnnotation<Autowired>()) {
+             val qualifier = param.findAnnotation<Qualifier>()?.value
+diff --git a/servers/graphql-kotlin-spring-server/src/main/kotlin/com/expediagroup/graphql/server/spring/subscriptions/SubscriptionWebSocketHandler.kt b/servers/graphql-kotlin-spring-server/src/main/kotlin/com/expediagroup/graphql/server/spring/subscriptions/SubscriptionWebSocketHandler.kt
+index e8939483..5edb33f5 100644
+--- a/servers/graphql-kotlin-spring-server/src/main/kotlin/com/expediagroup/graphql/server/spring/subscriptions/SubscriptionWebSocketHandler.kt
++++ b/servers/graphql-kotlin-spring-server/src/main/kotlin/com/expediagroup/graphql/server/spring/subscriptions/SubscriptionWebSocketHandler.kt
+@@ -30,7 +30,7 @@ class SubscriptionWebSocketHandler(
+     private val objectMapper: ObjectMapper
+ ) : WebSocketHandler {
+ 
+-    @ExperimentalCoroutinesApi
++    @OptIn(ExperimentalCoroutinesApi::class)
+     @Suppress("ForbiddenVoid")
+     override fun handle(session: WebSocketSession): Mono<Void> {
+         val response = session.receive()

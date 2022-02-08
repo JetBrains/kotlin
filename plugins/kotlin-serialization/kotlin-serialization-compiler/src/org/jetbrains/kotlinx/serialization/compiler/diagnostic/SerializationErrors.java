@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,8 +14,10 @@ import static org.jetbrains.kotlin.diagnostics.Severity.ERROR;
 import static org.jetbrains.kotlin.diagnostics.Severity.WARNING;
 
 public interface SerializationErrors {
-    DiagnosticFactory0<PsiElement> INLINE_CLASSES_NOT_SUPPORTED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory2<PsiElement, String, String> INLINE_CLASSES_NOT_SUPPORTED = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<PsiElement> PLUGIN_IS_NOT_ENABLED = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> ANONYMOUS_OBJECTS_NOT_SUPPORTED = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> INNER_CLASSES_NOT_SUPPORTED = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> EXPLICIT_SERIALIZABLE_IS_REQUIRED = DiagnosticFactory0.create(WARNING);
 
@@ -26,14 +28,19 @@ public interface SerializationErrors {
     DiagnosticFactory1<PsiElement, KotlinType> SERIALIZER_NOT_FOUND = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> SERIALIZER_NULLABILITY_INCOMPATIBLE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory3<PsiElement, KotlinType, KotlinType, KotlinType> SERIALIZER_TYPE_INCOMPATIBLE = DiagnosticFactory3.create(WARNING);
+    DiagnosticFactory1<PsiElement, KotlinType> LOCAL_SERIALIZER_USAGE = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<PsiElement> TRANSIENT_MISSING_INITIALIZER = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<PsiElement> TRANSIENT_IS_REDUNDANT = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> JSON_FORMAT_REDUNDANT_DEFAULT = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> JSON_FORMAT_REDUNDANT = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<PsiElement> INCORRECT_TRANSIENT = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory3<KtAnnotationEntry, String, String, String> REQUIRED_KOTLIN_TOO_HIGH = DiagnosticFactory3.create(ERROR);
     DiagnosticFactory3<KtAnnotationEntry, String, String, String> PROVIDED_RUNTIME_TOO_LOW = DiagnosticFactory3.create(ERROR);
+
+    DiagnosticFactory2<PsiElement, KotlinType, KotlinType> INCONSISTENT_INHERITABLE_SERIALINFO = DiagnosticFactory2.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

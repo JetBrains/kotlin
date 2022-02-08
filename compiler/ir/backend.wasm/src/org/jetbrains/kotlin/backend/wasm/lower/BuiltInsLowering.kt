@@ -10,23 +10,25 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irCallConstructor
 import org.jetbrains.kotlin.ir.builders.irComposite
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classFqName
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.util.functions
-import org.jetbrains.kotlin.ir.util.irCall
-import org.jetbrains.kotlin.ir.util.isFunction
-import org.jetbrains.kotlin.ir.util.isNullConst
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.name.parentOrNull
 
 class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
     private val irBuiltins = context.irBuiltIns
@@ -84,6 +86,15 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
             }
 
             irBuiltins.checkNotNullSymbol -> {
+
+                // Workaround: v8 doesnt support ref.cast-ing unreachable very well.
+                run {
+                    val arg = call.getValueArgument(0)!!
+                    if (arg.isNullConst()) {
+                        return builder.irCall(symbols.wasmUnreachable, irBuiltins.nothingType)
+                    }
+                }
+
                 return irCall(call, symbols.ensureNotNull).also {
                     it.putTypeArgument(0, call.type)
                 }
@@ -93,13 +104,13 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 return irCall(call, newSymbol)
             }
 
-            // TODO: Implement
             irBuiltins.noWhenBranchMatchedExceptionSymbol ->
-                return builder.irCall(symbols.wasmUnreachable, irBuiltins.nothingType)
+                return builder.irCall(symbols.throwNoBranchMatchedException, irBuiltins.nothingType)
 
-            // TODO: Implement
             irBuiltins.illegalArgumentExceptionSymbol ->
-                return builder.irCall(symbols.wasmUnreachable, irBuiltins.nothingType)
+                return builder.irCall(symbols.throwIAE, irBuiltins.nothingType, 1).apply {
+                    putValueArgument(0, call.getValueArgument(0)!!)
+                }
 
             irBuiltins.dataClassArrayMemberHashCodeSymbol -> {
                 // TODO: Implement
@@ -114,24 +125,38 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     putValueArgument(0, call.getValueArgument(0))
                 }
             }
-        }
+            in symbols.startCoroutineUninterceptedOrReturnIntrinsics -> {
+                val arity = symbols.startCoroutineUninterceptedOrReturnIntrinsics.indexOf(symbol)
+                val newSymbol = irBuiltins.suspendFunctionN(arity).getSimpleFunction("invoke")!!
+                return irCall(call, newSymbol, argumentsAsReceivers = true)
+            }
+            symbols.reflectionSymbols.getClassData -> {
+                val infoDataCtor = symbols.reflectionSymbols.wasmTypeInfoData.constructors.first()
+                val type = call.getTypeArgument(0)!!
+                val isInterface = type.isInterface()
+                val fqName = type.classFqName!!
+                val fqnShouldBeEmitted =
+                    context.configuration.languageVersionSettings.getFlag(AnalysisFlags.allowFullyQualifiedNameInKClass)
+                val packageName = if (fqnShouldBeEmitted) fqName.parentOrNull()?.asString() ?: "" else ""
+                val typeName = fqName.shortName().asString()
 
-        val nativeInvokeArity = getKotlinFunctionInvokeArity(call)
-        if (nativeInvokeArity != null) {
-            return irCall(call, symbols.functionNInvokeMethods[nativeInvokeArity])
+                return with(builder) {
+                    val wasmIdGetter = if (type.isInterface()) symbols.wasmInterfaceId else symbols.wasmClassId
+                    val typeId = irCall(wasmIdGetter).also {
+                        it.putTypeArgument(0, type)
+                    }
+
+                    irCallConstructor(infoDataCtor, emptyList()).also {
+                        it.putValueArgument(0, typeId)
+                        it.putValueArgument(1, isInterface.toIrConst(context.irBuiltIns.booleanType))
+                        it.putValueArgument(2, packageName.toIrConst(context.irBuiltIns.stringType))
+                        it.putValueArgument(3, typeName.toIrConst(context.irBuiltIns.stringType))
+                    }
+                }
+            }
         }
 
         return call
-    }
-
-    private fun getKotlinFunctionInvokeArity(call: IrCall): Int? {
-        val simpleFunction = call.symbol.owner as? IrSimpleFunction ?: return null
-        val receiverType = simpleFunction.dispatchReceiverParameter?.type ?: return null
-        if (simpleFunction.isSuspend) return null
-        if (simpleFunction.name == OperatorNameConventions.INVOKE && receiverType.isFunction()) {
-            return simpleFunction.valueParameters.size
-        }
-        return null
     }
 
     override fun lower(irFile: IrFile) {

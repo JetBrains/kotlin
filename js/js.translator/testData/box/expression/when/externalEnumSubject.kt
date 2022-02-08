@@ -1,4 +1,5 @@
 // EXPECTED_REACHABLE_NODES: 1291
+// CHECK_IF_COUNT: function=foo count=2
 external enum class X {
     A, B
 }

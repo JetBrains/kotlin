@@ -1,0 +1,34 @@
+FILE: simpleLazy.kt
+    public final val x: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+        ^ String(Hello)
+    }
+    )
+        public get(): R|kotlin/String| {
+            ^ D|/x|.R|kotlin/getValue|<R|kotlin/String|>(Null(null), ::R|/x|)
+        }
+    public final fun foo(): R|kotlin/Unit| {
+        R|/x|.R|kotlin/String.length|
+        lval y: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+            ^ String(Bye)
+        }
+        )
+        R|<local>/y|.R|kotlin/String.length|
+    }
+    public final class Some : R|kotlin/Any| {
+        public constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val z: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+            ^ String(Some)
+        }
+        )
+            public get(): R|kotlin/String| {
+                ^ this@R|/Some|.D|/Some.z|.R|kotlin/getValue|<R|kotlin/String|>(this@R|/Some|, ::R|/Some.z|)
+            }
+
+        public final fun foo(): R|kotlin/Unit| {
+            this@R|/Some|.R|/Some.z|.R|kotlin/String.length|
+        }
+
+    }

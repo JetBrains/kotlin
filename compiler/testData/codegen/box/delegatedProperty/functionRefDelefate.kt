@@ -1,6 +1,6 @@
 // KT-40412
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 // MODULE: lib
 // FILE: lib.kt

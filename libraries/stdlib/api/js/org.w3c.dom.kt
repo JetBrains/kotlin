@@ -769,6 +769,7 @@ public open external class BeforeUnloadEvent : org.w3c.dom.events.Event {
     }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface BinaryType {
     public companion object of BinaryType {
     }
@@ -834,11 +835,13 @@ public open external class CDATASection : org.w3c.dom.Text {
     }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface CSSBoxType {
     public companion object of CSSBoxType {
     }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface CanPlayTypeResult {
     public companion object of CanPlayTypeResult {
     }
@@ -850,6 +853,7 @@ public external interface CanvasCompositing {
     public abstract var globalCompositeOperation: kotlin.String { get; set; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface CanvasDirection {
     public companion object of CanvasDirection {
     }
@@ -889,6 +893,7 @@ public external interface CanvasDrawPath {
     public abstract fun stroke(path: org.w3c.dom.Path2D): kotlin.Unit
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface CanvasFillRule {
     public companion object of CanvasFillRule {
     }
@@ -945,11 +950,13 @@ public external interface CanvasImageSmoothing {
 public external interface CanvasImageSource : org.w3c.dom.ImageBitmapSource {
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface CanvasLineCap {
     public companion object of CanvasLineCap {
     }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface CanvasLineJoin {
     public companion object of CanvasLineJoin {
     }
@@ -1041,11 +1048,13 @@ public external interface CanvasText {
     public abstract fun strokeText(text: kotlin.String, x: kotlin.Double, y: kotlin.Double, maxWidth: kotlin.Double = ...): kotlin.Unit
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface CanvasTextAlign {
     public companion object of CanvasTextAlign {
     }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface CanvasTextBaseline {
     public companion object of CanvasTextBaseline {
     }
@@ -1193,6 +1202,7 @@ public external interface CloseEventInit : org.w3c.dom.EventInit {
     public open var wasClean: kotlin.Boolean? { get; set; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface ColorSpaceConversion {
     public companion object of ColorSpaceConversion {
     }
@@ -2120,6 +2130,7 @@ public external interface DocumentOrShadowRoot {
     public open val fullscreenElement: org.w3c.dom.Element? { get; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface DocumentReadyState {
     public companion object of DocumentReadyState {
     }
@@ -7376,11 +7387,13 @@ public open external class ImageData : org.w3c.dom.ImageBitmapSource, org.khrono
     public open val width: kotlin.Int { get; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface ImageOrientation {
     public companion object of ImageOrientation {
     }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface ImageSmoothingQuality {
     public companion object of ImageSmoothingQuality {
     }
@@ -8231,6 +8244,7 @@ public external interface PopStateEventInit : org.w3c.dom.EventInit {
     public open var state: kotlin.Any? { get; set; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface PremultiplyAlpha {
     public companion object of PremultiplyAlpha {
     }
@@ -8299,7 +8313,7 @@ public open external class PromiseRejectionEvent : org.w3c.dom.events.Event {
 }
 
 public external interface PromiseRejectionEventInit : org.w3c.dom.EventInit {
-    public open var promise: kotlin.js.Promise<kotlin.Any?>? { get; set; }
+    public abstract var promise: kotlin.js.Promise<kotlin.Any?>? { get; set; }
 
     public open var reason: kotlin.Any? { get; set; }
 }
@@ -8405,6 +8419,7 @@ public external interface RelatedEventInit : org.w3c.dom.EventInit {
 public external interface RenderingContext {
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface ResizeQuality {
     public companion object of ResizeQuality {
     }
@@ -8426,6 +8441,7 @@ public abstract external class Screen {
     public open val width: kotlin.Int { get; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface ScrollBehavior {
     public companion object of ScrollBehavior {
     }
@@ -8437,6 +8453,7 @@ public external interface ScrollIntoViewOptions : org.w3c.dom.ScrollOptions {
     public open var inline: org.w3c.dom.ScrollLogicalPosition? { get; set; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface ScrollLogicalPosition {
     public companion object of ScrollLogicalPosition {
     }
@@ -8446,6 +8463,7 @@ public external interface ScrollOptions {
     public open var behavior: org.w3c.dom.ScrollBehavior? { get; set; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface ScrollRestoration {
     public companion object of ScrollRestoration {
     }
@@ -8457,6 +8475,7 @@ public external interface ScrollToOptions : org.w3c.dom.ScrollOptions {
     public open var top: kotlin.Double? { get; set; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface SelectionMode {
     public companion object of SelectionMode {
     }
@@ -8511,9 +8530,10 @@ public open external class ShadowRoot : org.w3c.dom.DocumentFragment, org.w3c.do
 }
 
 public external interface ShadowRootInit {
-    public open var mode: org.w3c.dom.ShadowRootMode? { get; set; }
+    public abstract var mode: org.w3c.dom.ShadowRootMode? { get; set; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface ShadowRootMode {
     public companion object of ShadowRootMode {
     }
@@ -8745,6 +8765,7 @@ public abstract external class TextTrackCueList {
     public final fun getCueById(id: kotlin.String): org.w3c.dom.TextTrackCue?
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface TextTrackKind {
     public companion object of TextTrackKind {
     }
@@ -8764,6 +8785,7 @@ public abstract external class TextTrackList : org.w3c.dom.events.EventTarget {
     public final fun getTrackById(id: kotlin.String): org.w3c.dom.TextTrack?
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface TextTrackMode {
     public companion object of TextTrackMode {
     }
@@ -9265,6 +9287,7 @@ public external interface WorkerOptions {
     public open var type: org.w3c.dom.WorkerType? { get; set; }
 }
 
+@kotlin.js.JsName(name = "null")
 public external interface WorkerType {
     public companion object of WorkerType {
     }

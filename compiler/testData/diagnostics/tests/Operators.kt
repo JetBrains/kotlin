@@ -112,3 +112,30 @@ fun test2() {
     Anc() <!OPERATOR_MODIFIER_REQUIRED!>-<!> Anc()
     Anc2() + Anc2()
 }
+
+fun Int.iterator(): MyIntIterator = null!!
+
+operator fun Double.iterator(): MyDoubleIterator = null!!
+
+operator fun Boolean.iterator(): MyBooleanIterator = null!!
+
+interface MyIntIterator {
+    operator fun hasNext(): Boolean
+    operator fun next(): Int
+}
+
+interface MyDoubleIterator {
+    operator fun hasNext(): Boolean
+    fun next(): Double
+}
+
+interface MyBooleanIterator {
+    fun hasNext(): Boolean
+    operator fun next(): Boolean
+}
+
+fun test3(i: Int, d: Double, b: Boolean) {
+    for (element in <!OPERATOR_MODIFIER_REQUIRED!>i<!>) {}
+    for (element in <!OPERATOR_MODIFIER_REQUIRED!>d<!>) {}
+    for (element in <!OPERATOR_MODIFIER_REQUIRED!>b<!>) {}
+}

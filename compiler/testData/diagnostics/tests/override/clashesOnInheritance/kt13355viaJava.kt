@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: K.kt
 abstract class ATest1 : TestNN.JNullVsNotNull()
 

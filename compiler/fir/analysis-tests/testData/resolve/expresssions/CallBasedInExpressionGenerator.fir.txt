@@ -1,0 +1,88 @@
+FILE: CallBasedInExpressionGenerator.kt
+    package org.jetbrains.kotlin.codegen.range.inExpression
+
+    public abstract interface ExpressionCodegen : R|kotlin/Any| {
+    }
+    public abstract interface KtSimpleNameExpression : R|kotlin/Any| {
+    }
+    public abstract interface InExpressionGenerator : R|kotlin/Any| {
+    }
+    public abstract interface StackValue : R|kotlin/Any| {
+    }
+    public open class BranchedValue : R|kotlin/Any| {
+        public constructor(): R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface Type : R|kotlin/Any| {
+    }
+    public abstract interface KotlinType : R|kotlin/Any| {
+    }
+    public abstract interface Label : R|kotlin/Any| {
+    }
+    public abstract interface InstructionAdapter : R|kotlin/Any| {
+    }
+    public final class CallBasedInExpressionGenerator : R|org/jetbrains/kotlin/codegen/range/inExpression/InExpressionGenerator| {
+        public constructor(codegen: R|org/jetbrains/kotlin/codegen/range/inExpression/ExpressionCodegen|, operatorReference: R|org/jetbrains/kotlin/codegen/range/inExpression/KtSimpleNameExpression|): R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val codegen: R|org/jetbrains/kotlin/codegen/range/inExpression/ExpressionCodegen| = R|<local>/codegen|
+            public get(): R|org/jetbrains/kotlin/codegen/range/inExpression/ExpressionCodegen|
+
+        private final val resolvedCall: <ERROR TYPE REF: Unresolved name: getResolvedCallWithAssert> = R|<local>/operatorReference|.<Unresolved name: getResolvedCallWithAssert>#(this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.codegen|.<Unresolved name: bindingContext>#)
+            private get(): <ERROR TYPE REF: Unresolved name: getResolvedCallWithAssert>
+
+        private final val isInverted: R|kotlin/Boolean| = ==(R|<local>/operatorReference|.<Unresolved name: getReferencedNameElementType>#(), <Unresolved name: KtTokens>#.<Unresolved name: NOT_IN>#)
+            private get(): R|kotlin/Boolean|
+
+        public final override fun generate(argument: R|org/jetbrains/kotlin/codegen/range/inExpression/StackValue|): R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue| {
+            ^generate this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.gen|(R|<local>/argument|).R|kotlin/let|<R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue|, R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue|>(<L> = let@fun <anonymous>(it: R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue|): R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue| <inline=Inline, kind=EXACTLY_ONCE>  {
+                ^ when () {
+                    this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.isInverted| ->  {
+                        <Unresolved name: Invert>#(R|<local>/it|)
+                    }
+                    else ->  {
+                        R|<local>/it|
+                    }
+                }
+
+            }
+            )
+        }
+
+        private final fun gen(argument: R|org/jetbrains/kotlin/codegen/range/inExpression/StackValue|): R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue| {
+            ^gen object : R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue| {
+                private constructor(): R|<anonymous>| {
+                    super<R|org/jetbrains/kotlin/codegen/range/inExpression/BranchedValue|>(R|<local>/argument|, Null(null), R|<local>/argument|.<Unresolved name: type>#, <Unresolved name: Opcodes>#.<Unresolved name: IFEQ>#)
+                }
+
+                public final override fun putSelector(type: R|org/jetbrains/kotlin/codegen/range/inExpression/Type|, kotlinType: R|org/jetbrains/kotlin/codegen/range/inExpression/KotlinType?|, v: R|org/jetbrains/kotlin/codegen/range/inExpression/InstructionAdapter|): R|kotlin/Unit| {
+                    this@R|/<anonymous>|.R|/<anonymous>.invokeFunction|(R|<local>/v|)
+                    <Unresolved name: coerceTo>#(R|<local>/type|, R|<local>/kotlinType|, R|<local>/v|)
+                }
+
+                public final override fun condJump(jumpLabel: R|org/jetbrains/kotlin/codegen/range/inExpression/Label|, v: R|org/jetbrains/kotlin/codegen/range/inExpression/InstructionAdapter|, jumpIfFalse: R|kotlin/Boolean|): R|kotlin/Unit| {
+                    this@R|/<anonymous>|.R|/<anonymous>.invokeFunction|(R|<local>/v|)
+                    R|<local>/v|.<Unresolved name: visitJumpInsn>#(when () {
+                        R|<local>/jumpIfFalse| ->  {
+                            <Unresolved name: Opcodes>#.<Unresolved name: IFEQ>#
+                        }
+                        else ->  {
+                            <Unresolved name: Opcodes>#.<Unresolved name: IFNE>#
+                        }
+                    }
+                    , R|<local>/jumpLabel|)
+                }
+
+                private final fun invokeFunction(v: R|org/jetbrains/kotlin/codegen/range/inExpression/InstructionAdapter|): R|kotlin/Unit| {
+                    lval result: <ERROR TYPE REF: Unresolved name: invokeFunction> = this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.codegen|.<Unresolved name: invokeFunction>#(this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.resolvedCall|.<Unresolved name: call>#, this@R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator|.R|org/jetbrains/kotlin/codegen/range/inExpression/CallBasedInExpressionGenerator.resolvedCall|, <Unresolved name: none>#())
+                    R|<local>/result|.<Unresolved name: put>#(R|<local>/result|.<Unresolved name: type>#, R|<local>/result|.<Unresolved name: kotlinType>#, R|<local>/v|)
+                }
+
+            }
+
+        }
+
+    }

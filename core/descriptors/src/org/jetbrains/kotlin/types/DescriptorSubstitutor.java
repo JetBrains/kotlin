@@ -20,10 +20,12 @@ import kotlin.annotations.jvm.Mutable;
 import kotlin.annotations.jvm.ReadOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.descriptors.SourceElement;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl;
+import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +57,7 @@ public class DescriptorSubstitutor {
             @NotNull @Mutable List<TypeParameterDescriptor> result,
             @Nullable boolean[] wereChanges
     ) {
-        Map<TypeConstructor, TypeProjection> mutableSubstitution = new HashMap<TypeConstructor, TypeProjection>();
+        Map<TypeConstructor, TypeProjection> mutableSubstitutionMap = new HashMap<TypeConstructor, TypeProjection>();
 
         Map<TypeParameterDescriptor, TypeParameterDescriptorImpl> substitutedMap = new HashMap<TypeParameterDescriptor, TypeParameterDescriptorImpl>();
         int index = 0;
@@ -71,20 +73,26 @@ public class DescriptorSubstitutor {
                     descriptor.getStorageManager()
             );
 
-            mutableSubstitution.put(descriptor.getTypeConstructor(), new TypeProjectionImpl(substituted.getDefaultType()));
+            mutableSubstitutionMap.put(descriptor.getTypeConstructor(), new TypeProjectionImpl(substituted.getDefaultType()));
 
             substitutedMap.put(descriptor, substituted);
             result.add(substituted);
         }
 
-        TypeSubstitutor substitutor = TypeSubstitutor.createChainedSubstitutor(
-                originalSubstitution, TypeConstructorSubstitution.createByConstructorsMap(mutableSubstitution)
-        );
+        TypeConstructorSubstitution mutableSubstitution = TypeConstructorSubstitution.createByConstructorsMap(mutableSubstitutionMap);
+        TypeSubstitutor substitutor = TypeSubstitutor.createChainedSubstitutor(originalSubstitution, mutableSubstitution);
+        TypeSubstitutor nonApproximatingSubstitutor =
+                TypeSubstitutor.createChainedSubstitutor(originalSubstitution.replaceWithNonApproximating(), mutableSubstitution);
 
         for (TypeParameterDescriptor descriptor : typeParameters) {
             TypeParameterDescriptorImpl substituted = substitutedMap.get(descriptor);
             for (KotlinType upperBound : descriptor.getUpperBounds()) {
-                KotlinType substitutedBound = substitutor.substitute(upperBound, Variance.IN_VARIANCE);
+                ClassifierDescriptor upperBoundDeclaration = upperBound.getConstructor().getDeclarationDescriptor();
+                TypeSubstitutor boundSubstitutor = upperBoundDeclaration instanceof TypeParameterDescriptor && TypeUtilsKt.hasTypeParameterRecursiveBounds((TypeParameterDescriptor) upperBoundDeclaration)
+                                                   ? substitutor
+                                                   : nonApproximatingSubstitutor;
+
+                KotlinType substitutedBound = boundSubstitutor.substitute(upperBound, Variance.OUT_VARIANCE);
                 if (substitutedBound == null) return null;
 
                 if (substitutedBound != upperBound && wereChanges != null) {

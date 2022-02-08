@@ -153,6 +153,26 @@ private class NoExplicitReceiverScopeTowerProcessor<C : Candidate>(
             ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
             data.implicitReceiver
         )
+        is TowerData.BothTowerLevelAndContextReceiversGroup -> {
+            val groupsOfDuplicateCandidates = data.contextReceiversGroup.flatMap { receiver ->
+                data.level.collectCandidates(receiver).map { it to receiver }
+            }.filter { (candidate, _) ->
+                candidate.requiresExtensionReceiver
+            }.groupBy { it.first.descriptor }.values
+
+            val candidateToReceivers = groupsOfDuplicateCandidates.map { l ->
+                val candidate = l.first().first
+                val receivers = l.map { it.second }
+                candidate to receivers
+            }
+            candidateToReceivers.map {
+                candidateFactory.createCandidate(
+                    it.first,
+                    ExplicitReceiverKind.NO_EXPLICIT_RECEIVER,
+                    it.second
+                )
+            }
+        }
         else -> emptyList()
     }
 
@@ -161,7 +181,9 @@ private class NoExplicitReceiverScopeTowerProcessor<C : Candidate>(
             when (data) {
                 is TowerData.TowerLevel -> data.level.recordLookup(name)
                 is TowerData.BothTowerLevelAndImplicitReceiver -> data.level.recordLookup(name)
+                is TowerData.BothTowerLevelAndContextReceiversGroup -> data.level.recordLookup(name)
                 is TowerData.ForLookupForNoExplicitReceiver -> data.level.recordLookup(name)
+                else -> {}
             }
         }
     }

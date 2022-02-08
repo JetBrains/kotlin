@@ -9,8 +9,15 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeStubType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.types.model.StubTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 abstract class FirInferenceSession {
     companion object {
@@ -18,39 +25,57 @@ abstract class FirInferenceSession {
     }
 
     abstract fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement
-    abstract val currentConstraintSystem: ConstraintStorage
+    abstract val currentConstraintStorage: ConstraintStorage
 
     abstract fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement
-    abstract fun <T> addErrorCall(call: T) where T : FirResolvable, T : FirStatement
-    abstract fun <T> addCompetedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement
+    abstract fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement
+
+    abstract fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>)
+
+    abstract fun hasSyntheticTypeVariables(): Boolean
+    abstract fun isSyntheticTypeVariable(typeVariable: TypeVariableMarker): Boolean
+    abstract fun fixSyntheticTypeVariableWithNotEnoughInformation(
+        typeVariable: TypeVariableMarker,
+        completionContext: ConstraintSystemCompletionContext
+    )
 
     abstract fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
         initialStorage: ConstraintStorage,
+        completionMode: ConstraintSystemCompletionMode,
         // TODO: diagnostic holder
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>?
 
-    abstract fun <T> writeOnlyStubs(call: T): Boolean where T : FirResolvable, T : FirStatement
-    abstract fun <T> callCompleted(call: T): Boolean where T : FirResolvable, T : FirStatement
-    abstract fun <T> shouldCompleteResolvedSubAtomsOf(call: T): Boolean where T : FirResolvable, T : FirStatement
+    abstract fun clear()
+    abstract fun createSyntheticStubTypes(system: NewConstraintSystemImpl): Map<TypeConstructorMarker, ConeStubType>
 }
 
 abstract class FirStubInferenceSession : FirInferenceSession() {
     override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = true
 
-    override val currentConstraintSystem: ConstraintStorage
+    override val currentConstraintStorage: ConstraintStorage
         get() = ConstraintStorage.Empty
 
     override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {}
-    override fun <T> addErrorCall(call: T) where T : FirResolvable, T : FirStatement {}
-    override fun <T> addCompetedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {}
+    override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {}
 
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
-        initialStorage: ConstraintStorage
+        initialStorage: ConstraintStorage,
+        completionMode: ConstraintSystemCompletionMode
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
 
-    override fun <T> writeOnlyStubs(call: T): Boolean where T : FirResolvable, T : FirStatement = false
-    override fun <T> callCompleted(call: T): Boolean where T : FirResolvable, T : FirStatement = false
-    override fun <T> shouldCompleteResolvedSubAtomsOf(call: T): Boolean where T : FirResolvable, T : FirStatement = true
+    override fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>) {}
+
+    override fun hasSyntheticTypeVariables(): Boolean = false
+    override fun isSyntheticTypeVariable(typeVariable: TypeVariableMarker): Boolean = false
+    override fun fixSyntheticTypeVariableWithNotEnoughInformation(
+        typeVariable: TypeVariableMarker,
+        completionContext: ConstraintSystemCompletionContext
+    ) {}
+
+    override fun createSyntheticStubTypes(system: NewConstraintSystemImpl): Map<TypeConstructorMarker, ConeStubType> = emptyMap()
+
+    override fun clear() {
+    }
 }

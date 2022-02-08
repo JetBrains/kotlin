@@ -1,4 +1,4 @@
-public abstract interface F : R|kotlin/Any| {
+public abstract fun interface F : R|kotlin/Any| {
     public abstract fun R|kotlin/String|.f(x: R|kotlin/Int|): R|kotlin/Unit|
 
 }

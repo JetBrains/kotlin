@@ -90,9 +90,9 @@ class KotlinJavacBasedClassFinderTest : KotlinTestWithEnvironmentManagement() {
 
     private fun createEnvironment(tmpdir: File?, files: List<File> = emptyList()): KotlinCoreEnvironment {
         return KotlinCoreEnvironment.createForTests(
-                testRootDisposable,
-                KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
-                EnvironmentConfigFiles.JVM_CONFIG_FILES
+            testRootDisposable,
+            KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),
+            EnvironmentConfigFiles.JVM_CONFIG_FILES
         ).apply {
             registerJavac(files)
             // Activate Kotlin light class finder

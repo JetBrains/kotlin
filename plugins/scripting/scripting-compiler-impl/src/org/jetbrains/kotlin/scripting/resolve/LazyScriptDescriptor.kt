@@ -40,11 +40,9 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
-import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
-import org.jetbrains.kotlin.scripting.definitions.findScriptCompilationConfiguration
+import org.jetbrains.kotlin.scripting.definitions.*
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -75,7 +73,7 @@ class LazyScriptDescriptor(
         resolveSession.trace.record(BindingContext.SCRIPT, scriptInfo.script, this)
     }
 
-    override fun getResultValue(): ReplResultPropertyDescriptor? {
+    private val _resultValue: () -> ReplResultPropertyDescriptor? = resolveSession.storageManager.createNullableLazyValue {
         val expression = scriptInfo.script
             .getChildOfType<KtBlockExpression>()
             ?.getChildrenOfType<KtScriptInitializer>()?.lastOrNull()
@@ -85,7 +83,7 @@ class LazyScriptDescriptor(
             resolveSession.trace.bindingContext.getType(it)
         }
 
-        return if (type != null && !type.isUnit() && !type.isNothing()) {
+        if (type != null && !type.isUnit() && !type.isNothing()) {
             resultFieldName()?.let {
                 ReplResultPropertyDescriptor(
                     it,
@@ -97,6 +95,8 @@ class LazyScriptDescriptor(
             }
         } else null
     }
+
+    override fun getResultValue(): ReplResultPropertyDescriptor? = _resultValue()
 
     fun resultFieldName(): Name? {
         // TODO: implement robust REPL/script selection
@@ -118,6 +118,7 @@ class LazyScriptDescriptor(
     override fun getSource() = sourceElement
 
     private val priority: Int = ScriptPriorities.getScriptPriority(scriptInfo.script)
+    private val isReplScript: Boolean = ScriptPriorities.isReplScript(scriptInfo.script)
 
     override fun getPriority() = priority
 
@@ -148,11 +149,11 @@ class LazyScriptDescriptor(
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
         visitor.visitScriptDescriptor(this, data)
 
-    override fun createMemberScope(
+    override fun createScopesHolderForClass(
         c: LazyClassContext,
         declarationProvider: ClassMemberDeclarationProvider
     ): ScopesHolderForClass<LazyClassMemberScope> =
-        ScopesHolderForClass.create(this, c.storageManager, c.kotlinTypeChecker.kotlinTypeRefiner) {
+        ScopesHolderForClass.create(this, c.storageManager, c.kotlinTypeCheckerOfOwnerModule.kotlinTypeRefiner) {
             LazyScriptClassMemberScope(
                 // Must be a ResolveSession for scripts
                 c as ResolveSession,
@@ -288,7 +289,8 @@ class LazyScriptDescriptor(
 
     internal class ConstructorWithParams(
         val constructor: ClassConstructorDescriptorImpl,
-        val explicitConstructorParameters: List<ValueParameterDescriptor>,
+        val earlierScriptsParameter: ValueParameterDescriptor?,
+        val baseClassConstructorParameters: List<ValueParameterDescriptor>,
         val implicitReceiversParameters: List<ValueParameterDescriptor>,
         val scriptProvidedPropertiesParameters: List<ValueParameterDescriptor>
     )
@@ -303,48 +305,62 @@ class LazyScriptDescriptor(
                 val receiverName =
                     if (receiver is ScriptDescriptor) "${LazyScriptClassMemberScope.IMPORTED_SCRIPT_PARAM_NAME_PREFIX}${receiver.name}"
                     else "${LazyScriptClassMemberScope.IMPLICIT_RECEIVER_PARAM_NAME_PREFIX}$idx"
-                receiverName to receiver.defaultType
+                Name.identifier(receiverName) to receiver.defaultType
             }
 
         val providedPropertiesParamTypes =
             scriptProvidedProperties().map {
-                it.name.identifier to it.type
+                it.name to it.type
             }
         val constructorDescriptor = ClassConstructorDescriptorImpl.create(this, inheritedAnnotations, true, source)
 
-        var paramsIndexBase = baseExplicitParameters.lastIndex + 1
+        var paramsIndexBase = 0
 
-        fun createValueParameter(param: Pair<String, org.jetbrains.kotlin.types.KotlinType>) =
+        fun createValueParameter(param: Pair<Name, org.jetbrains.kotlin.types.KotlinType>) =
             ValueParameterDescriptorImpl(
                 constructorDescriptor,
                 null,
                 paramsIndexBase++,
                 Annotations.EMPTY,
-                Name.identifier(param.first),
+                param.first,
                 param.second,
                 declaresDefaultValue = false, isCrossinline = false, isNoinline = false, varargElementType = null,
                 source = SourceElement.NO_SOURCE
             )
 
-        val explicitParameters = baseExplicitParameters.map { it.copy(constructorDescriptor, it.name, it.index) }
+        val earlierScriptsParameter = if (isReplScript) {
+            createValueParameter(Name.special("<earlierScripts>") to builtIns.getArrayType(Variance.INVARIANT, builtIns.anyType))
+        } else null
+
+        val explicitParameters = baseExplicitParameters.map { it.copy(constructorDescriptor, it.name, paramsIndexBase++) }
         val implicitReceiversParameters = implicitReceiversParamTypes.map(::createValueParameter)
         val providedPropertiesParameters = providedPropertiesParamTypes.map(::createValueParameter)
 
         constructorDescriptor.initialize(
-            explicitParameters + implicitReceiversParameters + providedPropertiesParameters, DescriptorVisibilities.PUBLIC
+            buildList {
+                earlierScriptsParameter?.let { add(it) }
+                addAll(explicitParameters)
+                addAll(implicitReceiversParameters)
+                addAll(providedPropertiesParameters)
+            },
+            DescriptorVisibilities.PUBLIC
         )
         constructorDescriptor.returnType = defaultType()
 
         ConstructorWithParams(
             constructorDescriptor,
-            explicitConstructorParameters = explicitParameters,
+            earlierScriptsParameter = earlierScriptsParameter,
+            baseClassConstructorParameters = explicitParameters,
             implicitReceiversParameters = implicitReceiversParameters,
             scriptProvidedPropertiesParameters = providedPropertiesParameters
         )
     }
 
+    override fun getEarlierScriptsConstructorParameter(): ValueParameterDescriptor? =
+        scriptPrimaryConstructorWithParams().earlierScriptsParameter
+
     override fun getExplicitConstructorParameters(): List<ValueParameterDescriptor> =
-        scriptPrimaryConstructorWithParams().explicitConstructorParameters
+        scriptPrimaryConstructorWithParams().baseClassConstructorParameters
 
     override fun getImplicitReceiversParameters(): List<ValueParameterDescriptor> =
         scriptPrimaryConstructorWithParams().implicitReceiversParameters
@@ -360,6 +376,7 @@ class LazyScriptDescriptor(
                 receiverClassDescriptor,
                 true,
                 receiverClassDescriptor.thisAsReceiverParameter,
+                listOf(),
                 LexicalScopeKind.CLASS_MEMBER_SCOPE
             ).addImportingScope(
                 AllUnderImportScope.create(receiverClassDescriptor, emptyList())
@@ -382,4 +399,8 @@ class LazyScriptDescriptor(
 
     override val annotations: Annotations
         get() = scriptClassAnnotations()
+
+    override fun isReplScript(): Boolean {
+        return isReplScript
+    }
 }

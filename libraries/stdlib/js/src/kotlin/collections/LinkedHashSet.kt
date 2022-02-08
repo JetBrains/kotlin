@@ -38,8 +38,7 @@ public actual open class LinkedHashSet<E> : HashSet<E>, MutableSet<E> {
      *
      * @throws IllegalArgumentException if the initial capacity or load factor are negative
      */
-    @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-    actual constructor(initialCapacity: Int, loadFactor: Float = 0.0f) : super(LinkedHashMap<E, Any>(initialCapacity, loadFactor))
+    actual constructor(initialCapacity: Int, loadFactor: Float) : super(LinkedHashMap<E, Any>(initialCapacity, loadFactor))
 
     actual constructor(initialCapacity: Int) : this(initialCapacity, 0.0f)
 

@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.constants.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -73,7 +72,7 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
 
         return when (value.type) {
             Type.BYTE -> value.intValue.toByte().letIf(isUnsigned, ::UByteValue, ::ByteValue)
-            Type.CHAR -> CharValue(value.intValue.toChar())
+            Type.CHAR -> CharValue(value.intValue.toInt().toChar())
             Type.SHORT -> value.intValue.toShort().letIf(isUnsigned, ::UShortValue, ::ShortValue)
             Type.INT -> value.intValue.toInt().letIf(isUnsigned, ::UIntValue, ::IntValue)
             Type.LONG -> value.intValue.letIf(isUnsigned, ::ULongValue, ::LongValue)
@@ -84,7 +83,7 @@ class AnnotationDeserializer(private val module: ModuleDescriptor, private val n
             Type.CLASS -> KClassValue(nameResolver.getClassId(value.classId), value.arrayDimensionCount)
             Type.ENUM -> EnumValue(nameResolver.getClassId(value.classId), nameResolver.getName(value.enumValueId))
             Type.ANNOTATION -> AnnotationValue(deserializeAnnotation(value.annotation, nameResolver))
-            Type.ARRAY -> ConstantValueFactory.createArrayValue(
+            Type.ARRAY -> DeserializedArrayValue(
                 value.arrayElementList.map { resolveValue(builtIns.anyType, it, nameResolver) },
                 expectedType
             )

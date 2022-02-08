@@ -55,9 +55,9 @@ L0:
 L4 [after local declaration]:
     r({ if (flag) { s.add(it) } else { s.remove(it) } return true }) -> <v3>                                                                          PREV:[jmp?(L4)]
     mark(let { if (flag) { s.add(it) } else { s.remove(it) } return true })
-    call(let { if (flag) { s.add(it) } else { s.remove(it) } return true }, let|<v2>, <v3>)
+    call(let { if (flag) { s.add(it) } else { s.remove(it) } return true }, let|<v2>, <v3>) -> <v4>
 L3 [result of call]:
-    jmp?(L2)                                                                                                                                          NEXT:[mark({ name?.hashCode() }), r(false) -> <v5>]                                                                                                                        PREV:[jf(L3), call(let { if (flag) { s.add(it) } else { s.remove(it) } return true }, let|<v2>, <v3>)]
+    jmp?(L2)                                                                                                                                          NEXT:[mark({ name?.hashCode() }), r(false) -> <v5>]                                                                                                                        PREV:[jf(L3), call(let { if (flag) { s.add(it) } else { s.remove(it) } return true }, let|<v2>, <v3>) -> <v4>]
     r(false) -> <v5>
   6 mark({ name?.hashCode() })
     mark(name?.hashCode())

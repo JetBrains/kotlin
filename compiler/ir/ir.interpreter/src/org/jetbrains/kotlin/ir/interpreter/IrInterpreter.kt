@@ -1,795 +1,631 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.interpreter
 
+import org.jetbrains.kotlin.builtins.UnsignedType
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
-import org.jetbrains.kotlin.ir.interpreter.builtins.*
-import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterException
-import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterMethodNotFoundException
-import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterTimeOutException
-import org.jetbrains.kotlin.ir.interpreter.intrinsics.IntrinsicEvaluator
-import org.jetbrains.kotlin.ir.interpreter.stack.StackImpl
-import org.jetbrains.kotlin.ir.interpreter.stack.Variable
+import org.jetbrains.kotlin.ir.interpreter.exceptions.*
+import org.jetbrains.kotlin.ir.interpreter.proxy.CommonProxy.Companion.asProxy
+import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
+import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
+import org.jetbrains.kotlin.ir.interpreter.stack.Field
 import org.jetbrains.kotlin.ir.interpreter.state.*
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.interpreter.state.reflection.*
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import java.lang.invoke.MethodHandle
-import kotlin.concurrent.thread
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
-private const val MAX_COMMANDS = 500_000
-
-class IrInterpreter(private val irBuiltIns: IrBuiltIns, private val bodyMap: Map<IdSignature, IrBody> = emptyMap()) {
-    private val irExceptions = mutableListOf<IrClass>()
-
-    private val stack = StackImpl()
+class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal val bodyMap: Map<IdSignature, IrBody>) {
+    val irBuiltIns: IrBuiltIns
+        get() = environment.irBuiltIns
+    private val callStack: CallStack
+        get() = environment.callStack
+    private val callInterceptor: CallInterceptor = DefaultCallInterceptor(this)
     private var commandCount = 0
 
-    private val mapOfEnums = mutableMapOf<IrSymbol, Complex>()
-    private val mapOfObjects = mutableMapOf<IrSymbol, Complex>()
+    constructor(irBuiltIns: IrBuiltIns, bodyMap: Map<IdSignature, IrBody> = emptyMap()) :
+            this(IrInterpreterEnvironment(irBuiltIns), bodyMap)
 
-    constructor(irModule: IrModuleFragment): this(irModule.irBuiltins) {
-        irExceptions.addAll(
-            irModule.files
-                .flatMap { it.declarations }
-                .filterIsInstance<IrClass>()
-                .filter { it.isSubclassOf(irBuiltIns.throwableClass.owner) }
-        )
-    }
-
-    private fun Any?.getType(defaultType: IrType): IrType {
-        return when (this) {
-            is Boolean -> irBuiltIns.booleanType
-            is Char -> irBuiltIns.charType
-            is Byte -> irBuiltIns.byteType
-            is Short -> irBuiltIns.shortType
-            is Int -> irBuiltIns.intType
-            is Long -> irBuiltIns.longType
-            is String -> irBuiltIns.stringType
-            is Float -> irBuiltIns.floatType
-            is Double -> irBuiltIns.doubleType
-            null -> irBuiltIns.nothingNType
-            else -> when (defaultType.classifierOrNull?.owner) {
-                is IrTypeParameter -> stack.getVariable(defaultType.classifierOrFail).state.irClass.defaultType
-                else -> defaultType
-            }
-        }
-    }
+    constructor(irModule: IrModuleFragment) : this(IrInterpreterEnvironment(irModule), emptyMap())
 
     private fun incrementAndCheckCommands() {
         commandCount++
-        if (commandCount >= MAX_COMMANDS) throw InterpreterTimeOutException()
+        if (commandCount >= environment.configuration.maxCommands) InterpreterTimeOutError().handleUserException(environment)
     }
 
-    fun interpret(expression: IrExpression): IrExpression {
-        stack.clean()
-        lateinit var result: IrExpression
-        thread(start = true) {
-            result = try {
-                when (val returnLabel = expression.interpret().returnLabel) {
-                    ReturnLabel.REGULAR -> stack.popReturnValue().toIrExpression(expression)
-                    ReturnLabel.EXCEPTION -> {
-                        val message = (stack.popReturnValue() as ExceptionState).getFullDescription()
-                        IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + message)
-                    }
-                    else -> TODO("$returnLabel not supported as result of interpretation")
+    private fun getUnitState(): State = environment.mapOfObjects[irBuiltIns.unitClass]!!
+
+    private fun Instruction.handle() {
+        when (this) {
+            is CompoundInstruction -> unfoldInstruction(this.element, environment)
+            is SimpleInstruction -> interpret(this.element).also { incrementAndCheckCommands() }
+            is CustomInstruction -> this.evaluate()
+        }
+    }
+
+    fun interpret(expression: IrExpression, file: IrFile? = null): IrExpression {
+        commandCount = 0
+        callStack.newFrame(expression, file)
+        callStack.pushCompoundInstruction(expression)
+
+        while (!callStack.hasNoInstructions()) {
+            callStack.popInstruction().handle()
+        }
+
+        return callStack.popState().toIrExpression(expression).apply { callStack.dropFrame() }
+    }
+
+    internal fun withNewCallStack(call: IrCall, init: IrInterpreter.() -> Any?): State {
+        return with(IrInterpreter(environment.copyWithNewCallStack(), bodyMap)) {
+            callStack.newFrame(call.symbol.owner)
+            init()
+
+            while (!callStack.hasNoInstructions()) {
+                callStack.popInstruction().handle()
+            }
+
+            callStack.popState().apply { callStack.dropFrame() }
+        }
+    }
+
+    private fun interpret(element: IrElement) {
+        when (element) {
+            is IrSimpleFunction -> interpretFunction(element)
+            is IrConstructor -> interpretConstructor(element)
+            is IrCall -> interpretCall(element)
+            is IrConstructorCall -> interpretConstructorCall(element)
+            is IrEnumConstructorCall -> interpretEnumConstructorCall(element)
+            is IrDelegatingConstructorCall -> interpretDelegatingConstructorCall(element)
+            is IrValueParameter -> interpretValueParameter(element)
+            is IrField -> interpretField(element)
+            is IrBody -> interpretBody(element)
+            is IrBlock -> interpretBlock(element)
+            is IrReturn -> interpretReturn(element)
+            is IrSetField -> interpretSetField(element)
+            is IrGetField -> interpretGetField(element)
+            is IrGetObjectValue -> interpretGetObjectValue(element)
+            is IrGetEnumValue -> interpretGetEnumValue(element)
+            is IrEnumEntry -> interpretEnumEntry(element)
+            is IrConst<*> -> interpretConst(element)
+            is IrVariable -> callStack.storeState(element.symbol, callStack.popState())
+            is IrSetValue -> callStack.rewriteState(element.symbol, callStack.popState())
+            is IrTypeOperatorCall -> interpretTypeOperatorCall(element)
+            is IrBranch -> interpretBranch(element)
+            is IrWhileLoop -> interpretWhile(element)
+            is IrDoWhileLoop -> interpretDoWhile(element)
+            is IrWhen -> callStack.dropSubFrame()
+            is IrVararg -> interpretVararg(element)
+            is IrTry -> interpretTry(element)
+            is IrThrow -> interpretThrow(element)
+            is IrStringConcatenation -> interpretStringConcatenation(element)
+            is IrFunctionExpression -> interpretFunctionExpression(element)
+            is IrFunctionReference -> interpretFunctionReference(element)
+            is IrPropertyReference -> interpretPropertyReference(element)
+            is IrClassReference -> interpretClassReference(element)
+            is IrGetClass -> interpretGetClass(element)
+            else -> TODO("${element.javaClass} not supported for interpretation")
+        }
+    }
+
+    private fun IrFunction.tryResetFunctionBody() {
+        val signature = this.symbol.signature ?: return
+        if (bodyMap[signature] != null) this.body = null
+    }
+
+    private fun interpretFunction(function: IrSimpleFunction) {
+        function.tryResetFunctionBody()
+        if (function.checkCast(environment)) callStack.dropFrameAndCopyResult()
+    }
+
+    private fun interpretValueParameter(valueParameter: IrValueParameter) {
+        val irFunction = valueParameter.parent as IrFunction
+        fun isReceiver() = irFunction.dispatchReceiverParameter == valueParameter || irFunction.extensionReceiverParameter == valueParameter
+
+        val state = callStack.popState()
+
+        state.checkNullability(valueParameter.type, environment) {
+            if (isReceiver()) return@checkNullability NullPointerException()
+            val method = irFunction.getCapitalizedFileName() + "." + irFunction.fqName
+            val parameter = valueParameter.name
+            IllegalArgumentException("Parameter specified as non-null is null: method $method, parameter $parameter")
+        } ?: return
+
+        callStack.pushState(state)
+    }
+
+    private fun interpretCall(call: IrCall) {
+        fun State?.getThisOrSuperReceiver(irFunction: IrFunction): State? {
+            // check if this function must be handled by super wrapper object
+            if (this !is Common || this.superWrapperClass == null || irFunction.parent !is IrClass) return this
+            if (superWrapperClass!!.irClass.isSubclassOf(irFunction.parentAsClass)) return superWrapperClass
+            return this
+        }
+
+        val owner = call.symbol.owner
+        // 1. load evaluated arguments from stack
+        val valueArguments = owner.valueParameters.map { callStack.popState() }.reversed()
+        val extensionReceiver = owner.getExtensionReceiver()?.let { callStack.popState() }
+        val dispatchReceiver = owner.getDispatchReceiver()?.let { callStack.popState() }
+
+        // 2. get correct function for interpretation
+        val irFunction = dispatchReceiver?.getIrFunctionByIrCall(call) ?: call.symbol.owner
+        val args = listOfNotNull(dispatchReceiver.getThisOrSuperReceiver(irFunction), extensionReceiver) + valueArguments
+
+        // 3. evaluate reified type arguments; must do it here, before new frame, because outer type arguments can be loaded at this point
+        val reifiedTypeArguments = environment.loadReifiedTypeArguments(call)
+
+        callStack.newFrame(irFunction)
+        callStack.pushSimpleInstruction(irFunction)
+
+        // 4. load up values onto stack; do it at first to set low priority of these variables
+        if (dispatchReceiver is StateWithClosure) callStack.loadUpValues(dispatchReceiver)
+        if (extensionReceiver is StateWithClosure) callStack.loadUpValues(extensionReceiver)
+        if (irFunction.isLocal) callStack.copyUpValuesFromPreviousFrame()
+
+        // 5. store arguments in memory (remap args on actual names)
+        irFunction.getDispatchReceiver()?.let { callStack.storeState(it, dispatchReceiver!!) }
+        irFunction.getExtensionReceiver()?.let { callStack.storeState(it, extensionReceiver ?: callStack.loadState(it)) }
+        irFunction.valueParameters.forEachIndexed { i, param -> callStack.storeState(param.symbol, valueArguments[i]) }
+        // `call.type` is used in check cast and emptyArray
+        callStack.storeState(irFunction.symbol, KTypeState(call.type, environment.kTypeClass.owner))
+
+        // 6. store reified type parameters
+        reifiedTypeArguments.forEach { callStack.storeState(it.key, it.value) }
+
+        // 7. load outer class object
+        if (dispatchReceiver is Complex && irFunction.parentClassOrNull?.isInner == true) dispatchReceiver.loadOuterClassesInto(callStack)
+
+        callInterceptor.interceptCall(call, irFunction, args) {
+            callStack.pushCompoundInstruction(irFunction)
+        }
+    }
+
+    private fun interpretField(field: IrField) {
+        val irClass = field.parentAsClass
+        val receiver = irClass.thisReceiver!!.symbol
+        val receiverState = callStack.loadState(receiver)
+        receiverState.setField(field.correspondingPropertySymbol!!, callStack.popState())
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    private fun interpretBody(body: IrBody) {
+        if (callStack.peekState() == null) callStack.pushState(getUnitState()) // implicit Unit result
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    private fun interpretBlock(block: IrBlock) {
+        callStack.dropSubFrame()
+        if (callStack.peekState() == null) callStack.pushState(getUnitState()) // implicit Unit result
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    private fun interpretConstructor(constructor: IrConstructor) {
+        callStack.pushState(callStack.loadState(constructor.parentAsClass.thisReceiver!!.symbol))
+        callStack.dropFrameAndCopyResult()
+    }
+
+    private fun interpretConstructorCall(constructorCall: IrFunctionAccessExpression) {
+        val constructor = constructorCall.symbol.owner
+        val valueArguments = constructor.valueParameters.map { callStack.popState() }.reversed()
+        val irClass = constructor.parentAsClass
+        val receiverSymbol = constructor.dispatchReceiverParameter?.symbol
+
+        // this check is used to be sure that object will be created once
+        val objectState = when (constructorCall) {
+            !is IrConstructorCall -> callStack.loadState(constructorCall.getThisReceiver())
+            else -> (if (irClass.isSubclassOfThrowable()) ExceptionState(irClass, callStack.getStackTrace()) else Common(irClass))
+                .apply {
+                    // must set object's state here, before actual initialization, to avoid cyclic evaluation
+                    if (irClass.isObject) environment.mapOfObjects[irClass.symbol] = this
                 }
-            } catch (e: InterpreterException) {
-                // TODO don't handle, throw to lowering
-                IrErrorExpressionImpl(expression.startOffset, expression.endOffset, expression.type, "\n" + e.message)
-            }
-        }.join()
-        return result
-    }
-
-    private fun IrElement.interpret(): ExecutionResult {
-        try {
-            incrementAndCheckCommands()
-            val executionResult = when (this) {
-                is IrSimpleFunction -> interpretFunction(this)
-                is IrCall -> interpretCall(this)
-                is IrConstructorCall -> interpretConstructorCall(this)
-                is IrEnumConstructorCall -> interpretEnumConstructorCall(this)
-                is IrDelegatingConstructorCall -> interpretDelegatedConstructorCall(this)
-                is IrInstanceInitializerCall -> interpretInstanceInitializerCall(this)
-                is IrBody -> interpretBody(this)
-                is IrBlock -> interpretBlock(this)
-                is IrReturn -> interpretReturn(this)
-                is IrSetField -> interpretSetField(this)
-                is IrGetField -> interpretGetField(this)
-                is IrGetValue -> interpretGetValue(this)
-                is IrGetObjectValue -> interpretGetObjectValue(this)
-                is IrGetEnumValue -> interpretGetEnumValue(this)
-                is IrEnumEntry -> interpretEnumEntry(this)
-                is IrConst<*> -> interpretConst(this)
-                is IrVariable -> interpretVariable(this)
-                is IrSetValue -> interpretSetVariable(this)
-                is IrTypeOperatorCall -> interpretTypeOperatorCall(this)
-                is IrBranch -> interpretBranch(this)
-                is IrWhileLoop -> interpretWhile(this)
-                is IrDoWhileLoop -> interpretDoWhile(this)
-                is IrWhen -> interpretWhen(this)
-                is IrBreak -> interpretBreak(this)
-                is IrContinue -> interpretContinue(this)
-                is IrVararg -> interpretVararg(this)
-                is IrSpreadElement -> interpretSpreadElement(this)
-                is IrTry -> interpretTry(this)
-                is IrCatch -> interpretCatch(this)
-                is IrThrow -> interpretThrow(this)
-                is IrStringConcatenation -> interpretStringConcatenation(this)
-                is IrFunctionExpression -> interpretFunctionExpression(this)
-                is IrFunctionReference -> interpretFunctionReference(this)
-                is IrComposite -> interpretComposite(this)
-
-                else -> TODO("${this.javaClass} not supported")
-            }
-
-            return executionResult.getNextLabel(this) { this@getNextLabel.interpret() }
-        } catch (e: InterpreterException) {
-            throw e
-        } catch (e: Throwable) {
-            // catch exception from JVM such as: ArithmeticException, StackOverflowError and others
-            val exceptionName = e::class.java.simpleName
-            val irExceptionClass = irExceptions.firstOrNull { it.name.asString() == exceptionName } ?: irBuiltIns.throwableClass.owner
-            stack.pushReturnValue(ExceptionState(e, irExceptionClass, stack.getStackTrace()))
-            return Exception
         }
-    }
 
-    // this method is used to get stack trace after exception
-    private fun interpretFunction(irFunction: IrSimpleFunction): ExecutionResult {
-        if (irFunction.fileOrNull != null) stack.setCurrentFrameName(irFunction)
+        if (irClass.isLocal) callStack.storeUpValues(objectState as StateWithClosure)
+        val outerClass = receiverSymbol?.let { callStack.popState() }
+        val returnType = constructorCall.type.getTypeIfReified(callStack)
 
-        if (irFunction.body is IrSyntheticBody) return handleIntrinsicMethods(irFunction)
-        return irFunction.body?.interpret() ?: throw InterpreterException("Ir function must be with body")
-    }
+        callStack.newFrame(constructor)
+        callStack.pushSimpleInstruction(constructor)
+        if (irClass.isLocal) callStack.loadUpValues(objectState as StateWithClosure)
 
-    private fun MethodHandle?.invokeMethod(irFunction: IrFunction): ExecutionResult {
-        this ?: return handleIntrinsicMethods(irFunction)
-        val result = this.invokeWithArguments(irFunction.getArgsForMethodInvocation(stack.getAll()))
-        stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
+        callStack.storeState(constructorCall.getThisReceiver(), objectState)
+        constructor.valueParameters.forEachIndexed { i, param -> callStack.storeState(param.symbol, valueArguments[i]) }
+        callStack.storeState(constructor.symbol, KTypeState(returnType, environment.kTypeClass.owner))
 
-        return Next
-    }
-
-    private fun handleIntrinsicMethods(irFunction: IrFunction): ExecutionResult {
-        return IntrinsicEvaluator().evaluate(irFunction, stack) { this.interpret() }
-    }
-
-    private fun calculateBuiltIns(irFunction: IrFunction): ExecutionResult {
-        val methodName = when (val property = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol) {
-            null -> irFunction.name.asString()
-            else -> property.owner.name.asString()
+        val superReceiver = when (val irStatement = constructor.body?.statements?.get(0)) {
+            null -> null // for jvm
+            is IrTypeOperatorCall -> (irStatement.argument as IrFunctionAccessExpression).getThisReceiver() // for enums
+            is IrFunctionAccessExpression -> irStatement.getThisReceiver()
+            is IrBlock -> (irStatement.statements.last() as IrFunctionAccessExpression).getThisReceiver()
+            else -> TODO("${irStatement::class.java} is not supported as first statement in constructor call")
         }
-        val args = stack.getAll().map { it.state }
+        superReceiver?.let { callStack.storeState(it, objectState) }
 
-        val receiverType = irFunction.dispatchReceiverParameter?.type
-        val argsType = listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }
-        val argsValues = args.map {
-            when (it) {
-                is Complex -> when (irFunction.fqNameWhenAvailable?.asString()) {
-                    // must explicitly convert Common to String in String plus method or else will be taken default toString from Common
-                    "kotlin.String.plus" -> stack.apply { interpretToString(it) }.popReturnValue().asString()
-                    else -> it.getOriginal()
-                }
-                is Primitive<*> -> it.value
-                is Lambda -> it // lambda can be used in built in calculation, for example, in null check or toString
-                else -> TODO("unsupported type of argument for builtins calculations: ${it::class.java}")
+        if (outerClass != null) {
+            val outerClassSymbolToState = irClass.parentAsClass.thisReceiver!!.symbol to outerClass
+            (objectState as Complex).outerClass = outerClassSymbolToState
+            if (superReceiver?.owner?.type != receiverSymbol.owner.type) {
+                // This check is needed to test that this inner class is not subclass of its outer.
+                // If it is true and if we add the next symbol, it will interfere with super symbol in memory.
+                // In other case, we need this variable when inner class has inner super class.
+                callStack.storeState(receiverSymbol, outerClass)
+                // used to get information from outer class
+                objectState.loadOuterClassesInto(callStack, constructorCall.getThisReceiver())
             }
         }
 
-        fun IrType.getOnlyName(): String {
-            return when {
-                this.originalKotlinType != null -> this.originalKotlinType.toString()
-                this is IrSimpleType -> (this.classifierOrFail.owner as IrDeclarationWithName).name.asString() + (if (this.hasQuestionMark) "?" else "")
-                else -> this.render()
-            }
-        }
-
-        val signature = CompileTimeFunction(methodName, argsType.map { it.getOnlyName() })
-
-        // TODO replace unary, binary, ternary functions with vararg
-        val result = when (argsType.size) {
-            1 -> {
-                val function = unaryFunctions[signature]
-                    ?: throw InterpreterMethodNotFoundException("For given function $signature there is no entry in unary map")
-                function.invoke(argsValues.first())
-            }
-            2 -> {
-                val function = binaryFunctions[signature]
-                    ?: throw InterpreterMethodNotFoundException("For given function $signature there is no entry in binary map")
-                when (methodName) {
-                    "rangeTo" -> return calculateRangeTo(irFunction.returnType)
-                    else -> function.invoke(argsValues[0], argsValues[1])
-                }
-            }
-            3 -> {
-                val function = ternaryFunctions[signature]
-                    ?: throw InterpreterMethodNotFoundException("For given function $signature there is no entry in ternary map")
-                function.invoke(argsValues[0], argsValues[1], argsValues[2])
-            }
-            else -> throw InterpreterException("Unsupported number of arguments")
-        }
-
-        stack.pushReturnValue(result.toState(result.getType(irFunction.returnType)))
-        return Next
-    }
-
-    private fun calculateRangeTo(type: IrType): ExecutionResult {
-        val constructor = type.classOrNull!!.owner.constructors.first()
-        val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
-
-        val primitiveValueParameters = stack.getAll().map { it.state as Primitive<*> }
-        primitiveValueParameters.forEachIndexed { index, primitive ->
-            constructorCall.putValueArgument(index, primitive.value.toIrConst(primitive.type))
-        }
-
-        val constructorValueParameters = constructor.valueParameters.map { it.symbol }.zip(primitiveValueParameters)
-        return stack.newFrame(initPool = constructorValueParameters.map { Variable(it.first, it.second) }) {
-            constructorCall.interpret()
+        callInterceptor.interceptConstructor(constructorCall, valueArguments) {
+            callStack.pushCompoundInstruction(constructor)
         }
     }
 
-    private fun interpretValueParameters(
-        expression: IrFunctionAccessExpression, irFunction: IrFunction, pool: MutableList<Variable>
-    ): ExecutionResult {
-        // if irFunction is lambda and it has receiver, then first descriptor must be taken from extension receiver
-        val receiverAsFirstArgument = when (expression.dispatchReceiver?.type?.isFunction()) {
-            true -> listOfNotNull(irFunction.getExtensionReceiver())
-            else -> listOf()
-        }
-        val valueParametersSymbols = receiverAsFirstArgument + irFunction.valueParameters.map { it.symbol }
-
-        val valueArguments = (0 until expression.valueArgumentsCount).map { expression.getValueArgument(it) }
-        val defaultValues = expression.symbol.owner.valueParameters.map { it.defaultValue?.expression }
-
-        return stack.newFrame(asSubFrame = true, initPool = pool) {
-            for (i in valueArguments.indices) {
-                (valueArguments[i] ?: defaultValues[i])?.interpret()?.check { return@newFrame it }
-                    ?: stack.pushReturnValue(listOf<Any?>().toPrimitiveStateArray(expression.getVarargType(i)!!)) // if vararg is empty
-
-                stack.peekReturnValue().checkNullability(valueParametersSymbols[i].owner.type) {
-                    val method = irFunction.getCapitalizedFileName() + "." + irFunction.fqNameWhenAvailable
-                    val parameter = valueParametersSymbols[i].owner.name
-                    throw IllegalArgumentException("Parameter specified as non-null is null: method $method, parameter $parameter")
-                }
-
-                with(Variable(valueParametersSymbols[i], stack.popReturnValue())) {
-                    stack.addVar(this)  //must add value argument in current stack because it can be used later as default argument
-                    pool.add(this)
-                }
-            }
-            Next
-        }
+    private fun interpretDelegatingConstructorCall(constructorCall: IrDelegatingConstructorCall) {
+        if (constructorCall.symbol.owner.parent == irBuiltIns.anyClass.owner) return
+        interpretConstructorCall(constructorCall)
     }
 
-    private fun interpretCall(expression: IrCall): ExecutionResult {
-        val valueArguments = mutableListOf<Variable>()
-        // dispatch receiver processing
-        val rawDispatchReceiver = expression.dispatchReceiver
-        rawDispatchReceiver?.interpret()?.check { return it }
-        val dispatchReceiver = rawDispatchReceiver?.let { stack.popReturnValue() }?.checkNullability(expression.dispatchReceiver?.type)
-
-        // extension receiver processing
-        val rawExtensionReceiver = expression.extensionReceiver
-        rawExtensionReceiver?.interpret()?.check { return it }
-        val extensionReceiver = rawExtensionReceiver?.let { stack.popReturnValue() }?.checkNullability(expression.extensionReceiver?.type)
-
-        // get correct ir function
-        val irFunction = dispatchReceiver?.getIrFunctionByIrCall(expression) ?: expression.symbol.owner
-        val functionReceiver = dispatchReceiver.getCorrectReceiverByFunction(irFunction)
-
-        // it is important firstly to add receiver, then arguments; this order is used in builtin method call
-        irFunction.getDispatchReceiver()?.let { functionReceiver?.let { receiver -> valueArguments.add(Variable(it, receiver)) } }
-        irFunction.getExtensionReceiver()?.let { extensionReceiver?.let { receiver -> valueArguments.add(Variable(it, receiver)) } }
-
-        interpretValueParameters(expression, irFunction, valueArguments).check { return it }
-
-        valueArguments.addAll(getTypeArguments(irFunction, expression) { stack.getVariable(it).state })
-        if (dispatchReceiver is Complex) valueArguments.addAll(dispatchReceiver.typeArguments)
-        if (extensionReceiver is Complex) valueArguments.addAll(extensionReceiver.typeArguments)
-
-        val isLocal = (dispatchReceiver as? Complex)?.getOriginal()?.irClass?.isLocal ?: irFunction.isLocal
-        if (isLocal) valueArguments.addAll(dispatchReceiver.extractNonLocalDeclarations())
-
-        if (functionReceiver is Complex && irFunction.parentClassOrNull?.isInner == true) {
-            generateSequence(functionReceiver.outerClass) { (it.state as? Complex)?.outerClass }.forEach { valueArguments.add(it) }
-        }
-
-        return stack.newFrame(asSubFrame = irFunction.isInline || irFunction.isLocal, initPool = valueArguments) {
-            // inline only methods are not presented in lookup table, so must be interpreted instead of execution
-            val isInlineOnly = irFunction.hasAnnotation(FqName("kotlin.internal.InlineOnly"))
-            return@newFrame when {
-                dispatchReceiver is Wrapper && !isInlineOnly -> dispatchReceiver.getMethod(irFunction).invokeMethod(irFunction)
-                irFunction.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getStaticMethod(irFunction).invokeMethod(irFunction)
-                dispatchReceiver is Primitive<*> -> calculateBuiltIns(irFunction) // 'is Primitive' check for js char and js long
-                irFunction.body == null ->
-                    irFunction.trySubstituteFunctionBody() ?: irFunction.tryCalculateLazyConst() ?: calculateBuiltIns(irFunction)
-                else -> irFunction.interpret()
-            }
-        }.check { return it }.implicitCastIfNeeded(expression.type, irFunction.returnType, stack)
+    private fun interpretEnumConstructorCall(constructorCall: IrEnumConstructorCall) {
+        interpretConstructorCall(constructorCall)
     }
 
-    private fun IrFunction.trySubstituteFunctionBody(): ExecutionResult? {
-        val signature = this.symbol.signature ?: return null
-        val body = bodyMap[signature]
-
-        return body?.let {
-            try {
-                this.body = it
-                this.interpret()
-            } finally {
-                this.body = null
-            }
-        }
-    }
-
-    // TODO fix in FIR2IR; const val getter must have body with IrGetField node
-    private fun IrFunction.tryCalculateLazyConst(): ExecutionResult? {
-        if (this !is IrSimpleFunction) return null
-        return this.correspondingPropertySymbol?.owner?.backingField?.initializer?.interpret()
-    }
-
-    private fun interpretInstanceInitializerCall(call: IrInstanceInitializerCall): ExecutionResult {
-        val irClass = call.classSymbol.owner
-
-        // properties processing
-        val classProperties = irClass.declarations.filterIsInstance<IrProperty>()
-        classProperties.forEach { property ->
-            property.backingField?.initializer?.expression?.interpret()?.check { return it }
-            val receiver = irClass.thisReceiver!!.symbol
-            if (property.backingField?.initializer != null) {
-                val receiverState = stack.getVariable(receiver).state
-                val propertyVar = Variable(property.symbol, stack.popReturnValue())
-                receiverState.setField(propertyVar)
-            }
+    private fun interpretConst(expression: IrConst<*>) {
+        fun getSignedType(unsignedType: IrType): IrType? = when (unsignedType.getUnsignedType()) {
+            UnsignedType.UBYTE -> irBuiltIns.byteType
+            UnsignedType.USHORT -> irBuiltIns.shortType
+            UnsignedType.UINT -> irBuiltIns.intType
+            UnsignedType.ULONG -> irBuiltIns.longType
+            else -> null
         }
 
-        // init blocks processing
-        val anonymousInitializer = irClass.declarations.filterIsInstance<IrAnonymousInitializer>().filter { !it.isStatic }
-        anonymousInitializer.forEach { init -> init.body.interpret().check { return it } }
-
-        return Next
-    }
-
-    private fun interpretConstructor(constructorCall: IrFunctionAccessExpression): ExecutionResult {
-        val owner = constructorCall.symbol.owner
-        val valueArguments = mutableListOf<Variable>()
-
-        interpretValueParameters(constructorCall, owner, valueArguments).check { return it }
-
-        val irClass = owner.parent as IrClass
-        val typeArguments = getTypeArguments(irClass, constructorCall) { stack.getVariable(it).state }
-        if (irClass.hasAnnotation(evaluateIntrinsicAnnotation) || irClass.fqNameWhenAvailable!!.startsWith(Name.identifier("java"))) {
-            return stack.newFrame(initPool = valueArguments) { Wrapper.getConstructorMethod(owner).invokeMethod(owner) }
-                .apply { stack.peekReturnValue().addTypeArguments(typeArguments) }
-        }
-
-        if (irClass.defaultType.isArray() || irClass.defaultType.isPrimitiveArray()) {
-            // array constructor doesn't have body so must be treated separately
-            return stack.newFrame(initPool = valueArguments) { handleIntrinsicMethods(owner) }
-                .apply { stack.peekReturnValue().addTypeArguments(typeArguments) }
-        }
-
-        val state = Common(irClass).apply { this.addTypeArguments(typeArguments) }
-        if (irClass.isLocal) state.fields.addAll(stack.getAll()) // TODO save only necessary declarations
-        if (irClass.isInner) {
-            constructorCall.dispatchReceiver!!.interpret().check { return it }
-            state.outerClass = Variable(irClass.parentAsClass.thisReceiver!!.symbol, stack.popReturnValue())
-        }
-        valueArguments.add(Variable(irClass.thisReceiver!!.symbol, state)) //used to set up fields in body
-        return stack.newFrame(initPool = valueArguments + state.typeArguments) {
-            val statements = constructorCall.getBody()!!.statements
-            // enum entry use IrTypeOperatorCall with IMPLICIT_COERCION_TO_UNIT as delegation call, but we need the value
-            ((statements[0] as? IrTypeOperatorCall)?.argument ?: statements[0]).interpret().check { return@newFrame it }
-            val returnedState = stack.popReturnValue() as Complex
-
-            for (i in 1 until statements.size) statements[i].interpret().check { return@newFrame it }
-
-            stack.pushReturnValue(state.apply { this.setSuperClassInstance(returnedState) })
-            Next
-        }
-    }
-
-    private fun interpretConstructorCall(constructorCall: IrConstructorCall): ExecutionResult {
-        return interpretConstructor(constructorCall)
-    }
-
-    private fun interpretEnumConstructorCall(enumConstructorCall: IrEnumConstructorCall): ExecutionResult {
-        return interpretConstructor(enumConstructorCall)
-    }
-
-    private fun interpretDelegatedConstructorCall(delegatingConstructorCall: IrDelegatingConstructorCall): ExecutionResult {
-        if (delegatingConstructorCall.symbol.owner.parent == irBuiltIns.anyClass.owner) {
-            val anyAsStateObject = Common(irBuiltIns.anyClass.owner)
-            stack.pushReturnValue(anyAsStateObject)
-            return Next
-        }
-
-        return interpretConstructor(delegatingConstructorCall)
-    }
-
-    private fun interpretConst(expression: IrConst<*>): ExecutionResult {
-        fun getSignedType(unsignedType: IrType): IrType {
-            return when {
-                unsignedType.isUByte() -> irBuiltIns.byteType
-                unsignedType.isUShort() -> irBuiltIns.shortType
-                unsignedType.isUInt() -> irBuiltIns.intType
-                unsignedType.isULong() -> irBuiltIns.longType
-                else -> throw InterpreterException("Unsupported unsigned class ${unsignedType.render()}")
-            }
-        }
-
-        return if (expression.type.isUnsigned()) {
+        val signedType = getSignedType(expression.type)
+        if (signedType != null) {
             val unsignedClass = expression.type.classOrNull!!
             val constructor = unsignedClass.constructors.single().owner
             val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
-            constructorCall.putValueArgument(0, expression.value.toIrConst(getSignedType(expression.type)))
+            constructorCall.putValueArgument(0, expression.value.toIrConst(signedType))
 
-            constructorCall.interpret()
-        } else {
-            stack.pushReturnValue(expression.toPrimitive())
-            Next
+            return callStack.pushCompoundInstruction(constructorCall)
+        }
+        callStack.pushState(expression.toPrimitive())
+    }
+
+    private fun interpretReturn(expression: IrReturn) {
+        callStack.returnFromFrameWithResult(expression)
+    }
+
+    private fun interpretWhile(loop: IrWhileLoop) {
+        val result = callStack.popState().asBoolean()
+        callStack.dropSubFrame()
+        if (result) {
+            callStack.newSubFrame(loop)
+            callStack.pushSimpleInstruction(loop)
+            callStack.pushCompoundInstruction(loop.condition)
+            callStack.pushCompoundInstruction(loop.body)
         }
     }
 
-    private fun interpretStatements(statements: List<IrStatement>): ExecutionResult {
-        var executionResult: ExecutionResult = Next
-        for (statement in statements) {
-            when (statement) {
-                is IrClass -> if (statement.isLocal) Next else TODO("Only local classes are supported")
-                is IrFunction -> if (statement.isLocal) Next else TODO("Only local functions are supported")
-                else -> executionResult = statement.interpret().check { return it }
-            }
+    private fun interpretDoWhile(loop: IrDoWhileLoop) {
+        val result = callStack.popState().asBoolean()
+        callStack.dropSubFrame()
+        if (result) {
+            callStack.newSubFrame(loop)
+            callStack.pushSimpleInstruction(loop)
+            callStack.pushCompoundInstruction(loop.condition)
+            callStack.pushCompoundInstruction(loop.body)
         }
-        return executionResult
     }
 
-    private fun interpretBlock(block: IrBlock): ExecutionResult {
-        return stack.newFrame(asSubFrame = true) { interpretStatements(block.statements) }
-    }
-
-    private fun interpretBody(body: IrBody): ExecutionResult {
-        return stack.newFrame(asSubFrame = true) { interpretStatements(body.statements) }
-    }
-
-    private fun interpretReturn(expression: IrReturn): ExecutionResult {
-        expression.value.interpret().check { return it }
-        return Return.addOwnerInfo(expression.returnTargetSymbol.owner)
-    }
-
-    private fun interpretWhile(expression: IrWhileLoop): ExecutionResult {
-        while (true) {
-            expression.condition.interpret().check { return it }
-            if (stack.popReturnValue().asBooleanOrNull() != true) break
-            expression.body?.interpret()?.check { return it }
+    private fun interpretBranch(branch: IrBranch) {
+        val result = callStack.popState().asBoolean()
+        if (result) {
+            callStack.dropSubFrame()
+            callStack.pushCompoundInstruction(branch.result)
         }
-        return Next
     }
 
-    private fun interpretDoWhile(expression: IrDoWhileLoop): ExecutionResult {
-        do {
-            // pool from body must be seen to condition expression, so must create temp frame here
-            stack.newFrame(asSubFrame = true) {
-                expression.body?.interpret()?.check { return@newFrame it }
-                expression.condition.interpret().check { return@newFrame it }
-                Next
-            }.check { return it }
-
-            if (stack.popReturnValue().asBooleanOrNull() != true) break
-        } while (true)
-        return Next
-    }
-
-    private fun interpretWhen(expression: IrWhen): ExecutionResult {
-        var executionResult: ExecutionResult = Next
-        for (branch in expression.branches) {
-            executionResult = branch.interpret().check { return it }
-        }
-        return executionResult
-    }
-
-    private fun interpretBranch(expression: IrBranch): ExecutionResult {
-        val executionResult = expression.condition.interpret().check { return it }
-        if (stack.popReturnValue().asBooleanOrNull() == true) {
-            expression.result.interpret().check { return it }
-            return BreakWhen
-        }
-        return executionResult
-    }
-
-    private fun interpretBreak(breakStatement: IrBreak): ExecutionResult {
-        return BreakLoop.addOwnerInfo(breakStatement.loop)
-    }
-
-    private fun interpretContinue(continueStatement: IrContinue): ExecutionResult {
-        return Continue.addOwnerInfo(continueStatement.loop)
-    }
-
-    private fun interpretSetField(expression: IrSetField): ExecutionResult {
-        expression.value.interpret().check { return it }
-
-        // receiver is null only for top level var, but it cannot be used in constexpr; corresponding check is on frontend
+    private fun interpretSetField(expression: IrSetField) {
         val receiver = (expression.receiver as IrDeclarationReference).symbol
         val propertySymbol = expression.symbol.owner.correspondingPropertySymbol!!
-        stack.getVariable(receiver).apply { this.state.setField(Variable(propertySymbol, stack.popReturnValue())) }
-        return Next
+        callStack.loadState(receiver).apply { this.setField(propertySymbol, callStack.popState()) }
     }
 
-    private fun interpretGetField(expression: IrGetField): ExecutionResult {
+    private fun interpretGetField(expression: IrGetField) {
         val receiver = (expression.receiver as? IrDeclarationReference)?.symbol
         val field = expression.symbol.owner
-        // for java static variables
-        if (field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic) {
-            val initializerExpression = field.initializer?.expression
-            if (initializerExpression is IrConst<*>) {
-                return interpretConst(initializerExpression)
-            }
-            stack.pushReturnValue(Wrapper.getStaticGetter(field)!!.invokeWithArguments().toState(field.type))
-            return Next
-        }
-        // receiver is null, for example, for top level fields
-        val result = receiver?.let { stack.getVariable(receiver).state.getState(field.correspondingPropertySymbol!!) }
-            ?: return (expression.symbol.owner.initializer?.expression?.interpret() ?: Next)
-        stack.pushReturnValue(result)
-        return Next
-    }
-
-    private fun interpretGetValue(expression: IrGetValue): ExecutionResult {
-        val owner = expression.type.classOrNull?.owner
-        // used to evaluate constants inside object
-        if (owner != null && owner.isObject) return getOrCreateObjectValue(owner) // TODO is this correct behaviour?
-        stack.pushReturnValue(stack.getVariable(expression.symbol).state)
-        return Next
-    }
-
-    private fun interpretVariable(expression: IrVariable): ExecutionResult {
-        expression.initializer?.interpret()?.check { return it } ?: return Next
-        stack.addVar(Variable(expression.symbol, stack.popReturnValue()))
-        return Next
-    }
-
-    private fun interpretSetVariable(expression: IrSetValue): ExecutionResult {
-        expression.value.interpret().check { return it }
-
-        if (stack.contains(expression.symbol)) {
-            stack.getVariable(expression.symbol).apply { this.state = stack.popReturnValue() }
-        } else {
-            stack.addVar(Variable(expression.symbol, stack.popReturnValue()))
-        }
-        return Next
-    }
-
-    private fun interpretGetObjectValue(expression: IrGetObjectValue): ExecutionResult {
-        return getOrCreateObjectValue(expression.symbol.owner)
-    }
-
-    private fun getOrCreateObjectValue(objectClass: IrClass): ExecutionResult {
-        mapOfObjects[objectClass.symbol]?.let { return Next.apply { stack.pushReturnValue(it) } }
-
-        val objectState = when {
-            objectClass.hasAnnotation(evaluateIntrinsicAnnotation) -> Wrapper.getCompanionObject(objectClass)
-            else -> Common(objectClass).apply { setSuperClassRecursive() } // TODO test type arguments
-        }
-        mapOfObjects[objectClass.symbol] = objectState
-        stack.pushReturnValue(objectState)
-        return Next
-    }
-
-    private fun interpretGetEnumValue(expression: IrGetEnumValue): ExecutionResult {
-        mapOfEnums[expression.symbol]?.let { return Next.apply { stack.pushReturnValue(it) } }
-
-        val enumEntry = expression.symbol.owner
-        val enumClass = enumEntry.symbol.owner.parentAsClass
-        val valueOfFun = enumClass.declarations.single { it.nameForIrSerialization.asString() == "valueOf" } as IrFunction
-        enumClass.declarations.filterIsInstance<IrEnumEntry>().forEach {
-            val executionResult = when {
-                enumClass.hasAnnotation(evaluateIntrinsicAnnotation) -> {
-                    val enumEntryName = it.name.asString().toState(irBuiltIns.stringType)
-                    val enumNameAsVariable = Variable(valueOfFun.valueParameters.first().symbol, enumEntryName)
-                    stack.newFrame(initPool = listOf(enumNameAsVariable)) { Wrapper.getEnumEntry(enumClass)!!.invokeMethod(valueOfFun) }
+        when {
+            field.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && field.isStatic -> {
+                // for java static variables
+                when (val initializerExpression = field.initializer?.expression) {
+                    is IrConst<*> -> callStack.pushSimpleInstruction(initializerExpression)
+                    else -> callInterceptor.interceptJavaStaticField(expression)
                 }
-                else -> interpretEnumEntry(it)
             }
-            executionResult.check { result -> return result }
-            mapOfEnums[it.symbol] = stack.popReturnValue() as Complex
+            field.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && field.correspondingPropertySymbol?.owner?.isConst == true -> {
+                callStack.pushCompoundInstruction(field.initializer?.expression)
+            }
+            expression.accessesTopLevelOrObjectField() -> {
+                val propertyOwner = field.correspondingPropertySymbol?.owner
+                val isConst = propertyOwner?.isConst == true ||
+                        propertyOwner?.backingField?.initializer?.expression is IrConst<*> ||
+                        propertyOwner?.parentClassOrNull?.hasAnnotation(compileTimeAnnotation) == true // check if object is marked as compile time
+                verify(isConst) { "Cannot interpret get method on top level non const properties" }
+                callStack.pushCompoundInstruction(field.initializer?.expression)
+            }
+            else -> {
+                val result = callStack.loadState(receiver!!).getField(field.correspondingPropertySymbol!!)
+                callStack.pushState(result!!)
+            }
         }
-
-        stack.pushReturnValue(mapOfEnums[expression.symbol]!!)
-        return Next
     }
 
-    private fun interpretEnumEntry(enumEntry: IrEnumEntry): ExecutionResult {
-        val enumClass = enumEntry.symbol.owner.parentAsClass
-        val enumEntries = enumClass.declarations.filterIsInstance<IrEnumEntry>()
+    private fun interpretGetObjectValue(expression: IrGetObjectValue) {
+        callInterceptor.interceptGetObjectValue(expression) {
+            val objectClass = expression.symbol.owner
 
-        val enumSuperCall = (enumClass.primaryConstructor?.body?.statements?.firstOrNull() as? IrEnumConstructorCall)
-        if (enumEntries.isNotEmpty() && enumSuperCall != null) {
-            val valueArguments = listOf(
-                enumEntry.name.asString().toIrConst(irBuiltIns.stringType), enumEntries.indexOf(enumEntry).toIrConst(irBuiltIns.intType)
-            )
-            valueArguments.forEachIndexed { index, irConst -> enumSuperCall.putValueArgument(index, irConst) }
+            // non compile time objects can be used in interpreter, for example, to evaluate const properties or in tests
+            val buildObject = objectClass.hasAnnotation(compileTimeAnnotation) || environment.configuration.createNonCompileTimeObjects
+            if (objectClass.constructors.none() || !buildObject) {
+                val state = Common(objectClass)
+                environment.mapOfObjects[objectClass.symbol] = state
+                return@interceptGetObjectValue callStack.pushState(state)
+            }
+
+            val constructor = objectClass.constructors.first()
+            val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
+            callStack.pushCompoundInstruction(constructorCall)
         }
-
-        val executionResult = enumEntry.initializerExpression?.interpret()?.check { return it }
-        enumSuperCall?.apply { (0 until this.valueArgumentsCount).forEach { putValueArgument(it, null) } } // restore to null
-        return executionResult ?: throw InterpreterException("Initializer at enum entry ${enumEntry.fqNameWhenAvailable} is null")
     }
 
-    private fun interpretTypeOperatorCall(expression: IrTypeOperatorCall): ExecutionResult {
-        val executionResult = expression.argument.interpret().check { return it }
+    private fun interpretGetEnumValue(expression: IrGetEnumValue) {
+        callStack.pushState(environment.mapOfEnums[expression.symbol]!!)
+    }
+
+    private fun interpretEnumEntry(enumEntry: IrEnumEntry) {
+        callInterceptor.interceptEnumEntry(enumEntry) {
+            val enumClass = enumEntry.symbol.owner.parentAsClass
+            val enumEntries = enumClass.declarations.filterIsInstance<IrEnumEntry>()
+            val enumInitializer = enumEntry.initializerExpression?.expression
+                ?: throw InterpreterError("Initializer at enum entry ${enumEntry.fqName} is null")
+            val enumConstructorCall = enumInitializer as? IrEnumConstructorCall
+                ?: (enumInitializer as IrBlock).statements.filterIsInstance<IrEnumConstructorCall>().single()
+            val enumSuperCall = enumConstructorCall.getSuperEnumCall()
+
+            val cleanEnumSuperCall = fun() {
+                enumSuperCall.apply { (0 until this.valueArgumentsCount).forEach { putValueArgument(it, null) } } // restore to null
+                callStack.popState()    // result of constructor must be dropped, because next instruction will be `IrGetEnumValue`
+                callStack.dropSubFrame()
+            }
+
+            if (enumEntries.isNotEmpty()) {
+                val valueArguments = listOf(
+                    enumEntry.name.asString().toIrConst(irBuiltIns.stringType),
+                    enumEntries.indexOf(enumEntry).toIrConst(irBuiltIns.intType)
+                )
+                valueArguments.forEachIndexed { index, irConst -> enumSuperCall.putValueArgument(index, irConst) }
+            }
+
+            val enumClassObject = Common(enumEntry.correspondingClass ?: enumClass)
+            environment.mapOfEnums[enumEntry.symbol] = enumClassObject
+
+            callStack.newSubFrame(enumEntry)
+            callStack.pushInstruction(CustomInstruction(cleanEnumSuperCall))
+            callStack.pushCompoundInstruction(enumInitializer)
+            callStack.storeState(enumConstructorCall.getThisReceiver(), enumClassObject)
+        }
+    }
+
+    private fun interpretTypeOperatorCall(expression: IrTypeOperatorCall) {
         val typeClassifier = expression.typeOperand.classifierOrFail
         val isReified = (typeClassifier.owner as? IrTypeParameter)?.isReified == true
         val isErased = typeClassifier.owner is IrTypeParameter && !isReified
-        val typeOperand = if (isReified) stack.getVariable(typeClassifier).state.irClass.defaultType else expression.typeOperand
+        val typeOperand = expression.typeOperand.getTypeIfReified(callStack)
 
+        val state = callStack.popState()
         when (expression.operator) {
-            // coercion to unit means that return value isn't used
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> stack.popReturnValue()
+            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
+                // do nothing
+                // callStack.pushState(getUnitState()) TODO find real use cases for this
+            }
             IrTypeOperator.CAST, IrTypeOperator.IMPLICIT_CAST -> {
-                if (!isErased && !stack.peekReturnValue().isSubtypeOf(typeOperand)) {
-                    val convertibleClassName = stack.popReturnValue().irClass.fqNameWhenAvailable
-                    throw ClassCastException("$convertibleClassName cannot be cast to ${typeOperand.render()}")
+                when {
+                    // this first check is performed inside `isSubtypeOf` but repeated here to create separate exception
+                    state.isNull() && !typeOperand.isNullable() -> NullPointerException().handleUserException(environment)
+                    !isErased && !state.isSubtypeOf(typeOperand) -> {
+                        val castedClassName = state.irClass.fqName
+                        ClassCastException("$castedClassName cannot be cast to ${typeOperand.render()}").handleUserException(environment)
+                    }
+                    else -> callStack.pushState(state)
                 }
             }
             IrTypeOperator.SAFE_CAST -> {
-                if (!isErased && !stack.peekReturnValue().isSubtypeOf(typeOperand)) {
-                    stack.popReturnValue()
-                    stack.pushReturnValue(null.toState(irBuiltIns.nothingNType))
+                when {
+                    !isErased && !state.isSubtypeOf(typeOperand) ->
+                        callStack.pushState(environment.convertToState(null, irBuiltIns.nothingNType))
+                    else -> callStack.pushState(state)
                 }
             }
             IrTypeOperator.INSTANCEOF -> {
-                val isInstance = isErased || stack.peekReturnValue().isSubtypeOf(typeOperand)
-                stack.pushReturnValue(isInstance.toState(irBuiltIns.nothingType))
+                val isInstance = isErased || state.isSubtypeOf(typeOperand)
+                callStack.pushState(environment.convertToState(isInstance, irBuiltIns.booleanType))
             }
             IrTypeOperator.NOT_INSTANCEOF -> {
-                val isInstance = isErased || stack.peekReturnValue().isSubtypeOf(typeOperand)
-                stack.pushReturnValue((!isInstance).toState(irBuiltIns.nothingType))
+                val isInstance = isErased || state.isSubtypeOf(typeOperand)
+                callStack.pushState(environment.convertToState((!isInstance), irBuiltIns.booleanType))
             }
             IrTypeOperator.IMPLICIT_NOTNULL -> {
-
+                when {
+                    state.isNull() && !typeOperand.isNullable() -> NullPointerException().handleUserException(environment)
+                    else -> callStack.pushState(state)
+                }
             }
-            else -> TODO("${expression.operator} not implemented")
+            IrTypeOperator.SAM_CONVERSION -> {
+                val newState = when {
+                    state.isNull() -> state
+                    state is KFunctionState -> state.apply { this.funInterface = typeOperand }
+                    else -> {
+                        // this case supports implicit conversion of `invoke` method from FunctionN to similar in fun interface
+                        val samClass = typeOperand.classOrNull!!.owner
+                        val samFunction = samClass.getSingleAbstractMethod()
+
+                        val invokeFunction = state.irClass.declarations.filterIsInstance<IrFunction>()
+                            .first { it.name == OperatorNameConventions.INVOKE && it.valueParameters.size == samFunction.valueParameters.size }
+                        val functionClass = invokeFunction.getLastOverridden().parentAsClass
+
+                        // receiver will be stored as up value
+                        val dispatchReceiver = invokeFunction.dispatchReceiverParameter!!.symbol to state
+                        val newInvoke = invokeFunction.deepCopyWithSymbols(samClass).apply { dispatchReceiverParameter = null }
+                        KFunctionState(newInvoke, functionClass, environment, mutableMapOf(dispatchReceiver)).apply {
+                            this.funInterface = typeOperand
+                        }
+                    }
+                }
+                callStack.pushState(newState)
+            }
+            else -> stop { "Type operator ${expression.operator} is not supported for interpretation" }
         }
-        return executionResult
     }
 
-    private fun interpretVararg(expression: IrVararg): ExecutionResult {
-        val args = expression.elements.flatMap {
-            it.interpret().check { executionResult -> return executionResult }
-            return@flatMap when (val result = stack.popReturnValue()) {
-                is Wrapper -> listOf(result.value)
-                is Primitive<*> ->
-                    when (val value = result.value) {
-                        is ByteArray -> value.toList()
-                        is CharArray -> value.toList()
-                        is ShortArray -> value.toList()
-                        is IntArray -> value.toList()
-                        is LongArray -> value.toList()
-                        is FloatArray -> value.toList()
-                        is DoubleArray -> value.toList()
-                        is BooleanArray -> value.toList()
-                        is Array<*> -> value.toList()
-                        else -> listOf(value)
-                    }
-                else -> listOf(result)
-            }
+    private fun interpretVararg(expression: IrVararg) {
+        fun arrayToList(value: Any?): List<Any?> {
+            return when (value) {
+                is ByteArray -> value.toList()
+                is CharArray -> value.toList()
+                is ShortArray -> value.toList()
+                is IntArray -> value.toList()
+                is LongArray -> value.toList()
+                is FloatArray -> value.toList()
+                is DoubleArray -> value.toList()
+                is BooleanArray -> value.toList()
+                is Array<*> -> value.toList()
+                else -> listOf(value)
+            }.reversed()
         }
 
-        val array = when ((expression.type.classifierOrFail.owner as? IrDeclaration)?.nameForIrSerialization?.asString()) {
-            "UByteArray", "UShortArray", "UIntArray", "ULongArray" -> {
+        // TODO use wrap???
+        val args = expression.elements.flatMap {
+            return@flatMap when (val result = callStack.popState()) {
+                is Wrapper -> listOf(result.value)
+                is Primitive<*> -> when {
+                    expression.varargElementType.isArray() || expression.varargElementType.isPrimitiveArray() -> listOf(result)
+                    else -> arrayToList(result.value)
+                }
+                is Common -> when {
+                    result.irClass.defaultType.isUnsignedArray() -> arrayToList((result.fields.values.single() as Primitive<*>).value)
+                    else -> listOf(result.asProxy(callInterceptor))
+                }
+                else -> listOf(result)
+            }
+        }.reversed()
+
+        val array = when {
+            expression.type.isUnsignedArray() -> {
                 val owner = expression.type.classOrNull!!.owner
                 val storageProperty = owner.declarations.filterIsInstance<IrProperty>().first { it.name.asString() == "storage" }
-                val primitiveArray = args.map { ((it as Common).fields.single().state as Primitive<*>).value }
-                val unsignedArray = primitiveArray.toPrimitiveStateArray(storageProperty.backingField!!.type)
-                Common(owner).apply {
-                    setSuperClassRecursive()
-                    fields.add(Variable(storageProperty.symbol, unsignedArray))
+                val primitiveArray = args.map {
+                    when (it) {
+                        is Proxy -> (it.state.fields.values.single() as Primitive<*>).value  // is unsigned number
+                        else -> it                                                                 // is primitive number
+                    }
                 }
+                val unsignedArray = primitiveArray.toPrimitiveStateArray(storageProperty.backingField!!.type)
+                Common(owner).apply { setField(storageProperty.symbol, unsignedArray) }
             }
             else -> args.toPrimitiveStateArray(expression.type)
         }
-        stack.pushReturnValue(array)
-        return Next
+        callStack.pushState(array)
     }
 
-    private fun interpretSpreadElement(spreadElement: IrSpreadElement): ExecutionResult {
-        return spreadElement.expression.interpret().check { return it }
-    }
-
-    private fun interpretTry(expression: IrTry): ExecutionResult {
-        try {
-            expression.tryResult.interpret().check(ReturnLabel.EXCEPTION) { return it } // if not exception -> return
-            val exception = stack.peekReturnValue() as ExceptionState
-            for (catchBlock in expression.catches) {
-                if (exception.isSubtypeOf(catchBlock.catchParameter.type.classOrNull!!.owner)) {
-                    catchBlock.interpret().check { return it }
-                    break
-                }
+    private fun interpretTry(element: IrTry) {
+        val possibleException = callStack.peekState()
+        callStack.dropSubFrame()
+        if (possibleException is ExceptionState) {
+            // after evaluation of finally, check that there are not unhandled exceptions left
+            val checkUnhandledException = fun() {
+                callStack.pushState(possibleException)
+                callStack.dropFramesUntilTryCatch()
             }
-        } finally {
-            expression.finallyExpression?.interpret()?.check { return it }
+            callStack.pushInstruction(CustomInstruction(checkUnhandledException))
         }
-
-        return Next
+        element.finallyExpression?.handleAndDropResult(callStack)
     }
 
-    private fun interpretCatch(expression: IrCatch): ExecutionResult {
-        val catchParameter = Variable(expression.catchParameter.symbol, stack.popReturnValue())
-        return stack.newFrame(asSubFrame = true, initPool = listOf(catchParameter)) {
-            expression.result.interpret()
-        }
+    @Suppress("UNUSED_PARAMETER")
+    private fun interpretThrow(expression: IrThrow) {
+        callStack.dropFramesUntilTryCatch()
     }
 
-    private fun interpretThrow(expression: IrThrow): ExecutionResult {
-        expression.value.interpret().check { return it }
-        when (val exception = stack.popReturnValue()) {
-            is Common -> stack.pushReturnValue(ExceptionState(exception, stack.getStackTrace()))
-            is Wrapper -> stack.pushReturnValue(ExceptionState(exception, stack.getStackTrace()))
-            is ExceptionState -> stack.pushReturnValue(exception)
-            else -> throw InterpreterException("${exception::class} cannot be used as exception state")
-        }
-        return Exception
-    }
-
-    private fun interpretStringConcatenation(expression: IrStringConcatenation): ExecutionResult {
-        val result = StringBuilder()
-        expression.arguments.forEach {
-            it.interpret().check { executionResult -> return executionResult }
-            interpretToString(stack.popReturnValue()).check { executionResult -> return executionResult }
-            result.append(stack.popReturnValue().asString())
-        }
-
-        stack.pushReturnValue(result.toString().toState(expression.type))
-        return Next
-    }
-
-    private fun interpretToString(state: State): ExecutionResult {
-        val result = when (state) {
-            is Primitive<*> -> state.value.toString()
-            is Wrapper -> state.value.toString()
-            is Common -> {
-                val toStringFun = state.getToStringFunction()
-                return stack.newFrame(initPool = mutableListOf(Variable(toStringFun.getReceiver()!!, state))) {
-                    toStringFun.body?.let { toStringFun.interpret() } ?: calculateBuiltIns(toStringFun)
-                }
+    private fun interpretStringConcatenation(expression: IrStringConcatenation) {
+        val result = mutableListOf<String>()
+        repeat(expression.arguments.size) {
+            result += when (val state = callStack.popState()) {
+                is Primitive<*> -> state.value.toString()
+                is Wrapper -> state.value.toString()
+                else -> state.toString()
             }
-            is Lambda -> state.toString()
-            else -> throw InterpreterException("${state::class.java} cannot be used in StringConcatenation expression")
         }
-        stack.pushReturnValue(result.toState(irBuiltIns.stringType))
-        return Next
+
+        callStack.pushState(environment.convertToState(result.reversed().joinToString(separator = ""), expression.type))
     }
 
-    private fun interpretFunctionExpression(expression: IrFunctionExpression): ExecutionResult {
-        val lambda = Lambda(expression.function, expression.type.classOrNull!!.owner)
-        if (expression.function.isLocal) lambda.fields.addAll(stack.getAll()) // TODO save only necessary declarations
-        stack.pushReturnValue(lambda)
-        return Next
+    private fun interpretFunctionExpression(expression: IrFunctionExpression) {
+        val function = KFunctionState(expression.function, expression.type.classOrNull!!.owner, environment)
+        if (expression.function.isLocal) callStack.storeUpValues(function)
+        callStack.pushState(function)
     }
 
-    private fun interpretFunctionReference(reference: IrFunctionReference): ExecutionResult {
-        stack.pushReturnValue(Lambda(reference.symbol.owner, reference.type.classOrNull!!.owner))
-        return Next
+    private fun interpretFunctionReference(reference: IrFunctionReference) {
+        val irFunction = reference.symbol.owner
+
+        val dispatchReceiver = reference.dispatchReceiver?.let { callStack.popState() }
+        val extensionReceiver = reference.extensionReceiver?.let { callStack.popState() }
+
+        val function = KFunctionState(
+            reference,
+            environment,
+            dispatchReceiver?.let { Field(irFunction.getDispatchReceiver()!!, it) },
+            extensionReceiver?.let { Field(irFunction.getExtensionReceiver()!!, it) }
+        )
+        if (irFunction.isLocal) callStack.storeUpValues(function)
+        callStack.pushState(function)
     }
 
-    private fun interpretComposite(expression: IrComposite): ExecutionResult {
-        return when (expression.origin) {
-            IrStatementOrigin.DESTRUCTURING_DECLARATION -> interpretStatements(expression.statements)
-            null -> interpretStatements(expression.statements) // is null for body of do while loop
-            else -> TODO("${expression.origin} not implemented")
+    private fun interpretPropertyReference(propertyReference: IrPropertyReference) {
+        // it is impossible to get KProperty2 through ::, so only one receiver can be not null (or both null)
+        val receiver = (propertyReference.dispatchReceiver ?: propertyReference.extensionReceiver)?.let { callStack.popState() }
+        val propertyState = KPropertyState(propertyReference, receiver)
+
+        fun List<IrTypeParameter>.addToFields() {
+            (0 until propertyReference.typeArgumentsCount).forEach { index ->
+                val kTypeState = KTypeState(propertyReference.getTypeArgument(index)!!, environment.kTypeClass.owner)
+                propertyState.setField(this[index].symbol, kTypeState)
+            }
         }
+        propertyReference.getter?.owner?.typeParameters?.addToFields()
+        propertyReference.setter?.owner?.typeParameters?.addToFields()
+
+        callStack.pushState(propertyState)
+    }
+
+    private fun interpretClassReference(classReference: IrClassReference) {
+        when (classReference.symbol) {
+            is IrTypeParameterSymbol -> { // reified
+                val kTypeState = callStack.loadState(classReference.symbol) as KTypeState
+                callStack.pushState(KClassState(kTypeState.irType.classOrNull!!.owner, classReference.type.classOrNull!!.owner))
+            }
+            else -> callStack.pushState(KClassState(classReference))
+        }
+    }
+
+    private fun interpretGetClass(expression: IrGetClass) {
+        val irClass = callStack.popState().irClass
+        callStack.pushState(KClassState(irClass, expression.type.classOrNull!!.owner))
     }
 }

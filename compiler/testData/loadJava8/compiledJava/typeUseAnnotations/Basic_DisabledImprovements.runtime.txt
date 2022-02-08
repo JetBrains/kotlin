@@ -1,0 +1,32 @@
+package test
+
+public open class Basic_DisabledImprovements</*0*/ T : kotlin.Any!> {
+    public/*package*/ constructor Basic_DisabledImprovements</*0*/ T : kotlin.Any!>(/*0*/ test.Basic_DisabledImprovements.G<kotlin.String!>!)
+
+    public/*package*/ open class A {
+        public/*package*/ constructor A()
+
+        public/*package*/ open inner class B</*0*/ A : kotlin.Any!, /*1*/ B : kotlin.Any!> {
+            public/*package*/ constructor B</*0*/ A : kotlin.Any!, /*1*/ B : kotlin.Any!>()
+        }
+    }
+
+    public/*package*/ interface G</*0*/ T : kotlin.Any!> : test.Basic_DisabledImprovements.G2<T!, kotlin.String!> {
+    }
+
+    public/*package*/ interface G2</*0*/ A : kotlin.Any!, /*1*/ B : kotlin.Any!> {
+    }
+
+    public interface MyClass</*0*/ TT : kotlin.Any!> {
+        public abstract fun f1(/*0*/ test.Basic_DisabledImprovements.G<kotlin.String!>!): kotlin.Unit
+        public abstract fun </*0*/ T : kotlin.Any!, /*1*/ K : test.Basic_DisabledImprovements.G<kotlin.Array<(out) kotlin.String!>!>!> f10(/*0*/ T!): kotlin.Unit
+        public abstract fun f2(): test.Basic_DisabledImprovements.G2<kotlin.String!, kotlin.Int!>!
+        public abstract fun </*0*/ T : kotlin.Any!> f3(/*0*/ T!): kotlin.Unit
+        public abstract fun f4(/*0*/ test.Basic_DisabledImprovements.G<kotlin.Array<(out) kotlin.String!>!>!): kotlin.Unit
+        public abstract fun f5(/*0*/ test.Basic_DisabledImprovements.G<*>!): kotlin.Unit
+        public abstract fun f6(/*0*/ test.Basic_DisabledImprovements.G<*>!): kotlin.Unit
+        public abstract fun f7(/*0*/ test.Basic_DisabledImprovements.G<test.Basic_DisabledImprovements.A.B<*, *>!>!): kotlin.Unit
+        public abstract fun f81(): test.Basic_DisabledImprovements.G<test.Basic_DisabledImprovements.A.B<*, *>!>!
+        public abstract fun f9(): test.Basic_DisabledImprovements.G<test.Basic_DisabledImprovements.A.B<*, *>!>!
+    }
+}

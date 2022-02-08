@@ -1,6 +1,4 @@
-// !LANGUAGE: +NewInference
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 // ISSUE: KT-32462
 
 fun decodeValue(value: String): Any {

@@ -1,7 +1,7 @@
-fun foo(<!UNUSED_PARAMETER!>a<!> : Int = 1, <!UNUSED_PARAMETER!>b<!> : String = "abc") {
+fun foo(a : Int = 1, b : String = "abc") {
 }
 
-fun bar(<!UNUSED_PARAMETER!>x<!> : Int = 1, <!UNUSED_PARAMETER!>y<!> : Int = 1, <!UNUSED_PARAMETER!>z<!> : String) {
+fun bar(x : Int = 1, y : Int = 1, z : String) {
 }
 
 fun test() {

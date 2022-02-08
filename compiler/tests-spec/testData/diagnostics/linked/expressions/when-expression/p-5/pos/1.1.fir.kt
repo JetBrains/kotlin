@@ -47,33 +47,33 @@ fun case_4(value_1: Int, value_2: String, value_3: String) {
 fun case_5(value_1: Int, value_2: Int, value_3: Boolean?) {
     when (value_1) {
         1 -> when (value_3) {
-            value_2 > 1000 -> "1"
-            value_2 > 100 -> "2"
+            <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 1000<!> -> "1"
+            <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 100<!> -> "2"
             else -> "3"
         }
-        2 -> when (value_3) {
-            value_2 > 1000 -> "1"
-            value_2 > 100 -> "2"
+        2 -> <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_3) {
+            <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 1000<!> -> "1"
+            <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 100<!> -> "2"
         }
-        3 -> when (value_3) {}
+        3 -> <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_3) {}
         4 -> when (value_3) {
             true -> "1"
             false -> "2"
             null -> "3"
         }
-        5 -> when (value_3) {
+        5 -> <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_3) {
             true -> "1"
             false -> "2"
         }
-        6 -> when (value_3) {}
+        6 -> <!NON_EXHAUSTIVE_WHEN_STATEMENT!>when<!> (value_3) {}
     }
 }
 
 // TESTCASE NUMBER: 6
 fun case_6(value_1: Int, value_2: Int, value_3: Boolean?) = when (value_1) {
     1 -> when (value_3) {
-        value_2 > 1000 -> 1
-        value_2 > 100 -> 2
+        <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 1000<!> -> 1
+        <!CONFUSING_BRANCH_CONDITION_WARNING!>value_2 > 100<!> -> 2
         else -> 3
     }
     else -> when (value_3) {
@@ -125,7 +125,7 @@ fun case_10(value_1: Int, value_2: String?, value_3: String?) {
     when (value_1) {
         1 -> value_2 ?: true
         2 -> value_2 ?: value_3 ?: true
-        3 -> value_2!! ?: true
+        3 -> value_2!! <!USELESS_ELVIS!>?: true<!>
     }
 }
 
@@ -143,8 +143,8 @@ fun case_12(value_1: Int, value_2: Collection<Int>, value_3: Collection<Int>?) {
     when (value_1) {
         1 -> value_2 as List<Int>
         2 -> value_2 as? List<Int>
-        3 -> value_3 as? MutableMap<Int, Int>
-        4 -> (value_2 as? Map<Int, Int>) as MutableMap<Int, Int>
+        3 -> value_3 <!UNCHECKED_CAST!>as? MutableMap<Int, Int><!>
+        4 -> (value_2 <!UNCHECKED_CAST!>as? Map<Int, Int><!>) as MutableMap<Int, Int>
     }
 }
 

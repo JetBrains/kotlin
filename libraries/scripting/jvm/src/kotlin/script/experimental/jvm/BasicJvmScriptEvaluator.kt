@@ -19,16 +19,22 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
 
             // configuration shared between all module scripts
             val sharedConfiguration = scriptEvaluationConfiguration.getOrPrepareShared(scriptClass.java.classLoader)
-
+            val configurationForOtherScripts by lazy {
+                sharedConfiguration.with {
+                    reset(ScriptEvaluationConfiguration.previousSnippets)
+                }
+            }
             val sharedScripts = sharedConfiguration[ScriptEvaluationConfiguration.jvm.scriptsInstancesSharingMap]
 
             sharedScripts?.get(scriptClass)?.asSuccess()
                 ?: compiledScript.otherScripts.mapSuccess {
-                    invoke(it, sharedConfiguration)
+                    invoke(it, configurationForOtherScripts)
                 }.onSuccess { importedScriptsEvalResults ->
 
                     val refinedEvalConfiguration =
-                        sharedConfiguration.refineBeforeEvaluation(compiledScript).valueOr {
+                        sharedConfiguration.with {
+                            compilationConfiguration(compiledScript.compilationConfiguration)
+                        }.refineBeforeEvaluation(compiledScript).valueOr {
                             return@invoke ResultWithDiagnostics.Failure(it.reports)
                         }
 
@@ -68,9 +74,7 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
         val args = ArrayList<Any?>()
 
         refinedEvalConfiguration[ScriptEvaluationConfiguration.previousSnippets]?.let {
-            if (it.isNotEmpty()) {
-                args.add(it.toTypedArray())
-            }
+            args.add(it.toTypedArray())
         }
 
         refinedEvalConfiguration[ScriptEvaluationConfiguration.constructorArgs]?.let {

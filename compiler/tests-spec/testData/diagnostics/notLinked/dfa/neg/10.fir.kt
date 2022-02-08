@@ -12,6 +12,6 @@ fun case_1() {
         x = ClassLevel3()
     }
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel2 & kotlin.Any?")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel2")!>x<!>.<!UNRESOLVED_REFERENCE!>inv<!>()
 }

@@ -1,5 +1,6 @@
+// WITH_STDLIB
+// NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
-// WITH_RUNTIME
 package test
 
 inline fun <reified R> foo() = bar<R>() {"OK"}
@@ -12,7 +13,6 @@ public inline fun <T> call(f: () -> T): T = f()
 
 // FILE: 2.kt
 
-//NO_CHECK_LAMBDA_INLINING
 import test.*
 
 val x: () -> String = foo<String>()

@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.asJava.classes
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.SimpleModificationTracker
 import com.intellij.psi.*
-import com.intellij.psi.augment.PsiAugmentProvider
-import com.intellij.psi.impl.PsiCachedValueImpl
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.light.LightMethod
@@ -17,66 +15,23 @@ import com.intellij.psi.impl.source.PsiExtensibleClass
 import com.intellij.psi.scope.ElementClassHint
 import com.intellij.psi.scope.NameHint
 import com.intellij.psi.scope.PsiScopeProcessor
-import com.intellij.psi.util.CachedValueProvider
 import com.intellij.util.ArrayUtil
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.utils.SmartList
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.locks.ReentrantLock
 
-class KotlinClassInnerStuffCache(val myClass: PsiExtensibleClass, externalDependencies: List<Any>) {
+class KotlinClassInnerStuffCache(
+    private val myClass: PsiExtensibleClass,
+    externalDependencies: List<Any>,
+    private val lazyCreator: LazyCreator,
+) {
     private val myTracker = SimpleModificationTracker()
     private val dependencies: List<Any> = externalDependencies + myTracker
 
-    fun <T : Any> get(initializer: () -> T) = object : Lazy<T> {
-        private val lock = ReentrantLock()
-        private val holder = lazyPub {
-            PsiCachedValueImpl(PsiManager.getInstance(myClass.project),
-                               CachedValueProvider<T> {
-                                   val v = initializer()
-                                   CachedValueProvider.Result.create(v, dependencies)
-                               })
-        }
-
-        private fun computeValue(): T = holder.value.value ?: error("holder has not null in initializer")
-
-        override val value: T
-            get() {
-                return if (holder.value.hasUpToDateValue()) {
-                    computeValue()
-                } else {
-                    // the idea behind this locking approach:
-                    // Thread T1 starts to calculate value for A it acquires lock for A
-                    //
-                    // Assumption 1: Lets say A calculation requires another value e.g. B to be calculated
-                    // Assumption 2: Thread T2 wants to calculate value for B
-
-                    // to avoid dead-lock
-                    // - we mark thread as doing calculation and acquire lock only once per thread
-                    // as a trade-off to prevent dependent value could be calculated several time
-                    // due to CAS (within putUserDataIfAbsent etc) the same instance of calculated value will be used
-
-                    // TODO: NOTE: acquire lock for a several seconds to avoid dead-lock via resolve is a WORKAROUND
-
-                    if (!initIsRunning.get() && lock.tryLock(5, TimeUnit.SECONDS)) {
-                        try {
-                            initIsRunning.set(true)
-                            try {
-                                computeValue()
-                            } finally {
-                                initIsRunning.set(false)
-                            }
-                        } finally {
-                            lock.unlock()
-                        }
-                    } else {
-                        computeValue()
-                    }
-                }
-            }
-
-        override fun isInitialized() = holder.isInitialized()
+    abstract class LazyCreator {
+        abstract fun <T : Any> get(initializer: () -> T, dependencies: List<Any>): Lazy<T>
     }
+
+    private fun <T : Any> get(initializer: () -> T): Lazy<T> = lazyCreator.get(initializer, dependencies)
 
     private val _getConstructors: Array<PsiMethod> by get { PsiImplUtil.getConstructors(myClass) }
 
@@ -142,19 +97,19 @@ class KotlinClassInnerStuffCache(val myClass: PsiExtensibleClass, externalDepend
 
     private fun getAllFields(): Array<PsiField> {
         val own = myClass.ownFields
-        val ext = PsiAugmentProvider.collectAugments(myClass, PsiField::class.java)
+        val ext = collectAugments(myClass, PsiField::class.java)
         return ArrayUtil.mergeCollections(own, ext, PsiField.ARRAY_FACTORY)
     }
 
     private fun getAllMethods(): Array<PsiMethod> {
         val own = myClass.ownMethods
-        val ext = PsiAugmentProvider.collectAugments(myClass, PsiMethod::class.java)
+        val ext = collectAugments(myClass, PsiMethod::class.java)
         return ArrayUtil.mergeCollections(own, ext, PsiMethod.ARRAY_FACTORY)
     }
 
     private fun getAllInnerClasses(): Array<PsiClass> {
         val own = myClass.ownInnerClasses
-        val ext = PsiAugmentProvider.collectAugments(myClass, PsiClass::class.java)
+        val ext = collectAugments(myClass, PsiClass::class.java)
         return ArrayUtil.mergeCollections(own, ext, PsiClass.ARRAY_FACTORY)
     }
 
@@ -234,9 +189,6 @@ class KotlinClassInnerStuffCache(val myClass: PsiExtensibleClass, externalDepend
     companion object {
         private const val VALUES_METHOD = "values"
         private const val VALUE_OF_METHOD = "valueOf"
-
-        @JvmStatic
-        private val initIsRunning: ThreadLocal<Boolean> = ThreadLocal.withInitial { false }
 
         // Copy of PsiClassImplUtil.processDeclarationsInEnum for own cache class
         @JvmStatic

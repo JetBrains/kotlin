@@ -1,0 +1,145 @@
+KtValueParameterSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  hasDefaultValue: false
+  isExtension: false
+  isVararg: false
+  name: value
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/String
+  symbolKind: LOCAL
+  deprecationStatus: null
+
+KtConstructorSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  containingClassIdIfNonLocal: Style
+  hasStableParameterNames: true
+  isExtension: false
+  isPrimary: true
+  origin: SOURCE
+  receiverType: null
+  returnType: Style
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol(value)
+  ]
+  visibility: Private
+  deprecationStatus: null
+
+KtPropertyGetterSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  hasBody: true
+  hasStableParameterNames: true
+  isDefault: false
+  isExtension: false
+  isInline: false
+  isOverride: true
+  modality: FINAL
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/String
+  symbolKind: ACCESSOR
+  valueParameters: []
+  visibility: Public
+  getDispatchReceiver(): Style.SHEET
+  deprecationStatus: null
+
+KtKotlinPropertySymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  getter: KtPropertyGetterSymbol(<getter>)
+  hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isConst: false
+  isDelegatedProperty: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: true
+  isStatic: false
+  isVal: true
+  modality: FINAL
+  name: exitAnimation
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/String
+  setter: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getDispatchReceiver(): Style.SHEET
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getExitAnimation
+  javaSetterName: null
+  setterDeprecationStatus: null
+
+KtEnumEntrySymbol:
+  callableIdIfNonLocal: /Style.SHEET
+  containingEnumClassIdIfNonLocal: Style
+  isExtension: false
+  name: SHEET
+  origin: SOURCE
+  receiverType: null
+  returnType: Style
+  symbolKind: CLASS_MEMBER
+  deprecationStatus: null
+
+KtKotlinPropertySymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /Style.exitAnimation
+  getter: KtPropertyGetterSymbol(<getter>)
+  hasBackingField: false
+  hasGetter: true
+  hasSetter: false
+  initializer: null
+  isConst: false
+  isDelegatedProperty: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: ABSTRACT
+  name: exitAnimation
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/String
+  setter: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getDispatchReceiver(): Style
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getExitAnimation
+  javaSetterName: null
+  setterDeprecationStatus: null
+
+KtNamedClassOrObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: Style
+  classKind: ENUM_CLASS
+  companionObject: null
+  isData: false
+  isExternal: false
+  isFun: false
+  isInline: false
+  isInner: false
+  modality: FINAL
+  name: Style
+  origin: SOURCE
+  superTypes: [
+    kotlin/Enum<Style>
+  ]
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  visibility: Public
+  deprecationStatus: null

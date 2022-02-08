@@ -1,6 +1,6 @@
-// FILE: 1.kt
-// WITH_RUNTIME
+// WITH_STDLIB
 // KJS_WITH_FULL_RUNTIME
+// FILE: 1.kt
 package test
 
 inline fun <reified Y : Enum<Y>> myValues2(): String {

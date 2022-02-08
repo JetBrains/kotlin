@@ -1,0 +1,14 @@
+@kotlin.Metadata
+public final class Foo {
+    // source: 'kt49316a.kt'
+    private final @org.jetbrains.annotations.NotNull field s: java.lang.String
+    public method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
+    public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class Kt49316aKt {
+    // source: 'kt49316a.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method test(@org.jetbrains.annotations.NotNull p0: Foo): java.lang.String
+}

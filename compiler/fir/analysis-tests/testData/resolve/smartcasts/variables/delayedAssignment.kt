@@ -11,5 +11,5 @@ fun test(b: Boolean) {
     } else {
         a = null
     }
-    a.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+    a<!UNSAFE_CALL!>.<!>foo()
 }

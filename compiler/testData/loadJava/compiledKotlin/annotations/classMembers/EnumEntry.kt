@@ -1,4 +1,6 @@
 // ALLOW_AST_ACCESS
+// NO_CHECK_SOURCE_VS_BINARY
+//^ While compiling source, we do not store annotation default values, but we load them when reading compiled files
 package test
 
 annotation class Anno(val value: String = "0", val x: Int = 0)

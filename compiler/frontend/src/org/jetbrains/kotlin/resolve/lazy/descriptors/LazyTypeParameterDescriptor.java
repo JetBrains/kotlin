@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.lazy.descriptors;
 
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.lexer.KtTokens;
@@ -43,11 +44,13 @@ public class LazyTypeParameterDescriptor extends AbstractLazyTypeParameterDescri
             @NotNull LazyClassContext c,
             @NotNull LazyClassDescriptor containingDeclaration,
             @NotNull KtTypeParameter typeParameter,
+            @NotNull Annotations annotations,
             int index
     ) {
         super(
                 c.getStorageManager(),
                 containingDeclaration,
+                annotations,
                 typeParameter.getNameAsSafeName(),
                 typeParameter.getVariance(),
                 typeParameter.hasModifier(KtTokens.REIFIED_KEYWORD),

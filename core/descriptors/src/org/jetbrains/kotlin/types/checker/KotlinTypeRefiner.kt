@@ -9,14 +9,16 @@ import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.AbstractTypeRefiner
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.TypeRefinement
 
 @DefaultImplementation(impl = KotlinTypeRefiner.Default::class)
-abstract class KotlinTypeRefiner {
+abstract class KotlinTypeRefiner : AbstractTypeRefiner() {
     @TypeRefinement
-    abstract fun refineType(type: KotlinType): KotlinType
+    abstract override fun refineType(type: KotlinTypeMarker): KotlinType
 
     @TypeRefinement
     abstract fun refineSupertypes(classDescriptor: ClassDescriptor): Collection<KotlinType>
@@ -38,7 +40,7 @@ abstract class KotlinTypeRefiner {
 
     object Default : KotlinTypeRefiner() {
         @TypeRefinement
-        override fun refineType(type: KotlinType): KotlinType = type
+        override fun refineType(type: KotlinTypeMarker): KotlinType = type as KotlinType
 
         @TypeRefinement
         override fun refineSupertypes(classDescriptor: ClassDescriptor): Collection<KotlinType> {
@@ -75,7 +77,13 @@ abstract class KotlinTypeRefiner {
 @TypeRefinement
 fun KotlinTypeRefiner.refineTypes(types: Iterable<KotlinType>): List<KotlinType> = types.map { refineType(it) }
 
-class Ref<T : Any>(var value: T?)
+class Ref<T : Any>(var value: T)
 
 @TypeRefinement
-val REFINER_CAPABILITY = ModuleCapability<Ref<KotlinTypeRefiner>>("KotlinTypeRefiner")
+val REFINER_CAPABILITY = ModuleCapability<Ref<TypeRefinementSupport>>("KotlinTypeRefiner")
+
+sealed class TypeRefinementSupport(val isEnabled: Boolean) {
+    object Disabled : TypeRefinementSupport(isEnabled = false)
+    object EnabledUninitialized : TypeRefinementSupport(isEnabled = true)
+    class Enabled(val typeRefiner: KotlinTypeRefiner) : TypeRefinementSupport(isEnabled = true)
+}

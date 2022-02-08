@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // KT-5508 Stackoverflow in type substitution
 
 abstract class A<T> {

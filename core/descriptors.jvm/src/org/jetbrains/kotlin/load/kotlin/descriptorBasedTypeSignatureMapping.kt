@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
@@ -25,8 +26,6 @@ interface TypeMappingConfiguration<out T : Any> {
 
     // returns null when type doesn't need to be preprocessed
     fun preprocessType(kotlinType: KotlinType): KotlinType? = null
-
-    fun releaseCoroutines(): Boolean = true
 }
 
 fun <T : Any> mapType(
@@ -43,7 +42,7 @@ fun <T : Any> mapType(
 
     if (kotlinType.isSuspendFunctionType) {
         return mapType(
-            transformSuspendFunctionToRuntimeFunctionType(kotlinType, typeMappingConfiguration.releaseCoroutines()),
+            transformSuspendFunctionToRuntimeFunctionType(kotlinType),
             factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType
         )
     }
@@ -115,7 +114,7 @@ fun <T : Any> mapType(
 
         descriptor is ClassDescriptor -> {
             // NB if inline class is recursive, it's ok to map it as wrapped
-            if (descriptor.isInline && !mode.needInlineClassWrapping) {
+            if (descriptor.isInlineClass() && !mode.needInlineClassWrapping) {
                 val expandedType = SimpleClassicTypeSystemContext.computeExpandedTypeForInlineClass(kotlinType) as KotlinType?
                 if (expandedType != null) {
                     return mapType(

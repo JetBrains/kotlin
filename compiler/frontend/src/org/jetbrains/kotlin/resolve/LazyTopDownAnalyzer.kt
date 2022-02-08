@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.checkers.checkClassifierUsages
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.lazy.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
+import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import java.util.*
 
 class LazyTopDownAnalyzer(
@@ -57,9 +58,10 @@ class LazyTopDownAnalyzer(
     fun analyzeDeclarations(
         topDownAnalysisMode: TopDownAnalysisMode,
         declarations: Collection<PsiElement>,
-        outerDataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY
+        outerDataFlowInfo: DataFlowInfo = DataFlowInfo.EMPTY,
+        localContext: ExpressionTypingContext? = null
     ): TopDownAnalysisContext {
-        val c = TopDownAnalysisContext(topDownAnalysisMode, outerDataFlowInfo, declarationScopeProvider)
+        val c = TopDownAnalysisContext(topDownAnalysisMode, outerDataFlowInfo, declarationScopeProvider, localContext)
 
         val topLevelFqNames = HashMultimap.create<FqName, KtElement>()
 

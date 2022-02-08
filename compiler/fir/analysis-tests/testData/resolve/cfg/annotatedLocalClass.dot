@@ -5,19 +5,19 @@ digraph annotatedLocalClass_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter class Ann" style="filled" fillcolor=red];
-        1 [label="Exit class Ann" style="filled" fillcolor=red];
+        0 [label="Enter function <init>" style="filled" fillcolor=red];
+        1 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
+        2 [label="Exit function <init>" style="filled" fillcolor=red];
     }
-    0 -> {1} [color=green];
+    0 -> {1};
+    1 -> {2};
 
     subgraph cluster_1 {
         color=red
-        2 [label="Enter function <init>" style="filled" fillcolor=red];
-        3 [label="Delegated constructor call: super<R|kotlin/Any|>()"];
-        4 [label="Exit function <init>" style="filled" fillcolor=red];
+        3 [label="Enter class Ann" style="filled" fillcolor=red];
+        4 [label="Exit class Ann" style="filled" fillcolor=red];
     }
-    2 -> {3};
-    3 -> {4};
+    3 -> {4} [color=green];
 
     subgraph cluster_2 {
         color=red

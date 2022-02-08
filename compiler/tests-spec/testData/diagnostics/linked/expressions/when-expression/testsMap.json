@@ -426,7 +426,7 @@
       "1": [
         {
           "specVersion": "0.1-313",
-          "casesNumber": 4,
+          "casesNumber": 5,
           "description": " it is possible to  replace the else condition with an always-true condition",
           "path": "compiler/tests-spec/testData/diagnostics/linked/expressions/when-expression/p-4/neg/1.1.kt",
           "unexpectedBehaviour": false,

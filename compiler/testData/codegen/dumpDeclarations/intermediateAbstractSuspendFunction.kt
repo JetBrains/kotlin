@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 interface A<T> {
     suspend fun foo(): T
 }

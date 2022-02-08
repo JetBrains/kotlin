@@ -1,14 +1,15 @@
+// FIR_IDENTICAL
 public interface Base {
     var test: String
         get() = "OK"
-        set(<!UNUSED_PARAMETER!>s<!>: String) {
+        set(s: String) {
         }
 }
 
 public interface Base2 : Base {
     override var test: String
             get() = "OK2"
-            set(<!UNUSED_PARAMETER!>value<!>) {}
+            set(value) {}
 }
 
 class Delegate : Base2 {

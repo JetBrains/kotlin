@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi2ir.intermediate
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.psi2ir.generators.hasNoSideEffects
 import org.jetbrains.kotlin.psi2ir.isValueArgumentReorderingRequired
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
@@ -54,7 +55,7 @@ fun CallBuilder.getValueArgumentsInParameterOrder(): List<IrExpression?> =
     descriptor.valueParameters.map { irValueArgumentsByIndex[it.index] }
 
 fun CallBuilder.isValueArgumentReorderingRequired() =
-    original.isValueArgumentReorderingRequired()
+    original.isValueArgumentReorderingRequired() && irValueArgumentsByIndex.any { it != null && !it.hasNoSideEffects() }
 
 val CallBuilder.hasExtensionReceiver: Boolean
     get() =
@@ -83,11 +84,11 @@ val CallBuilder.explicitReceiverType: KotlinType?
 fun CallBuilder.setExplicitReceiverValue(explicitReceiverValue: IntermediateValue) {
     val previousCallReceiver = callReceiver
     callReceiver = object : CallReceiver {
-        override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {
-            return previousCallReceiver.call { dispatchReceiverValue, _ ->
+        override fun call(builder: CallExpressionBuilder): IrExpression {
+            return previousCallReceiver.call { dispatchReceiverValue, _, contextReceiverValues ->
                 val newDispatchReceiverValue = if (hasExtensionReceiver) dispatchReceiverValue else explicitReceiverValue
                 val newExtensionReceiverValue = if (hasExtensionReceiver) explicitReceiverValue else null
-                withDispatchAndExtensionReceivers(newDispatchReceiverValue, newExtensionReceiverValue)
+                builder.withReceivers(newDispatchReceiverValue, newExtensionReceiverValue, contextReceiverValues)
             }
         }
     }

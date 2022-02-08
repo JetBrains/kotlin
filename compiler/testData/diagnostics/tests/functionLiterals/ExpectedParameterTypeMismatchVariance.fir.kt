@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
 package a
 
@@ -16,6 +15,6 @@ fun test(s: Sub) {
         t: Trait -> s
     }
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(fun(t: Sub) = s)
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(fun(t): Super = s)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>fun(t: Sub) = s<!>)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>fun(t): Super = s<!>)
 }

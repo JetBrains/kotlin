@@ -1,8 +1,0 @@
-fun test() = 42
-
-fun foo(): Int {
-    return when (val a = test()) {
-        1 -> a
-        else -> 24
-    }
-}

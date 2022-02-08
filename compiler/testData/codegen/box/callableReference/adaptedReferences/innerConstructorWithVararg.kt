@@ -1,7 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: BINDING_RECEIVERS
-// !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
-
 class Outer(val o: String) {
     inner class Inner1(val i: Int, vararg v: String) {
         val result = "I1" + o + i + if (v.size == 0) "E" else v[0]

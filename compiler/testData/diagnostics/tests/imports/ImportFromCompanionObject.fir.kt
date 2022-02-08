@@ -60,12 +60,12 @@ class C3 {
 // FILE: b.kt
 package b
 
-import a.C1.O.*
+import a.C1.<!CANNOT_ALL_UNDER_IMPORT_FROM_SINGLETON!>O<!>.*
 
 fun testErroneusAllUnderImportFromObject() {
-    A()
-    B
-    bar()
+    <!UNRESOLVED_REFERENCE!>A<!>()
+    <!UNRESOLVED_REFERENCE!>B<!>
+    <!UNRESOLVED_REFERENCE!>bar<!>()
 }
 
 // FILE: c.kt
@@ -132,7 +132,7 @@ fun testMembersFromSupertypes() {
     fromI()
 
     genericFromI(3)
-    <!INAPPLICABLE_CANDIDATE!>genericFromI<!>("a")
+    genericFromI(<!ARGUMENT_TYPE_MISMATCH!>"a"<!>)
 
     own
 }

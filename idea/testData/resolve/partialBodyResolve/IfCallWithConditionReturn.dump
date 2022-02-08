@@ -1,6 +1,0 @@
-Resolve target: value-parameter p: kotlin.Any?
-----------------------------------------------
-fun foo(p: Any?) {
-    /* STATEMENT DELETED: if (x(p == null)) { print("returned true") return } */
-    <caret>p?.hashCode()
-}

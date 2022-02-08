@@ -25,7 +25,7 @@ public class AnonymousFunctionDescriptor extends SimpleFunctionDescriptorImpl {
             @NotNull SourceElement source,
             boolean isSuspend
     ) {
-        this(containingDeclaration, null, annotations, SpecialNames.ANONYMOUS_FUNCTION, kind, source, isSuspend);
+        this(containingDeclaration, null, annotations, SpecialNames.ANONYMOUS, kind, source, isSuspend);
     }
 
     private AnonymousFunctionDescriptor(

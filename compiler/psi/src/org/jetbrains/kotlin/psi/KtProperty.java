@@ -114,6 +114,17 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
         return getReceiverTypeRefByTree();
     }
 
+    @NotNull
+    @Override
+    public List<KtContextReceiver> getContextReceivers() {
+        KtContextReceiverList contextReceiverList = getStubOrPsiChild(KtStubElementTypes.CONTEXT_RECEIVER_LIST);
+        if (contextReceiverList != null) {
+            return contextReceiverList.contextReceivers();
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
     @Nullable
     private KtTypeReference getReceiverTypeRefByTree() {
         ASTNode node = getNode().getFirstChildNode();
@@ -186,6 +197,15 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     public KtPropertyAccessor getSetter() {
         for (KtPropertyAccessor accessor : getAccessors()) {
             if (accessor.isSetter()) return accessor;
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public KtBackingField getFieldDeclaration() {
+        for (KtBackingField field : getStubOrPsiChildrenAsList(KtStubElementTypes.BACKING_FIELD)) {
+            return field;
         }
 
         return null;

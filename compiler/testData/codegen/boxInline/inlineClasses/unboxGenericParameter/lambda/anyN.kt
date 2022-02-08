@@ -1,3 +1,4 @@
+// NO_CHECK_LAMBDA_INLINING
 // !LANGUAGE: +InlineClasses
 
 // FILE: inline.kt
@@ -11,7 +12,6 @@ inline fun <T> IC.extensionInline(): T = value as T
 inline fun <T> normalInline(a: IC): T = a.value as T
 
 // FILE: box.kt
-// NO_CHECK_LAMBDA_INLINING
 
 fun <T> extension(a: IC): T = bar(a) {
     it.extensionInline()

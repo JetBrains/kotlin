@@ -1,3 +1,4 @@
+// NO_CHECK_LAMBDA_INLINING
 // !LANGUAGE: +InlineClasses
 
 // FILE: 1.kt
@@ -12,7 +13,6 @@ inline class IC2(val x: String)
 
 
 // FILE: 2.kt
-// NO_CHECK_LAMBDA_INLINING
 
 import test.*
 

@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 annotation class NoArg
 
@@ -6,10 +6,6 @@ annotation class NoArg
 class Test(val a: String)
 
 fun box(): String {
-    try {
-        Test::class.java.newInstance()
-        return "OK"
-    } catch (_: Throwable) {
-        return "Fail"
-    }
+    Test::class.java.newInstance()
+    return "OK"
 }

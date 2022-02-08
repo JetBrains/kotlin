@@ -1,6 +1,6 @@
 var invokeOrder: String = ""
 
-fun test(x: Double = { invokeOrder += "x"; 1.0 }(), a: String, y: Long = { invokeOrder += "y"; 1 }(), b: String): String {
+fun test(x: Double = { invokeOrder += "x"; 1.0 }(), a: String, y: Long = { invokeOrder += "y"; 1L }(), b: String): String {
     return "" + x.toInt() + a + b + y;
 }
 

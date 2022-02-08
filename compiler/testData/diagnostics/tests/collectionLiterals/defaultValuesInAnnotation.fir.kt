@@ -1,6 +1,3 @@
-// !WITH_NEW_INFERENCE
-// !LANGUAGE: +ArrayLiteralsInAnnotations
-
 annotation class Foo(
         val a: Array<String> = ["/"],
         val b: Array<String> = [],
@@ -9,7 +6,7 @@ annotation class Foo(
 
 annotation class Bar(
         val a: Array<String> = [' '],
-        val b: Array<String> = ["", <!ILLEGAL_CONST_EXPRESSION!>''<!>],
+        val b: Array<String> = ["", <!EMPTY_CHARACTER_LITERAL!>''<!>],
         val c: Array<String> = [1]
 )
 

@@ -1,10 +1,9 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 
 class In<in T>() {
-    fun f(<!UNUSED_PARAMETER!>t<!> : T) : Unit {}
-    fun f(<!UNUSED_PARAMETER!>t<!> : Int) : Int = 1
-    fun f1(<!UNUSED_PARAMETER!>t<!> : T) : Unit {}
+    fun f(t : T) : Unit {}
+    fun f(t : Int) : Int = 1
+    fun f1(t : T) : Unit {}
 }
 
 class Out<out T>() {
@@ -14,7 +13,7 @@ class Out<out T>() {
 
 class Inv<T>() {
     fun f(t : T) : T = t
-    fun inf(<!UNUSED_PARAMETER!>t<!> : T) : Unit {}
+    fun inf(t : T) : Unit {}
     fun outf() : T {throw IllegalStateException()}
 }
 
@@ -37,13 +36,13 @@ fun testInOut() {
 
     Inv<Int>().f(1)
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).f(1)
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).<!OI;MEMBER_PROJECTED_OUT!>f<!>(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).<!OI;MEMBER_PROJECTED_OUT!>f<!>(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).f(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).f(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
 
     Inv<Int>().inf(1)
     (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).inf(1)
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).<!OI;MEMBER_PROJECTED_OUT!>inf<!>(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
-    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).<!OI;MEMBER_PROJECTED_OUT!>inf<!>(<!NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<out Int>).inf(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
+    (null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<*>).inf(<!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!>) // !!
 
     Inv<Int>().outf()
     checkSubtype<Int>(<!TYPE_MISMATCH!>(null <!CAST_NEVER_SUCCEEDS!>as<!> Inv<in Int>).outf()<!>) // Type mismatch

@@ -1,0 +1,21 @@
+FILE: main.kt
+    public final fun foo(m: R|MyRunnable|): R|kotlin/Unit| {
+    }
+    public final fun MyRunnable(x: R|(kotlin/Int) -> kotlin/Boolean|): R|kotlin/Int| {
+        ^MyRunnable Int(1)
+    }
+    public final fun main(): R|kotlin/Unit| {
+        <Inapplicable(INAPPLICABLE): /foo>#(R|/MyRunnable|(<L> = MyRunnable@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| <inline=NoInline>  {
+            ^ CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1)))
+        }
+        ))
+        <Inapplicable(INAPPLICABLE): /foo>#(R|/MyRunnable|(MyRunnable@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Boolean| <inline=NoInline>  {
+            ^ CMP(>, R|<local>/it|.R|kotlin/Int.compareTo|(Int(1)))
+        }
+        ))
+        lval x: R|(kotlin/Int) -> kotlin/Boolean| = fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| <inline=Unknown>  {
+            ^ CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1)))
+        }
+
+        <Inapplicable(INAPPLICABLE): /foo>#(R|/MyRunnable|(R|<local>/x|))
+    }

@@ -1,8 +1,5 @@
-// Enable for dexing once we have a D8 version with a fix for
-// https://issuetracker.google.com/148661132
-// IGNORE_DEXING
-// FILE: 1.kt
 // SKIP_INLINE_CHECK_IN: inlineFun$default
+// FILE: 1.kt
 package test
 
 open class A(val value: String)
@@ -14,7 +11,7 @@ inline fun <T : A> inlineFun(capturedParam: T, lambda: () -> T = { capturedParam
 }
 
 // FILE: 2.kt
-// CHECK_CONTAINS_NO_CALLS: box
+// CHECK_CONTAINS_NO_CALLS: box TARGET_BACKENDS=JS
 
 import test.*
 

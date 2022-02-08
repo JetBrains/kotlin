@@ -1,12 +1,14 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: UNSIGNED_ARRAYS
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class UInt(private val value: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class UInt(private val value: Int) {
     fun asInt() = value
 }
 
-inline class UIntArray(private val intArray: IntArray) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class UIntArray(private val intArray: IntArray) {
     operator fun get(index: Int): UInt = UInt(intArray[index])
 
     operator fun set(index: Int, value: UInt) {

@@ -3,7 +3,7 @@
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun box(): String {
   kotlin.assert(true)

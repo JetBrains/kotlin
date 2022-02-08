@@ -1,0 +1,15 @@
+STEP 0:
+    dependencies: stdlib
+    dirty: l11.kt, l12.kt
+STEP 1:
+    dependencies: stdlib
+    modifications:
+        D : l12.kt
+    dirty:
+
+STEP 2:
+    dependencies: stdlib
+    modifications:
+        U : l12_n.kt.2 -> l12_n.kt
+    dirty: l12_n.kt
+

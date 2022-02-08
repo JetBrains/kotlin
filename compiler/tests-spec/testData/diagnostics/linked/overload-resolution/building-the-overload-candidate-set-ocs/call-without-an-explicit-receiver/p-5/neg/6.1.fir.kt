@@ -13,10 +13,10 @@ import libCase1.*
 import kotlin.text.*
 
 fun case1() {
-    <!AMBIGUITY!>Regex<!>("")
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>Regex<!>("")
 }
 
-// FILE: Lib.kt
+// FILE: Lib1.kt
 package libCase1
 fun Regex(pattern: String) {}
 
@@ -33,14 +33,14 @@ import kotlin.text.*
 
 
 fun case2() {
-    <!AMBIGUITY!>Regex<!>("")
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>Regex<!>("")
 }
 
-// FILE: Lib.kt
+// FILE: Lib2.kt
 package libCase2.a
 fun Regex(pattern: String) {}
 
-// FILE: Lib.kt
+// FILE: Lib3.kt
 package libCase2.b
 fun Regex(pattern: String) {}
 
@@ -57,14 +57,14 @@ import libCase4.b.*
 import kotlin.text.*
 
 fun case4() {
-    <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!><!AMBIGUITY!>Regex<!>("")<!>
+    <!DEBUG_INFO_CALL("fqName: libCase4.a.Regex; typeCall: function")!>Regex("")<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib4.kt
 package libCase4.a
 fun Regex(pattern: String) {}
 
-// FILE: Lib.kt
+// FILE: Lib5.kt
 package libCase4.b
 class Regex(pattern: String) {}
 
@@ -80,14 +80,14 @@ import libCase5.a.*
 import libCase5.b.*
 
 fun case5() {
-    <!AMBIGUITY!>Regex<!>("")
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>Regex<!>("")
 }
 
-// FILE: Lib.kt
+// FILE: Lib6.kt
 package libCase5.a
 fun Regex(pattern: String) {}
 
-// FILE: Lib.kt
+// FILE: Lib7.kt
 package libCase5.b
 class Regex(pattern: String) {}
 
@@ -101,13 +101,13 @@ import libCase6.a.*
 import libCase6.b.*
 
 fun case6() {
-    <!AMBIGUITY!>MyRegex<!>("")
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>MyRegex<!>("")
 }
 
-// FILE: Lib.kt
+// FILE: Lib8.kt
 package libCase6.a
 fun MyRegex(pattern: String) {}
 
-// FILE: Lib.kt
+// FILE: Lib9.kt
 package libCase6.b
 class MyRegex(pattern: String) {}

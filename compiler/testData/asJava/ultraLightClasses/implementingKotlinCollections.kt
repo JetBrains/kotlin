@@ -22,3 +22,5 @@ abstract class SmartSet<T> private constructor() : AbstractMutableSet<T>() {
   override fun contains(element: T): Boolean = true
    */
 }
+
+// COMPILATION_ERRORS

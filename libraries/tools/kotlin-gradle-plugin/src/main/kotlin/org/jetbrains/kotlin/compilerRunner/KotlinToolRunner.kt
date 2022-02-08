@@ -7,13 +7,15 @@ package org.jetbrains.kotlin.compilerRunner
 
 import com.intellij.openapi.util.text.StringUtil.escapeStringCharacters
 import org.gradle.api.Project
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
 import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 import java.util.concurrent.ConcurrentHashMap
 
-internal abstract class KotlinToolRunner(
+// Note: this class is public because it is used in the K/N build infrastructure.
+abstract class KotlinToolRunner(
     val project: Project
 ) {
     // name that will be used in logs
@@ -26,13 +28,19 @@ internal abstract class KotlinToolRunner(
     open val execEnvironmentBlacklist: Set<String> = emptySet()
 
     open val execSystemProperties: Map<String, String> = emptyMap()
-    open val execSystemPropertiesBlacklist: Set<String> = setOf("java.endorsed.dirs")
+    open val execSystemPropertiesBlacklist: Set<String> = setOf(
+        "java.endorsed.dirs",       // Fix for KT-25887
+        "user.dir",                 // Don't propagate the working dir of the current Gradle process
+        "java.system.class.loader"  // Don't use custom class loaders
+    )
 
     abstract val classpath: Set<File>
     open fun checkClasspath(): Unit = check(classpath.isNotEmpty()) { "Classpath of the tool is empty: $displayName" }
 
     abstract val isolatedClassLoaderCacheKey: Any
-    private fun getIsolatedClassLoader(): ClassLoader = isolatedClassLoadersMap.computeIfAbsent(isolatedClassLoaderCacheKey) {
+    protected open val isolatedClassLoaders: ConcurrentHashMap<Any, URLClassLoader> get() = isolatedClassLoadersMap
+
+    private fun getIsolatedClassLoader(): URLClassLoader = isolatedClassLoaders.computeIfAbsent(isolatedClassLoaderCacheKey) {
         val arrayOfURLs = classpath.map { File(it.absolutePath).toURI().toURL() }.toTypedArray()
         URLClassLoader(arrayOfURLs, null).apply {
             setDefaultAssertionStatus(enableAssertions)
@@ -45,6 +53,9 @@ internal abstract class KotlinToolRunner(
 
     abstract val mustRunViaExec: Boolean
     open fun transformArgs(args: List<String>): List<String> = args
+
+    internal open val defaultArguments: List<String>
+        get() = emptyList()
 
     // for the purpose if there is a way to specify JVM args, for instance, straight in project configs
     open fun getCustomJvmArgs(): List<String> = emptyList()
@@ -69,8 +80,9 @@ internal abstract class KotlinToolRunner(
 
     fun run(args: List<String>) {
         checkClasspath()
+        val argsWithDefault = args + defaultArguments
 
-        if (mustRunViaExec) runViaExec(args) else runInProcess(args)
+        if (mustRunViaExec) runViaExec(argsWithDefault) else runInProcess(argsWithDefault)
     }
 
     private fun runViaExec(args: List<String>) {
@@ -96,7 +108,9 @@ internal abstract class KotlinToolRunner(
         )
 
         project.javaexec { spec ->
-            spec.main = mainClass
+            @Suppress("DEPRECATION")
+            if (GradleVersion.current() >= GradleVersion.version("7.0")) spec.mainClass.set(mainClass)
+            else spec.main = mainClass
             spec.classpath = classpath
             spec.jvmArgs(jvmArgs)
             spec.systemProperties(systemProperties)
@@ -108,17 +122,19 @@ internal abstract class KotlinToolRunner(
 
     private fun runInProcess(args: List<String>) {
         val transformedArgs = transformArgs(args)
+        val isolatedClassLoader = getIsolatedClassLoader()
 
         project.logger.info(
             """|Run in-process tool "$displayName"
                |Entry point method = $mainClass.$daemonEntryPoint
+               |Classpath = ${isolatedClassLoader.urLs.map { it.file }.toPrettyString()}
                |Arguments = ${args.toPrettyString()}
                |Transformed arguments = ${if (transformedArgs == args) "same as arguments" else transformedArgs.toPrettyString()}
             """.trimMargin()
         )
 
         try {
-            val mainClass = getIsolatedClassLoader().loadClass(mainClass)
+            val mainClass = isolatedClassLoader.loadClass(mainClass)
             val entryPoint = mainClass.methods.single { it.name == daemonEntryPoint }
 
             entryPoint.invoke(null, transformedArgs.toTypedArray())
@@ -133,15 +149,15 @@ internal abstract class KotlinToolRunner(
         private fun Sequence<Pair<String, String>>.escapeQuotesForWindows() =
             if (HostManager.hostIsMingw) map { (key, value) -> key.escapeQuotes() to value.escapeQuotes() } else this
 
-        private val isolatedClassLoadersMap = ConcurrentHashMap<Any, ClassLoader>()
+        private val isolatedClassLoadersMap = ConcurrentHashMap<Any, URLClassLoader>()
 
         private fun Map<String, String>.toPrettyString(): String = buildString {
-            append('{')
+            append('[')
             if (this@toPrettyString.isNotEmpty()) append('\n')
             this@toPrettyString.entries.forEach { (key, value) ->
                 append('\t').append(key).append(" = ").append(value.toPrettyString()).append('\n')
             }
-            append('}')
+            append(']')
         }
 
         private fun Collection<String>.toPrettyString(): String = buildString {

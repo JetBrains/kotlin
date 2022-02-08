@@ -170,6 +170,10 @@ open class ProtoCompareGenerated(
 
         if (!checkEqualsClassNestedClassName(old, new)) return false
 
+        if (!checkEqualsClassContextReceiverType(old, new)) return false
+
+        if (!checkEqualsClassContextReceiverTypeId(old, new)) return false
+
         if (!checkEqualsClassConstructor(old, new)) return false
 
         if (!checkEqualsClassFunction(old, new)) return false
@@ -181,6 +185,21 @@ open class ProtoCompareGenerated(
         if (!checkEqualsClassEnumEntry(old, new)) return false
 
         if (!checkEqualsClassSealedSubclassFqName(old, new)) return false
+
+        if (old.hasInlineClassUnderlyingPropertyName() != new.hasInlineClassUnderlyingPropertyName()) return false
+        if (old.hasInlineClassUnderlyingPropertyName()) {
+            if (!checkStringEquals(old.inlineClassUnderlyingPropertyName, new.inlineClassUnderlyingPropertyName)) return false
+        }
+
+        if (old.hasInlineClassUnderlyingType() != new.hasInlineClassUnderlyingType()) return false
+        if (old.hasInlineClassUnderlyingType()) {
+            if (!checkEquals(old.inlineClassUnderlyingType, new.inlineClassUnderlyingType)) return false
+        }
+
+        if (old.hasInlineClassUnderlyingTypeId() != new.hasInlineClassUnderlyingTypeId()) return false
+        if (old.hasInlineClassUnderlyingTypeId()) {
+            if (!checkEquals(oldTypeTable.getType(old.inlineClassUnderlyingTypeId), newTypeTable.getType(new.inlineClassUnderlyingTypeId))) return false
+        }
 
         if (!checkEqualsClassVersionRequirement(old, new)) return false
 
@@ -260,12 +279,17 @@ open class ProtoCompareGenerated(
         SUPERTYPE_LIST,
         SUPERTYPE_ID_LIST,
         NESTED_CLASS_NAME_LIST,
+        CONTEXT_RECEIVER_TYPE_LIST,
+        CONTEXT_RECEIVER_TYPE_ID_LIST,
         CONSTRUCTOR_LIST,
         FUNCTION_LIST,
         PROPERTY_LIST,
         TYPE_ALIAS_LIST,
         ENUM_ENTRY_LIST,
         SEALED_SUBCLASS_FQ_NAME_LIST,
+        INLINE_CLASS_UNDERLYING_PROPERTY_NAME,
+        INLINE_CLASS_UNDERLYING_TYPE,
+        INLINE_CLASS_UNDERLYING_TYPE_ID,
         VERSION_REQUIREMENT_LIST,
         VERSION_REQUIREMENT_TABLE,
         JVM_EXT_CLASS_MODULE_NAME,
@@ -302,6 +326,10 @@ open class ProtoCompareGenerated(
 
         if (!checkEqualsClassNestedClassName(old, new)) result.add(ProtoBufClassKind.NESTED_CLASS_NAME_LIST)
 
+        if (!checkEqualsClassContextReceiverType(old, new)) result.add(ProtoBufClassKind.CONTEXT_RECEIVER_TYPE_LIST)
+
+        if (!checkEqualsClassContextReceiverTypeId(old, new)) result.add(ProtoBufClassKind.CONTEXT_RECEIVER_TYPE_ID_LIST)
+
         if (!checkEqualsClassConstructor(old, new)) result.add(ProtoBufClassKind.CONSTRUCTOR_LIST)
 
         if (!checkEqualsClassFunction(old, new)) result.add(ProtoBufClassKind.FUNCTION_LIST)
@@ -313,6 +341,21 @@ open class ProtoCompareGenerated(
         if (!checkEqualsClassEnumEntry(old, new)) result.add(ProtoBufClassKind.ENUM_ENTRY_LIST)
 
         if (!checkEqualsClassSealedSubclassFqName(old, new)) result.add(ProtoBufClassKind.SEALED_SUBCLASS_FQ_NAME_LIST)
+
+        if (old.hasInlineClassUnderlyingPropertyName() != new.hasInlineClassUnderlyingPropertyName()) result.add(ProtoBufClassKind.INLINE_CLASS_UNDERLYING_PROPERTY_NAME)
+        if (old.hasInlineClassUnderlyingPropertyName()) {
+            if (!checkStringEquals(old.inlineClassUnderlyingPropertyName, new.inlineClassUnderlyingPropertyName)) result.add(ProtoBufClassKind.INLINE_CLASS_UNDERLYING_PROPERTY_NAME)
+        }
+
+        if (old.hasInlineClassUnderlyingType() != new.hasInlineClassUnderlyingType()) result.add(ProtoBufClassKind.INLINE_CLASS_UNDERLYING_TYPE)
+        if (old.hasInlineClassUnderlyingType()) {
+            if (!checkEquals(old.inlineClassUnderlyingType, new.inlineClassUnderlyingType)) result.add(ProtoBufClassKind.INLINE_CLASS_UNDERLYING_TYPE)
+        }
+
+        if (old.hasInlineClassUnderlyingTypeId() != new.hasInlineClassUnderlyingTypeId()) result.add(ProtoBufClassKind.INLINE_CLASS_UNDERLYING_TYPE_ID)
+        if (old.hasInlineClassUnderlyingTypeId()) {
+            if (!checkEquals(oldTypeTable.getType(old.inlineClassUnderlyingTypeId), newTypeTable.getType(new.inlineClassUnderlyingTypeId))) result.add(ProtoBufClassKind.INLINE_CLASS_UNDERLYING_TYPE_ID)
+        }
 
         if (!checkEqualsClassVersionRequirement(old, new)) result.add(ProtoBufClassKind.VERSION_REQUIREMENT_LIST)
 
@@ -420,6 +463,10 @@ open class ProtoCompareGenerated(
             if (!checkEquals(oldTypeTable.getType(old.receiverTypeId), newTypeTable.getType(new.receiverTypeId))) return false
         }
 
+        if (!checkEqualsFunctionContextReceiverType(old, new)) return false
+
+        if (!checkEqualsFunctionContextReceiverTypeId(old, new)) return false
+
         if (!checkEqualsFunctionValueParameter(old, new)) return false
 
         if (!checkEqualsFunctionVersionRequirement(old, new)) return false
@@ -518,6 +565,10 @@ open class ProtoCompareGenerated(
         if (old.hasReceiverTypeId()) {
             if (!checkEquals(oldTypeTable.getType(old.receiverTypeId), newTypeTable.getType(new.receiverTypeId))) return false
         }
+
+        if (!checkEqualsPropertyContextReceiverType(old, new)) return false
+
+        if (!checkEqualsPropertyContextReceiverTypeId(old, new)) return false
 
         if (old.hasSetterValueParameter() != new.hasSetterValueParameter()) return false
         if (old.hasSetterValueParameter()) {
@@ -1071,6 +1122,11 @@ open class ProtoCompareGenerated(
             if (!checkEquals(old.setter, new.setter)) return false
         }
 
+        if (old.hasDelegateMethod() != new.hasDelegateMethod()) return false
+        if (old.hasDelegateMethod()) {
+            if (!checkEquals(old.delegateMethod, new.delegateMethod)) return false
+        }
+
         return true
     }
 
@@ -1329,6 +1385,26 @@ open class ProtoCompareGenerated(
         return true
     }
 
+    open fun checkEqualsClassContextReceiverType(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
+        if (old.contextReceiverTypeCount != new.contextReceiverTypeCount) return false
+
+        for(i in 0..old.contextReceiverTypeCount - 1) {
+            if (!checkEquals(old.getContextReceiverType(i), new.getContextReceiverType(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsClassContextReceiverTypeId(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
+        if (old.contextReceiverTypeIdCount != new.contextReceiverTypeIdCount) return false
+
+        for(i in 0..old.contextReceiverTypeIdCount - 1) {
+            if (!checkEquals(oldTypeTable.getType(old.getContextReceiverTypeId(i)), newTypeTable.getType(new.getContextReceiverTypeId(i)))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsClassConstructor(old: ProtoBuf.Class, new: ProtoBuf.Class): Boolean {
         if (old.constructorCount != new.constructorCount) return false
 
@@ -1409,6 +1485,26 @@ open class ProtoCompareGenerated(
         return true
     }
 
+    open fun checkEqualsFunctionContextReceiverType(old: ProtoBuf.Function, new: ProtoBuf.Function): Boolean {
+        if (old.contextReceiverTypeCount != new.contextReceiverTypeCount) return false
+
+        for(i in 0..old.contextReceiverTypeCount - 1) {
+            if (!checkEquals(old.getContextReceiverType(i), new.getContextReceiverType(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsFunctionContextReceiverTypeId(old: ProtoBuf.Function, new: ProtoBuf.Function): Boolean {
+        if (old.contextReceiverTypeIdCount != new.contextReceiverTypeIdCount) return false
+
+        for(i in 0..old.contextReceiverTypeIdCount - 1) {
+            if (!checkEquals(oldTypeTable.getType(old.getContextReceiverTypeId(i)), newTypeTable.getType(new.getContextReceiverTypeId(i)))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsFunctionValueParameter(old: ProtoBuf.Function, new: ProtoBuf.Function): Boolean {
         if (old.valueParameterCount != new.valueParameterCount) return false
 
@@ -1434,6 +1530,26 @@ open class ProtoCompareGenerated(
 
         for(i in 0..old.typeParameterCount - 1) {
             if (!checkEquals(old.getTypeParameter(i), new.getTypeParameter(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsPropertyContextReceiverType(old: ProtoBuf.Property, new: ProtoBuf.Property): Boolean {
+        if (old.contextReceiverTypeCount != new.contextReceiverTypeCount) return false
+
+        for(i in 0..old.contextReceiverTypeCount - 1) {
+            if (!checkEquals(old.getContextReceiverType(i), new.getContextReceiverType(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsPropertyContextReceiverTypeId(old: ProtoBuf.Property, new: ProtoBuf.Property): Boolean {
+        if (old.contextReceiverTypeIdCount != new.contextReceiverTypeIdCount) return false
+
+        for(i in 0..old.contextReceiverTypeIdCount - 1) {
+            if (!checkEquals(oldTypeTable.getType(old.getContextReceiverTypeId(i)), newTypeTable.getType(new.getContextReceiverTypeId(i)))) return false
         }
 
         return true
@@ -1704,6 +1820,14 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
         hashCode = 31 * hashCode + stringIndexes(getNestedClassName(i))
     }
 
+    for(i in 0..contextReceiverTypeCount - 1) {
+        hashCode = 31 * hashCode + getContextReceiverType(i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..contextReceiverTypeIdCount - 1) {
+        hashCode = 31 * hashCode + typeById(getContextReceiverTypeId(i)).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
     for(i in 0..constructorCount - 1) {
         hashCode = 31 * hashCode + getConstructor(i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
@@ -1726,6 +1850,18 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
 
     for(i in 0..sealedSubclassFqNameCount - 1) {
         hashCode = 31 * hashCode + fqNameIndexes(getSealedSubclassFqName(i))
+    }
+
+    if (hasInlineClassUnderlyingPropertyName()) {
+        hashCode = 31 * hashCode + stringIndexes(inlineClassUnderlyingPropertyName)
+    }
+
+    if (hasInlineClassUnderlyingType()) {
+        hashCode = 31 * hashCode + inlineClassUnderlyingType.hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    if (hasInlineClassUnderlyingTypeId()) {
+        hashCode = 31 * hashCode + typeById(inlineClassUnderlyingTypeId).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     for(i in 0..versionRequirementCount - 1) {
@@ -1808,6 +1944,14 @@ fun ProtoBuf.Function.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
         hashCode = 31 * hashCode + typeById(receiverTypeId).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
+    for(i in 0..contextReceiverTypeCount - 1) {
+        hashCode = 31 * hashCode + getContextReceiverType(i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..contextReceiverTypeIdCount - 1) {
+        hashCode = 31 * hashCode + typeById(getContextReceiverTypeId(i)).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
     for(i in 0..valueParameterCount - 1) {
         hashCode = 31 * hashCode + getValueParameter(i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
@@ -1886,6 +2030,14 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
 
     if (hasReceiverTypeId()) {
         hashCode = 31 * hashCode + typeById(receiverTypeId).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..contextReceiverTypeCount - 1) {
+        hashCode = 31 * hashCode + getContextReceiverType(i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..contextReceiverTypeIdCount - 1) {
+        hashCode = 31 * hashCode + typeById(getContextReceiverTypeId(i)).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     if (hasSetterValueParameter()) {
@@ -2306,6 +2458,10 @@ fun JvmProtoBuf.JvmPropertySignature.hashCode(stringIndexes: (Int) -> Int, fqNam
 
     if (hasSetter()) {
         hashCode = 31 * hashCode + setter.hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    if (hasDelegateMethod()) {
+        hashCode = 31 * hashCode + delegateMethod.hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     return hashCode

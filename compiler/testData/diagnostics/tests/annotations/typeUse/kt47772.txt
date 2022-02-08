@@ -1,0 +1,19 @@
+package
+
+public fun </*0*/ K> materialize(): K?
+public fun test_error(): kotlin.Unit
+public fun test_ok(): kotlin.Unit
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS}) public final annotation class Bad : kotlin.Annotation {
+    public constructor Bad()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class Good : kotlin.Annotation {
+    public constructor Good()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER -PARAMETER_NAME_CHANGED_ON_OVERRIDE
-// !WITH_NEW_INFERENCE
 // FULL_JDK
 
 class KotlinMap1<K, V> : java.util.AbstractMap<K, V>() {
@@ -18,14 +17,14 @@ class KotlinMap2 : java.util.AbstractMap<String, Int>() {
 
 fun foo(x: MutableMap<String, Int>, y: java.util.HashMap<String, Int>, z: java.util.AbstractMap<String, Int>) {
     x.remove("", 1)
-    x.<!INAPPLICABLE_CANDIDATE!>remove<!>("", "")
-    x.<!INAPPLICABLE_CANDIDATE!>remove<!>("", null)
+    x.remove("", <!ARGUMENT_TYPE_MISMATCH!>""<!>)
+    x.remove("", <!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     y.remove("", 1)
-    y.<!INAPPLICABLE_CANDIDATE!>remove<!>("", "")
-    y.remove("", null)
+    y.remove("", <!ARGUMENT_TYPE_MISMATCH!>""<!>)
+    y.remove("", <!NULL_FOR_NONNULL_TYPE!>null<!>)
 
     z.remove("", 1)
-    z.<!INAPPLICABLE_CANDIDATE!>remove<!>("", "")
+    z.remove("", <!ARGUMENT_TYPE_MISMATCH!>""<!>)
     z.remove("", null)
 }

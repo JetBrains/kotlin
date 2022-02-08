@@ -1,3 +1,5 @@
+fun <T> eval(fn: () -> T) = fn()
+
 class A {
 
     var result: Int = 0;
@@ -12,15 +14,11 @@ class A {
         }
 
     fun test(p: Int):Int {
-        return {
-            p.times3
-        }()
+        return eval { p.times3 }
     }
 
     fun test2(p: Int, s: Int):Int {
-        {
-            p.times = s
-        }()
+        eval { p.times = s }
         return result
     }
 }

@@ -1,22 +1,25 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: PROPERTY_REFERENCES
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
 import kotlin.test.assertEquals
 
-inline class Z(private val x: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(private val x: Int) {
     companion object {
         val xref = Z::x
     }
 }
 
-inline class L(private val x: Long) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class L(private val x: Long) {
     companion object {
         val xref = L::x
     }
 }
 
-inline class S(private val x: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class S(private val x: String) {
     companion object {
         val xref = S::x
     }

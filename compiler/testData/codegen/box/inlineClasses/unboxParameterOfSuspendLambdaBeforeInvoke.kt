@@ -1,21 +1,26 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
+// IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: IGNORED_IN_JS
 // WITH_COROUTINES
-// WITH_RUNTIME
+// WITH_STDLIB
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 
-inline class BoxAny(val value: Any?) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class BoxAny(val value: Any?) {
     val intValue: Int get() = value as Int
 }
 
-inline class BoxInt(val value: Int)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class BoxInt(val value: Int)
 
-inline class BoxLong(val value: Long)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class BoxLong(val value: Long)
 
 class EmptyContinuation<T> : Continuation<T> {
     override val context: CoroutineContext

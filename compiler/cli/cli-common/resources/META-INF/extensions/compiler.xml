@@ -1,6 +1,5 @@
 <idea-plugin>
     <id>org.jetbrains.kotlin</id>
-    <version>1.2</version>
 
     <extensionPoints>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.analyzeCompleteHandlerExtension"
@@ -11,6 +10,9 @@
                         area="IDEA_PROJECT"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.extensions.internal.typeResolutionInterceptorExtension"
                         interface="org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptorExtension"
+                        area="IDEA_PROJECT"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.extensions.typeAttributeTranslatorExtension"
+                        interface="org.jetbrains.kotlin.extensions.TypeAttributeTranslatorExtension"
                         area="IDEA_PROJECT"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.diagnosticSuppressor"
                         interface="org.jetbrains.kotlin.resolve.diagnostics.DiagnosticSuppressor"
@@ -67,8 +69,8 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.renameHandler"
                         interface="com.intellij.refactoring.rename.RenameHandler"
                         dynamic="true"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar"
-                        interface="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar"/>
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter"
+                        interface="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.DescriptorSerializerPlugin"
                         interface="org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.defaultErrorMessages"

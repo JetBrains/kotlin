@@ -1,3 +1,4 @@
+// FIR_IDE_IGNORE
 // FILE: file1.kt
 private class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>C<!> {
     companion object

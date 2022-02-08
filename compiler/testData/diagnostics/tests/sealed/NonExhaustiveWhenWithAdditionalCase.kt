@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 sealed class Sealed(val x: Int) {
     interface ITuple {
         val x: Int

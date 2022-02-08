@@ -5,35 +5,26 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.findNonInterfaceSupertype
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 
-object FirEnumClassSimpleChecker : FirMemberDeclarationChecker() {
-    override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration !is FirClass<*> || declaration.classKind != ClassKind.ENUM_CLASS) {
+object FirEnumClassSimpleChecker : FirRegularClassChecker() {
+    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (!declaration.isEnumClass) {
             return
         }
 
         declaration.findNonInterfaceSupertype(context)?.let {
-            reporter.reportClassInSupertypeForEnum(it.source)
+            reporter.reportOn(it.source, FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM, context)
         }
 
         if (declaration.typeParameters.isNotEmpty()) {
-            reporter.reportTypeParametersInEnum(declaration.typeParameters.firstOrNull()?.source)
+            reporter.reportOn(declaration.typeParameters.firstOrNull()?.source, FirErrors.TYPE_PARAMETERS_IN_ENUM, context)
         }
-    }
-
-    private fun DiagnosticReporter.reportClassInSupertypeForEnum(source: FirSourceElement?) {
-        source?.let { report(FirErrors.CLASS_IN_SUPERTYPE_FOR_ENUM.on(it)) }
-    }
-
-    private fun DiagnosticReporter.reportTypeParametersInEnum(source: FirSourceElement?) {
-        source?.let { report(FirErrors.TYPE_PARAMETERS_IN_ENUM.on(it)) }
     }
 }

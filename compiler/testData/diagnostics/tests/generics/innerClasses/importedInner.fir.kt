@@ -11,10 +11,10 @@ class Outer<E> {
     }
 
     class Nested {
-        fun bar(x: Inner) {}
+        fun bar(x: <!OUTER_CLASS_ARGUMENTS_REQUIRED!>Inner<!>) {}
     }
 }
 
 class E
 
-fun bar(x: Inner) {}
+fun bar(x: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Inner<!>) {}

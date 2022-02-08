@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class A(val a: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class A(val a: String)
 
 fun isEqualNA(x: A?, y: A) = x == y
 fun isEqualAN(x: A, y: A?) = x == y

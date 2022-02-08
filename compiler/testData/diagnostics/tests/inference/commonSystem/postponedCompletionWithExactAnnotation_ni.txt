@@ -1,6 +1,6 @@
 package
 
-@kotlin.Suppress(names = {"INVISIBLE_REFERENCE"}) public fun </*0*/ K> elvisExact(/*0*/ x: K?, /*1*/ y: K): K
+@kotlin.Suppress(names = {"INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "HIDDEN"}) public fun </*0*/ K> elvisExact(/*0*/ x: K?, /*1*/ y: K): K
 public fun </*0*/ K> elvisSimple(/*0*/ x: K?, /*1*/ y: K): K
 public fun </*0*/ T : kotlin.Number> materialize(): T?
 public fun test(/*0*/ nullableSample: ISample, /*1*/ any: kotlin.Any): kotlin.Unit

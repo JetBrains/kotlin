@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -76,10 +77,12 @@ class EraseVirtualDispatchReceiverParametersTypes(val context: CommonBackendCont
         val newReceiver = oldReceiver.copyTo(irFunction, type = context.irBuiltIns.anyType)
         irFunction.dispatchReceiverParameter = newReceiver
 
+        val classThisReceiverSymbol = irFunction.parentAsClass.thisReceiver?.symbol
+
         // Cast receiver usages back to original type
         irFunction.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitGetValue(expression: IrGetValue): IrExpression {
-                if (expression.symbol == oldReceiver.symbol) {
+                if (expression.symbol == oldReceiver.symbol || expression.symbol == classThisReceiverSymbol) {
                     return with(builder) {
                         irImplicitCast(irGet(newReceiver), originalReceiverType)
                     }

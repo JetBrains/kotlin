@@ -1,0 +1,36 @@
+FILE: innerWithSuperCompanion.kt
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Base.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val some: R|kotlin/Int| = Int(0)
+                public get(): R|kotlin/Int|
+
+        }
+
+    }
+    public final class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val codegen: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+        public final inner class Inner : R|Base| {
+            public Outer.constructor(): R|Outer.Inner| {
+                super<R|Base|>()
+            }
+
+            public final val c: R|kotlin/String| = this@R|/Outer|.R|/Outer.codegen|
+                public get(): R|kotlin/String|
+
+        }
+
+    }

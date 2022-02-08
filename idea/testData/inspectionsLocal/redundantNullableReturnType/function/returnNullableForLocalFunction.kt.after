@@ -1,6 +1,0 @@
-fun test(): Int {
-    fun f(): Int? {
-        return null
-    }
-    return 1
-}

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.android.tests;
 
-import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 
 import java.io.File;
 
@@ -69,7 +69,7 @@ public class PathManager {
     }
 
     public String getAndroidSdkRoot() {
-        return KotlinTestUtils.getAndroidSdkSystemIndependentPath();
+        return KtTestUtil.getAndroidSdkSystemIndependentPath();
     }
 
     public String getAndroidModuleRoot() {

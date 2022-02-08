@@ -1,20 +1,34 @@
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class GCmp<T>(val xc: Comparable<T>)
-inline class GSCmp<T>(val sc: Comparable<String>)
-inline class SCmp(val sc: Comparable<String>)
-inline class ICmp(val intc: Comparable<Int>)
-inline class GICmp<T>(val intc: Comparable<Int>)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class GCmp<T>(val xc: Comparable<T>)
 
-inline class II(val i: Int) : Comparable<II> {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class GSCmp<T>(val sc: Comparable<String>)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class SCmp(val sc: Comparable<String>)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class ICmp(val intc: Comparable<Int>)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class GICmp<T>(val intc: Comparable<Int>)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class II(val i: Int) : Comparable<II> {
     override fun compareTo(other: II): Int {
         return i.compareTo(other.i)
     }
 }
 
-inline class IICmp(val iic: Comparable<II>)
-inline class GIICmp<T>(val iic: Comparable<II>)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IICmp(val iic: Comparable<II>)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class GIICmp<T>(val iic: Comparable<II>)
 
 fun testGCmp(x: GCmp<String>) {
     if (x.xc.compareTo("OK") != 0) throw AssertionError()

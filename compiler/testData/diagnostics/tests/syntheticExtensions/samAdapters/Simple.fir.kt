@@ -16,9 +16,9 @@ fun foo(javaClass: JavaClass, kotlinClass: KotlinClass) {
         bar()
     }
 
-    javaClass.<!INAPPLICABLE_CANDIDATE!>doSomething2<!> {
+    javaClass.doSomething2 <!ARGUMENT_TYPE_MISMATCH!>{
         bar()
-    }
+    }<!>
 }
 
 fun bar(){}

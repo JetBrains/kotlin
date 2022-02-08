@@ -12,12 +12,10 @@ import org.jetbrains.kotlin.builtins.UnsignedTypes;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotated;
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl;
 import org.jetbrains.kotlin.incremental.components.LookupLocation;
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.FqNameUnsafe;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.name.SpecialNames;
+import org.jetbrains.kotlin.name.*;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
 import org.jetbrains.kotlin.resolve.constants.StringValue;
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter;
@@ -112,6 +110,20 @@ public class DescriptorUtils {
             return FqName.topLevel(name);
         }
         return getFqNameFromTopLevelClass(containingDeclaration).child(name);
+    }
+
+    @NotNull
+    public static ClassId getClassIdForNonLocalClass(@NotNull DeclarationDescriptor descriptor) {
+        DeclarationDescriptor containingDeclaration = descriptor.getContainingDeclaration();
+        Name name = descriptor.getName();
+        if (containingDeclaration instanceof PackageFragmentDescriptorImpl) {
+            FqName packageFqName = ((PackageFragmentDescriptorImpl) containingDeclaration).getFqName();
+            return new ClassId(packageFqName, name);
+        }
+        if (!(containingDeclaration instanceof ClassDescriptor)) {
+            return new ClassId(FqName.ROOT, name);
+        }
+        return getClassIdForNonLocalClass(containingDeclaration).createNestedClassId(name);
     }
 
     public static boolean isTopLevelDeclaration(@Nullable DeclarationDescriptor descriptor) {
@@ -270,7 +282,7 @@ public class DescriptorUtils {
     }
 
     public static boolean isSealedClass(@Nullable DeclarationDescriptor descriptor) {
-        return isKindOf(descriptor, ClassKind.CLASS) && ((ClassDescriptor) descriptor).getModality() == Modality.SEALED;
+        return (isKindOf(descriptor, ClassKind.CLASS) || isKindOf(descriptor, ClassKind.INTERFACE)) && ((ClassDescriptor) descriptor).getModality() == Modality.SEALED;
     }
 
     public static boolean isAnonymousObject(@NotNull DeclarationDescriptor descriptor) {
@@ -280,7 +292,7 @@ public class DescriptorUtils {
     @SuppressWarnings("unused")
     public static boolean isAnonymousFunction(@NotNull DeclarationDescriptor descriptor) {
         return descriptor instanceof SimpleFunctionDescriptor &&
-               descriptor.getName().equals(SpecialNames.ANONYMOUS_FUNCTION);
+               descriptor.getName().equals(SpecialNames.ANONYMOUS);
     }
 
     public static boolean isNonCompanionObject(@Nullable DeclarationDescriptor descriptor) {
@@ -380,10 +392,20 @@ public class DescriptorUtils {
     }
 
     @NotNull
-    public static DescriptorVisibility getDefaultConstructorVisibility(@NotNull ClassDescriptor classDescriptor) {
+    public static DescriptorVisibility getDefaultConstructorVisibility(
+            @NotNull ClassDescriptor classDescriptor,
+            boolean freedomForSealedInterfacesSupported
+    ) {
         ClassKind classKind = classDescriptor.getKind();
-        if (classKind == ClassKind.ENUM_CLASS || classKind.isSingleton() || isSealedClass(classDescriptor)) {
+        if (classKind == ClassKind.ENUM_CLASS || classKind.isSingleton()) {
             return DescriptorVisibilities.PRIVATE;
+        }
+        if (isSealedClass(classDescriptor)) {
+            if (freedomForSealedInterfacesSupported) {
+                return DescriptorVisibilities.PROTECTED;
+            } else {
+                return DescriptorVisibilities.PRIVATE;
+            }
         }
         if (isAnonymousObject(classDescriptor)) {
             return DescriptorVisibilities.DEFAULT_VISIBILITY;

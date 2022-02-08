@@ -1,0 +1,2 @@
+FILE: safeCallsWithAugmentedAssignment.kt
+    public? final? fun foo(): R|kotlin/Unit| { LAZY_BLOCK }

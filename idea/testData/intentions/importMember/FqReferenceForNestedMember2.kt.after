@@ -1,6 +1,0 @@
-import p.Container
-
-// INTENTION_TEXT: "Add import for 'p.Container'"
-fun test() {
-    Container.Nested()
-}

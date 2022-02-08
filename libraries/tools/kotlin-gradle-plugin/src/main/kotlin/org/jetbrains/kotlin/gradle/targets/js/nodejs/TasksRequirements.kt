@@ -5,26 +5,28 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependencyDeclaration
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
+import org.jetbrains.kotlin.gradle.targets.js.npm.toDeclaration
+import java.io.Serializable
 
-class TasksRequirements {
-    private val _byTask = mutableMapOf<RequiresNpmDependencies, Set<RequiredKotlinJsDependency>>()
-    private val byCompilation = mutableMapOf<KotlinJsCompilation, MutableSet<NpmDependency>>()
+class TasksRequirements : Serializable {
+    private val _byTask = mutableMapOf<String, Set<RequiredKotlinJsDependency>>()
+    private val byCompilation = mutableMapOf<String, MutableSet<NpmDependencyDeclaration>>()
 
-    val byTask: Map<RequiresNpmDependencies, Set<RequiredKotlinJsDependency>>
+    val byTask: Map<String, Set<RequiredKotlinJsDependency>>
         get() = _byTask
 
-    fun getCompilationNpmRequirements(compilation: KotlinJsCompilation): Set<NpmDependency> =
-        byCompilation[compilation]
+    internal fun getCompilationNpmRequirements(projectPath: String, compilationName: String): Set<NpmDependencyDeclaration> =
+        byCompilation["$projectPath:$compilationName"]
             ?: setOf()
 
     fun addTaskRequirements(task: RequiresNpmDependencies) {
         val requirements = task.requiredNpmDependencies
 
-        _byTask[task] = requirements
+        _byTask[task.getPath()] = requirements
 
         val requiredNpmDependencies = requirements
             .asSequence()
@@ -32,11 +34,12 @@ class TasksRequirements {
             .filterIsInstance<NpmDependency>()
             .toMutableSet()
 
-        val compilation = task.compilation
-        if (compilation in byCompilation) {
-            byCompilation[compilation]!!.addAll(requiredNpmDependencies)
+        val projectPath = task.compilation.target.project.path
+        val compilationPath = "$projectPath:${task.compilation.disambiguatedName}"
+        if (compilationPath in byCompilation) {
+            byCompilation[compilationPath]!!.addAll(requiredNpmDependencies.map { it.toDeclaration() })
         } else {
-            byCompilation[compilation] = requiredNpmDependencies
+            byCompilation[compilationPath] = requiredNpmDependencies.map { it.toDeclaration() }.toMutableSet()
         }
     }
 }

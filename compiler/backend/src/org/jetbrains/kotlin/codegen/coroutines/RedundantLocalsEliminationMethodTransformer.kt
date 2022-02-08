@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.codegen.coroutines
 
 import org.jetbrains.kotlin.codegen.optimization.boxing.isUnitInstance
-import org.jetbrains.kotlin.codegen.optimization.common.MethodAnalyzer
+import org.jetbrains.kotlin.codegen.optimization.common.FastMethodAnalyzer
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.optimization.common.removeAll
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
@@ -85,7 +85,7 @@ private class UnitSourceInterpreter(private val localVariables: Set<Int>) : Basi
     }
 
     fun run(internalClassName: String, methodNode: MethodNode): Array<Frame<BasicValue>?> {
-        val frames = MethodAnalyzer<BasicValue>(internalClassName, methodNode, this).analyze()
+        val frames = FastMethodAnalyzer<BasicValue>(internalClassName, methodNode, this).analyze()
         // The ASM analyzer does not visit POP instructions, so we do so here.
         for ((insn, frame) in methodNode.instructions.asSequence().zip(frames.asSequence())) {
             if (frame != null && insn.opcode == Opcodes.POP) {

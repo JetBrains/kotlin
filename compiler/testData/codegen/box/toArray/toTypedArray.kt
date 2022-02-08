@@ -3,9 +3,10 @@
 // IGNORE_BACKEND: JS_IR_ES6
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS
+// IGNORE_BACKEND: WASM
 // missing isArrayOf on JS
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun box(): String {
     val array = listOf(2, 3, 9).toTypedArray()

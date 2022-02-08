@@ -22,7 +22,7 @@ fun assignedInTryAndFinally() {
     try {
         a = 42
     } finally {
-        a = 41
+        <!VAL_REASSIGNMENT!>a<!> = 41
     }
     a.hashCode()
 }
@@ -33,7 +33,7 @@ fun sideEffectBeforeAssignmentInTryButNotFinally(s: Any) {
         s as String // Potential cast exception
         a = 42
     } finally {
-        a = 41
+        <!VAL_REASSIGNMENT!>a<!> = 41
     }
     a.hashCode()
 }

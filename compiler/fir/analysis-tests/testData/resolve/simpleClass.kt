@@ -15,5 +15,5 @@ class SomeClass : SomeInterface {
         get() = true
         set(value) {}
 
-    var fau: Double
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var fau: Double<!>
 }

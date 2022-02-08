@@ -30,6 +30,10 @@ interface IrErrorType : IrType
 
 interface IrDynamicType : IrType, DynamicTypeMarker
 
+interface IrDefinitelyNotNullType : IrType, DefinitelyNotNullTypeMarker {
+    val original: IrType
+}
+
 interface IrSimpleType : IrType, SimpleTypeMarker, TypeArgumentListMarker {
     val classifier: IrClassifierSymbol
     val hasQuestionMark: Boolean

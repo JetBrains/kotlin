@@ -1,3 +1,7 @@
+// LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
+// IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: don't support legacy feature; for reasons this test is ignored, go to KT-46419
+
 fun box(): String {
     val a1: Byte = 1.unaryMinus()
     val a2: Short = 1.unaryMinus()

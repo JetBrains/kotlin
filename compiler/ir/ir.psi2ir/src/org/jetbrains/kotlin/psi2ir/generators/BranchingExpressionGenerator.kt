@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 import org.jetbrains.kotlin.psi2ir.intermediate.loadAt
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.utils.SmartList
 
 class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
@@ -111,18 +112,21 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
                 break
             }
 
-            var irBranchCondition: IrExpression? = null
-            for (ktCondition in ktEntry.conditions) {
-                val irCondition =
-                    if (irSubject != null)
-                        generateWhenConditionWithSubject(ktCondition, irSubject, expression.subjectExpression)
-                    else
-                        generateWhenConditionNoSubject(ktCondition)
-                irBranchCondition = irBranchCondition?.let { context.whenComma(it, irCondition) } ?: irCondition
-            }
+            // chunk conditions to avoid stackoverflow later when IrWhen is visited
+            for (ktConditions in ktEntry.conditions.toList().chunked(64)) {
+                var irBranchCondition: IrExpression? = null
+                for (ktCondition in ktConditions) {
+                    val irCondition =
+                        if (irSubject != null)
+                            generateWhenConditionWithSubject(ktCondition, irSubject, expression.subjectExpression)
+                        else
+                            generateWhenConditionNoSubject(ktCondition)
+                    irBranchCondition = irBranchCondition?.let { context.whenComma(it, irCondition) } ?: irCondition
+                }
 
-            val irBranchResult = ktEntry.expression!!.genExpr()
-            irWhen.branches.add(IrBranchImpl(irBranchCondition!!, irBranchResult))
+                val irBranchResult = ktEntry.expression!!.genExpr()
+                irWhen.branches.add(IrBranchImpl(irBranchCondition!!, irBranchResult))
+            }
         }
         if (!hasExplicitElseBranch) {
             addElseBranchForExhaustiveWhenIfNeeded(irWhen, expression)
@@ -142,7 +146,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
     }
 
     private fun addElseBranchForExhaustiveWhenIfNeeded(irWhen: IrWhen, whenExpression: KtWhenExpression) {
-        val isUsedAsExpression = true == get(BindingContext.USED_AS_EXPRESSION, whenExpression)
+        val isUsedAsExpression = whenExpression.isUsedAsExpression(context.bindingContext)
         val isImplicitElseRequired =
             if (isUsedAsExpression)
                 true == get(BindingContext.EXHAUSTIVE_WHEN, whenExpression)

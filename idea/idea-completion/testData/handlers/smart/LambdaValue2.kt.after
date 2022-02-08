@@ -1,7 +1,0 @@
-fun foo(list: List<String>) {
-    list.filter {
-        it.isEmpty()
-    }<caret>
-}
-
-// ELEMENT: isEmpty

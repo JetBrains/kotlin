@@ -21,8 +21,7 @@ group = "org.jetbrains.kotlinx"
 val deployVersion = findProperty("kotlinxMetadataDeployVersion") as String?
 version = deployVersion ?: "0.1-SNAPSHOT"
 
-jvmTarget = "1.6"
-javaHome = rootProject.extra["JDK_16"] as String
+project.configureJvmToolchain(JdkMajorVersion.JDK_1_6)
 
 sourceSets {
     "main" { projectDefault() }
@@ -33,7 +32,7 @@ val shadows by configurations.creating {
     isTransitive = false
 }
 configurations.getByName("compileOnly").extendsFrom(shadows)
-configurations.getByName("testCompile").extendsFrom(shadows)
+configurations.getByName("testApi").extendsFrom(shadows)
 
 dependencies {
     api(kotlinStdlib())
@@ -42,8 +41,8 @@ dependencies {
     shadows(project(":core:metadata.jvm"))
     shadows(protobufLite())
     testImplementation(project(":kotlin-test:kotlin-test-junit"))
-    testImplementation(commonDep("junit:junit"))
-    testImplementation(intellijDep()) { includeJars("asm-all", rootProject = rootProject) }
+    testImplementation(commonDependency("junit:junit"))
+    testImplementation(commonDependency("org.jetbrains.intellij.deps:asm-all"))
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntimeOnly(project(":kotlin-reflect"))
 }
@@ -51,8 +50,6 @@ dependencies {
 if (deployVersion != null) {
     publish()
 }
-
-noDefaultJar()
 
 runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
     callGroovy("manifestAttributes", manifest, project)

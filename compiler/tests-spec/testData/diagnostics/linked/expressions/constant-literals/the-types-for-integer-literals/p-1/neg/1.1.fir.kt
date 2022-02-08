@@ -1,14 +1,14 @@
 // TESTCASE NUMBER: 1
-val value_1 = <!ILLEGAL_CONST_EXPRESSION!>0bl<!>
+val value_1 = <!INT_LITERAL_OUT_OF_RANGE!>0bl<!>
 
 // TESTCASE NUMBER: 2
-val value_2 = <!ILLEGAL_CONST_EXPRESSION!>0BL<!>
+val value_2 = <!INT_LITERAL_OUT_OF_RANGE!>0BL<!>
 
 // TESTCASE NUMBER: 3
-val value_3 = <!ILLEGAL_CONST_EXPRESSION!>0Xl<!>
+val value_3 = <!INT_LITERAL_OUT_OF_RANGE!>0Xl<!>
 
 // TESTCASE NUMBER: 4
-val value_4 = <!ILLEGAL_CONST_EXPRESSION!>0xL<!>
+val value_4 = <!INT_LITERAL_OUT_OF_RANGE!>0xL<!>
 
 // TESTCASE NUMBER: 5
 val value_5 = <!ILLEGAL_UNDERSCORE!>0b_l<!>

@@ -1,7 +1,0 @@
-fun <T> doSomething(a: T) {}
-
-fun main(args: Array<String>) {
-    var a: String? = "A"
-    doSomething(if (a != null) a.length else null)
-}
-

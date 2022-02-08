@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER,-UNUSED_VARIABLE
 
 // FILE: Sam.java
@@ -11,7 +10,7 @@ public interface Sam {
 annotation class SamWithReceiver
 
 fun test() {
-    Sam <!NI;TYPE_MISMATCH!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>a, <!CANNOT_INFER_PARAMETER_TYPE!>b<!><!> ->
+    Sam <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>a, <!CANNOT_INFER_PARAMETER_TYPE!>b<!><!> ->
         System.out.println(a)
     }<!>
 

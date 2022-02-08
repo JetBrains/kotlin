@@ -1,0 +1,23 @@
+@java.lang.annotation.Retention(value=RUNTIME)
+@kotlin.Metadata
+public annotation class test/A {
+    // source: 'test.kt'
+}
+@kotlin.Metadata
+public synthetic final class test/Test$annotationImpl$test_A$0 {
+    // source: 'test.kt'
+    enclosing class test/Test
+    inner (anonymous) class test/Test$annotationImpl$test_A$0
+    public method <init>(): void
+    public final method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final method hashCode(): int
+    public final @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public synthetic final method annotationType(): java.lang.Class
+}
+@kotlin.Metadata
+public final class test/Test {
+    // source: 'test.kt'
+    inner (anonymous) class test/Test$annotationImpl$test_A$0
+    public method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method annotationInstantiation(): test.A
+}

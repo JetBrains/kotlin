@@ -76,6 +76,9 @@ val jsMainSources by task<Sync> {
 
     into("$buildDir/jsMainSources")
 
+    val unimplementedNativeBuiltIns = unimplementedNativeBuiltIns
+    val buildDir = buildDir
+    val builtInsHeader = builtInsHeader
     doLast {
         unimplementedNativeBuiltIns.forEach { path ->
             val file = File("$buildDir/jsMainSources/$path")
@@ -134,19 +137,35 @@ kotlin {
 tasks.withType<KotlinCompile<*>>().configureEach {
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xallow-kotlin-package",
-        "-Xallow-result-return-type",
-        "-Xuse-experimental=kotlin.Experimental",
-        "-Xuse-experimental=kotlin.ExperimentalMultiplatform",
-        "-Xuse-experimental=kotlin.contracts.ExperimentalContracts",
-        "-Xinline-classes",
-        "-Xopt-in=kotlin.RequiresOptIn",
-        "-Xopt-in=kotlin.ExperimentalUnsignedTypes",
-        "-Xopt-in=kotlin.ExperimentalStdlibApi"
+        "-opt-in=kotlin.ExperimentalMultiplatform",
+        "-opt-in=kotlin.contracts.ExperimentalContracts",
+        "-opt-in=kotlin.RequiresOptIn",
+        "-opt-in=kotlin.ExperimentalUnsignedTypes",
+        "-opt-in=kotlin.ExperimentalStdlibApi"
     )
+
+    doFirst {
+        kotlinOptions.freeCompilerArgs += listOfNotNull(
+            "-Xklib-relative-path-base=$buildDir,$projectDir".takeIf { !kotlinBuildProperties.getBoolean("kotlin.build.use.absolute.paths.in.klib") }
+        )
+    }
 }
 
 val compileKotlinJs by tasks.existing(KotlinCompile::class) {
     kotlinOptions.freeCompilerArgs += "-Xir-module-name=kotlin"
+
+    if (!kotlinBuildProperties.disableWerror) {
+        kotlinOptions.allWarningsAsErrors = true
+    }
+}
+
+val compileTestKotlinJs by tasks.existing(KotlinCompile::class) {
+    val sources: FileCollection = kotlin.sourceSets["commonTest"].kotlin
+    doFirst {
+        // Note: common test sources are copied to the actual source directory by commonMainSources task,
+        // so can't do this at configuration time:
+        kotlinOptions.freeCompilerArgs += "-Xcommon-sources=${sources.joinToString(",")}"
+    }
 }
 
 val packFullRuntimeKLib by tasks.registering(Jar::class) {

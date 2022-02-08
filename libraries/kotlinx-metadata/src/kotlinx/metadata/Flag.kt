@@ -6,8 +6,8 @@
 package kotlinx.metadata
 
 import org.jetbrains.kotlin.metadata.ProtoBuf.*
-import org.jetbrains.kotlin.metadata.deserialization.Flags as F
 import org.jetbrains.kotlin.metadata.ProtoBuf.Class.Kind as ClassKind
+import org.jetbrains.kotlin.metadata.deserialization.Flags as F
 
 /**
  * Represents a boolean flag that is either present or not in a Kotlin declaration. A "flag" is a boolean trait that is either present
@@ -202,11 +202,19 @@ class Flag(private val offset: Int, private val bitWidth: Int, private val value
         @JvmField
         val IS_EXPECT = Flag(F.IS_EXPECT_CLASS)
 
+        @JvmField
+        @Deprecated(
+            "Use IS_VALUE instead, which returns true if the class is either a pre-1.5 inline class, or a 1.5+ value class.",
+            level = DeprecationLevel.ERROR
+        )
+        @Suppress("unused")
+        val IS_INLINE = Flag(F.IS_VALUE_CLASS)
+
         /**
-         * Signifies that the corresponding class is `inline`.
+         * Signifies that the corresponding class is either a pre-Kotlin-1.5 `inline` class, or a 1.5+ `value` class.
          */
         @JvmField
-        val IS_INLINE = Flag(F.IS_INLINE_CLASS)
+        val IS_VALUE = Flag(F.IS_VALUE_CLASS)
 
         /**
          * Signifies that the corresponding class is a functional interface, i.e. marked with the keyword `fun`.

@@ -1,0 +1,23 @@
+fun test() {
+  var a: SomeJavaClass<out String> = SomeJavaClass<String>()
+  a.someFunction(hello = local fun <anonymous>(it: @FlexibleNullability String?) {
+    return Unit
+  }
+ /*-> @FlexibleNullability Hello<Nothing>? */)
+  a.plus(hello = local fun <anonymous>(it: @FlexibleNullability String?) {
+    return Unit
+  }
+ /*-> @FlexibleNullability Hello<Nothing>? */) /*~> Unit */
+  a.get(hello = local fun <anonymous>(it: @FlexibleNullability String?) {
+    return Unit
+  }
+ /*-> @FlexibleNullability Hello<Nothing>? */)
+  a = a.plus(hello = local fun <anonymous>(it: @FlexibleNullability String?) {
+    return Unit
+  }
+ /*-> @FlexibleNullability Hello<Nothing>? */) /*!! SomeJavaClass<out @FlexibleNullability String?> */
+  a.set(i = 0, hello = local fun <anonymous>(it: @FlexibleNullability String?) {
+    return Unit
+  }
+ /*-> @FlexibleNullability Hello<Nothing>? */)
+}

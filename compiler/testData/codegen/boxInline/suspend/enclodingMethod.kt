@@ -1,9 +1,8 @@
+// WITH_COROUTINES
+// WITH_STDLIB
+// FULL_JDK
 // TARGET_BACKEND: JVM
 // FILE: flow.kt
-// COMMON_COROUTINES_TEST
-// FULL_JDK
-// WITH_RUNTIME
-// WITH_COROUTINES
 
 package flow
 
@@ -43,8 +42,6 @@ inline fun decorate() = suspend {
 }
 
 // FILE: box.kt
-// COMMON_COROUTINES_TEST
-
 import flow.*
 
 fun box() : String {

@@ -46,7 +46,7 @@ import java.util.Objects;
 
 import static org.jetbrains.kotlin.codegen.DescriptorAsmUtil.writeAnnotationData;
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME;
-import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.JVM_SYNTHETIC_ANNOTATION_FQ_NAME;
+import static org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_FQ_NAME;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class PackagePartCodegen extends MemberCodegen<KtFile> {
@@ -107,7 +107,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
     protected void generateKotlinMetadataAnnotation() {
         Pair<DescriptorSerializer, ProtoBuf.Package> serializedPart = serializePackagePartMembers(this, packagePartType);
 
-        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.FILE_FACADE, 0, av -> {
+        WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.FILE_FACADE, false, 0, av -> {
             writeAnnotationData(av, serializedPart.getFirst(), serializedPart.getSecond());
 
             FqName kotlinPackageFqName = element.getPackageFqName();
@@ -127,7 +127,7 @@ public class PackagePartCodegen extends MemberCodegen<KtFile> {
         List<MemberDescriptor> members = CodegenUtil.getMemberDescriptorsToGenerate(codegen.element, codegen.bindingContext);
 
         JvmSerializerExtension extension = new JvmSerializerExtension(codegen.v.getSerializationBindings(), codegen.state);
-        DescriptorSerializer serializer = DescriptorSerializer.createTopLevel(extension);
+        DescriptorSerializer serializer = DescriptorSerializer.createTopLevel(extension, null);
         ProtoBuf.Package.Builder builder = serializer.packagePartProto(codegen.element.getPackageFqName(), members);
         extension.serializeJvmPackage(builder, packagePartType);
 

@@ -1,2 +1,0 @@
-<!-- conflictingOverloadsClass1 -->
-Conflicting overloads: public final fun lol(x: Int): Int defined in conflictingOverloads, public final fun lol(y: Int): Int defined in conflictingOverloads

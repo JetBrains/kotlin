@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_FIR: JVM_IR
 inline fun foo() = false
 
 fun run(x: Boolean, y: Boolean): String {

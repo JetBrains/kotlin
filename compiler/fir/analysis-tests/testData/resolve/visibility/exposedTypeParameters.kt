@@ -15,7 +15,7 @@ public class Test1<T: <!EXPOSED_TYPE_PARAMETER_BOUND!>A<!>>
 public class Test2<T: C, P: E>
 
 // invalid, D is protected
-public class Test3<T: E, P: <!EXPOSED_TYPE_PARAMETER_BOUND!>C.D<!>>
+public class Test3<T: E, P: <!EXPOSED_TYPE_PARAMETER_BOUND, INVISIBLE_REFERENCE!>C.D<!>>
 
 // valid, B is internal
 internal class Test4<T: B>
@@ -23,7 +23,7 @@ internal class Test4<T: B>
 // valid, B is internal
 private class Test5<T: B>
 
-public class Container : C {
+public class Container : <!SUPERTYPE_NOT_INITIALIZED!>C<!> {
     // valid, D is protected in C
     protected class Test6<T: C.D>
 
@@ -32,4 +32,4 @@ public class Container : C {
 }
 
 // invalid, A is private, B is internal, D is protected
-public interface Test8<T: <!EXPOSED_TYPE_PARAMETER_BOUND!>A<!>, P: <!EXPOSED_TYPE_PARAMETER_BOUND!>B<!>, F: C, N: <!EXPOSED_TYPE_PARAMETER_BOUND!>C.D<!>, M: E>
+public interface Test8<T: <!EXPOSED_TYPE_PARAMETER_BOUND!>A<!>, P: <!EXPOSED_TYPE_PARAMETER_BOUND!>B<!>, F: C, N: <!EXPOSED_TYPE_PARAMETER_BOUND, INVISIBLE_REFERENCE!>C.D<!>, M: E>

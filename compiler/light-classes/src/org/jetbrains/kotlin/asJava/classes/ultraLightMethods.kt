@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -134,17 +134,15 @@ internal abstract class KtUltraLightMethod(
     override fun getSignature(substitutor: PsiSubstitutor): MethodSignature =
         MethodSignatureBackedByPsiMethod.create(this, substitutor)
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is KtUltraLightMethod) return false
-        if (methodIndex != other.methodIndex) return false
-        if (this.javaClass != other.javaClass) return false
-        if (containingClass != other.containingClass) return false
-        if (kotlinOrigin === null || other.kotlinOrigin === null) return false
-        return kotlinOrigin == other.kotlinOrigin
-    }
+    override fun equals(other: Any?): Boolean = other === this ||
+            other is KtUltraLightMethod &&
+            other.methodIndex == methodIndex &&
+            other.delegate == delegate &&
+            super.equals(other)
 
-    override fun hashCode(): Int = name.hashCode()
+    override fun hashCode(): Int = super.hashCode()
+        .times(31).plus(delegate.hashCode())
+        .times(31).plus(methodIndex.hashCode())
 
     override fun isDeprecated(): Boolean = _deprecated
 }
@@ -197,6 +195,13 @@ internal class KtUltraLightMethodForSourceDeclaration(
     override fun getThrowsList(): PsiReferenceList = _throwsList
 
     override val checkNeedToErasureParametersTypes: Boolean by lazyPub { computeCheckNeedToErasureParametersTypes(methodDescriptor) }
+
+    override fun equals(other: Any?): Boolean =
+        other is KtUltraLightMethodForSourceDeclaration &&
+                other.forceToSkipNullabilityAnnotation == forceToSkipNullabilityAnnotation &&
+                super.equals(other)
+
+    override fun hashCode(): Int = super.hashCode() * 31 + forceToSkipNullabilityAnnotation.hashCode()
 }
 
 internal class KtUltraLightMethodForDescriptor(

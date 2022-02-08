@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
@@ -14,12 +13,12 @@ import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.inference.FirInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
-import org.jetbrains.kotlin.fir.resolve.inference.isBuiltinFunctionalType
 import org.jetbrains.kotlin.fir.resolve.initialTypeOfCandidate
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isBuiltinFunctionalType
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.descriptorUtil.OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.utils.addToStdlib.same
@@ -38,10 +37,7 @@ class FirOverloadByLambdaReturnTypeResolver(
         allCandidates: Collection<Candidate>,
         bestCandidates: Set<Candidate>
     ): Set<Candidate> where T : FirStatement, T : FirResolvable {
-        if (
-            bestCandidates.size <= 1 ||
-            !session.languageVersionSettings.supportsFeature(LanguageFeature.OverloadResolutionByLambdaReturnType)
-        ) return bestCandidates
+        if (bestCandidates.size <= 1) return bestCandidates
 
         /*
          * Inference session may look into candidate of call, and for that it uses callee reference.
@@ -139,18 +135,20 @@ class FirOverloadByLambdaReturnTypeResolver(
 
             call.replaceCalleeReference(FirNamedReferenceWithCandidate(null, firstCandidate.callInfo.name, firstCandidate))
             val results = postponedArgumentsAnalyzer.analyzeLambda(
-                firstCandidate.system.asPostponedArgumentsAnalyzerContext(),
+                firstCandidate.system,
                 firstAtom,
-                firstCandidate
+                firstCandidate,
+                ConstraintSystemCompletionMode.FULL,
             )
             while (iterator.hasNext()) {
                 val (candidate, atom) = iterator.next()
                 call.replaceCalleeReference(FirNamedReferenceWithCandidate(null, candidate.callInfo.name, candidate))
                 postponedArgumentsAnalyzer.applyResultsOfAnalyzedLambdaToCandidateSystem(
-                    candidate.system.asPostponedArgumentsAnalyzerContext(),
+                    candidate.system,
                     atom,
                     candidate,
-                    results
+                    results,
+                    ConstraintSystemCompletionMode.FULL,
                 )
             }
 

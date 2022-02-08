@@ -74,7 +74,7 @@ inline fun <T, reified S : T> MutableList<T>.transformSubsetFlat(transformation:
     when (transformed?.size) {
         null -> i++
         0 -> removeAt(i)
-        1 -> set(i++, transformed.first())
+        1 -> set(i++, transformed[0])
         else -> {
             addAll(i, transformed)
             i += transformed.size

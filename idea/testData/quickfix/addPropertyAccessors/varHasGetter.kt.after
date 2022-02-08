@@ -1,8 +1,0 @@
-// "Add setter" "true"
-class Test {
-    var x: Int
-        get() {
-            return 1
-        }
-        set(value) {<caret>}
-}

@@ -1,0 +1,3 @@
+source(new File(basedir, "../../../verify-common.bsh").getAbsolutePath());
+
+assertBuildLogHasLine("Dependency jar is: junit-4.13.1.jar");

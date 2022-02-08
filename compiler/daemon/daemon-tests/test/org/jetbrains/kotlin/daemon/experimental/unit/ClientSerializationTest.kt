@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.daemon.experimental.unit
 
 import io.ktor.network.sockets.aSocket
 import io.ktor.util.*
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
@@ -31,6 +32,7 @@ class TestServer(val serverPort: Int = 6999) {
     private val serverSocket = aSocket(selectorMgr).tcp().bind(InetSocketAddress(serverPort))
     private val log = Logger.getLogger("TestServer")
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun awaitClient() = GlobalScope.async {
         log.info("accepting clientSocket...")
         val client = serverSocket.accept()
@@ -61,7 +63,7 @@ class ClientSerializationTest : KotlinIntegrationTestBase() {
             }
         }
         log.info("printed")
-        var client2: T? = null
+        var client2: T?
         var connected = false
         runBlocking {
             val clientAwait = testServer.awaitClient()

@@ -4,8 +4,8 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:ir.tree"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    api(project(":compiler:ir.tree"))
+    compileOnly(intellijCore())
 }
 
 sourceSets {

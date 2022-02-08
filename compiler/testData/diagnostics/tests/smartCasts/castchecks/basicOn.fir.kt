@@ -13,23 +13,23 @@ fun g(a: SomeClass?) {
         // 'a' can be cast to SomeSubClass
         a.hashCode()
         a.foo
-        (a as? SomeSubClass).<!INAPPLICABLE_CANDIDATE!>foo<!>
-        (a as SomeSubClass).foo
+        (a as? SomeSubClass)<!UNSAFE_CALL!>.<!>foo
+        (a <!USELESS_CAST!>as SomeSubClass<!>).foo
     }
     val b = (a as? SomeSubClass)?.foo
     if (b != null) {
         // 'a' can be cast to SomeSubClass
         a.hashCode()
         a.foo
-        (a as? SomeSubClass).<!INAPPLICABLE_CANDIDATE!>foo<!>
-        (a as SomeSubClass).foo
+        (a as? SomeSubClass)<!UNSAFE_CALL!>.<!>foo
+        (a <!USELESS_CAST!>as SomeSubClass<!>).foo
     }
     val c = a as? SomeSubClass
     if (c != null) {
         // 'a' and 'c' can be cast to SomeSubClass
         a.hashCode()
         a.foo
-        (a as? SomeSubClass).<!INAPPLICABLE_CANDIDATE!>foo<!>
+        (a as? SomeSubClass)<!UNSAFE_CALL!>.<!>foo
         c.hashCode()
         c.foo
     }

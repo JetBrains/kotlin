@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils
 class ResultTypeWithNullableOperatorsChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         if (context.languageVersionSettings.supportsFeature(LanguageFeature.AllowNullOperatorsForResult)) return
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.AllowNullOperatorsForResultAndResultReturnTypeByDefault)) return
 
         val name = resolvedCall.resultingDescriptor.name
         val operationNode = resolvedCall.call.callOperationNode

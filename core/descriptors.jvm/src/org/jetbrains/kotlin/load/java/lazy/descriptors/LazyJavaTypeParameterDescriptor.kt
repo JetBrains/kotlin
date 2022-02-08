@@ -36,13 +36,14 @@ class LazyJavaTypeParameterDescriptor(
 ) : AbstractLazyTypeParameterDescriptor(
     c.storageManager,
     containingDeclaration,
+    LazyJavaAnnotations(c, javaTypeParameter),
     javaTypeParameter.name,
     Variance.INVARIANT,
-    /* isReified = */ false,
+    /* isReified = */
+    false,
     index,
-    SourceElement.NO_SOURCE, c.components.supertypeLoopChecker
+    SourceElement.NO_SOURCE, c.components.supertypeLoopChecker,
 ) {
-    override val annotations = LazyJavaAnnotations(c, javaTypeParameter)
 
     override fun resolveUpperBounds(): List<KotlinType> {
         return computeNotEnhancedBounds()

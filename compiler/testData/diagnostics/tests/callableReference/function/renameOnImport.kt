@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !CHECK_TYPE
 // FILE: a.kt
 
@@ -9,7 +10,7 @@ class A {
     fun bar() = 42
 }
 
-fun A.baz(<!UNUSED_PARAMETER!>x<!>: String) {}
+fun A.baz(x: String) {}
 
 // FILE: b.kt
 

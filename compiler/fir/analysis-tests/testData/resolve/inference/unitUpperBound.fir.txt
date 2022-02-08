@@ -1,0 +1,15 @@
+FILE: unitUpperBound.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(x: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit| {
+            lvar w: R|kotlin/Int| = Int(1)
+            R|<local>/x|.R|kotlin/collections/ifEmpty|<R|kotlin/collections/List<kotlin/String>|, R|kotlin/Any|>(<L> = ifEmpty@fun <anonymous>(): R|kotlin/Any| <inline=Inline, kind=UNKNOWN>  {
+                R|<local>/w| = R|<local>/w|.R|kotlin/Int.plus|(Int(2))
+            }
+            )
+        }
+
+    }

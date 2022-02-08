@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 /*
@@ -18,7 +19,7 @@ annotation class Ann(val x: Int)
  * UNEXPECTED BEHAVIOUR
  */
 fun case_1() {
-    val x: (Int) -> @Ann(<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved_reference<!>) Unit = {} // OK, no error in IDE and in the compiler
+    val x: (Int) -> @Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) Unit = {} // OK, no error in IDE and in the compiler
 }
 
 /*
@@ -26,7 +27,7 @@ fun case_1() {
  * UNEXPECTED BEHAVIOUR
  */
 fun case_2() {
-    val x: (@Ann(<!DEBUG_INFO_MISSING_UNRESOLVED!>unresolved_reference<!>) Int) -> Unit = { a: Int -> println(a) } // OK, no error in IDE and in the compiler
+    val x: (@Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) Int) -> Unit = { a: Int -> println(a) } // OK, no error in IDE and in the compiler
 }
 
 // TESTCASE NUMBER: 3

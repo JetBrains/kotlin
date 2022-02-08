@@ -1,0 +1,24 @@
+FILE: complexConstraintSystem.kt
+    public final class Inv<X> : R|kotlin/Any| {
+        public constructor<X>(x: R|X|): R|Inv<X>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|X| = R|<local>/x|
+            public get(): R|X|
+
+    }
+    public final fun test_0(list: R|kotlin/collections/List<kotlin/Int>|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lval x: R|kotlin/Int| = R|<local>/list|.R|kotlin/collections/mapNotNull|<R|kotlin/Int|, R|Inv<kotlin/Int>|>(<L> = mapNotNull@fun <anonymous>(it: R|kotlin/Int|): R|Inv<kotlin/Int>?| <inline=Inline, kind=UNKNOWN>  {
+            ^ when () {
+                R|<local>/b| ->  {
+                    R|/Inv.Inv|<R|kotlin/Int|>(R|<local>/it|)
+                }
+                else ->  {
+                    Null(null)
+                }
+            }
+
+        }
+        ).R|kotlin/collections/first|<R|Inv<kotlin/Int>|>().R|SubstitutionOverride</Inv.x: R|kotlin/Int|>|
+    }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,14 +14,19 @@ import kotlin.internal.*
 /**
  * A range of values of type `ULong`.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 public class ULongRange(start: ULong, endInclusive: ULong) : ULongProgression(start, endInclusive, 1), ClosedRange<ULong> {
     override val start: ULong get() = first
     override val endInclusive: ULong get() = last
 
     override fun contains(value: ULong): Boolean = first <= value && value <= last
 
+    /** 
+     * Checks if the range is empty.
+     
+     * The range is empty if its start value is greater than the end value.
+     */
     override fun isEmpty(): Boolean = first > last
 
     override fun equals(other: Any?): Boolean =
@@ -42,8 +47,8 @@ public class ULongRange(start: ULong, endInclusive: ULong) : ULongProgression(st
 /**
  * A progression of values of type `ULong`.
  */
-@SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalUnsignedTypes::class)
 public open class ULongProgression
 internal constructor(
     start: ULong,
@@ -70,9 +75,14 @@ internal constructor(
      */
     public val step: Long = step
 
-    override fun iterator(): ULongIterator = ULongProgressionIterator(first, last, step)
+    final override fun iterator(): Iterator<ULong> = ULongProgressionIterator(first, last, step)
 
-    /** Checks if the progression is empty. */
+    /** 
+     * Checks if the progression is empty.
+     
+     * Progression with a positive step is empty if its first element is greater than the last element.
+     * Progression with a negative step is empty if its first element is less than the last element.
+     */
     public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =
@@ -103,7 +113,7 @@ internal constructor(
  * @property step the number by which the value is incremented on each step.
  */
 @SinceKotlin("1.3")
-@ExperimentalUnsignedTypes
+@Suppress("DEPRECATION_ERROR")
 private class ULongProgressionIterator(first: ULong, last: ULong, step: Long) : ULongIterator() {
     private val finalElement = last
     private var hasNext: Boolean = if (step > 0) first <= last else first >= last

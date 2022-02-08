@@ -1,7 +1,0 @@
-package some
-
-import other.someProp
-
-fun other() {
-    someProp<caret>
-}

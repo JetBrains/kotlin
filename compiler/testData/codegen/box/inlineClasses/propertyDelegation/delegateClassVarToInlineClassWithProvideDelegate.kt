@@ -1,6 +1,6 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: PROPERTY_REFERENCES
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 class Foo {
     var a: Int = 42
@@ -10,14 +10,16 @@ class Foo {
 var provideDelegateInvoked = 0
 var setterInvoked = 0
 
-inline class DelegateFactory(val default: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class DelegateFactory(val default: Int) {
     operator fun provideDelegate(thisRef: Any?, prop: Any?): Delegate {
         provideDelegateInvoked++
         return Delegate(default)
     }
 }
 
-inline class Delegate(val default: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Delegate(val default: Int) {
 
     operator fun getValue(thisRef: Any?, prop: Any?) =
         (thisRef as? Foo)?.a ?: default

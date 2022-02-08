@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @file:JvmName("TestKt")
 package test
@@ -17,6 +17,7 @@ data class User(val firstName: String, val secondName: String, val age: Int) : P
 
         override fun create(parcel: Parcel) = User(parcel.readString(), parcel.readString(), 0)
 
+        @Suppress("UNCHECKED_CAST")
         override fun newArray(size: Int) = arrayOfNulls<User>(size) as Array<User>
     }
 }
@@ -31,7 +32,7 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val creator = User::class.java.getDeclaredField("CREATOR").get(null) as Parcelable.Creator<User>
+    val creator = parcelableCreator<User>()
     val result = parcel.createTypedArray(creator)
 
     assert(result.size == 2)

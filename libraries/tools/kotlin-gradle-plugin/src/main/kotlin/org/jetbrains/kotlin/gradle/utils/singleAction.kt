@@ -35,4 +35,9 @@ internal object SingleWarningPerBuild {
     fun show(project: Project, warningText: String) = SingleActionPerBuild.run(project, ACTION_ID_SHOW_WARNING + warningText) {
         project.logger.warn(warningText)
     }
+
+    fun deprecation(project: Project, context: String, target: String, replacement: String?) {
+        val replacementMessage = replacement?.let { " Please, use '$replacement' instead." } ?: ""
+        show(project, "Warning: $context '$target' is deprecated and will be removed in next major releases.$replacementMessage\n")
+    }
 }

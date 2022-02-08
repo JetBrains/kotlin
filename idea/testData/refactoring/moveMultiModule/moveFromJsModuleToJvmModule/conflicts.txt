@@ -1,1 +1,0 @@
-Constructor JsName(String), referenced in function ClassUsageJs.foo(), will not be accessible in module A

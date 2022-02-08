@@ -42,6 +42,15 @@ var KmClass.anonymousObjectOriginName: String?
     }
 
 /**
+ * JVM-specific flags of the class, consisting of [JvmFlag.Class] flags.
+ */
+var KmClass.jvmFlags: Flags
+    get() = jvm.jvmFlags
+    set(value) {
+        jvm.jvmFlags = value
+    }
+
+/**
  * Metadata of local delegated properties used somewhere inside this package fragment (but not in any class).
  * Note that for classes produced by the Kotlin compiler, such properties will have default accessors.
  *
@@ -134,6 +143,19 @@ var KmProperty.syntheticMethodForAnnotations: JvmMethodSignature?
     get() = jvm.syntheticMethodForAnnotations
     set(value) {
         jvm.syntheticMethodForAnnotations = value
+    }
+
+/**
+ * JVM signature of a synthetic method for properties which delegate to another property,
+ * which constructs and returns a property reference object.
+ * See https://kotlinlang.org/docs/delegated-properties.html#delegating-to-another-property.
+ *
+ * Example: `JvmMethodSignature("getX$delegate", "()Ljava/lang/Object;")`.
+ */
+var KmProperty.syntheticMethodForDelegate: JvmMethodSignature?
+    get() = jvm.syntheticMethodForDelegate
+    set(value) {
+        jvm.syntheticMethodForDelegate = value
     }
 
 /**

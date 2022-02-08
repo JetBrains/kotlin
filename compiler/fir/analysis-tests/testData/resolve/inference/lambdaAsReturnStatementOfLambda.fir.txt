@@ -1,0 +1,20 @@
+FILE: lambdaAsReturnStatementOfLambda.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun test(a: R|A|): R|kotlin/Unit| {
+        lval lambda: R|() -> A| = R|<local>/a|.R|kotlin/let|<R|A|, R|() -> A|>(<L> = let@fun <anonymous>(it: R|A|): R|() -> A| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ let@fun <anonymous>(): R|A| <inline=Unknown>  {
+                ^ R|<local>/it|
+            }
+
+        }
+        )
+        lval alsoA: R|A| = R|<local>/lambda|.R|SubstitutionOverride<kotlin/Function0.invoke: R|A|>|()
+        R|/takeA|(R|<local>/alsoA|)
+    }
+    public final fun takeA(a: R|A|): R|kotlin/Unit| {
+    }

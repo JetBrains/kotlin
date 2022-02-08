@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.calls.DslMarkerUtils.extractDslMarkerFqNames
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.getImplicitReceivers
+import org.jetbrains.kotlin.resolve.calls.util.getImplicitReceivers
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
@@ -49,7 +49,9 @@ object DslScopeViolationCallChecker : CallChecker {
     ) {
         val receiversUntilOneFromTheCall =
             context.scope.parentsWithSelf
-                .mapNotNull { (it as? LexicalScope)?.implicitReceiver?.value }
+                .filterIsInstance<LexicalScope>()
+                .flatMap { listOfNotNull(it.implicitReceiver) + it.contextReceiversGroup }
+                .map { it.value }
                 .takeWhile { it != callImplicitReceiver }.toList()
 
         if (receiversUntilOneFromTheCall.isEmpty()) return

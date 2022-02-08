@@ -5,139 +5,323 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.resolve.calls.Candidate
-import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
-import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeTypeVariableTypeConstructor
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
+import org.jetbrains.kotlin.fir.resolve.substitution.NotFixedTypeToVariableSubstitutorForDelegateInference
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.buildAbstractResultingSubstitutor
+import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
+import org.jetbrains.kotlin.resolve.calls.inference.model.BuilderInferencePosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
-import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
-import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.registerTypeVariableIfNotPresent
+import org.jetbrains.kotlin.types.model.*
 
 class FirDelegatedPropertyInferenceSession(
     val property: FirProperty,
-    initialCall: FirExpression,
     resolutionContext: ResolutionContext,
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
-) : AbstractManyCandidatesInferenceSession(resolutionContext) {
-    init {
-        val initialCandidate = (initialCall as? FirResolvable)
-            ?.calleeReference
-            ?.safeAs<FirNamedReferenceWithCandidate>()
-            ?.candidate
-        if (initialCandidate != null) {
-            addPartiallyResolvedCall(initialCall)
+) : FirInferenceSessionForChainedResolve(resolutionContext) {
+
+    private val currentConstraintSystem = components.session.inferenceComponents.createConstraintSystem()
+    override val currentConstraintStorage: ConstraintStorage get() = currentConstraintSystem.currentStorage()
+
+    private val unitType: ConeClassLikeType = components.session.builtinTypes.unitType.type
+    private lateinit var resultingConstraintSystem: NewConstraintSystem
+
+    private fun ConeKotlinType.containsStubType(): Boolean {
+        return this.contains {
+            it is ConeStubTypeForChainInference
         }
     }
 
-    val expectedType: ConeKotlinType? by lazy { property.returnTypeRef.coneTypeSafe() }
-    private val unitType: ConeKotlinType = components.session.builtinTypes.unitType.type
-    private lateinit var resultingConstraintSystem: NewConstraintSystem
+    fun integrateResolvedCall(storage: ConstraintStorage) {
+        registerSyntheticVariables(storage)
+        val stubToTypeVariableSubstitutor = createToSyntheticTypeVariableSubstitutor()
+        integrateConstraints(
+            currentConstraintSystem,
+            storage,
+            stubToTypeVariableSubstitutor,
+            false
+        )
+    }
 
-    override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement = false
+    override fun <T> addCompletedCall(call: T, candidate: Candidate) where T : FirResolvable, T : FirStatement {
+        partiallyResolvedCalls += call to candidate
+        if (candidate.isSuccessful) {
+            integrateResolvedCall(candidate.system.asReadOnlyStorage())
+        }
+    }
+
+    override fun <T> addPartiallyResolvedCall(call: T) where T : FirResolvable, T : FirStatement {
+        super.addPartiallyResolvedCall(call)
+        if (call.candidate.isSuccessful) {
+            integrateResolvedCall(call.candidate.system.currentStorage())
+        }
+    }
+
+    override fun <T> shouldRunCompletion(call: T): Boolean where T : FirResolvable, T : FirStatement {
+        val callee = call.calleeReference as? FirNamedReferenceWithCandidate ?: return true
+
+        if (callee.candidate.system.hasContradiction) return true
+
+        val hasStubType =
+            callee.candidate.extensionReceiverValue?.type?.containsStubType() ?: false
+                    || callee.candidate.dispatchReceiverValue?.type?.containsStubType() ?: false
+
+        if (!hasStubType) {
+            return true
+        }
+
+        val system = call.candidate.system
+
+        val storage = system.getBuilder().currentStorage()
+
+        if (call.hasPostponed()) return true
+
+        return storage.notFixedTypeVariables.keys.all {
+            val variable = storage.allTypeVariables[it]
+            val isPostponed = variable != null && variable in storage.postponedTypeVariables
+            isPostponed || isSyntheticTypeVariable(variable!!) ||
+                    components.callCompleter.completer.variableFixationFinder.isTypeVariableHasProperConstraint(system, it)
+        }
+    }
+
+    private fun FirStatement.hasPostponed(): Boolean {
+        var result = false
+        processAllContainingCallCandidates(processBlocks = false) {
+            result = result || it.hasPostponed()
+        }
+        return result
+    }
+
+    private fun Candidate.hasPostponed(): Boolean {
+        return postponedAtoms.any { !it.analyzed }
+    }
 
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
-        initialStorage: ConstraintStorage
+        initialStorage: ConstraintStorage,
+        completionMode: ConstraintSystemCompletionMode
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
 
-    override fun <T> shouldCompleteResolvedSubAtomsOf(call: T): Boolean where T : FirResolvable, T : FirStatement = true
+    private fun createNonFixedTypeToVariableSubstitutor(): NotFixedTypeToVariableSubstitutorForDelegateInference {
+        val typeContext = components.session.typeContext
+
+        val bindings = mutableMapOf<TypeVariableMarker, ConeKotlinType>()
+        for ((variable, synthetic) in syntheticTypeVariableByTypeVariable) {
+            bindings[synthetic] = variable.defaultType(typeContext) as ConeKotlinType
+        }
+
+        return NotFixedTypeToVariableSubstitutorForDelegateInference(bindings, typeContext)
+    }
+
+
+    /*
+     * This creates Stub-preserving substitution to synthetic type variables
+     * Stub(R) => Stub(_R)
+     * R => _R
+     */
+    private fun createToSyntheticTypeVariableSubstitutor(): ConeSubstitutor {
+
+        val typeContext = components.session.typeContext
+        val bindings = mutableMapOf<TypeConstructorMarker, ConeKotlinType>()
+        for ((variable, syntheticVariable) in syntheticTypeVariableByTypeVariable) {
+            bindings[variable.freshTypeConstructor(typeContext)] = syntheticVariable.defaultType
+        }
+
+        return typeContext.typeSubstitutorByTypeConstructor(bindings)
+    }
+
+    override fun hasSyntheticTypeVariables(): Boolean {
+        return syntheticTypeVariableByTypeVariable.isNotEmpty()
+    }
+
+    override fun isSyntheticTypeVariable(typeVariable: TypeVariableMarker): Boolean {
+        return typeVariable in syntheticTypeVariableByTypeVariable.values
+    }
+
+    override fun fixSyntheticTypeVariableWithNotEnoughInformation(
+        typeVariable: TypeVariableMarker,
+        completionContext: ConstraintSystemCompletionContext
+    ) {
+        typeVariable as ConeTypeVariable
+        completionContext.fixVariable(
+            typeVariable,
+            ConeStubTypeForSyntheticFixation(
+                ConeStubTypeConstructor(typeVariable, isTypeVariableInSubtyping = false, isForFixation = true),
+                ConeNullability.create(typeVariable.defaultType.isMarkedNullable)
+            ),
+            ConeFixVariableConstraintPosition(typeVariable)
+        )
+    }
 
     fun completeCandidates(): List<FirResolvable> {
+        val commonSystem = components.session.inferenceComponents.createConstraintSystem()
+
         @Suppress("UNCHECKED_CAST")
-        val resolvedCalls = partiallyResolvedCalls.map { it.first }
-        val commonSystem = components.session.inferenceComponents.createConstraintSystem().apply {
-            addOtherSystem(currentConstraintSystem)
+        val notCompletedCalls = partiallyResolvedCalls.mapNotNull { partiallyResolvedCall ->
+            partiallyResolvedCall.first.takeIf { resolvable ->
+                resolvable.candidate() != null
+            }
         }
-        prepareForCompletion(commonSystem, resolvedCalls)
+
+        val stubToTypeVariableSubstitutor = createNonFixedTypeToVariableSubstitutor()
+
+        for ((call, candidate) in partiallyResolvedCalls) {
+            if (candidate.isSuccessful) {
+                integrateConstraints(
+                    commonSystem,
+                    candidate.system.asReadOnlyStorage(),
+                    stubToTypeVariableSubstitutor,
+                    call.candidate() != null
+                )
+            }
+        }
+
+
         resolutionContext.bodyResolveContext.withInferenceSession(DEFAULT) {
             @Suppress("UNCHECKED_CAST")
             components.callCompleter.completer.complete(
                 commonSystem.asConstraintSystemCompleterContext(),
                 ConstraintSystemCompletionMode.FULL,
-                resolvedCalls as List<FirStatement>,
+                notCompletedCalls as List<FirStatement>,
                 unitType, resolutionContext
-            ) {
+            ) { lambdaAtom ->
+                // Reversed here bc we want top-most call to avoid exponential visit
+                val containingCandidateForLambda = notCompletedCalls.asReversed().first {
+                    var found = false
+                    it.processAllContainingCallCandidates(processBlocks = true) { subCandidate ->
+                        if (subCandidate.postponedAtoms.contains(lambdaAtom)) {
+                            found = true
+                        }
+                    }
+                    found
+                }.candidate
                 postponedArgumentsAnalyzer.analyze(
-                    commonSystem.asPostponedArgumentsAnalyzerContext(),
-                    it,
-                    resolvedCalls.first().candidate
+                    commonSystem,
+                    lambdaAtom,
+                    containingCandidateForLambda,
+                    ConstraintSystemCompletionMode.FULL,
                 )
             }
         }
+
+        for ((_, candidate) in partiallyResolvedCalls) {
+            for (error in commonSystem.errors) {
+                candidate.addDiagnostic(InferenceError(error))
+            }
+        }
+
         resultingConstraintSystem = commonSystem
-        return resolvedCalls
+        return notCompletedCalls
     }
 
-    private fun prepareForCompletion(commonSystem: NewConstraintSystem, partiallyResolvedCalls: List<FirResolvable>) {
-        val csBuilder = commonSystem.getBuilder()
-        for (call in partiallyResolvedCalls) {
-            val candidate = call.candidate
-            when ((call.calleeReference as FirNamedReference).name) {
-                OperatorNameConventions.GET_VALUE -> candidate.addConstraintsForGetValueMethod(csBuilder)
-                OperatorNameConventions.SET_VALUE -> candidate.addConstraintsForSetValueMethod(csBuilder)
+    fun createFinalSubstitutor(): ConeSubstitutor {
+        val stubTypeSubstitutor = createNonFixedTypeToVariableSubstitutor()
+
+        val resultSubstitutor = resultingConstraintSystem.asReadOnlyStorage()
+            .buildAbstractResultingSubstitutor(components.session.typeContext) as ConeSubstitutor
+        return ChainedSubstitutor(stubTypeSubstitutor, resultSubstitutor)
+    }
+
+    val stubTypesByTypeVariable: MutableMap<ConeTypeVariable, ConeStubType> = mutableMapOf()
+    val stubTypeBySyntheticTypeVariable: MutableMap<ConeTypeVariable, ConeStubType> = mutableMapOf()
+
+    private val syntheticTypeVariableByTypeVariable = mutableMapOf<TypeVariableMarker, ConeTypeVariable>()
+
+    private fun registerSyntheticVariables(storage: ConstraintStorage) {
+        for (variableWithConstraints in storage.notFixedTypeVariables.values) {
+            val variable = variableWithConstraints.typeVariable as ConeTypeVariable
+
+            val syntheticVariable = syntheticTypeVariableByTypeVariable.getOrPut(variable) {
+                ConeTypeVariable("_" + variable.typeConstructor.name).also {
+                    currentConstraintSystem.registerVariable(it)
+                }
+            }
+
+            stubTypesByTypeVariable.getOrPut(variable) {
+                ConeStubTypeForChainInference(
+                    syntheticVariable,
+                    ConeNullability.create(syntheticVariable.defaultType.isMarkedNullable)
+                ).also {
+                    stubTypeBySyntheticTypeVariable[syntheticVariable] = it
+                }
             }
         }
     }
 
-    fun createFinalSubstitutor(): ConeSubstitutor {
-        return resultingConstraintSystem.asReadOnlyStorage()
-            .buildAbstractResultingSubstitutor(components.session.inferenceComponents.ctx) as ConeSubstitutor
-    }
+    override fun createSyntheticStubTypes(system: NewConstraintSystemImpl): Map<TypeConstructorMarker, ConeStubType> {
 
-    private fun Candidate.addConstraintsForGetValueMethod(commonSystem: ConstraintSystemBuilder) {
-        if (expectedType != null) {
-            val accessor = symbol.fir as? FirSimpleFunction ?: return
-            val unsubstitutedReturnType = accessor.returnTypeRef.coneType
+        val bindings = mutableMapOf<TypeConstructorMarker, ConeStubType>()
+        registerSyntheticVariables(system.currentStorage())
+        for (variable in system.postponedTypeVariables) {
+            variable as ConeTypeVariable
 
-            val substitutedReturnType = substitutor.substituteOrSelf(unsubstitutedReturnType)
-            commonSystem.addSubtypeConstraint(substitutedReturnType, expectedType!!, SimpleConstraintSystemConstraintPosition)
+            bindings[variable.typeConstructor] = stubTypesByTypeVariable[variable]!!
         }
 
-        addConstraintForThis(commonSystem)
+        return bindings
     }
 
-    private fun Candidate.addConstraintsForSetValueMethod(commonSystem: ConstraintSystemBuilder) {
-        if (expectedType != null) {
-            val accessor = symbol.fir as? FirSimpleFunction ?: return
-            val unsubstitutedParameterType = accessor.valueParameters.getOrNull(2)?.returnTypeRef?.coneType ?: return
+    override fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>) {
+//        @Suppress("UNCHECKED_CAST")
+//        stubTypesByTypeVariable.putAll(map as Map<ConeTypeVariable, ConeStubType>)
+    }
 
-            val substitutedReturnType = substitutor.substituteOrSelf(unsubstitutedParameterType)
-            commonSystem.addSubtypeConstraint(substitutedReturnType, expectedType!!, SimpleConstraintSystemConstraintPosition)
+
+    private fun integrateConstraints(
+        commonSystem: NewConstraintSystemImpl,
+        storage: ConstraintStorage,
+        nonFixedToVariablesSubstitutor: ConeSubstitutor,
+        shouldIntegrateAllConstraints: Boolean
+    ): Boolean {
+        if (shouldIntegrateAllConstraints) {
+            storage.notFixedTypeVariables.values.forEach {
+                if (isSyntheticTypeVariable(it.typeVariable)) return@forEach
+                commonSystem.registerTypeVariableIfNotPresent(it.typeVariable)
+            }
+        }
+        /*
+        * storage can contain the following substitutions:
+        *  TypeVariable(A) -> ProperType
+        *  TypeVariable(B) -> Special-Non-Fixed-Type
+        *
+        * while substitutor from parameter map non-fixed types to the original type variable
+        * */
+        val callSubstitutor =
+            storage.buildAbstractResultingSubstitutor(commonSystem, transformTypeVariablesToErrorTypes = false) as ConeSubstitutor
+
+        var introducedConstraint = false
+
+        for (initialConstraint in storage.initialConstraints) {
+            if (integrateConstraintToSystem(
+                    commonSystem, initialConstraint, callSubstitutor, nonFixedToVariablesSubstitutor, storage.fixedTypeVariables
+                )
+            ) {
+                introducedConstraint = true
+            }
         }
 
-        addConstraintForThis(commonSystem)
-    }
+        if (shouldIntegrateAllConstraints) {
+            for ((variableConstructor, type) in storage.fixedTypeVariables) {
+                val typeVariable = storage.allTypeVariables.getValue(variableConstructor)
+                if (isSyntheticTypeVariable(typeVariable)) continue
 
-    private fun Candidate.addConstraintForThis(commonSystem: ConstraintSystemBuilder) {
-        val typeOfThis: ConeKotlinType = property.receiverTypeRef?.coneType
-            ?: when (val container = components.container) {
-                is FirRegularClass -> container.defaultType()
-                is FirAnonymousObject -> container.defaultType()
-                else -> null
-            } ?: components.session.builtinTypes.nullableNothingType.type
-        val valueParameterForThis = (symbol as? FirFunctionSymbol<*>)?.fir?.valueParameters?.firstOrNull() ?: return
-        val substitutedType = substitutor.substituteOrSelf(valueParameterForThis.returnTypeRef.coneType)
-        commonSystem.addSubtypeConstraint(typeOfThis, substitutedType, SimpleConstraintSystemConstraintPosition)
-    }
+                commonSystem.registerTypeVariableIfNotPresent(typeVariable)
+                commonSystem.addEqualityConstraint((typeVariable as ConeTypeVariable).defaultType, type, BuilderInferencePosition)
+                introducedConstraint = true
+            }
+        }
 
-    override fun <T> writeOnlyStubs(call: T): Boolean where T : FirResolvable, T : FirStatement = false
+        return introducedConstraint
+    }
 }

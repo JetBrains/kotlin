@@ -10,11 +10,11 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 fun ConeKotlinType.render(): String {
-    val nullabilitySuffix = if (this !is ConeKotlinErrorType && this !is ConeClassErrorType) nullability.suffix else ""
+    val nullabilitySuffix = if (this !is ConeFlexibleType && this !is ConeErrorType) nullability.suffix else ""
     return when (this) {
         is ConeTypeVariableType -> "${renderAttributes()}TypeVariable(${this.lookupTag.name})"
-        is ConeDefinitelyNotNullType -> "${original.render()}!!"
-        is ConeClassErrorType -> "${renderAttributes()}ERROR CLASS: ${diagnostic.reason}"
+        is ConeDefinitelyNotNullType -> "${original.render()} & Any"
+        is ConeErrorType -> "${renderAttributes()}ERROR CLASS: ${diagnostic.reason}"
         is ConeCapturedType -> "${renderAttributes()}CapturedType(${constructor.projection.render()})"
         is ConeClassLikeType -> {
             buildString {
@@ -46,8 +46,11 @@ fun ConeKotlinType.render(): String {
                 postfix = ")"
             )
         }
-        is ConeStubType -> "${renderAttributes()}Stub: $variable"
-        is ConeIntegerLiteralType -> "${renderAttributes()}ILT: $value"
+        is ConeStubTypeForChainInference -> "${renderAttributes()}Stub (chain inference): ${constructor.variable}"
+        is ConeStubTypeForSyntheticFixation -> "${renderAttributes()}Stub (fixation): ${constructor.variable}"
+        is ConeStubType -> "${renderAttributes()}Stub (subtyping): ${constructor.variable}"
+        is ConeIntegerLiteralConstantType -> "${renderAttributes()}ILT: $value"
+        is ConeIntegerConstantOperatorType -> "${renderAttributes()}IOT"
     } + nullabilitySuffix
 }
 
@@ -56,18 +59,21 @@ private fun ConeKotlinType.renderAttributes(): String {
     return attributes.joinToString(" ", postfix = " ") { it.toString() }
 }
 
-private fun ConeTypeProjection.render(): String {
+fun ConeTypeProjection.render(): String {
     return when (this) {
         ConeStarProjection -> "*"
+        is ConeKotlinTypeConflictingProjection -> "CONFLICTING-PROJECTION ${type.render()}"
         is ConeKotlinTypeProjectionIn -> "in ${type.render()}"
         is ConeKotlinTypeProjectionOut -> "out ${type.render()}"
         is ConeKotlinType -> render()
     }
 }
 
-fun ConeKotlinType.renderFunctionType(kind: FunctionClassKind?, isExtension: Boolean): String {
-    if (!kind.withPrettyRender()) return render()
-    return buildString {
+fun ConeKotlinType.renderFunctionType(
+    kind: FunctionClassKind?, isExtension: Boolean, renderType: ConeTypeProjection.() -> String = { render() }
+): String {
+    if (!kind.withPrettyRender()) return renderType()
+    val renderedType = buildString {
         if (kind == FunctionClassKind.SuspendFunction) {
             append("suspend ")
         }
@@ -79,13 +85,14 @@ fun ConeKotlinType.renderFunctionType(kind: FunctionClassKind?, isExtension: Boo
         val arguments = otherTypeArguments.subList(0, otherTypeArguments.size - 1)
         val returnType = otherTypeArguments.last()
         if (receiver != null) {
-            append(receiver.render())
+            append(receiver.renderType())
             append(".")
         }
-        append(arguments.joinToString(", ", "(", ")") { it.render() })
+        append(arguments.joinToString(", ", "(", ")") { it.renderType() })
         append(" -> ")
-        append(returnType.render())
+        append(returnType.renderType())
     }
+    return if (isMarkedNullable) "($renderedType)?" else renderedType
 }
 
 @OptIn(ExperimentalContracts::class)

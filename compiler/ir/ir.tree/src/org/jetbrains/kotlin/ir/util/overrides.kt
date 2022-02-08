@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 
 @ObsoleteDescriptorBasedAPI
 fun SymbolTable.declareSimpleFunctionWithOverrides(
@@ -23,7 +25,17 @@ fun SymbolTable.declareSimpleFunctionWithOverrides(
         with(descriptor) {
             irFactory.createFunction(
                 startOffset, endOffset, origin, it, nameProvider.nameForDeclaration(this),
-                visibility, modality, IrUninitializedType, isInline, isExternal, isTailrec, isSuspend, isOperator, isInfix, isExpect
+                visibility,
+                modality,
+                IrUninitializedType,
+                isInline,
+                isEffectivelyExternal(),
+                isTailrec,
+                isSuspend,
+                isOperator,
+                isInfix,
+                isExpect,
+                isFakeOverride = descriptor.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
             ).also { declaration ->
                 declaration.metadata = DescriptorMetadataSource.Function(this)
             }

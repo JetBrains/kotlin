@@ -1,7 +1,6 @@
 // !LANGUAGE: -DoNotGenerateThrowsForDelegatedKotlinMembers
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: A.kt
 
 import java.io.IOException

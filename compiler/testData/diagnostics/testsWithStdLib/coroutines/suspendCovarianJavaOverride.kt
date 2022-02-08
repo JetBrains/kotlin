@@ -1,4 +1,3 @@
-// COMMON_COROUTINES_TEST
 // FILE: I.kt
 
 interface I {
@@ -8,14 +7,14 @@ interface I {
 // FILE: JavaClass.java
 public class JavaClass implements I {
     @Override
-    public String foo(int x, COROUTINES_PACKAGE.Continuation<String> continuation) {
+    public String foo(int x, kotlin.coroutines.Continuation<String> continuation) {
         return null;
     }
 }
 
 // FILE: main.kt
 
-import COROUTINES_PACKAGE.Continuation
+import kotlin.coroutines.Continuation
 class K1 : JavaClass()
 
 class K2 : JavaClass() {
@@ -26,7 +25,7 @@ class K3 : JavaClass() {
     <!NOTHING_TO_OVERRIDE!>override<!> fun foo(x: Int, y: Continuation<String>): Any? = null
 }
 
-fun builder(<!UNUSED_PARAMETER!>block<!>: suspend () -> Unit) {}
+fun builder(block: suspend () -> Unit) {}
 
 fun main(x: Continuation<String>) {
     JavaClass().<!ILLEGAL_SUSPEND_FUNCTION_CALL!>foo<!>(5, <!TOO_MANY_ARGUMENTS!>x<!>)

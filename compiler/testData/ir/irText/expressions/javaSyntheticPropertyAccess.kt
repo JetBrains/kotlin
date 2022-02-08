@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM
 // FILE: javaSyntheticPropertyAccess.kt
 fun test(j: J) {
     j.foo

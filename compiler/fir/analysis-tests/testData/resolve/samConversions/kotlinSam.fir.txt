@@ -1,0 +1,56 @@
+FILE: kotlinSam.kt
+    public abstract fun interface MyRunnable : R|kotlin/Any| {
+        public abstract fun foo(x: R|kotlin/Int|): R|kotlin/Boolean|
+
+    }
+    public abstract fun interface WithProperty : R|kotlin/Any| {
+        public abstract val x: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+    public abstract fun interface TwoAbstract : R|MyRunnable| {
+        public abstract fun bar(): R|kotlin/Unit|
+
+    }
+    public abstract fun interface Super : R|kotlin/Any| {
+        public abstract fun foo(x: R|kotlin/Int|): R|kotlin/Any|
+
+    }
+    public abstract fun interface Derived : R|Super| {
+        public abstract override fun foo(x: R|kotlin/Int|): R|kotlin/Boolean|
+
+    }
+    public final fun foo1(m: R|MyRunnable|): R|kotlin/Unit| {
+    }
+    public final fun foo2(m: R|WithProperty|): R|kotlin/Unit| {
+    }
+    public final fun foo3(m: R|TwoAbstract|): R|kotlin/Unit| {
+    }
+    public final fun foo4(m: R|Derived|): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        lval f: R|(kotlin/Int) -> kotlin/Boolean| = fun <anonymous>(t: R|kotlin/Int|): R|kotlin/Boolean| <inline=Unknown>  {
+            ^ CMP(>, R|<local>/t|.R|kotlin/Int.compareTo|(Int(1)))
+        }
+
+        R|/foo1|(<L> = foo1@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| <inline=NoInline>  {
+            ^ CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1)))
+        }
+        )
+        R|/foo1|(R|<local>/f|)
+        <Inapplicable(INAPPLICABLE): /foo2>#(<L> = foo2@fun <anonymous>(x: R|kotlin/Nothing|): R|kotlin/Nothing| <inline=Unknown>  {
+            ^ CMP(>, R|<local>/x|.<Unresolved name: compareTo>#(Int(1)))
+        }
+        )
+        <Inapplicable(INAPPLICABLE): /foo2>#(R|<local>/f|)
+        <Inapplicable(INAPPLICABLE): /foo3>#(<L> = foo3@fun <anonymous>(x: R|kotlin/Nothing|): R|kotlin/Nothing| <inline=Unknown>  {
+            ^ CMP(>, R|<local>/x|.<Unresolved name: compareTo>#(Int(1)))
+        }
+        )
+        <Inapplicable(INAPPLICABLE): /foo3>#(R|<local>/f|)
+        R|/foo4|(<L> = foo4@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/Boolean| <inline=NoInline>  {
+            ^ CMP(>, R|<local>/x|.R|kotlin/Int.compareTo|(Int(1)))
+        }
+        )
+        R|/foo4|(R|<local>/f|)
+    }

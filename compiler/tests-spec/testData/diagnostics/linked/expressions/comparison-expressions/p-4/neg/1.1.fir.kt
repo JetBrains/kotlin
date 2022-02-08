@@ -5,7 +5,7 @@
 // TESTCASE NUMBER: 1
 class Case1(val a: Int)  {
     var isCompared = false
-    operator fun compareTo(other: Case1):Any = run{
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun compareTo(other: Case1):Any = run{
         TODO()
     }
 }
@@ -24,7 +24,7 @@ fun case1() {
 // TESTCASE NUMBER: 2
 class Case2(val a: Int) {
     var isCompared = false
-    operator fun compareTo(other: Case2): Nothing = run {
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun compareTo(other: Case2): Nothing = run {
         TODO()
     }
 }
@@ -43,7 +43,7 @@ fun case2() {
 // TESTCASE NUMBER: 3
 class Case3(val a: Int) {
     var isCompared = false
-    operator fun compareTo(other: Case3):Long = run{
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun compareTo(other: Case3):Long = run{
         TODO()
     }
 }
@@ -61,7 +61,7 @@ fun case3() {
 // TESTCASE NUMBER: 4
 class Case4(val a: Int) {
     var isCompared = false
-    operator fun compareTo(other: Case4):Int? = run{
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun compareTo(other: Case4):Int? = run{
         TODO()
     }
 }

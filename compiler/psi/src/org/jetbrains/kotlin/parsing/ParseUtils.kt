@@ -79,7 +79,7 @@ private fun parseLong(text: String): Long? {
 }
 
 private fun parseFloatingLiteral(text: String): Number? {
-    if (text.toLowerCase().endsWith('f')) {
+    if (text.lowercase().endsWith('f')) {
         return parseFloat(text)
     }
     return parseDouble(text)

@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -24,6 +26,8 @@ object JsAnnotations {
     val jsNativeGetter = FqName("kotlin.js.nativeGetter")
     val jsNativeSetter = FqName("kotlin.js.nativeSetter")
     val jsNativeInvoke = FqName("kotlin.js.nativeInvoke")
+    val jsFunFqn = FqName("kotlin.js.JsFun")
+    val jsNativeImplementationFqn = FqName("kotlin.js.JsNativeImplementation")
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -42,6 +46,12 @@ fun IrAnnotationContainer.getJsQualifier(): String? =
 fun IrAnnotationContainer.getJsName(): String? =
     getAnnotation(JsAnnotations.jsNameFqn)?.getSingleConstStringArgument()
 
+fun IrAnnotationContainer.getJsNativeImplementation(): String? =
+    getAnnotation(JsAnnotations.jsNativeImplementationFqn)?.getSingleConstStringArgument()
+
+fun IrAnnotationContainer.getJsFunAnnotation(): String? =
+    getAnnotation(JsAnnotations.jsFunFqn)?.getSingleConstStringArgument()
+
 fun IrAnnotationContainer.isJsExport(): Boolean =
     hasAnnotation(JsAnnotations.jsExportFqn)
 
@@ -51,8 +61,21 @@ fun IrAnnotationContainer.isJsNativeSetter(): Boolean = hasAnnotation(JsAnnotati
 
 fun IrAnnotationContainer.isJsNativeInvoke(): Boolean = hasAnnotation(JsAnnotations.jsNativeInvoke)
 
+fun IrAnnotationContainer.isAnnotatedWithJsFun(): Boolean = hasAnnotation(JsAnnotations.jsFunFqn)
+
+fun IrDeclarationWithName.getJsNameForOverriddenDeclaration(): String? {
+    val jsName = getJsName()
+
+    return when {
+        jsName != null -> jsName
+        this is IrOverridableDeclaration<*> ->
+            overriddenSymbols.firstNotNullOfOrNull { (it.owner as? IrAnnotationContainer)?.getJsName() }
+        else -> null
+    }
+}
+
 fun IrDeclarationWithName.getJsNameOrKotlinName(): Name =
-    when (val jsName = getJsName()) {
+    when (val jsName = getJsNameForOverriddenDeclaration()) {
         null -> name
         else -> Name.identifier(jsName)
     }

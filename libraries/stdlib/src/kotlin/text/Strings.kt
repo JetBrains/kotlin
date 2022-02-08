@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,68 @@
 package kotlin.text
 
 import kotlin.contracts.contract
+import kotlin.jvm.JvmName
+
+/**
+ * Returns a copy of this string converted to upper case using the rules of the default locale.
+ */
+@Deprecated("Use uppercase() instead.", ReplaceWith("uppercase()"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
+public expect fun String.toUpperCase(): String
+
+/**
+ * Returns a copy of this string converted to upper case using Unicode mapping rules of the invariant locale.
+ *
+ * This function supports one-to-many and many-to-one character mapping,
+ * thus the length of the returned string can be different from the length of the original string.
+ *
+ * @sample samples.text.Strings.uppercase
+ */
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
+public expect fun String.uppercase(): String
+
+/**
+ * Returns a copy of this string converted to lower case using the rules of the default locale.
+ */
+@Deprecated("Use lowercase() instead.", ReplaceWith("lowercase()"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
+public expect fun String.toLowerCase(): String
+
+/**
+ * Returns a copy of this string converted to lower case using Unicode mapping rules of the invariant locale.
+ *
+ * This function supports one-to-many and many-to-one character mapping,
+ * thus the length of the returned string can be different from the length of the original string.
+ *
+ * @sample samples.text.Strings.lowercase
+ */
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
+public expect fun String.lowercase(): String
+
+/**
+ * Returns a copy of this string having its first letter titlecased using the rules of the default locale,
+ * or the original string if it's empty or already starts with a title case letter.
+ *
+ * The title case of a character is usually the same as its upper case with several exceptions.
+ * The particular list of characters with the special title case form depends on the underlying platform.
+ *
+ * @sample samples.text.Strings.capitalize
+ */
+@Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
+public expect fun String.capitalize(): String
+
+/**
+ * Returns a copy of this string having its first letter lowercased using the rules of the default locale,
+ * or the original string if it's empty or already starts with a lower case letter.
+ *
+ * @sample samples.text.Strings.decapitalize
+ */
+@Deprecated("Use replaceFirstChar instead.", ReplaceWith("replaceFirstChar { it.lowercase() }"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
+public expect fun String.decapitalize(): String
 
 /**
  * Returns a sub sequence of this char sequence having leading and trailing characters matching the [predicate] removed.
@@ -438,7 +500,6 @@ public fun String.substringAfterLast(delimiter: String, missingDelimiterValue: S
  * @param startIndex the index of the first character to be replaced.
  * @param endIndex the index of the first character after the replacement to keep in the string.
  */
-@OptIn(ExperimentalStdlibApi::class)
 public fun CharSequence.replaceRange(startIndex: Int, endIndex: Int, replacement: CharSequence): CharSequence {
     if (endIndex < startIndex)
         throw IndexOutOfBoundsException("End index ($endIndex) is less than start index ($startIndex).")
@@ -484,7 +545,6 @@ public inline fun String.replaceRange(range: IntRange, replacement: CharSequence
  *
  * [endIndex] is not included in the removed part.
  */
-@OptIn(ExperimentalStdlibApi::class)
 public fun CharSequence.removeRange(startIndex: Int, endIndex: Int): CharSequence {
     if (endIndex < startIndex)
         throw IndexOutOfBoundsException("End index ($endIndex) is less than start index ($startIndex).")
@@ -709,6 +769,42 @@ public inline fun CharSequence.replace(regex: Regex, noinline transform: (MatchR
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.replaceFirst(regex: Regex, replacement: String): String = regex.replaceFirst(this, replacement)
+
+/**
+ * Returns a copy of this string having its first character replaced with the result of the specified [transform],
+ * or the original string if it's empty.
+ *
+ * @param transform function that takes the first character and returns the result of the transform applied to the character.
+ *
+ * @sample samples.text.Strings.replaceFirstChar
+ */
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@JvmName("replaceFirstCharWithChar")
+@kotlin.internal.InlineOnly
+public inline fun String.replaceFirstChar(transform: (Char) -> Char): String {
+    return if (isNotEmpty()) transform(this[0]) + substring(1) else this
+}
+
+/**
+ * Returns a copy of this string having its first character replaced with the result of the specified [transform],
+ * or the original string if it's empty.
+ *
+ * @param transform function that takes the first character and returns the result of the transform applied to the character.
+ *
+ * @sample samples.text.Strings.replaceFirstChar
+ */
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
+@OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@OverloadResolutionByLambdaReturnType
+@JvmName("replaceFirstCharWithCharSequence")
+@kotlin.internal.InlineOnly
+public inline fun String.replaceFirstChar(transform: (Char) -> CharSequence): String {
+    return if (isNotEmpty()) transform(this[0]).toString() + substring(1) else this
+}
 
 
 /**
@@ -1141,7 +1237,7 @@ private class DelimitedRangesSequence(
  * @param limit The maximum number of substrings to return. Zero by default means no limit is set.
  */
 private fun CharSequence.rangesDelimitedBy(delimiters: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
-    require(limit >= 0, { "Limit must be non-negative, but was $limit." })
+    requireNonNegativeLimit(limit)
 
     return DelimitedRangesSequence(this, startIndex, limit, { currentIndex ->
         indexOfAny(delimiters, currentIndex, ignoreCase = ignoreCase).let { if (it < 0) null else it to 1 }
@@ -1164,12 +1260,15 @@ private fun CharSequence.rangesDelimitedBy(delimiters: CharArray, startIndex: In
  * that matches this string at that position.
  */
 private fun CharSequence.rangesDelimitedBy(delimiters: Array<out String>, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
-    require(limit >= 0, { "Limit must be non-negative, but was $limit." } )
+    requireNonNegativeLimit(limit)
     val delimitersList = delimiters.asList()
 
     return DelimitedRangesSequence(this, startIndex, limit, { currentIndex -> findAnyOf(delimitersList, currentIndex, ignoreCase = ignoreCase, last = false)?.let { it.first to it.second.length } })
 
 }
+
+internal fun requireNonNegativeLimit(limit: Int) =
+    require(limit >= 0) { "Limit must be non-negative, but was $limit" }
 
 
 // split
@@ -1244,7 +1343,7 @@ public fun CharSequence.split(vararg delimiters: Char, ignoreCase: Boolean = fal
  * @param limit The maximum number of substrings to return.
  */
 private fun CharSequence.split(delimiter: String, ignoreCase: Boolean, limit: Int): List<String> {
-    require(limit >= 0, { "Limit must be non-negative, but was $limit." })
+    requireNonNegativeLimit(limit)
 
     var currentOffset = 0
     var nextIndex = indexOf(delimiter, currentOffset, ignoreCase)
@@ -1267,13 +1366,25 @@ private fun CharSequence.split(delimiter: String, ignoreCase: Boolean, limit: In
 }
 
 /**
- * Splits this char sequence around matches of the given regular expression.
+ * Splits this char sequence to a list of strings around matches of the given regular expression.
  *
  * @param limit Non-negative value specifying the maximum number of substrings to return.
  * Zero by default means no limit is set.
  */
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.split(regex: Regex, limit: Int = 0): List<String> = regex.split(this, limit)
+
+/**
+ * Splits this char sequence to a sequence of strings around matches of the given regular expression.
+ *
+ * @param limit Non-negative value specifying the maximum number of substrings to return.
+ * Zero by default means no limit is set.
+ * @sample samples.text.Strings.splitToSequence
+ */
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
+@kotlin.internal.InlineOnly
+public inline fun CharSequence.splitToSequence(regex: Regex, limit: Int = 0): Sequence<String> = regex.splitToSequence(this, limit)
 
 /**
  * Splits this char sequence to a sequence of lines delimited by any of the following character sequences: CRLF, LF or CR.
@@ -1288,3 +1399,88 @@ public fun CharSequence.lineSequence(): Sequence<String> = splitToSequence("\r\n
  * The lines returned do not include terminating line separators.
  */
 public fun CharSequence.lines(): List<String> = lineSequence().toList()
+
+/**
+ * Returns `true` if the contents of this char sequence are equal to the contents of the specified [other],
+ * i.e. both char sequences contain the same number of the same characters in the same order.
+ *
+ * @sample samples.text.Strings.contentEquals
+ */
+@SinceKotlin("1.5")
+public expect infix fun CharSequence?.contentEquals(other: CharSequence?): Boolean
+
+/**
+ * Returns `true` if the contents of this char sequence are equal to the contents of the specified [other], optionally ignoring case difference.
+ *
+ * @param ignoreCase `true` to ignore character case when comparing contents.
+ *
+ * @sample samples.text.Strings.contentEquals
+ */
+@SinceKotlin("1.5")
+public expect fun CharSequence?.contentEquals(other: CharSequence?, ignoreCase: Boolean): Boolean
+
+internal fun CharSequence?.contentEqualsIgnoreCaseImpl(other: CharSequence?): Boolean {
+    if (this is String && other is String) {
+        return this.equals(other, ignoreCase = true)
+    }
+
+    if (this === other) return true
+    if (this == null || other == null || this.length != other.length) return false
+
+    for (i in 0 until length) {
+        if (!this[i].equals(other[i], ignoreCase = true)) {
+            return false
+        }
+    }
+
+    return true
+}
+
+internal fun CharSequence?.contentEqualsImpl(other: CharSequence?): Boolean {
+    if (this is String && other is String) {
+        return this == other
+    }
+
+    if (this === other) return true
+    if (this == null || other == null || this.length != other.length) return false
+
+    for (i in 0 until length) {
+        if (this[i] != other[i]) {
+            return false
+        }
+    }
+
+    return true
+}
+
+/**
+ * Returns `true` if the content of this string is equal to the word "true", `false` if it is equal to "false",
+ * and throws an exception otherwise.
+ *
+ * There is also a lenient version of the function available on nullable String, [String?.toBoolean].
+ * Note that this function is case-sensitive.
+ *
+ * @sample samples.text.Strings.toBooleanStrict
+ */
+@SinceKotlin("1.5")
+public fun String.toBooleanStrict(): Boolean = when (this) {
+    "true" -> true
+    "false" -> false
+    else -> throw IllegalArgumentException("The string doesn't represent a boolean value: $this")
+}
+
+/**
+ * Returns `true` if the content of this string is equal to the word "true", `false` if it is equal to "false",
+ * and `null` otherwise.
+ *
+ * There is also a lenient version of the function available on nullable String, [String?.toBoolean].
+ * Note that this function is case-sensitive.
+ *
+ * @sample samples.text.Strings.toBooleanStrictOrNull
+ */
+@SinceKotlin("1.5")
+public fun String.toBooleanStrictOrNull(): Boolean? = when (this) {
+    "true" -> true
+    "false" -> false
+    else -> null
+}

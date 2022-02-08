@@ -1,0 +1,15 @@
+@kotlin.Metadata
+public final class Foo {
+    // source: 'inlineReifiedPropertyVisibility.kt'
+    public method <init>(): void
+    public synthetic final method getInternalExtProp$main(p0: java.lang.Object): java.lang.String
+    private synthetic final method getPrivateExtProp(p0: java.lang.Object): java.lang.String
+    protected synthetic final method getProtectedExtProp(p0: java.lang.Object): java.lang.String
+}
+
+@kotlin.Metadata
+public final class InlineReifiedPropertyVisibilityKt {
+    // source: 'inlineReifiedPropertyVisibility.kt'
+    public synthetic final static method getInternalExtProp(p0: java.lang.Object): java.lang.String
+    private synthetic final static method getPrivateExtProp(p0: java.lang.Object): java.lang.String
+}

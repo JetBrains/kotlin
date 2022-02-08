@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.ir.visitors.*
 
 class LocalClassesInInlineLambdasLowering(val context: CommonBackendContext) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
-        runOnFilePostfix(irFile, allowDeclarationModification = true)
+        runOnFilePostfix(irFile)
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
@@ -84,7 +84,7 @@ class LocalClassesInInlineLambdasLowering(val context: CommonBackendContext) : B
 
 class LocalClassesInInlineFunctionsLowering(val context: CommonBackendContext) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
-        runOnFilePostfix(irFile, allowDeclarationModification = true)
+        runOnFilePostfix(irFile)
     }
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
@@ -125,7 +125,10 @@ class LocalClassesInInlineFunctionsLowering(val context: CommonBackendContext) :
     }
 }
 
-class LocalClassesExtractionFromInlineFunctionsLowering(context: CommonBackendContext) : LocalClassPopupLowering(context) {
+class LocalClassesExtractionFromInlineFunctionsLowering(
+    context: CommonBackendContext,
+    recordExtractedLocalClasses: BackendContext.(IrClass) -> Unit = {},
+) : LocalClassPopupLowering(context, recordExtractedLocalClasses) {
     private val classesToExtract = mutableSetOf<IrClass>()
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {

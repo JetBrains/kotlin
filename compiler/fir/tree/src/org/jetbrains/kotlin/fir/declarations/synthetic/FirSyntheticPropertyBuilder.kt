@@ -5,27 +5,31 @@
 
 package org.jetbrains.kotlin.fir.declarations.synthetic
 
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.modality
-import org.jetbrains.kotlin.fir.declarations.visibility
-import org.jetbrains.kotlin.fir.symbols.impl.FirAccessorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirSyntheticPropertyBuilder {
-    lateinit var session: FirSession
+    lateinit var moduleData: FirModuleData
     lateinit var name: Name
-    lateinit var symbol: FirAccessorSymbol
+    lateinit var symbol: FirSyntheticPropertySymbol
     lateinit var delegateGetter: FirSimpleFunction
+    lateinit var deprecation: DeprecationsPerUseSite
+
+    var status: FirDeclarationStatus? = null
     var delegateSetter: FirSimpleFunction? = null
 
+
     fun build(): FirSyntheticProperty = FirSyntheticProperty(
-        session, name, isVar = delegateSetter != null, symbol = symbol,
-        status = delegateGetter.status,
+        moduleData, name, isVar = delegateSetter != null, symbol = symbol,
+        status = status ?: delegateGetter.status,
         resolvePhase = delegateGetter.resolvePhase,
         getter = FirSyntheticPropertyAccessor(delegateGetter, isGetter = true),
-        setter = delegateSetter?.let { FirSyntheticPropertyAccessor(it, isGetter = false) }
+        setter = delegateSetter?.let { FirSyntheticPropertyAccessor(it, isGetter = false) },
+        deprecation = deprecation
     )
 }
 

@@ -1,7 +1,0 @@
-if (n == 1) {
-    res = "one"
-} else if (n == 2) {
-    res = "two"
-} else {
-    res = "???" 
-}

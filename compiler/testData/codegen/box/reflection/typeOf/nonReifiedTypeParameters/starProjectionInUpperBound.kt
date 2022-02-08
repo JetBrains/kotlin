@@ -1,7 +1,5 @@
-// !USE_EXPERIMENTAL: kotlin.ExperimentalStdlibApi
 // WITH_REFLECT
 // KJS_WITH_FULL_RUNTIME
-
 import kotlin.reflect.KType
 import kotlin.reflect.typeOf
 

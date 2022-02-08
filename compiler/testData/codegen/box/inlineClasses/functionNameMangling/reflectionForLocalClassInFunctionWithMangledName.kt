@@ -1,9 +1,12 @@
-// !LANGUAGE: +InlineClasses
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
 import kotlin.test.*
 
-inline class S(val string: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class S(val string: String)
 
 fun test(s: S) {
     class Local

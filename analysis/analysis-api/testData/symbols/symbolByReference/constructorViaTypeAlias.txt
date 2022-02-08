@@ -1,0 +1,19 @@
+KtConstructorSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  containingClassIdIfNonLocal: java/util/ArrayList
+  hasStableParameterNames: false
+  isExtension: false
+  isPrimary: false
+  origin: JAVA
+  receiverType: null
+  returnType: java/util/ArrayList<E>
+  symbolKind: CLASS_MEMBER
+  typeParameters: [
+    KtTypeParameterSymbol(E)
+  ]
+  valueParameters: [
+    KtValueParameterSymbol(p0)
+  ]
+  visibility: Public
+  deprecationStatus: null

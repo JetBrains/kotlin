@@ -1,6 +1,13 @@
-inline class IcAny(val x: Any?)
-inline class IcInt(val x: Int)
-inline class IcLong(val x: Long)
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IcAny(val x: Any?)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IcInt(val x: Int)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IcLong(val x: Long)
 
 fun <T> id(x: T) = x
 

@@ -1,4 +1,0 @@
-Crumbs:
-  foo()
-Tooltips:
-  function <b><code>foo()</code></b>

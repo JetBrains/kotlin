@@ -1,0 +1,12 @@
+/main.kt:23:5: warning: type parameter 'X' has nullable upper bound, so override has incorrect signature comparing with a base member with NotNull annotation. Please add a non-nullable upper bound (e.g. Any) to the type parameter. See https://kotlinlang.org/docs/generics.html#upper-bounds for more details
+    override fun takeV(x: X)
+    ^
+/main.kt:24:5: warning: type parameter 'E1' has nullable upper bound, so override has incorrect signature comparing with a base member with NotNull annotation. Please add a non-nullable upper bound (e.g. Any) to the type parameter. See https://kotlinlang.org/docs/generics.html#upper-bounds for more details
+    override fun <E1> takeE(e: E1)
+    ^
+/main.kt:26:5: warning: type parameter 'X' has nullable upper bound, so override has incorrect signature comparing with a base member with NotNull annotation. Please add a non-nullable upper bound (e.g. Any) to the type parameter. See https://kotlinlang.org/docs/generics.html#upper-bounds for more details
+    override fun takeVList(l: List<X>)
+    ^
+/main.kt:27:5: warning: type parameter 'E2' has nullable upper bound, so override has incorrect signature comparing with a base member with NotNull annotation. Please add a non-nullable upper bound (e.g. Any) to the type parameter. See https://kotlinlang.org/docs/generics.html#upper-bounds for more details
+    override fun <E2> takeEList(l2: List<E2>)
+    ^

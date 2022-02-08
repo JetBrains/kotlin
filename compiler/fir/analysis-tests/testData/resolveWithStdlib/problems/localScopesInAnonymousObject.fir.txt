@@ -1,0 +1,76 @@
+FILE: localScopesInAnonymousObject.kt
+    public final val x: R|kotlin/Any| = object : R|kotlin/Any| {
+        private constructor(): R|<anonymous>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val someString: R|kotlin/String| = String(123)
+            public get(): R|kotlin/String|
+
+        private final fun foo(): R|kotlin/Unit| {
+            ^foo R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(this@R|/<anonymous>|.R|/<anonymous>.someString|, <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                lval presentations: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+                this@R|/<anonymous>|.R|/<anonymous>.bar|(Boolean(true))?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/Unit|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                    R|<local>/presentations|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(R|<local>/it|)
+                }
+                ) }
+            }
+            )
+        }
+
+        private final fun bar(arg: R|kotlin/Boolean|): R|kotlin/String?| {
+            ^bar R|kotlin/with|<R|kotlin/String|, R|kotlin/String?|>(this@R|/<anonymous>|.R|/<anonymous>.someString|, <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/String?| <inline=Inline, kind=EXACTLY_ONCE>  {
+                ^ when () {
+                    R|<local>/arg| ->  {
+                        this@R|special/anonymous|
+                    }
+                    else ->  {
+                        Null(null)
+                    }
+                }
+
+            }
+            )
+        }
+
+    }
+
+        public get(): R|kotlin/Any|
+    public final fun owner(): R|kotlin/Unit| {
+        local final class Local : R|kotlin/Any| {
+            public constructor(): R|Local| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val someString: R|kotlin/String| = String(123)
+                public get(): R|kotlin/String|
+
+            private final fun foo(): R|kotlin/Unit| {
+                ^foo R|kotlin/with|<R|kotlin/String|, R|kotlin/Unit|>(this@R|/Local|.R|<local>/someString|, <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                    lval presentations: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+                    this@R|/Local|.R|<local>/bar|(Boolean(true))?.{ $subj$.R|kotlin/let|<R|kotlin/String|, R|kotlin/Unit|>(<L> = let@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                        R|<local>/presentations|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(R|<local>/it|)
+                    }
+                    ) }
+                }
+                )
+            }
+
+            private final fun bar(arg: R|kotlin/Boolean|): R|kotlin/String?| {
+                ^bar R|kotlin/with|<R|kotlin/String|, R|kotlin/String?|>(this@R|/Local|.R|<local>/someString|, <L> = with@fun R|kotlin/String|.<anonymous>(): R|kotlin/String?| <inline=Inline, kind=EXACTLY_ONCE>  {
+                    ^ when () {
+                        R|<local>/arg| ->  {
+                            this@R|special/anonymous|
+                        }
+                        else ->  {
+                            Null(null)
+                        }
+                    }
+
+                }
+                )
+            }
+
+        }
+
+    }

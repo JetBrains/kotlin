@@ -6,6 +6,6 @@ allprojects {
     repositories {
         mavenLocal()
         maven("$rootDir/../repo")
-        jcenter()
+        mavenCentral()
     }
 }

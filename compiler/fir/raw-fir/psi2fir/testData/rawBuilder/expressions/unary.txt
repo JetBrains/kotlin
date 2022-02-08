@@ -31,12 +31,12 @@ FILE: unary.kt
 
     }
     public? final? class X : R|kotlin/Any| {
-        public? constructor(i: Int): R|X| {
+        public? [ContainingClassKey=X] constructor([CorrespondingProperty=/X.i] i: Int): R|X| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? val i: Int = R|<local>/i|
-            public? get(): Int
+        public? final? [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+            [ContainingClassKey=X] public? get(): Int
 
     }
     public? final? fun test2(x: X): R|kotlin/Unit| {
@@ -74,12 +74,12 @@ FILE: unary.kt
 
     }
     public? final? class Y : R|kotlin/Any| {
-        public? constructor(arr: Array<Int>): R|Y| {
+        public? [ContainingClassKey=Y] constructor([CorrespondingProperty=/Y.arr] arr: Array<Int>): R|Y| {
             super<R|kotlin/Any|>()
         }
 
-        public? final? val arr: Array<Int> = R|<local>/arr|
-            public? get(): Array<Int>
+        public? final? [IsFromPrimaryConstructor=true] val arr: Array<Int> = R|<local>/arr|
+            [ContainingClassKey=Y] public? get(): Array<Int>
 
     }
     public? final? fun test4(y: Y): R|kotlin/Unit| {

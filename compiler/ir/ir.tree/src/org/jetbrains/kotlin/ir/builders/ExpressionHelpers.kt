@@ -11,10 +11,11 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.isImmutable
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
 
 val IrBuilderWithScope.parent get() = scope.getLocalDeclarationParent()
@@ -26,20 +27,25 @@ inline fun IrBuilderWithScope.irLetS(
     irType: IrType? = null,
     body: (IrValueSymbol) -> IrExpression
 ): IrExpression {
-    val (valueSymbol, irTemporary) = if (value is IrGetValue && value.symbol.owner.isImmutable) {
-        value.symbol to null
+    val irTemporary: IrVariable?
+    val valueSymbol: IrValueSymbol
+    if (value is IrGetValue && value.symbol.owner.isImmutable) {
+        irTemporary = null
+        valueSymbol = value.symbol
     } else {
-        scope.createTemporaryVariable(value, nameHint, irType = irType).let { it.symbol to it }
+        irTemporary = scope.createTemporaryVariable(value, nameHint, irType = irType)
+        valueSymbol = irTemporary.symbol
     }
     val irResult = body(valueSymbol)
-    return if (irTemporary == null) {
-        irResult
+    if (irTemporary == null) return irResult
+    val irBlock = IrBlockImpl(startOffset, endOffset, irResult.type, origin)
+    irBlock.statements.add(irTemporary)
+    if (irResult is IrStatementContainer) {
+        irBlock.statements.addAll(irResult.statements)
     } else {
-        val irBlock = IrBlockImpl(startOffset, endOffset, irResult.type, origin)
-        irBlock.statements.add(irTemporary)
         irBlock.statements.add(irResult)
-        irBlock
     }
+    return irBlock
 }
 
 fun <T : IrElement> IrStatementsBuilder<T>.irTemporary(
@@ -48,7 +54,11 @@ fun <T : IrElement> IrStatementsBuilder<T>.irTemporary(
     irType: IrType = value?.type!!, // either value or irType should be supplied at callsite
     isMutable: Boolean = false,
 ): IrVariable {
-    val temporary = scope.createTemporaryVariableDeclaration(irType, nameHint, isMutable)
+    val temporary = scope.createTemporaryVariableDeclaration(
+        irType, nameHint, isMutable,
+        startOffset = startOffset,
+        endOffset = endOffset
+    )
     value?.let { temporary.initializer = it }
     +temporary
     return temporary
@@ -131,14 +141,19 @@ fun IrBuilderWithScope.irGet(type: IrType, variable: IrValueSymbol) =
 
 fun IrBuilderWithScope.irGet(variable: IrValueDeclaration) = irGet(variable.type, variable.symbol)
 
+fun IrBuilderWithScope.irGet(variable: IrValueDeclaration, type: IrType) = irGet(type, variable.symbol)
+
 fun IrBuilderWithScope.irSet(variable: IrValueSymbol, value: IrExpression, origin: IrStatementOrigin = IrStatementOrigin.EQ) =
     IrSetValueImpl(startOffset, endOffset, context.irBuiltIns.unitType, variable, value, origin)
+
+fun IrBuilderWithScope.irSet(variable: IrValueDeclaration, value: IrExpression, origin: IrStatementOrigin = IrStatementOrigin.EQ) =
+    irSet(variable.symbol, value, origin)
 
 fun IrBuilderWithScope.irGetField(receiver: IrExpression?, field: IrField) =
     IrGetFieldImpl(startOffset, endOffset, field.symbol, field.type, receiver)
 
-fun IrBuilderWithScope.irSetField(receiver: IrExpression?, field: IrField, value: IrExpression) =
-    IrSetFieldImpl(startOffset, endOffset, field.symbol, receiver, value, context.irBuiltIns.unitType)
+fun IrBuilderWithScope.irSetField(receiver: IrExpression?, field: IrField, value: IrExpression, origin: IrStatementOrigin? = null) =
+    IrSetFieldImpl(startOffset, endOffset, field.symbol, receiver, value, context.irBuiltIns.unitType, origin = origin)
 
 fun IrBuilderWithScope.irGetObjectValue(type: IrType, classSymbol: IrClassSymbol) =
     IrGetObjectValueImpl(startOffset, endOffset, type, classSymbol)
@@ -311,6 +326,9 @@ fun IrBuilderWithScope.irImplicitCast(argument: IrExpression, type: IrType) =
 fun IrBuilderWithScope.irReinterpretCast(argument: IrExpression, type: IrType) =
     IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.REINTERPRET_CAST, type, argument)
 
+fun IrBuilderWithScope.irSamConversion(argument: IrExpression, type: IrType) =
+    typeOperator(type, argument, IrTypeOperator.SAM_CONVERSION, type)
+
 fun IrBuilderWithScope.irInt(value: Int, type: IrType = context.irBuiltIns.intType) =
     IrConstImpl.int(startOffset, endOffset, type, value)
 
@@ -326,6 +344,14 @@ fun IrBuilderWithScope.irString(value: String) =
 fun IrBuilderWithScope.irConcat() =
     IrStringConcatenationImpl(startOffset, endOffset, context.irBuiltIns.stringType)
 
+fun IrBuilderWithScope.irVararg(elementType: IrType, values: List<IrExpression>) =
+    IrVarargImpl(startOffset, endOffset, context.irBuiltIns.arrayClass.typeWith(elementType), elementType, values)
+
+fun IrBuilderWithScope.irRawFunctionReferefence(type: IrType, symbol: IrFunctionSymbol) =
+    IrRawFunctionReferenceImpl(startOffset, endOffset, type, symbol)
+
+fun IrBuilderWithScope.irTry(type: IrType, tryResult: IrExpression, catches: List<IrCatch>, finallyExpression: IrExpression?) =
+    IrTryImpl(startOffset, endOffset, type, tryResult, catches, finallyExpression)
 
 inline fun IrBuilderWithScope.irBlock(
     startOffset: Int = this.startOffset,
@@ -366,3 +392,51 @@ inline fun IrBuilderWithScope.irBlockBody(
         endOffset
     ).blockBody(body)
 
+fun IrBuilderWithScope.irConstantPrimitive(value: IrConst<*>) =
+    IrConstantPrimitiveImpl(startOffset, endOffset, value)
+
+fun IrBuilderWithScope.irConstantArray(type: IrType, elements: List<IrConstantValue>) =
+    IrConstantArrayImpl(
+        startOffset, endOffset,
+        type,
+        elements
+    )
+
+fun IrBuilderWithScope.irConstantObject(
+    constructor: IrConstructorSymbol,
+    arguments: List<IrConstantValue>,
+    typeArguments: List<IrType> = emptyList()
+): IrConstantValue {
+    return IrConstantObjectImpl(
+        startOffset, endOffset,
+        constructor,
+        arguments,
+        typeArguments,
+    )
+}
+
+fun IrBuilderWithScope.irConstantObject(
+    clazz: IrClass,
+    arguments: List<IrConstantValue>,
+    typeArguments: List<IrType> = emptyList()
+): IrConstantValue {
+    return irConstantObject(clazz.primaryConstructor?.symbol!!, arguments, typeArguments)
+}
+
+fun IrBuilderWithScope.irConstantObject(
+    clazz: IrClass,
+    elements: Map<String, IrConstantValue>,
+    typeArguments: List<IrType> = emptyList()
+): IrConstantValue {
+    return irConstantObject(
+        clazz,
+        clazz.primaryConstructor!!.symbol.owner.valueParameters.also {
+            require(it.size == elements.size) {
+                "Wrong number of values provided for ${clazz.name} construction: ${elements.size} instead of ${it.size}"
+            }
+        }.map {
+            elements[it.name.asString()] ?: error("No value for field named ${it.name} provided")
+        },
+        typeArguments
+    )
+}

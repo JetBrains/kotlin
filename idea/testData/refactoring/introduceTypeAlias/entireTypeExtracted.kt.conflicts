@@ -1,1 +1,0 @@
-Type alias cannot refer to types which aren't accessible in the scope where it's defined

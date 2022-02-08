@@ -10,4 +10,3 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 abstract class ConeTypeParameterType : ConeLookupTagBasedType() {
     abstract override val lookupTag: ConeTypeParameterLookupTag
 }
-

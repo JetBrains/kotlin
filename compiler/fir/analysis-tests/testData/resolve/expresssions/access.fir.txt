@@ -1,0 +1,77 @@
+FILE: access.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Int|
+
+        public final fun abc(): R|kotlin/Int| {
+            ^abc this@R|/Foo|.R|/Foo.x|
+        }
+
+        public final fun cba(): R|kotlin/Int| {
+            ^cba this@R|/Foo|.R|/Foo.abc|()
+        }
+
+    }
+    public final class Bar : R|kotlin/Any| {
+        public constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+        public final fun R|Foo|.abc(): R|kotlin/Int| {
+            ^abc this@R|/Bar.abc|.R|/Foo.x|
+        }
+
+        public final fun bar(): R|Bar| {
+            ^bar this@R|/Bar|
+        }
+
+        public final operator fun R|kotlin/String|.plus(bar: R|Bar|): R|kotlin/String| {
+            ^plus String()
+        }
+
+        public final fun R|Foo|.check(): <ERROR TYPE REF: Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]> {
+            ^check this@R|/Bar.check|.R|/Foo.abc|().<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(this@R|/Bar|.R|/Bar.bar|())
+        }
+
+        public final fun R|Foo|.check2(): R|kotlin/String| {
+            ^check2 String().R|kotlin/String.plus|(this@R|/Bar|.R|/Bar.bar|())
+        }
+
+    }
+    public final fun R|Foo|.ext(): R|kotlin/Int| {
+        ^ext this@R|/ext|.R|/Foo.x|
+    }
+    public final fun bar(): R|kotlin/Unit| {
+    }
+    public final fun buz(): R|kotlin/Unit| {
+        R|/bar|()
+    }
+    public final fun f(): R|kotlin/Unit| {
+        lval a: R|kotlin/Int| = Int(10)
+        lval b: R|kotlin/Int| = R|<local>/a|
+        lval d: R|kotlin/String| = String()
+        lval c: <ERROR TYPE REF: Unresolved name: c> = <Unresolved name: c>#
+        <Unresolved name: abc>#()
+        local final fun bcd(): R|kotlin/Unit| {
+        }
+
+        local final fun abc(): R|kotlin/Unit| {
+            lval a: R|kotlin/String| = R|<local>/d|
+            lval b: R|kotlin/String| = R|<local>/a|
+            R|<local>/bcd|()
+            local final fun dcb(): R|kotlin/Unit| {
+            }
+
+            R|<local>/dcb|()
+        }
+
+        <Unresolved name: dcb>#()
+        R|<local>/abc|()
+    }

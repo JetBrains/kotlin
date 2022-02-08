@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.generators.builtins.functions.GenerateFunctions
 import org.jetbrains.kotlin.generators.builtins.iterators.GenerateIterators
 import org.jetbrains.kotlin.generators.builtins.progressionIterators.GenerateProgressionIterators
 import org.jetbrains.kotlin.generators.builtins.progressions.GenerateProgressions
-import org.jetbrains.kotlin.generators.builtins.ranges.GeneratePrimitives
+import org.jetbrains.kotlin.generators.builtins.numbers.GeneratePrimitives
+import org.jetbrains.kotlin.generators.builtins.numbers.GenerateFloorDivMod
 import org.jetbrains.kotlin.generators.builtins.ranges.GenerateRanges
 import org.jetbrains.kotlin.generators.builtins.unsigned.generateUnsignedTypes
 import org.xml.sax.InputSource
@@ -27,16 +28,14 @@ val BUILT_INS_NATIVE_DIR = File("core/builtins/native/")
 val BUILT_INS_SRC_DIR = File("core/builtins/src/")
 val RUNTIME_JVM_DIR = File("libraries/stdlib/jvm/runtime/")
 val UNSIGNED_TYPES_DIR = File("libraries/stdlib/unsigned/src")
+val STDLIB_DIR = File("libraries/stdlib/src")
 
 abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
     protected abstract fun generateBody(): Unit
 
     protected open fun getPackage(): String = "kotlin"
 
-    enum class Language {
-        KOTLIN,
-        JAVA
-    }
+    protected open fun getMultifileClassName(): String? = null
 
     fun generate() {
         out.println(readCopyrightNoticeFromProfile(File(".idea/copyright/apache.xml")))
@@ -44,6 +43,10 @@ abstract class BuiltInsSourceGenerator(val out: PrintWriter) {
         // and we don't want to scare users with any internal information about our project
         out.println("// Auto-generated file. DO NOT EDIT!")
         out.println()
+        getMultifileClassName()?.let { name ->
+            out.println("@file:kotlin.jvm.JvmName(\"$name\")")
+            out.println("@file:kotlin.jvm.JvmMultifileClass")
+        }
         out.print("package ${getPackage()}")
         out.println()
         out.println()
@@ -77,6 +80,7 @@ fun generateBuiltIns(generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) 
     generate(File(BUILT_INS_SRC_DIR, "kotlin/ProgressionIterators.kt")) { GenerateProgressionIterators(it) }
     generate(File(BUILT_INS_SRC_DIR, "kotlin/Progressions.kt")) { GenerateProgressions(it) }
     generate(File(BUILT_INS_SRC_DIR, "kotlin/Ranges.kt")) { GenerateRanges(it) }
+    generate(File(STDLIB_DIR, "kotlin/util/FloorDivMod.kt")) { GenerateFloorDivMod(it) }
 
     generateUnsignedTypes(UNSIGNED_TYPES_DIR, generate)
 }

@@ -1,7 +1,0 @@
-fun foo() {
-    val a: String? = if (<caret>) {
-        "aaa"
-    } else {
-    }
-    a.toString()
-}

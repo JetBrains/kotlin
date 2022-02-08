@@ -1,5 +1,7 @@
-apply plugin: 'kotlin'
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+}
 
 dependencies {
-    compile project(':script-template')
+    implementation project(':script-template')
 }

@@ -1,4 +1,4 @@
-enum interface Some {
+<!WRONG_MODIFIER_TARGET!>enum<!> interface Some {
     // Enum part
     D;
 

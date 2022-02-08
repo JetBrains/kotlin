@@ -1,14 +1,13 @@
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
+project.updateJvmTarget("1.6")
 
 dependencies {
-    compile(kotlinStdlib())
-    testCompile(project(":kotlin-test:kotlin-test-jvm"))
+    api(kotlinStdlib())
+    testApi(project(":kotlin-test:kotlin-test-jvm"))
 }
 
 sourceSets {

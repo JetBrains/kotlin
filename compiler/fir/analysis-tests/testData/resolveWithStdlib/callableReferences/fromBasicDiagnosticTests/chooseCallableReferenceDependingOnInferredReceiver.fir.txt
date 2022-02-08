@@ -1,0 +1,48 @@
+FILE: chooseCallableReferenceDependingOnInferredReceiver.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(i: R|A|): R|kotlin/Unit| {
+        }
+
+        public final fun baz(i: R|A|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(s: R|B|): R|kotlin/Unit| {
+        }
+
+        public final fun foo(c: R|kotlin/Char|): R|kotlin/Unit| {
+        }
+
+        public final fun baz(s: R|B|): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun <T> bar(f: R|(T) -> kotlin/Unit|): R|T| {
+        ^bar R|kotlin/TODO|()
+    }
+    public final fun test(): R|kotlin/Unit| {
+        <CS errors: /myWith>#<R|A|, R|ERROR CLASS: Cannot infer argument for type parameter R|>(R|/A.A|(), <L> = myWith@fun R|A|.<anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Inline, kind=UNKNOWN>  {
+            lval t1: R|A| = R|/bar|<R|A|>(::R|/A.foo|)
+            lval t2: R|A| = R|/bar|<R|A|>(::R|/A.baz|)
+            ^ R|/myWith|<R|B|, R|ERROR CLASS: Cannot infer argument for type parameter R|>(R|/B.B|(), <L> = myWith@fun R|B|.<anonymous>(): <ERROR TYPE REF: Cannot infer argument for type parameter R> <inline=Inline, kind=UNKNOWN>  {
+                lval a: R|A| = R|/bar|<R|A|>(::R|/A.foo|)
+                lval b: R|B| = R|/bar|<R|B|>(::R|/B.foo|)
+                lval t3: R|B| = R|/bar|<R|B|>(::R|/B.baz|)
+                ^ R|/bar|<R|ERROR CLASS: Cannot infer argument for type parameter T|>(::<Ambiguity: foo, [/B.foo, /B.foo]>#)
+            }
+            )
+        }
+        )
+    }
+    public final inline fun <T, R> myWith(receiver: R|T|, block: R|T.() -> R|): R|R| {
+        ^myWith R|kotlin/TODO|()
+    }

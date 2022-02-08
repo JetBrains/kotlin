@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.test.*
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
+import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparatorAdaptor
 import java.io.File
 import java.net.URLClassLoader
 
@@ -64,10 +65,10 @@ abstract class AbstractLocalClassProtoTest : TestCaseWithTmpdir() {
         val classDescriptor = components.classDeserializer.deserializeClass(clazz.classId)
                               ?: error("Class is not resolved: $clazz (classId = ${clazz.classId})")
 
-        RecursiveDescriptorComparator.validateAndCompareDescriptorWithFile(
-                classDescriptor,
-                RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT,
-                KotlinTestUtils.replaceExtension(source, "txt")
+        RecursiveDescriptorComparatorAdaptor.validateAndCompareDescriptorWithFile(
+            classDescriptor,
+            RecursiveDescriptorComparator.DONT_INCLUDE_METHODS_OF_OBJECT,
+            KotlinTestUtils.replaceExtension(source, "txt")
         )
     }
 

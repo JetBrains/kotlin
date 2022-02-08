@@ -1,5 +1,4 @@
 // !LANGUAGE: -SuspendConversion
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_VARIABLE
 
@@ -21,7 +20,7 @@ fun foo() {
     builder { 1 }
 
     val x = { 1 }
-    builder(<!NI;UNSUPPORTED_FEATURE, OI;TYPE_MISMATCH!>x<!>)
+    builder(<!UNSUPPORTED_FEATURE!>x<!>)
     builder({1} <!UNCHECKED_CAST!>as (suspend () -> Int)<!>)
 
     var i: Int = 1
@@ -29,22 +28,22 @@ fun foo() {
     i = genericBuilder { 1 }
     genericBuilder { 1 }
     genericBuilder<Int> { 1 }
-    genericBuilder<Int> { <!NI;TYPE_MISMATCH, TYPE_MISMATCH!>""<!> }
+    genericBuilder<Int> { <!TYPE_MISMATCH!>""<!> }
 
     val y = { 1 }
-    <!OI;TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>genericBuilder<!>(<!NI;UNSUPPORTED_FEATURE, OI;TYPE_MISMATCH!>y<!>)
+    genericBuilder(<!UNSUPPORTED_FEATURE!>y<!>)
 
     unitBuilder {}
-    unitBuilder { <!UNUSED_EXPRESSION!>1<!> }
+    unitBuilder { 1 }
     unitBuilder({})
-    unitBuilder({ <!UNUSED_EXPRESSION!>1<!> })
+    unitBuilder({ 1 })
 
     manyArgumentsBuilder({}, { "" }) { 1 }
 
     val s: String = manyArgumentsBuilder({}, { "" }) { 1 }
 
     manyArgumentsBuilder<String>({}, { "" }, { 1 })
-    manyArgumentsBuilder<String>({}, { <!CONSTANT_EXPECTED_TYPE_MISMATCH, NI;CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }, { 2 })
+    manyArgumentsBuilder<String>({}, { <!CONSTANT_EXPECTED_TYPE_MISMATCH!>1<!> }, { 2 })
 
     severalParamsInLambda { <!NAME_SHADOWING!>x<!>, <!NAME_SHADOWING!>y<!> ->
         x checkType { _<String>() }

@@ -1,7 +1,7 @@
 // SKIP_JDK6
 // TARGET_BACKEND: JVM
 // FULL_JDK
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import java.util.*
 import java.util.function.Predicate

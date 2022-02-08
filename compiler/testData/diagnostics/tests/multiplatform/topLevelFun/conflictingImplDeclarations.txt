@@ -3,16 +3,15 @@ package
 
 public expect fun foo(): kotlin.Unit
 
-
 // -- Module: <m2-jvm> --
 package
 
 public actual fun foo(): kotlin.Unit
 public actual fun foo(): kotlin.Unit
 
-
 // -- Module: <m3-js> --
 package
 
 public actual fun foo(): kotlin.Unit
 public actual fun foo(): kotlin.Unit
+

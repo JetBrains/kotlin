@@ -11,12 +11,17 @@ import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
+import org.jetbrains.kotlin.fir.types.ConeInferenceContext
+import org.jetbrains.kotlin.fir.types.typeContext
 
 class ResolutionContext(
     val session: FirSession,
     val bodyResolveComponents: BodyResolveComponents,
     val bodyResolveContext: BodyResolveContext
 ) {
+    val typeContext: ConeInferenceContext
+        get() = session.typeContext
+
     val inferenceComponents: InferenceComponents
         get() = session.inferenceComponents
 

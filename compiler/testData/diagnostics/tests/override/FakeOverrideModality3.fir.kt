@@ -13,4 +13,4 @@ interface C : A {
 interface D : A
 
 // Fake override Z#foo should be abstract
-class Z : B, C, D
+<!MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED!>class Z<!> : B, C, D

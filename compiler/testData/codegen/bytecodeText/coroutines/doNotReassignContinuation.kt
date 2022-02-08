@@ -12,4 +12,8 @@ suspend fun suspendThere(param: Int, param2: String, param3: Long): String {
     return a + b
 }
 
+// JVM_TEMPLATES
 // 1 ASTORE 4
+
+// JVM_IR_TEMPLATES
+// 0 ASTORE 4

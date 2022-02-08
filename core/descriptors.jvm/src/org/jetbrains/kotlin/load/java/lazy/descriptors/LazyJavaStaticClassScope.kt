@@ -48,6 +48,7 @@ class LazyJavaStaticClassScope(
             if (jClass.isEnum) {
                 addAll(listOf(StandardNames.ENUM_VALUE_OF, StandardNames.ENUM_VALUES))
             }
+            addAll(c.components.syntheticPartsProvider.getStaticFunctionNames(ownerDescriptor))
         }
 
     override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?) =
@@ -79,6 +80,10 @@ class LazyJavaStaticClassScope(
                 StandardNames.ENUM_VALUES -> result.add(createEnumValuesMethod(ownerDescriptor))
             }
         }
+    }
+
+    override fun computeImplicitlyDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
+        c.components.syntheticPartsProvider.generateStaticFunctions(ownerDescriptor, name, result)
     }
 
     override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {

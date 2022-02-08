@@ -1,0 +1,10 @@
+SkFoo()
+SkData()
+SkData()
+SkValue()
+SkData()
+MANAGED: f: true, a: true, b: false, v: true, c: false
+DATA: 17 19 17 17
+unref
+~SkData()
+~SkFoo()

@@ -1,0 +1,8 @@
+package
+
+public fun foo(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Any?, /*2*/ z: kotlin.Int): kotlin.Unit
+public fun myRun(/*0*/ block: () -> kotlin.Unit): kotlin.Any?
+public fun test_1(): kotlin.Unit
+public fun test_2(): kotlin.Unit
+public fun test_3(): kotlin.Unit
+

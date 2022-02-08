@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
@@ -24,13 +23,12 @@ val test2: (String) -> Boolean =
 
 val test3: (String) -> Boolean =
         when {
-            true -> { <!UNUSED_ANONYMOUS_PARAMETER!>s<!> -> true }
+            true -> { s -> true }
             else -> null!!
         }
 
 val test4: (String) -> Boolean =
         when {
-            true -> <!NI;TYPE_MISMATCH!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!><!UNUSED_ANONYMOUS_PARAMETER!>s1<!>, <!CANNOT_INFER_PARAMETER_TYPE, UNUSED_ANONYMOUS_PARAMETER!>s2<!><!> -> true }<!>
+            true -> <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>s1, <!CANNOT_INFER_PARAMETER_TYPE!>s2<!><!> -> true }<!>
             else -> null!!
         }
-

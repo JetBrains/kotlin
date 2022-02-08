@@ -1,2 +1,0 @@
-<!-- incompatibleEnums2 -->
-Comparison of incompatible enums 'E1' and 'E2' is always unsuccessful

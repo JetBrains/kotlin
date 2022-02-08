@@ -1,0 +1,7 @@
+class X<T> {
+  inner class Y<T1>
+
+  class Z<T2>
+
+  fun <T3> foo()
+}

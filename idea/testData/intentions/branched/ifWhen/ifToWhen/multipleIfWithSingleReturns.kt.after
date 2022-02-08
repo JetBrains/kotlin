@@ -1,8 +1,0 @@
-fun bar(arg: Int): Int {
-    when (arg) {
-        1 -> return 2
-        2 -> return 5
-        3 -> return 9
-        else -> return 13
-    }
-}

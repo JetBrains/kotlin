@@ -1,3 +1,4 @@
+// LANGUAGE: -ProhibitSimplificationOfNonTrivialConstBooleanExpressions
 fun unreachable() {}
 
 fun a() {
@@ -13,11 +14,11 @@ fun b() {
 }
 
 fun c() {
-    do {} while (1 == 1)
+    do {} while (<!NON_TRIVIAL_BOOLEAN_CONSTANT!>1 == 1<!>)
 }
 
 fun d() {
-    while (2 == 2) {}
+    while (<!NON_TRIVIAL_BOOLEAN_CONSTANT!>2 == 2<!>) {}
 }
 
 fun use(arg: Any) = arg

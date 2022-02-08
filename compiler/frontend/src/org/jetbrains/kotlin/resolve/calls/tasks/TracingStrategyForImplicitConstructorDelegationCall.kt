@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.BindingContext.CALL
 import org.jetbrains.kotlin.resolve.BindingContext.REFERENCE_TARGET
 import org.jetbrains.kotlin.resolve.BindingContext.RESOLVED_CALL
 import org.jetbrains.kotlin.resolve.BindingTrace
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.reportOnElement
+import org.jetbrains.kotlin.resolve.calls.util.reportOnElement
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.InferenceErrorData
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -69,7 +69,7 @@ class TracingStrategyForImplicitConstructorDelegationCall(
         reportError(trace)
     }
 
-    override fun <D : CallableDescriptor?> ambiguity(trace: BindingTrace, descriptors: MutableCollection<out ResolvedCall<D>>) {
+    override fun <D : CallableDescriptor?> ambiguity(trace: BindingTrace, resolvedCalls: MutableCollection<out ResolvedCall<D>>) {
         reportError(trace)
     }
 

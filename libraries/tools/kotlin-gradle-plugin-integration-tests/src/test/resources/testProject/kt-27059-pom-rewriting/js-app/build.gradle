@@ -1,5 +1,6 @@
 plugins {
     id "kotlin2js"
+    id "maven-publish"
 }
 
 group = "com.example"
@@ -27,36 +28,13 @@ if (project.findProperty("mppProjectDependency") == "true") {
 
 }
 
-
-if (project.findProperty("legacyPublishing") == "true") {
-
-    apply plugin: 'maven'
-
-    uploadArchives {
-        repositories {
-            mavenDeployer {
-                repository(url: "file://${rootProject.buildDir}/repo")
-            }
+publishing {
+    publications {
+        main(MavenPublication) {
+            from components.java
         }
     }
-
-    tasks.create("publish") {
-        dependsOn uploadArchives
+    repositories {
+        maven { setUrl("${rootProject.buildDir}/repo") }
     }
-
-} else {
-
-    apply plugin: 'maven-publish'
-
-    publishing {
-        publications {
-            main(MavenPublication) {
-                from components.java
-            }
-        }
-        repositories {
-            maven { setUrl("${rootProject.buildDir}/repo") }
-        }
-    }
-
 }

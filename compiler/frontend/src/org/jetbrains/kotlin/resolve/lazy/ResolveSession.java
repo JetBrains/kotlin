@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor;
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension;
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory;
@@ -85,6 +86,9 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private WrappedTypeFactory wrappedTypeFactory;
     private PlatformDiagnosticSuppressor platformDiagnosticSuppressor;
     private SamConversionResolver samConversionResolver;
+    private SealedClassInheritorsProvider sealedClassInheritorsProvider;
+
+    private AdditionalClassPartsProvider additionalClassPartsProvider;
 
     private final SyntheticResolveExtension syntheticResolveExtension;
 
@@ -157,6 +161,16 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
         this.samConversionResolver = samConversionResolver;
     }
 
+    @Inject
+    public void setAdditionalClassPartsProvider(@NotNull AdditionalClassPartsProvider additionalClassPartsProvider) {
+        this.additionalClassPartsProvider = additionalClassPartsProvider;
+    }
+
+    @Inject
+    public void setSealedClassInheritorsProvider(@NotNull SealedClassInheritorsProvider sealedClassInheritorsProvider) {
+        this.sealedClassInheritorsProvider = sealedClassInheritorsProvider;
+    }
+
     // Only calls from injectors expected
     @Deprecated
     public ResolveSession(
@@ -188,6 +202,12 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
                 if (fragment != null) {
                     packageFragments.add(fragment);
                 }
+            }
+
+            @Override
+            public boolean isEmpty(@NotNull FqName fqName) {
+                PackageMemberDeclarationProvider provider = declarationProviderFactory.getPackageMemberDeclarationProvider(fqName);
+                return provider == null;
             }
 
             @NotNull
@@ -491,7 +511,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
 
     @NotNull
     @Override
-    public NewKotlinTypeChecker getKotlinTypeChecker() {
+    public NewKotlinTypeChecker getKotlinTypeCheckerOfOwnerModule() {
         return kotlinTypeChecker;
     }
 
@@ -499,5 +519,24 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     public SamConversionResolver getSamConversionResolver() {
         return samConversionResolver;
+    }
+
+    @NotNull
+    @Override
+    public AdditionalClassPartsProvider getAdditionalClassPartsProvider() {
+        return additionalClassPartsProvider;
+    }
+
+    @NotNull
+    @Override
+    public SealedClassInheritorsProvider getSealedClassInheritorsProvider() {
+        return sealedClassInheritorsProvider;
+    }
+
+    // TODO: get inference session, otherwise, for instance, builder inference session is lost here
+    @Nullable
+    @Override
+    public InferenceSession getInferenceSession() {
+        return null;
     }
 }

@@ -1,9 +1,13 @@
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 interface IFoo {
     fun foo(): String
 }
 
-inline class ICFoo(val t: IFoo): IFoo {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class ICFoo(val t: IFoo): IFoo {
     override fun foo(): String = t.foo()
 }
 

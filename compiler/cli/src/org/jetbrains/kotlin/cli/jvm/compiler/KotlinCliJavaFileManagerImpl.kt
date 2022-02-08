@@ -73,22 +73,37 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     private fun findVirtualFileForTopLevelClass(classId: ClassId, searchScope: GlobalSearchScope): VirtualFile? {
         val relativeClassName = classId.relativeClassName.asString()
         return topLevelClassesCache.getOrPut(classId.packageFqName.child(classId.relativeClassName.pathSegments().first())) {
-            index.findClass(classId) { dir, type ->
-                findVirtualFileGivenPackage(dir, relativeClassName, type)
-            } ?: singleJavaFileRootsIndex.findJavaSourceClass(classId)
+            // Search java sources first. For build tools, it makes sense to build new files passing all the
+            // class files for the previous build on the class path.
+            //
+            // Suppose we have A.java and B.kt, we compile them and have the class files in previous.jar.
+            // Now we change both. A field is added to A which is used from B.kt.
+            //
+            // For a compilation such as:
+            //
+            //     kotlinc -cp previous.jar A.java B.kt
+            //
+            // we want to make sure that we get the new A.java and not the old version A.class from previous.jar.
+            //
+            // Otherwise B.kt will not see the newly added field in A.
+            singleJavaFileRootsIndex.findJavaSourceClass(classId)
+                ?: index.findClass(classId) { dir, type ->
+                    findVirtualFileGivenPackage(dir, relativeClassName, type)
+                }
+
         }?.takeIf { it in searchScope }
     }
 
     private val binaryCache: MutableMap<ClassId, JavaClass?> = THashMap()
     private val signatureParsingComponent = BinaryClassSignatureParser()
 
-    fun findClass(classId: ClassId, searchScope: GlobalSearchScope): JavaClass? = findClass(JavaClassFinder.Request(classId), searchScope)
+    fun findClass(classId: ClassId, searchScope: GlobalSearchScope) = findClass(JavaClassFinder.Request(classId), searchScope)
 
     override fun findClass(request: JavaClassFinder.Request, searchScope: GlobalSearchScope): JavaClass? {
         val (classId, classFileContentFromRequest, outerClassFromRequest) = request
         val virtualFile = findVirtualFileForTopLevelClass(classId, searchScope) ?: return null
 
-        if (!usePsiClassFilesReading && virtualFile.extension == "class") {
+        if (!usePsiClassFilesReading && (virtualFile.extension == "class" || virtualFile.extension == "sig")) {
             // We return all class files' names in the directory in knownClassNamesInPackage method, so one may request an inner class
             return binaryCache.getOrPut(classId) {
                 // Note that currently we implicitly suppose that searchScope for binary classes is constant and we do not use it
@@ -100,7 +115,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                 classId.outerClassId?.let { outerClassId ->
                     val outerClass = outerClassFromRequest ?: findClass(outerClassId, searchScope)
 
-                    return if (outerClass is BinaryJavaClass)
+                    return@getOrPut if (outerClass is BinaryJavaClass)
                         outerClass.findInnerClass(classId.shortClassName, classFileContentFromRequest)
                     else
                         outerClass?.findInnerClass(classId.shortClassName)
@@ -199,7 +214,14 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         if (!found) {
             found = singleJavaFileRootsIndex.findJavaSourceClasses(packageFqName).isNotEmpty()
         }
-        return if (found) PsiPackageImpl(myPsiManager, packageName) else null
+
+        if (!found) return null
+
+        return object : PsiPackageImpl(myPsiManager, packageName) {
+            // Do not check validness for packages we just made sure are actually present
+            // It might be important for source roots that have non-trivial package prefix
+            override fun isValid() = true
+        }
     }
 
     private fun findVirtualFileGivenPackage(
@@ -211,6 +233,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
         val vFile = when (rootType) {
             JavaRoot.RootType.BINARY -> packageDir.findChild("$topLevelClassName.class")
+            JavaRoot.RootType.BINARY_SIG -> packageDir.findChild("$topLevelClassName.sig")
             JavaRoot.RootType.SOURCE -> packageDir.findChild("$topLevelClassName.java")
         } ?: return null
 
@@ -231,7 +254,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         val result = THashSet<String>()
         index.traverseDirectoriesInPackage(packageFqName, continueSearch = { dir, _ ->
             for (child in dir.children) {
-                if (child.extension == "class" || child.extension == "java") {
+                if (child.extension == "class" || child.extension == "java" || child.extension == "sig") {
                     result.add(child.nameWithoutExtension)
                 }
             }

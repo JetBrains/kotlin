@@ -213,7 +213,7 @@ class PairPrimitiveMemberDefinition : MemberTemplateDefinition<Pair<PrimitiveTyp
     }
 
     init {
-        builderWith { (p1, p2) -> primitive = p1 }
+        builderWith { (p1, _) -> primitive = p1 }
     }
 }
 

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import java.io.File
@@ -65,12 +64,24 @@ enum class FilesOptionKind {
 /** Defines a subplugin option that should be excluded from Gradle input/output checks */
 open class InternalSubpluginOption(key: String, value: String) : SubpluginOption(key, value)
 
+/** Keeps one or more compiler options for one of more compiler plugins. */
+open class CompilerPluginConfig {
+    protected val optionsByPluginId = mutableMapOf<String, MutableList<SubpluginOption>>()
+
+    fun allOptions(): Map<String, List<SubpluginOption>> = optionsByPluginId
+
+    fun addPluginArgument(pluginId: String, option: SubpluginOption) {
+        optionsByPluginId.getOrPut(pluginId) { mutableListOf() }.add(option)
+    }
+}
+
 // Deprecated because most calls require the tasks to be instantiated, which is not compatible with Gradle task configuration avoidance.
 @Deprecated(
     message = "This interface will be removed due to performance considerations. " +
             "Please use the KotlinCompilerPluginSupportPlugin interface instead " +
             "and remove the META-INF/services/org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin entry.",
-    replaceWith = ReplaceWith("KotlinCompilerPluginSupportPlugin")
+    replaceWith = ReplaceWith("KotlinCompilerPluginSupportPlugin"),
+    level = DeprecationLevel.ERROR
 )
 interface KotlinGradleSubplugin<in KotlinCompile : AbstractCompile> {
     fun isApplicable(project: Project, task: AbstractCompile): Boolean
@@ -123,6 +134,14 @@ interface KotlinCompilerPluginSupportPlugin : Plugin<Project> {
 
     fun getCompilerPluginId(): String
     fun getPluginArtifact(): SubpluginArtifact
+
+    /**
+     * Kotlin/Native-specific plugin artifact.
+     *
+     * If Gradle is configured to use Kotlin/Native embeddable compiler jar
+     * (with `kotlin.native.useEmbeddableCompilerJar=true` project property),
+     * then [getPluginArtifact] is used instead.
+     */
     fun getPluginArtifactForNative(): SubpluginArtifact? = null
 }
 

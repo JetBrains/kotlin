@@ -32,7 +32,7 @@ object JvmPlatformAnalyzerServices : PlatformDependentAnalyzerServices() {
             }
         }
 
-        for (builtInPackage in JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FROM_CLASS_LOADER).builtInPackagesImportedByDefault) {
+        for (builtInPackage in JvmBuiltIns(storageManager, JvmBuiltIns.Kind.FALLBACK).builtInPackagesImportedByDefault) {
             addAllClassifiersFromScope(builtInPackage.memberScope)
         }
     }

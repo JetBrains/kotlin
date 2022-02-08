@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 //KT-1897 When call cannot be resolved to any function, save information about types of arguments
 
 package a
@@ -9,21 +8,21 @@ fun foo(i: Int, s: String) {}
 
 fun test() {
 
-    <!INAPPLICABLE_CANDIDATE!>bar<!>(<!UNRESOLVED_REFERENCE!>xx<!>)
+    bar(<!TOO_MANY_ARGUMENTS, UNRESOLVED_REFERENCE!>xx<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>bar<!> { }
+    bar <!TOO_MANY_ARGUMENTS!>{ }<!>
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>("", 1, <!UNRESOLVED_REFERENCE!>xx<!>)
+    foo("", 1, <!TOO_MANY_ARGUMENTS, UNRESOLVED_REFERENCE!>xx<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(r = <!UNRESOLVED_REFERENCE!>xx<!>, i = "", s = "")
+    foo(<!NAMED_PARAMETER_NOT_FOUND!>r<!> = <!UNRESOLVED_REFERENCE!>xx<!>, i = "", s = "")
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(i = 1, i = 1, s = 11)
+    foo(i = 1, <!ARGUMENT_PASSED_TWICE!>i<!> = 1, s = <!ARGUMENT_TYPE_MISMATCH!>11<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>("", s = 2)
+    foo(<!ARGUMENT_TYPE_MISMATCH!>""<!>, s = <!ARGUMENT_TYPE_MISMATCH!>2<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>(i = "", s = 2, 33)
+    foo(i = "", s = 2, <!TOO_MANY_ARGUMENTS!>33<!>)
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>("", 1) {}
+    foo("", 1) <!TOO_MANY_ARGUMENTS!>{}<!>
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>("", 1) {} {}
+    foo("", 1) <!TOO_MANY_ARGUMENTS!>{}<!> <!MANY_LAMBDA_EXPRESSION_ARGUMENTS!>{}<!>
 }

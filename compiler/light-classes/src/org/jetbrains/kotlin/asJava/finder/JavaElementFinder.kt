@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.finder
@@ -26,22 +15,23 @@ import com.intellij.psi.util.PsiUtilCore
 import com.intellij.util.SmartList
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.asJava.KotlinAsJavaSupport
+import org.jetbrains.kotlin.asJava.hasRepeatableAnnotationContainer
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isValidJavaFqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import java.util.*
 
 class JavaElementFinder(
     private val project: Project,
-    private val kotlinAsJavaSupport: KotlinAsJavaSupport
 ) : PsiElementFinder(), KotlinFinderMarker {
     private val psiManager = PsiManager.getInstance(project)
+    private val kotlinAsJavaSupport = KotlinAsJavaSupport.getInstance(project)
 
     override fun findClass(qualifiedName: String, scope: GlobalSearchScope) = findClasses(qualifiedName, scope).firstOrNull()
 
@@ -64,9 +54,10 @@ class JavaElementFinder(
     }
 
     // Finds explicitly declared classes and objects, not package classes
-    // Also DefaultImpls classes of interfaces
+    // Also DefaultImpls classes of interfaces, Container classes of repeatable annotations
     private fun findClassesAndObjects(qualifiedName: FqName, scope: GlobalSearchScope, answer: MutableList<PsiClass>) {
         findInterfaceDefaultImpls(qualifiedName, scope, answer)
+        findRepeatableAnnotationContainer(qualifiedName, scope, answer)
 
         val classOrObjectDeclarations = kotlinAsJavaSupport.findClassOrObjectDeclarations(qualifiedName, scope)
 
@@ -80,17 +71,30 @@ class JavaElementFinder(
         }
     }
 
-    private fun findInterfaceDefaultImpls(qualifiedName: FqName, scope: GlobalSearchScope, answer: MutableList<PsiClass>) {
-        if (qualifiedName.isRoot) return
+    private fun findInterfaceDefaultImpls(qualifiedName: FqName, scope: GlobalSearchScope, answer: MutableList<PsiClass>) =
+        findSyntheticInnerClass(qualifiedName, JvmAbi.DEFAULT_IMPLS_CLASS_NAME, scope, answer) {
+            it is KtClass && it.isInterface()
+        }
 
-        if (qualifiedName.shortName().asString() != JvmAbi.DEFAULT_IMPLS_CLASS_NAME) return
+    private fun findRepeatableAnnotationContainer(qualifiedName: FqName, scope: GlobalSearchScope, answer: MutableList<PsiClass>) =
+        findSyntheticInnerClass(qualifiedName, JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME, scope, answer) {
+            it.hasRepeatableAnnotationContainer
+        }
+
+    private fun findSyntheticInnerClass(
+        qualifiedName: FqName,
+        syntheticName: String,
+        scope: GlobalSearchScope,
+        answer: MutableList<PsiClass>,
+        predicate: (KtClassOrObject) -> Boolean,
+    ) {
+        if (qualifiedName.isRoot || qualifiedName.shortName().asString() != syntheticName) return
 
         for (classOrObject in kotlinAsJavaSupport.findClassOrObjectDeclarations(qualifiedName.parent(), scope)) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-            //NOTE: can't filter out more interfaces right away because decompiled declarations do not have member bodies
-            if (classOrObject is KtClass && classOrObject.isInterface()) {
+            if (predicate(classOrObject)) {
                 val interfaceClass = kotlinAsJavaSupport.getLightClass(classOrObject) ?: continue
-                val implsClass = interfaceClass.findInnerClassByName(JvmAbi.DEFAULT_IMPLS_CLASS_NAME, false) ?: continue
+                val implsClass = interfaceClass.findInnerClassByName(syntheticName, false) ?: continue
                 answer.add(implsClass)
             }
         }
@@ -160,13 +164,11 @@ class JavaElementFinder(
     override fun getPackageFiles(psiPackage: PsiPackage, scope: GlobalSearchScope): Array<PsiFile> =
         kotlinAsJavaSupport.findFilesForPackage(FqName(psiPackage.qualifiedName), scope).toTypedArray()
 
-    override fun getPackageFilesFilter(psiPackage: PsiPackage, scope: GlobalSearchScope): Condition<PsiFile>? {
-        return Condition { input ->
-            if (input !is KtFile) {
-                true
-            } else {
-                psiPackage.qualifiedName == input.packageFqName.asString()
-            }
+    override fun getPackageFilesFilter(psiPackage: PsiPackage, scope: GlobalSearchScope): Condition<PsiFile> = Condition { input ->
+        if (input !is KtFile) {
+            true
+        } else {
+            psiPackage.qualifiedName == input.packageFqName.asString()
         }
     }
 
@@ -175,16 +177,14 @@ class JavaElementFinder(
             EP.getPoint(project).extensions.firstIsInstanceOrNull()
                 ?: error(JavaElementFinder::class.java.simpleName + " is not found for project " + project)
 
-        fun byClasspathComparator(searchScope: GlobalSearchScope): Comparator<PsiElement> {
-            return Comparator { o1, o2 ->
-                val f1 = PsiUtilCore.getVirtualFile(o1)
-                val f2 = PsiUtilCore.getVirtualFile(o2)
-                when {
-                    f1 === f2 -> 0
-                    f1 == null -> -1
-                    f2 == null -> 1
-                    else -> searchScope.compare(f2, f1)
-                }
+        fun byClasspathComparator(searchScope: GlobalSearchScope): Comparator<PsiElement> = Comparator { o1, o2 ->
+            val f1 = PsiUtilCore.getVirtualFile(o1)
+            val f2 = PsiUtilCore.getVirtualFile(o2)
+            when {
+                f1 === f2 -> 0
+                f1 == null -> -1
+                f2 == null -> 1
+                else -> searchScope.compare(f2, f1)
             }
         }
     }

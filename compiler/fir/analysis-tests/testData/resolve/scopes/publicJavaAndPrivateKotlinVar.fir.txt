@@ -1,0 +1,23 @@
+FILE: C.kt
+    public open class C : R|B<kotlin/Any?>| {
+        public constructor(name: R|kotlin/String|): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final var name: R|kotlin/String| = R|<local>/name|
+            private get(): R|kotlin/String|
+            private set(value: R|kotlin/String|): R|kotlin/Unit|
+
+        public open override fun getName(): R|kotlin/String| {
+            ^getName this@R|/C|.R|/C.name|
+        }
+
+        public open override fun setName(newName: R|kotlin/String|): R|kotlin/Any?| {
+            ^setName Null(null)
+        }
+
+    }
+FILE: main.kt
+    public final fun test(d: R|D|): R|kotlin/Unit| {
+        lval name: R|kotlin/String| = R|<local>/d|.R|/C.name|
+    }

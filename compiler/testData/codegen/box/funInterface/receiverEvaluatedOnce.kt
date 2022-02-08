@@ -1,5 +1,4 @@
-// !LANGUAGE: +NewInference +FunctionalInterfaceConversion +SamConversionPerArgument +SamConversionForKotlinFunctions
-// WITH_RUNTIME
+// WITH_STDLIB
 
 fun interface KRunnable {
     fun invoke()

@@ -1,4 +1,5 @@
 // !LANGUAGE: +WarningOnMainUnusedParameter
+// !DIAGNOSTICS: +UNUSED_PARAMETER
 
 // FILE: a.kt
 fun main(<!UNUSED_PARAMETER!>args<!>: Array<String>) {}

@@ -1,5 +1,5 @@
 open class MyBase protected constructor() {
-    protected constructor(<!UNUSED_PARAMETER!>x<!>: Nothing?): this()
+    protected constructor(x: Nothing?): this()
 }
 typealias MyAlias = MyBase
 

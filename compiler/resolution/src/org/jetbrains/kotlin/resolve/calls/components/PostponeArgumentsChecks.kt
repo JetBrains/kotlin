@@ -86,7 +86,7 @@ private fun preprocessLambdaArgument(
 
     if (expectedType != null) {
         val lambdaType = createFunctionType(
-            csBuilder.builtIns, Annotations.EMPTY, resolvedArgument.receiver,
+            csBuilder.builtIns, Annotations.EMPTY, resolvedArgument.receiver, resolvedArgument.contextReceivers,
             resolvedArgument.parameters, null, resolvedArgument.returnType, resolvedArgument.isSuspend
         )
         csBuilder.addSubtypeConstraint(lambdaType, expectedType, ArgumentConstraintPositionImpl(argument))
@@ -114,6 +114,14 @@ private fun extraLambdaInfo(
         argumentAsFunctionExpression?.returnType ?: expectedType?.arguments?.singleOrNull()?.type?.unwrap()?.takeIf { isFunctionSupertype }
         ?: typeVariable.defaultType
 
+    val contextReceiversTypes = argumentAsFunctionExpression?.contextReceiversTypes?.mapIndexed { index, contextReceiverType ->
+        if (contextReceiverType != null) {
+            contextReceiverType
+        } else {
+            diagnosticsHolder.addDiagnostic(NotEnoughInformationForLambdaParameter(argument, index))
+            ErrorUtils.createErrorType("<Unknown lambda context receiver type>")
+        }
+    } ?: emptyList()
     val parameters = argument.parametersTypes?.mapIndexed { index, parameterType ->
         if (parameterType != null) {
             parameterType
@@ -130,6 +138,7 @@ private fun extraLambdaInfo(
         argument,
         isSuspend,
         receiverType,
+        contextReceiversTypes,
         parameters,
         returnType,
         typeVariable.takeIf { newTypeVariableUsed },
@@ -146,6 +155,7 @@ private fun extractLambdaInfoFromFunctionalType(
     val parametersTypes = argument.parametersTypes
     val expectedParameters = expectedType.getValueParameterTypesFromFunctionType()
     val expectedReceiver = expectedType.getReceiverTypeFromFunctionType()?.unwrap()
+    val expectedContextReceivers = expectedType.getContextReceiverTypesFromFunctionType().map { it.unwrap() }.toTypedArray()
     val argumentAsFunctionExpression = argument.safeAs<FunctionExpression>()
 
     val receiverFromExpected = argumentAsFunctionExpression?.receiverType == null && expectedReceiver != null
@@ -186,6 +196,7 @@ private fun extractLambdaInfoFromFunctionalType(
                 type.orExpected(index)
             } ?: expectedParameters.map { it.type.unwrap() }) to (if (receiverFromExpected) expectedReceiver else null)
     }
+    val contextReceivers = (argumentAsFunctionExpression?.contextReceiversTypes ?: expectedContextReceivers).filterNotNull()
 
     val returnType = argumentAsFunctionExpression?.returnType ?: expectedType.getReturnTypeFromFunctionType().unwrap()
 
@@ -193,6 +204,7 @@ private fun extractLambdaInfoFromFunctionalType(
         argument,
         expectedType.isSuspendFunctionType,
         receiver,
+        contextReceivers,
         parameters,
         returnType,
         typeVariableForLambdaReturnType = returnTypeVariable,
@@ -250,11 +262,6 @@ private fun preprocessCallableReference(
 
     if (expectedType == null) return result
 
-    val lhsResult = argument.lhsResult
-    if (lhsResult is LHSResult.Type) {
-        csBuilder.addConstraintFromLHS(argument, lhsResult, expectedType)
-    }
-
     val notCallableTypeConstructor =
         csBuilder.getProperSuperTypeConstructors(expectedType)
             .firstOrNull { !ReflectionTypes.isPossibleExpectedCallableType(it.requireIs()) }
@@ -269,30 +276,6 @@ private fun preprocessCallableReference(
         )
     }
     return result
-}
-
-private fun ConstraintSystemBuilder.addConstraintFromLHS(
-    argument: CallableReferenceKotlinCallArgument,
-    lhsResult: LHSResult.Type,
-    expectedType: UnwrappedType
-) {
-    if (!ReflectionTypes.isNumberedTypeWithOneOrMoreNumber(expectedType)) return
-
-    val lhsType = lhsResult.unboundDetailedReceiver.stableType
-    val expectedTypeProjectionForLHS = expectedType.arguments.first()
-    val expectedTypeForLHS = expectedTypeProjectionForLHS.type
-    val constraintPosition = LHSArgumentConstraintPositionImpl(argument, lhsResult.qualifier ?: lhsResult.unboundDetailedReceiver)
-    val expectedTypeVariance = expectedTypeProjectionForLHS.projectionKind.convertVariance()
-    val effectiveVariance = AbstractTypeChecker.effectiveVariance(
-        expectedType.constructor.parameters.first().variance.convertVariance(),
-        expectedTypeVariance
-    ) ?: expectedTypeVariance
-
-    when (effectiveVariance) {
-        TypeVariance.INV -> addEqualityConstraint(lhsType, expectedTypeForLHS, constraintPosition)
-        TypeVariance.IN -> addSubtypeConstraint(expectedTypeForLHS, lhsType, constraintPosition)
-        TypeVariance.OUT -> addSubtypeConstraint(lhsType, expectedTypeForLHS, constraintPosition)
-    }
 }
 
 private fun preprocessCollectionLiteralArgument(

@@ -17,7 +17,7 @@ class B {
 fun <T> bar(f: (T) -> Unit): T = TODO()
 
 fun test() {
-    myWith(A()) {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>myWith<!>(A()) {
         val t1 = bar(::foo)
         t1
 
@@ -31,7 +31,7 @@ fun test() {
             val t3 = bar(::baz)
             t3
 
-            bar(<!UNRESOLVED_REFERENCE!>::foo<!>)
+            bar(::<!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!>)
         }
     }
 }

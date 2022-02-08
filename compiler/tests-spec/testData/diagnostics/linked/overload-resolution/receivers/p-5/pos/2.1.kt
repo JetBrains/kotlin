@@ -14,7 +14,7 @@
  * DESCRIPTION: The implicit this receiver has higher priority than phantom static implicit this
  */
 
-// FILE: TestCase.kt
+// FILE: TestCase1.kt
 // TESTCASE NUMBER: 1
 package testsCase1
 
@@ -54,7 +54,7 @@ enum class Super_2 {
     }
 }
 
-// FILE: TestCase.kt
+// FILE: TestCase2.kt
 // TESTCASE NUMBER: 2
 package testsCase2
 

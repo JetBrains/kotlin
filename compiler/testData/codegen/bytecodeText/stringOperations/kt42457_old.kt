@@ -1,6 +1,6 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 // KOTLIN_CONFIGURATION_FLAGS: STRING_CONCAT=indy-with-constants
-// JVM_TARGET: 9
+// IGNORE_JAVA_ERRORS
+// JVM_TARGET: 11
 // FILE: JavaClass.java
 
 public class JavaClass {

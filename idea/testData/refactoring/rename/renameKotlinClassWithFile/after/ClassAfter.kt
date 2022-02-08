@@ -1,3 +1,0 @@
-package testing
-
-class ClassAfter

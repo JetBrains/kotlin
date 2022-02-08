@@ -3,8 +3,8 @@ package unresolved
 class Pair<A, B>(val a: A, val b: B)
 
 fun testGenericArgumentsCount() {
-    val p1: Pair<Int> = Pair(2, 2)
-    val p2: Pair = Pair(2, 2)
+    val p1: Pair<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><Int><!> = Pair(2, 2)
+    val p2: <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>Pair<!> = Pair(2, 2)
 }
 
 fun testUnresolved() {
@@ -22,11 +22,11 @@ fun testUnresolved() {
         is String -> <!UNRESOLVED_REFERENCE!>a<!>
     }
 
-    <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>for (j in <!UNRESOLVED_REFERENCE!>collection<!>) {
+    for (j in <!ITERATOR_MISSING, UNRESOLVED_REFERENCE!>collection<!>) {
        var i: Int = j
        i += 1
        foo1(j)
-    }<!>
+    }
 }
 
 fun foo1(i: Int) {}

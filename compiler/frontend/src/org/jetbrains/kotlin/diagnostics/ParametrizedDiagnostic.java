@@ -23,4 +23,10 @@ public interface ParametrizedDiagnostic<E extends PsiElement> extends Diagnostic
     @NotNull
     @Override
     E getPsiElement();
+
+    @NotNull
+    @Override
+    default String getFactoryName() {
+        return getFactory().getName();
+    }
 }

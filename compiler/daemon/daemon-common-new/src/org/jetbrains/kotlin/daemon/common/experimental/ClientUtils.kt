@@ -49,7 +49,7 @@ suspend fun walkDaemonsAsync(
     useRMI: Boolean = true,
     useSockets: Boolean = true
 ): List<DaemonWithMetadataAsync> { // TODO: replace with Deferred<List<DaemonWithMetadataAsync>> and use mapNotNullAsync to speed this up
-    val classPathDigest = compilerId.compilerClasspath.map { File(it).absolutePath }.distinctStringsDigest().toHexString()
+    val classPathDigest = compilerId.digest()
     val portExtractor = makePortFromRunFilenameExtractor(classPathDigest)
     return registryDir.walk().toList() // list, since walk returns Sequence and Sequence.map{...} is not inline => coroutines dont work
         .map { Pair(it, portExtractor(it.name)) }

@@ -1,0 +1,5 @@
+package
+
+public val a2: kotlin.Int
+public val a3: kotlin.Int
+public inline operator fun </*0*/ reified T> kotlin.Int.invoke(): kotlin.Int

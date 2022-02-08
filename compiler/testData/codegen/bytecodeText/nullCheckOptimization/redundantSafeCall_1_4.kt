@@ -1,5 +1,4 @@
-// !API_VERSION: LATEST
-
+// !LANGUAGE: -SafeCallsAreAlwaysNullable
 fun test(s: String) = s?.length
 
 // 0 IFNULL

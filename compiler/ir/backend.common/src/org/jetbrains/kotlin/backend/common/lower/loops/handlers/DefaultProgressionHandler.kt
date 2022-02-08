@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.getPropertyGetter
+import org.jetbrains.kotlin.ir.util.shallowCopy
 
 /** Builds a [HeaderInfo] for progressions not handled by more specialized handlers. */
 internal class DefaultProgressionHandler(private val context: CommonBackendContext, private val allowUnsignedBounds: Boolean = false) :
@@ -35,10 +36,10 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
             val (progressionVar, progressionExpression) = createTemporaryVariableIfNecessary(expression, nameHint = "progression")
             val progressionClass = expression.type.getClass()!!
             val first = irCall(progressionClass.symbol.getPropertyGetter("first")!!).apply {
-                dispatchReceiver = progressionExpression.copy()
+                dispatchReceiver = progressionExpression.shallowCopy()
             }
             val last = irCall(progressionClass.symbol.getPropertyGetter("last")!!).apply {
-                dispatchReceiver = progressionExpression.copy()
+                dispatchReceiver = progressionExpression.shallowCopy()
             }
 
             // *Ranges (e.g., IntRange) have step == 1 and is always increasing.
@@ -47,7 +48,7 @@ internal class DefaultProgressionHandler(private val context: CommonBackendConte
                 irInt(1)
             } else {
                 irCall(progressionClass.symbol.getPropertyGetter("step")!!).apply {
-                    dispatchReceiver = progressionExpression.copy()
+                    dispatchReceiver = progressionExpression.shallowCopy()
                 }
             }
             val direction = if (isRange) ProgressionDirection.INCREASING else ProgressionDirection.UNKNOWN

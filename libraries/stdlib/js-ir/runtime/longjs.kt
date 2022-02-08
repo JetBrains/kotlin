@@ -1,8 +1,7 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
 
 // Copyright 2009 The Closure Library Authors. All Rights Reserved.
 //
@@ -259,7 +258,7 @@ internal fun Long.divide(other: Long): Long {
         // We will tweak the approximate result by changing it in the 48-th digit or
         // the smallest non-fractional digit, whichever is larger.
         val log2 = JsMath.ceil(JsMath.log(approx2) / JsMath.LN2)
-        val delta = if (log2 <= 48) 1.0 else JsMath.pow(2, log2 - 48)
+        val delta = if (log2 <= 48) 1.0 else JsMath.pow(2.0, log2 - 48)
 
         // Decrease the approximation until it is smaller than the remainder.  Note
         // that if it is too large, the product overflows and is negative.
@@ -386,13 +385,4 @@ private val MIN_VALUE = Long(0, 1 shl 31)
 
 private val TWO_PWR_24_ = fromInt(1 shl 24)
 
-@JsName("Math")
-internal external object JsMath {
-    fun max(lhs: Number, rhs: Number): Double
-    fun floor(x: Number): Double
-    fun ceil(x: Number): Double
-    fun log(x: Number): Double
-    fun pow(base: Number, exponent: Number): Double
-    val LN2: Double
-}
 

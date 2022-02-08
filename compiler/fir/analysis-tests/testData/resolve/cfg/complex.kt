@@ -3,8 +3,6 @@ interface AutoCloseable {
     fun close()
 }
 
-fun Throwable.addSuppressed(other: Throwable) {}
-
 internal fun AutoCloseable?.closeFinally(cause: Throwable?) = when {
     this == null -> {}
     cause == null -> close()

@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class IC(val s: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IC(val s: String)
 
 interface IFoo<T> {
     fun foo(x: T, s: String = "K"): String

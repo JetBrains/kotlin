@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 //KT-2856 Fix the getOrElse signature to be able to return any supertype of V
 package d
 
@@ -17,4 +18,4 @@ fun main() {
 }
 
 //from standard library
-fun println(<!UNUSED_PARAMETER!>message<!> : Any?) {}
+fun println(message : Any?) {}

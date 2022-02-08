@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.CliSealedClassInheritorsProvider
 
 class ResolverForSingleModuleProject<M : ModuleInfo>(
     debugName: String,
@@ -59,6 +60,7 @@ class ResolverForSingleModuleProject<M : ModuleInfo>(
             projectContext.withModule(descriptor),
             modulesContent(moduleInfo),
             this,
-            languageVersionSettings
+            languageVersionSettings,
+            CliSealedClassInheritorsProvider,
         )
 }

@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'org.jetbrains.kotlin.kapt'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        url "https://packages.jetbrains.team/maven/p/ij/intellij-dependencies/"
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+    kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+    kapt "org.jetbrains.intellij.deps:asm-all:9.0"
+    testImplementation 'junit:junit:4.13.2'
+}

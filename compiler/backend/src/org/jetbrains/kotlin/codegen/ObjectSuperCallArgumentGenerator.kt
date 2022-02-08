@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 internal class ObjectSuperCallArgumentGenerator(
@@ -63,12 +62,6 @@ internal class ObjectSuperCallArgumentGenerator(
     public override fun generateDefault(i: Int, argument: DefaultValueArgument) {
         val type = parameters[i].asmType
         pushDefaultValueOnStack(type, iv)
-    }
-
-    public override fun generateDefaultJava(i: Int, argument: DefaultValueArgument) {
-        val type = parameters[i].asmType
-        val value =  superValueParameters[i].findJavaDefaultArgumentValue(type, typeMapper)
-        value.put(type, iv)
     }
 
     public override fun generateVararg(i: Int, argument: VarargValueArgument) {

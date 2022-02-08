@@ -7,8 +7,53 @@
 
 package kotlin.coroutines.intrinsics
 
-import kotlin.coroutines.*
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.ContinuationInterceptor
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.CoroutineImpl
 import kotlin.internal.InlineOnly
+
+/**
+ * Invoke 'invoke' method of suspend super type
+ * Because callable references translated with local classes,
+ * necessary to call it in special way, not in synamic way
+ */
+@Suppress("UNUSED_PARAMETER", "unused")
+@PublishedApi
+internal fun <T> (suspend () -> T).invokeSuspendSuperType(
+    completion: Continuation<T>
+): Any? {
+    throw NotImplementedError("It is intrinsic method")
+}
+
+/**
+ * Invoke 'invoke' method of suspend super type with receiver
+ * Because callable references translated with local classes,
+ * necessary to call it in special way, not in synamic way
+ */
+@Suppress("UNUSED_PARAMETER", "unused")
+@PublishedApi
+internal fun <R, T> (suspend R.() -> T).invokeSuspendSuperTypeWithReceiver(
+    receiver: R,
+    completion: Continuation<T>
+): Any? {
+    throw NotImplementedError("It is intrinsic method")
+}
+
+/**
+ * Invoke 'invoke' method of suspend super type with receiver and param
+ * Because callable references translated with local classes,
+ * necessary to call it in special way, not in synamic way
+ */
+@Suppress("UNUSED_PARAMETER", "unused")
+@PublishedApi
+internal fun <R, P, T> (suspend R.(P) -> T).invokeSuspendSuperTypeWithReceiverAndParam(
+    receiver: R,
+    param: P,
+    completion: Continuation<T>
+): Any? {
+    throw NotImplementedError("It is intrinsic method")
+}
 
 /**
  * Starts unintercepted coroutine without receiver and with result type [T] and executes it until its first suspension.
@@ -27,7 +72,9 @@ import kotlin.internal.InlineOnly
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
     completion: Continuation<T>
 ): Any? {
-    return this.asDynamic()(completion)
+    val a = this.asDynamic()
+    return if (jsTypeOf(a) == "function") a(completion)
+    else this.invokeSuspendSuperType(completion)
 }
 
 /**
@@ -47,8 +94,10 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
     completion: Continuation<T>
-): Any?  {
-    return this.asDynamic()(receiver, completion)
+): Any? {
+    val a = this.asDynamic()
+    return if (jsTypeOf(a) == "function") a(receiver, completion)
+    else this.invokeSuspendSuperTypeWithReceiver(receiver, completion)
 }
 
 @InlineOnly
@@ -56,7 +105,11 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
     receiver: R,
     param: P,
     completion: Continuation<T>
-): Any? = this.asDynamic()(receiver, param, completion)
+): Any? {
+    val a = this.asDynamic()
+    return if (jsTypeOf(a) == "function") a(receiver, param, completion)
+    else this.invokeSuspendSuperTypeWithReceiverAndParam(receiver, param, completion)
+}
 
 /**
  * Creates unintercepted coroutine without receiver and with result type [T].
@@ -79,7 +132,9 @@ public actual fun <T> (suspend () -> T).createCoroutineUnintercepted(
     completion: Continuation<T>
 ): Continuation<Unit> =
     createCoroutineFromSuspendFunction(completion) {
-        this.asDynamic()(completion)
+        val a = this.asDynamic()
+        if (jsTypeOf(a) == "function") a(completion)
+        else this.invokeSuspendSuperType(completion)
     }
 
 /**
@@ -104,7 +159,9 @@ public actual fun <R, T> (suspend R.() -> T).createCoroutineUnintercepted(
     completion: Continuation<T>
 ): Continuation<Unit> =
     createCoroutineFromSuspendFunction(completion) {
-        this.asDynamic()(receiver, completion)
+        val a = this.asDynamic()
+        if (jsTypeOf(a) == "function") a(receiver, completion)
+        else this.invokeSuspendSuperTypeWithReceiver(receiver, completion)
     }
 
 /**

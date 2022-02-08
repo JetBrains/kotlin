@@ -34,10 +34,11 @@ class OverloadResolver(
     private val trace: BindingTrace,
     private val overloadFilter: OverloadFilter,
     private val overloadChecker: OverloadChecker,
-    languageVersionSettings: LanguageVersionSettings
+    languageVersionSettings: LanguageVersionSettings,
+    mainFunctionDetectorFactory: MainFunctionDetector.Factory
 ) {
 
-    private val mainFunctionDetector = MainFunctionDetector(trace.bindingContext, languageVersionSettings)
+    private val mainFunctionDetector = mainFunctionDetectorFactory.createMainFunctionDetector(trace, languageVersionSettings)
 
     fun checkOverloads(c: BodiesResolveContext) {
         val inClasses = findConstructorsInNestedClassesAndTypeAliases(c)

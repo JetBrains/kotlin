@@ -1,36 +1,26 @@
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.util.*
-import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.junit.Assert
+import org.junit.Assume
+import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 
-class Kapt3WorkersAndroid32IT : Kapt3Android32IT() {
+class Kapt3WorkersAndroid34IT : Kapt3Android34IT() {
     override fun kaptOptions(): KaptOptions =
         super.kaptOptions().copy(useWorkers = true)
-
-    //android build tool 28.0.3 use org.gradle.api.file.ProjectLayout#fileProperty(org.gradle.api.provider.Provider) that was deleted in gradle 6.0
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.Until("5.6.4")
 }
 
-open class Kapt3Android32IT : Kapt3AndroidIT() {
+open class Kapt3Android34IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v3_2_0
+        get() = AGPVersion.v3_4_1
 
-    //android build tool 28.0.3 use org.gradle.api.file.ProjectLayout#fileProperty(org.gradle.api.provider.Provider) that was deleted in gradle 6.0
+    // AGP 3.4 is not working with Gradle 7+
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.Until("5.6.4")
-}
-
-open class Kapt3Android33IT : Kapt3AndroidIT() {
-    override val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v3_3_2
-
-    //android build tool 28.0.3 use org.gradle.api.file.ProjectLayout#fileProperty(org.gradle.api.provider.Provider) that was deleted in gradle 6.0
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.Until("5.6.4")
+        get() = GradleVersionRequired.Until("6.8.4")
 
     @Test
     fun testAndroidxNavigationSafeArgs() = with(Project("androidx-navigation-safe-args", directoryPrefix = "kapt2")) {
@@ -81,26 +71,125 @@ open class Kapt3Android33IT : Kapt3AndroidIT() {
     }
 }
 
-class Kapt3Android34IT : Kapt3AndroidIT() {
+class Kapt3Android70IT : Kapt3AndroidIT() {
     override val androidGradlePluginVersion: AGPVersion
-        get() = AGPVersion.v3_4_1
+        get() = AGPVersion.v7_0_0
 
-    // there is a weird validation exception in testICWithAnonymousClasses with 5.0 todo: fix it
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.Until("5.4.1")
+        get() = GradleVersionRequired.AtLeast("7.0")
+
+    override fun defaultBuildOptions(): BuildOptions {
+        val javaHome = File(System.getProperty("jdk11Home")!!)
+        Assume.assumeTrue("JDK 11 should be available", javaHome.isDirectory)
+        return super.defaultBuildOptions().copy(javaHome = javaHome, warningMode = WarningMode.Summary)
+    }
+
+    @Ignore("KT-44350")
+    override fun testRealm() = Unit
+
+    @Ignore("KT-44350")
+    override fun testDatabinding() = Unit
+
+    @Ignore("KT-44350")
+    override fun testDagger() = Unit
+
+    @Ignore("KT-44350")
+    override fun testButterKnife() = Unit
+
+    @Test
+    override fun testInterProjectIC() {
+        with(Project("android-inter-project-ic", directoryPrefix = "kapt2")) {
+            setupWorkingDir()
+            // includeCompileClasspath was removed in AGP 7
+            projectDir.resolve("app").getFileByName("build.gradle").modify { originalContent ->
+                originalContent
+                    .lines()
+                    .filter { !it.contains("javaCompileOptions") }
+                    .joinToString(separator = "\n")
+            }
+            build("assembleDebug") {
+                assertSuccessful()
+                assertKaptSuccessful()
+            }
+
+            fun modifyAndCheck(utilFileName: String, useUtilFileName: String) {
+                val utilKt = projectDir.getFileByName(utilFileName)
+                utilKt.modify {
+                    it.checkedReplace("Int", "Number")
+                }
+
+                build("assembleDebug") {
+                    assertSuccessful()
+                    val affectedFile = projectDir.getFileByName(useUtilFileName)
+                    assertCompiledKotlinSources(
+                        relativize(affectedFile),
+                        tasks = listOf("app:kaptGenerateStubsDebugKotlin", "app:compileDebugKotlin")
+                    )
+                }
+            }
+
+            modifyAndCheck("libAndroidUtil.kt", "useLibAndroidUtil.kt")
+            modifyAndCheck("libJvmUtil.kt", "useLibJvmUtil.kt")
+        }
+    }
 }
 
-abstract class Kapt3AndroidIT : Kapt3BaseIT() {
+class Kapt3Android42IT : BaseGradleIT() {
+    companion object {
+        private val KAPT_SUCCESSFUL_REGEX = "Annotation processing complete, errors: 0".toRegex()
+    }
+
+    private fun kaptOptions(): KaptOptions =
+        KaptOptions(verbose = true, useWorkers = false)
+
+    private fun CompiledProject.assertKaptSuccessful() {
+        KAPT_SUCCESSFUL_REGEX.findAll(this.output).count() > 0
+    }
+
+    override fun defaultBuildOptions(): BuildOptions =
+        super.defaultBuildOptions().copy(
+            kaptOptions = kaptOptions(),
+            warningMode = WarningMode.Summary,
+            androidHome = KtTestUtil.findAndroidSdk(),
+            androidGradlePluginVersion = AGPVersion.v4_2_0
+        )
+    
+    /** Regression test for https://youtrack.jetbrains.com/issue/KT-44020. */
+    @Test
+    fun testDatabindingWithAndroidX() {
+        val project = Project("android-databinding-androidX", directoryPrefix = "kapt2")
+
+        project.build("kaptDebugKotlin") {
+            assertSuccessful()
+            assertKaptSuccessful()
+        }
+    }
+}
+
+abstract class Kapt3AndroidIT : BaseGradleIT() {
+    companion object {
+        private val KAPT_SUCCESSFUL_REGEX = "Annotation processing complete, errors: 0".toRegex()
+    }
+
+    protected open fun kaptOptions(): KaptOptions =
+        KaptOptions(verbose = true, useWorkers = false)
+
+    fun CompiledProject.assertKaptSuccessful() {
+        KAPT_SUCCESSFUL_REGEX.findAll(this.output).count() > 0
+    }
+
     protected abstract val androidGradlePluginVersion: AGPVersion
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
-            androidHome = KotlinTestUtils.findAndroidSdk(),
+            kaptOptions = kaptOptions(),
+            warningMode = WarningMode.Summary,
+            androidHome = KtTestUtil.findAndroidSdk(),
             androidGradlePluginVersion = androidGradlePluginVersion
         )
 
     @Test
-    fun testButterKnife() {
+    open fun testButterKnife() {
         val project = Project("android-butterknife", directoryPrefix = "kapt2")
 
         project.build("assembleDebug") {
@@ -122,7 +211,7 @@ abstract class Kapt3AndroidIT : Kapt3BaseIT() {
     }
 
     @Test
-    fun testDagger() {
+    open fun testDagger() {
         val project = Project("android-dagger", directoryPrefix = "kapt2")
 
         project.build("assembleDebug") {
@@ -165,7 +254,7 @@ abstract class Kapt3AndroidIT : Kapt3BaseIT() {
     }
 
     @Test
-    fun testRealm() {
+    open fun testRealm() {
         val project = Project("android-realm", directoryPrefix = "kapt2")
 
         project.build("assembleDebug") {
@@ -179,7 +268,7 @@ abstract class Kapt3AndroidIT : Kapt3BaseIT() {
     }
 
     @Test
-    fun testInterProjectIC() = with(Project("android-inter-project-ic", directoryPrefix = "kapt2")) {
+    open fun testInterProjectIC() = with(Project("android-inter-project-ic", directoryPrefix = "kapt2")) {
         build("assembleDebug") {
             assertSuccessful()
             assertKaptSuccessful()
@@ -228,7 +317,7 @@ abstract class Kapt3AndroidIT : Kapt3BaseIT() {
     }
 
     @Test
-    fun testDatabinding() {
+    open fun testDatabinding() {
         val project = Project("android-databinding", directoryPrefix = "kapt2")
         setupDataBinding(project)
 
@@ -244,6 +333,97 @@ abstract class Kapt3AndroidIT : Kapt3BaseIT() {
 
             // KT-23866
             assertNotContains("The following options were not recognized by any processor")
+        }
+    }
+
+    // KT-45532
+    @Test
+    open fun kaptTasksShouldNotCreateOutputsOnConfigurationPhase() {
+        Project(
+            "android-dagger",
+            directoryPrefix = "kapt2"
+        ).build("--dry-run", "assembleDebug") {
+            assertSuccessful()
+            assertNoSuchFile("app/build/tmp")
+            assertNoSuchFile("app/build/generated")
+        }
+    }
+
+    @Test
+    fun testStaticDslOptionsPassedToKapt() = with(Project("android-dagger", directoryPrefix = "kapt2")) {
+        setupWorkingDir()
+
+        gradleBuildScript(subproject = "app").appendText(
+            """
+
+            apply plugin: 'kotlin-kapt'
+
+            android {
+                defaultConfig {
+                    javaCompileOptions {
+                        annotationProcessorOptions {
+                            arguments += ["enable.some.test.option": "true"]
+                        }
+                    }
+                }
+            }
+            """.trimIndent()
+        )
+
+        build(":app:kaptDebugKotlin") {
+            assertSuccessful()
+            assertContainsRegex(Regex("AP options.*enable\\.some\\.test\\.option=true"))
+        }
+    }
+
+    @Test
+    fun generateStubsTaskShouldRunIncrementallyOnChangesInAndroidVariantJavaSources() {
+        with(Project("android-dagger", directoryPrefix = "kapt2")) {
+            setupWorkingDir()
+
+            val javaFile = projectDir.resolve("app/src/main/java/com/example/dagger/kotlin/Utils.java")
+            javaFile.writeText(
+                //language=Java
+                """
+                package com.example.dagger.kotlin;
+
+                class Utils {
+                    public String oneMethod() {
+                        return "fake!";
+                    }
+                }
+                """.trimIndent()
+            )
+
+            build(":app:kaptDebugKotlin") {
+                assertSuccessful()
+                assertTasksExecuted(":app:kaptGenerateStubsDebugKotlin")
+            }
+
+            javaFile.writeText(
+                //language=Java
+                """
+                package com.example.dagger.kotlin;
+
+                class Utils {
+                    public String oneMethod() {
+                        return "fake!";
+                    }
+                    
+                    public void anotherMethod() {
+                        int one = 1;
+                    }
+                }
+                """.trimIndent()
+            )
+
+            build(":app:kaptDebugKotlin") {
+                assertSuccessful()
+                assertTasksExecuted(":app:kaptGenerateStubsDebugKotlin")
+                assertNotContains(
+                    "The input changes require a full rebuild for incremental task ':app:kaptGenerateStubsDebugKotlin'."
+                )
+            }
         }
     }
 

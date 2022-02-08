@@ -1,0 +1,14 @@
+typealias Test1 = String
+fun foo() {
+  { // BLOCK
+  }
+}
+
+class C {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}

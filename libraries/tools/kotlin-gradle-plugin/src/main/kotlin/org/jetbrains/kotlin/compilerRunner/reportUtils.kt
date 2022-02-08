@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.FieldVisitor
@@ -37,7 +38,7 @@ import java.time.format.DateTimeFormatter
 import java.util.zip.ZipFile
 import kotlin.concurrent.thread
 
-internal fun loadCompilerVersion(compilerClasspath: List<File>): String {
+internal fun loadCompilerVersion(compilerClasspath: Iterable<File>): String {
     var result: String? = null
 
     fun checkVersion(bytes: ByteArray) {
@@ -88,16 +89,24 @@ internal fun loadCompilerVersion(compilerClasspath: List<File>): String {
 internal fun runToolInSeparateProcess(
     argsArray: Array<String>,
     compilerClassName: String,
-    classpath: List<File>,
+    classpath: Iterable<File>,
     logger: KotlinLogger,
-    buildDir: File
+    buildDir: File,
+    jvmArgs: List<String> = emptyList()
 ): ExitCode {
     val javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java"
-    val classpathString = classpath.map { it.absolutePath }.joinToString(separator = File.pathSeparator)
+    val classpathString = classpath.joinToString(separator = File.pathSeparator) { it.absolutePath }
 
     val compilerOptions = writeArgumentsToFile(buildDir, argsArray)
 
-    val builder = ProcessBuilder(javaBin, "-cp", classpathString, compilerClassName, "@${compilerOptions.absolutePath}")
+    val builder = ProcessBuilder(
+        javaBin,
+        *(jvmArgs.toTypedArray()),
+        "-cp",
+        classpathString,
+        compilerClassName,
+        "@${compilerOptions.absolutePath}"
+    )
     val messageCollector = createLoggingMessageCollector(logger)
     val process = launchProcessWithFallback(builder, DaemonReportingTargets(messageCollector = messageCollector))
 
@@ -121,14 +130,17 @@ internal fun runToolInSeparateProcess(
     readErrThread.join()
 
     val exitCode = process.waitFor()
-    logger.logFinish(OUT_OF_PROCESS_EXECUTION_STRATEGY)
+    logger.logFinish(KotlinCompilerExecutionStrategy.OUT_OF_PROCESS)
     return exitCodeFromProcessExitCode(logger, exitCode)
 }
 
 private fun writeArgumentsToFile(directory: File, argsArray: Array<String>): File {
-    val compilerOptions =
-        Files.createTempFile(directory.toPath(), LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE) + "_", ".compiler.options").toFile()
-    compilerOptions.deleteOnExit()
+    val prefix = LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE) + "_"
+    val suffix = ".compiler.options"
+    val compilerOptions = if (directory.exists())
+        Files.createTempFile(directory.toPath(), prefix, suffix).toFile()
+    else
+        Files.createTempFile(prefix, suffix).toFile()
     compilerOptions.writeText(argsArray.joinToString(" ") { "\"${StringEscapeUtils.escapeJava(it)}\"" })
     return compilerOptions
 }
@@ -159,7 +171,7 @@ private fun createLoggingMessageCollector(log: KotlinLogger): MessageCollector =
     }
 }
 
-internal fun KotlinLogger.logFinish(strategy: String) {
+internal fun KotlinLogger.logFinish(strategy: KotlinCompilerExecutionStrategy) {
     debug("Finished executing kotlin compiler using $strategy strategy")
 }
 

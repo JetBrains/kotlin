@@ -18,8 +18,6 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.org.objectweb.asm.Type
 
-class CapturedParamDesc(private val containingLambdaType: Type, val fieldName: String, val type: Type) {
-
-    val containingLambdaName: String
-        get() = containingLambdaType.internalName
+class CapturedParamDesc(containingLambdaType: Type, val fieldName: String, val type: Type, val isSuspend: Boolean = false) {
+    val containingLambdaName: String = containingLambdaType.internalName
 }

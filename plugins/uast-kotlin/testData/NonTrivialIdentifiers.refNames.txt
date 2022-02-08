@@ -1,7 +1,0 @@
-Unit -> USimpleNameReferenceExpression (identifier = Unit) from KtNameReferenceExpression
-A -> USimpleNameReferenceExpression (identifier = A) from KtNameReferenceExpression
-a -> USimpleNameReferenceExpression (identifier = a) from KtNameReferenceExpression
-A -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) from KtNameReferenceExpression
-a -> USimpleNameReferenceExpression (identifier = a) from KtNameReferenceExpression
-p -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtNameReferenceExpression
-A -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0)) from KtNameReferenceExpression

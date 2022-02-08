@@ -1,0 +1,26 @@
+FILE: lib.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Any|
+
+        public abstract val x: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public abstract val y: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+    public abstract interface B : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Any|
+
+        public abstract val x: R|kotlin/String|
+            public get(): R|kotlin/String|
+
+        public abstract val y: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+    }
+FILE: main.kt
+    public final fun test(d: R|D|): R|kotlin/Unit| {
+        lval a: R|kotlin/Int| = R|<local>/d|.R|/C.x|
+        lval b: R|kotlin/Int| = R|<local>/d|.R|/D.y|
+    }

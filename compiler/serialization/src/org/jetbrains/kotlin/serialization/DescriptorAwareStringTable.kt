@@ -30,6 +30,14 @@ interface DescriptorAwareStringTable : StringTable {
 
     fun getLocalClassIdReplacement(descriptor: ClassifierDescriptorWithTypeParameters): ClassId? = null
 
+    /**
+     * true if this [StringTable] replaces absent [ClassId] of a local class descriptor with a semantic equivalent that
+     * still expects original type arguments when used in a type
+     * false otherwise
+     */
+    val isLocalClassIdReplacementKeptGeneric: Boolean
+        get() = false
+
     private fun renderDescriptor(descriptor: ClassifierDescriptorWithTypeParameters): String =
         DescriptorRenderer.COMPACT.render(descriptor) + " defined in " +
                 DescriptorRenderer.FQ_NAMES_IN_TYPES.render(descriptor.containingDeclaration)

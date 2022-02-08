@@ -24,7 +24,7 @@ class Test2 {
             }
         }
 
-        a = "2"
+        <!INITIALIZATION_BEFORE_DECLARATION!>a<!> = "2"
         t.some()
     }
 

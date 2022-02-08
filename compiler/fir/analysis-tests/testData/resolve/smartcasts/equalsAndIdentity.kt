@@ -16,12 +16,12 @@ fun test_1(x: A, y: A?) {
 
 fun test_2(x: A?, y: A?) {
     if (x == y) {
-        x.<!INAPPLICABLE_CANDIDATE!>foo<!>()
-        y.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+        x<!UNSAFE_CALL!>.<!>foo()
+        y<!UNSAFE_CALL!>.<!>foo()
     }
     if (x === y) {
-        x.<!INAPPLICABLE_CANDIDATE!>foo<!>()
-        y.<!INAPPLICABLE_CANDIDATE!>foo<!>()
+        x<!UNSAFE_CALL!>.<!>foo()
+        y<!UNSAFE_CALL!>.<!>foo()
     }
 }
 

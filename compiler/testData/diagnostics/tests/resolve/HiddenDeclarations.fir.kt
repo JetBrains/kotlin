@@ -17,13 +17,16 @@ fun String.topLevelExtensionFun(){}
 val String.topLevelExtensionProperty: Int get() = 1
 
 open class A {
-    constructor(p: Int) : this("") {}
+    constructor(p: Int) : this(<!ARGUMENT_TYPE_MISMATCH!>""<!>) {}
 
     @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
     constructor(s: String){}
 
     @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
     open fun memberFun(){}
+
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
+    private fun privateFun(){}
 
     @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
     val memberProperty = 1
@@ -35,17 +38,25 @@ open class A {
     val String.memberExtensionProperty: Int get() = 1
 
     fun foo() {
-        topLevelFun()
-        topLevelProperty++
-        "".topLevelExtensionFun()
-        "".topLevelExtensionProperty
+        <!UNRESOLVED_REFERENCE!>topLevelFun<!>()
+        <!UNRESOLVED_REFERENCE!>topLevelFun<!>(1)
+        <!UNRESOLVED_REFERENCE, UNRESOLVED_REFERENCE!>topLevelProperty<!>++
+        "".<!UNRESOLVED_REFERENCE!>topLevelExtensionFun<!>()
+        1.<!UNRESOLVED_REFERENCE!>topLevelExtensionFun<!>()
+        "".<!UNRESOLVED_REFERENCE!>topLevelExtensionProperty<!>
+        1.<!UNRESOLVED_REFERENCE!>topLevelExtensionProperty<!>
 
-        memberFun()
-        memberProperty
-        "".memberExtensionFun()
-        "".memberExtensionProperty
+        <!UNRESOLVED_REFERENCE!>memberFun<!>()
+        <!UNRESOLVED_REFERENCE!>memberFun<!>(1)
+        <!UNRESOLVED_REFERENCE!>privateFun<!>()
+        <!UNRESOLVED_REFERENCE!>privateFun<!>(1)
+        <!UNRESOLVED_REFERENCE!>memberProperty<!>
+        "".<!UNRESOLVED_REFERENCE!>memberExtensionFun<!>()
+        1.<!UNRESOLVED_REFERENCE!>memberExtensionFun<!>()
+        "".<!UNRESOLVED_REFERENCE!>memberExtensionProperty<!>
+        1.<!UNRESOLVED_REFERENCE!>memberExtensionProperty<!>
 
-        A("")
+        A(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
     }
 }
 
@@ -57,18 +68,20 @@ interface I {
     fun foo2()
 }
 
-class X : I {
-    override fun foo1() {
+<!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class X<!> : I {
+    override fun <!OVERRIDE_DEPRECATION!>foo1<!>() {
     }
 }
 
-class B : A("") {
+class B : A(<!ARGUMENT_TYPE_MISMATCH!>""<!>) {
     // still can override it
-    override fun memberFun() {
-        super.memberFun() // but cannot call super :)
+    override fun <!OVERRIDE_DEPRECATION!>memberFun<!>() {
+        super.<!UNRESOLVED_REFERENCE!>memberFun<!>() // but cannot call super :)
+        <!UNRESOLVED_REFERENCE!>privateFun<!>()
+        <!UNRESOLVED_REFERENCE!>privateFun<!>(1)
     }
 }
 
 class C : A {
-    constructor() : super("")
+    constructor() : super(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
 }

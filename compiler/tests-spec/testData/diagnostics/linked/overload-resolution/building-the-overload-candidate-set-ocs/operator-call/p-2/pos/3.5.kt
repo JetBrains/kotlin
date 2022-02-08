@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +NewInference
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -EXTENSION_SHADOWED_BY_MEMBER
 // SKIP_TXT
@@ -25,7 +26,7 @@ operator fun Case.E.plus(value: Int) =  Inv()
 operator fun Case.Inv.invoke(i: Int) = 1
 
 
-// FILE: TestCase1.kt
+// FILE: TestCase11.kt
 // TESTCASE NUMBER: 1
 package testPackCase1
 import libPackage.*
@@ -56,7 +57,7 @@ package libPackage1
 
 public <!NOTHING_TO_INLINE!>inline<!> operator fun CharSequence.contains(regex: Regex): Boolean = regex.containsMatchIn(this)
 
-// FILE: TestCase1.kt
+// FILE: TestCase12.kt
 // TESTCASE NUMBER: 2
 package testPackCase2
 import libPackage1.*

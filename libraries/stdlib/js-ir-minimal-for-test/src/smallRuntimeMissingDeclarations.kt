@@ -33,3 +33,22 @@ public actual fun Throwable.addSuppressed(exception: Throwable) {
 
 public actual val Throwable.suppressedExceptions: List<Throwable>
     get() = TODO("Not implemented in reduced runtime")
+
+/**
+ * Returns a string representation of this [Long] value in the specified [radix].
+ *
+ * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
+ */
+@SinceKotlin("1.2")
+public fun Long.toString(radix: Int): String =
+    this.toStringImpl(checkRadix(radix))
+
+/**
+ * Checks whether the given [radix] is valid radix for string to number and number to string conversion.
+ */
+internal fun checkRadix(radix: Int): Int {
+    if (radix !in 2..36) {
+        throw IllegalArgumentException("radix $radix was not in valid range 2..36")
+    }
+    return radix
+}

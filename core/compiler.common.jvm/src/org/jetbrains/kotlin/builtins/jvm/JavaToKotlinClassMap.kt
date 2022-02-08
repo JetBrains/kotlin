@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import java.util.*
 
 object JavaToKotlinClassMap {
     private val NUMBERED_FUNCTION_PREFIX: String =
@@ -26,8 +25,8 @@ object JavaToKotlinClassMap {
 
     private val FUNCTION_N_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.jvm.functions.FunctionN"))
     val FUNCTION_N_FQ_NAME: FqName = FUNCTION_N_CLASS_ID.asSingleFqName()
-    private val K_FUNCTION_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.reflect.KFunction"))
-    private val K_CLASS_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.reflect.KClass"))
+    private val K_FUNCTION_CLASS_ID: ClassId = StandardClassIds.KFunction
+    private val K_CLASS_CLASS_ID: ClassId = StandardClassIds.KClass
     private val CLASS_CLASS_ID: ClassId = classId(Class::class.java)
 
     private val javaToKotlin = HashMap<FqNameUnsafe, ClassId>()
@@ -35,6 +34,9 @@ object JavaToKotlinClassMap {
 
     private val mutableToReadOnly = HashMap<FqNameUnsafe, FqName>()
     private val readOnlyToMutable = HashMap<FqNameUnsafe, FqName>()
+
+    private val mutableToReadOnlyClassId = HashMap<ClassId, ClassId>()
+    private val readOnlyToMutableClassId = HashMap<ClassId, ClassId>()
 
     // describes mapping for a java class that has separate readOnly and mutable equivalents in Kotlin
     data class PlatformMutabilityMapping(
@@ -161,6 +163,9 @@ object JavaToKotlinClassMap {
         add(javaClassId, readOnlyClassId)
         addKotlinToJava(mutableClassId.asSingleFqName(), javaClassId)
 
+        mutableToReadOnlyClassId[mutableClassId] = readOnlyClassId
+        readOnlyToMutableClassId[readOnlyClassId] = mutableClassId
+
         val readOnlyFqName = readOnlyClassId.asSingleFqName()
         val mutableFqName = mutableClassId.asSingleFqName()
         mutableToReadOnly[mutableClassId.asSingleFqName().toUnsafe()] = readOnlyFqName
@@ -191,12 +196,16 @@ object JavaToKotlinClassMap {
     fun isJavaPlatformClass(fqName: FqName): Boolean = mapJavaToKotlin(fqName) != null
 
     fun mutableToReadOnly(fqNameUnsafe: FqNameUnsafe?): FqName? = mutableToReadOnly[fqNameUnsafe]
-
     fun readOnlyToMutable(fqNameUnsafe: FqNameUnsafe?): FqName? = readOnlyToMutable[fqNameUnsafe]
 
-    fun isMutable(fqNameUnsafe: FqNameUnsafe?): Boolean = mutableToReadOnly.containsKey(fqNameUnsafe)
+    fun mutableToReadOnly(classId: ClassId): ClassId? = mutableToReadOnlyClassId[classId]
+    fun readOnlyToMutable(classId: ClassId): ClassId? = readOnlyToMutableClassId[classId]
 
+    fun isMutable(fqNameUnsafe: FqNameUnsafe?): Boolean = mutableToReadOnly.containsKey(fqNameUnsafe)
     fun isReadOnly(fqNameUnsafe: FqNameUnsafe?): Boolean = readOnlyToMutable.containsKey(fqNameUnsafe)
+
+    fun isMutable(classId: ClassId?): Boolean = readOnlyToMutableClassId.containsKey(classId)
+    fun isReadOnly(classId: ClassId?): Boolean = readOnlyToMutableClassId.containsKey(classId)
 
     private fun classId(clazz: Class<*>): ClassId {
         assert(!clazz.isPrimitive && !clazz.isArray) { "Invalid class: $clazz" }

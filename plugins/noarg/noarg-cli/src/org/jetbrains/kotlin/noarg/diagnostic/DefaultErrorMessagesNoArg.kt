@@ -25,5 +25,15 @@ object DefaultErrorMessagesNoArg : DefaultErrorMessages.Extension {
 
     init {
         MAP.put(ErrorsNoArg.NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS, "Zero-argument constructor was not found in the superclass")
+        MAP.put(
+            ErrorsNoArg.NOARG_ON_INNER_CLASS,
+            "Noarg constructor generation for inner classes is deprecated and will be prohibited soon"
+        )
+        MAP.put(ErrorsNoArg.NOARG_ON_INNER_CLASS_ERROR, "Noarg constructor generation is not possible for inner classes")
+        MAP.put(
+            ErrorsNoArg.NOARG_ON_LOCAL_CLASS,
+            "Noarg constructor generation for local classes is deprecated and will be prohibited soon"
+        )
+        MAP.put(ErrorsNoArg.NOARG_ON_LOCAL_CLASS_ERROR, "Noarg constructor generation is not possible for local classes")
     }
 }

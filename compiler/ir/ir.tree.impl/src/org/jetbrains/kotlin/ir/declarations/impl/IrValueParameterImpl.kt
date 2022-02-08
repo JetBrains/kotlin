@@ -39,8 +39,9 @@ class IrValueParameterImpl(
     override var varargElementType: IrType?,
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean,
-    override val isHidden: Boolean = false,
-    override val isAssignable: Boolean = false
+    override val isHidden: Boolean,
+    override val isAssignable: Boolean,
+    override val factory: IrFactory = IrFactoryImpl,
 ) : IrValueParameter() {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ParameterDescriptor
@@ -49,9 +50,6 @@ class IrValueParameterImpl(
     init {
         symbol.bind(this)
     }
-
-    override val factory: IrFactory
-        get() = IrFactoryImpl
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()

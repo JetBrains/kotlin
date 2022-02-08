@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Foo(val a: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Foo(val a: Int) {
     fun member(): String = ""
 
     fun asResult() = a

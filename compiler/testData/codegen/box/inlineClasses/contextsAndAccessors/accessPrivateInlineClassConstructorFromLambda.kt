@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Composed(val s: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Composed(val s: String) {
 
     constructor(s: String, x: Int) : this(s.subSequence(0, x).toString())
 

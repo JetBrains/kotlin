@@ -15,10 +15,9 @@ import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.base.kapt3.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.incremental.JavaClassCacheManager
 import org.jetbrains.kotlin.kapt3.base.incremental.SourcesToReprocess
-import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaCompiler
-import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaFileManager
-import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaLog
+import org.jetbrains.kotlin.kapt3.base.javac.*
 import org.jetbrains.kotlin.kapt3.base.util.KaptLogger
+import org.jetbrains.kotlin.kapt3.base.util.isJava17OrLater
 import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
 import org.jetbrains.kotlin.kapt3.base.util.putJavacOption
 import java.io.Closeable
@@ -30,7 +29,7 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
     val compiler: KaptJavaCompiler
     val fileManager: KaptJavaFileManager
     private val javacOptions: Options
-    val javaLog: KaptJavaLog
+    val javaLog: KaptJavaLogBase
     val cacheManager: JavaClassCacheManager?
 
     val sourcesToReprocess: SourcesToReprocess
@@ -38,12 +37,24 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
     protected open fun preregisterTreeMaker(context: Context) {}
 
     private fun preregisterLog(context: Context) {
-        val interceptorData = KaptJavaLog.DiagnosticInterceptorData()
+        val interceptorData = KaptJavaLogBase.DiagnosticInterceptorData()
         context.put(Log.logKey, Context.Factory<Log> { newContext ->
-            KaptJavaLog(
-                options.projectBaseDir, newContext, logger.errorWriter, logger.warnWriter, logger.infoWriter,
-                interceptorData, options[KaptFlag.MAP_DIAGNOSTIC_LOCATIONS]
-            )
+            if (isJava17OrLater()) {
+                newContext.put(Log.outKey, logger.infoWriter)
+                val errKey = (Log::class.java.fields.firstOrNull() { it.name == "errKey" }
+                    ?: error("Can't find errKey field in Log.class")).get(null)
+                @Suppress("UNCHECKED_CAST")
+                newContext.put(errKey as Context.Key<java.io.PrintWriter>, logger.errorWriter)
+                KaptJavaLog17(
+                    options.projectBaseDir, newContext,
+                    interceptorData, options[KaptFlag.MAP_DIAGNOSTIC_LOCATIONS]
+                )
+            } else {
+                KaptJavaLog(
+                    options.projectBaseDir, newContext, logger.errorWriter, logger.warnWriter, logger.infoWriter,
+                    interceptorData, options[KaptFlag.MAP_DIAGNOSTIC_LOCATIONS]
+                )
+            }
         })
     }
 
@@ -60,10 +71,16 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
             JavaClassCacheManager(it)
         }
         if (options.flags[KaptFlag.INCREMENTAL_APT]) {
-            sourcesToReprocess =
+            sourcesToReprocess = run {
+                val start = System.currentTimeMillis()
                 cacheManager?.invalidateAndGetDirtyFiles(
                     options.changedFiles, options.classpathChanges
-                ) ?: SourcesToReprocess.FullRebuild
+                ).also {
+                    if (logger.isVerbose) {
+                        logger.info("Computing sources to reprocess took ${System.currentTimeMillis() - start}[ms].")
+                    }
+                }
+            }?: SourcesToReprocess.FullRebuild
 
             if (sourcesToReprocess == SourcesToReprocess.FullRebuild) {
                 // remove all generated sources and classes
@@ -111,15 +128,13 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
             val compileClasspath = if (sourcesToReprocess is SourcesToReprocess.FullRebuild) {
                 options.compileClasspath
             } else {
-                options.compileClasspath + options.compiledSources
+                options.compileClasspath + options.compiledSources + options.classesOutputDir
             }
 
-            putJavacOption("CLASSPATH", "CLASS_PATH",
-                           compileClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
+            putJavacOption("CLASSPATH", "CLASS_PATH", compileClasspath.makePathsString())
 
             @Suppress("SpellCheckingInspection")
-            putJavacOption("PROCESSORPATH", "PROCESSOR_PATH",
-                           options.processingClasspath.joinToString(File.pathSeparator) { it.canonicalPath })
+            putJavacOption("PROCESSORPATH", "PROCESSOR_PATH", options.processingClasspath.makePathsString())
 
             put(Option.S, options.sourcesOutputDir.canonicalPath)
             put(Option.D, options.classesOutputDir.canonicalPath)
@@ -144,16 +159,24 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
         }
 
         compiler = JavaCompiler.instance(context) as KaptJavaCompiler
-        compiler.keepComments = true
+        if (options.flags[KaptFlag.KEEP_KDOC_COMMENTS_IN_STUBS]) {
+            compiler.keepComments = true
+        }
 
         ClassReader.instance(context).saveParameterNames = true
 
-        javaLog = compiler.log as KaptJavaLog
+        javaLog = compiler.log as KaptJavaLogBase
     }
 
     override fun close() {
         cacheManager?.close()
         compiler.close()
         fileManager.close()
+    }
+
+    companion object {
+        const val MODULE_INFO_FILE = "module-info.java"
+
+        private fun Iterable<File>.makePathsString(): String = joinToString(File.pathSeparator) { it.canonicalPath }
     }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.jetbrains.kotlin.gradle.testbase.enableCacheRedirector
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Before
 import org.junit.Test
@@ -23,15 +24,17 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
 
     @Before
     fun cleanup() {
-        project.setupWorkingDir()
+        project.setupWorkingDir(false)
         project.gradleSettingsScript().modify { it.lines().filter { !it.startsWith("include") }.joinToString("\n") }
         project.projectDir.resolve("src").deleteRecursively()
         project.gradleBuildScript().modify { line ->
             line.lines().dropLastWhile { it != buildScriptCustomizationMarker }.joinToString("\n")
         }
+
+        project.projectDir.toPath().enableCacheRedirector()
     }
 
-    private val project by lazy { Project("mpp-source-set-hierarchy-analysis", GradleVersionRequired.AtLeast("6.0")) }
+    private val project by lazy { Project("mpp-source-set-hierarchy-analysis") }
 
     private fun doTest(cliCompiler: CliCompiler) = with(project) {
         val expectedErrorsPerSourceSetName = sourceRoots.associate { sourceRoot ->
@@ -52,11 +55,11 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
 
         // create Gradle Kotlin source sets for project roots:
         val scriptCustomization = buildString {
-            appendln()
-            appendln("kotlin {\n    sourceSets {")
+            appendLine()
+            appendLine("kotlin {\n    sourceSets {")
             sourceRoots.forEach { sourceRoot ->
                 if (sourceRoot.kotlinSourceSetName != "commonMain") {
-                    appendln(
+                    appendLine(
                         """        create("${sourceRoot.kotlinSourceSetName}") {
                           |            dependsOn(getByName("commonMain"))
                           |            listOf(${cliCompiler.targets.joinToString { "$it()" }}).forEach { 
@@ -67,7 +70,7 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
                         """.trimMargin()
                     )
                 } else {
-                    appendln("    // commonMain source set used for common module")
+                    appendLine("    // commonMain source set used for common module")
                 }
             }
 
@@ -76,11 +79,11 @@ class MppHighlightingTestDataWithGradleIT : BaseGradleIT() {
                 sourceRoot.dependencies.forEach { dependency ->
                     sourceRoots.find { it.qualifiedName == dependency }?.let { depSourceRoot ->
                         val depSourceSet = depSourceRoot.kotlinSourceSetName
-                        appendln("""        getByName("${sourceRoot.kotlinSourceSetName}").dependsOn(getByName("$depSourceSet"))""")
+                        appendLine("""        getByName("${sourceRoot.kotlinSourceSetName}").dependsOn(getByName("$depSourceSet"))""")
                     }
                 }
             }
-            appendln("    }\n}")
+            appendLine("    }\n}")
         }
 
         gradleBuildScript().appendText("\n" + scriptCustomization)

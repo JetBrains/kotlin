@@ -1,0 +1,4 @@
+package
+
+public fun foo(/*0*/ n: kotlin.Nothing, /*1*/ n2: MyNothing /* = kotlin.Nothing */): kotlin.Unit
+public typealias MyNothing = kotlin.Nothing

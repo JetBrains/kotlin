@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
+import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -24,14 +25,13 @@ import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-
 class ConstTransformer(private val context: JsIrBackendContext) : IrElementTransformerVoid() {
     private fun <C> lowerConst(
         irClass: IrClassSymbol,
         carrierFactory: (Int, Int, IrType, C) -> IrExpression,
         vararg args: C
     ): IrExpression {
-        val constructor = irClass.constructors.single()
+        val constructor = irClass.constructors.single { it.owner.isPrimary }
         val argType = constructor.owner.valueParameters.first().type
         return IrConstructorCallImpl.fromSymbolOwner(irClass.defaultType, constructor).apply {
             for (i in args.indices) {
@@ -43,9 +43,9 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
     private fun createLong(v: Long): IrExpression =
         lowerConst(context.intrinsics.longClassSymbol, IrConstImpl.Companion::int, v.toInt(), (v shr 32).toInt())
 
-    override fun <T> visitConst(expression: IrConst<T>): IrExpression {
+    override fun visitConst(expression: IrConst<*>): IrExpression {
         with(context.intrinsics) {
-            if (expression.type.isUnsigned()) {
+            if (expression.type.isUnsigned() && expression.kind != IrConstKind.Null) {
                 return when (expression.type.classifierOrNull) {
                     uByteClassSymbol -> lowerConst(uByteClassSymbol, IrConstImpl.Companion::byte, IrConstKind.Byte.valueOf(expression))
 
@@ -55,12 +55,12 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
 
                     uLongClassSymbol -> lowerConst(uLongClassSymbol, { _, _, _, v -> createLong(v) }, IrConstKind.Long.valueOf(expression))
 
-                    else -> error("Unknown unsigned type")
+                    else -> compilationException("Unknown unsigned type", expression)
                 }
             }
             return when {
                 expression.kind is IrConstKind.Char ->
-                    lowerConst(charClassSymbol, IrConstImpl.Companion::int, IrConstKind.Char.valueOf(expression).toInt())
+                    lowerConst(charClassSymbol, IrConstImpl.Companion::int, IrConstKind.Char.valueOf(expression).code)
 
                 expression.kind is IrConstKind.Long ->
                     createLong(IrConstKind.Long.valueOf(expression))

@@ -17,18 +17,13 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
-import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.refineTypes
-import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
-abstract class AbstractTypeConstructor(storageManager: StorageManager) : TypeConstructor {
+abstract class AbstractTypeConstructor(storageManager: StorageManager) : ClassifierBasedTypeConstructor() {
     override fun getSupertypes() = supertypes().supertypesWithoutCycles
-
-    abstract override fun getDeclarationDescriptor(): ClassifierDescriptor
 
     @TypeRefinement
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): TypeConstructor = ModuleViewTypeConstructor(kotlinTypeRefiner)
@@ -132,4 +127,5 @@ abstract class AbstractTypeConstructor(storageManager: StorageManager) : TypeCon
 
     // Only for debugging
     fun renderAdditionalDebugInformation(): String = "supertypes=${supertypes.renderDebugInformation()}"
+
 }

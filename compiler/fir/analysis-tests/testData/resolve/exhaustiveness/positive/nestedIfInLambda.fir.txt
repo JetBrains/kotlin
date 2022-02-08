@@ -1,0 +1,20 @@
+FILE: nestedIfInLambda.kt
+    public final fun run(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun test(b1: R|kotlin/Boolean|, b2: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lvar result: R|kotlin/Boolean| = Boolean(false)
+        R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            when () {
+                R|<local>/b1| ->  {
+                    when () {
+                        R|<local>/b2| ->  {
+                            R|<local>/result| = Boolean(true)
+                        }
+                    }
+
+                }
+            }
+
+        }
+        )
+    }

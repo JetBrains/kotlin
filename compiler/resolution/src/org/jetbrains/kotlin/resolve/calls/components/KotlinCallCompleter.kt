@@ -7,8 +7,12 @@ package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.isFunctionTypeOrSubtype
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.addEqualityConstraintIfCompatible
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
@@ -17,6 +21,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.TrivialConstraint
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.Empty.hasContradiction
 import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPositionImpl
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateFactory
 import org.jetbrains.kotlin.resolve.calls.tower.forceResolution
 import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.TypeUtils
@@ -27,32 +32,38 @@ import org.jetbrains.kotlin.utils.addToStdlib.same
 class KotlinCallCompleter(
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
     private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
-    private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle
+    private val trivialConstraintTypeInferenceOracle: TrivialConstraintTypeInferenceOracle,
+    private val languageVersionSettings: LanguageVersionSettings
 ) {
 
     fun runCompletion(
-        factory: SimpleCandidateFactory,
-        candidates: Collection<KotlinResolutionCandidate>,
+        factory: CandidateFactory<ResolutionCandidate>,
+        candidates: Collection<ResolutionCandidate>,
         expectedType: UnwrappedType?,
         resolutionCallbacks: KotlinResolutionCallbacks
     ): CallResolutionResult {
         val diagnosticHolder = KotlinDiagnosticsHolder.SimpleHolder()
+
         when {
-            candidates.isEmpty() -> diagnosticHolder.addDiagnostic(NoneCandidatesCallDiagnostic(factory.kotlinCall))
-            candidates.size > 1 -> diagnosticHolder.addDiagnostic(ManyCandidatesCallDiagnostic(factory.kotlinCall, candidates))
+            candidates.isEmpty() -> diagnosticHolder.addDiagnostic(NoneCandidatesCallDiagnostic())
+            candidates.size > 1 -> diagnosticHolder.addDiagnostic(ManyCandidatesCallDiagnostic(candidates))
         }
 
         val candidate = prepareCandidateForCompletion(factory, candidates, resolutionCallbacks)
-        val returnType = candidate.substitutedReturnType()
+        val resultType = when (candidate) {
+            is SimpleResolutionCandidate -> {
+                candidate.checkSamWithVararg(diagnosticHolder)
+                candidate.substitutedReturnType().also {
+                    candidate.addExpectedTypeConstraint(it, expectedType)
+                    candidate.addExpectedTypeFromCastConstraint(it, resolutionCallbacks)
+                }
+            }
+            is CallableReferenceResolutionCandidate -> candidate.substitutedReflectionType()
+        }
 
-        candidate.addExpectedTypeConstraint(returnType, expectedType)
-        candidate.addExpectedTypeFromCastConstraint(returnType, resolutionCallbacks)
-        candidate.checkSamWithVararg(diagnosticHolder)
-
-        val completionMode =
-            CompletionModeCalculator.computeCompletionMode(
-                candidate, expectedType, returnType, trivialConstraintTypeInferenceOracle, resolutionCallbacks.inferenceSession
-            )
+        val completionMode = CompletionModeCalculator.computeCompletionMode(
+            candidate, expectedType, resultType, trivialConstraintTypeInferenceOracle, resolutionCallbacks.inferenceSession
+        )
 
         return when (completionMode) {
             ConstraintSystemCompletionMode.FULL -> {
@@ -75,9 +86,9 @@ class KotlinCallCompleter(
     }
 
     fun chooseCandidateRegardingOverloadResolutionByLambdaReturnType(
-        candidates: Set<KotlinResolutionCandidate>,
+        candidates: Set<SimpleResolutionCandidate>,
         resolutionCallbacks: KotlinResolutionCallbacks
-    ): Set<KotlinResolutionCandidate> {
+    ): Set<SimpleResolutionCandidate> {
         val lambdas = candidates.flatMap { candidate ->
             candidate.getSubResolvedAtoms()
                 .filter { it is ResolvedLambdaAtom && !it.analyzed }
@@ -118,6 +129,7 @@ class KotlinCallCompleter(
             ConstraintSystemCompletionMode.FULL,
             diagnosticHolderForLambda,
         )
+        propagateLambdaAnalysisDiagnostics(diagnosticHolderForLambda, firstCandidate)
 
         while (iterator.hasNext()) {
             val (candidate, atom) = iterator.next()
@@ -128,10 +140,11 @@ class KotlinCallCompleter(
                 ConstraintSystemCompletionMode.FULL,
                 diagnosticHolderForLambda
             )
+            propagateLambdaAnalysisDiagnostics(diagnosticHolderForLambda, candidate)
         }
 
-        val errorCandidates = mutableSetOf<KotlinResolutionCandidate>()
-        val successfulCandidates = mutableSetOf<KotlinResolutionCandidate>()
+        val errorCandidates = mutableSetOf<SimpleResolutionCandidate>()
+        val successfulCandidates = mutableSetOf<SimpleResolutionCandidate>()
 
         for (candidate in candidates) {
             if (candidate.isSuccessful) {
@@ -146,9 +159,27 @@ class KotlinCallCompleter(
         }
     }
 
-    private fun KotlinResolutionCandidate.getInputTypesOfLambdaAtom(atom: ResolvedLambdaAtom): List<UnwrappedType> {
+    private fun propagateLambdaAnalysisDiagnostics(
+        diagnosticHolder: KotlinDiagnosticsHolder.SimpleHolder,
+        candidate: SimpleResolutionCandidate
+    ) {
+        val dontLoseDiagnosticsDuringOverloadResolutionByReturnType =
+            languageVersionSettings.supportsFeature(LanguageFeature.DontLoseDiagnosticsDuringOverloadResolutionByReturnType)
+
+        for (diagnostic in diagnosticHolder.getDiagnostics()) {
+            if (diagnostic is TransformableToWarning<*>) {
+                val transformedDiagnostic =
+                    if (dontLoseDiagnosticsDuringOverloadResolutionByReturnType) diagnostic else diagnostic.transformToWarning()
+                if (transformedDiagnostic != null) {
+                    candidate.addDiagnostic(transformedDiagnostic)
+                }
+            }
+        }
+    }
+
+    private fun SimpleResolutionCandidate.getInputTypesOfLambdaAtom(atom: ResolvedLambdaAtom): List<UnwrappedType> {
         val result = mutableListOf<UnwrappedType>()
-        val substitutor = csBuilder.buildCurrentSubstitutor()
+        val substitutor = getSystem().getBuilder().buildCurrentSubstitutor()
         val ctx = getSystem().asConstraintSystemCompleterContext()
         for (inputType in atom.inputTypes) {
             result += substitutor.safeSubstitute(ctx, inputType) as UnwrappedType
@@ -157,13 +188,14 @@ class KotlinCallCompleter(
     }
 
 
-    private fun KotlinResolutionCandidate.checkSamWithVararg(diagnosticHolder: KotlinDiagnosticsHolder.SimpleHolder) {
+    private fun ResolutionCandidate.checkSamWithVararg(diagnosticHolder: KotlinDiagnosticsHolder.SimpleHolder) {
         val samConversionPerArgumentWithWarningsForVarargAfterSam =
             callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument) &&
                     !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitVarargAsArrayAfterSamArgument)
 
-        if (samConversionPerArgumentWithWarningsForVarargAfterSam && resolvedCall.candidateDescriptor is SyntheticMemberDescriptor<*>) {
-            val declarationDescriptor = resolvedCall.candidateDescriptor.baseDescriptorForSynthetic as? FunctionDescriptor ?: return
+        val candidateDescriptor = resolvedCall.candidateDescriptor
+        if (samConversionPerArgumentWithWarningsForVarargAfterSam && candidateDescriptor is SyntheticMemberDescriptor<*>) {
+            val declarationDescriptor = candidateDescriptor.baseDescriptorForSynthetic as? FunctionDescriptor ?: return
 
             if (declarationDescriptor.valueParameters.lastOrNull()?.isVararg == true) {
                 diagnosticHolder.addDiagnostic(
@@ -174,7 +206,7 @@ class KotlinCallCompleter(
     }
 
     fun createAllCandidatesResult(
-        candidates: Collection<KotlinResolutionCandidate>,
+        candidates: Collection<ResolutionCandidate>,
         expectedType: UnwrappedType?,
         resolutionCallbacks: KotlinResolutionCallbacks
     ): CallResolutionResult {
@@ -194,12 +226,12 @@ class KotlinCallCompleter(
                 collectAllCandidatesMode = true
             )
 
-            CandidateWithDiagnostics(candidate, diagnosticsHolder.getDiagnostics() + candidate.diagnosticsFromResolutionParts)
+            CandidateWithDiagnostics(candidate, diagnosticsHolder.getDiagnostics() + candidate.diagnostics)
         }
-        return AllCandidatesResolutionResult(completedCandidates)
+        return AllCandidatesResolutionResult(completedCandidates, resolutionCallbacks.createEmptyConstraintSystem())
     }
 
-    private fun KotlinResolutionCandidate.runCompletion(
+    private fun ResolutionCandidate.runCompletion(
         completionMode: ConstraintSystemCompletionMode,
         diagnosticHolder: KotlinDiagnosticsHolder,
         resolutionCallbacks: KotlinResolutionCallbacks,
@@ -240,10 +272,10 @@ class KotlinCallCompleter(
     }
 
     private fun prepareCandidateForCompletion(
-        factory: SimpleCandidateFactory,
-        candidates: Collection<KotlinResolutionCandidate>,
+        factory: CandidateFactory<ResolutionCandidate>,
+        candidates: Collection<ResolutionCandidate>,
         resolutionCallbacks: KotlinResolutionCallbacks
-    ): KotlinResolutionCandidate {
+    ): ResolutionCandidate {
         val candidate = candidates.singleOrNull()
 
         // this is needed at least for non-local return checker, because when we analyze lambda we should already bind descriptor for outer call
@@ -260,17 +292,23 @@ class KotlinCallCompleter(
         return candidate ?: factory.createErrorCandidate().forceResolution()
     }
 
-    private fun KotlinResolutionCandidate.substitutedReturnType(): UnwrappedType? {
+    private fun CallableReferenceResolutionCandidate.substitutedReflectionType(): UnwrappedType {
+        return resolvedCall.freshVariablesSubstitutor.safeSubstitute(this.reflectionCandidateType)
+    }
+
+    private fun ResolutionCandidate.substitutedReturnType(): UnwrappedType? {
         val returnType = resolvedCall.candidateDescriptor.returnType?.unwrap() ?: return null
         return resolvedCall.freshVariablesSubstitutor.safeSubstitute(returnType)
     }
 
-    private fun KotlinResolutionCandidate.addExpectedTypeConstraint(
+    private fun ResolutionCandidate.addExpectedTypeConstraint(
         returnType: UnwrappedType?,
         expectedType: UnwrappedType?
     ) {
         if (returnType == null) return
         if (expectedType == null || (TypeUtils.noExpectedType(expectedType) && expectedType !== TypeUtils.UNIT_EXPECTED_TYPE)) return
+
+        val csBuilder = getSystem().getBuilder()
 
         when {
             csBuilder.currentStorage().notFixedTypeVariables.isEmpty() -> {
@@ -294,36 +332,39 @@ class KotlinCallCompleter(
         }
     }
 
-    private fun KotlinResolutionCandidate.addExpectedTypeFromCastConstraint(
+    private fun ResolutionCandidate.addExpectedTypeFromCastConstraint(
         returnType: UnwrappedType?,
         resolutionCallbacks: KotlinResolutionCallbacks
     ) {
         if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ExpectedTypeFromCast)) return
         if (returnType == null) return
+
         val expectedType = resolutionCallbacks.getExpectedTypeFromAsExpressionAndRecordItInTrace(resolvedCall) ?: return
+        val csBuilder = getSystem().getBuilder()
+
         csBuilder.addSubtypeConstraint(returnType, expectedType, ExpectedTypeConstraintPositionImpl(resolvedCall.atom))
     }
 
-    fun KotlinResolutionCandidate.asCallResolutionResult(
+    fun ResolutionCandidate.asCallResolutionResult(
         type: ConstraintSystemCompletionMode,
         diagnosticsHolder: KotlinDiagnosticsHolder.SimpleHolder,
         forwardToInferenceSession: Boolean = false
     ): CallResolutionResult {
-        val systemStorage = getSystem().asReadOnlyStorage()
-        val allDiagnostics = diagnosticsHolder.getDiagnostics() + diagnosticsFromResolutionParts
+        val constraintSystem = getSystem()
+        val allDiagnostics = diagnosticsHolder.getDiagnostics() + diagnostics
 
         if (isErrorCandidate()) {
-            return ErrorCallResolutionResult(resolvedCall, allDiagnostics, systemStorage)
+            return ErrorCallResolutionResult(resolvedCall, allDiagnostics, constraintSystem)
         }
 
         return if (type == ConstraintSystemCompletionMode.FULL) {
-            CompletedCallResolutionResult(resolvedCall, allDiagnostics, systemStorage)
+            CompletedCallResolutionResult(resolvedCall, allDiagnostics, constraintSystem)
         } else {
-            PartialCallResolutionResult(resolvedCall, allDiagnostics, systemStorage, forwardToInferenceSession)
+            PartialCallResolutionResult(resolvedCall, allDiagnostics, constraintSystem, forwardToInferenceSession)
         }
     }
 }
 
-internal fun KotlinResolutionCandidate.isErrorCandidate(): Boolean {
+internal fun ResolutionCandidate.isErrorCandidate(): Boolean {
     return ErrorUtils.isError(resolvedCall.candidateDescriptor) || hasContradiction
 }

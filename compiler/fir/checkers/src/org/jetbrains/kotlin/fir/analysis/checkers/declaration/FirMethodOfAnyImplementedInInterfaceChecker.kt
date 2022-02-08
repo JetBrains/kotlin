@@ -5,72 +5,54 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationInspector
+import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.FirDeclarationPresenter
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.firSymbolProvider
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.fir.analysis.diagnostics.withSuppressedDiagnostics
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.utils.hasBody
+import org.jetbrains.kotlin.fir.declarations.utils.isInterface
+import org.jetbrains.kotlin.fir.declarations.utils.isOverride
+import org.jetbrains.kotlin.fir.resolve.isEquals
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.util.OperatorNameConventions.TO_STRING
 
-object FirMethodOfAnyImplementedInInterfaceChecker : FirMemberDeclarationChecker(), FirDeclarationPresenter {
-    private var inspector: FirDeclarationInspector? = null
-
-    private fun getInspector(context: CheckerContext) = inspector ?: FirDeclarationInspector(this).apply {
-        val anyClassId = context.session.builtinTypes.anyType.id
-
-        context.session.firSymbolProvider.getClassLikeSymbolByFqName(anyClassId)
-            ?.fir.safeAs<FirRegularClass>()
-            ?.declarations
-            ?.filterIsInstance<FirSimpleFunction>()
-            ?.filter { it !is FirConstructor }
-            ?.forEach {
-                collect(it)
-            }
-
-        inspector = this
+object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(), FirDeclarationPresenter {
+    // We need representations that look like JVM signatures. Thus, just function names, not fully qualified ones.
+    override fun StringBuilder.appendRepresentation(it: CallableId) {
+        append(it.callableName)
     }
 
-    @Suppress("DuplicatedCode")
-    override fun represent(it: FirSimpleFunction) = buildString {
-        append('<')
-        it.typeParameters.forEach {
-            appendRepresentation(it)
-            append(',')
-        }
-        append('>')
-        append('[')
-        it.receiverTypeRef?.let {
-            appendRepresentation(it)
-        }
-        append(']')
-        append(it.name.asString())
-        append('(')
-        it.valueParameters.forEach {
-            appendRepresentation(it)
-            append(',')
-        }
-        append(')')
+    // We need representations that look like JVM signatures. Hence, no need to represent operator.
+    override fun StringBuilder.appendOperatorTag(it: FirSimpleFunction) {
+        // Intentionally empty
     }
 
-    override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (declaration !is FirClass<*> || declaration.classKind != ClassKind.INTERFACE) {
+    override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        if (!declaration.isInterface) {
             return
         }
 
-        for (it in declaration.declarations) {
-            val inspector = getInspector(context)
+        for (function in declaration.declarations) {
+            if (function !is FirSimpleFunction || !function.isOverride || !function.hasBody) continue
+            var methodOfAny = false
+            if (function.valueParameters.isEmpty() &&
+                (function.name == HASHCODE_NAME || function.name == TO_STRING)
+            ) {
+                methodOfAny = true
+            } else if (function.isEquals()) {
+                methodOfAny = true
+            }
 
-            if (it is FirSimpleFunction && inspector.contains(it) && it.body != null && it.isOverride) {
-                reporter.report(it.source)
+            if (methodOfAny) {
+                withSuppressedDiagnostics(function, context) {
+                    reporter.reportOn(function.source, FirErrors.METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, context)
+                }
             }
         }
-    }
-
-    private fun DiagnosticReporter.report(source: FirSourceElement?) {
-        source?.let { report(FirErrors.ANY_METHOD_IMPLEMENTED_IN_INTERFACE.on(it)) }
     }
 }

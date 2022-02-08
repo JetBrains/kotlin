@@ -14,12 +14,10 @@ import kotlin.internal.InlineOnly
  *
  * Any usage of a declaration annotated with `@ExperimentalContracts` must be accepted either by
  * annotating that usage with the [OptIn] annotation, e.g. `@OptIn(ExperimentalContracts::class)`,
- * or by using the compiler argument `-Xopt-in=kotlin.contracts.ExperimentalContracts`.
+ * or by using the compiler argument `-opt-in=kotlin.contracts.ExperimentalContracts`.
  */
-@Suppress("DEPRECATION")
 @Retention(AnnotationRetention.BINARY)
 @SinceKotlin("1.3")
-@Experimental
 @RequiresOptIn
 @MustBeDocumented
 public annotation class ExperimentalContracts

@@ -1,0 +1,28 @@
+package
+
+public fun consume(/*0*/ x: WrapperFactory<Wrapper<I>>): kotlin.Unit
+public fun </*0*/ CX : I> foo(/*0*/ x: CX, /*1*/ fn1: (CX) -> kotlin.Unit = ..., /*2*/ fn2: (CX?) -> kotlin.Unit = ...): WrapperFactory<Wrapper<CX>>
+public fun test(/*0*/ x: I): kotlin.Unit
+
+public interface I {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Wrapper</*0*/ in CX2> {
+    public constructor Wrapper</*0*/ in CX2>(/*0*/ fn1: (CX2) -> kotlin.Unit, /*1*/ fn2: (CX2?) -> kotlin.Unit)
+    public final val fn1: (CX2) -> kotlin.Unit
+    public final val fn2: (CX2?) -> kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class WrapperFactory</*0*/ W> {
+    public constructor WrapperFactory</*0*/ W>(/*0*/ creator: () -> W)
+    public final val creator: () -> W
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

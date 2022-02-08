@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE -INFIX_MODIFIER_REQUIRED
 
 inline var value: (p: Int) -> String

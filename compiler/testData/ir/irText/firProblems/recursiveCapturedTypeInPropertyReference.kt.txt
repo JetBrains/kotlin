@@ -1,0 +1,22 @@
+interface Something {
+
+}
+
+interface Recursive<R> where R : Recursive<R>, R : Something {
+  abstract val symbol: AbstractSymbol<R>
+    abstract get
+
+}
+
+abstract class AbstractSymbol<E> where E : Recursive<E>, E : Something {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun foo(list: List<Any>) {
+    val result: List<AbstractSymbol<out Recursive<*>>> = list.filterIsInstance<Recursive<*>>().map<Recursive<*>, AbstractSymbol<out Recursive<*>>>(transform = Recursive::symbol)
+  }
+
+}

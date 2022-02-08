@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.types.expressions;
 
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.BindingTrace;
@@ -41,10 +42,12 @@ public class ExpressionTypingContext extends ResolutionContext<ExpressionTypingC
             @NotNull KotlinType expectedType,
             @NotNull LanguageVersionSettings languageVersionSettings,
             @NotNull DataFlowValueFactory dataFlowValueFactory,
-            @NotNull InferenceSession inferenceSession
+            @Nullable InferenceSession inferenceSession
     ) {
-        return newContext(trace, scope, dataFlowInfo, expectedType, ContextDependency.INDEPENDENT, StatementFilter.NONE,
-                          languageVersionSettings, dataFlowValueFactory, inferenceSession);
+        return newContext(
+                trace, scope, dataFlowInfo, expectedType, ContextDependency.INDEPENDENT, StatementFilter.NONE, languageVersionSettings,
+                dataFlowValueFactory, inferenceSession != null ? inferenceSession : InferenceSession.Companion.getDefault()
+        );
     }
 
     @NotNull

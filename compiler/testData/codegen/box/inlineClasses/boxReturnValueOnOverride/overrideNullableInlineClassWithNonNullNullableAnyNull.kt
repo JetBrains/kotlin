@@ -1,5 +1,9 @@
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class X(val x: Any?)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class X(val x: Any?)
 
 interface IFoo {
     fun foo(): X?

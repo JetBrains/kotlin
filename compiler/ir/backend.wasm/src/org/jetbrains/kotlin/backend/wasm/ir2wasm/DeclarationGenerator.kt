@@ -9,27 +9,41 @@ import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.lower.wasmSignature
 import org.jetbrains.kotlin.backend.wasm.utils.*
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
+import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.wasm.ir.*
 
-class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVisitorVoid {
+class DeclarationGenerator(val context: WasmModuleCodegenContext, private val allowIncompleteImplementations: Boolean) : IrElementVisitorVoid {
 
     // Shortcuts
     private val backendContext: WasmBackendContext = context.backendContext
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
 
+    private val unitGetInstanceFunction: IrSimpleFunction by lazy { backendContext.findUnitGetInstanceFunction() }
+
     override fun visitElement(element: IrElement) {
         error("Unexpected element of type ${element::class}")
+    }
+
+    override fun visitProperty(declaration: IrProperty) {
+        require(declaration.isExternal)
     }
 
     override fun visitTypeAlias(declaration: IrTypeAlias) {
@@ -45,18 +59,16 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         if (declaration is IrConstructor && backendContext.inlineClassesUtils.isClassInlineLike(declaration.parentAsClass))
             return
 
-        val jsCode = declaration.getJsFunAnnotation()
-        val importedName = if (jsCode != null) {
-            val jsCodeName = jsCodeName(declaration)
-            context.addJsFun(jsCodeName, jsCode)
-            WasmImportPair("js_code", jsCodeName(declaration))
-        } else {
-            declaration.getWasmImportAnnotation()
-        }
-
-        val isIntrinsic = declaration.hasWasmReinterpretAnnotation() || declaration.getWasmOpAnnotation() != null
+        val isIntrinsic = declaration.hasWasmNoOpCastAnnotation() || declaration.getWasmOpAnnotation() != null
         if (isIntrinsic) {
             return
+        }
+
+        val jsCode = declaration.getJsFunAnnotation() ?: if (declaration.isExternal) declaration.name.asString() else null
+        val importedName = jsCode?.let {
+            val jsCodeName = jsCodeName(declaration)
+            context.addJsFun(jsCodeName, it)
+            WasmImportPair("js_code", jsCodeName(declaration))
         }
 
         if (declaration.isFakeOverride)
@@ -65,22 +77,18 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         // Generate function type
         val watName = declaration.fqNameWhenAvailable.toString()
         val irParameters = declaration.getEffectiveValueParameters()
+        val resultType =
+            when {
+                // Unit_getInstance returns true Unit reference instead of "void"
+                declaration == unitGetInstanceFunction -> context.transformType(declaration.returnType)
+                else -> context.transformResultType(declaration.returnType)
+            }
+
         val wasmFunctionType =
             WasmFunctionType(
                 name = watName,
-                parameterTypes = irParameters.map {
-                    val t = context.transformValueParameterType(it)
-                    if (importedName != null && t is WasmRefNullType) {
-                        WasmEqRef
-                    } else {
-                        t
-                    }
-                },
-                resultTypes = listOfNotNull(
-                    context.transformResultType(declaration.returnType).let {
-                        if (importedName != null && it is WasmRefNullType) WasmEqRef else it
-                    }
-                )
+                parameterTypes = irParameters.map { context.transformValueParameterType(it) },
+                resultTypes = listOfNotNull(resultType)
             )
         context.defineFunctionType(declaration.symbol, wasmFunctionType)
 
@@ -122,17 +130,8 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         val exprGen = functionCodegenContext.bodyGen
         val bodyBuilder = BodyGenerator(functionCodegenContext)
 
-        when (val body = declaration.body) {
-            is IrBlockBody ->
-                for (statement in body.statements) {
-                    bodyBuilder.statementToWasmInstruction(statement)
-                }
-
-            is IrExpressionBody ->
-                bodyBuilder.generateExpression(body.expression)
-
-            else -> error("Unexpected body $body")
-        }
+        require(declaration.body is IrBlockBody) { "Only IrBlockBody is supported" }
+        declaration.body?.acceptVoid(bodyBuilder)
 
         // Return implicit this from constructions to avoid extra tmp
         // variables on constructor call sites.
@@ -143,22 +142,26 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
         }
 
         // Add unreachable if function returns something but not as a last instruction.
-        if (wasmFunctionType.resultTypes.isNotEmpty() && declaration.body is IrBlockBody) {
-            // TODO: Add unreachable only if needed
+        // We can do a separate lowering which adds explicit returns everywhere instead.
+        if (wasmFunctionType.resultTypes.isNotEmpty()) {
             exprGen.buildUnreachable()
         }
 
         context.defineFunction(declaration.symbol, function)
 
-        if (declaration == backendContext.startFunction)
-            context.setStartFunction(function)
+        val initPriority = when (declaration) {
+            backendContext.fieldInitFunction -> "0"
+            backendContext.mainCallsWrapperFunction -> "1"
+            else -> null
+        }
+        if (initPriority != null)
+            context.registerInitFunction(function, initPriority)
 
-        if (declaration.isExported(backendContext)) {
+        if (declaration.isExported()) {
             context.addExport(
                 WasmExport.Function(
                     field = function,
-                    // TODO: Add ability to specify exported name.
-                    name = declaration.name.identifier
+                    name = declaration.getJsNameOrKotlinName().identifier
                 )
             )
         }
@@ -166,9 +169,35 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
 
     override fun visitClass(declaration: IrClass) {
         if (declaration.isAnnotationClass) return
+        if (declaration.isExternal) return
         val symbol = declaration.symbol
 
+
+        // Handle arrays
+        declaration.getWasmArrayAnnotation()?.let { wasmArrayAnnotation ->
+            val nameStr = declaration.fqNameWhenAvailable.toString()
+            val wasmArrayDeclaration = WasmArrayDeclaration(
+                nameStr,
+                WasmStructFieldDeclaration(
+                    name = "field",
+                    type = context.transformFieldType(wasmArrayAnnotation.type),
+                    isMutable = true
+                )
+            )
+
+            context.defineGcType(symbol, wasmArrayDeclaration)
+            return
+        }
+
         if (declaration.isInterface) {
+            val metadata = InterfaceMetadata(declaration, irBuiltIns)
+            for (method in metadata.methods) {
+                val methodSymbol = method.function.symbol
+                val table = WasmTable(
+                    elementType = WasmRefNullType(WasmHeapType.Type(context.referenceFunctionType(methodSymbol)))
+                )
+                context.defineInterfaceMethodTable(methodSymbol, table)
+            }
             context.registerInterface(symbol)
         } else {
             val nameStr = declaration.fqNameWhenAvailable.toString()
@@ -177,15 +206,15 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
                 fields = declaration.allFields(irBuiltIns).map {
                     WasmStructFieldDeclaration(
                         name = it.name.toString(),
-                        type = context.transformType(it.type),
+                        type = context.transformFieldType(it.type),
                         isMutable = true
                     )
                 }
             )
 
-            context.defineStructType(symbol, structType)
+            context.defineGcType(symbol, structType)
 
-            var depth = 2
+            var depth = 0
             val metadata = context.getClassMetadata(symbol)
             var subMetadata = metadata
             while (true) {
@@ -196,28 +225,51 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
             val initBody = mutableListOf<WasmInstr>()
             val wasmExpressionGenerator = WasmIrExpressionBuilder(initBody)
 
+            val wasmGcType = context.referenceGcType(symbol)
             val superClass = metadata.superClass
             if (superClass != null) {
                 val superRTT = context.referenceClassRTT(superClass.klass.symbol)
                 wasmExpressionGenerator.buildGetGlobal(superRTT)
+                wasmExpressionGenerator.buildRttSub(wasmGcType)
             } else {
-                wasmExpressionGenerator.buildRttCanon(WasmRefType(WasmHeapType.Simple.Eq))
+                wasmExpressionGenerator.buildRttCanon(wasmGcType)
             }
-
-            wasmExpressionGenerator.buildRttSub(
-                WasmRefType(WasmHeapType.Type(WasmSymbol(structType)))
-            )
 
             val rtt = WasmGlobal(
                 name = "rtt_of_$nameStr",
                 isMutable = false,
-                type = WasmRtt(depth, WasmHeapType.Type(WasmSymbol(structType))),
+                type = WasmRtt(depth, WasmSymbol(structType)),
                 init = initBody
             )
 
             context.defineRTT(symbol, rtt)
             context.registerClass(symbol)
             context.generateTypeInfo(symbol, binaryDataStruct(metadata))
+
+            // New type info model
+            if (declaration.modality != Modality.ABSTRACT) {
+                context.generateInterfaceTable(symbol, interfaceTable(metadata))
+                for (i in metadata.interfaces) {
+                    val interfaceImplementation = InterfaceImplementation(i.symbol, declaration.symbol)
+                    // TODO: Cache it
+                    val interfaceMetadata = InterfaceMetadata(i, irBuiltIns)
+                    val table = interfaceMetadata.methods.associate { method ->
+                        val classMethod: VirtualMethodMetadata? = metadata.virtualMethods
+                            .find { it.signature == method.signature && it.function.modality != Modality.ABSTRACT }  // TODO: Use map
+
+                        if (classMethod == null && !allowIncompleteImplementations) {
+                            error("Cannot find class implementation of method ${method.signature} in class ${declaration.fqNameWhenAvailable}")
+                        }
+                        val matchedMethod = classMethod?.let { context.referenceFunction(it.function.symbol) }
+                        method.function.symbol as IrFunctionSymbol to matchedMethod
+                    }
+
+                    context.registerInterfaceImplementationMethod(
+                        interfaceImplementation,
+                        table
+                    )
+                }
+            }
         }
 
         for (member in declaration.declarations) {
@@ -227,27 +279,25 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
 
     private fun binaryDataStruct(classMetadata: ClassMetadata): ConstantDataStruct {
         val invalidIndex = -1
-        val superClass = classMetadata.superClass?.klass
 
-        val superClassSymbol: WasmSymbol<Int> =
-            superClass?.let { context.referenceClassId(it.symbol) } ?: WasmSymbol(invalidIndex)
-
-        val superTypeField =
-            ConstantDataIntField("Super class", superClassSymbol)
-
-        val interfacesArray = ConstantDataIntArray(
-            "data",
-            classMetadata.interfaces.map { context.referenceInterfaceId(it.symbol) }
-        )
-        val interfacesArraySize = ConstantDataIntField(
-            "size",
-            interfacesArray.value.size
+        val fqnShouldBeEmitted = context.backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass)
+        //TODO("FqName for inner classes could be invalid due to topping it out from outer class")
+        val packageName = if (fqnShouldBeEmitted) classMetadata.klass.kotlinFqName.parentOrNull()?.asString() ?: "" else ""
+        val simpleName = classMetadata.klass.kotlinFqName.shortName().asString()
+        val typeInfo = ConstantDataStruct(
+            "TypeInfo",
+            listOf(
+                ConstantDataIntField("TypePackageNameLength", packageName.length),
+                ConstantDataIntField("TypePackageNamePtr", context.referenceStringLiteral(packageName)),
+                ConstantDataIntField("TypeNameLength", simpleName.length),
+                ConstantDataIntField("TypeNamePtr", context.referenceStringLiteral(simpleName))
+            )
         )
 
-        val implementedInterfacesArrayWithSize = ConstantDataStruct(
-            "Implemented interfaces array",
-            listOf(interfacesArraySize, interfacesArray)
-        )
+        val superClass = classMetadata.klass.getSuperClass(context.backendContext.irBuiltIns)
+        val superTypeId = superClass?.let {
+            ConstantDataIntField("SuperTypeId", context.referenceClassId(it.symbol))
+        } ?: ConstantDataIntField("SuperTypeId", -1)
 
         val vtableSizeField = ConstantDataIntField(
             "V-table length",
@@ -265,28 +315,48 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
             }
         )
 
-        val signaturesArray = ConstantDataIntArray(
-            "Signatures",
-            classMetadata.virtualMethods.map {
-                if (it.function.modality == Modality.ABSTRACT) {
-                    WasmSymbol(invalidIndex)
-                } else {
-                    context.referenceSignatureId(it.signature)
-                }
-            }
+        val interfaceTablePtr = ConstantDataIntField(
+            "interfaceTablePtr",
+            context.referenceInterfaceTableAddress(classMetadata.klass.symbol)
         )
 
         return ConstantDataStruct(
             "Class TypeInfo: ${classMetadata.klass.fqNameWhenAvailable} ",
             listOf(
-                superTypeField,
+                typeInfo,
+                superTypeId,
+                interfaceTablePtr,
                 vtableSizeField,
                 vtableArray,
-                signaturesArray,
-                implementedInterfacesArrayWithSize,
             )
         )
     }
+
+
+    private fun interfaceTable(classMetadata: ClassMetadata): ConstantDataStruct {
+        val interfaces = classMetadata.interfaces
+        val size = ConstantDataIntField("size", interfaces.size)
+        val interfaceIds = ConstantDataIntArray(
+            "interfaceIds",
+            interfaces.map { context.referenceInterfaceId(it.symbol) },
+        )
+        val interfaceImplementationIds = ConstantDataIntArray(
+            "interfaceImplementationId",
+            interfaces.map {
+                context.referenceInterfaceImplementationId(InterfaceImplementation(it.symbol, classMetadata.klass.symbol))
+            },
+        )
+
+        return ConstantDataStruct(
+            "Class interface table: ${classMetadata.klass.fqNameWhenAvailable} ",
+            listOf(
+                size,
+                interfaceIds,
+                interfaceImplementationIds,
+            )
+        )
+    }
+
 
     override fun visitField(declaration: IrField) {
         // Member fields are generated as part of struct type
@@ -296,13 +366,21 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
 
         val initBody = mutableListOf<WasmInstr>()
         val wasmExpressionGenerator = WasmIrExpressionBuilder(initBody)
-        generateDefaultInitializerForType(wasmType, wasmExpressionGenerator)
+
+        val initValue: IrExpression? = declaration.initializer?.expression
+        if (initValue != null) {
+            check(initValue is IrConst<*> && initValue.kind !is IrConstKind.String && initValue.kind !is IrConstKind.Null) {
+                "Static field initializer should be non-string const or null"
+            }
+            generateConstExpression(initValue, wasmExpressionGenerator, context)
+        } else {
+            generateDefaultInitializerForType(wasmType, wasmExpressionGenerator)
+        }
 
         val global = WasmGlobal(
             name = declaration.fqNameWhenAvailable.toString(),
             type = wasmType,
             isMutable = true,
-            // All globals are currently initialized in start function
             init = initBody
         )
 
@@ -313,12 +391,11 @@ class DeclarationGenerator(val context: WasmModuleCodegenContext) : IrElementVis
 
 fun generateDefaultInitializerForType(type: WasmType, g: WasmExpressionBuilder) = when (type) {
     WasmI32 -> g.buildConstI32(0)
-    WasmI1 -> g.buildConstI32(0)
     WasmI64 -> g.buildConstI64(0)
     WasmF32 -> g.buildConstF32(0f)
     WasmF64 -> g.buildConstF64(0.0)
     is WasmRefNullType -> g.buildRefNull(type.heapType)
-    is WasmExternRef -> g.buildRefNull(WasmHeapType.Simple.Extern)
+    is WasmExternRef, is WasmAnyRef -> g.buildRefNull(WasmHeapType.Simple.Extern)
     WasmUnreachableType -> error("Unreachable type can't be initialized")
     else -> error("Unknown value type ${type.name}")
 }
@@ -328,5 +405,26 @@ fun IrFunction.getEffectiveValueParameters(): List<IrValueParameter> {
     return listOfNotNull(implicitThis, dispatchReceiverParameter, extensionReceiverParameter) + valueParameters
 }
 
-fun IrFunction.isExported(context: WasmBackendContext): Boolean =
-    visibility == DescriptorVisibilities.PUBLIC && fqNameWhenAvailable in context.additionalExportedDeclarations
+fun IrFunction.isExported(): Boolean =
+    isJsExport()
+
+
+fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder, context: WasmBaseCodegenContext) {
+    when (val kind = expression.kind) {
+        is IrConstKind.Null -> generateDefaultInitializerForType(context.transformType(expression.type), body)
+        is IrConstKind.Boolean -> body.buildConstI32(if (kind.valueOf(expression)) 1 else 0)
+        is IrConstKind.Byte -> body.buildConstI32(kind.valueOf(expression).toInt())
+        is IrConstKind.Short -> body.buildConstI32(kind.valueOf(expression).toInt())
+        is IrConstKind.Int -> body.buildConstI32(kind.valueOf(expression))
+        is IrConstKind.Long -> body.buildConstI64(kind.valueOf(expression))
+        is IrConstKind.Char -> body.buildConstI32(kind.valueOf(expression).code)
+        is IrConstKind.Float -> body.buildConstF32(kind.valueOf(expression))
+        is IrConstKind.Double -> body.buildConstF64(kind.valueOf(expression))
+        is IrConstKind.String -> {
+            body.buildConstI32Symbol(context.referenceStringLiteral(kind.valueOf(expression)))
+            body.buildConstI32(kind.valueOf(expression).length)
+            body.buildCall(context.referenceFunction(context.backendContext.wasmSymbols.stringGetLiteral))
+        }
+        else -> error("Unknown constant kind")
+    }
+}

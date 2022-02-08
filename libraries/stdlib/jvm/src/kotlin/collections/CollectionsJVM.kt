@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,6 @@ public fun <T> listOf(element: T): List<T> = java.util.Collections.singletonList
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 internal actual inline fun <E> buildListInternal(builderAction: MutableList<E>.() -> Unit): List<E> {
     return build(createListBuilder<E>().apply(builderAction))
@@ -29,7 +28,6 @@ internal actual inline fun <E> buildListInternal(builderAction: MutableList<E>.(
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 internal actual inline fun <E> buildListInternal(capacity: Int, builderAction: MutableList<E>.() -> Unit): List<E> {
     return build(createListBuilder<E>(capacity).apply(builderAction))
@@ -37,21 +35,18 @@ internal actual inline fun <E> buildListInternal(capacity: Int, builderAction: M
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 internal fun <E> createListBuilder(): MutableList<E> {
     return ListBuilder<E>()
 }
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 internal fun <E> createListBuilder(capacity: Int): MutableList<E> {
     return ListBuilder<E>(capacity)
 }
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 internal fun <E> build(builder: MutableList<E>): List<E> {
     return (builder as ListBuilder<E>).build()
 }
@@ -123,3 +118,12 @@ internal actual inline fun checkCountOverflow(count: Int): Int {
     return count
 }
 
+
+@Suppress("NOTHING_TO_INLINE")
+internal actual inline fun brittleContainsOptimizationEnabled(): Boolean = CollectionSystemProperties.brittleContainsOptimizationEnabled
+
+internal object CollectionSystemProperties {
+    @JvmField
+    internal val brittleContainsOptimizationEnabled: Boolean =
+        System.getProperty("kotlin.collections.convert_arg_to_set_in_removeAll")?.toBoolean() ?: false
+}

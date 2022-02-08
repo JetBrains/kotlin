@@ -8,21 +8,17 @@ plugins {
     id("jps-compatible")
 }
 
+repositories {
+    mavenLocal()
+}
+
 dependencies {
-    Platform[193].orLower {
-        testCompileOnly(intellijDep()) { includeJars("openapi", rootProject = rootProject) }
-    }
+    testApi(intellijCore())
 
-    testCompileOnly(intellijDep()) {
-        includeJars("extensions", "idea_rt", "util", "asm-all", "platform-util-ex", rootProject = rootProject)
-    }
+    testRuntimeOnly("xerces:xercesImpl:2.12.0")
+    testRuntimeOnly(commonDependency("commons-lang:commons-lang"))
 
-    testCompileOnly(intellijPluginDep("java")) { includeJars("java-api") }
-    testRuntimeOnly(intellijPluginDep("java"))
-
-    testRuntimeOnly(intellijDep())
-
-    testApi(commonDep("junit:junit"))
+    testApi(commonDependency("junit:junit"))
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testApi(projectTests(":compiler:tests-common"))
@@ -30,8 +26,10 @@ dependencies {
     testCompileOnly(project(":kotlin-reflect-api"))
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(project(":core:descriptors.runtime"))
-    testApi(projectTests(":compiler:fir:analysis-tests"))
+    testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testApi(project(":compiler:fir:resolve"))
+    testApi(project(":compiler:fir:providers"))
+    testApi(project(":compiler:fir:semantics"))
     testApi(project(":compiler:fir:dump"))
 
     val asyncProfilerClasspath = project.findProperty("fir.bench.async.profiler.classpath") as? String
@@ -48,7 +46,8 @@ sourceSets {
 projectTest {
     systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
     workingDir = rootDir
-    jvmArgs!!.removeIf { it.contains("-Xmx") }
+    jvmArgs!!.removeIf { it.contains("-Xmx") || it.contains("-Xms") || it.contains("ReservedCodeCacheSize") }
+    minHeapSize = "8g"
     maxHeapSize = "8g"
     dependsOn(":dist")
 
@@ -59,6 +58,7 @@ projectTest {
             jvmArgs(paramRegex.findAll(argsExt).map { it.groupValues[1] }.toList())
         }
     }
+    jvmArgs("-XX:ReservedCodeCacheSize=512m")
 }
 
 testsJar()

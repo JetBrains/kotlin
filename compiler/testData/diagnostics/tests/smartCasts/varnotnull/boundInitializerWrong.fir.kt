@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // KT-15792 and related
 
 fun foo() {
@@ -6,7 +5,7 @@ fun foo() {
     val y = x
     x = null
     if (y != null) {
-        x.hashCode()
+        x<!UNSAFE_CALL!>.<!>hashCode()
     }
 }
 
@@ -23,7 +22,7 @@ fun bar(s: String?) {
     val hashCode = ss?.hashCode()
     ss = null
     if (hashCode != null) {
-        ss.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+        ss<!UNSAFE_CALL!>.<!>hashCode()
     }
 }
 
@@ -41,6 +40,6 @@ fun baz(arg: Some?) {
     val ss = arg?.s
     if (ss != null) {
         arg.hashCode()
-        arg.s.<!INAPPLICABLE_CANDIDATE!>hashCode<!>()
+        arg.s<!UNSAFE_CALL!>.<!>hashCode()
     }
 }

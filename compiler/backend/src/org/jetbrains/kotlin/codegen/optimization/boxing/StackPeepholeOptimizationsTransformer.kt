@@ -19,14 +19,12 @@ package org.jetbrains.kotlin.codegen.optimization.boxing
 import org.jetbrains.kotlin.codegen.optimization.common.findPreviousOrNull
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.org.objectweb.asm.Opcodes
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.InsnList
-import org.jetbrains.org.objectweb.asm.tree.InsnNode
-import org.jetbrains.org.objectweb.asm.tree.MethodNode
+import org.jetbrains.org.objectweb.asm.tree.*
 
 class StackPeepholeOptimizationsTransformer : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        while (transformOnce(methodNode)) {
+        while (true) {
+            if (!transformOnce(methodNode)) break
         }
     }
 
@@ -35,10 +33,10 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
 
         val insns = methodNode.instructions.toArray()
 
-        forInsn@ for (i in 1 until insns.size) {
+        for (i in 1 until insns.size) {
             val insn = insns[i]
             val prev = insn.previous
-            val prevNonNop = insn.findPreviousOrNull { it.opcode != Opcodes.NOP } ?: continue@forInsn
+            val prevNonNop = insn.findPreviousOrNull { it.opcode != Opcodes.NOP } ?: continue
 
             when (insn.opcode) {
                 Opcodes.POP -> {
@@ -55,7 +53,7 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
                 }
 
                 Opcodes.SWAP -> {
-                    val prevNonNop2 = prevNonNop.findPreviousOrNull { it.opcode != Opcodes.NOP } ?: continue@forInsn
+                    val prevNonNop2 = prevNonNop.findPreviousOrNull { it.opcode != Opcodes.NOP } ?: continue
                     if (prevNonNop.isPurePushOfSize1() && prevNonNop2.isPurePushOfSize1()) {
                         actions.add {
                             it.remove(insn)
@@ -85,7 +83,7 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
                             it.remove(prevNonNop)
                         }
                     } else if (i > 1) {
-                        val prevNonNop2 = prevNonNop.findPreviousOrNull { it.opcode != Opcodes.NOP } ?: continue@forInsn
+                        val prevNonNop2 = prevNonNop.findPreviousOrNull { it.opcode != Opcodes.NOP } ?: continue
                         if (prevNonNop.isEliminatedByPop() && prevNonNop2.isEliminatedByPop()) {
                             actions.add {
                                 it.set(insn, InsnNode(Opcodes.NOP))
@@ -115,20 +113,26 @@ class StackPeepholeOptimizationsTransformer : MethodTransformer() {
                 opcode == Opcodes.DUP
 
     private fun AbstractInsnNode.isPurePushOfSize1(): Boolean =
-        opcode in Opcodes.ACONST_NULL..Opcodes.FCONST_2 ||
-                opcode in Opcodes.BIPUSH..Opcodes.ILOAD ||
-                opcode == Opcodes.FLOAD ||
-                opcode == Opcodes.ALOAD ||
-                isUnitInstance()
+        !isLdcOfSize2() && (
+                opcode in Opcodes.ACONST_NULL..Opcodes.FCONST_2 ||
+                        opcode in Opcodes.BIPUSH..Opcodes.ILOAD ||
+                        opcode == Opcodes.FLOAD ||
+                        opcode == Opcodes.ALOAD ||
+                        isUnitInstance()
+                )
 
     private fun AbstractInsnNode.isEliminatedByPop2() =
         isPurePushOfSize2() ||
                 opcode == Opcodes.DUP2
 
     private fun AbstractInsnNode.isPurePushOfSize2(): Boolean =
-        opcode == Opcodes.LCONST_0 || opcode == Opcodes.LCONST_1 ||
+        isLdcOfSize2() ||
+                opcode == Opcodes.LCONST_0 || opcode == Opcodes.LCONST_1 ||
                 opcode == Opcodes.DCONST_0 || opcode == Opcodes.DCONST_1 ||
                 opcode == Opcodes.LLOAD ||
                 opcode == Opcodes.DLOAD
+
+    private fun AbstractInsnNode.isLdcOfSize2(): Boolean =
+        opcode == Opcodes.LDC && this is LdcInsnNode && (this.cst is Double || this.cst is Long)
 }
 

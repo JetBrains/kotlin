@@ -1,2 +1,0 @@
-4 <bold>val x: Int</bold> (in A)
-7 	x = <bold>1</bold> (in A)

@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class IC(val x: Int)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IC(val x: Int)
 
 abstract class A<T> {
     var t: T? = null

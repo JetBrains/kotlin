@@ -1,0 +1,27 @@
+FILE fqName:<root> fileName:/typeParameterAsContextReceiver.kt
+  FUN name:useContext visibility:public modality:FINAL <T> (<this>:T of <root>.useContext, block:kotlin.Function1<T of <root>.useContext, kotlin.Unit>) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
+    contextReceiverParametersCount: 1
+    VALUE_PARAMETER name:<this> index:0 type:T of <root>.useContext
+    VALUE_PARAMETER name:block index:1 type:kotlin.Function1<T of <root>.useContext, kotlin.Unit>
+    BLOCK_BODY
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.Unit origin=null
+        <T>: kotlin.Int
+        <R>: kotlin.Unit
+        receiver: CONST Int type=kotlin.Int value=42
+        block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.Int) returnType:kotlin.Unit
+            $receiver: VALUE_PARAMETER name:$this$with type:kotlin.Int
+            BLOCK_BODY
+              CALL 'public final fun useContext <T> (<this>: T of <root>.useContext, block: kotlin.Function1<T of <root>.useContext, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+                <T>: kotlin.Int
+                <this>: GET_VAR '$this$with: kotlin.Int declared in <root>.test.<anonymous>' type=kotlin.Int origin=null
+                block: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (i:kotlin.Int) returnType:kotlin.Unit
+                    VALUE_PARAMETER name:i index:0 type:kotlin.Int
+                    BLOCK_BODY
+                      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+                        CALL 'public open fun toDouble (): kotlin.Double declared in kotlin.Int' type=kotlin.Double origin=null
+                          $this: GET_VAR 'i: kotlin.Int declared in <root>.test.<anonymous>.<anonymous>' type=kotlin.Int origin=null

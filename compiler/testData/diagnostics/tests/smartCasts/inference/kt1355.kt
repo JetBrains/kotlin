@@ -35,6 +35,4 @@ public data class Tag(public var tagName: String) {
 //from library
 operator fun <K, V> MutableMap<K, V>.set(key : K, value : V) = this.put(key, value)
 
-fun <T> arrayListOf(vararg <!UNUSED_PARAMETER!>values<!>: T): MutableList<T> = throw Exception()
-
-
+fun <T> arrayListOf(vararg values: T): MutableList<T> = throw Exception()

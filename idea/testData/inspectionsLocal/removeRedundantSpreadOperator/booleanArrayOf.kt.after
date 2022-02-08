@@ -1,5 +1,0 @@
-fun foo(vararg x: Boolean) {}
-
-fun bar() {
-    foo(true, true)
-}

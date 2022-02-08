@@ -1,0 +1,14 @@
+KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtImplicitReceiverValue:
+        symbol = KtReceiverParameterSymbol:
+          origin: SOURCE
+          type: JavaClass
+      extensionReceiver = null
+      signature = KtVariableLikeSignature:
+        name = foo
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = val foo: kotlin.Int
+    simpleAccess = Read:

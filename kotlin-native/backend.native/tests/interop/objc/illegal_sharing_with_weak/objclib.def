@@ -1,0 +1,2 @@
+language = Objective-C
+headerFilter = **/objclib.h

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 
 // ===== Case 1: LHS is a class
@@ -48,7 +49,7 @@ object C {
     }
 
     class Derived : Base() {
-        val a = C.Base.Companion.FromBaseCompanion::<!UNRESOLVED_REFERENCE!>foo<!>
+        val a = C.Base.Companion.FromBaseCompanion::foo
     }
 }
 

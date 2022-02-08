@@ -1,6 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !CHECK_TYPE
-// !WITH_NEW_INFERENCE
 suspend fun noParams() {
 }
 
@@ -36,7 +35,7 @@ fun test() {
 
         severalParams("", 89) checkType { _<Double>() }
         // TODO: should we allow somehow to call with passing continuation explicitly?
-        severalParams("", 89, <!TOO_MANY_ARGUMENTS!>6.9<!>) checkType { <!NI;UNRESOLVED_REFERENCE_WRONG_RECEIVER, OI;TYPE_MISMATCH!>_<!><Unit>() }
+        severalParams("", 89, <!TOO_MANY_ARGUMENTS!>6.9<!>) checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Unit>() }
 
         "".stringReceiver(1)
         Any().anyReceiver(1)

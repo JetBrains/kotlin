@@ -26,6 +26,7 @@ interface PackageFragmentProvider {
     fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName>
 
     object Empty : PackageFragmentProvider {
+        @Deprecated("for usages use #packageFragments(FqName) at final point, for impl use #collectPackageFragments(FqName, MutableCollection<PackageFragmentDescriptor>)")
         override fun getPackageFragments(fqName: FqName) = emptyList<PackageFragmentDescriptor>()
 
         override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) = emptySet<FqName>()
@@ -34,12 +35,20 @@ interface PackageFragmentProvider {
 
 interface PackageFragmentProviderOptimized : PackageFragmentProvider {
     fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>)
+    fun isEmpty(fqName: FqName): Boolean
 }
 
 fun PackageFragmentProvider.packageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
     val packageFragments = mutableListOf<PackageFragmentDescriptor>()
     collectPackageFragmentsOptimizedIfPossible(fqName, packageFragments)
     return packageFragments
+}
+
+fun PackageFragmentProvider.isEmpty(fqName: FqName): Boolean {
+    return when (this) {
+        is PackageFragmentProviderOptimized -> isEmpty(fqName)
+        else -> packageFragments(fqName).isEmpty()
+    }
 }
 
 fun PackageFragmentProvider.collectPackageFragmentsOptimizedIfPossible(

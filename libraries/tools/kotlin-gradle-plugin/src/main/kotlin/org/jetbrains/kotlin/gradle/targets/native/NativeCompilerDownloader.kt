@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionType
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.konan.CompilerVersion
+import org.jetbrains.kotlin.konan.CompilerVersionImpl
 import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
 import java.io.File
+import java.nio.file.Files
 
 class NativeCompilerDownloader(
     val project: Project,
@@ -44,7 +46,20 @@ class NativeCompilerDownloader(
         get() = NativeDistributionTypeProvider(project).getDistributionType(compilerVersion)
 
     private val simpleOsName: String
-        get() = HostManager.simpleOsName()
+        get() {
+            fun CompilerVersion.isAtLeast(compilerVersion: CompilerVersion): Boolean {
+                if (this.major != compilerVersion.major) return this.major > compilerVersion.major
+                if (this.minor != compilerVersion.minor) return this.minor > compilerVersion.minor
+                if (this.maintenance != compilerVersion.maintenance) return this.maintenance > compilerVersion.maintenance
+                if (this.meta.ordinal != compilerVersion.meta.ordinal) return this.meta.ordinal > compilerVersion.meta.ordinal
+                return this.build >= compilerVersion.build
+            }
+            return if (compilerVersion.isAtLeast(CompilerVersionImpl(major = 1, minor = 5, maintenance = 30, build = 1466))) {
+                HostManager.platformName()
+            } else {
+                HostManager.simpleOsName()
+            }
+        }
 
     private val dependencyName: String
         get() {
@@ -127,9 +142,24 @@ class NativeCompilerDownloader(
 
         logger.lifecycle("Unpack Kotlin/Native compiler to $compilerDirectory")
         logger.lifecycleWithDuration("Unpack Kotlin/Native compiler to $compilerDirectory finished,") {
-            project.copy {
-                it.from(archiveFileTree(archive))
-                it.into(DependencyDirectories.localKonanDir)
+            val kotlinNativeDir = compilerDirectory.parentFile.also { it.mkdirs() }
+            val tmpDir = Files.createTempDirectory(kotlinNativeDir.toPath(), "compiler-").toFile()
+            try {
+                logger.debug("Unpacking Kotlin/Native compiler to tmp directory $tmpDir")
+                project.copy {
+                    it.from(archiveFileTree(archive))
+                    it.into(tmpDir)
+                }
+                val compilerTmp = tmpDir.resolve(dependencyNameWithVersion)
+                if (!compilerTmp.renameTo(compilerDirectory)) {
+                    project.copy {
+                        it.from(compilerTmp)
+                        it.into(compilerDirectory)
+                    }
+                }
+                logger.debug("Moved Kotlin/Native compiler from $tmpDir to $compilerDirectory")
+            } finally {
+                tmpDir.deleteRecursively()
             }
         }
 
@@ -137,7 +167,9 @@ class NativeCompilerDownloader(
     }
 
     fun downloadIfNeeded() {
-        if (KotlinNativeCompilerRunner(project).classpath.isEmpty()) {
+
+        val classpath = KotlinNativeCompilerRunner(project).classpath
+        if (classpath.isEmpty() || classpath.any { !it.exists() }) {
             downloadAndExtract()
         }
     }

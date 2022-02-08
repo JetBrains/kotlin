@@ -20,6 +20,6 @@ class Foo<R> {
 
     fun test() {
         Foo<Int>().bar<String>().baz().getR(1)
-        Foo<Int>().bar<String>().baz().<!INAPPLICABLE_CANDIDATE!>getR<!>("")
+        Foo<Int>().bar<String>().baz().getR(<!ARGUMENT_TYPE_MISMATCH!>""<!>)
     }
 }

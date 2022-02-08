@@ -1,5 +1,6 @@
+// TARGET_BACKEND: JVM
+// DUMP_EXTERNAL_CLASS: J1
 // FILE: constructorWithOwnTypeParametersCall.kt
-// DUMP_EXTERNAL_CLASS J1
 
 fun testKotlin() = K1<Int>().K2<String>()
 

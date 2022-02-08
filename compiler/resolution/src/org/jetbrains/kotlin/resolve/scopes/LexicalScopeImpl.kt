@@ -24,6 +24,7 @@ class LexicalScopeImpl @JvmOverloads constructor(
     override val ownerDescriptor: DeclarationDescriptor,
     override val isOwnerDescriptorAccessibleByLabel: Boolean,
     override val implicitReceiver: ReceiverParameterDescriptor?,
+    override val contextReceiversGroup: List<ReceiverParameterDescriptor>,
     override val kind: LexicalScopeKind,
     redeclarationChecker: LocalRedeclarationChecker = LocalRedeclarationChecker.DO_NOTHING,
     initialize: LexicalScopeImpl.InitializeHandler.() -> Unit = {}
@@ -37,8 +38,16 @@ class LexicalScopeImpl @JvmOverloads constructor(
 
     override fun printStructure(p: Printer) {
         p.println(
-            this::class.java.simpleName, ": ", kind, "; for descriptor: ", ownerDescriptor.name,
-            " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {"
+            this::class.java.simpleName,
+            ": ",
+            kind,
+            "; for descriptor: ",
+            ownerDescriptor.name,
+            " with implicitReceiver: ",
+            implicitReceiver?.value ?: "NONE",
+            " with contextReceiversGroup: ",
+            if (contextReceiversGroup.isEmpty()) "NONE" else contextReceiversGroup.joinToString { it.value.toString() },
+            " {"
         )
         p.pushIndent()
 

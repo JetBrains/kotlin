@@ -207,9 +207,9 @@ class JavacWrapper(
             javaClass.virtualFile?.let { if (it in scope) return javaClass }
         }
 
-        if (symbolBasedClassesCache.containsKey(classId)) {
-            val javaClass = symbolBasedClassesCache[classId]
-            javaClass?.virtualFile?.let { file ->
+        val javaClass = symbolBasedClassesCache[classId]
+        if (javaClass != null) {
+            javaClass.virtualFile?.let { file ->
                 if (file in scope) return javaClass
             }
         }
@@ -274,7 +274,9 @@ class JavacWrapper(
 
     fun isDeprecated(element: Element) = elements.isDeprecated(element)
 
-    fun isDeprecated(typeMirror: TypeMirror) = isDeprecated(types.asElement(typeMirror))
+    fun isDeprecated(typeMirror: TypeMirror): Boolean {
+        return isDeprecated(types.asElement(typeMirror) ?: return false)
+    }
 
     fun resolve(tree: JCTree, compilationUnit: CompilationUnitTree, containingElement: JavaElement): JavaClassifier? =
         classifierResolver.resolve(tree, compilationUnit, containingElement)
@@ -307,7 +309,8 @@ class JavacWrapper(
         }
 
     private fun findPackageInSymbols(fqName: String): SymbolBasedPackage? {
-        if (symbolBasedPackagesCache.containsKey(fqName)) return symbolBasedPackagesCache[fqName]
+        val cachedSymbolBasedPackage = symbolBasedPackagesCache[fqName]
+        if (cachedSymbolBasedPackage != null) return cachedSymbolBasedPackage
 
         fun findSimplePackageInSymbols(fqName: String): SimpleSymbolBasedPackage? {
             elements.getPackageElement(fqName)?.let { symbol ->

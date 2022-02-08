@@ -1,0 +1,6 @@
+language = Objective-C
+package = platform.IMServicePlugIn
+modules = IMServicePlugIn
+compilerOpts = -framework IMServicePlugIn
+linkerOpts = -framework IMServicePlugIn
+#Disabled: Unavailable

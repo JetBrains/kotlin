@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir
 
+import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.fir.builder.generateLazyLogicalOperation
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.buildErrorExpression
 data class WhenEntry(
     val conditions: List<FirExpression>,
     val firBlock: FirBlock,
+    val node: LighterASTNode,
     val isElse: Boolean = false
 ) {
     fun toFirWhenCondition(): FirExpression {

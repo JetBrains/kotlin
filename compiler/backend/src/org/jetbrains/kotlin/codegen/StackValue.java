@@ -20,11 +20,14 @@ import org.jetbrains.kotlin.codegen.coroutines.CoroutineCodegenUtilKt;
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.pseudoInsns.PseudoInsnsKt;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase;
+import org.jetbrains.kotlin.codegen.state.StaticTypeMapperForOldBackend;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
 import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
@@ -42,7 +45,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.SimpleType;
-import org.jetbrains.kotlin.types.TypeUtils;
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.Opcodes;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -452,15 +455,22 @@ public abstract class StackValue {
         v.invokevirtual(methodOwner.getInternalName(), type.getClassName() + "Value", "()" + type.getDescriptor(), false);
     }
 
-    public static void boxInlineClass(@NotNull KotlinType kotlinType, @NotNull InstructionAdapter v) {
-        Type boxedType = KotlinTypeMapper.mapInlineClassTypeAsDeclaration(kotlinType);
-        Type underlyingType = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType);
+    public static void boxInlineClass(
+            @NotNull KotlinTypeMarker kotlinType, @NotNull InstructionAdapter v, @NotNull KotlinTypeMapperBase typeMapper
+    ) {
+        Type boxed = typeMapper.mapTypeCommon(kotlinType, TypeMappingMode.CLASS_DECLARATION);
+        Type unboxed = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType, typeMapper);
+        boolean isNullable = typeMapper.getTypeSystem().isNullableType(kotlinType) && !isPrimitive(unboxed);
+        boxInlineClass(unboxed, boxed, isNullable, v);
+    }
 
-        if (TypeUtils.isNullableType(kotlinType) && !isPrimitive(underlyingType)) {
-            boxOrUnboxWithNullCheck(v, vv -> invokeBoxMethod(vv, boxedType, underlyingType));
-        }
-        else {
-            invokeBoxMethod(v, boxedType, underlyingType);
+    public static void boxInlineClass(
+            @NotNull Type unboxed, @NotNull Type boxed, boolean isNullable, @NotNull InstructionAdapter v
+    ) {
+        if (isNullable) {
+            boxOrUnboxWithNullCheck(v, vv -> invokeBoxMethod(vv, boxed, unboxed));
+        } else {
+            invokeBoxMethod(v, boxed, unboxed);
         }
     }
 
@@ -477,18 +487,26 @@ public abstract class StackValue {
         );
     }
 
-    public static void unboxInlineClass(@NotNull Type type, @NotNull KotlinType targetInlineClassType, @NotNull InstructionAdapter v) {
-        Type owner = KotlinTypeMapper.mapInlineClassTypeAsDeclaration(targetInlineClassType);
+    public static void unboxInlineClass(
+            @NotNull Type type,
+            @NotNull KotlinTypeMarker targetInlineClassType,
+            @NotNull InstructionAdapter v,
+            @NotNull KotlinTypeMapperBase typeMapper
+    ) {
+        Type boxed = typeMapper.mapTypeCommon(targetInlineClassType, TypeMappingMode.CLASS_DECLARATION);
+        Type unboxed = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(targetInlineClassType, typeMapper);
+        boolean isNullable = typeMapper.getTypeSystem().isNullableType(targetInlineClassType) && !isPrimitive(unboxed);
+        unboxInlineClass(type, boxed, unboxed, isNullable, v);
+    }
 
-        coerce(type, owner, v);
-
-        Type resultType = KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(targetInlineClassType);
-
-        if (TypeUtils.isNullableType(targetInlineClassType) && !isPrimitive(resultType)) {
-            boxOrUnboxWithNullCheck(v, vv -> invokeUnboxMethod(vv, owner, resultType));
-        }
-        else {
-            invokeUnboxMethod(v, owner, resultType);
+    public static void unboxInlineClass(
+            @NotNull Type type, @NotNull Type boxed, @NotNull Type unboxed, boolean isNullable, @NotNull InstructionAdapter v
+    ) {
+        coerce(type, boxed, v);
+        if (isNullable) {
+            boxOrUnboxWithNullCheck(v, vv -> invokeUnboxMethod(vv, boxed, unboxed));
+        } else {
+            invokeUnboxMethod(v, boxed, unboxed);
         }
     }
 
@@ -537,7 +555,7 @@ public abstract class StackValue {
             @Nullable KotlinType toKotlinType,
             @NotNull InstructionAdapter v
     ) {
-        if (coerceInlineClasses(fromType, fromKotlinType, toType, toKotlinType, v)) return;
+        if (coerceInlineClasses(fromType, fromKotlinType, toType, toKotlinType, v, StaticTypeMapperForOldBackend.INSTANCE)) return;
         coerce(fromType, toType, v);
     }
 
@@ -573,7 +591,8 @@ public abstract class StackValue {
             @Nullable KotlinType fromKotlinType,
             @NotNull Type toType,
             @Nullable KotlinType toKotlinType,
-            @NotNull InstructionAdapter v
+            @NotNull InstructionAdapter v,
+            @NotNull KotlinTypeMapperBase typeMapper
     ) {
         // NB see also requiresInlineClassBoxingOrUnboxing above
 
@@ -600,23 +619,23 @@ public abstract class StackValue {
             boolean isFromTypeUnboxed = isUnboxedInlineClass(fromKotlinType, fromType);
             boolean isToTypeUnboxed = isUnboxedInlineClass(toKotlinType, toType);
             if (isFromTypeUnboxed && !isToTypeUnboxed) {
-                boxInlineClass(fromKotlinType, v);
+                boxInlineClass(fromKotlinType, v, typeMapper);
                 return true;
             }
             else if (!isFromTypeUnboxed && isToTypeUnboxed) {
-                unboxInlineClass(fromType, toKotlinType, v);
+                unboxInlineClass(fromType, toKotlinType, v, typeMapper);
                 return true;
             }
         }
         else if (isFromTypeInlineClass) {
             if (isUnboxedInlineClass(fromKotlinType, fromType)) {
-                boxInlineClass(fromKotlinType, v);
+                boxInlineClass(fromKotlinType, v, typeMapper);
                 return true;
             }
         }
         else { // isToTypeInlineClass is `true`
             if (isUnboxedInlineClass(toKotlinType, toType)) {
-                unboxInlineClass(fromType, toKotlinType, v);
+                unboxInlineClass(fromType, toKotlinType, v, typeMapper);
                 return true;
             }
         }
@@ -625,11 +644,15 @@ public abstract class StackValue {
     }
 
     public static boolean isUnboxedInlineClass(@NotNull KotlinType kotlinType, @NotNull Type actualType) {
-        return KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType).equals(actualType);
+        return KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType, StaticTypeMapperForOldBackend.INSTANCE).equals(actualType);
     }
 
     public static void coerce(@NotNull Type fromType, @NotNull Type toType, @NotNull InstructionAdapter v) {
-        if (toType.equals(fromType)) return;
+        coerce(fromType, toType, v, false);
+    }
+
+    public static void coerce(@NotNull Type fromType, @NotNull Type toType, @NotNull InstructionAdapter v, boolean forceSelfCast) {
+        if (toType.equals(fromType) && !forceSelfCast) return;
 
         if (toType.getSort() == Type.VOID) {
             pop(v, fromType);
@@ -775,7 +798,8 @@ public abstract class StackValue {
     ) {
         // Coerce 'this' for the case when it is smart cast.
         // Do not coerce for other cases due to the 'protected' access issues (JVMS 7, 4.9.2 Structural Constraints).
-        boolean coerceType = descriptor.getKind() == ClassKind.INTERFACE || descriptor.isInline() || (castReceiver && !isSuper);
+        boolean coerceType = descriptor.getKind() == ClassKind.INTERFACE || InlineClassesUtilsKt.isInlineClass(descriptor) ||
+                             (castReceiver && !isSuper);
         return new ThisOuter(codegen, descriptor, isSuper, coerceType);
     }
 
@@ -1312,8 +1336,8 @@ public abstract class StackValue {
             StackValue newReceiver = StackValue.receiver(call, receiver, codegen, callable);
             ArgumentGenerator generator = createArgumentGenerator();
             newReceiver.put(newReceiver.type, newReceiver.kotlinType, v);
-            callGenerator.processAndPutHiddenParameters(false);
-
+            callGenerator.processHiddenParameters();
+            callGenerator.putHiddenParamsIntoLocals();
             defaultArgs = generator.generate(valueArguments, valueArguments, call.getResultingDescriptor());
         }
 
@@ -1731,7 +1755,8 @@ public abstract class StackValue {
                 assert getterDescriptor != null : "Getter descriptor should be not null for " + descriptor;
                 if (resolvedCall != null && getterDescriptor.isInline()) {
                     CallGenerator callGenerator = codegen.getOrCreateCallGenerator(resolvedCall, ((PropertyDescriptor)resolvedCall.getResultingDescriptor()).getGetter());
-                    callGenerator.processAndPutHiddenParameters(false);
+                    callGenerator.processHiddenParameters();
+                    callGenerator.putHiddenParamsIntoLocals();
                     callGenerator.genCall(getter, resolvedCall, false, codegen);
                 }
                 else {
@@ -1815,7 +1840,7 @@ public abstract class StackValue {
                 if (!skipReceiver) {
                     putReceiver(v, false);
                 }
-                callGenerator.processAndPutHiddenParameters(true);
+                callGenerator.processHiddenParameters();
                 callGenerator.putValueIfNeeded(new JvmKotlinType(
                                                        CollectionsKt.last(setter.getValueParameters()).getAsmType(),
                                                        CollectionsKt.last(setterDescriptor.getValueParameters()).getType()),
@@ -1863,7 +1888,7 @@ public abstract class StackValue {
                     if (kind == JvmMethodParameterKind.VALUE) {
                         break;
                     }
-                    if (kind == JvmMethodParameterKind.RECEIVER || kind == JvmMethodParameterKind.THIS) {
+                    if (kind == JvmMethodParameterKind.CONTEXT_RECEIVER || kind == JvmMethodParameterKind.RECEIVER || kind == JvmMethodParameterKind.THIS) {
                         return false;
                     }
                 }

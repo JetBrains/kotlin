@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Props(val intArray: IntArray) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Props(val intArray: IntArray) {
     val size get() = intArray.size
 
     fun foo(): Int {

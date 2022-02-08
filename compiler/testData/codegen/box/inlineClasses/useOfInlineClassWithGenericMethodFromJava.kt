@@ -1,8 +1,12 @@
 // TARGET_BACKEND: JVM
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 // FILE: a.kt
 
-inline class IC(val v: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IC(val v: Int) {
     fun <T> getT(): T? = null
 }
 

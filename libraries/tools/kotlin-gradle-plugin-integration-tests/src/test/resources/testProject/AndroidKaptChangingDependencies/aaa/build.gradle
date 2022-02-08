@@ -14,7 +14,7 @@ android {
 }
 
 dependencies {
-    compile project(':lib-a')
+    implementation project(':lib-a')
     kapt "com.squareup.dagger:dagger-compiler:$dagger_version"
 }
 

@@ -1,0 +1,27 @@
+open annotation class TestAnn : Annotation {
+  constructor(x: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: Int
+    field = x
+    get
+
+}
+
+class TestClass {
+  @TestAnn(x = 1)
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  @TestAnn(x = 2)
+  constructor(x: Int) {
+    this/*TestClass*/()
+  }
+
+}

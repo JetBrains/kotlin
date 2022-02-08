@@ -67,7 +67,7 @@ abstract class IrDelegateDescriptorBase(
         /* isDelegated = */ true
     ) {
     init {
-        setType(delegateType, emptyList(), (containingDeclaration as? ClassDescriptor)?.thisAsReceiverParameter, null)
+        setType(delegateType, emptyList(), (containingDeclaration as? ClassDescriptor)?.thisAsReceiverParameter, null, emptyList())
     }
 
     final override fun setOutType(outType: KotlinType?) {
@@ -75,6 +75,8 @@ abstract class IrDelegateDescriptorBase(
     }
 
     override fun getCompileTimeInitializer(): ConstantValue<*>? = null
+
+    override fun cleanCompileTimeInitializerCache() {}
 
     override fun getVisibility(): DescriptorVisibility = DescriptorVisibilities.PRIVATE
 
@@ -85,7 +87,7 @@ abstract class IrDelegateDescriptorBase(
     override fun isVar(): Boolean = false
 
     override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
-        visitor.visitVariableDescriptor(this, data)
+        visitor.visitPropertyDescriptor(this, data)
 }
 
 class IrPropertyDelegateDescriptorImpl(
@@ -131,6 +133,7 @@ class IrLocalDelegatedPropertyDelegateDescriptorImpl(
     ) {
 
     override fun getCompileTimeInitializer(): ConstantValue<*>? = null
+    override fun cleanCompileTimeInitializerCache() {}
     override fun isVar(): Boolean = false
     override fun isLateInit(): Boolean = false
     override fun substitute(substitutor: TypeSubstitutor): VariableDescriptor? = throw UnsupportedOperationException()

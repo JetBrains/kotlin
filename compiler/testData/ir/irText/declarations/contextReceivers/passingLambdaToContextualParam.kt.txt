@@ -1,0 +1,23 @@
+class C {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val result: String
+    field = "OK"
+    get
+
+}
+
+fun contextual(f: @ContextFunctionTypeParams(count = 1) Function1<C, String>): String {
+  return f.invoke(p1 = C())
+}
+
+fun box(): String {
+  return contextual(f = local fun <anonymous>(<this>: C): String {
+    return <this>.<get-result>()
+  }
+)
+}

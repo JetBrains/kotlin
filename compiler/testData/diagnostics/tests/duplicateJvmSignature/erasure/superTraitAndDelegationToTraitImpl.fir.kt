@@ -10,4 +10,4 @@ interface B {
 
 class C(f: A<String>): A<String> by f, B
 
-class D(f: A<Int>): A<Int> by f, B
+<!DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE!>class D<!>(f: A<Int>): A<Int> by f, B

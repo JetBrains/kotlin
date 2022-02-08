@@ -14,7 +14,7 @@ fun case_2(x: Any = null) {
 
 // TESTCASE NUMBER: 3
 fun case_3(x: Nothing = null) {
-    <!AMBIGUITY!>println<!>(x)
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(x)
 }
 
 // TESTCASE NUMBER: 4
@@ -38,18 +38,18 @@ class Case8 {
     var x: Any = 0
         get() = 0
         set(value) {
-            field = null
+            field = <!NULL_FOR_NONNULL_TYPE!>null<!>
         }
 }
 
 // TESTCASE NUMBER: 9
-fun case_9(): Any = null
+fun case_9(): Any = <!NULL_FOR_NONNULL_TYPE!>null<!>
 
 // TESTCASE NUMBER: 10
-fun case_10(x: Int, y: Boolean): Any = if (y) x else null
+fun case_10(x: Int, y: Boolean): Any = <!RETURN_TYPE_MISMATCH!>if (y) x else null<!>
 
 // TESTCASE NUMBER: 11
-fun case_11(x: Int, y: Boolean): Any = if (y) x else null
+fun case_11(x: Int, y: Boolean): Any = <!RETURN_TYPE_MISMATCH!>if (y) x else null<!>
 
 // TESTCASE NUMBER: 12
 class Case12 {
@@ -57,10 +57,10 @@ class Case12 {
     var y: Any
     var z: Any
     init {
-        x = null
-        y = null
+        x = <!NULL_FOR_NONNULL_TYPE!>null<!>
+        y = <!NULL_FOR_NONNULL_TYPE!>null<!>
         z = 10
-        z = null
+        z = <!NULL_FOR_NONNULL_TYPE!>null<!>
     }
 }
 
@@ -70,7 +70,7 @@ open class Case13_1 {
 }
 
 class Case13: Case13_1() {
-    override val x = null
+    override val <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>x<!> = null
 }
 
 // TESTCASE NUMBER: 14
@@ -79,7 +79,7 @@ abstract class Case14_1 {
 }
 
 class Case14: Case14_1() {
-    override val x = null
+    override val <!PROPERTY_TYPE_MISMATCH_ON_OVERRIDE!>x<!> = null
 }
 
 // TESTCASE NUMBER: 15
@@ -88,5 +88,5 @@ interface Case15_1 {
 }
 
 class Case15(): Case15_1 {
-    override fun foo() = null
+    override fun <!RETURN_TYPE_MISMATCH_ON_OVERRIDE!>foo<!>() = null
 }

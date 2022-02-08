@@ -6,13 +6,13 @@ class SomeContainer {
     protected fun makeLimit(): Limit = TODO()
 
     public inline fun foo(f: () -> Unit) {
-        Limit()
-        makeLimit()
+        <!PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE!>Limit<!>()
+        <!PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR!>makeLimit<!>()
     }
 }
 
 open class A protected constructor() {
     inline fun foo(f: () -> Unit) {
-        A()
+        <!PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE!>A<!>()
     }
 }

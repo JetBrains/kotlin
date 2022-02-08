@@ -1,4 +1,0 @@
-expect class My(x: Int, y: Int) {
-    val x: Int
-    val y: Int
-}

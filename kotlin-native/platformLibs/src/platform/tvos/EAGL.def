@@ -1,0 +1,9 @@
+depends = CFNetwork CoreFoundation Foundation Security darwin posix
+language = Objective-C
+package = platform.EAGL
+headers = OpenGLES/EAGL.h OpenGLES/EAGLDrawable.h
+
+headerFilter = OpenGLES/**
+
+compilerOpts = -framework OpenGLES
+linkerOpts = -framework OpenGLES

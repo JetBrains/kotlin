@@ -1,5 +1,0 @@
-// IS_APPLICABLE: true
-
-fun bar() {}
-
-fun foo(f: Boolean) = if (f) bar() else bar()

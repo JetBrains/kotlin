@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +Coroutines
 // SKIP_TXT
 

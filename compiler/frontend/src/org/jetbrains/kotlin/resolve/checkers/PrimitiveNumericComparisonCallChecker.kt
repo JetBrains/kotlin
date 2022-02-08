@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.*
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class PrimitiveNumericComparisonInfo(
     val comparisonType: KotlinType,
@@ -107,12 +106,12 @@ object PrimitiveNumericComparisonCallChecker : CallChecker {
     }
 
     private fun List<KotlinType>.findPrimitiveOrNullablePrimitiveType() =
-        firstNotNullResult { it.getPrimitiveTypeOrSupertype() }
+        firstNotNullOfOrNull { it.getPrimitiveTypeOrSupertype() }
 
     private fun KotlinType.getPrimitiveTypeOrSupertype(): KotlinType? =
         when {
             constructor.declarationDescriptor is TypeParameterDescriptor ->
-                immediateSupertypes().firstNotNullResult {
+                immediateSupertypes().firstNotNullOfOrNull {
                     it.getPrimitiveTypeOrSupertype()
                 }
             isPrimitiveNumberOrNullableType() ->

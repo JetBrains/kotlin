@@ -2,9 +2,8 @@ description = 'Kotlin Test TestNG'
 
 apply plugin: 'kotlin-platform-jvm'
 
-configureJvm6Project(project)
-configurePublishing(project)
-ext.javaHome = JDK_17
+JvmToolchain.configureJvmToolchain(project, JdkMajorVersion.JDK_1_7)
+JvmToolchain.updateJvmTarget(project, "1.6")
 
 def includeJava9 = BuildPropertiesExtKt.getIncludeJava9(project.kotlinBuildProperties)
 
@@ -16,8 +15,8 @@ sourceSets {
 
 dependencies {
     expectedBy project(':kotlin-test:kotlin-test-annotations-common')
-    compile project(':kotlin-test:kotlin-test-jvm')
-    compile('org.testng:testng:6.13.1')
+    api project(':kotlin-test:kotlin-test-jvm')
+    api('org.testng:testng:6.13.1')
     if (includeJava9) {
         java9CompileOnly('org.testng:testng:7.0.0')
     }
@@ -34,18 +33,24 @@ configureSourcesJar()
 configureJavadocJar()
 
 compileKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    kotlinOptions.freeCompilerArgs = [
+        "-Xallow-kotlin-package",
+        "-Xsuppress-deprecated-jvm-target-warning",
+    ]
     kotlinOptions.moduleName = project.name
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = ["-Xallow-kotlin-package"]
+    kotlinOptions.freeCompilerArgs = [
+        "-Xallow-kotlin-package",
+        "-Xsuppress-deprecated-jvm-target-warning",
+    ]
 }
 
-configureJvmIrBackend(project)
+configureFrontendIr(project)
 
 if (includeJava9) {
-    compileJava9Sources(project, 'kotlin.test.testng')
+    LibrariesCommon.configureJava9Compilation(project, 'kotlin.test.testng')
 }
 
 test {

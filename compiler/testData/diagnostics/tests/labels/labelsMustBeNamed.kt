@@ -14,7 +14,7 @@ fun foo(a: Any?): Int {
 
     var <!ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE!>b<!> = 1
 
-    <!UNUSED_VALUE!>(<!SYNTAX!>@<!> b) =<!> 2
+    (<!SYNTAX!>@<!> b) = 2
 
     return<!SYNTAX!>@<!> 1
 }

@@ -1,9 +1,18 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Z(val int: Int)
-inline class L(val long: Long)
-inline class Str(val string: String)
-inline class Obj(val obj: Any)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val int: Int)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class L(val long: Long)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Str(val string: String)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Obj(val obj: Any)
 
 inline fun <R> s1Z(x: Z, fn: (Int, Z) -> R) = fn(1, x)
 inline fun <R> s1L(x: L, fn: (Int, L) -> R) = fn(1, x)

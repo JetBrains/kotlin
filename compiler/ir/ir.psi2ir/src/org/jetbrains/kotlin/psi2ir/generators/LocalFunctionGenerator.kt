@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.psi.KtLambdaExpression
@@ -53,5 +54,5 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
     }
 
     private fun generateFunctionDeclaration(ktFun: KtNamedFunction) =
-        FunctionGenerator(context).generateFunctionDeclaration(ktFun)
+        FunctionGenerator(context).generateFunctionDeclaration(ktFun, IrDeclarationOrigin.LOCAL_FUNCTION)
 }

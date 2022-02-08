@@ -15,13 +15,14 @@ class WasmBinaryToIR(val b: MyByteReader) {
     val validVersion = 1u
 
     val functionTypes: MutableList<WasmFunctionType> = mutableListOf()
-    val structs: MutableList<WasmStructDeclaration> = mutableListOf()
+    val gcTypes: MutableList<WasmTypeDeclaration> = mutableListOf()
 
     val importsInOrder: MutableList<WasmNamedModuleField> = mutableListOf()
     val importedFunctions: MutableList<WasmFunction.Imported> = mutableListOf()
     val importedMemories: MutableList<WasmMemory> = mutableListOf()
     val importedTables: MutableList<WasmTable> = mutableListOf()
     val importedGlobals: MutableList<WasmGlobal> = mutableListOf()
+    val importedTags: MutableList<WasmTag> = mutableListOf()
 
     val definedFunctions: MutableList<WasmFunction.Defined> = mutableListOf()
     val table: MutableList<WasmTable> = mutableListOf()
@@ -32,7 +33,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
     val elements: MutableList<WasmElement> = mutableListOf()
     val data: MutableList<WasmData> = mutableListOf()
     var dataCount: Boolean = false
-
+    val tags: MutableList<WasmTag> = mutableListOf()
 
     private fun <T> byIdx(l1: List<T>, l2: List<T>, index: Int): T {
         if (index < l1.size)
@@ -45,6 +46,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
     private fun elemByIdx(index: Int) = elements[index]
     private fun tableByIdx(index: Int) = byIdx(importedTables, table, index)
     private fun globalByIdx(index: Int) = byIdx(importedGlobals, globals, index)
+    private fun tagByIdx(index: Int) = byIdx(importedTags, tags, index)
 
     fun parseModule(): WasmModule {
         if (b.readUInt32() != 0x6d736100u)
@@ -80,7 +82,8 @@ class WasmBinaryToIR(val b: MyByteReader) {
                                 is WasmFunctionType ->
                                     functionTypes += type
                                 is WasmStructDeclaration ->
-                                    structs += type
+                                    gcTypes += type
+                                is WasmArrayDeclaration -> {}
                             }
                         }
                     }
@@ -118,6 +121,11 @@ class WasmBinaryToIR(val b: MyByteReader) {
                                             importPair = importPair
                                         ).also { importsInOrder.add(it) }
                                     )
+                                }
+                                4 -> {
+                                    val tag = readTag(importPair)
+                                    importedTags.add(tag)
+                                    importsInOrder.add(tag)
                                 }
                                 else -> error(
                                     "Unsupported import kind $kind"
@@ -162,6 +170,13 @@ class WasmBinaryToIR(val b: MyByteReader) {
                         }
                     }
 
+                    // Tag section
+                    13 -> {
+                        forEachVectorElement {
+                            tags.add(readTag())
+                        }
+                    }
+
                     // Globals section
                     6 -> {
                         forEachVectorElement {
@@ -190,6 +205,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                                     1 -> WasmExport.Table(name, tableByIdx(index))
                                     2 -> WasmExport.Memory(name, memoryByIdx(index))
                                     3 -> WasmExport.Global(name, globalByIdx(index))
+                                    4 -> WasmExport.Tag(name, tagByIdx(index))
                                     else -> error("Invalid export kind $kind")
                                 }
                             )
@@ -313,12 +329,13 @@ class WasmBinaryToIR(val b: MyByteReader) {
 
         return WasmModule(
             functionTypes = functionTypes,
-            structs = structs,
+            gcTypes = gcTypes,
             importsInOrder = importsInOrder,
             importedFunctions = importedFunctions,
             importedMemories = importedMemories,
             importedTables = importedTables,
             importedGlobals = importedGlobals,
+            importedTags = importedTags,
             definedFunctions = definedFunctions,
             tables = table,
             memories = memory,
@@ -327,7 +344,8 @@ class WasmBinaryToIR(val b: MyByteReader) {
             startFunction = startFunction,
             elements = elements,
             data = data,
-            dataCount = dataCount
+            dataCount = dataCount,
+            tags = tags
         ).also {
             it.calculateIds()
         }
@@ -339,6 +357,13 @@ class WasmBinaryToIR(val b: MyByteReader) {
             minSize = b.readVarUInt32(),
             maxSize = if (hasMax) b.readVarUInt32() else null
         )
+    }
+
+    private fun readTag(importPair: WasmImportPair? = null): WasmTag {
+        val attribute = b.readByte()
+        check(attribute.toInt() == 0) { "as per spec" }
+        val type = functionTypes[b.readVarUInt32AsInt()]
+        return WasmTag(type, importPair)
     }
 
     private fun readExpression(): MutableList<WasmInstr> =
@@ -404,6 +429,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                 WasmImmediateKind.DATA_IDX -> WasmImmediate.DataIdx(b.readVarUInt32AsInt())
                 WasmImmediateKind.TABLE_IDX -> WasmImmediate.TableIdx(b.readVarUInt32AsInt())
                 WasmImmediateKind.LABEL_IDX -> WasmImmediate.LabelIdx(b.readVarUInt32AsInt())
+                WasmImmediateKind.TAG_IDX -> WasmImmediate.TagIdx(b.readVarUInt32AsInt())
                 WasmImmediateKind.LABEL_IDX_VECTOR -> WasmImmediate.LabelIdxVector(mapVector { b.readVarUInt32AsInt() })
                 WasmImmediateKind.ELEM_IDX -> WasmImmediate.ElemIdx(elemByIdx(b.readVarUInt32AsInt()))
                 WasmImmediateKind.VAL_TYPE_VECTOR -> WasmImmediate.ValTypeVector(mapVector { readValueType() })
@@ -411,6 +437,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                 WasmImmediateKind.STRUCT_FIELD_IDX -> TODO()
                 WasmImmediateKind.TYPE_IMM -> TODO()
                 WasmImmediateKind.HEAP_TYPE -> WasmImmediate.HeapType(readRefType())
+                WasmImmediateKind.LOCAL_DEFS -> TODO()
             }
         }
 

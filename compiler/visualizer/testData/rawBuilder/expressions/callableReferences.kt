@@ -50,3 +50,9 @@ val test6 = A::qux
 //  │         fun baz(): Unit
 //  │         │
 val test7 = ::baz
+
+//  reflect/KFunction1<A?, Unit>
+//  │       class A
+//  │       │   fun (A).foo(): Unit
+//  │       │   │
+val test8 = A?::foo

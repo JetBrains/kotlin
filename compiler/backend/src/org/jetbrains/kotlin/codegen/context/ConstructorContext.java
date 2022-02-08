@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.binding.MutableClosure;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor;
+import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.types.SimpleType;
 import org.jetbrains.org.objectweb.asm.Type;
@@ -48,7 +49,7 @@ public class ConstructorContext extends MethodContext {
         ClassDescriptor capturedOuterClassDescriptor = closure != null ? closure.getCapturedOuterClassDescriptor() : null;
         StackValue stackValue;
         if (capturedOuterClassDescriptor != null) {
-            if (capturedOuterClassDescriptor.isInline()) {
+            if (InlineClassesUtilsKt.isInlineClass(capturedOuterClassDescriptor)) {
                 SimpleType outerClassKotlinType = capturedOuterClassDescriptor.getDefaultType();
                 Type outerClassType = kotlinTypeMapper.mapType(capturedOuterClassDescriptor);
                 stackValue = StackValue.local(1, outerClassType, outerClassKotlinType);

@@ -1,0 +1,4 @@
+package
+
+public fun foo(): Hash /* = kotlin.Long */
+public typealias Hash = kotlin.Long

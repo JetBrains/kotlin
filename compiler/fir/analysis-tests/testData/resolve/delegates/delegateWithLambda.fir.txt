@@ -1,0 +1,37 @@
+FILE: delegateWithLambda.kt
+    public final class LazyDelegate<T> : R|kotlin/Any| {
+        public constructor<T>(value: R|T|): R|LazyDelegate<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val value: R|T| = R|<local>/value|
+            public get(): R|T|
+
+        public final operator fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/reflect/KProperty<*>|): R|T| {
+            ^getValue this@R|/LazyDelegate|.R|/LazyDelegate.value|
+        }
+
+    }
+    public final fun <T> lazy(block: R|() -> T|): R|LazyDelegate<T>| {
+        ^lazy R|/LazyDelegate.LazyDelegate|<R|T|>(R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|())
+    }
+    public final fun getAny(): R|kotlin/Any?| {
+        ^getAny Null(null)
+    }
+    public final fun <Q> materialize(): R|Q| {
+        ^materialize Null(null)!!
+    }
+    public final class Test : R|kotlin/Any| {
+        public constructor(): R|Test| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val x: R|kotlin/String|by R|/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+            ^ R|/materialize|<R|kotlin/String|>()
+        }
+        )
+            public get(): R|kotlin/String| {
+                ^ this@R|/Test|.D|/Test.x|.R|SubstitutionOverride</LazyDelegate.getValue: R|Stub (chain inference): TypeVariable(_T)|>|(this@R|/Test|, ::R|/Test.x|)
+            }
+
+    }

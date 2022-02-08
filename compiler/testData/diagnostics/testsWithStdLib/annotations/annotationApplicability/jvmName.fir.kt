@@ -6,10 +6,10 @@ fun foo() {}
 @JvmName("b")
 fun Any.foo() {}
 
-@JvmName("c")
+<!WRONG_ANNOTATION_TARGET!>@JvmName("c")<!>
 val px = 1
 
-@JvmName("d")
+<!WRONG_ANNOTATION_TARGET!>@JvmName("d")<!>
 val Any.px : Int
     get() = 1
 
@@ -29,9 +29,9 @@ var vardef: Int = 1
     @JvmName("i")
     set
 
-@JvmName("C")
-class C @JvmName("primary") constructor() {
-    @JvmName("ctr") constructor(x: Int): this() {}
+<!WRONG_ANNOTATION_TARGET!>@JvmName("C")<!>
+class C <!WRONG_ANNOTATION_TARGET!>@JvmName("primary")<!> constructor() {
+    <!WRONG_ANNOTATION_TARGET!>@JvmName("ctr")<!> constructor(x: Int): this() {}
 
     @JvmName("a")
     fun foo() {}
@@ -39,10 +39,10 @@ class C @JvmName("primary") constructor() {
     @JvmName("b")
     fun Any.foo() {}
 
-    @JvmName("c")
+    <!WRONG_ANNOTATION_TARGET!>@JvmName("c")<!>
     val px = 1
 
-    @JvmName("d")
+    <!WRONG_ANNOTATION_TARGET!>@JvmName("d")<!>
     val Any.px : Int
     get() = 1
 
@@ -58,10 +58,10 @@ class C @JvmName("primary") constructor() {
 }
 
 fun foo1() {
-    @JvmName("a")
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("a")<!>
     fun foo() {}
 
-    @JvmName("a")
+    <!WRONG_ANNOTATION_TARGET!>@JvmName("a")<!>
     val x = 1
 }
 
@@ -71,17 +71,17 @@ abstract class AB {
 
     abstract fun absFun2()
 
-    @JvmName("AB_openFun")
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("AB_openFun")<!>
     open fun openFun() {}
 }
 
 class D: AB() {
     override fun absFun1() {}
 
-    @JvmName("D_absFun2")
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("D_absFun2")<!>
     override fun absFun2() {}
 
-    @JvmName("D_openFun")
+    <!INAPPLICABLE_JVM_NAME!>@JvmName("D_openFun")<!>
     final override fun openFun() {}
 
     @JvmName("D_finalFun")
@@ -89,7 +89,7 @@ class D: AB() {
 }
 
 interface Intf {
-    @get:JvmName("getBar") // no error in IDE
-    @set:JvmName("setBar") // no error in IDE
+    <!INAPPLICABLE_JVM_NAME!>@get:JvmName("getBar")<!> // no error in IDE
+    <!INAPPLICABLE_JVM_NAME!>@set:JvmName("setBar")<!> // no error in IDE
     var foo: Int
 }

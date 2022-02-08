@@ -39,6 +39,7 @@ class AccessorForFunctionDescriptor(
                 null
             else
                 calleeDescriptor.dispatchReceiverParameter,
+            calleeDescriptor.contextReceiverParameters.map { p -> p.copy(this) },
             copyTypeParameters(calleeDescriptor),
             copyValueParameters(calleeDescriptor),
             calleeDescriptor.returnType,
@@ -50,7 +51,7 @@ class AccessorForFunctionDescriptor(
         if (calleeDescriptor.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION) != null) {
             userDataMap = LinkedHashMap<CallableDescriptor.UserDataKey<*>, Any>()
             userDataMap[INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION] =
-                    calleeDescriptor.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)
+                calleeDescriptor.getUserData(INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION)
         }
     }
 

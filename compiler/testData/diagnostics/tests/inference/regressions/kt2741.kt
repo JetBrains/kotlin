@@ -1,13 +1,12 @@
 //KT-2741 Compiler can't infer a type of a function literal parameter when its body contains errors
-// !WITH_NEW_INFERENCE
 
 package a
 
-fun <T, R: Comparable<R>> Iterable<T>._sortBy(<!UNUSED_PARAMETER!>f<!>: (T) -> R): List<T> = throw Exception()
-fun <T> _arrayList(vararg <!UNUSED_PARAMETER!>values<!>: T) : List<T> = throw Exception()
+fun <T, R: Comparable<R>> Iterable<T>._sortBy(f: (T) -> R): List<T> = throw Exception()
+fun <T> _arrayList(vararg values: T) : List<T> = throw Exception()
 
 class _Pair<A>(val a: A)
 
 fun test() {
-    _arrayList(_Pair(1))._sortBy <!NI;TYPE_MISMATCH, NI;TYPE_MISMATCH!>{ <!UNUSED_ANONYMOUS_PARAMETER!>it<!> -> <!UNRESOLVED_REFERENCE!>xxx<!> }<!>
+    _arrayList(_Pair(1))._sortBy <!TYPE_MISMATCH, TYPE_MISMATCH!>{ it -> <!UNRESOLVED_REFERENCE!>xxx<!> }<!>
 }

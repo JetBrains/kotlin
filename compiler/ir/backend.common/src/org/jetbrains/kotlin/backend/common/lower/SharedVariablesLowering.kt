@@ -40,10 +40,7 @@ val sharedVariablesPhase = makeIrFilePhase(
 class SharedVariablesLowering(val context: BackendContext) : BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        // TODO remove this condition
-        if (container is IrFunction || container is IrField || container is IrAnonymousInitializer) {
-            SharedVariablesTransformer(irBody, container).lowerSharedVariables()
-        }
+        SharedVariablesTransformer(irBody, container).lowerSharedVariables()
     }
 
     private inner class SharedVariablesTransformer(val irBody: IrBody, val irDeclaration: IrDeclaration) {

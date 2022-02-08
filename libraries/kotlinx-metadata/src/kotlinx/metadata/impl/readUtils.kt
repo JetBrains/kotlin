@@ -23,20 +23,21 @@ fun ProtoBuf.Annotation.readAnnotation(strings: NameResolver): KmAnnotation =
         }.toMap()
     )
 
-fun ProtoBuf.Annotation.Argument.Value.readAnnotationArgument(strings: NameResolver): KmAnnotationArgument<*>? {
+@OptIn(ExperimentalUnsignedTypes::class)
+fun ProtoBuf.Annotation.Argument.Value.readAnnotationArgument(strings: NameResolver): KmAnnotationArgument? {
     if (Flags.IS_UNSIGNED[flags]) {
         return when (type) {
-            BYTE -> KmAnnotationArgument.UByteValue(intValue.toByte())
-            SHORT -> KmAnnotationArgument.UShortValue(intValue.toShort())
-            INT -> KmAnnotationArgument.UIntValue(intValue.toInt())
-            LONG -> KmAnnotationArgument.ULongValue(intValue)
+            BYTE -> KmAnnotationArgument.UByteValue(intValue.toByte().toUByte())
+            SHORT -> KmAnnotationArgument.UShortValue(intValue.toShort().toUShort())
+            INT -> KmAnnotationArgument.UIntValue(intValue.toInt().toUInt())
+            LONG -> KmAnnotationArgument.ULongValue(intValue.toULong())
             else -> error("Cannot read value of unsigned type: $type")
         }
     }
 
     return when (type) {
         BYTE -> KmAnnotationArgument.ByteValue(intValue.toByte())
-        CHAR -> KmAnnotationArgument.CharValue(intValue.toChar())
+        CHAR -> KmAnnotationArgument.CharValue(intValue.toInt().toChar())
         SHORT -> KmAnnotationArgument.ShortValue(intValue.toShort())
         INT -> KmAnnotationArgument.IntValue(intValue.toInt())
         LONG -> KmAnnotationArgument.LongValue(intValue)
@@ -44,7 +45,7 @@ fun ProtoBuf.Annotation.Argument.Value.readAnnotationArgument(strings: NameResol
         DOUBLE -> KmAnnotationArgument.DoubleValue(doubleValue)
         BOOLEAN -> KmAnnotationArgument.BooleanValue(intValue != 0L)
         STRING -> KmAnnotationArgument.StringValue(strings.getString(stringValue))
-        CLASS -> KmAnnotationArgument.KClassValue(strings.getClassName(classId))
+        CLASS -> KmAnnotationArgument.KClassValue(strings.getClassName(classId), arrayDimensionCount)
         ENUM -> KmAnnotationArgument.EnumValue(strings.getClassName(classId), strings.getString(enumValueId))
         ANNOTATION -> KmAnnotationArgument.AnnotationValue(annotation.readAnnotation(strings))
         ARRAY -> KmAnnotationArgument.ArrayValue(arrayElementList.mapNotNull { it.readAnnotationArgument(strings) })

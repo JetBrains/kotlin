@@ -16,12 +16,12 @@
 
 package org.jetbrains.kotlin.load.java
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.FqName
 
-val JSPECIFY_NULLABLE = FqName("org.jspecify.annotations.Nullable")
-val JSPECIFY_NULLNESS_UNKNOWN = FqName("org.jspecify.annotations.NullnessUnspecified")
-
-val JSPECIFY_DEFAULT_NOT_NULL = FqName("org.jspecify.annotations.DefaultNonNull")
+val JSPECIFY_NULLABLE = FqName("org.jspecify.nullness.Nullable")
+val JSPECIFY_NULLNESS_UNKNOWN = FqName("org.jspecify.nullness.NullnessUnspecified")
+val JSPECIFY_NULL_MARKED = FqName("org.jspecify.nullness.NullMarked")
 
 val NULLABLE_ANNOTATIONS = listOf(
     JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION,
@@ -36,7 +36,8 @@ val NULLABLE_ANNOTATIONS = listOf(
     FqName("edu.umd.cs.findbugs.annotations.CheckForNull"),
     FqName("edu.umd.cs.findbugs.annotations.Nullable"),
     FqName("edu.umd.cs.findbugs.annotations.PossiblyNull"),
-    FqName("io.reactivex.annotations.Nullable")
+    FqName("io.reactivex.annotations.Nullable"),
+    FqName("io.reactivex.rxjava3.annotations.Nullable")
 )
 
 val JAVAX_NONNULL_ANNOTATION = FqName("javax.annotation.Nonnull")
@@ -52,7 +53,8 @@ val NOT_NULL_ANNOTATIONS = listOf(
     FqName("org.eclipse.jdt.annotation.NonNull"),
     FqName("org.checkerframework.checker.nullness.qual.NonNull"),
     FqName("lombok.NonNull"),
-    FqName("io.reactivex.annotations.NonNull")
+    FqName("io.reactivex.annotations.NonNull"),
+    FqName("io.reactivex.rxjava3.annotations.NonNull")
 )
 
 val COMPATQUAL_NULLABLE_ANNOTATION = FqName("org.checkerframework.checker.nullness.compatqual.NullableDecl")
@@ -71,14 +73,22 @@ val NULLABILITY_ANNOTATIONS = mutableSetOf<FqName>() +
         ANDROIDX_RECENTLY_NON_NULL_ANNOTATION +
         JSPECIFY_NULLABLE +
         JSPECIFY_NULLNESS_UNKNOWN +
-        JSPECIFY_DEFAULT_NOT_NULL
+        JSPECIFY_NULL_MARKED
 
-val READ_ONLY_ANNOTATIONS = listOf(
+val READ_ONLY_ANNOTATIONS = setOf(
     JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION,
     JvmAnnotationNames.READONLY_ANNOTATION
 )
 
-val MUTABLE_ANNOTATIONS = listOf(
+val MUTABLE_ANNOTATIONS = setOf(
     JvmAnnotationNames.JETBRAINS_MUTABLE_ANNOTATION,
     JvmAnnotationNames.MUTABLE_ANNOTATION
 )
+
+val javaToKotlinNameMap: Map<FqName, FqName> =
+    mapOf(
+        JvmAnnotationNames.TARGET_ANNOTATION to StandardNames.FqNames.target,
+        JvmAnnotationNames.RETENTION_ANNOTATION to StandardNames.FqNames.retention,
+        JvmAnnotationNames.DEPRECATED_ANNOTATION to StandardNames.FqNames.deprecated,
+        JvmAnnotationNames.DOCUMENTED_ANNOTATION to StandardNames.FqNames.mustBeDocumented
+    )

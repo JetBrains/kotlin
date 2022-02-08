@@ -16,6 +16,8 @@ object JvmAbi {
 
     @JvmField
     val JVM_FIELD_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmField")
+    @JvmField
+    val JVM_FIELD_ANNOTATION_CLASS_ID = ClassId.topLevel(JVM_FIELD_ANNOTATION_FQ_NAME)
 
     /**
      * Warning: use DEFAULT_IMPLS_CLASS_NAME and TypeMappingConfiguration.innerClassNameFactory when possible.
@@ -45,6 +47,9 @@ object JvmAbi {
     const val LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION = "\$i\$f$"
 
     const val IMPL_SUFFIX_FOR_INLINE_CLASS_MEMBERS = "-impl"
+
+    const val REPEATABLE_ANNOTATION_CONTAINER_NAME = "Container"
+    val REPEATABLE_ANNOTATION_CONTAINER_META_ANNOTATION = ClassId.fromString("kotlin/jvm/internal/RepeatableContainer")
 
     /**
      * @param baseName JVM name of the property getter since Kotlin 1.4, or Kotlin name of the property otherwise.

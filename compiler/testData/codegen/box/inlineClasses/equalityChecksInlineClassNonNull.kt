@@ -1,7 +1,12 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Inner(val w: String)
-inline class A(val x: Inner)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Inner(val w: String)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class A(val x: Inner)
 
 fun isNullVacuousLeft(s: A) = s == null
 fun isNullVacuousRight(s: A) = null == s

@@ -1,3 +1,0 @@
-fun foo() {
-    val x = <spot>X<String>("x")</spot>
-}

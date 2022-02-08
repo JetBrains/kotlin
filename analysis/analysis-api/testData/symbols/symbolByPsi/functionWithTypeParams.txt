@@ -1,0 +1,50 @@
+KtTypeParameterSymbol:
+  isReified: false
+  name: X
+  origin: SOURCE
+  upperBounds: [
+    kotlin/Any?
+  ]
+  variance: INVARIANT
+  deprecationStatus: null
+
+KtValueParameterSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  hasDefaultValue: false
+  isExtension: false
+  isVararg: false
+  name: x
+  origin: SOURCE
+  receiverType: null
+  returnType: X
+  symbolKind: LOCAL
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /foo
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: foo
+  origin: SOURCE
+  receiverType: null
+  returnType: kotlin/Unit
+  symbolKind: TOP_LEVEL
+  typeParameters: [
+    KtTypeParameterSymbol(X)
+  ]
+  valueParameters: [
+    KtValueParameterSymbol(x)
+  ]
+  visibility: Public
+  deprecationStatus: null

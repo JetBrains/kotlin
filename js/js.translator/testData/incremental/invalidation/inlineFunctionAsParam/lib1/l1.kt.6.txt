@@ -1,0 +1,4 @@
+// TODO: Uncomment default param after KT-51081
+inline fun foo1(/** x: Int = 123 */) = 77
+inline fun foo2() = 88
+inline fun foo3() = "foo3 update"

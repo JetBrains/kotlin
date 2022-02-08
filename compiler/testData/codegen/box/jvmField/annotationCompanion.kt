@@ -1,7 +1,7 @@
 // !LANGUAGE: +JvmFieldInInterface +NestedClassesInAnnotations
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: Foo.kt
 
 public class Bar(public val value: String)

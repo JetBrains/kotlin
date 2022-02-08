@@ -8,14 +8,16 @@ package org.jetbrains.kotlin.gradle.dsl
 import groovy.lang.Closure
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
+import org.gradle.api.Project
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 
-open class KotlinMultiplatformExtension :
-    KotlinProjectExtension(),
+open class KotlinMultiplatformExtension(project: Project) :
+    KotlinProjectExtension(project),
     KotlinTargetContainerWithPresetFunctions,
     KotlinTargetContainerWithJsPresetFunctions,
+    KotlinTargetContainerWithWasmPresetFunctions,
     KotlinTargetContainerWithNativeShortcuts {
     override lateinit var presets: NamedDomainObjectCollection<KotlinTargetPreset<*>>
         internal set
@@ -50,7 +52,7 @@ open class KotlinMultiplatformExtension :
     fun targetFromPreset(preset: KotlinTargetPreset<*>, configure: Closure<*>) = targetFromPreset(preset, preset.name, configure)
 
     internal val rootSoftwareComponent: KotlinSoftwareComponent by lazy {
-        KotlinSoftwareComponentWithCoordinatesAndPublication("kotlin", targets)
+        KotlinSoftwareComponentWithCoordinatesAndPublication(project, "kotlin", targets)
     }
 }
 
@@ -78,9 +80,9 @@ internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCre
         else -> {
             throw InvalidUserCodeException(
                 "The target '$targetName' already exists, but it was not created with the '${targetPreset.name}' preset. " +
-                "To configure it, access it by name in `kotlin.targets`" +
-                " or use the preset function '${existingTarget.preset?.name}'."
-                    .takeIf { existingTarget.preset != null } ?: "."
+                        "To configure it, access it by name in `kotlin.targets`" +
+                        (" or use the preset function '${existingTarget.preset?.name}'."
+                            .takeIf { existingTarget.preset != null } ?: ".")
             )
         }
     }

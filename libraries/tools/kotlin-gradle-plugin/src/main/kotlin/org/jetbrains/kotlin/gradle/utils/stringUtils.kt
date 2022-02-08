@@ -41,3 +41,10 @@ private val ANSI_COLOR_REGEX = "\\x1b\\[[0-9;]*m".toRegex()
 
 internal fun String.clearAnsiColor() =
     replace(ANSI_COLOR_REGEX, "")
+
+// Copy of stdlib's appendLine which is only available since 1.4. Can be removed as soon as this code is compiled with API >= 1.4.
+internal fun Appendable.appendLine(value: Any?): Appendable =
+    append(value.toString()).appendLine()
+
+internal fun Appendable.appendLine(): Appendable =
+    append('\n')

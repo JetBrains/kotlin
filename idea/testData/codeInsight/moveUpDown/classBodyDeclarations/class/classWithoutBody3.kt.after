@@ -1,6 +1,0 @@
-// class D
-class D {
-    // MOVE: down
-// class A
-    <caret>class A
-}

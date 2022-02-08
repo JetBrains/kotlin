@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun test1() {
     try {
 
@@ -10,5 +11,5 @@ fun test2() {
 
 fun test3() {
     try {
-    } catch (<!SYNTAX!><!>{}<!SYNTAX!>)<!> <!UNUSED_LAMBDA_EXPRESSION!>{}<!>
+    } catch (<!SYNTAX!><!>{}<!SYNTAX!>)<!> {}
 }

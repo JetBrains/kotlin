@@ -39,20 +39,20 @@ class KotlinClass2 : JavaClass() {
 }
 
 fun test(a: KotlinClass, b: KotlinClass2) {
-    a.<!HIDDEN!>foo<!>() // Error, protected_and_package declared in different package
-    b.<!HIDDEN!>foo<!>() // Error, protected visibility in same package (but could be protected_and_package)
+    a.<!INVISIBLE_REFERENCE!>foo<!>() // Error, protected_and_package declared in different package
+    b.<!INVISIBLE_REFERENCE!>foo<!>() // Error, protected visibility in same package (but could be protected_and_package)
 
-    a.<!HIDDEN!>field<!>
+    a.<!INVISIBLE_REFERENCE!>field<!>
 
-    JavaClass.<!HIDDEN!>bar1<!>()
-    JavaClass.<!HIDDEN!>CONST1<!>
+    JavaClass.<!INVISIBLE_REFERENCE!>bar1<!>()
+    JavaClass.<!INVISIBLE_REFERENCE!>CONST1<!>
 
     KotlinClass.<!UNRESOLVED_REFERENCE!>bar1<!>() // Currently it's unresolved, but it should be prohibited even in case it would be resolved
     KotlinClass.<!UNRESOLVED_REFERENCE!>CONST1<!>
 
-    JavaClassSamePackage.<!HIDDEN!>bar1<!>()
+    JavaClassSamePackage.<!INVISIBLE_REFERENCE!>bar1<!>()
     JavaClassSamePackage.bar2()
 
-    JavaClassSamePackage.<!HIDDEN!>CONST1<!>
+    JavaClassSamePackage.<!INVISIBLE_REFERENCE!>CONST1<!>
     JavaClassSamePackage.CONST2
 }

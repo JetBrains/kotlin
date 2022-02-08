@@ -1,4 +1,0 @@
-Function 'fun bar1(): Int' uses function 'fun foo(): Int', which is not accessible from the superclass
-Function 'fun bar2(): B.Z' uses class B.Z, which is not accessible from the superclass
-Property 'val x1: Int' uses function 'fun foo(): Int', which is not accessible from the superclass
-Property 'val x2: B.Z' uses class B.Z, which is not accessible from the superclass

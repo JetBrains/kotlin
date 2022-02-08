@@ -1,0 +1,12 @@
+package
+
+public val str1: kotlin.String? = null
+public val str2: kotlin.String? = null
+public fun </*0*/ T> visit(/*0*/ arg: Visitor<T>): T
+
+public interface Visitor</*0*/ T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public abstract fun visit(/*0*/ key: kotlin.String): T
+}

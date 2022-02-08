@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAME
-import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME_RELEASE
+import org.jetbrains.kotlin.builtins.StandardNames.COROUTINES_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.K_FUNCTION_PREFIX
 import org.jetbrains.kotlin.builtins.StandardNames.K_SUSPEND_FUNCTION_PREFIX
@@ -17,9 +17,12 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import kotlin.reflect.KProperty
 
 class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: NotFoundClasses) {
@@ -35,7 +38,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
 
     private class ClassLookup(val numberOfTypeParameters: Int) {
         operator fun getValue(types: ReflectionTypes, property: KProperty<*>): ClassDescriptor {
-            return types.find(property.name.capitalize(), numberOfTypeParameters)
+            return types.find(property.name.capitalizeAsciiOnly(), numberOfTypeParameters)
         }
     }
 
@@ -52,21 +55,23 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
     val kMutableProperty2: ClassDescriptor by ClassLookup(3)
 
     fun getKClassType(annotations: Annotations, type: KotlinType, variance: Variance): KotlinType =
-            KotlinTypeFactory.simpleNotNullType(annotations, kClass, listOf(TypeProjectionImpl(variance, type)))
+            KotlinTypeFactory.simpleNotNullType(annotations.toDefaultAttributes(), kClass, listOf(TypeProjectionImpl(variance, type)))
 
     fun getKFunctionType(
         annotations: Annotations,
         receiverType: KotlinType?,
+        contextReceiverTypes: List<KotlinType>,
         parameterTypes: List<KotlinType>,
         parameterNames: List<Name>?,
         returnType: KotlinType,
         builtIns: KotlinBuiltIns,
         isSuspend: Boolean
     ): SimpleType {
-        val arguments = getFunctionTypeArgumentProjections(receiverType, parameterTypes, parameterNames, returnType, builtIns)
+        val arguments =
+            getFunctionTypeArgumentProjections(receiverType, contextReceiverTypes, parameterTypes, parameterNames, returnType, builtIns)
         val classDescriptor =
             if (isSuspend) getKSuspendFunction(arguments.size - 1 /* return type */) else getKFunction(arguments.size - 1 /* return type */)
-        return KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)
+        return KotlinTypeFactory.simpleNotNullType(annotations.toDefaultAttributes(), classDescriptor, arguments)
     }
 
     fun getKPropertyType(annotations: Annotations, receiverTypes: List<KotlinType>, returnType: KotlinType, mutable: Boolean): SimpleType {
@@ -87,13 +92,18 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
         }
 
         val arguments = (receiverTypes + returnType).map(::TypeProjectionImpl)
-        return KotlinTypeFactory.simpleNotNullType(annotations, classDescriptor, arguments)
+        return KotlinTypeFactory.simpleNotNullType(annotations.toDefaultAttributes(), classDescriptor, arguments)
     }
 
     companion object {
         fun isReflectionClass(descriptor: ClassDescriptor): Boolean {
             val containingPackage = DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor::class.java)
             return containingPackage != null && containingPackage.fqName == KOTLIN_REFLECT_FQ_NAME
+        }
+
+        fun isKClassType(type: KotlinType): Boolean {
+            val descriptor = type.unwrap().constructor.declarationDescriptor ?: return false
+            return descriptor.classId == StandardClassIds.KClass
         }
 
         fun isCallableType(type: KotlinType): Boolean =
@@ -181,7 +191,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
 
         fun createKPropertyStarType(module: ModuleDescriptor): KotlinType? {
             val kPropertyClass = module.findClassAcrossModuleDependencies(StandardNames.FqNames.kProperty) ?: return null
-            return KotlinTypeFactory.simpleNotNullType(Annotations.EMPTY, kPropertyClass,
+            return KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, kPropertyClass,
                                                        listOf(StarProjectionImpl(kPropertyClass.typeConstructor.parameters.single())))
         }
 
@@ -203,7 +213,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
                        || shortName == "KCallable" || shortName == "KAnnotatedElement"
 
             }
-            if (packageName == BUILT_INS_PACKAGE_FQ_NAME || packageName == COROUTINES_PACKAGE_FQ_NAME_RELEASE) {
+            if (packageName == BUILT_INS_PACKAGE_FQ_NAME || packageName == COROUTINES_PACKAGE_FQ_NAME) {
                 return shortName.startsWith("Function") // FunctionN, Function
                         || shortName.startsWith("SuspendFunction")
             }

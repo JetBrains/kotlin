@@ -1,13 +1,19 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package samples.time
 
 import samples.*
+import kotlin.test.*
 
 import kotlin.time.*
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.nanoseconds
+import kotlin.time.Duration.Companion.seconds
 
 class Durations {
 
@@ -20,17 +26,17 @@ class Durations {
         assertPrints(86420.seconds.toIsoString(), "PT24H0M20S")
         assertPrints(2.days.toIsoString(), "PT48H")
         assertPrints(Duration.ZERO.toIsoString(), "PT0S")
-        assertPrints(Duration.INFINITE.toIsoString(), "PT2147483647H")
+        assertPrints(Duration.INFINITE.toIsoString(), "PT9999999999999H")
     }
 
     @Sample
     fun toStringDefault() {
-        assertPrints(45.days, "45.0d")
-        assertPrints(1.5.days, "36.0h")
-        assertPrints(1230.minutes, "20.5h")
-        assertPrints(920.minutes, "920m")
-        assertPrints(1.546.seconds, "1.55s")
-        assertPrints(25.12.milliseconds, "25.1ms")
+        assertPrints(45.days, "45d")
+        assertPrints(1.5.days, "1d 12h")
+        assertPrints(1230.minutes, "20h 30m")
+        assertPrints(920.minutes, "15h 20m")
+        assertPrints(1.546.seconds, "1.546s")
+        assertPrints(25.12.milliseconds, "25.12ms")
     }
 
     @Sample
@@ -41,6 +47,28 @@ class Durations {
         assertPrints(1230.minutes.toString(DurationUnit.SECONDS), "73800s")
     }
 
+    @Sample
+    fun parse() {
+        val isoFormatString = "PT1H30M"
+        val defaultFormatString = "1h 30m"
+        val singleUnitFormatString = "1.5h"
+        val invalidFormatString = "1 hour 30 minutes"
 
+        assertPrints(Duration.parse(isoFormatString), "1h 30m")
+        assertPrints(Duration.parse(defaultFormatString), "1h 30m")
+        assertPrints(Duration.parse(singleUnitFormatString), "1h 30m")
+        assertFails { Duration.parse(invalidFormatString) }
+        assertPrints(Duration.parseOrNull(invalidFormatString), "null")
+    }
+
+    @Sample
+    fun parseIsoString() {
+        val isoFormatString = "PT1H30M"
+        val defaultFormatString = "1h 30m"
+
+        assertPrints(Duration.parseIsoString(isoFormatString), "1h 30m")
+        assertFails { Duration.parseIsoString(defaultFormatString) }
+        assertPrints(Duration.parseIsoStringOrNull(defaultFormatString), "null")
+    }
 
 }

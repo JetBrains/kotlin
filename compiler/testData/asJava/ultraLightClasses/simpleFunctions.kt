@@ -13,3 +13,5 @@ class Foo {
 
   class Inner {}
 }
+
+// COMPILATION_ERRORS

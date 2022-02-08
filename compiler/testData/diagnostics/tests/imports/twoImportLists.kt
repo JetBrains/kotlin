@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // FILE:a.kt
 package a
 
@@ -85,7 +84,7 @@ object C {
 }
 
 fun foo() {
-    if (<!UNRESOLVED_REFERENCE!>i<!> <!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>==<!> 3) <!UNRESOLVED_REFERENCE!>f<!>()
+    if (<!UNRESOLVED_REFERENCE!>i<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>==<!> 3) <!UNRESOLVED_REFERENCE!>f<!>()
 }
 
 //FILE:d.kt

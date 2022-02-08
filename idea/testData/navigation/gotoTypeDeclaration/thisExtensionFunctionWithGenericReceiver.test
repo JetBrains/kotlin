@@ -1,9 +1,0 @@
-// FILE: before.kt
-interface Foo<T, U>
-
-fun Foo<Int, String>.bar(): Any = <caret>this
-
-// FILE: after.kt
-interface <caret>Foo<T, U>
-
-fun Foo<Int, String>.bar(): Any = this

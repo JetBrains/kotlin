@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @Deprecated("text")
 annotation class obsolete()
 

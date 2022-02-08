@@ -1,5 +1,0 @@
-if (<spot>foo()</spot>) {
-    baz()
-} else {
-    bar()
-}

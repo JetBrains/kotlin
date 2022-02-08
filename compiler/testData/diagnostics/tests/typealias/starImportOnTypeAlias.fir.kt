@@ -1,7 +1,5 @@
 // FILE: foo.kt
 
-// FILE: foo.kt
-
 package test
 
 typealias ClassAlias = ClassSample

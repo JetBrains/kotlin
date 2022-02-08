@@ -1,10 +1,15 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
+// IGNORE_BACKEND: WASM
 // WASM_MUTE_REASON: IGNORED_IN_JS
 // IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6, NATIVE
 // WITH_REFLECT
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
 import kotlin.test.*
 
-inline class Z(val s: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val s: String)
 
 fun box(): String {
     val a = Z("a")

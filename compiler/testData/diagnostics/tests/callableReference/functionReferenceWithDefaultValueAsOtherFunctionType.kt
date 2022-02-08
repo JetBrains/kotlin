@@ -1,5 +1,3 @@
-// !WITH_NEW_INFERENCE
-
 fun foo(a: String, b: Int = 5): String {
     return a + b
 }
@@ -13,6 +11,6 @@ fun bar2(body: (String, Int) -> String): String {
 }
 
 fun test() {
-    bar1(<!OI;TYPE_MISMATCH!>::foo<!>)
+    bar1(::foo)
     bar2(::foo)
 }

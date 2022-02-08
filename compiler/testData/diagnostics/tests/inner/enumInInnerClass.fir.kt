@@ -1,5 +1,5 @@
 class Outer {
     inner class Inner {
-        enum class TestNestedEnum
+        <!NESTED_CLASS_NOT_ALLOWED!>enum class TestNestedEnum<!>
     }
 }

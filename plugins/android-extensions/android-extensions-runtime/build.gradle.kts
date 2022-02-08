@@ -5,11 +5,11 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
+project.updateJvmTarget("1.6")
 
 dependencies {
-    compile(kotlinStdlib())
-    compileOnly(commonDep("com.google.android", "android"))
+    api(kotlinStdlib())
+    compileOnly(commonDependency("com.google.android", "android"))
 }
 
 sourceSets {

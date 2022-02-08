@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrClassReferenceImpl(
     override val startOffset: Int,
@@ -27,7 +26,4 @@ class IrClassReferenceImpl(
     override var type: IrType,
     override val symbol: IrClassifierSymbol,
     override var classType: IrType
-) : IrClassReference() {
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitClassReference(this, data)
-}
+) : IrClassReference()

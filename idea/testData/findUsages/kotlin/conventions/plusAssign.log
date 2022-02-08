@@ -1,8 +1,0 @@
-Checked type of a
-Resolved a += 1
-Resolved a += A(1)
-Searched references to A
-Searched references to a in non-Java files
-Searched references to parameter a of A.plusAssign(a: A) in non-Java files
-Used plain search of A.plusAssign(m: Int) in LocalSearchScope:
-    CLASS:A

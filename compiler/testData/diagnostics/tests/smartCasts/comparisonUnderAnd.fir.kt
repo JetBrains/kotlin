@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 fun foo(x : String?, y : String?) {
     if (y != null && x == y) {
         // Both not null
@@ -6,30 +5,30 @@ fun foo(x : String?, y : String?) {
         y.length
     }
     else {
-        x.<!INAPPLICABLE_CANDIDATE!>length<!>
-        y.<!INAPPLICABLE_CANDIDATE!>length<!>
+        x<!UNSAFE_CALL!>.<!>length
+        y<!UNSAFE_CALL!>.<!>length
     }
     if (y != null || x == y) {
-        x.<!INAPPLICABLE_CANDIDATE!>length<!>
-        y.<!INAPPLICABLE_CANDIDATE!>length<!>
+        x<!UNSAFE_CALL!>.<!>length
+        y<!UNSAFE_CALL!>.<!>length
     }
     else {
         // y == null but x != y
-        x.<!INAPPLICABLE_CANDIDATE!>length<!>
-        y.<!INAPPLICABLE_CANDIDATE!>length<!>
+        x.length
+        y<!UNSAFE_CALL!>.<!>length
     }
     if (y == null && x != y) {
         // y == null but x != y
-        x.<!INAPPLICABLE_CANDIDATE!>length<!>
-        y.<!INAPPLICABLE_CANDIDATE!>length<!>
+        x.length
+        y<!UNSAFE_CALL!>.<!>length
     }
     else {
-        x.<!INAPPLICABLE_CANDIDATE!>length<!>
-        y.<!INAPPLICABLE_CANDIDATE!>length<!>
+        x<!UNSAFE_CALL!>.<!>length
+        y<!UNSAFE_CALL!>.<!>length
     }
     if (y == null || x != y) {
-        x.<!INAPPLICABLE_CANDIDATE!>length<!>
-        y.<!INAPPLICABLE_CANDIDATE!>length<!>
+        x<!UNSAFE_CALL!>.<!>length
+        y<!UNSAFE_CALL!>.<!>length
     }
     else {
         // Both not null

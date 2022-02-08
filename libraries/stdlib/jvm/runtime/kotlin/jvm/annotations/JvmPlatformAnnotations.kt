@@ -72,7 +72,7 @@ internal actual annotation class JvmPackageName(actual val name: String)
  * This annotation is intended for *rare cases* when API designer needs to hide Kotlin-specific target from Java API
  * while keeping it a part of Kotlin API so the resulting API is idiomatic for both languages.
  */
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD)
+@Target(AnnotationTarget.FILE, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
 public actual annotation class JvmSynthetic
 
@@ -133,3 +133,24 @@ public actual annotation class JvmSuppressWildcards(actual val suppress: Boolean
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 public actual annotation class JvmWildcard
+
+/**
+ * Specifies that given value class is inline class.
+ *
+ * Adding and removing the annotation is binary incompatible change, since inline classes' methods and functions with inline classes
+ * in their signature are mangled.
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.RUNTIME)
+@MustBeDocumented
+@SinceKotlin("1.5")
+public actual annotation class JvmInline
+
+/**
+ * Instructs compiler to mark the class as a record and generate relevant toString/equals/hashCode methods
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.SOURCE)
+@MustBeDocumented
+@SinceKotlin("1.5")
+public actual annotation class JvmRecord

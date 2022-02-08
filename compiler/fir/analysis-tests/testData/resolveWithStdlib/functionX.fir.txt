@@ -1,0 +1,20 @@
+FILE: functionX.kt
+    public final val x: R|kotlin/jvm/functions/Function0<kotlin/Int>| = fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+        ^ Int(42)
+    }
+
+        public get(): R|kotlin/jvm/functions/Function0<kotlin/Int>|
+    public final val y: R|(kotlin/String) -> kotlin/String| = fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| <inline=Unknown>  {
+        ^ R|<local>/it|
+    }
+
+        public get(): R|(kotlin/String) -> kotlin/String|
+    public final class MyFunction : R|(kotlin/Int, kotlin/String) -> kotlin/Unit| {
+        public constructor(): R|MyFunction| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override operator fun invoke(p1: R|kotlin/Int|, p2: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+    }

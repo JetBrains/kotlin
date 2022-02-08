@@ -1,6 +1,6 @@
-// !WITH_NEW_INFERENCE
-// FILE: b.kt
+// WITH_EXTENDED_CHECKERS
 
+// FILE: a.kt
 
 package foobar.a
     import java.*
@@ -16,16 +16,16 @@ abstract class Foo<T>() {
     abstract val x : T<!TYPE_ARGUMENTS_NOT_ALLOWED!><Int><!>
 }
 
-// FILE: b.kt
+// FILE: c.kt
 package foobar.a
     import java.util.*
 
     val b : List<Int>? = <!TYPE_MISMATCH!>a<!>
     val b1 : <!UNRESOLVED_REFERENCE!>util<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>List<!><Int>? = a
 
-// FILE: b.kt
+// FILE: d.kt
 package foobar
-val x1 = <!UNRESOLVED_REFERENCE!>a<!>.<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>
+val x1 = <!UNRESOLVED_REFERENCE!>a<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>a<!>
 val x2 = foobar.a.a
 
 val y1 = foobar.a.b

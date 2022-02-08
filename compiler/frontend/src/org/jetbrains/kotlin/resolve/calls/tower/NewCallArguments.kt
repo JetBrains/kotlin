@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.StatementFilter
 import org.jetbrains.kotlin.resolve.TypeResolver
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
+import org.jetbrains.kotlin.resolve.calls.util.getCall
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
@@ -31,7 +32,7 @@ import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class SimpleTypeArgumentImpl(
-    val typeReference: KtTypeReference,
+    val typeProjection: KtTypeProjection,
     override val type: UnwrappedType
 ) : SimpleTypeArgument
 
@@ -115,6 +116,12 @@ class LambdaKotlinCallArgumentImpl(
             assert(!field)
             field = value
         }
+
+    override var builderInferenceSession: InferenceSession? = null
+        set(value) {
+            assert(field == null)
+            field = value
+        }
 }
 
 class FunctionExpressionImpl(
@@ -125,6 +132,7 @@ class FunctionExpressionImpl(
     val containingBlockForFunction: KtExpression,
     override val ktFunction: KtNamedFunction,
     override val receiverType: UnwrappedType?,
+    override val contextReceiversTypes: Array<UnwrappedType?>,
     override val parametersTypes: Array<UnwrappedType?>,
     override val returnType: UnwrappedType?
 ) : FunctionExpression, PSIFunctionKotlinCallArgument(outerCallContext, valueArgument, dataFlowInfoBeforeThisArgument, argumentName) {
@@ -139,7 +147,8 @@ class CallableReferenceKotlinCallArgumentImpl(
     val ktCallableReferenceExpression: KtCallableReferenceExpression,
     override val argumentName: Name?,
     override val lhsResult: LHSResult,
-    override val rhsName: Name
+    override val rhsName: Name,
+    override val call: KotlinCall
 ) : CallableReferenceKotlinCallArgument, PSIKotlinCallArgument()
 
 class CollectionLiteralKotlinCallArgumentImpl(
@@ -238,7 +247,7 @@ fun processFunctionalExpression(
     val expression = ArgumentTypeResolver.getFunctionLiteralArgumentIfAny(argumentExpression, outerCallContext) ?: return null
     val postponedExpression = if (expression is KtFunctionLiteral) expression.getParentOfType<KtLambdaExpression>(true) else expression
 
-    val lambdaArgument: PSIKotlinCallArgument? = when (postponedExpression) {
+    val lambdaArgument: PSIKotlinCallArgument = when (postponedExpression) {
         is KtLambdaExpression ->
             LambdaKotlinCallArgumentImpl(
                 outerCallContext, valueArgument, startDataFlowInfo, argumentName, postponedExpression, argumentExpression,
@@ -249,13 +258,14 @@ fun processFunctionalExpression(
             // if function is a not anonymous function, resolve it as simple expression
             if (!postponedExpression.isFunctionalExpression()) return null
             val receiverType = resolveType(outerCallContext, postponedExpression.receiverTypeReference, typeResolver)
+            val contextReceiversTypes = resolveContextReceiversTypes(outerCallContext, postponedExpression, typeResolver)
             val parametersTypes = resolveParametersTypes(outerCallContext, postponedExpression, typeResolver) ?: emptyArray()
             val returnType = resolveType(outerCallContext, postponedExpression.typeReference, typeResolver)
-                    ?: if (postponedExpression.hasBlockBody()) builtIns.unitType else null
+                ?: if (postponedExpression.hasBlockBody()) builtIns.unitType else null
 
             FunctionExpressionImpl(
                 outerCallContext, valueArgument, startDataFlowInfo, argumentName,
-                argumentExpression, postponedExpression, receiverType, parametersTypes, returnType
+                argumentExpression, postponedExpression, receiverType, contextReceiversTypes, parametersTypes, returnType
             )
         }
 
@@ -285,16 +295,36 @@ private fun resolveParametersTypes(
     }
 }
 
+private fun resolveContextReceiversTypes(
+    context: BasicCallResolutionContext,
+    ktFunction: KtFunction,
+    typeResolver: TypeResolver
+): Array<UnwrappedType?> {
+    val contextReceivers = ktFunction.contextReceivers
+
+    return Array(contextReceivers.size) {
+        contextReceivers[it]?.typeReference()?.let { typeRef -> resolveType(context, typeRef, typeResolver) }
+    }
+}
+
+@JvmName("resolveTypeWithGivenTypeReference")
+internal fun resolveType(
+    context: BasicCallResolutionContext,
+    typeReference: KtTypeReference,
+    typeResolver: TypeResolver
+): UnwrappedType {
+    val type = typeResolver.resolveType(context.scope, typeReference, context.trace, checkBounds = true)
+    ForceResolveUtil.forceResolveAllContents(type)
+    return type.unwrap()
+}
+
 internal fun resolveType(
     context: BasicCallResolutionContext,
     typeReference: KtTypeReference?,
     typeResolver: TypeResolver
 ): UnwrappedType? {
     if (typeReference == null) return null
-
-    val type = typeResolver.resolveType(context.scope, typeReference, context.trace, checkBounds = true)
-    ForceResolveUtil.forceResolveAllContents(type)
-    return type.unwrap()
+    return resolveType(context, typeReference, typeResolver)
 }
 
 
@@ -323,9 +353,11 @@ internal fun createSimplePSICallArgument(
     dataFlowValueFactory: DataFlowValueFactory,
     call: Call
 ): SimplePSIKotlinCallArgument? {
-
     val ktExpression = KtPsiUtil.getLastElementDeparenthesized(valueArgument.getArgumentExpression(), statementFilter) ?: return null
-    val partiallyResolvedCall = ktExpression.getCall(bindingContext)?.let {
+    val ktExpressionToExtractResolvedCall =
+        if (ktExpression is KtCallableReferenceExpression) ktExpression.callableReference else ktExpression
+
+    val partiallyResolvedCall = ktExpressionToExtractResolvedCall.getCall(bindingContext)?.let {
         bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)?.result
     }
     // todo hack for if expression: sometimes we not write properly type information for branches

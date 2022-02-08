@@ -1,4 +1,0 @@
-// MOVE: left
-fun foo(list: List<String>) {
-    list.foldRightIndexed(1, { <caret>p2, p1, p3 -> 1 })
-}

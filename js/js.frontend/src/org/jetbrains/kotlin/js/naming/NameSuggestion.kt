@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.js.naming
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
+import org.jetbrains.kotlin.js.common.isES5IdentifierPart
+import org.jetbrains.kotlin.js.common.isES5IdentifierStart
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.getNameForAnnotatedObject
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils.isNativeObject
 import org.jetbrains.kotlin.name.Name
@@ -359,28 +361,3 @@ class NameSuggestion {
         }
     }
 }
-
-// See ES 5.1 spec: https://www.ecma-international.org/ecma-262/5.1/#sec-7.6
-fun Char.isES5IdentifierStart() =
-        Character.isLetter(this) ||   // Lu | Ll | Lt | Lm | Lo
-        Character.getType(this).toByte() == Character.LETTER_NUMBER ||
-        // Nl which is missing in Character.isLetter, but present in UnicodeLetter in spec
-        this == '_' ||
-        this == '$'
-
-fun Char.isES5IdentifierPart() =
-        isES5IdentifierStart() ||
-        when (Character.getType(this).toByte()) {
-            Character.NON_SPACING_MARK,
-            Character.COMBINING_SPACING_MARK,
-            Character.DECIMAL_DIGIT_NUMBER,
-            Character.CONNECTOR_PUNCTUATION -> true
-            else -> false
-        } ||
-        this == '\u200C' ||   // Zero-width non-joiner
-        this == '\u200D'      // Zero-width joiner
-
-fun String.isValidES5Identifier() =
-        isNotEmpty() &&
-        first().isES5IdentifierStart() &&
-        drop(1).all { it.isES5IdentifierPart() }

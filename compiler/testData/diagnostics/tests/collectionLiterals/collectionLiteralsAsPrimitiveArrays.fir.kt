@@ -12,7 +12,7 @@ fun basicTypes() {
 }
 
 fun basicTypesWithErrors() {
-    val a: IntArray = [1.0]
-    val b: ShortArray = [1.0]
-    val c: CharArray = ["a"]
+    val a: IntArray = <!INITIALIZER_TYPE_MISMATCH!>[1.0]<!>
+    val b: ShortArray = <!INITIALIZER_TYPE_MISMATCH!>[1.0]<!>
+    val c: CharArray = <!INITIALIZER_TYPE_MISMATCH!>["a"]<!>
 }

@@ -1,6 +1,0 @@
-// HIGHLIGHT: INFORMATION
-fun main() {
-    test("", FooBar { }, 1)
-}
-
-fun test(s: String, foo: Foo, i: Int) {}

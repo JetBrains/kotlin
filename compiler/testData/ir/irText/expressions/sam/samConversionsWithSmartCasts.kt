@@ -1,6 +1,4 @@
-// !LANGUAGE: -NewInference
-// NB new inference doesn't really work with old JVM back-end.
-
+// TARGET_BACKEND: JVM
 // WITH_JDK
 // FILE: samConversionsWithSmartCasts.kt
 

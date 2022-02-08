@@ -18,5 +18,5 @@ fun test() {
     useEnum(TestEnum.THIRD)
 
     useVararg(TestEnum.FIRST, TestEnum.SECOND)
-    <!INAPPLICABLE_CANDIDATE!>useVararg<!>(1, 2, 3, 4, 5)
+    useVararg(<!ARGUMENT_TYPE_MISMATCH!>1<!>, <!ARGUMENT_TYPE_MISMATCH!>2<!>, <!ARGUMENT_TYPE_MISMATCH!>3<!>, <!ARGUMENT_TYPE_MISMATCH!>4<!>, <!ARGUMENT_TYPE_MISMATCH!>5<!>)
 }

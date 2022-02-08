@@ -1,10 +1,11 @@
 // FIR_IDENTICAL
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// !OPT_IN: kotlin.RequiresOptIn
 // FILE: api.kt
 
 package feature.experimental.self
 
 @RequiresOptIn
+@Retention(AnnotationRetention.BINARY)
 annotation class ImportedMarker
 
 @ImportedMarker

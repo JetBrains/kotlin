@@ -85,8 +85,8 @@ private fun parseImplementationTestInfo(testFilePath: String, linkedTestType: Sp
         testArea = TestArea.valueOf(testInfoByContentMatcher.group("testArea").withUnderscores()),
         testType = TestType.valueOf(testInfoByContentMatcher.group("testType")),
         testNumber = testInfoElements[CommonSpecTestFileInfoElementType.NUMBER]?.content?.toInt() ?: 0,
-        testDescription = fileNameWithoutExtension.toUpperCase()[0] + fileNameWithoutExtension.substring(1)
-            .replace(Regex("""([A-Z])"""), " $1").toLowerCase(),
+        testDescription = fileNameWithoutExtension.uppercase()[0] + fileNameWithoutExtension.substring(1)
+            .replace(Regex("""([A-Z])"""), " $1").lowercase(),
         testInfoElements = testInfoElements,
         testCasesSet = SpecTestCasesSet(mutableMapOf(), mutableMapOf(), mutableMapOf()), //todo
         unexpectedBehavior = testInfoElements.contains(CommonInfoElementType.UNEXPECTED_BEHAVIOUR),

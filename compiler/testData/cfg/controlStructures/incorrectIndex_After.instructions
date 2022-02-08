@@ -52,7 +52,7 @@ L0:
     mark({ if (flag) { s.add(it) } else { s.remove(it) } return true })
     r({ if (flag) { s.add(it) } else { s.remove(it) } return true }) -> <v3>
     mark(let { if (flag) { s.add(it) } else { s.remove(it) } return true })
-    call(let { if (flag) { s.add(it) } else { s.remove(it) } return true }, let|<v2>, <v3>)
+    call(let { if (flag) { s.add(it) } else { s.remove(it) } return true }, let|<v2>, <v3>) -> <v4>
 L4 [before inlined declaration]:
     inlined({ if (flag) { s.add(it) } else { s.remove(it) } return true })                                                                            NEXT:[<SINK>]
 L3 [result of call]:

@@ -1,18 +1,17 @@
 // !JVM_TARGET: 1.8
 
 interface A {
-    <!JVM_DEFAULT_IN_DECLARATION!>@JvmDefault
+    <!JVM_DEFAULT_IN_DECLARATION!>@<!DEPRECATION!>JvmDefault<!>
     fun test()<!> {
     }
 }
 
-interface <!JVM_DEFAULT_THROUGH_INHERITANCE!>B<!> : A {
-
+interface B : A {
 }
 
 
-open class <!JVM_DEFAULT_THROUGH_INHERITANCE!>Foo<!> : B
-open class <!JVM_DEFAULT_THROUGH_INHERITANCE!>Foo2<!> : B, A
+open class Foo : B
+open class Foo2 : B, A
 
 open class FooNoError : B {
     override fun test() {
@@ -28,7 +27,7 @@ class Bar2 : Foo(), A
 class Bar3 : Foo(), B
 
 open class BarWithJvmDefault : B {
-    <!JVM_DEFAULT_NOT_IN_INTERFACE!>@JvmDefault<!>
+    <!JVM_DEFAULT_NOT_IN_INTERFACE!>@<!DEPRECATION!>JvmDefault<!><!>
     override fun test() {
     }
 }

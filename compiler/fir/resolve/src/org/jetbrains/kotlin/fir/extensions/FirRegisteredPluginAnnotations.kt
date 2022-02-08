@@ -15,14 +15,20 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 
 abstract class FirRegisteredPluginAnnotations(val session: FirSession) : FirSessionComponent {
-    companion object {
-        fun create(session: FirSession): FirRegisteredPluginAnnotations {
-            return FirRegisteredPluginAnnotationsImpl(session)
-        }
-    }
-
+    /**
+     * Contains all annotations that can be targeted by the plugins. It includes the annotations directly mentioned by the plugin,
+     * and all the user-defined annotations which are meta-annotated by the annotations from the [metaAnnotations] list.
+     */
     abstract val annotations: Set<AnnotationFqn>
+
+    /**
+     * Contains meta-annotations that can be targeted by the plugins.
+     */
     abstract val metaAnnotations: Set<AnnotationFqn>
+
+    val hasRegisteredAnnotations: Boolean
+        get() = annotations.isNotEmpty() || metaAnnotations.isNotEmpty()
+
     abstract fun getAnnotationsWithMetaAnnotation(metaAnnotation: AnnotationFqn): Collection<AnnotationFqn>
 
     abstract fun registerUserDefinedAnnotation(metaAnnotation: AnnotationFqn, annotationClasses: Collection<FirRegularClass>)
@@ -34,7 +40,7 @@ abstract class FirRegisteredPluginAnnotations(val session: FirSession) : FirSess
 }
 
 @NoMutableState
-private class FirRegisteredPluginAnnotationsImpl(session: FirSession) : FirRegisteredPluginAnnotations(session) {
+class FirRegisteredPluginAnnotationsImpl(session: FirSession) : FirRegisteredPluginAnnotations(session) {
     override val annotations: MutableSet<AnnotationFqn> = mutableSetOf()
     override val metaAnnotations: MutableSet<AnnotationFqn> = mutableSetOf()
 
@@ -68,9 +74,24 @@ private class FirRegisteredPluginAnnotationsImpl(session: FirSession) : FirRegis
 
     @PluginServicesInitialization
     override fun initialize() {
+        val registrar = object : FirDeclarationPredicateRegistrar() {
+            val predicates = mutableListOf<DeclarationPredicate>()
+            override fun register(vararg predicates: DeclarationPredicate) {
+                this.predicates += predicates
+            }
+
+            override fun register(predicates: Collection<DeclarationPredicate>) {
+                this.predicates += predicates
+            }
+        }
+
         for (extension in session.extensionService.getAllExtensions()) {
-            if (extension !is FirPredicateBasedExtension) continue
-            val predicate = extension.predicate
+            with(extension) {
+                registrar.registerPredicates()
+            }
+        }
+
+        for (predicate in registrar.predicates) {
             annotations += predicate.annotations
             metaAnnotations += predicate.metaAnnotations
         }

@@ -25,3 +25,5 @@ abstract class C<T>(var constructorParam: List<CharSequence>) {
 
 open class K<out T: K<T>> { }
 class Sub: K<K<*>>()
+
+// COMPILATION_ERRORS

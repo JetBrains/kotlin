@@ -17,7 +17,7 @@ class A : S {
     constructor() : super(
             foo(),
             Nested(),
-            Inner(),
+            <!RESOLUTION_TO_CLASSIFIER!>Inner<!>(),
             CONST,
             Companion.CONST,
             Nested.CONST,

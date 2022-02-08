@@ -1,0 +1,34 @@
+FILE: localVariablesWithBackingFields.kt
+    public final val that: R|kotlin/Number|
+        private <explicit backing field>: R|kotlin/Int| = Int(239)
+        public get(): R|kotlin/Number|
+    public final fun test(): R|kotlin/Unit| {
+        lval a: R|kotlin/Number|
+        <Unresolved name: field># = Int(1)
+        lval b: R|kotlin/Number|by R|kotlin/lazy|<R|kotlin/Int|>(<L> = lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            ^ Int(2)
+        }
+        )
+        <Unresolved name: field># = Int(10)
+    }
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val c: R|kotlin/Number|by R|kotlin/lazy|<R|kotlin/Int|>(<L> = lazy@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            ^ Int(2)
+        }
+        )
+            private <explicit backing field>: R|kotlin/Int| = Int(10)
+            public get(): R|kotlin/Number| {
+                ^ this@R|/A|.D|/A.c|.R|kotlin/getValue|<R|kotlin/Int|>(this@R|/A|, ::R|/A.c|)
+            }
+
+    }
+    public final val R|A|.cc: R|kotlin/Number|
+        private <explicit backing field>: R|kotlin/Int| = Int(10)
+        public get(): R|kotlin/Number|
+    public final fun R|A|.cc(): R|kotlin/Unit| {
+        lval it: <ERROR TYPE REF: Ambiguity: plus, [kotlin/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/sequences/plus]> = <Unresolved name: a>#.<Ambiguity: plus, [kotlin/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/sequences/plus]>#(Int(2))
+    }

@@ -15,7 +15,7 @@ fun check(k: KClass<*>, j: JsClass<*>) {
     assertSame(k, k.js.kotlin)
 }
 
-fun jsClassbyName(name: String) = js("JS_TESTS").foo[name]
+fun jsClassbyName(name: String) = js("main").foo[name]
 
 fun box(): String {
     check(A::class, jsClassbyName("A"))

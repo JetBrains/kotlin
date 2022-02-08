@@ -1,6 +1,6 @@
-fun <T, T> Pair() {}
+fun <<!REDECLARATION!>T<!>, <!REDECLARATION!>T<!>> Pair() {}
 
-class P<T, T> {}
+class P<<!REDECLARATION!>T<!>, <!REDECLARATION!>T<!>> {}
 
-val <T, T> T.foo : Int
+val <<!REDECLARATION!>T<!>, <!REDECLARATION!>T<!>> T.foo : Int
     get() = 1

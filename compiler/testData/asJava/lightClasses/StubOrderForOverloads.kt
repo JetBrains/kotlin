@@ -7,4 +7,5 @@ class A {
 interface P
 interface RS
 
+// WITH_STDLIB
 // FIR_COMPARISON

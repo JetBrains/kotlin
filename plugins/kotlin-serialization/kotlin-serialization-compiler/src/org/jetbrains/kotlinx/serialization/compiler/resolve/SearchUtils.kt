@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
+import org.jetbrains.kotlin.types.TypeAttributes
 
 internal fun ClassConstructorDescriptor.isSerializationCtor(): Boolean {
     /*kind == CallableMemberDescriptor.Kind.SYNTHESIZED does not work because DeserializedClassConstructorDescriptor loses its kind*/
@@ -69,6 +69,14 @@ internal fun ClassDescriptor.getKSerializerConstructorMarker(): ClassDescriptor 
         )
     )!!
 
+internal fun ClassDescriptor.getKSerializer(): ClassDescriptor =
+    module.findClassAcrossModuleDependencies(
+        ClassId(
+            SerializationPackages.packageFqName,
+            SerialEntityNames.KSERIALIZER_NAME
+        )
+    )!!
+
 internal fun getInternalPackageFqn(classSimpleName: String): FqName =
     SerializationPackages.internalPackageFqName.child(Name.identifier(classSimpleName))
 
@@ -82,11 +90,21 @@ internal fun ModuleDescriptor.getClassFromInternalSerializationPackage(classSimp
         )
     ) { "Can't locate class $classSimpleName from package ${SerializationPackages.internalPackageFqName}" }
 
+internal fun ModuleDescriptor.getClassFromSerializationDescriptorsPackage(classSimpleName: String) =
+    requireNotNull(
+        findClassAcrossModuleDependencies(
+            ClassId(
+                SerializationPackages.descriptorsPackageFqName,
+                Name.identifier(classSimpleName)
+            )
+        )
+    ) { "Can't locate class $classSimpleName from package ${SerializationPackages.descriptorsPackageFqName}" }
+
 internal fun getSerializationPackageFqn(classSimpleName: String): FqName =
     SerializationPackages.packageFqName.child(Name.identifier(classSimpleName))
 
 internal fun ModuleDescriptor.getClassFromSerializationPackage(classSimpleName: String) =
-    SerializationPackages.allPublicPackages.firstNotNullResult { pkg ->
+    SerializationPackages.allPublicPackages.firstNotNullOfOrNull { pkg ->
         module.findClassAcrossModuleDependencies(ClassId(
             pkg,
             Name.identifier(classSimpleName)
@@ -100,7 +118,7 @@ internal fun ClassDescriptor.getClassFromInternalSerializationPackage(classSimpl
     module.getClassFromInternalSerializationPackage(classSimpleName)
 
 fun ClassDescriptor.toSimpleType(nullable: Boolean = false) =
-    KotlinTypeFactory.simpleType(Annotations.EMPTY, this.typeConstructor, emptyList(), nullable)
+    KotlinTypeFactory.simpleType(TypeAttributes.Empty, this.typeConstructor, emptyList(), nullable)
 
 internal fun Annotated.annotationsWithArguments(): List<Triple<ClassDescriptor, List<ValueArgument>, List<ValueParameterDescriptor>>> =
     annotations.asSequence()

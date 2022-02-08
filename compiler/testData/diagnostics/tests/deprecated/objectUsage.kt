@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @Deprecated("Object")
 object Obsolete {
     fun use() {}
@@ -5,5 +6,5 @@ object Obsolete {
 
 fun useObject() {
     <!DEPRECATION!>Obsolete<!>.use()
-    val <!UNUSED_VARIABLE!>x<!> = <!DEPRECATION!>Obsolete<!>
+    val x = <!DEPRECATION!>Obsolete<!>
 }

@@ -105,6 +105,11 @@ public class MutableClassDescriptor extends ClassDescriptorBase {
     }
 
     @Override
+    public boolean isValue() {
+        return false;
+    }
+
+    @Override
     public boolean isCompanionObject() {
         return false;
     }
@@ -182,6 +187,12 @@ public class MutableClassDescriptor extends ClassDescriptorBase {
     @Override
     public Collection<ClassDescriptor> getSealedSubclasses() {
         return Collections.emptyList();
+    }
+
+    @Nullable
+    @Override
+    public InlineClassRepresentation<SimpleType> getInlineClassRepresentation() {
+        return null;
     }
 
     @Override

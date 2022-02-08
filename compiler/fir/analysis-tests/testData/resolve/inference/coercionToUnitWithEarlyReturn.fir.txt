@@ -1,0 +1,25 @@
+FILE: coercionToUnitWithEarlyReturn.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun unit(): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun foo(x: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun main(x: R|A?|): R|kotlin/Unit| {
+        lval lambda: R|() -> kotlin/Unit| = l@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            when () {
+                ==(R|<local>/x|?.{ $subj$.R|kotlin/Any.hashCode|() }, Int(0)) ->  {
+                    ^@l Unit
+                }
+            }
+
+            ^ R|<local>/x|?.{ $subj$.R|/A.unit|() }
+        }
+
+        R|/foo|(R|<local>/lambda|)
+    }

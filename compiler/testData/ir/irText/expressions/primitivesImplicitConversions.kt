@@ -1,3 +1,7 @@
+// LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
+// IGNORE_BACKEND_FIR: ANY
+// For reasons this test is ignored, go to KT-46419
+
 val test1: Long = 42
 val test2: Short = 42
 val test3: Byte = 42

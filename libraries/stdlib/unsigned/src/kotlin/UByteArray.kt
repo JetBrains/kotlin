@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,10 +7,12 @@
 
 package kotlin
 
+import kotlin.jvm.*
+
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public inline class UByteArray
-@Suppress("NON_PUBLIC_PRIMARY_CONSTRUCTOR_OF_INLINE_CLASS")
+@JvmInline
+public value class UByteArray
 @PublishedApi
 internal constructor(@PublishedApi internal val storage: ByteArray) : Collection<UByte> {
 
@@ -39,8 +41,9 @@ internal constructor(@PublishedApi internal val storage: ByteArray) : Collection
     public override val size: Int get() = storage.size
 
     /** Creates an iterator over the elements of the array. */
-    public override operator fun iterator(): UByteIterator = Iterator(storage)
+    public override operator fun iterator(): kotlin.collections.Iterator<UByte> = Iterator(storage)
 
+    @Suppress("DEPRECATION_ERROR")
     private class Iterator(private val array: ByteArray) : UByteIterator() {
         private var index = 0
         override fun hasNext() = index < array.size

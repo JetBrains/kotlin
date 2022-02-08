@@ -1,0 +1,24 @@
+FILE: topExtensionVsOuterMember.kt
+    public final fun R|Outer.Inner|.foo(): R|kotlin/Int| {
+        ^foo Int(42)
+    }
+    public final class Outer : R|kotlin/Any| {
+        public constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/String| {
+            ^foo String()
+        }
+
+        public final inner class Inner : R|kotlin/Any| {
+            public Outer.constructor(): R|Outer.Inner| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val x: R|kotlin/Int| = this@R|/Outer.Inner|.R|/foo|()
+                public get(): R|kotlin/Int|
+
+        }
+
+    }

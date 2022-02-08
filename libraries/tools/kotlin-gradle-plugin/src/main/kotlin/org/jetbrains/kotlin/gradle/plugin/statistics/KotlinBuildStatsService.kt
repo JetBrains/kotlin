@@ -12,7 +12,6 @@ import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
 import org.gradle.initialization.BuildRequestMetaData
 import org.gradle.invocation.DefaultGradle
-import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatHandler.Companion.runSafe
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
@@ -85,7 +84,7 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
          */
         @JvmStatic
         @Synchronized
-        internal fun getOrCreateInstance(project: Project, listenerRegistryHolder: BuildEventsListenerRegistryHolder): IStatisticsValuesConsumer? {
+        internal fun getOrCreateInstance(project: Project): IStatisticsValuesConsumer? {
 
             return runSafe("${KotlinBuildStatsService::class.java}.getOrCreateInstance") {
                 val gradle = project.gradle
@@ -106,7 +105,6 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
                             )
                             instance = JMXKotlinBuildStatsService(mbs, beanName)
                         } else {
-                            val kotlinBuildStatProvider = project.provider{ KotlinBuildStatListener(beanName) }
                             val newInstance = DefaultKotlinBuildStatsService(gradle, beanName)
 
                             instance = newInstance
@@ -115,7 +113,7 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
                         }
 
                         if (!isConfigurationCacheAvailable(gradle)) {
-                            gradle.addBuildListener(instance)
+                            gradle.addBuildListener(instance!!)
                         }
                     }
                     instance

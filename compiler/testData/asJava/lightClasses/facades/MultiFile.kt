@@ -1,5 +1,5 @@
 // test.MultiFile
-// WITH_RUNTIME
+// WITH_STDLIB
 @file:JvmMultifileClass
 @file:JvmName("MultiFile")
 

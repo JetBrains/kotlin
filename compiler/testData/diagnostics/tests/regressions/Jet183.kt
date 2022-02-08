@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 enum class ProtocolState {
   WAITING {
     override fun signal() = ProtocolState.TALKING
@@ -11,5 +12,5 @@ enum class ProtocolState {
 }
 
 fun box() {
-   val <!UNUSED_VARIABLE!>x<!>: ProtocolState = ProtocolState.WAITING
+   val x: ProtocolState = ProtocolState.WAITING
 }

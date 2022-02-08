@@ -1,0 +1,24 @@
+FILE: WithSpeedSearch.kt
+    public final class JList<E> : R|kotlin/Any| {
+        public constructor<E>(): R|JList<E>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class ListSpeedSearch<T> : R|kotlin/Any| {
+        public constructor<T>(list: R|JList<T>|): R|ListSpeedSearch<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class XThreadsFramesView : R|kotlin/Any| {
+        public constructor(): R|XThreadsFramesView| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final fun <J : R|JList<*>|> R|J|.withSpeedSearch(): R|J| {
+            lval search: R|ListSpeedSearch<out kotlin/Any?>| = R|/ListSpeedSearch.ListSpeedSearch|<R|CapturedType(*)|>(this@R|/XThreadsFramesView.withSpeedSearch|)
+            ^withSpeedSearch this@R|/XThreadsFramesView.withSpeedSearch|
+        }
+
+    }

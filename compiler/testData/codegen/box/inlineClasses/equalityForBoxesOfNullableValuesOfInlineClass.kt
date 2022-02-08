@@ -1,14 +1,19 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: WASM_NULL_CAST
-// KJS_WITH_FULL_RUNTIME
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class X(val x: String)
-inline class Y(val y: Number)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class X(val x: String)
 
-inline class NX(val x: String?)
-inline class NY(val y: Number?)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Y(val y: Number)
+
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class NX(val x: String?)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class NY(val y: Number?)
 
 fun testNotNull(x: X?, y: Y?) {
     val xs = listOf<Any?>(x)

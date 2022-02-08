@@ -29,7 +29,7 @@ fun Candidate.computeCompletionMode(
         expectedType != null -> ConstraintSystemCompletionMode.FULL
 
         // This is questionable as null return type can be only for error call
-        currentReturnType == null || currentReturnType is ConeIntegerLiteralType -> ConstraintSystemCompletionMode.PARTIAL
+        currentReturnType == null -> ConstraintSystemCompletionMode.PARTIAL
 
         // Full if return type for call has no type variables
         csBuilder.isProperType(currentReturnType) -> ConstraintSystemCompletionMode.FULL
@@ -125,11 +125,12 @@ private class CalculatorForNestedCall(
         type: KotlinTypeMarker, outerVariance: TypeVariance,
         fixationDirectionsCollector: MutableSet<FixationDirectionForVariable>
     ) {
-        val typeArgumentsCount = type.argumentsCount()
+        val unwrappedType = type.lowerBoundIfFlexible()
+        val typeArgumentsCount = unwrappedType.argumentsCount()
         if (typeArgumentsCount > 0) {
             for (position in 0 until typeArgumentsCount) {
-                val argument = type.getArgument(position)
-                val parameter = type.typeConstructor().getParameter(position)
+                val argument = unwrappedType.getArgument(position)
+                val parameter = unwrappedType.typeConstructor().getParameter(position)
 
                 if (argument.isStarProjection())
                     continue

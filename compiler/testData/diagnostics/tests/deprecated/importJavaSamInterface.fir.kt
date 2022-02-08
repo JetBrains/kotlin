@@ -10,4 +10,4 @@ public interface J {
 
 // FILE: K.kt
 
-import test.J
+import <!DEPRECATION!>test.J<!>

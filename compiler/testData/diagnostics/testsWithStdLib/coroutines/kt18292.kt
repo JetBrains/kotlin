@@ -1,6 +1,5 @@
-// !WITH_NEW_INFERENCE
 // SKIP_TXT
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.coroutines.*
 
@@ -8,12 +7,12 @@ interface Job : CoroutineContext.Element {}
 interface Deferred<out T> : Job {
     suspend fun await(): T
 }
-fun <T> async(<!UNUSED_PARAMETER!>block<!>: suspend () -> T): Deferred<T> = TODO()
+fun <T> async(block: suspend () -> T): Deferred<T> = TODO()
 
 suspend fun fib(n: Long) =
     async {
         when {
             n < 2 -> n
-            else -> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!><!DEBUG_INFO_MISSING_UNRESOLVED!>fib<!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>n<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>-<!> 1)<!>.<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>await<!>() <!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>+<!> fib(n - 2).<!NI;DEBUG_INFO_MISSING_UNRESOLVED, OI;DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>await<!>()
+            else -> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!><!DEBUG_INFO_MISSING_UNRESOLVED!>fib<!>(<!DEBUG_INFO_MISSING_UNRESOLVED!>n<!> <!DEBUG_INFO_MISSING_UNRESOLVED!>-<!> 1)<!>.<!DEBUG_INFO_MISSING_UNRESOLVED!>await<!>() <!DEBUG_INFO_MISSING_UNRESOLVED!>+<!> fib(n - 2).<!DEBUG_INFO_MISSING_UNRESOLVED!>await<!>()
         }
     }

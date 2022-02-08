@@ -19,19 +19,23 @@ package org.jetbrains.kotlin.cli.jvm.compiler;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import kotlin.io.FilesKt;
+import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.output.OutputFile;
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity;
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector;
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk;
 import org.jetbrains.kotlin.cli.common.modules.ModuleXmlParser;
 import org.jetbrains.kotlin.name.FqName;
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 import org.jetbrains.kotlin.utils.PathUtil;
 
 import java.io.*;
-import java.util.*;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.jar.*;
 
 import static org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR;
@@ -59,6 +63,7 @@ public class CompileEnvironmentUtil {
             OutputStream fos,
             @Nullable FqName mainClass,
             boolean includeRuntime,
+            boolean noReflect,
             boolean resetJarTimestamps
     ) {
         try {
@@ -88,6 +93,9 @@ public class CompileEnvironmentUtil {
             }
             if (includeRuntime) {
                 writeRuntimeToJar(stream, resetJarTimestamps);
+                if (!noReflect) {
+                    writeReflectToJar(stream, resetJarTimestamps);
+                }
             }
             stream.finish();
         }
@@ -97,16 +105,26 @@ public class CompileEnvironmentUtil {
     }
 
     public static void writeToJar(
-            File jarPath, boolean jarRuntime, boolean resetJarTimestamps, FqName mainClass, OutputFileCollection outputFiles
+            File jarPath,
+            boolean jarRuntime,
+            boolean noReflect,
+            boolean resetJarTimestamps,
+            FqName mainClass,
+            OutputFileCollection outputFiles,
+            MessageCollector messageCollector
     ) {
         FileOutputStream outputStream = null;
         try {
+            // we should try to create the output dir first
+            if (jarPath.getParentFile() != null) {
+                jarPath.getParentFile().mkdirs();
+            }
             outputStream = new FileOutputStream(jarPath);
-            doWriteToJar(outputFiles, outputStream, mainClass, jarRuntime, resetJarTimestamps);
+            doWriteToJar(outputFiles, outputStream, mainClass, jarRuntime, noReflect, resetJarTimestamps);
             outputStream.close();
         }
         catch (FileNotFoundException e) {
-            throw new CompileEnvironmentException("Invalid jar path " + jarPath, e);
+            messageCollector.report(CompilerMessageSeverity.ERROR, "Invalid jar path: " + jarPath, null);
         }
         catch (IOException e) {
             throw ExceptionUtilsKt.rethrow(e);
@@ -124,20 +142,32 @@ public class CompileEnvironmentUtil {
         copyJarImpl(stream, stdlibPath, resetJarTimestamps);
     }
 
+    private static void writeReflectToJar(JarOutputStream stream, boolean resetJarTimestamps) throws IOException {
+        File reflectPath = PathUtil.getKotlinPathsForCompiler().getReflectPath();
+        if (!reflectPath.exists()) {
+            throw new CompileEnvironmentException("Couldn't find kotlin-reflect at " + reflectPath);
+        }
+        copyJarImpl(stream, reflectPath, resetJarTimestamps);
+    }
+
     private static void copyJarImpl(JarOutputStream stream, File jarPath, boolean resetJarTimestamps) throws IOException {
         try (JarInputStream jis = new JarInputStream(new FileInputStream(jarPath))) {
             while (true) {
                 JarEntry e = jis.getNextJarEntry();
-                if (e == null) {
-                    break;
+                if (e == null) break;
+
+                String name = e.getName();
+                if (!FileUtilRt.extensionEquals(name, "class") &&
+                    !FileUtilRt.extensionEquals(name, BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) &&
+                    !name.startsWith("META-INF/services/")) {
+                    continue;
                 }
+                if (StringsKt.substringAfterLast(name, "/", name).equals("module-info.class")) continue;
                 if (resetJarTimestamps) {
                     e.setTime(DOS_EPOCH);
                 }
-                if (FileUtilRt.extensionEquals(e.getName(), "class")) {
-                    stream.putNextEntry(e);
-                    FileUtil.copy(jis, stream);
-                }
+                stream.putNextEntry(e);
+                FileUtil.copy(jis, stream);
             }
         }
     }

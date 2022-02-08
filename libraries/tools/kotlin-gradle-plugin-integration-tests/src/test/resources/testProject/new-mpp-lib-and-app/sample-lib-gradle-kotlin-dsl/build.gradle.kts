@@ -8,13 +8,14 @@ version = "1.0"
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
 }
 
 kotlin {
     val jvm = jvm("jvm6")
     val js = js("nodeJs")
     linuxX64("linux64")
+    wasm()
 
     targets.all {
         mavenPublication(Action<MavenPublication> {
@@ -39,7 +40,6 @@ kotlin {
         js.compilations["main"].defaultSourceSet {
         	dependencies {
                 api(kotlin("stdlib-js"))
-        		implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.6.11")
         	}
         }
     }

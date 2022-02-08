@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
+import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualsForExpected
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 
 /**
@@ -29,9 +29,7 @@ class FrameMapWithExpectActualSupport(private val module: ModuleDescriptor) : Fr
         // in ExpressionCodegen.generateThisOrOuterFromContext by comparing classes by type constructor equality.
         if (parameter !is ReceiverParameterDescriptor || parameter.value !is ExtensionReceiver) return null
 
-        val actual = with(ExpectedActualResolver) {
-            container.findCompatibleActualForExpected(module).firstOrNull()
-        }
+        val actual = container.findCompatibleActualsForExpected(module).firstOrNull()
 
         return (actual as? CallableDescriptor)?.extensionReceiverParameter
     }

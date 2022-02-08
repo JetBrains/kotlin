@@ -41,41 +41,64 @@ fun functionMismatchedParameterNames29(vararg variadicArguments: Int) {}
 fun functionMismatchedParameterNames30(arg0: Int, vararg variadicArguments: Int) {}
 
 fun functionMismatchedParameterNames31(i: Int, s: String) {}
+
 @kotlinx.cinterop.ObjCMethod
-fun functionMismatchedParameterNames32(i: Int, s: String) {}
+fun functionMismatchedParameterNames32(i: Int, s: String) {
+}
+
 fun functionMismatchedParameterNames33(i: Int, s: String) {}
-@kotlinx.cinterop.ObjCMethod
-fun functionMismatchedParameterNames34(i: Int, s: String) {}
 
 @kotlinx.cinterop.ObjCMethod
-fun functionMismatchedParameterNames35(i: Int, s: String) {}
-@kotlinx.cinterop.ObjCMethod
-fun functionMismatchedParameterNames36(arg0: Int, arg1: String) {}
-@kotlinx.cinterop.ObjCMethod
-fun functionMismatchedParameterNames37(arg0: Int, arg1: String) {}
+fun functionMismatchedParameterNames34(i: Int, s: String) {
+}
 
-// hasStableParameterNames=false
 @kotlinx.cinterop.ObjCMethod
-fun functionMismatchedParameterNames38(i: Int, s: String) {}
+fun functionMismatchedParameterNames35(i: Int, s: String) {
+}
+
 @kotlinx.cinterop.ObjCMethod
-fun functionMismatchedParameterNames39(i: Int, s: String) {}
-// hasStableParameterNames=false
+fun functionMismatchedParameterNames36(arg0: Int, arg1: String) {
+}
+
 @kotlinx.cinterop.ObjCMethod
-fun functionMismatchedParameterNames40(i: Int, s: String) {}
+fun functionMismatchedParameterNames37(arg0: Int, arg1: String) {
+}
 
 // hasStableParameterNames=false
 @kotlinx.cinterop.ObjCMethod
-fun functionMismatchedParameterNames41(arg0: Int, arg1: String) {}
-@kotlinx.cinterop.ObjCMethod
-fun functionMismatchedParameterNames42(arg0: Int, arg1: String) {}
-// hasStableParameterNames=false
-@kotlinx.cinterop.ObjCMethod
-fun functionMismatchedParameterNames43(arg0: Int, arg1: String) {}
+fun functionMismatchedParameterNames38(i: Int, s: String) {
+}
 
 @kotlinx.cinterop.ObjCMethod
-fun overloadedFunctionByParameterNames(i: Int, s: String) {}
+fun functionMismatchedParameterNames39(i: Int, s: String) {
+}
+
+// hasStableParameterNames=false
 @kotlinx.cinterop.ObjCMethod
-fun overloadedFunctionByParameterNames(xi: Int, xs: String) {}
+fun functionMismatchedParameterNames40(i: Int, s: String) {
+}
+
+// hasStableParameterNames=false
+@kotlinx.cinterop.ObjCMethod
+fun functionMismatchedParameterNames41(arg0: Int, arg1: String) {
+}
+
+@kotlinx.cinterop.ObjCMethod
+fun functionMismatchedParameterNames42(arg0: Int, arg1: String) {
+}
+
+// hasStableParameterNames=false
+@kotlinx.cinterop.ObjCMethod
+fun functionMismatchedParameterNames43(arg0: Int, arg1: String) {
+}
+
+@kotlinx.cinterop.ObjCMethod
+fun overloadedFunctionByParameterNames(i: Int, s: String) {
+}
+
+@kotlinx.cinterop.ObjCMethod
+fun overloadedFunctionByParameterNames(xi: Int, xs: String) {
+}
 
 fun functionMismatchedParameterCount1(i: Int, s: String) {}
 fun functionMismatchedParameterCount2(i: Int, s: String, l: List<Double>) {}

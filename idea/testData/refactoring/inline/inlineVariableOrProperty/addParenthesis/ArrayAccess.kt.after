@@ -1,3 +1,0 @@
-fun f() {
-    println((s1 + s2)[1])
-}

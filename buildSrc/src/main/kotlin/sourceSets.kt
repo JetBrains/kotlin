@@ -1,5 +1,5 @@
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 
@@ -30,21 +30,22 @@ val SourceSet.projectDefault: Project.() -> Unit
             }
             "test" -> {
                 java.srcDirs("test", "tests")
+                this@projectDefault.resources.srcDir("testResources")
             }
         }
     }
 
 val Project.sourceSets: SourceSetContainer
-    get() = javaPluginConvention().sourceSets
+    get() = javaPluginExtension().sourceSets
 
 val Project.mainSourceSet: SourceSet
-    get() = javaPluginConvention().mainSourceSet
+    get() = javaPluginExtension().mainSourceSet
 
 val Project.testSourceSet: SourceSet
-    get() = javaPluginConvention().testSourceSet
+    get() = javaPluginExtension().testSourceSet
 
-val JavaPluginConvention.mainSourceSet: SourceSet
+val JavaPluginExtension.mainSourceSet: SourceSet
     get() = sourceSets.getByName("main")
 
-val JavaPluginConvention.testSourceSet: SourceSet
+val JavaPluginExtension.testSourceSet: SourceSet
     get() = sourceSets.getByName("test")

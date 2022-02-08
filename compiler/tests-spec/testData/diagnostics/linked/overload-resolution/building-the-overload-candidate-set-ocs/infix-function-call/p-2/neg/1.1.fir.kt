@@ -2,14 +2,14 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_PARAMETER -UNUSED_EXPRESSION -EXTENSION_SHADOWED_BY_MEMBER
 // SKIP_TXT
 
-// FILE: Extensions.kt
+// FILE: Extensions1.kt
 package libPackage
 
 class A() {
      fun foo(x: Int) = "member fun foo"
 }
 
-// FILE: Extensions.kt
+// FILE: Extensions2.kt
 // TESTCASE NUMBER: 1, 2, 3, 4
 
 package sentence3
@@ -28,8 +28,8 @@ class Case1() {
 
     fun case1() {
         val a = A()
-        a foo 1
-        A() foo 1
+        a <!INFIX_MODIFIER_REQUIRED!>foo<!> 1
+        A() <!INFIX_MODIFIER_REQUIRED!>foo<!> 1
     }
 }
 // FILE: TestCase2.kt
@@ -43,8 +43,8 @@ interface Case2 {
 
     fun case2() {
         val a = A()
-        a foo 1
-        A() foo 1
+        a <!INFIX_MODIFIER_REQUIRED!>foo<!> 1
+        A() <!INFIX_MODIFIER_REQUIRED!>foo<!> 1
     }
 }
 
@@ -60,8 +60,8 @@ fun case3() {
     fun A.foo(x: Int) ="my local scope contains"
 
     val a = A()
-    a foo 1
-    A() foo 1
+    a <!INFIX_MODIFIER_REQUIRED!>foo<!> 1
+    A() <!INFIX_MODIFIER_REQUIRED!>foo<!> 1
 }
 
 // FILE: TestCase4.kt
@@ -79,7 +79,7 @@ fun case4() {
     fun subfun() {
         fun A.foo(x: Int) = "my local contains"
         val a = A()
-        a foo 1
-        A() foo 1
+        a <!INFIX_MODIFIER_REQUIRED!>foo<!> 1
+        A() <!INFIX_MODIFIER_REQUIRED!>foo<!> 1
     }
 }

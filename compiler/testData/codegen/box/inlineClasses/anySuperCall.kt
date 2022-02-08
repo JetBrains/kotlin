@@ -1,7 +1,10 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
 // IGNORE_BACKEND: JVM
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class A(val x: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class A(val x: Int) {
     fun f(): Int = super.hashCode()
 }
 

@@ -1,5 +1,4 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
-// !WITH_NEW_INFERENCE
 
 fun foo(s1: Int, s2: Int) = s1 + s2
 
@@ -18,8 +17,8 @@ fun test2(x: String?) {
 
 fun test3(x: String?, y: String?) {
     when (val z = x ?: y!!) {
-        "foo" -> x.<!INAPPLICABLE_CANDIDATE!>length<!>
-        "bar" -> y.<!INAPPLICABLE_CANDIDATE!>length<!>
+        "foo" -> x<!UNSAFE_CALL!>.<!>length
+        "bar" -> y<!UNSAFE_CALL!>.<!>length
         "baz" -> z.length
     }
 }

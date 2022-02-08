@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// JVM_TARGET: 1.8
 
 // FILE: A.java
 

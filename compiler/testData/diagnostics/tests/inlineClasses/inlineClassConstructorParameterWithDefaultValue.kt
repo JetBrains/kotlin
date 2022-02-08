@@ -1,4 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +InlineClasses
+// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 
 inline class Test(val x: Int = 42)

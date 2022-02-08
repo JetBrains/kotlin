@@ -1,5 +1,3 @@
-// !LANGUAGE: +NewInference
-
 class Recursive<T : Recursive<T>> : Generic<PlaceHolder<T>>, MainSupertype
 open class Simple<T> : Generic<T>, MainSupertype
 

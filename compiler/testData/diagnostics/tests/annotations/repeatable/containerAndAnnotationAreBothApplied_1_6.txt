@@ -1,0 +1,83 @@
+package
+
+@JR @JR.Container(value = {}) public fun jr1(): kotlin.Unit
+@JR @JR.Container(value = {}) @JR public fun jr2(): kotlin.Unit
+@JR @JR.Container(value = {JR}) @JR public fun jr3(): kotlin.Unit
+@JR @JR.Container(value = {JR}) public fun jr4(): kotlin.Unit
+@JR @JR.Container(value = {JR, JR}) public fun jr5(): kotlin.Unit
+@JS @JS.Container(value = {}) public fun js1(): kotlin.Unit
+@JS @JS.Container(value = {}) @JS public fun js2(): kotlin.Unit
+@JS @JS.Container(value = {JS}) @JS public fun js3(): kotlin.Unit
+@JS @JS.Container(value = {JS}) public fun js4(): kotlin.Unit
+@JS @JS.Container(value = {JS, JS}) public fun js5(): kotlin.Unit
+@KR.Container(value = {}) @KR public fun kr1(): kotlin.Unit
+@KR.Container(value = {}) @KR @KR public fun kr2(): kotlin.Unit
+@KR @KR @KR.Container(value = {KR}) public fun kr3(): kotlin.Unit
+@KR.Container(value = {KR}) @KR public fun kr4(): kotlin.Unit
+@KR @KR.Container(value = {KR, KR}) public fun kr5(): kotlin.Unit
+@KS.Container(value = {}) @KS public fun ks1(): kotlin.Unit
+@KS.Container(value = {}) @KS @KS public fun ks2(): kotlin.Unit
+@KS @KS @KS.Container(value = {KS}) public fun ks3(): kotlin.Unit
+@KS.Container(value = {KS}) @KS public fun ks4(): kotlin.Unit
+@KS @KS.Container(value = {KS, KS}) public fun ks5(): kotlin.Unit
+
+@java.lang.annotation.Repeatable(value = JR.Container::class) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class JR : kotlin.Annotation {
+    public constructor JR()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final annotation class Container : kotlin.Annotation {
+        public constructor Container(/*0*/ vararg value: JR /*kotlin.Array<out JR>*/)
+        public final val value: kotlin.Array<JR>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+@java.lang.annotation.Repeatable(value = JS.Container::class) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final annotation class JS : kotlin.Annotation {
+    public constructor JS()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final annotation class Container : kotlin.Annotation {
+        public constructor Container(/*0*/ vararg value: JS /*kotlin.Array<out JS>*/)
+        public final val value: kotlin.Array<JS>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+@java.lang.annotation.Repeatable(value = KR.Container::class) @kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class KR : kotlin.Annotation {
+    public constructor KR()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final annotation class Container : kotlin.Annotation {
+        public constructor Container(/*0*/ value: kotlin.Array<KR>)
+        public final val value: kotlin.Array<KR>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+
+@java.lang.annotation.Repeatable(value = KS.Container::class) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final annotation class KS : kotlin.Annotation {
+    public constructor KS()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final annotation class Container : kotlin.Annotation {
+        public constructor Container(/*0*/ value: kotlin.Array<KS>)
+        public final val value: kotlin.Array<KS>
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+

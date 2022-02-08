@@ -9,24 +9,36 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.SmartSet
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val ConeKotlinType.isNullable: Boolean get() = nullability != ConeNullability.NOT_NULL
-
 val ConeKotlinType.isMarkedNullable: Boolean get() = nullability == ConeNullability.NULLABLE
 
-val ConeKotlinType.classId: ClassId? get() = this.safeAs<ConeClassLikeType>()?.lookupTag?.classId
+val ConeKotlinType.classId: ClassId? get() = (this as? ConeClassLikeType)?.lookupTag?.classId
 
-fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean): Boolean {
-    return contains(predicate, null)
+/**
+ * Recursively visits each [ConeKotlinType] inside (including itself) and performs the given action.
+ */
+fun ConeKotlinType.forEachType(action: (ConeKotlinType) -> Unit) {
+    action(this)
+
+    return when (this) {
+        is ConeFlexibleType -> {
+            lowerBound.forEachType(action)
+            upperBound.forEachType(action)
+        }
+        is ConeDefinitelyNotNullType -> original.forEachType(action)
+        is ConeIntersectionType -> intersectedTypes.forEach { it.forEachType(action) }
+        else -> typeArguments.forEach { if (it is ConeKotlinTypeProjection) it.type.forEachType(action) }
+    }
 }
 
-private fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean, visited: SmartSet<ConeKotlinType>?): Boolean {
-    if (visited?.contains(this) == true) return false
-    if (predicate(this)) return true
+fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean): Boolean {
+    return contains(predicate, SmartSet.create())
+}
 
-    @Suppress("NAME_SHADOWING")
-    val visited = visited ?: SmartSet.create()
+private fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean, visited: SmartSet<ConeKotlinType>): Boolean {
+    if (this in visited) return false
+    if (predicate(this)) return true
     visited += this
 
     return when (this) {
@@ -37,9 +49,33 @@ private fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean, visi
     }
 }
 
+// ----------------------------------- Transformations -----------------------------------
+
+fun ConeKotlinType.upperBoundIfFlexible(): ConeSimpleKotlinType {
+    return when (this) {
+        is ConeSimpleKotlinType -> this
+        is ConeFlexibleType -> upperBound
+    }
+}
+
+fun ConeKotlinType.lowerBoundIfFlexible(): ConeSimpleKotlinType {
+    return when (this) {
+        is ConeSimpleKotlinType -> this
+        is ConeFlexibleType -> lowerBound
+    }
+}
+
+fun ConeIntersectionType.withAlternative(alternativeType: ConeKotlinType): ConeIntersectionType {
+    return ConeIntersectionType(intersectedTypes, alternativeType)
+}
+
+fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
+    return ConeIntersectionType(intersectedTypes.map(func), alternativeType?.let(func))
+}
+
 fun ConeClassLikeType.withArguments(typeArguments: Array<out ConeTypeProjection>): ConeClassLikeType = when (this) {
     is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, isNullable, attributes)
-    is ConeClassErrorType -> this
+    is ConeErrorType -> this
     else -> error("Unknown cone type: ${this::class}")
 }
 
@@ -49,6 +85,15 @@ fun ConeKotlinType.toTypeProjection(variance: Variance): ConeTypeProjection =
         Variance.IN_VARIANCE -> ConeKotlinTypeProjectionIn(this)
         Variance.OUT_VARIANCE -> ConeKotlinTypeProjectionOut(this)
     }
+
+fun ConeKotlinType.toTypeProjection(projectionKind: ProjectionKind): ConeTypeProjection {
+    return when (projectionKind) {
+        ProjectionKind.INVARIANT -> this
+        ProjectionKind.IN -> ConeKotlinTypeProjectionIn(this)
+        ProjectionKind.OUT -> ConeKotlinTypeProjectionOut(this)
+        ProjectionKind.STAR -> ConeStarProjection
+    }
+}
 
 fun ConeClassLikeType.replaceArgumentsWithStarProjections(): ConeClassLikeType {
     if (typeArguments.isEmpty()) return this

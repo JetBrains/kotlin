@@ -1,0 +1,27 @@
+package
+
+public fun </*0*/ T, /*1*/ R> bar(): kotlin.Unit
+public fun </*0*/ T> foo(/*0*/ block: (A<T>) -> kotlin.Unit): kotlin.Unit
+public fun </*0*/ T, /*1*/ S> foo(/*0*/ c: C<T>): kotlin.Unit
+
+public final data class A</*0*/ T> {
+    public constructor A</*0*/ T>(/*0*/ i: T)
+    public final val i: T
+    public final operator /*synthesized*/ fun component1(): T
+    public final /*synthesized*/ fun copy(/*0*/ i: T = ...): A<T>
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
+public final data class C</*0*/ T> {
+    public constructor C</*0*/ T>(/*0*/ x: kotlin.Int, /*1*/ y: T)
+    public final val x: kotlin.Int
+    public final val y: T
+    public final operator /*synthesized*/ fun component1(): kotlin.Int
+    public final operator /*synthesized*/ fun component2(): T
+    public final /*synthesized*/ fun copy(/*0*/ x: kotlin.Int = ..., /*1*/ y: T = ...): C<T>
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}

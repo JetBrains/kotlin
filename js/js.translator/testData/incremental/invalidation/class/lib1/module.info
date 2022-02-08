@@ -1,0 +1,20 @@
+STEP 0:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.0_simple_class.txt -> l1.kt
+    dirty: l1.kt
+STEP 1:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.1_data_class.txt -> l1.kt
+    dirty: l1.kt
+STEP 2:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.0_simple_class.txt -> l1.kt
+    dirty: l1.kt
+STEP 3:
+    dependencies: stdlib
+    modifications:
+        U : l1.kt.2_inline_class.txt -> l1.kt
+    dirty: l1.kt

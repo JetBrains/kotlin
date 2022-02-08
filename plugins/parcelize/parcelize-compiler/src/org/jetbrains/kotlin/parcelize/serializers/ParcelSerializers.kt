@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.parcelize.serializers
 
-import kotlinx.parcelize.Parceler
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.FrameMap
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -24,13 +23,14 @@ import org.jetbrains.kotlin.codegen.useTmpVar
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.parcelize.serializers.BoxedPrimitiveTypeParcelSerializer.Companion.BOXED_VALUE_METHOD_NAMES
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 internal val PARCEL_TYPE = Type.getObjectType("android/os/Parcel")
-internal val PARCELER_TYPE = Type.getObjectType(Parceler::class.java.name.replace(".", "/"))
+internal val PARCELER_TYPE = Type.getObjectType("kotlinx/parcelize/Parceler")
 
 internal class GenericParcelSerializer(override val asmType: Type) : ParcelSerializer {
     override fun writeValue(v: InstructionAdapter) {
@@ -783,6 +783,20 @@ internal open class PrimitiveTypeParcelSerializer private constructor(final over
 
     override fun readValue(v: InstructionAdapter) {
         v.invokevirtual(PARCEL_TYPE.internalName, readMethod.name, readMethod.signature, false)
+    }
+}
+
+internal class ParcelSerializerStub(override val asmType: Type, private val kotlinType: KotlinType) : ParcelSerializer {
+    private fun throwError() {
+        TODO("Type is only supported in the IR backend: ${DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(kotlinType)}")
+    }
+
+    override fun writeValue(v: InstructionAdapter) {
+        throwError()
+    }
+
+    override fun readValue(v: InstructionAdapter) {
+        throwError()
     }
 }
 

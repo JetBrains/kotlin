@@ -1,0 +1,18 @@
+FILE: whenAsReceiver.kt
+    public final fun <T, R> R|T|.also(block: R|() -> R|): R|R| {
+        ^also Null(null)!!
+    }
+    public final fun foo(b: R|kotlin/Boolean|, a: R|kotlin/Int|): R|kotlin/Unit| {
+        lval x: R|kotlin/Int?| = when (R|<local>/b|) {
+            ==($subj$, Boolean(true)) ->  {
+                R|<local>/a|
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+        ?.{ $subj$.R|/also|<R|kotlin/Int|, R|kotlin/Int|>(<L> = also@fun <anonymous>(): R|kotlin/Int| <inline=NoInline>  {
+            ^ Int(1)
+        }
+        ) }
+    }

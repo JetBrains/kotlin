@@ -42,13 +42,11 @@ class IrConstructorImpl(
     override val isPrimary: Boolean,
     override val isExpect: Boolean,
     override val containerSource: DeserializedContainerSource? = null,
+    override val factory: IrFactory = IrFactoryImpl,
 ) : IrConstructor() {
     init {
         symbol.bind(this)
     }
-
-    override val factory: IrFactory
-        get() = IrFactoryImpl
 
     override lateinit var parent: IrDeclarationParent
     override var annotations: List<IrConstructorCall> = emptyList()
@@ -64,6 +62,7 @@ class IrConstructorImpl(
 
     override var dispatchReceiverParameter: IrValueParameter? = null
     override var extensionReceiverParameter: IrValueParameter? = null
+    override var contextReceiverParametersCount: Int = 0
     override var valueParameters: List<IrValueParameter> = emptyList()
 
     override var body: IrBody? = null

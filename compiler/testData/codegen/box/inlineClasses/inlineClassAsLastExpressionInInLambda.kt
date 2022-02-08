@@ -1,12 +1,16 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Name(private val value: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Name(private val value: String) {
     fun asValue(): String = value
 }
 
 fun concat(a: Name, b: Name) = a.asValue() + b.asValue()
 
-inline class UInt(private val value: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class UInt(private val value: Int) {
     fun asValue(): Int = value
 }
 

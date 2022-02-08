@@ -1,0 +1,9 @@
+@Target(allowedTargets = [kotlin.annotation.AnnotationTarget.TYPE])
+annotation class A {
+  constructor(value: Int)
+
+  val value: Int
+}
+
+fun x(): @A(value = 3) Int
+

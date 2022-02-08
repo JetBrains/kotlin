@@ -1,0 +1,18 @@
+FILE: variableInitializedInTryBlock.kt
+    public final fun test(): R|kotlin/Unit| {
+        lval b: R|kotlin/Boolean|
+        try {
+            lval s: R|kotlin/String| = R|/getStringOrNull|() ?: ^test Unit
+            R|<local>/b| = !=(R|<local>/s|.R|kotlin/String.length|, Int(0))
+        }
+        finally {
+            R|/test|()
+        }
+
+        R|/takeBoolean|(R|<local>/b|)
+    }
+    public final fun takeBoolean(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+    }
+    public final fun getStringOrNull(): R|kotlin/String?| {
+        ^getStringOrNull String(hello)
+    }

@@ -1,9 +1,0 @@
-// WITH_RUNTIME
-
-infix fun Int.upTo(other: Int) = this.rangeTo(other)
-
-fun main() {
-    for (x in 1 upTo 2) {
-        x
-    }
-}

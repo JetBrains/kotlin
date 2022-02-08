@@ -1,6 +1,4 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// !LANGUAGE: -NonStrictOnlyInputTypesChecks
 // Issue: KT-26698
 
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
@@ -18,7 +16,7 @@ class Out<out T>
 // -------------------------------------------------------
 
 fun test_0(x: Inv2<in Number, out Number>, list: List<Inv2<Any, Int>>) {
-    list.<!NI;TYPE_INFERENCE_ONLY_INPUT_TYPES!>foo<!>(x)
+    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>foo<!>(x)
 }
 
 // ------------------------- Inv -------------------------
@@ -28,27 +26,27 @@ fun test_1(x: Inv<Number>, list: List<Inv<Number>>) {
 }
 
 fun test_2(x: Inv<Number>, list: List<Inv<Int>>) {
-    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES!>contains1<!>(x)
+    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>contains1<!>(x)
 }
 
 fun test_3(x: Inv<Number>, list: List<Inv<Any>>) {
-    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES!>contains1<!>(x)
+    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>contains1<!>(x)
 }
 
 fun test_4(x: Inv<in Number>, list: List<Inv<Any>>) {
-    list.<!NI;TYPE_INFERENCE_ONLY_INPUT_TYPES!>contains1<!>(x)
+    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>contains1<!>(x)
 }
 
 fun test_5(x: Inv<in Number>, list: List<Inv<Number>>) {
-    list.<!NI;TYPE_INFERENCE_ONLY_INPUT_TYPES!>contains1<!>(x)
+    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>contains1<!>(x)
 }
 
 fun test_6(x: Inv<in Number>, list: List<Inv<Int>>) {
-    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES!>contains1<!>(x)
+    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>contains1<!>(x)
 }
 
 fun test_7(x: Inv<out Number>, list: List<Inv<Any>>) {
-    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES!>contains1<!>(x)
+    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>contains1<!>(x)
 }
 
 fun test_8(x: Inv<out Number>, list: List<Inv<Number>>) {
@@ -98,7 +96,7 @@ fun test_32(x: Inv<Number>, list: List<Inv<in Int>>) {
 }
 
 fun test_33(x: Inv<Number>, list: List<Inv<in Any>>) {
-    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES!>contains1<!>(x)
+    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>contains1<!>(x)
 }
 
 fun test_34(x: Inv<Number>, list: List<Inv<out Number>>) {
@@ -106,7 +104,7 @@ fun test_34(x: Inv<Number>, list: List<Inv<out Number>>) {
 }
 
 fun test_35(x: Inv<Number>, list: List<Inv<out Int>>) {
-    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES!>contains1<!>(x)
+    list.<!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>contains1<!>(x)
 }
 
 fun test_36(x: Inv<Number>, list: List<Inv<out Any>>) {

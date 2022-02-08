@@ -1,0 +1,262 @@
+FILE: forLoopChecker.kt
+    public final class NotRange1 : R|kotlin/Any| {
+        public constructor(): R|NotRange1| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract class NotRange2 : R|kotlin/Any| {
+        public constructor(): R|NotRange2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract operator fun iterator(): R|kotlin/Unit|
+
+    }
+    public abstract class ImproperIterator1 : R|kotlin/Any| {
+        public constructor(): R|ImproperIterator1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract operator fun hasNext(): R|kotlin/Boolean|
+
+    }
+    public abstract class NotRange3 : R|kotlin/Any| {
+        public constructor(): R|NotRange3| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract operator fun iterator(): R|ImproperIterator1|
+
+    }
+    public abstract class ImproperIterator2 : R|kotlin/Any| {
+        public constructor(): R|ImproperIterator2| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract operator fun next(): R|kotlin/Boolean|
+
+    }
+    public abstract class NotRange4 : R|kotlin/Any| {
+        public constructor(): R|NotRange4| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract operator fun iterator(): R|ImproperIterator2|
+
+    }
+    public abstract class ImproperIterator3 : R|kotlin/Any| {
+        public constructor(): R|ImproperIterator3| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract operator fun hasNext(): R|kotlin/Int|
+
+        public abstract operator fun next(): R|kotlin/Int|
+
+    }
+    public abstract class NotRange5 : R|kotlin/Any| {
+        public constructor(): R|NotRange5| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract operator fun iterator(): R|ImproperIterator3|
+
+    }
+    public abstract class AmbiguousHasNextIterator : R|kotlin/Any| {
+        public constructor(): R|AmbiguousHasNextIterator| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract operator fun hasNext(): R|kotlin/Boolean|
+
+        public final val hasNext: R|kotlin/Boolean|
+            public get(): R|kotlin/Boolean| {
+                ^ Boolean(false)
+            }
+
+        public abstract operator fun next(): R|kotlin/Int|
+
+    }
+    public abstract class NotRange6 : R|kotlin/Any| {
+        public constructor(): R|NotRange6| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract operator fun iterator(): R|AmbiguousHasNextIterator|
+
+    }
+    public abstract class ImproperIterator4 : R|kotlin/Any| {
+        public constructor(): R|ImproperIterator4| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val hasNext: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(1)
+            }
+
+        public abstract operator fun next(): R|kotlin/Int|
+
+    }
+    public abstract class NotRange7 : R|kotlin/Any| {
+        public constructor(): R|NotRange7| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract operator fun iterator(): R|ImproperIterator3|
+
+    }
+    public abstract class GoodIterator : R|kotlin/Any| {
+        public constructor(): R|GoodIterator| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract operator fun hasNext(): R|kotlin/Boolean|
+
+        public abstract operator fun next(): R|kotlin/Int|
+
+    }
+    public abstract class Range0 : R|kotlin/Any| {
+        public constructor(): R|Range0| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract operator fun iterator(): R|GoodIterator|
+
+    }
+    public abstract class Range1 : R|kotlin/Any| {
+        public constructor(): R|Range1| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract operator fun iterator(): R|kotlin/collections/Iterator<kotlin/Int>|
+
+    }
+    public abstract class ImproperIterator5 : R|kotlin/Any| {
+        public constructor(): R|ImproperIterator5| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract val R|kotlin/String|.hasNext: R|kotlin/Boolean|
+            public get(): R|kotlin/Boolean|
+
+        public abstract operator fun next(): R|kotlin/Int|
+
+    }
+    public abstract class ImproperIterator6 : R|kotlin/Any| {
+        public constructor(): R|ImproperIterator6| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract fun hasNext(): R|kotlin/Boolean|
+
+        public abstract fun next(): R|kotlin/Int|
+
+    }
+    public abstract class NotRange8 : R|kotlin/Any| {
+        public constructor(): R|NotRange8| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract operator fun iterator(): R|ImproperIterator5|
+
+    }
+    public abstract class NotRange9 : R|kotlin/Any| {
+        public constructor(): R|NotRange9| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract fun iterator(): R|ImproperIterator6|
+
+    }
+    public final fun test(notRange1: R|NotRange1|, notRange2: R|NotRange2|, notRange3: R|NotRange3|, notRange4: R|NotRange4|, notRange5: R|NotRange5|, notRange6: R|NotRange6|, notRange7: R|NotRange7|, notRange8: R|NotRange8|, notRange9: R|NotRange9|, range0: R|Range0|, range1: R|Range1|): R|kotlin/Unit| {
+         {
+            lval <iterator>: <ERROR TYPE REF: Unresolved name: iterator> = R|<local>/notRange1|.<Unresolved name: iterator>#()
+            while(R|<local>/<iterator>|.<Unresolved name: hasNext>#()) {
+                lval i: <ERROR TYPE REF: Unresolved name: next> = R|<local>/<iterator>|.<Unresolved name: next>#()
+            }
+
+        }
+
+         {
+            lval <iterator>: R|kotlin/Unit| = R|<local>/notRange2|.R|/NotRange2.iterator|()
+            while(R|<local>/<iterator>|.<Unresolved name: hasNext>#()) {
+                lval i: <ERROR TYPE REF: Unresolved name: next> = R|<local>/<iterator>|.<Unresolved name: next>#()
+            }
+
+        }
+
+         {
+            lval <iterator>: R|ImproperIterator1| = R|<local>/notRange3|.R|/NotRange3.iterator|()
+            while(R|<local>/<iterator>|.R|/ImproperIterator1.hasNext|()) {
+                lval i: <ERROR TYPE REF: Unresolved name: next> = R|<local>/<iterator>|.<Unresolved name: next>#()
+            }
+
+        }
+
+         {
+            lval <iterator>: R|ImproperIterator2| = R|<local>/notRange4|.R|/NotRange4.iterator|()
+            while(R|<local>/<iterator>|.<Unresolved name: hasNext>#()) {
+                lval i: R|kotlin/Boolean| = R|<local>/<iterator>|.R|/ImproperIterator2.next|()
+            }
+
+        }
+
+         {
+            lval <iterator>: R|ImproperIterator3| = R|<local>/notRange5|.R|/NotRange5.iterator|()
+            while(R|<local>/<iterator>|.R|/ImproperIterator3.hasNext|()) {
+                lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|/ImproperIterator3.next|()
+            }
+
+        }
+
+         {
+            lval <iterator>: R|AmbiguousHasNextIterator| = R|<local>/notRange6|.R|/NotRange6.iterator|()
+            while(R|<local>/<iterator>|.R|/AmbiguousHasNextIterator.hasNext|()) {
+                lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|/AmbiguousHasNextIterator.next|()
+            }
+
+        }
+
+         {
+            lval <iterator>: R|ImproperIterator3| = R|<local>/notRange7|.R|/NotRange7.iterator|()
+            while(R|<local>/<iterator>|.R|/ImproperIterator3.hasNext|()) {
+                lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|/ImproperIterator3.next|()
+            }
+
+        }
+
+         {
+            lval <iterator>: R|ImproperIterator5| = R|<local>/notRange8|.R|/NotRange8.iterator|()
+            while(R|<local>/<iterator>|.<Unresolved name: hasNext>#()) {
+                lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|/ImproperIterator5.next|()
+            }
+
+        }
+
+         {
+            lval <iterator>: R|ImproperIterator6| = R|<local>/notRange9|.R|/NotRange9.iterator|()
+            while(R|<local>/<iterator>|.R|/ImproperIterator6.hasNext|()) {
+                lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|/ImproperIterator6.next|()
+            }
+
+        }
+
+         {
+            lval <iterator>: R|GoodIterator| = R|<local>/range0|.R|/Range0.iterator|()
+            while(R|<local>/<iterator>|.R|/GoodIterator.hasNext|()) {
+                lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|/GoodIterator.next|()
+            }
+
+        }
+
+         {
+            lval <iterator>: R|kotlin/collections/Iterator<kotlin/Int>| = R|<local>/range1|.R|/Range1.iterator|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+                lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/Int|>|()
+            }
+
+        }
+
+    }

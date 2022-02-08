@@ -1,7 +1,0 @@
-fun foo() {
-    var a: String? = if (<caret>) {
-        "aaa"
-    } else {
-    }
-    a = "bbb"
-}

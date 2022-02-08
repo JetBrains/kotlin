@@ -1,5 +1,0 @@
-fun main() {
-    Foo<List<String>>(listOf())
-}
-
-class Foo<A>(first: A)

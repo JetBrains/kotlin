@@ -1,6 +1,0 @@
-MODULE top { platform=[JVM, JS, Native] }
-MODULE middle { platform=[JVM, JS] }
-MODULE bottom { platform=[JVM] }
-
-middle -> top { kind=DEPENDS_ON }
-bottom -> middle { kind=DEPENDS_ON }

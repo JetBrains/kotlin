@@ -5,7 +5,7 @@ public final annotation class Anno : R|kotlin/Annotation| {
 
 public final class Class : R|kotlin/Any| {
     @R|test/Anno|() public final inner class Inner : R|kotlin/Any| {
-        public constructor(): R|test/Class.Inner|
+        public test/Class.constructor(): R|test/Class.Inner|
 
     }
 

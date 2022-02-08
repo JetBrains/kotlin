@@ -1,35 +1,54 @@
 Usage: kotlinc-js <options> <source files>
 where advanced options include:
+  -Xcache-directories=<path> A path to cache directories
   -Xenable-js-scripting      Enable experimental support of .kts files using K/JS (with -Xir only)
   -Xerror-tolerance-policy   Set up error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL)
+  -Xenable-extension-functions-in-externals
+                             Enable extensions functions members in external interfaces
   -Xfake-override-validator  Enable IR fake override validator
   -Xfriend-modules=<path>    Paths to friend modules
   -Xfriend-modules-disabled  Disable internal declaration export
   -Xgenerate-dts             Generate TypeScript declarations .d.ts file alongside JS file. Available in IR backend only.
   -Xinclude=<path>           A path to an intermediate library that should be processed in the same manner as source files.
+  -Xir-base-class-in-metadata Write base class into metadata
+  -Xir-build-cache           Use compiler to build cache
   -Xir-dce                   Perform experimental dead code elimination
-  -Xir-dce-driven            Perform a more experimental faster dead code elimination
   -Xir-dce-print-reachability-info
                              Print declarations' reachability info to stdout during performing DCE
+  -Xir-dce-runtime-diagnostic={log|exception}
+                             Enable runtime diagnostics when performing DCE instead of removing declarations
   -Xir-module-name=<name>    Specify a compilation module name for IR backend
+  -Xir-new-ir2js             New fragment-based ir2js
   -Xir-only                  Disables pre-IR backend
+  -Xir-per-file              Splits generated .js per-file
   -Xir-per-module            Splits generated .js per-module
+  -Xir-per-module-output-name Adds a custom output name to the splitted js files
   -Xir-produce-js            Generates JS file using IR backend. Also disables pre-IR backend
   -Xir-produce-klib-dir      Generate unpacked KLIB into parent directory of output JS file.
                              In combination with -meta-info generates both IR and pre-IR versions of library.
   -Xir-produce-klib-file     Generate packed klib into file specified by -output. Disables pre-IR backend
+  -Xir-property-lazy-initialization
+                             Perform lazy initialization for properties
+  -Xir-safe-external-boolean Safe access via Boolean() to Boolean properties in externals to safely cast falsy values.
+  -Xir-safe-external-boolean-diagnostic={log|exception}
+                             Enable runtime diagnostics when access safely to boolean in external declarations
   -Xmetadata-only            Generate *.meta.js and *.kjsm files only
+  -Xpartial-linkage          Allow unlinked symbols
+  -Xrepositories=<path>      Paths to additional places where libraries could be found
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays
   -Xwasm                     Use experimental WebAssembly compiler backend
+  -Xwasm-debug-info          Add debug info to WebAssembly compiled module
+  -Xwasm-kclass-fqn          Enable support for FQ names in KClass
+  -Xwasm-launcher=esm|nodejs Picks flavor for the wasm launcher. Default is ESM.
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
   -Xallow-result-return-type Allow compiling code when `kotlin.Result` is used as a return type
+  -Xbuiltins-from-sources    Compile builtIns from sources
   -Xcheck-phase-conditions   Check pre- and postconditions on phases
   -Xcheck-sticky-phase-conditions
                              Run sticky condition checks on subsequent phases as well. Implies -Xcheck-phase-conditions
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in the multi-platform mode.
                              Should be a subset of sources passed as free arguments
-  -Xcoroutines={enable|warn|error}
-                             Enable coroutines or report warnings or errors on declarations and use sites of 'suspend' modifier
+  -Xcontext-receivers        Enable experimental context receivers
   -Xdisable-default-scripting-plugin
                              Do not enable scripting plugin by default
   -Xdisable-phases           Disable backend phases
@@ -38,11 +57,16 @@ where advanced options include:
   -Xdump-fqname              FqName of declaration that should be dumped
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file
   -Xeffect-system            Enable experimental language feature: effect system
+  -Xenable-builder-inference Use the builder inference by default, for all calls with lambdas which can't be resolved without it.
+                             The corresponding calls' declarations may not be marked with @BuilderInference.
   -Xexpect-actual-linker     Enable experimental expect/actual linker
-  -Xexperimental=<fq.name>   Enable and propagate usages of experimental API for marker annotation with the given fully qualified name
   -Xexplicit-api={strict|warning|disable}
                              Force compiler to report errors on all public API declarations without explicit visibility or return type.
                              Use 'warning' level to issue warnings instead of errors.
+  -Xextended-compiler-checks Enable additional compiler checks that might provide verbose diagnostic information for certain errors.
+                             Warning: this mode is not backward-compatible and might cause compilation errors in previously compiled code.
+  -Xenable-incremental-compilation
+                             Enable incremental compilation
   -Xinference-compatibility  Enable compatibility changes for generic type inference algorithm
   -Xinline-classes           Enable experimental inline classes
   -Xintellij-plugin-root=<path> Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found
@@ -54,7 +78,7 @@ where advanced options include:
   -Xnew-inference            Enable new experimental generic type inference algorithm
   -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects
   -Xno-inline                Disable method inlining
-  -Xopt-in=<fq.name>         Enable usages of API that requires opt-in with an opt-in requirement marker with the given fully qualified name
+  -Xklib-normalize-absolute-path Normalize absolute paths in klibs
   -Xphases-to-dump           Dump backend state both before and after these phases
   -Xphases-to-dump-after     Dump backend state after these phases
   -Xphases-to-dump-before    Dump backend state before these phases
@@ -62,14 +86,20 @@ where advanced options include:
   -Xphases-to-validate-after Validate backend state after these phases
   -Xphases-to-validate-before Validate backend state before these phases
   -Xplugin=<path>            Load plugins from the given classpath
-  -Xpolymorphic-signature    Enable experimental support for @PolymorphicSignature (MethodHandle/VarHandle)
   -Xprofile-phases           Profile backend phases
   -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types
   -Xread-deserialized-contracts Enable reading of contracts from metadata
+  -Xklib-relative-path-base  Provide a base paths to compute source's relative paths in klib (default is empty)
+  -Xrender-internal-diagnostic-names
+                             Render internal names of warnings and errors
   -Xreport-output-files      Report source to output files mapping
   -Xreport-perf              Report detailed performance statistics
+  -Xself-upper-bound-inference Support inferring type arguments based on only self upper bounds of the corresponding type parameters
   -Xskip-metadata-version-check Allow to load classes with bad metadata version and pre-release classes
   -Xskip-prerelease-check    Allow to load pre-release classes
+  -Xsuppress-version-warnings Suppress warnings about outdated, inconsistent or experimental language or API versions
+  -Xunrestricted-builder-inference
+                             Eliminate builder inference restrictions like allowance of returning type variables of a builder inference call
   -Xuse-experimental=<fq.name> Enable, but don't propagate usages of experimental API for marker annotation with the given fully qualified name
   -Xuse-fir                  Compile using Front-end IR. Warning: this feature is far from being production-ready
   -Xuse-fir-extended-checkers Use extended analysis mode based on Front-end IR. Warning: this feature is far from being production-ready

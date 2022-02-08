@@ -21,28 +21,16 @@ class SyntaxErrorDiagnostic(errorElement: PsiErrorElement) : AbstractDiagnosticF
     SyntaxErrorDiagnosticFactory.INSTANCE
 )
 
-open class AbstractDiagnosticForTests(private val element: PsiElement, private val factory: DiagnosticFactory<*>) : Diagnostic {
-    override fun getFactory(): DiagnosticFactory<*> {
-        return factory
-    }
+open class AbstractDiagnosticForTests(override val psiElement: PsiElement, override val factory: DiagnosticFactory<*>) : Diagnostic {
+    override val severity: Severity
+        get() = Severity.ERROR
 
-    override fun getSeverity(): Severity {
-        return Severity.ERROR
-    }
+    override val textRanges: List<TextRange>
+        get() = listOf(psiElement.textRange)
 
-    override fun getPsiElement(): PsiElement {
-        return element
-    }
+    override val psiFile: PsiFile
+        get() = psiElement.containingFile
 
-    override fun getTextRanges(): List<TextRange> {
-        return listOf(element.textRange)
-    }
-
-    override fun getPsiFile(): PsiFile {
-        return element.containingFile
-    }
-
-    override fun isValid(): Boolean {
-        return true
-    }
+    override val isValid: Boolean
+        get() = true
 }

@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 
 class C<K> @JvmOverloads constructor(val s: String = "OK")
 

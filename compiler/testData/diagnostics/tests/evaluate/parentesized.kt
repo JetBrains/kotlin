@@ -1,7 +1,8 @@
-val p1: Byte = (1 + 2) * 2
-val p2: Short = (1 + 2) * 2
+// LANGUAGE: +ApproximateIntegerLiteralTypesInReceiverPosition
+val p1: Byte = <!TYPE_MISMATCH!>(1 + 2) * 2<!>
+val p2: Short = <!TYPE_MISMATCH!>(1 + 2) * 2<!>
 val p3: Int = (1 + 2) * 2
-val p4: Long = (1 + 2) * 2
+val p4: Long = <!TYPE_MISMATCH!>(1 + 2) * 2<!>
 
 val b1: Byte = <!TYPE_MISMATCH!>(1.toByte() + 2) * 2<!>
 val b2: Short = <!TYPE_MISMATCH!>(1.toShort() + 2) * 2<!>

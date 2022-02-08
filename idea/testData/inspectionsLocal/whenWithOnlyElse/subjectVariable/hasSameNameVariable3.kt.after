@@ -1,7 +1,0 @@
-fun test() {
-    <caret>use(42)
-
-    val a = 33
-}
-
-fun use(i: Int) {}

@@ -25,8 +25,7 @@ internal class DirtyClassesJvmNameMap(storageFile: File) : AbstractDirtyClassesM
 internal class DirtyClassesFqNameMap(storageFile: File) : AbstractDirtyClassesMap<FqName>(FqNameTransformer, storageFile)
 
 internal abstract class AbstractDirtyClassesMap<Name>(
-        private val nameTransformer: NameTransformer<Name>,
-        storageFile: File
+    private val nameTransformer: NameTransformer<Name>, storageFile: File
 ) : BasicStringMap<Boolean>(storageFile, BooleanDataDescriptor.INSTANCE) {
     fun markDirty(className: Name) {
         storage[nameTransformer.asString(className)] = true
@@ -37,10 +36,10 @@ internal abstract class AbstractDirtyClassesMap<Name>(
     }
 
     fun getDirtyOutputClasses(): Collection<Name> =
-            storage.keys.map { nameTransformer.asName(it) }
+        storage.keys.map { nameTransformer.asName(it) }
 
     fun isDirty(className: Name): Boolean =
-            storage.contains(nameTransformer.asString(className))
+        storage.contains(nameTransformer.asString(className))
 
     override fun dumpValue(value: Boolean) = ""
 }

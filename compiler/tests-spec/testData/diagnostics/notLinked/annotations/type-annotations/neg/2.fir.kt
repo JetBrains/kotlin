@@ -5,4 +5,4 @@
 @Target(AnnotationTarget.TYPE)
 annotation class Ann(val x: Int)
 
-abstract class Foo : @Ann(unresolved_reference) Any()
+abstract class Foo : @Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) Any()

@@ -1,7 +1,0 @@
-3 fun foo(<bold>n: Int</bold>) { (in foo(Int))
-4 	val x = <bold>n</bold> (in foo(Int))
-4 		<bold>val x</bold> = n (in foo(Int))
-7 	y = <bold>n</bold> (in foo(Int))
-6 		<bold>val y: Int</bold> (in foo(Int))
-9 	bar(<bold>n</bold>) (in foo(Int))
-12 		fun bar(<bold>m: Int</bold>) { (in bar(Int))

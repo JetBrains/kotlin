@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 interface Base1 {
     fun test() = "OK"
 }
@@ -23,6 +22,6 @@ public abstract class MyClass : Base1, Base2 {
     }
 }
 
-class A : MyClass(), Base1 by Delegate1(), Base1 by Delegate2() {
+<!DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE, MANY_IMPL_MEMBER_NOT_IMPLEMENTED!>class A<!> : MyClass(), Base1 by Delegate1(), <!SUPERTYPE_APPEARS_TWICE!>Base1<!> by <!TYPE_MISMATCH!>Delegate2()<!> {
 
 }

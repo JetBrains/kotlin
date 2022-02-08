@@ -1,0 +1,16 @@
+package
+
+context(kotlin.Any) public val p: kotlin.Int
+public fun f(/*0*/ g: () -> kotlin.Unit, /*1*/ value: kotlin.Any): () -> kotlin.Unit
+context(kotlin.Any) public fun f(/*0*/ g: context(kotlin.Any) () -> kotlin.Unit, /*1*/ value: kotlin.Any): context(A) () -> kotlin.Unit
+context(kotlin.Any) public fun sameAsFWithoutNonContextualCounterpart(/*0*/ g: () -> kotlin.Unit, /*1*/ value: kotlin.Any): () -> kotlin.Unit
+public fun useWithContextReceivers(): kotlin.Unit
+
+context(kotlin.String, kotlin.Int) public final class A {
+    public constructor A()
+    context(kotlin.Any) public final val p: kotlin.Any
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    context(kotlin.String, kotlin.Int) public final fun m(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -1,10 +1,14 @@
-public open enum class EnumWithSpecializedEntry : R|kotlin/Enum<ft<@FlexibleNullability test/EnumWithSpecializedEntry, test/EnumWithSpecializedEntry?>!>| {
-    public final static enum entry E1: R|@FlexibleNullability test/EnumWithSpecializedEntry|
-    public final static enum entry E2: R|@FlexibleNullability test/EnumWithSpecializedEntry|
+public final enum class EnumWithSpecializedEntry : R|kotlin/Enum<ft<test/EnumWithSpecializedEntry, test/EnumWithSpecializedEntry?>>| {
+    public final static enum entry E1: R|@EnhancedNullability test/EnumWithSpecializedEntry|
+    public final static enum entry E2: R|@EnhancedNullability test/EnumWithSpecializedEntry|
     public final static fun values(): R|kotlin/Array<test/EnumWithSpecializedEntry>| {
     }
 
     public final static fun valueOf(value: R|kotlin/String|): R|test/EnumWithSpecializedEntry| {
     }
 
+    public/*package*/ open class Nested : R|kotlin/Any| {
+        public/*package*/ constructor(): R|test/EnumWithSpecializedEntry.Nested|
+
+    }
 }

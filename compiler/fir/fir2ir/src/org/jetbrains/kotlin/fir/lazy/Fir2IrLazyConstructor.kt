@@ -22,6 +22,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isExternal
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.name.SpecialNames
 
 class Fir2IrLazyConstructor(
     components: Fir2IrComponents,
@@ -59,7 +64,7 @@ class Fir2IrLazyConstructor(
     override var body: IrBody? = null
 
     override val name: Name
-        get() = Name.special("<init>")
+        get() = SpecialNames.INIT
 
     @Suppress("SetterBackingFieldAssignment")
     override var visibility: DescriptorVisibility = components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
@@ -67,11 +72,11 @@ class Fir2IrLazyConstructor(
             error("Mutating Fir2Ir lazy elements is not possible")
         }
 
-    override var returnType: IrType by lazyVar {
+    override var returnType: IrType by lazyVar(lock) {
         fir.returnTypeRef.toIrType(typeConverter)
     }
 
-    override var dispatchReceiverParameter: IrValueParameter? by lazyVar {
+    override var dispatchReceiverParameter: IrValueParameter? by lazyVar(lock) {
         val containingClass = parent as? IrClass
         val outerClass = containingClass?.parentClassOrNull
         if (containingClass?.isInner == true && outerClass != null) {
@@ -92,7 +97,9 @@ class Fir2IrLazyConstructor(
             error("Mutating Fir2Ir lazy elements is not possible")
         }
 
-    override var valueParameters: List<IrValueParameter> by lazyVar {
+    override var contextReceiverParametersCount: Int = 0
+
+    override var valueParameters: List<IrValueParameter> by lazyVar(lock) {
         declarationStorage.enterScope(this)
         fir.valueParameters.mapIndexed { index, valueParameter ->
             declarationStorage.createIrParameter(

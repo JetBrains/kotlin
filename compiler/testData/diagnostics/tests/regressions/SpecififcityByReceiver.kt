@@ -1,9 +1,9 @@
-fun Any.<!EXTENSION_SHADOWED_BY_MEMBER!>equals<!>(<!UNUSED_PARAMETER!>other<!> : Any?) : Boolean = true
+fun Any.<!EXTENSION_SHADOWED_BY_MEMBER!>equals<!>(other : Any?) : Boolean = true
 
 fun main() {
 
     val command : Any = 1
 
-    command<!UNNECESSARY_SAFE_CALL!>?.<!>equals(null)
+    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>command<!UNNECESSARY_SAFE_CALL!>?.<!>equals(null)<!>
     command.equals(null)
 }

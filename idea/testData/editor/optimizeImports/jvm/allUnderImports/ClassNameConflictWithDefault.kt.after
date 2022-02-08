@@ -1,8 +1,0 @@
-// NAME_COUNT_TO_USE_STAR_IMPORT: 1
-package ppp
-
-import java.sql.*
-import java.sql.Array
-
-fun foo(a: Array, d: Date) {
-}

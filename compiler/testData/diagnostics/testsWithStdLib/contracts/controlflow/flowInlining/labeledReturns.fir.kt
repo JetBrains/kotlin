@@ -1,5 +1,5 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 
 import kotlin.contracts.*
@@ -42,7 +42,7 @@ fun threeLevelsReturnNoInitialization(x: Int?): Int? {
             }
         }
         // Possible to report unreachable here
-        y = 54
+        <!VAL_REASSIGNMENT!>y<!> = 54
     }
     return <!UNINITIALIZED_VARIABLE!>y<!>.inc()
 }

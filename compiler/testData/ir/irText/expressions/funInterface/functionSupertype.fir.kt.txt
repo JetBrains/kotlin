@@ -1,0 +1,11 @@
+fun interface Foo : Function0<Int> {
+
+}
+
+fun id(foo: Foo): Any {
+  return foo
+}
+
+fun test(foo: Foo) {
+  id(foo = foo) /*~> Unit */
+}

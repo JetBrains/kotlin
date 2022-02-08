@@ -1,12 +1,11 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// !WITH_NEW_INFERENCE
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 
 import kotlin.contracts.*
 
 // TESTCASE NUMBER: 1
 fun case_1(): Boolean {
-    contract { returns(true) <!INAPPLICABLE_CANDIDATE!>implies<!> (-10) }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (<!ARGUMENT_TYPE_MISMATCH!>-10<!>)<!> }
     return true
 }
 
@@ -18,7 +17,7 @@ fun case_2(): Boolean {
 
 // TESTCASE NUMBER: 3
 fun case_3(): Boolean {
-    contract { returns(false) <!INAPPLICABLE_CANDIDATE!>implies<!> ("..." + "$<!UNRESOLVED_REFERENCE!>value_1<!>") }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(false) implies (<!ARGUMENT_TYPE_MISMATCH!>"..." + "$<!UNRESOLVED_REFERENCE!>value_1<!>"<!>)<!> }
     return true
 }
 
@@ -27,26 +26,26 @@ fun case_3(): Boolean {
  * ISSUES: KT-26386
  */
 fun case_4(): Boolean? {
-    contract { returns(null) <!INAPPLICABLE_CANDIDATE!>implies<!> case_4() }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(null) implies <!ARGUMENT_TYPE_MISMATCH!>case_4()<!><!> }
     return null
 }
 
 // TESTCASE NUMBER: 5
 fun case_5(): Boolean? {
-    contract { returns(null) <!INAPPLICABLE_CANDIDATE!>implies<!> listOf(0) }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(null) implies <!ARGUMENT_TYPE_MISMATCH!>listOf(0)<!><!> }
     return null
 }
 
 // TESTCASE NUMBER: 6
 fun case_6(value_1: Boolean): Boolean? {
-    contract { returns(null) <!INAPPLICABLE_CANDIDATE!>implies<!> contract { returns(null) implies (!value_1) } }
+    contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(null) implies <!ARGUMENT_TYPE_MISMATCH!>contract { returns(null) implies (!value_1) }<!><!> }
     return null
 }
 
 // TESTCASE NUMBER: 7
 fun case_7(): Int {
     contract {
-        callsInPlace(::case_7, InvocationKind.EXACTLY_ONCE)
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>callsInPlace(::case_7, InvocationKind.EXACTLY_ONCE)<!>
     }
     return 1
 }
@@ -57,7 +56,7 @@ fun case_7(): Int {
  */
 fun case_8(): () -> Unit {
     contract {
-        callsInPlace(case_8(), InvocationKind.EXACTLY_ONCE)
+        <!ERROR_IN_CONTRACT_DESCRIPTION!>callsInPlace(case_8(), InvocationKind.EXACTLY_ONCE)<!>
     }
     return {}
 }

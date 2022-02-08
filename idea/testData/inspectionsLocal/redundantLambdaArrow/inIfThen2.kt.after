@@ -1,7 +1,0 @@
-fun test(): (Int) -> Int {
-    return if (true) {
-        { 42 }
-    } else {
-        { _ -> 42 }
-    }
-}

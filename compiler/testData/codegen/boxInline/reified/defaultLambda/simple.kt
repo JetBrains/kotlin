@@ -1,7 +1,7 @@
+// SKIP_INLINE_CHECK_IN: inlineFun$default
+// WITH_STDLIB
 // TARGET_BACKEND: JVM
 // FILE: 1.kt
-// SKIP_INLINE_CHECK_IN: inlineFun$default
-// WITH_RUNTIME
 package test
 
 inline fun <reified T> inlineFun(lambda: () -> String = { T::class.java.simpleName }): String {

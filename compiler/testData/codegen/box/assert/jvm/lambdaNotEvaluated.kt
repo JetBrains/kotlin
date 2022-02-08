@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
-// KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
-// WITH_RUNTIME
+// ASSERTIONS_MODE: jvm
+// WITH_STDLIB
 
 // If assertions are disabled, neither argument to assert should be evaluated.
 // If assertions are enabled, both arguments should be evaluate to values before
@@ -15,10 +15,11 @@ interface Checker {
 class Checker1 : Checker {
     override fun check(): Boolean {
         var result = true
-        assert(true, {
+        val lam = {
             result = false
             { "Assertion failure" }
-        }())
+        }
+        assert(true, lam())
         return result
     }
 }
@@ -26,10 +27,11 @@ class Checker1 : Checker {
 class Checker2 : Checker {
     override fun check(): Boolean {
         var result = true
-        assert(true, {
+        val lam = {
             result = false
             { "Assertion failure" }
-        }())
+        }
+        assert(true, lam())
         return result
     }
 }

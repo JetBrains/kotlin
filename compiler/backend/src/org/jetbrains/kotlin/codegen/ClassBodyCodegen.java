@@ -105,12 +105,14 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
         }
 
         // Generate synthetic nested classes
-        Collection<DeclarationDescriptor> classifiers = descriptor
-                .getUnsubstitutedMemberScope()
-                .getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.Companion.getALL_NAME_FILTER());
-        for (DeclarationDescriptor memberDescriptor : classifiers) {
-            if (memberDescriptor instanceof SyntheticClassOrObjectDescriptor) {
-                genSyntheticClassOrObject((SyntheticClassOrObjectDescriptor) memberDescriptor);
+        if (kind != OwnerKind.DEFAULT_IMPLS) {
+            Collection<DeclarationDescriptor> classifiers = descriptor
+                    .getUnsubstitutedMemberScope()
+                    .getContributedDescriptors(DescriptorKindFilter.CLASSIFIERS, MemberScope.Companion.getALL_NAME_FILTER());
+            for (DeclarationDescriptor memberDescriptor : classifiers) {
+                if (memberDescriptor instanceof SyntheticClassOrObjectDescriptor) {
+                    genSyntheticClassOrObject((SyntheticClassOrObjectDescriptor) memberDescriptor);
+                }
             }
         }
 

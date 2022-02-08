@@ -21,13 +21,15 @@ import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor;
+import org.jetbrains.kotlin.config.LanguageFeature;
+import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.ReservedCheckingKt;
 import org.jetbrains.kotlin.resolve.OverrideResolver;
-import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
+import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.components.ArgumentsUtilsKt;
 import org.jetbrains.kotlin.resolve.calls.model.*;
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy;
@@ -66,10 +68,11 @@ public class ValueArgumentsToParametersMapper {
     public static <D extends CallableDescriptor> Status mapValueArgumentsToParameters(
             @NotNull Call call,
             @NotNull TracingStrategy tracing,
-            @NotNull MutableResolvedCall<D> candidateCall
+            @NotNull MutableResolvedCall<D> candidateCall,
+            @NotNull LanguageVersionSettings languageVersionSettings
     ) {
         //return new ValueArgumentsToParametersMapper().process(call, tracing, candidateCall, unmappedArguments);
-        Processor<D> processor = new Processor<>(call, candidateCall, tracing);
+        Processor<D> processor = new Processor<>(call, candidateCall, tracing, languageVersionSettings);
         processor.process();
         return processor.status;
     }
@@ -78,6 +81,7 @@ public class ValueArgumentsToParametersMapper {
         private final Call call;
         private final TracingStrategy tracing;
         private final MutableResolvedCall<D> candidateCall;
+        private final LanguageVersionSettings languageVersionSettings;
         private final List<ValueParameterDescriptor> parameters;
 
         private final Map<Name,ValueParameterDescriptor> parameterByName;
@@ -87,11 +91,17 @@ public class ValueArgumentsToParametersMapper {
         private final Set<ValueParameterDescriptor> usedParameters = new HashSet<>();
         private Status status = OK;
 
-        private Processor(@NotNull Call call, @NotNull MutableResolvedCall<D> candidateCall, @NotNull TracingStrategy tracing) {
+        private Processor(
+                @NotNull Call call,
+                @NotNull MutableResolvedCall<D> candidateCall,
+                @NotNull TracingStrategy tracing,
+                @NotNull LanguageVersionSettings languageVersionSettings
+        ) {
             this.call = call;
             this.tracing = tracing;
             this.candidateCall = candidateCall;
             this.parameters = candidateCall.getCandidateDescriptor().getValueParameters();
+            this.languageVersionSettings = languageVersionSettings;
 
             this.parameterByName = new HashMap<>();
             for (ValueParameterDescriptor valueParameter : parameters) {
@@ -177,7 +187,9 @@ public class ValueArgumentsToParametersMapper {
                 ValueParameterDescriptor valueParameterDescriptor = parameterByName.get(argumentName.getAsName());
                 KtSimpleNameExpression nameReference = argumentName.getReferenceExpression();
 
-                ReservedCheckingKt.checkReservedYield(nameReference, candidateCall.getTrace());
+                if (!languageVersionSettings.supportsFeature(LanguageFeature.YieldIsNoMoreReserved)) {
+                    ReservedCheckingKt.checkReservedYield(nameReference, candidateCall.getTrace());
+                }
                 if (nameReference != null) {
                     if (candidate instanceof MemberDescriptor && ((MemberDescriptor) candidate).isExpect() &&
                         candidate.getContainingDeclaration() instanceof ClassDescriptor) {
@@ -349,7 +361,7 @@ public class ValueArgumentsToParametersMapper {
             else {
                 LeafPsiElement spread = valueArgument.getSpreadElement();
                 if (spread != null) {
-                    candidateCall.getTrace().report(NON_VARARG_SPREAD.on(spread));
+                    candidateCall.getTrace().report(NON_VARARG_SPREAD.onError(spread));
                     setStatus(WEAK_ERROR);
                 }
                 ResolvedValueArgument argument = new ExpressionValueArgument(valueArgument);

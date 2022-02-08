@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 annotation class Ann
 annotation class Second
 
@@ -5,7 +6,7 @@ annotation class Second
 class SomeClass {
 
     <!INAPPLICABLE_PARAM_TARGET, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@param:Ann<!>
-    constructor(<!INAPPLICABLE_PARAM_TARGET!>@param:Ann<!> <!UNUSED_PARAMETER!>a<!>: String)
+    constructor(<!INAPPLICABLE_PARAM_TARGET!>@param:Ann<!> a: String)
 
     <!INAPPLICABLE_PARAM_TARGET!>@param:Ann<!>
     protected val simpleProperty: String = "text"
@@ -13,12 +14,12 @@ class SomeClass {
     <!INAPPLICABLE_PARAM_TARGET!>@param:Ann<!>
     fun anotherFun() {
         <!INAPPLICABLE_PARAM_TARGET!>@param:Ann<!>
-        val <!UNUSED_VARIABLE!>localVariable<!> = 5
+        val localVariable = 5
     }
 
 }
 
 class PrimaryConstructorClass(
-        <!REDUNDANT_ANNOTATION_TARGET!>@param:Ann<!> <!UNUSED_PARAMETER!>a<!>: String,
-@param:[<!REDUNDANT_ANNOTATION_TARGET!>Ann<!> <!REDUNDANT_ANNOTATION_TARGET!>Second<!>] <!UNUSED_PARAMETER!>b<!>: String,
+        <!REDUNDANT_ANNOTATION_TARGET!>@param:Ann<!> a: String,
+@param:[<!REDUNDANT_ANNOTATION_TARGET!>Ann<!> <!REDUNDANT_ANNOTATION_TARGET!>Second<!>] b: String,
 @param:Ann val c: String)

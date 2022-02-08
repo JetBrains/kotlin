@@ -1,0 +1,18 @@
+// DONT_TARGET_EXACT_BACKEND: JS
+// ES_MODULES
+// SPLIT_PER_MODULE
+// EXPECTED_REACHABLE_NODES: 1283
+// MODULE: 1
+// FILE: lib1.kt
+
+fun foo() = "OK"
+
+// MODULE: 2(1)
+// FILE: lib2.kt
+
+inline fun bar() = foo()
+
+// MODULE: main(2)
+// FILE: main.kt
+
+fun box() = bar()

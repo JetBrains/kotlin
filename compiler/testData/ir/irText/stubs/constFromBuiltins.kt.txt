@@ -1,0 +1,3 @@
+val test: Int
+  field = -2147483648
+  get

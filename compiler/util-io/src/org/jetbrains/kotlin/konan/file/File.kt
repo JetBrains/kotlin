@@ -10,7 +10,6 @@ import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.RandomAccessFile
-import java.lang.Exception
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.file.*
@@ -59,6 +58,7 @@ data class File constructor(internal val javaPath: Path) {
         get() = if (exists) listFiles else emptyList()
 
     fun child(name: String) = File(this, name)
+    fun startsWith(another: File) = javaPath.startsWith(another.javaPath)
 
     fun copyTo(destination: File) {
         Files.copy(javaPath, destination.javaPath, StandardCopyOption.REPLACE_EXISTING)

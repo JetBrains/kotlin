@@ -46,6 +46,14 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
 
     }
 
+    // intermediate abstract class to workaround KT-43321
+    internal abstract class AbstractEntrySet<E : Map.Entry<K, V>, K, V> : AbstractMutableSet<E>() {
+        final override fun contains(element: E): Boolean = containsEntry(element)
+        abstract fun containsEntry(element: Map.Entry<K, V>): Boolean
+        final override fun remove(element: E): Boolean = removeEntry(element)
+        abstract fun removeEntry(element: Map.Entry<K, V>): Boolean
+    }
+
     actual override fun clear() {
         entries.clear()
     }
@@ -117,15 +125,6 @@ public actual abstract class AbstractMutableMap<K, V> protected actual construct
                     }
 
                     override val size: Int get() = this@AbstractMutableMap.size
-
-                    // TODO: should we implement them this way? Currently it's unspecified in JVM
-                    override fun equals(other: Any?): Boolean {
-                        if (this === other) return true
-                        if (other !is Collection<*>) return false
-                        return AbstractList.orderedEquals(this, other)
-                    }
-
-                    override fun hashCode(): Int = AbstractList.orderedHashCode(this)
 
                     override fun checkIsMutable(): Unit = this@AbstractMutableMap.checkIsMutable()
                 }

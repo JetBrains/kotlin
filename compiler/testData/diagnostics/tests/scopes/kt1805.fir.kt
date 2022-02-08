@@ -7,14 +7,14 @@ open class Some {
 
 class SomeSubclass : Some() {
     fun test() {
-        this.<!HIDDEN!>privateField<!> // 1. Unresolved reference
+        this.<!INVISIBLE_REFERENCE!>privateField<!> // 1. Unresolved reference
     }
 }
 
 fun test() {
     val s2 = Some()
-    s2.<!HIDDEN!>privateField<!> // 2. Can't access to 'privateField' in Some
+    s2.<!INVISIBLE_REFERENCE!>privateField<!> // 2. Can't access to 'privateField' in Some
 
     val s1 = SomeSubclass()
-    s1.<!HIDDEN!>privateField<!> // 3. Unresolved reference
+    s1.<!INVISIBLE_REFERENCE!>privateField<!> // 3. Unresolved reference
 }

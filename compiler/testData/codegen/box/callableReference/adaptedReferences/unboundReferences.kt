@@ -1,7 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: SPREAD_OPERATOR
-// !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.test.assertEquals
 

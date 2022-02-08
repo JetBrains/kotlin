@@ -76,6 +76,12 @@ public abstract class DelegatingResolvedCall<D extends CallableDescriptor> imple
 
     @NotNull
     @Override
+    public List<ReceiverValue> getContextReceivers() {
+        return resolvedCall.getContextReceivers();
+    }
+
+    @NotNull
+    @Override
     public ExplicitReceiverKind getExplicitReceiverKind() {
         return resolvedCall.getExplicitReceiverKind();
     }

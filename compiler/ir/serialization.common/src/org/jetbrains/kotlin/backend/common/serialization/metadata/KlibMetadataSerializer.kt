@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.backend.common.serialization.metadata
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.serialization.isExpectMember
 import org.jetbrains.kotlin.backend.common.serialization.isSerializableExpectClass
-import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -20,8 +18,8 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
+import org.jetbrains.kotlin.serialization.ApproximatingStringTable
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
-import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
@@ -33,6 +31,7 @@ abstract class KlibMetadataSerializer(
     val languageVersionSettings: LanguageVersionSettings,
     val metadataVersion: BinaryVersion,
     val project: Project?,
+    val exportKDoc: Boolean = false,
     val skipExpects: Boolean = false,
     val includeOnlyModuleContent: Boolean = false,
     private val allowErrorTypes: Boolean
@@ -51,12 +50,13 @@ abstract class KlibMetadataSerializer(
         val extension = KlibMetadataSerializerExtension(
             languageVersionSettings,
             metadataVersion,
-            KlibMetadataStringTable(),
-            allowErrorTypes
+            ApproximatingStringTable(),
+            allowErrorTypes,
+            exportKDoc
         )
         return SerializerContext(
             extension,
-            DescriptorSerializer.createTopLevel(extension)
+            DescriptorSerializer.createTopLevel(extension, project)
         )
     }
 
@@ -261,19 +261,6 @@ abstract class KlibMetadataSerializer(
             header.flags = 1
         }
 
-        val experimentalAnnotationFqNames = languageVersionSettings.getFlag(AnalysisFlags.experimental)
-        if (experimentalAnnotationFqNames.isNotEmpty()) {
-            val stringTable = StringTableImpl()
-            for (fqName in experimentalAnnotationFqNames) {
-                val descriptor = moduleDescriptor.resolveClassByFqName(FqName(fqName), NoLookupLocation.FOR_ALREADY_TRACKED) ?: continue
-                header.addAnnotation(ProtoBuf.Annotation.newBuilder().apply {
-                    id = stringTable.getFqNameIndex(descriptor)
-                })
-            }
-            val (strings, qualifiedNames) = stringTable.buildProto()
-            header.strings = strings
-            header.qualifiedNames = qualifiedNames
-        }
         fragmentNames.forEach {
             header.addPackageFragmentName(it)
         }

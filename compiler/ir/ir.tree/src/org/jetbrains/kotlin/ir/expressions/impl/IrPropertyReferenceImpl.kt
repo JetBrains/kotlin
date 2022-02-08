@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
 
 class IrPropertyReferenceImpl(
@@ -36,22 +35,15 @@ class IrPropertyReferenceImpl(
     override val getter: IrSimpleFunctionSymbol?,
     override val setter: IrSimpleFunctionSymbol?,
     override val origin: IrStatementOrigin? = null,
-) : IrPropertyReference(typeArgumentsCount) {
+) : IrPropertyReference() {
+    override val typeArgumentsByIndex: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
+
+    override val argumentsByParameterIndex: Array<IrExpression?>
+        get() = throw UnsupportedOperationException("Property reference $symbol has no value arguments")
+
     override val valueArgumentsCount: Int
         get() = 0
 
     override val referencedName: Name
         get() = symbol.owner.name
-
-    private fun throwNoValueArguments(): Nothing =
-        throw UnsupportedOperationException("Property reference $symbol has no value arguments")
-
-    override fun getValueArgument(index: Int): IrExpression? = throwNoValueArguments()
-
-    override fun putValueArgument(index: Int, valueArgument: IrExpression?): Unit = throwNoValueArguments()
-
-    override fun removeValueArgument(index: Int): Unit = throwNoValueArguments()
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
-        visitor.visitPropertyReference(this, data)
 }

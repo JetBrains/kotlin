@@ -5,7 +5,7 @@ open class A {
 }
 
 class B : A() {
-    protected override fun foo() {}
+    <!CANNOT_CHANGE_ACCESS_PRIVILEGE!>protected<!> override fun foo() {}
 }
 
 class C : A() {
@@ -18,7 +18,7 @@ open class D {
 }
 
 class E : D() {
-    internal override fun self() = this
+    internal <!NOTHING_TO_OVERRIDE!>override<!> fun self() = this
 
     fun test() {
         val s : E = self()
@@ -35,7 +35,7 @@ class G : F() {
 }
 
 fun test_fun_stays_protected(g: G) {
-    g.<!HIDDEN!>protected_fun<!>()
+    g.<!INVISIBLE_REFERENCE!>protected_fun<!>()
 }
 
 //------------
@@ -48,7 +48,7 @@ class I : H() {
 }
 
 class J : H() {
-    internal override fun pi_fun() {}
+    <!CANNOT_CHANGE_ACCESS_PRIVILEGE!>internal<!> override fun pi_fun() {}
 }
 
 class K : H() {
@@ -65,7 +65,7 @@ open class L : T {
 }
 
 class M : L() {
-    internal override fun foo() {}
+    <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>internal<!> override fun foo() {}
 }
 //---------------
 interface R {
@@ -81,5 +81,5 @@ interface Q : R {
 }
 
 class S : P, Q {
-    internal override fun foo() {}
+    <!CANNOT_WEAKEN_ACCESS_PRIVILEGE!>internal<!> override fun foo() {}
 }

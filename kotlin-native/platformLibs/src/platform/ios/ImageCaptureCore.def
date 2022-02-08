@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation CoreGraphics Foundation Security darwin posix
+language = Objective-C
+package = platform.ImageCaptureCore
+modules = ImageCaptureCore
+
+compilerOpts = -framework ImageCaptureCore
+linkerOpts = -framework ImageCaptureCore

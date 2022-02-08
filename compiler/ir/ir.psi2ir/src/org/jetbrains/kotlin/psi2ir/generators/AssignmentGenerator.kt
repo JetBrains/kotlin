@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.ir.builders.irBlock
@@ -38,9 +35,10 @@ import org.jetbrains.kotlin.psi2ir.unwrappedGetMethod
 import org.jetbrains.kotlin.psi2ir.unwrappedSetMethod
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.PropertyImportedFromObject
-import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
+import org.jetbrains.kotlin.resolve.calls.util.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
+import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.types.KotlinType
 
 class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGeneratorExtension(statementGenerator) {
@@ -206,6 +204,8 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                     createVariableValue(ktExpr, descriptor, origin)
             is PropertyDescriptor ->
                 generateAssignmentReceiverForProperty(descriptor, origin, ktExpr, resolvedCall, isAssignmentStatement)
+            is FakeCallableDescriptorForObject ->
+                OnceExpressionValue(ktExpr.genExpr())
             is ValueDescriptor ->
                 createVariableValue(ktExpr, descriptor, origin)
             else ->
@@ -273,7 +273,9 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
                     descriptor.type.toIrType(),
                     descriptor.name.asString(),
                     statementGenerator.generateCallReceiver(
-                        ktLeft, descriptor, resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver,
+                        ktLeft, descriptor, resolvedCall.dispatchReceiver,
+                        resolvedCall.extensionReceiver,
+                        resolvedCall.contextReceivers,
                         isSafe = resolvedCall.call.isSafeCall(),
                         isAssignmentReceiver = isAssignmentStatement
                     )
@@ -285,15 +287,20 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
             }
             else -> {
                 val propertyReceiver = statementGenerator.generateCallReceiver(
-                    ktLeft, descriptor, resolvedCall.dispatchReceiver, resolvedCall.extensionReceiver,
+                    ktLeft, descriptor, resolvedCall.dispatchReceiver,
+                    resolvedCall.extensionReceiver,
+                    resolvedCall.contextReceivers,
                     isSafe = resolvedCall.call.isSafeCall(),
                     isAssignmentReceiver = isAssignmentStatement
                 )
 
                 val superQualifier = getSuperQualifier(resolvedCall)
+                val candidateDescriptor = resolvedCall.candidateDescriptor as PropertyDescriptor
 
                 // TODO property imported from an object
-                createPropertyLValue(ktLeft, descriptor, propertyReceiver, getTypeArguments(resolvedCall), origin, superQualifier)
+                createPropertyLValue(
+                    ktLeft, descriptor, candidateDescriptor, propertyReceiver, getTypeArguments(resolvedCall), origin, superQualifier
+                )
             }
         }
 
@@ -305,26 +312,30 @@ class AssignmentGenerator(statementGenerator: StatementGenerator) : StatementGen
 
     private fun createPropertyLValue(
         ktExpression: KtExpression,
-        descriptor: PropertyDescriptor,
+        resultingDescriptor: PropertyDescriptor,
+        candidateDescriptor: PropertyDescriptor,
         propertyReceiver: CallReceiver,
         typeArgumentsMap: Map<TypeParameterDescriptor, KotlinType>?,
         origin: IrStatementOrigin?,
         superQualifier: ClassDescriptor?
     ): PropertyLValueBase {
 
-        val unwrappedPropertyDescriptor = descriptor.unwrapPropertyDescriptor()
+        val unwrappedPropertyDescriptor = resultingDescriptor.unwrapPropertyDescriptor()
         val getterDescriptor = unwrappedPropertyDescriptor.unwrappedGetMethod
         val setterDescriptor = unwrappedPropertyDescriptor.unwrappedSetMethod
+            ?.takeUnless { it.visibility == DescriptorVisibilities.INVISIBLE_FAKE }
 
         val getterSymbol = getterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it.original) }
         val setterSymbol = setterDescriptor?.let { context.symbolTable.referenceSimpleFunction(it.original) }
 
-        val propertyIrType = descriptor.type.toIrType()
+        val propertyIrType = resultingDescriptor.type.toIrType()
         return if (getterSymbol != null || setterSymbol != null) {
             val superQualifierSymbol = superQualifier?.let { context.symbolTable.referenceClass(it) }
             val typeArgumentsList =
                 typeArgumentsMap?.let { typeArguments ->
-                    descriptor.original.typeParameters.map { typeArguments[it]!!.toIrType() }
+                    candidateDescriptor.typeParameters.map {
+                        typeArguments[it]!!.toIrType()
+                    }
                 }
             AccessorPropertyLValue(
                 context,

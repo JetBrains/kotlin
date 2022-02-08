@@ -20,6 +20,8 @@ public open external class Promise<out T>(executor: (resolve: (T) -> Unit, rejec
 
     public open fun <S> catch(onRejected: (Throwable) -> S): Promise<S>
 
+    public open fun finally(onFinally: () -> Unit): Promise<T>
+
     companion object {
         public fun <S> all(promise: Array<out Promise<S>>): Promise<Array<out S>>
 

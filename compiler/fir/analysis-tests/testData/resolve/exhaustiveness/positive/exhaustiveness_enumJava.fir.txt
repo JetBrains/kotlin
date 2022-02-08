@@ -1,0 +1,100 @@
+FILE: main.kt
+    public final fun test_1(e: R|JavaEnum|): R|kotlin/Unit| {
+        lval a: <ERROR TYPE REF: Unresolved name: plus> = when (R|<local>/e|) {
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.A|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.B|) ->  {
+                Int(2)
+            }
+        }
+        .<Unresolved name: plus>#(Int(0))
+        lval b: <ERROR TYPE REF: Unresolved name: plus> = when (R|<local>/e|) {
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.A|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.B|) ->  {
+                Int(2)
+            }
+            ($subj$ is R|kotlin/String|) ->  {
+                Int(3)
+            }
+        }
+        .<Unresolved name: plus>#(Int(0))
+        lval c: R|kotlin/Int| = when (R|<local>/e|) {
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.A|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.B|) ->  {
+                Int(2)
+            }
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.C|) ->  {
+                Int(3)
+            }
+        }
+        .R|kotlin/Int.plus|(Int(0))
+        lval d: R|kotlin/Int| = when (R|<local>/e|) {
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.A|) ->  {
+                Int(1)
+            }
+            else ->  {
+                Int(2)
+            }
+        }
+        .R|kotlin/Int.plus|(Int(0))
+    }
+    public final fun test_2(e: R|JavaEnum?|): R|kotlin/Unit| {
+        lval a: <ERROR TYPE REF: Unresolved name: plus> = when (R|<local>/e|) {
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.A|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.B|) ->  {
+                Int(2)
+            }
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.C|) ->  {
+                Int(3)
+            }
+        }
+        .<Unresolved name: plus>#(Int(0))
+        lval a: R|kotlin/Int| = when (R|<local>/e|) {
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.A|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.B|) ->  {
+                Int(2)
+            }
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.C|) ->  {
+                Int(3)
+            }
+            ==($subj$, Null(null)) ->  {
+                Int(4)
+            }
+        }
+        .R|kotlin/Int.plus|(Int(0))
+        lval a: R|kotlin/Int| = when (R|<local>/e|) {
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.A|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.B|) ->  {
+                Int(2)
+            }
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.C|) ->  {
+                Int(3)
+            }
+            else ->  {
+                Int(4)
+            }
+        }
+        .R|kotlin/Int.plus|(Int(0))
+    }
+    public final fun test_3(e: R|JavaEnum|): R|kotlin/Unit| {
+        lval a: R|kotlin/Int| = when (R|<local>/e|) {
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.A|) || ==($subj$, Q|JavaEnum|.R|/JavaEnum.B|) ->  {
+                Int(1)
+            }
+            ==($subj$, Q|JavaEnum|.R|/JavaEnum.C|) ->  {
+                Int(2)
+            }
+        }
+        .R|kotlin/Int.plus|(Int(0))
+    }

@@ -16,32 +16,48 @@
 
 package org.jetbrains.kotlin.noarg.diagnostic
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.extensions.AnnotationBasedExtension
+import org.jetbrains.kotlin.noarg.diagnostic.ErrorsNoArg.*
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtModifierListOwner
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 
-class CliNoArgDeclarationChecker(private val noArgAnnotationFqNames: List<String>) : AbstractNoArgDeclarationChecker() {
-    override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?) = noArgAnnotationFqNames
+internal class CliNoArgDeclarationChecker(
+    private val noArgAnnotationFqNames: List<String>,
+    useIr: Boolean,
+) : AbstractNoArgDeclarationChecker(useIr) {
+    override fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?): List<String> = noArgAnnotationFqNames
 }
 
-abstract class AbstractNoArgDeclarationChecker : DeclarationChecker, AnnotationBasedExtension {
+abstract class AbstractNoArgDeclarationChecker(private val useIr: Boolean) : DeclarationChecker, AnnotationBasedExtension {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
-        // Handle only classes
         if (descriptor !is ClassDescriptor || declaration !is KtClass) return
         if (descriptor.kind != ClassKind.CLASS) return
         if (!descriptor.hasSpecialAnnotation(declaration)) return
 
+        if (descriptor.isInner) {
+            val diagnostic = if (useIr) NOARG_ON_INNER_CLASS_ERROR else NOARG_ON_INNER_CLASS
+            context.trace.report(diagnostic.on(declaration.reportTarget))
+        } else if (DescriptorUtils.isLocal(descriptor)) {
+            val diagnostic = if (useIr) NOARG_ON_LOCAL_CLASS_ERROR else NOARG_ON_LOCAL_CLASS
+            context.trace.report(diagnostic.on(declaration.reportTarget))
+        }
+
         val superClass = descriptor.getSuperClassOrAny()
         if (superClass.constructors.none { it.isNoArgConstructor() } && !superClass.hasSpecialAnnotation(declaration)) {
-            val reportTarget = declaration.nameIdentifier ?: declaration.getClassOrInterfaceKeyword() ?: declaration
-            context.trace.report(ErrorsNoArg.NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS.on(reportTarget))
+            context.trace.report(NO_NOARG_CONSTRUCTOR_IN_SUPERCLASS.on(declaration.reportTarget))
         }
     }
 
-    private fun ConstructorDescriptor.isNoArgConstructor() = valueParameters.all(ValueParameterDescriptor::declaresDefaultValue)
+    private val KtClass.reportTarget: PsiElement
+        get() = nameIdentifier ?: getClassOrInterfaceKeyword() ?: this
+
+    private fun ConstructorDescriptor.isNoArgConstructor(): Boolean =
+        valueParameters.all(ValueParameterDescriptor::declaresDefaultValue)
 }

@@ -14,15 +14,20 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.*
 import plugins.KotlinBuildPublishingPlugin
 import plugins.configureRepository
+import plugins.mainPublicationName
 import java.util.*
 
 internal const val PLUGIN_MARKER_SUFFIX = ".gradle.plugin"
 
 @OptIn(ExperimentalStdlibApi::class)
 fun Project.publishPluginMarkers(withEmptyJars: Boolean = true) {
+
+    fun Project.isSonatypePublish(): Boolean =
+        hasProperty("isSonatypePublish") && property("isSonatypePublish") as Boolean
+
     val pluginDevelopment = extensions.getByType<PluginBundleExtension>()
     val publishingExtension = extensions.getByType<PublishingExtension>()
-    val mainPublication = publishingExtension.publications[KotlinBuildPublishingPlugin.PUBLICATION_NAME] as MavenPublication
+    val mainPublication = publishingExtension.publications[mainPublicationName] as MavenPublication
 
     pluginDevelopment.plugins.forEach { declaration ->
         val markerPublication = createMavenMarkerPublication(declaration, mainPublication, publishingExtension.publications)
@@ -32,7 +37,12 @@ fun Project.publishPluginMarkers(withEmptyJars: Boolean = true) {
 
         tasks.named<PublishToMavenRepository>(
             "publish${markerPublication.name.capitalize(Locale.ROOT)}PublicationTo${KotlinBuildPublishingPlugin.REPOSITORY_NAME}Repository"
-        ).configureRepository()
+        ).apply {
+            configureRepository()
+            configure {
+                onlyIf { !isSonatypePublish() }
+            }
+        }
     }
 }
 
@@ -55,6 +65,9 @@ private fun createMavenMarkerPublication(
 ): MavenPublication {
     return publications.create<MavenPublication>(declaration.name.toString() + "PluginMarkerMaven") {
         val pluginId: String = declaration.id
+        val cGroupId = coordinates.groupId
+        val cArtifactId = coordinates.artifactId
+        val cVersion = coordinates.version
         artifactId = pluginId + PLUGIN_MARKER_SUFFIX
         groupId = pluginId
         pom.withXml {
@@ -63,11 +76,11 @@ private fun createMavenMarkerPublication(
             val dependencies = root.appendChild(document.createElement("dependencies"))
             val dependency = dependencies.appendChild(document.createElement("dependency"))
             val groupId = dependency.appendChild(document.createElement("groupId"))
-            groupId.textContent = coordinates.groupId
+            groupId.textContent = cGroupId
             val artifactId = dependency.appendChild(document.createElement("artifactId"))
-            artifactId.textContent = coordinates.artifactId
+            artifactId.textContent = cArtifactId
             val version = dependency.appendChild(document.createElement("version"))
-            version.textContent = coordinates.version
+            version.textContent = cVersion
         }
 
         pom.name.set(declaration.displayName)

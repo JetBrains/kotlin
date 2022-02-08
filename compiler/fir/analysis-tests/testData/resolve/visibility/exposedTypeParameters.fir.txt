@@ -1,0 +1,84 @@
+FILE: exposedTypeParameters.kt
+    private open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    internal open class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        protected open class D : R|kotlin/Any| {
+            public constructor(): R|C.D| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public open class E : R|kotlin/Any| {
+        public constructor(): R|E| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Test1<T : R|A|> : R|kotlin/Any| {
+        public constructor<T : R|A|>(): R|Test1<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Test2<T : R|C|, P : R|E|> : R|kotlin/Any| {
+        public constructor<T : R|C|, P : R|E|>(): R|Test2<T, P>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Test3<T : R|E|, P : <ERROR TYPE REF: HIDDEN: C.D is invisible>> : R|kotlin/Any| {
+        public constructor<T : R|E|, P : <ERROR TYPE REF: HIDDEN: C.D is invisible>>(): R|Test3<T, P>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    internal final class Test4<T : R|B|> : R|kotlin/Any| {
+        public constructor<T : R|B|>(): R|Test4<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    private final class Test5<T : R|B|> : R|kotlin/Any| {
+        public constructor<T : R|B|>(): R|Test5<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Container : R|C| {
+        public constructor(): R|Container| {
+            super<R|C|>()
+        }
+
+        protected final class Test6<T : R|C.D|> : R|kotlin/Any| {
+            public constructor<T : R|C.D|>(): R|Container.Test6<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        protected final class Test7<T : R|B|> : R|kotlin/Any| {
+            public constructor<T : R|B|>(): R|Container.Test7<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public abstract interface Test8<T : R|A|, P : R|B|, F : R|C|, N : <ERROR TYPE REF: HIDDEN: C.D is invisible>, M : R|E|> : R|kotlin/Any| {
+    }

@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 object T2 {
@@ -10,5 +9,5 @@ object T2 {
     operator fun <T> Foo<T>.getValue(receiver: String, p: Any?): T = TODO()
 
     val String.test1: String by delegate()
-    val test2: String by <!NI;DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!><!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>delegate<!>()<!>
+    val test2: String by <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>delegate()<!>
 }

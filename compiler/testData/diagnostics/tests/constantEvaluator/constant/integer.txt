@@ -1,0 +1,14 @@
+package
+
+package test {
+    public val prop1: kotlin.Long = 1.toLong()
+    public val prop10: kotlin.Long = 1.toLong()
+    public val prop2: kotlin.Long = 1.toLong()
+    public val prop3: kotlin.Long = 1.toLong()
+    public val prop4: kotlin.Long = 1.toLong()
+    public val prop5: kotlin.Long = 1.toLong()
+    public val prop6: kotlin.Long = 1.toLong()
+    public val prop7: kotlin.Long = 1.toLong()
+    public val prop8: kotlin.Long = 1.toLong()
+    public val prop9: kotlin.Long = 1.toLong()
+}

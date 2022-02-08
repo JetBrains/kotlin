@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class InlinedComparable(val x: Int) : Comparable<InlinedComparable> {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class InlinedComparable(val x: Int) : Comparable<InlinedComparable> {
     override fun compareTo(other: InlinedComparable): Int {
         return x.compareTo(other.x)
     }
@@ -12,7 +15,8 @@ interface Base<T> {
     fun Base<T>.foo(a: Base<T>, b: T): Base<T>
 }
 
-inline class InlinedBase(val x: Int) : Base<InlinedBase> {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class InlinedBase(val x: Int) : Base<InlinedBase> {
     override fun Base<InlinedBase>.foo(a: Base<InlinedBase>, b: InlinedBase): Base<InlinedBase> {
         return if (a is InlinedBase) InlinedBase(a.x + b.x) else this
     }

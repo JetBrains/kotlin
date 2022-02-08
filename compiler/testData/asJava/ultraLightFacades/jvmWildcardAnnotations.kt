@@ -29,3 +29,4 @@ fun foo2(): Out<T>
 
 @JvmSuppressWildcards(true)
 fun foo3(): In<Open>
+// COMPILATION_ERRORS

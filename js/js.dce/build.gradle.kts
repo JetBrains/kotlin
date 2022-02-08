@@ -5,10 +5,12 @@ plugins {
 }
 
 dependencies {
-    compile(project(":compiler:util"))
-    compile(project(":js:js.ast"))
-    compile(project(":js:js.translator"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    api(project(":compiler:util"))
+    api(project(":js:js.ast"))
+    api(project(":js:js.translator"))
+    compileOnly(project(":js:js.sourcemap"))
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("com.google.guava:guava"))
 }
 
 sourceSets {

@@ -1,0 +1,46 @@
+FILE: buildSetWithVisitor.kt
+    public abstract class AnyVisitor : R|kotlin/Any| {
+        public constructor(): R|AnyVisitor| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract fun visit(arg: R|Wrapper|): R|kotlin/Unit|
+
+    }
+    public final class Wrapper : R|kotlin/Any| {
+        public constructor(tag: R|kotlin/String|): R|Wrapper| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val tag: R|kotlin/String| = R|<local>/tag|
+            public get(): R|kotlin/String|
+
+    }
+    public final fun R|Wrapper|.accept(visitor: R|AnyVisitor|): R|kotlin/Unit| {
+        R|<local>/visitor|.R|/AnyVisitor.visit|(this@R|/accept|)
+    }
+    public final fun bar(wrapper: R|Wrapper|): R|kotlin/collections/Set<kotlin/String>| {
+        ^bar R|kotlin/collections/buildSet|<R|kotlin/String|>(<L> = buildSet@fun R|kotlin/collections/MutableSet<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/wrapper|.R|/accept|(object : R|AnyVisitor| {
+                private constructor(): R|<anonymous>| {
+                    super<R|AnyVisitor|>()
+                }
+
+                public final override fun visit(arg: R|Wrapper|): R|kotlin/Unit| {
+                    this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableSet.add: R|kotlin/Boolean|>|(R|<local>/arg|.R|/Wrapper.tag|)
+                }
+
+            }
+            )
+        }
+        )
+    }
+    public final fun foo(wrapper: R|Wrapper|): R|kotlin/collections/Set<kotlin/String>| {
+        ^foo R|kotlin/collections/buildSet|<R|kotlin/String|>(<L> = buildSet@fun R|kotlin/collections/MutableSet<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/wrapper|.R|kotlin/let|<R|Wrapper|, R|kotlin/Unit|>(<L> = let@fun <anonymous>(it: R|Wrapper|): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableSet.add: R|kotlin/Boolean|>|(R|<local>/it|.R|/Wrapper.tag|)
+            }
+            )
+        }
+        )
+    }

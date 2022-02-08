@@ -1,6 +1,0 @@
-class A {
-    private fun bar(): () -> Any<caret> = {
-        class Local()
-        Local()
-    }
-}

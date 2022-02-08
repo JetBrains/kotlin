@@ -31,11 +31,11 @@ class PredefinedFunctionEnhancementInfo(
 )
 
 /** Type is always nullable: `T?` */
-private val NULLABLE = JavaTypeQualifiers(NullabilityQualifier.NULLABLE, null, isNotNullTypeParameter = false)
+private val NULLABLE = JavaTypeQualifiers(NullabilityQualifier.NULLABLE, null, definitelyNotNull = false)
 /** Nullability depends on substitution, but the type is not platform: `T` */
-private val NOT_PLATFORM = JavaTypeQualifiers(NullabilityQualifier.NOT_NULL, null, isNotNullTypeParameter = false)
+private val NOT_PLATFORM = JavaTypeQualifiers(NullabilityQualifier.NOT_NULL, null, definitelyNotNull = false)
 /** Type is always non-nullable: `T & Any` */
-private val NOT_NULLABLE = JavaTypeQualifiers(NullabilityQualifier.NOT_NULL, null, isNotNullTypeParameter = true)
+private val NOT_NULLABLE = JavaTypeQualifiers(NullabilityQualifier.NOT_NULL, null, definitelyNotNull = true)
 
 @Suppress("LocalVariableName")
 val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE = signatures {

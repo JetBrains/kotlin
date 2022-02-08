@@ -3,7 +3,7 @@ package
 public fun foo(/*0*/ s: Sealed): kotlin.Int
 
 public sealed class Sealed {
-    private constructor Sealed(/*0*/ x: kotlin.Int)
+    protected constructor Sealed(/*0*/ x: kotlin.Int)
     public final val x: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -56,3 +56,4 @@ public sealed class Sealed {
         public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
     }
 }
+

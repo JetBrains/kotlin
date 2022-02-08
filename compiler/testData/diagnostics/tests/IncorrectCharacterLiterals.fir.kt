@@ -2,11 +2,11 @@
 // KT-451 Incorrect character literals cause assertion failures
 
 fun ff() {
-    val b = <!ILLEGAL_CONST_EXPRESSION!>''<!>
-    val c = <!ILLEGAL_CONST_EXPRESSION!>'23'<!>
-    val d = <!ILLEGAL_CONST_EXPRESSION!>'a<!>
-    val e = <!ILLEGAL_CONST_EXPRESSION!>'ab<!>
-    val f = <!ILLEGAL_CONST_EXPRESSION!>'\'<!>
+    val b = <!EMPTY_CHARACTER_LITERAL!>''<!>
+    val c = <!TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL!>'23'<!>
+    val d = <!INCORRECT_CHARACTER_LITERAL!>'a<!>
+    val e = <!INCORRECT_CHARACTER_LITERAL!>'ab<!>
+    val f = <!ILLEGAL_ESCAPE!>'\'<!>
 }
 
 fun test() {
@@ -19,19 +19,19 @@ fun test() {
     '\''
     '\\'
     '\$'
-    <!ILLEGAL_CONST_EXPRESSION!>'\x'<!>
-    <!ILLEGAL_CONST_EXPRESSION!>'\123'<!>
-    <!ILLEGAL_CONST_EXPRESSION!>'\ra'<!>
-    <!ILLEGAL_CONST_EXPRESSION!>'\000'<!>
-    <!ILLEGAL_CONST_EXPRESSION!>'\000'<!>
+    <!ILLEGAL_ESCAPE!>'\x'<!>
+    <!ILLEGAL_ESCAPE!>'\123'<!>
+    <!ILLEGAL_ESCAPE!>'\ra'<!>
+    <!ILLEGAL_ESCAPE!>'\000'<!>
+    <!ILLEGAL_ESCAPE!>'\000'<!>
     '\u0000'
     '\u000a'
     '\u000A'
-    <!ILLEGAL_CONST_EXPRESSION!>'\u'<!>
-    <!ILLEGAL_CONST_EXPRESSION!>'\u0'<!>
-    <!ILLEGAL_CONST_EXPRESSION!>'\u00'<!>
-    <!ILLEGAL_CONST_EXPRESSION!>'\u000'<!>
-    <!ILLEGAL_CONST_EXPRESSION!>'\u000z'<!>
-    <!ILLEGAL_CONST_EXPRESSION!>'\\u000'<!>
-    <!ILLEGAL_CONST_EXPRESSION!>'\'<!>
+    <!ILLEGAL_ESCAPE!>'\u'<!>
+    <!ILLEGAL_ESCAPE!>'\u0'<!>
+    <!ILLEGAL_ESCAPE!>'\u00'<!>
+    <!ILLEGAL_ESCAPE!>'\u000'<!>
+    <!ILLEGAL_ESCAPE!>'\u000z'<!>
+    <!ILLEGAL_ESCAPE!>'\\u000'<!>
+    <!ILLEGAL_ESCAPE!>'\'<!>
 }

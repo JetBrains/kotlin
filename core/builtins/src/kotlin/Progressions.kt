@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,7 +32,7 @@ public open class CharProgression
     /**
      * The last element in the progression.
      */
-    public val last: Char = getProgressionLastElement(start.toInt(), endInclusive.toInt(), step).toChar()
+    public val last: Char = getProgressionLastElement(start.code, endInclusive.code, step).toChar()
 
     /**
      * The step of the progression.
@@ -41,7 +41,12 @@ public open class CharProgression
 
     override fun iterator(): CharIterator = CharProgressionIterator(first, last, step)
 
-    /** Checks if the progression is empty. */
+    /**
+     * Checks if the progression is empty.
+     *
+     * Progression with a positive step is empty if its first element is greater than the last element.
+     * Progression with a negative step is empty if its first element is less than the last element.
+     */
     public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =
@@ -49,14 +54,14 @@ public open class CharProgression
         first == other.first && last == other.last && step == other.step)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * (31 * first.toInt() + last.toInt()) + step)
+        if (isEmpty()) -1 else (31 * (31 * first.code + last.code) + step)
 
     override fun toString(): String = if (step > 0) "$first..$last step $step" else "$first downTo $last step ${-step}"
 
     companion object {
         /**
          * Creates CharProgression within the specified bounds of a closed range.
-
+         *
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
          *
@@ -89,7 +94,7 @@ public open class IntProgression
     /**
      * The last element in the progression.
      */
-    public val last: Int = getProgressionLastElement(start.toInt(), endInclusive.toInt(), step).toInt()
+    public val last: Int = getProgressionLastElement(start, endInclusive, step)
 
     /**
      * The step of the progression.
@@ -98,7 +103,12 @@ public open class IntProgression
 
     override fun iterator(): IntIterator = IntProgressionIterator(first, last, step)
 
-    /** Checks if the progression is empty. */
+    /**
+     * Checks if the progression is empty.
+     *
+     * Progression with a positive step is empty if its first element is greater than the last element.
+     * Progression with a negative step is empty if its first element is less than the last element.
+     */
     public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =
@@ -113,7 +123,7 @@ public open class IntProgression
     companion object {
         /**
          * Creates IntProgression within the specified bounds of a closed range.
-
+         *
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
          *
@@ -146,7 +156,7 @@ public open class LongProgression
     /**
      * The last element in the progression.
      */
-    public val last: Long = getProgressionLastElement(start.toLong(), endInclusive.toLong(), step).toLong()
+    public val last: Long = getProgressionLastElement(start, endInclusive, step)
 
     /**
      * The step of the progression.
@@ -155,7 +165,12 @@ public open class LongProgression
 
     override fun iterator(): LongIterator = LongProgressionIterator(first, last, step)
 
-    /** Checks if the progression is empty. */
+    /**
+     * Checks if the progression is empty.
+     *
+     * Progression with a positive step is empty if its first element is greater than the last element.
+     * Progression with a negative step is empty if its first element is less than the last element.
+     */
     public open fun isEmpty(): Boolean = if (step > 0) first > last else first < last
 
     override fun equals(other: Any?): Boolean =
@@ -170,7 +185,7 @@ public open class LongProgression
     companion object {
         /**
          * Creates LongProgression within the specified bounds of a closed range.
-
+         *
          * The progression starts with the [rangeStart] value and goes toward the [rangeEnd] value not excluding it, with the specified [step].
          * In order to go backwards the [step] must be negative.
          *

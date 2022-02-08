@@ -1,0 +1,6 @@
+fun test(x: Any?, y: Double): Boolean {
+  return when {
+    x is Int -> less(arg0 = x /*as Int */.toDouble(), arg1 = y)
+    else -> false
+  }
+}

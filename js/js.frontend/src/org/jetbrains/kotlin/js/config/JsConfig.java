@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration;
+import org.jetbrains.kotlin.resolve.TargetEnvironment;
 import org.jetbrains.kotlin.serialization.js.*;
 import org.jetbrains.kotlin.storage.LockBasedStorageManager;
 import org.jetbrains.kotlin.utils.JsMetadataVersion;
@@ -71,15 +72,22 @@ public class JsConfig {
     @Nullable
     private final Set<String> librariesToSkip;
 
-    public JsConfig(@NotNull Project project, @NotNull CompilerConfiguration configuration) {
-        this(project, configuration, null, null);
+    public final TargetEnvironment targetEnvironment;
+
+    public JsConfig(@NotNull Project project, @NotNull CompilerConfiguration configuration, @NotNull TargetEnvironment targetEnvironment) {
+        this(project, configuration, targetEnvironment, null, null);
     }
 
-    public JsConfig(@NotNull Project project, @NotNull CompilerConfiguration configuration,
+    public JsConfig(
+            @NotNull Project project,
+            @NotNull CompilerConfiguration configuration,
+            @NotNull TargetEnvironment targetEnvironment,
             @Nullable List<JsModuleDescriptor<KotlinJavaScriptLibraryParts>> metadataCache,
-            @Nullable Set<String> librariesToSkip) {
+            @Nullable Set<String> librariesToSkip
+    ) {
         this.project = project;
         this.configuration = configuration.copy();
+        this.targetEnvironment = targetEnvironment;
         this.metadataCache = metadataCache;
         this.librariesToSkip = librariesToSkip;
     }
@@ -164,9 +172,6 @@ public class JsConfig {
             return false;
         }
 
-        VirtualFileSystem fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL);
-        VirtualFileSystem jarFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL);
-
         Set<String> modules = new HashSet<>();
 
         boolean skipMetadataVersionCheck = getLanguageVersionSettings().getFlag(AnalysisFlags.getSkipMetadataVersionCheck());
@@ -174,23 +179,9 @@ public class JsConfig {
         for (String path : libraries) {
             if (librariesToSkip != null && librariesToSkip.contains(path)) continue;
 
-            VirtualFile file;
-
             File filePath = new File(path);
             if (!filePath.exists()) {
                 report.error("Path '" + path + "' does not exist");
-                return true;
-            }
-
-            if (path.endsWith(".jar") || path.endsWith(".zip")) {
-                file = jarFileSystem.findFileByPath(path + URLUtil.JAR_SEPARATOR);
-            }
-            else {
-                file = fileSystem.findFileByPath(path);
-            }
-
-            if (file == null) {
-                report.error("File '" + path + "' does not exist or could not be read");
                 return true;
             }
 

@@ -1,9 +1,13 @@
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 interface IQ {
     fun ok(): String
 }
 
-inline class X(val t: IQ): IQ {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class X(val t: IQ): IQ {
     override fun ok(): String = t.ok()
 }
 

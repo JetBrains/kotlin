@@ -1,6 +1,6 @@
 // IGNORE_BACKEND_FIR: JVM_IR
-// COMMON_COROUTINES_TEST
-// WITH_RUNTIME
+// FIR status: questionable bytecode listing difference (open/final methods in final class)
+// WITH_STDLIB
 // WITH_COROUTINES
 // CHECK_BYTECODE_LISTING
 
@@ -15,7 +15,7 @@
 
 package flow
 
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 import helpers.*
 
 interface FlowCollector<T> {

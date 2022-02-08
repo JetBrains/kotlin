@@ -47,7 +47,8 @@ fun makeModuleFile(
     commonSources: Iterable<File>,
     javaSourceRoots: Iterable<JvmSourceRoot>,
     classpath: Iterable<File>,
-    friendDirs: Iterable<File>
+    friendDirs: Iterable<File>,
+    isIncrementalMode: Boolean = true
 ): File {
     val builder = KotlinModuleXmlBuilder()
     builder.addModule(
@@ -65,7 +66,8 @@ fun makeModuleFile(
         isTest,
         // this excludes the output directories from the class path, to be removed for true incremental compilation
         setOf(outputDir),
-        friendDirs
+        friendDirs,
+        isIncrementalMode
     )
 
     val scriptFile = Files.createTempFile("kjps", sanitizeJavaIdentifier(name) + ".script.xml").toFile()
@@ -136,7 +138,8 @@ fun LookupStorage.update(
 
 data class DirtyData(
     val dirtyLookupSymbols: Collection<LookupSymbol> = emptyList(),
-    val dirtyClassesFqNames: Collection<FqName> = emptyList()
+    val dirtyClassesFqNames: Collection<FqName> = emptyList(),
+    val dirtyClassesFqNamesForceRecompile: Collection<FqName> = emptyList()
 )
 
 fun ChangesCollector.getDirtyData(
@@ -145,6 +148,9 @@ fun ChangesCollector.getDirtyData(
 ): DirtyData {
     val dirtyLookupSymbols = HashSet<LookupSymbol>()
     val dirtyClassesFqNames = HashSet<FqName>()
+
+    val sealedParents = HashMap<FqName, MutableSet<FqName>>()
+    val notSealedParents = HashSet<FqName>()
 
     for (change in changes()) {
         reporter.reportVerbose { "Process $change" }
@@ -170,10 +176,35 @@ fun ChangesCollector.getDirtyData(
             }
 
             fqNames.mapTo(dirtyLookupSymbols) { LookupSymbol(SAM_LOOKUP_NAME.asString(), it.asString()) }
+        } else if (change is ChangeInfo.ParentsChanged) {
+            fun FqName.isSealed(): Boolean {
+                if (notSealedParents.contains(this)) return false
+                if (sealedParents.containsKey(this)) return true
+                return isSealed(this, caches).also { sealed ->
+                    if (sealed) {
+                        sealedParents[this] = HashSet()
+                    } else {
+                        notSealedParents.add(this)
+                    }
+                }
+            }
+            change.parentsChanged.forEach { parent ->
+                if (parent.isSealed()) {
+                    sealedParents.getOrPut(parent) { HashSet() }.add(change.fqName)
+                }
+            }
         }
     }
 
-    return DirtyData(dirtyLookupSymbols, dirtyClassesFqNames)
+    val forceRecompile = HashSet<FqName>().apply {
+        addAll(sealedParents.keys)
+        //we should recompile all inheritors with parent sealed class: add known subtypes
+        addAll(sealedParents.keys.flatMap { withSubtypes(it, caches) })
+        //we should recompile all inheritors with parent sealed class: add new subtypes
+        addAll(sealedParents.values.flatten())
+    }
+
+    return DirtyData(dirtyLookupSymbols, dirtyClassesFqNames, forceRecompile)
 }
 
 fun mapLookupSymbolsToFiles(
@@ -217,26 +248,32 @@ fun mapClassesFqNamesToFiles(
     return fqNameToAffectedFiles.values.flattenTo(HashSet())
 }
 
+fun isSealed(
+    fqName: FqName,
+    caches: Iterable<IncrementalCacheCommon>
+): Boolean = caches.any { it.isSealed(fqName) ?: false }
+
 fun withSubtypes(
     typeFqName: FqName,
     caches: Iterable<IncrementalCacheCommon>
 ): Set<FqName> {
-    val types = LinkedHashSet(listOf(typeFqName))
-    val subtypes = hashSetOf<FqName>()
+    val typesToProccess = LinkedHashSet(listOf(typeFqName))
+    val proccessedTypes = hashSetOf<FqName>()
 
-    while (types.isNotEmpty()) {
-        val iterator = types.iterator()
+
+    while (typesToProccess.isNotEmpty()) {
+        val iterator = typesToProccess.iterator()
         val unprocessedType = iterator.next()
         iterator.remove()
 
         caches.asSequence()
             .flatMap { it.getSubtypesOf(unprocessedType) }
-            .filter { it !in subtypes }
-            .forEach { types.add(it) }
+            .filter { it !in proccessedTypes }
+            .forEach { typesToProccess.add(it) }
 
-        subtypes.add(unprocessedType)
+        proccessedTypes.add(unprocessedType)
     }
 
-    return subtypes
+    return proccessedTypes
 }
 

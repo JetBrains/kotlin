@@ -5,7 +5,6 @@
 
 package kotlin.script.experimental.jvm.impl
 
-import kotlinx.coroutines.runBlocking
 import java.io.File
 import kotlin.script.dependencies.Environment
 import kotlin.script.dependencies.ScriptContents
@@ -16,6 +15,7 @@ import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.dependencies.ScriptReport
 import kotlin.script.experimental.host.FileScriptSource
 import kotlin.script.experimental.host.toScriptSource
+import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.compat.mapToLegacyScriptReportPosition
 import kotlin.script.experimental.jvm.compat.mapToLegacyScriptReportSeverity
@@ -27,7 +27,8 @@ class BridgeDependenciesResolver(
 ) : AsyncDependenciesResolver {
 
     override fun resolve(scriptContents: ScriptContents, environment: Environment): DependenciesResolver.ResolveResult =
-        runBlocking {
+        @Suppress("DEPRECATION_ERROR")
+        internalScriptingRunSuspend {
             resolveAsync(scriptContents, environment)
         }
 

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.fir.declarations.expandedConeType
+import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
-fun FirClassLikeDeclaration<*>.fullyExpandedClass(useSiteSession: FirSession): FirRegularClass? {
+fun FirClassLikeDeclaration.fullyExpandedClass(useSiteSession: FirSession): FirRegularClass? {
     if (this is FirTypeAlias) return this.expandedConeType?.lookupTag?.toSymbol(useSiteSession)?.fir?.fullyExpandedClass(useSiteSession)
     if (this is FirRegularClass) return this
     error("Not supported: $this")
@@ -72,7 +72,7 @@ class PackageQualifierReceiver(
     useSiteSession: FirSession
 ) : QualifierReceiver(explicitReceiver) {
     val scope = FirPackageMemberScope(explicitReceiver.packageFqName, useSiteSession)
-    override fun classifierScope(): FirScope? {
+    override fun classifierScope(): FirScope {
         return FirOnlyClassifiersScope(scope)
     }
 

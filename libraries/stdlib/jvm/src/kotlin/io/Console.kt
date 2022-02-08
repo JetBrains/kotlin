@@ -141,6 +141,28 @@ public actual inline fun println() {
 }
 
 /**
+ * Reads a line of input from the standard input stream and returns it,
+ * or throws a [RuntimeException] if EOF has already been reached when [readln] is called.
+ *
+ * LF or CRLF is treated as the line terminator. Line terminator is not included in the returned string.
+ *
+ * The input is decoded using the system default Charset. A [CharacterCodingException] is thrown if input is malformed.
+ */
+@SinceKotlin("1.6")
+public actual fun readln(): String = readlnOrNull() ?: throw ReadAfterEOFException("EOF has already been reached")
+
+/**
+ * Reads a line of input from the standard input stream and returns it,
+ * or return `null` if EOF has already been reached when [readlnOrNull] is called.
+ *
+ * LF or CRLF is treated as the line terminator. Line terminator is not included in the returned string.
+ *
+ * The input is decoded using the system default Charset. A [CharacterCodingException] is thrown if input is malformed.
+ */
+@SinceKotlin("1.6")
+public actual fun readlnOrNull(): String? = readLine()
+
+/**
  * Reads a line of input from the standard input stream.
  *
  * @return the line read or `null` if the input stream is redirected to a file and the end of file has been reached.
@@ -183,7 +205,7 @@ internal object LineReader {
                 bytes[nBytes++] = readByte.toByte()
             }
             // With "directEOL" encoding bytes are batched before being decoded all at once
-            if (readByte == '\n'.toInt() || nBytes == BUFFER_SIZE || !directEOL) {
+            if (readByte == '\n'.code || nBytes == BUFFER_SIZE || !directEOL) {
                 // Decode the bytes that were read
                 byteBuf.limit(nBytes) // byteBuf position is always zero
                 charBuf.position(nChars) // charBuf limit is always BUFFER_SIZE
@@ -254,7 +276,7 @@ internal object LineReader {
         // try decoding ASCII line separator to see if this charset (like UTF-8) encodes it directly
         byteBuf.clear()
         charBuf.clear()
-        byteBuf.put('\n'.toByte())
+        byteBuf.put('\n'.code.toByte())
         byteBuf.flip()
         decoder.decode(byteBuf, charBuf, false)
         directEOL = charBuf.position() == 1 && charBuf.get(0) == '\n'

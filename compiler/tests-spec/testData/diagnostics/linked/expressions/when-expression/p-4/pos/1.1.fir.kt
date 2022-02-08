@@ -3,6 +3,15 @@
 // SKIP_TXT
 // FULL_JDK
 
+/*
+ * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
+ *
+ * SPEC VERSION: 0.1-313
+ * MAIN LINK: expressions, when-expression -> paragraph 4 -> sentence 1
+ * NUMBER: 1
+ * DESCRIPTION:  it is possible to  replace the else condition with an always-true condition
+ */
+
 // FILE: JavaEnum.java
 
 enum JavaEnum {
@@ -28,7 +37,7 @@ fun case1() {
     val when3 = when (z) {
         JavaEnum.Val_1 -> { }
         JavaEnum.Val_2 -> { }
-        JavaEnum.Val_2 -> { }
+        <!DUPLICATE_LABEL_IN_WHEN!>JavaEnum.Val_2<!> -> { }
     }
 }
 
@@ -42,13 +51,13 @@ fun case2() {
         else -> { }
     }
 
-    val when2: Any = when (b) {
+    val when2: Any = <!NO_ELSE_IN_WHEN!>when<!> (b) {
         false -> { }
         !false -> { }
     }
-    val when3: Any = when (b) {
+    val when3: Any = <!NO_ELSE_IN_WHEN!>when<!> (b) {
         false -> { }
-        false -> { }
+        <!DUPLICATE_LABEL_IN_WHEN!>false<!> -> { }
         !false -> { }
     }
 }
@@ -69,7 +78,7 @@ fun case3() {
     val when3: Any = when (a) {
         true -> { }
         false -> { }
-        false -> { }
+        <!DUPLICATE_LABEL_IN_WHEN!>false<!> -> { }
     }
 }
 
@@ -93,7 +102,7 @@ fun case4() {
     val when3 = when (x){
         is  SClass.A ->{ }
         is  SClass.B ->{ }
-        is  SClass.B ->{ }
+        is  <!DUPLICATE_LABEL_IN_WHEN!>SClass.B<!> ->{ }
         is  SClass.C ->{ }
     }
 }

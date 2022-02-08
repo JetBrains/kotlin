@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.COCOAPODS_EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.GENERATE_WRAPPER_PROPERTY
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.KOTLIN_TARGET_FOR_IOS_DEVICE
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.KOTLIN_TARGET_FOR_WATCHOS_DEVICE
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.SYNC_TASK_NAME
-import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import java.io.File
 
@@ -33,11 +30,14 @@ import java.io.File
 open class PodspecTask : DefaultTask() {
 
     @get:Input
-    internal val specName = project.name.asValidFrameworkName()
+    internal val specName = project.objects.property(String::class.java)
+
+    @get:Internal
+    internal val outputDir = project.objects.property(File::class.java)
 
     @get:OutputFile
-    internal val outputFileProvider: Provider<File>
-        get() = project.provider { project.file("$specName.podspec") }
+    val outputFile: File
+        get() = outputDir.get().resolve("${specName.get()}.podspec")
 
     @get:Input
     internal lateinit var needPodspec: Provider<Boolean>
@@ -46,7 +46,14 @@ open class PodspecTask : DefaultTask() {
     val pods = project.objects.listProperty(CocoapodsDependency::class.java)
 
     @get:Input
-    internal lateinit var version: Provider<String>
+    internal val version = project.objects.property(String::class.java)
+
+    @get:Input
+    internal val publishing = project.objects.property(Boolean::class.java)
+
+    @get:Input
+    @get:Optional
+    internal val source = project.objects.property(String::class.java)
 
     @get:Input
     @get:Optional
@@ -63,6 +70,10 @@ open class PodspecTask : DefaultTask() {
     @get:Input
     @get:Optional
     internal val summary = project.objects.property(String::class.java)
+
+    @get:Input
+    @get:Optional
+    internal val extraSpecAttributes = project.objects.mapProperty(String::class.java, String::class.java)
 
     @get:Input
     internal lateinit var frameworkName: Provider<String>
@@ -86,11 +97,14 @@ open class PodspecTask : DefaultTask() {
     @TaskAction
     fun generate() {
 
-        val frameworkDir = project.cocoapodsBuildDirs.framework.relativeTo(outputFileProvider.get().parentFile).path
-        val dependencies = pods.get().map { pod ->
-            val versionSuffix = if (pod.version != null) ", '${pod.version}'" else ""
-            "|    spec.dependency '${pod.name}'$versionSuffix"
-        }.joinToString(separator = "\n")
+        check(version.get() != Project.DEFAULT_VERSION) {
+            """
+                Cocoapods Integration requires pod version to be specified.
+                Please specify pod version by adding 'version = "<version>"' to the cocoapods block.
+                Alternatively, specify the version for the entire project explicitly. 
+                Pod version format has to conform podspec syntax requirements: https://guides.cocoapods.org/syntax/podspec.html#version 
+            """.trimIndent()
+        }
 
         val gradleWrapper = (project.rootProject.tasks.getByName("wrapper") as? Wrapper)?.scriptFile
         require(gradleWrapper != null && gradleWrapper.exists()) {
@@ -103,74 +117,86 @@ open class PodspecTask : DefaultTask() {
             """.trimIndent()
         }
 
-        val gradleCommand = "\$REPO_ROOT/${gradleWrapper!!.toRelativeString(project.projectDir)}"
-        val syncTask = "${project.path}:$SYNC_TASK_NAME"
-
         val deploymentTargets = run {
             listOf(ios, osx, tvos, watchos).map { it.get() }.filter { it.deploymentTarget != null }.joinToString("\n") {
-                "|    spec.${it.name}.deployment_target = '${it.deploymentTarget}'"
+                if (extraSpecAttributes.get().containsKey("${it.name}.deployment_target")) "" else "|    spec.${it.name}.deployment_target = '${it.deploymentTarget}'"
             }
         }
 
-        with(outputFileProvider.get()) {
-            writeText(
-                """
-                |Pod::Spec.new do |spec|
-                |    spec.name                     = '$specName'
-                |    spec.version                  = '${version.get()}'
-                |    spec.homepage                 = '${homepage.getOrEmpty()}'
-                |    spec.source                   = { :git => "Not Published", :tag => "Cocoapods/#{spec.name}/#{spec.version}" }
-                |    spec.authors                  = '${authors.getOrEmpty()}'
-                |    spec.license                  = '${license.getOrEmpty()}'
-                |    spec.summary                  = '${summary.getOrEmpty()}'
-                |
-                |    spec.static_framework         = true
-                |    spec.vendored_frameworks      = "$frameworkDir/${frameworkName.get()}.framework"
-                |    spec.libraries                = "c++"
-                |    spec.module_name              = "#{spec.name}_umbrella"
-                |
-                $deploymentTargets
-                |
-                $dependencies
-                |
+        val dependencies = pods.get().map { pod ->
+            val versionSuffix = if (pod.version != null) ", '${pod.version}'" else ""
+            "|    spec.dependency '${pod.name}'$versionSuffix"
+        }.joinToString(separator = "\n")
+
+        val frameworkDir = project.cocoapodsBuildDirs.framework.relativeTo(outputFile.parentFile)
+        val vendoredFramework = if (publishing.get()) "${frameworkName.get()}.xcframework" else frameworkDir.resolve("${frameworkName.get()}.framework").invariantSeparatorsPath
+        val vendoredFrameworks = if (extraSpecAttributes.get().containsKey("vendored_frameworks")) "" else "|    spec.vendored_frameworks      = '$vendoredFramework'"
+
+        val libraries = if (extraSpecAttributes.get().containsKey("libraries")) "" else "|    spec.libraries                = 'c++'"
+
+        val xcConfig = if (publishing.get() || extraSpecAttributes.get().containsKey("pod_target_xcconfig")) "" else
+            """ |
                 |    spec.pod_target_xcconfig = {
-                |        'KOTLIN_TARGET[sdk=iphonesimulator*]' => 'ios_x64',
-                |        'KOTLIN_TARGET[sdk=iphoneos*]' => '$KOTLIN_TARGET_FOR_IOS_DEVICE',
-                |        'KOTLIN_TARGET[sdk=watchsimulator*]' => 'watchos_x86',
-                |        'KOTLIN_TARGET[sdk=watchos*]' => '$KOTLIN_TARGET_FOR_WATCHOS_DEVICE',
-                |        'KOTLIN_TARGET[sdk=appletvsimulator*]' => 'tvos_x64',
-                |        'KOTLIN_TARGET[sdk=appletvos*]' => 'tvos_arm64',
-                |        'KOTLIN_TARGET[sdk=macosx*]' => 'macos_x64'
+                |        'KOTLIN_PROJECT_PATH' => '${project.path}',
+                |        'PRODUCT_MODULE_NAME' => '${frameworkName.get()}',
                 |    }
-                |
+            """.trimMargin()
+
+        val gradleCommand = "\$REPO_ROOT/${gradleWrapper.relativeTo(project.projectDir).invariantSeparatorsPath}"
+        val scriptPhase = if (publishing.get() || extraSpecAttributes.get().containsKey("script_phases")) "" else
+            """ |
                 |    spec.script_phases = [
                 |        {
-                |            :name => 'Build $specName',
+                |            :name => 'Build ${specName.get()}',
                 |            :execution_position => :before_compile,
                 |            :shell_path => '/bin/sh',
                 |            :script => <<-SCRIPT
+                |                if [ "YES" = "${'$'}COCOAPODS_SKIP_KOTLIN_BUILD" ]; then
+                |                  echo "Skipping Gradle build task invocation due to COCOAPODS_SKIP_KOTLIN_BUILD environment variable set to \"YES\""
+                |                  exit 0
+                |                fi
                 |                set -ev
                 |                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT"
-                |                "$gradleCommand" -p "${'$'}REPO_ROOT" $syncTask \
-                |                    -P${KotlinCocoapodsPlugin.TARGET_PROPERTY}=${'$'}KOTLIN_TARGET \
-                |                    -P${KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY}=${'$'}CONFIGURATION \
-                |                    -P${KotlinCocoapodsPlugin.CFLAGS_PROPERTY}="${'$'}OTHER_CFLAGS" \
-                |                    -P${KotlinCocoapodsPlugin.HEADER_PATHS_PROPERTY}="${'$'}HEADER_SEARCH_PATHS" \
-                |                    -P${KotlinCocoapodsPlugin.FRAMEWORK_PATHS_PROPERTY}="${'$'}FRAMEWORK_SEARCH_PATHS"
+                |                "$gradleCommand" -p "${'$'}REPO_ROOT" ${'$'}KOTLIN_PROJECT_PATH:$SYNC_TASK_NAME \
+                |                    -P${KotlinCocoapodsPlugin.PLATFORM_PROPERTY}=${'$'}PLATFORM_NAME \
+                |                    -P${KotlinCocoapodsPlugin.ARCHS_PROPERTY}="${'$'}ARCHS" \
+                |                    -P${KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY}="${'$'}CONFIGURATION"
                 |            SCRIPT
                 |        }
                 |    ]
+        """.trimMargin()
+
+        val customSpec = extraSpecAttributes.get().map { "|    spec.${it.key} = ${it.value}" }.joinToString("\n")
+
+        with(outputFile) {
+            writeText(
+                """
+                |Pod::Spec.new do |spec|
+                |    spec.name                     = '${specName.get()}'
+                |    spec.version                  = '${version.get()}'
+                |    spec.homepage                 = ${homepage.getOrEmpty().surroundWithSingleQuotesIfNeeded()}
+                |    spec.source                   = ${source.getOrElse("{ :http=> ''}")}
+                |    spec.authors                  = ${authors.getOrEmpty().surroundWithSingleQuotesIfNeeded()}
+                |    spec.license                  = ${license.getOrEmpty().surroundWithSingleQuotesIfNeeded()}
+                |    spec.summary                  = '${summary.getOrEmpty()}'
+                $vendoredFrameworks
+                $libraries
+                $deploymentTargets
+                $dependencies
+                $xcConfig
+                $scriptPhase
+                $customSpec
                 |end
         """.trimMargin()
             )
 
-            if (hasPodfileOwnOrParent(project)) {
+            if (hasPodfileOwnOrParent(project) && publishing.get().not()) {
                 logger.quiet(
                     """
                     Generated a podspec file at: ${absolutePath}.
                     To include it in your Xcode project, check that the following dependency snippet exists in your Podfile:
 
-                    pod '$specName', :path => '${parentFile.absolutePath}'
+                    pod '${specName.get()}', :path => '${parentFile.absolutePath}'
 
             """.trimIndent()
                 )
@@ -179,7 +205,10 @@ open class PodspecTask : DefaultTask() {
         }
     }
 
-    fun Provider<String>.getOrEmpty() = getOrElse("")
+    private fun Provider<String>.getOrEmpty(): String = getOrElse("")
+
+    private fun String.surroundWithSingleQuotesIfNeeded(): String =
+        if (startsWith("{") || startsWith("<<-") || startsWith("'")) this else "'$this'"
 
     companion object {
         private val KotlinMultiplatformExtension?.cocoapodsExtensionOrNull: CocoapodsExtension?
@@ -215,8 +244,17 @@ open class DummyFrameworkTask : DefaultTask() {
     @Input
     lateinit var frameworkName: Provider<String>
 
+    @Input
+    lateinit var useDynamicFramework: Provider<Boolean>
+
     private val frameworkDir: File
         get() = destinationDir.resolve("${frameworkName.get()}.framework")
+
+    private val dummyFrameworkPath: String
+        get() {
+            val staticOrDynamic = if (useDynamicFramework.get()) "dynamic" else "static"
+            return "/cocoapods/$staticOrDynamic/dummy.framework/"
+        }
 
     private fun copyResource(from: String, to: File) {
         to.parentFile.mkdirs()
@@ -240,7 +278,7 @@ open class DummyFrameworkTask : DefaultTask() {
 
     private fun copyFrameworkFile(relativeFrom: String, relativeTo: String = relativeFrom) =
         copyResource(
-            "/cocoapods/dummy.framework/$relativeFrom",
+            "$dummyFrameworkPath$relativeFrom",
             frameworkDir.resolve(relativeTo)
         )
 
@@ -249,7 +287,7 @@ open class DummyFrameworkTask : DefaultTask() {
         relativeTo: String = relativeFrom,
         transform: (String) -> String = { it }
     ) = copyTextResource(
-        "/cocoapods/dummy.framework/$relativeFrom",
+        "$dummyFrameworkPath$relativeFrom",
         frameworkDir.resolve(relativeTo),
         transform
     )

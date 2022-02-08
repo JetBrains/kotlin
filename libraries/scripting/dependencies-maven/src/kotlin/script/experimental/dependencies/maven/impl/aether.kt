@@ -11,25 +11,29 @@ import org.apache.maven.settings.Settings
 import org.apache.maven.settings.SettingsUtils
 import org.apache.maven.settings.TrackableBase
 import org.apache.maven.settings.building.*
+import org.apache.maven.wagon.Wagon
+import org.codehaus.plexus.DefaultContainerConfiguration
+import org.codehaus.plexus.DefaultPlexusContainer
+import org.codehaus.plexus.classworlds.ClassWorld
 import org.eclipse.aether.RepositorySystem
 import org.eclipse.aether.RepositorySystemSession
 import org.eclipse.aether.artifact.Artifact
-import org.eclipse.aether.artifact.DefaultArtifact
 import org.eclipse.aether.collection.CollectRequest
 import org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory
 import org.eclipse.aether.graph.Dependency
 import org.eclipse.aether.graph.DependencyFilter
+import org.eclipse.aether.internal.transport.wagon.PlexusWagonConfigurator
+import org.eclipse.aether.internal.transport.wagon.PlexusWagonProvider
 import org.eclipse.aether.repository.LocalRepository
 import org.eclipse.aether.repository.Proxy
 import org.eclipse.aether.repository.RemoteRepository
-import org.eclipse.aether.resolution.ArtifactResult
-import org.eclipse.aether.resolution.DependencyRequest
-import org.eclipse.aether.resolution.DependencyResolutionException
-import org.eclipse.aether.resolution.DependencyResult
+import org.eclipse.aether.resolution.*
 import org.eclipse.aether.spi.connector.RepositoryConnectorFactory
 import org.eclipse.aether.spi.connector.transport.TransporterFactory
 import org.eclipse.aether.transport.file.FileTransporterFactory
-import org.eclipse.aether.transport.http.HttpTransporterFactory
+import org.eclipse.aether.transport.wagon.WagonConfigurator
+import org.eclipse.aether.transport.wagon.WagonProvider
+import org.eclipse.aether.transport.wagon.WagonTransporterFactory
 import org.eclipse.aether.util.filter.DependencyFilterUtils
 import org.eclipse.aether.util.repository.AuthenticationBuilder
 import org.eclipse.aether.util.repository.DefaultMirrorSelector
@@ -40,15 +44,15 @@ import java.util.*
 
 val mavenCentral: RemoteRepository = RemoteRepository.Builder("maven central", "default", "https://repo.maven.apache.org/maven2/").build()
 
-class AetherResolveSession(
-    val localRepo: File = File(File(System.getProperty("user.home")!!, ".m2"), "repository"),
+internal class AetherResolveSession(
+    private val localRepo: File = File(File(System.getProperty("user.home")!!, ".m2"), "repository"),
     remoteRepos: List<RemoteRepository> = listOf(mavenCentral)
 ) {
 
-    val remotes by lazy {
-        val proxySelector = settings.getActiveProxy()?.let { proxy ->
+    private val remotes by lazy {
+        val proxySelector = settings.activeProxy?.let { proxy ->
             val selector = DefaultProxySelector()
-            val auth = with (AuthenticationBuilder()) {
+            val auth = with(AuthenticationBuilder()) {
                 addUsername(proxy.username)
                 addPassword(proxy.password)
                 build()
@@ -95,8 +99,24 @@ class AetherResolveSession(
         )
         locator.addService(
             TransporterFactory::class.java,
-            HttpTransporterFactory::class.java
+            WagonTransporterFactory::class.java
         )
+
+        val container = DefaultPlexusContainer(DefaultContainerConfiguration().apply {
+            val realmId = "wagon"
+            classWorld = ClassWorld(realmId, Wagon::class.java.classLoader)
+            realm = classWorld.getRealm(realmId)
+        })
+
+        locator.setServices(
+            WagonProvider::class.java,
+            PlexusWagonProvider(container)
+        )
+        locator.setServices(
+            WagonConfigurator::class.java,
+            PlexusWagonConfigurator(container)
+        )
+
         locator.getService(RepositorySystem::class.java)
     }
 
@@ -107,22 +127,51 @@ class AetherResolveSession(
         }
     }
 
-    fun resolve(coordinates: String, scope: String, filter: DependencyFilter? = null): List<Artifact>? =
-        resolve(DefaultArtifact(coordinates), scope, filter)
+    fun resolve(root: Artifact, scope: String, transitive: Boolean, filter: DependencyFilter?): List<Artifact> {
+        return if (transitive) resolveDependencies(root, scope, filter)
+        else resolveArtifact(root)
+    }
 
-    fun resolve(root: Artifact, scope: String, filter: DependencyFilter? = null): List<Artifact>? {
-
+    private fun resolveDependencies(root: Artifact, scope: String, filter: DependencyFilter? = null): List<Artifact> {
         return fetch(
-            repositorySystem,
-            repositorySystemSession,
             DependencyRequest(
                 request(Dependency(root, scope)),
                 filter ?: DependencyFilterUtils.classpathFilter(scope)
-            )
+            ),
+            { req -> repositorySystem.resolveDependencies(repositorySystemSession, req).artifactResults },
+            { req, ex ->
+                DependencyResolutionException(
+                    DependencyResult(req),
+                    IllegalArgumentException( //Logger.format(
+                        //        "failed to load '%s' from %[list]s into %s",
+                        //        req.getCollectRequest().getRoot(),
+                        //        Aether.reps(req.getCollectRequest().getRepositories()),
+                        //        session.getLocalRepositoryManager()
+                        //                .getRepository()
+                        //                .getBasedir()
+                        //),
+                        ex
+                    )
+                )
+            }
         )
     }
 
-    private fun request(root: Dependency): CollectRequest? {
+    private fun resolveArtifact(artifact: Artifact): List<Artifact> {
+        val request = ArtifactRequest()
+        request.artifact = artifact
+        for (repo in remotes) {
+            request.addRepository(repo)
+        }
+
+        return fetch(
+            request,
+            { req -> listOf(repositorySystem.resolveArtifact(repositorySystemSession, req)) },
+            { req, ex -> ArtifactResolutionException(listOf(ArtifactResult(req)), ex.message, IllegalArgumentException(ex)) }
+        )
+    }
+
+    private fun request(root: Dependency): CollectRequest {
         val request = CollectRequest()
         request.root = root
         for (repo in remotes) {
@@ -131,32 +180,23 @@ class AetherResolveSession(
         return request
     }
 
-    private fun fetch(system: RepositorySystem, session: RepositorySystemSession, dreq: DependencyRequest): List<Artifact>? {
+    private fun <RequestT> fetch(
+        request: RequestT,
+        fetchBody: (RequestT) -> Collection<ArtifactResult>,
+        wrapException: (RequestT, Exception) -> Exception
+    ): List<Artifact> {
         val deps: MutableList<Artifact> = LinkedList()
         try {
             var results: Collection<ArtifactResult>
             synchronized(this) {
-                results = system.resolveDependencies(session, dreq)
-                    .artifactResults
+                results = fetchBody(request)
             }
             for (res in results) {
                 deps.add(res.artifact)
             }
             // @checkstyle IllegalCatch (1 line)
         } catch (ex: Exception) {
-            throw DependencyResolutionException(
-                DependencyResult(dreq),
-                IllegalArgumentException( //Logger.format(
-                    //        "failed to load '%s' from %[list]s into %s",
-                    //        dreq.getCollectRequest().getRoot(),
-                    //        Aether.reps(dreq.getCollectRequest().getRepositories()),
-                    //        session.getLocalRepositoryManager()
-                    //                .getRepository()
-                    //                .getBasedir()
-                    //),
-                    ex
-                )
-            )
+            throw wrapException(request, ex)
         }
         return deps
     }
@@ -167,7 +207,7 @@ class AetherResolveSession(
         if (mirrors != null) {
             for (mirror in mirrors) {
                 selector.add(
-                    mirror.id, mirror.url, mirror.layout, false,
+                    mirror.id, mirror.url, mirror.layout, false, false,
                     mirror.mirrorOf, mirror.mirrorOfLayouts
                 )
             }
@@ -191,8 +231,7 @@ class AetherResolveSession(
         if (global != null) {
             request.globalSettingsFile = File(global)
         }
-        val result: SettingsBuildingResult
-        result = try {
+        val result: SettingsBuildingResult = try {
             builder.build(request)
         } catch (ex: SettingsBuildingException) {
             throw IllegalStateException(ex)
@@ -206,13 +245,14 @@ class AetherResolveSession(
     ): Settings {
         var main = result.effectiveSettings
         val files = File(System.getProperty("user.dir"))
-            .parentFile.listFiles(
+            .parentFile?.listFiles(
                 NameFileFilter("interpolated-settings.xml") as FileFilter
             )
-        if (files.size == 1) {
+        val settingsFile = files?.singleOrNull()
+        if (settingsFile != null) {
             val irequest =
                 DefaultSettingsBuildingRequest()
-            irequest.userSettingsFile = files[0]
+            irequest.userSettingsFile = settingsFile
             main = try {
                 val isettings = builder.build(irequest)
                     .effectiveSettings

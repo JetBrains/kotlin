@@ -15,7 +15,7 @@ class Outer <!WRONG_MODIFIER_TARGET!>expect<!> constructor() {
 
 fun foo() {
     <!NON_MEMBER_FUNCTION_NO_BODY!><!WRONG_MODIFIER_TARGET!>expect<!> fun localFun()<!>
-    <!WRONG_MODIFIER_TARGET!>expect<!> var <!UNUSED_VARIABLE!>x<!> = 42
+    <!WRONG_MODIFIER_TARGET!>expect<!> var x = 42
     <!WRONG_MODIFIER_TARGET!>expect<!> class Bar
 }
 
@@ -30,6 +30,6 @@ class Outer <!ACTUAL_WITHOUT_EXPECT!>actual constructor()<!> {
 
 fun foo() {
     <!WRONG_MODIFIER_TARGET!>actual<!> fun localFun() {}
-    <!WRONG_MODIFIER_TARGET!>actual<!> var <!UNUSED_VARIABLE!>x<!> = 42
+    <!WRONG_MODIFIER_TARGET!>actual<!> var x = 42
     <!WRONG_MODIFIER_TARGET!>actual<!> class <!ACTUAL_WITHOUT_EXPECT!>Bar<!>
 }

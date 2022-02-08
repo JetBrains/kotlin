@@ -14,7 +14,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 public class AsmTypes {
     private static final Map<Class<?>, Type> TYPES_MAP = new HashMap<>();

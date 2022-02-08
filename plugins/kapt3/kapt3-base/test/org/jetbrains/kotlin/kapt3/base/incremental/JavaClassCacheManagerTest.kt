@@ -12,7 +12,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import java.io.File
-import java.io.ObjectOutputStream
 
 class JavaClassCacheManagerTest {
 
@@ -56,7 +55,8 @@ class JavaClassCacheManagerTest {
         }
         prepareForIncremental()
 
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(File("Mentioned.java")), emptyList()) as SourcesToReprocess.Incremental
+        val dirtyFiles =
+            cache.invalidateAndGetDirtyFiles(listOf(File("Mentioned.java").absoluteFile), emptyList()) as SourcesToReprocess.Incremental
         assertEquals(
             listOf(
                 File("Mentioned.java").absoluteFile,
@@ -84,7 +84,8 @@ class JavaClassCacheManagerTest {
         }
         prepareForIncremental()
 
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(File("Mentioned.java")), emptyList()) as SourcesToReprocess.Incremental
+        val dirtyFiles =
+            cache.invalidateAndGetDirtyFiles(listOf(File("Mentioned.java").absoluteFile), emptyList()) as SourcesToReprocess.Incremental
         assertEquals(
             listOf(
                 File("Mentioned.java").absoluteFile,
@@ -112,7 +113,8 @@ class JavaClassCacheManagerTest {
         }
         prepareForIncremental()
 
-        val dirtyFiles = cache.invalidateAndGetDirtyFiles(listOf(File("TwoTypes.java")), emptyList()) as SourcesToReprocess.Incremental
+        val dirtyFiles =
+            cache.invalidateAndGetDirtyFiles(listOf(File("TwoTypes.java").absoluteFile), emptyList()) as SourcesToReprocess.Incremental
         assertEquals(
             listOf(
                 File("TwoTypes.java").absoluteFile,
@@ -155,36 +157,12 @@ class JavaClassCacheManagerTest {
 
         val dirtyFiles =
             cache.invalidateAndGetDirtyFiles(
-                listOf(File("Constants.java")), emptyList()
+                listOf(File("Constants.java").absoluteFile), emptyList()
             ) as SourcesToReprocess.Incremental
         assertEquals(
             listOf(File("Constants.java").absoluteFile, File("MentionsConst.java").absoluteFile),
             dirtyFiles.toReprocess
         )
-    }
-
-    @Test
-    fun testWithAnnotations() {
-        SourceFileStructure(File("Annotated1.java").toURI()).also {
-            it.addDeclaredType("test.Annotated1")
-            it.addMentionedAnnotations("test.Annotation")
-            cache.javaCache.addSourceStructure(it)
-        }
-        SourceFileStructure(File("Annotated2.java").toURI()).also {
-            it.addDeclaredType("test.Annotated2")
-            it.addMentionedAnnotations("com.test.MyAnnotation")
-            cache.javaCache.addSourceStructure(it)
-        }
-        SourceFileStructure(File("Annotated3.java").toURI()).also {
-            it.addDeclaredType("test.Annotated3")
-            it.addMentionedAnnotations("Runnable")
-            cache.javaCache.addSourceStructure(it)
-        }
-        prepareForIncremental()
-
-        assertEquals(setOf(File("Annotated1.java").absoluteFile), cache.javaCache.invalidateEntriesAnnotatedWith(setOf("test.Annotation")))
-        assertEquals(setOf(File("Annotated2.java").absoluteFile), cache.javaCache.invalidateEntriesAnnotatedWith(setOf("com.test.*")))
-        assertEquals(setOf(File("Annotated3.java").absoluteFile), cache.javaCache.invalidateEntriesAnnotatedWith(setOf("*")))
     }
 
     private fun prepareForIncremental() {

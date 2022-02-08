@@ -16,7 +16,10 @@ import kotlin.concurrent.read
 import kotlin.concurrent.write
 import kotlin.script.experimental.api.KotlinType
 
-class ReplImplicitsExtensionsResolutionFilter : ImplicitsExtensionsResolutionFilter {
+class ReplImplicitsExtensionsResolutionFilter(
+    classesToSkip: Collection<KotlinType> = emptyList(),
+    classesToSkipAfterFirstTime: Collection<KotlinType> = emptyList()
+) : ImplicitsExtensionsResolutionFilter {
     private val lock = ReentrantReadWriteLock()
     private var classesToSkipNames: Set<String> = emptySet()
     private var classesToSkipFirstTimeNames: Set<String> = emptySet()
@@ -29,13 +32,18 @@ class ReplImplicitsExtensionsResolutionFilter : ImplicitsExtensionsResolutionFil
         classesToSkipFirstTimeNames = classesToSkipAfterFirstTime.mapTo(hashSetOf()) { it.typeName }
     }
 
+    init {
+        update(classesToSkip, classesToSkipAfterFirstTime)
+    }
+
     override fun getScopesWithInfo(
         scopes: Sequence<HierarchicalScope>
     ): Sequence<ScopeWithImplicitsExtensionsResolutionInfo> {
         val processedReceivers = mutableSetOf<String>()
         return scopes.map { scope ->
-            val receiver = (scope as? LexicalScope)?.implicitReceiver?.value
-            val keep = receiver?.let {
+            val receivers = (if (scope is LexicalScope) listOfNotNull(scope.implicitReceiver) + scope.contextReceiversGroup else null)
+                ?.map { it.value }
+            val keep = receivers?.all {
                 lock.read {
                     when (val descriptorFqName = (it as? ImplicitClassReceiver)?.declarationDescriptor?.fqNameSafe?.asString()) {
                         null -> true

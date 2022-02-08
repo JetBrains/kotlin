@@ -1,4 +1,0 @@
-import A
-
-object A {
-}

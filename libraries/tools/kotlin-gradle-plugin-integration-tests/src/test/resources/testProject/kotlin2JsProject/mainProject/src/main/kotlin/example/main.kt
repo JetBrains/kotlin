@@ -1,6 +1,6 @@
 package example
 
-import kotlin.browser.document
+import kotlinx.browser.document
 import example.library.Counter
 
 

@@ -1,3 +1,0 @@
-class Test(private vararg val a: String) {
-    val size = a.size
-}

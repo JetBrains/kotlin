@@ -1,0 +1,22 @@
+package
+
+package test {
+
+    public final annotation class Ann : kotlin.Annotation {
+        public constructor Ann(/*0*/ b1: kotlin.Byte, /*1*/ b2: kotlin.Byte, /*2*/ b3: kotlin.Byte, /*3*/ b4: kotlin.Byte)
+        public final val b1: kotlin.Byte
+        public final val b2: kotlin.Byte
+        public final val b3: kotlin.Byte
+        public final val b4: kotlin.Byte
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    @test.Ann(b1 = 1.toByte(), b2 = 1.toByte(), b3 = -128.toByte(), b4 = 128) public final class MyClass {
+        public constructor MyClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

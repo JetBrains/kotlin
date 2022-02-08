@@ -5,27 +5,34 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
-import org.jetbrains.kotlin.backend.common.LoggingContext
-import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
+import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
+import org.jetbrains.kotlin.backend.common.serialization.IrFileSerializer
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
 
 class JsIrFileSerializer(
-    logger: LoggingContext,
+    messageLogger: IrMessageLogger,
     declarationTable: DeclarationTable,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
+    compatibilityMode: CompatibilityMode,
     skipExpects: Boolean,
-    bodiesOnlyForInlines: Boolean = false
+    bodiesOnlyForInlines: Boolean = false,
+    normalizeAbsolutePaths: Boolean,
+    sourceBaseDirs: Collection<String>
 ) : IrFileSerializer(
-    logger,
+    messageLogger,
     declarationTable,
     expectDescriptorToSymbol,
+    compatibilityMode,
     bodiesOnlyForInlines = bodiesOnlyForInlines,
-    skipExpects = skipExpects
+    skipExpects = skipExpects,
+    normalizeAbsolutePaths = normalizeAbsolutePaths,
+    sourceBaseDirs = sourceBaseDirs
 ) {
     companion object {
         private val JS_EXPORT_FQN = FqName("kotlin.js.JsExport")

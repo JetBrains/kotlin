@@ -87,7 +87,7 @@ class AnnotationSplitter(
             val (targeted, other) = this@AnnotationSplitter.splitAnnotations()
 
             if (target != null) {
-                targeted[target]?.let((Annotations)::create) ?: Annotations.EMPTY
+                targeted[target]?.let(Annotations.Companion::create) ?: Annotations.EMPTY
             } else {
                 other
             }

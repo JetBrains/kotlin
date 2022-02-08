@@ -1,0 +1,23 @@
+FILE: exposedFunctionParameterType.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final class AInner : R|kotlin/Any| {
+            public constructor(): R|A.AInner| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(value: <ERROR TYPE REF: HIDDEN: A.AInner is invisible>): R|kotlin/Unit| {
+        }
+
+    }

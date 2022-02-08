@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-import org.gradle.api.Task
+import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 
 internal fun isConfigurationCacheAvailable(gradle: Gradle) =
@@ -16,18 +16,13 @@ internal fun isConfigurationCacheAvailable(gradle: Gradle) =
         null
     } ?: false
 
-internal fun Task.disableTaskOnConfigurationCacheBuild(transientFieldAccessor: () -> Unit) {
-    if (isConfigurationCacheAvailable(project.gradle)) {
-        onlyIf {
-            logger.warn("Configuration cache is not yet fully supported: use it at your own risk.")
-            try {
-                // transientFieldAccessor() will throw an exception after loading task from configuration cache
-                transientFieldAccessor()
-                true
-            } catch (e: Exception) {
-                logger.warn("Task cannot be executed because of corrupted state after loading from configuration cache.")
-                false
-            }
-        }
+internal fun Project.getSystemProperty(key: String): String? {
+    return if (isConfigurationCacheAvailable(gradle)) {
+        providers.systemProperty(key).forUseAtConfigurationTime().orNull
+    } else {
+        System.getProperty(key)
     }
 }
+
+internal fun unavailableValueError(propertyName: String): Nothing =
+    error("'$propertyName' should be available at configuration time but unavailable on configuration cache reuse")

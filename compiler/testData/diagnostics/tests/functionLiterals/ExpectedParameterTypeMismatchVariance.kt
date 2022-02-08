@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER
 package a
 
@@ -16,6 +15,6 @@ fun test(s: Sub) {
         t: Trait -> s
     }
 
-    foo(<!NI;TYPE_MISMATCH, TYPE_MISMATCH!>fun(<!EXPECTED_PARAMETER_TYPE_MISMATCH!>t: Sub<!>) = s<!>)
+    foo(<!TYPE_MISMATCH, TYPE_MISMATCH!>fun(<!EXPECTED_PARAMETER_TYPE_MISMATCH!>t: Sub<!>) = s<!>)
     foo(<!TYPE_MISMATCH!>fun(t): Super = s<!>)
 }

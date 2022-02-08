@@ -1,3 +1,8 @@
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+@kotlin.internal.InlineOnly
+public val kotlin.Char.code: kotlin.Int { get; }
+
 @kotlin.SinceKotlin(version = "1.2")
 @kotlin.internal.InlineOnly
 public val kotlin.reflect.KProperty0<*>.isInitialized: kotlin.Boolean { get; }
@@ -5,7 +10,17 @@ public val kotlin.reflect.KProperty0<*>.isInitialized: kotlin.Boolean { get; }
 @kotlin.SinceKotlin(version = "1.4")
 public val kotlin.Throwable.suppressedExceptions: kotlin.collections.List<kotlin.Throwable> { get; }
 
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
+public inline fun Char(code: kotlin.Int): kotlin.Char
+
+/*∆*/ @kotlin.SinceKotlin(version = "1.5")
+/*∆*/ @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+@kotlin.internal.InlineOnly
+/*∆*/ public inline fun Char(code: kotlin.UShort): kotlin.Char
+/*∆*/ 
+/*∆*/ @kotlin.internal.InlineOnly
 public inline fun TODO(): kotlin.Nothing
 
 @kotlin.internal.InlineOnly
@@ -140,6 +155,8 @@ public inline fun <R> runCatching(block: () -> R): kotlin.Result<R>
 @kotlin.SinceKotlin(version = "1.2")
 public inline fun <R> suspend(noinline block: suspend () -> R): suspend () -> R
 
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.6")
+@kotlin.Deprecated(message = "Synchronization on any object is not supported in Kotlin/JS", replaceWith = kotlin.ReplaceWith(expression = "run(block)", imports = {}))
 @kotlin.internal.InlineOnly
 public inline fun <R> synchronized(lock: kotlin.Any, block: () -> R): R
 
@@ -176,6 +193,10 @@ public inline fun <T> T.also(block: (T) -> kotlin.Unit): T
 @kotlin.internal.InlineOnly
 public inline fun <T> T.apply(block: T.() -> kotlin.Unit): T
 
+@kotlin.internal.InlineOnly
+@kotlin.SinceKotlin(version = "1.6")
+public inline infix fun <T> kotlin.Comparable<T>.compareTo(other: T): kotlin.Int
+
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
@@ -195,27 +216,23 @@ public fun kotlin.Long.countLeadingZeroBits(): kotlin.Int
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Short.countLeadingZeroBits(): kotlin.Int
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByte.countLeadingZeroBits(): kotlin.Int
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UInt.countLeadingZeroBits(): kotlin.Int
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULong.countLeadingZeroBits(): kotlin.Int
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShort.countLeadingZeroBits(): kotlin.Int
 
@@ -237,27 +254,23 @@ public fun kotlin.Long.countOneBits(): kotlin.Int
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Short.countOneBits(): kotlin.Int
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByte.countOneBits(): kotlin.Int
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UInt.countOneBits(): kotlin.Int
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULong.countOneBits(): kotlin.Int
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShort.countOneBits(): kotlin.Int
 
@@ -279,29 +292,89 @@ public fun kotlin.Long.countTrailingZeroBits(): kotlin.Int
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Short.countTrailingZeroBits(): kotlin.Int
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByte.countTrailingZeroBits(): kotlin.Int
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UInt.countTrailingZeroBits(): kotlin.Int
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULong.countTrailingZeroBits(): kotlin.Int
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShort.countTrailingZeroBits(): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Byte.floorDiv(other: kotlin.Byte): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Byte.floorDiv(other: kotlin.Int): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Byte.floorDiv(other: kotlin.Long): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Byte.floorDiv(other: kotlin.Short): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Int.floorDiv(other: kotlin.Byte): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Int.floorDiv(other: kotlin.Int): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Int.floorDiv(other: kotlin.Long): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Int.floorDiv(other: kotlin.Short): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Long.floorDiv(other: kotlin.Byte): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Long.floorDiv(other: kotlin.Int): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Long.floorDiv(other: kotlin.Long): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Long.floorDiv(other: kotlin.Short): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Short.floorDiv(other: kotlin.Byte): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Short.floorDiv(other: kotlin.Int): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Short.floorDiv(other: kotlin.Long): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Short.floorDiv(other: kotlin.Short): kotlin.Int
 
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin(version = "1.3")
@@ -369,6 +442,86 @@ public inline fun <R, T> kotlin.Result<T>.map(transform: (value: T) -> R): kotli
 @kotlin.SinceKotlin(version = "1.3")
 public inline fun <R, T> kotlin.Result<T>.mapCatching(transform: (value: T) -> R): kotlin.Result<R>
 
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Byte.mod(other: kotlin.Byte): kotlin.Byte
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Byte.mod(other: kotlin.Int): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Byte.mod(other: kotlin.Long): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Byte.mod(other: kotlin.Short): kotlin.Short
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Double.mod(other: kotlin.Double): kotlin.Double
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Double.mod(other: kotlin.Float): kotlin.Double
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Float.mod(other: kotlin.Double): kotlin.Double
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Float.mod(other: kotlin.Float): kotlin.Float
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Int.mod(other: kotlin.Byte): kotlin.Byte
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Int.mod(other: kotlin.Int): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Int.mod(other: kotlin.Long): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Int.mod(other: kotlin.Short): kotlin.Short
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Long.mod(other: kotlin.Byte): kotlin.Byte
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Long.mod(other: kotlin.Int): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Long.mod(other: kotlin.Long): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Long.mod(other: kotlin.Short): kotlin.Short
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Short.mod(other: kotlin.Byte): kotlin.Byte
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Short.mod(other: kotlin.Int): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Short.mod(other: kotlin.Long): kotlin.Long
+
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.internal.InlineOnly
+public inline fun kotlin.Short.mod(other: kotlin.Short): kotlin.Short
+
 @kotlin.internal.InlineOnly
 @kotlin.SinceKotlin(version = "1.3")
 public inline fun <T> kotlin.Result<T>.onFailure(action: (exception: kotlin.Throwable) -> kotlin.Unit): kotlin.Result<T>
@@ -390,84 +543,76 @@ public inline fun <R, T : R> kotlin.Result<T>.recover(transform: (exception: kot
 @kotlin.SinceKotlin(version = "1.3")
 public inline fun <R, T : R> kotlin.Result<T>.recoverCatching(transform: (exception: kotlin.Throwable) -> R): kotlin.Result<R>
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.Byte.rotateLeft(bitCount: kotlin.Int): kotlin.Byte
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.Int.rotateLeft(bitCount: kotlin.Int): kotlin.Int
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.Long.rotateLeft(bitCount: kotlin.Int): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.Short.rotateLeft(bitCount: kotlin.Int): kotlin.Short
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class, kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByte.rotateLeft(bitCount: kotlin.Int): kotlin.UByte
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class, kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UInt.rotateLeft(bitCount: kotlin.Int): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class, kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULong.rotateLeft(bitCount: kotlin.Int): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class, kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShort.rotateLeft(bitCount: kotlin.Int): kotlin.UShort
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.Byte.rotateRight(bitCount: kotlin.Int): kotlin.Byte
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.Int.rotateRight(bitCount: kotlin.Int): kotlin.Int
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Long.rotateRight(bitCount: kotlin.Int): kotlin.Long
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public fun kotlin.Short.rotateRight(bitCount: kotlin.Int): kotlin.Short
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class, kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByte.rotateRight(bitCount: kotlin.Int): kotlin.UByte
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class, kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UInt.rotateRight(bitCount: kotlin.Int): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class, kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULong.rotateRight(bitCount: kotlin.Int): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalStdlibApi
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.6")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class, kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShort.rotateRight(bitCount: kotlin.Int): kotlin.UShort
 
@@ -507,27 +652,23 @@ public fun kotlin.Long.takeHighestOneBit(): kotlin.Long
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Short.takeHighestOneBit(): kotlin.Short
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByte.takeHighestOneBit(): kotlin.UByte
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UInt.takeHighestOneBit(): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULong.takeHighestOneBit(): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShort.takeHighestOneBit(): kotlin.UShort
 
@@ -553,27 +694,23 @@ public fun kotlin.Long.takeLowestOneBit(): kotlin.Long
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Short.takeLowestOneBit(): kotlin.Short
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UByte.takeLowestOneBit(): kotlin.UByte
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UInt.takeLowestOneBit(): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.ULong.takeLowestOneBit(): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.4")
-@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class, kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShort.takeLowestOneBit(): kotlin.UShort
 
@@ -605,103 +742,103 @@ public fun kotlin.Float.toRawBits(): kotlin.Int
 
 public fun kotlin.Any?.toString(): kotlin.String
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Byte.toUByte(): kotlin.UByte
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Int.toUByte(): kotlin.UByte
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Long.toUByte(): kotlin.UByte
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Short.toUByte(): kotlin.UByte
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Byte.toUInt(): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Double.toUInt(): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Float.toUInt(): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Int.toUInt(): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Long.toUInt(): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Short.toUInt(): kotlin.UInt
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Byte.toULong(): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Double.toULong(): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Float.toULong(): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Int.toULong(): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Long.toULong(): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Short.toULong(): kotlin.ULong
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Byte.toUShort(): kotlin.UShort
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Int.toUShort(): kotlin.UShort
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Long.toUShort(): kotlin.UShort
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Short.toUShort(): kotlin.UShort
 
@@ -882,6 +1019,8 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
 
     public open override fun toByte(): kotlin.Byte
 
+    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public open override fun toChar(): kotlin.Char
 
     public open override fun toDouble(): kotlin.Double
@@ -940,18 +1079,30 @@ public final class Char : kotlin.Comparable<kotlin.Char> {
 
     public final operator fun rangeTo(other: kotlin.Char): kotlin.ranges.CharRange
 
+    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toByte()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public final fun toByte(): kotlin.Byte
 
     public final fun toChar(): kotlin.Char
 
+    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toDouble()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public final fun toDouble(): kotlin.Double
 
+    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toFloat()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public final fun toFloat(): kotlin.Float
 
+    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public final fun toInt(): kotlin.Int
 
+    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toLong()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public final fun toLong(): kotlin.Long
 
+    @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toShort()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public final fun toShort(): kotlin.Short
 
     public companion object of Char {
@@ -1036,6 +1187,14 @@ public open class ConcurrentModificationException : kotlin.RuntimeException {
     public constructor ConcurrentModificationException(cause: kotlin.Throwable?)
 }
 
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE})
+@kotlin.annotation.MustBeDocumented
+public final annotation class ContextFunctionTypeParams : kotlin.Annotation {
+    public constructor ContextFunctionTypeParams(count: kotlin.Int)
+
+    public final val count: kotlin.Int { get; }
+}
+
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalStdlibApi
 public final class DeepRecursiveFunction<T, R> {
@@ -1046,6 +1205,8 @@ public final class DeepRecursiveFunction<T, R> {
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.ExperimentalStdlibApi
 public sealed class DeepRecursiveScope<T, R> {
+    protected constructor DeepRecursiveScope<T, R>()
+
     public abstract suspend fun callRecursive(value: T): R
 
     public abstract suspend fun <U, S> kotlin.DeepRecursiveFunction<U, S>.callRecursive(value: U): S
@@ -1171,8 +1332,11 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public final operator fun times(other: kotlin.Short): kotlin.Double
 
     @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toByte()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.3")
     public open override fun toByte(): kotlin.Byte
 
+    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public open override fun toChar(): kotlin.Char
 
     public open override fun toDouble(): kotlin.Double
@@ -1184,6 +1348,7 @@ public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public open override fun toLong(): kotlin.Long
 
     @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toShort()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.3")
     public open override fun toShort(): kotlin.Short
 
     public final operator fun unaryMinus(): kotlin.Double
@@ -1275,6 +1440,7 @@ public open class Exception : kotlin.Throwable {
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS})
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
 @kotlin.SinceKotlin(version = "1.2")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.6", warningSince = "1.4")
 @kotlin.Deprecated(message = "Please use RequiresOptIn instead.")
 public final annotation class Experimental : kotlin.Annotation {
     public constructor Experimental(level: kotlin.Experimental.Level = ...)
@@ -1288,7 +1454,6 @@ public final annotation class Experimental : kotlin.Annotation {
     }
 }
 
-@kotlin.Experimental
 @kotlin.RequiresOptIn
 @kotlin.annotation.MustBeDocumented
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS})
@@ -1297,7 +1462,6 @@ public final annotation class ExperimentalMultiplatform : kotlin.Annotation {
     public constructor ExperimentalMultiplatform()
 }
 
-@kotlin.Experimental(level = Level.ERROR)
 @kotlin.RequiresOptIn(level = Level.ERROR)
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS})
@@ -1307,7 +1471,6 @@ public final annotation class ExperimentalStdlibApi : kotlin.Annotation {
     public constructor ExperimentalStdlibApi()
 }
 
-@kotlin.Experimental(level = Level.WARNING)
 @kotlin.RequiresOptIn(level = Level.WARNING)
 @kotlin.annotation.MustBeDocumented
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.ANNOTATION_CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FIELD, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.TYPEALIAS})
@@ -1406,8 +1569,11 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public final operator fun times(other: kotlin.Short): kotlin.Float
 
     @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toByte()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.3")
     public open override fun toByte(): kotlin.Byte
 
+    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public open override fun toChar(): kotlin.Char
 
     public open override fun toDouble(): kotlin.Double
@@ -1419,6 +1585,7 @@ public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public open override fun toLong(): kotlin.Long
 
     @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toShort()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.3")
     public open override fun toShort(): kotlin.Short
 
     public final operator fun unaryMinus(): kotlin.Float
@@ -1788,6 +1955,8 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
 
     public open override fun toByte(): kotlin.Byte
 
+    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = {}))
+    @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public open override fun toChar(): kotlin.Char
 
     public open override fun toDouble(): kotlin.Double
@@ -1978,6 +2147,7 @@ public final annotation class RequiresOptIn : kotlin.Annotation {
 }
 
 @kotlin.SinceKotlin(version = "1.3")
+@kotlin.jvm.JvmInline
 public final inline class Result<out T> : kotlin.io.Serializable {
     public final val isFailure: kotlin.Boolean { get; }
 
@@ -2108,6 +2278,8 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
 
     public open override fun toByte(): kotlin.Byte
 
+    @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = {}))
+/*∆*/     @kotlin.DeprecatedSinceKotlin(warningSince = "1.5")
     public open override fun toChar(): kotlin.Char
 
     public open override fun toDouble(): kotlin.Double
@@ -2223,8 +2395,9 @@ public final data class Triple<out A, out B, out C> : kotlin.io.Serializable {
     public open override fun toString(): kotlin.String
 }
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
+@kotlin.jvm.JvmInline
 public final inline class UByte : kotlin.Comparable<kotlin.UByte> {
     @kotlin.internal.InlineOnly
     public final inline infix fun and(other: kotlin.UByte): kotlin.UByte
@@ -2258,6 +2431,18 @@ public final inline class UByte : kotlin.Comparable<kotlin.UByte> {
 
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UByte): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UInt): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.ULong): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UShort): kotlin.UInt
+
     public open override fun hashCode(): kotlin.Int
 
     @kotlin.internal.InlineOnly
@@ -2277,6 +2462,18 @@ public final inline class UByte : kotlin.Comparable<kotlin.UByte> {
 
     @kotlin.internal.InlineOnly
     public final inline operator fun minus(other: kotlin.UShort): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UByte): kotlin.UByte
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UInt): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.ULong): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UShort): kotlin.UShort
 
     @kotlin.internal.InlineOnly
     public final inline infix fun or(other: kotlin.UByte): kotlin.UByte
@@ -2368,6 +2565,7 @@ public final inline class UByte : kotlin.Comparable<kotlin.UByte> {
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.jvm.JvmInline
 public final inline class UByteArray : kotlin.collections.Collection<kotlin.UByte> {
     public constructor UByteArray(size: kotlin.Int)
 
@@ -2385,15 +2583,16 @@ public final inline class UByteArray : kotlin.collections.Collection<kotlin.UByt
 
     public open override fun isEmpty(): kotlin.Boolean
 
-    public open override operator fun iterator(): kotlin.collections.UByteIterator
+    public open override operator fun iterator(): kotlin.collections.Iterator<kotlin.UByte>
 
     public final operator fun set(index: kotlin.Int, value: kotlin.UByte): kotlin.Unit
 
     public open override fun toString(): kotlin.String
 }
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
+@kotlin.jvm.JvmInline
 public final inline class UInt : kotlin.Comparable<kotlin.UInt> {
     @kotlin.internal.InlineOnly
     public final inline infix fun and(other: kotlin.UInt): kotlin.UInt
@@ -2427,6 +2626,18 @@ public final inline class UInt : kotlin.Comparable<kotlin.UInt> {
 
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UByte): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UInt): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.ULong): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UShort): kotlin.UInt
+
     public open override fun hashCode(): kotlin.Int
 
     @kotlin.internal.InlineOnly
@@ -2446,6 +2657,18 @@ public final inline class UInt : kotlin.Comparable<kotlin.UInt> {
 
     @kotlin.internal.InlineOnly
     public final inline operator fun minus(other: kotlin.UShort): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UByte): kotlin.UByte
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UInt): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.ULong): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UShort): kotlin.UShort
 
     @kotlin.internal.InlineOnly
     public final inline infix fun or(other: kotlin.UInt): kotlin.UInt
@@ -2543,6 +2766,7 @@ public final inline class UInt : kotlin.Comparable<kotlin.UInt> {
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.jvm.JvmInline
 public final inline class UIntArray : kotlin.collections.Collection<kotlin.UInt> {
     public constructor UIntArray(size: kotlin.Int)
 
@@ -2560,15 +2784,16 @@ public final inline class UIntArray : kotlin.collections.Collection<kotlin.UInt>
 
     public open override fun isEmpty(): kotlin.Boolean
 
-    public open override operator fun iterator(): kotlin.collections.UIntIterator
+    public open override operator fun iterator(): kotlin.collections.Iterator<kotlin.UInt>
 
     public final operator fun set(index: kotlin.Int, value: kotlin.UInt): kotlin.Unit
 
     public open override fun toString(): kotlin.String
 }
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
+@kotlin.jvm.JvmInline
 public final inline class ULong : kotlin.Comparable<kotlin.ULong> {
     @kotlin.internal.InlineOnly
     public final inline infix fun and(other: kotlin.ULong): kotlin.ULong
@@ -2602,6 +2827,18 @@ public final inline class ULong : kotlin.Comparable<kotlin.ULong> {
 
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UByte): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UInt): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.ULong): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UShort): kotlin.ULong
+
     public open override fun hashCode(): kotlin.Int
 
     @kotlin.internal.InlineOnly
@@ -2621,6 +2858,18 @@ public final inline class ULong : kotlin.Comparable<kotlin.ULong> {
 
     @kotlin.internal.InlineOnly
     public final inline operator fun minus(other: kotlin.UShort): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UByte): kotlin.UByte
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UInt): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.ULong): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UShort): kotlin.UShort
 
     @kotlin.internal.InlineOnly
     public final inline infix fun or(other: kotlin.ULong): kotlin.ULong
@@ -2718,6 +2967,7 @@ public final inline class ULong : kotlin.Comparable<kotlin.ULong> {
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.jvm.JvmInline
 public final inline class ULongArray : kotlin.collections.Collection<kotlin.ULong> {
     public constructor ULongArray(size: kotlin.Int)
 
@@ -2735,15 +2985,16 @@ public final inline class ULongArray : kotlin.collections.Collection<kotlin.ULon
 
     public open override fun isEmpty(): kotlin.Boolean
 
-    public open override operator fun iterator(): kotlin.collections.ULongIterator
+    public open override operator fun iterator(): kotlin.collections.Iterator<kotlin.ULong>
 
     public final operator fun set(index: kotlin.Int, value: kotlin.ULong): kotlin.Unit
 
     public open override fun toString(): kotlin.String
 }
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.ExperimentalUnsignedTypes
+@kotlin.SinceKotlin(version = "1.5")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalUnsignedTypes::class})
+@kotlin.jvm.JvmInline
 public final inline class UShort : kotlin.Comparable<kotlin.UShort> {
     @kotlin.internal.InlineOnly
     public final inline infix fun and(other: kotlin.UShort): kotlin.UShort
@@ -2777,6 +3028,18 @@ public final inline class UShort : kotlin.Comparable<kotlin.UShort> {
 
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UByte): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UInt): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.ULong): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun floorDiv(other: kotlin.UShort): kotlin.UInt
+
     public open override fun hashCode(): kotlin.Int
 
     @kotlin.internal.InlineOnly
@@ -2796,6 +3059,18 @@ public final inline class UShort : kotlin.Comparable<kotlin.UShort> {
 
     @kotlin.internal.InlineOnly
     public final inline operator fun minus(other: kotlin.UShort): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UByte): kotlin.UByte
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UInt): kotlin.UInt
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.ULong): kotlin.ULong
+
+    @kotlin.internal.InlineOnly
+    public final inline fun mod(other: kotlin.UShort): kotlin.UShort
 
     @kotlin.internal.InlineOnly
     public final inline infix fun or(other: kotlin.UShort): kotlin.UShort
@@ -2887,6 +3162,7 @@ public final inline class UShort : kotlin.Comparable<kotlin.UShort> {
 
 @kotlin.SinceKotlin(version = "1.3")
 @kotlin.ExperimentalUnsignedTypes
+@kotlin.jvm.JvmInline
 public final inline class UShortArray : kotlin.collections.Collection<kotlin.UShort> {
     public constructor UShortArray(size: kotlin.Int)
 
@@ -2904,7 +3180,7 @@ public final inline class UShortArray : kotlin.collections.Collection<kotlin.USh
 
     public open override fun isEmpty(): kotlin.Boolean
 
-    public open override operator fun iterator(): kotlin.collections.UShortIterator
+    public open override operator fun iterator(): kotlin.collections.Iterator<kotlin.UShort>
 
     public final operator fun set(index: kotlin.Int, value: kotlin.UShort): kotlin.Unit
 
@@ -2949,6 +3225,7 @@ public open class UnsupportedOperationException : kotlin.RuntimeException {
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.LOCAL_VARIABLE, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.EXPRESSION, AnnotationTarget.FILE, AnnotationTarget.TYPEALIAS})
 @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE)
 @kotlin.SinceKotlin(version = "1.2")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.6", warningSince = "1.4")
 @kotlin.Deprecated(message = "Please use OptIn instead.", replaceWith = kotlin.ReplaceWith(expression = "OptIn(*markerClass)", imports = {"kotlin.OptIn"}))
 public final annotation class UseExperimental : kotlin.Annotation {
     public constructor UseExperimental(vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation>)

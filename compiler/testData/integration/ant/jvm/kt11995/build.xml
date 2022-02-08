@@ -2,7 +2,7 @@
     <taskdef resource="org/jetbrains/kotlin/ant/antlib.xml" classpath="${kotlin.lib}/kotlin-ant.jar"/>
 
     <target name="build">
-        <kotlinc src="${test.data}/test.kt" classpath="${test.data}/Kt11995.jar" output="${temp}/test.jar" nowarn="true" />
+        <kotlinc src="${test.data}/test.kt" classpath="${test.data}/Kt11995.jar" output="${temp}/test.jar" nowarn="true" includeRuntime="true"/>
 
         <exec executable="java">
             <arg line="-classpath ${temp}/test.jar foo.TestKt"/>

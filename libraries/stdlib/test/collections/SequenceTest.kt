@@ -122,7 +122,7 @@ public class SequenceTest {
         data.forEach {  }
         assertEquals(0, count, "onEach should be executed only when resulting sequence is iterated")
 
-        val sum = newData.sumBy { it.length }
+        val sum = newData.sumOf { it.length }
         assertEquals(sum, count)
     }
 
@@ -718,7 +718,7 @@ public class SequenceTest {
         assertEquals(mapOf("Alice" to 5, "Bob" to 3, "Carol" to 5), itemsWithTheirLength)
 
         val updatedLength =
-            items.drop(1).associateWithTo(itemsWithTheirLength.toMutableMap()) { name -> name.toLowerCase().count { it in "aeuio" }}
+            items.drop(1).associateWithTo(itemsWithTheirLength.toMutableMap()) { name -> name.lowercase().count { it in "aeuio" }}
 
         assertEquals(mapOf("Alice" to 5, "Bob" to 1, "Carol" to 2), updatedLength)
     }
@@ -729,6 +729,20 @@ public class SequenceTest {
 
         val s2: Sequence<Int>? = sequenceOf(1)
         assertEquals(s2, s2.orEmpty())
+    }
+
+    @Test
+    fun firstNotNullOf() {
+        fun Int.isMonodigit(): Boolean = toString().toHashSet().size == 1
+        fun Int.doubleIfNotMonodigit(): Int? = if (this > 9 && this.isMonodigit()) this * 2 else null
+
+        assertEquals(110, fibonacci().firstNotNullOf { it.doubleIfNotMonodigit() })
+        assertEquals(110, fibonacci().firstNotNullOfOrNull { it.doubleIfNotMonodigit() })
+
+        assertFailsWith<NoSuchElementException> {
+            fibonacci().take(10).firstNotNullOf<Int, Int> { it.doubleIfNotMonodigit() }
+        }
+        assertNull(fibonacci().take(10).firstNotNullOfOrNull { it.doubleIfNotMonodigit() })
     }
 
     /*

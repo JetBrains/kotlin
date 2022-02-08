@@ -1,0 +1,7 @@
+// KT-45676: annotations on backing fields are missing their attribute values
+
+@Target(AnnotationTarget.FIELD)
+annotation class MyFieldAnnotation~MyFieldAnnotation(String)~(val value: String)
+
+@`MyFieldAnnotation(String)`MyFieldAnnotation("SomeStringValue"`:kotlin::String`)
+var myProperty = 0

@@ -1,0 +1,7 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreServices DiskArbitration Foundation IOKit IOSurface Metal Security darwin libkern osx posix
+language = Objective-C
+package = platform.MLCompute
+
+modules = MLCompute
+compilerOpts = -framework MLCompute
+linkerOpts = -framework MLCompute

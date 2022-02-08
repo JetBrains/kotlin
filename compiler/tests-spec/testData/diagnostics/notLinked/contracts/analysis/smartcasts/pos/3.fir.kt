@@ -1,4 +1,4 @@
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 
 // FILE: contracts.kt
 
@@ -93,7 +93,7 @@ fun case_1(value_1: Any?, value_2: Any?) {
 fun case_2(value_1: Any?, value_2: Any?) {
     contracts.case_2(value_1, value_2)
     println(value_1.length)
-    <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
 }
 
 // TESTCASE NUMBER: 3
@@ -102,9 +102,9 @@ class case_3_class {
     fun case_3(value_1: Any?, value_2: Number?) {
         val o = case_3_class()
         contracts.case_3(value_1, value_2, o.prop_1, this.prop_1)
-        <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
-        println(value_2?.toByte())
-        <!AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
+        println(value_1.dec())
+        println(<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte()<!>)
+        println(o.prop_1.plus(3))
     }
 }
 
@@ -132,19 +132,19 @@ fun case_4(value_1: Any?, value_2: Any?) {
 fun case_5(value_1: Any?, value_2: Any?) {
     if (contracts.case_5_1(value_1, value_2)) {
         println(value_1.length)
-        <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (!contracts.case_5_2(value_1, value_2)) {
         println(value_1.length)
-        <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (contracts.case_5_3(value_1, value_2) != null) {
         println(value_1.length)
-        <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
     if (contracts.case_5_4(value_1, value_2) == null) {
         println(value_1.length)
-        <!AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
+        <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value_2?.<!UNRESOLVED_REFERENCE!>toByte<!>())
     }
 }
 
@@ -154,24 +154,24 @@ class case_6_class {
     fun case_6(value_1: Any?, value_2: Number?) {
         val o = case_6_class()
         if (contracts.case_6_1(value_1, value_2, o.prop_1, this.prop_1)) {
-            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
-            println(value_2?.toByte())
-            <!AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
+            println(value_1.dec())
+            println(<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte()<!>)
+            println(o.prop_1.plus(3))
         }
         if (!contracts.case_6_2(value_1, value_2, o.prop_1, this.prop_1)) {
-            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
-            println(value_2?.toByte())
-            <!AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
+            println(value_1.dec())
+            println(<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte()<!>)
+            println(o.prop_1.plus(3))
         }
         if (contracts.case_6_3(value_1, value_2, o.prop_1, this.prop_1) != null) {
-            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
-            println(value_2?.toByte())
-            <!AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
+            println(value_1.dec())
+            println(<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte()<!>)
+            println(o.prop_1.plus(3))
         }
         if (contracts.case_6_4(value_1, value_2, o.prop_1, this.prop_1) == null) {
-            <!AMBIGUITY!>println<!>(value_1.<!UNRESOLVED_REFERENCE!>dec<!>())
-            println(value_2?.toByte())
-            <!AMBIGUITY!>println<!>(o.prop_1.<!NONE_APPLICABLE!>plus<!>(3))
+            println(value_1.dec())
+            println(<!SAFE_CALL_WILL_CHANGE_NULLABILITY!>value_2<!UNNECESSARY_SAFE_CALL!>?.<!>toByte()<!>)
+            println(o.prop_1.plus(3))
         }
     }
 }

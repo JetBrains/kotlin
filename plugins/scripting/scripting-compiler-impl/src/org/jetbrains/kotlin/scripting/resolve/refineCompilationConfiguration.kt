@@ -16,7 +16,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.testFramework.LightVirtualFile
-import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtFile
@@ -34,6 +33,7 @@ import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.host.*
+import kotlin.script.experimental.impl.internalScriptingRunSuspend
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.compat.mapToDiagnostics
 import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
@@ -103,7 +103,7 @@ class ScriptLightVirtualFile(name: String, private val _path: String?, text: Str
 
     override fun getPath(): String = _path ?: if (parent != null) parent.path + "/" + name else name
 
-    override fun getCanonicalPath(): String? = path
+    override fun getCanonicalPath() = path
 }
 
 abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
@@ -148,7 +148,7 @@ abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
         override val importedScripts: List<SourceCode>
             get() = configuration?.get(ScriptCompilationConfiguration.importScripts).orEmpty()
 
-        @Suppress("OverridingDeprecatedMember")
+        @Suppress("OverridingDeprecatedMember", "OVERRIDE_DEPRECATION")
         override val legacyDependencies: ScriptDependencies?
             get() = configuration?.toDependencies(dependenciesClassPath)
 
@@ -162,7 +162,7 @@ abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
         }
     }
 
-    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
     class FromLegacy(
         script: SourceCode,
         override val legacyDependencies: ScriptDependencies?,
@@ -187,8 +187,8 @@ abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
         override val configuration: ScriptCompilationConfiguration?
             get() {
                 val legacy = legacyDependencies ?: return null
-                return definition?.compilationConfiguration?.let {
-                    ScriptCompilationConfiguration(it) {
+                return definition?.compilationConfiguration?.let { config ->
+                    ScriptCompilationConfiguration(config) {
                         updateClasspath(legacy.classpath)
                         defaultImports.append(legacy.imports)
                         importScripts.append(legacy.scripts.map { FileScriptSource(it) })
@@ -221,13 +221,14 @@ typealias ScriptCompilationConfigurationResult = ResultWithDiagnostics<ScriptCom
 fun refineScriptCompilationConfiguration(
     script: SourceCode,
     definition: ScriptDefinition,
-    project: Project
+    project: Project,
+    providedConfiguration: ScriptCompilationConfiguration? = null // if null - take from definition
 ): ScriptCompilationConfigurationResult {
     // TODO: add location information on refinement errors
     val ktFileSource = script.toKtFileSource(definition, project)
     val legacyDefinition = definition.asLegacyOrNull<KotlinScriptDefinition>()
     if (legacyDefinition == null) {
-        val compilationConfiguration = definition.compilationConfiguration
+        val compilationConfiguration = providedConfiguration ?: definition.compilationConfiguration
         val collectedData =
             runReadAction {
                 getScriptCollectedData(ktFileSource.ktFile, compilationConfiguration, project, definition.contextClassLoader)
@@ -254,7 +255,8 @@ fun refineScriptCompilationConfiguration(
                 // runBlocking is using there to avoid loading dependencies asynchronously
                 // because it leads to starting more than one gradle daemon in case of resolving dependencies in build.gradle.kts
                 // It is more efficient to use one hot daemon consistently than multiple daemon in parallel
-                runBlocking {
+                @Suppress("DEPRECATION_ERROR")
+                internalScriptingRunSuspend {
                     resolver.resolveAsync(scriptContents, environment)
                 }
             } else {
@@ -352,8 +354,8 @@ fun getScriptCollectedData(
     val hostConfiguration =
         compilationConfiguration[ScriptCompilationConfiguration.hostConfiguration] ?: defaultJvmScriptingHostConfiguration
     val getScriptingClass = hostConfiguration[ScriptingHostConfiguration.getScriptingClass]
-    val jvmGetScriptingClass = (getScriptingClass as? JvmGetScriptingClass)
-        ?: throw IllegalArgumentException("Expecting JvmGetScriptingClass in the hostConfiguration[getScriptingClass], got $getScriptingClass")
+    val jvmGetScriptingClass = (getScriptingClass as? GetScriptingClassByClassLoader)
+        ?: throw IllegalArgumentException("Expecting class implementing GetScriptingClassByClassLoader in the hostConfiguration[getScriptingClass], got $getScriptingClass")
     val acceptedAnnotations =
         compilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.flatMap {
             it.annotations.mapNotNull { ann ->

@@ -7,9 +7,9 @@ annotation class A
 @A
 open class B1 {
     @A
-    <!INCOMPATIBLE_MODIFIERS!>private<!> <!INCOMPATIBLE_MODIFIERS!>open<!> fun foo() {}
+    private open fun foo() {}
 }
 
 class D1 : B1() {
-    override fun foo() {}
+    <!NOTHING_TO_OVERRIDE!>override<!> fun foo() {}
 }

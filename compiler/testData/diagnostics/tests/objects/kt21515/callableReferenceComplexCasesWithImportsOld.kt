@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: -ProhibitVisibilityOfNestedClassifiersFromSupertypesOfCompanion
 
 import A.Base.Companion.FromABaseCompanion
@@ -53,7 +54,7 @@ object C {
     }
 
     class Derived : Base() {
-        val a = FromCBaseCompanion::<!UNRESOLVED_REFERENCE!>foo<!>
+        val a = FromCBaseCompanion::foo
     }
 }
 

@@ -1,12 +1,11 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_GENERATED
-// !LANGUAGE: +InlineClasses
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 data class RGBA(val rgba: Int)
 
-inline class RgbaArray(val array: IntArray) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class RgbaArray(val array: IntArray) {
     val size: Int get() = array.size
 
     fun fill(value: RGBA, start: Int = 0, end: Int = this.size): Unit = array.fill(value.rgba, start, end)

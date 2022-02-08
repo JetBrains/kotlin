@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ProhibitInvisibleAbstractMethodsInSuperclasses
 // MODULE: base
 // FILE: Base.kt
@@ -27,9 +28,9 @@ package impl
 import base.*
 import intermediate.*
 
-<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>class ImplDirectFromBase<!> : Base()
+<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>class ImplDirectFromBase<!> : Base()
 
-<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>object ImplObjDirectFromBase<!> : Base()
+<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>object ImplObjDirectFromBase<!> : Base()
 
 class ImplDirectFromBaseWithOverride : BaseWithOverride()
 
@@ -37,7 +38,7 @@ class ImplDirectFromBaseWithOverrid : Base() {
     <!CANNOT_OVERRIDE_INVISIBLE_MEMBER!>override<!> fun internalFoo(): String = ""
 }
 
-<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER!>class ImplViaIntermediate<!> : Intermediate()
+<!INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER_ERROR!>class ImplViaIntermediate<!> : Intermediate()
 
 fun foo() {
     ImplDirectFromBase().foo()

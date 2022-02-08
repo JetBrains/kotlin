@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+/* Associate compilations are not yet supported by the IDE. KT-34102 */
 @file:Suppress("invisible_reference", "invisible_member", "FunctionName", "DuplicatedCode")
 
 package org.jetbrains.kotlin.gradle
 
 import com.android.build.gradle.LibraryExtension
-import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.testfixtures.ProjectBuilder
@@ -29,6 +29,7 @@ class JvmAndAndroidIntermediateSourceSetTest {
     @BeforeTest
     fun setup() {
         project = ProjectBuilder.builder().build() as ProjectInternal
+        addBuildEventsListenerRegistryMock(project)
         project.extensions.getByType(ExtraPropertiesExtension::class.java).set("kotlin.mpp.enableGranularSourceSetsMetadata", "true")
 
         project.plugins.apply("kotlin-multiplatform")

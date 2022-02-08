@@ -10,7 +10,7 @@ dependencies {
     api(project(":compiler:fir:cones"))
 
     // Necessary only to store bound PsiElement inside FirElement
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    compileOnly(intellijCore())
 }
 
 sourceSets {
@@ -40,6 +40,7 @@ val generateTree by tasks.registering(NoDebugJavaExec::class) {
     outputs.dirs(generationRoot)
 
     args(generationRoot)
+    workingDir = rootDir
     classpath = generatorClasspath
     main = "org.jetbrains.kotlin.fir.tree.generator.MainKt"
     systemProperties["line.separator"] = "\n"

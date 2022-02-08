@@ -1,5 +1,0 @@
-13 <bold>val v</bold> = c.prop (in foo(I, C))
-13 	val v = <bold>c.prop</bold> (in foo(I, C))
-8 		override <bold>var prop: Int</bold> = 0 (in C)
-8 			override var prop: Int = <bold>0</bold> (in C.prop)
-12 			i.prop = <bold>10</bold> (in foo(I, C))

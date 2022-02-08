@@ -1,0 +1,25 @@
+syntax = "proto2";
+package org.jetbrains.kotlin.backend.jvm.serialization.proto;
+import "compiler/ir/serialization.common/src/KotlinIr.proto";
+
+option java_outer_classname = "JvmIr";
+option optimize_for = LITE_RUNTIME;
+
+/* Stored in JVM .class annotations */
+
+message XStatementOrExpression {
+  oneof kind {
+    common.serialization.proto.IrStatement statement = 1;
+    common.serialization.proto.IrExpression expression = 2;
+  }
+}
+
+message ClassOrFile {
+  repeated common.serialization.proto.IrDeclaration declaration = 1;
+  repeated common.serialization.proto.IrType type = 2;
+  repeated common.serialization.proto.IdSignature signature = 3;
+  repeated string string = 4;
+  repeated XStatementOrExpression body = 5;
+  repeated string debug_info = 6;
+  required string file_facade_fq_name = 7;
+}

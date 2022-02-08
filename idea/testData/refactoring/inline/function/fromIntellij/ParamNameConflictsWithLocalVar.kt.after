@@ -1,9 +1,0 @@
-fun bar(br: Boolean) {
-    val fe = 0
-    if (br) {
-        println(fe)
-    }
-    else {
-        println(11)
-    }
-}

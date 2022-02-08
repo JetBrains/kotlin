@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.logging.kotlinWarn
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.gradle.utils.androidPluginIds
+import org.jetbrains.kotlin.gradle.utils.getOrPut
 import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class KotlinPlatformPluginBase(protected val platformName: String) : Plugin<Project> {
@@ -55,8 +56,8 @@ const val IMPLEMENT_DEPRECATION_WARNING = "The '$IMPLEMENT_CONFIG_NAME' configur
 open class KotlinPlatformImplementationPluginBase(platformName: String) : KotlinPlatformPluginBase(platformName) {
     private val commonProjects = arrayListOf<Project>()
 
-    protected open fun configurationsForCommonModuleDependency(project: Project): List<Configuration> =
-        listOf(project.configurations.getByName("compile"))
+    private fun configurationsForCommonModuleDependency(project: Project): List<Configuration> =
+        listOf(project.configurations.getByName("api"))
 
     override fun apply(project: Project) {
         warnAboutKotlin12xMppDeprecation(project)
@@ -170,12 +171,12 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
             // At the point when the source set in the platform module is created, the task does not exist
             val platformTasks = platformProject.tasks
                 .withType(AbstractKotlinCompile::class.java)
-                .filter { it.sourceSetName == commonSourceSet.name } // TODO use strict check once this code is not run in K/N
+                .filter { it.sourceSetName.get() == commonSourceSet.name } // TODO use strict check once this code is not run in K/N
 
             val commonSources = getKotlinSourceDirectorySetSafe(commonSourceSet)!!
             for (platformTask in platformTasks) {
                 platformTask.source(commonSources)
-                platformTask.commonSourceSet += commonSources
+                platformTask.commonSourceSet.from(commonSources)
             }
         }
     }
@@ -215,19 +216,37 @@ internal fun <T> Project.whenEvaluated(fn: Project.() -> T) {
         return
     }
 
-    /* Make sure that all afterEvaluate blocks from the AndroidPlugin get scheduled first */
-    val isDispatched = AtomicBoolean(false)
-    androidPluginIds.forEach { androidPluginId ->
-        pluginManager.withPlugin(androidPluginId) {
-            if (!isDispatched.getAndSet(true)) {
-                afterEvaluate { fn() }
-            }
+    /** If there's already an Android plugin applied, just dispatch the action to `afterEvaluate`, it gets executed after AGP's actions */
+    if (androidPluginIds.any { pluginManager.hasPlugin(it) }) {
+        afterEvaluate { fn() }
+        return
+    }
+
+    val isDispatchedAfterAndroid = AtomicBoolean(false)
+
+    /**
+     * This queue holds all actions submitted to `whenEvaluated` in this project, waiting for one of the Android plugins to be applied.
+     * After (and if) an Android plugin gets applied, we dispatch all the actions in the queue to `afterEvaluate`, so that they are
+     * executed after what AGP scheduled to `afterEvaluate`. There are different Android plugins, so actions in the queue also need to check
+     * if it's the first Android plugin, using `isDispatched` (each has its own instance).
+     */
+    val afterAndroidDispatchQueue = project.extensions.extraProperties.getOrPut("org.jetbrains.kotlin.whenEvaluated") {
+        val queue = mutableListOf<() -> Unit>()
+        // Trigger the actions on any plugin applied; the actions themselves ensure that they only dispatch the fn once.
+        androidPluginIds.forEach { id ->
+            pluginManager.withPlugin(id) { queue.forEach { it() } }
+        }
+        queue
+    }
+    afterAndroidDispatchQueue.add {
+        if (!isDispatchedAfterAndroid.getAndSet(true)) {
+            afterEvaluate { fn() }
         }
     }
 
     afterEvaluate {
-        /* If no Android plugin was loaded, then the action was not dispatched and we can freely execute it now */
-        if (!isDispatched.getAndSet(true)) {
+        /** If no Android plugin was loaded, then the action was not dispatched, and we can freely execute it now */
+        if (!isDispatchedAfterAndroid.getAndSet(true)) {
             fn()
         }
     }
@@ -238,10 +257,6 @@ open class KotlinPlatformAndroidPlugin : KotlinPlatformImplementationPluginBase(
         project.applyPlugin<KotlinAndroidPluginWrapper>()
         super.apply(project)
     }
-
-    override fun configurationsForCommonModuleDependency(project: Project): List<Configuration> =
-        (project.configurations.findByName("api"))?.let(::listOf)
-            ?: super.configurationsForCommonModuleDependency(project) // older Android plugins don't have api/implementation configs
 
     override fun namedSourceSetsContainer(project: Project): NamedDomainObjectContainer<*> =
         (project.extensions.getByName("android") as BaseExtension).sourceSets

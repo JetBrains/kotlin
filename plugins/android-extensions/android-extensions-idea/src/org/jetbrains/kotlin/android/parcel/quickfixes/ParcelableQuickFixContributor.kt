@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 class ParcelableQuickFixContributor : QuickFixContributor {
     override fun registerQuickFixes(quickFixes: QuickFixes) {
         quickFixes.register(ErrorsAndroid.PARCELABLE_CANT_BE_INNER_CLASS,
-                            RemoveModifierFix.createRemoveModifierFromListOwnerFactory(KtTokens.INNER_KEYWORD, false))
+                            RemoveModifierFix.createRemoveModifierFromListOwnerPsiBasedFactory(KtTokens.INNER_KEYWORD, false))
 
         quickFixes.register(ErrorsAndroid.NO_PARCELABLE_SUPERTYPE, ParcelableAddSupertypeQuickfix.Factory)
         quickFixes.register(ErrorsAndroid.PARCELABLE_SHOULD_HAVE_PRIMARY_CONSTRUCTOR, ParcelableAddPrimaryConstructorQuickfix.Factory)

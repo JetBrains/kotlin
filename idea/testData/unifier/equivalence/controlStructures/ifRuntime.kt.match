@@ -1,7 +1,0 @@
-if ((a) + b > 0) {
-        println(a*(b))
-    }
-
-if (a + b > 0) {
-        println(a*(b))
-    }

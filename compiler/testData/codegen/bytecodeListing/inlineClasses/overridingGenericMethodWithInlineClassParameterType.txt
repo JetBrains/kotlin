@@ -1,3 +1,4 @@
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class CFoo {
     // source: 'overridingGenericMethodWithInlineClassParameterType.kt'
@@ -25,6 +26,7 @@ public interface IFoo {
     public abstract method foo(p0: java.lang.Object): void
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Z {
     // source: 'overridingGenericMethodWithInlineClassParameterType.kt'

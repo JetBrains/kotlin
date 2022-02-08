@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 description = "Kotlin KLIB Library Commonizer"
@@ -14,26 +13,39 @@ configurations {
 }
 
 dependencies {
+    embedded(project(":kotlinx-metadata-klib")) { isTransitive = false }
+    embedded(project(":kotlinx-metadata")) { isTransitive = false }
+    embedded(project(":native:kotlin-klib-commonizer-api")) { isTransitive = false }
+
+    // N.B. The order of "kotlinx-metadata*" dependencies makes sense for runtime classpath
+    // of the "runCommonizer" task. Please, don't mix them up.
+    compileOnly(project(":kotlinx-metadata-klib")) { isTransitive = false }
+    compileOnly(project(":kotlinx-metadata")) { isTransitive = false }
+    compileOnly(project(":native:kotlin-klib-commonizer-api")) { isTransitive = false }
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":compiler:ir.serialization.common"))
     compileOnly(project(":compiler:frontend"))
     compileOnly(project(":native:frontend.native"))
     compileOnly(project(":kotlin-util-klib-metadata"))
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("trove4j") }
+    compileOnly(intellijCore())
+    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
 
     // This dependency is necessary to keep the right dependency record inside of POM file:
     publishedCompile(project(":kotlin-compiler"))
 
     api(kotlinStdlib())
 
-    testImplementation(commonDep("junit:junit"))
+    testImplementation(commonDependency("junit:junit"))
     testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(project(":kotlinx-metadata-klib")) { isTransitive = false }
+    testImplementation(project(":kotlinx-metadata")) { isTransitive = false }
+    testImplementation(project(":native:kotlin-klib-commonizer-api"))
+    testApi(intellijCore())
 }
 
 val runCommonizer by tasks.registering(JavaExec::class) {
     classpath(configurations.compileOnly, sourceSets.main.get().runtimeClasspath)
-    main = "org.jetbrains.kotlin.descriptors.commonizer.cli.CommonizerCLI"
+    main = "org.jetbrains.kotlin.commonizer.cli.CommonizerCLI"
 }
 
 sourceSets {

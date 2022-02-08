@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 // todo problem: intersection types in constrains: A <: Number, B <: Inv<A & Any> =>? B <: Inv<out Number & Any>
@@ -40,29 +40,19 @@ class ConstraintIncorporator(
         fun addNewIncorporatedConstraint(typeVariable: TypeVariableMarker, type: KotlinTypeMarker, constraintContext: ConstraintContext)
     }
 
-    fun incorporateEqualityConstraint(c: Context, typeVariable: TypeVariableMarker, constraint: Constraint) = with(c) {
-        // we shouldn't incorporate recursive constraint -- It is too dangerous
-        if (c.areThereRecursiveConstraints(typeVariable, constraint)) return
-
-        c.directWithVariable(typeVariable, constraint)
-        if (constraint.type.contains { it is TypeVariableTypeConstructorMarker }) {
-            c.otherInsideMyConstraint(typeVariable, constraint)
-        }
-        c.insideOtherConstraint(typeVariable, constraint)
-    }
-
     // \alpha is typeVariable, \beta -- other type variable registered in ConstraintStorage
-    fun incorporateSubtypeConstraint(c: Context, typeVariable: TypeVariableMarker, constraint: Constraint) {
+    fun incorporate(c: Context, typeVariable: TypeVariableMarker, constraint: Constraint) {
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
+
         // we shouldn't incorporate recursive constraint -- It is too dangerous
         if (c.areThereRecursiveConstraints(typeVariable, constraint)) return
 
         c.directWithVariable(typeVariable, constraint)
-        c.otherInsideMyConstraint(typeVariable, constraint)
         c.insideOtherConstraint(typeVariable, constraint)
     }
 
     private fun Context.areThereRecursiveConstraints(typeVariable: TypeVariableMarker, constraint: Constraint) =
-        constraint.type.contains { it.typeConstructor() == typeVariable.freshTypeConstructor() }
+        constraint.type.contains { it.typeConstructor().unwrapStubTypeVariableConstructor() == typeVariable.freshTypeConstructor() }
 
     // A <:(=) \alpha <:(=) B => A <: B
     private fun Context.directWithVariable(
@@ -98,26 +88,6 @@ class ConstraintIncorporator(
         }
     }
 
-    // \alpha <: Inv<\beta>, \beta <: Number => \alpha <: Inv<out Number>
-    private fun Context.otherInsideMyConstraint(
-        typeVariable: TypeVariableMarker,
-        constraint: Constraint
-    ) {
-        val otherInMyConstraint = SmartSet.create<TypeVariableMarker>()
-        constraint.type.contains {
-            otherInMyConstraint.addIfNotNull(this.getTypeVariable(it.typeConstructor()))
-            false
-        }
-
-        for (otherTypeVariable in otherInMyConstraint) {
-            // to avoid ConcurrentModificationException
-            val otherConstraints = SmartList(this.getConstraintsForVariable(otherTypeVariable))
-            for (otherConstraint in otherConstraints) {
-                generateNewConstraint(typeVariable, constraint, otherTypeVariable, otherConstraint)
-            }
-        }
-    }
-
     // \alpha <: Number, \beta <: Inv<\alpha> => \beta <: Inv<out Number>
     private fun Context.insideOtherConstraint(
         typeVariable: TypeVariableMarker,
@@ -126,7 +96,7 @@ class ConstraintIncorporator(
         val freshTypeConstructor = typeVariable.freshTypeConstructor()
         for (typeVariableWithConstraint in this@insideOtherConstraint.allTypeVariablesWithConstraints) {
             val constraintsWhichConstraintMyVariable = typeVariableWithConstraint.constraints.filter {
-                it.type.contains { it.typeConstructor() == freshTypeConstructor }
+                containsTypeVariable(it.type, freshTypeConstructor)
             }
             constraintsWhichConstraintMyVariable.forEach {
                 generateNewConstraint(typeVariableWithConstraint.typeVariable, it, typeVariable, constraint)
@@ -162,7 +132,7 @@ class ConstraintIncorporator(
         otherConstraint: Constraint
     ) {
         val isBaseGenericType = baseConstraint.type.argumentsCount() != 0
-        val isOtherCapturedType = otherConstraint.type.isCapturedType()
+        val isBaseOrOtherCapturedType = baseConstraint.type.isCapturedType() || otherConstraint.type.isCapturedType()
         val (type, needApproximation) = when (otherConstraint.kind) {
             ConstraintKind.EQUALITY -> {
                 otherConstraint.type to false
@@ -177,9 +147,9 @@ class ConstraintIncorporator(
                  *      incorporatedConstraint = Approx(CapturedType(out Number)) <: TypeVariable(A) => Nothing <: TypeVariable(A)
                  * TODO: implement this for generics and captured types
                  */
-                if (baseConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isOtherCapturedType) {
+                if (baseConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
                     nothingType() to false
-                } else if (baseConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isOtherCapturedType) {
+                } else if (baseConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
                     otherConstraint.type to false
                 } else {
                     createCapturedType(
@@ -200,9 +170,9 @@ class ConstraintIncorporator(
                  *      incorporatedConstraint = TypeVariable(A) <: Approx(CapturedType(in Number)) => TypeVariable(A) <: Any?
                  * TODO: implement this for generics and captured types
                  */
-                if (baseConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isOtherCapturedType) {
+                if (baseConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
                     nullableAnyType() to false
-                } else if (baseConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isOtherCapturedType) {
+                } else if (baseConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isBaseOrOtherCapturedType) {
                     otherConstraint.type to false
                 } else {
                     createCapturedType(
@@ -251,7 +221,8 @@ class ConstraintIncorporator(
 
         val kind = if (isSubtype) ConstraintKind.LOWER else ConstraintKind.UPPER
 
-        val inputTypePosition = baseConstraint.position.from as? OnlyInputTypeConstraintPosition
+        val inputTypePosition =
+            baseConstraint.position.from as? OnlyInputTypeConstraintPosition ?: baseConstraint.inputTypePositionBeforeIncorporation
 
         val isNewConstraintUsefulForNullability = isUsefulForNullabilityConstraint && newConstraint.isNullableNothing()
         val isOtherConstraintUsefulForNullability = otherConstraint.isNullabilityConstraint && otherConstraint.type.isNullableNothing()
@@ -287,8 +258,9 @@ class ConstraintIncorporator(
     }
 
     private fun Context.getNestedTypeVariables(type: KotlinTypeMarker): List<TypeVariableMarker> =
-        getNestedArguments(type).mapNotNullTo(SmartList()) { getTypeVariable(it.getType().typeConstructor()) }
-
+        getNestedArguments(type).mapNotNullTo(SmartList()) {
+            getTypeVariable(it.getType().typeConstructor().unwrapStubTypeVariableConstructor())
+        }
 
     private fun KotlinTypeMarker.substitute(c: Context, typeVariable: TypeVariableMarker, value: KotlinTypeMarker): KotlinTypeMarker {
         val substitutor = c.typeSubstitutorByTypeConstructor(mapOf(typeVariable.freshTypeConstructor(c) to value))

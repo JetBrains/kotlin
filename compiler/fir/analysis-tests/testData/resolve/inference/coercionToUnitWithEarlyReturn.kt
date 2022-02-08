@@ -14,6 +14,5 @@ fun main(x: A?) {
         x?.unit()
     }
 
-    // lambda has a type (() -> Unit?)
     foo(lambda)
 }

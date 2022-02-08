@@ -1,0 +1,21 @@
+FILE: castToBareType.kt
+    public abstract interface FirDeclaration : R|kotlin/Any| {
+    }
+    public abstract interface FirSymbolOwner<E : R|FirSymbolOwner<E>|> : R|kotlin/Any| {
+        public abstract val symbol: R|AbstractFirBasedSymbol<E>|
+            public get(): R|AbstractFirBasedSymbol<E>|
+
+    }
+    public abstract interface FirFunction<F : R|FirFunction<F>|> : R|FirSymbolOwner<F>|, R|FirDeclaration| {
+    }
+    public abstract interface AbstractFirBasedSymbol<E : R|FirSymbolOwner<E>|, R|FirDeclaration|> : R|kotlin/Any| {
+        public abstract val fir: R|E|
+            public get(): R|E|
+
+    }
+    public final fun foo(firAdaptee: R|FirFunction<*>|): R|kotlin/Unit| {
+    }
+    public final fun test(symbol: R|AbstractFirBasedSymbol<*>|): R|kotlin/Unit| {
+        lval firAdaptee: R|FirFunction<FirSymbolOwner<out it(FirSymbolOwner<out it(FirSymbolOwner<out it(FirSymbolOwner<out kotlin/Any?> & FirDeclaration)> & FirDeclaration)> & FirDeclaration)>>| = (R|<local>/symbol|.R|SubstitutionOverride</AbstractFirBasedSymbol.fir: R|CapturedType(*)|>| as R|FirFunction<FirSymbolOwner<out it(FirSymbolOwner<out it(FirSymbolOwner<out it(FirSymbolOwner<out kotlin/Any?> & FirDeclaration)> & FirDeclaration)> & FirDeclaration)>>|)
+        R|/foo|(R|<local>/firAdaptee|)
+    }

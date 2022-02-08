@@ -1,12 +1,14 @@
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// FIR_IDENTICAL
+// !OPT_IN: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // FILE: api.kt
 
 package api
 
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-@Target(AnnotationTarget.TYPE, AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPEALIAS,
+@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPEALIAS,
         AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.BINARY)
 annotation class ExperimentalAPI
 
 @ExperimentalAPI
@@ -71,8 +73,8 @@ package usage3
 import api.*
 
 fun use() {
-    <!EXPERIMENTAL_API_USAGE!>function<!>()
-    <!EXPERIMENTAL_API_USAGE!>property<!>
-    val s: <!EXPERIMENTAL_API_USAGE!>Typealias<!> = ""
-    s.hashCode()
+    <!OPT_IN_USAGE!>function<!>()
+    <!OPT_IN_USAGE!>property<!>
+    val s: <!OPT_IN_USAGE!>Typealias<!> = ""
+    <!OPT_IN_USAGE!>s<!>.hashCode()
 }

@@ -1,7 +1,0 @@
-fun foo(vararg strings: String){ }
-
-fun bar(s: String){
-    foo("", s<caret>)
-}
-
-// ELEMENT: s

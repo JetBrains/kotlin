@@ -1,5 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: UNKNOWN
 class Inv<T>
 
 fun Inv<*>.invToInv(): Inv<*>? = null

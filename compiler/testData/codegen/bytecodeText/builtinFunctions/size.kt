@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
 abstract class A1 : Collection<String> {
     override val size: Int get() = 1
 }

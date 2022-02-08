@@ -1,5 +1,4 @@
-// !WITH_NEW_INFERENCE
-// !LANGUAGE: +ArrayLiteralsInAnnotations, +ProhibitAssigningSingleElementsToVarargsInNamedForm
+// !LANGUAGE: +ProhibitAssigningSingleElementsToVarargsInNamedForm
 
 annotation class Ann1(vararg val a: String = [])
 annotation class Ann2(vararg val a: Int = [1, 2])
@@ -23,7 +22,7 @@ fun test1_2() {}
 @Ann2(*[])
 fun test2() {}
 
-@Ann3(a = *[0f, 1 / 0f])
+@Ann3(a = *<!REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION!>[0f, <!DIVISION_BY_ZERO!>1 / 0f<!>]<!>)
 fun test3() {}
 
 @Ann5(Ann4(*["/"]))
@@ -34,7 +33,7 @@ fun test6() {}
 
 annotation class AnnArray(val a: Array<String>)
 
-<!INAPPLICABLE_CANDIDATE!>@AnnArray(*["/"])<!>
+@AnnArray(<!NON_VARARG_SPREAD!>*<!>["/"])
 fun testArray() {}
 
 @Ann1([""])

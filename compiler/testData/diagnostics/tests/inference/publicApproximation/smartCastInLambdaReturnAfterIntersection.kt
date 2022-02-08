@@ -1,5 +1,5 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// !WITH_NEW_INFERENCE
 // NI_EXPECTED_FILE
 
 interface Base {
@@ -18,5 +18,5 @@ fun smartCastAfterIntersection(a: One, b: Two) = run {
 }
 
 fun test(one: One, two: Two) {
-    smartCastAfterIntersection(one, two)<!NI;UNNECESSARY_SAFE_CALL!>?.<!><!NI;UNRESOLVED_REFERENCE!>base<!>()
+    <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>smartCastAfterIntersection(one, two)<!UNNECESSARY_SAFE_CALL!>?.<!><!UNRESOLVED_REFERENCE!>base<!>()<!>
 }

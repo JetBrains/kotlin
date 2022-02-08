@@ -1,0 +1,15 @@
+fun testEqeq(a: Int, b: Int): Boolean {
+  return EQEQ(arg0 = a, arg1 = b)
+}
+
+fun testEquals(a: Int, b: Int): Boolean {
+  return a.equals(other = b)
+}
+
+fun testJEqeqNull(): Boolean {
+  return EQEQ(arg0 = #INT_NULL, arg1 = null)
+}
+
+fun testJEqualsNull(): Boolean {
+  return #INT_NULL.equals(other = null)
+}

@@ -1,0 +1,5 @@
+language = C
+
+---
+
+__attribute__((always_inline)) void throwCppException();

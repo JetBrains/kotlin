@@ -5,7 +5,7 @@ interface B
 class Clazz1 : A, B
 class Clazz2 : A, B
 
-fun <K> select(x: K, y: K): K
+<!NON_MEMBER_FUNCTION_NO_BODY!>fun <K> select(x: K, y: K): K<!>
 
 fun test() = select(Clazz1(), Clazz2())
 

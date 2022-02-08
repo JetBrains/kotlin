@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // NON_EXISTENT_CLASS
 // NO_VALIDATION
 
@@ -11,7 +12,7 @@ typealias Coocoo3<X> = ABC<String, X>
 object NonExistentType {
     val a: ABCDEF? = null
     val b: List<ABCDEF>? = null
-    val c: (ABCDEF) -> Unit = { f -> }
+    val c: (ABCDEF) -> Unit = { f: ABCDEF -> }
     val d: ABCDEF<String, (List<ABCDEF>) -> Unit>? = null
 
     lateinit var string2: String2

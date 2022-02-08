@@ -1,6 +1,0 @@
-open class A(n: Int)
-
-fun foo() {
-    val n = 1
-    val x = object : A(n) {}
-}

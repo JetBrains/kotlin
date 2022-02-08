@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,7 +13,7 @@ import kotlin.annotation.AnnotationTarget.*
  * If a method has N parameters and M of which have default values, M overloads are generated: the first one
  * takes N-1 parameters (all but the last one that takes a default value), the second takes N-2 parameters, and so on.
  */
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR)
+@Target(FUNCTION, CONSTRUCTOR)
 @MustBeDocumented
 @OptionalExpectation
 public expect annotation class JvmOverloads()
@@ -25,7 +25,7 @@ public expect annotation class JvmOverloads()
  * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/java-to-kotlin-interop.html#static-methods)
  * for more information.
  */
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
+@Target(FUNCTION, PROPERTY, PROPERTY_GETTER, PROPERTY_SETTER)
 @MustBeDocumented
 @OptionalExpectation
 public expect annotation class JvmStatic()
@@ -37,7 +37,7 @@ public expect annotation class JvmStatic()
  * for more information.
  * @property name the name of the element.
  */
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FILE)
+@Target(FILE, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
 @MustBeDocumented
 @OptionalExpectation
 public expect annotation class JvmName(val name: String)
@@ -46,11 +46,10 @@ public expect annotation class JvmName(val name: String)
  * Instructs the Kotlin compiler to generate a multifile class with top-level functions and properties declared in this file as one of its parts.
  * Name of the corresponding multifile class is provided by the [JvmName] annotation.
  */
-@Target(AnnotationTarget.FILE)
+@Target(FILE)
 @MustBeDocumented
 @OptionalExpectation
 public expect annotation class JvmMultifileClass()
-
 
 
 /**
@@ -59,7 +58,7 @@ public expect annotation class JvmMultifileClass()
  * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/java-to-kotlin-interop.html#instance-fields)
  * for more information.
  */
-@Target(AnnotationTarget.FIELD)
+@Target(FIELD)
 @MustBeDocumented
 @OptionalExpectation
 public expect annotation class JvmField()
@@ -73,7 +72,7 @@ public expect annotation class JvmField()
  * This annotation is intended for *rare cases* when API designer needs to hide Kotlin-specific target from Java API
  * while keeping it a part of Kotlin API so the resulting API is idiomatic for both languages.
  */
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER, AnnotationTarget.FIELD)
+@Target(FILE, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, FIELD)
 @OptionalExpectation
 public expect annotation class JvmSynthetic()
 
@@ -86,7 +85,7 @@ public expect annotation class JvmSynthetic()
  *
  * It may be helpful only if declaration seems to be inconvenient to use from Java.
  */
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.TYPE)
+@Target(CLASS, FUNCTION, PROPERTY, TYPE)
 @MustBeDocumented
 @OptionalExpectation
 public expect annotation class JvmSuppressWildcards(val suppress: Boolean = true)
@@ -96,12 +95,31 @@ public expect annotation class JvmSuppressWildcards(val suppress: Boolean = true
  *
  * It may be helpful only if declaration seems to be inconvenient to use from Java without wildcard.
  */
-@Target(AnnotationTarget.TYPE)
+@Target(TYPE)
 @MustBeDocumented
 @OptionalExpectation
 public expect annotation class JvmWildcard()
 
+/**
+ * Specifies that given value class is inline class.
+ *
+ * Adding and removing the annotation is binary incompatible change, since inline classes' methods and functions with inline classes
+ * in their signature are mangled.
+ */
+@Target(CLASS)
+@MustBeDocumented
+@SinceKotlin("1.5")
+@OptionalExpectation
+public expect annotation class JvmInline()
 
+/**
+ * Instructs compiler to mark the class as a record and generate relevant toString/equals/hashCode methods
+ */
+@Target(CLASS)
+@MustBeDocumented
+@OptionalExpectation
+@SinceKotlin("1.5")
+public expect annotation class JvmRecord()
 
 /**
  * Marks the JVM backing field of the annotated property as `volatile`, meaning that writes to this field
@@ -142,7 +160,7 @@ public expect annotation class Strictfp()
 public expect annotation class Synchronized()
 
 
-@Target(AnnotationTarget.FILE)
+@Target(FILE)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
 @SinceKotlin("1.2")

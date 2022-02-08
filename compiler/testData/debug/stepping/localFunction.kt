@@ -10,19 +10,19 @@ fun box() {
     "OK"
 }
 
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:4 box
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:5 box
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:8 box
 // test.kt:9 box
-// LINENUMBERS JVM
+// EXPECTATIONS JVM
 // test.kt:6 invoke
 // test.kt:7 invoke
-// LINENUMBERS JVM_IR
+// EXPECTATIONS JVM_IR
 // test.kt:6 box$bar
 // test.kt:7 box$bar
-// LINENUMBERS
+// EXPECTATIONS
 // test.kt:10 box
 // test.kt:11 box

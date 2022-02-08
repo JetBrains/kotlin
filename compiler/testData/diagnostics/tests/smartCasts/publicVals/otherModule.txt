@@ -12,7 +12,6 @@ package a {
     }
 }
 
-
 // -- Module: <m2> --
 package
 
@@ -23,3 +22,4 @@ package a {
 package b {
     public fun a.X.gav(): kotlin.Int
 }
+

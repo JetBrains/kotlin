@@ -24,7 +24,7 @@ object HtmlSpecSentencesMapBuilder {
         spec.select("$SECTION_SELECTORS, $PARAGRAPH_SELECTORS, .sentence").forEach { element ->
             when {
                 element.`is`(SECTION_SELECTORS) -> {
-                    val sectionTag = SectionTag.valueOf(element.tagName().toLowerCase())
+                    val sectionTag = SectionTag.valueOf(element.tagName().lowercase())
                     while (!currentSectionsPath.empty() && currentSectionsPath.peek().first.level >= sectionTag.level) {
                         currentSectionsPath.pop()
                     }

@@ -1,8 +1,12 @@
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 interface IQ1
 interface IQ2
 
-inline class X(val x: Any): IQ1, IQ2
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class X(val x: Any): IQ1, IQ2
 
 interface IFoo1 {
     fun foo(): IQ1

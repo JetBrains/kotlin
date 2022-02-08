@@ -13,12 +13,12 @@
  * DESCRIPTION: Implicit receiver: sets of explicitly imported, declared in the package scope and star-imported extension callables
  */
 
-// FILE: Extensions.kt
+// FILE: Extensions1.kt
 package libPackageExplicit
 
 public fun String.padEnd(lengthParam: Int, padChar: Char = ' '): String = TODO()
 
-// FILE: Extensions.kt
+// FILE: Extensions2.kt
 package libPackage
 
 public fun String.padEnd(lengthParam: Int, padChar: Char = ' '): String = TODO()

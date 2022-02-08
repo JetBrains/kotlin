@@ -1,8 +1,9 @@
-// KJS_WITH_FULL_RUNTIME
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Ucn(private val i: UInt)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Ucn(private val i: UInt)
 
 class PPInput(private val s: ByteArray) {
     fun peek(n: UInt = 0u): Ucn? =

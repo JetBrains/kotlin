@@ -47,7 +47,7 @@ class StringEncodingTest {
 
     // https://youtrack.jetbrains.com/issue/KT-31614
     private fun string(vararg codeUnits: Int): String {
-        return buildString { codeUnits.forEach { append(it.toChar()) } }
+        return buildString { codeUnits.forEach { append(Char(it)) } }
     }
 
     @Test

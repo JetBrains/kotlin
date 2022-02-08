@@ -13,11 +13,11 @@ public interface J2 extends J {
 // FILE: main.kt
 
 interface A : J {
-    override fun foo()
+    override fun <!OVERRIDE_DEPRECATION!>foo<!>()
 }
 
 fun main(j: J, j2: J2, a: A) {
-    j.foo()
+    j.<!DEPRECATION!>foo<!>()
     j2.foo()
     a.foo()
 }

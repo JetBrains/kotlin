@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import kotlin.js.RegExp
  */
 @SinceKotlin("1.2")
 @Deprecated("Use CharArray.concatToString() instead", ReplaceWith("chars.concatToString()"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public actual fun String(chars: CharArray): String {
     var result = ""
     for (char in chars) {
@@ -28,6 +29,7 @@ public actual fun String(chars: CharArray): String {
  */
 @SinceKotlin("1.2")
 @Deprecated("Use CharArray.concatToString(startIndex, endIndex) instead", ReplaceWith("chars.concatToString(offset, offset + length)"))
+@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public actual fun String(chars: CharArray, offset: Int, length: Int): String {
     if (offset < 0 || length < 0 || chars.size - offset < length)
         throw IndexOutOfBoundsException("size: ${chars.size}; offset: $offset; length: $length")
@@ -168,19 +170,45 @@ public actual fun String.encodeToByteArray(
 
 /**
  * Returns a copy of this string converted to upper case using the rules of the default locale.
- *
- * @sample samples.text.Strings.toUpperCase
  */
+@Deprecated("Use uppercase() instead.", ReplaceWith("uppercase()"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.internal.InlineOnly
 public actual inline fun String.toUpperCase(): String = asDynamic().toUpperCase()
 
 /**
- * Returns a copy of this string converted to lower case using the rules of the default locale.
+ * Returns a copy of this string converted to upper case using Unicode mapping rules of the invariant locale.
  *
- * @sample samples.text.Strings.toLowerCase
+ * This function supports one-to-many and many-to-one character mapping,
+ * thus the length of the returned string can be different from the length of the original string.
+ *
+ * @sample samples.text.Strings.uppercase
  */
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
+@kotlin.internal.InlineOnly
+public actual inline fun String.uppercase(): String = asDynamic().toUpperCase()
+
+/**
+ * Returns a copy of this string converted to lower case using the rules of the default locale.
+ */
+@Deprecated("Use lowercase() instead.", ReplaceWith("lowercase()"))
+@DeprecatedSinceKotlin(warningSince = "1.5")
 @kotlin.internal.InlineOnly
 public actual inline fun String.toLowerCase(): String = asDynamic().toLowerCase()
+
+/**
+ * Returns a copy of this string converted to lower case using Unicode mapping rules of the invariant locale.
+ *
+ * This function supports one-to-many and many-to-one character mapping,
+ * thus the length of the returned string can be different from the length of the original string.
+ *
+ * @sample samples.text.Strings.lowercase
+ */
+@SinceKotlin("1.5")
+@WasExperimental(ExperimentalStdlibApi::class)
+@kotlin.internal.InlineOnly
+public actual inline fun String.lowercase(): String = asDynamic().toLowerCase()
 
 @kotlin.internal.InlineOnly
 internal actual inline fun String.nativeIndexOf(str: String, fromIndex: Int): Int = asDynamic().indexOf(str, fromIndex)
@@ -200,9 +228,13 @@ public actual inline fun String.substring(startIndex: Int): String = asDynamic()
 @kotlin.internal.InlineOnly
 public actual inline fun String.substring(startIndex: Int, endIndex: Int): String = asDynamic().substring(startIndex, endIndex)
 
+@Deprecated("Use String.plus() instead", ReplaceWith("this + str"))
+@DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun String.concat(str: String): String = asDynamic().concat(str)
 
+@Deprecated("Use Regex.findAll() instead or invoke matches() on String dynamically: this.asDynamic().match(regex)")
+@DeprecatedSinceKotlin(warningSince = "1.6")
 @kotlin.internal.InlineOnly
 public inline fun String.match(regex: String): Array<String>? = asDynamic().match(regex)
 
@@ -212,6 +244,11 @@ public inline fun String.match(regex: String): Array<String>? = asDynamic().matc
 @kotlin.internal.InlineOnly
 internal inline fun String.nativeReplace(pattern: RegExp, replacement: String): String = asDynamic().replace(pattern, replacement)
 
+/**
+ * Compares two strings lexicographically, optionally ignoring case differences.
+ *
+ * If [ignoreCase] is true, the result of `Char.uppercaseChar().lowercaseChar()` on each character is compared.
+ */
 @SinceKotlin("1.2")
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.compareTo(other: String, ignoreCase: Boolean = false): Int {
@@ -220,29 +257,52 @@ public actual fun String.compareTo(other: String, ignoreCase: Boolean = false): 
         val n2 = other.length
         val min = minOf(n1, n2)
         if (min == 0) return n1 - n2
-        var start = 0
-        while (true) {
-            val end = minOf(start + 16, min)
-            var s1 = this.substring(start, end)
-            var s2 = other.substring(start, end)
-            if (s1 != s2) {
-                s1 = s1.toUpperCase()
-                s2 = s2.toUpperCase()
-                if (s1 != s2) {
-                    s1 = s1.toLowerCase()
-                    s2 = s2.toLowerCase()
-                    if (s1 != s2) {
-                        return s1.compareTo(s2)
+        for (index in 0 until min) {
+            var thisChar = this[index]
+            var otherChar = other[index]
+
+            if (thisChar != otherChar) {
+                thisChar = thisChar.uppercaseChar()
+                otherChar = otherChar.uppercaseChar()
+
+                if (thisChar != otherChar) {
+                    thisChar = thisChar.lowercaseChar()
+                    otherChar = otherChar.lowercaseChar()
+
+                    if (thisChar != otherChar) {
+                        return thisChar.compareTo(otherChar)
                     }
                 }
             }
-            if (end == min) break
-            start = end
         }
         return n1 - n2
     } else {
         return compareTo(other)
     }
+}
+
+/**
+ * Returns `true` if the contents of this char sequence are equal to the contents of the specified [other],
+ * i.e. both char sequences contain the same number of the same characters in the same order.
+ *
+ * @sample samples.text.Strings.contentEquals
+ */
+@SinceKotlin("1.5")
+public actual infix fun CharSequence?.contentEquals(other: CharSequence?): Boolean = contentEqualsImpl(other)
+
+/**
+ * Returns `true` if the contents of this char sequence are equal to the contents of the specified [other], optionally ignoring case difference.
+ *
+ * @param ignoreCase `true` to ignore character case when comparing contents.
+ *
+ * @sample samples.text.Strings.contentEquals
+ */
+@SinceKotlin("1.5")
+public actual fun CharSequence?.contentEquals(other: CharSequence?, ignoreCase: Boolean): Boolean {
+    return if (ignoreCase)
+        this.contentEqualsIgnoreCaseImpl(other)
+    else
+        this.contentEqualsImpl(other)
 }
 
 

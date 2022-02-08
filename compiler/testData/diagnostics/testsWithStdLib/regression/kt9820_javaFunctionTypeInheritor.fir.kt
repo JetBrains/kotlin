@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 
 // FILE: J.java
 
@@ -14,5 +13,5 @@ fun useJ(j: J) {
 }
 
 fun jj() {
-    useJ({})
+    useJ(<!ARGUMENT_TYPE_MISMATCH!>{}<!>)
 }

@@ -1,0 +1,114 @@
+FILE: transform.kt
+    public abstract interface FirElement : R|kotlin/Any| {
+        public abstract fun <R, D> accept(visitor: R|FirVisitor<R, D>|, data: R|D|): R|R|
+
+        public open fun accept(visitor: R|FirVisitorVoid|): R|kotlin/Unit| {
+            ^accept this@R|/FirElement|.R|/FirElement.accept|<R|kotlin/Unit|, R|kotlin/Nothing?|>(R|<local>/visitor|, Null(null))
+        }
+
+        public abstract fun <E : R|FirElement|, D> transform(visitor: R|FirTransformer<D>|, data: R|D|): R|E|
+
+    }
+    public abstract class FirVisitor<out R, in D> : R|kotlin/Any| {
+        public constructor<out R, in D>(): R|FirVisitor<R, D>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract class FirVisitorVoid : R|FirVisitor<kotlin/Unit, kotlin/Nothing?>| {
+        public constructor(): R|FirVisitorVoid| {
+            super<R|FirVisitor<kotlin/Unit, kotlin/Nothing?>|>()
+        }
+
+    }
+    public abstract class FirTransformer<in D> : R|FirVisitor<FirElement, D>| {
+        public constructor<in D>(): R|FirTransformer<D>| {
+            super<R|FirVisitor<FirElement, D>|>()
+        }
+
+    }
+    public abstract interface FirAnnotationContainer : R|FirElement| {
+        public abstract override fun <R, D> accept(visitor: R|FirVisitor<R, D>|, data: R|D|): R|R|
+
+    }
+    public abstract interface FirStatement : R|FirAnnotationContainer| {
+        public abstract override fun <R, D> accept(visitor: R|FirVisitor<R, D>|, data: R|D|): R|R|
+
+    }
+    public abstract interface FirTypeParameterRefsOwner : R|FirElement| {
+        public abstract override fun <R, D> accept(visitor: R|FirVisitor<R, D>|, data: R|D|): R|R|
+
+    }
+    public abstract interface FirDeclaration : R|FirElement| {
+        public abstract override fun <R, D> accept(visitor: R|FirVisitor<R, D>|, data: R|D|): R|R|
+
+    }
+    public abstract interface FirAnnotatedDeclaration : R|FirDeclaration|, R|FirAnnotationContainer| {
+        public abstract override fun <R, D> accept(visitor: R|FirVisitor<R, D>|, data: R|D|): R|R|
+
+    }
+    public abstract interface FirSymbolOwner<E : R|FirSymbolOwner<E>|, R|FirDeclaration|> : R|FirElement| {
+        public abstract override fun <R, D> accept(visitor: R|FirVisitor<R, D>|, data: R|D|): R|R|
+
+    }
+    public abstract interface FirClassLikeDeclaration<F : R|FirClassLikeDeclaration<F>|> : R|FirAnnotatedDeclaration|, R|FirStatement|, R|FirSymbolOwner<F>| {
+    }
+    public abstract interface FirClass<F : R|FirClass<F>|> : R|FirClassLikeDeclaration<F>|, R|FirStatement|, R|FirTypeParameterRefsOwner| {
+    }
+    private final class FirApplySupertypesTransformer : R|FirTransformer<kotlin/Nothing?>| {
+        public constructor(): R|FirApplySupertypesTransformer| {
+            super<R|FirTransformer<kotlin/Nothing?>|>()
+        }
+
+    }
+    public final fun <F : R|FirClass<F>|> R|F|.runSupertypeResolvePhaseForLocalClass(): R|F| {
+        lval applySupertypesTransformer: R|FirApplySupertypesTransformer| = R|/FirApplySupertypesTransformer.FirApplySupertypesTransformer|()
+        ^runSupertypeResolvePhaseForLocalClass this@R|/runSupertypeResolvePhaseForLocalClass|.R|SubstitutionOverride</FirClass.transform: R|E|>|<R|F|, R|kotlin/Nothing?|>(R|<local>/applySupertypesTransformer|, Null(null))
+    }
+    public abstract class FirPureAbstractElement : R|FirElement| {
+        public constructor(): R|FirPureAbstractElement| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract interface FirTypedDeclaration : R|FirAnnotatedDeclaration| {
+        public abstract override fun <R, D> accept(visitor: R|FirVisitor<R, D>|, data: R|D|): R|R|
+
+    }
+    public abstract interface FirCallableDeclaration<F : R|FirCallableDeclaration<F>|> : R|FirTypedDeclaration|, R|FirSymbolOwner<F>| {
+        public abstract override fun <R, D> accept(visitor: R|FirVisitor<R, D>|, data: R|D|): R|R|
+
+    }
+    public abstract class FirVariable<F : R|FirVariable<F>|> : R|FirPureAbstractElement|, R|FirCallableDeclaration<F>|, R|FirAnnotatedDeclaration|, R|FirStatement| {
+        public constructor<F : R|FirVariable<F>|>(): R|FirVariable<F>| {
+            super<R|FirPureAbstractElement|>()
+        }
+
+        public abstract override fun <R, D> accept(visitor: R|FirVisitor<R, D>|, data: R|D|): R|R|
+
+    }
+    public abstract class FirWhenExpression : R|kotlin/Any| {
+        public constructor(): R|FirWhenExpression| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract val subjectVariable: R|FirVariable<*>?|
+            public get(): R|FirVariable<*>?|
+
+    }
+    public final class FirRenderer : R|FirVisitorVoid| {
+        public constructor(): R|FirRenderer| {
+            super<R|FirVisitorVoid|>()
+        }
+
+        public final fun foo(expression: R|FirWhenExpression|): R|kotlin/Unit| {
+            lval variable: R|FirVariable<*>?| = R|<local>/expression|.R|/FirWhenExpression.subjectVariable|
+            when () {
+                !=(R|<local>/variable|, Null(null)) ->  {
+                    R|<local>/variable|.R|/FirElement.accept|(this@R|/FirRenderer|)
+                }
+            }
+
+        }
+
+    }

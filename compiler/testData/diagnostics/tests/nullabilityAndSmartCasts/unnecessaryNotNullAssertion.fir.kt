@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -SENSELESS_COMPARISON, -DEBUG_INFO_SMARTCAST
 
 fun takeNotNull(s: String) {}
@@ -17,8 +16,8 @@ fun test() {
     takeNotNull(dependOn(dependOn(x!!)))
 
     if (x != null) {
-        takeNotNull(dependOn(x)!!)
-        takeNotNull(dependOn(dependOn(x))!!)
-        takeNotNull(dependOn(dependOn(x)!!))
+        takeNotNull(dependOn(x)<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
+        takeNotNull(dependOn(dependOn(x))<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
+        takeNotNull(dependOn(dependOn(x)<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>))
     }
 }

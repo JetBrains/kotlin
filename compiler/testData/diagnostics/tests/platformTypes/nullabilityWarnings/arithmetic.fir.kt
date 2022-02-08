@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // FILE: J.java
 
 import org.jetbrains.annotations.*;
@@ -22,11 +21,11 @@ fun test() {
     var platformJ = J.staticJ
 
     +platformNN
-    <!INAPPLICABLE_CANDIDATE!>+<!>platformN
+    <!UNSAFE_CALL!>+<!>platformN
     +platformJ
 
     ++platformNN
-    <!INAPPLICABLE_CANDIDATE!>++<!>platformN
+    <!UNSAFE_CALL!>++<!>platformN
     ++platformJ
 
     platformNN++
@@ -41,13 +40,13 @@ fun test() {
     platformN + 1
     platformJ + 1
 
-    1 plus platformNN
-    1 plus platformN
-    1 plus platformJ
+    1 <!INFIX_MODIFIER_REQUIRED!>plus<!> platformNN
+    1 <!INFIX_MODIFIER_REQUIRED!>plus<!> platformN
+    1 <!INFIX_MODIFIER_REQUIRED!>plus<!> platformJ
 
-    platformNN plus 1
-    platformN plus 1
-    platformJ plus 1
+    platformNN <!INFIX_MODIFIER_REQUIRED!>plus<!> 1
+    platformN <!INFIX_MODIFIER_REQUIRED!>plus<!> 1
+    platformJ <!INFIX_MODIFIER_REQUIRED!>plus<!> 1
 
     platformNN += 1
     platformN += 1

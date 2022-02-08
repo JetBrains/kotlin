@@ -9,14 +9,16 @@ import org.gradle.api.Task
 import org.gradle.api.tasks.TaskState
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 
-internal interface TaskExecutionData {
-    val task: Task
-    val startNs: Long
-    val endNs: Long
-    val totalTimeNs: Long
-    val resultState: TaskState
+interface TaskExecutionData {
+    val taskPath: String
+    val startMs: Long
+    val endMs: Long
+    val totalTimeMs: Long
+    val skipMessage: String?
+    val didWork: Boolean
     val icLogLines: List<String>
     val buildMetrics: BuildMetrics
     val isKotlinTask: Boolean
+    val type: String
 }
 

@@ -1,9 +1,9 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_COLLECTIONS
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class FieldValue(val value: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class FieldValue(val value: String)
 
 enum class RequestFields {
     ENUM_ONE

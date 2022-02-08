@@ -1,0 +1,40 @@
+typealias OI = Inner
+class Outer {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  open inner class Inner {
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  inner class InnerDerived0 : Inner {
+    constructor() /* primary */ {
+      <this>.super/*Inner*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  inner class InnerDerived1 : Inner {
+    constructor() /* primary */ {
+      <this>.super/*Inner*/()
+      /* <init>() */
+
+    }
+
+  }
+
+}
+
+fun test(): Inner {
+  return Outer().Inner()
+}

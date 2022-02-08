@@ -1,0 +1,20 @@
+FILE: topLevelCallables.kt
+    package foo
+
+    @R|org/jetbrains/kotlin/fir/plugin/DummyFunction|() public final class MySuperClass : R|kotlin/Any| {
+        public constructor(): R|foo/MySuperClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            lval s: R|kotlin/String| = R|foo/dummyMySuperClass|(this@R|foo/MySuperClass|)
+            R|foo/takeString|(R|<local>/s|)
+        }
+
+    }
+    public final fun takeString(s: R|kotlin/String|): R|kotlin/Unit| {
+    }
+FILE: __GENERATED DECLARATIONS__.kt
+    package foo
+
+    public final fun dummyMySuperClass(value: R|foo/MySuperClass|): R|kotlin/String|

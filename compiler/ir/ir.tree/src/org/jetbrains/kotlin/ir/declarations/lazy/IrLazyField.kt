@@ -43,17 +43,17 @@ class IrLazyField(
 
     override var parent: IrDeclarationParent by createLazyParent()
 
-    override var annotations: List<IrConstructorCall> by lazyVar {
+    override var annotations: List<IrConstructorCall> by lazyVar(stubGenerator.lock) {
         descriptor.backingField?.annotations
             ?.mapNotNullTo(mutableListOf(), typeTranslator.constantValueGenerator::generateAnnotationConstructorCall)
             ?: mutableListOf()
     }
 
-    override var type: IrType by lazyVar {
+    override var type: IrType by lazyVar(stubGenerator.lock) {
         descriptor.type.toIrType()
     }
 
-    override var initializer: IrExpressionBody? by lazyVar {
+    override var initializer: IrExpressionBody? by lazyVar(stubGenerator.lock) {
         descriptor.compileTimeInitializer?.let {
             factory.createExpressionBody(
                 typeTranslator.constantValueGenerator.generateConstantValueAsExpression(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it)
@@ -61,7 +61,7 @@ class IrLazyField(
         }
     }
 
-    override var correspondingPropertySymbol: IrPropertySymbol? by lazyVar {
+    override var correspondingPropertySymbol: IrPropertySymbol? by lazyVar(stubGenerator.lock) {
         stubGenerator.generatePropertyStub(descriptor).symbol
     }
 

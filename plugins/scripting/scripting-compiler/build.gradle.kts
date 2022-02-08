@@ -1,4 +1,3 @@
-
 description = "Kotlin Scripting Compiler Plugin"
 
 plugins {
@@ -12,30 +11,28 @@ dependencies {
     compileOnly(project(":compiler:psi"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:cli"))
-    compileOnly(project(":compiler:backend.js"))
     compileOnly(project(":core:descriptors.runtime"))
     compileOnly(project(":compiler:ir.tree.impl"))
+    compileOnly(project(":compiler:backend.jvm.entrypoint"))
     compileOnly(project(":kotlin-reflect-api"))
-    compile(project(":kotlin-scripting-common"))
-    compile(project(":kotlin-scripting-js"))
-    compile(project(":kotlin-util-klib"))
-    compile(project(":kotlin-scripting-jvm"))
-    compile(project(":kotlin-scripting-compiler-impl"))
-    compile(kotlinStdlib())
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+    api(project(":kotlin-scripting-common"))
+    api(project(":kotlin-scripting-jvm"))
+    api(project(":kotlin-scripting-compiler-impl"))
+    api(kotlinStdlib())
+    compileOnly(intellijCore())
 
-    testCompile(project(":compiler:frontend"))
-    testCompile(project(":compiler:plugin-api"))
-    testCompile(project(":compiler:util"))
-    testCompile(project(":compiler:cli"))
-    testCompile(project(":compiler:cli-common"))
-    testCompile(project(":compiler:frontend.java"))
-    testCompile(project(":compiler:backend.js"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(commonDep("junit:junit"))
+    testApi(project(":compiler:frontend"))
+    testApi(project(":compiler:plugin-api"))
+    testApi(project(":compiler:util"))
+    testApi(project(":compiler:cli"))
+    testApi(project(":compiler:cli-common"))
+    testApi(project(":compiler:frontend.java"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(commonDependency("junit:junit"))
 
-    testImplementation(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntimeOnly(intellijDep()) { includeJars("jps-model") }
+    testImplementation(intellijCore())
+    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
+    testImplementation(project(":kotlin-reflect"))
 }
 
 sourceSets {
@@ -45,9 +42,7 @@ sourceSets {
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions {
-        languageVersion = "1.3"
-        apiVersion = "1.3"
-        freeCompilerArgs += "-Xskip-metadata-version-check"
+        freeCompilerArgs = freeCompilerArgs - "-progressive" + "-Xskip-metadata-version-check"
     }
 }
 
@@ -63,4 +58,13 @@ projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
+    systemProperty("kotlin.script.test.base.compiler.arguments", "-Xuse-old-backend")
 }
+
+projectTest(taskName = "testWithIr", parallel = true) {
+    dependsOn(":dist")
+    workingDir = rootDir
+    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
+    systemProperty("kotlin.script.test.base.compiler.arguments", "-Xuse-ir")
+}
+

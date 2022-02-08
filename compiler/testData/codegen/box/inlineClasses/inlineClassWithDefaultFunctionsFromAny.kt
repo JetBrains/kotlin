@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Z(val data: Int)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val data: Int)
 
 fun box(): String {
     if (Z(0) != Z(0)) throw AssertionError()

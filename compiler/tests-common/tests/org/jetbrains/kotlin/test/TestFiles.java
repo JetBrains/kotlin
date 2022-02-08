@@ -10,10 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.TestHelperGeneratorKt;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -33,37 +30,35 @@ public class TestFiles {
      */
     private static final String MODULE_DELIMITER = ",\\s*";
 
-    private static final Pattern FILE_OR_MODULE_PATTERN = Pattern.compile(
-            "(?://\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*)?" +
-            "//\\s*FILE:\\s*(.*)$", Pattern.MULTILINE);
+    private static final Pattern MODULE_PATTERN = Pattern.compile("//\\s*MODULE:\\s*([^()\\n]+)(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\(([^()]+(?:" + MODULE_DELIMITER + "[^()]+)*)\\))?\\s*(?:\\((\\d+(?:" + MODULE_DELIMITER + "\\d+)*)\\))?\n");
+    private static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)\n");
 
     private static final Pattern LINE_SEPARATOR_PATTERN = Pattern.compile("\\r\\n|\\r|\\n");
 
     @NotNull
     public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory) {
-        return createTestFiles(testFileName, expectedText, factory, false, "");
-    }
-
-    @NotNull
-    public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory, String coroutinesPackage) {
-        return createTestFiles(testFileName, expectedText, factory, false, coroutinesPackage);
+        return createTestFiles(testFileName, expectedText, factory, false);
     }
 
     @NotNull
     public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M , F> factory,
-            boolean preserveLocations, String coroutinesPackage) {
-        return createTestFiles(testFileName, expectedText, factory, preserveLocations, coroutinesPackage, false);
+            boolean preserveLocations) {
+        return createTestFiles(testFileName, expectedText, factory, preserveLocations, false);
     }
 
     @NotNull
     public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(String testFileName, String expectedText, TestFileFactory<M , F> factory,
-            boolean preserveLocations, String coroutinesPackage, boolean parseDirectivesPerFile) {
+            boolean preserveLocations, boolean parseDirectivesPerFile) {
         Map<String, M> modules = new HashMap<>();
         List<F> testFiles = Lists.newArrayList();
-        Matcher matcher = FILE_OR_MODULE_PATTERN.matcher(expectedText);
+        Matcher fileMatcher = FILE_PATTERN.matcher(expectedText);
+        Matcher moduleMatcher = MODULE_PATTERN.matcher(expectedText);
         boolean hasModules = false;
         String commonPrefixOrWholeFile;
-        if (!matcher.find()) {
+
+        boolean fileFound = fileMatcher.find();
+        boolean moduleFound = moduleMatcher.find();
+        if (!fileFound && !moduleFound) {
             assert testFileName != null : "testFileName should not be null if no FILE directive defined";
             // One file
             testFiles.add(factory.createFile(null, testFileName, expectedText, parseDirectives(expectedText)));
@@ -74,45 +69,65 @@ public class TestFiles {
             int processedChars = 0;
             M module = null;
             boolean firstFileProcessed = false;
-            commonPrefixOrWholeFile = expectedText.substring(0, matcher.start());
+
+            int commonStart;
+            if (moduleFound) {
+                commonStart = moduleMatcher.start();
+            } else {
+                commonStart = fileMatcher.start();
+            }
+
+            commonPrefixOrWholeFile = expectedText.substring(0, commonStart);
 
             // Many files
             while (true) {
-                String moduleName = matcher.group(1);
-                String moduleDependencies = matcher.group(2);
-                String moduleFriends = matcher.group(3);
-                if (moduleName != null) {
-                    moduleName = moduleName.trim();
-                    hasModules = true;
-                    module = factory.createModule(moduleName, parseModuleList(moduleDependencies), parseModuleList(moduleFriends));
-                    M oldValue = modules.put(moduleName, module);
-                    assert oldValue == null : "Module with name " + moduleName + " already present in file";
+                if (moduleFound) {
+                    String moduleName = moduleMatcher.group(1);
+                    String moduleDependencies = moduleMatcher.group(2);
+                    String moduleFriends = moduleMatcher.group(3);
+                    String abiVersions = moduleMatcher.group(4);
+                    if (moduleName != null) {
+                        moduleName = moduleName.trim();
+                        hasModules = true;
+                        module = factory.createModule(moduleName, parseModuleList(moduleDependencies), parseModuleList(moduleFriends), parseAbiVersionsList(abiVersions));
+                        M oldValue = modules.put(moduleName, module);
+                        assert oldValue == null : "Module with name " + moduleName + " already present in file";
+                    }
                 }
 
-                String fileName = matcher.group(4);
-                int start = processedChars;
+                boolean nextModuleExists = moduleMatcher.find();
+                moduleFound = nextModuleExists;
+                while (true) {
+                    String fileName = fileMatcher.group(1);
+                    int start = processedChars;
 
-                boolean nextFileExists = matcher.find();
-                int end;
-                if (nextFileExists) {
-                    end = matcher.start();
+                    boolean nextFileExists = fileMatcher.find();
+                    int end;
+                    if (nextFileExists && nextModuleExists) {
+                        end = Math.min(fileMatcher.start(), moduleMatcher.start());
+                    }
+                    else if (nextFileExists) {
+                        end = fileMatcher.start();
+                    }
+                    else {
+                        end = expectedText.length();
+                    }
+                    String fileText = preserveLocations ?
+                                      substringKeepingLocations(expectedText, start, end) :
+                                      expectedText.substring(start, end);
+
+
+                    String expectedText1 = firstFileProcessed ? commonPrefixOrWholeFile + fileText : fileText;
+                    testFiles.add(factory.createFile(module, fileName, fileText,
+                                                     parseDirectivesPerFile ?
+                                                     parseDirectives(expectedText1)
+                                                                            : allFilesOrCommonPrefixDirectives));
+                    processedChars = end;
+                    firstFileProcessed = true;
+                    if (!nextFileExists && !nextModuleExists) break;
+                    if (nextModuleExists && fileMatcher.start() > moduleMatcher.start()) break;
                 }
-                else {
-                    end = expectedText.length();
-                }
-                String fileText = preserveLocations ?
-                                  substringKeepingLocations(expectedText, start, end) :
-                                  expectedText.substring(start,end);
-
-
-                String expectedText1 = firstFileProcessed ? commonPrefixOrWholeFile + fileText : fileText;
-                testFiles.add(factory.createFile(module, fileName, fileText,
-                                                 parseDirectivesPerFile ?
-                                                 parseDirectives(expectedText1)
-                                                                        : allFilesOrCommonPrefixDirectives));
-                processedChars = end;
-                firstFileProcessed = true;
-                if (!nextFileExists) break;
+                if (!nextModuleExists) break;
             }
             assert processedChars == expectedText.length() : "Characters skipped from " +
                                                              processedChars +
@@ -121,15 +136,11 @@ public class TestFiles {
         }
 
         if (isDirectiveDefined(expectedText, "WITH_COROUTINES")) {
-            M supportModule = hasModules ? factory.createModule("support", Collections.emptyList(), Collections.emptyList()) : null;
+            M supportModule = hasModules ? factory.createModule("support", Collections.emptyList(), Collections.emptyList(), Collections.emptyList()) : null;
             if (supportModule != null) {
                 M oldValue = modules.put(supportModule.name, supportModule);
                 assert oldValue == null : "Module with name " + supportModule.name + " already present in file";
             }
-
-            boolean isReleaseCoroutines =
-                    !coroutinesPackage.contains("experimental") &&
-                    !isDirectiveDefined(expectedText, "!LANGUAGE: -ReleaseCoroutines");
 
             boolean checkStateMachine = isDirectiveDefined(expectedText, "CHECK_STATE_MACHINE");
             boolean checkTailCallOptimization = isDirectiveDefined(expectedText, "CHECK_TAIL_CALL_OPTIMIZATION");
@@ -138,8 +149,7 @@ public class TestFiles {
                     factory.createFile(
                             supportModule,
                             "CoroutineUtil.kt",
-                            TestHelperGeneratorKt.createTextForCoroutineHelpers(
-                                    isReleaseCoroutines, checkStateMachine, checkTailCallOptimization),
+                            TestHelperGeneratorKt.createTextForCoroutineHelpers(checkStateMachine, checkTailCallOptimization),
                             parseDirectives(commonPrefixOrWholeFile)
                     ));
         }
@@ -148,13 +158,13 @@ public class TestFiles {
             if (module != null) {
                 module.getDependencies().addAll(module.dependenciesSymbols.stream().map(name -> {
                     M dep = modules.get(name);
-                    assert dep != null : "Dependency not found:" + name + "for module " + module.name;
+                    assert dep != null : "Dependency not found: " + name + " for module " + module.name;
                     return dep;
                 }).collect(Collectors.toList()));
 
                 module.getFriends().addAll(module.friendsSymbols.stream().map(name -> {
                     M dep = modules.get(name);
-                    assert dep != null : "Dependency not found:" + name + "for module " + module.name;
+                    assert dep != null : "Dependency not found: " + name + " for module " + module.name;
                     return dep;
                 }).collect(Collectors.toList()));
             }
@@ -189,9 +199,19 @@ public class TestFiles {
         return kotlin.text.StringsKt.split(dependencies, Pattern.compile(MODULE_DELIMITER), 0);
     }
 
+    private static List<Integer> parseAbiVersionsList(@Nullable String versions) {
+        if (versions == null) return Collections.emptyList();
+        List<String> splitted = kotlin.text.StringsKt.split(versions, Pattern.compile(MODULE_DELIMITER), 0);
+        List<Integer> result = new ArrayList<>(splitted.size());
+        for (String s : splitted) {
+            result.add(Integer.parseInt(s));
+        }
+        return result;
+    }
+
     public interface TestFileFactory<M, F> {
         F createFile(@Nullable M module, @NotNull String fileName, @NotNull String text, @NotNull Directives directives);
-        M createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends);
+        M createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends, @NotNull List<Integer> abiVersions);
     }
 
     public static abstract class TestFileFactoryNoModules<F> implements TestFileFactory<KotlinBaseTest.TestModule, F> {
@@ -209,7 +229,7 @@ public class TestFiles {
         public abstract F create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives);
 
         @Override
-        public KotlinBaseTest.TestModule createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends) {
+        public KotlinBaseTest.TestModule createModule(@NotNull String name, @NotNull List<String> dependencies, @NotNull List<String> friends, @NotNull List<Integer> abiVersions) {
             return null;
         }
     }

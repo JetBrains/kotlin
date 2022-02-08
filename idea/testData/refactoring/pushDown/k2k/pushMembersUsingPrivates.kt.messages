@@ -1,1 +1,0 @@
-Function 'fun bar()' uses function 'fun foo()', which is not accessible from the class B

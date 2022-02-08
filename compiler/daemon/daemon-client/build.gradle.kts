@@ -24,24 +24,24 @@ dependencies {
     compileOnly(project(":daemon-common"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(project(":js:js.frontend"))
-    compileOnly(commonDep("net.rubygrapefruit", "native-platform"))
-    compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
+    compileOnly(commonDependency("net.rubygrapefruit", "native-platform"))
 
     embedded(project(":daemon-common")) { isTransitive = false }
-    embedded(commonDep("net.rubygrapefruit", "native-platform"))
+    embedded(commonDependency("net.rubygrapefruit", "native-platform"))
     nativePlatformVariants.forEach {
-        embedded(commonDep("net.rubygrapefruit", "native-platform", "-$it"))
+        embedded(commonDependency("net.rubygrapefruit", "native-platform", "-$it"))
     }
     runtimeOnly(project(":kotlin-reflect"))
-    api(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
+    api(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) {
         isTransitive = false
     }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
     kotlinOptions {
-        // This module is being run from within Gradle, older versions of which only have kotlin-stdlib 1.3 in the runtime classpath.
-        apiVersion = "1.3"
+        // This module is being run from within Gradle, older versions of which only have older kotlin-stdlib in the runtime classpath.
+        apiVersion = "1.4"
+        freeCompilerArgs += "-Xsuppress-version-warnings"
     }
 }
 

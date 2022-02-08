@@ -37,12 +37,10 @@ class BasicJvmReplEvaluator(val scriptEvaluator: ScriptEvaluator = BasicJvmScrip
         val lastSnippetClass = history.lastItem()?.first
         val historyBeforeSnippet = history.items.map { it.second }
         val currentConfiguration = ScriptEvaluationConfiguration(configuration) {
-            if (historyBeforeSnippet.isNotEmpty()) {
-                previousSnippets.put(historyBeforeSnippet)
-            }
+            previousSnippets.put(historyBeforeSnippet)
             if (lastSnippetClass != null) {
                 jvm {
-                    baseClassLoader(lastSnippetClass.java.classLoader)
+                    lastSnippetClassLoader(lastSnippetClass.java.classLoader)
                 }
             }
         }
@@ -55,6 +53,7 @@ class BasicJvmReplEvaluator(val scriptEvaluator: ScriptEvaluator = BasicJvmScrip
                 when (retVal) {
                     is ResultValue.Error -> history.add(retVal.scriptClass, null)
                     is ResultValue.Value, is ResultValue.Unit -> history.add(retVal.scriptClass, retVal.scriptInstance)
+                    is ResultValue.NotEvaluated -> {}
                 }
                 KJvmEvaluatedSnippet(snippetVal, currentConfiguration, retVal)
             }

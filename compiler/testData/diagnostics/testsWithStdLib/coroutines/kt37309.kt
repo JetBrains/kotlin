@@ -1,4 +1,5 @@
-// !USE_EXPERIMENTAL: kotlin.RequiresOptIn
+// FIR_IDENTICAL
+// !OPT_IN: kotlin.RequiresOptIn
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 import kotlin.experimental.ExperimentalTypeInference

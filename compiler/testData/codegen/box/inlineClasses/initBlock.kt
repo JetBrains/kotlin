@@ -1,14 +1,16 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: IGNORED_IN_JS
-// IGNORE_BACKEND: JS_IR
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class SingleInitBlock(val s: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class SingleInitBlock(val s: String) {
     init {
         res = s
     }
 }
 
-inline class MultipleInitBlocks(val a: Any?) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class MultipleInitBlocks(val a: Any?) {
     init {
         res = "O"
     }
@@ -17,14 +19,16 @@ inline class MultipleInitBlocks(val a: Any?) {
     }
 }
 
-inline class Lambda(val s: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Lambda(val s: String) {
     init {
         val lambda = { res = s }
         lambda()
     }
 }
 
-inline class FunLiteral(val s: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class FunLiteral(val s: String) {
     init {
         val funLiteral = fun() {
             res = s
@@ -33,7 +37,8 @@ inline class FunLiteral(val s: String) {
     }
 }
 
-inline class ObjectLiteral(val s: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class ObjectLiteral(val s: String) {
     init {
         val objectLiteral = object {
             fun run() {
@@ -44,7 +49,8 @@ inline class ObjectLiteral(val s: String) {
     }
 }
 
-inline class LocalFunction(val s: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class LocalFunction(val s: String) {
     init {
         fun local() {
             res = s
@@ -53,7 +59,8 @@ inline class LocalFunction(val s: String) {
     }
 }
 
-inline class LocalClass(val s: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class LocalClass(val s: String) {
     init {
         class Local {
             fun run() {
@@ -64,7 +71,8 @@ inline class LocalClass(val s: String) {
     }
 }
 
-inline class Getter(val s: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Getter(val s: String) {
     init {
         res = ok
     }
@@ -73,7 +81,8 @@ inline class Getter(val s: String) {
         get() = s
 }
 
-inline class GetterThis(val s: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class GetterThis(val s: String) {
     init {
         res = this.ok
     }
@@ -82,7 +91,8 @@ inline class GetterThis(val s: String) {
         get() = s
 }
 
-inline class Method(val s: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Method(val s: String) {
     init {
         res = ok(this)
     }
@@ -90,7 +100,8 @@ inline class Method(val s: String) {
     fun ok(m: Method): String = m.s
 }
 
-inline class MethodThis(val s: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class MethodThis(val s: String) {
     init {
         res = this.ok(this)
     }
@@ -98,7 +109,8 @@ inline class MethodThis(val s: String) {
     fun ok(m: MethodThis): String = m.s
 }
 
-inline class InlineFun(val s: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class InlineFun(val s: String) {
     init {
         res = ok()
     }
@@ -106,7 +118,8 @@ inline class InlineFun(val s: String) {
     inline fun ok(): String = s
 }
 
-inline class InlineFunThis(val s: String) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class InlineFunThis(val s: String) {
     init {
         res = this.ok()
     }

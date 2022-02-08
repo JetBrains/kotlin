@@ -6,75 +6,74 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
 import com.intellij.psi.tree.IElementType
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirExpressionChecker
-import org.jetbrains.kotlin.fir.analysis.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirVariableAssignmentChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.getChild
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.dispatchReceiverTypeOrNull
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isPrimitive
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
-object CanBeReplacedWithOperatorAssignmentChecker : FirExpressionChecker<FirVariableAssignment>() {
+object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker() {
     override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
         val lValue = expression.lValue
         if (lValue !is FirResolvedNamedReference) return
-        if (expression.source?.kind is FirFakeSourceElementKind) return
+        if (expression.source?.kind is KtFakeSourceElementKind) return
 
         val rValue = expression.rValue as? FirFunctionCall ?: return
-        if (rValue.source?.kind is FirFakeSourceElementKind) return
+        if (rValue.source?.kind is KtFakeSourceElementKind) return
 
-        val rValueClassId = rValue.explicitReceiver?.typeRef?.coneType?.classId
-        if (rValueClassId !in StandardClassIds.primitiveTypes) return
+        if (rValue.explicitReceiver?.typeRef?.coneType?.isPrimitive != true) return
         val rValueResolvedSymbol = rValue.toResolvedCallableSymbol() ?: return
-        if (rValueResolvedSymbol.dispatchReceiverClassOrNull()?.classId !in StandardClassIds.primitiveTypes) return
+        if (rValueResolvedSymbol.dispatchReceiverTypeOrNull()?.isPrimitive != true) return
 
         var needToReport = false
         val assignmentSource = expression.source
 
-        if (assignmentSource is FirPsiSourceElement<*>) {
+        if (assignmentSource is KtPsiSourceElement) {
             val lValuePsi = lValue.psi as? KtNameReferenceExpression ?: return
             val rValuePsi = rValue.psi as? KtBinaryExpression ?: return
 
             if (rValuePsi.matcher(lValuePsi)) {
                 needToReport = true
             }
-        } else if (assignmentSource is FirLightSourceElement) {
-            val lValueLightTree = (lValue.source as FirLightSourceElement).element
-            val rValueLightTree = (rValue.source as FirLightSourceElement).element
+        } else if (assignmentSource is KtLightSourceElement) {
+            val lValueLightTree = lValue.source!!.lighterASTNode
+            val rValueLightTree = rValue.source!!.lighterASTNode
             if (lightTreeMatcher(lValueLightTree, rValueLightTree, assignmentSource)) {
                 needToReport = true
             }
         }
 
         if (needToReport) {
-            val source = expression.source?.getChild(setOf(KtTokens.EQ))
-            reporter.report(source, FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT)
+            reporter.reportOn(expression.source, FirErrors.CAN_BE_REPLACED_WITH_OPERATOR_ASSIGNMENT, context)
         }
 
     }
 
-    fun lightTreeMatcher(
+    private fun lightTreeMatcher(
         variable: LighterASTNode,
         expression: LighterASTNode,
-        source: FirLightSourceElement,
+        source: KtLightSourceElement,
         prevOperator: LighterASTNode? = null
     ): Boolean {
-        val tree = source.tree
-        val childrenNullable = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(expression, childrenNullable)
-        val children = childrenNullable.get().filterNotNull()
+        val tree = source.treeStructure
+        val children = expression.getChildren(tree).filterNotNull()
 
         val operator = children.firstOrNull { it.tokenType == KtNodeTypes.OPERATION_REFERENCE }
         if (prevOperator != null && !isLightNodesHierarchicallyTrue(prevOperator, operator)) return false

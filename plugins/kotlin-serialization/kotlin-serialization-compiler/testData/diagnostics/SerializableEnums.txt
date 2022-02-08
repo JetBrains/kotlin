@@ -6,7 +6,6 @@ public object EnumSerializer : kotlinx.serialization.KSerializer<ExplicitlyMarke
     public open override /*1*/ fun deserialize(/*0*/ decoder: kotlinx.serialization.encoding.Decoder): ExplicitlyMarkedEnumCustom
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Patch function is deprecated for removal since this functionality is no longer supported by serializer.Some formats may provide implementation-specific patching in their Decoders.") public open override /*1*/ /*fake_override*/ fun patch(/*0*/ decoder: kotlinx.serialization.encoding.Decoder, /*1*/ old: ExplicitlyMarkedEnumCustom): ExplicitlyMarkedEnumCustom
     public open override /*1*/ fun serialize(/*0*/ encoder: kotlinx.serialization.encoding.Encoder, /*1*/ value: ExplicitlyMarkedEnumCustom): kotlin.Nothing
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -24,6 +23,7 @@ public object EnumSerializer : kotlinx.serialization.KSerializer<ExplicitlyMarke
     public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    @kotlin.jvm.JvmStatic public final /*synthesized*/ fun `write$Self`(/*0*/ self: EnumUsage, /*1*/ output: kotlinx.serialization.encoding.CompositeEncoder, /*2*/ serialDesc: kotlinx.serialization.descriptors.SerialDescriptor): kotlin.Unit
 
     @kotlin.Deprecated(level = DeprecationLevel.HIDDEN, message = "This synthesized declaration should not be used directly", replaceWith = kotlin.ReplaceWith(expression = "", imports = {})) public object `$serializer` : kotlinx.serialization.internal.GeneratedSerializer<EnumUsage> {
         private constructor `$serializer`()
@@ -32,7 +32,6 @@ public object EnumSerializer : kotlinx.serialization.KSerializer<ExplicitlyMarke
         public open override /*1*/ /*synthesized*/ fun deserialize(/*0*/ decoder: kotlinx.serialization.encoding.Decoder): EnumUsage
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Patch function is deprecated for removal since this functionality is no longer supported by serializer.Some formats may provide implementation-specific patching in their Decoders.") public open override /*1*/ /*fake_override*/ fun patch(/*0*/ decoder: kotlinx.serialization.encoding.Decoder, /*1*/ old: EnumUsage): EnumUsage
         public open override /*1*/ /*synthesized*/ fun serialize(/*0*/ encoder: kotlinx.serialization.encoding.Encoder, /*1*/ value: EnumUsage): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         public open override /*1*/ /*fake_override*/ fun typeParametersSerializers(): kotlin.Array<kotlinx.serialization.KSerializer<*>>
@@ -70,7 +69,6 @@ public object EnumSerializer : kotlinx.serialization.KSerializer<ExplicitlyMarke
         public open override /*1*/ /*synthesized*/ fun deserialize(/*0*/ decoder: kotlinx.serialization.encoding.Decoder): ExplicitlyMarkedEnum
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Patch function is deprecated for removal since this functionality is no longer supported by serializer.Some formats may provide implementation-specific patching in their Decoders.") public open override /*1*/ /*fake_override*/ fun patch(/*0*/ decoder: kotlinx.serialization.encoding.Decoder, /*1*/ old: ExplicitlyMarkedEnum): ExplicitlyMarkedEnum
         public open override /*1*/ /*synthesized*/ fun serialize(/*0*/ encoder: kotlinx.serialization.encoding.Encoder, /*1*/ value: ExplicitlyMarkedEnum): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
         public open override /*1*/ /*fake_override*/ fun typeParametersSerializers(): kotlin.Array<kotlinx.serialization.KSerializer<*>>
@@ -104,6 +102,14 @@ public object EnumSerializer : kotlinx.serialization.KSerializer<ExplicitlyMarke
     public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<ExplicitlyMarkedEnumCustom!>!
     public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final /*synthesized*/ fun serializer(): kotlinx.serialization.KSerializer<ExplicitlyMarkedEnumCustom>
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
 
     // Static members
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): ExplicitlyMarkedEnumCustom

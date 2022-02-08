@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+
 val test1 = "\uD83E\uDD17"
 val test2 = "\uD83E\uDD17\uD83E\uDD17"
 

@@ -1,5 +1,9 @@
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class WrappingInt(val value: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class WrappingInt(val value: Int) {
     operator fun inc(): WrappingInt = plus(1)
     operator fun plus(num: Int): WrappingInt = WrappingInt((value + num) and 0xFFFF)
 }

@@ -1,2 +1,0 @@
-[common.kt] Value read 2 use(boo)
-[common.kt] Value read 3 use(boo)

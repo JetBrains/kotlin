@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.common
 import org.jetbrains.kotlin.backend.common.CodegenUtil.getMemberToGenerate
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDescriptorSerializerPlugin
@@ -69,12 +70,13 @@ abstract class SerializerCodegen(
         serializerDescriptor::checkSerializableClassPropertyResult
     ) { true }
 
-    val localSerializersFieldsDescriptors: List<PropertyDescriptor> = findLocalSerializersFieldDescriptors()
+    var localSerializersFieldsDescriptors: List<Pair<PropertyDescriptor, IrProperty>> = emptyList()
+        protected set
 
     // Can be false if user specified inheritance from KSerializer explicitly
     protected val isGeneratedSerializer = serializerDescriptor.typeConstructor.supertypes.any(::isGeneratedKSerializer)
 
-    private fun findLocalSerializersFieldDescriptors(): List<PropertyDescriptor> {
+    protected fun findLocalSerializersFieldDescriptors(): List<PropertyDescriptor> {
         val count = serializableDescriptor.declaredTypeParameters.size
         if (count == 0) return emptyList()
         val propNames = (0 until count).map { "${SerialEntityNames.typeArgPrefix}$it" }

@@ -1,0 +1,23 @@
+@kotlin.annotation.Target(allowedTargets=[PROPERTY, TYPEALIAS])
+@java.lang.annotation.Retention(value=RUNTIME)
+@java.lang.annotation.Target(value=[])
+@kotlin.Metadata
+public annotation class Anno {
+    // source: 'internalPropertyOrTypealias.kt'
+}
+
+@kotlin.Metadata
+public final class C {
+    // source: 'internalPropertyOrTypealias.kt'
+    public method <init>(): void
+    public synthetic deprecated static @Anno method getProperty$main$annotations(): void
+    public final method getProperty$main(): int
+}
+
+@kotlin.Metadata
+public final class InternalPropertyOrTypealiasKt {
+    // source: 'internalPropertyOrTypealias.kt'
+    public synthetic deprecated static @Anno method Typealias$annotations(): void
+    public synthetic deprecated static @Anno method getProperty$annotations(): void
+    public final static method getProperty(): int
+}

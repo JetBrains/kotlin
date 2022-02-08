@@ -1,5 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: BOUND_RECEIVER
 open class SuperClass(val arg: () -> String)
 
 object obj {

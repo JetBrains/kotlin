@@ -1,8 +1,0 @@
-// WITH_RUNTIME
-
-fun test() {
-    val map = mutableMapOf<String, () -> Unit>()
-    map[""] = label@{
-        return@label
-    }
-}

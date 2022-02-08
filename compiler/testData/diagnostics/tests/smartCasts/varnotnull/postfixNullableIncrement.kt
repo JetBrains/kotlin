@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 operator fun Int?.inc(): Int? { return this }
 
 public fun box(arg: Int?) : Int? {

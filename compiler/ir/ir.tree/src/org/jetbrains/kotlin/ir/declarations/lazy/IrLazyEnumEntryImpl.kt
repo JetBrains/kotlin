@@ -47,7 +47,7 @@ class IrLazyEnumEntryImpl(
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
-    override val name: Name = symbol.descriptor.name
+    override val name: Name = descriptor.name
 
     override var correspondingClass: IrClass? = null
 

@@ -1,10 +1,17 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: PROPERTY_REFERENCES
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
 import kotlin.reflect.KProperty
 
-inline class ICInt(val i: Int)
-inline class ICLong(val l: Long)
-inline class ICOverIC(val o: ICLong)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class ICInt(val i: Int)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class ICLong(val l: Long)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class ICOverIC(val o: ICLong)
 
 class Delegate<T>(var f: () -> T) {
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T = f()

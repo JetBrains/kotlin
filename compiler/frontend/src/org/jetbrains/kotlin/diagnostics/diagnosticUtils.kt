@@ -29,13 +29,12 @@ import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.getEffectiveExpectedType
-import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.getEffectiveExpectedType
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.context.CallPosition
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.isCaptured
 import org.jetbrains.kotlin.resolve.calls.inference.wrapWithCapturingSubstitution
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
@@ -63,7 +62,7 @@ fun ResolutionContext<*>.reportTypeMismatchDueToTypeProjection(
             val resolvedCall = callPosition.leftPart.getResolvedCall(trace.bindingContext) ?: return false
             resolvedCall to { f: CallableDescriptor -> (f as? PropertyDescriptor)?.setter?.valueParameters?.get(0)?.type }
         }
-        is CallPosition.Unknown -> return false
+        is CallPosition.Unknown, is CallPosition.CallableReferenceRhs -> return false
     }
 
     val receiverType = resolvedCall.smartCastDispatchReceiverType
@@ -110,7 +109,7 @@ fun ResolutionContext<*>.reportTypeMismatchDueToTypeProjection(
 }
 
 fun BindingTrace.reportDiagnosticOnce(diagnostic: Diagnostic) {
-    if (bindingContext.diagnostics.forElement(diagnostic.psiElement).any { it.factory == diagnostic.factory }) return
+    if (bindingContext.diagnostics.noSuppression().forElement(diagnostic.psiElement).any { it.factory == diagnostic.factory }) return
 
     report(diagnostic)
 }
@@ -119,8 +118,10 @@ fun BindingTrace.reportDiagnosticOnceWrtDiagnosticFactoryList(
     diagnosticToReport: Diagnostic,
     vararg diagnosticFactories: DiagnosticFactory<*>,
 ) {
-    val hasAlreadyReportedDiagnosticFromListOrSameType = bindingContext.diagnostics.forElement(diagnosticToReport.psiElement)
-        .any { diagnostic -> diagnostic.factory == diagnosticToReport.factory || diagnosticFactories.any { it == diagnostic.factory } }
+    val hasAlreadyReportedDiagnosticFromListOrSameType =
+        bindingContext.diagnostics.noSuppression()
+            .forElement(diagnosticToReport.psiElement)
+            .any { diagnostic -> diagnostic.factory == diagnosticToReport.factory || diagnosticFactories.any { it == diagnostic.factory } }
 
     if (hasAlreadyReportedDiagnosticFromListOrSameType) return
 

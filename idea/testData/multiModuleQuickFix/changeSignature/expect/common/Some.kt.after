@@ -1,2 +1,0 @@
-// "Convert parameter to receiver" "true"
-expect fun String.f1(i: Int<caret>)

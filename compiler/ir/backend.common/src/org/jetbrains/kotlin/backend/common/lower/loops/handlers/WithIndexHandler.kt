@@ -19,18 +19,26 @@ import org.jetbrains.kotlin.ir.types.isIterable
 import org.jetbrains.kotlin.ir.types.isSequence
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
+import org.jetbrains.kotlin.ir.util.isUnsignedArray
 import org.jetbrains.kotlin.name.FqName
 
 /** Builds a [HeaderInfo] for calls to `withIndex()`. */
 internal class WithIndexHandler(context: CommonBackendContext, private val visitor: NestedHeaderInfoBuilderForWithIndex) :
     HeaderInfoFromCallHandler<Nothing?> {
 
+    private val supportsUnsignedArrays = context.optimizeLoopsOverUnsignedArrays
+
     // Use Quantifier.ANY so we can handle all `withIndex()` calls in the same manner.
     override val matcher =
         createIrCallMatcher(Quantifier.ANY) {
             callee {
                 fqName { it == FqName("kotlin.collections.withIndex") }
-                extensionReceiver { it != null && it.type.run { isArray() || isPrimitiveArray() || isIterable() } }
+                extensionReceiver {
+                    it != null && it.type.run {
+                        isArray() || isPrimitiveArray() || isIterable() ||
+                                (supportsUnsignedArrays && isUnsignedArray())
+                    }
+                }
                 parameterCount { it == 0 }
             }
             callee {

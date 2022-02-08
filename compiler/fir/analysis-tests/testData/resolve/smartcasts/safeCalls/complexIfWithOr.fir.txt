@@ -1,0 +1,19 @@
+FILE: complexIfWithOr.kt
+    public abstract interface State : R|kotlin/Any| {
+    }
+    public abstract interface Complex : R|kotlin/Any| {
+        public abstract val superClass: R|Complex?|
+            public get(): R|Complex?|
+
+    }
+    public abstract interface ExceptionState : R|State| {
+    }
+    public final fun test(qualifier: R|State?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/qualifier|, Null(null)) || (R|<local>/qualifier| is R|ExceptionState|) || ==((R|<local>/qualifier| as? R|Complex|)?.{ $subj$.R|/Complex.superClass| }, Null(null)) ->  {
+                ^test Unit
+            }
+        }
+
+        R|<local>/qualifier|.R|/Complex.superClass|
+    }

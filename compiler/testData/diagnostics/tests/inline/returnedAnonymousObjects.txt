@@ -1,4 +1,22 @@
 package
 
-private inline fun foo(/*0*/ crossinline f: () -> kotlin.Int): foo.<no name provided>
-public fun test(/*0*/ b: kotlin.Boolean): kotlin.Unit
+private inline fun foo1(/*0*/ crossinline f: () -> kotlin.Int): foo1.<no name provided>
+private inline fun foo2(/*0*/ crossinline f: () -> kotlin.Int): foo2.<no name provided>
+private inline fun foo3(/*0*/ crossinline f: () -> kotlin.Int): foo3.<no name provided>
+private fun foo4(/*0*/ f: () -> kotlin.Int): foo4.<no name provided>
+public fun test1(/*0*/ b: kotlin.Boolean): kotlin.Unit
+public fun test2(/*0*/ b: kotlin.Boolean): kotlin.Unit
+public fun test3(/*0*/ b: kotlin.Boolean): kotlin.Unit
+public fun test4(/*0*/ b: kotlin.Boolean): kotlin.Unit
+
+public interface I1 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface I2 {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

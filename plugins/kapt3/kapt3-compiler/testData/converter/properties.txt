@@ -1,0 +1,44 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class Test {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String simple = "123";
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String inferType = null;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String getter = "O";
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.Class<?> constJavaClassValue = null;
+    @org.jetbrains.annotations.NotNull()
+    private final kotlin.reflect.KClass<?> constClassValue = null;
+
+    public Test() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getSimple() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getInferType() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getGetter() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.Class<?> getConstJavaClassValue() {
+        return null;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final kotlin.reflect.KClass<?> getConstClassValue() {
+        return null;
+    }
+}

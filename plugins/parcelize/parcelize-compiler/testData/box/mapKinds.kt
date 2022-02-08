@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // FULL_JDK
 
 @file:JvmName("TestKt")
@@ -37,11 +37,9 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val first2 = readFromParcel<Test>(parcel)
+    val first2 = parcelableCreator<Test>().createFromParcel(parcel)
 
     assert(first == first2)
     assert((first.c as HashMap<*, *>).size == 1)
     assert((first2.e as TreeMap<*, *>).size == 1)
-    assert(first2.f is SortedMap<*, *>)
-    assert(first2.g is NavigableMap<*, *>)
 }

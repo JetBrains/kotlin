@@ -1,9 +1,0 @@
-private val b = true
-
-// EXTRACTION_TARGET: property with initializer
-fun foo(): String {
-    val x = "a${b}123"
-    val x = "aTRUE123"
-    val z = true
-    return "ab${b}def"
-}

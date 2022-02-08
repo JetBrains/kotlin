@@ -104,4 +104,13 @@ class AnnotationAndConstantLoaderImpl(
         val value = proto.getExtensionOrNull(protocol.compileTimeValue) ?: return null
         return deserializer.resolveValue(expectedType, value, container.nameResolver)
     }
+
+    override fun loadAnnotationDefaultValue(
+        container: ProtoContainer,
+        proto: ProtoBuf.Property,
+        expectedType: KotlinType
+    ): ConstantValue<*>? {
+        // Implement this method to properly support Annotations Instantiation feature
+        return null
+    }
 }

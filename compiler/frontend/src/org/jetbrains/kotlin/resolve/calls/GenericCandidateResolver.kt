@@ -19,11 +19,11 @@ import org.jetbrains.kotlin.psi.psiUtil.getBinaryWithTypeParent
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.*
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
-import org.jetbrains.kotlin.resolve.calls.callResolverUtil.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
-import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
+import org.jetbrains.kotlin.resolve.calls.util.*
+import org.jetbrains.kotlin.resolve.calls.util.ResolveArgumentsMode.RESOLVE_FUNCTION_ARGUMENTS
+import org.jetbrains.kotlin.resolve.calls.util.ResolveArgumentsMode.SHAPE_FUNCTION_ARGUMENTS
+import org.jetbrains.kotlin.resolve.calls.util.getCall
+import org.jetbrains.kotlin.resolve.calls.util.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.context.CallCandidateResolutionContext
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency.INDEPENDENT
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.Constrain
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.VALUE_PARAMETER_POSITION
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ValidityConstraintForConstituentType
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
-import org.jetbrains.kotlin.resolve.calls.resolvedCallUtil.makeNullableTypeIfSafeReceiver
+import org.jetbrains.kotlin.resolve.calls.util.makeNullableTypeIfSafeReceiver
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.INCOMPLETE_TYPE_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.OTHER_ERROR
@@ -54,7 +54,7 @@ val SPECIAL_FUNCTION_NAMES = ResolveConstruct.values().map { it.specialFunctionN
 
 class GenericCandidateResolver(
     private val argumentTypeResolver: ArgumentTypeResolver,
-    private val coroutineInferenceSupport: CoroutineInferenceSupport,
+    private val builderInferenceSupport: BuilderInferenceSupport,
     private val languageVersionSettings: LanguageVersionSettings,
     private val dataFlowValueFactory: DataFlowValueFactory
 ) {
@@ -347,7 +347,13 @@ class GenericCandidateResolver(
         }
         val resultingSystem = constraintSystem.build()
         resolvedCall.setConstraintSystem(resultingSystem)
-        resolvedCall.setResultingSubstitutor(resultingSystem.resultingSubstitutor)
+
+        val isNewInferenceEnabled = languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
+        val resultingSubstitutor = if (isNewInferenceEnabled) {
+            resultingSystem.resultingSubstitutor.replaceWithContravariantApproximatingSubstitution()
+        } else resultingSystem.resultingSubstitutor
+
+        resolvedCall.setSubstitutor(resultingSubstitutor)
     }
 
     // See KT-5385
@@ -378,8 +384,8 @@ class GenericCandidateResolver(
 
         val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument, context)
 
-        if (isCoroutineCallWithAdditionalInference(valueParameterDescriptor, valueArgument, languageVersionSettings)) {
-            coroutineInferenceSupport.analyzeCoroutine(functionLiteral, valueArgument, constraintSystem, context, effectiveExpectedType)
+        if (isBuilderInferenceCall(valueParameterDescriptor, valueArgument, languageVersionSettings)) {
+            builderInferenceSupport.analyzeBuilderInferenceCall(functionLiteral, valueArgument, constraintSystem, context, effectiveExpectedType)
         }
 
         val currentSubstitutor = constraintSystem.build().currentSubstitutor

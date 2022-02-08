@@ -1,13 +1,15 @@
 // EXPECTED_REACHABLE_NODES: 1372
 package foo
 
-class A
-
 fun box(): String {
 
     assertEquals(true, 'A' == 'A')
-    assertEquals(false, 'A'== 'B')
+    assertEquals(false, 'A' == 'B')
     assertEquals(false, ('A' as Any) == (65 as Any))
+
+    // FIXME(KT-50157): assertEquals(true, 'A' === 'A')
+    assertEquals(false, 'A' === 'B')
+    assertEquals(false, ('A' as Any) === (65 as Any))
 
     assertTrue(bar('Q'))
     assertFalse(bar('W'))

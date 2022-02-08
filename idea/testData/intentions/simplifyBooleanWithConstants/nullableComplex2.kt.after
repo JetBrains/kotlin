@@ -1,5 +1,0 @@
-data class Test(val notnull: Boolean, val nullable: Boolean?)
-
-fun test(a: Test, b: Test?) {
-    a.notnull || a.nullable == true || b?.notnull == true || b?.nullable == true
-}

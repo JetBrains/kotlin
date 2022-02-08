@@ -1,0 +1,68 @@
+FILE: invokePriorityComplex.kt
+    public final class AHolder : R|kotlin/Any| {
+        public constructor(a: R|kotlin/Int|): R|AHolder| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/Int| = R|<local>/a|
+            public get(): R|kotlin/Int|
+
+    }
+    public final class E : R|kotlin/Any| {
+        public constructor(): R|E| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object foo : R|kotlin/Any| {
+            private constructor(): R|E.foo| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val a: R|kotlin/Int| = Int(42)
+                public get(): R|kotlin/Int|
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|E.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val foo: R|AHolder| = R|/AHolder.AHolder|(Int(52))
+                public get(): R|AHolder|
+
+        }
+
+    }
+    public final class EE : R|kotlin/Any| {
+        public constructor(): R|EE| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object foo : R|kotlin/Any| {
+            private constructor(): R|EE.foo| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|EE.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val foo: R|AHolder| = R|/AHolder.AHolder|(Int(52))
+                public get(): R|AHolder|
+
+        }
+
+    }
+    public final fun main(): R|kotlin/Unit| {
+        Q|E.foo|.R|/E.foo.a|
+        Q|E.foo|
+        R|kotlin/with|<R|E.foo|, R|kotlin/Int|>(Q|E.foo|, <L> = with@fun R|E.foo|.<anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ this@R|special/anonymous|.R|/E.foo.a|
+        }
+        )
+        Q|EE.foo|.<Unresolved name: a>#
+    }

@@ -8,13 +8,13 @@ FILE: typeParameters.kt
     public? final typealias StringList = List<out String>
     public? final typealias AnyList = List<*>
     public? abstract class AbstractList<out T : Any> : List<T> {
-        public? constructor<out T : Any>(): R|AbstractList<T>| {
+        public? [ContainingClassKey=AbstractList] constructor<out T : Any>(): R|AbstractList<T>| {
             super<<implicit>>()
         }
 
     }
     public? final? class SomeList : AbstractList<Int> {
-        public? constructor(): R|SomeList| {
+        public? [ContainingClassKey=SomeList] constructor(): R|SomeList| {
             super<AbstractList<Int>>()
         }
 

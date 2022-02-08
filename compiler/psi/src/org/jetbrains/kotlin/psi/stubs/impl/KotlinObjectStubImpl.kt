@@ -24,16 +24,18 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.name.FqName
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.name.ClassId
 
 class KotlinObjectStubImpl(
     parent: StubElement<out PsiElement>?,
     private val name: StringRef?,
     private val fqName: FqName?,
+    private val classId: ClassId?,
     private val superNames: Array<StringRef>,
     private val isTopLevel: Boolean,
     private val isDefault: Boolean,
     private val isLocal: Boolean,
-    private val isObjectLiteral: Boolean
+    private val isObjectLiteral: Boolean,
 ) : KotlinStubBaseImpl<KtObjectDeclaration>(parent, KtStubElementTypes.OBJECT_DECLARATION), KotlinObjectStub {
     override fun getFqName() = fqName
     override fun getName() = StringRef.toString(name)
@@ -42,4 +44,5 @@ class KotlinObjectStubImpl(
     override fun isCompanion() = isDefault
     override fun isObjectLiteral() = isObjectLiteral
     override fun isLocal() = isLocal
+    override fun getClassId(): ClassId? = classId
 }

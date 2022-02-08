@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
-import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.Name
 
@@ -17,7 +16,7 @@ class JavaClassStaticEnhancementScope(
     session: FirSession,
     owner: FirRegularClassSymbol,
     private val useSiteStaticScope: JavaClassStaticUseSiteScope,
-) : FirScope(), FirContainingNamesAwareScope {
+) : FirContainingNamesAwareScope() {
     private val signatureEnhancement = FirSignatureEnhancement(owner.fir, session) {
         emptyList()
     }
@@ -30,10 +29,12 @@ class JavaClassStaticEnhancementScope(
         return super.processPropertiesByName(name, processor)
     }
 
-    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> Unit) {
+    override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         useSiteStaticScope.processFunctionsByName(name) process@{ original ->
             val enhancedFunction = signatureEnhancement.enhancedFunction(original, name)
-            processor(enhancedFunction)
+            if (enhancedFunction is FirNamedFunctionSymbol) {
+                processor(enhancedFunction)
+            }
         }
 
         return super.processFunctionsByName(name, processor)

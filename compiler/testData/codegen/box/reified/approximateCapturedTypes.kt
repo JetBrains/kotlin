@@ -1,6 +1,6 @@
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 // Basically this test checks that no captured type used as argument for signature mapping
 
 package test

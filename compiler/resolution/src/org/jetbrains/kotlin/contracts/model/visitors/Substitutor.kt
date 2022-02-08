@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.contracts.model.visitors
 
-import org.jetbrains.kotlin.contracts.model.Computation
-import org.jetbrains.kotlin.contracts.model.ESExpression
-import org.jetbrains.kotlin.contracts.model.ESExpressionVisitor
-import org.jetbrains.kotlin.contracts.model.ESTypeSubstitution
+import org.jetbrains.kotlin.contracts.model.*
 import org.jetbrains.kotlin.contracts.model.structure.*
 
 /**
@@ -60,9 +57,11 @@ class Substitutor(
         return CallComputation(ESBooleanType, or.functor.invokeWithArguments(left, right))
     }
 
-    override fun visitVariable(esVariable: ESVariable): Computation? = substitutions[esVariable] ?: esVariable
+    override fun visitVariable(esVariable: ESVariable): Computation = substitutions[esVariable] ?: esVariable
 
-    override fun visitConstant(esConstant: ESConstant): Computation? = esConstant
+    override fun visitConstant(esConstant: ESConstant): Computation = esConstant
 
     override fun visitReceiver(esReceiver: ESReceiver): ESReceiver = esReceiver
+
+    override fun visitLambda(lambda: ESValue): Computation = lambda
 }

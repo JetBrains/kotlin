@@ -1,5 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
-// WITH_RUNTIME
+// WITH_STDLIB
 
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
@@ -13,7 +13,7 @@ fun wrong(arg: Wrong) {}
 class Wrong
 
 class Right {
-    val prop: () -> Unit by <!DELEGATE_SPECIAL_FUNCTION_MISSING, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>::wrong<!>
+    val prop: () -> Unit by <!DELEGATE_SPECIAL_FUNCTION_MISSING!>::wrong<!>
 }
 
 fun box(): String {

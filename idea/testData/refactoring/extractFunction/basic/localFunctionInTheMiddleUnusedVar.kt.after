@@ -1,9 +1,0 @@
-fun test(): Int {
-    return i()
-}
-
-private fun i(): Int {
-    val j = 1
-    fun local() = 1
-    return local()
-}

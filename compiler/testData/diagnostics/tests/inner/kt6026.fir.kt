@@ -4,5 +4,5 @@ val oo = object {
     // Forbidden in KT-13510
     class Nested
 
-    fun f1() = <!INAPPLICABLE_CANDIDATE!>Nested<!>(11)
+    fun f1() = Nested(<!TOO_MANY_ARGUMENTS!>11<!>)
 }

@@ -11,6 +11,8 @@ import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.TaskProvider
@@ -69,6 +71,13 @@ sealed class NativeBinary(
         linkerOpts.addAll(options)
     }
 
+    var binaryOptions: MutableMap<String, String> = mutableMapOf()
+
+    fun binaryOption(name: String, value: String) {
+        // TODO: report if $name is unknown?
+        binaryOptions[name] = value
+    }
+
     /** Additional arguments passed to the Kotlin/Native compiler. */
     var freeCompilerArgs: List<String>
         get() = linkTask.kotlinOptions.freeCompilerArgs
@@ -122,7 +131,9 @@ class Executable constructor(
         get() = super.baseName
         set(value) {
             super.baseName = value
-            runTask?.executable = outputFile.absolutePath
+            runTaskProvider?.configure {
+                it.executable = outputFile.absolutePath
+            }
         }
 
     var entryPoint: String? = null
@@ -133,10 +144,10 @@ class Executable constructor(
 
     /**
      * A name of a task running this executable.
-     * Returns null if the executables's target is not a host one (macosX64, linuxX64 or mingw64).
+     * Returns null if the executables's target is not a host one (macosArm64, macosX64, linuxX64 or mingw64).
      */
     val runTaskName: String?
-        get() = if (konanTarget in listOf(KonanTarget.MACOS_X64, KonanTarget.LINUX_X64, KonanTarget.MINGW_X64)) {
+        get() = if (konanTarget in listOf(KonanTarget.MACOS_ARM64, KonanTarget.MACOS_X64, KonanTarget.LINUX_X64, KonanTarget.MINGW_X64)) {
             lowerCamelCaseName("run", name, compilation.target.targetName)
         } else {
             null
@@ -144,10 +155,13 @@ class Executable constructor(
 
     /**
      * A task running this executable.
-     * Returns null if the executables's target is not a host one (macosX64, linuxX64 or mingw64).
+     * Returns null if the executables's target is not a host one (macosArm64, macosX64, linuxX64 or mingw64).
      */
+    val runTaskProvider: TaskProvider<AbstractExecTask<*>>?
+        get() = runTaskName?.let { project.tasks.withType(AbstractExecTask::class.java).named(it) }
+
     val runTask: AbstractExecTask<*>?
-        get() = runTaskName?.let { project.tasks.getByName(it) as AbstractExecTask<*> }
+        get() = runTaskProvider?.get()
 }
 
 class TestExecutable(
@@ -229,7 +243,11 @@ class Framework(
     baseName: String,
     buildType: NativeBuildType,
     compilation: KotlinNativeCompilation
-) : AbstractNativeLibrary(name, baseName, buildType, compilation) {
+) : AbstractNativeLibrary(name, baseName, buildType, compilation), HasAttributes {
+
+    private val attributeContainer = HierarchyAttributeContainer(parent = compilation.attributes)
+
+    override fun getAttributes() = attributeContainer
 
     override val outputKind: NativeOutputKind
         get() = NativeOutputKind.FRAMEWORK
@@ -238,12 +256,12 @@ class Framework(
     /**
      * Embed bitcode for the framework or not. See [BitcodeEmbeddingMode].
      */
-    var embedBitcode: BitcodeEmbeddingMode = buildType.embedBitcode(konanTarget)
+    var embedBitcode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode = buildType.embedBitcode(konanTarget)
 
     /**
      * Enable or disable embedding bitcode for the framework. See [BitcodeEmbeddingMode].
      */
-    fun embedBitcode(mode: BitcodeEmbeddingMode) {
+    fun embedBitcode(mode: org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode) {
         embedBitcode = mode
     }
 
@@ -257,22 +275,24 @@ class Framework(
      *     marker - Embed placeholder LLVM IR data as a marker.
      *              Has the same effect as the -Xembed-bitcode-marker command line option.
      */
-    fun embedBitcode(mode: String) = embedBitcode(BitcodeEmbeddingMode.valueOf(mode.toUpperCase()))
+    fun embedBitcode(mode: String) = embedBitcode(org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.valueOf(mode.toUpperCase()))
 
     /**
      * Specifies if the framework is linked as a static library (false by default).
      */
     var isStatic = false
 
-    enum class BitcodeEmbeddingMode {
-        /** Don't embed LLVM IR bitcode. */
-        DISABLE,
+    object BitcodeEmbeddingMode {
+        val DISABLE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.DISABLE
+        val BITCODE = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.BITCODE
+        val MARKER = org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode.MARKER
+    }
 
-        /** Embed LLVM IR bitcode as data. */
-        BITCODE,
-
-        /** Embed placeholder LLVM IR data as a marker. */
-        MARKER,
+    companion object {
+        val frameworkTargets: Attribute<Set<*>> = Attribute.of(
+            "org.jetbrains.kotlin.native.framework.targets",
+            Set::class.java
+        )
     }
 }
 

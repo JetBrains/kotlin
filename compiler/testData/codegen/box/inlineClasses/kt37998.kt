@@ -1,4 +1,9 @@
-inline class Z(val x: Int)
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val x: Int)
 
 class A {
     fun foo() = Z(42)

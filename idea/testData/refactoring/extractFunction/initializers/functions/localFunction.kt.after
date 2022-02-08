@@ -1,9 +1,0 @@
-// PARAM_TYPES: kotlin.Int
-// PARAM_TYPES: kotlin.Int
-// PARAM_DESCRIPTOR: value-parameter a: kotlin.Int defined in bar.foo
-// PARAM_DESCRIPTOR: value-parameter b: kotlin.Int defined in bar.foo
-fun bar(n: Int) {
-    fun i(a: Int, b: Int) = a + b - n
-
-    fun foo(a: Int, b: Int) = i(a, b) - 1
-}

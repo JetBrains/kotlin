@@ -1,0 +1,88 @@
+FILE: innerClassHierarchy.kt
+    public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open inner class Inner : R|kotlin/Any| {
+            public Base.constructor(): R|Base.Inner| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final class Derived : R|Base| {
+        public constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+        public final inner class InnerDerived : R|Base.Inner| {
+            public Derived.constructor(): R|Derived.InnerDerived| {
+                this@R|/Derived|.super<R|Base.Inner|>()
+            }
+
+            public final inner class VeryInner : R|Base.Inner| {
+                public Derived.InnerDerived.constructor(): R|Derived.InnerDerived.VeryInner| {
+                    this@R|/Derived|.super<R|Base.Inner|>()
+                }
+
+                public final inner class VeryVeryInner : R|Base.Inner| {
+                    public Derived.InnerDerived.VeryInner.constructor(): R|Derived.InnerDerived.VeryInner.VeryVeryInner| {
+                        this@R|/Derived|.super<R|Base.Inner|>()
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+    public open class A : R|kotlin/Any| {
+        public constructor(s: R|kotlin/String|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|kotlin/String| = R|<local>/s|
+            public get(): R|kotlin/String|
+
+        public open inner class B : R|A| {
+            public A.constructor(s: R|kotlin/String|): R|A.B| {
+                super<R|A|>(R|<local>/s|)
+            }
+
+        }
+
+        public open inner class C : R|A.B| {
+            public A.constructor(s: R|kotlin/String|, additional: R|kotlin/Double|): R|A.C| {
+                this@R|/A|.super<R|A.B|>(R|<local>/s|)
+            }
+
+        }
+
+        public open inner class D : R|A.C| {
+            public A.constructor(other: R|kotlin/Int|, another: R|kotlin/Long|, s: R|kotlin/String|): R|A.D| {
+                this@R|/A|.super<R|A.C|>(R|<local>/s|, R|<local>/another|.R|kotlin/Long.toDouble|())
+            }
+
+        }
+
+        public open inner class E : R|A.D| {
+            public A.constructor(): R|A.E| {
+                this@R|/A|.super<R|A.D|>(Int(0), Long(42), String(OK))
+            }
+
+        }
+
+        public final inner class F : R|A.E| {
+            public A.constructor(): R|A.F| {
+                this@R|/A|.super<R|A.E|>()
+            }
+
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box R|/A.A|(String(Fail)).R|/A.F.F|().R|/A.s|
+    }

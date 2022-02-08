@@ -19,6 +19,7 @@ public final class NullabilityInExpansionKt {
     public final static @org.jetbrains.annotations.NotNull method zwrapNbox(p0: int): Z1
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Q1 {
     // source: 'nullabilityInExpansion.kt'
@@ -37,6 +38,7 @@ public final class Q1 {
     public synthetic final method unbox-impl(): java.lang.Integer
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Q2 {
     // source: 'nullabilityInExpansion.kt'
@@ -55,6 +57,7 @@ public final class Q2 {
     public synthetic final method unbox-impl(): java.lang.Integer
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class QN {
     // source: 'nullabilityInExpansion.kt'
@@ -73,6 +76,7 @@ public final class QN {
     public synthetic final method unbox-impl(): Q1
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class S1 {
     // source: 'nullabilityInExpansion.kt'
@@ -91,6 +95,7 @@ public final class S1 {
     public synthetic final method unbox-impl(): java.lang.String
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class S2 {
     // source: 'nullabilityInExpansion.kt'
@@ -109,6 +114,7 @@ public final class S2 {
     public synthetic final method unbox-impl(): java.lang.String
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class SN {
     // source: 'nullabilityInExpansion.kt'
@@ -127,6 +133,7 @@ public final class SN {
     public synthetic final method unbox-impl(): java.lang.String
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class SN2 {
     // source: 'nullabilityInExpansion.kt'
@@ -145,6 +152,7 @@ public final class SN2 {
     public synthetic final method unbox-impl(): java.lang.String
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class W1 {
     // source: 'nullabilityInExpansion.kt'
@@ -163,6 +171,7 @@ public final class W1 {
     public synthetic final method unbox-impl(): java.lang.String
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class W2 {
     // source: 'nullabilityInExpansion.kt'
@@ -181,6 +190,7 @@ public final class W2 {
     public synthetic final method unbox-impl(): java.lang.String
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class WN {
     // source: 'nullabilityInExpansion.kt'
@@ -199,6 +209,7 @@ public final class WN {
     public synthetic final method unbox-impl(): W1
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Z1 {
     // source: 'nullabilityInExpansion.kt'
@@ -217,6 +228,7 @@ public final class Z1 {
     public synthetic final method unbox-impl(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Z2 {
     // source: 'nullabilityInExpansion.kt'
@@ -235,6 +247,7 @@ public final class Z2 {
     public synthetic final method unbox-impl(): int
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class ZN {
     // source: 'nullabilityInExpansion.kt'
@@ -253,6 +266,7 @@ public final class ZN {
     public synthetic final method unbox-impl(): Z1
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class ZN2 {
     // source: 'nullabilityInExpansion.kt'

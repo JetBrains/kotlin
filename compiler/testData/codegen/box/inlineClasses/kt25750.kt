@@ -1,7 +1,6 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: PROPERTY_REFERENCES
-// !LANGUAGE: +InlineClasses
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
@@ -9,7 +8,8 @@ import kotlin.reflect.KProperty
 operator fun <R> KMutableProperty0<R>.setValue(host: Any?, property: KProperty<*>, value: R) = set(value)
 operator fun <R> KMutableProperty0<R>.getValue(host: Any?, property: KProperty<*>): R = get()
 
-inline class Foo(val i: Int)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Foo(val i: Int)
 
 var f = Foo(4)
 

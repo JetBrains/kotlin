@@ -1,4 +1,5 @@
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// FIR_IDE_IGNORE
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 // SKIP_TXT
 
 // TESTCASE NUMBER: 1
@@ -10,7 +11,7 @@ fun case_1(arg: Int?) {
 // TESTCASE NUMBER: 2
 fun case_2(arg: Int?) {
     funWithAtLeastOnceCallsInPlace { arg!! }
-    arg.<!INAPPLICABLE_CANDIDATE!>inc<!>()
+    arg<!UNSAFE_CALL!>.<!>inc()
 }
 
 // TESTCASE NUMBER: 3
@@ -23,6 +24,6 @@ fun case_3() {
 // TESTCASE NUMBER: 4
 fun case_4() {
     val value_1: Boolean?
-    funWithAtLeastOnceCallsInPlace { value_1 = true }
-    value_1.<!INAPPLICABLE_CANDIDATE!>not<!>()
+    funWithAtLeastOnceCallsInPlace { <!VAL_REASSIGNMENT!>value_1<!> = true }
+    value_1<!UNSAFE_CALL!>.<!>not()
 }

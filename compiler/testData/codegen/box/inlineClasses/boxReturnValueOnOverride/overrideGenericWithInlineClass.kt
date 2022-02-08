@@ -1,10 +1,16 @@
-inline class Marker(val i: Int)
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Marker(val i: Int)
 
 interface I<T> {
     fun foo(i: Marker) : T
 }
 
-inline class IC(val a: Any)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class IC(val a: Any)
 
 class C : I<IC> {
     override fun foo(i: Marker): IC = IC("OK")

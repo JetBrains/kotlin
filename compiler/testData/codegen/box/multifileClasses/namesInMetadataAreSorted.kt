@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// IGNORE_BACKEND: ANDROID
+// WITH_STDLIB
 // FILE: ccc.kt
 
 @file:JvmName("Facade")

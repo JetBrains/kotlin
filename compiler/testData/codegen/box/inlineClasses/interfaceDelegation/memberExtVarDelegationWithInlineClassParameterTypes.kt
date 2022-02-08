@@ -1,9 +1,11 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 import kotlin.test.assertEquals
 
-inline class S(val xs: Array<String>)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class S(val xs: Array<String>)
 
 interface IFoo {
     var S.extVar: String

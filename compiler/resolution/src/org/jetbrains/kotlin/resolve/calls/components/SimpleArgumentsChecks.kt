@@ -85,7 +85,7 @@ private fun checkExpressionArgument(
         if (argumentType.isMarkedNullable) {
             if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, actualExpectedType, position)) return null
             if (csBuilder.addSubtypeConstraintIfCompatible(argumentType.makeNotNullable(), actualExpectedType, position)) {
-                return ArgumentTypeMismatchDiagnostic(actualExpectedType, argumentType, expressionArgument)
+                return ArgumentNullabilityErrorDiagnostic(actualExpectedType, argumentType, expressionArgument)
             }
         }
 
@@ -96,8 +96,8 @@ private fun checkExpressionArgument(
     val position = if (isReceiver) ReceiverConstraintPositionImpl(expressionArgument) else ArgumentConstraintPositionImpl(expressionArgument)
 
     // Used only for arguments with @NotNull annotation
-    if (expectedType is NotNullTypeVariable && argumentType.isMarkedNullable) {
-        diagnosticsHolder.addDiagnostic(ArgumentTypeMismatchDiagnostic(expectedType, argumentType, expressionArgument))
+    if (expectedType is NotNullTypeParameter && argumentType.isMarkedNullable) {
+        diagnosticsHolder.addDiagnostic(ArgumentNullabilityErrorDiagnostic(expectedType, argumentType, expressionArgument))
     }
 
     if (expressionArgument.isSafeCall) {
@@ -153,7 +153,7 @@ private fun checkExpressionArgument(
  * }
  *
  */
-private fun captureFromTypeParameterUpperBoundIfNeeded(argumentType: UnwrappedType, expectedType: UnwrappedType): UnwrappedType {
+fun captureFromTypeParameterUpperBoundIfNeeded(argumentType: UnwrappedType, expectedType: UnwrappedType): UnwrappedType {
     val expectedTypeConstructor = expectedType.upperIfFlexible().constructor
 
     if (argumentType.lowerIfFlexible().constructor.declarationDescriptor is TypeParameterDescriptor) {

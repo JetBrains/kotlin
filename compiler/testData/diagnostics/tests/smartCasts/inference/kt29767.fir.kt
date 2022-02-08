@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // ISSUE: KT-29767
 
 fun test(a: MutableList<out Int?>?) {

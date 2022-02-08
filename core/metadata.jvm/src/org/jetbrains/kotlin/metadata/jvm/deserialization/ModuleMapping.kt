@@ -39,7 +39,11 @@ class ModuleMapping private constructor(
 
         fun readVersionNumber(stream: DataInputStream): IntArray? =
             try {
-                IntArray(stream.readInt()) { stream.readInt() }
+                val size = stream.readInt()
+                if (size < 0 || size > BinaryVersion.MAX_LENGTH)
+                    null // cache is evidently corrupted
+                else
+                    IntArray(size) { stream.readInt() }
             } catch (e: IOException) {
                 null
             }

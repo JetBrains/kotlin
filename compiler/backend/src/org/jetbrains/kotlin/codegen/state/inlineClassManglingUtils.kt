@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.codegen.state
 
 import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.name.FqNameUnsafe
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForParameterTypes
 import org.jetbrains.kotlin.resolve.jvm.requiresFunctionNameManglingForReturnType
 import org.jetbrains.kotlin.types.KotlinType
@@ -85,6 +85,7 @@ fun getManglingSuffixBasedOnKotlinSignature(
 ): String? {
     if (descriptor !is FunctionDescriptor) return null
     if (descriptor is ConstructorDescriptor) return null
+    if (descriptor is JavaMethodDescriptor) return null
     if (InlineClassDescriptorResolver.isSynthesizedBoxOrUnboxMethod(descriptor)) return null
 
     // Don't mangle functions with '@JvmName' annotation.
@@ -111,7 +112,7 @@ fun getManglingSuffixBasedOnKotlinSignature(
 private fun getInfoForMangling(type: KotlinType): InfoForMangling? {
     val descriptor = type.constructor.declarationDescriptor ?: return null
     return when (descriptor) {
-        is ClassDescriptor -> InfoForMangling(descriptor.fqNameUnsafe, descriptor.isInline, type.isMarkedNullable)
+        is ClassDescriptor -> InfoForMangling(descriptor.fqNameUnsafe, descriptor.isInlineClass(), type.isMarkedNullable)
 
         is TypeParameterDescriptor -> {
             getInfoForMangling(descriptor.representativeUpperBound)

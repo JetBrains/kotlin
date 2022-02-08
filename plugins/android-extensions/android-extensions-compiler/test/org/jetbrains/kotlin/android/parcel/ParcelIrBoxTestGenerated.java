@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.android.parcel;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
+import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.runner.RunWith;
@@ -26,7 +27,7 @@ public class ParcelIrBoxTestGenerated extends AbstractParcelIrBoxTest {
     }
 
     public void testAllFilesPresentInBox() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/parcel/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/android-extensions/android-extensions-compiler/testData/parcel/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @TestMetadata("allPrimitiveTypes.kt")
@@ -179,6 +180,21 @@ public class ParcelIrBoxTestGenerated extends AbstractParcelIrBoxTest {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/kt39981.kt");
     }
 
+    @TestMetadata("kt41553.kt")
+    public void testKt41553() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/kt41553.kt");
+    }
+
+    @TestMetadata("kt41553_2.kt")
+    public void testKt41553_2() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/kt41553_2.kt");
+    }
+
+    @TestMetadata("kt46567.kt")
+    public void testKt46567() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/kt46567.kt");
+    }
+
     @TestMetadata("listKinds.kt")
     public void testListKinds() throws Exception {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/listKinds.kt");
@@ -237,6 +253,11 @@ public class ParcelIrBoxTestGenerated extends AbstractParcelIrBoxTest {
     @TestMetadata("newArray.kt")
     public void testNewArray() throws Exception {
         runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/newArray.kt");
+    }
+
+    @TestMetadata("newArrayParceler.kt")
+    public void testNewArrayParceler() throws Exception {
+        runTest("plugins/android-extensions/android-extensions-compiler/testData/parcel/box/newArrayParceler.kt");
     }
 
     @TestMetadata("nullableTypes.kt")

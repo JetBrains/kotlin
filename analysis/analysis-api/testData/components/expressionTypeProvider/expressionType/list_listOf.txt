@@ -1,0 +1,2 @@
+expression: lst
+type: kotlin.collections.List<kotlin.collections.List<*>>

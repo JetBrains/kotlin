@@ -1,0 +1,3 @@
+val test: Int
+  field = Companion.#MIN_VALUE
+  get

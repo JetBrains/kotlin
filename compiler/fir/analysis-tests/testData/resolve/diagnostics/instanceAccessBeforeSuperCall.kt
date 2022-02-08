@@ -7,10 +7,10 @@ class A {
 class B(other: B = <!NO_THIS!>this<!>)
 
 class C() {
-    constructor(x: Int) : <!INAPPLICABLE_CANDIDATE!>this<!>({
+    constructor(x: Int) : this(<!ARGUMENT_TYPE_MISMATCH!>{
         val a = 10
-        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>
-    }) {}
+        <!ARGUMENT_TYPE_MISMATCH, INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>
+    }<!>) {}
 }
 
 class D {
@@ -37,7 +37,7 @@ class F(var a: Int, b: Int, closure: () -> Unit, instance: F?) {
         val a = 10
         <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>
         test(<!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>)
-        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.<!UNRESOLVED_REFERENCE!>a<!> = 20
+        <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>.a = 20
     }, <!INSTANCE_ACCESS_BEFORE_SUPER_CALL!>this<!>) {
         this.a = 30
     }

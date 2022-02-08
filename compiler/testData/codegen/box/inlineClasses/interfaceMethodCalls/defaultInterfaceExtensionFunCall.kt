@@ -1,19 +1,24 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 interface IFoo {
     fun Long.foo() = bar()
     fun bar(): String
 }
 
-inline class Z(val x: Int) : IFoo {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val x: Int) : IFoo {
     override fun bar(): String = "OK"
 }
 
-inline class L(val x: Long) : IFoo {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class L(val x: Long) : IFoo {
     override fun bar(): String = "OK"
 }
 
-inline class S(val x: String) : IFoo {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class S(val x: String) : IFoo {
     override fun bar(): String = "OK"
 }
 

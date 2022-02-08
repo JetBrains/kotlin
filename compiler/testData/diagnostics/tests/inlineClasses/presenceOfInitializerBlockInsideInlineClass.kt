@@ -1,6 +1,6 @@
-// !LANGUAGE: +InlineClasses
-// !DIAGNOSTICS: -UNUSED_VARIABLE
 // FIR_IDENTICAL
+// !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
+// !DIAGNOSTICS: -UNUSED_VARIABLE
 
 inline class Foo(val x: Int) {
     init {}

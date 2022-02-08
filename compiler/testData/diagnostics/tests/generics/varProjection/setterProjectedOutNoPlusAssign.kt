@@ -1,5 +1,5 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNREACHABLE_CODE
-// !WITH_NEW_INFERENCE
 interface Tr<T> {
     var v: T
 }

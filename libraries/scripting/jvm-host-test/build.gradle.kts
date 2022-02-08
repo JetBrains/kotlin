@@ -4,27 +4,25 @@ plugins {
 }
 
 val allTestsRuntime by configurations.creating
-val testCompile by configurations
-testCompile.extendsFrom(allTestsRuntime)
+val testApi by configurations
+testApi.extendsFrom(allTestsRuntime)
 val embeddableTestRuntime by configurations.creating {
     extendsFrom(allTestsRuntime)
 }
 
 dependencies {
-    allTestsRuntime(commonDep("junit"))
-    allTestsRuntime(intellijCoreDep()) { includeJars("intellij-core") }
-    Platform[193].orLower {
-        allTestsRuntime(intellijDep()) { includeJars("openapi") }
-    }
-    allTestsRuntime(intellijDep()) { includeJars("idea", "idea_rt", "log4j", "jna") }
-    testCompile(project(":kotlin-scripting-jvm-host-unshaded"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(project(":kotlin-scripting-compiler"))
-    testCompile(project(":daemon-common")) // TODO: fix import (workaround for jps build)
+    allTestsRuntime(commonDependency("junit"))
+    allTestsRuntime(intellijCore())
+    testApi(project(":kotlin-scripting-jvm-host-unshaded"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(project(":kotlin-scripting-compiler"))
+    testApi(project(":daemon-common")) // TODO: fix import (workaround for jps build)
+
+    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
 
     testRuntimeOnly(project(":kotlin-compiler"))
-    testRuntimeOnly(project(":kotlin-reflect"))
-    testRuntimeOnly(commonDep("org.jetbrains.intellij.deps", "trove4j"))
+    testImplementation(project(":kotlin-reflect"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
     
     embeddableTestRuntime(project(":kotlin-scripting-jvm-host"))
     embeddableTestRuntime(project(":kotlin-test:kotlin-test-jvm"))
@@ -45,6 +43,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
 projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
+    systemProperty("kotlin.script.test.base.compiler.arguments", "-Xuse-old-backend")
 }
 
 // This doesn;t work now due to conflicts between embeddable compiler contents and intellij sdk modules
@@ -54,3 +53,9 @@ projectTest(parallel = true) {
 //    dependsOn(embeddableTestRuntime)
 //    classpath = embeddableTestRuntime
 //}
+
+projectTest(taskName = "testWithIr", parallel = true) {
+    dependsOn(":dist")
+    workingDir = rootDir
+    systemProperty("kotlin.script.base.compiler.arguments", "-Xuse-ir")
+}

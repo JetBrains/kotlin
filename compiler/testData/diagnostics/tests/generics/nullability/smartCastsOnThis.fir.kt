@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_EXPRESSION,-UNUSED_VARIABLE
 
 fun <T : CharSequence?> T.bar1() {}
@@ -9,10 +8,10 @@ fun CharSequence.bar4() {}
 
 fun <T : String?> T.foo() {
     if (this != null) {
-        if (this != null) {}
+        if (<!SENSELESS_COMPARISON!>this != null<!>) {}
 
         length
-        this?.length
+        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>this<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
 
         bar1()
         bar2()
@@ -20,14 +19,14 @@ fun <T : String?> T.foo() {
         bar4()
 
 
-        this?.bar1()
+        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>this<!UNNECESSARY_SAFE_CALL!>?.<!>bar1()<!>
     }
 
-    <!INAPPLICABLE_CANDIDATE!>length<!>
+    <!UNSAFE_CALL!>length<!>
 
     if (this is String) {
         length
-        this?.length
+        <!SAFE_CALL_WILL_CHANGE_NULLABILITY!>this<!UNNECESSARY_SAFE_CALL!>?.<!>length<!>
 
         bar1()
         bar2()

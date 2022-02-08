@@ -35,8 +35,8 @@ class IsolationgIncrementalProcessorTest {
 
         assertEquals(
             mapOf(
-                generatedSources.resolve("test/UserGenerated.java") to File("plugins/kapt3/kapt3-base/testData/runner/incremental/User.java").absoluteFile,
-                generatedSources.resolve("test/AddressGenerated.java") to File("plugins/kapt3/kapt3-base/testData/runner/incremental/Address.java").absoluteFile
+                generatedSources.resolve("test/UserGenerated.java") to "test.User",
+                generatedSources.resolve("test/AddressGenerated.java") to "test.Address"
             ),
             isolating.getGeneratedToSources()
         )
@@ -62,12 +62,12 @@ class IsolationgIncrementalProcessorTest {
 
         assertEquals(
             mapOf(
-                generatedSources.resolve("test/UserGenerated.java") to TEST_DATA_DIR.resolve("User.java").absoluteFile,
-                generatedSources.resolve("test/UserGeneratedClass.class") to TEST_DATA_DIR.resolve("User.java").absoluteFile,
-                generatedSources.resolve("test/UserGeneratedResource") to TEST_DATA_DIR.resolve("User.java").absoluteFile,
-                generatedSources.resolve("test/AddressGenerated.java") to TEST_DATA_DIR.resolve("Address.java").absoluteFile,
-                generatedSources.resolve("test/AddressGeneratedClass.class") to TEST_DATA_DIR.resolve("Address.java").absoluteFile,
-                generatedSources.resolve("test/AddressGeneratedResource") to TEST_DATA_DIR.resolve("Address.java").absoluteFile
+                generatedSources.resolve("test/UserGenerated.java") to "test.User",
+                generatedSources.resolve("test/UserGeneratedClass.class") to "test.User",
+                generatedSources.resolve("test/UserGeneratedResource") to "test.User",
+                generatedSources.resolve("test/AddressGenerated.java") to "test.Address",
+                generatedSources.resolve("test/AddressGeneratedClass.class") to "test.Address",
+                generatedSources.resolve("test/AddressGeneratedResource") to "test.Address"
             ),
             isolating.getGeneratedToSources()
         )
@@ -95,15 +95,15 @@ class IsolationgIncrementalProcessorTest {
         isolating.forEach { assertEquals(RuntimeProcType.ISOLATING, it.getRuntimeType()) }
         assertEquals(
             mapOf(
-                generatedSources.resolve("test/UserGenerated.java") to File("plugins/kapt3/kapt3-base/testData/runner/incremental/User.java").absoluteFile,
-                generatedSources.resolve("test/AddressGenerated.java") to File("plugins/kapt3/kapt3-base/testData/runner/incremental/Address.java").absoluteFile
+                generatedSources.resolve("test/UserGenerated.java") to "test.User",
+                generatedSources.resolve("test/AddressGenerated.java") to "test.Address"
             ), isolating[0].getGeneratedToSources()
         )
 
         assertEquals(
             mapOf(
-                generatedSources.resolve("test/UserGeneratedTwo.java") to File("plugins/kapt3/kapt3-base/testData/runner/incremental/User.java").absoluteFile,
-                generatedSources.resolve("test/AddressGeneratedTwo.java") to File("plugins/kapt3/kapt3-base/testData/runner/incremental/Address.java").absoluteFile
+                generatedSources.resolve("test/UserGeneratedTwo.java") to "test.User",
+                generatedSources.resolve("test/AddressGeneratedTwo.java") to "test.Address"
             ), isolating[1].getGeneratedToSources()
         )
     }
@@ -116,7 +116,7 @@ class IsolationgIncrementalProcessorTest {
 
         assertEquals(
             mapOf(
-                generatedSources.resolve("test/UserGenerated.java") to File("plugins/kapt3/kapt3-base/testData/runner/incremental/User.java").absoluteFile
+                generatedSources.resolve("test/UserGenerated.java") to "test.User"
             ), isolating[0].getGeneratedToSources()
         )
     }

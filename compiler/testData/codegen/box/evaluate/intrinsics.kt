@@ -1,6 +1,9 @@
+// !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
+// IGNORE_BACKEND_FIR: JVM_IR
+// FIR status: don't support legacy feature
 // TARGET_BACKEND: JVM
 
-// WITH_RUNTIME
+// WITH_STDLIB
 
 @Retention(AnnotationRetention.RUNTIME)
 annotation class Ann(

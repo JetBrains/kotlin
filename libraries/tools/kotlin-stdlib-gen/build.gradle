@@ -8,8 +8,8 @@ sourceSets {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion"
-    compile "org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion"
+    api "org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion"
+    api "org.jetbrains.kotlin:kotlin-reflect:$bootstrapKotlinVersion"
 }
 
 compileKotlin {
@@ -34,4 +34,11 @@ task run(type: JavaExec) {
     classpath sourceSets.main.runtimeClasspath
     args = ["${rootDir}"]
     systemProperty 'line.separator', '\n'
+}
+
+task generateUnicodeData(type: JavaExec) {
+    group 'application'
+    main 'generators.unicode.GenerateUnicodeDataKt'
+    classpath sourceSets.main.runtimeClasspath
+    args = ["${rootDir}"]
 }

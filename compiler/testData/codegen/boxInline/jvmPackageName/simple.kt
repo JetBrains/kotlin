@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: 1.kt
 
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
@@ -10,10 +10,12 @@ fun f(): String = "O"
 
 val g: String? get() = "K"
 
+inline val h: String get() = ""
+
 inline fun <T> i(block: () -> T): T = block()
 
 // FILE: 2.kt
 
 import foo.bar.*
 
-fun box(): String = i { f() + g }
+fun box(): String = i { f() + g + h }

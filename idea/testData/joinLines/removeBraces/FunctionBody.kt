@@ -1,3 +1,0 @@
-<caret>fun foo() {
-    bar()
-}

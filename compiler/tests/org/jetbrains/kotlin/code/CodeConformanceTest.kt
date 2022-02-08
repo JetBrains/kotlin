@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.code
 
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.io.systemIndependentPath
 import junit.framework.TestCase
+import org.jetbrains.kotlin.config.LanguageFeature
 import java.io.File
 import java.util.*
 import java.util.regex.Pattern
@@ -24,6 +24,7 @@ class CodeConformanceTest : TestCase() {
                 ".git",
                 ".idea",
                 "build/js",
+                "build/tmp",
                 "buildSrc",
                 "compiler/build",
                 "compiler/fir/lightTree/testData",
@@ -36,12 +37,15 @@ class CodeConformanceTest : TestCase() {
                 "dist",
                 "idea/testData/codeInsight/renderingKDoc",
                 "js/js.tests/.gradle",
+                "js/js.tests/build",
                 "js/js.translator/qunit/qunit.js",
                 "js/js.translator/testData/node_modules",
+                "local",
                 "libraries/kotlin.test/js/it/.gradle",
                 "libraries/kotlin.test/js/it/node_modules",
                 "libraries/reflect/api/src/java9/java/kotlin/reflect/jvm/internal/impl",
                 "libraries/reflect/build",
+                "libraries/stdlib/jdk8/moduleTest/NonExportedPackagesTest.kt",
                 "libraries/stdlib/js-ir/.gradle",
                 "libraries/stdlib/js-ir/build",
                 "libraries/stdlib/js-ir-minimal-for-test/.gradle",
@@ -50,15 +54,21 @@ class CodeConformanceTest : TestCase() {
                 "libraries/stdlib/js-v1/build",
                 "libraries/tools/binary-compatibility-validator/src/main/kotlin/org.jetbrains.kotlin.tools",
                 "libraries/tools/kotlin-gradle-plugin-core/gradle_api_jar/build/tmp",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/out",
                 "libraries/tools/kotlin-js-tests/src/test/web/qunit.js",
                 "libraries/tools/kotlin-maven-plugin/target",
+                "libraries/tools/kotlin-source-map-loader/.gradle",
                 "libraries/tools/kotlin-test-js-runner/.gradle",
                 "libraries/tools/kotlin-test-js-runner/lib",
                 "libraries/tools/kotlin-test-js-runner/node_modules",
                 "libraries/tools/kotlin-test-nodejs-runner/.gradle",
                 "libraries/tools/kotlin-test-nodejs-runner/node_modules",
                 "libraries/tools/kotlinp/src",
-                "out"
+                "libraries/tools/new-project-wizard/new-project-wizard-cli/build",
+                "out",
+                "kotlin-native/build",
+                "kotlin-native/performance",
+                "kotlin-native/samples"
             )
         )
 
@@ -66,6 +76,7 @@ class CodeConformanceTest : TestCase() {
             File("."),
             listOf(
                 "build",
+                "buildSrc/build/generated-sources",
                 "buildSrc/prepare-deps/build",
                 "compiler/ir/serialization.js/build/fullRuntime",
                 "compiler/ir/serialization.js/build/reducedRuntime/src/libraries/stdlib/js-ir/runtime/longjs.kt",
@@ -76,6 +87,7 @@ class CodeConformanceTest : TestCase() {
                 "dist",
                 "idea/idea-jvm/src/org/jetbrains/kotlin/idea/copyright",
                 "js/js.tests/.gradle",
+                "js/js.tests/build",
                 "js/js.translator/testData/node_modules",
                 "libraries/kotlin.test/js/it/.gradle",
                 "libraries/kotlin.test/js/it/node_modules",
@@ -89,14 +101,19 @@ class CodeConformanceTest : TestCase() {
                 "libraries/stdlib/js-v1/.gradle",
                 "libraries/stdlib/js-v1/build",
                 "libraries/stdlib/js-v1/node_modules",
+                "libraries/stdlib/wasm/build",
                 "libraries/tools/kotlin-gradle-plugin-integration-tests/build",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/.testKitDir",
+                "libraries/tools/kotlin-gradle-plugin-integration-tests/out",
                 "libraries/tools/kotlin-maven-plugin-test/target",
                 "libraries/tools/kotlin-test-js-runner/.gradle",
                 "libraries/tools/kotlin-test-js-runner/lib",
                 "libraries/tools/kotlin-test-js-runner/node_modules",
                 "libraries/tools/kotlin-test-nodejs-runner/.gradle",
                 "libraries/tools/kotlin-test-nodejs-runner/node_modules",
-                "out"
+                "libraries/tools/kotlin-source-map-loader/.gradle",
+                "kotlin-native", "libraries/stdlib/native-wasm", // Have a separate licences manager
+                "out",
             )
         )
     }
@@ -125,7 +142,7 @@ class CodeConformanceTest : TestCase() {
         }
         val extension = fileExtensions.last()
 
-        return !(extension !in possibleAdditionalExtensions && extension.toIntOrNull() ?: MAX_STEPS_COUNT >= MAX_STEPS_COUNT)
+        return !((extension !in possibleAdditionalExtensions && (extension.toIntOrNull() ?: MAX_STEPS_COUNT) >= MAX_STEPS_COUNT))
     }
 
     fun testForgottenBunchDirectivesAndFiles() {
@@ -162,17 +179,14 @@ class CodeConformanceTest : TestCase() {
 
         val atAuthorPattern = Pattern.compile("/\\*.+@author.+\\*/", Pattern.DOTALL)
 
-        val root = nonSourcesMatcher.root
-
         val tests = listOf(
             TestData(
                 "%d source files contain @author javadoc tag.\nPlease remove them or exclude in this test:\n%s"
-            ) { file, source ->
+            ) { _, source ->
                 // substring check is an optimization
                 "@author" in source && atAuthorPattern.matcher(source).find() &&
                         "ASM: a very small and fast Java bytecode manipulation framework" !in source &&
-                        "package org.jetbrains.kotlin.tools.projectWizard.settings.version.maven" !in source &&
-                        !file.relativeTo(root).systemIndependentPath.startsWith("kotlin-ultimate/ide/common-cidr-native")
+                        "package org.jetbrains.kotlin.tools.projectWizard.settings.version.maven" !in source
             },
             TestData(
                 "%d source files use something from com.beust.jcommander.internal package.\n" +
@@ -260,16 +274,16 @@ class CodeConformanceTest : TestCase() {
 
     private class FileMatcher(val root: File, paths: Collection<String>) {
         private val files = paths.map { File(it) }
-        private val paths = files.mapTo(HashSet()) { it.systemIndependentPath }
-        private val relativePaths = files.filterTo(ArrayList()) { it.isDirectory }.mapTo(HashSet()) { it.systemIndependentPath + "/" }
+        private val paths = files.mapTo(HashSet()) { it.invariantSeparatorsPath }
+        private val relativePaths = files.filterTo(ArrayList()) { it.isDirectory }.mapTo(HashSet()) { it.invariantSeparatorsPath + "/" }
 
         fun matchExact(file: File): Boolean {
-            return file.relativeTo(root).systemIndependentPath in paths
+            return file.relativeTo(root).invariantSeparatorsPath in paths
         }
 
         fun matchWithContains(file: File): Boolean {
             if (matchExact(file)) return true
-            val relativePath = file.relativeTo(root).systemIndependentPath
+            val relativePath = file.relativeTo(root).invariantSeparatorsPath
             return relativePaths.any { relativePath.startsWith(it) }
         }
     }
@@ -285,7 +299,7 @@ class CodeConformanceTest : TestCase() {
     }
 
     fun testRepositoriesAbuse() {
-        class RepoAllowList(val repo: String, root: File, allowList: Set<String>) {
+        class RepoAllowList(val repo: String, root: File, allowList: Set<String>, val exclude: String? = null) {
             val matcher = FileMatcher(root, allowList)
         }
 
@@ -294,96 +308,24 @@ class CodeConformanceTest : TestCase() {
         val repoCheckers = listOf(
             RepoAllowList(
                 // Please use cache-redirector for importing in tests
-                "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root, setOf("gradle/cacheRedirector.gradle.kts")
+                "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root,
+                setOf("gradle/cacheRedirector.gradle.kts")
             ),
             RepoAllowList(
-                "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root, setOf()
-            ),
-            RepoAllowList(
-                // Please use cache-redirector for importing in tests
-                "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/eap", root, setOf("gradle/cacheRedirector.gradle.kts")
-            ),
-            RepoAllowList(
-                "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root, setOf()
+                "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root,
+                setOf("gradle/cacheRedirector.gradle.kts")
             ),
             RepoAllowList(
                 // Please use cache-redirector for importing in tests
-                "https://dl.bintray.com/kotlin/kotlin-dev", root, setOf(
-                    "libraries/tools/new-project-wizard/new-project-wizard-cli/testData",
-                    "gradle/cacheRedirector.gradle.kts",
-                    "kotlin-ultimate/prepare/mobile-plugin/build.gradle.kts",
-                    "kotlin-ultimate/gradle/cidrPluginTools.gradle.kts",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/build/resources/test/testProject/native-fat-framework/smoke/build.gradle.kts",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/build/resources/test/testProject/kotlin2JsProjectWithSourceMapInline/build.gradle",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/build/resources/test/testProject/new-mpp-android/build.gradle",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/native-fat-framework/smoke/build.gradle.kts",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/kotlin2JsProjectWithSourceMapInline/build.gradle",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/new-mpp-android/build.gradle",
-                    "libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/VariantAwareDependenciesIT.kt",
-                    "libraries/tools/new-project-wizard/src/org/jetbrains/kotlin/tools/projectWizard/core/service/KotlinVersionProviderService.kt",
-                    "idea/testData/gradle/nativeRunConfiguration/customEntryPointWithoutRunGutter/build.gradle.kts",
-                    "idea/testData/gradle/nativeRunConfiguration/customEntryPointWithoutRunGutter/settings.gradle.kts",
-                    "idea/testData/gradle/nativeRunConfiguration/multiplatformNativeRunGutter/build.gradle.kts",
-                    "idea/testData/gradle/nativeRunConfiguration/multiplatformNativeRunGutter/settings.gradle.kts",
-                    "idea/testData/perfTest/native/_common/settings.gradle.kts",
-                    "idea/testData/gradle/nativeLibraries/commonIOSWithDisabledPropagation/settings.gradle.kts",
-                    "idea/testData/gradle/packagePrefixImport/packagePrefixNonMPP/build.gradle",
-                    "idea/testData/gradle/gradleFacetImportTest/jvmImportWithCustomSourceSets_1_1_2/build.gradle",
-                    "idea/testData/gradle/gradleFacetImportTest/jvmImport_1_1_2/build.gradle",
-                    "idea/idea-gradle/tests/org/jetbrains/kotlin/idea/codeInsight/gradle/MultiplePluginVersionGradleImportingTestCase.kt",
-                    "idea/testData/perfTest/native/_common/build.gradle.kts.header"
-                )
-            ),
-            RepoAllowList("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-dev", root, setOf()),
-            RepoAllowList(
-                // Please use cache-redirector for importing in tests
-                "https://dl.bintray.com/kotlin/kotlin-eap", root, setOf(
-                    "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/app/build.gradle.kts",
-                    "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/shared/build.gradle.kts",
-                    "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/build.gradle.kts",
-                    "kotlin-ultimate/ide/android-studio-native/testData/wizard/expected/settings.gradle.kts",
-                    "kotlin-ultimate/ide/android-studio-native/src/com/jetbrains/kmm/wizard/templates/buildFile.kt",
-                    "libraries/scripting/dependencies-maven/test/kotlin/script/experimental/test/MavenResolverTest.kt",
-                    "idea/testData/configuration/gradle/eapVersion/build_after.gradle",
-                    "idea/testData/configuration/gradle/rcVersion/build_after.gradle",
-                    "idea/testData/configuration/gradle/m04Version/build_after.gradle",
-                    "idea/testData/configuration/gsk/eapVersion/build_after.gradle.kts",
-                    "idea/testData/configuration/gsk/eap11Version/build_after.gradle.kts",
-                    "idea/idea-jvm/src/org/jetbrains/kotlin/idea/configuration/ConfigureKotlinInProjectUtils.kt",
-                    "gradle/cacheRedirector.gradle.kts",
-                    "idea/idea-maven/testData/configurator/jvm/simpleProjectEAP/pom_after.xml",
-                    "idea/idea-maven/testData/configurator/jvm/simpleProjectRc/pom_after.xml",
-                    "idea/idea-maven/testData/maven-inspections/deprecatedJre.fixed.1.xml",
-                    "idea/idea-maven/testData/maven-inspections/deprecatedJre.xml",
-                    "idea/idea-maven/testData/maven-inspections/deprecatedKotlinxCoroutines.fixed.1.xml",
-                    "idea/idea-maven/testData/maven-inspections/deprecatedKotlinxCoroutines.xml",
-                    "idea/idea-maven/testData/maven-inspections/deprecatedKotlinxCoroutinesNoError.xml",
-                    "idea/testData/gradle/configurator/configureJsEAPWithBuildGradle/build.gradle.after",
-                    "idea/testData/gradle/configurator/configureJsEAPWithBuildGradleKts/build.gradle.kts.after",
-                    "idea/testData/gradle/configurator/configureJvmEAPWithBuildGradle/build.gradle.after",
-                    "idea/testData/gradle/configurator/configureJvmEAPWithBuildGradleKts/build.gradle.kts.after",
-                    "idea/testData/gradle/nativeRunConfiguration/customEntryPointWithoutRunGutter/build.gradle.kts",
-                    "idea/testData/gradle/nativeRunConfiguration/customEntryPointWithoutRunGutter/settings.gradle.kts",
-                    "idea/testData/gradle/nativeRunConfiguration/multiplatformNativeRunGutter/build.gradle.kts",
-                    "idea/testData/gradle/nativeRunConfiguration/multiplatformNativeRunGutter/settings.gradle.kts",
-                    "idea/testData/perfTest/native/_common/settings.gradle.kts",
-                    "kotlin-ultimate/gradle/cidrPluginTools.gradle.kts",
-                    "libraries/tools/new-project-wizard/src/org/jetbrains/kotlin/tools/projectWizard/core/service/KotlinVersionProviderService.kt",
-                    "idea/testData/perfTest/native/_common/build.gradle.kts.header"
-                )
-            ),
-            RepoAllowList("https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-eap", root, setOf()),
-            RepoAllowList(
-                // Please use cache-redirector for importing in tests
-                "https://dl.bintray.com/kotlin/kotlin-bootstrap", root, setOf(
-                    "kotlin-ultimate/build.gradle.kts"
-                )
+                "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/eap", root,
+                setOf("gradle/cacheRedirector.gradle.kts")
             ),
             RepoAllowList(
-                "https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlin-bootstrap", root, setOf(
-                    "kotlin-ultimate/build.gradle.kts"
-                )
+                "https://cache-redirector.jetbrains.com/maven.pkg.jetbrains.space/kotlin/p/kotlin/dev", root,
+                setOf("gradle/cacheRedirector.gradle.kts")
             ),
+            RepoAllowList("kotlin/ktor", root, setOf("gradle/cacheRedirector.gradle.kts")),
+            RepoAllowList("bintray.com", root, setOf("gradle/cacheRedirector.gradle.kts"), exclude = "jcenter.bintray.com")
         )
 
         data class RepoOccurance(val repo: String, val file: File)
@@ -401,7 +343,7 @@ class CodeConformanceTest : TestCase() {
                     file.useLines { lines ->
                         for (line in lines) {
                             for (checker in checkers) {
-                                if (line.contains(checker.repo)) {
+                                if (line.contains(checker.repo) && (checker.exclude == null || !line.contains(checker.exclude))) {
                                     occurrences.add(RepoOccurance(checker.repo, file))
                                 }
                             }
@@ -417,7 +359,7 @@ class CodeConformanceTest : TestCase() {
 
         if (repoOccurrences.isNotEmpty()) {
             val repoOccurrencesStableOrder = repoOccurrences
-                .map { RepoOccurrences(it.repo, it.files.sortedBy { it.path }) }
+                .map { occurrence -> RepoOccurrences(occurrence.repo, occurrence.files.sortedBy { file -> file.path }) }
                 .sortedBy { it.repo }
             fail(
                 buildString {
@@ -425,7 +367,7 @@ class CodeConformanceTest : TestCase() {
                     for ((repo, files) in repoOccurrencesStableOrder) {
                         appendLine(repo)
                         for (file in files) {
-                            appendLine("  ${file.relativeTo(root).systemIndependentPath}")
+                            appendLine("  ${file.relativeTo(root).invariantSeparatorsPath}")
                         }
                     }
                 }
@@ -442,7 +384,21 @@ class CodeConformanceTest : TestCase() {
 
         }
     }
+
+    fun testLanguageFeatureOrder() {
+        val values = enumValues<LanguageFeature>()
+        val enabledFeatures = values.filter { it.sinceVersion != null && it.defaultState == LanguageFeature.State.ENABLED }
+
+        if (enabledFeatures.sortedBy { it.sinceVersion!! } != enabledFeatures) {
+            val (a, b) = enabledFeatures.zipWithNext().first { (a, b) -> a.sinceVersion!! > b.sinceVersion!! }
+            fail(
+                "Please make sure LanguageFeature entries are sorted by sinceVersion to improve readability & reduce confusion.\n" +
+                        "The feature $b is out of order; its sinceVersion is ${b.sinceVersion}, yet it comes after $a, whose " +
+                        "sinceVersion is ${a.sinceVersion}.\n"
+            )
+        }
+    }
 }
 
 private fun String.ensureFileOrEndsWithSlash() =
-    if (endsWith("/") || "." in substringAfterLast('/')) this else this + "/"
+    if (endsWith("/") || "." in substringAfterLast('/')) this else "$this/"

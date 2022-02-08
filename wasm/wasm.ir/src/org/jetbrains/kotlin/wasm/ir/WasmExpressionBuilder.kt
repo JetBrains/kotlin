@@ -9,8 +9,6 @@ abstract class WasmExpressionBuilder {
     abstract fun buildInstr(op: WasmOp, vararg immediates: WasmImmediate)
     abstract var numberOfNestedBlocks: Int
 
-    abstract val lastInstr: WasmOp?
-
     fun buildConstI32(value: Int) {
         buildInstr(WasmOp.I32_CONST, WasmImmediate.ConstI32(value))
     }
@@ -32,10 +30,6 @@ abstract class WasmExpressionBuilder {
     }
 
     fun buildUnreachable() {
-        // Unreachable is not needed
-        if (lastInstr == WasmOp.UNREACHABLE || lastInstr == WasmOp.RETURN)
-            return
-
         buildInstr(WasmOp.UNREACHABLE)
     }
 
@@ -72,6 +66,20 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.BR, WasmImmediate.LabelIdx(relativeLevel))
     }
 
+    fun buildThrow(tagIdx: Int) {
+        buildInstr(WasmOp.THROW, WasmImmediate.TagIdx(tagIdx))
+    }
+
+    @Suppress("UNUSED_PARAMETER")
+    fun buildTry(label: String?, resultType: WasmType? = null) {
+        numberOfNestedBlocks++
+        buildInstr(WasmOp.TRY, WasmImmediate.BlockType.Value(resultType))
+    }
+
+    fun buildCatch(tagIdx: Int) {
+        buildInstr(WasmOp.CATCH, WasmImmediate.TagIdx(tagIdx))
+    }
+
     fun buildBrIf(absoluteBlockLevel: Int) {
         val relativeLevel = numberOfNestedBlocks - absoluteBlockLevel
         assert(relativeLevel >= 0) { "Negative relative block index" }
@@ -82,11 +90,14 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.CALL, WasmImmediate.FuncIdx(symbol))
     }
 
-    fun buildCallIndirect(symbol: WasmSymbol<WasmFunctionType>) {
+    fun buildCallIndirect(
+        symbol: WasmSymbol<WasmFunctionType>,
+        tableIdx: WasmSymbolReadOnly<Int> = WasmSymbol(0),
+    ) {
         buildInstr(
             WasmOp.CALL_INDIRECT,
             WasmImmediate.TypeIdx(symbol),
-            WasmImmediate.TableIdx(0)
+            WasmImmediate.TableIdx(tableIdx)
         )
     }
 
@@ -106,45 +117,45 @@ abstract class WasmExpressionBuilder {
         buildInstr(WasmOp.GLOBAL_SET, WasmImmediate.GlobalIdx(global))
     }
 
-    fun buildStructGet(struct: WasmSymbol<WasmStructDeclaration>, fieldId: WasmSymbol<Int>) {
+    fun buildStructGet(struct: WasmSymbol<WasmTypeDeclaration>, fieldId: WasmSymbol<Int>) {
         buildInstr(
             WasmOp.STRUCT_GET,
-            WasmImmediate.StructType(struct),
+            WasmImmediate.GcType(struct),
             WasmImmediate.StructFieldIdx(fieldId)
         )
     }
 
-    fun buildStructNew(struct: WasmSymbol<WasmStructDeclaration>) {
-        buildInstr(WasmOp.STRUCT_NEW_WITH_RTT, WasmImmediate.StructType(struct))
+    fun buildStructNew(struct: WasmSymbol<WasmTypeDeclaration>) {
+        buildInstr(WasmOp.STRUCT_NEW_WITH_RTT, WasmImmediate.GcType(struct))
     }
 
-    fun buildStructSet(struct: WasmSymbol<WasmStructDeclaration>, fieldId: WasmSymbol<Int>) {
+    fun buildStructSet(struct: WasmSymbol<WasmTypeDeclaration>, fieldId: WasmSymbol<Int>) {
         buildInstr(
             WasmOp.STRUCT_SET,
-            WasmImmediate.StructType(struct),
+            WasmImmediate.GcType(struct),
             WasmImmediate.StructFieldIdx(fieldId)
         )
     }
 
 
-    fun buildRefCast(fromType: WasmType, toType: WasmType) {
-        buildInstr(
-            WasmOp.REF_CAST,
-            WasmImmediate.HeapType(fromType.getHeapType()),
-            WasmImmediate.HeapType(toType.getHeapType())
-        )
+    fun buildRefCast() {
+        buildInstr(WasmOp.REF_CAST)
     }
 
     fun buildRefNull(type: WasmHeapType) {
         buildInstr(WasmOp.REF_NULL, WasmImmediate.HeapType(WasmRefType(type)))
     }
 
-    fun buildRttSub(heapType: WasmType) {
-        buildInstr(WasmOp.RTT_SUB, WasmImmediate.HeapType(heapType))
+    fun buildRttSub(decl: WasmSymbol<WasmTypeDeclaration>) {
+        buildInstr(WasmOp.RTT_SUB, WasmImmediate.TypeIdx(decl))
     }
 
-    fun buildRttCanon(heapType: WasmType) {
-        buildInstr(WasmOp.RTT_CANON, WasmImmediate.HeapType(heapType))
+    fun buildRttCanon(decl: WasmSymbol<WasmTypeDeclaration>) {
+        buildInstr(WasmOp.RTT_CANON, WasmImmediate.TypeIdx(decl))
+    }
+
+    fun buildDrop() {
+        buildInstr(WasmOp.DROP)
     }
 }
 

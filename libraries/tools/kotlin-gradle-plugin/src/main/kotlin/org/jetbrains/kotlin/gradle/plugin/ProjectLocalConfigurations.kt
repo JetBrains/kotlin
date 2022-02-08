@@ -9,11 +9,15 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 
+/**
+ * This attribute is registered in the schema only for the case if some 3rd-party consumer or published
+ * module still has it or relies on it. The Kotlin Gradle plugin should not add this attribute to any variant.
+ * TODO: examine and remove
+ */
 object ProjectLocalConfigurations {
     val ATTRIBUTE: Attribute<String> = Attribute.of("org.jetbrains.kotlin.localToProject", String::class.java)
 
     const val PUBLIC_VALUE = "public"
-    const val LOCAL_TO_PROJECT_PREFIX = "local to "
 
     fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) = with(attributesSchema) {
         attribute(ATTRIBUTE) {
@@ -43,12 +47,5 @@ internal fun Configuration.setupAsLocalTargetSpecificConfigurationIfSupported(ta
     // `api/RuntimeElements` with the KotlinPlatformType
     if ((target !is KotlinWithJavaTarget<*> || target.platformType != KotlinPlatformType.common)) {
         usesPlatformOf(target)
-        attributes.attribute(ProjectLocalConfigurations.ATTRIBUTE, ProjectLocalConfigurations.LOCAL_TO_PROJECT_PREFIX + target.project.path)
-    }
-}
-
-internal fun Configuration.setupAsPublicConfigurationIfSupported(target: KotlinTarget) {
-    if ((target !is KotlinWithJavaTarget<*> || target.platformType != KotlinPlatformType.common)) {
-        attributes.attribute(ProjectLocalConfigurations.ATTRIBUTE, ProjectLocalConfigurations.PUBLIC_VALUE)
     }
 }

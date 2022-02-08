@@ -11,14 +11,21 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.components.candidate.CallableReferenceResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleResolutionCandidate
+import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.results.SimpleConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.tower.CandidateFactoryProviderForInvoke
 import org.jetbrains.kotlin.resolve.calls.tower.ImplicitScopeTower
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstant
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.StubType
+import org.jetbrains.kotlin.types.StubTypeForBuilderInference
 import org.jetbrains.kotlin.types.UnwrappedType
 
 // stateless component
@@ -37,8 +44,8 @@ interface KotlinResolutionStatelessCallbacks {
 
     fun isSuperExpression(receiver: SimpleKotlinCallArgument?): Boolean
     fun getScopeTowerForCallableReferenceArgument(argument: CallableReferenceKotlinCallArgument): ImplicitScopeTower
-    fun getVariableCandidateIfInvoke(functionCall: KotlinCall): KotlinResolutionCandidate?
-    fun isCoroutineCall(argument: KotlinCallArgument, parameter: ValueParameterDescriptor): Boolean
+    fun getVariableCandidateIfInvoke(functionCall: KotlinCall): ResolutionCandidate?
+    fun isBuilderInferenceCall(argument: KotlinCallArgument, parameter: ValueParameterDescriptor): Boolean
     fun isApplicableCallForBuilderInference(descriptor: CallableDescriptor, languageVersionSettings: LanguageVersionSettings): Boolean
 
     fun isOldIntersectionIsEmpty(types: Collection<KotlinType>): Boolean
@@ -71,11 +78,27 @@ interface KotlinResolutionCallbacks {
         lambdaArgument: LambdaKotlinCallArgument,
         isSuspend: Boolean,
         receiverType: UnwrappedType?,
+        contextReceiversTypes: List<UnwrappedType>,
         parameters: List<UnwrappedType>,
         expectedReturnType: UnwrappedType?, // null means, that return type is not proper i.e. it depends on some type variables
         annotations: Annotations,
-        stubsForPostponedVariables: Map<NewTypeVariable, StubType>,
+        stubsForPostponedVariables: Map<NewTypeVariable, StubTypeForBuilderInference>,
     ): ReturnArgumentsAnalysisResult
+
+    fun getCandidateFactoryForInvoke(
+        scopeTower: ImplicitScopeTower,
+        kotlinCall: KotlinCall,
+    ): CandidateFactoryProviderForInvoke<ResolutionCandidate>
+
+    fun resolveCallableReferenceArgument(
+        argument: CallableReferenceKotlinCallArgument,
+        expectedType: UnwrappedType?,
+        baseSystem: ConstraintStorage,
+    ): Collection<CallableReferenceResolutionCandidate>
+
+    fun findResultType(constraintSystem: NewConstraintSystem, typeVariable: TypeVariableTypeConstructor): KotlinType?
+
+    fun createEmptyConstraintSystem(): NewConstraintSystem
 
     fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom)
 
@@ -87,7 +110,9 @@ interface KotlinResolutionCallbacks {
 
     fun disableContractsIfNecessary(resolvedAtom: ResolvedCallAtom)
 
+    fun getLhsResult(call: KotlinCall): LHSResult
+
     fun convertSignedConstantToUnsigned(argument: KotlinCallArgument): IntegerValueTypeConstant?
 
-    fun recordInlinabilityOfLambda(atom: Set<Map.Entry<KotlinResolutionCandidate, ResolvedLambdaAtom>>)
+    fun recordInlinabilityOfLambda(atom: Set<Map.Entry<SimpleResolutionCandidate, ResolvedLambdaAtom>>)
 }

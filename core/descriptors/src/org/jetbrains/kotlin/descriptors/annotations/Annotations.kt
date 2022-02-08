@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.descriptors.annotations
 
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.types.model.AnnotationMarker
 
 interface Annotated {
     val annotations: Annotations
@@ -79,6 +80,23 @@ class FilteredAnnotations(
         }
 }
 
+class FilteredByPredicateAnnotations(
+    private val delegate: Annotations,
+    private val filter: (AnnotationDescriptor) -> Boolean
+) : Annotations {
+    override fun isEmpty(): Boolean {
+        return !iterator().hasNext()
+    }
+
+    override fun iterator(): Iterator<AnnotationDescriptor> {
+        return delegate.filter(filter).iterator()
+    }
+
+    override fun findAnnotation(fqName: FqName): AnnotationDescriptor? {
+        return super.findAnnotation(fqName)?.takeIf(filter)
+    }
+}
+
 class CompositeAnnotations(
     private val delegates: List<Annotations>
 ) : Annotations {
@@ -90,7 +108,7 @@ class CompositeAnnotations(
 
     override fun findAnnotation(fqName: FqName) = delegates.asSequence().mapNotNull { it.findAnnotation(fqName) }.firstOrNull()
 
-    @Suppress("DEPRECATION", "OverridingDeprecatedMember")
+    @Suppress("DEPRECATION", "OverridingDeprecatedMember", "OVERRIDE_DEPRECATION")
     override fun getUseSiteTargetedAnnotations() = delegates.flatMap { it.getUseSiteTargetedAnnotations() }
 
     override fun iterator() = delegates.asSequence().flatMap { it.asSequence() }.iterator()

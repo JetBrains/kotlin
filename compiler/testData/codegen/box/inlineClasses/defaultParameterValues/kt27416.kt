@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class A(val i: Int) {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class A(val i: Int) {
     fun foo(s: String = "OK") = s
 }
 

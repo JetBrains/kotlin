@@ -1,0 +1,194 @@
+# Also see codestyle/cpp/README.md
+# For documentation on options see: https://releases.llvm.org/8.0.0/tools/clang/docs/ClangFormatStyleOptions.html
+# "Kt N/A" means that this C/C++/ObjC construct have no corresponding Kotlin construct to refer to
+# "Kt U" means that formatting is unspecified in Kotlin formatting guide
+# "Kt <url>" means that this is specified in Kotlin formatting guide with url pointing to it
+---
+DisableFormat: false
+Standard: Cpp11
+
+# Kt N/A. Different from 0 to make modifiers stand out. An alternative is -2, but it introduces another level of indentation.
+AccessModifierOffset: -4
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#method-call-formatting
+AlignAfterOpenBracket: AlwaysBreak
+# Kt U. Not touching
+AlignConsecutiveAssignments: false
+# Kt U. Not touching
+AlignConsecutiveDeclarations: false
+# Kt N/A. Not touching
+AlignEscapedNewlines: DontAlign
+# Kt U. Not touching
+AlignOperands: false
+# Kt U. Not touching
+AlignTrailingComments: false
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#function-formatting
+AllowAllParametersOfDeclarationOnNextLine: true
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting-control-flow-statements
+AllowShortBlocksOnASingleLine: false
+# Kt U. The closest is https://kotlinlang.org/docs/reference/coding-conventions.html#formatting-control-flow-statements
+# Using false, because case statements usually contain at least 2 statements: doing something + break, which makes them multiline
+AllowShortCaseLabelsOnASingleLine: false
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#function-formatting Inline is somewhat close to "single expression" functions
+AllowShortFunctionsOnASingleLine: Inline
+# Kt U. The closest is https://kotlinlang.org/docs/reference/coding-conventions.html#using-conditional-statements however it mostly refers to the ternary operator.
+AllowShortIfStatementsOnASingleLine: true
+# Kt U. Same as previous
+AllowShortLoopsOnASingleLine: true
+# Kt N/A. In Kotlin return type is in a trailing position.
+AlwaysBreakAfterReturnType: None
+# Kt U. Not touching.
+AlwaysBreakBeforeMultilineStrings: false
+# Kt N/A. In Kotlin type parameters are declared inline in a much more compact way.
+# Using Yes to make it easy to detect function name
+AlwaysBreakTemplateDeclarations: Yes
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#method-call-formatting
+BinPackArguments: true
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#function-formatting
+BinPackParameters: false
+BraceWrapping:
+    # Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting
+    AfterClass: false
+    # Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting
+    AfterControlStatement: false
+    # Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting
+    AfterEnum: false
+    # Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting
+    AfterFunction: false
+    # Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting
+    AfterNamespace: false
+    # Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting
+    AfterObjCDeclaration: false
+    # Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting
+    AfterStruct: false
+    # Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting
+    AfterUnion: false
+    # Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting
+    AfterExternBlock: false
+    # Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting-control-flow-statements
+    BeforeCatch: false
+    # Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting-control-flow-statements
+    BeforeElse: false
+    # Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting
+    IndentBraces: false
+    # Only used when AfterFunction is true
+    SplitEmptyFunction: true
+    # Only used when AfterRecord is true
+    SplitEmptyRecord: true
+    # Only used if AfterNamespace is true
+    SplitEmptyNamespace: true
+# Kt U. Break after operators
+BreakBeforeBinaryOperators: None
+# Configured by BraceWrapping
+BreakBeforeBraces: Custom
+# Kt U. Using true because it looks more like an if-expression with "then" and "else" branches marked "?" and ":"
+BreakBeforeTernaryOperators: true
+# Kt N/A. The closest is https://kotlinlang.org/docs/reference/coding-conventions.html#class-header-formatting AfterColon looks the most consistent
+BreakConstructorInitializers: AfterColon
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#class-header-formatting
+BreakInheritanceList: AfterColon
+# Kt U. Choosing to break long strings to fit into line length
+BreakStringLiterals: true
+# Kt U. IDEA displays a vertical guide at 120. Choosing it to avoid very long lines.
+ColumnLimit: 140
+# Kt N/A. Probably should use nested namespaces instead.
+CompactNamespaces: false
+# Kt N/A. The closest is https://kotlinlang.org/docs/reference/coding-conventions.html#class-header-formatting
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting
+ConstructorInitializerIndentWidth: 4
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting IDEA seems to indent continuations with 8
+ContinuationIndentWidth: 8
+# Kt N/A. The closest is https://kotlinlang.org/docs/reference/coding-conventions.html#horizontal-whitespace
+# Braced initalizer braces are close to parens in function call or to brackets in array initialier. And styleguide asks not to put spaces in them.
+Cpp11BracedListStyle: true
+# Configured by PointerAlignment
+DerivePointerAlignment: false
+# Confgured by BinPack*
+ExperimentalAutoDetectBinPacking: false
+# Kt N/A. Setting to true because it helps to see when anonymous namespace ends
+FixNamespaceComments: true
+# Kt U. Not touching manually created including blocks
+IncludeBlocks: Preserve
+# Kt U. Sorting: main header (priority 0) > system headers > project headers
+IncludeCategories:
+  - Regex: '^<.*'
+    Priority: 1
+  - Regex: '.*'
+    Priority: 2
+# Kt N/A. Main header must match current filename (modulo extension) exactly.
+IncludeIsMainRegex: '$'
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting-control-flow-statements
+IndentCaseLabels: true
+# Kt N/A. Do not indent macro code
+IndentPPDirectives: None
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting
+IndentWidth: 4
+# Kt U. IDEA seems to indent
+IndentWrappedFunctionNames: true
+# Kt U. Do not touch.
+KeepEmptyLinesAtTheStartOfBlocks: false
+# Kt U. IDEA keeps 1 empty line by default.
+MaxEmptyLinesToKeep: 1
+# Kt N/A.
+NamespaceIndentation: None
+# Kt N/A. The closest is https://kotlinlang.org/docs/reference/coding-conventions.html#class-header-formatting
+ObjCBinPackProtocolList: Never
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting
+ObjCBlockIndentWidth: 4
+# Kt N/A. Following Google and LLVM styleguides.
+ObjCSpaceAfterProperty: false
+# Kt N/A. The closest is class inheritance list. Following Google and LLVM styleguides.
+ObjCSpaceBeforeProtocolList: true
+# Kt N/A.
+PointerAlignment: Left
+# Kt U. Reflow comments to fit into line width
+ReflowComments: true
+# Kt U. IDEA does not sort by default, but allows this option. Do not touch.
+SortIncludes: false
+# Kt U. Like SortIncludes.
+SortUsingDeclarations: false
+# Kt N/A.
+SpaceAfterCStyleCast: false
+# Kt N/A. IDEA puts space in `fun <T>`
+SpaceAfterTemplateKeyword: true
+# Kt U. https://kotlinlang.org/docs/reference/coding-conventions.html puts spaces
+SpaceBeforeAssignmentOperators: true
+# Kt N/A. The closest is https://kotlinlang.org/docs/reference/coding-conventions.html#horizontal-whitespace which does not put space before parens and brackets.
+SpaceBeforeCpp11BracedList: false
+# Kt N/A. The closest is https://kotlinlang.org/docs/reference/coding-conventions.html#colon
+SpaceBeforeCtorInitializerColon: true
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#colon
+SpaceBeforeInheritanceColon: true
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#horizontal-whitespace
+SpaceBeforeParens: ControlStatements
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#horizontal-whitespace
+SpaceBeforeRangeBasedForLoopColon: true
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#horizontal-whitespace
+SpaceInEmptyParentheses: false
+# Kt U. https://kotlinlang.org/docs/reference/coding-conventions.html uses 1
+SpacesBeforeTrailingComments: 1
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#horizontal-whitespace
+SpacesInAngles: false
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#horizontal-whitespace
+SpacesInContainerLiterals: false
+# Kt N/A.
+SpacesInCStyleCastParentheses: false
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#horizontal-whitespace
+SpacesInParentheses: false
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#horizontal-whitespace
+SpacesInSquareBrackets: false
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting
+TabWidth: 4
+# Kt https://kotlinlang.org/docs/reference/coding-conventions.html#formatting
+UseTab: Never
+
+PenaltyBreakAssignment: 2
+PenaltyBreakBeforeFirstCallParameter: 1
+PenaltyBreakComment: 300
+PenaltyBreakFirstLessLess: 120
+PenaltyBreakString: 1000
+PenaltyBreakTemplateDeclaration: 10
+PenaltyExcessCharacter: 1000000
+PenaltyReturnTypeOnItsOwnLine: 200
+...
+

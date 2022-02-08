@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.TestWithWorkingDir
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.incremental.utils.TestCompilationResult
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
@@ -28,9 +29,35 @@ import java.io.File
 abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerArguments> : TestWithWorkingDir() {
     protected abstract fun createCompilerArguments(destinationDir: File, testDir: File): Args
 
+    protected open val moduleNames: Collection<String>? get() = null
+
+    protected open fun setupTest(testDir: File, srcDir: File, cacheDir: File, outDir: File): List<File> =
+        listOf(srcDir)
+
+    protected open fun resetTest(testDir: File, newOutDir: File, newCacheDir: File) {}
+
+    private fun createCompilerArgumentsImpl(destinationDir: File, testDir: File): Args = createCompilerArguments(destinationDir, testDir).apply {
+        parseCommandLineArguments(parseAdditionalArgs(testDir), this)
+    }
+
     fun doTest(path: String) {
         val testDir = File(path)
+        val failFile = testDir.resolve(FAIL_FILE_NAME)
+        var testPassed = false
+        try {
+            doTestImpl(testDir)
+            testPassed = true
+        } catch (e: Throwable) {
+            if (!failFile.exists()) {
+                throw e
+            }
+        }
+        if (testPassed && failFile.exists()) {
+            fail("Test is successful and $FAIL_FILE_NAME can be removed")
+        }
+    }
 
+    private fun doTestImpl(testDir: File) {
         fun Iterable<File>.relativePaths() =
             map { it.relativeTo(workingDir).path.replace('\\', '/') }
 
@@ -39,9 +66,9 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         val outDir = File(workingDir, "out").apply { mkdirs() }
 
         val mapWorkingToOriginalFile = HashMap(copyTestSources(testDir, srcDir, filePrefix = ""))
-        val sourceRoots = listOf(srcDir)
-        val args = createCompilerArguments(outDir, testDir)
-        val (_, _, errors) = initialMake(cacheDir, sourceRoots, args)
+        val sourceRoots = setupTest(testDir, srcDir, cacheDir, outDir)
+        val args = createCompilerArgumentsImpl(outDir, testDir)
+        val (_, _, errors) = initialMake(cacheDir, outDir, sourceRoots, args)
         check(errors.isEmpty()) { "Initial build failed: \n${errors.joinToString("\n")}" }
 
         // modifications
@@ -49,7 +76,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         val buildLogSteps = parseTestBuildLog(buildLogFile)
         val modifications = getModificationsToPerform(
             testDir,
-            moduleNames = null,
+            moduleNames = moduleNames,
             allowNoFilesWithSuffixInTestData = false,
             touchPolicy = TouchPolicy.CHECKSUM
         )
@@ -69,7 +96,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         var step = 1
         for ((modificationStep, buildLogStep) in modifications.zip(buildLogSteps)) {
             modificationStep.forEach { it.perform(workingDir, mapWorkingToOriginalFile) }
-            val (_, compiledSources, compileErrors) = incrementalMake(cacheDir, sourceRoots, args)
+            val (_, compiledSources, compileErrors) = incrementalMake(cacheDir, outDir, sourceRoots, createCompilerArgumentsImpl(outDir, testDir))
 
             expectedSB.appendLine(stepLogAsString(step, buildLogStep.compiledKotlinFiles, buildLogStep.compileErrors))
             expectedSBWithoutErrors.appendLine(
@@ -98,9 +125,9 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
     }
 
     // these functions are needed only to simplify debugging of IC tests
-    private fun initialMake(cacheDir: File, sourceRoots: List<File>, args: Args) = make(cacheDir, sourceRoots, args)
+    private fun initialMake(cacheDir: File, outDir: File, sourceRoots: List<File>, args: Args) = make(cacheDir, outDir, sourceRoots, args)
 
-    private fun incrementalMake(cacheDir: File, sourceRoots: List<File>, args: Args) = make(cacheDir, sourceRoots, args)
+    private fun incrementalMake(cacheDir: File, outDir: File, sourceRoots: List<File>, args: Args) = make(cacheDir, outDir, sourceRoots, args)
 
     protected open fun rebuildAndCompareOutput(
         sourceRoots: List<File>,
@@ -111,7 +138,9 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         // todo: also compare caches
         val rebuildOutDir = File(workingDir, "rebuild-out").apply { mkdirs() }
         val rebuildCacheDir = File(workingDir, "rebuild-cache").apply { mkdirs() }
-        val rebuildResult = make(rebuildCacheDir, sourceRoots, createCompilerArguments(rebuildOutDir, testDir))
+        resetTest(testDir, rebuildOutDir, rebuildCacheDir)
+
+        val rebuildResult = make(rebuildCacheDir, rebuildOutDir, sourceRoots, createCompilerArgumentsImpl(rebuildOutDir, testDir))
 
         val rebuildExpectedToSucceed = buildLogSteps.last().compileSucceeded
         val rebuildSucceeded = rebuildResult.exitCode == ExitCode.OK
@@ -125,7 +154,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
     protected open val buildLogFinder: BuildLogFinder
         get() = BuildLogFinder(isGradleEnabled = true)
 
-    protected abstract fun make(cacheDir: File, sourceRoots: Iterable<File>, args: Args): TestCompilationResult
+    protected abstract fun make(cacheDir: File, outDir: File, sourceRoots: Iterable<File>, args: Args): TestCompilationResult
 
     private fun stepLogAsString(step: Int, ktSources: Iterable<String>, errors: Collection<String>, includeErrors: Boolean = true): String {
         val sb = StringBuilder()
@@ -158,6 +187,24 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
         @JvmStatic
         protected val kotlinStdlibJvm: File = File(distKotlincLib, "kotlin-stdlib.jar").also {
             KtUsefulTestCase.assertExists(it)
+        }
+
+        @JvmStatic
+        protected fun buildHistoryFile(cacheDir: File): File = File(cacheDir, "build-history.bin")
+
+        @JvmStatic
+        protected fun abiSnapshotFile(cacheDir: File): File = File(cacheDir, IncrementalCompilerRunner.ABI_SNAPSHOT_FILE_NAME)
+
+        private const val ARGUMENTS_FILE_NAME = "args.txt"
+        private const val FAIL_FILE_NAME = "fail.txt"
+
+        private fun parseAdditionalArgs(testDir: File): List<String> {
+            return File(testDir, ARGUMENTS_FILE_NAME)
+                .takeIf { it.exists() }
+                ?.readText()
+                ?.split(" ", "\n")
+                ?.filter { it.isNotBlank() }
+                ?: emptyList()
         }
     }
 }

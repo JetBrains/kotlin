@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+// !JVM_TARGET: 1.6
 // FILE: Test.java
 public interface Test {
     default String test() {

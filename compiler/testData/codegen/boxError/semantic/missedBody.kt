@@ -1,11 +1,12 @@
+// IGNORE_ERRORS
 // ERROR_POLICY: SEMANTIC
 
 // MODULE: lib
 // FILE: t.kt
 
-fun bar(a: String, b: String): String
+fun bar(a: String, b: String): Any
 
-fun foo(): String {
+fun foo(): Any {
     return bar("O", "K")
 }
 

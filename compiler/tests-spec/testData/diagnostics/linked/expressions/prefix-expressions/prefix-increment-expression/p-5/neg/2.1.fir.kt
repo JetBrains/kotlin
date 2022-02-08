@@ -6,13 +6,13 @@
 
 fun case1() {
     var a = Case1()
-    val res: Any? = --a
+    val res: Any? = <!RESULT_TYPE_MISMATCH!>--a<!>
 }
 
 
 class Case1() {
 
-    operator fun dec(): B {
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun dec(): B {
         TODO()
     }
 }
@@ -23,13 +23,13 @@ class B() {}
 
 fun case2() {
     var a = Case2()
-    val res: Any? = --a
+    val res: Any? = <!RESULT_TYPE_MISMATCH!>--a<!>
 }
 
 class Case2() : C() {
     var i = 0
 
-    operator fun dec(): C {
+    <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun dec(): C {
         TODO()
     }
 

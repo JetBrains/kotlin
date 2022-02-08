@@ -14,13 +14,16 @@ fun raise(name: String): Nothing {
     throw Exception(name)
 }
 
+// Adapter should be initialized eagerly
 @Suppress("INVISIBLE_MEMBER")
+@OptIn(kotlin.ExperimentalStdlibApi::class)
+@EagerInitialization
 private val underscore = kotlin.test.setAdapter(object : FrameworkAdapter {
     override fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) {
         sortingContext.suite(name, ignored) { suiteFn() }
     }
 
-    override fun test(name: String, ignored: Boolean, testFn: () -> dynamic) {
+    override fun test(name: String, ignored: Boolean, testFn: () -> Any?) {
         sortingContext.test(name, ignored) { returned(testFn()) }
     }
 })
@@ -39,7 +42,7 @@ interface TestBodyContext {
 
     fun caught(msg: String)
 
-    fun returned(msg: dynamic)
+    fun returned(msg: Any?)
 }
 
 private sealed class Entity(val name: String,
@@ -123,7 +126,7 @@ private class LoggingContext : SuiteContext, TestBodyContext{
         record("caught(\"$msg\")")
     }
 
-    override fun returned(msg: dynamic) = indent {
+    override fun returned(msg: Any?) = indent {
         if (msg is String) record("returned(\"$msg\")")
     }
 

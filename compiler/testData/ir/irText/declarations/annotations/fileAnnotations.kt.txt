@@ -1,0 +1,16 @@
+@file:A(x = "File annotation")
+package test
+
+@Target(allowedTargets = [AnnotationTarget.FILE])
+open annotation class A : Annotation {
+  constructor(x: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val x: String
+    field = x
+    get
+
+}

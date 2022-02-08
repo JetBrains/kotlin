@@ -7,9 +7,10 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
+import org.jetbrains.kotlin.cli.common.setupLanguageVersionSettings
+import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
@@ -23,24 +24,32 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 data class ModuleData(
     val name: String,
+    val timestamp: Long,
     val rawOutputDir: String,
     val qualifier: String,
     val rawClasspath: List<String>,
     val rawSources: List<String>,
-    val rawJavaSourceRoots: List<String>,
+    val rawJavaSourceRoots: List<JavaSourceRootData<String>>,
+    val rawFriendDirs: List<String>,
+    val optInAnnotations: List<String>,
+    val rawModularJdkRoot: String?,
+    val rawJdkHome: String?,
     val isCommon: Boolean
 ) {
     val qualifiedName get() = if (name in qualifier) qualifier else "$name.$qualifier"
 
-    val outputDir = File(ROOT_PATH_PREFIX, rawOutputDir.removePrefix("/"))
-    val classpath = rawClasspath.map { File(ROOT_PATH_PREFIX, it.removePrefix("/")) }
-    val sources = rawSources.map { File(ROOT_PATH_PREFIX, it.removePrefix("/")) }
-    val javaSourceRoots = rawJavaSourceRoots.map { File(ROOT_PATH_PREFIX, it.removePrefix("/")) }
-    lateinit var targetInfo: String
-    var compilationError: String? = null
-    var jvmInternalError: String? = null
-    var exceptionMessage: String = "NO MESSAGE"
+    val outputDir = rawOutputDir.fixPath()
+    val classpath = rawClasspath.map { it.fixPath() }
+    val sources = rawSources.map { it.fixPath() }
+    val javaSourceRoots = rawJavaSourceRoots.map { JavaSourceRootData(it.path.fixPath(), it.packagePrefix) }
+    val friendDirs = rawFriendDirs.map { it.fixPath() }
+    val jdkHome = rawJdkHome?.fixPath()
+    val modularJdkRoot = rawModularJdkRoot?.fixPath()
 }
+
+data class JavaSourceRootData<Path : Any>(val path: Path, val packagePrefix: String?)
+
+private fun String.fixPath(): File = File(ROOT_PATH_PREFIX, this.removePrefix("/"))
 
 private fun NodeList.toList(): List<Node> {
     val list = mutableListOf<Node>()
@@ -87,8 +96,18 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
     fun createDefaultConfiguration(moduleData: ModuleData): CompilerConfiguration {
         val configuration = KotlinTestUtils.newConfiguration()
-        configuration.addJavaSourceRoots(moduleData.javaSourceRoots)
+        moduleData.javaSourceRoots.forEach {
+            configuration.addJavaSourceRoot(it.path, it.packagePrefix)
+        }
         configuration.addJvmClasspathRoots(moduleData.classpath)
+        configuration.languageVersionSettings = LanguageVersionSettingsImpl(
+            LanguageVersion.LATEST_STABLE,
+            ApiVersion.LATEST_STABLE,
+            analysisFlags = mutableMapOf(AnalysisFlags.optIn to moduleData.optInAnnotations)
+        )
+
+        // in case of modular jdk only
+        configuration.putIfNotNull(JVMConfigurationKeys.JDK_HOME, moduleData.modularJdkRoot)
 
         configuration.addAll(
             CLIConfigurationKeys.CONTENT_ROOTS,
@@ -107,32 +126,58 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         val moduleName = moduleElement.attributes.getNamedItem("name").nodeValue
         val outputDir = moduleElement.attributes.getNamedItem("outputDir").nodeValue
         val moduleNameQualifier = outputDir.substringAfterLast("/")
-        val javaSourceRoots = mutableListOf<String>()
+        val javaSourceRoots = mutableListOf<JavaSourceRootData<String>>()
         val classpath = mutableListOf<String>()
         val sources = mutableListOf<String>()
+        val friendDirs = mutableListOf<String>()
+        val optInAnnotations = mutableListOf<String>()
+        val timestamp = moduleElement.attributes.getNamedItem("timestamp")?.nodeValue?.toLong() ?: 0
+        val jdkHome = moduleElement.attributes.getNamedItem("jdkHome")?.nodeValue
+        var modularJdkRoot: String? = null
         var isCommon = false
 
         for (index in 0 until moduleElement.childNodes.length) {
             val item = moduleElement.childNodes.item(index)
 
-            if (item.nodeName == "classpath") {
-                val path = item.attributes.getNamedItem("path").nodeValue
-                if (path != outputDir) {
-                    classpath += path
+            when (item.nodeName) {
+                "classpath" -> {
+                    val path = item.attributes.getNamedItem("path").nodeValue
+                    if (path != outputDir) {
+                        classpath += path
+                    }
                 }
-            }
-            if (item.nodeName == "javaSourceRoots") {
-                javaSourceRoots += item.attributes.getNamedItem("path").nodeValue
-            }
-            if (item.nodeName == "sources") {
-                sources += item.attributes.getNamedItem("path").nodeValue
-            }
-            if (item.nodeName == "commonSources") {
-                isCommon = true
+                "friendDir" -> {
+                    val path = item.attributes.getNamedItem("path").nodeValue
+                    friendDirs += path
+                }
+                "javaSourceRoots" -> {
+                    javaSourceRoots +=
+                        JavaSourceRootData(
+                            item.attributes.getNamedItem("path").nodeValue,
+                            item.attributes.getNamedItem("packagePrefix")?.nodeValue,
+                        )
+                }
+                "sources" -> sources += item.attributes.getNamedItem("path").nodeValue
+                "commonSources" -> isCommon = true
+                "modularJdkRoot" -> modularJdkRoot = item.attributes.getNamedItem("path").nodeValue
+                "useOptIn" -> optInAnnotations += item.attributes.getNamedItem("annotation").nodeValue
             }
         }
 
-        return ModuleData(moduleName, outputDir, moduleNameQualifier, classpath, sources, javaSourceRoots, isCommon)
+        return ModuleData(
+            moduleName,
+            timestamp,
+            outputDir,
+            moduleNameQualifier,
+            classpath,
+            sources,
+            javaSourceRoots,
+            friendDirs,
+            optInAnnotations,
+            modularJdkRoot,
+            jdkHome,
+            isCommon,
+        )
     }
 
 
@@ -149,11 +194,13 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         println("BASE PATH: ${root.absolutePath}")
 
         val filterRegex = (System.getProperty("fir.bench.filter") ?: ".*").toRegex()
-        val modules =
-            root.listFiles().filter { it.extension == "xml" }
-                .sortedBy { it.lastModified() }.map { loadModule(it) }
-                .filter { it.rawOutputDir.matches(filterRegex) }
-                .filter { !it.isCommon }
+        val files = root.listFiles() ?: emptyArray()
+        val modules = files.filter { it.extension == "xml" }
+            .sortedBy { it.lastModified() }
+            .map { loadModule(it) }
+            .sortedBy { it.timestamp }
+            .filter { it.rawOutputDir.matches(filterRegex) }
+            .filter { !it.isCommon }
 
 
         for (module in modules.progress(step = 0.0) { "Analyzing ${it.qualifiedName}" }) {

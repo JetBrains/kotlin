@@ -1,10 +1,13 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 interface IFoo<T> {
     fun foo(x: T): String
 }
 
-inline class Z(val x: Int) : IFoo<Z> {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Z(val x: Int) : IFoo<Z> {
     override fun foo(x: Z) = "OK"
 }
 

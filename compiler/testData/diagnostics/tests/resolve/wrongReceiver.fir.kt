@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 package some
 
 class A()
@@ -9,13 +8,13 @@ val Int.foo: Int get() = 4
 fun Int.extFun() = 4
 
 fun String.test() {
-    some
+    <!EXPRESSION_EXPECTED_PACKAGE_FOUND!>some<!>
     some.A()
-    "".<!INAPPLICABLE_CANDIDATE!>some<!>
+    "".<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>some<!>
 
-    <!INAPPLICABLE_CANDIDATE!>foo<!>
-    "".<!INAPPLICABLE_CANDIDATE!>foo<!>
+    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>
+    "".<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo<!>
 
-    <!INAPPLICABLE_CANDIDATE!>extFun<!>()
-    "".<!INAPPLICABLE_CANDIDATE!>extFun<!>()
+    <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>extFun<!>()
+    "".<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>extFun<!>()
 }

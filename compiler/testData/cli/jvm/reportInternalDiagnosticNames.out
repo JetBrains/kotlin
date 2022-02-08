@@ -1,0 +1,7 @@
+compiler/testData/cli/jvm/reportInternalDiagnosticNames.kt:2:21: error: [CONSTANT_EXPECTED_TYPE_MISMATCH] The integer literal does not conform to the expected type String
+    val x: String = 1
+                    ^
+compiler/testData/cli/jvm/reportInternalDiagnosticNames.kt:3:1: error: [NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY] A 'return' expression required in a function with a block body ('{...}')
+}
+^
+COMPILATION_ERROR

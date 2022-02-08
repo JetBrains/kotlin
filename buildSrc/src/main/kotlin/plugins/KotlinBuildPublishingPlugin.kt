@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package plugins
 
+import PublishToMavenLocalSerializable
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
@@ -13,10 +14,10 @@ import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
+import org.gradle.api.publish.maven.tasks.PublishToMavenLocal
 import org.gradle.api.publish.maven.tasks.PublishToMavenRepository
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.*
-import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
 import org.gradle.plugins.signing.SigningPlugin
 import java.util.*
@@ -27,7 +28,6 @@ class KotlinBuildPublishingPlugin @Inject constructor(
 ) : Plugin<Project> {
     override fun apply(target: Project): Unit = with(target) {
         apply<MavenPublishPlugin>()
-        apply<SigningPlugin>()
 
         val publishedRuntime = configurations.maybeCreate(RUNTIME_CONFIGURATION).apply {
             isCanBeConsumed = false
@@ -68,82 +68,132 @@ class KotlinBuildPublishingPlugin @Inject constructor(
 
         configure<PublishingExtension> {
             publications {
-                create<MavenPublication>(PUBLICATION_NAME) {
+                create<MavenPublication>(project.mainPublicationName) {
                     from(kotlinLibraryComponent)
 
-                    pom {
-                        packaging = "jar"
-                        name.set(humanReadableName(project))
-                        description.set(project.description ?: humanReadableName(project))
-                        url.set("https://kotlinlang.org/")
-                        licenses {
-                            license {
-                                name.set("The Apache License, Version 2.0")
-                                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                            }
-                        }
-                        scm {
-                            url.set("https://github.com/JetBrains/kotlin")
-                            connection.set("scm:git:https://github.com/JetBrains/kotlin.git")
-                            developerConnection.set("scm:git:https://github.com/JetBrains/kotlin.git")
-                        }
-                        developers {
-                            developer {
-                                name.set("Kotlin Team")
-                                organization.set("JetBrains")
-                                organizationUrl.set("https://www.jetbrains.com")
-                            }
-                        }
-                    }
-                }
-            }
-
-            repositories {
-                maven {
-                    name = REPOSITORY_NAME
-                    url = file("${project.rootDir}/build/repo").toURI()
+                    configureKotlinPomAttributes(project)
                 }
             }
         }
-
-        val signingRequired = provider {
-            project.findProperty("signingRequired")?.toString()?.toBoolean()
-                ?: project.property("isSonatypeRelease") as Boolean
-        }
-
-        configure<SigningExtension> {
-            setRequired(signingRequired)
-            sign(extensions.getByType<PublishingExtension>().publications[PUBLICATION_NAME])
-            useGpgCmd()
-        }
-
-        tasks.withType<Sign>().configureEach {
-            setOnlyIf { signingRequired.get() }
-        }
-
-        tasks.register("install") {
-            dependsOn(tasks.named("publishToMavenLocal"))
-        }
-
-        tasks.named<PublishToMavenRepository>("publish${PUBLICATION_NAME}PublicationTo${REPOSITORY_NAME}Repository")
-            .configureRepository()
+        configureDefaultPublishing()
     }
 
     companion object {
-        const val PUBLICATION_NAME = "Main"
+        const val DEFAULT_MAIN_PUBLICATION_NAME = "Main"
+        const val MAIN_PUBLICATION_NAME_PROPERTY = "MainPublicationName"
         const val REPOSITORY_NAME = "Maven"
         const val ADHOC_COMPONENT_NAME = "kotlinLibrary"
 
         const val COMPILE_CONFIGURATION = "publishedCompile"
         const val RUNTIME_CONFIGURATION = "publishedRuntime"
-
-        @OptIn(ExperimentalStdlibApi::class)
-        fun humanReadableName(project: Project) =
-            project.name.split("-").joinToString(separator = " ") { it.capitalize(Locale.ROOT) }
     }
 }
 
-fun TaskProvider<PublishToMavenRepository>.configureRepository() = configure {
+var Project.mainPublicationName: String
+    get() {
+        return if (project.extra.has(KotlinBuildPublishingPlugin.MAIN_PUBLICATION_NAME_PROPERTY))
+            project.extra.get(KotlinBuildPublishingPlugin.MAIN_PUBLICATION_NAME_PROPERTY) as String
+        else KotlinBuildPublishingPlugin.DEFAULT_MAIN_PUBLICATION_NAME
+    }
+    set(value) {
+        project.extra.set(KotlinBuildPublishingPlugin.MAIN_PUBLICATION_NAME_PROPERTY, value)
+    }
+
+@OptIn(ExperimentalStdlibApi::class)
+private fun humanReadableName(name: String) =
+    name.split("-").joinToString(separator = " ") { it.capitalize(Locale.ROOT) }
+
+fun MavenPublication.configureKotlinPomAttributes(project: Project, explicitDescription: String? = null, packaging: String = "jar") {
+    val publication = this
+    pom {
+        this.packaging = packaging
+        name.set(humanReadableName(publication.artifactId))
+        description.set(explicitDescription ?: project.description ?: humanReadableName(publication.artifactId))
+        url.set("https://kotlinlang.org/")
+        licenses {
+            license {
+                name.set("The Apache License, Version 2.0")
+                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+            }
+        }
+        scm {
+            url.set("https://github.com/JetBrains/kotlin")
+            connection.set("scm:git:https://github.com/JetBrains/kotlin.git")
+            developerConnection.set("scm:git:https://github.com/JetBrains/kotlin.git")
+        }
+        developers {
+            developer {
+                name.set("Kotlin Team")
+                organization.set("JetBrains")
+                organizationUrl.set("https://www.jetbrains.com")
+            }
+        }
+    }
+}
+
+
+fun Project.configureDefaultPublishing() {
+    configure<PublishingExtension> {
+        repositories {
+            maven {
+                name = KotlinBuildPublishingPlugin.REPOSITORY_NAME
+                url = file("${project.rootDir}/build/repo").toURI()
+            }
+        }
+    }
+
+    val signingRequired = project.providers.gradleProperty("signingRequired").forUseAtConfigurationTime().orNull?.toBoolean()
+        ?: project.providers.gradleProperty("isSonatypeRelease").forUseAtConfigurationTime().orNull?.toBoolean() ?: false
+
+    if (signingRequired) {
+        apply<SigningPlugin>()
+        configureSigning()
+    }
+
+    tasks.register("install") {
+        dependsOn(tasks.named("publishToMavenLocal"))
+    }
+
+    // workaround for Gradle configuration cache
+    // TODO: remove it when https://github.com/gradle/gradle/pull/16945 merged into used in build Gradle version
+    tasks.withType(PublishToMavenLocal::class.java) {
+        val originalTask = this
+        val serializablePublishTask =
+            tasks.register(originalTask.name + "Serializable", PublishToMavenLocalSerializable::class.java) {
+                publication = originalTask.publication
+            }
+        originalTask.onlyIf { false }
+        originalTask.dependsOn(serializablePublishTask)
+    }
+
+    tasks.withType<PublishToMavenRepository>()
+        .matching { it.name.endsWith("PublicationTo${KotlinBuildPublishingPlugin.REPOSITORY_NAME}Repository") }
+        .all { configureRepository() }
+}
+
+private fun Project.getSensitiveProperty(name: String): String? {
+    return project.findProperty(name) as? String ?: System.getenv(name)
+}
+
+private fun Project.configureSigning() {
+    configure<SigningExtension> {
+        sign(extensions.getByType<PublishingExtension>().publications) // all publications
+
+        val signKeyId = project.getSensitiveProperty("signKeyId")
+        if (!signKeyId.isNullOrBlank()) {
+            val signKeyPrivate = project.getSensitiveProperty("signKeyPrivate") ?: error("Parameter `signKeyPrivate` not found")
+            val signKeyPassphrase = project.getSensitiveProperty("signKeyPassphrase") ?: error("Parameter `signKeyPassphrase` not found")
+            useInMemoryPgpKeys(signKeyId, signKeyPrivate, signKeyPassphrase)
+        } else {
+            useGpgCmd()
+        }
+    }
+}
+
+fun TaskProvider<PublishToMavenRepository>.configureRepository() =
+    configure { configureRepository() }
+
+private fun PublishToMavenRepository.configureRepository() {
     dependsOn(project.rootProject.tasks.named("preparePublication"))
     doFirst {
         val preparePublication = project.rootProject.tasks.named("preparePublication").get()

@@ -43,7 +43,7 @@ annotation class A(val value: String)
 @Anno
 fun test() {}
 
-// MODULE: m2-jvm(m1-common)
+// MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
 actual typealias Anno = Jnno

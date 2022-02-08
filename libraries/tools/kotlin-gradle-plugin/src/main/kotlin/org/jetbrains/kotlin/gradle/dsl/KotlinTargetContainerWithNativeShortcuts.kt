@@ -36,7 +36,7 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
         name: String,
         children: List<KotlinSourceSet>,
         parent: KotlinSourceSet? = null
-    ) : KotlinSourceSet =
+    ): KotlinSourceSet =
         sourceSets.maybeCreate(name).apply {
             parent?.let { dependsOn(parent) }
             children.forEach {
@@ -94,7 +94,7 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
     ) {
         val device32 = watchosArm32("${namePrefix}Arm32")
         val device64 = watchosArm64("${namePrefix}Arm64")
-        val simulator = watchosX86("${namePrefix}X86")
+        val simulatorX64 = watchosX64("${namePrefix}X64")
         val deviceTargets = listOf(device32, device64)
 
         val deviceSourceSets = createIntermediateSourceSets(
@@ -104,11 +104,11 @@ interface KotlinTargetContainerWithNativeShortcuts : KotlinTargetContainerWithPr
 
         createIntermediateSourceSets(
             namePrefix,
-            listOf(deviceSourceSets, simulator.defaultSourceSets()),
+            listOf(deviceSourceSets, simulatorX64.defaultSourceSets()),
             mostCommonSourceSets()
         )
 
-        listOf(device32, device64, simulator).forEach { it.configure() }
+        listOf(device32, device64, simulatorX64).forEach { it.configure() }
     }
 
     fun watchos() = watchos("watchos") { }

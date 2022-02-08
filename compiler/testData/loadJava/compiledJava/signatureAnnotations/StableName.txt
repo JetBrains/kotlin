@@ -1,6 +1,0 @@
-package test
-
-public open class StableName {
-    public constructor StableName()
-    public open fun connect(/*0*/ @kotlin.annotations.jvm.internal.ParameterName(value = "host") /* annotation class not found */ host: kotlin.String!): kotlin.Unit
-}

@@ -1,5 +1,0 @@
-data class Data(val first: Int, val second: Int)
-
-fun foo() {
-    val (first, second) = Data(1, 2)
-}

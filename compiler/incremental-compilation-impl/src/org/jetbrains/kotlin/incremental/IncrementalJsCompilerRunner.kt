@@ -19,9 +19,10 @@ package org.jetbrains.kotlin.incremental
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.ICReporter
-import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.isIrBackendEnabled
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -41,31 +42,37 @@ fun makeJsIncrementally(
     cachesDir: File,
     sourceRoots: Iterable<File>,
     args: K2JSCompilerArguments,
+    buildHistoryFile: File,
     messageCollector: MessageCollector = MessageCollector.NONE,
     reporter: ICReporter = EmptyICReporter,
-    scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER
+    scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER,
+    modulesApiHistory: ModulesApiHistory = EmptyModulesApiHistory,
+    providedChangedFiles: ChangedFiles? = null
 ) {
     val allKotlinFiles = sourceRoots.asSequence().flatMap { it.walk() }
         .filter { it.isFile && it.extension.equals("kt", ignoreCase = true) }.toList()
-    val buildHistoryFile = File(cachesDir, "build-history.bin")
 
     val buildReporter = BuildReporter(icReporter = reporter, buildMetricsReporter = DoNothingBuildMetricsReporter)
-    withJsIC {
+    withJsIC(args) {
         val compiler = IncrementalJsCompilerRunner(
             cachesDir, buildReporter,
             buildHistoryFile = buildHistoryFile,
-            modulesApiHistory = EmptyModulesApiHistory,
+            modulesApiHistory = modulesApiHistory,
             scopeExpansion = scopeExpansion
         )
-        compiler.compile(allKotlinFiles, args, messageCollector, providedChangedFiles = null)
+        compiler.compile(allKotlinFiles, args, messageCollector, providedChangedFiles)
     }
 }
 
-inline fun <R> withJsIC(fn: () -> R): R {
+@Suppress("DEPRECATION")
+inline fun <R> withJsIC(args: CommonCompilerArguments, enabled: Boolean = true, fn: () -> R): R {
     val isJsEnabledBackup = IncrementalCompilation.isEnabledForJs()
     IncrementalCompilation.setIsEnabledForJs(true)
 
     try {
+        if (args.incrementalCompilation == null) {
+            args.incrementalCompilation = enabled
+        }
         return fn()
     } finally {
         IncrementalCompilation.setIsEnabledForJs(isJsEnabledBackup)
@@ -73,7 +80,7 @@ inline fun <R> withJsIC(fn: () -> R): R {
 }
 
 class IncrementalJsCompilerRunner(
-    private val workingDir: File,
+    workingDir: File,
     reporter: BuildReporter,
     buildHistoryFile: File,
     private val modulesApiHistory: ModulesApiHistory,
@@ -84,22 +91,32 @@ class IncrementalJsCompilerRunner(
     reporter,
     buildHistoryFile = buildHistoryFile
 ) {
-    override fun isICEnabled(): Boolean =
-        IncrementalCompilation.isEnabledForJs()
 
     override fun createCacheManager(args: K2JSCompilerArguments, projectDir: File?): IncrementalJsCachesManager {
         val serializerProtocol = if (!args.isIrBackendEnabled()) JsSerializerProtocol else KlibMetadataSerializerProtocol
-        return IncrementalJsCachesManager(cacheDirectory, workingDir, reporter, serializerProtocol)
+        return IncrementalJsCachesManager(
+            cacheDirectory,
+            projectDir,
+            reporter,
+            serializerProtocol,
+            storeFullFqNamesInLookupCache = withSnapshot
+            )
     }
 
-    override fun destinationDir(args: K2JSCompilerArguments): File =
-        File(args.outputFile).parentFile
+    override fun destinationDir(args: K2JSCompilerArguments): File {
+        val outputFile = File(args.outputFile!!)
+        return if (args.isIrBackendEnabled())
+            outputFile
+        else
+            outputFile.parentFile
+    }
 
     override fun calculateSourcesToCompileImpl(
         caches: IncrementalJsCachesManager,
         changedFiles: ChangedFiles.Known,
         args: K2JSCompilerArguments,
-        messageCollector: MessageCollector
+        messageCollector: MessageCollector,
+        classpathAbiSnapshots: Map<String, AbiSnapshot> //Ignore for now
     ): CompilationMode {
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
             ?: return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
@@ -108,7 +125,12 @@ class IncrementalJsCompilerRunner(
         initDirtyFiles(dirtyFiles, changedFiles)
 
         val libs = (args.libraries ?: "").split(File.pathSeparator).map { File(it) }
-        val classpathChanges = getClasspathChanges(libs, changedFiles, lastBuildInfo, modulesApiHistory, reporter)
+        //TODO(valtman) check for JS
+        val classpathChanges = getClasspathChanges(
+            libs, changedFiles, lastBuildInfo, modulesApiHistory, reporter,
+            mapOf(), false, caches.platformCache,
+            caches.lookupCache.lookupSymbols.map { if (it.scope.isBlank()) it.name else it.scope }.distinct()
+        )
 
         @Suppress("UNUSED_VARIABLE") // for sealed when
         val unused = when (classpathChanges) {
@@ -125,7 +147,7 @@ class IncrementalJsCompilerRunner(
         val removedClassesChanges = getRemovedClassesChanges(caches, changedFiles)
         dirtyFiles.addByDirtySymbols(removedClassesChanges.dirtyLookupSymbols)
         dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNames)
-
+        dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNamesForceRecompile)
         return CompilationMode.Incremental(dirtyFiles)
     }
 
@@ -173,11 +195,13 @@ class IncrementalJsCompilerRunner(
     ): ExitCode {
         val freeArgsBackup = args.freeArgs
 
+        val compiler = K2JSCompiler()
         return try {
             args.freeArgs += sourcesToCompile.map { it.absolutePath }
-            K2JSCompiler().exec(messageCollector, services, args)
+            compiler.exec(messageCollector, services, args)
         } finally {
             args.freeArgs = freeArgsBackup
+            reportPerformanceData(compiler.defaultPerformanceManager)
         }
     }
 

@@ -1,0 +1,10 @@
+language = Objective-C
+package = platform.CHIP
+headers = CHIP/CHIP.h
+
+headerFilter = CHIP/**
+
+compilerOpts = -framework CHIP
+linkerOpts = -framework CHIP
+# https://github.com/project-chip/connectedhomeip
+# Not officially available.

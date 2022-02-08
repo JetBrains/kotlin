@@ -1,0 +1,7 @@
+@kotlin.Metadata
+public final class JvmOverloadsExternalKt {
+    // source: 'jvmOverloadsExternal.kt'
+    public synthetic static method foo$default(p0: int, p1: int, p2: java.lang.Object): void
+    public final static @kotlin.jvm.JvmOverloads method foo(): void
+    public native final static @kotlin.jvm.JvmOverloads method foo(p0: int): void
+}

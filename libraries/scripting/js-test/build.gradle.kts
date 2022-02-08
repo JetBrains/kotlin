@@ -5,24 +5,20 @@ plugins {
 val embeddableTestRuntime by configurations.creating
 
 dependencies {
-    testCompile(commonDep("junit"))
+    testApi(commonDependency("junit"))
 
-    testCompile(project(":kotlin-scripting-js"))
-    testCompile(project(":compiler:plugin-api"))
-    testCompile(project(":kotlin-scripting-compiler"))
-    testCompile(project(":compiler:cli"))
-    testCompile(project(":compiler:backend.js"))
-    testCompile(project(":compiler:ir.tree.impl"))
-    testCompile(project(":js:js.engines"))
-    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    Platform[193].orLower {
-        testRuntimeOnly(intellijDep()) { includeJars("openapi", "picocontainer", rootProject = rootProject) }
-    }
-    testRuntimeOnly(intellijDep()) {
-        includeJars("idea", "idea_rt", "log4j", "guava", "jdom", rootProject = rootProject)
-    }
-    testRuntimeOnly(commonDep("org.jetbrains.intellij.deps", "trove4j"))
+    testApi(project(":kotlin-scripting-js"))
+    testApi(project(":compiler:plugin-api"))
+    testApi(project(":kotlin-scripting-compiler-js"))
+    testApi(project(":compiler:cli"))
+    testApi(project(":compiler:backend.js"))
+    testApi(project(":compiler:ir.tree.impl"))
+    testApi(project(":js:js.engines"))
+    testApi(intellijCore())
+
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
 }
 
 sourceSets {

@@ -6,10 +6,10 @@ class Test {
 
     fun bar(a: Test, b: Test) {
         if (a.foo != null) {
-            <!INAPPLICABLE_CANDIDATE!>useInt<!>(b.foo)
+            useInt(<!ARGUMENT_TYPE_MISMATCH!>b.foo<!>)
         }
         if (a.foo != null) {
-            <!INAPPLICABLE_CANDIDATE!>useInt<!>(foo)
+            useInt(<!ARGUMENT_TYPE_MISMATCH!>foo<!>)
         }
         if (this.foo != null) {
             useInt(foo)

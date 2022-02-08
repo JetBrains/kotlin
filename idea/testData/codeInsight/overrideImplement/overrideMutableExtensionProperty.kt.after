@@ -1,9 +1,0 @@
-interface A {
-    var Int.foo : Double
-}
-
-class B : A {
-    override var Int.foo: Double
-        get() = <selection><caret>TODO("Not yet implemented")</selection>
-        set(value) {}
-}

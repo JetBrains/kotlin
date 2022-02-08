@@ -1,0 +1,41 @@
+FILE: test.kt
+    package test
+
+    public sealed class Test : R|kotlin/Any| {
+        protected constructor(): R|test/Test| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object O : R|test/Test| {
+            private constructor(): R|test/Test.O| {
+                super<R|test/Test|>()
+            }
+
+        }
+
+        public final class Extra : R|test/Test| {
+            public constructor(x: R|kotlin/Int|): R|test/Test.Extra| {
+                super<R|test/Test|>()
+            }
+
+            public final val x: R|kotlin/Int| = R|<local>/x|
+                public get(): R|kotlin/Int|
+
+        }
+
+    }
+FILE: main.kt
+    package other
+
+    public abstract class Factory : R|kotlin/Any| {
+        public constructor(): R|other/Factory| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract fun createTest(): <ERROR TYPE REF: Symbol not found for Test>
+
+        public abstract fun createObj(): R|test/Test.O|
+
+        public abstract fun createExtra(): R|test/Test.Extra|
+
+    }

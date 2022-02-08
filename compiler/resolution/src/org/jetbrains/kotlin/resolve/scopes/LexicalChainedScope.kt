@@ -27,13 +27,13 @@ import org.jetbrains.kotlin.util.collectionUtils.getFirstClassifierDiscriminateH
 import org.jetbrains.kotlin.util.collectionUtils.getFromAllScopes
 import org.jetbrains.kotlin.util.collectionUtils.listOfNonEmptyScopes
 import org.jetbrains.kotlin.utils.Printer
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 class LexicalChainedScope private constructor(
     parent: LexicalScope,
     override val ownerDescriptor: DeclarationDescriptor,
     override val isOwnerDescriptorAccessibleByLabel: Boolean,
     override val implicitReceiver: ReceiverParameterDescriptor?,
+    override val contextReceiversGroup: List<ReceiverParameterDescriptor>,
     override val kind: LexicalScopeKind,
     // NB. Here can be very special subtypes of MemberScope (e.g., DeprecatedMemberScope).
     // Please, do not leak them outside of LexicalChainedScope, because other parts of compiler are not ready to work with them
@@ -50,7 +50,7 @@ class LexicalChainedScope private constructor(
         getFirstClassifierDiscriminateHeaders(memberScopes) { it.getContributedClassifier(name, location) }
 
     override fun getContributedClassifierIncludeDeprecated(name: Name, location: LookupLocation): DescriptorWithDeprecation<ClassifierDescriptor>? {
-        val (firstClassifier, isFirstDeprecated) = memberScopes.firstNotNullResult {
+        val (firstClassifier, isFirstDeprecated) = memberScopes.firstNotNullOfOrNull {
             it.getContributedClassifierIncludeDeprecated(name, location)
         } ?: return null
 
@@ -75,8 +75,16 @@ class LexicalChainedScope private constructor(
 
     override fun printStructure(p: Printer) {
         p.println(
-            this::class.java.simpleName, ": ", kind, "; for descriptor: ", ownerDescriptor.name,
-            " with implicitReceiver: ", implicitReceiver?.value ?: "NONE", " {"
+            this::class.java.simpleName,
+            ": ",
+            kind,
+            "; for descriptor: ",
+            ownerDescriptor.name,
+            " with implicitReceiver: ",
+            implicitReceiver?.value ?: "NONE",
+            " with contextReceiversGroup: ",
+            if (contextReceiversGroup.isEmpty()) "NONE" else contextReceiversGroup.joinToString { it.value.toString() },
+            " {"
         )
         p.pushIndent()
 
@@ -107,12 +115,13 @@ class LexicalChainedScope private constructor(
             ownerDescriptor: DeclarationDescriptor,
             isOwnerDescriptorAccessibleByLabel: Boolean,
             implicitReceiver: ReceiverParameterDescriptor?,
+            contextReceiversGroup: List<ReceiverParameterDescriptor>,
             kind: LexicalScopeKind,
             vararg memberScopes: MemberScope?,
             isStaticScope: Boolean = false
         ): LexicalScope =
             LexicalChainedScope(
-                parent, ownerDescriptor, isOwnerDescriptorAccessibleByLabel, implicitReceiver, kind,
+                parent, ownerDescriptor, isOwnerDescriptorAccessibleByLabel, implicitReceiver, contextReceiversGroup, kind,
                 listOfNonEmptyScopes(*memberScopes).toTypedArray(),
                 isStaticScope
             )

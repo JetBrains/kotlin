@@ -1,0 +1,37 @@
+FILE: topLevelCallables.kt
+    package foo
+
+    @R|org/jetbrains/kotlin/fir/plugin/DummyFunction|() public final class First : R|kotlin/Any| {
+        public constructor(): R|foo/First| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/DummyFunction|() public final class Second : R|kotlin/Any| {
+        public constructor(): R|foo/Second| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval result1: R|kotlin/String| = R|foo/dummyFirst|(R|foo/First.First|())
+        when () {
+            !=(R|<local>/result1|, String(foo.First)) ->  {
+                ^box <strcat>(String(Error: ), R|<local>/result1|)
+            }
+        }
+
+        lval result2: R|kotlin/String| = R|foo/dummySecond|(R|foo/Second.Second|())
+        when () {
+            !=(R|<local>/result2|, String(foo.Second)) ->  {
+                ^box <strcat>(String(Error: ), R|<local>/result2|)
+            }
+        }
+
+        ^box String(OK)
+    }
+FILE: __GENERATED DECLARATIONS__.kt
+    package foo
+
+    public final fun dummyFirst(value: R|foo/First|): R|kotlin/String|
+    public final fun dummySecond(value: R|foo/Second|): R|kotlin/String|

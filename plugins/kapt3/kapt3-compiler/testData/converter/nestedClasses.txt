@@ -5,6 +5,10 @@ public final class A {
     @org.jetbrains.annotations.Nullable()
     private final A x = null;
 
+    public A() {
+        super();
+    }
+
     @org.jetbrains.annotations.Nullable()
     public final A getX() {
         return null;
@@ -15,10 +19,6 @@ public final class A {
     A a, @org.jetbrains.annotations.NotNull()
     A.B b) {
         return null;
-    }
-
-    public A() {
-        super();
     }
 
     @kotlin.Metadata()

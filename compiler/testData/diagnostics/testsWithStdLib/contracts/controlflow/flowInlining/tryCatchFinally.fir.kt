@@ -1,5 +1,5 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseCallsInPlaceEffect
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER -UNUSED_PARAMETER
 
 import kotlin.contracts.*
@@ -23,10 +23,10 @@ fun innerTryCatchFinally() {
             x = someComputation()
             report(x)
         } catch (e: java.lang.Exception) {
-            x = 42
+            <!VAL_REASSIGNMENT!>x<!> = 42
             report(x)
         } finally {
-            x = 0
+            <!VAL_REASSIGNMENT!>x<!> = 0
         }
     }
 

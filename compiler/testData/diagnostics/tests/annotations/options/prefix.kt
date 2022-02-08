@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 @Target(AnnotationTarget.FUNCTION)
 annotation class FunAnn
 

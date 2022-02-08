@@ -1,0 +1,8 @@
+depends = CFNetwork CoreFoundation CoreGraphics CoreImage CoreText CoreVideo EAGL FileProvider Foundation IOSurface ImageIO Metal OpenGLESCommon QuartzCore Security UserNotifications darwin posix
+language = Objective-C
+package = platform.UIKit
+modules = UIKit
+
+compilerOpts = -framework UIKit
+linkerOpts = -framework UIKit
+excludedFunctions = UISceneErrorDomain

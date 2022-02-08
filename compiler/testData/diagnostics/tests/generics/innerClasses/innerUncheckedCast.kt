@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 
 class Outer<E> {
@@ -15,7 +14,7 @@ class Outer<E> {
         if (y is <!NO_TYPE_ARGUMENTS_ON_RHS!>Inner<!>) return
 
         if (z is Inner) {
-            <!OI;DEBUG_INFO_SMARTCAST!>z<!>.prop.checkType { _<Any?>() }
+            z.prop.checkType { _<Any?>() }
             return
         }
 

@@ -1,15 +1,15 @@
 var x : Int = 1 + x
    get() : Int = 1
-   set(value : Long) {
+   set(value : <!WRONG_SETTER_PARAMETER_TYPE!>Long<!>) {
       field = value.toInt()
-      field = 1.toLong()
+      field = <!ASSIGNMENT_TYPE_MISMATCH!>1.toLong()<!>
     }
 
- val xx : Int = 1 + x
+ val xx : Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1 + x<!>
    get() : Int = 1
-   set(value : Long) {}
+   <!VAL_WITH_SETTER!>set(value : <!WRONG_SETTER_PARAMETER_TYPE!>Long<!>) {}<!>
 
-  val p : Int = 1
+  val p : Int = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>1<!>
     get() = 1
 
 class Test() {

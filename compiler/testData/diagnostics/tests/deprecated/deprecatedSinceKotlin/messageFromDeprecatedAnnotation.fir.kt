@@ -5,5 +5,5 @@ package kotlin
 fun foo() {}
 
 fun test() {
-    foo()
+    <!DEPRECATION!>foo<!>()
 }

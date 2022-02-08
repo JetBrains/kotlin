@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.fir.checkers.generator
 
-import org.jetbrains.kotlin.fir.tree.generator.printer.*
+import org.jetbrains.kotlin.fir.tree.generator.printer.printCopyright
+import org.jetbrains.kotlin.fir.tree.generator.printer.printGeneratedMessage
+import org.jetbrains.kotlin.fir.tree.generator.util.writeToFileUsingSmartPrinterIfFileContentChanged
+import org.jetbrains.kotlin.util.SmartPrinter
+import org.jetbrains.kotlin.util.withIndent
 import java.io.File
 
 private typealias Alias = String
@@ -20,20 +24,11 @@ class Generator(
     private val packageName: String,
     private val abstractCheckerName: String
 ) {
-    private val generationPath: File
-
-    init {
-        var path = generationPath
-        packageName.split(".").forEach {
-            path = path.resolve(it)
-        }
-        path.mkdirs()
-        this.generationPath = path
-    }
+    private val generationPath: File = getGenerationPath(generationPath, packageName)
 
     private fun generateAliases() {
         val filename = "${abstractCheckerName}Aliases.kt"
-        generationPath.resolve(filename).useSmartPrinter {
+        generationPath.resolve(filename).writeToFileUsingSmartPrinterIfFileContentChanged {
             printPackageAndCopyright()
             printGeneratedMessage()
             configuration.aliases.keys
@@ -42,14 +37,17 @@ class Generator(
                 .forEach { println("import $it") }
             println()
             for ((kClass, alias) in configuration.aliases) {
-                println("typealias $alias = $abstractCheckerName<${kClass.simpleName}>")
+                val typeParameters =
+                    if (kClass.typeParameters.isEmpty()) ""
+                    else kClass.typeParameters.joinToString(separator = ",", prefix = "<", postfix = ">") { "*" }
+                println("typealias $alias = $abstractCheckerName<${kClass.simpleName}$typeParameters>")
             }
         }
     }
 
     private fun generateAbstractCheckersComponent() {
         val filename = "${checkersComponentName}.kt"
-        generationPath.resolve(filename).useSmartPrinter {
+        generationPath.resolve(filename).writeToFileUsingSmartPrinterIfFileContentChanged {
             printPackageAndCopyright()
             printImports()
             printGeneratedMessage()
@@ -77,12 +75,12 @@ class Generator(
                 }
 
                 for ((kClass, alias) in configuration.aliases) {
-                    print("$CHECKERS_COMPONENT_INTERNAL_ANNOTATION internal val ${alias.allFieldName}: ${alias.setType} get() = ${alias.fieldName}")
+                    print("$CHECKERS_COMPONENT_INTERNAL_ANNOTATION internal val ${alias.allFieldName}: ${alias.setType} by lazy { ${alias.fieldName}")
                     for (parent in configuration.parentsMap.getValue(kClass)) {
                         val parentAlias = configuration.aliases.getValue(parent)
-                        print(" + ${parentAlias.allFieldName}")
+                        print(" + ${parentAlias.fieldName}")
                     }
-                    println()
+                    println(" }")
                 }
             }
             println("}")
@@ -92,11 +90,11 @@ class Generator(
     private fun generateComposedComponent() {
         val composedComponentName = "Composed$checkersComponentName"
         val filename = "${composedComponentName}.kt"
-        generationPath.resolve(filename).useSmartPrinter {
+        generationPath.resolve(filename).writeToFileUsingSmartPrinterIfFileContentChanged {
             printPackageAndCopyright()
             printImports()
             printGeneratedMessage()
-            println("internal class $composedComponentName : $checkersComponentName() {")
+            println("class $composedComponentName : $checkersComponentName() {")
             withIndent {
                 // public overrides
                 for (alias in configuration.aliases.values) {
@@ -124,10 +122,10 @@ class Generator(
 
                 // register function
                 println(CHECKERS_COMPONENT_INTERNAL_ANNOTATION)
-                println("internal fun register(checkers: $checkersComponentName) {")
+                println("fun register(checkers: $checkersComponentName) {")
                 withIndent {
                     for (alias in configuration.aliases.values) {
-                        println("_${alias.fieldName} += checkers.${alias.allFieldName}")
+                        println("_${alias.fieldName} += checkers.${alias.fieldName}")
                     }
                     for (fieldName in configuration.additionalCheckers.keys) {
                         println("_$fieldName += checkers.$fieldName")
@@ -162,10 +160,10 @@ class Generator(
         get() = "val $fieldName: $setType"
 
     private val Alias.fieldName: String
-        get() = removePrefix("Fir").decapitalize() + "s"
+        get() = removePrefix("Fir").replaceFirstChar(Char::lowercaseChar) + "s"
 
     private val Alias.allFieldName: String
-        get() = "all${fieldName.capitalize()}"
+        get() = "all${fieldName.replaceFirstChar(Char::uppercaseChar)}"
 
     private val Alias.setType: String
         get() = "Set<$this>"

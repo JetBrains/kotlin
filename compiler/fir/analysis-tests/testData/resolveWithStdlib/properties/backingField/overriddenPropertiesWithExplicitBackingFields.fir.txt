@@ -1,0 +1,31 @@
+FILE: overriddenPropertiesWithExplicitBackingFields.kt
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open var it: R|kotlin/Number|
+            private <explicit backing field>: R|kotlin/Int| = Int(3)
+            public get(): R|kotlin/Number|
+            public set(value: R|kotlin/Number|): R|kotlin/Unit| {
+                this@R|/A|.F|/A.it| = R|<local>/value|.R|kotlin/Number.toInt|()
+            }
+
+        public final fun test(): R|kotlin/Unit| {
+            <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#(this@R|/A|.R|/A.it|.<Unresolved name: plus>#(Int(1)))
+        }
+
+    }
+    public open class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        public open override var it: R|kotlin/Number|
+            public get(): R|kotlin/Number| {
+                ^ Double(3.14)
+            }
+            public set(value: R|kotlin/Number|): R|kotlin/Unit| {
+            }
+
+    }

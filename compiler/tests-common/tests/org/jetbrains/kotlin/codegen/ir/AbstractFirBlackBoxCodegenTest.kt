@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.codegen.ir
 
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 
+@OptIn(ObsoleteTestInfrastructure::class)
 abstract class AbstractFirBlackBoxCodegenTest : AbstractIrBlackBoxCodegenTest() {
     override fun updateConfiguration(configuration: CompilerConfiguration) {
         super.updateConfiguration(configuration)

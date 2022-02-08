@@ -1,9 +1,18 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Foo(val x: Int)
-inline class FooRef(val y: String)
-inline class FooLong(val x: Long)
-inline class FooDouble(val y: Double)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Foo(val x: Int)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class FooRef(val y: String)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class FooLong(val x: Long)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class FooDouble(val y: Double)
 
 fun box(): String {
     val f = Foo(42)

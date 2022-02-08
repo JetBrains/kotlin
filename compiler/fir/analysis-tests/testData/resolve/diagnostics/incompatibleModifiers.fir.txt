@@ -1,0 +1,129 @@
+FILE: incompatibleModifiers.kt
+    private final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    protected final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class D : R|kotlin/Any| {
+        public constructor(): R|D| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class E : R|kotlin/Any| {
+        public constructor(): R|E| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class F : R|kotlin/Any| {
+        protected constructor(): R|F| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public sealed class G : R|kotlin/Any| {
+        protected constructor(): R|G| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final inline fun foo(crossinline noinline first: R|() -> kotlin/Unit|, second: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public abstract data class H : R|kotlin/Any| {
+        public constructor(i: R|kotlin/Int|): R|H| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val i: R|kotlin/Int| = R|<local>/i|
+            public get(): R|kotlin/Int|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(i: R|kotlin/Int| = this@R|/H|.R|/H.i|): R|H|
+
+    }
+    public sealed data class I : R|kotlin/Any| {
+        protected constructor(i: R|kotlin/Int|): R|I| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val i: R|kotlin/Int| = R|<local>/i|
+            public get(): R|kotlin/Int|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(i: R|kotlin/Int| = this@R|/I|.R|/I.i|): R|I|
+
+    }
+    public final data inline class J : R|kotlin/Any| {
+        public constructor(i: R|kotlin/Int|): R|J| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val i: R|kotlin/Int| = R|<local>/i|
+            public get(): R|kotlin/Int|
+
+        public final operator fun component1(): R|kotlin/Int|
+
+        public final fun copy(i: R|kotlin/Int| = this@R|/J|.R|/J.i|): R|J|
+
+    }
+    public abstract class K : R|kotlin/Any| {
+        public constructor(): R|K| {
+            super<R|kotlin/Any|>()
+        }
+
+        private open val i1: R|kotlin/Int| = Int(0)
+            private get(): R|kotlin/Int|
+
+        private abstract val i2: R|kotlin/Int|
+            private get(): R|kotlin/Int|
+
+    }
+    private open class L : R|K| {
+        public constructor(): R|L| {
+            super<R|K|>()
+        }
+
+    }
+    private abstract class M : R|K| {
+        public constructor(): R|M| {
+            super<R|K|>()
+        }
+
+    }
+    public final class X : R|kotlin/Any| {
+        public constructor(): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner data class Y : R|kotlin/Any| {
+            public X.constructor(i: R|kotlin/Int|): R|X.Y| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val i: R|kotlin/Int| = R|<local>/i|
+                public get(): R|kotlin/Int|
+
+            public final operator fun component1(): R|kotlin/Int|
+
+            public final fun copy(i: R|kotlin/Int| = this@R|/X.Y|.R|/X.Y.i|): R|X.Y|
+
+        }
+
+        public sealed inner class Z : R|kotlin/Any| {
+            protected X.constructor(): R|X.Z| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

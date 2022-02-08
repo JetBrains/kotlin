@@ -1,4 +1,5 @@
-// NB '!!' uses Intrinsics.throwNpe/checkNotNull
+// NB '!!' uses Intrinsics.throwNpe/checkNotNull, but IR follows it with ATHROW
+// while the old backend returns null from `exit`
 inline fun exit(): Nothing = null!!
 
 fun box(): String {
@@ -13,4 +14,7 @@ fun box(): String {
     return a
 }
 
+// JVM_TEMPLATES
 // 1 ATHROW
+// JVM_IR_TEMPLATES
+// 2 ATHROW

@@ -8,16 +8,13 @@ package org.jetbrains.kotlin.checkers
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.rt.execution.junit.FileComparisonFailure
 import junit.framework.AssertionFailedError
 import junit.framework.TestCase
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.TestsCompilerError
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
-import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
@@ -41,11 +38,10 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.diagnostics.Errors.*
-import org.jetbrains.kotlin.fir.AbstractFirOldFrontendDiagnosticsTest
-import org.jetbrains.kotlin.fir.loadTestDataWithoutDiagnostics
 import org.jetbrains.kotlin.frontend.java.di.createContainerForLazyResolveWithJava
 import org.jetbrains.kotlin.frontend.java.di.initJvmBuiltInsForTopDownAnalysis
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.name.FqName
@@ -81,6 +77,7 @@ import java.util.*
 import java.util.function.Predicate
 import java.util.regex.Pattern
 
+@ObsoleteTestInfrastructure("org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest")
 abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     override fun analyzeAndCheck(testDataFile: File, files: List<TestFile>) {
         try {
@@ -127,15 +124,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
             val oldModule = modules[testModule]!!
 
-            val languageVersionSettings =
-                if (coroutinesPackage.isNotEmpty()) {
-                    val isExperimental = coroutinesPackage == StandardNames.COROUTINES_PACKAGE_FQ_NAME_EXPERIMENTAL.asString()
-                    CompilerTestLanguageVersionSettings(
-                        DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
-                        if (isExperimental) ApiVersion.KOTLIN_1_2 else ApiVersion.KOTLIN_1_3,
-                        if (isExperimental) LanguageVersion.KOTLIN_1_2 else LanguageVersion.KOTLIN_1_3
-                    )
-                } else loadLanguageVersionSettings(testFilesInModule)
+            val languageVersionSettings = loadLanguageVersionSettings(testFilesInModule)
 
             languageVersionSettingsByModule[testModule] = languageVersionSettings
 
@@ -180,7 +169,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         var exceptionFromDescriptorValidation: Throwable? = null
         try {
             val expectedFile = getExpectedDescriptorFile(testDataFile, files)
-            validateAndCompareDescriptorWithFile(expectedFile, files, modules, coroutinesPackage)
+            validateAndCompareDescriptorWithFile(expectedFile, files, modules)
         } catch (e: Throwable) {
             exceptionFromDescriptorValidation = e
         }
@@ -223,7 +212,11 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
 
             if (testFile.renderDiagnosticsFullText) {
                 shouldCheckDiagnosticsFullText = true
-                AnalyzerWithCompilerReport.reportDiagnostics(moduleBindingContext.diagnostics, diagnosticsFullTextCollector)
+                AnalyzerWithCompilerReport.reportDiagnostics(
+                    moduleBindingContext.diagnostics,
+                    diagnosticsFullTextCollector,
+                    renderInternalDiagnosticName = false
+                )
             }
         }
 
@@ -256,58 +249,10 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         performAdditionalChecksAfterDiagnostics(
             testDataFile, files, groupedByModule, modules, moduleBindings, languageVersionSettingsByModule
         )
-        if (shouldValidateFirTestData(testDataFile)) {
-            checkFirTestdata(testDataFile, files)
-        }
     }
 
     protected open fun checkDiagnostics(actualText: String, testDataFile: File) {
-        KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText) { s ->
-            s.replace("COROUTINES_PACKAGE", coroutinesPackage)
-        }
-    }
-
-    private fun checkFirTestdata(testDataFile: File, files: List<TestFile>) {
-        val firTestDataFile = File(testDataFile.absolutePath.replace(".kt", ".fir.kt"))
-        val firFailFile = File(testDataFile.absolutePath.replace(".kt", ".fir.fail"))
-        when {
-            firFailFile.exists() -> return
-            firTestDataFile.exists() -> checkOriginalAndFirTestdataIdentity(testDataFile, firTestDataFile)
-            else -> runFirTestAndGenerateTestData(testDataFile, firTestDataFile, files)
-        }
-    }
-
-    private fun checkOriginalAndFirTestdataIdentity(testDataFile: File, firTestDataFile: File) {
-        val originalTestData = loadTestDataWithoutDiagnostics(testDataFile)
-        val firTestData = loadTestDataWithoutDiagnostics(firTestDataFile)
-        val message = "Original and fir test data aren't identical. " +
-                "Please, add changes from ${testDataFile.name} to ${firTestDataFile.name}"
-        TestCase.assertEquals(message, originalTestData, firTestData)
-    }
-
-    private fun runFirTestAndGenerateTestData(testDataFile: File, firTestDataFile: File, files: List<TestFile>) {
-        val testRunner = object : AbstractFirOldFrontendDiagnosticsTest() {
-            init {
-                environment = this@AbstractDiagnosticsTest.environment
-                coroutinesPackage = this@AbstractDiagnosticsTest.coroutinesPackage
-            }
-        }
-        if (testDataFile.readText().contains("// FIR_IDENTICAL")) {
-            try {
-                PsiElementFinder.EP.getPoint(environment.project).unregisterExtension(JavaElementFinder::class.java)
-                testRunner.analyzeAndCheckUnhandled(testDataFile, files)
-            } catch (e: FileComparisonFailure) {
-                println("Old FE & FIR produces different diagnostics for this file. Please remove FIR_IDENTICAL line manually")
-                throw FileComparisonFailure(
-                    "Old FE & FIR produces different diagnostics for this file. Please remove FIR_IDENTICAL line manually\n" +
-                            e.message,
-                    e.expected, e.actual, e.filePath, e.actualFilePath
-                )
-            }
-        } else {
-            FileUtil.copy(testDataFile, firTestDataFile)
-            testRunner.analyzeAndCheckUnhandled(firTestDataFile, files)
-        }
+        KotlinTestUtils.assertEqualsToFile(getExpectedDiagnosticsFile(testDataFile), actualText)
     }
 
     private fun StringBuilder.cleanupInferenceDiagnostics(): String = replace(Regex("NI;([\\S]*), OI;\\1([,!])")) { it.groupValues[1] + it.groupValues[2] }
@@ -459,7 +404,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
         if (platform.isCommon()) {
             return CommonResolverForModuleFactory.analyzeFiles(
                 files, moduleDescriptor.name, true, languageVersionSettings,
-                CommonPlatforms.defaultCommonPlatform,
+                CommonPlatforms.defaultCommonPlatform, CompilerEnvironment,
                 mapOf(
                     MODULE_FILES to files
                 )
@@ -482,8 +427,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
             moduleContentScope,
             moduleClassResolver,
-            CompilerEnvironment, LookupTracker.DO_NOTHING,
-            ExpectActualTracker.DoNothing,
+            CompilerEnvironment,
+            LookupTracker.DO_NOTHING, ExpectActualTracker.DoNothing, InlineConstTracker.DoNothing,
             environment.createPackagePartProvider(moduleContentScope),
             languageVersionSettings,
             useBuiltInsProvider = true
@@ -497,7 +442,8 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                 listOf(
                     container.get<KotlinCodeAnalyzer>().packageFragmentProvider,
                     container.get<JavaDescriptorResolver>().packageFragmentProvider
-                )
+                ),
+                "CompositeProvider@AbstractDiagnosticsTest for $moduleDescriptor"
             )
         )
 
@@ -529,8 +475,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
     private fun validateAndCompareDescriptorWithFile(
         expectedFile: File,
         testFiles: List<TestFile>,
-        modules: Map<TestModule?, ModuleDescriptorImpl>,
-        coroutinesPackage: String
+        modules: Map<TestModule?, ModuleDescriptorImpl>
     ) {
         if (skipDescriptorsValidation()) return
         if (testFiles.any { file -> InTextDirectivesUtils.isDirectiveDefined(file.expectedText, "// SKIP_TXT") }) {
@@ -538,7 +483,12 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
             return
         }
 
-        val comparator = RecursiveDescriptorComparator(createdAffectedPackagesConfiguration(testFiles, modules.values))
+        val comparator = RecursiveDescriptorComparator(
+            createdAffectedPackagesConfiguration(
+                testFiles,
+                modules.values
+            )
+        )
 
         val isMultiModuleTest = modules.size != 1
 
@@ -591,9 +541,7 @@ abstract class AbstractDiagnosticsTest : BaseDiagnosticsTest() {
                     "Such tests are hard to maintain, take long time to execute and are subject to sudden unreviewed changes anyway."
         }
 
-        KotlinTestUtils.assertEqualsToFile(expectedFile, allPackagesText) { s ->
-            s.replace("COROUTINES_PACKAGE", coroutinesPackage)
-        }
+        KotlinTestUtils.assertEqualsToFile(expectedFile, allPackagesText)
     }
 
 

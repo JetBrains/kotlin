@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,24 +10,12 @@ package org.w3c.dom.mediasource
 
 import kotlin.js.*
 import org.khronos.webgl.*
-import org.w3c.css.masking.*
 import org.w3c.dom.*
-import org.w3c.dom.clipboard.*
-import org.w3c.dom.css.*
-import org.w3c.dom.encryptedmedia.*
 import org.w3c.dom.events.*
-import org.w3c.dom.mediacapture.*
-import org.w3c.dom.parsing.*
-import org.w3c.dom.pointerevents.*
-import org.w3c.dom.svg.*
-import org.w3c.dom.url.*
-import org.w3c.fetch.*
-import org.w3c.files.*
-import org.w3c.notifications.*
-import org.w3c.performance.*
-import org.w3c.workers.*
-import org.w3c.xhr.*
 
+/**
+ * Exposes the JavaScript [MediaSource](https://developer.mozilla.org/en/docs/Web/API/MediaSource) to Kotlin
+ */
 public external open class MediaSource : EventTarget, MediaProvider {
     open val sourceBuffers: SourceBufferList
     open val activeSourceBuffers: SourceBufferList
@@ -47,6 +35,9 @@ public external open class MediaSource : EventTarget, MediaProvider {
     }
 }
 
+/**
+ * Exposes the JavaScript [SourceBuffer](https://developer.mozilla.org/en/docs/Web/API/SourceBuffer) to Kotlin
+ */
 public external abstract class SourceBuffer : EventTarget {
     open var mode: AppendMode
     open val updating: Boolean
@@ -67,16 +58,21 @@ public external abstract class SourceBuffer : EventTarget {
     fun remove(start: Double, end: Double)
 }
 
+/**
+ * Exposes the JavaScript [SourceBufferList](https://developer.mozilla.org/en/docs/Web/API/SourceBufferList) to Kotlin
+ */
 public external abstract class SourceBufferList : EventTarget {
     open val length: Int
     open var onaddsourcebuffer: ((Event) -> dynamic)?
     open var onremovesourcebuffer: ((Event) -> dynamic)?
 }
 
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline operator fun SourceBufferList.get(index: Int): SourceBuffer? = asDynamic()[index]
 
 /* please, don't implement this interface! */
+@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface ReadyState {
     companion object
@@ -89,6 +85,7 @@ public inline val ReadyState.Companion.OPEN: ReadyState get() = "open".asDynamic
 public inline val ReadyState.Companion.ENDED: ReadyState get() = "ended".asDynamic().unsafeCast<ReadyState>()
 
 /* please, don't implement this interface! */
+@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface EndOfStreamError {
     companion object
@@ -99,6 +96,7 @@ public inline val EndOfStreamError.Companion.NETWORK: EndOfStreamError get() = "
 public inline val EndOfStreamError.Companion.DECODE: EndOfStreamError get() = "decode".asDynamic().unsafeCast<EndOfStreamError>()
 
 /* please, don't implement this interface! */
+@JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
 public external interface AppendMode {
     companion object

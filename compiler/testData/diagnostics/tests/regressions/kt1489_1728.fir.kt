@@ -1,4 +1,3 @@
-// !WITH_NEW_INFERENCE
 package kt606_dependents
 
 //KT-1489 Code analyzer fails with assertion
@@ -19,7 +18,7 @@ class C {
     fun p() : Resource? = null
 
     fun bar() {
-        <!INAPPLICABLE_CANDIDATE!>foo<!>(p()) {
+        foo(<!ARGUMENT_TYPE_MISMATCH!>p()<!>) {
 
         }
     }

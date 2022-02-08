@@ -1,0 +1,2 @@
+expression: p0
+expected type: kotlin/String

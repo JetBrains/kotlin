@@ -15,12 +15,13 @@ enum class Modality {
     ABSTRACT;
 
     companion object {
-
-        // NB: never returns SEALED
-        fun convertFromFlags(abstract: Boolean, open: Boolean): Modality {
-            if (abstract) return ABSTRACT
-            if (open) return OPEN
-            return FINAL
+        fun convertFromFlags(sealed: Boolean, abstract: Boolean, open: Boolean): Modality {
+            return when {
+                sealed -> SEALED
+                abstract -> ABSTRACT
+                open -> OPEN
+                else -> FINAL
+            }
         }
     }
 }

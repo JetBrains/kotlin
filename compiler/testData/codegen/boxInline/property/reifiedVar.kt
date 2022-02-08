@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // WITH_REFLECT
 // FILE: 1.kt
 package test

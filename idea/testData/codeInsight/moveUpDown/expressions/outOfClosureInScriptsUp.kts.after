@@ -1,7 +1,0 @@
-// MOVE: up
-fun takeLamb(f: () -> Unit) {}
-<caret>foo()
-takeLamb {
-}
-
-fun foo() {}

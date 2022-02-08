@@ -1,0 +1,29 @@
+FILE: sequentialLazy.kt
+    public final class Some : R|kotlin/Any| {
+        public constructor(classNames: R|() -> kotlin/collections/Collection<kotlin/String>|): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        internal final val first: R|kotlin/collections/Set<kotlin/String>|by R|kotlin/lazy|<R|kotlin/collections/Set<kotlin/String>|>(<L> = lazy@fun <anonymous>(): R|kotlin/collections/Set<kotlin/String>| <inline=NoInline>  {
+            ^ R|<local>/classNames|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/collections/Collection<kotlin/String>|>|().R|kotlin/collections/toSet|<R|kotlin/String|>()
+        }
+        )
+            internal get(): R|kotlin/collections/Set<kotlin/String>| {
+                ^ this@R|/Some|.D|/Some.first|.R|kotlin/getValue|<R|kotlin/collections/Set<kotlin/String>|>(this@R|/Some|, ::R|/Some.first|)
+            }
+
+        private final val second: R|kotlin/collections/Set<kotlin/String>?|by R|kotlin/lazy|<R|kotlin/collections/Set<kotlin/String>?|>(<L> = lazy@fun <anonymous>(): R|kotlin/collections/Set<kotlin/String>?| <inline=NoInline>  {
+            lval nonDeclaredNames: R|kotlin/collections/Set<kotlin/String>| = this@R|/Some|.R|/Some.getNonDeclaredClassifierNames|() ?: ^@lazy Null(null)
+            lval allNames: R|kotlin/collections/Set<kotlin/String>| = this@R|/Some|.R|/Some.first|.R|kotlin/collections/plus|<R|kotlin/String|>(R|<local>/nonDeclaredNames|)
+            ^ R|<local>/allNames|
+        }
+        )
+            private get(): R|kotlin/collections/Set<kotlin/String>?| {
+                ^ this@R|/Some|.D|/Some.second|.R|kotlin/getValue|<R|kotlin/collections/Set<kotlin/String>?|>(this@R|/Some|, ::R|/Some.second|)
+            }
+
+        public final fun getNonDeclaredClassifierNames(): R|kotlin/collections/Set<kotlin/String>?| {
+            ^getNonDeclaredClassifierNames Null(null)
+        }
+
+    }

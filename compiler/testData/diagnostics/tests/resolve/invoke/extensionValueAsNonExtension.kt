@@ -1,4 +1,4 @@
-// !WITH_NEW_INFERENCE
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_PARAMETER -UNUSED_VARIABLE
 class A
 
@@ -19,5 +19,5 @@ fun foo(): A.() -> Int {
     val b: Int = foo()(A())
     val c: Int = (foo())(A())
 
-    <!OI;UNREACHABLE_CODE!>return<!> null!!
+    return null!!
 }

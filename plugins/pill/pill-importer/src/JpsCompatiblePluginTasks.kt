@@ -6,8 +6,17 @@
 package org.jetbrains.kotlin.pill
 
 import org.gradle.api.Project
-import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.plugins.BasePluginExtension
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.SourceSet
 import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.getByType
+import org.jetbrains.kotlin.pill.artifact.ArtifactDependencyMapper
+import org.jetbrains.kotlin.pill.artifact.ArtifactGenerator
+import org.jetbrains.kotlin.pill.model.PDependency
+import org.jetbrains.kotlin.pill.model.PLibrary
+import org.jetbrains.kotlin.pill.model.POrderRoot
+import org.jetbrains.kotlin.pill.model.PProject
 import shadow.org.jdom2.input.SAXBuilder
 import shadow.org.jdom2.*
 import shadow.org.jdom2.output.Format
@@ -18,7 +27,12 @@ import kotlin.collections.HashMap
 
 const val EMBEDDED_CONFIGURATION_NAME = "embedded"
 
-class JpsCompatiblePluginTasks(private val rootProject: Project, private val platformDir: File, private val resourcesDir: File) {
+class JpsCompatiblePluginTasks(
+    private val rootProject: Project,
+    private val platformDir: File,
+    private val resourcesDir: File,
+    private val isIdePluginAttached: Boolean
+) {
     companion object {
         private val DIST_LIBRARIES = listOf(
             ":kotlin-annotations-jvm",
@@ -28,14 +42,13 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             ":kotlin-reflect",
             ":kotlin-test:kotlin-test-jvm",
             ":kotlin-test:kotlin-test-junit",
-            ":kotlin-script-runtime",
-            ":kotlin-serialization"
+            ":kotlin-script-runtime"
         )
 
         private val IGNORED_LIBRARIES = listOf(
             // Libraries
             ":kotlin-stdlib-common",
-            ":kotlin-reflect-api",
+            ":kotlin-serialization",
             ":kotlin-test:kotlin-test-common",
             ":kotlin-test:kotlin-test-annotations-common",
             // Other
@@ -49,26 +62,30 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
         )
 
         private val MAPPED_LIBRARIES = mapOf(
+            ":kotlin-reflect-api/main" to ":kotlin-reflect/main",
             ":kotlin-reflect-api/java9" to ":kotlin-reflect/main"
         )
 
         private val LIB_DIRECTORIES = listOf("dependencies", "dist")
+
+        private val ALLOWED_ARTIFACT_PATTERNS = listOf(
+            Regex("kotlinx_cli_jvm_[\\d_]+_SNAPSHOT\\.xml"),
+            Regex("kotlin_test_wasm_js_[\\d_]+_SNAPSHOT\\.xml")
+        )
     }
 
     private lateinit var projectDir: File
     private lateinit var platformVersion: String
     private lateinit var platformBaseNumber: String
     private lateinit var intellijCoreDir: File
-    private var isAndroidStudioPlatform: Boolean = false
 
     private fun initEnvironment(project: Project) {
         projectDir = project.projectDir
         platformVersion = project.extensions.extraProperties.get("versions.intellijSdk").toString()
         platformBaseNumber = platformVersion.substringBefore(".", "").takeIf { it.isNotEmpty() }
             ?: platformVersion.substringBefore("-", "").takeIf { it.isNotEmpty() }
-                ?: error("Invalid platform version: $platformVersion")
+                    ?: error("Invalid platform version: $platformVersion")
         intellijCoreDir = File(platformDir.parentFile.parentFile.parentFile, "intellij-core")
-        isAndroidStudioPlatform = project.extensions.extraProperties.has("versions.androidStudioRelease")
     }
 
     fun pill() {
@@ -83,17 +100,13 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
 
         rootProject.logger.lifecycle("Pill: Setting up project for the '${variant.name.toLowerCase()}' variant...")
 
-        if (variant == PillExtensionMirror.Variant.NONE || variant == PillExtensionMirror.Variant.DEFAULT) {
-            rootProject.logger.error("'none' and 'default' should not be passed as a Pill variant property value")
-            return
-        }
-
-        val parserContext = ParserContext(variant)
+        val modulePrefix = System.getProperty("pill.module.prefix", "")
+        val modelParser = ModelParser(variant, modulePrefix)
 
         val dependencyPatcher = DependencyPatcher(rootProject)
         val dependencyMappers = listOf(dependencyPatcher, ::attachPlatformSources, ::attachAsmSources)
 
-        val jpsProject = parse(rootProject, parserContext)
+        val jpsProject = modelParser.parse(rootProject)
             .mapDependencies(dependencyMappers)
             .copy(libraries = dependencyPatcher.libraries)
 
@@ -101,28 +114,30 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
 
         removeExistingIdeaLibrariesAndModules()
         removeJpsAndPillRunConfigurations()
-        removeAllArtifactConfigurations()
+        removeArtifactConfigurations()
 
-        val artifactDependencyMapper = object : ArtifactDependencyMapper {
-            override fun map(dependency: PDependency): List<PDependency> {
-                val result = mutableListOf<PDependency>()
+        if (isIdePluginAttached && variant.includes.contains(PillExtensionMirror.Variant.BASE)) {
+            val artifactDependencyMapper = object : ArtifactDependencyMapper {
+                override fun map(dependency: PDependency): List<PDependency> {
+                    val result = mutableListOf<PDependency>()
 
-                for (mappedDependency in jpsProject.mapDependency(dependency, dependencyMappers)) {
-                    result += mappedDependency
+                    for (mappedDependency in jpsProject.mapDependency(dependency, dependencyMappers)) {
+                        result += mappedDependency
 
-                    if (mappedDependency is PDependency.Module) {
-                        val module = jpsProject.modules.find { it.name == mappedDependency.name }
-                        if (module != null) {
-                            result += module.embeddedDependencies
+                        if (mappedDependency is PDependency.Module) {
+                            val module = jpsProject.modules.find { it.name == mappedDependency.name }
+                            if (module != null) {
+                                result += module.embeddedDependencies
+                            }
                         }
                     }
+
+                    return result
                 }
-
-                return result
             }
-        }
 
-        generateKotlinPluginArtifactFile(rootProject, artifactDependencyMapper).write()
+            ArtifactGenerator(artifactDependencyMapper).generateKotlinPluginArtifact(rootProject).write()
+        }
 
         copyRunConfigurations()
         setOptionsForDefaultJunitRunConfiguration(rootProject)
@@ -135,7 +150,7 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
 
         removeExistingIdeaLibrariesAndModules()
         removeJpsAndPillRunConfigurations()
-        removeAllArtifactConfigurations()
+        removeArtifactConfigurations()
     }
 
     private fun removeExistingIdeaLibrariesAndModules() {
@@ -150,10 +165,10 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             .forEach { it.delete() }
     }
 
-    private fun removeAllArtifactConfigurations() {
+    private fun removeArtifactConfigurations() {
         File(projectDir, ".idea/artifacts")
             .walk()
-            .filter { it.extension.toLowerCase() == "xml" }
+            .filter { it.extension.toLowerCase() == "xml" && ALLOWED_ARTIFACT_PATTERNS.none { p -> p.matches(it.name) } }
             .forEach { it.delete() }
     }
 
@@ -161,14 +176,11 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
         val runConfigurationsDir = File(resourcesDir, "runConfigurations")
         val targetDir = File(projectDir, ".idea/runConfigurations")
         val platformDirProjectRelative = "\$PROJECT_DIR\$/" + platformDir.toRelativeString(projectDir)
-        val additionalIdeaArgs = if (isAndroidStudioPlatform) "-Didea.platform.prefix=AndroidStudio" else ""
 
         targetDir.mkdirs()
 
         fun substitute(text: String): String {
-            return text
-                .replace("\$IDEA_HOME_PATH\$", platformDirProjectRelative)
-                .replace("\$ADDITIONAL_IDEA_ARGS\$", additionalIdeaArgs)
+            return text.replace("\$IDEA_HOME_PATH\$", platformDirProjectRelative)
         }
 
         (runConfigurationsDir.listFiles() ?: emptyArray())
@@ -233,19 +245,31 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
                     .map { it.trim() }
                     .filter { it.isNotEmpty() }
 
-                fun addOrReplaceOptionValue(name: String, value: Any?) {
-                    val optionsWithoutNewValue = options.filter { !it.startsWith("-D$name=") }
-                    options = if (value == null) optionsWithoutNewValue else (optionsWithoutNewValue + listOf("-D$name=$value"))
+                fun addOptionIfAbsent(name: String) {
+                    if (options.none { it == name }) {
+                        options = options + name
+                    }
                 }
 
-                if (options.none { it == "-ea" }) {
-                    options = options + "-ea"
+                fun addOrReplaceOptionValue(name: String, value: Any?, prefix: String = "-D") {
+                    val optionsWithoutNewValue = options.filter { !it.startsWith("$prefix$name=") }
+                    options = if (value == null) optionsWithoutNewValue else (optionsWithoutNewValue + listOf("$prefix$name=$value"))
                 }
 
+                addOptionIfAbsent("-ea")
+                addOptionIfAbsent("-XX:+HeapDumpOnOutOfMemoryError")
+                addOptionIfAbsent("-Xmx1600m")
+                addOptionIfAbsent("-XX:+UseCodeCacheFlushing")
+
+                addOrReplaceOptionValue("ReservedCodeCacheSize", "128m", prefix = "-XX:")
+                addOrReplaceOptionValue("jna.nosys", "true")
+                addOrReplaceOptionValue("idea.platform.prefix", "Idea")
+                addOrReplaceOptionValue("idea.is.unit.test", "true")
+                addOrReplaceOptionValue("idea.ignore.disabled.plugins", "true")
                 addOrReplaceOptionValue("idea.home.path", platformDirProjectRelative)
-                addOrReplaceOptionValue("ideaSdk.androidPlugin.path", "$platformDirProjectRelative/plugins/android/lib")
                 addOrReplaceOptionValue("use.jps", "true")
                 addOrReplaceOptionValue("kotlinVersion", project.rootProject.extra["kotlinVersion"].toString())
+                addOrReplaceOptionValue("java.awt.headless", "true")
 
                 val isAndroidStudioBunch = project.findProperty("versions.androidStudioRelease") != null
                 addOrReplaceOptionValue("idea.platform.prefix", if (isAndroidStudioBunch) "AndroidStudio" else null)
@@ -292,11 +316,19 @@ class JpsCompatiblePluginTasks(private val rootProject: Project, private val pla
             fun List<File>.filterExisting() = filter { it.exists() }
 
             for (path in DIST_LIBRARIES) {
-                val project = rootProject.findProject(path) ?: error("Project not found")
-                val archiveName = project.convention.findPlugin(BasePluginConvention::class.java)!!.archivesBaseName
+                val project = rootProject.findProject(path) ?: error("Project '$path' not found")
+                val archiveName = project.extensions.getByType<BasePluginExtension>().archivesName.get()
                 val classesJars = listOf(File(distLibDir, "$archiveName.jar")).filterExisting()
                 val sourcesJars = listOf(File(distLibDir, "$archiveName-sources.jar")).filterExisting()
-                result["$path/main"] = Optional.of(PLibrary(archiveName, classesJars, sourcesJars, originalName = path))
+                val sourceSets = project.extensions.getByType<JavaPluginExtension>().sourceSets
+
+                val applicableSourceSets = listOfNotNull(
+                    sourceSets.findByName(SourceSet.MAIN_SOURCE_SET_NAME),
+                    sourceSets.findByName("java9")
+                )
+
+                val optLibrary = Optional.of(PLibrary(archiveName, classesJars, sourcesJars, originalName = path))
+                applicableSourceSets.forEach { ss -> result["$path/${ss.name}"] = optLibrary }
             }
 
             for (path in IGNORED_LIBRARIES) {

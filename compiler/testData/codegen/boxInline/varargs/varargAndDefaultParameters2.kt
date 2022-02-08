@@ -1,6 +1,6 @@
-// FILE: 1.kt
-// WITH_RUNTIME
+// WITH_STDLIB
 // KJS_WITH_FULL_RUNTIME
+// FILE: 1.kt
 
 package test
 inline fun inlineFun(vararg constraints: String, receiver: String = "K", init: String.() -> String): String {
@@ -16,4 +16,3 @@ fun box(): String {
         this
     }
 }
-

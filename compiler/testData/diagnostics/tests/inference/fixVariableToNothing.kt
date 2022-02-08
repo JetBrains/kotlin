@@ -1,11 +1,10 @@
-
 // completion order here: X, Y, WHEN_VARIABLE
 fun <T> List<T>.optimizeReadOnlyList() = when (size) {
     0 -> emptyList() // here type variable Y will be fixed to Nothing
     1 -> listOf(this[0])
     else -> this
 }
-fun <X> listOf(<!UNUSED_PARAMETER!>element<!>: X): List<X> = TODO()
+fun <X> listOf(element: X): List<X> = TODO()
 fun <Y> emptyList(): List<Y> = TODO()
 
 

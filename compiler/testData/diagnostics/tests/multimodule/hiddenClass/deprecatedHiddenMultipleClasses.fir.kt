@@ -25,10 +25,10 @@ class A(val v3: Unit)
 // MODULE: m4(m1, m2, m3)
 // FILE: oneExplicitImportOtherStars.kt
 import p1.*
-import p2.A
+import <!DEPRECATION_ERROR!>p2.A<!>
 import p3.*
 
-fun test(a: A) {
+fun test(a: <!DEPRECATION_ERROR!>A<!>) {
     a.<!UNRESOLVED_REFERENCE!>v1<!>
     a.v2
     a.<!UNRESOLVED_REFERENCE!>v3<!>
@@ -39,8 +39,8 @@ import p1.*
 import p2.*
 import p3.*
 
-fun test(a: A) {
-    a.v1
+fun test(a: <!UNRESOLVED_REFERENCE!>A<!>) {
+    a.<!UNRESOLVED_REFERENCE!>v1<!>
     a.<!UNRESOLVED_REFERENCE!>v2<!>
     a.<!UNRESOLVED_REFERENCE!>v3<!>
 }

@@ -1,6 +1,4 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: PROPERTY_REFERENCES
-// WITH_RUNTIME
+// WITH_STDLIB
 
 val b: First by lazy {
     object : First {   }

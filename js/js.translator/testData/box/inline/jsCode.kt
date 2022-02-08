@@ -1,9 +1,9 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
 // EXPECTED_REACHABLE_NODES: 1283
 package foo
 
-// CHECK_CONTAINS_NO_CALLS: test
+// In the IR backend the injected JS code is outlined.
+// CHECK_CONTAINS_NO_CALLS: test TARGET_BACKENDS=JS
+// CHECK_NOT_CALLED_IN_SCOPE: function=sum scope=test
 
 internal inline fun sum(x: Int, y: Int): Int = js("x + y")
 

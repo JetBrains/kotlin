@@ -1,0 +1,33 @@
+FILE: noIntersectionOverrideOfTwoMembers_java.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Any|
+
+        public abstract val x: R|kotlin/Any|
+            public get(): R|kotlin/Any|
+
+    }
+    public abstract interface B : R|A| {
+        public abstract override fun foo(): R|kotlin/Any|
+
+        public abstract override val x: R|kotlin/Any|
+            public get(): R|kotlin/Any|
+
+    }
+    public abstract interface C : R|A|, R|B| {
+    }
+    public abstract interface D : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Int|
+
+        public abstract val x: R|kotlin/Any|
+            public get(): R|kotlin/Any|
+
+    }
+    public abstract interface Explicit : R|C|, R|D| {
+        public abstract override fun foo(): R|kotlin/Int|
+
+        public abstract override val x: R|kotlin/Any|
+            public get(): R|kotlin/Any|
+
+    }
+    public abstract interface Implicit : R|C|, R|D| {
+    }

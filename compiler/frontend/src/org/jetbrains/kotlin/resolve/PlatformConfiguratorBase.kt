@@ -28,6 +28,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     SuspendLimitationsChecker,
     InlineClassDeclarationChecker,
     PropertiesWithBackingFieldsInsideInlineClass(),
+    InnerClassInsideInlineClass(),
     AnnotationClassTargetAndRetentionChecker(),
     ReservedMembersAndConstructsForInlineClass(),
     ResultClassInReturnTypeChecker(),
@@ -37,13 +38,22 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     TrailingCommaDeclarationChecker,
     MissingDependencySupertypeChecker.ForDeclarations,
     FunInterfaceDeclarationChecker(),
+    DeprecationInheritanceChecker,
     DeprecatedSinceKotlinAnnotationChecker,
     ContractDescriptionBlockChecker,
-    PrivateInlineFunctionsReturningAnonymousObjectsChecker
+    PrivateInlineFunctionsReturningAnonymousObjectsChecker,
+    SealedInheritorInSamePackageChecker,
+    SealedInheritorInSameModuleChecker,
+    SealedInterfaceAllowedChecker,
+    SuspendFunctionAsSupertypeChecker,
+    EnumCompanionInEnumConstructorCallChecker,
+    ContextualDeclarationChecker,
+    ValueParameterUsageInDefaultArgumentChecker,
+    CyclicAnnotationsChecker,
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
-    CapturingInClosureChecker(), InlineCheckerWrapper(), SafeCallChecker(), TrailingCommaCallChecker,
+    CapturingInClosureChecker(), InlineCheckerWrapper(), SynchronizedByValueChecker(), SafeCallChecker(), TrailingCommaCallChecker,
     DeprecatedCallChecker, CallReturnsArrayOfNothingChecker(), InfixCallChecker(), OperatorCallChecker(),
     ConstructorHeaderCallChecker, ProtectedConstructorCallChecker, ApiVersionCallChecker,
     CoroutineSuspendCallChecker, BuilderFunctionsCallChecker, DslScopeViolationCallChecker, MissingDependencyClassChecker,
@@ -54,7 +64,10 @@ private val DEFAULT_CALL_CHECKERS = listOf(
     NamedFunAsExpressionChecker, ContractNotAllowedCallChecker, ReifiedTypeParameterSubstitutionChecker(),
     MissingDependencySupertypeChecker.ForCalls, AbstractClassInstantiationChecker, SuspendConversionCallChecker,
     UnitConversionCallChecker, FunInterfaceConstructorReferenceChecker, NullableExtensionOperatorWithSafeCallChecker,
-    ReferencingToUnderscoreNamedParameterOfCatchBlockChecker, VarargWrongExecutionOrderChecker
+    ReferencingToUnderscoreNamedParameterOfCatchBlockChecker, VarargWrongExecutionOrderChecker, SelfCallInNestedObjectConstructorChecker,
+    NewSchemeOfIntegerOperatorResolutionChecker, EnumEntryVsCompanionPriorityCallChecker, CompanionInParenthesesLHSCallChecker,
+    ResolutionToPrivateConstructorOfSealedClassChecker,
+    EqualityCallChecker,
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(

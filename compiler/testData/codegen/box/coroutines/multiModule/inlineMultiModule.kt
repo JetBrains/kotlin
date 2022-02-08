@@ -1,13 +1,12 @@
+// IGNORE_BACKEND: JS_IR
 // WITH_COROUTINES
-// WITH_RUNTIME
-// COMMON_COROUTINES_TEST
-
+// WITH_STDLIB
 // MODULE: lib(support)
 // FILE: lib.kt
 
 import helpers.*
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 var continuation: () -> Unit = { }
 var log = ""
@@ -39,8 +38,8 @@ fun builder(c: suspend () -> Unit) {
 // MODULE: main(lib)
 // FILE: main.kt
 
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 suspend fun baz() {
     bar("A")

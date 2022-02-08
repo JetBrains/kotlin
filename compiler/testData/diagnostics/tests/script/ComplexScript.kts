@@ -1,4 +1,6 @@
-fun foo(<!UNUSED_PARAMETER!>x<!>: Int) = 1
+// !DIAGNOSICS: +UNUSED_PARAMETER
+
+fun foo(x: Int) = 1
 
 val y = 2
 

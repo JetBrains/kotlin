@@ -17,8 +17,8 @@ public class Inv<T> {
 // FILE: test.kt
 
 fun test(inv: Inv<String>) {
-    val m: ((String) -> String) -> Inv<String> = inv::map
-    <!INAPPLICABLE_CANDIDATE!>take<!>(<!UNRESOLVED_REFERENCE!>inv::map<!>)
+    val m: ((String) -> String) -> Inv<String> = inv::<!UNRESOLVED_REFERENCE!>map<!>
+    <!INAPPLICABLE_CANDIDATE!>take<!>(inv::<!UNRESOLVED_REFERENCE!>map<!>)
 }
 
 fun take(f: ((String) -> String) -> Inv<String>) {}

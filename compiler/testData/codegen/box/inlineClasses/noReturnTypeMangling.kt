@@ -1,6 +1,9 @@
-// !LANGUAGE: +InlineClasses -MangleClassMembersReturningInlineClasses
+// WITH_STDLIB
+// LANGUAGE: -MangleClassMembersReturningInlineClasses +ValueClasses
+// WORKS_WHEN_VALUE_CLASS
 
-inline class S(val x: String)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class S(val x: String)
 
 class Test {
     fun getO() = S("O")

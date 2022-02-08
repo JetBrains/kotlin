@@ -48,6 +48,7 @@ interface ScriptDefinitionsProvider {
     /**
      * The callback to update/add/remove script definitions after loading, if needed
      */
+    @Suppress("DEPRECATION") // To be replaced with -Xjvm-default=all-compatibility.
     @JvmDefault
     fun provideDefinitions(
         baseHostConfiguration: ScriptingHostConfiguration,

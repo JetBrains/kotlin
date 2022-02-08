@@ -287,6 +287,7 @@ LONELY_BACKTICK=`
 "=="         { return KtTokens.EQEQ      ; }
 "!="         { return KtTokens.EXCLEQ    ; }
 "&&"         { return KtTokens.ANDAND    ; }
+"&"          { return KtTokens.AND       ; }
 "||"         { return KtTokens.OROR      ; }
 "*="         { return KtTokens.MULTEQ    ; }
 "/="         { return KtTokens.DIVEQ     ; }

@@ -1,5 +1,6 @@
+// FIR_IDENTICAL
 class A(vararg val t : Int) {
     init {
-        val <!UNUSED_VARIABLE!>t1<!> : IntArray = t
+        val t1 : IntArray = t
     }
 }

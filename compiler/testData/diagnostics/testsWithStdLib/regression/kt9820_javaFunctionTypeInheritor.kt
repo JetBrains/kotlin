@@ -1,5 +1,3 @@
-// !WITH_NEW_INFERENCE
-
 // FILE: J.java
 
 import kotlin.jvm.functions.Function1;
@@ -14,5 +12,5 @@ fun useJ(j: J) {
 }
 
 fun jj() {
-    useJ(<!TYPE_MISMATCH!>{<!NI;TYPE_MISMATCH!><!>}<!>)
+    useJ(<!TYPE_MISMATCH!>{<!TYPE_MISMATCH!><!>}<!>)
 }

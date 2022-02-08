@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -132,10 +132,12 @@ public fun <K, V> linkedMapOf(vararg pairs: Pair<K, V>): LinkedHashMap<K, V> = p
  *
  * Entries of the map are iterated in the order they were added by the [builderAction].
  *
+ * The returned map is serializable (JVM).
+ *
  * @sample samples.collections.Builders.Maps.buildMapSample
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <K, V> buildMap(@BuilderInference builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
@@ -144,7 +146,6 @@ public inline fun <K, V> buildMap(@BuilderInference builderAction: MutableMap<K,
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 internal expect inline fun <K, V> buildMapInternal(builderAction: MutableMap<K, V>.() -> Unit): Map<K, V>
 
@@ -159,12 +160,14 @@ internal expect inline fun <K, V> buildMapInternal(builderAction: MutableMap<K, 
  *
  * Entries of the map are iterated in the order they were added by the [builderAction].
  *
+ * The returned map is serializable (JVM).
+ *
  * @throws IllegalArgumentException if the given [capacity] is negative.
  *
  * @sample samples.collections.Builders.Maps.buildMapSample
  */
-@SinceKotlin("1.3")
-@ExperimentalStdlibApi
+@SinceKotlin("1.6")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline fun <K, V> buildMap(capacity: Int, @BuilderInference builderAction: MutableMap<K, V>.() -> Unit): Map<K, V> {
     contract { callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE) }
@@ -173,7 +176,6 @@ public inline fun <K, V> buildMap(capacity: Int, @BuilderInference builderAction
 
 @PublishedApi
 @SinceKotlin("1.3")
-@ExperimentalStdlibApi
 @kotlin.internal.InlineOnly
 internal expect inline fun <K, V> buildMapInternal(capacity: Int, builderAction: MutableMap<K, V>.() -> Unit): Map<K, V>
 

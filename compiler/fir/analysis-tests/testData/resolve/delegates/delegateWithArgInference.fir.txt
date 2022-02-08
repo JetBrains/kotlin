@@ -1,0 +1,37 @@
+FILE: delegateWithArgInference.kt
+    public final class Delegate<T> : R|kotlin/Any| {
+        public constructor<T>(data: R|T|): R|Delegate<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val data: R|T| = R|<local>/data|
+            public get(): R|T|
+
+        public final operator fun getValue(thisRef: R|kotlin/Nothing?|, prop: R|kotlin/reflect/KProperty<*>|): R|T| {
+            ^getValue this@R|/Delegate|.R|/Delegate.data|
+        }
+
+    }
+    public final fun makeIntDelegate(t: R|kotlin/Int|): R|Delegate<kotlin/Int>| {
+        ^makeIntDelegate R|/Delegate.Delegate|<R|kotlin/Int|>(R|<local>/t|)
+    }
+    public final fun <TT> makeDelegate(t: R|TT|): R|Delegate<TT>| {
+        ^makeDelegate R|/Delegate.Delegate|<R|TT|>(R|<local>/t|)
+    }
+    public final fun <M> materialize(): R|M| {
+        ^materialize Null(null)!!
+    }
+    public final fun <M2> materialize2(): R|M2| {
+        ^materialize2 Null(null)!!
+    }
+    public final fun <Q> id(v: R|Q|): R|Q| {
+        ^id R|<local>/v|
+    }
+    public final val x: R|kotlin/Int|by R|/makeIntDelegate|(R|kotlin/run|<R|kotlin/Int|>(<L> = run@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+        lval x: R|kotlin/String| = R|/materialize|<R|kotlin/String|>()
+        ^ R|/materialize2|<R|kotlin/Int|>()
+    }
+    ))
+        public get(): R|kotlin/Int| {
+            ^ D|/x|.R|SubstitutionOverride</Delegate.getValue: R|kotlin/Int|>|(Null(null), ::R|/x|)
+        }

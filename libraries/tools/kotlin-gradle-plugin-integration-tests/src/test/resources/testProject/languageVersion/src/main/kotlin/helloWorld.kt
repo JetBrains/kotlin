@@ -1,7 +1,1 @@
-fun breakInWhen() {
-    while (true) {
-        when {
-            true -> break
-        }
-    }
-}
+interface A : suspend () -> Unit

@@ -6,15 +6,15 @@ public final class A<TA> : R|kotlin/Any| {
 
                 public final fun <P1, P2, P3, P4> foo(p1: R|P1|, p2: R|P2|, p3: R|P3|, p4: R|P4|): R|kotlin/Nothing|
 
-                public constructor<TD>(): R|test/A.B.C.D<TD, TC, TB, TA>|
+                public test/A.B.C<TC, TB, TA>.constructor<TD>(): R|test/A.B.C.D<TD, TC, TB, TA>|
 
             }
 
-            public constructor<TC>(): R|test/A.B.C<TC, TB, TA>|
+            public test/A.B<TB, TA>.constructor<TC>(): R|test/A.B.C<TC, TB, TA>|
 
         }
 
-        public constructor<TB>(): R|test/A.B<TB, TA>|
+        public test/A<TA>.constructor<TB>(): R|test/A.B<TB, TA>|
 
     }
 

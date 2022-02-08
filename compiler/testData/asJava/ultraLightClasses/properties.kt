@@ -101,3 +101,11 @@ interface A {
     public get
     internal set
 }
+
+class Foo {
+  val foo get() = getMeNonNullFoo()
+  val foo2: Foo get() = getMeNonNullFoo()
+  fun getMeNonNullFoo() : Foo = Foo()
+}
+
+// COMPILATION_ERRORS

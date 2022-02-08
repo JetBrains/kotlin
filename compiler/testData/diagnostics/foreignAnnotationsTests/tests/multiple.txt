@@ -1,0 +1,51 @@
+package
+
+public fun main1(/*0*/ a: A1<kotlin.String>, /*1*/ a1: A1<kotlin.String?>): kotlin.Unit
+public fun main2(/*0*/ a: A2<kotlin.String>, /*1*/ a1: A2<kotlin.String?>): kotlin.Unit
+public fun main3(/*0*/ a: A3<kotlin.String>, /*1*/ a1: A3<kotlin.String?>): kotlin.Unit
+public fun main4(/*0*/ a: A4<kotlin.String>, /*1*/ a1: A4<kotlin.String?>): kotlin.Unit
+
+public open class A1</*0*/ T : kotlin.Any!> {
+    public constructor A1</*0*/ T : kotlin.Any!>()
+    @io.reactivex.annotations.Nullable public final var field: kotlin.String?
+    @io.reactivex.annotations.NonNull public open fun bar(): kotlin.String
+    @io.reactivex.annotations.Nullable public open fun baz(/*0*/ @io.reactivex.annotations.NonNull x: T): T?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @io.reactivex.annotations.Nullable public open fun foo(/*0*/ @io.reactivex.annotations.NonNull x: kotlin.String, /*1*/ @io.reactivex.annotations.Nullable y: kotlin.CharSequence?): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class A2</*0*/ T : kotlin.Any!> {
+    public constructor A2</*0*/ T : kotlin.Any!>()
+    @org.eclipse.jdt.annotation.Nullable public final var field: kotlin.String!
+    @org.eclipse.jdt.annotation.NonNull public open fun bar(): kotlin.String!
+    @org.eclipse.jdt.annotation.Nullable public open fun baz(/*0*/ @org.eclipse.jdt.annotation.NonNull x: T!): T!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @org.eclipse.jdt.annotation.Nullable public open fun foo(/*0*/ @org.eclipse.jdt.annotation.NonNull x: kotlin.String!, /*1*/ @org.eclipse.jdt.annotation.Nullable y: kotlin.CharSequence!): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class A3</*0*/ T : kotlin.Any!> {
+    public constructor A3</*0*/ T : kotlin.Any!>()
+    @androidx.annotation.Nullable public final var field: kotlin.String?
+    @androidx.annotation.NonNull public open fun bar(): kotlin.String
+    @androidx.annotation.Nullable public open fun baz(/*0*/ @androidx.annotation.NonNull x: T): T?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @androidx.annotation.Nullable public open fun foo(/*0*/ @androidx.annotation.NonNull x: kotlin.String, /*1*/ @androidx.annotation.Nullable y: kotlin.CharSequence?): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class A4</*0*/ T : kotlin.Any!> {
+    public constructor A4</*0*/ T : kotlin.Any!>()
+    @com.android.annotations.Nullable public final var field: kotlin.String!
+    @com.android.annotations.NonNull public open fun bar(): kotlin.String!
+    @com.android.annotations.Nullable public open fun baz(/*0*/ @com.android.annotations.NonNull x: T!): T!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    @com.android.annotations.Nullable public open fun foo(/*0*/ @com.android.annotations.NonNull x: kotlin.String!, /*1*/ @com.android.annotations.Nullable y: kotlin.CharSequence!): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

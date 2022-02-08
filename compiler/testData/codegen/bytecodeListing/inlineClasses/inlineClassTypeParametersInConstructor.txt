@@ -76,6 +76,7 @@ public abstract class TestSealed {
     public final inner class TestSealed$Case
 }
 
+@kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Z {
     // source: 'inlineClassTypeParametersInConstructor.kt'

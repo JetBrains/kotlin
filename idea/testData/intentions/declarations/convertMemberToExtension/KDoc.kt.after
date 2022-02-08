@@ -1,9 +1,0 @@
-class Foo
-{
-}
-
-/**
- * Doc
- */
-public val Foo.<caret>count: Int
-    get() = 1

@@ -5,21 +5,29 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSourceElement
-import org.jetbrains.kotlin.fir.builder.generateTemporaryVariable
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.generateTemporaryVariable
 import org.jetbrains.kotlin.fir.lightTree.converter.generateDestructuringBlock
+import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 
 data class DestructuringDeclaration(
     val isVar: Boolean,
-    val entries: List<FirVariable<*>>,
+    val entries: List<FirVariable?>,
     val initializer: FirExpression,
-    val source: FirSourceElement
+    val source: KtSourceElement,
+    val modifier: Modifier,
 ) {
-    fun toFirDestructingDeclaration(session: FirSession): FirExpression {
-        val baseVariable = generateTemporaryVariable(session, source, "destruct", initializer)
-        return generateDestructuringBlock(session, this, baseVariable, tmpVariable = true)
+    fun toFirDestructingDeclaration(moduleData: FirModuleData): FirExpression {
+        val baseVariable = generateTemporaryVariable(
+            moduleData,
+            source,
+            "destruct",
+            initializer,
+            modifier.annotations
+        )
+        return generateDestructuringBlock(moduleData, this, baseVariable, tmpVariable = true)
     }
 }

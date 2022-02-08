@@ -2,6 +2,7 @@ package
 
 @Anno1(s = {"foo"}) @Anno2(i = {1}) public fun f1(): kotlin.Unit
 @Anno1(s = {"foo"}) @Anno2(i = {1}) public fun f2(): kotlin.Unit
+@Anno1(s = {"foo"}) @Anno2(i = {{1}}) public fun f3(): kotlin.Unit
 public fun foo(/*0*/ vararg ints: kotlin.Int /*kotlin.IntArray*/): kotlin.Unit
 public fun test(): kotlin.Unit
 
@@ -20,3 +21,4 @@ public final annotation class Anno2 : kotlin.Annotation {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

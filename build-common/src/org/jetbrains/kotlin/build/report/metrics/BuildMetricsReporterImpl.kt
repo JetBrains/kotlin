@@ -5,27 +5,37 @@
 
 package org.jetbrains.kotlin.build.report.metrics
 
+import java.io.Serializable
 import java.util.*
 
-class BuildMetricsReporterImpl : BuildMetricsReporter {
+class BuildMetricsReporterImpl : BuildMetricsReporter, Serializable {
     private val myBuildTimeStartNs: EnumMap<BuildTime, Long> =
         EnumMap(
             BuildTime::class.java
         )
     private val myBuildTimes = BuildTimes()
+    private val myBuildMetrics = BuildPerformanceMetrics()
     private val myBuildAttributes = BuildAttributes()
 
-    override fun startMeasure(metric: BuildTime, startNs: Long) {
-        if (metric in myBuildTimeStartNs) {
-            error("$metric was restarted before it finished")
+    override fun startMeasure(time: BuildTime) {
+        if (time in myBuildTimeStartNs) {
+            error("$time was restarted before it finished")
         }
-        myBuildTimeStartNs[metric] = startNs
+        myBuildTimeStartNs[time] = System.nanoTime()
     }
 
-    override fun endMeasure(metric: BuildTime, endNs: Long) {
-        val startNs = myBuildTimeStartNs.remove(metric) ?: error("$metric finished before it started")
-        val durationNs = endNs - startNs
-        myBuildTimes.add(metric, durationNs)
+    override fun endMeasure(time: BuildTime) {
+        val startNs = myBuildTimeStartNs.remove(time) ?: error("$time finished before it started")
+        val durationNs = System.nanoTime() - startNs
+        myBuildTimes.addTimeNs(time, durationNs)
+    }
+
+    override fun addTimeMetricNs(time: BuildTime, durationNs: Long) {
+        myBuildTimes.addTimeNs(time, durationNs)
+    }
+
+    override fun addMetric(metric: BuildPerformanceMetric, value: Long) {
+        myBuildMetrics.add(metric, value)
     }
 
     override fun addAttribute(attribute: BuildAttribute) {
@@ -35,13 +45,13 @@ class BuildMetricsReporterImpl : BuildMetricsReporter {
     override fun getMetrics(): BuildMetrics =
         BuildMetrics(
             buildTimes = myBuildTimes,
+            buildPerformanceMetrics = myBuildMetrics,
             buildAttributes = myBuildAttributes
         )
 
-    override fun addMetrics(metrics: BuildMetrics?) {
-        if (metrics == null) return
-
+    override fun addMetrics(metrics: BuildMetrics) {
         myBuildAttributes.addAll(metrics.buildAttributes)
         myBuildTimes.addAll(metrics.buildTimes)
+        myBuildMetrics.addAll(metrics.buildPerformanceMetrics)
     }
 }

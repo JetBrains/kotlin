@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// WITH_RUNTIME
+// WITH_STDLIB
 // FILE: JavaRunner.java
 public class JavaRunner {
     public static void runTwice(Runnable runnable) {

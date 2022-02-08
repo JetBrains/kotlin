@@ -1,3 +1,0 @@
-fun foo() {
-    val pi = 3.14f
-}

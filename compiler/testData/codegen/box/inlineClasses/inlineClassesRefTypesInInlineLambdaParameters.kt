@@ -1,7 +1,12 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
-inline class Str(val string: String)
-inline class Obj(val obj: Any)
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Str(val string: String)
+
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Obj(val obj: Any)
 
 inline fun <T, R> s0(x: T, fn: (Int, T) -> R) = fn(0, x)
 

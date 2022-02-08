@@ -11,7 +11,7 @@
  * DESCRIPTION:
  */
 
-// FILE: TestCase1.kt
+// FILE: TestCase11.kt
 /*
  * TESTCASE NUMBER: 1
  * UNEXPECTED BEHAVIOUR
@@ -24,12 +24,12 @@ fun case1() {
     Regex("")
 }
 
-// FILE: Lib.kt
+// FILE: Lib1.kt
 package libCase1
 fun Regex(pattern: String) {}
 
 
-// FILE: TestCase1.kt
+// FILE: TestCase12.kt
 /*
  * TESTCASE NUMBER: 1
  * UNEXPECTED BEHAVIOUR
@@ -41,7 +41,7 @@ fun case() {
     <!DEBUG_INFO_CALL("fqName: kotlin.text.Regex.<init>; typeCall: function")!>Regex("")<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib2.kt
 package testPackCase1
 class Regex(pattern: String) {}
 
@@ -61,7 +61,7 @@ fun case2() {
     <!DEBUG_INFO_CALL("fqName: libCase2.a.Regex; typeCall: function")!>Regex("")<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib3.kt
 package libCase2.a
 fun Regex(pattern: String) {}
 
@@ -69,7 +69,7 @@ fun Regex(pattern: String) {}
 //    operator fun invoke(s: String) {}
 //}
 
-// FILE: Lib1.kt
+// FILE: Lib11.kt
 package libCase2.b
 
 enum class Regex{
@@ -95,7 +95,7 @@ fun case3() {
     <!DEBUG_INFO_CALL("fqName: libCase3.Regex; typeCall: function")!>Regex("")<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib4.kt
 package libCase3
 fun Regex(pattern: String) {}
 
@@ -118,7 +118,7 @@ fun case4() {
     <!DEBUG_INFO_CALL("fqName: libCase4.a.Regex; typeCall: function")!>Regex("")<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib5.kt
 package libCase4.a
 fun Regex(pattern: String) {}
 
@@ -126,7 +126,7 @@ object Regex {
     operator fun invoke(s: String) {}
 }
 
-// FILE: Lib1.kt
+// FILE: Lib12.kt
 package libCase4.b
 
 enum class Regex{
@@ -149,7 +149,7 @@ fun case() {
    <!DEBUG_INFO_CALL("fqName: testPackCase5.Regex; typeCall: function")!>Regex("")<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib6.kt
 package testPackCase5
 fun Regex(pattern: String) {}
 
@@ -166,7 +166,7 @@ fun case() {
    <!DEBUG_INFO_CALL("fqName: testPackCase6.Regex; typeCall: function")!>Regex("")<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib7.kt
 package testPackCase6
 fun Regex(pattern: String) {}
 
@@ -183,7 +183,7 @@ fun case() {
    <!DEBUG_INFO_CALL("fqName: kotlin.text.Regex.<init>; typeCall: function")!>Regex("")<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib8.kt
 package testPackCase7
 class Regex(pattern: String) {}
 
@@ -200,7 +200,7 @@ fun case() {
     <!DEBUG_INFO_CALL("fqName: testPackCase8.Regex.<init>; typeCall: function")!>Regex("")<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib9.kt
 package testPackCase8
 class Regex(pattern: String) {}
 
@@ -217,7 +217,7 @@ fun case() {
     <!DEBUG_INFO_CALL("fqName: testPackCase9.Regex.<init>; typeCall: function")!>Regex("")<!>
 }
 
-// FILE: Lib.kt
+// FILE: Lib10.kt
 package testPackCase9
 class Regex(pattern: String) {}
 

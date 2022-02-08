@@ -1,0 +1,39 @@
+@kotlin.Metadata
+public final class Foo$DefaultImpls {
+    // source: 'superCall.kt'
+    public deprecated static @java.lang.Deprecated @org.jetbrains.annotations.NotNull method bar(@org.jetbrains.annotations.NotNull p0: Foo): java.lang.String
+    public final inner class Foo$DefaultImpls
+}
+
+@kotlin.Metadata
+public interface Foo {
+    // source: 'superCall.kt'
+    public synthetic static method access$bar$jd(p0: Foo): java.lang.String
+    public @org.jetbrains.annotations.NotNull method bar(): java.lang.String
+    public final inner class Foo$DefaultImpls
+}
+
+@kotlin.Metadata
+public final class FooClass$bar$1 {
+    // source: 'superCall.kt'
+    enclosing method FooClass.bar()Ljava/lang/String;
+    synthetic final field this$0: FooClass
+    inner (anonymous) class FooClass$bar$1
+    method <init>(p0: FooClass): void
+    public final @org.jetbrains.annotations.NotNull method run(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class FooClass {
+    // source: 'superCall.kt'
+    inner (anonymous) class FooClass$bar$1
+    public method <init>(): void
+    public synthetic final static method access$bar$s70822(p0: FooClass): java.lang.String
+    public @org.jetbrains.annotations.NotNull method bar(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class SuperCallKt {
+    // source: 'superCall.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

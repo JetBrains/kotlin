@@ -6,37 +6,33 @@ plugins {
 }
 
 dependencies {
-    testCompile(project(":core:descriptors"))
-    testCompile(project(":core:descriptors.jvm"))
-    testCompile(project(":compiler:util"))
-    testCompile(project(":compiler:cli"))
-    testCompile(project(":compiler:frontend"))
-    testCompile(project(":compiler:backend"))
-    testCompile(project(":compiler:incremental-compilation-impl"))
-    testCompile(project(":compiler:frontend.java"))
+    testApi(project(":core:descriptors"))
+    testApi(project(":core:descriptors.jvm"))
+    testApi(project(":compiler:util"))
+    testApi(project(":compiler:cli"))
+    testApi(project(":compiler:frontend"))
+    testApi(project(":compiler:backend"))
+    testApi(project(":compiler:incremental-compilation-impl"))
+    testApi(project(":compiler:frontend.java"))
 
-    testCompile(kotlinStdlib())
-    testCompile(project(":kotlin-reflect"))
-    testCompile(projectTests(":compiler:tests-common"))
-    testCompile(commonDep("junit:junit"))
+    testApi(kotlinStdlib())
+    testApi(project(":kotlin-reflect"))
+    testApi(projectTests(":compiler:tests-common"))
+    testApi(commonDependency("junit:junit"))
+    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testApi(projectTests(":compiler:tests-compiler-utils"))
+    testApi(projectTests(":compiler:tests-common-new"))
 
-    testCompile(projectTests(":jps-plugin"))
-    testCompile(commonDep("junit:junit"))
+    testApi(commonDependency("junit:junit"))
 
-    Platform[193].orLower {
-        testCompile(intellijDep()) { includeJars("openapi", rootProject = rootProject) }
-    }
+    testApi(jpsModel())
+    testApi(jpsBuildTest())
 
-    testCompile(intellijDep()) { includeJars("util", "idea", "idea_rt", rootProject = rootProject) }
-    Platform[202].orHigher {
-        testCompile(intellijDep()) { includeJars("groovy", rootProject = rootProject) }
-    }
-    Platform[201].orLower {
-        testCompile(intellijDep()) { includeJars("groovy-all", rootProject = rootProject) }
-    }
-    testCompile(intellijPluginDep("java")) { includeJars("jps-builders") }
-    testCompile(jpsStandalone()) { includeJars("jps-model") }
-    testCompile(jpsBuildTest())
+    testRuntimeOnly(intellijCore())
+    testRuntimeOnly(commonDependency("net.java.dev.jna:jna"))
+
+    testApi("org.junit.platform:junit-platform-launcher:${commonDependencyVersion("org.junit.platform", "")}")
 }
 
 sourceSets {

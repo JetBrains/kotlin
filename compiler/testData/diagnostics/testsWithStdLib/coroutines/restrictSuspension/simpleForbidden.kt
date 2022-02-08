@@ -1,11 +1,11 @@
-// COMMON_COROUTINES_TEST
-@COROUTINES_PACKAGE.RestrictsSuspension
+// FIR_IDENTICAL
+@kotlin.coroutines.RestrictsSuspension
 class RestrictedController
 
 suspend fun Any?.extFun() {}
 suspend fun suspendFun() {}
 
-fun generate(<!UNUSED_PARAMETER!>c<!>: suspend RestrictedController.() -> Unit) {}
+fun generate(c: suspend RestrictedController.() -> Unit) {}
 
 fun test() {
     generate {

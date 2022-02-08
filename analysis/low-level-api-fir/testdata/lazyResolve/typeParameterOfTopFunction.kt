@@ -1,0 +1,1 @@
+fun ddd<resolveMe>() {}

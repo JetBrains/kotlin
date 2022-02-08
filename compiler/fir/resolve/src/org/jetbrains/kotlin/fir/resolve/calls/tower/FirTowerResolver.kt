@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
-import org.jetbrains.kotlin.fir.typeContext
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
@@ -66,6 +66,7 @@ class FirTowerResolver(
                 if (receiver is FirQualifiedAccessExpression) {
                     if (receiver.calleeReference is FirSuperReference) {
                         manager.enqueueResolverTask { mainTask.runResolverForSuperReceiver(info, receiver) }
+                        invokeResolveTowerExtension.enqueueResolveTasksForSuperReceiver(info, receiver)
                         return
                     }
                 }

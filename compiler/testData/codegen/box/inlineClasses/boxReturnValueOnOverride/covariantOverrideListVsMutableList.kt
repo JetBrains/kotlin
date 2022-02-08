@@ -1,7 +1,6 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: STDLIB_COLLECTIONS
-// WITH_RUNTIME
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 interface IFooList {
     fun foo(): List<String>
@@ -11,7 +10,8 @@ interface IFooMutableList {
     fun foo(): MutableList<String>
 }
 
-inline class AL(val t: MutableList<String>) : MutableList<String> {
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class AL(val t: MutableList<String>) : MutableList<String> {
     override val size: Int get() = t.size
     override fun get(index: Int): String = t.get(index)
     override fun set(index: Int, element: String): String = t.set(index, element)

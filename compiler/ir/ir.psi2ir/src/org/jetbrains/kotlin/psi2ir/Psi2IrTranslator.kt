@@ -20,22 +20,26 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.ConstantValueGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.noUnboundLeft
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.psi2ir.generators.ModuleGenerator
+import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
+import org.jetbrains.kotlin.psi2ir.generators.fragments.EvaluatorFragmentInfo
+import org.jetbrains.kotlin.psi2ir.generators.fragments.FragmentContext
+import org.jetbrains.kotlin.psi2ir.generators.fragments.FragmentModuleGenerator
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.utils.SmartList
 
-typealias Psi2IrPostprocessingStep = (IrModuleFragment) -> Unit
+fun interface Psi2IrPostprocessingStep {
+    fun invoke(irModuleFragment: IrModuleFragment)
+}
 
 class Psi2IrTranslator(
     val languageVersionSettings: LanguageVersionSettings,
@@ -51,12 +55,10 @@ class Psi2IrTranslator(
         moduleDescriptor: ModuleDescriptor,
         bindingContext: BindingContext,
         symbolTable: SymbolTable,
-        extensions: GeneratorExtensions = GeneratorExtensions()
+        extensions: GeneratorExtensions = GeneratorExtensions(),
+        fragmentContext: FragmentContext? = null
     ): GeneratorContext {
-        val typeTranslator = TypeTranslator(symbolTable, languageVersionSettings, moduleDescriptor.builtIns, extensions = extensions)
-        val constantValueGenerator = ConstantValueGenerator(moduleDescriptor, symbolTable)
-        typeTranslator.constantValueGenerator = constantValueGenerator
-        constantValueGenerator.typeTranslator = typeTranslator
+        val typeTranslator = TypeTranslatorImpl(symbolTable, languageVersionSettings, moduleDescriptor, extensions = extensions)
         return GeneratorContext(
             configuration,
             moduleDescriptor,
@@ -65,8 +67,8 @@ class Psi2IrTranslator(
             symbolTable,
             extensions,
             typeTranslator,
-            constantValueGenerator,
-            IrBuiltIns(moduleDescriptor.builtIns, typeTranslator, symbolTable),
+            IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable),
+            fragmentContext
         )
     }
 
@@ -75,9 +77,13 @@ class Psi2IrTranslator(
         ktFiles: Collection<KtFile>,
         irProviders: List<IrProvider>,
         linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>,
-        expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null
+        expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>? = null,
+        fragmentInfo: EvaluatorFragmentInfo? = null
     ): IrModuleFragment {
-        val moduleGenerator = ModuleGenerator(context, expectDescriptorToSymbol)
+        val moduleGenerator = fragmentInfo?.let {
+            FragmentModuleGenerator(context, it)
+        } ?: ModuleGenerator(context, expectDescriptorToSymbol)
+
         val irModule = moduleGenerator.generateModuleFragment(ktFiles)
 
         val deserializers = irProviders.filterIsInstance<IrDeserializer>()
@@ -86,7 +92,9 @@ class Psi2IrTranslator(
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
 
         deserializers.forEach { it.postProcess() }
-        context.symbolTable.noUnboundLeft("Unbound symbols not allowed\n")
+        if (!context.configuration.allowUnboundSymbols) {
+            context.symbolTable.noUnboundLeft("Unbound symbols not allowed\n")
+        }
 
         postprocessingSteps.forEach { it.invoke(irModule) }
 //        assert(context.symbolTable.allUnbound.isEmpty()) // TODO: fix IrPluginContext to make it not produce additional external reference

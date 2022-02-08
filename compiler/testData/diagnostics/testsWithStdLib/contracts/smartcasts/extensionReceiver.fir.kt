@@ -1,5 +1,5 @@
 // !LANGUAGE: +AllowContractsForCustomFunctions +UseReturnsEffect -ContractsOnCallsWithImplicitReceiver
-// !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 // !DIAGNOSTICS: -INVISIBLE_REFERENCE -INVISIBLE_MEMBER
 //
 // ISSUE: KT-28672
@@ -17,7 +17,7 @@ fun CharSequence?.isNullOrEmpty(): Boolean {
 fun smartcastOnReceiver(s: String?) {
     with(s) {
         if (isNullOrEmpty()) {
-            <!INAPPLICABLE_CANDIDATE!>length<!>
+            <!UNSAFE_CALL!>length<!>
         }
         else {
             length
@@ -32,7 +32,7 @@ fun mixedReceiver(s: String?) {
         }
     } else {
         with(s) {
-            <!INAPPLICABLE_CANDIDATE!>length<!>
+            <!UNSAFE_CALL!>length<!>
         }
     }
 }

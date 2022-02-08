@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
+import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
 import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
 /**
  * Every type variable can be in the following states:
@@ -33,6 +37,7 @@ import org.jetbrains.kotlin.types.model.*
 interface ConstraintStorage {
     val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker>
     val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
+    val missedConstraints: List<Pair<IncorporationConstraintPosition, List<Pair<TypeVariableMarker, Constraint>>>>
     val initialConstraints: List<InitialConstraint>
     val maxTypeDepthFromInitialConstraints: Int
     val errors: List<ConstraintSystemError>
@@ -41,10 +46,12 @@ interface ConstraintStorage {
     val postponedTypeVariables: List<TypeVariableMarker>
     val builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables: Map<Pair<TypeConstructorMarker, List<Pair<TypeConstructorMarker, Int>>>, KotlinTypeMarker>
     val builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker>
+    val constraintsFromAllForkPoints: List<Pair<IncorporationConstraintPosition, ForkPointData>>
 
     object Empty : ConstraintStorage {
         override val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker> get() = emptyMap()
         override val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints> get() = emptyMap()
+        override val missedConstraints: List<Pair<IncorporationConstraintPosition, List<Pair<TypeVariableMarker, Constraint>>>> get() = emptyList()
         override val initialConstraints: List<InitialConstraint> get() = emptyList()
         override val maxTypeDepthFromInitialConstraints: Int get() = 1
         override val errors: List<ConstraintSystemError> get() = emptyList()
@@ -53,6 +60,7 @@ interface ConstraintStorage {
         override val postponedTypeVariables: List<TypeVariableMarker> get() = emptyList()
         override val builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables: Map<Pair<TypeConstructorMarker, List<Pair<TypeConstructorMarker, Int>>>, KotlinTypeMarker> = emptyMap()
         override val builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker> = emptyMap()
+        override val constraintsFromAllForkPoints: List<Pair<IncorporationConstraintPosition, ForkPointData>> = emptyList()
     }
 }
 
@@ -111,14 +119,16 @@ class InitialConstraint(
     val constraintKind: ConstraintKind, // see [checkConstraint]
     val position: ConstraintPosition
 ) {
-    override fun toString(): String {
+    override fun toString(): String = "${asStringWithoutPosition()} from $position"
+
+    fun asStringWithoutPosition(): String {
         val sign =
             when (constraintKind) {
                 ConstraintKind.EQUALITY -> "=="
                 ConstraintKind.LOWER -> ":>"
                 ConstraintKind.UPPER -> "<:"
             }
-        return "$a $sign $b from $position"
+        return "$a $sign $b"
     }
 }
 
@@ -143,3 +153,6 @@ fun checkConstraint(
         ConstraintKind.UPPER -> typeChecker.isSubtypeOf(context, resultType, constraintType)
     }
 }
+
+fun Constraint.replaceType(newType: KotlinTypeMarker) =
+    Constraint(kind, newType, position, typeHashCode, derivedFrom, isNullabilityConstraint, inputTypePositionBeforeIncorporation)

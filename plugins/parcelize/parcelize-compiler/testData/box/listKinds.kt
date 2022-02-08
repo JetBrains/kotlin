@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// WITH_STDLIB
 // FULL_JDK
 
 @file:JvmName("TestKt")
@@ -45,11 +45,9 @@ fun box() = parcelTest { parcel ->
     parcel.unmarshall(bytes, 0, bytes.size)
     parcel.setDataPosition(0)
 
-    val first2 = readFromParcel<Test>(parcel)
+    val first2 = parcelableCreator<Test>().createFromParcel(parcel)
 
     assert(first == first2)
     assert((first.d as LinkedList<*>).size == 1)
     assert((first2.h as HashSet<*>).size == 1)
-    assert(first2.j is NavigableSet<*>)
-    assert(first2.k is SortedSet<*>)
 }

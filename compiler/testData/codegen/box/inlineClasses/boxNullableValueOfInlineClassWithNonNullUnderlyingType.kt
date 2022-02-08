@@ -1,4 +1,6 @@
-// !LANGUAGE: +InlineClasses
+// WITH_STDLIB
+// WORKS_WHEN_VALUE_CLASS
+// LANGUAGE: +ValueClasses
 
 class BoxT<T>(val boxed: T)
 class BoxAny(val boxed: Any?)
@@ -6,11 +8,14 @@ class BoxFoo(val boxed: IFoo?)
 
 interface IFoo
 
-inline class Str(val value: String) : IFoo
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Str(val value: String) : IFoo
 
-inline class Str2(val value: Str): IFoo
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class Str2(val value: Str): IFoo
 
-inline class StrArr(val value: Array<String>): IFoo
+OPTIONAL_JVM_INLINE_ANNOTATION
+value class StrArr(val value: Array<String>): IFoo
 
 fun boxToTypeParameter(x: Str?) = BoxT(x)
 fun boxToNullableAny(x: Str?) = BoxAny(x)

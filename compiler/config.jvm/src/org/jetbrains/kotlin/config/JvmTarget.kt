@@ -19,47 +19,40 @@ package org.jetbrains.kotlin.config
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.org.objectweb.asm.Opcodes
 
-enum class JvmTarget(override val description: String) : TargetPlatformVersion {
-    JVM_1_6("1.6"),
-    JVM_1_8("1.8"),
-    JVM_9("9"),
-    JVM_10("10"),
-    JVM_11("11"),
-    JVM_12("12"),
-    JVM_13("13"),
-    JVM_14("14"),
-    JVM_15("15"),
+enum class JvmTarget(
+    override val description: String,
+    val majorVersion: Int,
+) : TargetPlatformVersion {
+    JVM_1_6("1.6", Opcodes.V1_6),
+    JVM_1_8("1.8", Opcodes.V1_8),
+    JVM_9("9", Opcodes.V9),
+    JVM_10("10", Opcodes.V10),
+    JVM_11("11", Opcodes.V11),
+    JVM_12("12", Opcodes.V12),
+    JVM_13("13", Opcodes.V12 + 1),
+    JVM_14("14", Opcodes.V12 + 2),
+    JVM_15("15", Opcodes.V12 + 3),
+    JVM_16("16", Opcodes.V12 + 4),
+    JVM_17("17", Opcodes.V12 + 5),
     ;
 
-    val bytecodeVersion: Int by lazy {
-        when (this) {
-            JVM_1_6 -> Opcodes.V1_6
-            JVM_1_8 -> Opcodes.V1_8
-            JVM_9 -> Opcodes.V9
-            JVM_10 -> Opcodes.V10
-            JVM_11 -> Opcodes.V11
-            JVM_12 -> Opcodes.V12
-            JVM_13 -> Opcodes.V12 + 1
-            JVM_14 -> Opcodes.V12 + 2
-            JVM_15 -> Opcodes.V12 + 3
-        }
-    }
+    override fun toString() = description
 
     companion object {
         @JvmField
-        val DEFAULT = JVM_1_6
+        val DEFAULT = JVM_1_8
 
         @JvmStatic
         fun fromString(string: String) = values().find { it.description == string }
 
-        fun getDescription(bytecodeVersion: Int): String {
-            val platformDescription = values().find { it.bytecodeVersion == bytecodeVersion }?.description ?: when (bytecodeVersion) {
+        fun getDescription(majorVersion: Int): String {
+            val platformDescription = values().find { it.majorVersion == majorVersion }?.description ?: when (majorVersion) {
                 Opcodes.V1_7 -> "1.7"
                 else -> null
             }
 
             return if (platformDescription != null) "JVM target $platformDescription"
-            else "JVM bytecode version $bytecodeVersion"
+            else "JVM bytecode version $majorVersion"
         }
     }
 }

@@ -1,0 +1,13 @@
+package
+
+public var kotlin.Int.p: kotlin.Int
+public fun kotlin.Int.f(): kotlin.Unit
+
+public final class X {
+    public constructor X()
+    public final var kotlin.Int.p: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    public final fun kotlin.Int.f(): kotlin.Unit
+}

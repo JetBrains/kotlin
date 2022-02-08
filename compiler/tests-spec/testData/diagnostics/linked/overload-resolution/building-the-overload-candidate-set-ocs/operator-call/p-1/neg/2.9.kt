@@ -24,7 +24,7 @@ import LibPackCase1.a.plusAssign
 
 fun case1 (){
     var b: B = B()
-    b +={ <!TYPE_MISMATCH, TYPE_MISMATCH, TYPE_MISMATCH!>C()<!> }
+    b +={ <!TYPE_MISMATCH, TYPE_MISMATCH!>C()<!> }
     b +={ 1 }
 }
 

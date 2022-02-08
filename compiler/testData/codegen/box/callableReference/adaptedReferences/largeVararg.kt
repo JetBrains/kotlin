@@ -1,7 +1,3 @@
-// DONT_TARGET_EXACT_BACKEND: WASM
-// WASM_MUTE_REASON: BIG_ARITY
-// !LANGUAGE: +NewInference
-
 fun foo(
     f: (
         Int, Int, Int, Int, Int, Int, Int, Int, Int, Int,

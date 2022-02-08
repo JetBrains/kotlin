@@ -1,4 +1,22 @@
 public final class FakeStaticOverrides : R|kotlin/Any| {
     public constructor(): R|test/FakeStaticOverrides|
 
+    public open class A : R|kotlin/Any| {
+        public open static fun foo(x: R|ft<kotlin/Function0<ft<kotlin/Unit, kotlin/Unit?>>, kotlin/Function0<ft<kotlin/Unit, kotlin/Unit?>>?>|): R|kotlin/Unit|
+
+        public constructor(): R|test/FakeStaticOverrides.A|
+
+    }
+    public open class B : R|test/FakeStaticOverrides.A| {
+        public open static fun foo(x: R|ft<java/lang/Runnable, java/lang/Runnable?>|): R|kotlin/Unit|
+
+        public open static fun foo(x: R|ft<kotlin/Function0<ft<kotlin/Unit, kotlin/Unit?>>, kotlin/Function0<ft<kotlin/Unit, kotlin/Unit?>>?>|): R|kotlin/Unit|
+
+        public constructor(): R|test/FakeStaticOverrides.B|
+
+    }
+    public open class C : R|test/FakeStaticOverrides.B| {
+        public constructor(): R|test/FakeStaticOverrides.C|
+
+    }
 }

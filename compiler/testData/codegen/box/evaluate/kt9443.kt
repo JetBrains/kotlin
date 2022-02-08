@@ -1,5 +1,4 @@
-// KJS_WITH_FULL_RUNTIME
-// WITH_RUNTIME
+// WITH_STDLIB
 
 abstract class BaseClass {
     protected open val menuId: Int = 0
@@ -12,7 +11,7 @@ class ImplClass: BaseClass() {
     override val menuId: Int = 3
 }
 
-public fun box(): String {
+fun box(): String {
     val result = ImplClass().run()
 
     if (result != ("3" to false)) return "Fail: $result"

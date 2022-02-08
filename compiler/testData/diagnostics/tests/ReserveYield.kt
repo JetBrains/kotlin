@@ -1,5 +1,5 @@
-// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_EXPRESSION -UNREACHABLE_CODE -UNUSED_VARIABLE
+// !LANGUAGE: -YieldIsNoMoreReserved
 
 // FILE: 1.kt
 package p1.yield
@@ -20,7 +20,7 @@ fun yield(yield: Int) {
     val foo = <!YIELD_IS_RESERVED!>yield<!> + <!YIELD_IS_RESERVED!>yield<!>
     val foo2 = <!YIELD_IS_RESERVED!>yield<!>
 
-    bar(<!OI;YIELD_IS_RESERVED!>yield<!> = 5)
+    bar(yield = 5)
 
     yield(4)
     <!YIELD_IS_RESERVED!>yield<!> {}

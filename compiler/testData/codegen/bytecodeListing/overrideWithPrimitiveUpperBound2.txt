@@ -1,0 +1,26 @@
+@kotlin.Metadata
+public class ATAny {
+    // source: 'overrideWithPrimitiveUpperBound2.kt'
+    private final field x: java.lang.Object
+    public method <init>(p0: java.lang.Object): void
+    public method getX(): java.lang.Object
+}
+
+@kotlin.Metadata
+public class BTChar {
+    // source: 'overrideWithPrimitiveUpperBound2.kt'
+    private final field x: char
+    public method <init>(p0: char): void
+    public method getX(): char
+    public synthetic bridge method getX(): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class CChar {
+    // source: 'overrideWithPrimitiveUpperBound2.kt'
+    private final field x: char
+    public method <init>(p0: char): void
+    public synthetic bridge method getX(): char
+    public @org.jetbrains.annotations.NotNull method getX(): java.lang.Character
+    public synthetic bridge method getX(): java.lang.Object
+}

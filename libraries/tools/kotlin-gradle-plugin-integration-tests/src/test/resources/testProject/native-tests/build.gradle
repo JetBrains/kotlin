@@ -4,7 +4,7 @@ version '1.0'
 buildscript {
     repositories {
         mavenLocal()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -15,7 +15,7 @@ apply plugin: 'kotlin-multiplatform'
 
 repositories {
     mavenLocal()
-    jcenter()
+    mavenCentral()
 }
 
 kotlin {
@@ -23,6 +23,7 @@ kotlin {
         fromPreset(presets.<SingleNativeTarget>, 'host')
 
         fromPreset(presets.iosX64, 'ios')
+        fromPreset(presets.iosSimulatorArm64, 'iosArm64')
 
         configure([host]) {
             compilations.create("anotherTest")
@@ -41,7 +42,9 @@ kotlin {
 }
 
 // Check that test events are correctly reported in CLI.
-configure([hostTest, iosTest]){
+configure([hostTest, iosTest, iosArm64Test]){
+    trackEnvironment("ANDROID_HOME")
+
     testLogging {
         events "passed", "skipped", "failed"
     }

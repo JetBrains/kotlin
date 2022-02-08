@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+
 object PrimitiveTypes {
     const val booleanFalse: Boolean = false
     const val booleanTrue: Boolean = true

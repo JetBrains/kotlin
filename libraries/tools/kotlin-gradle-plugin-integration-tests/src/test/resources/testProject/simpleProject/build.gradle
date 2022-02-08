@@ -1,15 +1,7 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+    id "java"
 }
-
-apply plugin: "kotlin"
-apply plugin: 'java'
 
 sourceSets {
     deploy
@@ -21,11 +13,9 @@ repositories {
 }
 
 dependencies {
-    compile 'com.google.guava:guava:12.0'
-    deployCompile 'com.google.guava:guava:12.0'
-    testCompile 'org.testng:testng:6.8'
-    compile "org.jetbrains.kotlin:kotlin-stdlib"
-    deployCompile "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation 'com.google.guava:guava:12.0'
+    deployImplementation 'com.google.guava:guava:12.0'
+    testImplementation 'org.testng:testng:6.8'
 }
 
 test {

@@ -7,37 +7,39 @@ interface B {
 
         }
 
-        @JvmStatic private fun a2() {
+        <!JVM_STATIC_ON_NON_PUBLIC_MEMBER!>@JvmStatic private fun a2()<!> {
 
         }
 
-        @JvmStatic protected fun a3() {
+        <!JVM_STATIC_ON_NON_PUBLIC_MEMBER!>@JvmStatic protected fun a3()<!> {
 
         }
 
-        @JvmStatic internal fun a4() {
+        <!JVM_STATIC_ON_NON_PUBLIC_MEMBER!>@JvmStatic internal fun a4()<!> {
 
         }
+
+        <!JVM_STATIC_ON_EXTERNAL_IN_INTERFACE!>@JvmStatic external fun a5()<!>
 
         @JvmStatic
         var foo = 1
 
-        @JvmStatic
-        var foo1 = 1
+        <!JVM_STATIC_ON_NON_PUBLIC_MEMBER!>@JvmStatic
+        var foo1<!> = 1
             protected set
 
-        @JvmStatic
-        var foo2 = 1
+        <!JVM_STATIC_ON_NON_PUBLIC_MEMBER!>@JvmStatic
+        var foo2<!> = 1
             private set
 
-        @JvmStatic
-        private var foo3 = 1
+        <!JVM_STATIC_ON_NON_PUBLIC_MEMBER!>@JvmStatic
+        private var foo3<!> = 1
 
-        @JvmStatic
-        protected var foo4 = 1
+        <!JVM_STATIC_ON_NON_PUBLIC_MEMBER!>@JvmStatic
+        protected var foo4<!> = 1
 
-        @JvmStatic
-        protected var foo5 = 1
+        <!JVM_STATIC_ON_NON_PUBLIC_MEMBER!>@JvmStatic
+        protected var foo5<!> = 1
 
         @JvmStatic
         val foo6 = 1
@@ -46,11 +48,15 @@ interface B {
         @JvmStatic get
 
         private var foo8 = 1
-        @JvmStatic public set
+        @JvmStatic <!SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY!>public<!> set
 
         public var foo9 = 1
-        @JvmStatic private set
+        <!JVM_STATIC_ON_NON_PUBLIC_MEMBER!>@JvmStatic private set<!>
 
+        <!JVM_STATIC_ON_EXTERNAL_IN_INTERFACE!>@JvmStatic
+        val foo10: Int<!> external get
+
+        val foo11: Int <!JVM_STATIC_ON_EXTERNAL_IN_INTERFACE!>@JvmStatic external get<!>
     }
 
 }

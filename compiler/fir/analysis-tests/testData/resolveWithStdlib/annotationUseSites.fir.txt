@@ -1,0 +1,38 @@
+FILE: test.kt
+    @R|kotlin/annotation/Target|(allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|)) public final annotation class KotlinMessage : R|kotlin/Annotation| {
+        public constructor(): R|KotlinMessage| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final data class KotlinResult : R|kotlin/Any| {
+        @R|KotlinMessage|() public constructor(@R|KotlinMessage|() message: R|kotlin/String| = String()): R|KotlinResult| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|KotlinMessage|() public final val message: R|kotlin/String| = R|<local>/message|
+            @PROPERTY_GETTER:R|KotlinMessage|() public get(): R|kotlin/String|
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final fun copy(message: R|kotlin/String| = this@R|/KotlinResult|.R|/KotlinResult.message|): R|KotlinResult|
+
+    }
+    public open class Some : R|kotlin/Any| {
+        public constructor(): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|Some.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public open val INSTANCE: R|kotlin/String|
+                @PROPERTY_GETTER:R|kotlin/jvm/JvmName|(name = String(getInstance)) public get(): R|kotlin/String| {
+                    ^ String(Omega)
+                }
+
+        }
+
+    }

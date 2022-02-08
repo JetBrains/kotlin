@@ -13,6 +13,7 @@ import java.util.*
 interface PropertiesProvider {
     val rootProjectDir: File
     fun getProperty(key: String): Any?
+    fun getSystemProperty(key: String): String?
 }
 
 class KotlinBuildProperties(
@@ -44,34 +45,12 @@ class KotlinBuildProperties(
 
     val isJpsBuildEnabled: Boolean = getBoolean("jpsBuild")
 
-    val isInIdeaSync: Boolean = run {
-        // "idea.sync.active" was introduced in 2019.1
-        System.getProperty("idea.sync.active")?.toBoolean() == true || let {
-            // before 2019.1 there is "idea.active" that was true only on sync,
-            // but since 2019.1 "idea.active" present in task execution too.
-            // So let's check Idea version
-            val majorIdeaVersion = System.getProperty("idea.version")
-                ?.split(".")
-                ?.getOrNull(0)
-            val isBeforeIdea2019 = majorIdeaVersion == null || majorIdeaVersion.toInt() < 2019
-
-            isBeforeIdea2019 && System.getProperty("idea.active")?.toBoolean() == true
-        }
-    }
+    val isInIdeaSync: Boolean = propertiesProvider.getSystemProperty("idea.sync.active")?.toBoolean() == true
 
     val isInJpsBuildIdeaSync: Boolean
         get() = isJpsBuildEnabled && isInIdeaSync
 
-    private val kotlinUltimateExists: Boolean = propertiesProvider.rootProjectDir.resolve("kotlin-ultimate").exists()
-
     val isTeamcityBuild: Boolean = getBoolean("teamcity") || System.getenv("TEAMCITY_VERSION") != null
-
-    val intellijUltimateEnabled: Boolean = getBoolean("intellijUltimateEnabled", isTeamcityBuild) ||
-            getBoolean("kotlin.build.dependencies.iu.enabled", isTeamcityBuild)
-
-    val includeCidrPlugins: Boolean = kotlinUltimateExists && getBoolean("cidrPluginsEnabled")
-
-    val includeUltimate: Boolean = kotlinUltimateExists && (isTeamcityBuild || intellijUltimateEnabled)
 
     val buildCacheUrl: String? = getOrNull("kotlin.build.cache.url") as String?
 
@@ -101,10 +80,6 @@ class KotlinBuildProperties(
 
     val localBootstrapPath: String? = getOrNull("bootstrap.local.path") as String?
 
-    val useIR: Boolean = getBoolean("kotlin.build.useIR")
-
-    val useIRForLibraries: Boolean = getBoolean("kotlin.build.useIRForLibraries")
-
     val useFir: Boolean = getBoolean("kotlin.build.useFir")
 
     val useFirForLibraries: Boolean = getBoolean("kotlin.build.useFirForLibraries")
@@ -120,6 +95,8 @@ class KotlinBuildProperties(
     val teamCityBootstrapUrl: String? = getOrNull("bootstrap.teamcity.url") as String?
 
     val rootProjectDir: File = propertiesProvider.rootProjectDir
+
+    val isKotlinNativeEnabled: Boolean = getBoolean("kotlin.native.enabled")
 }
 
 private const val extensionName = "kotlinBuildProperties"
@@ -129,6 +106,8 @@ class ProjectProperties(val project: Project) : PropertiesProvider {
         get() = project.rootProject.projectDir.let { if (it.name == "buildSrc") it.parentFile else it }
 
     override fun getProperty(key: String): Any? = project.findProperty(key)
+
+    override fun getSystemProperty(key: String) = project.providers.systemProperty(key).forUseAtConfigurationTime().orNull
 }
 
 val Project.kotlinBuildProperties: KotlinBuildProperties
@@ -145,6 +124,8 @@ class SettingsProperties(val settings: Settings) : PropertiesProvider {
         val obj = (settings as DynamicObjectAware).asDynamicObject
         return if (obj.hasProperty(key)) obj.getProperty(key) else null
     }
+
+    override fun getSystemProperty(key: String) = settings.providers.systemProperty(key).forUseAtConfigurationTime().orNull
 }
 
 fun getKotlinBuildPropertiesForSettings(settings: Any) = (settings as Settings).kotlinBuildProperties
