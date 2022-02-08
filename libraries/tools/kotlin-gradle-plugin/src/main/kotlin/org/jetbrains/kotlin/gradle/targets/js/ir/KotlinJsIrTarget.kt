@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.setProperty
 import javax.inject.Inject
 
 open class KotlinJsIrTarget
@@ -68,7 +69,7 @@ constructor(
                     compilation = compilations.getByName(MAIN_COMPILATION_NAME),
                     usage = project.usageByName("java-api-jars"),
                     dependencyConfigurationName = commonFakeApiElementsConfigurationName,
-                    overrideConfigurationArtifacts = project.listProperty { emptyList() }
+                    overrideConfigurationArtifacts = project.setProperty { emptyList() }
                 )
     }
 
