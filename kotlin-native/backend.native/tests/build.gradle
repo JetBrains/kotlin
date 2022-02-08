@@ -203,7 +203,11 @@ run {
     // Add regular gradle test tasks
     dependsOn(tasksOf(Test))
     dependsOn(tasksOf(CoverageTest))
-    dependsOn(tasksOf(FileCheckTest))
+    // Bitcode that is generated in presence of caches or two-stage compilation differs from the "closed world"-generated,
+    // so disable these tests for now.
+    if (cacheTesting == null && !twoStageEnabled && project.testTarget != 'linux_mips32') {
+        dependsOn(tasksOf(FileCheckTest))
+    }
     dependsOn(":kotlin-native:Interop:Indexer:check")
 }
 
@@ -5992,6 +5996,7 @@ Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
         task.configure(configureClosure)
         task.llvmIr = project.file("$testOutputFileCheck/$name/$target/out.ll")
         def target = task.target
+        boolean isCrossCompiling = target != project.target
         if (task.enabled) {
             konanArtifacts {
                 def lib = task.interop
@@ -6006,7 +6011,9 @@ Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
                     program(name, targets: [target]) {
                         srcFiles task.annotatedSource
                         baseDir "$testOutputFileCheck/$name"
-                        extraOpts project.globalTestArgs
+                        if (!isCrossCompiling) {
+                            extraOpts project.globalTestArgs
+                        }
                         extraOpts "-Xtemporary-files-dir=$testOutputFileCheck/$name/$target", "-Xsave-llvm-ir"
                         if (lib != null) {
                             libraries {
@@ -6019,7 +6026,9 @@ Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
                     framework(name, targets: [target]) {
                         srcFiles task.annotatedSource
                         baseDir "$testOutputFileCheck/$name"
-                        extraOpts project.globalTestArgs
+                        if (!isCrossCompiling) {
+                            extraOpts project.globalTestArgs
+                        }
                         extraOpts "-Xtemporary-files-dir=$testOutputFileCheck/$name/$target", "-Xsave-llvm-ir", "-Xmeaningful-bridge-names"
                         if (lib != null) {
                             libraries {
