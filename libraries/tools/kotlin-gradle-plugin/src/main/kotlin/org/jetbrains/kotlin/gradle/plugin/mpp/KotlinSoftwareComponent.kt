@@ -16,7 +16,7 @@ import org.gradle.api.component.ComponentWithVariants
 import org.gradle.api.component.SoftwareComponent
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
-import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.publish.maven.MavenPublication
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigur
 import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.listProperty
+import org.jetbrains.kotlin.gradle.utils.setProperty
 
 abstract class KotlinSoftwareComponent(
     private val project: Project,
@@ -69,7 +70,7 @@ abstract class KotlinSoftwareComponent(
                 compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
                 usage = javaApiUsage,
                 dependencyConfigurationName = metadataTarget.apiElementsConfigurationName,
-                overrideConfigurationArtifacts = project.listProperty { listOf(allMetadataArtifact) }
+                overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) }
             )
 
 
@@ -128,7 +129,7 @@ class DefaultKotlinUsageContext(
     override val compilation: KotlinCompilation<*>,
     private val usage: Usage,
     override val dependencyConfigurationName: String,
-    internal val overrideConfigurationArtifacts: ListProperty<PublishArtifact>? = null,
+    internal val overrideConfigurationArtifacts: SetProperty<PublishArtifact>? = null,
     internal val overrideConfigurationAttributes: AttributeContainer? = null,
     override val includeIntoProjectStructureMetadata: Boolean = true
 ) : KotlinUsageContext {
