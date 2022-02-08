@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.setProperty
 
 open class KotlinAndroidTarget(
     override val targetName: String,
@@ -206,7 +207,7 @@ open class KotlinAndroidTarget(
                 compilation,
                 project.usageByName(usageName),
                 dependencyConfigurationName,
-                overrideConfigurationArtifacts = project.listProperty { listOf(artifact) },
+                overrideConfigurationArtifacts = project.setProperty { listOf(artifact) },
                 overrideConfigurationAttributes = HierarchyAttributeContainer(configuration.attributes) {
                     val valueString = run {
                         val value = configuration.attributes.getAttribute(it)

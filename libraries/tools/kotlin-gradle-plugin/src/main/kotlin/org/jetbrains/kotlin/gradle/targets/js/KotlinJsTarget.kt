@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.setProperty
 import javax.inject.Inject
 
 open class KotlinJsTarget
@@ -102,7 +103,7 @@ constructor(
                     compilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME),
                     usage = project.usageByName("java-api-jars"),
                     dependencyConfigurationName = commonFakeApiElementsConfigurationName,
-                    overrideConfigurationArtifacts = project.listProperty { emptyList() }
+                    overrideConfigurationArtifacts = project.setProperty { emptyList() }
                 )
     }
 

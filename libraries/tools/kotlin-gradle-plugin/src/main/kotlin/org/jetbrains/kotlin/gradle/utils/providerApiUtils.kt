@@ -10,8 +10,10 @@ import org.gradle.api.Task
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.TaskProvider
 import java.io.File
 import kotlin.properties.ReadOnlyProperty
@@ -98,5 +100,8 @@ internal fun <T : Task> T.outputFilesProvider(provider: T.() -> Any): Configurab
     return project.filesProvider(this) { provider() }
 }
 
-internal inline fun <reified T> Project.listProperty(noinline itemsProvider: () -> Iterable<T>) =
+internal inline fun <reified T> Project.listProperty(noinline itemsProvider: () -> Iterable<T>): ListProperty<T> =
     objects.listProperty(T::class.java).apply { set(provider(itemsProvider)) }
+
+internal inline fun <reified T> Project.setProperty(noinline itemsProvider: () -> Iterable<T>): SetProperty<T> =
+    objects.setProperty(T::class.java).apply { set(provider(itemsProvider)) }
