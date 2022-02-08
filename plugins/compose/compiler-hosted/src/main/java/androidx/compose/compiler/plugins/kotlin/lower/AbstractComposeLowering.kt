@@ -18,6 +18,7 @@ package androidx.compose.compiler.plugins.kotlin.lower
 
 import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
+import androidx.compose.compiler.plugins.kotlin.FunctionMetrics
 import androidx.compose.compiler.plugins.kotlin.KtxNameConventions
 import androidx.compose.compiler.plugins.kotlin.allowsComposableCalls
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
@@ -63,6 +64,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -260,6 +262,15 @@ abstract class AbstractComposeLowering(
             propertySymbol.owner.getter!!.symbol
         )
     }
+
+    fun metricsFor(function: IrFunction): FunctionMetrics =
+        (function as? IrAttributeContainer)?.let {
+            context.irTrace[ComposeWritableSlices.FUNCTION_METRICS, it] ?: run {
+                val metrics = metrics.makeFunctionMetrics(function)
+                context.irTrace.record(ComposeWritableSlices.FUNCTION_METRICS, it, metrics)
+                metrics
+            }
+        } ?: metrics.makeFunctionMetrics(function)
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun KotlinType.toIrType(): IrType = typeTranslator.translateType(this)
