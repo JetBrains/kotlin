@@ -789,6 +789,7 @@ class ClassStabilityTransformTests : ComposeIrTransformTest() {
               }
             }
             @Composable
+            @ComposableInferredTarget(scheme = "[0[0]]")
             fun <T> X(items: List<T>, itemContent: Function3<T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
               if (isTraceInProgress()) {
                 traceEventStart(<>)

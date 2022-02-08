@@ -274,6 +274,10 @@ class ComposeComponentRegistrar : ComponentRegistrar {
                 project,
                 ComposableDeclarationChecker()
             )
+            StorageComponentContainerContributor.registerExtension(
+                project,
+                ComposableTargetChecker()
+            )
             ComposeDiagnosticSuppressor.registerExtension(
                 project,
                 ComposeDiagnosticSuppressor()

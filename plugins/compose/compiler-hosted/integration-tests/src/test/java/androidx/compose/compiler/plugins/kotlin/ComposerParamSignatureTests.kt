@@ -131,7 +131,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
             override val size: Int
                 get() = super.size
         }
-        """, dumpClasses = true
+        """
     ) {
         assertTrue(it.contains("INVOKESPECIAL java/util/ArrayList.size ()I"))
         assertFalse(it.contains("INVOKESPECIAL java/util/ArrayList.getSize ()I"))
