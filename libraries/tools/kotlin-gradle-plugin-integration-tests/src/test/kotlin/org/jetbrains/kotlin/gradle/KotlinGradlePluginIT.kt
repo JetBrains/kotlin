@@ -946,14 +946,15 @@ class KotlinGradleIT : BaseGradleIT() {
 
         //Should contains build metrics for all compile kotlin tasks
         assertTrue { report.contains("Time metrics:") }
-        assertTrue { report.contains("RUN_COMPILER:") }
-        assertTrue { report.contains("INCREMENTAL_COMPILATION:") }
+        assertTrue { report.contains("Run compilation:") }
+        assertTrue { report.contains("Incremental compilation in daemon:") }
         assertTrue { report.contains("Build performance metrics:") }
-        assertTrue { report.contains("OUTPUT_SIZE:") }
-        assertTrue { report.contains("SNAPSHOT_SIZE:") }
+        assertTrue { report.contains("Total size of the cache directory:") }
+        assertTrue { report.contains("Total compiler iteration:") }
+        assertTrue { report.contains("ABI snapshot size:") }
+        //for non-incremental builds
         assertTrue { report.contains("Build attributes:") }
         assertTrue { report.contains("REBUILD_REASON:") }
-        assertTrue { report.contains("COMPILE_ITERATION:") }
     }
 
     @Test
@@ -967,9 +968,9 @@ class KotlinGradleIT : BaseGradleIT() {
         assertNotNull(reports)
         assertEquals(1, reports.size)
         val report = reports[0].readText()
-        assertTrue { report.contains("CODE_ANALYSIS:") }
-        assertTrue { report.contains("CODE_GENERATION:") }
-        assertTrue { report.contains("COMPILER_INITIALIZATION:") }
+        assertTrue { report.contains("Compiler code analysis:") }
+        assertTrue { report.contains("Compiler code generation:") }
+        assertTrue { report.contains("Compiler initialization time:") }
     }
 
     @Test

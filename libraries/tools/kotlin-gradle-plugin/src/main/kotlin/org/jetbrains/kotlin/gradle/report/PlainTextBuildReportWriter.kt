@@ -98,7 +98,7 @@ internal class PlainTextBuildReportWriter(
 
                 val timeMs = buildTimesMs[buildTime]
                 if (timeMs != null) {
-                    p.println("${buildTime.name}: ${formatTime(timeMs)}")
+                    p.println("${buildTime.readableString}: ${formatTime(timeMs)}")
                     p.withIndent {
                         BuildTime.children[buildTime]?.forEach { printBuildTime(it) }
                     }
@@ -123,7 +123,7 @@ internal class PlainTextBuildReportWriter(
 
         p.withIndent("Build performance metrics:") {
             for (metric in BuildPerformanceMetric.values()) {
-                allBuildMetrics[metric]?.let { p.println("${metric.name}: $it") }
+                allBuildMetrics[metric]?.let { p.println("${metric.readableString}: $it") }
             }
         }
         p.println()
@@ -136,7 +136,7 @@ internal class PlainTextBuildReportWriter(
         p.withIndent("Build attributes:") {
             val attributesByKind = allAttributes.entries.groupBy { it.key.kind }.toSortedMap()
             for ((kind, attributesCounts) in attributesByKind) {
-                printMap(p, kind.name, attributesCounts.map { (k, v) -> k.name to v }.toMap())
+                printMap(p, kind.name, attributesCounts.map { (k, v) -> k.readableString to v }.toMap())
             }
         }
         p.println()
