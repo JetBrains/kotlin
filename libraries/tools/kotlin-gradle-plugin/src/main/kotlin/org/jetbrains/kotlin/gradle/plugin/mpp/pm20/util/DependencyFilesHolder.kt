@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AbstractKotlinFragmentMetadat
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariantWithRuntime
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.resolvableMetadataConfigurationName
+import org.jetbrains.kotlin.gradle.utils.filesProvider
 
 interface DependencyFilesHolder {
     val dependencyConfigurationName: String
@@ -54,4 +55,7 @@ class SimpleDependencyFilesHolder(
 ) : DependencyFilesHolder
 
 internal fun Project.newDependencyFilesHolder(dependencyConfigurationName: String): DependencyFilesHolder =
-    SimpleDependencyFilesHolder(dependencyConfigurationName, project.files())
+    SimpleDependencyFilesHolder(
+        dependencyConfigurationName,
+        project.filesProvider { project.configurations.getByName(dependencyConfigurationName) }
+    )
