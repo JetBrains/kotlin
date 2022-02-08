@@ -26,6 +26,9 @@ plugins {
 dependencies {
     compileOnly(libs.kotlinStdlib)
     compileOnly(libs.kotlinCompiler)
+
+    testImplementation(libs.kotlinStdlib)
+    testImplementation(libs.junit)
 }
 
 tasks.withType(KotlinCompile).configureEach {

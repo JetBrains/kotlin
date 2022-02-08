@@ -328,6 +328,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
         """,
         """
             @Composable
+            @ComposableInferredTarget(scheme = "[0[0]]")
             fun Example(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
               %composer.startReplaceableGroup(<>)
               sourceInformation(%composer, "C(Example)<conten...>:Test.kt#2487m")
@@ -434,6 +435,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
             """,
             """
                 @Composable
+                @ComposableInferredTarget(scheme = "[0[0]]")
                 fun Wrapper(block: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
                   if (isTraceInProgress()) {
                     traceEventStart(<>)
@@ -574,6 +576,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
             """,
             """
                 @Composable
+                @ComposableInferredTarget(scheme = "[0[0]]")
                 fun composeVector(composable: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
                   if (isTraceInProgress()) {
                     traceEventStart(<>)
@@ -615,6 +618,7 @@ class ComposerParamTransformTests : ComposeIrTransformTest() {
                   }
                 }
                 @Composable
+                @ComposableInferredTarget(scheme = "[0[0]]")
                 fun emit(composable: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
                   %composer.startReplaceableGroup(<>)
                   sourceInformation(%composer, "C(emit)<compos...>:Test.kt#2487m")
