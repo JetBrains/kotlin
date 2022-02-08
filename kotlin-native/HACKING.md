@@ -98,6 +98,9 @@ and then a final native binary is produced from this klibrary using the -Xinclud
         ./gradlew -Ptest_two_stage :kotlin-native:backend.native:tests:array0
         
 * **-Ptest_with_cache_kind=static|dynamic** enables using caches during testing. 
+
+* **-Ptest_compile_only** allows one to only compile tests, without actually running them. It is useful for testing compilation pipeline in 
+case of targets that are tricky to execute tests on.
        
  ### Runtime unit tests
  
