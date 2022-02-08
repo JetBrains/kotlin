@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.targets.android.findAndroidTarget
@@ -75,12 +76,18 @@ internal fun Project.runDisabledCInteropCommonizationOnHmppProjectConfigurationH
     if (isAllowCommonizer() && !kotlinPropertiesProvider.enableCInteropCommonization) {
         val multiplatformExtension = multiplatformExtensionOrNull ?: return
 
-        val affectedCompilations = multiplatformExtension.targets.flatMap { it.compilations }
+        val sharedCompilationsWithInterops = multiplatformExtension.targets.flatMap { it.compilations }
             .filterIsInstance<KotlinSharedNativeCompilation>()
-            .filter { compilation -> CInteropCommonizerDependent.from(compilation)?.interops.orEmpty().isNotEmpty() }
+            .mapNotNull { compilation -> compilation to (CInteropCommonizerDependent.from(compilation) ?: return@mapNotNull null) }
+            .toMap()
+
+        val affectedCompilations = sharedCompilationsWithInterops.keys
+        val affectedCInterops = sharedCompilationsWithInterops.values.flatMap { it.interops }.toSet()
+
 
         /* CInterop commonizer would not affect the project: No compilation that would actually benefit */
         if (affectedCompilations.isEmpty()) return
+        if (affectedCInterops.isEmpty()) return
 
         warningLogger(
             """
@@ -89,12 +96,16 @@ internal fun Project.runDisabledCInteropCommonizationOnHmppProjectConfigurationH
                
                     'cinterop commonization' can be enabled in your 'gradle.properties'
                     kotlin.mpp.enableCInteropCommonization=true
+                    
+                    To hide this message, add to your 'gradle.properties'
+                    $KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION.nowarn=true 
                 
                     The following source sets are affected: 
                     ${affectedCompilations.map { it.defaultSourceSetName }.sorted().joinToString(", ", "[", "]")}
-                
-                    The following compilations are affected: 
-                    ${affectedCompilations.map { "${it.target.name}/${it.compilationName}" }.sorted().joinToString(", ", "[", "]")}
+                    
+                    The following cinterops are affected: 
+                    ${affectedCInterops.map { it.toString() }.sorted().joinToString(", ", "[", "]")}
+                    
             """.trimIndent()
         )
     }

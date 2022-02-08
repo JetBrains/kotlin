@@ -23,7 +23,7 @@ class DisabledCInteropCommonizationWarningTest {
     private val project by lazy { ProjectBuilder.builder().build() as ProjectInternal }
 
     @Test
-    fun `test warning shows affected source sets and compilations`() {
+    fun `test warning shows affected source sets, affected cinterops and how to hide the warning`() {
         project.enableCInteropCommonization(false)
         project.setupNativeTargetsWithCInterops()
         project.evaluate()
@@ -38,8 +38,18 @@ class DisabledCInteropCommonizationWarningTest {
         )
 
         assertTrue(
-            "[metadata/commonMain, metadata/nativeMain]" in warningMessage,
-            "Expected compilations being mentioned in the warning message. Found\n\n$warningMessage"
+            "[" +
+                "cinterop:compilation/compileKotlinLinuxArm64/dummy1, " +
+                "cinterop:compilation/compileKotlinLinuxArm64/dummy2, " +
+                "cinterop:compilation/compileKotlinLinuxX64/dummy1, " +
+                "cinterop:compilation/compileKotlinLinuxX64/dummy2" +
+                "]" in warningMessage,
+            "Expected affected cinterops being mentioned in the warning message. Found\n\n$warningMessage"
+        )
+
+        assertTrue(
+            "$KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION.nowarn=true" in warningMessage,
+            "Expected warning message to include hint on how to disable the warning"
         )
     }
 
@@ -52,7 +62,7 @@ class DisabledCInteropCommonizationWarningTest {
 
         assertNull(
             project.runHealthCheckAndGetWarning(),
-            "Expected no warning message shown when explictily ignored"
+            "Expected no warning message shown when explicitly ignored"
         )
     }
 
