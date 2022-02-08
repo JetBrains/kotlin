@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.gradle.plugin.statistics
 
-import org.gradle.api.logging.Logging
-import org.gradle.tooling.events.FinishEvent
-import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskSkippedResult
 import org.gradle.tooling.events.task.TaskSuccessResult
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
+import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
-import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatData
-import org.jetbrains.kotlin.gradle.plugin.stat.ReportStatistics
+import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatisticsData
+import org.jetbrains.kotlin.gradle.plugin.stat.StatTag
+import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.incremental.ChangedFiles
-import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
+import java.lang.management.ManagementFactory
 import java.net.InetAddress
 import java.util.*
-import kotlin.system.measureTimeMillis
 
 enum class TaskExecutionState {
     SKIPPED,
@@ -31,16 +30,7 @@ enum class TaskExecutionState {
     ;
 }
 
-class KotlinBuildStatListener(
-    val projectName: String,
-    val label: String?,
-    val kotlinVersion: String,
-    val reportStatistics: List<ReportStatistics>
-) : OperationCompletionListener, AutoCloseable {
-
-    private val log = Logging.getLogger(this.javaClass)
-    val buildUuid: String = UUID.randomUUID().toString()
-
+class KotlinBuildStatListener {
     companion object {
         val hostName: String? = try {
             InetAddress.getLocalHost().hostName
@@ -59,7 +49,7 @@ class KotlinBuildStatListener(
             uuid: String,
             label: String?,
             kotlinVersion: String
-        ): CompileStatData? {
+        ): CompileStatisticsData? {
             val result = event.result
             val taskPath = event.descriptor.taskPath
             val durationMs = result.endTime - result.startTime
@@ -89,33 +79,50 @@ class KotlinBuildStatListener(
                 else -> emptyList<String>()
 
             }
-            return CompileStatData(
-                durationMs = durationMs, taskResult = taskResult.name, label = label,
-                buildTimesMs = buildTimesMs, perfData = perfData, projectName = projectName, taskName = taskPath, changes = changes,
-                tags = taskExecutionResult?.taskInfo?.properties?.map { it.name } ?: emptyList(),
-                nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap() ?: emptyMap(),
-                hostName = hostName, kotlinVersion = kotlinVersion, buildUuid = uuid, timeInMillis = System.currentTimeMillis()
+            return CompileStatisticsData(
+                durationMs = durationMs,
+                taskResult = taskResult.name,
+                label = label,
+                buildTimesMetrics = buildTimesMs,
+                performanceMetrics = perfData,
+                projectName = projectName,
+                taskName = taskPath,
+                changes = changes,
+                tags = parseTags(taskExecutionResult).map { it.name },
+                nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap()?.filter { it.value > 0 }?.keys ?: emptySet(),
+                hostName = hostName,
+                kotlinVersion = kotlinVersion,
+                buildUuid = uuid,
+                finishTime = System.currentTimeMillis(),
+                compilerArguments = taskExecutionResult?.taskInfo?.compilerArguments?.asList() ?: emptyList()
             )
         }
 
-    }
-
-    override fun onFinish(event: FinishEvent?) {
-        if (event is TaskFinishEvent) {
-            val (collectDataDuration, compileStatData) = measureTimeMillisWithResult {
-                prepareData(event, projectName, buildUuid, label, kotlinVersion)
+        private fun parseTags(taskExecutionResult: TaskExecutionResult?): List<StatTag> {
+            val tags = ArrayList<StatTag>()
+            CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS.value.toBooleanLenient()?.let {
+                if (it) tags.add(StatTag.ABI_SNAPSHOT)
             }
-            log.debug("Collect data takes $collectDataDuration: $compileStatData")
-
-            val reportDataDuration = measureTimeMillis {
-                compileStatData?.also { data -> reportStatistics.forEach { it.report(data) }}
+            CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.value.toBooleanLenient()?.let {
+                if (it) tags.add(StatTag.ARTIFACT_TRANSFORM)
             }
-            log.debug("Report data takes $reportDataDuration: $compileStatData")
+            val nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap() ?: emptyMap()
+
+            if (nonIncrementalAttributes.isEmpty()) {
+                tags.add(StatTag.INCREMENTAL)
+            } else {
+                tags.add(StatTag.NON_INCREMENTAL)
+            }
+
+            val debugConfiguration = "-agentlib:"
+            if (ManagementFactory.getRuntimeMXBean().inputArguments.firstOrNull { it.startsWith(debugConfiguration) } != null) {
+                tags.add(StatTag.GRADLE_DEBUG)
+            }
+            return tags
         }
-    }
 
-    override fun close() {
     }
 
 }
+
 

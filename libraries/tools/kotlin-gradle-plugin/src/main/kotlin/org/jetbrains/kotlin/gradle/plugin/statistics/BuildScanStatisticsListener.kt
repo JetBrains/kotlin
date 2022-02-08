@@ -7,15 +7,24 @@ package org.jetbrains.kotlin.gradle.plugin.statistics
 
 import com.gradle.scan.plugin.BuildScanExtension
 import org.gradle.api.logging.Logging
-import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatData
-import org.jetbrains.kotlin.gradle.plugin.stat.ReportStatistics
+import org.gradle.tooling.events.FinishEvent
+import org.gradle.tooling.events.OperationCompletionListener
+import org.gradle.tooling.events.task.TaskFinishEvent
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricType
+import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatisticsData
 import org.jetbrains.kotlin.konan.file.File
-import java.util.function.Consumer
+import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.LinkedHashSet
 import kotlin.system.measureTimeMillis
 
-class ReportStatisticsToBuildScan(
-    private val buildScan: BuildScanExtension
-) : ReportStatistics {
+class BuildScanStatisticsListener(
+    private val buildScan: BuildScanExtension,
+    val projectName: String,
+    val label: String?,
+    val kotlinVersion: String,
+) : OperationCompletionListener, AutoCloseable {
     companion object {
         const val kbSize = 1024
         const val mbSize = kbSize * kbSize
@@ -25,8 +34,28 @@ class ReportStatisticsToBuildScan(
 
     private val tags = LinkedHashSet<String>()
     private val log = Logging.getLogger(this.javaClass)
+    private val buildUuid: String = UUID.randomUUID().toString()
 
-    override fun report(data: CompileStatData) {
+    override fun onFinish(event: FinishEvent?) {
+        if (event is TaskFinishEvent) {
+            val (collectDataDuration, compileStatData) = measureTimeMillisWithResult {
+                KotlinBuildStatListener.prepareData(event, projectName, buildUuid, label, kotlinVersion)
+            }
+            log.debug("Collect data takes $collectDataDuration: $compileStatData")
+
+            compileStatData?.also {
+                val reportDataDuration = measureTimeMillis {
+                    report(it)
+                }
+                log.debug("Report data takes $reportDataDuration: $compileStatData")
+            }
+        }
+    }
+
+    override fun close() {
+    }
+
+    fun report(data: CompileStatisticsData) {
         val elapsedTime = measureTimeMillis {
 
             readableString(data).forEach { buildScan.value(data.taskName, it) }
@@ -41,19 +70,23 @@ class ReportStatisticsToBuildScan(
         log.debug("Report statistic to build scan takes $elapsedTime ms")
     }
 
-    private fun readableString(data: CompileStatData): List<String> {
-        val nonIncrementalReasons = data.nonIncrementalAttributes.filterValues { it > 0 }.keys
+    private fun readableString(data: CompileStatisticsData): List<String> {
         val readableString = StringBuilder()
-        if (nonIncrementalReasons.isEmpty()) {
+        if (data.nonIncrementalAttributes.isEmpty()) {
             readableString.append("Incremental build; ")
+            data.changes.joinTo(readableString, prefix = "Changes: [", postfix = "]; ") { it.substringAfterLast(File.separator) }
         } else {
-            nonIncrementalReasons.joinTo(readableString, prefix = "Non incremental build because: [", postfix = "]; ") { it.readableString }
+            data.nonIncrementalAttributes.joinTo(readableString, prefix = "Non incremental build because: [", postfix = "]; ") { it.readableString }
         }
-        data.changes.joinTo(readableString, prefix = "Changes: [", postfix = "]; ") { it.substringAfterLast(File.separator) }
 
         val timeData =
-            data.buildTimesMs.map { (key, value) -> "${key.readableString}: ${value}ms" } //sometimes it is better to have separate variable to be able debug
-        val perfData = data.perfData.map { (key, value) -> "${key.readableString}: ${readableFileLength(value)}" }
+            data.buildTimesMetrics.map { (key, value) -> "${key.readableString}: ${value}ms" } //sometimes it is better to have separate variable to be able debug
+        val perfData = data.performanceMetrics.map { (key, value) ->
+            when (key.type) {
+                BuildMetricType.FILE_SIZE -> "${key.readableString}: ${readableFileLength(value)}"
+                else -> "${key.readableString}: $value}"
+            }
+        }
         timeData.union(perfData).joinTo(readableString, ",", "Performance: [", "]")
 
         return splitStringIfNeed(readableString.toString(), lengthLimit)

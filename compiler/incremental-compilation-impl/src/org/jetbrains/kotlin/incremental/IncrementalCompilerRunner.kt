@@ -72,7 +72,7 @@ abstract class IncrementalCompilerRunner<
         // otherwise we track source files changes ourselves.
         providedChangedFiles: ChangedFiles?,
         projectDir: File? = null
-    ): ExitCode = reporter.measure(BuildTime.INCREMENTAL_COMPILATION) {
+    ): ExitCode = reporter.measure(BuildTime.INCREMENTAL_COMPILATION_DAEMON) {
         compileImpl(allSourceFiles, args, messageCollector, providedChangedFiles, projectDir)
     }
 
@@ -321,16 +321,17 @@ abstract class IncrementalCompilerRunner<
         abiSnapshot: AbiSnapshot = AbiSnapshotImpl(mutableMapOf()),
         classpathAbiSnapshot: Map<String, AbiSnapshot> = HashMap()
     ): ExitCode {
+        if (compilationMode is CompilationMode.Rebuild) {
+            reporter.report { "Non-incremental compilation will be performed: ${compilationMode.reason}" }
+        }
+
         preBuildHook(args, compilationMode)
 
-        val buildTimeMode: BuildTime
         val dirtySources = when (compilationMode) {
             is CompilationMode.Incremental -> {
-                buildTimeMode = BuildTime.INCREMENTAL_ITERATION
                 compilationMode.dirtyFiles.toMutableList()
             }
             is CompilationMode.Rebuild -> {
-                buildTimeMode = BuildTime.NON_INCREMENTAL_ITERATION
                 reporter.addAttribute(compilationMode.reason)
                 allKotlinSources.toMutableList()
             }
@@ -368,7 +369,7 @@ abstract class IncrementalCompilerRunner<
             val bufferingMessageCollector = BufferingMessageCollector()
             val messageCollectorAdapter = MessageCollectorToOutputItemsCollectorAdapter(bufferingMessageCollector, outputItemsCollector)
 
-            exitCode = reporter.measure(buildTimeMode) {
+            exitCode = reporter.measure(BuildTime.COMPILATION_ROUND) {
                 runCompiler(sourcesToCompile.toSet(), args, caches, services, messageCollectorAdapter)
             }
 
