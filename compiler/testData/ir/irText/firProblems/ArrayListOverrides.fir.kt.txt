@@ -1,0 +1,21 @@
+class A1 : ArrayList<String> {
+  constructor() /* primary */ {
+    super/*ArrayList*/<String>()
+    /* <init>() */
+
+  }
+
+}
+
+class A2 : ArrayList<String> {
+  constructor() /* primary */ {
+    super/*ArrayList*/<String>()
+    /* <init>() */
+
+  }
+
+  override fun remove(x: String): Boolean {
+    return true
+  }
+
+}

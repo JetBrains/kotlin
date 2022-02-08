@@ -2447,6 +2447,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
         }
 
         @Test
+        @TestMetadata("ArrayListOverrides.kt")
+        public void testArrayListOverrides() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/ArrayListOverrides.kt");
+        }
+
+        @Test
         @TestMetadata("ArrayMap.kt")
         public void testArrayMap() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/ArrayMap.kt");
