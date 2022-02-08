@@ -51,15 +51,6 @@ abstract class IrDelegatedSimpleType(kotlinType: KotlinType? = null) : IrAbstrac
         get() = delegate.annotations
 }
 
-// TODO: This implementation is aligned with FE representation of DefinitelyNotNull (DNN) type but
-//       in fact DNN is special case of more general `IntersectionType`
-//       so someday it should be reconsidered
-class IrDefinitelyNotNullTypeImpl(kotlinType: KotlinType?, original: IrType) : IrDelegatedSimpleType(kotlinType), IrDefinitelyNotNullType {
-    override val delegate: IrSimpleType = original as IrSimpleType
-    override val original: IrType
-        get() = delegate
-}
-
 class IrSimpleTypeImpl(
     kotlinType: KotlinType?,
     override val classifier: IrClassifierSymbol,

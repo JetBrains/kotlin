@@ -84,6 +84,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun SimpleTypeMarker.typeConstructor(): TypeConstructorMarker = when (this) {
         is IrCapturedType -> constructor
         is IrSimpleType -> classifier
+        is IrDefinitelyNotNullType -> original.typeConstructor()
         else -> error("Unknown type constructor")
     }
 
@@ -549,7 +550,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         error("Captured type is unsupported in IR")
 
     override fun DefinitelyNotNullTypeMarker.original(): SimpleTypeMarker =
-        error("DefinitelyNotNull type is unsupported in IR")
+        (this as IrDefinitelyNotNullType).original as IrSimpleType
 
     override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(): KotlinTypeMarker {
         error("makeDefinitelyNotNullOrNotNull is not supported in IR")
