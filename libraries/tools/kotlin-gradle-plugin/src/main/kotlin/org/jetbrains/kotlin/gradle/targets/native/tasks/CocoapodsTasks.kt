@@ -155,12 +155,19 @@ open class PodspecTask : DefaultTask() {
                 |                  echo "Skipping Gradle build task invocation due to COCOAPODS_SKIP_KOTLIN_BUILD environment variable set to \"YES\""
                 |                  exit 0
                 |                fi
-                |                set -ev
+                |                set -v
                 |                REPO_ROOT="${'$'}PODS_TARGET_SRCROOT"
                 |                "$gradleCommand" -p "${'$'}REPO_ROOT" ${'$'}KOTLIN_PROJECT_PATH:$SYNC_TASK_NAME \
                 |                    -P${KotlinCocoapodsPlugin.PLATFORM_PROPERTY}=${'$'}PLATFORM_NAME \
                 |                    -P${KotlinCocoapodsPlugin.ARCHS_PROPERTY}="${'$'}ARCHS" \
-                |                    -P${KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY}="${'$'}CONFIGURATION"
+                |                    -P${KotlinCocoapodsPlugin.CONFIGURATION_PROPERTY}="${'$'}CONFIGURATION" \
+                |                    2>&1 | sed -e 's/^e: /error: /'
+                |                if [ ${PIPESTATUS[0]} -ne 0 ] ; then
+                |                    echo "error: errors when building ${frameworkName.get()}.framework"
+                |                    exit 1
+                |                else
+                |                    exit 0
+                |                fi
                 |            SCRIPT
                 |        }
                 |    ]
