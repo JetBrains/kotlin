@@ -40,15 +40,19 @@ internal open class LegacyMappedVariant(
 
     override val platformType: KotlinPlatformType
         get() = compilation.platformType
+
     override val compileDependenciesConfiguration: Configuration
         get() = project.configurations.getByName(compilation.compileDependencyConfigurationName)
+
     override var compileDependencyFiles: FileCollection
         get() = compilation.compileDependencyFiles
         set(value) {
             compilation.compileDependencyFiles = value
         }
+
     override val compilationOutputs: KotlinCompilationOutput
         get() = compilation.output
+
     override val sourceArchiveTaskName: String
         get() = defaultSourceArtifactTaskName // TODO: no such task yet
 
@@ -180,12 +184,11 @@ internal fun mapTargetCompilationsToKpmVariants(target: AbstractKotlinTarget, pu
         module.fragments.add(variant)
     }
 
-    val whenPublicationShouldRegister: (() -> Unit) -> Unit = when (publicationRegistration) {
-        PublicationRegistrationMode.IMMEDIATE -> ::run
-        PublicationRegistrationMode.AFTER_EVALUATE -> {
-            { target.project.whenEvaluated { it() } }
+    fun whenPublicationShouldRegister(action: () -> Unit) =
+        when (publicationRegistration) {
+            PublicationRegistrationMode.IMMEDIATE -> action()
+            PublicationRegistrationMode.AFTER_EVALUATE -> target.project.whenEvaluated { action() }
         }
-    }
 
     whenPublicationShouldRegister {
         val mainModule = target.project.kpmModules.getByName(KotlinGradleModule.MAIN_MODULE_NAME)

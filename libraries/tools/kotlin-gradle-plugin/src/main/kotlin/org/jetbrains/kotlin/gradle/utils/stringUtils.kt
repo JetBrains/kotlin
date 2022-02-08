@@ -24,7 +24,7 @@ internal fun dashSeparatedName(vararg nameParts: String?): String {
 }
 
 internal fun dashSeparatedLowercaseName(nameParts: Iterable<String?>) =
-    dashSeparatedName(*nameParts.toList().toTypedArray())
+    dashSeparatedLowercaseName(*nameParts.toList().toTypedArray())
 
 internal fun dashSeparatedLowercaseName(vararg nameParts: String?): String {
     val nonEmptyParts = nameParts.mapNotNull { it?.takeIf(String::isNotEmpty)?.toLowerCase(Locale.ENGLISH) }

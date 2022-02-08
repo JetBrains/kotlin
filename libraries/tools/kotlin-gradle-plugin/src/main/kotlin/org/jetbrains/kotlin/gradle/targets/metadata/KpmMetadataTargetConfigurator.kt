@@ -27,16 +27,13 @@ internal class KpmMetadataTargetConfigurator(private val metadataTargetConfigura
     override fun configureCompilationDefaults(target: KotlinMetadataTarget) {
         super.configureCompilationDefaults(target)
 
-        // we still want to configure the legacy "main" compilation
-        run {
-            val mainCompilation = target.compilations.create(KotlinCompilation.MAIN_COMPILATION_NAME)
-            defineConfigurationsForCompilation(mainCompilation)
-            createLifecycleTask(mainCompilation)
-            metadataTargetConfigurator
-                .buildCompilationProcessor(mainCompilation)
-                .run()
-            mainCompilation.compileKotlinTaskProvider.configure { it.enabled = false }
-        }
+        val mainCompilation = target.compilations.create(KotlinCompilation.MAIN_COMPILATION_NAME)
+        defineConfigurationsForCompilation(mainCompilation)
+        createLifecycleTask(mainCompilation)
+        metadataTargetConfigurator
+            .buildCompilationProcessor(mainCompilation)
+            .run()
+        mainCompilation.compileKotlinTaskProvider.configure { it.enabled = false }
     }
 
     private fun configureTargetWithKpm(target: KotlinMetadataTarget) {

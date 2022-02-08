@@ -28,7 +28,7 @@ internal open class KpmAwareTargetConfigurator<T : KotlinTarget>(
     private fun setupMavenPublicationDsl(target: T) {
         if (target is AbstractKotlinTarget) {
             target.compilations.all { compilation ->
-                val compilationDetails = (compilation as? AbstractKotlinCompilation)?.compilationDetails as? VariantMappedCompilationDetails
+                val compilationDetails = (compilation as? AbstractKotlinCompilation)?.compilationDetails
                 if (compilationDetails is VariantMappedCompilationDetails<*> && compilationDetails.variant.containingModule.isMain) {
                     val variant = compilationDetails.variant
                     if (variant is SingleMavenPublishedModuleHolder) {

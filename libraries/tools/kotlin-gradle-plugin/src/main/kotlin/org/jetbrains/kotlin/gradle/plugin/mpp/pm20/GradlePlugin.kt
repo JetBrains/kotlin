@@ -82,8 +82,7 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
 fun rootPublicationComponentName(module: KotlinGradleModule) =
     module.disambiguateName("root")
 
-open class KotlinPm20ProjectExtension(project: Project) :
-    KotlinTopLevelExtension(project) {
+open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtension(project) {
 
     internal val kpmModelContainer = DefaultKpmGradleProjectModelContainer.create(project)
 
