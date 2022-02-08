@@ -193,7 +193,7 @@ abstract class FirDataFlowAnalyzer<FLOW : Flow>(
         return getTypeUsingSmartcastInfo(symbol, qualifiedAccessExpression)
     }
 
-    private fun getTypeUsingSmartcastInfo(
+    protected open fun getTypeUsingSmartcastInfo(
         symbol: FirBasedSymbol<*>,
         expression: FirExpression
     ): Pair<PropertyStability, MutableList<ConeKotlinType>>? {

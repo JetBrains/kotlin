@@ -73,7 +73,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     val ResolutionMode.expectedType: FirTypeRef?
         get() = expectedType(components)
 
-    class BodyResolveTransformerComponents(
+    open class BodyResolveTransformerComponents(
         override val session: FirSession,
         override val scopeSession: ScopeSession,
         val transformer: FirBodyResolveTransformer,
