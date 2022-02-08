@@ -183,12 +183,6 @@ open class VariantPublishingConfigurator @Inject constructor(
             )
 
             platformComponent.addVariantsFromConfiguration(publishedConfiguration) details@{ variantDetails ->
-                // TODO: This is temporary for Android! Make sure to only publish AAR
-                val androidArtifactType = variantDetails.configurationVariant.attributes.getAttribute(AndroidArtifacts.ARTIFACT_TYPE)
-                if (androidArtifactType != null && androidArtifactType != AndroidArtifacts.ArtifactType.AAR.type) {
-                    return@details variantDetails.skip()
-                }
-
                 mavenScopeOrNull?.let { variantDetails.mapToMavenScope(it) }
             }
         }
