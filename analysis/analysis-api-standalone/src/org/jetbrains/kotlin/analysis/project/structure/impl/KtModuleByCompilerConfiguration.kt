@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.project.structure.impl
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
 import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
@@ -51,10 +52,11 @@ internal class KtSourceModuleByCompilerConfiguration(
     compilerConfig: CompilerConfiguration,
     project: Project,
     ktFiles: List<KtFile>,
+    jarFileSystem: CoreJarFileSystem,
 ) : BaseKtModuleByCompilerConfiguration(compilerConfig, project), KtSourceModule {
     override val directRegularDependencies: List<KtModule> by lazy {
         (compilerConfig.jvmModularRoots + compilerConfig.jvmClasspathRoots).map {
-            KtLibraryModuleByCompilerConfiguration(compilerConfig, project, it.toPath())
+            KtLibraryModuleByCompilerConfiguration(compilerConfig, project, it.toPath(), jarFileSystem)
         }
     }
 
@@ -66,11 +68,12 @@ internal class KtLibraryModuleByCompilerConfiguration(
     compilerConfig: CompilerConfiguration,
     project: Project,
     private val jar: Path,
+    jarFileSystem: CoreJarFileSystem,
 ) : BaseKtModuleByCompilerConfiguration(compilerConfig, project), KtLibraryModule {
     override val directRegularDependencies: List<KtModule> get() = emptyList()
 
     internal val virtualFiles: Collection<VirtualFile> by lazy {
-        LibraryUtils.getAllVirtualFilesFromJar(jar)
+        LibraryUtils.getAllVirtualFilesFromJar(jar, jarFileSystem)
     }
 
     override val libraryName: String
