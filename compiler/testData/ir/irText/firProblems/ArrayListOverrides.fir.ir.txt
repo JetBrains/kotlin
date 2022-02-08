@@ -203,8 +203,6 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
     FUN name:remove visibility:public modality:FINAL <> ($this:<root>.A2, x:kotlin.String) returnType:kotlin.Boolean
       overridden:
         public open fun remove (p0: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Boolean declared in java.util.ArrayList
-        public open fun remove (p0: @[FlexibleNullability] E of java.util.ArrayList?): kotlin.Boolean [fake_override] declared in java.util.ArrayList
-        public abstract fun remove (element: E of java.util.ArrayList): kotlin.Boolean [fake_override] declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:<root>.A2
       VALUE_PARAMETER name:x index:0 type:kotlin.String
       BLOCK_BODY
