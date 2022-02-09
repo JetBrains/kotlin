@@ -74,7 +74,7 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
             applySources()
         }
 
-        val loggedCompilerParameters = LoggedData.CompilerParameters(compilerArgs, sourceModules)
+        val loggedCompilerParameters = LoggedData.CompilerParameters(home, compilerArgs, sourceModules)
 
         val (loggedCompilerCall: LoggedData, result: TestCompilationResult.ImmediateResult<out A>) = try {
             val (exitCode, compilerOutput, compilerOutputHasErrors, duration) = callCompiler(

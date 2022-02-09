@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.RunResult
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunParameter
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.get
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeHome
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.SafeEnvVars
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.SafeProperties
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -50,6 +51,7 @@ internal abstract class LoggedData {
     }
 
     class CompilerParameters(
+        private val home: KotlinNativeHome,
         private val compilerArgs: Array<String>,
         private val sourceModules: Collection<TestModule>,
         private val environment: JVMEnvironment = JVMEnvironment() // Capture environment.
@@ -64,7 +66,7 @@ internal abstract class LoggedData {
             }
 
         override fun computeText() = buildString {
-            appendArguments("COMPILER ARGUMENTS:", listOf("\$\$kotlinc-native\$\$") + compilerArgs)
+            appendArguments("COMPILER ARGUMENTS:", listOf(home.dir.resolve("bin/kotlinc-native").path) + compilerArgs)
             appendLine()
             appendLine(environment)
 
