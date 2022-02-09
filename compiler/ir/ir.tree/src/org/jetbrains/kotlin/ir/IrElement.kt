@@ -15,8 +15,7 @@ interface IrElement {
 
     fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R
 
-    fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement =
-        accept(transformer, data)
+    fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement
 
     fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D)
 

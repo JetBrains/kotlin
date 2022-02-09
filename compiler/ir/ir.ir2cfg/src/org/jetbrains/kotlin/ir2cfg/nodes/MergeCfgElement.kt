@@ -27,6 +27,8 @@ class MergeCfgElement(val from: IrElement, val name: String) : CfgIrElement {
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D) = visitor.visitElement(this, data)
 
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement = accept(transformer, data)
+
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) = Unit
 
     override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) = Unit
