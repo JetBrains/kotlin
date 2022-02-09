@@ -1654,7 +1654,8 @@ object ArrayOps : TemplateGroupBase() {
                 on(Backend.Wasm) {
                     body {
                         """
-                        for (index in fromIndex..toIndex) {
+                        AbstractList.checkRangeIndexes(fromIndex, toIndex, size)
+                        for (index in fromIndex until toIndex) {
                             this[index] = element    
                         }
                         """
