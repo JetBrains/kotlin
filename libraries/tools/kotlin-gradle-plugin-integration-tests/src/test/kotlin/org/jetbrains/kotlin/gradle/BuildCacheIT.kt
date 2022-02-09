@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.readText
-import kotlin.io.path.relativeTo
 import kotlin.io.path.writeText
 
 @ExperimentalPathApi
@@ -119,30 +118,6 @@ class BuildCacheIT : KGPBaseTest() {
             build("clean", ":assemble") {
                 assertTasksFromCache(":compileKotlin")
             }
-        }
-    }
-
-    //doesn't work for build history files approach
-    @DisplayName("Restore from build cache should not break incremental compilation")
-    @GradleTest
-    fun testIncrementalCompilationAfterCacheHit(gradleVersion: GradleVersion) {
-        val withSnapshotProperty = "-Dkotlin.incremental.classpath.snapshot.enabled=true"
-        project("incrementalMultiproject", gradleVersion) {
-            enableLocalBuildCache(localBuildCacheDir)
-            build("assemble", withSnapshotProperty)
-            build("clean", "assemble", withSnapshotProperty) {
-                assertTasksFromCache(":lib:compileKotlin")
-                assertTasksFromCache(":app:compileKotlin")
-            }
-            val bKtSourceFile = projectPath.resolve("lib/src/main/kotlin/bar/B.kt")
-
-            bKtSourceFile.modify { it.replace("fun b() {}", "fun b() {}\nfun b2() {}") }
-
-            build("assemble", withSnapshotProperty, buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
-                assertOutputDoesNotContain("[KOTLIN] [IC] Non-incremental compilation will be performed")
-                assertCompiledKotlinSources(setOf(bKtSourceFile).map { it.relativeTo(projectPath)}, output)
-            }
-
         }
     }
 
