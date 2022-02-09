@@ -131,7 +131,6 @@ projectTest(
 ) {
     systemProperty("kotlin.gradle.kpm.enableModelMapping", "true")
     includeMppAndAndroid(true)
-    includeNative(false)
     if (isTeamcityBuild) finalizedBy(cleanTestKitCacheTask)
 }
 
