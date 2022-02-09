@@ -464,20 +464,23 @@ open class IrFileSerializer(
     )
 
     private val IrType.toIrTypeKey: IrTypeKey
-        get() = IrTypeKey(
-            kind = when (this) {
-                is IrDefinitelyNotNullType -> IrTypeKind.DEFINITELY_NOT_NULL
-                is IrSimpleType -> IrTypeKind.SIMPLE
-                is IrDynamicType -> IrTypeKind.DYNAMIC
-                is IrErrorType -> IrTypeKind.ERROR
-                else -> error("Unexpected IrType kind: $this")
-            },
-            classifier = this.classifierOrNull,
-            hasQuestionMark = (this as? IrSimpleType)?.hasQuestionMark,
-            arguments = (this as? IrSimpleType)?.arguments?.map { it.toIrTypeArgumentKey },
-            annotations = this.annotations,
-            abbreviation = (this as? IrSimpleType)?.abbreviation
-        )
+        get() {
+            var type = this
+            return IrTypeKey(
+                kind = when (this) {
+                    is IrDefinitelyNotNullType -> IrTypeKind.DEFINITELY_NOT_NULL.also { type = original }
+                    is IrSimpleType -> IrTypeKind.SIMPLE
+                    is IrDynamicType -> IrTypeKind.DYNAMIC
+                    is IrErrorType -> IrTypeKind.ERROR
+                    else -> error("Unexpected IrType kind: $this")
+                },
+                classifier = type.classifierOrNull,
+                hasQuestionMark = (type as? IrSimpleType)?.hasQuestionMark,
+                arguments = (type as? IrSimpleType)?.arguments?.map { it.toIrTypeArgumentKey },
+                annotations = type.annotations,
+                abbreviation = (type as? IrSimpleType)?.abbreviation
+            )
+        }
 
     private val IrTypeArgument.toIrTypeArgumentKey: IrTypeArgumentKey
         get() = IrTypeArgumentKey(
