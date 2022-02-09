@@ -1,4 +1,4 @@
 plugins {
-    id("gradle-plugin-common-configuration")
+    id("gradle-plugin-dependency-configuration")
     id("jps-compatible")
 }
