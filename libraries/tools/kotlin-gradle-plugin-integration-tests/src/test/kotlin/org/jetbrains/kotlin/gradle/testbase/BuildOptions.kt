@@ -9,6 +9,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.report.BuildReportType
@@ -22,7 +23,8 @@ data class BuildOptions(
     val configurationCacheProblems: BaseGradleIT.ConfigurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
     val parallel: Boolean = true,
     val incremental: Boolean? = null,
-    val useClasspathSnapshot: Boolean? = null,
+    val useGradleClasspathSnapshot: Boolean? = null,
+    val useICClasspathSnapshot: Boolean? = null,
     val maxWorkers: Int = (Runtime.getRuntime().availableProcessors() / 4 - 1).coerceAtLeast(2),
     val fileSystemWatchEnabled: Boolean = false,
     val buildCacheEnabled: Boolean = false,
@@ -83,7 +85,8 @@ data class BuildOptions(
             arguments.add("-Pkotlin.incremental=$incremental")
         }
 
-        useClasspathSnapshot?.let { arguments.add("-P${COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.property}=$it") }
+        useGradleClasspathSnapshot?.let { arguments.add("-P${COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.property}=$it") }
+        useICClasspathSnapshot?.let { arguments.add("-D${COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS.property}=$it") }
 
         if (gradleVersion >= GradleVersion.version("6.5")) {
             if (fileSystemWatchEnabled) {

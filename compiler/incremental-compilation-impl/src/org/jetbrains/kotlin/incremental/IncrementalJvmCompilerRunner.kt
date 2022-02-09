@@ -256,7 +256,14 @@ class IncrementalJvmCompilerRunner(
             is NotAvailableDueToMissingClasspathSnapshot -> ChangesEither.Unknown(BuildAttribute.CLASSPATH_SNAPSHOT_NOT_FOUND)
             is NotAvailableForNonIncrementalRun -> ChangesEither.Unknown(BuildAttribute.UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
             is ClasspathSnapshotDisabled -> reporter.measure(BuildTime.IC_ANALYZE_CHANGES_IN_DEPENDENCIES) {
-                val lastBuildInfo = BuildInfo.read(lastBuildInfoFile) ?: return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
+                if (!withSnapshot && !buildHistoryFile.isFile) {
+                    // If the previous build was a Gradle cache hit, the build history file must have been deleted as it is marked as
+                    // @LocalState in the Gradle task. Therefore, this compilation will need to run non-incrementally.
+                    // (Note that buildHistoryFile is outside workingDir. We don't need to perform the same check for files inside
+                    // workingDir as workingDir is an @OutputDirectory, so the files must be present in an incremental build.)
+                    return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
+                }
+                val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
                 reporter.reportVerbose { "Last Kotlin Build info -- $lastBuildInfo" }
                 val scopes = caches.lookupCache.lookupSymbols.map { it.scope.ifBlank { it.name } }.distinct()
 
