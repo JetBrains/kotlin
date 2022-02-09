@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental.classpathDiff
 
 import com.google.gson.GsonBuilder
+import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.asFile
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.ClassFileUtil.snapshot
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathSnapshotTestCommon.CompileUtil.compile
@@ -131,10 +132,11 @@ abstract class ClasspathSnapshotTestCommon {
             // Note: Calling the following is simpler:
             //     org.jetbrains.kotlin.test.MockLibraryUtil.compileKotlin(
             //         srcDir.path, classesDir, extraClasspath = classpath.map { it.path }.toTypedArray())
-            // However, it currently fails with UnsupportedClassVersionError, so we have to launch a new kotlinc process instead
-            // (Linux only).
+            // However, it currently fails with UnsupportedClassVersionError, so we have to launch a new kotlinc process instead.
+            val kotlincBinary = if (isWindows) "dist/kotlinc/bin/kotlinc.bat" else "dist/kotlinc/bin/kotlinc"
+            check(File(kotlincBinary).exists()) { "'${File(kotlincBinary).absolutePath}' not found. Run ./gradlew dist first." }
             val commandAndArgs = listOf(
-                "dist/kotlinc/bin/kotlinc",
+                kotlincBinary,
                 srcDir.path,
                 "-d", classesDir.path,
                 "-classpath", (listOf(srcDir) + classpath).joinToString(File.pathSeparator) { it.path }
