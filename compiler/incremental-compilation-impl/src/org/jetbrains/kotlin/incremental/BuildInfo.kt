@@ -37,19 +37,15 @@ data class BuildInfo(val startTS: Long, val dependencyToAbiSnapshot: Map<String,
         private fun ObjectOutputStream.writeBuildInfo(buildInfo: BuildInfo) {
             writeLong(buildInfo.startTS)
             writeInt(buildInfo.dependencyToAbiSnapshot.size)
-            for((identifier, abiSnapshot) in buildInfo.dependencyToAbiSnapshot) {
+            for ((identifier, abiSnapshot) in buildInfo.dependencyToAbiSnapshot) {
                 writeUTF(identifier)
                 writeAbiSnapshot(abiSnapshot)
             }
         }
 
-        fun read(file: File): BuildInfo? =
-            try {
-                ObjectInputStream(FileInputStream(file)).use {
-                    it.readBuildInfo()
-                }
-            } catch (e: Exception) {
-                null
+        fun read(file: File): BuildInfo =
+            ObjectInputStream(FileInputStream(file)).use {
+                it.readBuildInfo()
             }
 
         fun write(buildInfo: BuildInfo, file: File) {

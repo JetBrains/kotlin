@@ -118,8 +118,10 @@ class IncrementalJsCompilerRunner(
         messageCollector: MessageCollector,
         classpathAbiSnapshots: Map<String, AbiSnapshot> //Ignore for now
     ): CompilationMode {
+        if (!withSnapshot && !buildHistoryFile.isFile) {
+            return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
+        }
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)
-            ?: return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
 
         val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
         initDirtyFiles(dirtyFiles, changedFiles)
