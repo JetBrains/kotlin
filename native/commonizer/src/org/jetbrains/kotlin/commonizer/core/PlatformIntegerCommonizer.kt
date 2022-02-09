@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.commonizer.core
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.commonizer.mergedtree.PlatformWidth
+import org.jetbrains.kotlin.commonizer.mergedtree.PlatformWidthIndex
 import org.jetbrains.kotlin.commonizer.mergedtree.PlatformWidthIndexImpl
 import org.jetbrains.kotlin.descriptors.konan.*
 import org.jetbrains.kotlin.name.ClassId
@@ -20,15 +21,20 @@ class PlatformIntegerCommonizer(
     constructor(typeCommonizer: TypeCommonizer, classifiers: CirKnownClassifiers)
             : this(TypeArgumentListCommonizer(typeCommonizer), classifiers)
 
+    private val platformWidthIndex: PlatformWidthIndex
+        get() = PlatformWidthIndexImpl
+
     override fun invoke(values: List<CirClassOrTypeAliasType>): CirClassOrTypeAliasType? {
         val typesToCommonizeWithTargets = values.zip(classifiers.classifierIndices.targets)
 
-        for ((platformTypeGroup, commonizer) in commonizersByGroups.entries) {
+        for ((platformTypeGroup, commonizer) in platformTypeGroupsToCommonizers) {
+            // all types should belong to the same category
             if (values.any { it.classifierId !in platformTypeGroup })
                 continue
 
+            // bit width of types should match their platform width
             if (typesToCommonizeWithTargets.any { (type, target) ->
-                    platformTypeGroup[type.classifierId] != PlatformWidthIndexImpl.platformWidthOf(target)
+                    platformTypeGroup[type.classifierId] != platformWidthIndex.platformWidthOf(target)
                 }) continue
 
             return commonizer(values)
@@ -37,7 +43,7 @@ class PlatformIntegerCommonizer(
         return null
     }
 
-    private val commonizersByGroups: Map<PlatformTypeGroup, PlatformTypeCommonizer> = mapOf(
+    private val platformTypeGroupsToCommonizers: List<Pair<PlatformTypeGroup, PlatformTypeCommonizer>> = listOf(
         commonizableSignedIntegerIds to { platformIntType },
         commonizableUnsignedIntegerIds to { platformUIntType },
         commonizableSignedArrayIds to { platformIntArrayType },

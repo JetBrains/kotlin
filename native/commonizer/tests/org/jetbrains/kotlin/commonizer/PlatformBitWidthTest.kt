@@ -94,4 +94,12 @@ class PlatformBitWidthTest {
             )
         )
     }
+
+    @Test
+    fun `test watchosArm64 is considered int`() {
+        assertEquals(
+            PlatformWidth.INT,
+            createPlatformBitWidthIndex().platformWidthOf(CommonizerTarget(KonanTarget.WATCHOS_ARM64))
+        )
+    }
 }

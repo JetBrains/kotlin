@@ -22,18 +22,14 @@ interface PlatformWidthIndex {
 
 object PlatformWidthIndexImpl : PlatformWidthIndex {
     private val widthByLeafTargets = mapOf(
-        /*LeafCommonizerTarget(KonanTarget.ANDROID_X64) to PlatformWidth.LONG,
-        LeafCommonizerTarget(KonanTarget.ANDROID_X86) to PlatformWidth.INT,
-        LeafCommonizerTarget(KonanTarget.ANDROID_ARM32) to PlatformWidth.INT,
-        LeafCommonizerTarget(KonanTarget.ANDROID_ARM64) to PlatformWidth.LONG,*/
         LeafCommonizerTarget(KonanTarget.IOS_ARM32) to PlatformWidth.INT,
         LeafCommonizerTarget(KonanTarget.IOS_ARM64) to PlatformWidth.LONG,
         LeafCommonizerTarget(KonanTarget.IOS_X64) to PlatformWidth.LONG,
         LeafCommonizerTarget(KonanTarget.IOS_SIMULATOR_ARM64) to PlatformWidth.LONG,
         LeafCommonizerTarget(KonanTarget.WATCHOS_ARM32) to PlatformWidth.INT,
-        LeafCommonizerTarget(KonanTarget.WATCHOS_ARM64) to PlatformWidth.LONG,
+        LeafCommonizerTarget(KonanTarget.WATCHOS_ARM64) to PlatformWidth.INT,
         LeafCommonizerTarget(KonanTarget.WATCHOS_X86) to PlatformWidth.INT,
-        LeafCommonizerTarget(KonanTarget.WATCHOS_X64) to PlatformWidth.INT, // yep
+        LeafCommonizerTarget(KonanTarget.WATCHOS_X64) to PlatformWidth.LONG,
         LeafCommonizerTarget(KonanTarget.WATCHOS_SIMULATOR_ARM64) to PlatformWidth.LONG,
         LeafCommonizerTarget(KonanTarget.TVOS_ARM64) to PlatformWidth.LONG,
         LeafCommonizerTarget(KonanTarget.TVOS_X64) to PlatformWidth.LONG,
