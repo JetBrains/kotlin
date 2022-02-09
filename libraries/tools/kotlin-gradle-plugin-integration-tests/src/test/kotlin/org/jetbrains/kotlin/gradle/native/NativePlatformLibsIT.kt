@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.embedProject
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.extractNativeCommandLineArguments
+import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.withNativeCommandLineArguments
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
@@ -180,12 +181,11 @@ class NativePlatformLibsIT : BaseGradleIT() {
                     ":compileKotlinLinuxX64",
                     ":linkDebugSharedLinuxX64"
                 )
-                assertContains("-Xfoo=bar")
-                assertContains("-Xbaz=qux")
-                assertContains("-Xmen=pool")
-                assertContains("w: Flag is not supported by this version of the compiler: -Xfoo=bar")
-                assertContains("w: Flag is not supported by this version of the compiler: -Xbaz=qux")
-                assertContains("w: Flag is not supported by this version of the compiler: -Xmen=pool")
+                withNativeCommandLineArguments(":linkDebugSharedLinuxX64") {
+                    assertTrue(it.contains("-Xfoo=bar"))
+                    assertTrue(it.contains("-Xbaz=qux"))
+                    assertTrue(it.contains("-Xmen=pool"))
+                }
                 assertFileExists("/build/bin/linuxX64/debugShared/libnative_platform_libraries.so")
                 assertFileExists("/build/bin/linuxX64/debugShared/libnative_platform_libraries_api.h")
             }
