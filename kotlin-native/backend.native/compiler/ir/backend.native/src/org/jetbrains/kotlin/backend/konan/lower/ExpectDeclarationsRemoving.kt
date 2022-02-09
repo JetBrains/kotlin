@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrExpressionBodyImpl
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
-import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
-import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -101,6 +98,9 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
     private fun IrClass.findActualForExpected(): IrClass =
             moduleIndex.classes[descriptor.findActualForExpect()]!!
 
+    private fun IrEnumEntry.findActualForExpected(): IrEnumEntry =
+            moduleIndex.enumEntries[descriptor.findActualForExpect()]!!
+
     private inline fun <reified T : MemberDescriptor> T.findActualForExpect(): T {
         if (!this.isExpect) error(this)
         return (findCompatibleActualsForExpected(module).singleOrNull() ?: error(this)) as T
@@ -155,6 +155,12 @@ internal class ExpectToActualDefaultValueCopier(private val irModule: IrModuleFr
                         symbol.owner.findActualForExpected().symbol
                     else
                         super.getReferencedProperty(symbol)
+
+            override fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol =
+                    if (symbol.descriptor.isExpect)
+                        symbol.owner.findActualForExpected().symbol
+                    else
+                        super.getReferencedEnumEntry(symbol)
 
             override fun getReferencedValue(symbol: IrValueSymbol) =
                     remapExpectValue(symbol)?.symbol ?: super.getReferencedValue(symbol)

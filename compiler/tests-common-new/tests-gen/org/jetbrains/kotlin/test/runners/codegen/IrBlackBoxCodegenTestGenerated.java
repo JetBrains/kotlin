@@ -28555,6 +28555,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("nestedEnumEntryValue.kt")
+            public void testNestedEnumEntryValue() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/nestedEnumEntryValue.kt");
+            }
+
+            @Test
             @TestMetadata("parametersInArgumentValues.kt")
             public void testParametersInArgumentValues() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/parametersInArgumentValues.kt");
