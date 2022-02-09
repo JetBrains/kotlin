@@ -152,7 +152,10 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         project.registerTask<DefaultTask>(compilation.compileAllTaskName) {
             it.group = LifecycleBasePlugin.BUILD_GROUP
             it.description = "Assembles outputs for compilation '${compilation.name}' of target '${compilation.target.name}'"
-            it.inputs.files(compilation.compileKotlinTaskProvider.map { it.outputs })
+            it.inputs.files(project.provider {
+                // the task may not be registered at this point, reference it lazily
+                compilation.compileKotlinTaskProvider.map { it.outputs.files }
+            })
             it.inputs.files(compilation.output.resourcesDirProvider)
         }
         compilation.output.classesDirs.from(project.files().builtBy(compilation.compileAllTaskName))
