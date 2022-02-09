@@ -39,7 +39,6 @@ apply plugin: 'kotlin'
 configurations {
     cli_bc
     update_tests
-    update_stdlib_tests
 
     nopPluginApi
     api.extendsFrom nopPluginApi
@@ -50,10 +49,6 @@ dependencies {
     cli_bc project(path: ':kotlin-native:backend.native', configuration: 'cli_bcApiElements')
 }
 ext.testOutputRoot = rootProject.file("test.output").absolutePath
-ext.externalTestsDir = project.file("build/external")
-ext.externalStdlibTestsDir = project.file("build/stdlib_external/stdlib")
-externalTestsDir.mkdirs()
-externalStdlibTestsDir.mkdirs()
 
 ext.platformManager = project.project(":kotlin-native").platformManager
 ext.target = platformManager.targetManager(project.testTarget).target
@@ -89,21 +84,12 @@ if (cacheTesting != null) {
         dependsOn cacheTesting.buildCacheTask
         extraOpts cacheTesting.compilerArgs
     }
-
-    tasks.withType(RunExternalTestGroup.class).configureEach {
-        dependsOn cacheTesting.buildCacheTask
-        flags = (flags ?: []) + cacheTesting.compilerArgs
-    }
 }
 
 // Enable two-stage test compilation if the test_two_stage property is set.
 ext.twoStageEnabled = project.hasProperty("test_two_stage")
 
 tasks.withType(KonanCompileNativeBinary.class).configureEach {
-    enableTwoStageCompilation = twoStageEnabled
-}
-
-tasks.withType(RunExternalTestGroup.class).configureEach {
     enableTwoStageCompilation = twoStageEnabled
 }
 
@@ -114,10 +100,6 @@ ext.isNoopGC = project.globalTestArgs.contains("-Xgc=noop")
 if (project.globalTestArgs.contains("-g")) {
     tasks.withType(KonanCompileNativeBinary.class).configureEach {
         extraOpts "-Xbinary=runtimeAssertionsMode=panic"
-    }
-
-    tasks.withType(RunExternalTestGroup.class).configureEach {
-        flags = (flags ?: []) + "-Xbinary=runtimeAssertionsMode=panic"
     }
 }
 
@@ -221,18 +203,13 @@ task sanity {
 // Collect reports in one json.
 task resultsTask() {
     doLast {
-        List<KonanTestGroupReport> reports = []
         def statistics = new Statistics()
-        tasks.withType(RunExternalTestGroup).matching { it.state.executed }.each {
-            reports += new KonanTestGroupReport(it.name, it.testGroupReporter.suiteReports)
-            statistics.add(it.testGroupReporter.statistics)
-        }
 
         tasks.withType(KonanGTest).matching { it.state.executed }.each {
             statistics.add(it.statistics)
         }
 
-        ExternalReportUtilsKt.saveReport("$testOutputExternal/reports.json", statistics, reports)
+        ExternalReportUtilsKt.saveReport("$testOutputExternal/reports.json", statistics)
         use(KonanTestSuiteReportKt) {
             project.logger.quiet("DONE.\n\n" +
                     "TOTAL: $statistics.total\n" +
@@ -343,38 +320,6 @@ Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
         }
     }
 }
-
-Map<String, List<String>> ignoredTests = [:]
-
-task run_external () {
-    outputs.upToDateWhen{ false }
-
-    rootProject.files(
-            'compiler/testData/codegen/box',
-            'compiler/testData/codegen/boxInline'
-    ).asFileTree.visit { file ->
-        if (!file.isDirectory() || !file.file.list().any{ it.endsWith(".kt")})
-            return
-        def taskPath = rootProject.relativePath(file.file)
-        def fileSeparator = System.properties["file.separator"]
-        def taskName = taskPath.split("\\$fileSeparator").join('_')
-        project.tasks.register(taskName, RunExternalTestGroup) {
-            it.groupDirectory = taskPath
-            it.finalizedBy resultsTask
-            it.ignoredTests = ignoredTests[taskName]
-        }
-    }
-
-    // Set up dependencies.
-    dependsOn(tasksOf(RunExternalTestGroup))
-    dependsOn("stdlibTest")
-    dependsOn("stdlibTestInWorker")
-}
-
-task daily() {
-    dependsOn(run_external)
-}
-
 
 task slackReport(type:Reporter) {
     reportHome = rootProject.file("test.output").absoluteFile
@@ -5850,51 +5795,6 @@ tasks.register("llvm_variant_dev", KonanDriverTest) {
     outputChecker = { out -> !out.contains(message) }
 }
 
-createStdlibTest('stdlibTest', /* inWorker = */ false)
-createStdlibTest('stdlibTestInWorker', /*inWorker = */ true)
-
-/**
- * Creates tasks to build and execute stdlib tests.
- */
-private void createStdlibTest(String name, boolean inWorker) {
-    KotlinNativeTestKt.createTest(project, name, KonanGTest) { task ->
-        configureStdlibTest(task, inWorker)
-    }
-}
-
-/**
- * Configures tasks to build and execute stdlib tests.
- */
-private void configureStdlibTest(KonanGTest task, boolean inWorker) {
-    def sources = UtilsKt.getFilesToCompile(project,
-            [ '../../../libraries/stdlib/common/test',
-              '../../../libraries/stdlib/test',
-              '../../../libraries/kotlin.test/common/src/test/kotlin',
-              'stdlib_external/utils.kt',
-              'stdlib_external/jsCollectionFactoriesActuals.kt',
-              'stdlib_external/text'],
-            [ /*'build/stdlib_external/stdlib/test/internalAnnotations.kt'*/ ])
-
-    konanArtifacts {
-        program(task.name, targets: [target.name]) {
-            srcFiles sources
-            baseDir "$testOutputStdlib/$task.name"
-            enableMultiplatform true
-            extraOpts inWorker ? '-trw' : '-tr',
-                    '-Xverify-ir',
-                    '-opt-in=kotlin.RequiresOptIn,kotlin.ExperimentalStdlibApi',
-                    "-friend-modules", project.rootProject.file("${UtilsKt.getKotlinNativeDist(project)}/klib/common/stdlib").absolutePath
-            extraOpts project.globalTestArgs
-        }
-    }
-    // Exclude test providing args to the test executable
-    task.arguments = [ "--ktest_negative_regex_filter=test.collections.CollectionTest.abstractCollectionToArray" ]
-    task.useFilter = false
-    task.testLogger = KonanTest.Logger.GTEST
-    task.finalizedBy("resultsTask")
-    task.enabled = (project.testTarget != 'wasm32') // Uses exceptions
-}
-
 /**
  * Builds tests into a single binary with TestRunner
  */
@@ -5949,13 +5849,6 @@ sourceSets {
     test {
         kotlin {
             srcDir 'debugger/src/test/kotlin'
-        }
-    }
-    update_stdlib_tests{
-        kotlin {
-            srcDir '../../../libraries/stdlib/common/test'
-            srcDir '../../../libraries/stdlib/test'
-            srcDir '../../../libraries/kotlin.test/common/src/test/kotlin'
         }
     }
 }
