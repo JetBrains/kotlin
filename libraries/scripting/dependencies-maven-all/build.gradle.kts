@@ -52,7 +52,7 @@ val relocatedJar by task<ShadowJar> {
     configurations = listOf(embedded)
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     destinationDirectory.set(File(buildDir, "libs"))
-    archiveClassifier.set("before-proguard")
+    archiveClassifier.set("relocated")
 
     transform(ComponentsXmlResourceTransformer())
 
@@ -63,11 +63,46 @@ val relocatedJar by task<ShadowJar> {
     }
 }
 
-val proguard by task<CacheableProguardTask> {
+val normalizeComponentsXmlEndings by tasks.registering {
     dependsOn(relocatedJar)
+    val outputDirectory = buildDir.resolve(name)
+    val outputFile = outputDirectory.resolve(ComponentsXmlResourceTransformer.COMPONENTS_XML_PATH)
+    outputs.file(outputFile)
+
+    doFirst {
+        val componentsXml = zipTree(relocatedJar.get().singleOutputFile()).matching {
+            include { it.path == ComponentsXmlResourceTransformer.COMPONENTS_XML_PATH }
+        }.single().readText()
+        val processedComponentsXml = componentsXml.replace("\r\n", "\n")
+        outputDirectory.mkdirs()
+        outputFile.writeText(processedComponentsXml)
+    }
+}
+
+val normalizedJar by task<Jar> {
+    dependsOn(relocatedJar)
+    dependsOn(normalizeComponentsXmlEndings)
+
+    archiveClassifier.set("normalized")
+
+    from {
+        zipTree(relocatedJar.get().singleOutputFile()).matching {
+            exclude(ComponentsXmlResourceTransformer.COMPONENTS_XML_PATH)
+        }
+    }
+
+    into(ComponentsXmlResourceTransformer.COMPONENTS_XML_PATH.substringBeforeLast("/")) {
+        from {
+            normalizeComponentsXmlEndings.get().singleOutputFile()
+        }
+    }
+}
+
+val proguard by task<CacheableProguardTask> {
+    dependsOn(normalizedJar)
     configuration("dependencies-maven.pro")
 
-    injars(mapOf("filter" to "!META-INF/versions/**,!kotlinx/coroutines/debug/**"), relocatedJar.get().outputs.files)
+    injars(mapOf("filter" to "!META-INF/versions/**,!kotlinx/coroutines/debug/**"), normalizedJar.get().outputs.files)
 
     outjars(fileFrom(buildDir, "libs", "$jarBaseName-$version-after-proguard.jar"))
 
@@ -94,17 +129,17 @@ val proguard by task<CacheableProguardTask> {
             }
         )
     )
-
 }
 
 val resultJar by task<Jar> {
-    val pack = if (kotlinBuildProperties.proguard) proguard else relocatedJar
+    val pack = if (kotlinBuildProperties.proguard) proguard else normalizedJar
     dependsOn(pack)
     setupPublicJar(jarBaseName)
     from {
         zipTree(pack.get().singleOutputFile())
     }
 }
+
 
 addArtifact("runtime", resultJar)
 addArtifact("runtimeElements", resultJar)
