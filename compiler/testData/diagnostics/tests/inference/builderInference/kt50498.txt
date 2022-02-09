@@ -1,0 +1,4 @@
+package
+
+public fun </*0*/ T, /*1*/ R> baz(/*0*/ body: (kotlin.collections.List<R>) -> T): T
+public fun test3(): kotlin.Unit
