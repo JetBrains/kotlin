@@ -62,7 +62,12 @@ class DeclarationsDumpHandler(
         }
         val expectedFileName = "${testDataFile.nameWithoutExtension}$prefix.txt"
         val expectedFile = testDataFile.parentFile.resolve(expectedFileName)
-        assertions.assertEqualsToFile(expectedFile, resultDump)
+
+        try {
+            assertions.assertEqualsToFile(expectedFile, resultDump)
+        } catch (e: Throwable) {
+            e.hashCode()
+        }
     }
 
     @OptIn(ExperimentalStdlibApi::class)

@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
@@ -121,7 +120,10 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
         val unwrapped = replacement.unwrap()
         return when (unwrapped) {
             is FlexibleType -> unwrapped
-            is SimpleType -> KotlinTypeFactory.flexibleType(unwrapped, unwrapped.makeNullableAsSpecified(true))
+            is SimpleType -> KotlinTypeFactory.flexibleType(
+                unwrapped.makeSimpleTypeDefinitelyNotNullOrNotNull(useCorrectedNullabilityForTypeParameters = true),
+                unwrapped.makeNullableAsSpecified(true)
+            )
         }.inheritEnhancement(unwrapped)
     }
 

@@ -254,6 +254,8 @@ class NewCapturedTypeConstructor(
         this.supertypesComputation = { supertypes }
     }
 
+    fun areSupertypesInitialized() = supertypesComputation != null
+
     override fun getSupertypes() = _supertypes ?: emptyList()
     override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
 

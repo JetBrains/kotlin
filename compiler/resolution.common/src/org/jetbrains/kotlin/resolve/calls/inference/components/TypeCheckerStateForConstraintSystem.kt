@@ -282,11 +282,19 @@ abstract class TypeCheckerStateForConstraintSystem(
      */
     private fun simplifyUpperConstraint(typeVariable: KotlinTypeMarker, superType: KotlinTypeMarker): Boolean = with(extensionTypeContext) {
         val typeVariableLowerBound = typeVariable.lowerBoundIfFlexible()
-        val simplifiedSuperType = if (typeVariableLowerBound.isDefinitelyNotNullType()) {
-            superType.withNullability(true)
-        } else if (typeVariable.isFlexible() && superType is SimpleTypeMarker) {
-            createFlexibleType(superType.makeSimpleTypeDefinitelyNotNullOrNotNull(), superType.withNullability(true))
-        } else superType
+        val simplifiedSuperType = when {
+            typeVariable.isFlexible() -> {
+                createFlexibleType(
+                    superType.lowerBoundIfFlexible().makeSimpleTypeDefinitelyNotNullOrNotNull(),
+                    superType.upperBoundIfFlexible().withNullability(true)
+                )
+            }
+
+            typeVariableLowerBound.isDefinitelyNotNullType() -> {
+                superType.withNullability(true)
+            }
+            else -> superType
+        }
 
         addUpperConstraint(typeVariableLowerBound.typeConstructor(), simplifiedSuperType)
 

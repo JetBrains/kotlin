@@ -45,7 +45,7 @@ fun <T> case_3() {
     val y: T? = null
     val result = select(A(y), A(x), A(null as T))
 
-    <!DEBUG_INFO_EXPRESSION_TYPE("A<(T..T?)>")!>result<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("A<(T & Any..T?)>")!>result<!>
 }
 
 fun case_4() {
@@ -164,20 +164,20 @@ fun <T> case_11(y: T) {
         val result_17 = select(y as T, x3)
         val result_18 = select(x3, y as T)
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("(T..T?)")!>x1<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(T & Any..T?)")!>x1<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x2<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("(T..T?)")!>x3<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(T & Any..T?)")!>x3<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T")!>y<!>
 
         <!DEBUG_INFO_EXPRESSION_TYPE("A<T>")!>result_1<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T..T?)>")!>result_2<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T..T?)>")!>result_3<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T & Any..T?)>")!>result_2<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T & Any..T?)>")!>result_3<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("A<T>")!>result_4<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T..T?)>")!>result_5<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T..T?)>")!>result_6<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T & Any..T?)>")!>result_5<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T & Any..T?)>")!>result_6<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("A<T>")!>result_7<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("A<T>")!>result_8<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T..T?)>")!>result_9<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("A<(T & Any..T?)>")!>result_9<!>
 
         <!DEBUG_INFO_EXPRESSION_TYPE("(T..T?)")!>result_10<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>result_11<!>
