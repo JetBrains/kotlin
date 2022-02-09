@@ -46,7 +46,7 @@ abstract class IncrementalCompilerRunner<
     private val workingDir: File,
     cacheDirName: String,
     protected val reporter: BuildReporter,
-    private val buildHistoryFile: File,
+    protected val buildHistoryFile: File,
     // there might be some additional output directories (e.g. for generated java in kapt)
     // to remove them correctly on rebuild, we pass them as additional argument
     private val additionalOutputFiles: Collection<File> = emptyList()
@@ -129,15 +129,8 @@ abstract class IncrementalCompilerRunner<
                 else -> providedChangedFiles
             }
 
-            // Check whether the cache directory is populated (note that it may be deleted upon a Gradle build cache hit if the directory is
-            // marked as @LocalState in the Gradle task).
-            val cacheDirectoryNotPopulated = cacheDirectory.walk().none { it.isFile }
-
-            val compilationMode = if (cacheDirectoryNotPopulated) {
-                CompilationMode.Rebuild(BuildAttribute.CACHE_DIRECTORY_NOT_POPULATED)
-            } else {
-                sourcesToCompile(caches, changedFiles, args, messageCollector, classpathAbiSnapshot)
-            }
+            @Suppress("MoveVariableDeclarationIntoWhen")
+            val compilationMode = sourcesToCompile(caches, changedFiles, args, messageCollector, classpathAbiSnapshot)
 
             val exitCode = when (compilationMode) {
                 is CompilationMode.Incremental -> {
