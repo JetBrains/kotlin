@@ -73,15 +73,14 @@ interface KotlinVariantCompilationDataInternal<T : KotlinCommonOptions> : Kotlin
                 .filterIsInstance<KotlinGradleModule>()
                 .filter { dependencyModule ->
                     // the module comes from the same Gradle project // todo: extend to other friends once supported
-                    dependencyModule.project == owner.containingModule.project &&
-                            // also, important to check that the owner variant really requests this module:
-                            variantResolver.getChosenVariant(owner, dependencyModule) is VariantResolution.VariantMatch
+                    dependencyModule.project == owner.containingModule.project
                 }
 
-        val friendVariants = friendModules.map {
-            (variantResolver.getChosenVariant(owner, it) as VariantResolution.VariantMatch).chosenVariant
-        }
-        return friendVariants.filterIsInstance<KotlinGradleVariant>()
+        return friendModules
+            .map { friendModule -> variantResolver.getChosenVariant(owner, friendModule) }
+            // also, important to check that the owner variant really requests this module:
+            .filterIsInstance<VariantResolution.VariantMatch>()
+            .mapNotNull { variantMatch -> variantMatch.chosenVariant as? KotlinGradleVariant }
     }
 }
 
