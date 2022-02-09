@@ -150,7 +150,7 @@ fun nativeTest(taskName: String, vararg tags: String) = projectTest(taskName, jU
 
 // Tasks that run different sorts of tests. Most frequent use case: running specific tests at TeamCity.
 val infrastructureTest = nativeTest("infrastructureTest", "infrastructure")
-val externalTest = nativeTest("externalTest", "external")
+val codegenBoxTest = nativeTest("codegenBoxTest", "codegen")
 val klibAbiTest = nativeTest("klibAbiTest", "klib")
 
 // "test" task is created by convention. We can't just remove it. Let's enable it in developer's environment, so it can be used

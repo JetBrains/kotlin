@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
 import java.io.File
 
-abstract class AbstractExternalNativeBlackBoxTest : ExternalSourceTransformersProvider, AbstractNativeBlackBoxTest() {
+abstract class AbstractNativeCodegenBoxTest : ExternalSourceTransformersProvider, AbstractNativeBlackBoxTest() {
     private val registeredSourceTransformers: ThreadSafeCache<File, MutableList<ExternalSourceTransformer>> = ThreadSafeCache()
 
     override fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers? = registeredSourceTransformers[testDataFile]

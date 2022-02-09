@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.group.PredefinedTestCases
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestFactory
 
-@Tag("external")
+@Tag("codegen")
 @PredefinedTestCases(
     TC(
         name = "nativeStdlib",
