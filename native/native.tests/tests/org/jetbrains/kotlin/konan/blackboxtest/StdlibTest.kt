@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.group.PredefinedTestCases
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestFactory
 
-@Tag("codegen")
+@Tag("stdlib")
 @PredefinedTestCases(
     TC(
-        name = "nativeStdlib",
+        name = "default",
         runnerType = TestRunnerType.DEFAULT,
         freeCompilerArgs = [ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API],
         sourceLocations = [
@@ -31,7 +31,7 @@ import org.junit.jupiter.api.TestFactory
         ignoredTests = [DISABLED_STDLIB_TEST]
     ),
     TC(
-        name = "nativeStdlibInWorker",
+        name = "worker",
         runnerType = TestRunnerType.WORKER,
         freeCompilerArgs = [ENABLE_MPP, STDLIB_IS_A_FRIEND, ENABLE_X_STDLIB_API],
         sourceLocations = [
@@ -42,35 +42,17 @@ import org.junit.jupiter.api.TestFactory
             "kotlin-native/backend.native/tests/stdlib_external/jsCollectionFactoriesActuals.kt"
         ],
         ignoredTests = [DISABLED_STDLIB_TEST]
-    ),
-    TC(
-        name = "kotlinTest",
-        runnerType = TestRunnerType.DEFAULT,
-        freeCompilerArgs = [STDLIB_IS_A_FRIEND],
-        sourceLocations = ["libraries/kotlin.test/common/src/test/kotlin/**.kt"]
-    ),
-    TC(
-        name = "kotlinTestInWorker",
-        runnerType = TestRunnerType.WORKER,
-        freeCompilerArgs = [STDLIB_IS_A_FRIEND],
-        sourceLocations = ["libraries/kotlin.test/common/src/test/kotlin/**.kt"]
     )
 )
 class StdlibTest : AbstractNativeBlackBoxTest() {
     @TestFactory
-    fun kotlinTest() = dynamicTestCase(TestCaseId.Named("kotlinTest"))
+    fun default() = dynamicTestCase(TestCaseId.Named("default"))
 
     @TestFactory
-    fun kotlinTestInWorker() = dynamicTestCase(TestCaseId.Named("kotlinTestInWorker"))
-
-    @TestFactory
-    fun nativeStdlib() = dynamicTestCase(TestCaseId.Named("nativeStdlib"))
-
-    @TestFactory
-    fun nativeStdlibInWorker() = dynamicTestCase(TestCaseId.Named("nativeStdlibInWorker"))
+    fun worker() = dynamicTestCase(TestCaseId.Named("worker"))
 }
 
 private const val ENABLE_MPP = "-Xmulti-platform"
-private const val STDLIB_IS_A_FRIEND = "-friend-modules=$KOTLIN_NATIVE_DISTRIBUTION/klib/common/stdlib"
+internal const val STDLIB_IS_A_FRIEND = "-friend-modules=$KOTLIN_NATIVE_DISTRIBUTION/klib/common/stdlib"
 private const val ENABLE_X_STDLIB_API = "-opt-in=kotlin.RequiresOptIn,kotlin.ExperimentalStdlibApi"
 private const val DISABLED_STDLIB_TEST = "test.collections.CollectionTest.abstractCollectionToArray"
