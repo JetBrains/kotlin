@@ -86,3 +86,5 @@ fun DeclarationDescriptor.containingPackage(): FqName? {
     require(container is PackageFragmentDescriptor?)
     return container?.fqName
 }
+
+object DeserializedDeclarationsFromSupertypeConflictDataKey : CallableDescriptor.UserDataKey<CallableMemberDescriptor>

@@ -12741,6 +12741,18 @@ public class ExternalTestGenerated extends AbstractExternalNativeBlackBoxTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/differentDependencyVersion")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("external")
+        @UseExtTestCaseGroupProvider()
+        public class DifferentDependencyVersion {
+            @Test
+            public void testAllFilesPresentInDifferentDependencyVersion() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/differentDependencyVersion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/directInvokeOptimization")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("external")

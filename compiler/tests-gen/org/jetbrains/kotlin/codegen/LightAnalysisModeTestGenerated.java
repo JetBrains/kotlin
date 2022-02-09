@@ -12495,6 +12495,34 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/differentDependencyVersion")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DifferentDependencyVersion extends AbstractLightAnalysisModeTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDifferentDependencyVersion() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/differentDependencyVersion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("kt51194_java.kt")
+        public void testKt51194_java() throws Exception {
+            runTest("compiler/testData/codegen/box/differentDependencyVersion/kt51194_java.kt");
+        }
+
+        @TestMetadata("kt51194_javaAndKotlin.kt")
+        public void testKt51194_javaAndKotlin() throws Exception {
+            runTest("compiler/testData/codegen/box/differentDependencyVersion/kt51194_javaAndKotlin.kt");
+        }
+
+        @TestMetadata("kt51194_kotlin.kt")
+        public void testKt51194_kotlin() throws Exception {
+            runTest("compiler/testData/codegen/box/differentDependencyVersion/kt51194_kotlin.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/directInvokeOptimization")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

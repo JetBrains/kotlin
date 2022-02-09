@@ -11767,6 +11767,16 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/differentDependencyVersion")
+    @TestDataPath("$PROJECT_ROOT")
+    public class DifferentDependencyVersion {
+        @Test
+        public void testAllFilesPresentInDifferentDependencyVersion() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/differentDependencyVersion"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/directInvokeOptimization")
     @TestDataPath("$PROJECT_ROOT")
     public class DirectInvokeOptimization {

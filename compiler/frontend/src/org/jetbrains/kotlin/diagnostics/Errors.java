@@ -597,6 +597,8 @@ public interface Errors {
 
     DiagnosticFactory2<KtClassOrObject, ClassDescriptor, Collection<CallableMemberDescriptor>> CONFLICTING_INHERITED_MEMBERS =
             DiagnosticFactory2.create(ERROR, DECLARATION_NAME);
+    DiagnosticFactory2<KtClassOrObject, ClassDescriptor, Collection<CallableMemberDescriptor>> CONFLICTING_INHERITED_MEMBERS_WARNING =
+            DiagnosticFactory2.create(WARNING, DECLARATION_NAME);
     DiagnosticFactory2<KtClassOrObject, KtClassOrObject, CallableMemberDescriptor> ABSTRACT_MEMBER_NOT_IMPLEMENTED =
             DiagnosticFactory2.create(ERROR, DECLARATION_NAME);
     DiagnosticFactory2<KtClassOrObject, KtClassOrObject, CallableMemberDescriptor> ABSTRACT_CLASS_MEMBER_NOT_IMPLEMENTED =
