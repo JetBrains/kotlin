@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.klib
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import junit.framework.TestCase
+import org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationRemover
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
@@ -286,7 +287,9 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
         val irLinker = JsIrLinker(moduleDescriptor, IrMessageLogger.None, irBuiltIns, symbolTable, null)
         irLinker.deserializeIrModuleHeader(stdlibDescriptor, stdlib)
 
-        return psi2Ir.generateModuleFragment(context, ktFiles, listOf(irLinker), emptyList(), expectActualSymbols) to bindingContext
+        val r = psi2Ir.generateModuleFragment(context, ktFiles, listOf(irLinker), emptyList(), expectActualSymbols) to bindingContext
+        r.first.transform(ExpectDeclarationRemover(symbolTable, true), null)
+        return r
     }
 }
 

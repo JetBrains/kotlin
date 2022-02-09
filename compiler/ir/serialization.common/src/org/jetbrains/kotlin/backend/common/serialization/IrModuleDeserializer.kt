@@ -132,11 +132,11 @@ class IrModuleDeserializerWithBuiltIns(
                 functionPattern.matcher(signature.declarationFqName.split('.').first()).find()
     }
 
-    override operator fun contains(idSig: StringSignature): Boolean {
-        val topLevel = idSig.topLevelSignature()
+    override operator fun contains(signature: StringSignature): Boolean {
+        val topLevel = signature.topLevelSignature()
         if (topLevel in irBuiltInsMap) return true
 
-        return checkIsFunctionInterface(topLevel) || idSig in delegate
+        return checkIsFunctionInterface(topLevel) || signature in delegate
     }
 
     override fun referenceSimpleFunctionByLocalSignature(file: IrFile, signature: StringSignature): IrSimpleFunctionSymbol =
@@ -205,14 +205,14 @@ class IrModuleDeserializerWithBuiltIns(
         }
     }
 
-    override fun deserializeIrSymbol(idSig: StringSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        irBuiltInsMap[idSig]?.let { return it }
+    override fun deserializeIrSymbol(signature: StringSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
+        irBuiltInsMap[signature]?.let { return it }
 
-        val topLevel = idSig.topLevelSignature()
+        val topLevel = signature.topLevelSignature()
 
-        if (checkIsFunctionInterface(topLevel)) return resolveFunctionalInterface(idSig, symbolKind)
+        if (checkIsFunctionInterface(topLevel)) return resolveFunctionalInterface(signature, symbolKind)
 
-        return delegate.deserializeIrSymbol(idSig, symbolKind)
+        return delegate.deserializeIrSymbol(signature, symbolKind)
     }
 
     override fun declareIrSymbol(symbol: IrSymbol) {
@@ -232,8 +232,8 @@ class IrModuleDeserializerWithBuiltIns(
     override val strategyResolver: (String) -> DeserializationStrategy
         get() = delegate.strategyResolver
 
-    override fun addModuleReachableTopLevel(idSig: StringSignature) {
-        delegate.addModuleReachableTopLevel(idSig)
+    override fun addModuleReachableTopLevel(signature: StringSignature) {
+        delegate.addModuleReachableTopLevel(signature)
     }
 
     override val moduleFragment: IrModuleFragment get() = delegate.moduleFragment
@@ -257,10 +257,10 @@ open class CurrentModuleDeserializer(
     override val moduleFragment: IrModuleFragment,
     override val moduleDependencies: Collection<IrModuleDeserializer>
 ) : IrModuleDeserializer(moduleFragment.descriptor, KotlinAbiVersion.CURRENT) {
-    override fun contains(idSig: StringSignature): Boolean = false // TODO:
+    override fun contains(signature: StringSignature): Boolean = false // TODO:
 
-    override fun deserializeIrSymbol(idSig: StringSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        error("Unreachable execution: there could not be back-links (sig: $idSig)")
+    override fun deserializeIrSymbol(signature: StringSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
+        error("Unreachable execution: there could not be back-links (sig: $signature)")
     }
 
     override fun declareIrSymbol(symbol: IrSymbol) {}

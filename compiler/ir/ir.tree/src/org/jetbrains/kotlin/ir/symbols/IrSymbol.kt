@@ -40,7 +40,7 @@ interface IrSymbol {
 
     // TODO: remove once JS IR IC migrates to a different stable tag generation scheme
     // Used to store signatures in private symbols for JS IC
-    var privateSignature: IdSignature?
+    var privateSignature: StringSignature?
 }
 
 val IrSymbol.isPublicApi: Boolean

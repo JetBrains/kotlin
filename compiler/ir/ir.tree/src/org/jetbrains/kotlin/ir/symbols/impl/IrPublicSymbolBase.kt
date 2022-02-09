@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.ir.util.render
 
@@ -64,7 +63,7 @@ abstract class IrBindablePublicSymbolBase<out D : DeclarationDescriptor, B : IrS
     override val isBound: Boolean
         get() = _owner != null
 
-    override var privateSignature: IdSignature? = null
+    override var privateSignature: StringSignature? = null
 }
 
 class IrClassPublicSymbolImpl(sig: StringSignature, descriptor: ClassDescriptor? = null) :

@@ -73,11 +73,11 @@ class StringSignature private constructor(val value: String, b: StringSignature.
         private var idx = 0
 
         private fun Char.isValidId(): Boolean {
-            return this == '_' || this.isLetterOrDigit()
+            return this == '_' || this == '$' || this.isLetterOrDigit()
         }
 
         private fun Char.isValidIdStart(): Boolean {
-            return this == '_' || this.isLetter()
+            return this == '_' || this == '$' || this.isLetter()
         }
 
         private fun parseIdentificator(): String {
@@ -227,7 +227,8 @@ class StringSignature private constructor(val value: String, b: StringSignature.
 
         private fun consume(c: Char) {
             assert(idx < value.length) { value }
-            if (value[idx++] != c) error("Expecting '$c' at position #$idx in \"$value\"")
+            if (value[idx++] != c)
+                error("Expecting '$c' at position #$idx in \"$value\"")
         }
 
         private fun consumeIf(c: Char): Boolean {

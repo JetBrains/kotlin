@@ -74,7 +74,7 @@ abstract class IrBindableSymbolBase<out D : DeclarationDescriptor, B : IrSymbolO
     override val isBound: Boolean
         get() = _owner != null
 
-    override var privateSignature: IdSignature? = null
+    override var privateSignature: StringSignature? = null
 }
 
 class IrFileSymbolImpl(descriptor: PackageFragmentDescriptor? = null) :

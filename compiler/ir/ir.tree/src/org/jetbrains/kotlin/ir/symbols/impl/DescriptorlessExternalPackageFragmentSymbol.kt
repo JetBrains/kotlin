@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.symbols.IrExternalPackageFragmentSymbol
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.StringSignature
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -32,5 +31,5 @@ class DescriptorlessExternalPackageFragmentSymbol : IrExternalPackageFragmentSym
         _owner = owner
     }
 
-    override var privateSignature: IdSignature? = null
+    override var privateSignature: StringSignature? = null
 }

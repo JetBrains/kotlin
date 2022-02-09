@@ -91,9 +91,6 @@ abstract class BasicIrModuleDeserializer(
     override fun contains(signature: StringSignature): Boolean = signature in moduleReversedFileIndex
 
     override fun deserializeIrSymbol(signature: StringSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
-        if (signature.value == "kotlin.js/undefined.^g()=kotlin/Nothing?") {
-            println(">..")
-        }
         val topLevelSignature = signature.topLevelSignature()
         val fileLocalDeserializationState = moduleReversedFileIndex[topLevelSignature]
             ?: error("No file for $topLevelSignature (@ $signature) in module $moduleDescriptor")

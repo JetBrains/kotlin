@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
-import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -35,9 +32,9 @@ class JsIrLinker(
     symbolTable = symbolTable,
     exportedDependencies = emptyList(),
     symbolProcessor = { symbol, idSig ->
-//        if (idSig.isLocal) {
-//            symbol.privateSignature = IdSignature.CompositeSignature(IdSignature.FileSignature(fileSymbol), idSig)
-//        }
+        if (idSig.isLocal) {
+            symbol.privateSignature = StringSignature("${fileSymbol.owner.fileEntry.name}/${idSig.value}")
+        }
         symbol
     }) {
 

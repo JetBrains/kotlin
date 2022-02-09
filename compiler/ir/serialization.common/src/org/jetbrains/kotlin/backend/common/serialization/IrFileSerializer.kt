@@ -1450,7 +1450,7 @@ open class IrFileSerializer(
             }
 
         fillPlatformExplicitlyExported(file, proto)
-        serializeExpectActualSubstitutionTable(proto)
+//        serializeExpectActualSubstitutionTable(proto)
 
         return SerializedIrFile(
             proto.build().toByteArray(),

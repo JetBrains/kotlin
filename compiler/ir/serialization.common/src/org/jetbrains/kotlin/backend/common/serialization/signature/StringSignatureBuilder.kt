@@ -76,7 +76,7 @@ class StringSignatureBuilderOverIr(
     private fun StringBuilder.addParentName(parent: IrDeclarationParent, visibility: DescriptorVisibility, needFile: Boolean) {
         when (parent) {
             is IrFile -> {
-                if (!visibility.isPublicAPI && needFile) {
+                if (visibility == DescriptorVisibilities.PRIVATE && needFile) {
                     append(File(parent.fileEntry.name).nameWithoutExtension)
                     append('/')
                 }
@@ -151,6 +151,10 @@ class StringSignatureBuilderOverIr(
             append('.')
         }
         append(klass.name.asString())
+        if (klass.kind == ClassKind.ENUM_ENTRY) {
+            append('.')
+            append("EEC")
+        }
     }
 
     /**
@@ -422,6 +426,39 @@ class StringSignatureBuilderOverIr(
         error("No type parameter parent found for ${render()} in hierarchy of ${declaration.render()}")
     }
 
+    private fun extractTypeParameters(parent: IrDeclarationParent): List<IrTypeParameter> {
+        val result = mutableListOf<IrTypeParameter>()
+        var current: IrDeclarationParent? = parent
+        while (current != null) {
+            if (current is IrField) {
+                current.correspondingPropertySymbol?.let { propS ->
+                    val prop = propS.owner
+                    result += (prop.getter ?: prop.setter ?: error("No accessor in property ${prop.render()}")).typeParameters
+                }
+            } else {
+                (current as? IrTypeParametersContainer)?.let { result += it.typeParameters }
+            }
+            current =
+                when (current) {
+                    is IrField -> current.parent
+                    is IrClass -> when {
+                        current.isInner -> current.parent as IrClass
+                        current.visibility == DescriptorVisibilities.LOCAL -> current.parent
+                        else -> null
+                    }
+                    is IrConstructor -> current.parent as IrClass
+                    is IrFunction ->
+                        if (current.visibility == DescriptorVisibilities.LOCAL || current.dispatchReceiverParameter != null)
+                            current.parent
+                        else
+                            null
+                    else -> null
+                }
+        }
+        return result
+    }
+
+
     /**
      * TypeArguments:
      *   ‘<’ TypeArgument ( ‘,’ TypeArgument )* ‘>’
@@ -446,6 +483,9 @@ class StringSignatureBuilderOverIr(
 
         arguments.collectForMangler(this, MangleConstant.TYPE_ARGUMENTS) { argument ->
             if (argument is IrTypeProjection) {
+                if (index >= typeParameters.size) {
+                    println(":;;")
+                }
                 val typeParameter = typeParameters[index]
                 val effectiveVariance = effectiveVariance(typeParameter.variance, argument.variance)
                 buildVariance(effectiveVariance)

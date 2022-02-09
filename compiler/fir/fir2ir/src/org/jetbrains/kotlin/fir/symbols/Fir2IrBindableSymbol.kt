@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -44,7 +43,7 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrDeclara
     override val hasDescriptor: Boolean
         get() = false
 
-    override var privateSignature: IdSignature? = null
+    override var privateSignature: StringSignature? = null
 
     override fun toString(): String {
         if (isBound) return owner.render()

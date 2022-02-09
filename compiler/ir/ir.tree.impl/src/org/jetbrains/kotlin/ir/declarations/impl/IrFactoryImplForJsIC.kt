@@ -9,24 +9,24 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.types.Variance
 
 class IrFactoryImplForJsIC(override val stageController: StageController) : AbstractIrFactoryImpl(), IdSignatureRetriever {
-    private val declarationToSignature = mutableMapOf<IrDeclaration, IdSignature>()
+    private val declarationToSignature = mutableMapOf<IrDeclaration, StringSignature>()
 
     private fun <T : IrDeclaration> T.register(): T {
         val parentSig = stageController.currentDeclaration?.let { declarationSignature(it) } ?: return this
 
-        stageController.createSignature(parentSig)?.let { declarationToSignature[this] = it}
+        stageController.createSignature(parentSig)?.let { declarationToSignature[this] = it }
 
         return this
     }
 
-    override fun declarationSignature(declaration: IrDeclaration): IdSignature? {
-        return null // declarationToSignature[declaration] ?: declaration.symbol.signature ?: declaration.symbol.privateSignature
+    override fun declarationSignature(declaration: IrDeclaration): StringSignature? {
+        return declarationToSignature[declaration] ?: declaration.symbol.signature ?: declaration.symbol.privateSignature
     }
 
     override fun createAnonymousInitializer(

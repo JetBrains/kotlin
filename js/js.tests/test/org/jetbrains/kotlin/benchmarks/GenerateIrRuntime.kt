@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
+import org.jetbrains.kotlin.backend.common.serialization.signature.StringSignatureBuilderOverDescriptors
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -465,7 +466,8 @@ class GenerateIrRuntime {
 
     private fun doPsi2Ir(files: List<KtFile>, analysisResult: AnalysisResult): IrModuleFragment {
         val psi2Ir = Psi2IrTranslator(languageVersionSettings, Psi2IrConfiguration())
-        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl)
+        val com = StringSignatureBuilderOverDescriptors()
+        val symbolTable = SymbolTable(com, IrFactoryImpl)
         val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
 
         val irLinker = JsIrLinker(
@@ -544,7 +546,8 @@ class GenerateIrRuntime {
     private fun doDeserializeIrModule(moduleDescriptor: ModuleDescriptorImpl): DeserializedModuleInfo {
         val mangler = JsManglerDesc
         val signaturer = IdSignatureDescriptor(mangler)
-        val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
+        val com = StringSignatureBuilderOverDescriptors()
+        val symbolTable = SymbolTable(com, IrFactoryImpl)
         val typeTranslator = TypeTranslatorImpl(symbolTable, languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
@@ -569,7 +572,8 @@ class GenerateIrRuntime {
         val moduleDescriptor = doDeserializeModuleMetadata(moduleRef)
         val mangler = JsManglerDesc
         val signaturer = IdSignatureDescriptor(mangler)
-        val symbolTable = SymbolTable(signaturer, IrFactoryImpl)
+        val com = StringSignatureBuilderOverDescriptors()
+        val symbolTable = SymbolTable(com, IrFactoryImpl)
         val typeTranslator = TypeTranslatorImpl(symbolTable, languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 

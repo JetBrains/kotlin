@@ -66,7 +66,7 @@ dependencies {
     testApi(projectTests(":plugins:lombok:lombok-compiler-plugin"))
     testApi(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
     testApi(projectTests(":kotlinx-serialization-compiler-plugin"))
-    testApi(projectTests(":kotlinx-atomicfu-compiler-plugin"))
+//    testApi(projectTests(":kotlinx-atomicfu-compiler-plugin"))
     testApi(projectTests(":plugins:fir-plugin-prototype"))
     testApi(projectTests(":plugins:fir-plugin-prototype:fir-plugin-ic-test"))
     testApi(projectTests(":generators:test-generator"))
