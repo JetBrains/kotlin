@@ -16,4 +16,9 @@
 
 package org.jetbrains.kotlin.ir
 
-abstract class IrElementBase : IrElement
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+
+abstract class IrElementBase : IrElement {
+    override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement =
+        accept(transformer, data)
+}
