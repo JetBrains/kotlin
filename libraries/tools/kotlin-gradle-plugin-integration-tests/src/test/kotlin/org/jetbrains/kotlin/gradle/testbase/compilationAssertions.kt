@@ -58,6 +58,16 @@ fun GradleProject.assertCompiledKotlinSources(expectedSources: Iterable<Path>, o
 }
 
 /**
+ * Asserts that compilation was non-incremental.
+ *
+ * Note: Log level of output must be set to [LogLevel.DEBUG].
+ */
+@Suppress("unused")
+fun BuildResult.assertNonIncrementalCompilation() {
+    assertOutputContains("Non-incremental compilation will be performed")
+}
+
+/**
  * Asserts that compilation was incremental and the set of compiled .kt files exactly match [expectedCompiledKotlinFiles].
  *
  * [expectedCompiledKotlinFiles] are relative to the project directory.

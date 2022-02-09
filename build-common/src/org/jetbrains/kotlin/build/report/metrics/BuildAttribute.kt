@@ -16,7 +16,6 @@ enum class BuildAttributeKind : Serializable {
 }
 
 enum class BuildAttribute(val kind: BuildAttributeKind, val readableString: String) : Serializable {
-    CACHE_DIRECTORY_NOT_POPULATED(BuildAttributeKind.REBUILD_REASON, "Cache directory not populated"),
     NO_BUILD_HISTORY(BuildAttributeKind.REBUILD_REASON, "Build history file not found"),
     NO_ABI_SNAPSHOT(BuildAttributeKind.REBUILD_REASON, "ABI snapshot not found"),
     CLASSPATH_SNAPSHOT_NOT_FOUND(BuildAttributeKind.REBUILD_REASON, "Classpath snapshot not found"),

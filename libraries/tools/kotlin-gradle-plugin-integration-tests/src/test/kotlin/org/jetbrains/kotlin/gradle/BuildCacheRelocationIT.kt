@@ -331,12 +331,25 @@ class BuildCacheRelocationIT : KGPBaseTest() {
 
     @DisplayName("Kotlin incremental compilation with `kotlin.incremental.useClasspathSnapshot` feature should work correctly")
     @GradleTest
-    fun testKotlinIncrementalCompilation_withClasspathSnapshot(gradleVersion: GradleVersion) {
-        checkKotlinIncrementalCompilation(gradleVersion, useClasspathSnapshot = true)
+    fun testKotlinIncrementalCompilation_withGradleClasspathSnapshot(gradleVersion: GradleVersion) {
+        checkKotlinIncrementalCompilation(gradleVersion, useGradleClasspathSnapshot = true)
     }
 
-    private fun checkKotlinIncrementalCompilation(gradleVersion: GradleVersion, useClasspathSnapshot: Boolean? = null) {
-        val buildOptions = defaultBuildOptions.copy(useClasspathSnapshot = useClasspathSnapshot)
+    @DisplayName("Kotlin incremental compilation with `kotlin.incremental.classpath.snapshot.enabled` feature should work correctly")
+    @GradleTest
+    fun testKotlinIncrementalCompilation_withICClasspathSnapshot(gradleVersion: GradleVersion) {
+        checkKotlinIncrementalCompilation(gradleVersion, useICClasspathSnapshot = true)
+    }
+
+    private fun checkKotlinIncrementalCompilation(
+        gradleVersion: GradleVersion,
+        useGradleClasspathSnapshot: Boolean? = null,
+        useICClasspathSnapshot: Boolean? = null
+    ) {
+        val buildOptions = defaultBuildOptions.copy(
+            useGradleClasspathSnapshot = useGradleClasspathSnapshot,
+            useICClasspathSnapshot = useICClasspathSnapshot
+        )
         val (firstProject, secondProject) = prepareTestProjects("buildCacheSimple", gradleVersion, buildOptions)
 
         // First build, should be stored into the build cache:
@@ -349,15 +362,19 @@ class BuildCacheRelocationIT : KGPBaseTest() {
             assertTasksFromCache(":compileKotlin")
         }
 
-        // Change the return type of foo() from Int to String in foo.kt, and check that fooUsage.kt is recompiled as well:
+        // Check whether compilation after a cache hit is incremental (KT-34862)
         val fooKtSourceFile = secondProject.kotlinSourcesDir().resolve("foo.kt")
         val fooUsageKtSourceFile = secondProject.kotlinSourcesDir().resolve("fooUsage.kt")
         fooKtSourceFile.modify { it.replace("Int = 1", "String = \"abc\"") }
         secondProject.build("assemble", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
-            secondProject.assertIncrementalCompilation(
-                this,
-                listOf(fooKtSourceFile, fooUsageKtSourceFile).relativizeTo(secondProject.projectPath).map { it.pathString }
-            )
+            if (useGradleClasspathSnapshot == true || useICClasspathSnapshot == true) {
+                secondProject.assertIncrementalCompilation(
+                    this,
+                    listOf(fooKtSourceFile, fooUsageKtSourceFile).relativizeTo(secondProject.projectPath).map { it.pathString }
+                )
+            } else {
+                assertNonIncrementalCompilation()
+            }
         }
 
         // Revert the change to the return type of foo(), and check if we get a cache hit
