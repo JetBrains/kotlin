@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
@@ -87,20 +88,18 @@ private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
 internal val Project.isNativeDependencyPropagationEnabled: Boolean
     get() = PropertiesProvider(this).nativeDependencyPropagation ?: true
 
-//for reflection call from KotlinCommonizerModelBuilder
-// DO NOT REFACTOR THIS FUNCTION!
-//  TODO SELLMAIR: Resolve fragile reflection call from IDE plugin
-@JvmOverloads
+/**
+ * Function signature needs to be kept stable since this is used during import
+ * in IDEs (KotlinCommonizerModelBuilder) < 222
+ *
+ * IDEs >= will use the [ideaImportDependsOn] infrastructure
+ */
 @JvmName("isAllowCommonizer")
-internal fun Project.isAllowCommonizer(
-    kotlinVersion: String = getKotlinPluginVersion()
-): Boolean {
+internal fun Project.isAllowCommonizer(): Boolean {
     assert(state.executed) { "'isAllowCommonizer' can only be called after project evaluation" }
     multiplatformExtensionOrNull ?: return false
 
-    //register commonizer only for 1.4+, only for HMPP projects
-    return compareVersionNumbers(kotlinVersion, "1.4") >= 0
-            && multiplatformExtension.targets.any { it.platformType == KotlinPlatformType.native }
+    return multiplatformExtension.targets.any { it.platformType == KotlinPlatformType.native }
             && isKotlinGranularMetadataEnabled
             && !isNativeDependencyPropagationEnabled // temporary fix: turn on commonizer only when native deps propagation is disabled
 }

@@ -11,6 +11,8 @@ import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
+import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -26,7 +28,14 @@ internal val Project.isOptimisticNumberCommonizationEnabled: Boolean
 internal val Project.commonizeTask: TaskProvider<Task>
     get() = locateOrRegisterTask(
         "commonize",
-        invokeWhenRegistered = { @Suppress("deprecation") runCommonizerTask.dependsOn(this) },
+        invokeWhenRegistered = {
+            @OptIn(Idea222Api::class)
+            ideaImportDependsOn(this)
+
+            /* 'runCommonizer' is called by older IDEs during import */
+            @Suppress("deprecation")
+            runCommonizerTask.dependsOn(this)
+        },
         configureTask = {
             group = "interop"
             description = "Aggregator task for all c-interop & Native distribution commonizer tasks"
@@ -40,7 +49,6 @@ internal val Project.commonizeTask: TaskProvider<Task>
 internal val Project.runCommonizerTask: TaskProvider<Task>
     get() = locateOrRegisterTask(
         "runCommonizer",
-        invokeWhenRegistered = { dependsOn(commonizeTask) },
         configureTask = {
             group = "interop"
             description = "[Deprecated: Use 'commonize' instead]"
@@ -74,7 +82,15 @@ internal val Project.copyCommonizeCInteropForIdeTask: TaskProvider<CopyCommonize
         if (commonizeCInteropTask != null) {
             return locateOrRegisterTask(
                 "copyCommonizeCInteropForIde",
-                invokeWhenRegistered = { if (isInIdeaSync) commonizeTask.dependsOn(this) },
+                invokeWhenRegistered = {
+                    @OptIn(Idea222Api::class)
+                    ideaImportDependsOn(this)
+
+                    /* Older IDEs will still call 'runCommonizer' -> 'commonize'  tasks */
+                    if (isInIdeaSync) {
+                        commonizeTask.dependsOn(this)
+                    }
+                },
                 configureTask = {
                     group = "interop"
                     description = "Copies the output of ${commonizeCInteropTask.get().name} into " +
@@ -90,7 +106,11 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
         if (!isAllowCommonizer()) return null
         return rootProject.locateOrRegisterTask(
             "commonizeNativeDistribution",
-            invokeWhenRegistered = { rootProject.commonizeTask.dependsOn(this); cleanNativeDistributionCommonizerTask },
+            invokeWhenRegistered = {
+                commonizeTask.dependsOn(this)
+                rootProject.commonizeTask.dependsOn(this)
+                cleanNativeDistributionCommonizerTask
+            },
             configureTask = {
                 group = "interop"
                 description = "Invokes the commonizer on platform libraries provided by the Kotlin/Native distribution"

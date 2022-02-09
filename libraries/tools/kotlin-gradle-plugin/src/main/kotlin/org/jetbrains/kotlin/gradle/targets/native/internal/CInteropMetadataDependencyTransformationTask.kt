@@ -13,6 +13,8 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
+import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets
@@ -57,7 +59,14 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
 
     return locateOrRegisterTask(
         lowerCamelCaseName("transform", sourceSet.name, "CInteropDependenciesMetadataForIde"),
-        invokeWhenRegistered = { commonizeTask.dependsOn(this) },
+        invokeWhenRegistered = {
+            @OptIn(Idea222Api::class)
+            ideaImportDependsOn(this)
+
+            /* Older IDEs will still enqueue 'runCommonizer' task before import */
+            @Suppress("deprecation")
+            runCommonizerTask.dependsOn(this)
+        },
         args = listOf(
             sourceSet,
             /* outputDirectory = */

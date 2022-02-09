@@ -84,7 +84,7 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
         createTargetConfigurator().configureTarget(result)
 
         SingleActionPerProject.run(project, "setUpKotlinNativePlatformDependencies") {
-            project.gradle.projectsEvaluated {
+            project.whenEvaluated {
                 project.setupKotlinNativePlatformDependencies()
             }
         }
