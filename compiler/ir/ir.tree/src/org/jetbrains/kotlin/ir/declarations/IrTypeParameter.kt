@@ -28,12 +28,4 @@ abstract class IrTypeParameter : IrDeclarationBase(), IrDeclarationWithName {
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrTypeParameter =
         transformer.visitTypeParameter(this, data) as IrTypeParameter
-
-    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
-        // no children
-    }
-
-    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
-        // no children
-    }
 }
