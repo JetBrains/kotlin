@@ -385,16 +385,18 @@ fun getIrModuleInfoForKlib(
     messageLogger: IrMessageLogger,
     loadFunctionInterfacesIntoStdlib: Boolean,
     mapping: (KotlinLibrary) -> ModuleDescriptor,
-) = getIrModuleInfoForKlib2(
-    moduleDescriptor,
-    friendModules,
-    configuration,
-    symbolTable,
-    messageLogger,
-    loadFunctionInterfacesIntoStdlib,
-) {
-    val mainModuleLib = sortedDependencies.last()
-    deserializeDependencies(sortedDependencies, it, mainModuleLib, filesToLoad, mapping)
+): IrModuleInfo {
+    return getIrModuleInfoForKlib2(
+        moduleDescriptor,
+        friendModules,
+        configuration,
+        symbolTable,
+        messageLogger,
+        loadFunctionInterfacesIntoStdlib,
+    ) {
+        val mainModuleLib = sortedDependencies.last()
+        deserializeDependencies(sortedDependencies, it, mainModuleLib, filesToLoad, mapping)
+    }
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
