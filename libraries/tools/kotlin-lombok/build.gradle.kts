@@ -3,25 +3,17 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 description = "Kotlin lombok compiler plugin"
 
 plugins {
-    kotlin("jvm")
+    id("gradle-plugin-common-configuration")
     id("jps-compatible")
 }
 
 dependencies {
     embedded(project(":plugins:lombok:lombok-compiler-plugin")) { isTransitive = false }
 
-    compileOnly(gradleApi())
-    api(project(":kotlin-gradle-plugin-api"))
     api(project(":kotlin-gradle-plugin-model"))
 }
 
 projectTest(parallel = true)
-
-publishGradlePlugin()
-
-sourcesJar()
-javadocJar()
-runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
 
 tasks {
     withType<KotlinCompile> {
@@ -32,26 +24,15 @@ tasks {
             "-Xskip-prerelease-check", "-Xsuppress-version-warnings"
         )
     }
-
-    named<Jar>("jar") {
-        callGroovy("manifestAttributes", manifest, project)
-    }
 }
 
-pluginBundle {
-    fun create(name: String, id: String, display: String) {
-        (plugins).create(name) {
-            this.id = id
-            this.displayName = display
-            this.description = display
+gradlePlugin {
+    plugins {
+        create("kotlinLombokPlugin") {
+            id = "org.jetbrains.kotlin.plugin.lombok"
+            displayName = "Kotlin Lombok plugin"
+            description = displayName
+            implementationClass = "org.jetbrains.kotlin.lombok.gradle.LombokSubplugin"
         }
     }
-
-    create(
-        name = "kotlinLombokPlugin",
-        id = "org.jetbrains.kotlin.plugin.lombok",
-        display = "Kotlin Lombok plugin"
-    )
 }
-
-publishPluginMarkers()
