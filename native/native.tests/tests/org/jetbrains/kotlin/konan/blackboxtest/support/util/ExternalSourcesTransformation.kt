@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.util
 
-import org.jetbrains.kotlin.konan.blackboxtest.AbstractExternalNativeBlackBoxTest
+import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeCodegenBoxTest
 
 /**
- * This relates only to external codegen tests (see [AbstractExternalNativeBlackBoxTest]) that may have their own source transformers.
+ * This relates only to external codegen tests (see [AbstractNativeCodegenBoxTest]) that may have their own source transformers.
  */
 
 internal typealias ExternalSourceTransformer = (/* file contents */ String) -> /* patched file contents */ String
