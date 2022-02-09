@@ -17006,6 +17006,12 @@ public class ExternalTestGenerated extends AbstractExternalNativeBlackBoxTest {
             }
 
             @Test
+            @TestMetadata("kt51157.kt")
+            public void testKt51157() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/kt51157.kt");
+            }
+
+            @Test
             @TestMetadata("mangledDefaultParameterFunction.kt")
             public void testMangledDefaultParameterFunction() throws Exception {
                 // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
