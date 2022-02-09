@@ -17,8 +17,17 @@
 package org.jetbrains.kotlin.ir
 
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 abstract class IrElementBase : IrElement {
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrElement =
         accept(transformer, data)
+
+    override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
+        // No children by default
+    }
+
+    override fun <D> transformChildren(transformer: IrElementTransformer<D>, data: D) {
+        // No children by default
+    }
 }
