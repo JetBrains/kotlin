@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // LANGUAGE: +ProhibitArrayLiteralsInCompanionOfAnnotation
 // ISSUE: KT-39041
 
