@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.psi.KtNamedFunction
 
 
 //todo introduce LibraryModificationTracker based cache?
-object FirIdeDeserializedDeclarationSourceProvider {
+internal object FirDeserializedDeclarationSourceProvider {
     fun findPsi(fir: FirElement, project: Project): PsiElement? {
         return when (fir) {
             is FirSimpleFunction -> provideSourceForFunction(fir, project)
@@ -156,7 +156,7 @@ private fun FirElement.getAllowedPsi() = when (val source = source) {
 }
 
 fun FirElement.findPsi(project: Project): PsiElement? =
-    getAllowedPsi() ?: FirIdeDeserializedDeclarationSourceProvider.findPsi(this, project)
+    getAllowedPsi() ?: FirDeserializedDeclarationSourceProvider.findPsi(this, project)
 
 
 fun FirBasedSymbol<*>.findPsi(): PsiElement? =
@@ -171,4 +171,4 @@ fun FirElement.findPsi(session: FirSession): PsiElement? =
  * Otherwise, behaves the same way as [findPsi] returns exact PSI declaration corresponding to passed [FirDeclaration]
  */
 fun FirDeclaration.findReferencePsi(): PsiElement? =
-    psi ?: FirIdeDeserializedDeclarationSourceProvider.findPsi(this, (moduleData.session as LLFirSession).project)
+    psi ?: FirDeserializedDeclarationSourceProvider.findPsi(this, (moduleData.session as LLFirSession).project)
