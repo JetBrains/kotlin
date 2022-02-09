@@ -105,7 +105,13 @@ targetList.forEach { targetName ->
 
         destinationDir = buildDir.resolve("$targetName${library.name}")
 
-        from(buildDir.resolve("${library.name}/${hostName}/${library.name}"))
+        val libFile = buildDir.resolve("${library.name}/${hostName}/${library.name}")
+        from(libFile) {
+            exclude("default/targets/$hostName")
+        }
+        from(libFile.resolve("default/targets/$hostName")) {
+            into("default/targets/$targetName")
+        }
 
         if (targetName != hostName) {
             doLast {
