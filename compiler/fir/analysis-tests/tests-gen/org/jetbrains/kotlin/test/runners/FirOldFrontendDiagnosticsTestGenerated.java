@@ -14005,6 +14005,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("kt50498.kt")
+                public void testKt50498() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt50498.kt");
+                }
+
+                @Test
                 @TestMetadata("kt50989.kt")
                 public void testKt50989() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/builderInference/kt50989.kt");
