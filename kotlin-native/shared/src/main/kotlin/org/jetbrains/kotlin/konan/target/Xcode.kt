@@ -92,9 +92,13 @@ private object CurrentXcode : Xcode {
     private fun xcrun(vararg args: String): String = try {
         Command("/usr/bin/xcrun", *args).getOutputLines().first()
     } catch (e: KonanExternalToolFailure) {
+        // TODO: we should make the message below even more clear and actionable.
+        //  Maybe add a link to the documentation.
+        //  See https://youtrack.jetbrains.com/issue/KT-50923.
         val message = """
                 An error occurred during an xcrun execution. Make sure that Xcode and its command line tools are properly installed.
                 Failed command: /usr/bin/xcrun ${args.joinToString(" ")}
+                Try running this command in Terminal and fix the errors by making Xcode (and its command line tools) configuration correct.
             """.trimIndent()
         throw MissingXcodeException(message, e)
     }
