@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
-import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
-import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -103,7 +101,11 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
     }
 
     private fun checkFunction(declaration: FirFunction, reporter: DiagnosticReporter, context: CheckerContext) {
-        val functionVisibility = (declaration as FirMemberDeclaration).effectiveVisibility
+        var functionVisibility = (declaration as FirMemberDeclaration).effectiveVisibility
+
+        if (declaration is FirConstructor && declaration.isFromSealedClass) {
+            functionVisibility = EffectiveVisibility.PrivateInClass
+        }
 
         if (functionVisibility == EffectiveVisibility.Local) return
         if (declaration !is FirConstructor && declaration !is FirPropertyAccessor) {
