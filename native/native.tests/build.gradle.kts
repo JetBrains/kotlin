@@ -148,43 +148,16 @@ fun nativeTest(taskName: String, vararg tags: String) = projectTest(taskName, jU
         }
 }
 
-@Suppress("PropertyName")
-val TEST_GROUPING_TASK_MARKER = "groupingTaskMarker"
-
-fun Test.isGroupingTest() = TEST_GROUPING_TASK_MARKER in inputs.properties
-
-// N.B. Have to register grouping tasks as Test, otherwise IDEA will not show test results correctly in the Run tool window.
-fun groupingTest(taskName: String, vararg dependencyTasks: Any) = getOrCreateTask<Test>(taskName) {
-    group = "verification"
-    dependsOn(*dependencyTasks)
-
-    inputs.property(TEST_GROUPING_TASK_MARKER, 1) // Mark it as a test grouping task to distinguish from other test tasks.
-}
-
-// Tasks that run different sorts of tests. Most frequent use case: running specific tests from the IDE.
+// Tasks that run different sorts of tests. Most frequent use case: running specific tests at TeamCity.
 val infrastructureTest = nativeTest("infrastructureTest", "infrastructure")
 val externalTest = nativeTest("externalTest", "external")
 val klibAbiTest = nativeTest("klibAbiTest", "klib")
 
-// "test" task is created by convention. We can't just remove it. So, let it be just an alias for external test task.
-val test by groupingTest("test", externalTest)
-
-gradle.taskGraph.whenReady {
-    allTasks.forEach { task ->
-        if (task.project == project && task is Test && task.isGroupingTest()) {
-            val commandLineIncludePatterns = task.commandLineIncludePatterns
-            if (commandLineIncludePatterns.isNotEmpty()) {
-                val testTasks = tasks.withType<Test>().filterNot { it.isGroupingTest() }.map { it.path }.sorted()
-                throw GradleException(
-                    buildString {
-                        appendLine("Task ${task.path} is only used for grouping of tests. Running it with command-line filter won't have any effect.")
-                        appendLine("Make sure you apply the filter to one of the following Kotlin/Native test tasks:")
-                        testTasks.forEach { append("  ").appendLine(it) }
-                        appendLine("Your command-line filter is: $commandLineIncludePatterns(--tests filter)")
-                    }
-                )
-            }
-        }
+// "test" task is created by convention. We can't just remove it. Let's enable it in developer's environment, so it can be used
+// to run any test from IDE or from console, but disable it at TeamCity where it is not supposed to be ever used.
+val test by nativeTest("test" /* no tags */).apply {
+    if (kotlinBuildProperties.isTeamcityBuild) {
+        configure { doFirst { throw GradleException("Task $path is not supposed to be executed in TeamCity environment") } }
     }
 }
 
