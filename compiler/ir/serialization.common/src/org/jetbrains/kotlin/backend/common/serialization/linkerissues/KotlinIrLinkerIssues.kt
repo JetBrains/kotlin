@@ -23,7 +23,7 @@ abstract class KotlinIrLinkerIssue {
 
     fun raiseIssue(messageLogger: IrMessageLogger): KotlinIrLinkerInternalException {
         messageLogger.report(IrMessageLogger.Severity.ERROR, errorMessage, null)
-        throw KotlinIrLinkerInternalException()
+        throw KotlinIrLinkerInternalException("Linker error: $errorMessage")
     }
 }
 

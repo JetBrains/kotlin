@@ -47,7 +47,7 @@ class ExternalDependenciesGenerator(
                 // We wait for the unbound to stabilize on fake overrides.
             } while (unbound != prevUnbound)
         } catch (ex: KotlinIrLinkerInternalException) {
-            throw CompilationErrorException()
+            throw ex
         }
     }
 }
