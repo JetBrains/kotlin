@@ -509,7 +509,15 @@ val IrFunction.allTypeParameters: List<IrTypeParameter>
 
 fun IrMemberAccessExpression<*>.getTypeSubstitutionMap(irFunction: IrFunction): Map<IrTypeParameterSymbol, IrType> {
     val typeParameters = irFunction.allTypeParameters
-    val dispatchReceiverTypeArguments = (dispatchReceiver?.type as? IrSimpleType)?.arguments ?: emptyList()
+
+    val superQualifierSymbol = (this as? IrCallImpl)?.superQualifierSymbol
+
+    val receiverType =
+        if (superQualifierSymbol != null) superQualifierSymbol.defaultType as? IrSimpleType
+        else dispatchReceiver?.type as? IrSimpleType
+
+    val dispatchReceiverTypeArguments = receiverType?.arguments ?: emptyList()
+
     if (typeParameters.isEmpty() && dispatchReceiverTypeArguments.isEmpty()) {
         return emptyMap()
     }
@@ -526,7 +534,7 @@ fun IrMemberAccessExpression<*>.getTypeSubstitutionMap(irFunction: IrFunction): 
             } else {
                 extractTypeParameters(irFunction.parentClassOrNull!!)
             }
-        parentTypeParameters.withIndex().forEach { (index, typeParam) ->
+        for ((index, typeParam) in parentTypeParameters.withIndex()) {
             dispatchReceiverTypeArguments[index].typeOrNull?.let {
                 result[typeParam.symbol] = it
             }
