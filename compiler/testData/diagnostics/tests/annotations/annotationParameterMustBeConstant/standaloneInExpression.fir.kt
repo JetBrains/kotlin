@@ -13,6 +13,6 @@ class Test2
 @AnnE(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"1" + AnnE("23")<!>)
 class Test3
 
-@AnnE(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"1" + arrayOf("23", "34")<!>)
+@AnnE(<!ANNOTATION_ARGUMENT_MUST_BE_CONST!>"1" + <!UNSUPPORTED!>arrayOf("23", "34")<!><!>)
 class Test4
 

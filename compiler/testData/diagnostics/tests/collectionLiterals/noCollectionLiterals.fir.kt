@@ -1,15 +1,15 @@
 fun test(): Array<Int> {
-    [1, 2]
-    [1, 2][0]
-    [1, 2].get(0)
+    <!UNSUPPORTED!>[1, 2]<!>
+    <!UNSUPPORTED!>[1, 2]<!>[0]
+    <!UNSUPPORTED!>[1, 2]<!>.get(0)
 
-    foo([""])
+    foo(<!UNSUPPORTED!>[""]<!>)
 
-    val p = [1, 2] <!UNRESOLVED_REFERENCE!>+<!> [3, 4]
+    val p = <!UNSUPPORTED!>[1, 2]<!> <!UNRESOLVED_REFERENCE!>+<!> <!UNSUPPORTED!>[3, 4]<!>
 
-    return [1, 2]
+    return <!UNSUPPORTED!>[1, 2]<!>
 }
 
-fun foo(a: Array<String> = [""]) {}
+fun foo(a: Array<String> = <!UNSUPPORTED!>[""]<!>) {}
 
-class A(val a: Array<Int> = [])
+class A(val a: Array<Int> = <!UNSUPPORTED!>[]<!>)
