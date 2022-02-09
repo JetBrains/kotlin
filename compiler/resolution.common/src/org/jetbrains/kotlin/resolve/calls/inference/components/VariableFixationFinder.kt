@@ -67,7 +67,7 @@ class VariableFixationFinder(
     ): TypeVariableFixationReadiness = when {
         !notFixedTypeVariables.contains(variable) ||
                 dependencyProvider.isVariableRelatedToTopLevelType(variable) -> TypeVariableFixationReadiness.FORBIDDEN
-        isTypeInferenceForSelfTypesSupported && hasOnlyDeclaredUpperBoundSelfTypes(variable) ->
+        isTypeInferenceForSelfTypesSupported && areAllProperConstraintsSelfTypeBased(variable) ->
             TypeVariableFixationReadiness.READY_FOR_FIXATION_DECLARED_UPPER_BOUND_WITH_SELF_TYPES
         !variableHasProperArgumentConstraints(variable) -> TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT
         hasDependencyToOtherTypeVariables(variable) -> TypeVariableFixationReadiness.WITH_COMPLEX_DEPENDENCY
@@ -175,13 +175,29 @@ class VariableFixationFinder(
         }
     }
 
-    private fun Context.hasOnlyDeclaredUpperBoundSelfTypes(variable: TypeConstructorMarker): Boolean {
-        val constraints = notFixedTypeVariables[variable]?.constraints ?: return false
-        return constraints.isNotEmpty() && constraints.all {
-            val typeConstructor = it.type.typeConstructor()
-            it.position.from is DeclaredUpperBoundConstraintPosition<*>
-                    && (hasRecursiveTypeParametersWithGivenSelfType(typeConstructor) || isRecursiveTypeParameter(typeConstructor))
+    private fun Context.isSelfTypeConstraint(constraint: Constraint): Boolean {
+        val typeConstructor = constraint.type.typeConstructor()
+        return constraint.position.from is DeclaredUpperBoundConstraintPosition<*>
+                && (hasRecursiveTypeParametersWithGivenSelfType(typeConstructor) || isRecursiveTypeParameter(typeConstructor))
+    }
+
+    private fun Context.areAllProperConstraintsSelfTypeBased(variable: TypeConstructorMarker): Boolean {
+        val constraints = notFixedTypeVariables[variable]?.constraints?.takeIf { it.isNotEmpty() } ?: return false
+
+        var hasSelfTypeConstraint = false
+        var hasOtherProperConstraint = false
+
+        for (constraint in constraints) {
+            if (isSelfTypeConstraint(constraint)) {
+                hasSelfTypeConstraint = true
+            }
+            if (isProperArgumentConstraint(constraint)) {
+                hasOtherProperConstraint = true
+            }
+            if (hasSelfTypeConstraint && hasOtherProperConstraint) break
         }
+
+        return hasSelfTypeConstraint && !hasOtherProperConstraint
     }
 }
 
