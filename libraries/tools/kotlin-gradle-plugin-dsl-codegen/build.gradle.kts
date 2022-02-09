@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm")
+    id("gradle-plugin-dependency-configuration")
 }
 
 dependencies {
