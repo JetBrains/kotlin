@@ -1029,7 +1029,7 @@ private fun KlibMetadataIncrementalSerializer(configuration: CompilerConfigurati
         allowErrorTypes = allowErrors
     )
 
-private fun Map<IrModuleFragment, KotlinLibrary>.getUniqueNameForEachFragment(): Map<IrModuleFragment, String> {
+fun Map<IrModuleFragment, KotlinLibrary>.getUniqueNameForEachFragment(): Map<IrModuleFragment, String> {
     return this.entries.mapNotNull { (moduleFragment, klib) ->
         klib.manifestProperties.getProperty(KLIB_PROPERTY_JS_OUTPUT_NAME)?.let {
             moduleFragment to it

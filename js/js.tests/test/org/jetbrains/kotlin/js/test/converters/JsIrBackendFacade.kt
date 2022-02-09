@@ -7,23 +7,33 @@ package org.jetbrains.kotlin.js.test.converters
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
+import org.jetbrains.kotlin.backend.common.serialization.mangle.*
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponentsStorage
+import org.jetbrains.kotlin.fir.backend.IrBuiltInsOverFir
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
+import org.jetbrains.kotlin.fir.signaturer.FirMangler
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.CompilerOutputSink
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationOptions
 import org.jetbrains.kotlin.ir.backend.js.codegen.generateEsModules
 import org.jetbrains.kotlin.ir.backend.js.dce.eliminateDeadDeclarations
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsUnlinkedDeclarationsSupport
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformerTmp
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
+import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
@@ -43,7 +53,6 @@ import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
-import org.jetbrains.kotlin.test.frontend.fir.resolveJsLibraries
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
@@ -244,7 +253,8 @@ class JsIrBackendFacade(
         val filesToLoad = module.files.takeIf { !firstTimeCompilation }?.map { "/${it.relativePath}" }?.toSet()
 
         val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
-        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImplForJsIC(WholeWorldStageController()),)
+        val irFactory = IrFactoryImplForJsIC(WholeWorldStageController())
+        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory,)
 
         // this happens to be the stlib (for checking simple tests)
 //        val libraries = resolveJsLibraries(module, testServices, configuration).map { it.library }.take(1)
@@ -255,23 +265,72 @@ class JsIrBackendFacade(
 
         moduleDescriptor.name = Name.special("<main>")
 
-        return getIrModuleInfoForKlib2(
-            moduleDescriptor,
-            friendModules,
-            configuration,
-            symbolTable,
-            messageLogger,
-            loadFunctionInterfacesIntoStdlib = true,
-        ) {
-            // nb: there are no descriptors for correct mapping
-            deserializeDependencies(libraries + mainModuleLib, it, mainModuleLib, filesToLoad) {
+        val mangler = object : AbstractKotlinMangler<FirDeclaration>(), FirMangler {
+            override fun FirDeclaration.isExported(compatibleMode: Boolean): Boolean = true
+
+            override fun FirDeclaration.mangleString(compatibleMode: Boolean): String {
+                TODO("Not yet implemented")
+            }
+
+            override fun FirDeclaration.signatureString(compatibleMode: Boolean): String {
+                TODO("Not yet implemented")
+            }
+
+            override fun FirDeclaration.fqnString(compatibleMode: Boolean): String {
+                TODO("Not yet implemented")
+            }
+
+            override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<FirDeclaration> {
+                return object : KotlinExportChecker<FirDeclaration> {
+                    override fun check(declaration: FirDeclaration, type: SpecialDeclarationType): Boolean = true
+
+                    override fun FirDeclaration.isPlatformSpecificExported(): Boolean = true
+                }
+            }
+
+            override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<FirDeclaration> {
+                TODO("Not yet implemented")
+            }
+        }
+        val signatureComposer = FirBasedSignatureComposer(mangler)
+        val components = Fir2IrComponentsStorage(moduleDescriptor.session, ScopeSession(), symbolTable, irFactory, signatureComposer)
+
+        val irBuiltIns = IrBuiltInsOverFir(components, configuration.languageVersionSettings, moduleDescriptor)
+        val allowUnboundSymbols = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+        val unlinkedDeclarationsSupport = JsUnlinkedDeclarationsSupport(allowUnboundSymbols)
+        val irLinker = JsIrLinker(
+            currentModule = null,
+            messageLogger = messageLogger,
+            builtIns = irBuiltIns,
+            symbolTable = symbolTable,
+            translationPluginContext = null,
+            icData = null,
+            friendModules = friendModules,
+            unlinkedDeclarationsSupport = unlinkedDeclarationsSupport
+        )
+        val deserializedModuleFragmentsToLib = // nb: there are no descriptors for correct mapping
+        // nb: there are no descriptors for correct mapping
+// nb: there are no descriptors for correct mapping
+            deserializeDependencies(libraries + mainModuleLib, irLinker, mainModuleLib, filesToLoad) {
                 if (it == mainModuleLib) {
                     moduleDescriptor
                 } else {
                     moduleDescriptor.builtIns.builtInsModule
                 }
             }
-        }
+        val deserializedModuleFragments = deserializedModuleFragmentsToLib.keys.toList()
+        val moduleFragment = deserializedModuleFragments.last()
+        irLinker.init(null, emptyList())
+        ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
+        irLinker.postProcess()
+        return IrModuleInfo(
+            moduleFragment,
+            deserializedModuleFragments,
+            irBuiltIns,
+            symbolTable,
+            irLinker,
+            deserializedModuleFragmentsToLib.getUniqueNameForEachFragment()
+        )
 
         // so, it fails, because there's no builtins module
     }
