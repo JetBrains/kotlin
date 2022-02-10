@@ -9,33 +9,26 @@ import org.gradle.api.GradleException
 import org.gradle.api.JavaVersion
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.invocation.Gradle
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Internal
 import org.gradle.internal.jvm.Jvm
 import org.gradle.jvm.toolchain.*
-import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptionsImpl
-import org.jetbrains.kotlin.gradle.tasks.KotlinJavaToolchain.Companion.TOOLCHAIN_SUPPORTED_VERSION
 import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import java.io.File
 import javax.inject.Inject
-import kotlin.reflect.full.functions
 
 internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
     private val objects: ObjectFactory,
     projectLayout: ProjectLayout,
-    gradle: Gradle,
     kotlinCompileTaskProvider: () -> KotlinCompile?
 ) : KotlinJavaToolchain {
-
-    private val currentGradleVersion = GradleVersion.version(gradle.gradleVersion)
 
     @get:Internal
     internal val currentJvm: Provider<Jvm> = objects
@@ -116,23 +109,13 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
 
     final override val jdk: KotlinJavaToolchain.JdkSetter = DefaultJdkSetter(
         providedJvm,
-        currentGradleVersion,
         objects,
         { providedJvmExplicitlySet = true },
         kotlinCompileTaskProvider
     )
 
-    private val defaultJavaToolchainSetter by lazy(LazyThreadSafetyMode.NONE) {
-        if (currentGradleVersion >= TOOLCHAIN_SUPPORTED_VERSION) {
-            DefaultJavaToolchainSetter(providedJvm, kotlinCompileTaskProvider)
-        } else {
-            null
-        }
-    }
-
-    final override val toolchain: KotlinJavaToolchain.JavaToolchainSetter
-        get() = defaultJavaToolchainSetter
-            ?: throw GradleException("Toolchain support is available from $TOOLCHAIN_SUPPORTED_VERSION")
+    final override val toolchain: KotlinJavaToolchain.JavaToolchainSetter =
+        DefaultJavaToolchainSetter(providedJvm, kotlinCompileTaskProvider)
 
     /**
      * Updates [task] 'jvmTarget' if user has configured toolchain and not 'jvmTarget'.
@@ -197,7 +180,6 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
 
     private class DefaultJdkSetter(
         private val providedJvm: Property<Jvm>,
-        private val currentGradleVersion: GradleVersion,
         private val objects: ObjectFactory,
         private val updateProvidedJdkCallback: () -> Unit,
         kotlinCompileTaskProvider: () -> KotlinCompile?
@@ -219,14 +201,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
             providedJvm.set(
                 objects.providerWithLazyConvention {
                     updateJvmTarget(jdkVersion)
-                    if (currentGradleVersion < GradleVersion.version("6.2.0")) {
-                        // Before Gradle 6.2.0 'Jvm.discovered' does not have 'implementationJavaVersion' parameter
-                        Jvm::class.functions
-                            .first { it.name == "discovered" }
-                            .call(jdkHomeLocation, jdkVersion) as Jvm
-                    } else {
-                        Jvm.discovered(jdkHomeLocation, null, jdkVersion)
-                    }
+                    Jvm.discovered(jdkHomeLocation, null, jdkVersion)
                 }
             )
         }

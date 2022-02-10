@@ -678,10 +678,7 @@ abstract class KotlinCompile @Inject constructor(
 
     @get:Internal
     internal val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objects
-        .propertyWithNewInstance(
-            project.gradle,
-            { this }
-        )
+        .propertyWithNewInstance({ this })
 
     final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchain> = defaultKotlinJavaToolchain.cast()
 

@@ -51,12 +51,14 @@ fun Project.configureJvmToolchain(
 
         if (shouldOverrideObsoleteJdk(jdkVersion)) {
             kotlinExtension.jvmToolchain {
+                @Suppress("USELESS_CAST") // Remove after boostrap update
                 (this as JavaToolchainSpec).languageVersion
                     .set(JavaLanguageVersion.of(jdkVersion.overrideMajorVersion!!))
             }
             updateJvmTarget(jdkVersion.targetName)
         } else {
             kotlinExtension.jvmToolchain {
+                @Suppress("USELESS_CAST") // Remove after boostrap update
                 (this as JavaToolchainSpec).languageVersion
                     .set(JavaLanguageVersion.of(jdkVersion.majorVersion))
             }
