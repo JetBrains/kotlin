@@ -25,7 +25,10 @@ interface TypeMappingContext<Writer : JvmDescriptorTypeWriter<Type>> {
 }
 
 object AbstractTypeMapper {
-    fun <Writer : JvmDescriptorTypeWriter<Type>> mapClass(context: TypeMappingContext<Writer>, typeConstructor: TypeConstructorMarker): Type {
+    fun <Writer : JvmDescriptorTypeWriter<Type>> mapClass(
+        context: TypeMappingContext<Writer>,
+        typeConstructor: TypeConstructorMarker
+    ): Type {
         return with(context.typeContext) {
             when {
                 typeConstructor.isClassTypeConstructor() -> {
@@ -47,96 +50,124 @@ object AbstractTypeMapper {
     ): Type = context.typeContext.mapType(context, type, mode, sw)
 
     // NB: The counterpart, [descriptorBasedTypeSignatureMapping#mapType] doesn't have restriction on [type].
-    @OptIn(ExperimentalStdlibApi::class)
     private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapType(
         context: TypeMappingContext<Writer>,
         type: KotlinTypeMarker,
         mode: TypeMappingMode = TypeMappingMode.DEFAULT,
         sw: Writer? = null
     ): Type {
-        if (type is DefinitelyNotNullTypeMarker) {
-            return mapType(context, type.original(), mode, sw)
-        }
-
-        if (type is SimpleTypeMarker && type.isSuspendFunction()) {
-            val argumentsCount = type.argumentsCount()
-            val argumentsList = type.asArgumentList()
-
-            val arguments = buildList {
-                for (i in 0 until (argumentsCount - 1)) {
-                    this += argumentsList[i].adjustedType()
-                }
-                this += continuationTypeConstructor().typeWithArguments(argumentsList[argumentsCount - 1].adjustedType())
-                this += nullableAnyType()
-            }
-            val runtimeFunctionType = functionNTypeConstructor(arguments.size - 1).typeWithArguments(arguments)
-            return mapType(context, runtimeFunctionType, mode, sw)
-        }
-
-        mapBuiltInType(type, AsmTypeFactory, mode)?.let { builtInType ->
-            return boxTypeIfNeeded(builtInType, mode.needPrimitiveBoxing).also { asmType ->
-                with(context) { sw?.writeGenericType(type, asmType, mode) }
-            }
-        }
-
         val typeConstructor = type.typeConstructor()
 
-        when {
-            type is SimpleTypeMarker && type.isArrayOrNullableArray() -> {
-                val typeArgument = type.asArgumentList()[0]
-                val (variance, memberType) = when {
-                    typeArgument.isStarProjection() -> Variance.OUT_VARIANCE to nullableAnyType()
-                    else -> typeArgument.getVariance().toVariance() to typeArgument.getType()
-                }
-                require(memberType is SimpleTypeMarker)
-
-                val arrayElementType: Type
-                sw?.writeArrayType()
-                if (variance == Variance.IN_VARIANCE) {
-                    arrayElementType = AsmTypes.OBJECT_TYPE
-                    sw?.writeClass(arrayElementType)
-                } else {
-                    arrayElementType = mapType(context, memberType, mode.toGenericArgumentMode(variance, ofArray = true), sw)
-                }
-                sw?.writeArrayEnd()
-                return AsmUtil.getArrayType(arrayElementType)
-            }
-
-            type is SimpleTypeMarker && typeConstructor.isClassTypeConstructor() -> {
-                if (typeConstructor.isInlineClass() && !mode.needInlineClassWrapping) {
-                    val expandedType = computeExpandedTypeForInlineClass(type)
-                    require(expandedType is SimpleTypeMarker?)
-                    if (expandedType != null) {
-                        return mapType(context, expandedType, mode.wrapInlineClassesMode(), sw)
-                    }
-                }
-
-                val asmType = if (mode.isForAnnotationParameter && type.isKClass())
-                    AsmTypes.JAVA_CLASS_TYPE
-                else
-                    Type.getObjectType(context.getClassInternalName(typeConstructor))
-
+        if (type is SimpleTypeMarker) {
+            val builtInType = mapBuiltInType(type, AsmTypeFactory, mode)
+            if (builtInType != null) {
+                val asmType = boxTypeIfNeeded(builtInType, mode.needPrimitiveBoxing)
                 with(context) { sw?.writeGenericType(type, asmType, mode) }
                 return asmType
             }
 
-            typeConstructor.isScript() -> {
-                return Type.getObjectType(context.getScriptInternalName(typeConstructor))
+            if (type.isSuspendFunction()) {
+                return mapSuspendFunctionType(type, context, mode, sw)
             }
 
+            if (type.isArrayOrNullableArray()) {
+                return mapArrayType(type, sw, context, mode)
+            }
+
+            if (typeConstructor.isClassTypeConstructor()) {
+                return mapClassType(typeConstructor, mode, type, context, sw)
+            }
+        }
+
+        return when {
             typeConstructor.isTypeParameter() -> {
                 val typeParameter = typeConstructor.asTypeParameter()
-                return mapType(context, typeParameter.representativeUpperBound(), mode, null).also { asmType ->
-                    sw?.writeTypeVariable(typeParameter.getName(), asmType)
-                }
+                val asmType = mapType(context, typeParameter.representativeUpperBound(), mode, null)
+                sw?.writeTypeVariable(typeParameter.getName(), asmType)
+                asmType
             }
 
             type.isFlexible() -> {
-                return mapType(context, type.upperBoundIfFlexible(), mode, sw)
+                mapType(context, type.upperBoundIfFlexible(), mode, sw)
             }
 
-            else -> throw UnsupportedOperationException("Unknown type $type")
+            type is DefinitelyNotNullTypeMarker ->
+                mapType(context, type.original(), mode, sw)
+
+            typeConstructor.isScript() ->
+                Type.getObjectType(context.getScriptInternalName(typeConstructor))
+
+            else ->
+                throw UnsupportedOperationException("Unknown type $type")
         }
+    }
+
+    private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapSuspendFunctionType(
+        type: SimpleTypeMarker,
+        context: TypeMappingContext<Writer>,
+        mode: TypeMappingMode,
+        sw: Writer?
+    ): Type {
+        val argumentsCount = type.argumentsCount()
+        val argumentsList = type.asArgumentList()
+        val arguments = buildList {
+            for (i in 0 until (argumentsCount - 1)) {
+                this += argumentsList[i].adjustedType()
+            }
+            this += continuationTypeConstructor().typeWithArguments(argumentsList[argumentsCount - 1].adjustedType())
+            this += nullableAnyType()
+        }
+        val runtimeFunctionType = functionNTypeConstructor(arguments.size - 1).typeWithArguments(arguments)
+        return mapType(context, runtimeFunctionType, mode, sw)
+    }
+
+    private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapArrayType(
+        type: SimpleTypeMarker,
+        sw: Writer?,
+        context: TypeMappingContext<Writer>,
+        mode: TypeMappingMode
+    ): Type {
+        val typeArgument = type.asArgumentList()[0]
+        val (variance, memberType) = when {
+            typeArgument.isStarProjection() -> Variance.OUT_VARIANCE to nullableAnyType()
+            else -> typeArgument.getVariance().toVariance() to typeArgument.getType()
+        }
+        require(memberType is SimpleTypeMarker)
+
+        val arrayElementType: Type
+        sw?.writeArrayType()
+        if (variance == Variance.IN_VARIANCE) {
+            arrayElementType = AsmTypes.OBJECT_TYPE
+            sw?.writeClass(arrayElementType)
+        } else {
+            arrayElementType = mapType(context, memberType, mode.toGenericArgumentMode(variance, ofArray = true), sw)
+        }
+        sw?.writeArrayEnd()
+        return AsmUtil.getArrayType(arrayElementType)
+    }
+
+    private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapClassType(
+        typeConstructor: TypeConstructorMarker,
+        mode: TypeMappingMode,
+        type: SimpleTypeMarker,
+        context: TypeMappingContext<Writer>,
+        sw: Writer?
+    ): Type {
+        if (typeConstructor.isInlineClass() && !mode.needInlineClassWrapping) {
+            val expandedType = computeExpandedTypeForInlineClass(type)
+            require(expandedType is SimpleTypeMarker?)
+            if (expandedType != null) {
+                return mapType(context, expandedType, mode.wrapInlineClassesMode(), sw)
+            }
+        }
+
+        val asmType = if (mode.isForAnnotationParameter && type.isKClass())
+            AsmTypes.JAVA_CLASS_TYPE
+        else
+            Type.getObjectType(context.getClassInternalName(typeConstructor))
+
+        with(context) { sw?.writeGenericType(type, asmType, mode) }
+        return asmType
     }
 
     private fun boxTypeIfNeeded(possiblyPrimitiveType: Type, needBoxedType: Boolean): Type =
