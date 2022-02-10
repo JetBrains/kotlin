@@ -4047,6 +4047,7 @@ def generateWithSpaceDefFile() {
         mapOption = "\"-Wl,--Map,${buildDir}/cutom map.map\""
     }
 
+    buildDir.mkdirs()
     def file = new File("${buildDir}/withSpaces.def")
     file.write """
 headers = stdio.h "${projectDir}/interop/basics/custom headers/custom.h"
