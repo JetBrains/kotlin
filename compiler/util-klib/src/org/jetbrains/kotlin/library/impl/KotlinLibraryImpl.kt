@@ -100,8 +100,6 @@ class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : 
 
     override fun irDeclaration(index: Int, fileIndex: Int) = loadIrDeclaration(index, fileIndex)
 
-    override fun type(index: Int, fileIndex: Int) = types.tableItemBytes(fileIndex, index)
-
     fun wrap(reader: IrMultiArrayFileReader, index: Int, fileIndex: Int): ByteArray {
         val r = """
             Before file = ${reader.file}
@@ -119,6 +117,8 @@ class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : 
             throw e
         }
     }
+
+    override fun type(index: Int, fileIndex: Int) = wrap(types, index, fileIndex)
 
     override fun signature(index: Int, fileIndex: Int) = wrap(signatures, index, fileIndex)
 
