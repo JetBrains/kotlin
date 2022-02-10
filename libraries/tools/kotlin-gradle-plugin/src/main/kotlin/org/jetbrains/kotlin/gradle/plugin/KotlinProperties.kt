@@ -216,7 +216,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(KotlinMultiplatformPlugin.STABILITY_NOWARN_FLAG)
 
     val mppEnableOptimisticNumberCommonization: Boolean
-        get() = booleanProperty(KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION) ?: false
+        get() = booleanProperty(KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION) ?: true
 
     val mppEnablePlatformIntegerCommonization: Boolean
         get() = booleanProperty(KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION) ?: false
