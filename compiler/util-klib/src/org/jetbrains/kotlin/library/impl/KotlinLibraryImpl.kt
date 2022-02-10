@@ -102,29 +102,31 @@ class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : 
 
     override fun type(index: Int, fileIndex: Int) = types.tableItemBytes(fileIndex, index)
 
-    override fun signature(index: Int, fileIndex: Int) = signatures.tableItemBytes(fileIndex, index)
-
-    override fun string(index: Int, fileIndex: Int) = strings.tableItemBytes(fileIndex, index)
-
-    override fun body(index: Int, fileIndex: Int): ByteArray {
+    fun wrap(reader: IrMultiArrayFileReader, index: Int, fileIndex: Int): ByteArray {
         val r = """
-            Before file = ${bodies.file}
-            Size = ${bodies.buffer.size}
+            Before file = ${reader.file}
+            Size = ${reader.buffer.size}
             index = $index fileIndex = $fileIndex
         """.trimIndent()
         return try {
-            bodies.tableItemBytes(fileIndex, index)
+            reader.tableItemBytes(fileIndex, index)
         } catch (e: Throwable) {
             println(r)
-            println("Bodies: ${bodies.file}")
-            val buffer = ReadBuffer.WeakFileBuffer(bodies.file.javaFile())
-            println("Buffer size = ${buffer.size} while bodies size = ${bodies.buffer.size}")
+            println("Bodies: ${reader.file}")
+            val buffer = ReadBuffer.WeakFileBuffer(reader.file.javaFile())
+            println("Buffer size = ${buffer.size} while bodies size = ${reader.buffer.size}")
 
             throw e
         }
     }
 
-    override fun debugInfo(index: Int, fileIndex: Int) = debugInfos?.tableItemBytes(fileIndex, index)
+    override fun signature(index: Int, fileIndex: Int) = wrap(signatures, index, fileIndex)
+
+    override fun string(index: Int, fileIndex: Int) = wrap(strings, index, fileIndex)
+
+    override fun body(index: Int, fileIndex: Int) = wrap(bodies, index, fileIndex)
+
+    override fun debugInfo(index: Int, fileIndex: Int) = debugInfos?.let { wrap(it, index, fileIndex) }
 
     override fun file(index: Int) = files.tableItemBytes(index)
 
