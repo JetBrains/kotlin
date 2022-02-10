@@ -10,6 +10,7 @@ import com.intellij.psi.PsiModifier
 import com.intellij.psi.PsiReferenceList
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.getKtModuleOfTypeSafe
+import org.jetbrains.kotlin.analysis.project.structure.NoCacheForModuleException
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.classes.*
 import org.jetbrains.kotlin.asJava.elements.KtLightField
@@ -433,18 +435,38 @@ internal fun KtSymbolWithMembers.createInnerClasses(
     return result
 }
 
-internal fun KtClassOrObject.checkIsInheritor(baseClassOrigin: KtClassOrObject, checkDeep: Boolean): Boolean {
-    return analyseForLightClasses(this) {
-        val subClassSymbol = this@checkIsInheritor.getClassOrObjectSymbol()
-        val superClassSymbol = baseClassOrigin.getClassOrObjectSymbol()
+internal fun KtClassOrObject.checkIsInheritor(superClassOrigin: KtClassOrObject, checkDeep: Boolean): Boolean {
+    val subClassOrigin = this
 
-        if (subClassSymbol == superClassSymbol) return@analyseForLightClasses false
+    fun KtAnalysisSession.check(): Boolean {
+        val subClassSymbol = subClassOrigin.getClassOrObjectSymbol()
+        val superClassSymbol = superClassOrigin.getClassOrObjectSymbol()
 
-        if (checkDeep) {
+        if (subClassSymbol == superClassSymbol) return false
+
+        return if (checkDeep) {
             subClassSymbol.isSubClassOf(superClassSymbol)
         } else {
             subClassSymbol.isDirectSubClassOf(superClassSymbol)
         }
+    }
+
+    // Due to the KT-51240 we cannot be sure which PSI element is better to analyse, so we try both.
+    //
+    // We specifically catch NoCacheForModuleException as a sign that LLFirSessionProvider.getModuleCache could not
+    // find a cache for the passed module. This means that `module(subClassOrigin)` does not have `module(superClassOrigin)` as
+    // its dependency, and we should try the other way around.
+    //
+    // Note, however, that the second call might also fail, since the modules can be completely independent.
+    // We can only hope that, since this code is invoked from the light classes, the passed PSI classes are
+    // relatively close to each other syntactically, meaning that there is some dependency between the modules
+    // they reside in.
+    //
+    // TODO: Avoid this hack when KT-51240 is fixed
+    return try {
+        analyseForLightClasses(subClassOrigin) { check() }
+    } catch (e: NoCacheForModuleException) {
+        analyseForLightClasses(superClassOrigin) { check() }
     }
 }
 
