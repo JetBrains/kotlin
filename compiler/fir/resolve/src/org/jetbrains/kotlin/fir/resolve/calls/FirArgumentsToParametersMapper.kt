@@ -147,11 +147,16 @@ private class FirCallArgumentsProcessor(
             }
             // process named argument
             else {
-                if (state == State.VARARG_POSITION) {
-                    completeVarargPositionArguments()
+                if (function.origin == FirDeclarationOrigin.DynamicScope) {
+                    if (processPositionArgument(argument.expression, isLastArgument = argument === arguments.last())) {
+                        state = State.VARARG_POSITION
+                    }
+                } else {
+                    if (state == State.VARARG_POSITION) {
+                        completeVarargPositionArguments()
+                    }
+                    processNamedArgument(argument)
                 }
-
-                processNamedArgument(argument)
             }
         }
         if (state == State.VARARG_POSITION) {
