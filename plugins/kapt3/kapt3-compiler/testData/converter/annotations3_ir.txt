@@ -1,0 +1,101 @@
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class B {
+
+    public B() {
+        super();
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class BParceler implements Parceler<B> {
+    @org.jetbrains.annotations.NotNull()
+    public static final BParceler INSTANCE = null;
+
+    private BParceler() {
+        super();
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class C {
+
+    public C() {
+        super();
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public final class CParceler implements Parceler<C> {
+    @org.jetbrains.annotations.NotNull()
+    public static final CParceler INSTANCE = null;
+
+    private CParceler() {
+        super();
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+public abstract interface Parceler<T extends java.lang.Object> {
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@TypeParceler.Container(value = {@TypeParceler(), @TypeParceler()})
+@kotlin.Metadata()
+public final class Test {
+
+    public Test() {
+        super();
+    }
+}
+
+////////////////////
+
+
+import java.lang.System;
+
+@kotlin.Metadata()
+@java.lang.annotation.Repeatable(value = TypeParceler.Container.class)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY})
+@kotlin.annotation.Repeatable()
+@kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+public abstract @interface TypeParceler<T extends java.lang.Object, P extends Parceler<? super T>> extends java.lang.annotation.Annotation {
+
+    @kotlin.Metadata()
+    @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE})
+    @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+    @kotlin.jvm.internal.RepeatableContainer()
+    @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY})
+    @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+    public static abstract @interface Container {
+
+        public abstract TypeParceler[] value();
+    }
+}
