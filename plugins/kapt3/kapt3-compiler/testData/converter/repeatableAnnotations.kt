@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: lib/Anno.java
 package lib;
 public @interface Anno {
