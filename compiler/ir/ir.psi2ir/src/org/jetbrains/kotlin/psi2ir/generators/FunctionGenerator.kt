@@ -15,17 +15,12 @@ import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
-import org.jetbrains.kotlin.psi.psiUtil.pureEndOffset
-import org.jetbrains.kotlin.psi.psiUtil.pureStartOffset
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi2ir.isConstructorDelegatingToSuper
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -357,8 +352,16 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                         valueParameterDescriptor.containingDeclaration.safeAs<ConstructorDescriptor>()?.isAnnotationConstructor() ?: false
                     if (inAnnotation) {
                         generateDefaultAnnotationParameterValue(defaultValue, valueParameterDescriptor)
-                    } else
+                    } else if (context.configuration.generateBodies) {
                         bodyGenerator.generateExpressionBody(defaultValue)
+                    } else context.irFactory.createExpressionBody(
+                        IrErrorExpressionImpl(
+                            defaultValue.startOffsetSkippingComments,
+                            defaultValue.endOffset,
+                            context.irBuiltIns.nothingType,
+                            defaultValue::class.java.simpleName
+                        )
+                    )
                 }
             }
         }
