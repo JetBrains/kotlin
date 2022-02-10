@@ -60,10 +60,6 @@ internal sealed class MetafactoryArgumentsResult {
         // TODO make sure indy and Kotlin bytecode inliner work well together
         object InliningHazard : Failure()
 
-        // Resulting object should be Serializable.
-        // TODO implement serialization support required by j.l.invoke.LambdaMetafactory
-        object SerializationHazard : Failure()
-
         // There's something special about a function we are referencing.
         // Wrapping it into a proxy local function might help.
         object FunctionHazard : Failure()
@@ -549,7 +545,9 @@ internal class LambdaMetafactoryArgumentsBuilder(
         )
     }
 
-    private fun computeParameterTypeAdaptationConstraint(adapteeType: IrType, expectedType: IrType): TypeAdaptationConstraint? {
+    private fun computeParameterTypeAdaptationConstraint(adapteeType0: IrType, expectedType0: IrType): TypeAdaptationConstraint? {
+        val adapteeType = adapteeType0.unwrapDefinitelyNotNullType()
+        val expectedType = expectedType0.unwrapDefinitelyNotNullType()
         if (adapteeType !is IrSimpleType)
             throw AssertionError("Simple type expected: ${adapteeType.render()}")
         if (expectedType !is IrSimpleType)
