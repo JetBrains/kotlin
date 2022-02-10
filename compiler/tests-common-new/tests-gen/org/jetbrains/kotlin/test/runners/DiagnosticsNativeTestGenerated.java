@@ -31,12 +31,6 @@ public class DiagnosticsNativeTestGenerated extends AbstractDiagnosticsNativeTes
     }
 
     @Test
-    @TestMetadata("leakingCommonPhantomType.kt")
-    public void testLeakingCommonPhantomType() throws Exception {
-        runTest("compiler/testData/diagnostics/nativeTests/leakingCommonPhantomType.kt");
-    }
-
-    @Test
     @TestMetadata("sharedImmutable.kt")
     public void testSharedImmutable() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/sharedImmutable.kt");
