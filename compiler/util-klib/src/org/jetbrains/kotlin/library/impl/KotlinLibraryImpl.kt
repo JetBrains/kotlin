@@ -106,7 +106,14 @@ class IrMonoliticLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : 
 
     override fun string(index: Int, fileIndex: Int) = strings.tableItemBytes(fileIndex, index)
 
-    override fun body(index: Int, fileIndex: Int) = bodies.tableItemBytes(fileIndex, index)
+    override fun body(index: Int, fileIndex: Int) = try { bodies.tableItemBytes(fileIndex, index) }
+    catch (e: Throwable) {
+        println("Bodies: ${bodies.file}")
+        val buffer = ReadBuffer.WeakFileBuffer(bodies.file.javaFile())
+        println("Buffer size = ${buffer.size} while bodies size = ${bodies.buffer.size}")
+
+        throw e
+    }
 
     override fun debugInfo(index: Int, fileIndex: Int) = debugInfos?.tableItemBytes(fileIndex, index)
 

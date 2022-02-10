@@ -66,7 +66,7 @@ class IrLongArrayMemoryReader(bytes: ByteArray) {
     }
 }
 
-abstract class IrMultiArrayReader(private val buffer: ReadBuffer) {
+abstract class IrMultiArrayReader(val buffer: ReadBuffer) {
     private val indexToOffset: IntArray
     private val indexIndexToOffset = mutableMapOf<Int, IntArray>()
 
@@ -114,7 +114,7 @@ abstract class IrMultiArrayReader(private val buffer: ReadBuffer) {
     }
 }
 
-class IrMultiArrayFileReader(file: File) : IrMultiArrayReader(ReadBuffer.WeakFileBuffer(file.javaFile()))
+class IrMultiArrayFileReader(val file: File) : IrMultiArrayReader(ReadBuffer.WeakFileBuffer(file.javaFile()))
 class IrMultiArrayMemoryReader(bytes: ByteArray) : IrMultiArrayReader(ReadBuffer.MemoryBuffer(bytes))
 
 abstract class IrMultiTableReader<K>(private val buffer: ReadBuffer, private val keyReader: ReadBuffer.() -> K) {
