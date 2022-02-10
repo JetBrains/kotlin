@@ -1,5 +1,34 @@
 package
 
+internal sealed class A {
+    protected constructor A()
+    protected abstract val b: A.B?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    protected final data class B {
+        public constructor B(/*0*/ s: kotlin.String)
+        public final val s: kotlin.String
+        public final operator /*synthesized*/ fun component1(): kotlin.String
+        public final /*synthesized*/ fun copy(/*0*/ s: kotlin.String = ...): A.B
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+
+    internal final data class C : A {
+        public constructor C()
+        private constructor C(/*0*/ b: A.B?)
+        protected open override /*1*/ val b: A.B?
+        protected final operator /*synthesized*/ fun component1(): A.B?
+        public final /*synthesized*/ fun copy(/*0*/ b: A.B? = ...): A.C
+        public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+    }
+}
+
 public abstract class AbstractFoo {
     public constructor AbstractFoo(/*0*/ x: Bar, /*1*/ y: Bar, /*2*/ z: Bar)
     public final val x: Bar
