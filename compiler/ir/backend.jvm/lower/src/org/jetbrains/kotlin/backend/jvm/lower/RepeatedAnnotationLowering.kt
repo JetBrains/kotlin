@@ -63,6 +63,7 @@ class RepeatedAnnotationLowering(private val context: JvmBackendContext) : FileL
     }
 
     private fun transformAnnotations(annotations: List<IrConstructorCall>): List<IrConstructorCall> {
+        if (!context.state.classBuilderMode.generateBodies) return annotations
         if (annotations.size < 2) return annotations
 
         val annotationsByClass = annotations.groupByTo(mutableMapOf()) { it.symbol.owner.constructedClass }
