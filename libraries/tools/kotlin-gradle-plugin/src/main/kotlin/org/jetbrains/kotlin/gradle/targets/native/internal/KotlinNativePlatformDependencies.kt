@@ -11,8 +11,11 @@ import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
+import org.jetbrains.kotlin.gradle.internal.PLATFORM_INTEGERS_SUPPORT_LIBRARY
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.MissingNativeStdlibWarning.showMissingNativeStdlibWarning
@@ -41,6 +44,15 @@ internal fun Project.setupKotlinNativePlatformDependencies() {
             */
             isCompilationDependency = false
         )
+    }
+
+    if (isPlatformIntegerCommonizationEnabled) {
+        getRootNativeSourceSets(kotlin.sourceSets).forEach { sourceSet ->
+            dependencies.add(
+                sourceSet.implementationConfigurationName,
+                "$KOTLIN_MODULE_GROUP:$PLATFORM_INTEGERS_SUPPORT_LIBRARY:${getKotlinPluginVersion()}"
+            )
+        }
     }
 }
 
@@ -74,6 +86,16 @@ private fun Project.addDependencies(
             if (project.isIntransitiveMetadataConfigurationEnabled) sourceSet.intransitiveMetadataConfigurationName
             else sourceSet.implementationMetadataConfigurationName
         dependencies.add(metadataConfigurationName, libraries)
+    }
+}
+
+private fun Project.getRootNativeSourceSets(allSourceSets: Iterable<KotlinSourceSet>): Collection<KotlinSourceSet> {
+    val nativeSourceSets = allSourceSets.filter { sourceSet -> getCommonizerTarget(sourceSet) != null }
+    return nativeSourceSets.filter { sourceSet ->
+        val allVisibleSourceSets = sourceSet.dependsOn + getVisibleSourceSetsFromAssociateCompilations(project, sourceSet)
+        allVisibleSourceSets.none { dependee ->
+            dependee in nativeSourceSets
+        }
     }
 }
 
