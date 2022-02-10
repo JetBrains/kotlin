@@ -204,6 +204,7 @@ class AndroidSubplugin :
                 it.inputs.files(getLayoutDirectories(project, resDirectories))
                     .withPathSensitivity(PathSensitivity.RELATIVE)
                     .withPropertyName("androidExtensionLayoutsFrom$name")
+                    .skipWhenEmpty(true)
                     .run {
                         if (GradleVersion.current() >= GradleVersion.version("6.8")) {
                             ignoreEmptyDirectories()
