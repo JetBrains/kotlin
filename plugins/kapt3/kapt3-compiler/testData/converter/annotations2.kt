@@ -1,5 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-
 @file:kotlin.jvm.JvmName("AnnotationsTest")
 package test
 
