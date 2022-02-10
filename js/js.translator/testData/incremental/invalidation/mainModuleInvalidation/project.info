@@ -5,6 +5,3 @@ STEP 0:
 
 STEP 1:
     libs: lib1, main
-
-STEP 2:
-    libs: lib1, main

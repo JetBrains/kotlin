@@ -202,6 +202,7 @@ interface PersistentCacheConsumer {
     fun commitBinaryDts(path: String, dstData: ByteArray)
     fun commitSourceMap(path: String, mapData: ByteArray)
     fun invalidateForFile(path: String)
+    fun invalidate()
 
     fun commitLibraryInfo(libraryPath: String, moduleName: String, flatHash: ULong, transHash: ULong, configHash: ULong)
 
@@ -225,6 +226,9 @@ interface PersistentCacheConsumer {
             }
 
             override fun invalidateForFile(path: String) {
+            }
+
+            override fun invalidate() {
             }
 
             override fun commitBinaryAst(path: String, astData: ByteArray) {
@@ -301,6 +305,10 @@ class PersistentCacheConsumerImpl(private val cachePath: String) : PersistentCac
         File(fileDir, fileBinaryAst).delete()
         // TODO: once per-file invalidation is integrated into IC delete the whole directory including PIR parts
         //fileDir.deleteRecursively()
+    }
+
+    override fun invalidate() {
+        File(cachePath).deleteRecursively()
     }
 
     private fun commitByteArrayToCacheFile(fileName: String, cacheName: String, data: ByteArray) {

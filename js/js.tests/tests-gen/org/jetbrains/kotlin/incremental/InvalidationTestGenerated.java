@@ -100,6 +100,11 @@ public class InvalidationTestGenerated extends AbstractInvalidationTest {
         runTest("js/js.translator/testData/incremental/invalidation/jsExport/");
     }
 
+    @TestMetadata("mainModuleInvalidation")
+    public void testMainModuleInvalidation() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/mainModuleInvalidation/");
+    }
+
     @TestMetadata("moveFilesBetweenModules")
     public void testMoveFilesBetweenModules() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/moveFilesBetweenModules/");

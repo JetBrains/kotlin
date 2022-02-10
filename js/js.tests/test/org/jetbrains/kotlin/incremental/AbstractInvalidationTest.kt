@@ -254,29 +254,25 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         mainArguments: List<String>?,
         executor: CacheExecutor
     ): CacheUpdateStatus {
-        val (libraries, dependencyGraph, configMD5) = CacheConfiguration(dependencies, compilerConfiguration)
-
         val modulePath = moduleName.toCanonicalPath()
+
         val icCacheMap: Map<ModulePath, CacheInfo> = loadCacheInfo(icCachePaths).also {
-            it[modulePath] = CacheInfo.loadOrCreate(
-                cachePath,
-                moduleName,
-                configHash = configMD5
-            )
+            it[modulePath] = CacheInfo.loadOrCreate(cachePath, modulePath)
         }
 
-        return actualizeCacheForModule(
-            moduleName = modulePath,
-            cachePath = cachePath,
-            compilerConfiguration = compilerConfiguration,
-            configMD5 = configMD5,
-            libraries = libraries,
-            dependencyGraph = dependencyGraph,
-            icCacheMap = icCacheMap,
-            irFactory = irFactory,
-            mainArguments = mainArguments,
-            executor = executor
-        )
+        val statuses = mutableMapOf<String, CacheUpdateStatus>()
+        actualizeCaches(
+            modulePath,
+            compilerConfiguration,
+            dependencies,
+            icCacheMap.map { it.value.path },
+            { irFactory },
+            mainArguments,
+            executor
+        ) { updateStatus, updatedModule ->
+            statuses[updatedModule] = updateStatus
+        }
+        return statuses[modulePath] ?: error("Status is missed for $modulePath")
     }
 
     private fun KotlinCoreEnvironment.createPsiFile(file: File): KtFile {

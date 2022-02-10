@@ -43,9 +43,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
-import org.jetbrains.kotlin.ir.backend.js.ic.actualizeCaches
-import org.jetbrains.kotlin.ir.backend.js.ic.buildCacheForModuleFiles
-import org.jetbrains.kotlin.ir.backend.js.ic.loadModuleCaches
+import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformerTmp
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.SourceMapsInfo
@@ -210,7 +208,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
             val includes = arguments.includes!!
 
-            val start = System.currentTimeMillis()
+            var start = System.currentTimeMillis()
 
             actualizeCaches(
                 includes,
@@ -220,12 +218,15 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 { IrFactoryImplForJsIC(WholeWorldStageController()) },
                 mainCallArguments,
                 ::buildCacheForModuleFiles,
-            ) { updateStatus ->
-                if (updateStatus.upToDate) {
-                    messageCollector.report(INFO, "IC per-file cache up-to-date check duration: ${System.currentTimeMillis() - start}ms")
-                } else {
-                    messageCollector.report(INFO, "IC per-file cache building duration: ${System.currentTimeMillis() - start}ms")
+            ) { updateStatus, updatedModule ->
+                val now = System.currentTimeMillis()
+                val strStatus = when (updateStatus) {
+                    CacheUpdateStatus.FAST_PATH -> "up-to-date; fast check"
+                    CacheUpdateStatus.NO_DIRTY_FILES -> "up-to-date; full check"
+                    CacheUpdateStatus.DIRTY -> "dirty; cache building"
                 }
+                messageCollector.report(INFO, "IC per-file is $strStatus duration ${now - start}ms; module [${File(updatedModule).name}]")
+                start = now
             }
         } else emptyList()
 
