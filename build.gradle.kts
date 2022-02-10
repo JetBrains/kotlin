@@ -123,8 +123,8 @@ if (!project.hasProperty("versions.kotlin-native")) {
     extra["versions.kotlin-native"] = "1.7.0-dev-1827"
 }
 
-
 val useJvmFir by extra(project.kotlinBuildProperties.useFir)
+val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames)
 
 val irCompilerModules = arrayOf(
     ":compiler:ir.tree",
@@ -500,6 +500,9 @@ allprojects {
             if (useJvmFir && this@allprojects.path !in projectsWithDisabledFirBootstrap) {
                 freeCompilerArgs += "-Xuse-fir"
                 freeCompilerArgs += "-Xabi-stability=stable"
+            }
+            if (renderDiagnosticNames) {
+                freeCompilerArgs += "-Xrender-internal-diagnostic-names"
             }
         }
     }
