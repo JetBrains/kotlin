@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -71,13 +72,6 @@ internal class TestProcessor (val context: Context) {
     private val IrFile.fileName
         get() = name.substringAfterLast('/')
 
-    private val IrFile.topLevelSuiteName: String
-        get() {
-            val packageFqName = fqName
-            val shortFileName = PackagePartClassUtils.getFilePartShortName(fileName)
-            return if (packageFqName.isRoot) shortFileName else "$packageFqName.$shortFileName"
-        }
-
     private fun MutableList<TestFunction>.registerFunction(
             function: IrFunction,
             kinds: Collection<Pair<FunctionKind, /* ignored: */ Boolean>>) =
@@ -101,7 +95,7 @@ internal class TestProcessor (val context: Context) {
                 // Call registerTestCase(name: String, testFunction: () -> Unit) method.
                 +irCall(registerTestCase).apply {
                     dispatchReceiver = irGet(receiver)
-                    putValueArgument(0, irString(it.function.name.identifier))
+                    putValueArgument(0, irString(it.functionName))
                     putValueArgument(1, IrFunctionReferenceImpl(
                             it.function.startOffset,
                             it.function.endOffset,
@@ -159,19 +153,19 @@ internal class TestProcessor (val context: Context) {
     private fun IrType.isTestFunctionKind() = classifierOrNull == symbols.testFunctionKind
 
     private data class TestFunction(
-        val function: IrFunction,
-        val kind: FunctionKind,
-        val ignored: Boolean
-    )
+            val function: IrFunction,
+            val kind: FunctionKind,
+            val ignored: Boolean
+    ) {
+        val functionName: String get() = function.name.identifier
+    }
 
     private inner class TestClass(val ownerClass: IrClass) {
         var companion: IrClass? = null
         val functions = mutableListOf<TestFunction>()
 
-        fun registerFunction(
-            function: IrFunction,
-            kinds: Collection<Pair<FunctionKind, /* ignored: */ Boolean>>
-        ) = functions.registerFunction(function, kinds)
+        val suiteClassId: ClassId = ownerClass.classId ?: error(ownerClass.render())
+        val suiteName: String get() = suiteClassId.asFqNameString()
 
         fun registerFunction(function: IrFunction, kind: FunctionKind, ignored: Boolean) =
                 functions.registerFunction(function, kind, ignored)
@@ -179,7 +173,12 @@ internal class TestProcessor (val context: Context) {
 
     private inner class AnnotationCollector(val irFile: IrFile) : IrElementVisitorVoid {
         val testClasses = mutableMapOf<IrClass, TestClass>()
+
         val topLevelFunctions = mutableListOf<TestFunction>()
+        val topLevelSuiteClassId: ClassId by lazy {
+            ClassId(irFile.fqName, PackagePartClassUtils.getFilePartShortName(irFile.fileName).let(Name::identifier))
+        }
+        val topLevelSuiteName: String get() = topLevelSuiteClassId.asFqNameString()
 
         private fun MutableMap<IrClass, TestClass>.getTestClass(key: IrClass) =
                 getOrPut(key) { TestClass(key) }
@@ -474,10 +473,12 @@ internal class TestProcessor (val context: Context) {
      * Builds a test suite class representing a test class (any class in the original IrFile with method(s)
      * annotated with @Test). The test suite class is a subclass of ClassTestSuite<T> where T is the test class.
      */
-    private fun buildClassSuite(testClass: IrClass,
-                                testCompanion: IrClass?,
-                                functions: Collection<TestFunction>,
-                                irFile: IrFile
+    private fun buildClassSuite(
+            suiteName: String,
+            testClass: IrClass,
+            testCompanion: IrClass?,
+            functions: Collection<TestFunction>,
+            irFile: IrFile
     ): IrClass {
         return IrClassImpl(
                 testClass.startOffset, testClass.endOffset,
@@ -506,8 +507,7 @@ internal class TestProcessor (val context: Context) {
             }
 
             val constructor = buildClassSuiteConstructor(
-                    testClass.fqNameForIrSerialization.toString(), testClassType, testCompanionType,
-                    symbol, this, functions, testClass.ignored
+                    suiteName, testClassType, testCompanionType, symbol, this, functions, testClass.ignored
             )
 
             val instanceGetter: IrFunction
@@ -535,19 +535,19 @@ internal class TestProcessor (val context: Context) {
 
     // region IR generation methods
     private fun generateClassSuite(irFile: IrFile, testClass: TestClass) =
-            with(buildClassSuite(testClass.ownerClass, testClass.companion, testClass.functions, irFile)) {
+            with(buildClassSuite(testClass.suiteName, testClass.ownerClass, testClass.companion, testClass.functions, irFile)) {
                 val irConstructor = constructors.single()
                 val irBuilder = context.createIrBuilder(irFile.symbol, testClass.ownerClass.startOffset, testClass.ownerClass.endOffset)
                 irBuilder.irCall(irConstructor)
             }
 
     /** Check if this fqName already used or not. */
-    private fun checkSuiteName(irFile: IrFile, name: String): Boolean {
-        if (topLevelSuiteNames.contains(name)) {
+    private fun checkTopLevelSuiteName(irFile: IrFile, topLevelSuiteName: String): Boolean {
+        if (topLevelSuiteNames.contains(topLevelSuiteName)) {
             context.reportCompilationError("Package '${irFile.fqName}' has top-level test " +
                     "functions in several files with the same name: '${irFile.fileName}'")
         }
-        topLevelSuiteNames.add(name)
+        topLevelSuiteNames.add(topLevelSuiteName)
         return true
     }
 
@@ -570,16 +570,15 @@ internal class TestProcessor (val context: Context) {
                 && it.valueParameters[2].type.isBoolean()
     }
 
-    private fun generateTopLevelSuite(irFile: IrFile, functions: Collection<TestFunction>): IrExpression? {
+    private fun generateTopLevelSuite(irFile: IrFile, topLevelSuiteName: String, functions: Collection<TestFunction>): IrExpression? {
         val irBuilder = context.createIrBuilder(irFile.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
-        val suiteName = irFile.topLevelSuiteName
-        if (!checkSuiteName(irFile, suiteName)) {
+        if (!checkTopLevelSuiteName(irFile, topLevelSuiteName)) {
             return null
         }
 
         return irBuilder.irBlock {
             val constructorCall = irCall(topLevelSuiteConstructor).apply {
-                putValueArgument(0, irString(suiteName))
+                putValueArgument(0, irString(topLevelSuiteName))
             }
             val testSuiteVal = irTemporary(constructorCall, "topLevelTestSuite")
             generateFunctionRegistration(testSuiteVal,
@@ -591,14 +590,17 @@ internal class TestProcessor (val context: Context) {
 
     private fun createTestSuites(irFile: IrFile, annotationCollector: AnnotationCollector) {
         val statements = mutableListOf<IrExpression>()
+
         annotationCollector.testClasses.filter {
             it.value.functions.any { it.kind == FunctionKind.TEST }
-        }.forEach { _, testClass ->
+        }.forEach { (_, testClass) ->
             statements.add(generateClassSuite(irFile, testClass))
         }
+
         if (annotationCollector.topLevelFunctions.isNotEmpty()) {
-            generateTopLevelSuite(irFile, annotationCollector.topLevelFunctions)?.let { statements.add(it) }
+            generateTopLevelSuite(irFile, annotationCollector.topLevelSuiteName, annotationCollector.topLevelFunctions)?.let { statements.add(it) }
         }
+
         if (statements.isNotEmpty()) {
             context.irFactory.buildFun {
                 startOffset = SYNTHETIC_OFFSET
@@ -618,6 +620,25 @@ internal class TestProcessor (val context: Context) {
     }
     // endregion
 
+    // region test functions to be dumped
+    private fun recordTestFunctions(annotationCollector: AnnotationCollector) {
+        if (context.config.testDumpFile == null) return
+
+        fun recordFunction(suiteClassId: ClassId, function: TestFunction) {
+            if (function.kind == FunctionKind.TEST)
+                context.testCasesToDump.computeIfAbsent(suiteClassId) { mutableListOf() } += function.functionName
+        }
+
+        annotationCollector.topLevelFunctions.forEach { function ->
+            recordFunction(annotationCollector.topLevelSuiteClassId, function)
+        }
+
+        annotationCollector.testClasses.values.forEach { testClass ->
+            testClass.functions.forEach { function -> recordFunction(testClass.suiteClassId, function) }
+        }
+    }
+    // endregion
+
     private fun shouldProcessFile(irFile: IrFile): Boolean = irFile.packageFragmentDescriptor.module.let {
         // Process test annotations in source libraries too.
         it == context.moduleDescriptor || it in context.getIncludedLibraryDescriptors()
@@ -632,5 +653,6 @@ internal class TestProcessor (val context: Context) {
         val annotationCollector = AnnotationCollector(irFile)
         irFile.acceptChildrenVoid(annotationCollector)
         createTestSuites(irFile, annotationCollector)
+        recordTestFunctions(annotationCollector)
     }
 }

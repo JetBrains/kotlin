@@ -327,6 +327,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val unitSuspendFunctionObjCExport: UnitSuspendFunctionObjCExport
         get() = configuration.get(BinaryOptions.unitSuspendFunctionObjCExport) ?: UnitSuspendFunctionObjCExport.LEGACY
+
+    internal val testDumpFile: File? = configuration[KonanConfigKeys.TEST_DUMP_OUTPUT_PATH]?.let(::File)
 }
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String)
