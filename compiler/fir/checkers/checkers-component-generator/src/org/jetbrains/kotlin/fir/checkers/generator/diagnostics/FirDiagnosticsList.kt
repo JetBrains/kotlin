@@ -1071,7 +1071,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<EventOccurrencesRange>("requiredRange")
             parameter<EventOccurrencesRange>("actualRange")
         }
-        val LEAKED_IN_PLACE_LAMBDA by error<PsiElement> {
+        val LEAKED_IN_PLACE_LAMBDA by warning<PsiElement> {
             parameter<Symbol>("lambda")
         }
         val WRONG_IMPLIES_CONDITION by warning<PsiElement>()

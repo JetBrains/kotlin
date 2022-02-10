@@ -1,4 +1,3 @@
-// IGNORE_FIR_DIAGNOSTICS
 // !OPT_IN: kotlin.contracts.ExperimentalContracts
 // IGNORE_BACKEND: NATIVE
 // FILE: 1.kt
