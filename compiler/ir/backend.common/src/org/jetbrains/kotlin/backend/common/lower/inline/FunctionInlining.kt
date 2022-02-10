@@ -84,6 +84,7 @@ class FunctionInlining(
         DefaultInlineFunctionResolver(context),
         innerClassesSupport
     )
+
     constructor(context: CommonBackendContext, innerClassesSupport: InnerClassesSupport?, insertAdditionalImplicitCasts: Boolean) : this(
         context,
         DefaultInlineFunctionResolver(context),
@@ -120,7 +121,12 @@ class FunctionInlining(
         if (Symbols.isTypeOfIntrinsic(callee.symbol))
             return expression
 
-        val actualCallee = inlineFunctionResolver.getFunctionDeclaration(callee.symbol)
+        val actualCallee: IrFunction = try {
+            inlineFunctionResolver.getFunctionDeclaration(callee.symbol)
+        } catch (e: Throwable) {
+            println("visitFunctionAccess ($expression) :: ${callee.symbol}")
+            throw e
+        }
 
         val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull()
             ?: allScopes.map { it.irElement }.filterIsInstance<IrDeclaration>().lastOrNull()?.parent

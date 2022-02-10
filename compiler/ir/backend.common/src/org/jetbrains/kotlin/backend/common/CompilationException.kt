@@ -27,6 +27,7 @@ class CompilationException(
                 appendLine("Back-end: Please report this problem https://kotl.in/issue")
                 path?.let { appendLine("$it:$line:$column") }
                 content?.let { appendLine("Problem with `$it`") }
+                append("File: ${file?.path}")
                 append("Details: " + super.message)
             }
         } catch (e: Throwable) {
