@@ -200,7 +200,7 @@ private fun getJsDependencies(module: TestModule, testServices: TestServices): T
 
 fun getAllJsDependenciesNames(module: TestModule, testServices: TestServices): List<String> {
     val (runtimeKlibsNames, transitiveLibraries, friendLibraries) = getJsDependencies(module, testServices)
-    return runtimeKlibsNames + transitiveLibraries.map { it.name } + friendLibraries.map { it.name }
+    return runtimeKlibsNames + transitiveLibraries.map { it.path } + friendLibraries.map { it.path }
 }
 
 fun resolveJsLibraries(
