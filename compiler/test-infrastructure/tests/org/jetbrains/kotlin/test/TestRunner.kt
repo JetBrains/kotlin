@@ -81,10 +81,6 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
             preprocessor.preprocessModuleStructure(moduleStructure)
         }
 
-        if (modules.size > 1) {
-            return
-        }
-
         for (module in modules) {
             val shouldProcessNextModules = processModule(module, dependencyProvider)
             if (!shouldProcessNextModules) break

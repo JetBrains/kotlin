@@ -178,9 +178,9 @@ class JsKlibBackendFacade(
         val logger = configuration[IrMessageLogger.IR_MESSAGE_LOGGER].toResolverLogger()
         val lib = jsResolveLibraries(librariesWithThis, repositories, logger).getFullResolvedList().last().library
 
-        if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
-            testServices.jsIrIncrementalDataProvider.recordIncrementalData(module, lib)
-        }
+//        if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
+//            testServices.jsIrIncrementalDataProvider.recordIncrementalData(module, lib)
+//        }
 
         return BinaryArtifacts.KLibForFir(File(outputFile), descriptor, lib)
     }

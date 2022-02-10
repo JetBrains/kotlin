@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
-import org.jetbrains.kotlin.test.builders.configureJsArtifactsHandlersStep
-import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
@@ -171,6 +168,9 @@ open class AbstractFirJsTest : AbstractKotlinCompilerWithTargetBackendTest(Targe
     private val frontendToBackendConverter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
         get() = ::Fir2IrResultsConverter
 
+    private val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
+        get() = ::JsKlibBackendFacade
+
     override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = targetFrontend
@@ -227,5 +227,8 @@ open class AbstractFirJsTest : AbstractKotlinCompilerWithTargetBackendTest(Targe
         // There were some problems not covered by
         // the FIR handlers above
         facadeStep(frontendToBackendConverter)
+        irHandlersStep()
+
+        facadeStep(backendFacade)
     }
 }
