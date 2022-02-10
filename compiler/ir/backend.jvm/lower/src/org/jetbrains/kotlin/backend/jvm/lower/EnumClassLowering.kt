@@ -132,6 +132,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
                     returnType = declaration.returnType
                 }.apply {
                     parent = declaration.parent
+                    annotations = declaration.annotations
 
                     addValueParameter(
                         "\$enum\$name", context.irBuiltIns.stringType, JvmLoweredDeclarationOrigin.ENUM_CONSTRUCTOR_SYNTHETIC_PARAMETER
