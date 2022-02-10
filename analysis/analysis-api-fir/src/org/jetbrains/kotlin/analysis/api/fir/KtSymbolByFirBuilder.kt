@@ -232,11 +232,11 @@ internal class KtSymbolByFirBuilder private constructor(
         }
 
         fun buildFunctionSignature(firSymbol: FirNamedFunctionSymbol): KtFunctionLikeSignature<KtFirFunctionSymbol> {
-            firSymbol.ensureResolved(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+            firSymbol.ensureTypesAreResolved()
             val functionSymbol = buildFunctionSymbol(firSymbol)
             return KtFunctionLikeSignature(
                 functionSymbol,
-                typeBuilder.buildKtType(firSymbol.resolvedReturnType),
+                typeBuilder.buildKtType(firSymbol.fir.returnTypeRef),
                 firSymbol.resolvedReceiverTypeRef?.let { typeBuilder.buildKtType(it) },
                 functionSymbol.valueParameters.zip(firSymbol.fir.valueParameters).map { (ktSymbol, fir) ->
                     var type = fir.returnTypeRef.coneType

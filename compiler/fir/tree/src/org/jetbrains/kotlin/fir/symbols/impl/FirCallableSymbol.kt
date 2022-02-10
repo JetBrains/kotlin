@@ -54,6 +54,10 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
             return fir.deprecation
         }
 
+    fun ensureTypesAreResolved() {
+        ensureType(fir.returnTypeRef)
+    }
+
     private fun ensureType(typeRef: FirTypeRef?) {
         when (typeRef) {
             null, is FirResolvedTypeRef -> {}
