@@ -1,6 +1,10 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.gradle.api.attributes.DocsType.SOURCES
+import org.gradle.api.plugins.JavaPlugin.SOURCES_ELEMENTS_CONFIGURATION_NAME
+import org.gradle.api.plugins.internal.JvmPluginsHelper.configureDocumentationVariantWithArtifact
 import org.gradle.internal.jvm.Jvm
-import java.util.Properties
+import java.util.*
+
 
 description = "Stripped down variant of Kotlin Backend Native for Mobile"
 
@@ -104,6 +108,14 @@ val resultJar by task<Jar> {
         zipTree(proguard.get().singleOutputFile())
     }
 }
+
+// includes more sources than left by proguard
+configureDocumentationVariantWithArtifact(
+        SOURCES_ELEMENTS_CONFIGURATION_NAME, null, SOURCES, listOf(), "sourcesJar",
+        project(":kotlin-native:backend.native").sourceSets["cli_bc"].allSource +
+                project(":kotlin-native:backend.native").sourceSets["compiler"].allSource,
+        components["java"] as AdhocComponentWithVariants, configurations, tasks, objects
+)
 
 addArtifact("runtime", resultJar)
 addArtifact("runtimeElements", resultJar)
