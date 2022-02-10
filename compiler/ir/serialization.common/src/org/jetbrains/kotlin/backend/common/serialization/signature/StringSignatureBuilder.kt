@@ -23,7 +23,38 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 
+private fun Char.isValidId(): Boolean {
+    return this == '_' || this.isLetterOrDigit()
+}
 
+private fun Char.isValidIdStart(): Boolean {
+    return this == '_' || this.isLetter()
+}
+
+private fun StringBuilder.escapeIdentifier(ident: String) {
+//
+//    append(ident)
+//    return
+
+    var i = 0
+
+//    if (ident == "\$metadata\$") {
+//        println("ll")
+//    }
+
+    while (i < ident.length) {
+        val c = ident[i]
+        val dontEscape = if (i == 0) {
+            c.isValidIdStart()
+        } else c.isValidId()
+
+        if (!dontEscape) {
+            append('\\')
+        }
+        append(c)
+        ++i
+    }
+}
 
 class StringSignatureBuilderOverIr(
     private val localClassResolver: ((IrDeclaration) -> Int)? = null // for local class index resolution
@@ -107,7 +138,7 @@ class StringSignatureBuilderOverIr(
                 if (last() != '/' && l != length) {
                     append('.')
                 }
-                append(decl.name.asString())
+                escapeIdentifier(decl.name.asString())
             }
         }
     }
@@ -118,7 +149,7 @@ class StringSignatureBuilderOverIr(
         if (last() != '/' && l != length) {
             append('.')
         }
-        append(typeAlias.name.asString())
+        escapeIdentifier(typeAlias.name.asString())
     }
 
     private fun StringBuilder.buildForEnumEntry(enumEntry: IrEnumEntry) {
@@ -127,7 +158,7 @@ class StringSignatureBuilderOverIr(
         if (last() != '/' && l != length) {
             append('.')
         }
-        append(enumEntry.name.asString())
+        escapeIdentifier(enumEntry.name.asString())
     }
 
     /**
@@ -150,7 +181,7 @@ class StringSignatureBuilderOverIr(
         if (last() != '/' && l != length) {
             append('.')
         }
-        append(klass.name.asString())
+        escapeIdentifier(klass.name.asString())
         if (klass.kind == ClassKind.ENUM_ENTRY) {
             append('.')
             append("EEC")
@@ -170,7 +201,7 @@ class StringSignatureBuilderOverIr(
             val klass = field.parent as? IrClass ?: error("Non-backing field has to have IrClass as a parent (${field.render()})")
             buildForClass(klass)
             append(MangleConstant.FIELD_MARK)
-            append(field.name.asString())
+            escapeIdentifier(field.name.asString())
         }
     }
 
@@ -184,7 +215,7 @@ class StringSignatureBuilderOverIr(
         if (last() != '/' && l != length) {
             append('.')
         }
-        append(property.name.asString())
+        escapeIdentifier(property.name.asString())
         val accessor = property.getter ?: error("No get accessor for property")
         buildPropertyTypeSignature(accessor, property)
         buildTypeParameters(accessor)
@@ -251,7 +282,7 @@ class StringSignatureBuilderOverIr(
             if (last() != '/' && l != length) {
                 append('.')
             }
-            append(property.name.asString())
+            escapeIdentifier(property.name.asString())
             append('.')
             append(name)
         } ?: run {
@@ -259,7 +290,7 @@ class StringSignatureBuilderOverIr(
             if (last() != '/' && l != length) {
                 append('.')
             }
-            append(function.name.asString())
+            escapeIdentifier(function.name.asString())
         }
 
         buildMethodTypeSignature(function)
@@ -438,22 +469,21 @@ class StringSignatureBuilderOverIr(
             } else {
                 (current as? IrTypeParametersContainer)?.let { result += it.typeParameters }
             }
-            current =
-                when (current) {
-                    is IrField -> current.parent
-                    is IrClass -> when {
-                        current.isInner -> current.parent as IrClass
-                        current.visibility == DescriptorVisibilities.LOCAL -> current.parent
-                        else -> null
-                    }
-                    is IrConstructor -> current.parent as IrClass
-                    is IrFunction ->
-                        if (current.visibility == DescriptorVisibilities.LOCAL || current.dispatchReceiverParameter != null)
-                            current.parent
-                        else
-                            null
+            current = when (current) {
+                is IrField -> current.parent
+                is IrClass -> when {
+                    current.isInner -> current.parent as IrClass
+                    current.visibility == DescriptorVisibilities.LOCAL -> current.parent
                     else -> null
                 }
+                is IrConstructor -> current.parent as IrClass
+                is IrFunction ->
+                    if (current.visibility == DescriptorVisibilities.LOCAL || current.dispatchReceiverParameter != null)
+                        current.parent
+                    else
+                        null
+                else -> null
+            }
         }
         return result
     }
@@ -483,9 +513,6 @@ class StringSignatureBuilderOverIr(
 
         arguments.collectForMangler(this, MangleConstant.TYPE_ARGUMENTS) { argument ->
             if (argument is IrTypeProjection) {
-                if (index >= typeParameters.size) {
-                    println(":;;")
-                }
                 val typeParameter = typeParameters[index]
                 val effectiveVariance = effectiveVariance(typeParameter.variance, argument.variance)
                 buildVariance(effectiveVariance)
@@ -586,7 +613,7 @@ class StringSignatureBuilderOverDescriptors : StringSignatureComposer {
                 if (!isEmpty() && last() != '/' && l != length) {
                     append('.')
                 }
-                append(parent.name.asString())
+                escapeIdentifier(parent.name.asString())
             }
         }
     }
@@ -602,7 +629,7 @@ class StringSignatureBuilderOverDescriptors : StringSignatureComposer {
         if (last() != '/' && l != length) {
             append('.')
         }
-        append(klass.name.asString())
+        escapeIdentifier(klass.name.asString())
     }
 
 
@@ -616,7 +643,7 @@ class StringSignatureBuilderOverDescriptors : StringSignatureComposer {
         if (last() != '/' && l != length) {
             append('.')
         }
-        append(property.name.asString())
+        escapeIdentifier(property.name.asString())
         buildPropertyTypeSignature(property)
         buildTypeParameters(property)
     }
@@ -679,12 +706,14 @@ class StringSignatureBuilderOverDescriptors : StringSignatureComposer {
         when (function) {
             is PropertyGetterDescriptor -> append(MangleConstant.GETTER_MARK)
             is PropertySetterDescriptor -> append(MangleConstant.SETTER_MARK)
-            else -> append(function.name.asString())
+            else -> escapeIdentifier(function.name.asString())
         }
 
-
         buildMethodTypeSignature(function)
-        buildTypeParameters(function)
+
+        val tpContainer = if (function is PropertyAccessorDescriptor) function.correspondingProperty else function
+
+        buildTypeParameters(tpContainer)
         if (function.isSuspend) {
             append('|')
             append(MangleConstant.SUSPEND_MARK)

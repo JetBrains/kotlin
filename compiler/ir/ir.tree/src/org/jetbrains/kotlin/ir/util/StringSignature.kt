@@ -10,6 +10,41 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.name.FqName
 
+private fun Char.isValidId(): Boolean {
+    return this == '_' || this == '\\' || this.isLetterOrDigit()
+//            return this == '_' || this == '$' || this.isLetterOrDigit()
+}
+
+private fun Char.isValidIdStart(): Boolean {
+    return this == '_' || this == '\\' || this.isLetter()
+//            return this == '_' || this == '$' || this.isLetter()
+}
+
+private fun StringBuilder.escapeIdentifier(ident: String) {
+//
+//    append(ident)
+//    return
+
+    var i = 0
+
+//    if (ident == "\$metadata\$") {
+//        println("ll")
+//    }
+
+    while (i < ident.length) {
+        val c = ident[i]
+        val dontEscape = if (i == 0) {
+            c.isValidIdStart()
+        } else c.isValidId()
+
+        if (!dontEscape) {
+            append('\\')
+        }
+        append(c)
+        ++i
+    }
+}
+
 class StringSignature private constructor(val value: String, b: StringSignature.() -> ParsedSignature) {
 
     constructor(_value: String) : this(_value, { parseSignature() })
@@ -54,8 +89,21 @@ class StringSignature private constructor(val value: String, b: StringSignature.
 
     val parsedSignature by lazy { b() }
 
+    private fun String.deescape(): String {
+        val s = this
+        return buildString {
+            var i = 0
+            while (i < s.length) {
+                if (s[i] == '\\') {
+                    ++i
+                }
+                append(s[i++])
+            }
+        }
+    }
+
     val declarationFqName: String
-        get() = topLevelPrefix().third
+        get() = topLevelPrefix().third.deescape()
 
     val shortName: String get() = declarationFqName.substringAfterLast('.')
 
@@ -72,19 +120,18 @@ class StringSignature private constructor(val value: String, b: StringSignature.
     class StringSignatureParser(private val value: String) {
         private var idx = 0
 
-        private fun Char.isValidId(): Boolean {
-            return this == '_' || this == '$' || this.isLetterOrDigit()
-        }
 
-        private fun Char.isValidIdStart(): Boolean {
-            return this == '_' || this == '$' || this.isLetter()
-        }
 
         private fun parseIdentificator(): String {
             return buildString {
                 do {
-                    if (consumeIf2('$', '$')) {
-                        append("\$\$")
+
+////                    if (consumeIf2('$', '$')) {
+////                        append("\$\$")
+////                    }
+                    if (value[idx] == '\\') {
+                        append(value[idx++])
+                        checkNotEnd()
                     }
                     append(value[idx++])
                 } while (idx < value.length && value[idx].isValidId())

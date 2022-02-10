@@ -191,8 +191,8 @@ class IrModuleDeserializerWithBuiltIns(
                     parsed.extraName?.let { extra ->
                         functionClass.declarations.filterIsInstance<IrProperty>().single { it.name.asString() == memberName }
                             .let { property ->
-                                property.getter?.let { g -> if (extra[1] == 'g') return g.symbol }
-                                property.setter?.let { s -> if (extra[1] == 's') return s.symbol }
+                                property.getter?.let { g -> if (extra[0] == 'g') return g.symbol }
+                                property.setter?.let { s -> if (extra[0] == 's') return s.symbol }
                                 error("No accessor found for signature $signature")
                             }
                     }
