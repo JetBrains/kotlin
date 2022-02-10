@@ -988,6 +988,13 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             getObjCProtocolAt(cursor)
         }
     }
+
+    fun indexObjCCategory(cursor: CValue<CXCursor>) {
+        if (isAvailable(cursor)) {
+            getObjCCategoryAt(cursor)
+        }
+    }
+
     protected open fun String.isUnknownTemplate() = false
 
     private fun getParentName(cursor: CValue<CXCursor>, pkg: List<String> = emptyList()) : String? {
@@ -1225,6 +1232,13 @@ private fun indexDeclarations(nativeIndex: NativeIndexImpl): CompilationWithPCH 
                     when (cursor.kind) {
                         CXCursorKind.CXCursor_ObjCInterfaceDecl -> nativeIndex.indexObjCClass(cursor)
                         CXCursorKind.CXCursor_ObjCProtocolDecl -> nativeIndex.indexObjCProtocol(cursor)
+                        CXCursorKind.CXCursor_ObjCCategoryDecl -> {
+                            // This fixes https://youtrack.jetbrains.com/issue/KT-49455, which effectively seems to be a bug in libclang:
+                            // the libclang indexer doesn't properly index categories with
+                            // `__attribute__((external_source_symbol(language="Swift",...)))`.
+                            // As a workaround, additionally enumerate all the categories explicitly.
+                            nativeIndex.indexObjCCategory(cursor)
+                        }
                         else -> {}
                     }
                 }
