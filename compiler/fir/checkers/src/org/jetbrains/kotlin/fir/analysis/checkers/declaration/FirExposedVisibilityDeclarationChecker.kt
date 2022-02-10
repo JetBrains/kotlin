@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -101,8 +102,11 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker() {
     }
 
     private fun checkFunction(declaration: FirFunction, reporter: DiagnosticReporter, context: CheckerContext) {
-        var functionVisibility = (declaration as FirMemberDeclaration).effectiveVisibility
+        if (declaration.source?.kind is KtFakeSourceElementKind) {
+            return
+        }
 
+        var functionVisibility = (declaration as FirMemberDeclaration).effectiveVisibility
         if (declaration is FirConstructor && declaration.isFromSealedClass) {
             functionVisibility = EffectiveVisibility.PrivateInClass
         }
