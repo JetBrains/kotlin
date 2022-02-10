@@ -26,9 +26,12 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.toHexString
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
 import javax.inject.Inject
 
 @CacheableTask
@@ -64,10 +67,6 @@ abstract class KotlinJsIrLink @Inject constructor(
     @Transient
     @get:Internal
     internal val propertiesProvider = PropertiesProvider(project)
-
-    @get:Inject
-    open val fileHasher: FileHasher
-        get() = throw UnsupportedOperationException()
 
     @get:Input
     internal val incrementalJsIr: Boolean = propertiesProvider.incrementalJsIr
@@ -125,15 +124,17 @@ abstract class KotlinJsIrLink @Inject constructor(
             )
         }
         if (incrementalJsIr && mode == DEVELOPMENT) {
+            val digest = MessageDigest.getInstance("SHA-256")
             args.cacheDirectories = args.libraries?.splitByPathSeparator()
                 ?.map {
                     val file = File(it)
+                    val hash = digest.digest(file.normalize().absolutePath.toByteArray(StandardCharsets.UTF_8)).toHexString()
                     rootCacheDirectory
                         .resolve(file.nameWithoutExtension)
+                        .resolve(hash)
                         .also {
                             it.mkdirs()
                         }
-                        .resolve(fileHasher.hash(file).toString())
                 }
                 ?.plus(rootCacheDirectory.resolve(entryModule.get().asFile.name))
                 ?.let {

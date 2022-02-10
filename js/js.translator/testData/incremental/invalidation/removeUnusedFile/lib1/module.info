@@ -5,3 +5,6 @@ STEP 1:
     dependencies: stdlib
     modifications:
         D : l1_1.kt
+STEP 2:
+    dependencies: stdlib
+    flags: FP
