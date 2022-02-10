@@ -159,19 +159,25 @@ private class FirCallArgumentsProcessor(
     }
 
     private fun processNonLambdaArgument(argument: FirExpression, isLastArgument: Boolean) {
-        // process position argument
-        if (argument !is FirNamedArgumentExpression) {
-            if (processPositionArgument(argument, isLastArgument)) {
-                state = State.VARARG_POSITION
+        when {
+            // process position argument
+            argument !is FirNamedArgumentExpression -> {
+                if (processPositionArgument(argument, isLastArgument)) {
+                    state = State.VARARG_POSITION
+                }
             }
-        }
-        // process named argument
-        else {
-            if (state == State.VARARG_POSITION) {
-                completeVarargPositionArguments()
+            // process named argument
+            function.origin == FirDeclarationOrigin.DynamicScope -> {
+                if (processPositionArgument(argument.expression, isLastArgument)) {
+                    state = State.VARARG_POSITION
+                }
             }
-
-            processNamedArgument(argument)
+            else -> {
+                if (state == State.VARARG_POSITION) {
+                    completeVarargPositionArguments()
+                }
+                processNamedArgument(argument)
+            }
         }
     }
 
