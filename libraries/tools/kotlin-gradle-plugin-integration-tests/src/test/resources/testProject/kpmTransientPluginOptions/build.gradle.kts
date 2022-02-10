@@ -7,8 +7,8 @@ plugins {
 }
 
 repositories {
-    mavenCentral()
     mavenLocal()
+    mavenCentral()
 }
 
 plugins.apply(GradleKpmPluginWithTransientPluginOptions::class.java)
