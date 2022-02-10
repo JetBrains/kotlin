@@ -9,11 +9,15 @@ import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.compilerRunner.konanHome
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
+import org.jetbrains.kotlin.gradle.internal.PLATFORM_INTEGERS_SUPPORT_LIBRARY
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
 import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.internal.MissingNativeStdlibWarning.showMissingNativeStdlibWarning
@@ -43,6 +47,15 @@ internal fun Project.setupKotlinNativePlatformDependencies() {
             isCompilationDependency = false
         )
     }
+
+    if (isPlatformIntegerCommonizationEnabled) {
+        kotlin.nativeRootSourceSets.forEach { sourceSet ->
+            dependencies.add(
+                sourceSet.implementationConfigurationName,
+                "$KOTLIN_MODULE_GROUP:$PLATFORM_INTEGERS_SUPPORT_LIBRARY:${getKotlinPluginVersion()}"
+            )
+        }
+    }
 }
 
 internal fun Project.getNativeDistributionDependencies(target: CommonizerTarget): FileCollection {
@@ -51,6 +64,17 @@ internal fun Project.getNativeDistributionDependencies(target: CommonizerTarget)
         is SharedCommonizerTarget -> commonizeNativeDistributionTask?.get()?.getCommonizedPlatformLibrariesFor(target) ?: project.files()
     }
 }
+
+internal val KotlinMultiplatformExtension.nativeRootSourceSets: Collection<KotlinSourceSet>
+    get() {
+        val nativeSourceSets = sourceSets.filter { sourceSet -> project.getCommonizerTarget(sourceSet) != null }
+        return nativeSourceSets.filter { sourceSet ->
+            val allVisibleSourceSets = sourceSet.dependsOn + getVisibleSourceSetsFromAssociateCompilations(project, sourceSet)
+            allVisibleSourceSets.none { dependency ->
+                dependency in nativeSourceSets
+            }
+        }
+    }
 
 private fun Project.getOriginalPlatformLibrariesFor(target: LeafCommonizerTarget): FileCollection = project.filesProvider {
     konanDistribution.platformLibsDir.resolve(target.konanTarget.name).listLibraryFiles().toSet()
