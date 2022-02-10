@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.util
 
+import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
@@ -22,8 +23,23 @@ object LibraryUtils {
         jar: Path,
         jarFileSystem: CoreJarFileSystem = CoreJarFileSystem(),
     ): Collection<VirtualFile> {
-        val root = jarFileSystem.refreshAndFindFileByPath(jar.toAbsolutePath().toString() + JAR_SEPARATOR)!!
+        return jarFileSystem.refreshAndFindFileByPath(jar.toAbsolutePath().toString() + JAR_SEPARATOR)
+            ?.let { getAllVirtualFilesFromRoot(it) } ?: emptySet()
+    }
 
+    /**
+     * Get all [VirtualFile]s inside the given [dir] (of [Path])
+     */
+    fun getAllVirtualFilesFromDirectory(
+        dir: Path,
+    ): Collection<VirtualFile> {
+        val fs = StandardFileSystems.local()
+        return fs.findFileByPath(dir.toAbsolutePath().toString())?.let { getAllVirtualFilesFromRoot(it) } ?: return emptySet()
+    }
+
+    private fun getAllVirtualFilesFromRoot(
+        root: VirtualFile
+    ): Collection<VirtualFile> {
         val files = mutableSetOf<VirtualFile>()
         VfsUtilCore.iterateChildrenRecursively(
             root,

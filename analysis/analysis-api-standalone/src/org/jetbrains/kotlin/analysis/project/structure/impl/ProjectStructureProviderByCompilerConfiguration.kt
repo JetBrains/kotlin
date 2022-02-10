@@ -28,7 +28,7 @@ internal class ProjectStructureProviderByCompilerConfiguration(
                 val path = Paths.get(srcRoot)
                 if (Files.isDirectory(path)) {
                     // E.g., project/app/src
-                    Files.walk(Paths.get(srcRoot))
+                    Files.walk(path)
                         .filter(Files::isRegularFile)
                         .forEach { add(it.toString()) }
                 } else {
@@ -42,13 +42,12 @@ internal class ProjectStructureProviderByCompilerConfiguration(
     private val sourceModule = KtSourceModuleByCompilerConfiguration(compilerConfig, project, ktFiles, jarFileSystem)
 
     override fun getKtModuleForKtElement(element: PsiElement): KtModule {
-        val containingFilePath = element.containingFile.virtualFile.path
-        return if (containingFilePath in sourceFiles) {
+        val containingFile = element.containingFile.virtualFile
+        return if (containingFile.path in sourceFiles) {
             sourceModule
         } else {
-            sourceModule.directRegularDependencies.find { libModule ->
-                (libModule as KtLibraryModuleByCompilerConfiguration).virtualFiles.any { it.path == containingFilePath }
-            } ?: error("Can't find module for $containingFilePath")
+            sourceModule.directRegularDependencies.find { libModule -> containingFile in libModule.contentScope }
+                ?: error("Can't find module for ${containingFile.path}")
         }
     }
 }
