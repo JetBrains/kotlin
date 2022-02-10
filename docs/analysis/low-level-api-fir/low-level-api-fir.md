@@ -1,6 +1,6 @@
 # Low Level API
 
-Low-level API (LL API fopr short) is an interlayer between Analysis API FIR Implementation and FIR compiler. Low-level API is responsible for:
+Low-level API (LL API for short) is an interlayer between Analysis API FIR Implementation and FIR compiler. Low-level API is responsible for:
 
 * Finding corresponding `FirElement` by `KtElement`
 * Lazy resolving of `FirDeclaration`
@@ -8,7 +8,7 @@ Low-level API (LL API fopr short) is an interlayer between Analysis API FIR Impl
 * Incremental code analysis
 * Implementing FIR providers using IntelliJ indexes
 
-You can read about how FIR compiler works [here](../fir/fir-basics.md).
+You can read about how FIR compiler works [here](../../fir/fir-basics.md).
 
 The entry point for LL API is `FirModuleResolveState`.` FirModuleResolveState` is a view of project modules visible from the current module.
 The lifetime of
