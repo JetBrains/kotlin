@@ -25776,6 +25776,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/multiplatform/annotationsViaActualTypeAliasFromBinary.kt");
         }
 
+        @TestMetadata("commonInternal.kt")
+        public void testCommonInternal() throws Exception {
+            runTest("compiler/testData/codegen/box/multiplatform/commonInternal.kt");
+        }
+
         @TestMetadata("expectClassInJvmMultifileFacade.kt")
         public void testExpectClassInJvmMultifileFacade() throws Exception {
             runTest("compiler/testData/codegen/box/multiplatform/expectClassInJvmMultifileFacade.kt");

@@ -30756,6 +30756,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("commonInternal.kt")
+        public void testCommonInternal() throws Exception {
+            runTest("compiler/testData/codegen/box/multiplatform/commonInternal.kt");
+        }
+
+        @Test
         @TestMetadata("expectClassInJvmMultifileFacade.kt")
         public void testExpectClassInJvmMultifileFacade() throws Exception {
             runTest("compiler/testData/codegen/box/multiplatform/expectClassInJvmMultifileFacade.kt");
