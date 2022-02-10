@@ -74,8 +74,4 @@ interface KotlinJavaToolchain {
             javaLauncher: Provider<JavaLauncher>
         )
     }
-
-    companion object {
-        val TOOLCHAIN_SUPPORTED_VERSION: GradleVersion = GradleVersion.version("6.7")
-    }
 }

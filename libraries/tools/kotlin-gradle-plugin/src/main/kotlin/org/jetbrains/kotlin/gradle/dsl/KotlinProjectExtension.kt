@@ -77,9 +77,9 @@ abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTo
     /**
      * Configures [Java toolchain](https://docs.gradle.org/current/userguide/toolchains.html) both for Kotlin JVM and Java tasks.
      *
-     * @param action - action to configure [JavaToolchainSpec]. You could safely cast `Any` into `JavaToolchainSpec`.
+     * @param action - action to configure [JavaToolchainSpec]
      */
-    fun jvmToolchain(action: Action<Any>) {
+    fun jvmToolchain(action: Action<JavaToolchainSpec>) {
         toolchainSupport.applyToolchain(action)
     }
 

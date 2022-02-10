@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.Action
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionContainer
 import org.gradle.api.plugins.JavaPluginExtension
@@ -14,38 +13,24 @@ import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.jvm.toolchain.JavaToolchainSpec
-import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinJavaToolchain.Companion.TOOLCHAIN_SUPPORTED_VERSION
 import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
 
 internal interface ToolchainSupport {
-    fun applyToolchain(action: Action<Any>)
+    fun applyToolchain(action: Action<JavaToolchainSpec>)
 
     companion object {
         internal fun createToolchain(
             project: Project
         ): ToolchainSupport {
-            val currentVersion = GradleVersion.version(project.gradle.gradleVersion)
-            return when {
-                currentVersion < TOOLCHAIN_SUPPORTED_VERSION -> project.objects.newInstance<NonExistingToolchainSupport>()
-                else -> project.objects.newInstance<DefaultToolchainSupport>(
-                    project.extensions,
-                    project.tasks,
-                    project.plugins
-                )
-            }
+            return project.objects.newInstance<DefaultToolchainSupport>(
+                project.extensions,
+                project.tasks,
+                project.plugins
+            )
         }
-    }
-}
-
-internal abstract class NonExistingToolchainSupport : ToolchainSupport {
-    override fun applyToolchain(
-        action: Action<Any>
-    ) {
-        throw GradleException("JavaToolchain support is only available from Gradle 6.7")
     }
 }
 
@@ -64,7 +49,7 @@ internal abstract class DefaultToolchainSupport @Inject constructor(
     }
 
     override fun applyToolchain(
-        action: Action<Any>
+        action: Action<JavaToolchainSpec>
     ) {
         action.execute(toolchainSpec)
         configureToolchain()
