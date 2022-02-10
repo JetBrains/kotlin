@@ -122,19 +122,19 @@ inline constexpr bool is_explicitly_convertible_v = !std::is_convertible_v<From,
 } // namespace
 
 TEST(SaturatingTest, ValueConstructor) {
-    static_assert(is_explicitly_convertible_v<int8_t, int_sat8_t>);
-    static_assert(is_explicitly_convertible_v<int8_t, int_sat16_t>);
-    static_assert(is_explicitly_convertible_v<int8_t, int_sat32_t>);
-    static_assert(is_explicitly_convertible_v<int8_t, int_sat64_t>);
+    static_assert(std::is_convertible_v<int8_t, int_sat8_t>);
+    static_assert(std::is_convertible_v<int8_t, int_sat16_t>);
+    static_assert(std::is_convertible_v<int8_t, int_sat32_t>);
+    static_assert(std::is_convertible_v<int8_t, int_sat64_t>);
     static_assert(is_explicitly_convertible_v<int8_t, uint_sat8_t>);
     static_assert(is_explicitly_convertible_v<int8_t, uint_sat16_t>);
     static_assert(is_explicitly_convertible_v<int8_t, uint_sat32_t>);
     static_assert(is_explicitly_convertible_v<int8_t, uint_sat64_t>);
 
     static_assert(is_explicitly_convertible_v<int16_t, int_sat8_t>);
-    static_assert(is_explicitly_convertible_v<int16_t, int_sat16_t>);
-    static_assert(is_explicitly_convertible_v<int16_t, int_sat32_t>);
-    static_assert(is_explicitly_convertible_v<int16_t, int_sat64_t>);
+    static_assert(std::is_convertible_v<int16_t, int_sat16_t>);
+    static_assert(std::is_convertible_v<int16_t, int_sat32_t>);
+    static_assert(std::is_convertible_v<int16_t, int_sat64_t>);
     static_assert(is_explicitly_convertible_v<int16_t, uint_sat8_t>);
     static_assert(is_explicitly_convertible_v<int16_t, uint_sat16_t>);
     static_assert(is_explicitly_convertible_v<int16_t, uint_sat32_t>);
@@ -142,8 +142,8 @@ TEST(SaturatingTest, ValueConstructor) {
 
     static_assert(is_explicitly_convertible_v<int32_t, int_sat8_t>);
     static_assert(is_explicitly_convertible_v<int32_t, int_sat16_t>);
-    static_assert(is_explicitly_convertible_v<int32_t, int_sat32_t>);
-    static_assert(is_explicitly_convertible_v<int32_t, int_sat64_t>);
+    static_assert(std::is_convertible_v<int32_t, int_sat32_t>);
+    static_assert(std::is_convertible_v<int32_t, int_sat64_t>);
     static_assert(is_explicitly_convertible_v<int32_t, uint_sat8_t>);
     static_assert(is_explicitly_convertible_v<int32_t, uint_sat16_t>);
     static_assert(is_explicitly_convertible_v<int32_t, uint_sat32_t>);
@@ -152,7 +152,7 @@ TEST(SaturatingTest, ValueConstructor) {
     static_assert(is_explicitly_convertible_v<int64_t, int_sat8_t>);
     static_assert(is_explicitly_convertible_v<int64_t, int_sat16_t>);
     static_assert(is_explicitly_convertible_v<int64_t, int_sat32_t>);
-    static_assert(is_explicitly_convertible_v<int64_t, int_sat64_t>);
+    static_assert(std::is_convertible_v<int64_t, int_sat64_t>);
     static_assert(is_explicitly_convertible_v<int64_t, uint_sat8_t>);
     static_assert(is_explicitly_convertible_v<int64_t, uint_sat16_t>);
     static_assert(is_explicitly_convertible_v<int64_t, uint_sat32_t>);
@@ -162,19 +162,19 @@ TEST(SaturatingTest, ValueConstructor) {
     static_assert(is_explicitly_convertible_v<uint8_t, int_sat16_t>);
     static_assert(is_explicitly_convertible_v<uint8_t, int_sat32_t>);
     static_assert(is_explicitly_convertible_v<uint8_t, int_sat64_t>);
-    static_assert(is_explicitly_convertible_v<uint8_t, uint_sat8_t>);
-    static_assert(is_explicitly_convertible_v<uint8_t, uint_sat16_t>);
-    static_assert(is_explicitly_convertible_v<uint8_t, uint_sat32_t>);
-    static_assert(is_explicitly_convertible_v<uint8_t, uint_sat64_t>);
+    static_assert(std::is_convertible_v<uint8_t, uint_sat8_t>);
+    static_assert(std::is_convertible_v<uint8_t, uint_sat16_t>);
+    static_assert(std::is_convertible_v<uint8_t, uint_sat32_t>);
+    static_assert(std::is_convertible_v<uint8_t, uint_sat64_t>);
 
     static_assert(is_explicitly_convertible_v<uint16_t, int_sat8_t>);
     static_assert(is_explicitly_convertible_v<uint16_t, int_sat16_t>);
     static_assert(is_explicitly_convertible_v<uint16_t, int_sat32_t>);
     static_assert(is_explicitly_convertible_v<uint16_t, int_sat64_t>);
     static_assert(is_explicitly_convertible_v<uint16_t, uint_sat8_t>);
-    static_assert(is_explicitly_convertible_v<uint16_t, uint_sat16_t>);
-    static_assert(is_explicitly_convertible_v<uint16_t, uint_sat32_t>);
-    static_assert(is_explicitly_convertible_v<uint16_t, uint_sat64_t>);
+    static_assert(std::is_convertible_v<uint16_t, uint_sat16_t>);
+    static_assert(std::is_convertible_v<uint16_t, uint_sat32_t>);
+    static_assert(std::is_convertible_v<uint16_t, uint_sat64_t>);
 
     static_assert(is_explicitly_convertible_v<uint32_t, int_sat8_t>);
     static_assert(is_explicitly_convertible_v<uint32_t, int_sat16_t>);
@@ -182,8 +182,8 @@ TEST(SaturatingTest, ValueConstructor) {
     static_assert(is_explicitly_convertible_v<uint32_t, int_sat64_t>);
     static_assert(is_explicitly_convertible_v<uint32_t, uint_sat8_t>);
     static_assert(is_explicitly_convertible_v<uint32_t, uint_sat16_t>);
-    static_assert(is_explicitly_convertible_v<uint32_t, uint_sat32_t>);
-    static_assert(is_explicitly_convertible_v<uint32_t, uint_sat64_t>);
+    static_assert(std::is_convertible_v<uint32_t, uint_sat32_t>);
+    static_assert(std::is_convertible_v<uint32_t, uint_sat64_t>);
 
     static_assert(is_explicitly_convertible_v<uint64_t, int_sat8_t>);
     static_assert(is_explicitly_convertible_v<uint64_t, int_sat16_t>);
@@ -192,7 +192,7 @@ TEST(SaturatingTest, ValueConstructor) {
     static_assert(is_explicitly_convertible_v<uint64_t, uint_sat8_t>);
     static_assert(is_explicitly_convertible_v<uint64_t, uint_sat16_t>);
     static_assert(is_explicitly_convertible_v<uint64_t, uint_sat32_t>);
-    static_assert(is_explicitly_convertible_v<uint64_t, uint_sat64_t>);
+    static_assert(std::is_convertible_v<uint64_t, uint_sat64_t>);
 }
 
 TEST(SaturatingTest, ValueCast) {
@@ -271,9 +271,9 @@ TEST(SaturatingTest, ValueCast) {
 
 TEST(SaturatingTest, SaturatingConstructor) {
     static_assert(std::is_convertible_v<int_sat8_t, int_sat8_t>);
-    static_assert(is_explicitly_convertible_v<int_sat8_t, int_sat16_t>);
-    static_assert(is_explicitly_convertible_v<int_sat8_t, int_sat32_t>);
-    static_assert(is_explicitly_convertible_v<int_sat8_t, int_sat64_t>);
+    static_assert(std::is_convertible_v<int_sat8_t, int_sat16_t>);
+    static_assert(std::is_convertible_v<int_sat8_t, int_sat32_t>);
+    static_assert(std::is_convertible_v<int_sat8_t, int_sat64_t>);
     static_assert(is_explicitly_convertible_v<int_sat8_t, uint_sat8_t>);
     static_assert(is_explicitly_convertible_v<int_sat8_t, uint_sat16_t>);
     static_assert(is_explicitly_convertible_v<int_sat8_t, uint_sat32_t>);
@@ -281,8 +281,8 @@ TEST(SaturatingTest, SaturatingConstructor) {
 
     static_assert(is_explicitly_convertible_v<int_sat16_t, int_sat8_t>);
     static_assert(std::is_convertible_v<int_sat16_t, int_sat16_t>);
-    static_assert(is_explicitly_convertible_v<int_sat16_t, int_sat32_t>);
-    static_assert(is_explicitly_convertible_v<int_sat16_t, int_sat64_t>);
+    static_assert(std::is_convertible_v<int_sat16_t, int_sat32_t>);
+    static_assert(std::is_convertible_v<int_sat16_t, int_sat64_t>);
     static_assert(is_explicitly_convertible_v<int_sat16_t, uint_sat8_t>);
     static_assert(is_explicitly_convertible_v<int_sat16_t, uint_sat16_t>);
     static_assert(is_explicitly_convertible_v<int_sat16_t, uint_sat32_t>);
@@ -291,7 +291,7 @@ TEST(SaturatingTest, SaturatingConstructor) {
     static_assert(is_explicitly_convertible_v<int_sat32_t, int_sat8_t>);
     static_assert(is_explicitly_convertible_v<int_sat32_t, int_sat16_t>);
     static_assert(std::is_convertible_v<int_sat32_t, int_sat32_t>);
-    static_assert(is_explicitly_convertible_v<int_sat32_t, int_sat64_t>);
+    static_assert(std::is_convertible_v<int_sat32_t, int_sat64_t>);
     static_assert(is_explicitly_convertible_v<int_sat32_t, uint_sat8_t>);
     static_assert(is_explicitly_convertible_v<int_sat32_t, uint_sat16_t>);
     static_assert(is_explicitly_convertible_v<int_sat32_t, uint_sat32_t>);
@@ -311,9 +311,9 @@ TEST(SaturatingTest, SaturatingConstructor) {
     static_assert(is_explicitly_convertible_v<uint_sat8_t, int_sat32_t>);
     static_assert(is_explicitly_convertible_v<uint_sat8_t, int_sat64_t>);
     static_assert(std::is_convertible_v<uint_sat8_t, uint_sat8_t>);
-    static_assert(is_explicitly_convertible_v<uint_sat8_t, uint_sat16_t>);
-    static_assert(is_explicitly_convertible_v<uint_sat8_t, uint_sat32_t>);
-    static_assert(is_explicitly_convertible_v<uint_sat8_t, uint_sat64_t>);
+    static_assert(std::is_convertible_v<uint_sat8_t, uint_sat16_t>);
+    static_assert(std::is_convertible_v<uint_sat8_t, uint_sat32_t>);
+    static_assert(std::is_convertible_v<uint_sat8_t, uint_sat64_t>);
 
     static_assert(is_explicitly_convertible_v<uint_sat16_t, int_sat8_t>);
     static_assert(is_explicitly_convertible_v<uint_sat16_t, int_sat16_t>);
@@ -321,8 +321,8 @@ TEST(SaturatingTest, SaturatingConstructor) {
     static_assert(is_explicitly_convertible_v<uint_sat16_t, int_sat64_t>);
     static_assert(is_explicitly_convertible_v<uint_sat16_t, uint_sat8_t>);
     static_assert(std::is_convertible_v<uint_sat16_t, uint_sat16_t>);
-    static_assert(is_explicitly_convertible_v<uint_sat16_t, uint_sat32_t>);
-    static_assert(is_explicitly_convertible_v<uint_sat16_t, uint_sat64_t>);
+    static_assert(std::is_convertible_v<uint_sat16_t, uint_sat32_t>);
+    static_assert(std::is_convertible_v<uint_sat16_t, uint_sat64_t>);
 
     static_assert(is_explicitly_convertible_v<uint_sat32_t, int_sat8_t>);
     static_assert(is_explicitly_convertible_v<uint_sat32_t, int_sat16_t>);
@@ -331,7 +331,7 @@ TEST(SaturatingTest, SaturatingConstructor) {
     static_assert(is_explicitly_convertible_v<uint_sat32_t, uint_sat8_t>);
     static_assert(is_explicitly_convertible_v<uint_sat32_t, uint_sat16_t>);
     static_assert(std::is_convertible_v<uint_sat32_t, uint_sat32_t>);
-    static_assert(is_explicitly_convertible_v<uint_sat32_t, uint_sat64_t>);
+    static_assert(std::is_convertible_v<uint_sat32_t, uint_sat64_t>);
 
     static_assert(is_explicitly_convertible_v<uint_sat64_t, int_sat8_t>);
     static_assert(is_explicitly_convertible_v<uint_sat64_t, int_sat16_t>);
@@ -551,6 +551,25 @@ TEST(SaturatingTest, CommonTypeWithIntegral) {
     static_assert(std::is_same_v<std::common_type_t<uint_sat64_t, uint16_t>, uint_sat64_t>);
     static_assert(std::is_same_v<std::common_type_t<uint_sat64_t, uint32_t>, uint_sat64_t>);
     static_assert(std::is_same_v<std::common_type_t<uint_sat64_t, uint64_t>, uint_sat64_t>);
+}
+
+TEST(SaturatingTest, IsSaturating) {
+    static_assert(!is_saturating_v<int8_t>);
+    static_assert(!is_saturating_v<int16_t>);
+    static_assert(!is_saturating_v<int32_t>);
+    static_assert(!is_saturating_v<int64_t>);
+    static_assert(!is_saturating_v<uint8_t>);
+    static_assert(!is_saturating_v<uint16_t>);
+    static_assert(!is_saturating_v<uint32_t>);
+    static_assert(!is_saturating_v<uint64_t>);
+    static_assert(is_saturating_v<int_sat8_t>);
+    static_assert(is_saturating_v<int_sat16_t>);
+    static_assert(is_saturating_v<int_sat32_t>);
+    static_assert(is_saturating_v<int_sat64_t>);
+    static_assert(is_saturating_v<uint_sat8_t>);
+    static_assert(is_saturating_v<uint_sat16_t>);
+    static_assert(is_saturating_v<uint_sat32_t>);
+    static_assert(is_saturating_v<uint_sat64_t>);
 }
 
 namespace {

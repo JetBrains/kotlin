@@ -3,6 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
+#pragma once
+
 #include <cstdint>
 #include <functional>
 #include <limits>
@@ -10,6 +12,15 @@
 namespace kotlin {
 
 namespace internal {
+
+template <typename From, typename Into>
+struct is_promotable :
+    public std::bool_constant<
+            std::is_integral_v<From> && std::is_integral_v<Into> && std::is_signed_v<From> == std::is_signed_v<Into> &&
+            sizeof(Into) >= sizeof(From)> {};
+
+template <typename From, typename Into>
+inline constexpr bool is_promotable_v = is_promotable<From, Into>::value;
 
 // Not using std::common_type, because it allows to convert between unsigned and signed with losing information, and
 // is otherwise not intuitive. Examples:
@@ -158,12 +169,20 @@ struct saturating {
     // The underlying value.
     T value;
 
-    // Construct from any value using saturating_cast.
-    template <typename U>
+    // Implicitly construct from safely promotable types.
+    template <typename U, typename std::enable_if_t<internal::is_promotable_v<U, T>, bool> = false>
+    constexpr saturating(U value) noexcept : value(value) {}
+
+    // Explicitly construct from any integral value using saturating_cast.
+    template <typename U, typename std::enable_if_t<!internal::is_promotable_v<U, T>, bool> = false>
     explicit constexpr saturating(U value) noexcept : value(saturating_cast<T>(value)) {}
 
-    // Construct from any other saturating type using saturating_cast.
-    template <typename U>
+    // Implicitly construct from safely promotable saturating type.
+    template <typename U, typename std::enable_if_t<internal::is_promotable_v<U, T>, bool> = false>
+    constexpr saturating(saturating<U> other) noexcept : value(other.value) {}
+
+    // Explicitly construct from any saturating type using saturating_cast.
+    template <typename U, typename std::enable_if_t<!internal::is_promotable_v<U, T>, bool> = false>
     explicit constexpr saturating(saturating<U> other) noexcept : value(saturating_cast<T>(other.value)) {}
 
     ~saturating() = default;
@@ -246,6 +265,15 @@ using uint_sat16_t = saturating<uint16_t>;
 using uint_sat32_t = saturating<uint32_t>;
 using uint_sat64_t = saturating<uint64_t>;
 using size_sat_t = saturating<size_t>;
+
+template <typename T>
+struct is_saturating : public std::false_type {};
+
+template <typename T>
+struct is_saturating<saturating<T>> : public std::true_type {};
+
+template <typename T>
+inline constexpr bool is_saturating_v = is_saturating<T>::value;
 
 } // namespace kotlin
 
