@@ -241,6 +241,14 @@ fun box(): String {
     return "OK"
 }
 
+// TODO: Rewrite test to use module system
+@JsFun("() => { globalThis.main = wasmExports; }")
+external fun hackNonModuleExport()
+
+fun main() {
+    hackNonModuleExport()
+}
+
 // FILE: functionTypes__after.js
 
 const exportedFres = main.exportedF()(1, 20, 300)("<", ">");

@@ -11,9 +11,11 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.backend.wasm.WasmLoaderKind
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
 import org.jetbrains.kotlin.backend.wasm.wasmPhases
+import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -38,6 +40,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
+import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.ic.actualizeCaches
@@ -326,49 +329,30 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     exportedDeclarations = setOf(FqName("main")),
                     propertyLazyInitialization = arguments.irPropertyLazyInitialization,
                 )
+                if (arguments.irDce) {
+                    eliminateDeadDeclarations(allModules, backendContext)
+                }
                 val res = compileWasm(
                     allModules = allModules,
                     backendContext = backendContext,
                     emitNameSection = arguments.wasmDebug,
-                    dceEnabled = arguments.irDce,
+                    allowIncompleteImplementations = arguments.irDce,
                 )
-                val outputWasmFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "wasm")!!
-                outputWasmFile.writeBytes(res.wasm)
-                val outputWatFile = outputFile.withReplacedExtensionOrNull(outputFile.extension, "wat")!!
-                outputWatFile.writeText(res.wat)
 
-                val esmRunner = """
-                    export default WebAssembly.instantiateStreaming(fetch('${outputWasmFile.name}'), { runtime, js_code }).then((it) => {
-                        wasmInstance = it.instance;
-                        wasmInstance.exports.__init?.();
-                        wasmInstance.exports.startUnitTests?.();
-                        
-                        return it.instance.exports;
-                    });
-                """.trimIndent()
-
-                val nodeRunner = """
-                    const fs = require('fs');
-                    var path = require('path');
-                    const wasmBuffer = fs.readFileSync(path.resolve(__dirname, './${outputWasmFile.name}'));
-                    
-                    module.exports = WebAssembly.instantiate(wasmBuffer, { runtime, js_code }).then(wasm => {
-                        wasmInstance = wasm.instance;
-                    
-                        wasmInstance.exports.__init?.();
-                        wasmInstance.exports.startUnitTests?.();
-                    
-                        return wasmInstance.exports
-                    });
-                """.trimIndent()
-
-                val runner = when (arguments.wasmLauncher) {
-                    "esm" -> esmRunner
-                    "nodejs" -> nodeRunner
+                val launcherKind = when (arguments.wasmLauncher) {
+                    "esm" -> WasmLoaderKind.BROWSER
+                    "nodejs" -> WasmLoaderKind.NODE
+                    "d8" -> WasmLoaderKind.D8
                     else -> throw IllegalArgumentException("Unrecognized flavor for the wasm launcher")
                 }
 
-                outputFile.writeText(res.js + "\n" + runner)
+                writeCompilationResult(
+                    result = res,
+                    dir = outputFile.parentFile,
+                    loaderKind = launcherKind,
+                    fileNameBase = outputFile.nameWithoutExtension
+                )
+
                 return OK
             }
 

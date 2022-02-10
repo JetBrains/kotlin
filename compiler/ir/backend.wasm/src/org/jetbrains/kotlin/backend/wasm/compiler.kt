@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
-import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToBinary
 import org.jetbrains.kotlin.wasm.ir.convertors.WasmIrToText
 import java.io.ByteArrayOutputStream
+import java.io.File
 
 class WasmCompilerResult(val wat: String, val js: String, val wasm: ByteArray)
 
@@ -75,15 +75,10 @@ fun compileWasm(
     allModules: List<IrModuleFragment>,
     backendContext: WasmBackendContext,
     emitNameSection: Boolean = false,
-    dceEnabled: Boolean = false,
+    allowIncompleteImplementations: Boolean = false,
 ): WasmCompilerResult {
-
-    if (dceEnabled) {
-        eliminateDeadDeclarations(allModules, backendContext)
-    }
-
     val compiledWasmModule = WasmCompiledModuleFragment(backendContext.irBuiltIns)
-    val codeGenerator = WasmModuleFragmentGenerator(backendContext, compiledWasmModule, allowIncompleteImplementations = dceEnabled)
+    val codeGenerator = WasmModuleFragmentGenerator(backendContext, compiledWasmModule, allowIncompleteImplementations = allowIncompleteImplementations)
     allModules.forEach { codeGenerator.generateModule(it) }
 
     val linkedModule = compiledWasmModule.linkWasmCompiledFragments()
@@ -107,13 +102,76 @@ fun compileWasm(
 fun WasmCompiledModuleFragment.generateJs(): String {
     //language=js
     val runtime = """
-    var wasmInstance = null;
     
     const externrefBoxes = new WeakMap();
     """.trimIndent()
 
-    val jsFuns = jsFuns.joinToString(",\n") { "\"" + it.importName + "\" : " + it.jsCode }
-    val jsCode = "\nconst js_code = {$jsFuns};"
+    val jsCodeBody = jsFuns.joinToString(",\n") { "\"" + it.importName + "\" : " + it.jsCode }
+    val jsCodeBodyIndented = jsCodeBody.prependIndent("    ")
+    val jsCode =
+        "\nconst js_code = {\n$jsCodeBodyIndented\n};\n"
 
     return runtime + jsCode
+}
+
+enum class WasmLoaderKind {
+    D8,
+    NODE,
+    BROWSER,
+}
+
+fun generateJsWasmLoader(kind: WasmLoaderKind, wasmFilePath: String, externalJs: String): String {
+    val instantiation = when (kind) {
+        WasmLoaderKind.D8 ->
+            """
+                const wasmModule = new WebAssembly.Module(read('$wasmFilePath', 'binary'));
+                const wasmInstance = new WebAssembly.Instance(wasmModule, { js_code });
+            """.trimIndent()
+
+        WasmLoaderKind.NODE ->
+            """
+                const fs = require('fs');
+                var path = require('path');
+                const wasmBuffer = fs.readFileSync(path.resolve(__dirname, './$wasmFilePath'));
+                const wasmModule = new WebAssembly.Module(wasmBuffer);
+                const wasmInstance = new WebAssembly.Instance(wasmModule, { js_code });
+            """.trimIndent()
+
+        WasmLoaderKind.BROWSER ->
+            """
+                const { wasmInstance } = await WebAssembly.instantiateStreaming(fetch("$wasmFilePath"), { js_code });
+            """.trimIndent()
+    }
+
+    val init =
+        """
+            
+            const wasmExports = wasmInstance.exports;
+            wasmExports.__init();
+            wasmExports.startUnitTests?.();
+            
+        """.trimIndent()
+
+    val export = when (kind) {
+        WasmLoaderKind.D8, WasmLoaderKind.BROWSER ->
+            "export default wasmExports;\n"
+
+        WasmLoaderKind.NODE ->
+            "module.exports = wasmExports;\n"
+    }
+
+    return externalJs + instantiation + init + export
+}
+
+fun writeCompilationResult(
+    result: WasmCompilerResult,
+    dir: File,
+    loaderKind: WasmLoaderKind,
+    fileNameBase: String = "index",
+) {
+    dir.mkdirs()
+    File(dir, "$fileNameBase.wat").writeText(result.wat)
+    File(dir, "$fileNameBase.wasm").writeBytes(result.wasm)
+    val jsWithLoader = generateJsWasmLoader(loaderKind, "./$fileNameBase.wasm", result.js)
+    File(dir, "$fileNameBase.js").writeText(jsWithLoader)
 }

@@ -364,7 +364,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         val jsCode = buildString {
             append("(f) => (")
             appendParameterList(arity)
-            append(") => wasmInstance.exports.__callFunction_")
+            append(") => wasmExports.__callFunction_")
             append(info.hashString)
             append("(f, ")
             appendParameterList(arity)

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR, JS
 // MODULE: main
 // FILE: externals.kt
 
@@ -24,6 +25,15 @@ fun eiAsAny(ei: EI): Any = ei
 fun anyAsEI(any: Any): EI = any as EI
 
 fun box(): String = "OK"
+
+// TODO: Rewrite test to use module system
+
+@JsFun("() => { globalThis.main = wasmExports; }")
+external fun hackNonModuleExport()
+
+fun main() {
+    hackNonModuleExport()
+}
 
 // FILE: jsExport__after.js
 

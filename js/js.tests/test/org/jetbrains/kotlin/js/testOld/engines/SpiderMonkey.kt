@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.testOld.engines
 
 import java.io.BufferedReader
+import java.io.File
 import java.io.InputStreamReader
 import java.lang.Boolean.getBoolean
 import kotlin.test.fail
@@ -14,15 +15,27 @@ import kotlin.test.fail
 val toolLogsEnabled: Boolean = getBoolean("kotlin.js.test.verbose")
 
 class ExternalTool(val path: String) {
-    fun run(vararg arguments: String) {
+    fun run(vararg arguments: String, workingDirectory: File? = null) {
         val command = arrayOf(path, *arguments)
-        val process = ProcessBuilder(*command)
+        val processBuilder = ProcessBuilder(*command)
             .redirectErrorStream(true)
-            .start()
+
+        if (workingDirectory != null) {
+            processBuilder.directory(workingDirectory)
+        }
+
+        val process = processBuilder.start()
+
 
         val commandString = command.joinToString(" ") { escapeShellArgument(it) }
         if (toolLogsEnabled) {
-            println(commandString)
+            println(
+                if (workingDirectory != null) {
+                    "(cd '$workingDirectory' && $commandString)"
+                } else {
+                    commandString
+                }
+            )
         }
 
         // Print process output
