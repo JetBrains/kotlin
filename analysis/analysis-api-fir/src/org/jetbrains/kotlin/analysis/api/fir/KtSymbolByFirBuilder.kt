@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.ensureResolved
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -319,7 +318,7 @@ internal class KtSymbolByFirBuilder private constructor(
         }
 
         fun buildPropertySignature(firSymbol: FirPropertySymbol): KtVariableLikeSignature<KtVariableSymbol> {
-            firSymbol.ensureResolved(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+            firSymbol.ensureTypesAreResolved()
             return KtVariableLikeSignature(
                 buildPropertySymbol(firSymbol),
                 typeBuilder.buildKtType(firSymbol.fir.returnTypeRef),
