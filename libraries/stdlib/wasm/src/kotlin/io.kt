@@ -7,11 +7,11 @@ package kotlin.io
 
 import kotlin.wasm.internal.*
 
-@JsFun("(error) => console.error(\">>>  \" + error)")
+@JsFun("(error) => console.error(error)")
 internal external fun printError(error: String?): Unit
 
-@JsFun("(message) => console.log(\">>>  \" + message)")
-private external fun printlnImpl(error: String?): Unit
+@JsFun("(message) => console.log(message)")
+private external fun printlnImpl(message: String?): Unit
 
 /** Prints the line separator to the standard output stream. */
 public actual fun println() {

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 
-internal fun eliminateDeadDeclarations(modules: List<IrModuleFragment>, context: WasmBackendContext) {
+fun eliminateDeadDeclarations(modules: List<IrModuleFragment>, context: WasmBackendContext) {
     val printReachabilityInfo =
         context.configuration.getBoolean(JSConfigurationKeys.PRINT_REACHABILITY_INFO) ||
                 java.lang.Boolean.getBoolean("kotlin.wasm.dce.print.reachability.info")

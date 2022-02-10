@@ -242,7 +242,7 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
 
     @Argument(
             value = "-Xwasm-launcher",
-            valueDescription = "esm|nodejs",
+            valueDescription = "esm|nodejs|d8",
             description = "Picks flavor for the wasm launcher. Default is ESM."
     )
     var wasmLauncher: String? by NullableStringFreezableVar("esm")
