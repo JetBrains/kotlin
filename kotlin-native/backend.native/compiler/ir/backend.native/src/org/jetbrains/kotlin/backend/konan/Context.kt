@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
+import org.jetbrains.kotlin.name.ClassId
 
 internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
 
@@ -289,6 +290,9 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     fun copyLocalClassName(source: IrAttributeContainer, destination: IrAttributeContainer) {
         getLocalClassName(source)?.let { name -> putLocalClassName(destination, name) }
     }
+
+    /* test suite class -> test function names */
+    val testCasesToDump = mutableMapOf<ClassId, MutableCollection<String>>()
 
     val reflectionTypes: KonanReflectionTypes by lazy(PUBLICATION) {
         KonanReflectionTypes(moduleDescriptor)
