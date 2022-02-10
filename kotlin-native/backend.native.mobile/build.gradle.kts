@@ -14,7 +14,7 @@ plugins {
     `maven-publish`
 }
 
-version = "1.6.10-1" // CHANGE VERSION HERE
+version = "1.6.10-2" // CHANGE VERSION HERE
 
 val relocate = false
 val mobilePackage = when (relocate) {
