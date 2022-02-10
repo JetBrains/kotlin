@@ -8,10 +8,12 @@ package org.jetbrains.kotlin.ir.types
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
+import org.jetbrains.kotlin.ir.types.impl.IrTypeBase
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.*
 
-interface IrType : KotlinTypeMarker, IrAnnotationContainer {
+abstract class IrType : KotlinTypeMarker, IrAnnotationContainer {
 
     /**
      * @return true if this type is equal to [other] symbolically. Note that this is NOT EQUIVALENT to the full type checking algorithm
@@ -21,29 +23,28 @@ interface IrType : KotlinTypeMarker, IrAnnotationContainer {
      * Classes are compared by FQ names, which means that even if two types refer to different symbols of the class with the same FQ name,
      * such types will be considered equal. Type annotations do not have any effect on the behavior of this method.
      */
-    override fun equals(other: Any?): Boolean
+    abstract override fun equals(other: Any?): Boolean
 
-    override fun hashCode(): Int
+    abstract override fun hashCode(): Int
 }
 
-interface IrErrorType : IrType
+abstract class IrErrorType(kotlinType: KotlinType?) : IrTypeBase(kotlinType)
 
-interface IrDynamicType : IrType, DynamicTypeMarker
+abstract class IrDynamicType(kotlinType: KotlinType?) : IrTypeBase(kotlinType), DynamicTypeMarker
 
-interface IrDefinitelyNotNullType : IrType, DefinitelyNotNullTypeMarker {
-    val original: IrType
+abstract class IrDefinitelyNotNullType(kotlinType: KotlinType?) : IrTypeBase(kotlinType), DefinitelyNotNullTypeMarker {
+    abstract val original: IrType
 }
 
-interface IrSimpleType : IrType, SimpleTypeMarker, TypeArgumentListMarker {
-    val classifier: IrClassifierSymbol
-    val hasQuestionMark: Boolean
-    val arguments: List<IrTypeArgument>
-    val abbreviation: IrTypeAbbreviation?
+abstract class IrSimpleType(kotlinType: KotlinType?) : IrTypeBase(kotlinType), SimpleTypeMarker, TypeArgumentListMarker {
+    abstract val classifier: IrClassifierSymbol
+    abstract val hasQuestionMark: Boolean
+    abstract val arguments: List<IrTypeArgument>
+    abstract val abbreviation: IrTypeAbbreviation?
 }
 
 interface IrTypeArgument : TypeArgumentMarker {
     override fun equals(other: Any?): Boolean
-
     override fun hashCode(): Int
 }
 

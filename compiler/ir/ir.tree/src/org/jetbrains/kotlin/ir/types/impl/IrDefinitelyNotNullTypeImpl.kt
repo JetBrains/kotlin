@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.types.Variance
 class IrDefinitelyNotNullTypeImpl(
     kotlinType: KotlinType?,
     override val original: IrType,
-) : IrTypeBase(kotlinType), IrDefinitelyNotNullType {
+) : IrDefinitelyNotNullType(kotlinType) {
 
     override val annotations: List<IrConstructorCall>
         get() = original.annotations
