@@ -105,17 +105,17 @@ open class KotlinGradleFragmentInternal @Inject constructor(
         )
 
     override fun toString(): String = "fragment $fragmentName in $containingModule"
+
+    private val kotlinGradleFragmentConsistencyChecker =
+        FragmentConsistencyChecker(
+            unitsName = "fragments",
+            name = { name },
+            checks = FragmentConsistencyChecks<KotlinGradleFragment>(
+                unitName = "fragment",
+                languageSettings = { languageSettings }
+            ).allChecks
+        )
 }
 
 val KotlinGradleFragment.refinesClosure: Set<KotlinGradleFragment>
     get() = (this as KotlinModuleFragment).refinesClosure.map { it as KotlinGradleFragment }.toSet()
-
-internal val kotlinGradleFragmentConsistencyChecker =
-    FragmentConsistencyChecker<KotlinGradleFragment>(
-        unitsName = "fragments",
-        name = { name },
-        checks = FragmentConsistencyChecks<KotlinGradleFragment>(
-            unitName = "fragment",
-            languageSettings = { languageSettings }
-        ).allChecks
-    )
