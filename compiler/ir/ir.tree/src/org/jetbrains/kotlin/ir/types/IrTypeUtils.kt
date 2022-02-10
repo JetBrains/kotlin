@@ -70,3 +70,9 @@ fun IrType.toArrayOrPrimitiveArrayType(irBuiltIns: IrBuiltIns): IrType =
     } else {
         irBuiltIns.arrayClass.typeWith(this)
     }
+
+fun IrType.unwrapDefinitelyNotNullType(): IrType =
+    if (this is IrDefinitelyNotNullType)
+        this.original.unwrapDefinitelyNotNullType()
+    else
+        this

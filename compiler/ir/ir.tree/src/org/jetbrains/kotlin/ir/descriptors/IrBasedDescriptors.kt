@@ -1134,11 +1134,13 @@ private fun getContainingDeclaration(declaration: IrDeclaration): DeclarationDes
 fun IrType.toIrBasedKotlinType(): KotlinType = when (this) {
     is IrSimpleType ->
         makeKotlinType(classifier, arguments, hasQuestionMark)
-    is IrDefinitelyNotNullType ->
-        DefinitelyNotNullType.makeDefinitelyNotNull(this.original.toIrBasedKotlinType().unwrap())
-            ?: throw AssertionError("Can't reconstruct a definitely not-null type: ${this.render()}")
+    is IrDefinitelyNotNullType -> {
+        val kotlinType = this.original.toIrBasedKotlinType()
+        DefinitelyNotNullType.makeDefinitelyNotNull(kotlinType.unwrap())
+            ?: kotlinType
+    }
     else ->
-        TODO(toString())
+        throw AssertionError("Unexpected type: $this = ${this.render()}")
 }
 
 private fun makeKotlinType(
