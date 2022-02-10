@@ -70,6 +70,9 @@ ext.configureFrontendIr = { Project project ->
             if (project.kotlinBuildProperties.useFirForLibraries) {
                 freeCompilerArgs += "-Xuse-fir"
             }
+            if (project.properties.renderDiagnosticNames) {
+                freeCompilerArgs += "-Xrender-internal-diagnostic-names"
+            }
         }
     }
 }
