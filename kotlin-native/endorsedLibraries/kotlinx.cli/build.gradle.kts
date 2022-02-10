@@ -105,6 +105,8 @@ targetList.forEach { targetName ->
 
         destinationDir = buildDir.resolve("$targetName${library.name}")
 
+        // We build a single klib file for host platform and then copy it to other platforms
+        // creating target dirs and adding targets to manifest file
         val libFile = buildDir.resolve("${library.name}/${hostName}/${library.name}")
         from(libFile) {
             exclude("default/targets/$hostName")
@@ -126,7 +128,7 @@ targetList.forEach { targetName ->
     }
 
     if (targetName in cacheableTargetNames) {
-        tasks.register("${targetName}KotlinxCliCache", KonanCacheTask::class.java) {
+        tasks.register("${targetName}${library.taskName}Cache", KonanCacheTask::class.java) {
             target = targetName
             originalKlib = project.buildDir.resolve("$targetName${library.name}")
             cacheRoot = project.buildDir.resolve("cache/$targetName").absolutePath
