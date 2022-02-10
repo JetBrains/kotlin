@@ -20060,6 +20060,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 runTest("compiler/testData/diagnostics/tests/multiplatform/sealedTypeAliasTopLevel.kt");
             }
 
+            @Test
+            @TestMetadata("smartcastOnMemberPropertyFromCommonClass.kt")
+            public void testSmartcastOnMemberPropertyFromCommonClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/smartcastOnMemberPropertyFromCommonClass.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/defaultArguments")
             @TestDataPath("$PROJECT_ROOT")

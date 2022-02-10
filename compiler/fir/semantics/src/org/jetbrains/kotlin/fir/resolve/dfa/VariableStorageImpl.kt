@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -190,7 +191,6 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
             property.isVar -> PropertyStability.MUTABLE_PROPERTY
             property.receiverTypeRef != null -> PropertyStability.PROPERTY_WITH_GETTER
             property.getter.let { it != null && it !is FirDefaultPropertyAccessor } -> PropertyStability.PROPERTY_WITH_GETTER
-            property.originalOrSelf().moduleData.session != session -> PropertyStability.ALIEN_PUBLIC_PROPERTY
             property.modality != Modality.FINAL -> {
                 val dispatchReceiver = (originalFir.unwrapElement() as? FirQualifiedAccess)?.dispatchReceiver ?: return null
                 val receiverType = dispatchReceiver.typeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session) ?: return null
@@ -201,7 +201,14 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
                     else -> throw IllegalStateException("Should not be here: $receiverFir")
                 }
             }
-            else -> PropertyStability.STABLE_VALUE
+            else -> {
+                val propertyModuleData = property.originalOrSelf().moduleData
+                val currentModuleData = session.moduleData
+                when (propertyModuleData) {
+                    currentModuleData, in currentModuleData.dependsOnDependencies -> PropertyStability.STABLE_VALUE
+                    else -> PropertyStability.ALIEN_PUBLIC_PROPERTY
+                }
+            }
         }
     }
 }
