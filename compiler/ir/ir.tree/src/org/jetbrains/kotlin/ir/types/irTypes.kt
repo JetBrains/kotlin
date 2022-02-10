@@ -108,17 +108,28 @@ fun IrType.makeNotNull() =
             kotlinType = originalKotlinType?.makeNotNullable()
             hasQuestionMark = false
         }
-    } else
+    } else {
         this
+    }
 
-fun IrType.makeNullable() =
-    if (this is IrSimpleType && !this.hasQuestionMark)
-        buildSimpleType {
-            kotlinType = originalKotlinType?.makeNullable()
-            hasQuestionMark = true
+fun IrType.makeNullable(): IrType =
+    when (this) {
+        is IrSimpleType -> {
+            if (this.hasQuestionMark)
+                this
+            else
+                buildSimpleType {
+                    kotlinType = originalKotlinType?.makeNullable()
+                    hasQuestionMark = true
+                }
         }
-    else
-        this
+        is IrDefinitelyNotNullType -> {
+            // '{ T & Any }?' => 'T?'
+            this.original.makeNullable()
+        }
+        else ->
+            this
+    }
 
 @ObsoleteDescriptorBasedAPI
 fun IrType.toKotlinType(): KotlinType {
