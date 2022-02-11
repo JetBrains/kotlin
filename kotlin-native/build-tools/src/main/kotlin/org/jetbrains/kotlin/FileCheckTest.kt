@@ -89,9 +89,15 @@ open class FileCheckTest : DefaultTask() {
      * Check that [inputFile] matches [annotatedFile] with FileCheck.
      */
     private fun runFileCheck(annotatedFile: Path, inputFile: Path): ProcessOutput {
-        val args = mutableListOf(annotatedFile.toAbsolutePath().toString(), "--input-file", inputFile.toAbsolutePath().toString())
+        val args = mutableListOf(
+                annotatedFile.toAbsolutePath().toString(),
+                "--input-file", inputFile.toAbsolutePath().toString()
+        )
         checkPrefix?.let {
             args.addAll(listOf("--check-prefix", it))
+        }
+        additionalFileCheckFlags?.let {
+            args.addAll(it)
         }
         val platform = project.platformManager.platform(target)
         val configurables = platform.configurables
