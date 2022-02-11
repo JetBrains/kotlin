@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
+import org.jetbrains.kotlin.diagnostics.deprecationError2
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.*
@@ -682,6 +683,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val PLATFORM_CLASS_MAPPED_TO_KOTLIN by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<FqName>("kotlinClass")
+        }
+
+        val INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION by error<PsiElement> {
+            parameter<String>("typeVariableDescription")
+            parameter<Collection<ConeKotlinType>>("incompatibleTypes")
         }
     }
 

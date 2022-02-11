@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirNamedArgumentExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -26,6 +27,11 @@ abstract class InapplicableArgumentDiagnostic : ResolutionDiagnostic(INAPPLICABL
 }
 
 class MixingNamedAndPositionArguments(override val argument: FirExpression) : InapplicableArgumentDiagnostic()
+
+class InferredEmptyIntersectionDiagnostic(
+    val incompatibleTypes: Collection<ConeKotlinType>,
+    val typeVariable: ConeTypeVariable
+) : ResolutionDiagnostic(INAPPLICABLE)
 
 class TooManyArguments(
     val argument: FirExpression,

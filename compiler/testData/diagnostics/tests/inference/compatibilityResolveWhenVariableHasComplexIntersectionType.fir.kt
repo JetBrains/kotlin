@@ -11,7 +11,7 @@ object Scope {
         fun <T : Comparable<T>, S : T> greater(x: Bar<in S>, t: T) {}
 
         fun test(b: Bar<Long>) {
-            <!DEBUG_INFO_CALL("fqName: Scope.Nested.greater; typeCall: function")!>greater(b, b)<!>
+            <!DEBUG_INFO_CALL("fqName: Scope.greater; typeCall: function")!>greater(b, b)<!>
         }
     }
 }
@@ -20,7 +20,7 @@ object OnlyOne {
     fun <T : Comparable<T>, S : T> greater(x: Bar<in S>, t: T) {}
 
     fun test(b: Bar<Long>) {
-        <!DEBUG_INFO_CALL("fqName: OnlyOne.greater; typeCall: function")!>greater(b, b)<!>
+        <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!><!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION!>greater<!>(b, b)<!>
     }
 }
 

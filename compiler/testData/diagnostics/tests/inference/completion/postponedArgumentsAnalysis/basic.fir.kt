@@ -164,10 +164,10 @@ fun main() {
     select({ x, y -> x.inv() + y.toByte() }, id { x: Int, y -> y.toByte() }, id { x, y: Number -> x.inv() })
 
     // Inferring lambda parameter types by other specified lambda parameters; expected type is a functional type with type variables in parameter types
-    takeLambdas({ <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> }, { x: Int -> }, { x: Nothing -> x })
-    takeLambdas({ <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> }, { } as (Int) -> Unit, { x: Nothing -> x })
-    takeLambdas({ <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> }, { } as (Nothing) -> Unit, { x: Int -> x })
-    takeLambdas({ <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> }, { } as (Int) -> Unit, { } as (Nothing) -> Unit)
+    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION!>takeLambdas<!>({ <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> }, { x: Int -> }, { x: Nothing -> x })
+    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION!>takeLambdas<!>({ <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> }, { } as (Int) -> Unit, { x: Nothing -> x })
+    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION!>takeLambdas<!>({ <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> }, { } as (Nothing) -> Unit, { x: Int -> x })
+    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION!>takeLambdas<!>({ <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>it<!> }, { } as (Int) -> Unit, { } as (Nothing) -> Unit)
 
     // Inferring lambda parameter types by other specified lambda parameters; expected type is a functional type with type variables in parameter types; dependent type parameters
     takeLambdasWithDirectlyDependentTypeParameters({ <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> }, { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>it<!> }, { x: Int -> x })

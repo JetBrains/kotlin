@@ -17,12 +17,14 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInfix
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.calls.InferredEmptyIntersectionDiagnostic
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -253,6 +255,8 @@ private fun mapInapplicableCandidateError(
                     diagnostic.candidate
                 )
             }
+            is InferredEmptyIntersectionDiagnostic ->
+                reportInferredIntoEmptyIntersectionError(source, rootCause.typeVariable, rootCause.incompatibleTypes)
             else -> genericDiagnostic
         }
     }.distinct()
@@ -388,8 +392,27 @@ private fun ConstraintSystemError.toDiagnostic(
                 position.initialConstraint.asStringWithoutPosition(),
             )
         }
+        is InferredEmptyIntersection -> {
+            @Suppress("UNCHECKED_CAST")
+            reportInferredIntoEmptyIntersectionError(
+                source,
+                typeVariable as ConeTypeVariable,
+                incompatibleTypes as Collection<ConeKotlinType>
+            )
+        }
         else -> null
     }
+}
+
+private fun reportInferredIntoEmptyIntersectionError(
+    source: KtSourceElement,
+    typeVariable: ConeTypeVariable,
+    incompatibleTypes: Collection<ConeKotlinType>,
+): KtDiagnosticWithParameters2<String, Collection<ConeKotlinType>>? {
+    val typeVariableText =
+        (typeVariable.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.name?.asString()
+            ?: typeVariable.toString()
+    return FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.createOn(source, typeVariableText, incompatibleTypes)
 }
 
 private val NewConstraintError.lowerConeType: ConeKotlinType get() = lowerType as ConeKotlinType
