@@ -17903,6 +17903,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("kt51254.kt")
+            public void testKt51254() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/kt51254.kt");
+            }
+
+            @Test
             @TestMetadata("mangledDefaultParameterFunction.kt")
             public void testMangledDefaultParameterFunction() throws Exception {
                 // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()

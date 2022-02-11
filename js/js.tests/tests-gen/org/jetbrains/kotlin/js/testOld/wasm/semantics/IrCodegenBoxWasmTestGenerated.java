@@ -13717,6 +13717,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/inlineClasses/kt51157.kt");
         }
 
+        @TestMetadata("kt51254.kt")
+        public void testKt51254() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt51254.kt");
+        }
+
         @TestMetadata("mangledDefaultParameterFunction.kt")
         public void testMangledDefaultParameterFunction() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
