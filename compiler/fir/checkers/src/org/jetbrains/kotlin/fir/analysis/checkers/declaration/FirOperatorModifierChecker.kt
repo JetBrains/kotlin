@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.member
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.memberOrExtension
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.Checks.noDefaultAndVarargs
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
-import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeOf
 import org.jetbrains.kotlin.fir.analysis.checkers.isSupertypeOf
 import org.jetbrains.kotlin.fir.analysis.checkers.overriddenFunctions
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter

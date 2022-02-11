@@ -98,18 +98,6 @@ fun FirClassSymbol<*>.isSupertypeOf(other: FirClassSymbol<*>, session: FirSessio
     return isSupertypeOf(other, mutableSetOf())
 }
 
-/**
- * Returns the FirRegularClassSymbol associated with this
- * or null of something goes wrong.
- */
-fun ConeClassLikeType.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol? {
-    return fullyExpandedType(session).toSymbol(session) as? FirRegularClassSymbol
-}
-
-fun ConeKotlinType.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol? {
-    return (this as? ConeClassLikeType)?.toRegularClassSymbol(session)
-}
-
 fun ConeKotlinType.isInlineClass(session: FirSession): Boolean = toRegularClassSymbol(session)?.isInline == true
 
 /**
@@ -293,80 +281,6 @@ val FirValueParameter.hasValOrVar: Boolean
 
 fun KotlinTypeMarker.isSupertypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?): Boolean =
     type != null && AbstractTypeChecker.isSubtypeOf(context, type, this)
-
-fun KotlinTypeMarker.isSubtypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?): Boolean =
-    type != null && AbstractTypeChecker.isSubtypeOf(context, this, type)
-
-fun ConeKotlinType.canHaveSubtypes(session: FirSession): Boolean {
-    if (this.isMarkedNullable) {
-        return true
-    }
-    val classSymbol = toRegularClassSymbol(session) ?: return true
-    if (classSymbol.isEnumClass || classSymbol.isExpect || classSymbol.modality != Modality.FINAL) {
-        return true
-    }
-
-    classSymbol.typeParameterSymbols.forEachIndexed { idx, typeParameterSymbol ->
-        val typeProjection = typeArguments[idx]
-
-        if (typeProjection.isStarProjection) {
-            return true
-        }
-
-        val argument = typeProjection.type!! //safe because it is not a star
-
-        when (typeParameterSymbol.variance) {
-            Variance.INVARIANT ->
-                when (typeProjection.kind) {
-                    ProjectionKind.INVARIANT ->
-                        if (lowerThanBound(session.typeContext, argument, typeParameterSymbol) || argument.canHaveSubtypes(session)) {
-                            return true
-                        }
-                    ProjectionKind.IN ->
-                        if (lowerThanBound(session.typeContext, argument, typeParameterSymbol)) {
-                            return true
-                        }
-                    ProjectionKind.OUT ->
-                        if (argument.canHaveSubtypes(session)) {
-                            return true
-                        }
-                    ProjectionKind.STAR ->
-                        return true
-                }
-            Variance.IN_VARIANCE ->
-                if (typeProjection.kind != ProjectionKind.OUT) {
-                    if (lowerThanBound(session.typeContext, argument, typeParameterSymbol)) {
-                        return true
-                    }
-                } else {
-                    if (argument.canHaveSubtypes(session)) {
-                        return true
-                    }
-                }
-            Variance.OUT_VARIANCE ->
-                if (typeProjection.kind != ProjectionKind.IN) {
-                    if (argument.canHaveSubtypes(session)) {
-                        return true
-                    }
-                } else {
-                    if (lowerThanBound(session.typeContext, argument, typeParameterSymbol)) {
-                        return true
-                    }
-                }
-        }
-    }
-
-    return false
-}
-
-private fun lowerThanBound(context: ConeInferenceContext, argument: ConeKotlinType, typeParameterSymbol: FirTypeParameterSymbol): Boolean {
-    typeParameterSymbol.resolvedBounds.forEach { boundTypeRef ->
-        if (argument != boundTypeRef.coneType && argument.isSubtypeOf(context, boundTypeRef.coneType)) {
-            return true
-        }
-    }
-    return false
-}
 
 fun FirMemberDeclaration.isInlineOnly(): Boolean =
     isInline && hasAnnotation(INLINE_ONLY_ANNOTATION_CLASS_ID)

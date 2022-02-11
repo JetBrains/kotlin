@@ -7,12 +7,16 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
@@ -20,10 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLookupTagWithFixedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -594,3 +595,89 @@ fun FirCallableDeclaration.isSubtypeOf(
         other.returnTypeRef.coneType
     )
 }
+
+fun ConeKotlinType.canHaveSubtypes(session: FirSession): Boolean {
+    if (this.isMarkedNullable) {
+        return true
+    }
+    val classSymbol = toRegularClassSymbol(session) ?: return true
+    if (classSymbol.isEnumClass || classSymbol.isExpect || classSymbol.modality != Modality.FINAL) {
+        return true
+    }
+
+    classSymbol.typeParameterSymbols.forEachIndexed { idx, typeParameterSymbol ->
+        val typeProjection = typeArguments[idx]
+
+        if (typeProjection.isStarProjection) {
+            return true
+        }
+
+        val argument = typeProjection.type!! //safe because it is not a star
+
+        when (typeParameterSymbol.variance) {
+            Variance.INVARIANT ->
+                when (typeProjection.kind) {
+                    ProjectionKind.INVARIANT ->
+                        if (lowerThanBound(session.typeContext, argument, typeParameterSymbol) || argument.canHaveSubtypes(session)) {
+                            return true
+                        }
+                    ProjectionKind.IN ->
+                        if (lowerThanBound(session.typeContext, argument, typeParameterSymbol)) {
+                            return true
+                        }
+                    ProjectionKind.OUT ->
+                        if (argument.canHaveSubtypes(session)) {
+                            return true
+                        }
+                    ProjectionKind.STAR ->
+                        return true
+                }
+            Variance.IN_VARIANCE ->
+                if (typeProjection.kind != ProjectionKind.OUT) {
+                    if (lowerThanBound(session.typeContext, argument, typeParameterSymbol)) {
+                        return true
+                    }
+                } else {
+                    if (argument.canHaveSubtypes(session)) {
+                        return true
+                    }
+                }
+            Variance.OUT_VARIANCE ->
+                if (typeProjection.kind != ProjectionKind.IN) {
+                    if (argument.canHaveSubtypes(session)) {
+                        return true
+                    }
+                } else {
+                    if (lowerThanBound(session.typeContext, argument, typeParameterSymbol)) {
+                        return true
+                    }
+                }
+        }
+    }
+
+    return false
+}
+
+/**
+ * Returns the FirRegularClassSymbol associated with this
+ * or null of something goes wrong.
+ */
+fun ConeClassLikeType.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol? {
+    return fullyExpandedType(session).toSymbol(session) as? FirRegularClassSymbol
+}
+
+fun ConeKotlinType.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol? {
+    return (this as? ConeClassLikeType)?.toRegularClassSymbol(session)
+}
+
+private fun lowerThanBound(context: ConeInferenceContext, argument: ConeKotlinType, typeParameterSymbol: FirTypeParameterSymbol): Boolean {
+    typeParameterSymbol.resolvedBounds.forEach { boundTypeRef ->
+        if (argument != boundTypeRef.coneType && argument.isSubtypeOf(context, boundTypeRef.coneType)) {
+            return true
+        }
+    }
+    return false
+}
+
+fun KotlinTypeMarker.isSubtypeOf(context: TypeCheckerProviderContext, type: KotlinTypeMarker?): Boolean =
+    type != null && AbstractTypeChecker.isSubtypeOf(context, this, type)
