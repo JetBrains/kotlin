@@ -12,6 +12,6 @@ interface IdeaKotlinResourceDirectory : Serializable {
     val file: File
 }
 
-class IdeaKotlinResourceDirectoryImpl @KotlinGradlePluginApi constructor(
+data class IdeaKotlinResourceDirectoryImpl @KotlinGradlePluginApi constructor(
     override val file: File
 ) : IdeaKotlinResourceDirectory
