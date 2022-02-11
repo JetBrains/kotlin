@@ -49,8 +49,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
             origin,
             getOrFail(BindingContext.FUNCTION, ktFunction)
         ) {
-            if (context.configuration.skipBodies) null
-            else ktFunction.bodyExpression?.let { generateFunctionBody(it) }
+            ktFunction.bodyExpression?.let { generateFunctionBody(it) }
         }
 
     fun generateLambdaFunctionDeclaration(ktFunction: KtFunctionLiteral): IrSimpleFunction {
