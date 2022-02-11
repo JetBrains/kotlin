@@ -56,8 +56,6 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
     register(FirDefaultParametersResolver::class, FirDefaultParametersResolver())
 
     register(FirExtensionService::class, FirExtensionService(this))
-    register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
-    register(FirPredicateBasedProvider::class, FirPredicateBasedProviderImpl(this))
     register(GeneratedClassIndex::class, GeneratedClassIndex.create())
 
     register(FirSubstitutionOverrideStorage::class, FirSubstitutionOverrideStorage(this))
@@ -70,6 +68,9 @@ fun FirSession.registerCliCompilerOnlyComponents() {
     register(FirCachesFactory::class, FirThreadUnsafeCachesFactory)
     register(SealedClassInheritorsProvider::class, SealedClassInheritorsProviderImpl)
     register(FirPhaseManager::class, FirPhaseCheckingPhaseManager)
+
+    register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
+    register(FirPredicateBasedProvider::class, FirPredicateBasedProviderImpl(this))
 }
 
 @OptIn(SessionConfiguration::class)
