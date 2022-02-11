@@ -54,7 +54,7 @@ internal class KtSourceModuleByCompilerConfiguration(
     ktFiles: List<KtFile>,
     jarFileSystem: CoreJarFileSystem,
 ) : BaseKtModuleByCompilerConfiguration(compilerConfig, project), KtSourceModule {
-    override val directRegularDependencies: List<KtModule> by lazy {
+    override val directRegularDependencies: List<KtLibraryModule> by lazy {
         val libraryRoots = compilerConfig.jvmModularRoots + compilerConfig.jvmClasspathRoots
         val libraryRootsByType = libraryRoots.groupBy { it.isDirectory }
         buildList {

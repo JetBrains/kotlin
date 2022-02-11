@@ -52,7 +52,10 @@ fun MockProject.registerTestServices(
         KotlinModificationTrackerFactory::class.java,
         KotlinStaticModificationTrackerFactory::class.java
     )
-    registerService(KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(allKtFiles))
+    registerService(
+        KotlinDeclarationProviderFactory::class.java,
+        KotlinStaticDeclarationProviderFactory(this, allKtFiles)
+    )
     registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(allKtFiles))
     registerService(ProjectStructureProvider::class.java, projectStructureProvider)
     registerService(SymbolLightClassFacadeCache::class.java)

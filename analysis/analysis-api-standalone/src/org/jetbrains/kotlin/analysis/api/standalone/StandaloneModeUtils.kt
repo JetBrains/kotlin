@@ -5,18 +5,32 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone
 
+import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
+import com.intellij.openapi.extensions.LoadingOrder
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
+import com.intellij.psi.ClassFileViewProviderFactory
+import com.intellij.psi.FileTypeFileViewProviders
 import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.PsiManager
+import com.intellij.psi.compiled.ClassFileDecompilers
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.InvalidWayOfUsingAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
+import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
+import org.jetbrains.kotlin.analysis.decompiled.light.classes.fe10.KotlinDeclarationInCompiledFileSearcherFE10Impl
+import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.KotlinDeclarationInCompiledFileSearcher
+import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
+import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.CachedAttributeData
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.FileAttributeService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.PackagePartProviderFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
@@ -42,6 +56,8 @@ import org.jetbrains.kotlin.light.classes.symbol.caches.SymbolLightClassFacadeCa
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
 import org.jetbrains.kotlin.psi.KtFile
+import java.io.DataInput
+import java.io.DataOutput
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -51,6 +67,11 @@ import java.nio.file.Paths
  * In particular, this will register:
  *   * [KotlinReferenceProvidersService]
  *   * [KotlinReferenceProviderContributor]
+ *   * [ClsKotlinBinaryClassCache]
+ *   * [FileAttributeService]
+ *   * [FileTypeFileViewProviders]
+ *   * [KotlinClassFileDecompiler]
+ *   * [KotlinBuiltInDecompiler]
  */
 public fun configureApplicationEnvironment(app: MockApplication) {
     if (app.getServiceIfCreated(KotlinReferenceProvidersService::class.java) == null) {
@@ -65,6 +86,37 @@ public fun configureApplicationEnvironment(app: MockApplication) {
             KotlinFirReferenceContributor::class.java
         )
     }
+
+    if (app.getServiceIfCreated(ClsKotlinBinaryClassCache::class.java) == null) {
+        app.registerService(ClsKotlinBinaryClassCache::class.java)
+        app.registerService(FileAttributeService::class.java, DummyFileAttributeService)
+
+        FileTypeFileViewProviders.INSTANCE.addExplicitExtension(
+            JavaClassFileType.INSTANCE,
+            ClassFileViewProviderFactory()
+        )
+
+        @Suppress("DEPRECATION")
+        ClassFileDecompilers.getInstance().EP_NAME.point.apply {
+            registerExtension(KotlinClassFileDecompiler(), LoadingOrder.FIRST)
+            registerExtension(KotlinBuiltInDecompiler(), LoadingOrder.FIRST)
+        }
+
+        app.registerService(
+            KotlinDeclarationInCompiledFileSearcher::class.java,
+            KotlinDeclarationInCompiledFileSearcherFE10Impl::class.java
+        )
+    }
+}
+
+private object DummyFileAttributeService : FileAttributeService {
+    override fun <T> write(file: VirtualFile, id: String, value: T, writeValueFun: (DataOutput, T) -> Unit): CachedAttributeData<T> {
+        return CachedAttributeData(value, 0)
+    }
+
+    override fun <T> read(file: VirtualFile, id: String, readValueFun: (DataInput) -> T): CachedAttributeData<T>? {
+        return null
+    }
 }
 
 /**
@@ -74,6 +126,7 @@ public fun configureApplicationEnvironment(app: MockApplication) {
  *   * [KtAnalysisSessionProvider]
  *   * [KotlinAsJavaSupport] (a FIR version)
  *   * [SymbolLightClassFacadeCache] for FIR light class support
+ *   * [ClsJavaStubByVirtualFileCache]
  *   * [KotlinModificationTrackerFactory]
  *   * [LLFirResolveStateService]
  *   * [FirSealedClassInheritorsProcessorFactory]
@@ -138,7 +191,7 @@ private fun getKtFilesFromPaths(
 internal fun configureProjectEnvironment(
     project: MockProject,
     compilerConfig: CompilerConfiguration,
-    ktFiles: List<KtFile>,
+    sourceKtFiles: List<KtFile>,
     packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
     jarFileSystem: CoreJarFileSystem = CoreJarFileSystem(),
 ) {
@@ -147,6 +200,9 @@ internal fun configureProjectEnvironment(
     // FIR LC
     project.registerService(
         SymbolLightClassFacadeCache::class.java
+    )
+    project.registerService(
+        ClsJavaStubByVirtualFileCache::class.java
     )
 
     project.picoContainer.registerComponentInstance(
@@ -167,22 +223,29 @@ internal fun configureProjectEnvironment(
         KtModuleScopeProviderImpl()
     )
 
-    project.picoContainer.registerComponentInstance(
-        ProjectStructureProvider::class.qualifiedName,
+    val projectStructureProvider =
         ProjectStructureProviderByCompilerConfiguration(
             compilerConfig,
             project,
-            ktFiles,
+            sourceKtFiles,
+            jarFileSystem
+        )
+    project.picoContainer.registerComponentInstance(
+        ProjectStructureProvider::class.qualifiedName,
+        projectStructureProvider
+    )
+    project.picoContainer.registerComponentInstance(
+        KotlinDeclarationProviderFactory::class.qualifiedName,
+        KotlinStaticDeclarationProviderFactory(
+            project,
+            sourceKtFiles,
+            projectStructureProvider.libraryModules,
             jarFileSystem
         )
     )
     project.picoContainer.registerComponentInstance(
-        KotlinDeclarationProviderFactory::class.qualifiedName,
-        KotlinStaticDeclarationProviderFactory(ktFiles)
-    )
-    project.picoContainer.registerComponentInstance(
         KotlinPackageProviderFactory::class.qualifiedName,
-        KotlinStaticPackageProviderFactory(ktFiles)
+        KotlinStaticPackageProviderFactory(sourceKtFiles)
     )
     project.picoContainer.registerComponentInstance(
         PackagePartProviderFactory::class.qualifiedName,

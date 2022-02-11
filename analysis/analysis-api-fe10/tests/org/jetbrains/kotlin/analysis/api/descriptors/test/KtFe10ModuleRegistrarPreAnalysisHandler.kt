@@ -39,7 +39,10 @@ class KtFe10ModuleRegistrarPreAnalysisHandler(
 
             with(project as MockProject) {
                 registerService(KotlinModificationTrackerFactory::class.java, KotlinStaticModificationTrackerFactory::class.java)
-                registerService(KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(allKtFiles))
+                registerService(
+                    KotlinDeclarationProviderFactory::class.java,
+                    KotlinStaticDeclarationProviderFactory(project, allKtFiles)
+                )
                 registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(allKtFiles))
             }
         }
