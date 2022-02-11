@@ -98,7 +98,6 @@ fun makeIncrementally(
             kotlinSourceFilesExtensions = kotlinExtensions,
             classpathChanges = ClasspathSnapshotDisabled
         )
-        //TODO set properly
         compiler.compile(sourceFiles, args, messageCollector, providedChangedFiles = null)
     }
 }
@@ -135,13 +134,15 @@ class IncrementalJvmCompilerRunner(
     outputFiles: Collection<File>,
     private val modulesApiHistory: ModulesApiHistory,
     override val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS,
-    private val classpathChanges: ClasspathChanges
+    private val classpathChanges: ClasspathChanges,
+    withAbiSnapshot: Boolean = false
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
     workingDir,
     "caches-jvm",
     reporter,
     additionalOutputFiles = outputFiles,
-    buildHistoryFile = buildHistoryFile
+    buildHistoryFile = buildHistoryFile,
+    withAbiSnapshot = withAbiSnapshot
 ) {
     override fun createCacheManager(args: K2JVMCompilerArguments, projectDir: File?): IncrementalJvmCachesManager =
         IncrementalJvmCachesManager(
@@ -149,7 +150,7 @@ class IncrementalJvmCompilerRunner(
             projectDir,
             File(args.destination),
             reporter,
-            storeFullFqNamesInLookupCache = withSnapshot || classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled,
+            storeFullFqNamesInLookupCache = withAbiSnapshot || classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled,
             trackChangesInLookupCache = classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun
         )
 
@@ -191,7 +192,7 @@ class IncrementalJvmCompilerRunner(
         classpathAbiSnapshots: Map<String, AbiSnapshot>
     ): CompilationMode {
         return try {
-            calculateSourcesToCompileImpl(caches, changedFiles, args, classpathAbiSnapshots)
+            calculateSourcesToCompileImpl(caches, changedFiles, args, classpathAbiSnapshots, withAbiSnapshot)
         } finally {
             psiFileProvider.messageCollector.flush(messageCollector)
             psiFileProvider.messageCollector.clear()
@@ -228,7 +229,8 @@ class IncrementalJvmCompilerRunner(
         caches: IncrementalJvmCachesManager,
         changedFiles: ChangedFiles.Known,
         args: K2JVMCompilerArguments,
-        abiSnapshots: Map<String, AbiSnapshot> = HashMap()
+        abiSnapshots: Map<String, AbiSnapshot> = HashMap(),
+        withAbiSnapshot: Boolean
     ): CompilationMode {
         val dirtyFiles = DirtyFilesContainer(caches, reporter, kotlinSourceFilesExtensions)
         initDirtyFiles(dirtyFiles, changedFiles)
@@ -264,7 +266,7 @@ class IncrementalJvmCompilerRunner(
             is NotAvailableDueToMissingClasspathSnapshot -> ChangesEither.Unknown(BuildAttribute.CLASSPATH_SNAPSHOT_NOT_FOUND)
             is NotAvailableForNonIncrementalRun -> ChangesEither.Unknown(BuildAttribute.UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
             is ClasspathSnapshotDisabled -> reporter.measure(BuildTime.IC_ANALYZE_CHANGES_IN_DEPENDENCIES) {
-                if (!withSnapshot && !buildHistoryFile.isFile) {
+                if (!withAbiSnapshot && !buildHistoryFile.isFile) {
                     // If the previous build was a Gradle cache hit, the build history file must have been deleted as it is marked as
                     // @LocalState in the Gradle task. Therefore, this compilation will need to run non-incrementally.
                     // (Note that buildHistoryFile is outside workingDir. We don't need to perform the same check for files inside
@@ -276,7 +278,7 @@ class IncrementalJvmCompilerRunner(
                 val scopes = caches.lookupCache.lookupSymbols.map { it.scope.ifBlank { it.name } }.distinct()
 
                 getClasspathChanges(
-                    args.classpathAsList, changedFiles, lastBuildInfo, modulesApiHistory, reporter, abiSnapshots, withSnapshot,
+                    args.classpathAsList, changedFiles, lastBuildInfo, modulesApiHistory, reporter, abiSnapshots, withAbiSnapshot,
                     caches.platformCache, scopes
                 )
             }

@@ -49,17 +49,15 @@ abstract class IncrementalCompilerRunner<
     protected val buildHistoryFile: File,
     // there might be some additional output directories (e.g. for generated java in kapt)
     // to remove them correctly on rebuild, we pass them as additional argument
-    private val additionalOutputFiles: Collection<File> = emptyList()
+    private val additionalOutputFiles: Collection<File> = emptyList(),
+    protected val withAbiSnapshot: Boolean = false
 ) {
 
     protected val cacheDirectory = File(workingDir, cacheDirName)
     private val dirtySourcesSinceLastTimeFile = File(workingDir, DIRTY_SOURCES_FILE_NAME)
     protected val lastBuildInfoFile = File(workingDir, LAST_BUILD_INFO_FILE_NAME)
-    protected val abiSnapshotFile = File(workingDir, ABI_SNAPSHOT_FILE_NAME)
+    private val abiSnapshotFile = File(workingDir, ABI_SNAPSHOT_FILE_NAME)
     protected open val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
-
-    //TODO(valtman) temporal measure to ensure quick disable, should be deleted after successful release
-    protected val withSnapshot: Boolean = CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS.value.toBooleanLenient() ?: false
 
     protected abstract fun createCacheManager(args: Args, projectDir: File?): CacheManager
     protected abstract fun destinationDir(args: Args): File
@@ -85,14 +83,14 @@ abstract class IncrementalCompilerRunner<
     ): ExitCode {
         var caches = createCacheManager(args, projectDir)
 
-        if (withSnapshot) {
+        if (withAbiSnapshot) {
             reporter.report { "Incremental compilation with ABI snapshot enabled" }
         }
         //TODO if abi-snapshot is corrupted unable to rebuild. Should roll back to withSnapshot = false?
         val classpathAbiSnapshot =
-            if (withSnapshot) {
+            if (withAbiSnapshot) {
                 reporter.measure(BuildTime.SET_UP_ABI_SNAPSHOTS) {
-                    setupJarDependencies(args, withSnapshot, reporter)
+                    setupJarDependencies(args, withAbiSnapshot, reporter)
                 }
             } else {
                 emptyMap()
@@ -110,8 +108,10 @@ abstract class IncrementalCompilerRunner<
                 caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
             }
             val allKotlinFiles = allSourceFiles.filter { it.isKotlinFile(kotlinSourceFilesExtensions) }
-            return compileIncrementally(args, caches, allKotlinFiles, CompilationMode.Rebuild(reason), messageCollector, withSnapshot,
-                                        classpathAbiSnapshot = classpathAbiSnapshot)
+            return compileIncrementally(
+                args, caches, allKotlinFiles, CompilationMode.Rebuild(reason), messageCollector, withAbiSnapshot,
+                classpathAbiSnapshot = classpathAbiSnapshot
+            )
         }
 
         // If compilation has crashed or we failed to close caches we have to clear them
@@ -134,7 +134,7 @@ abstract class IncrementalCompilerRunner<
 
             val exitCode = when (compilationMode) {
                 is CompilationMode.Incremental -> {
-                    if (withSnapshot) {
+                    if (withAbiSnapshot) {
                         val abiSnapshot = AbiSnapshotImpl.read(abiSnapshotFile, reporter)
                         if (abiSnapshot != null) {
                             compileIncrementally(
@@ -143,7 +143,7 @@ abstract class IncrementalCompilerRunner<
                                 allSourceFiles,
                                 compilationMode,
                                 messageCollector,
-                                withSnapshot,
+                                withAbiSnapshot,
                                 abiSnapshot,
                                 classpathAbiSnapshot
                             )
@@ -157,7 +157,7 @@ abstract class IncrementalCompilerRunner<
                             allSourceFiles,
                             compilationMode,
                             messageCollector,
-                            withSnapshot
+                            withAbiSnapshot
                         )
                     }
                 }

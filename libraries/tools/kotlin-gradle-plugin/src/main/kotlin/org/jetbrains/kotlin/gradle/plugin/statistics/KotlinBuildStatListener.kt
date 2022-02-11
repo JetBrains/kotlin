@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatisticsData
 import org.jetbrains.kotlin.gradle.plugin.stat.StatTag
 import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.incremental.ChangedFiles
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.lang.management.ManagementFactory
 import java.net.InetAddress
 import java.util.*
@@ -100,18 +101,22 @@ class KotlinBuildStatListener {
 
         private fun parseTags(taskExecutionResult: TaskExecutionResult?): List<StatTag> {
             val tags = ArrayList<StatTag>()
-            CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS.value.toBooleanLenient()?.let {
-                if (it) tags.add(StatTag.ABI_SNAPSHOT)
-            }
-            CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.value.toBooleanLenient()?.let {
-                if (it) tags.add(StatTag.ARTIFACT_TRANSFORM)
-            }
+
             val nonIncrementalAttributes = taskExecutionResult?.buildMetrics?.buildAttributes?.asMap() ?: emptyMap()
 
             if (nonIncrementalAttributes.isEmpty()) {
                 tags.add(StatTag.INCREMENTAL)
             } else {
                 tags.add(StatTag.NON_INCREMENTAL)
+            }
+
+            val taskInfo = taskExecutionResult?.taskInfo
+
+            taskInfo?.withAbiSnapshot?.ifTrue {
+                tags.add(StatTag.ABI_SNAPSHOT)
+            }
+            taskInfo?.withArtifactTransform?.ifTrue {
+                tags.add(StatTag.ARTIFACT_TRANSFORM)
             }
 
             val debugConfiguration = "-agentlib:"

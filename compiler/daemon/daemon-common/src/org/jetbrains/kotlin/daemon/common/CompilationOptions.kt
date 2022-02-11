@@ -65,12 +65,13 @@ class IncrementalCompilationOptions(
         requestedCompilationResults: Array<Int>,
     val usePreciseJavaTracking: Boolean,
     /**
-         * Directories that should be cleared when IC decides to rebuild
-         */
-        val outputFiles: List<File>,
+     * Directories that should be cleared when IC decides to rebuild
+     */
+    val outputFiles: List<File>,
     val multiModuleICSettings: MultiModuleICSettings,
     val modulesInfo: IncrementalModuleInfo,
-    kotlinScriptExtensions: Array<String>? = null
+    kotlinScriptExtensions: Array<String>? = null,
+    val withAbiSnapshot: Boolean = false
 ) : CompilationOptions(
     compilerMode,
     targetPlatform,

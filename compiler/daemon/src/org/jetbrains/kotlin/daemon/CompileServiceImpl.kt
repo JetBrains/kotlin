@@ -559,7 +559,8 @@ abstract class CompileServiceImplBase(
             reporter = reporter,
             buildHistoryFile = incrementalCompilationOptions.multiModuleICSettings.buildHistoryFile,
             scopeExpansion = if (args.isIrBackendEnabled()) CompileScopeExpansionMode.ALWAYS else CompileScopeExpansionMode.NEVER,
-            modulesApiHistory = modulesApiHistory
+            modulesApiHistory = modulesApiHistory,
+            withAbiSnapshot = incrementalCompilationOptions.withAbiSnapshot
         )
         return try {
             compiler.compile(allKotlinFiles, args, compilerMessageCollector, changedFiles)
@@ -617,7 +618,8 @@ abstract class CompileServiceImplBase(
             usePreciseJavaTracking = incrementalCompilationOptions.usePreciseJavaTracking,
             modulesApiHistory = modulesApiHistory,
             kotlinSourceFilesExtensions = allKotlinExtensions,
-            classpathChanges = incrementalCompilationOptions.classpathChanges
+            classpathChanges = incrementalCompilationOptions.classpathChanges,
+            withAbiSnapshot = incrementalCompilationOptions.withAbiSnapshot
         )
         return try {
             compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles, projectRoot)
