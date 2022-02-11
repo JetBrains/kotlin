@@ -362,6 +362,7 @@ val projectsWithDisabledFirBootstrap = coreLibProjects + listOf(
 val gradlePluginProjects = listOf(
     ":kotlin-gradle-plugin",
     ":kotlin-gradle-plugin-api",
+    ":kotlin-gradle-plugin-idea",
     ":kotlin-gradle-plugin-kpm-android",
     ":kotlin-allopen",
     ":kotlin-annotation-processing-gradle",

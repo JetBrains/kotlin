@@ -40,7 +40,7 @@ interface ExperimentalExtensionConfig {
 /**
  * Different modes that can be used to set the level of issue reporting for [KotlinTopLevelExtensionConfig.explicitApi] option.
  */
-enum class ExplicitApiMode(private val cliOption: String) {
+enum class ExplicitApiMode(val cliOption: String) {
     /** Report issues as errors. */
     Strict("strict"),
 
