@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isAny
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
@@ -708,12 +709,26 @@ internal class ObjCExportTranslatorImpl(
         if (unavailable) {
             attributes += "unavailable"
         } else {
-            attributes.addIfNotNull(mapper.getDeprecation(method)?.toDeprecationAttribute())
+            attributes.addIfNotNull(getDeprecationAttribute(method))
         }
 
         val comment = buildComment(method, baseMethodBridge)
 
         return ObjCMethod(method, isInstanceMethod, returnType, selectorParts, parameters, attributes, comment)
+    }
+
+    private fun getDeprecationAttribute(method: FunctionDescriptor): String? {
+        mapper.getDeprecation(method)?.toDeprecationAttribute()?.let { return it }
+
+        if (method.kind == CallableMemberDescriptor.Kind.SYNTHESIZED) {
+            val parent = method.containingDeclaration
+            if (parent is ClassDescriptor && parent.isData && DataClassResolver.isComponentLike(method.name)) {
+                // componentN methods of data classes.
+                return renderDeprecationAttribute("deprecated", "use corresponding property instead")
+            }
+        }
+
+        return null
     }
 
     private fun splitSelector(selector: String): List<String> {
@@ -1353,8 +1368,10 @@ private fun DeprecationInfo.toDeprecationAttribute(): String {
 
     val message = this.message.orEmpty()
 
-    return "$attribute(${quoteAsCStringLiteral(message)})"
+    return renderDeprecationAttribute(attribute, message)
 }
+
+private fun renderDeprecationAttribute(attribute: String, message: String) = "$attribute(${quoteAsCStringLiteral(message)})"
 
 private fun quoteAsCStringLiteral(str: String): String = buildString {
     append('"')
