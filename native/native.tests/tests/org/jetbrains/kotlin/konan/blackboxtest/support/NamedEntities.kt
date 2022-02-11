@@ -31,29 +31,48 @@ internal class PackageName private constructor(private val fqn: String, val segm
  * [packagePartClassName] - package-part class name (if there is any)
  * [functionName] - name of test function
  */
-internal data class TestName(private val fqn: String) {
+internal class TestName {
+    private val fqn: String
+
     val packageName: PackageName
     val packagePartClassName: String?
     val functionName: String
 
-    init {
+    constructor(purePackageSegments: List<String>, classNames: List<String>, functionName: String) {
+        this.functionName = functionName
+
+        val segments = purePackageSegments.toMutableList()
+        if (classNames.lastOrNull().isPackagePartClassName()) {
+            packagePartClassName = classNames.last()
+            segments += classNames.dropLast(1)
+        } else {
+            packagePartClassName = null
+            segments += classNames
+        }
+
+        packageName = PackageName(segments)
+        fqn = buildString {
+            if (!packageName.isEmpty()) append(packageName).append('.')
+            if (packagePartClassName != null) append(packagePartClassName).append('.')
+            append(functionName)
+        }
+    }
+
+    constructor(fqn: String) {
+        this.fqn = fqn
+
         val segments = fqn.split('.').toMutableList()
         functionName = segments.removeLast()
-
-        val maybePackagePartClassSegment = segments.lastOrNull()
-        packagePartClassName = if (maybePackagePartClassSegment?.firstOrNull()?.isEffectivelyUpperCase() == true
-            && maybePackagePartClassSegment.endsWith("Kt")
-        ) {
-            segments.removeLast()
-        } else
-            null
-
+        packagePartClassName = if (segments.lastOrNull().isPackagePartClassName()) segments.removeLast() else null
         packageName = PackageName(segments)
     }
 
     override fun toString() = fqn
+    override fun equals(other: Any?) = fqn == (other as? TestName)?.fqn
+    override fun hashCode() = fqn.hashCode()
 
     companion object {
         private fun Char.isEffectivelyUpperCase() = if (isUpperCase()) true else !isLowerCase()
+        private fun String?.isPackagePartClassName() = this != null && firstOrNull()?.isEffectivelyUpperCase() == true && endsWith("Kt")
     }
 }
