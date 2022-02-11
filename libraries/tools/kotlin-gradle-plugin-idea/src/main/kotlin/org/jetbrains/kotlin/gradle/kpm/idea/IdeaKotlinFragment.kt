@@ -16,7 +16,7 @@ interface IdeaKotlinFragment : Serializable {
     val resourceDirectories: Collection<IdeaKotlinResourceDirectory>
 }
 
-class IdeaKotlinFragmentImpl @KotlinGradlePluginApi constructor(
+data class IdeaKotlinFragmentImpl @KotlinGradlePluginApi constructor(
     override val name: String,
     override val languageSettings: IdeaKotlinLanguageSettings?,
     override val dependencies: Collection<IdeaKotlinFragmentDependency>,

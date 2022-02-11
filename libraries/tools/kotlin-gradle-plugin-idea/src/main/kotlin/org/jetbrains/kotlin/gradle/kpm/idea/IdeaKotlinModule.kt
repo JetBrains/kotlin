@@ -12,7 +12,7 @@ interface IdeaKotlinModule : Serializable {
     val fragments: Collection<IdeaKotlinFragment>
 }
 
-class IdeaKotlinModuleImpl @KotlinGradlePluginApi constructor(
+data class IdeaKotlinModuleImpl @KotlinGradlePluginApi constructor(
     override val moduleIdentifier: IdeaKotlinModuleIdentifier,
     override val fragments: Collection<IdeaKotlinFragment>
 ) : IdeaKotlinModule

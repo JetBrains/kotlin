@@ -21,13 +21,13 @@ interface IdeaKotlinMavenModuleIdentifier : IdeaKotlinModuleIdentifier {
     val name: String
 }
 
-class IdeaKotlinLocalModuleIdentifierImpl @KotlinGradlePluginApi constructor(
+data class IdeaKotlinLocalModuleIdentifierImpl @KotlinGradlePluginApi constructor(
     override val moduleClassifier: String?,
     override val buildId: String,
     override val projectId: String
 ) : IdeaKotlinLocalModuleIdentifier
 
-class IdeaKotlinMavenModuleIdentifierImpl @KotlinGradlePluginApi constructor(
+data class IdeaKotlinMavenModuleIdentifierImpl @KotlinGradlePluginApi constructor(
     override val moduleClassifier: String?,
     override val group: String,
     override val name: String

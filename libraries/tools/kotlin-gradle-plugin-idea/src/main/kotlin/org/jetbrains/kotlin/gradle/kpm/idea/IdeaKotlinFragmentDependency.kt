@@ -5,4 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
-interface IdeaKotlinFragmentDependency
+import java.io.Serializable
+
+interface IdeaKotlinFragmentDependency : Serializable
