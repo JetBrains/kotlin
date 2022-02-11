@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.asJava.classes.METHOD_INDEX_FOR_NON_ORIGIN_METHOD
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUES
+import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUE_OF
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -95,7 +97,8 @@ internal open class FirLightClassForSymbol(
 
             val visibleDeclarations = declaredMemberScope.getCallableSymbols().applyIf(isEnum) {
                 filterNot { function ->
-                    function is KtFunctionSymbol && function.name.asString().let { it == "values" || it == "valueOf" }
+                    function is KtFunctionSymbol &&
+                            (function.name == ENUM_VALUES || function.name == ENUM_VALUE_OF)
                 }
             }.applyIf(classOrObjectSymbol.isObject) {
                 filterNot {
