@@ -1,0 +1,41 @@
+plugins {
+    id "kotlin2js"
+    id "maven-publish"
+    id "org.jetbrains.kotlin.plugin.serialization"
+}
+
+group = "com.example"
+version = "1.0"
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-js"
+}
+
+if (project.findProperty("mppProjectDependency") == "true") {
+
+    dependencies {
+        api project(":mpp-lib")
+    }
+
+} else {
+
+    repositories {
+        maven { setUrl "${rootProject.buildDir}/repo" }
+    }
+
+    dependencies {
+        api "com.example:mpp-lib:1.0"
+    }
+
+}
+
+publishing {
+    publications {
+        main(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven { setUrl("${rootProject.buildDir}/repo") }
+    }
+}
