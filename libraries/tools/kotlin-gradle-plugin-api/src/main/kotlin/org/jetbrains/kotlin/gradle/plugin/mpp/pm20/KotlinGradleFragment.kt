@@ -31,6 +31,8 @@ interface KotlinGradleFragment : KotlinModuleFragment, HasKotlinDependencies, Ko
 
     fun refines(other: NamedDomainObjectProvider<KotlinGradleFragment>)
 
+    override val directRefinesDependencies: Iterable<KotlinGradleFragment>
+
     override fun dependencies(configureClosure: Closure<Any?>) =
         dependencies f@{ project.configure(this@f, configureClosure) }
 

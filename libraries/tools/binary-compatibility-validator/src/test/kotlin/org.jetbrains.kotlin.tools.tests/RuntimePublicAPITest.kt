@@ -33,6 +33,10 @@ class RuntimePublicAPITest {
         snapshotAPIAndCompare("../../reflect/api/build/libs", "kotlin-reflect-api(?!-[-a-z]+)", nonPublicPackages = listOf("kotlin.reflect.jvm.internal"))
     }
 
+    @Test fun kotlinGradlePluginIdea() {
+        snapshotAPIAndCompare("../kotlin-gradle-plugin-idea/build/libs", "kotlin-gradle-plugin-idea(?!-[-a-z]+)")
+    }
+
     private fun snapshotAPIAndCompare(
         basePath: String,
         jarPattern: String,

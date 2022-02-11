@@ -13,18 +13,21 @@ import org.gradle.api.component.SoftwareComponentFactory
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKotlinProjectModelBuilder
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import org.jetbrains.kotlin.project.model.KotlinModuleIdentifier
 import javax.inject.Inject
 
 abstract class KotlinPm20GradlePlugin @Inject constructor(
-    @Inject private val softwareComponentFactory: SoftwareComponentFactory
+    @Inject private val softwareComponentFactory: SoftwareComponentFactory,
+    @Inject private val toolingModelBuilderRegistry: ToolingModelBuilderRegistry
 ) : Plugin<Project> {
     override fun apply(project: Project) {
         checkGradleCompatibility("the Kotlin Multiplatform plugin", GradleVersion.version("6.1"))
@@ -37,6 +40,7 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
         registerDefaultVariantFactories(project)
         setupFragmentsMetadataForKpmModules(project)
         setupKpmModulesPublication(project)
+        setupToolingModelBuilder()
     }
 
     private fun createDefaultModules(project: Project) {
@@ -76,6 +80,10 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun setupToolingModelBuilder() {
+        toolingModelBuilderRegistry.register(IdeaKotlinProjectModelBuilder())
     }
 }
 

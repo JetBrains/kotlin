@@ -30,6 +30,7 @@ kotlin.sourceSets.all {
     languageSettings.optIn("kotlin.RequiresOptIn")
     languageSettings.optIn("org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalVariantApi")
     languageSettings.optIn("org.jetbrains.kotlin.gradle.plugin.mpp.external.AdvancedExternalVariantApi")
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.kpm.idea.KotlinGradlePluginApi")
 }
 
 dependencies {
@@ -56,6 +57,7 @@ dependencies {
     embedded(project(":kotlin-gradle-statistics"))
     compileOnly(project(":kotlin-gradle-build-metrics"))
     embedded(project(":kotlin-gradle-build-metrics"))
+    implementation(project(":kotlin-gradle-plugin-idea"))
 
     implementation(commonDependency("com.google.code.gson:gson"))
     implementation(commonDependency("com.google.guava:guava"))
