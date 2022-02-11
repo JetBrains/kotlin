@@ -56,8 +56,11 @@ interface Xcode {
     companion object {
         // Don't cache the instance: the compiler might be executed in a Gradle daemon process,
         // so current Xcode might actually change between different invocations.
+        @Deprecated("", ReplaceWith("this.findCurrent()"), DeprecationLevel.WARNING)
         val current: Xcode
-            get() = CurrentXcode()
+            get() = findCurrent()
+
+        fun findCurrent(): Xcode = CurrentXcode()
     }
 }
 

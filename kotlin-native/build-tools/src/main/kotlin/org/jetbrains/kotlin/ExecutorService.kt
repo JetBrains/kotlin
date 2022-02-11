@@ -259,7 +259,7 @@ private fun simulator(project: Project): ExecutorService = object : ExecutorServ
     }
 
     private val simctl by lazy {
-        val sdk = Xcode.current.pathToPlatformSdk(configurables.platformName())
+        val sdk = Xcode.findCurrent().pathToPlatformSdk(configurables.platformName())
         val out = ByteArrayOutputStream()
         val result = project.exec {
             commandLine("/usr/bin/xcrun", "--find", "simctl", "--sdk", sdk)
@@ -638,7 +638,7 @@ fun KonanTestExecutable.configureXcodeBuild() {
                 }
 
         val sdk = when (project.testTarget) {
-            KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> Xcode.current.iphoneosSdk
+            KonanTarget.IOS_ARM32, KonanTarget.IOS_ARM64 -> Xcode.findCurrent().iphoneosSdk
             else -> error("Unsupported target: ${project.testTarget}")
         }
 
