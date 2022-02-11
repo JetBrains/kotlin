@@ -202,7 +202,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> : AbstractKotl
             task.taskBuildCacheableOutputDirectory.value(getKotlinBuildDir(task).map { it.dir("cacheable") }).disallowChanges()
             task.taskBuildLocalStateDirectory.value(getKotlinBuildDir(task).map { it.dir("localstate") }).disallowChanges()
 
-            task.localStateDirectories.from(task.taskBuildLocalStateDirectory, task.taskBuildCacheableOutputDirectory).disallowChanges()
+            task.localStateDirectories.from(task.taskBuildLocalStateDirectory).disallowChanges()
 
             PropertiesProvider(task.project).mapKotlinDaemonProperties(task)
         }
