@@ -1,7 +1,7 @@
-/kt48935.kt:7:35: warning: parameter 'func' is never used
+/kt48935.kt:6:35: warning: parameter 'func' is never used
 fun <T, V> exampleGenericFunction(func: V) where T: Base, V: (T) -> Unit {
                                   ^
-/kt48935.kt:13:5: warning: type argument for a type parameter T can't be inferred because it's upper bounded by incompatible types: Base, DoesNotImplementBase. This will become an error in Kotlin 1.8
+/kt48935.kt:12:5: warning: type argument for a type parameter T can't be inferred because it's upper bounded by incompatible types: Base, DoesNotImplementBase. This will become an error in Kotlin 1.8
     exampleGenericFunction(func) // expected this to be a compilation error as the T: Base constraint should not be satisfied
     ^
 

@@ -1405,6 +1405,12 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val kotlinClass: FqName
     }
 
+    abstract class InferredTypeVariableIntoEmptyIntersection : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = InferredTypeVariableIntoEmptyIntersection::class
+        abstract val typeVariableDescription: String
+        abstract val incompatibleTypes: List<KtType>
+    }
+
     abstract class ExtensionInClassReferenceNotAllowed : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ExtensionInClassReferenceNotAllowed::class
         abstract val referencedDeclaration: KtCallableSymbol

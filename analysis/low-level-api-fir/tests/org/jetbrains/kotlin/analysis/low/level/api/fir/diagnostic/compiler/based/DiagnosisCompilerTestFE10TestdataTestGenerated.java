@@ -13841,6 +13841,30 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("kt45461_2.kt")
+            public void testKt45461_2() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/kt45461_2.kt");
+            }
+
+            @Test
+            @TestMetadata("kt45461_3.kt")
+            public void testKt45461_3() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/kt45461_3.kt");
+            }
+
+            @Test
+            @TestMetadata("kt45461_4.kt")
+            public void testKt45461_4() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/kt45461_4.kt");
+            }
+
+            @Test
+            @TestMetadata("kt45461_5.kt")
+            public void testKt45461_5() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/kt45461_5.kt");
+            }
+
+            @Test
             @TestMetadata("kt46515.kt")
             public void testKt46515() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/kt46515.kt");

@@ -1687,6 +1687,13 @@ internal class PlatformClassMappedToKotlinImpl(
     override val token: ValidityToken,
 ) : KtFirDiagnostic.PlatformClassMappedToKotlin(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class InferredTypeVariableIntoEmptyIntersectionImpl(
+    override val typeVariableDescription: String,
+    override val incompatibleTypes: List<KtType>,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: ValidityToken,
+) : KtFirDiagnostic.InferredTypeVariableIntoEmptyIntersection(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class ExtensionInClassReferenceNotAllowedImpl(
     override val referencedDeclaration: KtCallableSymbol,
     override val firDiagnostic: KtPsiDiagnostic,
