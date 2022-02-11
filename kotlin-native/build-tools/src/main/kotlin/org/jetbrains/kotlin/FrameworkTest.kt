@@ -200,7 +200,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
         val configs = project.testTargetConfigurables as AppleConfigurables
         val swiftPlatform = configs.platformName().toLowerCase()
         val simulatorPath = when (configs.targetTriple.isSimulator) {
-            true -> Xcode.current.getLatestSimulatorRuntimeFor(configs.target.family, configs.osVersionMin)
+            true -> xcode.getLatestSimulatorRuntimeFor(configs.target.family, configs.osVersionMin)
                     ?.bundlePath
                     ?.let { "$it/Contents/Resources/RuntimeRoot/usr/lib/swift" }
             else -> null
@@ -255,7 +255,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
         if (configurables.targetTriple.isSimulator) {
             return // bitcode-build-tool doesn't support simulators.
         }
-        val sdk = Xcode.current.pathToPlatformSdk(configurables.platformName())
+        val sdk = xcode.pathToPlatformSdk(configurables.platformName())
 
         val python3 = listOf("/usr/bin/python3", "/usr/local/bin/python3")
                 .map { Paths.get(it) }.firstOrNull { Files.exists(it) }
@@ -264,4 +264,6 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
         runTest(executorService = localExecutorService(project), testExecutable = python3,
                 args = listOf("-B", bitcodeBuildTool, "--sdk", sdk, "-v", "-t", toolPath, frameworkBinary))
     }
+
+    private val xcode by lazy { Xcode.findCurrent() }
 }

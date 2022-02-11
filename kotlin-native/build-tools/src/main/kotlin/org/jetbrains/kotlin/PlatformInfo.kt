@@ -56,7 +56,7 @@ object PlatformInfo {
                 && properties.checkXcodeVersion
                 && requiredMajorVersion != null
         ) {
-            val currentXcodeVersion = Xcode.current.version
+            val currentXcodeVersion = Xcode.findCurrent().version
             val currentMajorVersion = currentXcodeVersion.splitToSequence('.').first()
             if (currentMajorVersion != requiredMajorVersion) {
                 throw IllegalStateException(

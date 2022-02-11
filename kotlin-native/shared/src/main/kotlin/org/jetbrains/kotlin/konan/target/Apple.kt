@@ -55,7 +55,7 @@ class AppleConfigurablesImpl(
         if (InternalServer.isAvailable) {
             XcodePartsProvider.InternalServer
         } else {
-            val xcode = Xcode.current
+            val xcode = Xcode.findCurrent()
 
             if (properties.getProperty("ignoreXcodeVersionCheck") != "true") {
                 properties.getProperty("minimalXcodeVersion")?.let { minimalXcodeVersion ->
