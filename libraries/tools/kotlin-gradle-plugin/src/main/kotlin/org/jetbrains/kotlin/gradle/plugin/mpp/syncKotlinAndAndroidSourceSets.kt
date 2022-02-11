@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.api.AndroidSourceDirectorySet
 import com.android.build.gradle.api.AndroidSourceSet
-import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractAndroidProjectHandler.Companion.kotlinSourceSetNameForAndroidSourceSet
-import org.jetbrains.kotlin.gradle.plugin.addConvention
-import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinSourceSetFactory.Companion.defaultSourceFolder
 import java.io.File
 
@@ -24,10 +22,10 @@ internal fun syncKotlinAndAndroidSourceSets(target: KotlinAndroidTarget) {
     android.sourceSets.all { androidSourceSet ->
         val kotlinSourceSetName = kotlinSourceSetNameForAndroidSourceSet(target, androidSourceSet.name)
         val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinSourceSetName)
-        androidSourceSet.kotlinSourceSet = kotlinSourceSet
+        val kotlinAndroidSources = WrappedAndroidSourceSet(androidSourceSet, kotlinSourceSet)
 
         createDefaultDependsOnEdges(target, kotlinSourceSet, androidSourceSet)
-        syncKotlinAndAndroidSourceDirs(target, kotlinSourceSet, androidSourceSet)
+        syncKotlinAndAndroidSourceDirs(target, kotlinSourceSet, kotlinAndroidSources)
         syncKotlinAndAndroidResources(target, kotlinSourceSet, androidSourceSet)
 
         ifKaptEnabled(project) {
@@ -36,14 +34,29 @@ internal fun syncKotlinAndAndroidSourceSets(target: KotlinAndroidTarget) {
     }
 }
 
-internal var AndroidSourceSet.kotlinSourceSet: KotlinSourceSet
-    get() = checkNotNull(kotlinSourceSetOrNull) { "Missing kotlinSourceSet for Android source set $name" }
-    private set(value) {
-        addConvention(KOTLIN_DSL_NAME, value)
+internal class WrappedAndroidSourceSet(
+    val androidSourceSet: AndroidSourceSet,
+    kotlinSourceSet: KotlinSourceSet) {
+
+    private val androidKotlinSourceDir: AndroidSourceDirectorySet? = try {
+        // this AGP version has built-in support for Kotlin sources
+        AndroidSourceSet::class.java.getMethod("getKotlin").invoke(androidSourceSet) as AndroidSourceDirectorySet
+    } catch (t: Throwable) {
+        androidSourceSet.addConvention(KOTLIN_DSL_NAME, kotlinSourceSet)
+        null
     }
 
-internal val AndroidSourceSet.kotlinSourceSetOrNull: KotlinSourceSet?
-    get() = getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet
+    internal fun getKotlinSourceDirs(): Set<File> {
+        return androidKotlinSourceDir?.srcDirs ?: setOf(File("src/${androidSourceSet.name}/kotlin"))
+    }
+
+    internal fun setAndroidKotlinSrcDir(dirs: Set<File>) {
+        androidKotlinSourceDir?.setSrcDirs(dirs)
+    }
+}
+
+internal val AndroidSourceSet.kotlinSourceSet: KotlinSourceSet
+    get() = checkNotNull(getConvention(KOTLIN_DSL_NAME)) { "Missing kotlinSourceSet for Android source set $name" } as KotlinSourceSet
 
 private fun createDefaultDependsOnEdges(
     target: KotlinAndroidTarget,
@@ -61,7 +74,7 @@ private fun createDefaultDependsOnEdges(
 }
 
 private fun syncKotlinAndAndroidSourceDirs(
-    target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, androidSourceSet: AndroidSourceSet
+    target: KotlinAndroidTarget, kotlinSourceSet: KotlinSourceSet, wrappedAndroidSourceSet: WrappedAndroidSourceSet
 ) {
     val disambiguationClassifier = target.disambiguationClassifier
 
@@ -74,11 +87,17 @@ private fun syncKotlinAndAndroidSourceDirs(
 
     The Kotlin source set would win in this scenario.
      */
-    if (disambiguationClassifier == null || !androidSourceSet.name.startsWith(disambiguationClassifier)) {
-        kotlinSourceSet.kotlin.srcDir("src/${androidSourceSet.name}/kotlin")
+    fun syncDirs() {
+        if (disambiguationClassifier == null || !wrappedAndroidSourceSet.androidSourceSet.name.startsWith(disambiguationClassifier)) {
+            kotlinSourceSet.kotlin.srcDirs(wrappedAndroidSourceSet.getKotlinSourceDirs())
+        }
+        // Make sure AGP is aware of the final location of Kotlin sources
+        wrappedAndroidSourceSet.setAndroidKotlinSrcDir(kotlinSourceSet.kotlin.srcDirs)
+
+        kotlinSourceSet.kotlin.srcDirs(*wrappedAndroidSourceSet.androidSourceSet.java.srcDirs.toTypedArray())
     }
 
-    kotlinSourceSet.kotlin.srcDirs(*androidSourceSet.java.srcDirs.toTypedArray())
+    syncDirs()
 
     /*
     Make sure to include user configuration as well.
@@ -86,7 +105,7 @@ private fun syncKotlinAndAndroidSourceDirs(
     Therefore we sync the directories once again after evaluation
      */
     target.project.whenEvaluated {
-        kotlinSourceSet.kotlin.srcDirs(*androidSourceSet.java.srcDirs.toTypedArray())
+        syncDirs()
     }
 }
 

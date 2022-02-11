@@ -1028,7 +1028,7 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         // Register the source only after the task is created, because the task is required for that:
         compilation.source(defaultSourceSet)
 
-        compilation.androidVariant.forEachKotlinSourceSet { kotlinSourceSet -> compilation.source(kotlinSourceSet) }
+        compilation.forEachKotlinSourceSet(project.kotlinExtension.sourceSets) { kotlinSourceSet -> compilation.source(kotlinSourceSet) }
     }
 
     private fun postprocessVariant(
@@ -1057,10 +1057,16 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
     }
 }
 
-internal inline fun BaseVariant.forEachKotlinSourceSet(action: (KotlinSourceSet) -> Unit) {
-    sourceSets
-        .mapNotNull { provider -> provider.getConvention(KOTLIN_DSL_NAME) as? KotlinSourceSet }
-        .forEach(action)
+internal inline fun KotlinJvmAndroidCompilation.forEachKotlinSourceSet(
+    kotlinSourceSets: NamedDomainObjectContainer<KotlinSourceSet>,
+    action: (KotlinSourceSet) -> Unit
+) {
+    androidVariant.sourceSets.mapNotNull { provider ->
+        val kotlinSourceSetName = AbstractAndroidProjectHandler.kotlinSourceSetNameForAndroidSourceSet(
+            this.target as KotlinAndroidTarget, provider.name
+        )
+        kotlinSourceSets.findByName(kotlinSourceSetName)
+    }.forEach { action(it) }
 }
 
 internal inline fun BaseVariant.forEachJavaSourceDir(action: (ConfigurableFileTree) -> Unit) {

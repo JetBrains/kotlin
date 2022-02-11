@@ -1,11 +1,13 @@
 package org.jetbrains.kotlin.gradle.plugin
 
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
@@ -105,7 +107,7 @@ class SubpluginEnvironment(
 
             if (subplugin is LegacyKotlinCompilerPluginSupportPlugin) {
                 subplugin.getPluginKotlinTasks(kotlinCompilation).forEach { task ->
-                    addCompilationSourcesToExternalCompileTask(kotlinCompilation, task.thisTaskProvider)
+                    addCompilationSourcesToExternalCompileTask(kotlinCompilation, task.thisTaskProvider, project.kotlinExtension.sourceSets)
                 }
             }
         }
@@ -127,9 +129,13 @@ class SubpluginEnvironment(
     }
 }
 
-internal fun addCompilationSourcesToExternalCompileTask(compilation: KotlinCompilation<*>, task: TaskProvider<out AbstractCompile>) {
+internal fun addCompilationSourcesToExternalCompileTask(
+    compilation: KotlinCompilation<*>,
+    task: TaskProvider<out AbstractCompile>,
+    kotlinSourceSets: NamedDomainObjectContainer<KotlinSourceSet>
+) {
     if (compilation is KotlinJvmAndroidCompilation) {
-        compilation.androidVariant.forEachKotlinSourceSet { sourceSet -> task.configure { it.source(sourceSet.kotlin) } }
+        compilation.forEachKotlinSourceSet(kotlinSourceSets) { sourceSet -> task.configure { it.source(sourceSet.kotlin) } }
         compilation.androidVariant.forEachJavaSourceDir { sources -> task.configure { it.source(sources.dir) } }
     } else {
         task.configure { taskInstance ->

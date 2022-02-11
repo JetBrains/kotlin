@@ -700,7 +700,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         }
 
         project.whenEvaluated {
-            addCompilationSourcesToExternalCompileTask(kotlinCompilation, kaptTaskProvider)
+            addCompilationSourcesToExternalCompileTask(kotlinCompilation, kaptTaskProvider, project.kotlinExtension.sourceSets)
         }
 
         val subpluginOptions = buildOptions("stubs", project.provider { kaptExtension.getJavacOptions() })
