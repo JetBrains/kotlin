@@ -875,7 +875,7 @@ class GeneralNativeIT : BaseGradleIT() {
         }
 
         // Check that changing K/N version lead to tasks rerun
-        build(*compileTasksArray, "-Porg.jetbrains.kotlin.native.version=1.5.30") {
+        build(*compileTasksArray, "-Porg.jetbrains.kotlin.native.version=1.6.10") {
             assertSuccessful()
             assertTasksExecuted(compileTasks)
         }

@@ -28,8 +28,8 @@ class NativeEmbeddableCompilerJarIT : BaseGradleIT() {
         build(":linkDebugExecutableHost") {
             assertSuccessful()
             withNativeCompilerClasspath(":linkDebugExecutableHost", ":compileKotlinHost") {
-                assertTrue(it.includesRegularJar())
-                assertFalse(it.includesEmbeddableJar())
+                assertFalse(it.includesRegularJar())
+                assertTrue(it.includesEmbeddableJar())
             }
         }
     }
@@ -61,8 +61,8 @@ class NativeEmbeddableCompilerJarIT : BaseGradleIT() {
         build(":linkDebugExecutableHost") {
             assertSuccessful()
             withNativeCompilerClasspath(":linkDebugExecutableHost", ":compileKotlinHost") {
-                assertTrue(it.includesRegularJar())
-                assertFalse(it.includesEmbeddableJar())
+                assertFalse(it.includesRegularJar())
+                assertTrue(it.includesEmbeddableJar())
             }
         }
 
@@ -70,12 +70,12 @@ class NativeEmbeddableCompilerJarIT : BaseGradleIT() {
             assertTasksUpToDate(":linkDebugExecutableHost", ":compileKotlinHost")
         }
 
-        build(":linkDebugExecutableHost", "-Pkotlin.native.useEmbeddableCompilerJar=true") {
+        build(":linkDebugExecutableHost", "-Pkotlin.native.useEmbeddableCompilerJar=false") {
             assertSuccessful()
             assertTasksExecuted(":linkDebugExecutableHost", ":compileKotlinHost")
             withNativeCompilerClasspath(":linkDebugExecutableHost", ":compileKotlinHost") {
-                assertFalse(it.includesRegularJar())
-                assertTrue(it.includesEmbeddableJar())
+                assertTrue(it.includesRegularJar())
+                assertFalse(it.includesEmbeddableJar())
             }
         }
     }
