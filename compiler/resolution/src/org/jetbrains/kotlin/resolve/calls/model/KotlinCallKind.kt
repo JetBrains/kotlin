@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.resolve.calls.components.CheckCallableReference
 import org.jetbrains.kotlin.resolve.calls.components.CheckContextReceiversResolutionPart
 import org.jetbrains.kotlin.resolve.calls.components.CheckExplicitReceiverKindConsistency
 import org.jetbrains.kotlin.resolve.calls.components.CheckExternalArgument
+import org.jetbrains.kotlin.resolve.calls.components.CheckIncompatibleTypeVariableUpperBounds
 import org.jetbrains.kotlin.resolve.calls.components.CheckInfixResolutionPart
 import org.jetbrains.kotlin.resolve.calls.components.CheckOperatorResolutionPart
 import org.jetbrains.kotlin.resolve.calls.components.CheckReceivers
@@ -38,7 +39,8 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
         CheckExplicitReceiverKindConsistency,
         CheckReceivers,
         PostponedVariablesInitializerResolutionPart,
-        CheckContextReceiversResolutionPart
+        CheckContextReceiversResolutionPart,
+        CheckIncompatibleTypeVariableUpperBounds
     ),
     FUNCTION(
         CheckVisibility,
@@ -58,7 +60,8 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
         CompatibilityOfTypeVariableAsIntersectionTypePart,
         CompatibilityOfPartiallyApplicableSamConversion,
         PostponedVariablesInitializerResolutionPart,
-        CheckContextReceiversResolutionPart
+        CheckContextReceiversResolutionPart,
+        CheckIncompatibleTypeVariableUpperBounds
     ),
     INVOKE(*FUNCTION.resolutionSequence.toTypedArray()),
     CALLABLE_REFERENCE(
@@ -69,7 +72,8 @@ enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
         CollectionTypeVariableUsagesInfo,
         CheckReceivers,
         CheckCallableReference,
-        CompatibilityOfTypeVariableAsIntersectionTypePart
+        CompatibilityOfTypeVariableAsIntersectionTypePart,
+        CheckIncompatibleTypeVariableUpperBounds
     ),
     UNSUPPORTED();
 

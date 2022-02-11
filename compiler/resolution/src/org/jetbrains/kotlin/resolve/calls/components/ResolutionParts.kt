@@ -900,3 +900,22 @@ internal object CheckContextReceiversResolutionPart : ResolutionPart() {
         return null
     }
 }
+
+internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionPart() {
+    override fun ResolutionCandidate.process(workIndex: Int) = with(getSystem().asConstraintSystemCompleterContext()) {
+        val typeVariables = getSystem().getBuilder().currentStorage().notFixedTypeVariables.values
+
+        for (variableWithConstraints in typeVariables) {
+            val upperTypes = variableWithConstraints.constraints.extractUpperTypes()
+
+            if (upperTypes.isEmptyIntersection()) {
+                val isInferredEmptyIntersectionForbidden =
+                    callComponents.languageVersionSettings.supportsFeature(LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection)
+
+                val errorFactory =
+                    if (isInferredEmptyIntersectionForbidden) ::InferredEmptyIntersectionError else ::InferredEmptyIntersectionWarning
+                addError(errorFactory(upperTypes, variableWithConstraints.typeVariable))
+            }
+        }
+    }
+}
