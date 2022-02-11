@@ -165,10 +165,10 @@ object KotlinToJVMBytecodeCompiler {
 
         for (module in chunk) {
             for (classpathRoot in module.getClasspathRoots()) {
-                configuration.add(
-                    CLIConfigurationKeys.CONTENT_ROOTS,
-                    if (isJava9Module) JvmModulePathRoot(File(classpathRoot)) else JvmClasspathRoot(File(classpathRoot))
-                )
+                if (isJava9Module) {
+                    configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(File(classpathRoot)))
+                }
+                configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(File(classpathRoot)))
             }
         }
 

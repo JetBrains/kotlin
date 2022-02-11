@@ -158,16 +158,13 @@ fun CompilerConfiguration.configureJdkHome(arguments: K2JVMCompilerArguments): B
     return true
 }
 
-fun CompilerConfiguration.configureExplicitContentRoots(arguments: K2JVMCompilerArguments) {
+fun CompilerConfiguration.configureJavaModulesContentRoots(arguments: K2JVMCompilerArguments) {
     for (modularRoot in arguments.javaModulePath?.split(File.pathSeparatorChar).orEmpty()) {
         add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(File(modularRoot)))
     }
+}
 
-    if (arguments.buildFile != null) {
-        // In the .xml compilation mode, all content roots except module path will be loaded from the .xml build file.
-        return
-    }
-
+fun CompilerConfiguration.configureContentRootsFromClassPath(arguments: K2JVMCompilerArguments) {
     for (path in arguments.classpath?.split(File.pathSeparatorChar).orEmpty()) {
         add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(File(path)))
     }
