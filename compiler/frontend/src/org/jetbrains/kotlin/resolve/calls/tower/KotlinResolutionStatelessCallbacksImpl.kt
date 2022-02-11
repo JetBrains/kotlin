@@ -113,7 +113,7 @@ class KotlinResolutionStatelessCallbacksImpl(
         constraintInjector: ConstraintInjector, builtIns: KotlinBuiltIns
     ): SimpleConstraintSystem {
         return if (languageVersionSettings.getFlag(AnalysisFlags.constraintSystemForOverloadResolution).forNewInference())
-            SimpleConstraintSystemImpl(constraintInjector, builtIns, kotlinTypeRefiner)
+            SimpleConstraintSystemImpl(constraintInjector, builtIns, kotlinTypeRefiner, languageVersionSettings)
         else
             ConstraintSystemBuilderImpl.forSpecificity()
     }

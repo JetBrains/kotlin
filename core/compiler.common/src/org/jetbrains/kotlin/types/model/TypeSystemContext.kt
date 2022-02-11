@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.types.model
 
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
 import kotlin.contracts.ExperimentalContracts
@@ -174,6 +175,18 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun createStubTypeForBuilderInference(typeVariable: TypeVariableMarker): StubTypeMarker
     fun createStubTypeForTypeVariablesInSubtyping(typeVariable: TypeVariableMarker): StubTypeMarker
+
+    fun KotlinTypeMarker.isFinal(): Boolean
+
+    fun Collection<KotlinTypeMarker>.isEmptyIntersection(): Boolean =
+        any { first ->
+            any { second ->
+                first !== second &&
+                        first.isFinal() &&
+                        second.typeConstructor().isClassTypeConstructor() &&
+                        !AbstractTypeChecker.isSubtypeOf(this@TypeSystemInferenceExtensionContext, first, second)
+            }
+        }
 
     fun KotlinTypeMarker.removeAnnotations(): KotlinTypeMarker
     fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker

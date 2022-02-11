@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
-import org.jetbrains.kotlin.resolve.calls.inference.model.FixVariableConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -110,4 +108,9 @@ abstract class ConstraintSystemCompletionContext : VariableFixationFinder.Contex
     private fun <T : PostponedResolvedAtomMarker> findPostponedArgumentWithFixedInputTypes(
         postponedArguments: List<T>
     ) = postponedArguments.firstOrNull { argument -> argument.inputTypes.all { containsOnlyFixedVariables(it) } }
+
+    fun List<Constraint>.extractUpperTypes(): List<KotlinTypeMarker> =
+        filter { constraint ->
+            constraint.kind == ConstraintKind.UPPER && !constraint.type.contains { !it.typeConstructor().isClassTypeConstructor() }
+        }.map { it.type }
 }

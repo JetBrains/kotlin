@@ -61,7 +61,9 @@ class BuilderInferenceSession(
     psiCallResolver, postponedArgumentsAnalyzer, kotlinConstraintSystemCompleter, callComponents, builtIns
 ) {
     private lateinit var lambda: ResolvedLambdaAtom
-    private val commonSystem = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns, callComponents.kotlinTypeRefiner)
+    private val commonSystem = NewConstraintSystemImpl(
+        callComponents.constraintInjector, builtIns, callComponents.kotlinTypeRefiner, topLevelCallContext.languageVersionSettings
+    )
 
     init {
         if (topLevelCallContext.inferenceSession is StubTypesBasedInferenceSession<*>) {

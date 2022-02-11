@@ -261,6 +261,7 @@ enum class LanguageFeature(
     ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_8, kind = BUG_FIX),
     ModifierNonBuiltinSuspendFunError(KOTLIN_1_8),
     SynchronizedSuspendError(KOTLIN_1_8),
+    ForbidInferringTypeVariablesIntoEmptyIntersection(KOTLIN_1_8, kind = BUG_FIX), // KT-51221
 
     // 1.9
 

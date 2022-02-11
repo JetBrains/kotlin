@@ -113,7 +113,7 @@ class NewConstraintWarning(
     override val lowerType: KotlinTypeMarker,
     override val upperType: KotlinTypeMarker,
     override val position: IncorporationConstraintPosition,
-) : ConstraintSystemError(RESOLVED), NewConstraintMismatch
+) : ConstraintSystemError(RESOLVED_WITH_WARNING), NewConstraintMismatch
 
 class CapturedTypeFromSubtyping(
     val typeVariable: TypeVariableMarker,
@@ -134,6 +134,21 @@ class ConstrainingTypeIsError(
 ) : ConstraintSystemError(INAPPLICABLE)
 
 class NoSuccessfulFork(val position: IncorporationConstraintPosition) : ConstraintSystemError(INAPPLICABLE)
+
+sealed interface InferredEmptyIntersection {
+    val incompatibleTypes: Collection<KotlinTypeMarker>
+    val typeVariable: TypeVariableMarker
+}
+
+class InferredEmptyIntersectionWarning(
+    override val incompatibleTypes: Collection<KotlinTypeMarker>,
+    override val typeVariable: TypeVariableMarker
+) : ConstraintSystemError(RESOLVED_WITH_WARNING), InferredEmptyIntersection
+
+class InferredEmptyIntersectionError(
+    override val incompatibleTypes: Collection<KotlinTypeMarker>,
+    override val typeVariable: TypeVariableMarker
+) : ConstraintSystemError(INAPPLICABLE), InferredEmptyIntersection
 
 class OnlyInputTypesDiagnostic(val typeVariable: TypeVariableMarker) : ConstraintSystemError(INAPPLICABLE)
 

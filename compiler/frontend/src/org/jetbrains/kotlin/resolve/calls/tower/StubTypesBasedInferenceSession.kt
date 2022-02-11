@@ -120,7 +120,9 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
 
             for (callInfo in listOf(goodCandidate, badCandidate)) {
                 val atomsToAnalyze = mutableListOf<ResolvedAtom>(callInfo.callResolutionResult)
-                val system = NewConstraintSystemImpl(callComponents.constraintInjector, builtIns, callComponents.kotlinTypeRefiner).apply {
+                val system = NewConstraintSystemImpl(
+                    callComponents.constraintInjector, builtIns, callComponents.kotlinTypeRefiner, callComponents.languageVersionSettings
+                ).apply {
                     addOtherSystem(callInfo.callResolutionResult.constraintSystem.getBuilder().currentStorage())
                     /*
                      * This is needed for very stupid case, when we have some delegate with good `getValue` and bad `setValue` that
@@ -159,7 +161,8 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
             val commonSystem = NewConstraintSystemImpl(
                 callComponents.constraintInjector,
                 builtIns,
-                callComponents.kotlinTypeRefiner
+                callComponents.kotlinTypeRefiner,
+                callComponents.languageVersionSettings
             ).apply {
                 addOtherSystem(currentConstraintSystem())
             }

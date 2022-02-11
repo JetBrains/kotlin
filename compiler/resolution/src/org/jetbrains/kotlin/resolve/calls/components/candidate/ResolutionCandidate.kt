@@ -79,7 +79,8 @@ sealed class ResolutionCandidate : Candidate, KotlinDiagnosticsHolder {
     fun getSystem(): NewConstraintSystem {
         if (newSystem == null) {
             newSystem = NewConstraintSystemImpl(
-                callComponents.constraintInjector, callComponents.builtIns, callComponents.kotlinTypeRefiner
+                callComponents.constraintInjector, callComponents.builtIns,
+                callComponents.kotlinTypeRefiner, callComponents.languageVersionSettings
             )
             if (baseSystem != null) {
                 newSystem!!.addOtherSystem(baseSystem!!)
