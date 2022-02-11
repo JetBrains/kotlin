@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.LoggedData
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestName
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.GTestListing
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestOutputFilter
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.parseGTestListing
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import kotlin.time.Duration
 
@@ -38,6 +38,6 @@ internal class LocalTestNameExtractor(
         runResult: RunResult.Completed
     ) : AbstractLocalProcessRunner<Collection<TestName>>.ResultHandler(runResult) {
         override fun getLoggedRun() = LoggedData.TestRun(getLoggedParameters(), runResult)
-        override fun doHandle() = parseGTestListing(runResult.processOutput.stdOut.filteredOutput)
+        override fun doHandle() = GTestListing.parse(runResult.processOutput.stdOut.filteredOutput)
     }
 }

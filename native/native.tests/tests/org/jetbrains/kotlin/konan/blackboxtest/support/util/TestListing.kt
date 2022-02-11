@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestName
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.GTestListingParseState as State
 
 /**
  * Extracts [TestName]s from GTest listing.
@@ -22,60 +21,62 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.util.GTestListingParseSta
  * yields TestName(packageName = "sample.test", packagePartClassName = "SampleTestKt", functionName = "one")
  *    and TestName(packageName = "sample.test", packagePartClassName = "SampleTestKt", functionName = "two")
  */
-internal fun parseGTestListing(listing: String): Collection<TestName> = buildList {
-    fun parseError(message: String, index: Int, line: String): Nothing = fail {
-        buildString {
-            appendLine("$message at line #$index: \"$line\"")
-            appendLine()
-            appendLine("Full listing:")
-            appendLine(listing)
-        }
-    }
-
-    var state: State = State.Begin
-
-    val lines = listing.lines()
-    lines.forEachIndexed { index, line ->
-        fun parseError(message: String): Nothing = parseError(message, index, line)
-
-        state = when {
-            line.startsWith(STDLIB_TESTS_IGNORED_LINE_PREFIX) && state is State.Begin -> State.Begin
-            line.isBlank() -> when (state) {
-                is State.NewTest, is State.End -> State.End
-                else -> parseError("Unexpected empty line")
-            }
-            line[0].isWhitespace() -> when (state) {
-                is State.NewTestSuite,
-                is State.NewTest -> {
-                    val testSuite = state.testSuite
-                    this += TestName(testSuite.testSuiteNameWithDotSuffix + line.trim())
-                    State.NewTest(testSuite)
-                }
-                else -> parseError("Test name encountered before test suite name")
-            }
-            else -> when (state) {
-                is State.Begin, is State.NewTest -> {
-                    State.NewTestSuite(line.trimEnd())
-                }
-                else -> parseError("Unexpected test suite name")
+internal object GTestListing {
+    fun parse(listing: String): Collection<TestName> = buildList {
+        fun parseError(message: String, index: Int, line: String): Nothing = fail {
+            buildString {
+                appendLine("$message at line #$index: \"$line\"")
+                appendLine()
+                appendLine("Full listing:")
+                appendLine(listing)
             }
         }
+
+        var state: ParseState = ParseState.Begin
+
+        val lines = listing.lines()
+        lines.forEachIndexed { index, line ->
+            fun parseError(message: String): Nothing = parseError(message, index, line)
+
+            state = when {
+                line.startsWith(STDLIB_TESTS_IGNORED_LINE_PREFIX) && state is ParseState.Begin -> ParseState.Begin
+                line.isBlank() -> when (state) {
+                    is ParseState.NewTest, is ParseState.End -> ParseState.End
+                    else -> parseError("Unexpected empty line")
+                }
+                line[0].isWhitespace() -> when (state) {
+                    is ParseState.NewTestSuite,
+                    is ParseState.NewTest -> {
+                        val testSuite = state.testSuite
+                        this += TestName(testSuite.testSuiteNameWithDotSuffix + line.trim())
+                        ParseState.NewTest(testSuite)
+                    }
+                    else -> parseError("Test name encountered before test suite name")
+                }
+                else -> when (state) {
+                    is ParseState.Begin, is ParseState.NewTest -> {
+                        ParseState.NewTestSuite(line.trimEnd())
+                    }
+                    else -> parseError("Unexpected test suite name")
+                }
+            }
+        }
+
+        if (state is ParseState.NewTestSuite)
+            parseError("Test name expected before test suite name", lines.lastIndex, lines.last())
     }
 
-    if (state is State.NewTestSuite)
-        parseError("Test name expected before test suite name", lines.lastIndex, lines.last())
+    private sealed interface ParseState {
+        object Begin : ParseState
+        object End : ParseState
+
+        class NewTestSuite(val testSuiteNameWithDotSuffix: String) : ParseState
+        class NewTest(val testSuite: NewTestSuite) : ParseState
+    }
+
+    private inline val ParseState.testSuite: ParseState.NewTestSuite
+        get() = safeAs<ParseState.NewTestSuite>() ?: cast<ParseState.NewTest>().testSuite
+
+    // The very first line of stdlib test output may contain seed of Random. Such line should be ignored.
+    private const val STDLIB_TESTS_IGNORED_LINE_PREFIX = "Seed: "
 }
-
-private sealed interface GTestListingParseState {
-    object Begin : State
-    object End : State
-
-    class NewTestSuite(val testSuiteNameWithDotSuffix: String) : State
-    class NewTest(val testSuite: NewTestSuite) : State
-}
-
-private inline val State.testSuite: State.NewTestSuite
-    get() = safeAs<State.NewTestSuite>() ?: cast<State.NewTest>().testSuite
-
-// The very first line of stdlib test output may contain seed of Random. Such line should be ignored.
-private const val STDLIB_TESTS_IGNORED_LINE_PREFIX = "Seed: "
