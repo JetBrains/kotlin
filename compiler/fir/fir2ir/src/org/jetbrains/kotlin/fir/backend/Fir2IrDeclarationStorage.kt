@@ -509,7 +509,6 @@ class Fir2IrDeclarationStorage(
             // For private functions signature is null, fallback to non-lazy function
             return createIrLazyFunction(function as FirSimpleFunction, signature, irParent, updatedOrigin)
         }
-        classifierStorage.preCacheTypeParameters(function)
         val name = simpleFunction?.name
             ?: if (isLambda) SpecialNames.ANONYMOUS else Name.special("<no name provided>")
         val visibility = simpleFunction?.visibility ?: Visibilities.Local
@@ -518,6 +517,7 @@ class Fir2IrDeclarationStorage(
             else simpleFunction?.isSuspend == true
         val created = function.convertWithOffsets { startOffset, endOffset ->
             val result = declareIrSimpleFunction(signature, simpleFunction?.containerSource) { symbol ->
+                classifierStorage.preCacheTypeParameters(function, symbol)
                 irFactory.createFunction(
                     startOffset, endOffset, updatedOrigin, symbol,
                     name, components.visibilityConverter.convertToDescriptorVisibility(visibility),
@@ -602,10 +602,10 @@ class Fir2IrDeclarationStorage(
     ): IrConstructor = convertCatching(constructor) {
         val origin = constructor.computeIrOrigin(predefinedOrigin)
         val isPrimary = constructor.isPrimary
-        classifierStorage.preCacheTypeParameters(constructor)
         val signature = if (isLocal) null else signatureComposer.composeSignature(constructor)
         val created = constructor.convertWithOffsets { startOffset, endOffset ->
             declareIrConstructor(signature) { symbol ->
+                classifierStorage.preCacheTypeParameters(constructor, symbol)
                 irFactory.createConstructor(
                     startOffset, endOffset, origin, symbol,
                     SpecialNames.INIT, components.visibilityConverter.convertToDescriptorVisibility(constructor.visibility),
@@ -829,14 +829,9 @@ class Fir2IrDeclarationStorage(
             // For private functions signature is null, fallback to non-lazy property
             return createIrLazyProperty(property, signature, irParent, origin)
         }
-        classifierStorage.preCacheTypeParameters(property)
-        if (property.delegate != null) {
-            ((property.delegate as? FirQualifiedAccess)?.calleeReference?.resolvedSymbol?.fir as? FirTypeParameterRefsOwner)?.let {
-                classifierStorage.preCacheTypeParameters(it)
-            }
-        }
         return property.convertWithOffsets { startOffset, endOffset ->
             val result = declareIrProperty(signature, property.containerSource) { symbol ->
+                classifierStorage.preCacheTypeParameters(property, symbol)
                 irFactory.createProperty(
                     startOffset, endOffset, origin, symbol,
                     property.name, components.visibilityConverter.convertToDescriptorVisibility(property.visibility), property.modality!!,
@@ -861,6 +856,9 @@ class Fir2IrDeclarationStorage(
                     val setter = property.setter
                     if (delegate != null || property.hasBackingField) {
                         backingField = if (delegate != null) {
+                            ((delegate as? FirQualifiedAccess)?.calleeReference?.resolvedSymbol?.fir as? FirTypeParameterRefsOwner)?.let {
+                                classifierStorage.preCacheTypeParameters(it, symbol)
+                            }
                             createBackingField(
                                 property, IrDeclarationOrigin.PROPERTY_DELEGATE,
                                 components.visibilityConverter.convertToDescriptorVisibility(property.fieldVisibility),
@@ -1257,7 +1255,7 @@ class Fir2IrDeclarationStorage(
     private fun createIrLazyFunction(
         fir: FirSimpleFunction,
         signature: IdSignature,
-        lazyParent: Fir2IrLazyClass,
+        lazyParent: IrDeclarationParent,
         declarationOrigin: IrDeclarationOrigin
     ): IrSimpleFunction {
         val symbol = symbolTable.referenceSimpleFunction(signature)
@@ -1335,7 +1333,7 @@ class Fir2IrDeclarationStorage(
     private fun createIrLazyProperty(
         fir: FirProperty,
         signature: IdSignature,
-        lazyParent: Fir2IrLazyClass,
+        lazyParent: IrDeclarationParent,
         declarationOrigin: IrDeclarationOrigin
     ): IrProperty {
         val symbol = Fir2IrPropertySymbol(signature, fir.containerSource)
@@ -1354,8 +1352,6 @@ class Fir2IrDeclarationStorage(
             }
         }
         propertyCache[fir] = irProperty
-        // NB: this is needed to prevent recursions in case of self bounds
-        (irProperty as Fir2IrLazyProperty).prepareTypeParameters()
         return irProperty
     }
 
