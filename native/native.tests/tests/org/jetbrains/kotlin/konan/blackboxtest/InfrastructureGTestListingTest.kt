@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.konan.blackboxtest
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestName
-import org.jetbrains.kotlin.konan.blackboxtest.support.util.parseGTestListing
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.GTestListing
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
 @Tag("infrastructure")
-class InfrastructureTestListingTest {
+class InfrastructureGTestListingTest {
     @Test
     fun successfullyParsed() = assertEquals(
         listOf(
@@ -35,7 +35,7 @@ class InfrastructureTestListingTest {
             "a.b.__launcher__Kt.bar",
             "a.b.__launcher__Kt.baz",
         ).map(::TestName),
-        parseGTestListing(
+        GTestListing.parse(
             """
                 |Seed: 123
                 |Seed: 456
@@ -156,7 +156,7 @@ class InfrastructureTestListingTest {
     companion object {
         private fun assertCorrectParseError(expectedMessage: String, lineNumber: Int, listing: String) {
             try {
-                parseGTestListing(listing)
+                GTestListing.parse(listing)
                 fail { "Listing parsed without errors" }
             } catch (e: AssertionError) {
                 val message = e.message.orEmpty()
