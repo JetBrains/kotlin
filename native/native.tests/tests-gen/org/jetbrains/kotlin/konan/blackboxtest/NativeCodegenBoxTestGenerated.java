@@ -17090,6 +17090,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("overrideReturnNothing.kt")
+            public void testOverrideReturnNothing() throws Exception {
+                runTest("compiler/testData/codegen/box/inlineClasses/overrideReturnNothing.kt");
+            }
+
+            @Test
             @TestMetadata("overridingFunCallingPrivateFun.kt")
             public void testOverridingFunCallingPrivateFun() throws Exception {
                 // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()

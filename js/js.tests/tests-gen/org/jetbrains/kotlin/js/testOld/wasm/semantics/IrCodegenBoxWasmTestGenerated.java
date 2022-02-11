@@ -13242,6 +13242,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/inlineClasses/nullableWrapperEquality.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
         }
 
+        @TestMetadata("overrideReturnNothing.kt")
+        public void testOverrideReturnNothing() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/overrideReturnNothing.kt");
+        }
+
         @TestMetadata("overridingFunCallingPrivateFun.kt")
         public void testOverridingFunCallingPrivateFun() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/overridingFunCallingPrivateFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
