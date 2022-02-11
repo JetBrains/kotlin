@@ -25,8 +25,8 @@ class FirIntersectionTypeRefBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     var isMarkedNullable: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    var leftType: FirTypeRef? = null
-    var rightType: FirTypeRef? = null
+    lateinit var leftType: FirTypeRef
+    lateinit var rightType: FirTypeRef
 
     override fun build(): FirIntersectionTypeRef {
         return FirIntersectionTypeRefImpl(
