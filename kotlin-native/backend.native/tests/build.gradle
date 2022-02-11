@@ -6116,6 +6116,8 @@ fileCheckTest("filecheck_signext_zeroext_objc_export") {
 
 fileCheckTest("filecheck_function_attributes_at_callsite") {
     enabled = (project.testTarget != 'wasm32') // KT-49739
+    // attributes for caller and callee might be the same so we allow overlapping.
+    additionalFileCheckFlags = ["--allow-deprecated-dag-overlap"]
     annotatedSource = project.file('filecheck/function_attributes_at_callsite.kt')
 }
 

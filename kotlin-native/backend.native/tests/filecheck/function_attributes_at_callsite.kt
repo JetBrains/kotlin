@@ -17,7 +17,7 @@ fun main() {
     flameThrower()
 }
 
-// CHECK-DAG: attributes #[[THROW_EXCEPTION_DECLARATION_ATTRIBUTES]] = { noreturn uwtable {{.+}} }
-// CHECK-DAG: attributes #[[THROW_EXCEPTION_CALLSITE_ATTRIBUTES]] = { noreturn uwtable }
-// CHECK-DAG: attributes #[[FLAME_THROWER_DECLARATION_ATTRIBUTES]] = { noreturn {{.+}} }
-// CHECK-DAG: attributes #[[FLAME_THROWER_CALLSITE_ATTRIBUTES]] = { noreturn }
+// CHECK-DAG: attributes #[[THROW_EXCEPTION_DECLARATION_ATTRIBUTES]] = {{{.*}}noreturn{{.*}}}
+// CHECK-DAG: attributes #[[THROW_EXCEPTION_CALLSITE_ATTRIBUTES]] = {{{.*}}noreturn{{.*}}}
+// CHECK-DAG: attributes #[[FLAME_THROWER_DECLARATION_ATTRIBUTES]] = {{{.*}}noreturn{{.*}}}
+// CHECK-DAG: attributes #[[FLAME_THROWER_CALLSITE_ATTRIBUTES]] = {{{.*}}noreturn{{.*}}}
