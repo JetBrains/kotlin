@@ -1,0 +1,48 @@
+@kotlin.Metadata
+public interface A {
+    // source: 'overrideReturnNothing.kt'
+    public abstract @org.jetbrains.annotations.Nullable method foo-wSRmS7I(): Inlined
+    public abstract method foo2-yXoPhBc(): int
+    public abstract @org.jetbrains.annotations.Nullable method getProperty-wSRmS7I(): Inlined
+    public abstract method getProperty2-yXoPhBc(): int
+}
+
+@kotlin.Metadata
+public final class B {
+    // source: 'overrideReturnNothing.kt'
+    private final @org.jetbrains.annotations.Nullable field property: java.lang.Void
+    public method <init>(): void
+    public @org.jetbrains.annotations.Nullable method foo(): java.lang.Void
+    public synthetic bridge method foo-wSRmS7I(): Inlined
+    public @org.jetbrains.annotations.NotNull method foo2(): java.lang.Void
+    public synthetic bridge method foo2-yXoPhBc(): int
+    public @org.jetbrains.annotations.Nullable method getProperty(): java.lang.Void
+    public synthetic bridge method getProperty-wSRmS7I(): Inlined
+    public @org.jetbrains.annotations.NotNull method getProperty2(): java.lang.Void
+    public synthetic bridge method getProperty2-yXoPhBc(): int
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class Inlined {
+    // source: 'overrideReturnNothing.kt'
+    private final field value: int
+    private synthetic method <init>(p0: int): void
+    public synthetic final static method box-impl(p0: int): Inlined
+    public static method constructor-impl(p0: int): int
+    public method equals(p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int): boolean
+    public final method getValue(): int
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int): int
+    public method toString(): java.lang.String
+    public static method toString-impl(p0: int): java.lang.String
+    public synthetic final method unbox-impl(): int
+}
+
+@kotlin.Metadata
+public final class OverrideReturnNothingKt {
+    // source: 'overrideReturnNothing.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
