@@ -60,7 +60,6 @@ val targetList: List<String> by project
 val endorsedLibraries: Map<Project, EndorsedLibraryInfo> by project(":kotlin-native:endorsedLibraries").ext
 
 val library = endorsedLibraries[project] ?: throw IllegalStateException("Library for $project is not set")
-lateinit var buildTask: TaskProvider<Task>
 
 konanArtifacts {
     library(library.name) {
@@ -86,12 +85,8 @@ konanArtifacts {
         commonSrcDir(commonSrc)
         srcDir(nativeSrc)
 
-        buildTask = project.findKonanBuildTask(library.name, project.platformManager.hostPlatform.target).apply {
-            configure {
-                dependsOn(":kotlin-native:distCompiler")
-                dependsOn(":kotlin-native:distRuntime")
-            }
-        }
+        dependsOn(":kotlin-native:distCompiler")
+        dependsOn(":kotlin-native:distRuntime")
     }
 }
 
@@ -99,9 +94,8 @@ val hostName: String by project
 val cacheableTargetNames: List<String> by project
 
 targetList.forEach { targetName ->
-    val copyTask = tasks.register("${targetName}${library.name}", Copy::class.java) {
-        require(::buildTask.isInitialized)
-        dependsOn(buildTask)
+    val copyTask = tasks.register("${targetName}${library.taskName}", Copy::class.java) {
+        dependsOn(project.findKonanBuildTask(library.name, project.platformManager.hostPlatform.target))
 
         destinationDir = buildDir.resolve("$targetName${library.name}")
 

@@ -26,7 +26,7 @@ targetList.forEach { target ->
     tasks.create("${target}EndorsedLibraries") {
         endorsedLibraries.forEach { library ->
             dependsOn(tasks.register("${target}${library.name}EndorsedLibraries", Copy::class.java) {
-                dependsOn("${library.projectName}:${target}${library.name}")
+                dependsOn("${library.projectName}:${target}${library.taskName}")
                 destinationDir = project.file("${project.buildDir}/${library.name}")
 
                 from(library.project.file("build/${target}${library.name}")) {
