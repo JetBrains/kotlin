@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.withScope
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 
@@ -220,7 +221,6 @@ class FakeOverrideGenerator(
                 // We've got no relevant declaration in FIR world for such a fake override in current class, thus we're creating it here
                 val fakeOverrideSymbol = createFakeOverrideSymbol(originalDeclaration, baseSymbol)
                 declarationStorage.saveFakeOverrideInClass(irClass, originalDeclaration, fakeOverrideSymbol.fir)
-                classifierStorage.preCacheTypeParameters(originalDeclaration)
                 fakeOverrideSymbol.fir to listOf(originalSymbol)
             }
             else -> {
@@ -274,7 +274,7 @@ class FakeOverrideGenerator(
                 // We've got no relevant declaration in FIR world for such a fake override in current class, thus we're creating it here
                 val fakeOverrideSymbol = createFakeOverrideSymbol(originalDeclaration, baseSymbol)
                 declarationStorage.saveFakeOverrideInClass(irClass, originalDeclaration, fakeOverrideSymbol.fir)
-                classifierStorage.preCacheTypeParameters(originalDeclaration)
+                classifierStorage.preCacheTypeParameters(originalDeclaration, irClass.symbol)
                 fakeOverrideSymbol.fir to listOf(originalSymbol)
             }
             else -> {

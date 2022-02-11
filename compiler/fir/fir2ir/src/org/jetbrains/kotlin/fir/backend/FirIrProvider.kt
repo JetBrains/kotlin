@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
-import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
@@ -56,7 +53,12 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
 
     private fun getDeclarationForCompositeSignature(signature: IdSignature.CompositeSignature, kind: SymbolKind): IrDeclaration? {
         if (kind == SymbolKind.TYPE_PARAMETER_SYMBOL) {
-            TODO()
+            val container = (getDeclarationForSignature(signature.container, SymbolKind.CLASS_SYMBOL)
+                ?: getDeclarationForSignature(signature.container, SymbolKind.FUNCTION_SYMBOL)
+                ?: getDeclarationForSignature(signature.container, SymbolKind.PROPERTY_SYMBOL)
+            ) as IrTypeParametersContainer
+            val localSignature = signature.inner as IdSignature.LocalSignature
+            return container.typeParameters[localSignature.index()]
         }
         return getDeclarationForSignature(signature.nearestPublicSig(), kind)
     }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.signaturer
 
+import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrSignatureComposer
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.name.ClassId
 
 // @NoMutableState -- we'll restore this annotation once we get rid of withFileSignature().
 class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignatureComposer {
@@ -116,6 +118,18 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
             IdSignature.CompositeSignature(fileSig, publicSignature)
         } else
             publicSignature
+    }
+
+    override fun composeTypeParameterSignature(
+        typeParameter: FirTypeParameter,
+        index: Int,
+        containerSignature: IdSignature?
+    ): IdSignature? {
+        if (containerSignature == null) return null
+        return IdSignature.CompositeSignature(
+             containerSignature,
+             IdSignature.LocalSignature(MangleConstant.TYPE_PARAMETER_MARKER_NAME, index.toLong(), null)
+        )
     }
 
     override fun composeAccessorSignature(
