@@ -88,6 +88,7 @@ internal object LLFirSessionFactory {
             registerCommonComponents(languageVersionSettings)
             registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
             registerResolveComponents()
+            registerJavaSpecificResolveComponents()
 
             val provider = LLFirProvider(
                 project,
@@ -135,6 +136,15 @@ internal object LLFirSessionFactory {
                     }
             }
 
+            FirSessionFactory.FirSessionConfigurator(this).apply {
+                if (isRootModule) {
+                    registerExtendedCommonCheckers()
+                }
+                for (extensionRegistrar in FirExtensionRegistrar.getInstances(project)) {
+                    registerExtensions(extensionRegistrar.configure())
+                }
+            }.configure()
+
             val dependencyProvider = DependentModuleProviders(this, dependentProviders)
 
             register(
@@ -157,15 +167,6 @@ internal object LLFirSessionFactory {
             register(FirDependenciesSymbolProvider::class, dependencyProvider)
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
 
-            registerJavaSpecificResolveComponents()
-            FirSessionFactory.FirSessionConfigurator(this).apply {
-                if (isRootModule) {
-                    registerExtendedCommonCheckers()
-                }
-                for (extensionRegistrar in FirExtensionRegistrar.getInstances(project)) {
-                    registerExtensions(extensionRegistrar.configure())
-                }
-            }.configure()
             configureSession?.invoke(this)
         }
     }
@@ -305,6 +306,7 @@ internal object LLFirSessionFactory {
             registerCommonComponents(languageVersionSettings)
             registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
             registerResolveComponents()
+            registerJavaSpecificResolveComponents()
 
             val provider = LLFirProvider(
                 project,
@@ -339,6 +341,12 @@ internal object LLFirSessionFactory {
                 )
             }
 
+            FirSessionFactory.FirSessionConfigurator(this).apply {
+                for (extensionRegistrar in FirExtensionRegistrar.getInstances(project)) {
+                    registerExtensions(extensionRegistrar.configure())
+                }
+            }.configure()
+
             val dependencyProvider = DependentModuleProviders(this, dependentProviders)
 
             register(
@@ -361,12 +369,6 @@ internal object LLFirSessionFactory {
             register(FirDependenciesSymbolProvider::class, dependencyProvider)
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
 
-            registerJavaSpecificResolveComponents()
-            FirSessionFactory.FirSessionConfigurator(this).apply {
-                for (extensionRegistrar in FirExtensionRegistrar.getInstances(project)) {
-                    registerExtensions(extensionRegistrar.configure())
-                }
-            }.configure()
             configureSession?.invoke(this)
         }
 
