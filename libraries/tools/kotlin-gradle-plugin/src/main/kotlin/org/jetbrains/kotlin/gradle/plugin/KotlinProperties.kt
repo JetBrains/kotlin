@@ -316,7 +316,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * Will be default after proper migration.
      */
     val nativeUseEmbeddableCompilerJar: Boolean
-        get() = booleanProperty("kotlin.native.useEmbeddableCompilerJar") ?: false
+        get() = booleanProperty("kotlin.native.useEmbeddableCompilerJar") ?: true
 
     /**
      * Allows a user to set project-wide options that will be passed to the K/N compiler via -Xbinary flag.

@@ -136,11 +136,12 @@ interface KotlinCompilerPluginSupportPlugin : Plugin<Project> {
     fun getPluginArtifact(): SubpluginArtifact
 
     /**
-     * Kotlin/Native-specific plugin artifact.
+     * Legacy Kotlin/Native-specific plugin artifact.
      *
-     * If Gradle is configured to use Kotlin/Native embeddable compiler jar
-     * (with `kotlin.native.useEmbeddableCompilerJar=true` project property),
-     * then [getPluginArtifact] is used instead.
+     * It is used only if Gradle is configured not to use Kotlin/Native embeddable compiler jar
+     * (with `kotlin.native.useEmbeddableCompilerJar=false` project property).
+     *
+     * Otherwise, [getPluginArtifact] is used by default.
      */
     fun getPluginArtifactForNative(): SubpluginArtifact? = null
 }
