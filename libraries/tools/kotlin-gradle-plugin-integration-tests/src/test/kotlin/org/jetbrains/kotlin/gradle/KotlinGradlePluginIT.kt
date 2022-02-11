@@ -998,7 +998,7 @@ class KotlinGradleIT : BaseGradleIT() {
     }
 
     @Test
-    fun testDetectingDifferentClassLoaders() = with(Project("kt-27059-pom-rewriting", GradleVersionRequired.FOR_MPP_SUPPORT)) {
+    fun testDetectingDifferentClassLoaders() = with(Project("differentClassloaders", GradleVersionRequired.FOR_MPP_SUPPORT)) {
         setupWorkingDir()
 
         val originalRootBuildScript = gradleBuildScript().readText()
