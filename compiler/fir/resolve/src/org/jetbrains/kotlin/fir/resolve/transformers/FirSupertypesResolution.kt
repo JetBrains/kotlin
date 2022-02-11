@@ -401,7 +401,7 @@ open class FirSupertypeResolverVisitor(
               So we create a copy of supertypeRefs to avoid it
              */
             supertypeRefs.createCopy().mapTo(mutableListOf()) {
-                val superTypeRef = transformer.transformTypeRef(it, scopeDeclaration)
+                val superTypeRef = it.transform<FirTypeRef, ScopeClassDeclaration>(transformer, scopeDeclaration)
                 val typeParameterType = superTypeRef.coneTypeSafe<ConeTypeParameterType>()
                 when {
                     typeParameterType != null ->

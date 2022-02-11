@@ -471,7 +471,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         supertypeSupplier: SupertypeSupplier
     ): Pair<ConeKotlinType, ConeDiagnostic?> {
         return when (typeRef) {
-            is FirResolvedTypeRef -> typeRef.type to null
+            is FirResolvedTypeRef -> error("Do not resolve, resolved type-refs")
             is FirUserTypeRef -> {
                 val (symbol, substitutor, diagnostic) = resolveToSymbol(typeRef, scopeClassDeclaration, useSiteFile, supertypeSupplier)
                 resolveUserType(
