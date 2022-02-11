@@ -18,7 +18,7 @@ val binarySuffix = getNativeProgramExtension()
 val videoplayerDir = "$projectDir/../../samples/videoplayer"
 
 val linkerOpts = when {
-    PlatformInfo.isMac() -> listOf("-linker-options","-L/opt/local/lib", "-linker-options", "-L/usr/local/lib")
+    PlatformInfo.isMac() -> listOf("-linker-options", "-L/opt/local/lib", "-linker-options", "-L/usr/local/lib", "-linker-options", "-L/opt/homebrew/lib", "-linker-options", "-L/opt/homebrew/opt/ffmpeg@4/lib")
     PlatformInfo.isLinux() -> listOf("-linker-options", "-L/usr/lib/x86_64-linux-gnu", "-linker-options", "-L/usr/lib64")
     PlatformInfo.isWindows() -> listOf("-linker-options", "-L$mingwPath/lib")
     else -> error("Unsupported platform")
@@ -29,7 +29,8 @@ var filterDirsFfmpeg = emptyList<String>()
 when {
     PlatformInfo.isMac() -> filterDirsFfmpeg = listOf(
         "-headerFilterAdditionalSearchPrefix", "/opt/local/include",
-        "-headerFilterAdditionalSearchPrefix", "/usr/local/include"
+        "-headerFilterAdditionalSearchPrefix", "/usr/local/include",
+        "-headerFilterAdditionalSearchPrefix", "/opt/homebrew/opt/ffmpeg@4/include"
     )
     PlatformInfo.isLinux() -> filterDirsFfmpeg = listOf(
         "-headerFilterAdditionalSearchPrefix", "/usr/include",
@@ -42,7 +43,8 @@ when {
 var includeDirsSdl = when {
     PlatformInfo.isMac() -> listOf(
         "-compiler-option", "-I/opt/local/include/SDL2",
-        "-compiler-option", "-I/usr/local/include/SDL2"
+        "-compiler-option", "-I/usr/local/include/SDL2",
+        "-compiler-option", "-I/opt/homebrew/include/SDL2"
     )
     PlatformInfo.isLinux() -> listOf("-compiler-option", "-I/usr/include/SDL2")
     PlatformInfo.isWindows() -> listOf("-compiler-option", "-I$mingwPath/include/SDL2")
