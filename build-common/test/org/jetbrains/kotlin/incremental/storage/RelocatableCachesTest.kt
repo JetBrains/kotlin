@@ -47,13 +47,13 @@ class RelocatableCachesTest : TestWithWorkingDir() {
      * Fills lookup storage in [projectRoot] with N fq-names,
      * where i_th fq-name myscope_i.MyClass_i has lookups for previous fq-names (from 0 to i-1)
      */
-    private fun fillLookupStorage(projectRoot: File, reverseFiles: Boolean, reverseLookups: Boolean) {
+    private fun fillLookupStorage(projectRoot: File, reverseFiles: Boolean, reverseLookups: Boolean, storeFullFqNames: Boolean = false) {
         val storageRoot = projectRoot.storageRoot
         val fileToPathConverter = RelativeFileToPathConverter(projectRoot)
         val lookupStorage = LookupStorage(
             storageRoot,
             fileToPathConverter,
-            storeFullFqNames = CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS.value.toBooleanLenient() ?: false
+            storeFullFqNames = storeFullFqNames
         )
         val files = LinkedHashSet<String>()
         val symbols = LinkedHashSet<LookupSymbol>()

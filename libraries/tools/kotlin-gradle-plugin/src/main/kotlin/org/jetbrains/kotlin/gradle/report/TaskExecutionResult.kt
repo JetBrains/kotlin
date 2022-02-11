@@ -16,5 +16,7 @@ internal class TaskExecutionResult(
 
 internal class TaskExecutionInfo(
     val changedFiles: ChangedFiles? = null,
-    val compilerArguments: Array<String> = emptyArray()
+    val compilerArguments: Array<String> = emptyArray(),
+    val withArtifactTransform: Boolean? = false,
+    val withAbiSnapshot: Boolean? = false
 )

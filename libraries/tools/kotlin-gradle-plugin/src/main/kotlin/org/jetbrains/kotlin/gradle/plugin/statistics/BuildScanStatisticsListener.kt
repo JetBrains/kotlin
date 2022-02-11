@@ -40,10 +40,7 @@ class BuildScanStatisticsListener(
             log.debug("Collect data takes $collectDataDuration: $compileStatData")
 
             compileStatData?.also {
-                val reportDataDuration = measureTimeMillis {
-                    report(it)
-                }
-                log.debug("Report data takes $reportDataDuration: $compileStatData")
+                report(it)
             }
         }
     }

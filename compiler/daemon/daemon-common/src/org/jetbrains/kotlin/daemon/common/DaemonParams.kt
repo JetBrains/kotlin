@@ -312,8 +312,6 @@ fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
     if (inheritAdditionalProperties) {
         CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.value?.let { opts.jvmParams.add("D${CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.property}=\"$it\"") }
         CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.value?.let { opts.jvmParams.add("D${CompilerSystemProperties.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY.property}") }
-        //Temporary solution to test abi snapshot
-        CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS.value?.let { opts.jvmParams.add("D${CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS.property}") }
     }
 
     if (opts.jvmParams.none { it.matches(jvmAssertArgsRegex) }) {
