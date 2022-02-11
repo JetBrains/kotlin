@@ -601,6 +601,21 @@ class DiagnosticReporterByTrackingStrategy(
                     )
                 }
             }
+
+            InferredEmptyIntersectionError::class.java, InferredEmptyIntersectionWarning::class.java -> {
+                val typeVariable = (error as InferredEmptyIntersection).typeVariable
+                psiKotlinCall.psiCall.calleeExpression?.let {
+                    val typeVariableText = (typeVariable as? TypeVariableFromCallableDescriptor)?.originalTypeParameter?.name?.asString()
+                        ?: typeVariable.toString()
+                    trace.reportDiagnosticOnce(
+                        @Suppress("UNCHECKED_CAST")
+                        INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.on(
+                            context.languageVersionSettings, it, typeVariableText,
+                            error.incompatibleTypes as Collection<KotlinType>
+                        )
+                    )
+                }
+            }
         }
     }
 
