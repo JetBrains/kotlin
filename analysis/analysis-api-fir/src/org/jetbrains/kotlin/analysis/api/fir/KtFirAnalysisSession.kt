@@ -106,7 +106,7 @@ private constructor(
         return KtFirAnalysisSession(
             project,
             contextResolveState,
-            firSymbolBuilder.createReadOnlyCopy(contextResolveState),
+            firSymbolBuilder,
             token,
             AnalysisSessionMode.DEPENDENT_COPY
         )
@@ -124,8 +124,8 @@ private constructor(
         ): KtFirAnalysisSession {
             val project = firResolveState.project
             val firSymbolBuilder = KtSymbolByFirBuilder(
-                firResolveState,
                 project,
+                firResolveState,
                 token
             )
             return KtFirAnalysisSession(
