@@ -269,7 +269,8 @@ private fun createInitialCompilerConfiguration(
             ScriptingCompilerConfigurationComponentRegistrar()
         )
 
-        configureExplicitContentRoots(baseArguments)
+        configureJavaModulesContentRoots(baseArguments)
+        configureContentRootsFromClassPath(baseArguments)
 
         if (!baseArguments.noStdlib) {
             addModularRootIfNotNull(isModularJava, "kotlin.stdlib", KotlinJars.stdlib)
