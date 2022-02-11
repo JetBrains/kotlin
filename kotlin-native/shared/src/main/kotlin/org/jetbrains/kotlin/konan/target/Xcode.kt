@@ -54,13 +54,14 @@ interface Xcode {
     }
 
     companion object {
-        val current: Xcode by lazy {
-            CurrentXcode
-        }
+        // Don't cache the instance: the compiler might be executed in a Gradle daemon process,
+        // so current Xcode might actually change between different invocations.
+        val current: Xcode
+            get() = CurrentXcode()
     }
 }
 
-private object CurrentXcode : Xcode {
+private class CurrentXcode : Xcode {
 
     override val toolchain by lazy {
         val ldPath = xcrun("-f", "ld") // = $toolchain/usr/bin/ld
