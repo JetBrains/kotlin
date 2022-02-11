@@ -20,19 +20,19 @@ internal class FirIntersectionTypeRefImpl(
     override val source: KtSourceElement?,
     override val annotations: MutableList<FirAnnotation>,
     override val isMarkedNullable: Boolean,
-    override var leftType: FirTypeRef?,
-    override var rightType: FirTypeRef?,
+    override var leftType: FirTypeRef,
+    override var rightType: FirTypeRef,
 ) : FirIntersectionTypeRef() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
-        leftType?.accept(visitor, data)
-        rightType?.accept(visitor, data)
+        leftType.accept(visitor, data)
+        rightType.accept(visitor, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirIntersectionTypeRefImpl {
         transformAnnotations(transformer, data)
-        leftType = leftType?.transform(transformer, data)
-        rightType = rightType?.transform(transformer, data)
+        leftType = leftType.transform(transformer, data)
+        rightType = rightType.transform(transformer, data)
         return this
     }
 

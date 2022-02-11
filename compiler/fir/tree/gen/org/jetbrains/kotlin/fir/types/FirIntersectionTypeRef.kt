@@ -19,8 +19,8 @@ abstract class FirIntersectionTypeRef : FirTypeRefWithNullability() {
     abstract override val source: KtSourceElement?
     abstract override val annotations: List<FirAnnotation>
     abstract override val isMarkedNullable: Boolean
-    abstract val leftType: FirTypeRef?
-    abstract val rightType: FirTypeRef?
+    abstract val leftType: FirTypeRef
+    abstract val rightType: FirTypeRef
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitIntersectionTypeRef(this, data)
 

@@ -644,8 +644,8 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         intersectionTypeRef.configure {
-            +field("leftType", typeRef, nullable = true)
-            +field("rightType", typeRef, nullable = true)
+            +field("leftType", typeRef)
+            +field("rightType", typeRef)
         }
 
         thisReceiverExpression.configure {
