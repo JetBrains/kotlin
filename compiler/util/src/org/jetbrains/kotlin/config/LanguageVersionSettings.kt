@@ -261,7 +261,6 @@ enum class LanguageFeature(
     ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_8, kind = BUG_FIX),
     ModifierNonBuiltinSuspendFunError(KOTLIN_1_8),
     SynchronizedSuspendError(KOTLIN_1_8),
-    ForbidInferringTypeVariablesIntoEmptyIntersection(KOTLIN_1_8, kind = BUG_FIX), // KT-51221
 
     // 1.9
 
@@ -275,6 +274,7 @@ enum class LanguageFeature(
     StopPropagatingDeprecationThroughOverrides(KOTLIN_1_9, kind = BUG_FIX), // KT-47902
     ReportTypeVarianceConflictOnQualifierArguments(KOTLIN_1_9, kind = BUG_FIX), // KT-50947
     ReportErrorsOnRecursiveTypeInsidePlusAssignment(KOTLIN_1_9, kind = BUG_FIX), // KT-48546
+    ForbidInferringTypeVariablesIntoEmptyIntersection(KOTLIN_1_9, kind = BUG_FIX), // KT-51221
 
     // Disabled for indefinite time. See KT-48535 and related discussion
     ApproximateIntegerLiteralTypesInReceiverPosition(sinceVersion = null),

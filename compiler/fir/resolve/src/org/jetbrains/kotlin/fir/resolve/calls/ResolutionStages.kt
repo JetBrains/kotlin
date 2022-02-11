@@ -576,6 +576,27 @@ internal object CheckLowPriorityInOverloadResolution : CheckerStage() {
     }
 }
 
+internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
+    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) =
+        with(candidate.system.asConstraintSystemCompleterContext()) {
+            val typeVariables = candidate.system.notFixedTypeVariables.values
+
+            for (variableWithConstraints in typeVariables) {
+                val upperTypes = variableWithConstraints.constraints.extractUpperTypes()
+
+                if (upperTypes.isEmptyIntersection()) {
+                    sink.yieldDiagnostic(
+                        @Suppress("UNCHECKED_CAST")
+                        InferredEmptyIntersectionDiagnostic(
+                            upperTypes as Collection<ConeKotlinType>,
+                            variableWithConstraints.typeVariable as ConeTypeVariable
+                        )
+                    )
+                }
+            }
+        }
+}
+
 internal object PostponedVariablesInitializerResolutionStage : ResolutionStage() {
 
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
