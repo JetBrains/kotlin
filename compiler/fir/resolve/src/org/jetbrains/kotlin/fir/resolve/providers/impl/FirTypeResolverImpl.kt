@@ -486,27 +486,11 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             is FirFunctionTypeRef -> createFunctionalType(typeRef) to null
             is FirDynamicTypeRef -> ConeErrorType(ConeUnsupportedDynamicType()) to null
             is FirIntersectionTypeRef -> {
-                val (leftType, leftDiagnostic) = resolveType(
-                    typeRef.leftType
-                        ?: return ConeErrorType(ConeSimpleDiagnostic("Problem during processing intersection type")) to null,
-                    scopeClassDeclaration,
-                    areBareTypesAllowed,
-                    isOperandOfIsOperator,
-                    useSiteFile,
-                    supertypeSupplier
-                )
-                val (rightType, _) = resolveType(
-                    typeRef.rightType
-                        ?: return ConeErrorType(ConeSimpleDiagnostic("Problem during processing intersection type")) to null,
-                    scopeClassDeclaration,
-                    areBareTypesAllowed,
-                    isOperandOfIsOperator,
-                    useSiteFile,
-                    supertypeSupplier
-                )
+                val leftType = typeRef.leftType.coneType
+                val rightType = typeRef.rightType.coneType
 
                 if (rightType.isAny && leftType is ConeTypeParameterType) {
-                    ConeDefinitelyNotNullType(leftType) to leftDiagnostic //how properly concat (leftDiagnostic + rightDiagnostic)?
+                    ConeDefinitelyNotNullType(leftType) to null
                 } else {
                     ConeErrorType(ConeUnsupported("Intersection types are not supported yet", typeRef.source)) to null
                 }
