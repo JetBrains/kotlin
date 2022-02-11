@@ -246,6 +246,7 @@ internal class ExecutableCompilation(
                     TestRunnerType.NO_EXIT -> "-generate-no-exit-test-runner"
                 }
                 add(testRunnerArg)
+                add("-Xdump-tests-to=${expectedArtifact.testDumpFile}")
             }
         }
         super.applySpecificArgs(argsBuilder)
