@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.util.*
 
 private val EXPERIMENTAL_CONTINUATION_FQ_NAME = FqName("kotlin.coroutines.experimental.Continuation")
 
@@ -126,7 +125,9 @@ class TypeDeserializer(
             else ->
                 KotlinTypeFactory.simpleType(attributes, constructor, arguments, proto.nullable).let {
                     if (Flags.DEFINITELY_NOT_NULL_TYPE.get(proto.flags))
-                        DefinitelyNotNullType.makeDefinitelyNotNull(it) ?: error("null DefinitelyNotNullType for '$it'")
+                        DefinitelyNotNullType.makeDefinitelyNotNull(
+                            it, useCorrectedNullabilityForTypeParameters = true
+                        ) ?: error("null DefinitelyNotNullType for '$it'")
                     else
                         it
                 }
