@@ -256,7 +256,6 @@ private fun Candidate.findClosestMatchingReceivers(
 object CheckDslScopeViolation : ResolutionStage() {
     private val dslMarkerClassId = ClassId.fromString("kotlin/DslMarker")
 
-    @OptIn(ExperimentalStdlibApi::class)
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         fun checkReceiverValue(receiverValue: ReceiverValue?) {
             if (receiverValue is ImplicitReceiverValue<*>) {
@@ -333,7 +332,6 @@ object CheckDslScopeViolation : ResolutionStage() {
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun ImplicitReceiverValue<*>.getDslMarkersOfImplicitReceiver(context: ResolutionContext): Set<ClassId> {
         return buildSet {
             (boundSymbol as? FirAnonymousFunctionSymbol)?.fir?.matchingParameterFunctionType?.let {
@@ -358,7 +356,6 @@ object CheckDslScopeViolation : ResolutionStage() {
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     private fun FirThisReceiverExpression.getDslMarkersOfThisReceiverExpression(context: ResolutionContext): Set<ClassId> {
         return buildSet {
             collectDslMarkerAnnotations(context, typeRef.coneType)
