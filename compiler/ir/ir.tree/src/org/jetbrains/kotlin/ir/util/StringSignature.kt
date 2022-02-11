@@ -162,8 +162,10 @@ class StringSignature private constructor(val value: String, b: StringSignature.
                     isTypeParameter = true
                 } else {
                     val (pkg, cls) = parseClassId()
-                    append(pkg)
-                    append('/')
+                    if (cls[0] != '$') {
+                        append(pkg)
+                        append('/')
+                    }
                     append(cls)
                 }
 

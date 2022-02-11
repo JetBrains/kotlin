@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.backend.common.overrides
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
 import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
@@ -139,10 +138,6 @@ class FakeOverrideBuilder(
         }
         declaration.setter?.let {
             it.correspondingPropertySymbol = tempSymbol
-        }
-
-        if (declaration.parentAsClass.visibility == DescriptorVisibilities.LOCAL) {
-            println(":;;")
         }
 
         val signature = composeSignature(declaration, compatibilityMode)

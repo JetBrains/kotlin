@@ -43,7 +43,8 @@ class IrFileDeserializer(
     }
 
     private fun loadTopLevelDeclarationProto(signature: StringSignature): ProtoDeclaration {
-        val idSigIndex = reversedSignatureIndex[signature] ?: error("Not found Idx for $signature")
+        val idSigIndex = reversedSignatureIndex[signature]
+            ?: error("Not found Idx for $signature")
         return libraryFile.declaration(idSigIndex)
     }
 

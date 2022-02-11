@@ -97,6 +97,7 @@ class StringSignatureBuilderOverIr(
                 is IrValueDeclaration -> return null
                 is IrAnonymousInitializer -> return null
                 is IrLocalDelegatedProperty -> return null
+                is IrErrorDeclaration -> return null
                 else -> error("Unexpected type of declaration (${declaration.render()})")
             }
         }
