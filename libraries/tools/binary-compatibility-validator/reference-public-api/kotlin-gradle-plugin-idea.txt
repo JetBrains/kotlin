@@ -1,0 +1,188 @@
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragment : java/io/Serializable {
+	public abstract fun getDependencies ()Ljava/util/Collection;
+	public abstract fun getDirectRefinesDependencies ()Ljava/util/Collection;
+	public abstract fun getLanguageSettings ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettings;
+	public abstract fun getName ()Ljava/lang/String;
+	public abstract fun getResourceDirectories ()Ljava/util/Collection;
+	public abstract fun getSourceDirectories ()Ljava/util/Collection;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentDependency : java/io/Serializable {
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentImpl : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragment {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettings;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettings;
+	public final fun component3 ()Ljava/util/Collection;
+	public final fun component4 ()Ljava/util/Collection;
+	public final fun component5 ()Ljava/util/Collection;
+	public final fun component6 ()Ljava/util/Collection;
+	public final fun copy (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettings;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentImpl;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentImpl;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettings;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentImpl;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDependencies ()Ljava/util/Collection;
+	public fun getDirectRefinesDependencies ()Ljava/util/Collection;
+	public fun getLanguageSettings ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettings;
+	public fun getName ()Ljava/lang/String;
+	public fun getResourceDirectories ()Ljava/util/Collection;
+	public fun getSourceDirectories ()Ljava/util/Collection;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettings : java/io/Serializable {
+	public abstract fun getApiVersion ()Ljava/lang/String;
+	public abstract fun getCompilerPluginArguments ()Ljava/util/Collection;
+	public abstract fun getCompilerPluginClasspath ()Ljava/util/Collection;
+	public abstract fun getEnabledLanguageFeatures ()Ljava/util/Collection;
+	public abstract fun getFreeCompilerArgs ()Ljava/util/Collection;
+	public abstract fun getLanguageVersion ()Ljava/lang/String;
+	public abstract fun getOptInAnnotationsInUse ()Ljava/util/Collection;
+	public abstract fun isProgressiveMode ()Z
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettingsImpl : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettings {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ZLjava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Z
+	public final fun component4 ()Ljava/util/Collection;
+	public final fun component5 ()Ljava/util/Collection;
+	public final fun component6 ()Ljava/util/Collection;
+	public final fun component7 ()Ljava/util/Collection;
+	public final fun component8 ()Ljava/util/Collection;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;ZLjava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettingsImpl;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettingsImpl;Ljava/lang/String;Ljava/lang/String;ZLjava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettingsImpl;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getApiVersion ()Ljava/lang/String;
+	public fun getCompilerPluginArguments ()Ljava/util/Collection;
+	public fun getCompilerPluginClasspath ()Ljava/util/Collection;
+	public fun getEnabledLanguageFeatures ()Ljava/util/Collection;
+	public fun getFreeCompilerArgs ()Ljava/util/Collection;
+	public fun getLanguageVersion ()Ljava/lang/String;
+	public fun getOptInAnnotationsInUse ()Ljava/util/Collection;
+	public fun hashCode ()I
+	public fun isProgressiveMode ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLocalModuleIdentifier : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier {
+	public abstract fun getBuildId ()Ljava/lang/String;
+	public abstract fun getProjectId ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLocalModuleIdentifierImpl : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLocalModuleIdentifier {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLocalModuleIdentifierImpl;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLocalModuleIdentifierImpl;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLocalModuleIdentifierImpl;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getBuildId ()Ljava/lang/String;
+	public fun getModuleClassifier ()Ljava/lang/String;
+	public fun getProjectId ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinMavenModuleIdentifier : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier {
+	public abstract fun getGroup ()Ljava/lang/String;
+	public abstract fun getName ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinMavenModuleIdentifierImpl : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinMavenModuleIdentifier {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinMavenModuleIdentifierImpl;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinMavenModuleIdentifierImpl;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinMavenModuleIdentifierImpl;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getGroup ()Ljava/lang/String;
+	public fun getModuleClassifier ()Ljava/lang/String;
+	public fun getName ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModule : java/io/Serializable {
+	public abstract fun getFragments ()Ljava/util/Collection;
+	public abstract fun getModuleIdentifier ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier : java/io/Serializable {
+	public abstract fun getModuleClassifier ()Ljava/lang/String;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleImpl : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModule {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier;Ljava/util/Collection;)V
+	public final fun component1 ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier;
+	public final fun component2 ()Ljava/util/Collection;
+	public final fun copy (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier;Ljava/util/Collection;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleImpl;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleImpl;Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier;Ljava/util/Collection;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleImpl;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getFragments ()Ljava/util/Collection;
+	public fun getModuleIdentifier ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinProjectModel : java/io/Serializable {
+	public abstract fun getCoreLibrariesVersion ()Ljava/lang/String;
+	public abstract fun getExplicitApiModeCliOption ()Ljava/lang/String;
+	public abstract fun getKotlinNativeHome ()Ljava/io/File;
+	public abstract fun getModules ()Ljava/util/List;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinProjectModelImpl : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinProjectModel {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Ljava/util/List;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/io/File;
+	public final fun component4 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Ljava/util/List;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinProjectModelImpl;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinProjectModelImpl;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Ljava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinProjectModelImpl;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getCoreLibrariesVersion ()Ljava/lang/String;
+	public fun getExplicitApiModeCliOption ()Ljava/lang/String;
+	public fun getKotlinNativeHome ()Ljava/io/File;
+	public fun getModules ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinResourceDirectory : java/io/Serializable {
+	public abstract fun getFile ()Ljava/io/File;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinResourceDirectoryImpl : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinResourceDirectory {
+	public fun <init> (Ljava/io/File;)V
+	public final fun component1 ()Ljava/io/File;
+	public final fun copy (Ljava/io/File;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinResourceDirectoryImpl;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinResourceDirectoryImpl;Ljava/io/File;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinResourceDirectoryImpl;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getFile ()Ljava/io/File;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDirectory : java/io/Serializable {
+	public abstract fun getFile ()Ljava/io/File;
+}
+
+public final class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDirectoryImpl : org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDirectory {
+	public fun <init> (Ljava/io/File;)V
+	public final fun component1 ()Ljava/io/File;
+	public final fun copy (Ljava/io/File;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDirectoryImpl;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDirectoryImpl;Ljava/io/File;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDirectoryImpl;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getFile ()Ljava/io/File;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/gradle/kpm/idea/KotlinGradlePluginApi : java/lang/annotation/Annotation {
+}
+
