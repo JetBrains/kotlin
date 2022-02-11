@@ -20,6 +20,7 @@ fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
         is IrConstructorSymbol -> BinarySymbolData.SymbolKind.CONSTRUCTOR_SYMBOL
         is IrSimpleFunctionSymbol -> BinarySymbolData.SymbolKind.FUNCTION_SYMBOL
         is IrPropertySymbol -> BinarySymbolData.SymbolKind.PROPERTY_SYMBOL
+        is IrFieldSymbol -> BinarySymbolData.SymbolKind.FIELD_SYMBOL
         is IrEnumEntrySymbol -> BinarySymbolData.SymbolKind.ENUM_ENTRY_SYMBOL
         is IrTypeAliasSymbol -> BinarySymbolData.SymbolKind.TYPEALIAS_SYMBOL
         is IrTypeParameterSymbol -> BinarySymbolData.SymbolKind.TYPE_PARAMETER_SYMBOL

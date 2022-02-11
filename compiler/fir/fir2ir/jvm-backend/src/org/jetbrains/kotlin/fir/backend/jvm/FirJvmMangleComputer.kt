@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -282,30 +283,39 @@ open class FirJvmMangleComputer(
         anonymousObject.mangleSimpleDeclaration("<anonymous>")
     }
 
-    override fun visitProperty(property: FirProperty, data: Boolean) {
-        isRealExpect = isRealExpect or property.isExpect
-        typeParameterContainer.add(property)
-        property.visitParent()
+    override fun visitVariable(variable: FirVariable, data: Boolean) {
+        isRealExpect = isRealExpect or variable.isExpect
+        typeParameterContainer.add(variable)
+        variable.visitParent()
 
-        val isStaticProperty = property.isStatic
+        val isStaticProperty = variable.isStatic
         if (isStaticProperty) {
             builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
         }
 
-        property.receiverTypeRef?.let {
+        variable.receiverTypeRef?.let {
             builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
             mangleType(builder, it.coneType)
         }
 
-        property.typeParameters.withIndex().toList().collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { (index, typeParameter) ->
-            mangleTypeParameter(this, typeParameter, index)
+        variable.typeParameters.withIndex().toList().collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { (index, typeParameter) ->
+            mangleTypeParameter(this, typeParameter.symbol.fir, index)
         }
 
-        builder.append(property.name.asString())
+        builder.append(variable.name.asString())
     }
 
-    override fun visitField(field: FirField, data: Boolean) =
-        field.mangleSimpleDeclaration(field.name.asString())
+    override fun visitProperty(property: FirProperty, data: Boolean) {
+        visitVariable(property, data)
+    }
+
+    override fun visitField(field: FirField, data: Boolean) {
+        if (field is FirJavaField) {
+            field.mangleSimpleDeclaration(field.name.asString())
+        } else {
+            visitVariable(field, data)
+        }
+    }
 
     override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Boolean) {
         enumEntry.mangleSimpleDeclaration(enumEntry.name.asString())

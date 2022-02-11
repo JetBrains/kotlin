@@ -1021,14 +1021,29 @@ class Fir2IrDeclarationStorage(
         origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
     ): IrField = convertCatching(field) {
         val type = typeRef.toIrType()
+        val signature = signatureComposer.composeSignature(field)
         return field.convertWithOffsets { startOffset, endOffset ->
-            irFactory.createField(
-                startOffset, endOffset, origin, IrFieldSymbolImpl(),
-                field.name, type, components.visibilityConverter.convertToDescriptorVisibility(field.visibility),
-                isFinal = field.modality == Modality.FINAL,
-                isExternal = false,
-                isStatic = field.isStatic
-            ).apply {
+            if (signature != null) {
+                symbolTable.declareField(
+                    signature, symbolFactory = { IrFieldPublicSymbolImpl(signature) }
+                ) { symbol ->
+                    irFactory.createField(
+                        startOffset, endOffset, origin, symbol,
+                        field.name, type, components.visibilityConverter.convertToDescriptorVisibility(field.visibility),
+                        isFinal = field.modality == Modality.FINAL,
+                        isExternal = false,
+                        isStatic = field.isStatic
+                    )
+                }
+            } else {
+                irFactory.createField(
+                    startOffset, endOffset, origin, IrFieldSymbolImpl(),
+                    field.name, type, components.visibilityConverter.convertToDescriptorVisibility(field.visibility),
+                    isFinal = field.modality == Modality.FINAL,
+                    isExternal = false,
+                    isStatic = field.isStatic
+                )
+            }.apply {
                 fieldCache[field] = this
                 val initializer = field.initializer
                 if (initializer is FirConstExpression<*>) {
@@ -1445,16 +1460,16 @@ class Fir2IrDeclarationStorage(
         else -> parentOrigin
     }
 
-    fun getIrFieldSymbol(firFieldSymbol: FirFieldSymbol): IrSymbol {
+    fun getIrFieldSymbol(firFieldSymbol: FirFieldSymbol): IrFieldSymbol {
         val fir = firFieldSymbol.fir
-        val irProperty = fieldCache[fir] ?: run {
+        val irField = fieldCache[fir] ?: run {
             // In case of type parameters from the parent as the field's return type, find the parent ahead to cache type parameters.
             val irParent = findIrParent(fir)
             createIrField(fir).apply {
                 setAndModifyParent(irParent)
             }
         }
-        return irProperty.symbol
+        return irField.symbol
     }
 
     fun getIrBackingFieldSymbol(firBackingFieldSymbol: FirBackingFieldSymbol): IrSymbol {
