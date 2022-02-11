@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
+import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUES
+import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUE_OF
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
@@ -26,12 +29,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitStringTypeRef
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-
-private val ENUM_VALUES = Name.identifier("values")
-private val ENUM_VALUE_OF = Name.identifier("valueOf")
-private val VALUE = Name.identifier("value")
 
 fun FirRegularClassBuilder.generateValuesFunction(
     moduleData: FirModuleData, packageFqName: FqName, classFqName: FqName, makeExpect: Boolean = false
@@ -94,8 +92,8 @@ fun FirRegularClassBuilder.generateValueOfFunction(
             origin = FirDeclarationOrigin.Source
             this.moduleData = moduleData
             returnTypeRef = FirImplicitStringTypeRef(source)
-            name = VALUE
-            this@vp.symbol = FirValueParameterSymbol(VALUE)
+            name = DEFAULT_VALUE_PARAMETER
+            this@vp.symbol = FirValueParameterSymbol(DEFAULT_VALUE_PARAMETER)
             isCrossinline = false
             isNoinline = false
             isVararg = false
