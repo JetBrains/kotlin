@@ -66,6 +66,11 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
             setExpected(property.isExpect)
         }
 
+        override fun visitField(field: FirField, data: Any?) {
+            hashId = mangler.run { field.signatureMangle(compatibleMode = false) }
+            setExpected(field.isExpect)
+        }
+
         override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Any?) {
             setExpected(enumEntry.isExpect)
         }
