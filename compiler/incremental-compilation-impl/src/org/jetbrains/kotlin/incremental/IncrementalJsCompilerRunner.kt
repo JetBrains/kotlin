@@ -84,12 +84,14 @@ class IncrementalJsCompilerRunner(
     reporter: BuildReporter,
     buildHistoryFile: File,
     private val modulesApiHistory: ModulesApiHistory,
-    private val scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER
+    private val scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER,
+    withAbiSnapshot: Boolean = false
 ) : IncrementalCompilerRunner<K2JSCompilerArguments, IncrementalJsCachesManager>(
     workingDir,
     "caches-js",
     reporter,
-    buildHistoryFile = buildHistoryFile
+    buildHistoryFile = buildHistoryFile,
+    withAbiSnapshot = withAbiSnapshot
 ) {
 
     override fun createCacheManager(args: K2JSCompilerArguments, projectDir: File?): IncrementalJsCachesManager {
@@ -99,7 +101,7 @@ class IncrementalJsCompilerRunner(
             projectDir,
             reporter,
             serializerProtocol,
-            storeFullFqNamesInLookupCache = withSnapshot
+            storeFullFqNamesInLookupCache = withAbiSnapshot
             )
     }
 
@@ -118,7 +120,7 @@ class IncrementalJsCompilerRunner(
         messageCollector: MessageCollector,
         classpathAbiSnapshots: Map<String, AbiSnapshot> //Ignore for now
     ): CompilationMode {
-        if (!withSnapshot && !buildHistoryFile.isFile) {
+        if (!withAbiSnapshot && !buildHistoryFile.isFile) {
             return CompilationMode.Rebuild(BuildAttribute.NO_BUILD_HISTORY)
         }
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile)

@@ -9,7 +9,6 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.report.BuildReportType
@@ -88,7 +87,7 @@ data class BuildOptions(
         }
 
         useGradleClasspathSnapshot?.let { arguments.add("-P${COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.property}=$it") }
-        useICClasspathSnapshot?.let { arguments.add("-D${COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS.property}=$it") }
+        useICClasspathSnapshot?.let { arguments.add("-Pkotlin.incremental.classpath.snapshot.enabled=$it") }
 
         if (gradleVersion >= GradleVersion.version("6.5")) {
             if (fileSystemWatchEnabled) {

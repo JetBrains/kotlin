@@ -126,11 +126,10 @@ class BuildCacheIT : KGPBaseTest() {
     @DisplayName("Restore from build cache should not break incremental compilation")
     @GradleTest
     fun testIncrementalCompilationAfterCacheHit(gradleVersion: GradleVersion) {
-        val withSnapshotProperty = "-Dkotlin.incremental.classpath.snapshot.enabled=true"
-        project("incrementalMultiproject", gradleVersion) {
+        project("incrementalMultiproject", gradleVersion, buildOptions = defaultBuildOptions.copy(useICClasspathSnapshot = true)) {
             enableLocalBuildCache(localBuildCacheDir)
-            build("assemble", withSnapshotProperty)
-            build("clean", "assemble", withSnapshotProperty) {
+            build("assemble")
+            build("clean", "assemble") {
                 assertTasksFromCache(":lib:compileKotlin")
                 assertTasksFromCache(":app:compileKotlin")
             }
@@ -138,8 +137,9 @@ class BuildCacheIT : KGPBaseTest() {
 
             bKtSourceFile.modify { it.replace("fun b() {}", "fun b() {}\nfun b2() {}") }
 
-            build("assemble", withSnapshotProperty, buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build("assemble", buildOptions = defaultBuildOptions.copy(useICClasspathSnapshot = true, logLevel = LogLevel.DEBUG)) {
                 assertOutputDoesNotContain("[KOTLIN] [IC] Non-incremental compilation will be performed")
+                assertOutputContains("Incremental compilation with ABI snapshot enabled")
                 assertCompiledKotlinSources(setOf(bKtSourceFile).map { it.relativeTo(projectPath)}, output)
             }
 
