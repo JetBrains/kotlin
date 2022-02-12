@@ -136,7 +136,10 @@ private fun dependenciesForPomRewriting(target: AbstractKotlinTarget): Provider<
                 val project = target.project
 
                 // Only the commonMain API dependencies can be published for consumers who can't read Gradle project metadata
-                val commonMainApi = project.sourceSetDependencyConfigurationByScope(commonMain, KotlinDependencyScope.API_SCOPE)
+                val commonMainApi = project.configurations.sourceSetDependencyConfigurationByScope(
+                    commonMain,
+                    KotlinDependencyScope.API_SCOPE
+                )
                 val commonMainDependencies = commonMainApi.allDependencies
                 commonMainDependencies.map { ModuleCoordinates(it.group, it.name, it.version) }.toSet()
             }

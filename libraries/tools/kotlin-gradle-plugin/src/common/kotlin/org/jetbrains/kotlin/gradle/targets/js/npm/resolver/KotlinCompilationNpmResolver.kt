@@ -182,7 +182,7 @@ internal class KotlinCompilationNpmResolver(
             )
             all.extendsFrom(compilationConfiguration)
             compilation.allKotlinSourceSets.forEach { sourceSet ->
-                val sourceSetConfiguration = project.sourceSetDependencyConfigurationByScope(sourceSet, scope)
+                val sourceSetConfiguration = project.configurations.sourceSetDependencyConfigurationByScope(sourceSet, scope)
                 all.extendsFrom(sourceSetConfiguration)
             }
         }

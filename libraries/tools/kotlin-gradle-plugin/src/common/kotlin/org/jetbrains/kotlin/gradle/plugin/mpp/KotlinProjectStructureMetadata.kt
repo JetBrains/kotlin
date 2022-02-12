@@ -179,7 +179,7 @@ private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformEx
                 else listOf(sourceSet)
             val sourceSetExportedDependencies = scopes.flatMap { scope ->
                 sourceSetsToIncludeDependencies.flatMap { hierarchySourceSet ->
-                    project.sourceSetDependencyConfigurationByScope(hierarchySourceSet, scope).allDependencies.toList()
+                    project.configurations.sourceSetDependencyConfigurationByScope(hierarchySourceSet, scope).allDependencies.toList()
                 }
             }
             sourceSet.name to sourceSetExportedDependencies.map { ModuleIds.fromDependency(it) }.toSet()

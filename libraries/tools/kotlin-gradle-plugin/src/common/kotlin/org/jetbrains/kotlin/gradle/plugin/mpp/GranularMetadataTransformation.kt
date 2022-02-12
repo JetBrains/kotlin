@@ -365,7 +365,7 @@ internal fun requestedDependencies(
 ): Iterable<Dependency> {
     fun collectScopedDependenciesFromSourceSet(sourceSet: KotlinSourceSet): Set<Dependency> =
         requestedScopes.flatMapTo(mutableSetOf()) { scope ->
-            project.sourceSetDependencyConfigurationByScope(sourceSet, scope).incoming.dependencies
+            project.configurations.sourceSetDependencyConfigurationByScope(sourceSet, scope).incoming.dependencies
         }
 
     val otherContributingSourceSets = dependsOnClosureWithInterCompilationDependencies(project, sourceSet)

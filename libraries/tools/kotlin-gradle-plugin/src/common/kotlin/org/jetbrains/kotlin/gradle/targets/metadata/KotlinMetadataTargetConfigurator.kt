@@ -248,7 +248,12 @@ class KotlinMetadataTargetConfigurator :
             val apiElementsConfiguration = configurations.getByName(target.apiElementsConfigurationName)
 
             // With the metadata target, we publish all API dependencies of all the published source sets together:
-            apiElementsConfiguration.extendsFrom(sourceSetDependencyConfigurationByScope(sourceSet, KotlinDependencyScope.API_SCOPE))
+            apiElementsConfiguration.extendsFrom(
+                configurations.sourceSetDependencyConfigurationByScope(
+                    sourceSet,
+                    KotlinDependencyScope.API_SCOPE
+                )
+            )
 
             /** For Kotlin/Native-shared source sets, we also add the implementation dependencies to apiElements, because Kotlin/Native
              * can't have any implementation dependencies, all dependencies used for compilation must be shipped along with the klib.
@@ -260,7 +265,10 @@ class KotlinMetadataTargetConfigurator :
             if (isSharedNativeCompilation) {
                 sourceSet.withDependsOnClosure.forEach { hierarchySourceSet ->
                     apiElementsConfiguration.extendsFrom(
-                        sourceSetDependencyConfigurationByScope(hierarchySourceSet, KotlinDependencyScope.IMPLEMENTATION_SCOPE)
+                        configurations.sourceSetDependencyConfigurationByScope(
+                            hierarchySourceSet,
+                            KotlinDependencyScope.IMPLEMENTATION_SCOPE
+                        )
                     )
                 }
             }
@@ -368,7 +376,7 @@ class KotlinMetadataTargetConfigurator :
             if (sourceSet is DefaultKotlinSourceSet)
                 sourceSet.dependencyTransformations[scope] = granularMetadataTransformation
 
-            val sourceSetDependencyConfigurationByScope = project.sourceSetDependencyConfigurationByScope(sourceSet, scope)
+            val sourceSetDependencyConfigurationByScope = project.configurations.sourceSetDependencyConfigurationByScope(sourceSet, scope)
 
             if (isSourceSetPublished) {
                 if (scope != KotlinDependencyScope.COMPILE_ONLY_SCOPE) {
@@ -470,7 +478,7 @@ class KotlinMetadataTargetConfigurator :
             attributes.attribute(USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
             attributes.attribute(CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
 
-            val commonMainApiConfiguration = project.sourceSetDependencyConfigurationByScope(
+            val commonMainApiConfiguration = project.configurations.sourceSetDependencyConfigurationByScope(
                 project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME),
                 KotlinDependencyScope.API_SCOPE
             )

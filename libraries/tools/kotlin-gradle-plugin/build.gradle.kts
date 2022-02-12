@@ -96,6 +96,9 @@ dependencies {
         functionalTestImplementation(project(":kotlin-gradle-plugin-kpm-android"))
         functionalTestImplementation(project(":kotlin-tooling-metadata"))
         functionalTestImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
+        functionalTestImplementation("com.github.gundy:semver4j:0.16.4:nodeps") {
+            exclude(group = "*")
+        }
     }
 
     testCompileOnly(project(":compiler"))
