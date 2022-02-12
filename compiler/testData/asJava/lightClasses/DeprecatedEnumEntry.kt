@@ -12,3 +12,4 @@ enum class E {
 }
 
 // FIR_COMPARISON
+// SKIP_SANITY_TEST
