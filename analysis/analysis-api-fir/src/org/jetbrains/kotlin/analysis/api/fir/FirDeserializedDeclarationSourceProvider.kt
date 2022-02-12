@@ -144,6 +144,7 @@ private val allowedFakeElementKinds = setOf(
     KtFakeSourceElementKind.FromUseSiteTarget,
     KtFakeSourceElementKind.PropertyFromParameter,
     KtFakeSourceElementKind.ItLambdaParameter,
+    KtFakeSourceElementKind.EnumGeneratedDeclaration,
     KtFakeSourceElementKind.DataClassGeneratedMembers,
     KtFakeSourceElementKind.ImplicitConstructor,
 )
