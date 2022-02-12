@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.backend.common.DataClassMethodGenerator
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUES
+import org.jetbrains.kotlin.builtins.StandardNames.ENUM_VALUE_OF
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.kotlinType
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
@@ -45,6 +47,7 @@ import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
+import org.jetbrains.kotlin.resolve.scopes.findFirstFunction
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 
@@ -312,6 +315,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
             }
         }
 
+        addMethodsFromEnumClass(result)
         addMethodsFromDataClass(result)
         addDelegatesToInterfaceMethods(result)
 
@@ -337,9 +341,29 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         }, false
     )
 
-    private fun addMethodsFromDataClass(result: MutableList<KtLightMethod>) {
-        if (!classOrObject.hasModifier(DATA_KEYWORD)) return
+    private fun addMethodsFromEnumClass(result: MutableList<KtLightMethod>) {
         val ktClass = classOrObject as? KtClass ?: return
+        if (!ktClass.isEnum()) return
+        val descriptor = classOrObject.resolve() as? ClassDescriptor ?: return
+
+        val valuesFunction = descriptor.staticScope.findFirstFunction(ENUM_VALUES.identifier) {
+            it.dispatchReceiverParameter == null &&
+                    it.extensionReceiverParameter == null &&
+                    it.valueParameters.size == 0
+        }
+        result.add(createGeneratedMethodFromDescriptor(valuesFunction, JvmDeclarationOriginKind.SYNTHETIC))
+
+        val valueOfFunction = descriptor.staticScope.findFirstFunction(ENUM_VALUE_OF.identifier) {
+            it.dispatchReceiverParameter == null &&
+                    it.extensionReceiverParameter == null &&
+                    it.valueParameters.size == 1
+        }
+        result.add(createGeneratedMethodFromDescriptor(valueOfFunction, JvmDeclarationOriginKind.SYNTHETIC))
+    }
+
+    private fun addMethodsFromDataClass(result: MutableList<KtLightMethod>) {
+        val ktClass = classOrObject as? KtClass ?: return
+        if (!ktClass.isData()) return
         val descriptor = classOrObject.resolve() as? ClassDescriptor ?: return
         val bindingContext = classOrObject.analyze()
 
