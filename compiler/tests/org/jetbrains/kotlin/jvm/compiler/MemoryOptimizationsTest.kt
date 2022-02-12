@@ -18,12 +18,12 @@ package org.jetbrains.kotlin.jvm.compiler
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
-import org.jetbrains.kotlin.ir.util.findFirstFunction
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
+import org.jetbrains.kotlin.resolve.scopes.findFirstFunction
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -57,8 +57,6 @@ class MemoryOptimizationsTest : KtUsefulTestCase() {
         // NullableSimpleType should store and return the same instance as lower bound of flexible type
         assertTrue(parameterType.lowerIfFlexible() === upperBound.makeNullableAsSpecified(false))
     }
-
-
 
     fun testSubstitutorDoNotRecreateUnchangedDescriptor() {
         val text =
