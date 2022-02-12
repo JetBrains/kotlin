@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.scopes
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope.Companion.ALL_NAME_FILTER
 import org.jetbrains.kotlin.utils.Printer
@@ -65,6 +66,9 @@ fun MemberScope.computeAllNames() = getClassifierNames()?.let { classifierNames 
         it.addAll(classifierNames)
     }
 }
+
+inline fun MemberScope.findFirstFunction(name: String, predicate: (CallableMemberDescriptor) -> Boolean) =
+    getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).first(predicate)
 
 fun Iterable<MemberScope>.flatMapClassifierNamesOrNull(): MutableSet<Name>? =
         flatMapToNullable(hashSetOf(), MemberScope::getClassifierNames)
