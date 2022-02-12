@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitStringTypeRef
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -91,7 +90,14 @@ fun FirRegularClassBuilder.generateValueOfFunction(
             source = sourceElement
             origin = FirDeclarationOrigin.Source
             this.moduleData = moduleData
-            returnTypeRef = FirImplicitStringTypeRef(source)
+            returnTypeRef = buildResolvedTypeRef {
+                source = sourceElement
+                type = ConeClassLikeTypeImpl(
+                    ConeClassLikeLookupTagImpl(StandardClassIds.String),
+                    emptyArray(),
+                    isNullable = false
+                )
+            }
             name = DEFAULT_VALUE_PARAMETER
             this@vp.symbol = FirValueParameterSymbol(DEFAULT_VALUE_PARAMETER)
             isCrossinline = false
