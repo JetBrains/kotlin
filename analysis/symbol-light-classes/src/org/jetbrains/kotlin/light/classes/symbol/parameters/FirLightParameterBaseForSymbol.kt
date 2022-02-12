@@ -31,7 +31,7 @@ internal abstract class FirLightParameterBaseForSymbol(
 
     protected val nullabilityType: NullabilityType
         get() {
-            val nullabilityApplicable = !containingMethod.containingClass.let { it.isAnnotationType || it.isEnum } &&
+            val nullabilityApplicable = !containingMethod.containingClass.let { it.isAnnotationType } &&
                     !containingMethod.hasModifierProperty(PsiModifier.PRIVATE)
 
             return if (nullabilityApplicable) {

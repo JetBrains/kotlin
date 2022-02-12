@@ -8,3 +8,4 @@ enum class AnnotatedParameterInEnumConstructor(@Anno("a") a: String, @Anno("b") 
 }
 
 // FIR_COMPARISON
+// SKIP_SANITY_TEST

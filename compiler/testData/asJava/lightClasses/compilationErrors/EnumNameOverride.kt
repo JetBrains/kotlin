@@ -11,3 +11,4 @@ interface Bar : Foo {
 enum class EnumNameOverride : Bar
 
 // FIR_COMPARISON
+// SKIP_SANITY_TEST
