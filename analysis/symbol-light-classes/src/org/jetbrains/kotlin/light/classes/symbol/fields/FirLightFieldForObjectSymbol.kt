@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.*
+import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -26,7 +27,7 @@ internal class FirLightFieldForObjectSymbol(
 
     private val _modifierList: PsiModifierList by lazyPub {
         val modifiers = setOf(objectSymbol.toPsiVisibilityForMember(isTopLevel = false), PsiModifier.STATIC, PsiModifier.FINAL)
-        val notNullAnnotation = FirLightSimpleAnnotation("org.jetbrains.annotations.NotNull", this)
+        val notNullAnnotation = FirLightSimpleAnnotation(NotNull::class.java.name, this)
         FirLightMemberModifierList(this, modifiers, listOf(notNullAnnotation))
     }
 
