@@ -78,4 +78,9 @@ fun KotlinGradleModule.createKotlinAndroidVariant(androidVariant: BaseVariant) {
         androidVariant.getCompileClasspath(mainBytecodeKey),
         project.getAndroidRuntimeJars()
     )
+
+    val androidDsl = AndroidDsl()
+    androidDsl.androidManifest = project.file("AndroidManifest.xml")
+    androidDsl.compileSdk = 23
+    androidCommon.external[androidDslKey] = androidDsl
 }

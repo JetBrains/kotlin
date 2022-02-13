@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelContainer
 import java.io.Serializable
 
 interface IdeaKotlinFragment : Serializable {
@@ -14,6 +15,7 @@ interface IdeaKotlinFragment : Serializable {
     val directRefinesDependencies: Collection<IdeaKotlinFragment>
     val sourceDirectories: Collection<IdeaKotlinSourceDirectory>
     val resourceDirectories: Collection<IdeaKotlinResourceDirectory>
+    val external: KotlinExternalModelContainer
 }
 
 @InternalKotlinGradlePluginApi
@@ -23,7 +25,8 @@ data class IdeaKotlinFragmentImpl(
     override val dependencies: Collection<IdeaKotlinFragmentDependency>,
     override val directRefinesDependencies: Collection<IdeaKotlinFragment>,
     override val sourceDirectories: Collection<IdeaKotlinSourceDirectory>,
-    override val resourceDirectories: Collection<IdeaKotlinResourceDirectory>
+    override val resourceDirectories: Collection<IdeaKotlinResourceDirectory>,
+    override val external: KotlinExternalModelContainer
 ) : IdeaKotlinFragment {
 
     @InternalKotlinGradlePluginApi
