@@ -15,4 +15,10 @@ interface IdeaKotlinResourceDirectory : Serializable {
 @InternalKotlinGradlePluginApi
 data class IdeaKotlinResourceDirectoryImpl(
     override val file: File
-) : IdeaKotlinResourceDirectory
+) : IdeaKotlinResourceDirectory {
+
+    @InternalKotlinGradlePluginApi
+    companion object {
+        private const val serialVersionUID = 0L
+    }
+}

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import java.io.Serializable
 
-sealed interface IdeaKotlinModuleIdentifier : Serializable {
+interface IdeaKotlinModuleIdentifier : Serializable {
     val moduleClassifier: String?
 }
 
@@ -26,11 +26,23 @@ data class IdeaKotlinLocalModuleIdentifierImpl(
     override val moduleClassifier: String?,
     override val buildId: String,
     override val projectId: String
-) : IdeaKotlinLocalModuleIdentifier
+) : IdeaKotlinLocalModuleIdentifier {
+
+    @InternalKotlinGradlePluginApi
+    companion object {
+        private const val serialVersionUID = 0L
+    }
+}
 
 @InternalKotlinGradlePluginApi
 data class IdeaKotlinMavenModuleIdentifierImpl(
     override val moduleClassifier: String?,
     override val group: String,
     override val name: String
-) : IdeaKotlinMavenModuleIdentifier
+) : IdeaKotlinMavenModuleIdentifier {
+
+    @InternalKotlinGradlePluginApi
+    companion object {
+        private const val serialVersionUID = 0L
+    }
+}
