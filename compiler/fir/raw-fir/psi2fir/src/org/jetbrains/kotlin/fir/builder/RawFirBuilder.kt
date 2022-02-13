@@ -1909,19 +1909,30 @@ open class RawFirBuilder(
         override fun visitIfExpression(expression: KtIfExpression, data: Unit): FirElement {
             return buildWhenExpression {
                 source = expression.toFirSourceElement()
-                val ktCondition = expression.condition
-                branches += buildWhenBranch {
-                    source = ktCondition?.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
-                    condition = ktCondition.toFirExpression("If statement should have condition")
-                    result = expression.then.toFirBlock()
-                }
-                if (expression.elseKeyword != null) {
+
+                var ktLastIf: KtIfExpression = expression
+                whenBranches@ while (true) {
+                    val ktCondition = ktLastIf.condition
                     branches += buildWhenBranch {
-                        source = expression.elseKeyword?.toKtPsiSourceElement()
-                        condition = buildElseIfTrueCondition()
-                        result = expression.`else`.toFirBlock()
+                        source = ktCondition?.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
+                        condition = ktCondition.toFirExpression("If statement should have condition")
+                        result = ktLastIf.then.toFirBlock()
+                    }
+
+                    when (val ktElse = ktLastIf.`else`) {
+                        null -> break@whenBranches
+                        is KtIfExpression -> ktLastIf = ktElse
+                        else ->  {
+                            branches += buildWhenBranch {
+                                source = ktLastIf.elseKeyword?.toKtPsiSourceElement()
+                                condition = buildElseIfTrueCondition()
+                                result = ktLastIf.`else`.toFirBlock()
+                            }
+                            break@whenBranches
+                        }
                     }
                 }
+
                 usedAsExpression = expression.usedAsExpression
             }
         }
