@@ -1,12 +1,5 @@
 plugins {
-    kotlin("jvm")
-}
-
-kotlin {
-    sourceSets.configureEach {
-        languageSettings.languageVersion = "1.4"
-        languageSettings.apiVersion = "1.4"
-    }
+    id("gradle-plugin-common-configuration")
 }
 
 dependencies {
