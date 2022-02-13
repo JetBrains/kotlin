@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":kotlin-stdlib"))
+    implementation(kotlinStdlib())
 }
 
 publish()
