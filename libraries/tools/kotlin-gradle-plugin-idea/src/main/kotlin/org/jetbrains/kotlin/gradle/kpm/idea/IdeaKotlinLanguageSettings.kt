@@ -19,7 +19,8 @@ interface IdeaKotlinLanguageSettings : Serializable {
     val freeCompilerArgs: Collection<String>
 }
 
-data class IdeaKotlinLanguageSettingsImpl @KotlinGradlePluginApi constructor(
+@InternalKotlinGradlePluginApi
+data class IdeaKotlinLanguageSettingsImpl(
     override val languageVersion: String?,
     override val apiVersion: String?,
     override val isProgressiveMode: Boolean,
