@@ -16,4 +16,10 @@ interface IdeaKotlinModule : Serializable {
 data class IdeaKotlinModuleImpl(
     override val moduleIdentifier: IdeaKotlinModuleIdentifier,
     override val fragments: Collection<IdeaKotlinFragment>
-) : IdeaKotlinModule
+) : IdeaKotlinModule {
+
+    @InternalKotlinGradlePluginApi
+    companion object {
+        private const val serialVersionUID = 0L
+    }
+}

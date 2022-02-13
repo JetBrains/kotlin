@@ -21,4 +21,10 @@ data class IdeaKotlinProjectModelImpl(
     override val explicitApiModeCliOption: String?,
     override val kotlinNativeHome: File,
     override val modules: List<IdeaKotlinModule>
-) : IdeaKotlinProjectModel
+) : IdeaKotlinProjectModel {
+
+    @InternalKotlinGradlePluginApi
+    companion object {
+        private const val serialVersionUID = 0L
+    }
+}

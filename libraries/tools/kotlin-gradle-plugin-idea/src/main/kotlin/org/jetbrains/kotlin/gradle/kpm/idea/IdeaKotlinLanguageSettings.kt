@@ -29,4 +29,10 @@ data class IdeaKotlinLanguageSettingsImpl(
     override val compilerPluginArguments: Collection<String>,
     override val compilerPluginClasspath: Collection<File>,
     override val freeCompilerArgs: Collection<String>
-) : IdeaKotlinLanguageSettings
+) : IdeaKotlinLanguageSettings {
+
+    @InternalKotlinGradlePluginApi
+    companion object {
+        private const val serialVersionUID = 0L
+    }
+}

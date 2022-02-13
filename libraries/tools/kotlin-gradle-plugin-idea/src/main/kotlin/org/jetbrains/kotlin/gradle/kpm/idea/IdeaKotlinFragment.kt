@@ -24,4 +24,10 @@ data class IdeaKotlinFragmentImpl(
     override val directRefinesDependencies: Collection<IdeaKotlinFragment>,
     override val sourceDirectories: Collection<IdeaKotlinSourceDirectory>,
     override val resourceDirectories: Collection<IdeaKotlinResourceDirectory>
-) : IdeaKotlinFragment
+) : IdeaKotlinFragment {
+
+    @InternalKotlinGradlePluginApi
+    companion object {
+        private const val serialVersionUID = 0L
+    }
+}
