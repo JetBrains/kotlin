@@ -3,15 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.mpp.external
+package org.jetbrains.kotlin.gradle.plugin.mpp.pm20
 
-import kotlin.reflect.KType
-
-
-interface ExternalModelContainer {
-
-}
-
-interface MutableExternalModelContainer {
-
-}
+@RequiresOptIn("API is marked as advanced. Consultation with the Kotlin Team advised.")
+annotation class AdvancedKotlinGradlePluginApi

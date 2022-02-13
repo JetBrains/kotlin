@@ -3,18 +3,15 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.plugin.mpp.external
+package org.jetbrains.kotlin.gradle.kpm.external
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
+import org.jetbrains.kotlin.gradle.kpm.KotlinMutableExternalModelContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import kotlin.annotation.AnnotationTarget.*
 
 @RequiresOptIn("API is intended to build external Kotlin Targets.")
 annotation class ExternalVariantApi
-
-@RequiresOptIn("API is intended to build external Kotlin Targets *and* is marked as advanced. Consultation with the Kotlin Team advised.")
-annotation class AdvancedExternalVariantApi
 
 @ExternalVariantApi
 val KotlinTopLevelExtension.project: Project
@@ -33,3 +30,7 @@ fun KotlinGradleModule.createExternalJvmVariant(
 @ExternalVariantApi
 val KotlinGradleVariantInternal.compilationData
     get() = this.compilationData
+
+@ExternalVariantApi
+val KotlinGradleFragment.external: KotlinMutableExternalModelContainer
+    get() = (this as KotlinGradleFragmentInternal).external

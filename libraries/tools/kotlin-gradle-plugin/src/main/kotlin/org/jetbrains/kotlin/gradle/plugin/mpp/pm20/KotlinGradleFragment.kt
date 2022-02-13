@@ -13,7 +13,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelContainer
-import org.jetbrains.kotlin.gradle.kpm.KotlinHasExternalModel
 import org.jetbrains.kotlin.gradle.kpm.KotlinMutableExternalModelContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
@@ -35,8 +34,7 @@ open class KotlinGradleFragmentInternal @Inject constructor(
     final override val fragmentName: String,
     dependencyConfigurations: KotlinFragmentDependencyConfigurations
 ) : KotlinGradleFragment,
-    KotlinFragmentDependencyConfigurations by dependencyConfigurations,
-    KotlinHasExternalModel {
+    KotlinFragmentDependencyConfigurations by dependencyConfigurations {
 
     final override fun getName(): String = fragmentName
 
@@ -48,7 +46,7 @@ open class KotlinGradleFragmentInternal @Inject constructor(
     // FIXME check for consistency
     override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder()
 
-    override val external: KotlinMutableExternalModelContainer = KotlinExternalModelContainer.mutable()
+    internal val external: KotlinMutableExternalModelContainer = KotlinExternalModelContainer.mutable()
 
     override fun refines(other: KotlinGradleFragment) {
         checkCanRefine(other)

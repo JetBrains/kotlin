@@ -8,10 +8,6 @@ package org.jetbrains.kotlin.gradle.kpm
 import org.jetbrains.kotlin.gradle.kpm.idea.InternalKotlinGradlePluginApi
 import java.io.Serializable
 
-interface KotlinHasExternalModel {
-    val external: KotlinExternalModelContainer
-}
-
 abstract class KotlinExternalModelContainer internal constructor() : Serializable {
     abstract operator fun <T : Any> contains(key: KotlinExternalModelKey<T>): Boolean
     abstract operator fun <T : Any> get(key: KotlinExternalModelKey<T>): T?
