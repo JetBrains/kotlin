@@ -29,7 +29,7 @@ pill {
 kotlin.sourceSets.all {
     languageSettings.optIn("kotlin.RequiresOptIn")
     languageSettings.optIn("org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalVariantApi")
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.plugin.mpp.external.AdvancedExternalVariantApi")
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.plugin.mpp.pm20.AdvancedKotlinGradlePluginApi")
     languageSettings.optIn("org.jetbrains.kotlin.gradle.kpm.idea.InternalKotlinGradlePluginApi")
 }
 
@@ -37,6 +37,7 @@ dependencies {
     compileOnly(gradleKotlinDsl())
     api(project(":kotlin-gradle-plugin-api"))
     api(project(":kotlin-gradle-plugin-model"))
+    implementation(project(":kotlin-gradle-plugin-idea"))
     compileOnly(project(":compiler"))
     compileOnly(project(":compiler:incremental-compilation-impl"))
     compileOnly(project(":daemon-common"))
@@ -57,7 +58,6 @@ dependencies {
     embedded(project(":kotlin-gradle-statistics"))
     compileOnly(project(":kotlin-gradle-build-metrics"))
     embedded(project(":kotlin-gradle-build-metrics"))
-    implementation(project(":kotlin-gradle-plugin-idea"))
 
     implementation(commonDependency("com.google.code.gson:gson"))
     implementation(commonDependency("com.google.guava:guava"))

@@ -6,9 +6,9 @@ plugins {
 
 dependencies {
     implementation(gradleKotlinDsl())
+    compileOnly("com.android.tools.build:gradle:7.0.0")
     compileOnly(project(":kotlin-gradle-plugin"))
     compileOnly(project(":kotlin-gradle-plugin-idea"))
-    compileOnly("com.android.tools.build:gradle:7.0.0")
 }
 
 gradlePlugin {
