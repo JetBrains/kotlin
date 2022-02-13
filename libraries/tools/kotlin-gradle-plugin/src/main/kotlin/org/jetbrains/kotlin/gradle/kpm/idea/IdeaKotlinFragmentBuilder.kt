@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelContainer
+import org.jetbrains.kotlin.gradle.kpm.KotlinHasExternalModel
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
 
 internal fun KotlinGradleFragment.toIdeaKotlinFragment(
@@ -21,7 +23,8 @@ internal fun KotlinGradleFragment.toIdeaKotlinFragment(
             sourceDirectories = kotlinSourceRoots.sourceDirectories.files.toList().map { file ->
                 IdeaKotlinSourceDirectoryImpl(file)
             },
-            resourceDirectories = emptyList()
+            resourceDirectories = emptyList(),
+            external = (this as? KotlinHasExternalModel)?.external ?: KotlinExternalModelContainer.Empty
         )
     }
 }
