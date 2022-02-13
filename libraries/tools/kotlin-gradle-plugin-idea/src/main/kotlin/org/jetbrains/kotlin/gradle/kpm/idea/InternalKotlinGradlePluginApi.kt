@@ -9,4 +9,4 @@ package org.jetbrains.kotlin.gradle.kpm.idea
     level = RequiresOptIn.Level.ERROR,
     message = "This API can only be used by the Kotlin Gradle Plugin and is not kept stable for access inside the IDE process"
 )
-annotation class KotlinGradlePluginApi
+annotation class InternalKotlinGradlePluginApi

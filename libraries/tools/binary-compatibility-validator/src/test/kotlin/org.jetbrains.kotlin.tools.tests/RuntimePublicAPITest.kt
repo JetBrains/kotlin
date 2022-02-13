@@ -34,14 +34,18 @@ class RuntimePublicAPITest {
     }
 
     @Test fun kotlinGradlePluginIdea() {
-        snapshotAPIAndCompare("../kotlin-gradle-plugin-idea/build/libs", "kotlin-gradle-plugin-idea(?!-[-a-z]+)")
+        snapshotAPIAndCompare(
+            "../kotlin-gradle-plugin-idea/build/libs", "kotlin-gradle-plugin-idea(?!-[-a-z]+)",
+            nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/kpm/idea/InternalKotlinGradlePluginApi")
+        )
     }
 
     private fun snapshotAPIAndCompare(
         basePath: String,
         jarPattern: String,
         publicPackages: List<String> = emptyList(),
-        nonPublicPackages: List<String> = emptyList()
+        nonPublicPackages: List<String> = emptyList(),
+        nonPublicAnnotations: List<String> = emptyList()
     ) {
         val base = File(basePath).absoluteFile.normalize()
         val jarFile = getJarPath(base, jarPattern, System.getProperty("kotlinVersion"))
@@ -50,7 +54,9 @@ class RuntimePublicAPITest {
         val publicPackageFilter = { className: String -> publicPackagePrefixes.none { className.startsWith(it) } }
 
         println("Reading binary API from $jarFile")
-        val api = JarFile(jarFile).loadApiFromJvmClasses(publicPackageFilter).filterOutNonPublic(nonPublicPackages)
+        val api = JarFile(jarFile).loadApiFromJvmClasses(publicPackageFilter)
+            .filterOutNonPublic(nonPublicPackages)
+            .filterOutAnnotated(nonPublicAnnotations.toSet())
 
         val target = File("reference-public-api")
             .resolve(testName.methodName.replaceCamelCaseWithDashedLowerCase() + ".txt")
@@ -72,3 +78,26 @@ class RuntimePublicAPITest {
 
 }
 
+/*
+Copied from `binary-compatibility-validator
+Can be removed after:
+https://github.com/Kotlin/binary-compatibility-validator/pull/75
+*/
+private fun List<ClassBinarySignature>.filterOutAnnotated(targetAnnotations: Set<String>): List<ClassBinarySignature> {
+    if (targetAnnotations.isEmpty()) return this
+    return filter {
+        it.annotations.all { ann -> !targetAnnotations.any { ann.refersToName(it) }  }
+    }.map {
+        ClassBinarySignature(
+            it.name,
+            it.superName,
+            it.outerName,
+            it.supertypes,
+            it.memberSignatures.filter { it.annotations.all { ann -> !targetAnnotations.any { ann.refersToName(it) } } },
+            it.access,
+            it.isEffectivelyPublic,
+            it.isNotUsedWhenEmpty,
+            it.annotations
+        )
+    }
+}

@@ -15,6 +15,13 @@ dependencies {
     testArtifacts project(':kotlin-stdlib-jdk8')
     testArtifacts project(':kotlin-reflect')
     testArtifacts project(':kotlin-gradle-plugin-idea')
+
+    testCompileOnly("org.ow2.asm:asm-tree:9.0") {
+        because(
+                "Necessary to compile copied 'filterOutAnnotated' implementation. " +
+                        "Can be removed after https://github.com/Kotlin/binary-compatibility-validator/pull/75"
+        )
+    }
 }
 
 pill {

@@ -30,7 +30,7 @@ kotlin.sourceSets.all {
     languageSettings.optIn("kotlin.RequiresOptIn")
     languageSettings.optIn("org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalVariantApi")
     languageSettings.optIn("org.jetbrains.kotlin.gradle.plugin.mpp.external.AdvancedExternalVariantApi")
-    languageSettings.optIn("org.jetbrains.kotlin.gradle.kpm.idea.KotlinGradlePluginApi")
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.kpm.idea.InternalKotlinGradlePluginApi")
 }
 
 dependencies {

@@ -15,7 +15,8 @@ interface IdeaKotlinProjectModel : Serializable {
     val modules: List<IdeaKotlinModule>
 }
 
-data class IdeaKotlinProjectModelImpl @KotlinGradlePluginApi constructor(
+@InternalKotlinGradlePluginApi
+data class IdeaKotlinProjectModelImpl(
     override val coreLibrariesVersion: String,
     override val explicitApiModeCliOption: String?,
     override val kotlinNativeHome: File,
