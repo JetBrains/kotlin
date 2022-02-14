@@ -86,7 +86,13 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
         get() = compilationDetails.compileDependencyFilesHolder.dependencyFiles
         set(value) { compilationDetails.compileDependencyFilesHolder.dependencyFiles = value }
 
-    final override val kotlinSourceSets: MutableSet<KotlinSourceSet> get() = compilationDetails.directlyIncludedKotlinSourceSets
+    final override val kotlinSourceSets: MutableSet<KotlinSourceSet> get() =
+        when (val details = compilationDetails) {
+            is DefaultCompilationDetails -> details.directlyIncludedKotlinSourceSets // mutable in that subtype
+            // TODO deprecate mutability of this set. We shouldn't allow mutating it directly anyway;
+            else -> details.directlyIncludedKotlinSourceSets.toMutableSet()
+        }
+
     final override val defaultSourceSetName: String get() = compilationDetails.defaultSourceSetName
 
     final override val compilationName: String get() = compilationDetails.compilationData.compilationPurpose
