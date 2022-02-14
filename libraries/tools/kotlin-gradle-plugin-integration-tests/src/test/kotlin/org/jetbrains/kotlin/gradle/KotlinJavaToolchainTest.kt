@@ -27,7 +27,7 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             projectName = "simple".fullProjectName,
             gradleVersion = gradleVersion
         ) {
-            build("assemble", enableGradleDebug = true) {
+            build("assemble") {
                 assertOutputDoesNotContain("'kotlinOptions.jdkHome' is deprecated and will be ignored in Kotlin 1.7!")
                 assertJdkHomeIsUsingJdk(getUserJdk().javaHomeRealPath)
             }
