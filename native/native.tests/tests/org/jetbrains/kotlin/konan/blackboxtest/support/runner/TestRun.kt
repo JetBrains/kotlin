@@ -5,19 +5,50 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.runner
 
-import org.jetbrains.kotlin.konan.blackboxtest.support.LoggedData
-import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseId
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestName
+import org.jetbrains.kotlin.konan.blackboxtest.support.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.Executable
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Success
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.DumpedTestListing
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.startsWith
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
+import java.io.IOException
 
 internal class TestExecutable(
     val executableFile: File,
-    val loggedCompilerCall: LoggedData.CompilerCall
-)
+    val loggedCompilerCall: LoggedData.CompilerCall,
+    val testNames: Collection<TestName>
+) {
+    companion object {
+        fun fromCompilationResult(testCase: TestCase, compilationResult: Success<out Executable>): TestExecutable {
+            val testNames = when (testCase.kind) {
+                TestKind.REGULAR, TestKind.STANDALONE -> {
+                    val testDumpFile = compilationResult.resultingArtifact.testDumpFile
+                    val testDump = try {
+                        testDumpFile.readText()
+                    } catch (e: IOException) {
+                        fail { compilationResult.loggedData.withErrorMessage("Failed to read test dump file: $testDumpFile", e) }
+                    }
+
+                    try {
+                        DumpedTestListing.parse(testDump)
+                    } catch (e: Exception) {
+                        fail { compilationResult.loggedData.withErrorMessage("Failed to parse test dump file: $testDumpFile", e) }
+                    }
+                }
+                else -> emptyList()
+            }
+
+            return TestExecutable(
+                executableFile = compilationResult.resultingArtifact.executableFile,
+                loggedCompilerCall = compilationResult.loggedData,
+                testNames = testNames
+            )
+        }
+    }
+}
 
 internal class TestRun(
     val displayName: String,
