@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkError
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkSymbolType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType.KindCase.*
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -318,6 +320,12 @@ class IrDeclarationDeserializer(
             if (allowRedeclaration && symbol.isBound) return symbol.owner
 
             val flags = ClassFlags.decode(fcode)
+            // Similar to 948dc4f3, compatibility hack for libs that were generated before 1.6.20.
+            val effectiveModality = if (flags.kind == ClassKind.ANNOTATION_CLASS) {
+                Modality.OPEN
+            } else {
+                flags.modality
+            }
             symbolTable.declareClass(signature, { symbol }) {
                 irFactory.createClass(
                     startOffset, endOffset, origin,
@@ -325,7 +333,7 @@ class IrDeclarationDeserializer(
                     deserializeName(proto.name),
                     flags.kind,
                     flags.visibility,
-                    flags.modality,
+                    effectiveModality,
                     flags.isCompanion,
                     flags.isInner,
                     flags.isData,
