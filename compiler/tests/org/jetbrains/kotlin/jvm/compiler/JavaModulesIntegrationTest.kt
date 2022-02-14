@@ -154,7 +154,10 @@ abstract class JavaModulesIntegrationTest(private val jdkVersion: Int, private v
     }
 
     fun testReleaseFlagWrongValue() {
-        module("module5", additionalKotlinArguments = listOf("-Xjdk-release=5"))
+        module("module5", additionalKotlinArguments = listOf("-Xjdk-release=5"), checkKotlinOutput = { output ->
+            assertTrue(output, "error: unknown JDK release version: 5" in output)
+            assertTrue(output, "error: unknown JVM target version: 5" in output)
+        })
         if (jdkVersion == 11) {
             module("module12", additionalKotlinArguments = listOf("-Xjdk-release=12"))
         }
