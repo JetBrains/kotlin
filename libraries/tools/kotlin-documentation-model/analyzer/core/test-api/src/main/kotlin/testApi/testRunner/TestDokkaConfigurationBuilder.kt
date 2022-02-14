@@ -54,7 +54,8 @@ class TestDokkaConfigurationBuilder {
         suppressObviousFunctions = suppressObviousFunctions,
         includes = includes.toSet(),
         suppressInheritedMembers = suppressInheritedMembers,
-        delayTemplateSubstitution = delayTemplateSubstitution
+        delayTemplateSubstitution = delayTemplateSubstitution,
+        finalizeCoroutines = false
     )
 
     fun sourceSets(block: SourceSetsBuilder.() -> Unit) {
