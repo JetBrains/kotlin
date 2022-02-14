@@ -23,7 +23,7 @@ class IrLazyTypeParameter(
     override var origin: IrDeclarationOrigin,
     override val symbol: IrTypeParameterSymbol,
     override val descriptor: TypeParameterDescriptor,
-    override val name: Name,
+    override var name: Name,
     override val index: Int,
     override val isReified: Boolean,
     override val variance: Variance,

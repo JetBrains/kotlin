@@ -22,7 +22,7 @@ private val SCRIPT_ORIGIN = object : IrDeclarationOriginImpl("SCRIPT") {}
 
 class IrScriptImpl(
     override val symbol: IrScriptSymbol,
-    override val name: Name,
+    override var name: Name,
     override val factory: IrFactory,
 ) : IrScript() {
     override val startOffset: Int get() = UNDEFINED_OFFSET

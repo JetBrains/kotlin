@@ -33,7 +33,7 @@ class IrValueParameterImpl(
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrValueParameterSymbol,
-    override val name: Name,
+    override var name: Name,
     override val index: Int,
     override var type: IrType,
     override var varargElementType: IrType?,

@@ -52,8 +52,11 @@ class Fir2IrLazyPropertyAccessor(
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
-    override val name: Name
+    override var name: Name
         get() = Name.special("<${if (isSetter) "set" else "get"}-${firParentProperty.name}>")
+        set(_) {
+            throw UnsupportedOperationException()
+        }
 
     override var returnType: IrType by lazyVar(lock) {
         if (isSetter) irBuiltIns.unitType else firParentProperty.returnTypeRef.toIrType(typeConverter, conversionTypeContext)

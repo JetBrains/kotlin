@@ -18,7 +18,7 @@ class IrTypeAliasImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override val symbol: IrTypeAliasSymbol,
-    override val name: Name,
+    override var name: Name,
     override var visibility: DescriptorVisibility,
     override var expandedType: IrType,
     override val isActual: Boolean,

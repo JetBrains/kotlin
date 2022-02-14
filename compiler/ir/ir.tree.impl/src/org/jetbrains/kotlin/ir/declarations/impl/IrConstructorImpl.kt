@@ -34,7 +34,7 @@ class IrConstructorImpl(
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrConstructorSymbol,
-    override val name: Name,
+    override var name: Name,
     override var visibility: DescriptorVisibility,
     returnType: IrType,
     override val isInline: Boolean,

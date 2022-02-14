@@ -32,7 +32,7 @@ class IrFieldImpl(
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrFieldSymbol,
-    override val name: Name,
+    override var name: Name,
     override var type: IrType,
     override var visibility: DescriptorVisibility,
     override val isFinal: Boolean,

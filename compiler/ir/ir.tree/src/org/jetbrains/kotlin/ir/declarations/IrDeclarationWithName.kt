@@ -8,5 +8,5 @@ package org.jetbrains.kotlin.ir.declarations
 import org.jetbrains.kotlin.name.Name
 
 interface IrDeclarationWithName : IrDeclaration {
-    val name: Name
+    var name: Name
 }

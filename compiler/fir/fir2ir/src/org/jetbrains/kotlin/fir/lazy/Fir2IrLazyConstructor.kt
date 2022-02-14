@@ -63,8 +63,11 @@ class Fir2IrLazyConstructor(
 
     override var body: IrBody? = null
 
-    override val name: Name
+    override var name: Name
         get() = SpecialNames.INIT
+        set(_) {
+            throw UnsupportedOperationException()
+        }
 
     @Suppress("SetterBackingFieldAssignment")
     override var visibility: DescriptorVisibility = components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)

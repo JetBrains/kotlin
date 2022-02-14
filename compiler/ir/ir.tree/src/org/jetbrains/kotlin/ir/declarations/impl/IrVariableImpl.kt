@@ -33,7 +33,7 @@ class IrVariableImpl(
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrVariableSymbol,
-    override val name: Name,
+    override var name: Name,
     override var type: IrType,
     override val isVar: Boolean,
     override val isConst: Boolean,

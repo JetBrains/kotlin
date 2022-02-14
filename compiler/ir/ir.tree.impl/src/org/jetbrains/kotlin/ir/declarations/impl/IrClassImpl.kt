@@ -30,7 +30,7 @@ open class IrClassImpl(
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     final override val symbol: IrClassSymbol,
-    override val name: Name,
+    override var name: Name,
     override val kind: ClassKind,
     override var visibility: DescriptorVisibility,
     override var modality: Modality,
