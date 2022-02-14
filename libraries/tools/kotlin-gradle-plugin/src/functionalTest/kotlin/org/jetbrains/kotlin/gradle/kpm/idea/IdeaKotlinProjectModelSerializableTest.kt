@@ -21,7 +21,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-class KotlinIdeaProjectModelSerializableTest : AbstractKpmExtensionTest() {
+class IdeaKotlinProjectModelSerializableTest : AbstractKpmExtensionTest() {
 
     @Test
     fun `test - serialize and deserialize - empty project`() {
@@ -61,8 +61,8 @@ class KotlinIdeaProjectModelSerializableTest : AbstractKpmExtensionTest() {
         }
 
         assertEquals(
-            model, deserializedModel,
-            "Expected deserializedModel to match source model"
+            model.toString(), deserializedModel.toString(),
+            "Expected deserializedModel string representation to match source model"
         )
     }
 }
