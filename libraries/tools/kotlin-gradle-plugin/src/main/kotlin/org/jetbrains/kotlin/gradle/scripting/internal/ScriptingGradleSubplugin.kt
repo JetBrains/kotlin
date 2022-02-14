@@ -18,10 +18,8 @@ import org.gradle.api.attributes.Attribute
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -30,7 +28,6 @@ import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
-import java.io.File
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 private const val SCRIPTING_LOG_PREFIX = "kotlin scripting plugin:"
@@ -211,10 +208,7 @@ private fun Configuration.discoverScriptExtensionsFiles() =
     }.artifacts.artifactFiles
 
 
-class ScriptingKotlinGradleSubplugin :
-    KotlinCompilerPluginSupportPlugin,
-    @Suppress("DEPRECATION_ERROR") // implementing to fix KT-39809
-    KotlinGradleSubplugin<KotlinCompile> {
+class ScriptingKotlinGradleSubplugin : KotlinCompilerPluginSupportPlugin {
     companion object {
         const val SCRIPTING_ARTIFACT_NAME = "kotlin-scripting-compiler-embeddable"
 
@@ -257,13 +251,4 @@ class ScriptingKotlinGradleSubplugin :
     override fun getCompilerPluginId() = "kotlin.scripting"
     override fun getPluginArtifact(): SubpluginArtifact =
         JetBrainsSubpluginArtifact(artifactId = SCRIPTING_ARTIFACT_NAME)
-
-    //region Stub implementation for legacy API, KT-39809
-    override fun isApplicable(project: Project, task: AbstractCompile): Boolean = false
-
-    override fun apply(
-        project: Project, kotlinCompile: KotlinCompile, javaCompile: AbstractCompile?, variantData: Any?, androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation<KotlinCommonOptions>?
-    ): List<SubpluginOption> = emptyList()
-    //endregion
 }

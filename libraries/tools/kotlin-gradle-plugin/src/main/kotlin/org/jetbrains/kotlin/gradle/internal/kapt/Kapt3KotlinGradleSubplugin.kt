@@ -25,7 +25,6 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.CLASS_STRUCTURE_ARTIFACT_TYPE
 import org.jetbrains.kotlin.gradle.internal.kapt.incremental.StructureTransformAction
@@ -852,19 +851,3 @@ private val BaseVariant.dataBindingDependencyArtifactsIfSupported: FileCollectio
         .find { it.name == "getDataBindingDependencyArtifacts" }
         ?.also { it.isAccessible = true }
         ?.invoke(this) as? FileCollection
-
-//region Stub implementation for legacy API, KT-39809
-@Suppress("DEPRECATION_ERROR") // implementing to fix KT-39809
-class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<AbstractCompile> {
-    override fun isApplicable(project: Project, task: AbstractCompile): Boolean = false
-
-    override fun apply(
-        project: Project, kotlinCompile: AbstractCompile, javaCompile: AbstractCompile?, variantData: Any?, androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation<KotlinCommonOptions>?
-    ): List<SubpluginOption> = emptyList()
-
-    override fun getCompilerPluginId(): String = Kapt3GradleSubplugin.KAPT_SUBPLUGIN_ID
-
-    override fun getPluginArtifact(): SubpluginArtifact = JetBrainsSubpluginArtifact(artifactId = Kapt3GradleSubplugin.KAPT_ARTIFACT_NAME)
-}
-//endregion
