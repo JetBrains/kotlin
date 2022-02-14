@@ -4,6 +4,7 @@ public abstract class org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContain
 	public abstract fun get (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;)Ljava/lang/Object;
 	public abstract fun getIds ()Ljava/util/Set;
 	public final fun getOrThrow (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;)Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer$Empty : org/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer {
