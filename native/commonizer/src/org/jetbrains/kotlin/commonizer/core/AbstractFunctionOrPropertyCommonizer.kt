@@ -5,15 +5,20 @@
 
 package org.jetbrains.kotlin.commonizer.core
 
+import org.jetbrains.kotlin.commonizer.CommonizerSettings
 import org.jetbrains.kotlin.commonizer.cir.*
+import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
 import org.jetbrains.kotlin.commonizer.utils.singleDistinctValueOrNull
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DELEGATION
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.SYNTHESIZED
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class FunctionOrPropertyBaseCommonizer(
+    private val classifiers: CirKnownClassifiers,
+    private val settings: CommonizerSettings,
     private val typeCommonizer: TypeCommonizer,
     private val extensionReceiverCommonizer: ExtensionReceiverCommonizer = ExtensionReceiverCommonizer(typeCommonizer),
     private val returnTypeCommonizer: ReturnTypeCommonizer = ReturnTypeCommonizer(typeCommonizer),
@@ -26,7 +31,8 @@ class FunctionOrPropertyBaseCommonizer(
         val visibility: Visibility,
         val extensionReceiver: CirExtensionReceiver?,
         val returnType: CirType,
-        val typeParameters: List<CirTypeParameter>
+        val typeParameters: List<CirTypeParameter>,
+        val additionalAnnotations: List<CirAnnotation>,
     )
 
     override fun invoke(values: List<CirFunctionOrProperty>): FunctionOrProperty? {
@@ -43,6 +49,16 @@ class FunctionOrPropertyBaseCommonizer(
             return null
         }
 
+        val additionalUnsafeNumberAnnotation =
+            createUnsafeNumberAnnotationIfNecessary(classifiers.classifierIndices.targets, settings, values) {
+                returnType.let {
+                    when (it) {
+                        is CirFlexibleType -> it.lowerBound.safeAs<CirClassOrTypeAliasType>()?.classifierId
+                        else -> it.safeAs<CirClassOrTypeAliasType>()?.classifierId
+                    }
+                }
+            }
+
         return FunctionOrProperty(
             name = values.first().name,
             kind = values.singleDistinctValueOrNull { it.kind } ?: return null,
@@ -50,7 +66,8 @@ class FunctionOrPropertyBaseCommonizer(
             visibility = VisibilityCommonizer.lowering().commonize(values) ?: return null,
             extensionReceiver = (extensionReceiverCommonizer(values.map { it.extensionReceiver }) ?: return null).receiver,
             returnType = returnTypeCommonizer(values) ?: return null,
-            typeParameters = TypeParameterListCommonizer(typeCommonizer).commonize(values.map { it.typeParameters }) ?: return null
+            typeParameters = TypeParameterListCommonizer(typeCommonizer).commonize(values.map { it.typeParameters }) ?: return null,
+            additionalAnnotations = listOfNotNull(additionalUnsafeNumberAnnotation)
         )
     }
 }
