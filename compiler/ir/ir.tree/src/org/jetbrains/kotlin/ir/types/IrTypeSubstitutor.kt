@@ -7,17 +7,13 @@ package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import org.jetbrains.kotlin.ir.types.impl.IrCapturedType
-import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
-import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.types.impl.toBuilder
+import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 
 
 abstract class AbstractIrTypeSubstitutor(private val irBuiltIns: IrBuiltIns) : TypeSubstitutorMarker {
-
 
     private fun IrType.typeParameterConstructor(): IrTypeParameterSymbol? {
         return if (this is IrSimpleType) classifier as? IrTypeParameterSymbol
@@ -42,15 +38,18 @@ abstract class AbstractIrTypeSubstitutor(private val irBuiltIns: IrBuiltIns) : T
 
     private fun substituteType(irType: IrType): IrType {
         return when (irType) {
-            is IrDynamicType -> irType
-            is IrErrorType -> irType
-            else -> {
-                require(irType is IrSimpleType)
+            is IrSimpleType ->
                 with(irType.toBuilder()) {
                     arguments = irType.arguments.map { substituteTypeArgument(it) }
                     buildSimpleType()
                 }
-            }
+            is IrDefinitelyNotNullType ->
+                IrDefinitelyNotNullTypeImpl(null, substituteType(irType.original))
+            is IrDynamicType,
+            is IrErrorType ->
+                irType
+            else ->
+                throw AssertionError("Unexpected type: $irType")
         }
     }
 
