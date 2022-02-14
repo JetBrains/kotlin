@@ -628,31 +628,33 @@ private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithNam
 }
 
 private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName, context: JsIrBackendContext): Boolean {
-    if (context.additionalExportedDeclarationNames.contains(declaration.fqNameWhenAvailable))
-        return true
+    return context.exportedDeclarataionsCache.getOrPut(declaration) {
+        if (context.additionalExportedDeclarationNames.contains(declaration.fqNameWhenAvailable))
+            return@getOrPut true
 
-    if (context.additionalExportedDeclarations.contains(declaration))
-        return true
+        if (context.additionalExportedDeclarations.contains(declaration))
+            return@getOrPut true
 
-    if (declaration is IrOverridableDeclaration<*>) {
-        val overriddenNonEmpty = declaration
-            .overriddenSymbols
-            .isNotEmpty()
+        if (declaration is IrOverridableDeclaration<*>) {
+            val overriddenNonEmpty = declaration
+                .overriddenSymbols
+                .isNotEmpty()
 
-        if (overriddenNonEmpty) {
-            return declaration.isOverriddenExported(context) ||
-                    (declaration as? IrSimpleFunction)?.isMethodOfAny() == true // Handle names for special functions
-                    || declaration.isAllowedFakeOverriddenDeclaration(context)
+            if (overriddenNonEmpty) {
+                return@getOrPut declaration.isOverriddenExported(context) ||
+                        (declaration as? IrSimpleFunction)?.isMethodOfAny() == true // Handle names for special functions
+                        || declaration.isAllowedFakeOverriddenDeclaration(context)
+            }
         }
-    }
 
-    if (declaration.isJsExport())
-        return true
+        if (declaration.isJsExport())
+            return@getOrPut true
 
-    return when (val parent = declaration.parent) {
-        is IrDeclarationWithName -> shouldDeclarationBeExported(parent, context)
-        is IrAnnotationContainer -> parent.isJsExport()
-        else -> false
+        when (val parent = declaration.parent) {
+            is IrDeclarationWithName -> shouldDeclarationBeExported(parent, context)
+            is IrAnnotationContainer -> parent.isJsExport()
+            else -> false
+        }
     }
 }
 
