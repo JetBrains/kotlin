@@ -2,15 +2,12 @@
 
 package org.jetbrains.dokka
 
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.scheduling.ExperimentalCoroutineDispatcher
 import org.jetbrains.dokka.generation.GracefulGenerationExit
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.utilities.DokkaLogger
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.isAccessible
 
 /**
  * DokkaGenerator is the main entry point for generating documentation
@@ -45,27 +42,11 @@ class DokkaGenerator(
         additionalPlugins: List<DokkaPlugin> = emptyList()
     ) = DokkaContext.create(configuration, logger, additionalPlugins)
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun finalizeCoroutines() {
-        runCatching {
-            Dispatchers.Default.closeExecutor()
-
-            Dispatchers.IO.let { dispatcher ->
-                dispatcher::class.memberProperties.find {
-                    it.name == "dispatcher"
-                }?.also {
-                    it.isAccessible = true
-                }?.call(dispatcher)
-            }?.closeExecutor()
+        if (configuration.finalizeCoroutines) {
+            Dispatchers.shutdown()
         }
-    }
-
-    @OptIn(InternalCoroutinesApi::class)
-    private fun Any.closeExecutor() = (this as ExperimentalCoroutineDispatcher).also {
-        it.executor::class.members
-            .find { it.name == "close" }
-            ?.also {
-                it.isAccessible = true
-            }?.call(it.executor)
     }
 }
 
