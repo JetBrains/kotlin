@@ -6,13 +6,14 @@
 package kotlinx.cinterop
 
 /**
- * Marker for typealias that will represent numbers of different bit width on at least two platforms.
+ * Marker for typealias that will represent numbers of different bit width on at least two platforms,
+ * or function/property that have such numbers in their signature.
  *
- * @param actualPlatformTypes: Contains the underlying platform types represented as `{konanTarget}: {type fqn}`
+ * @param actualPlatformTypes: Contains platform types represented as `{konanTarget}: {type fqn}`
  * e.g. ["linux_x64: kotlin.Int", "linux_arm64: kotlin.Long"]
  */
 @Suppress("unused") // Is emitted by the Commonizer
-@Target(AnnotationTarget.TYPEALIAS)
+@Target(AnnotationTarget.TYPEALIAS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.BINARY)
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 annotation class UnsafeNumber(val actualPlatformTypes: Array<String>)
