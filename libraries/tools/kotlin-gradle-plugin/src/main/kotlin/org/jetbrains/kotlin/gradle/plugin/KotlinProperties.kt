@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion
 import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
@@ -254,6 +255,14 @@ internal class PropertiesProvider private constructor(private val project: Proje
      */
     val nativeDistributionType: String?
         get() = property("kotlin.native.distribution.type")
+
+    /**
+     * Allows overriding Kotlin/Native base download url.
+     *
+     * When Kotlin/native will try to download native compiler, it will append compiler version and os type to this url.
+     */
+    val nativeBaseDownloadUrl: String
+        get() = property("kotlin.native.distribution.baseDownloadUrl") ?: NativeCompilerDownloader.BASE_DOWNLOAD_URL
 
     /**
      * A property that was used to choose a restricted distribution in 1.3.

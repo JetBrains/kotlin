@@ -13,6 +13,7 @@ import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionType
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.konan.CompilerVersion
@@ -33,7 +34,7 @@ class NativeCompilerDownloader(
             CompilerVersion.fromString(loadPropertyFromResources("project.properties", "kotlin.native.version"))
         }
 
-        private const val BASE_DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native/builds"
+        internal const val BASE_DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native/builds"
     }
 
     val compilerDirectory: File
@@ -41,6 +42,8 @@ class NativeCompilerDownloader(
 
     private val logger: Logger
         get() = project.logger
+
+    private val kotlinProperties get() = PropertiesProvider(project)
 
     private val distributionType: NativeDistributionType
         get() = NativeDistributionTypeProvider(project).getDistributionType(compilerVersion)
@@ -112,7 +115,7 @@ class NativeCompilerDownloader(
 
     private fun downloadAndExtract() {
         val repoUrl = buildString {
-            append("$BASE_DOWNLOAD_URL/")
+            append("${kotlinProperties.nativeBaseDownloadUrl}/")
             append(if (compilerVersion.meta == MetaVersion.DEV) "dev/" else "releases/")
             append("$compilerVersion/")
             append(simpleOsName)
