@@ -134,6 +134,25 @@ interface DokkaConfiguration : Serializable {
     val includes: Set<File>
     val suppressInheritedMembers: Boolean
 
+    /**
+     * Whether coroutines dispatchers should be shutdown after
+     * generating documentation via [DokkaGenerator.generate].
+     *
+     * It effectively stops all background threads associated with
+     * coroutines in order to make classes unloadable by the JVM,
+     * and rejects all new tasks with [RejectedExecutionException]
+     *
+     * This is primarily useful for multi-module builds where coroutines
+     * can be shut down after each module's partial task to avoid
+     * possible memory leaks.
+     *
+     * However, this can lead to problems in specific lifecycles where
+     * coroutines are shared and will be reused after documentation generation,
+     * and closing it down will leave the build in an inoperable state.
+     * One such example is unit tests, for which finalization should be disabled.
+     */
+    val finalizeCoroutines: Boolean
+
     enum class SerializationFormat : Serializable {
         JSON, XML
     }
