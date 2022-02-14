@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.moduleName
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.StringSignature
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner
 import org.jetbrains.kotlin.konan.properties.propertyList
@@ -38,15 +37,15 @@ class TestModuleCache(val files: MutableMap<String, FileCache>) {
                 return 0L
             }
 
-            override fun inlineGraphForFile(path: String, sigResolver: (Int) -> IdSignature): Collection<Pair<IdSignature, TransHash>> {
+            override fun inlineGraphForFile(path: String, sigResolver: (Int) -> StringSignature): Collection<Pair<StringSignature, TransHash>> {
                 error("Is not supported")
             }
 
-            override fun inlineHashes(path: String, sigResolver: (Int) -> IdSignature): Map<IdSignature, TransHash> {
+            override fun inlineHashes(path: String, sigResolver: (Int) -> StringSignature): Map<StringSignature, TransHash> {
                 error("Is not supported")
             }
 
-            override fun allInlineHashes(sigResolver: (String, Int) -> IdSignature): Map<IdSignature, TransHash> {
+            override fun allInlineHashes(sigResolver: (String, Int) -> StringSignature): Map<StringSignature, TransHash> {
                 error("Is not supported")
             }
 

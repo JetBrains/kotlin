@@ -146,11 +146,13 @@ abstract class BasicIrModuleDeserializer(
         moduleDeserializationState.deserializeReachableDeclarations()
     }
 
-    override fun signatureDeserializerForFile(fileName: String): IdSignatureDeserializer {
+    override fun signatureDeserializerForFile(fileName: String): Map<Int, StringSignature> {
         val fileDeserializer = fileToDeserializerMap.entries.find { it.key.fileEntry.name == fileName }?.value
             ?: error("No file deserializer for $fileName")
 
-        TODO("?/")
+        return fileDeserializer.symbolDeserializer.signatureCache
+
+//        TODO("?/")
 //        return fileDeserializer.symbolDeserializer.signatureDeserializer
     }
 

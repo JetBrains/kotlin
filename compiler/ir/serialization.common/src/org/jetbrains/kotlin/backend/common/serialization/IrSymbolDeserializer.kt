@@ -32,6 +32,8 @@ class IrSymbolDeserializer(
 
     val deserializedSymbols: MutableMap<StringSignature, IrSymbol> = mutableMapOf()
 
+    val signatureCache = mutableMapOf<Int, StringSignature>()
+
     fun deserializeIrSymbol(signature: StringSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         return deserializedSymbols.getOrPut(signature) {
             val symbol = referenceDeserializedSymbol(symbolKind, signature)
@@ -86,8 +88,11 @@ class IrSymbolDeserializer(
     }
 
     fun deserializeSignature(index: Int): StringSignature {
-        val r = StringSignature(libraryFile.string(index))
-        return r
+        return signatureCache.getOrPut(index) {
+            StringSignature(libraryFile.string(index))
+        }
+//        val r = StringSignature(libraryFile.string(index))
+//        return r
     }
 
 //    val signatureDeserializer = IdSignatureDeserializer(libraryFile, fileSignature)

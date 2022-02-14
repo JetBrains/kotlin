@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
-import org.jetbrains.kotlin.backend.common.serialization.IdSignatureDeserializer
-import org.jetbrains.kotlin.backend.common.serialization.IrLibraryBytesSource
-import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.common.serialization.signature.StringSignatureBuilderOverDescriptors
@@ -41,19 +38,23 @@ import java.security.MessageDigest
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
 
 private fun KotlinLibrary.fingerprint(fileIndex: Int): Hash {
-    return ((((types(fileIndex).md5() * 31) + signatures(fileIndex).md5()) * 31 + strings(fileIndex).md5()) * 31 + declarations(fileIndex).md5()) * 31 + bodies(
-        fileIndex
-    ).md5()
+    val typesHash = types(fileIndex).md5()
+    val sigHash = signatures(fileIndex).md5()
+    val stringHash = strings(fileIndex).md5()
+    val declHash = declarations(fileIndex).md5()
+    val bodyHash = bodies(fileIndex).md5()
+
+    return ((((typesHash * 31) + sigHash) * 31 + stringHash) * 31 + declHash) * 31 + bodyHash
 }
 
 private fun invalidateCacheForModule(
     library: KotlinLibrary,
     libraryFiles: List<String>,
-    externalHashes: Map<IdSignature, TransHash>,
-    cachedInlineHashesForFile: MutableMap<String, Map<IdSignature, TransHash>>,
+    externalHashes: Map<StringSignature, TransHash>,
+    cachedInlineHashesForFile: MutableMap<String, Map<StringSignature, TransHash>>,
     cacheProvider: PersistentCacheProvider,
     cacheConsumer: PersistentCacheConsumer,
-    signatureResolver: (String, Int) -> IdSignature,
+    signatureResolver: (String, Int) -> StringSignature,
     fileFingerPrints: MutableMap<String, Hash>,
     configUpdated: Boolean
 ): Pair<Set<String>, Collection<String>> {
@@ -79,7 +80,7 @@ private fun invalidateCacheForModule(
 
     // 4. extend dirty set with inline functions
 
-    val graphCache = mutableMapOf<FilePath, Collection<Pair<IdSignature, TransHash>>>()
+    val graphCache = mutableMapOf<FilePath, Collection<Pair<StringSignature, TransHash>>>()
 
     var oldSize: Int
     do {
@@ -124,30 +125,15 @@ private fun invalidateCacheForModule(
     return dirtyFiles to deletedFiles
 }
 
-private fun KotlinLibrary.filesAndSigReaders(): List<Pair<String, IdSignatureDeserializer>> {
+private fun KotlinLibrary.files(): List<String> {
     val fileSize = fileCount()
-    val result = ArrayList<Pair<String, IdSignatureDeserializer>>(fileSize)
+    val result = ArrayList<String>(fileSize)
     val extReg = ExtensionRegistryLite.newInstance()
 
     for (i in 0 until fileSize) {
         val fileStream = file(i).codedInputStream
         val fileProto = ProtoFile.parseFrom(fileStream, extReg)
-        val sigReader = IdSignatureDeserializer(IrLibraryFileFromBytes(object : IrLibraryBytesSource() {
-            private fun err(): Nothing = error("Not supported")
-            override fun irDeclaration(index: Int): ByteArray = err()
-
-            override fun type(index: Int): ByteArray = err()
-
-            override fun signature(index: Int): ByteArray = signature(index, i)
-
-            override fun string(index: Int): ByteArray = string(index, i)
-
-            override fun body(index: Int): ByteArray = err()
-
-            override fun debugInfo(index: Int): ByteArray? = null
-        }), null)
-
-        result.add(fileProto.fileEntry.name to sigReader)
+        result.add(fileProto.fileEntry.name)
     }
 
     return result
@@ -550,14 +536,13 @@ private fun actualizeCacheForModule(
     // 1. Invalidate
     val dependencies = dependencyGraph[library]!!
 
-    val filesAndSigReaders = library.filesAndSigReaders()
-    val signatureDeserializers = filesAndSigReaders.toMap()
-    val libraryFiles = filesAndSigReaders.map { it.first }
+    val libraryFiles = library.files()
+    val depReaders = dependencies.associateWith { it.files() }
 
-    val depReaders = dependencies.associateWith { it.filesAndSigReaders().toMap() }
-
-    val signatureResolver: (String, Int) -> IdSignature = { f, s ->
-        signatureDeserializers[f]?.deserializeIdSignature(s) ?: error("Cannot deserialize sig $s from $f")
+    val signatureResolver: (String, Int) -> StringSignature = { f, s ->
+        val fileIndex = libraryFiles.indexOf(f)
+        assert(fileIndex >= 0)
+        StringSignature(library.string(s, fileIndex).decodeToString())
     }
 
     val sigHashes = mutableMapOf<StringSignature, TransHash>()
@@ -565,11 +550,11 @@ private fun actualizeCacheForModule(
         persistentCacheProviders[lib]?.let { provider ->
             val moduleReaders = depReaders[lib]!!
             val inlineHashes = provider.allInlineHashes { f, i ->
-                val moduleReader = moduleReaders[f]
-                    ?: error("No module reader for file $f")
-                moduleReader.deserializeIdSignature(i)
+                val fileIndex = moduleReaders.indexOf(f)
+                assert(fileIndex >= 0) { "No module reader for file $f" }
+                StringSignature(lib.string(i, fileIndex).decodeToString())
             }
-//            sigHashes.putAll(inlineHashes)
+            sigHashes.putAll(inlineHashes)
         }
     }
 
@@ -577,18 +562,19 @@ private fun actualizeCacheForModule(
 
     val currentLibraryCacheProvider = persistentCacheProviders[library] ?: error("No cache provider for $library")
 
-    val fileCachedInlineHashes = mutableMapOf<String, Map<IdSignature, TransHash>>()
+    val fileCachedInlineHashes = mutableMapOf<String, Map<StringSignature, TransHash>>()
 
-    filesAndSigReaders.forEach { (filePath, sigReader) ->
-        fileCachedInlineHashes[filePath] =
-            currentLibraryCacheProvider.inlineHashes(filePath) { s -> sigReader.deserializeIdSignature(s) }
+    libraryFiles.forEachIndexed { fileIndex, fileName ->
+        fileCachedInlineHashes[fileName] =
+            currentLibraryCacheProvider.inlineHashes(fileName) { sigIndex ->
+                StringSignature(library.signature(sigIndex, fileIndex).decodeToString())
+            }
     }
 
     val (dirtySet, deletedFiles) = invalidateCacheForModule(
         library,
         libraryFiles,
-//        sigHashes,
-        emptyMap(),
+        sigHashes,
         fileCachedInlineHashes,
         currentLibraryCacheProvider,
         persistentCacheConsumer,
@@ -625,14 +611,8 @@ private fun actualizeCacheForModule(
     val currentIrModule = irModules.find { it.second == library }?.first!!
     val currentModuleDeserializer = jsIrLinker.moduleDeserializer(currentIrModule.descriptor)
 
-//    for (file in libraryFiles) {
-//        if (file !in dirtySet) {
-//            val sigDeserializer = signatureDeserializers[file]!!
-//            sigHashes.putAll(currentLibraryCacheProvider.inlineHashes(file) { sigDeserializer.deserializeIdSignature(it) })
-//        }
-//    }
-
-    val deserializers = dirtySet.associateWith { currentModuleDeserializer.signatureDeserializerForFile(it).signatureToIndexMapping() }
+    val deserializers =
+        dirtySet.associateWith { currentModuleDeserializer.signatureDeserializerForFile(it).entries.associate { e -> e.value to e.key } }
 
     buildCacheForModule(
         libraryInfo,
@@ -644,8 +624,7 @@ private fun actualizeCacheForModule(
         deletedFiles,
         sigHashes,
         persistentCacheConsumer,
-//        deserializers,
-        emptyMap(),
+        deserializers,
         fileFingerPrints,
         mainArguments,
         cacheExecutor
@@ -742,8 +721,8 @@ fun loadModuleCaches(icCachePaths: Collection<String>): Map<String, ModuleCache>
     return icCacheMap.entries.associate { (lib, cache) ->
         val provider = createCacheProvider(cache.path)
         val files = provider.filePaths()
-        lib to ModuleCache(provider.moduleName(), files.associate { f ->
-            f to FileCache(f, provider.binaryAst(f), provider.dts(f), provider.sourceMap(f))
+        lib to ModuleCache(provider.moduleName(), files.associateWith { f ->
+            FileCache(f, provider.binaryAst(f), provider.dts(f), provider.sourceMap(f))
         })
     }
 }

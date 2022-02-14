@@ -106,7 +106,7 @@ abstract class IrModuleDeserializer(private val _moduleDescriptor: ModuleDescrip
 
     val compatibilityMode: CompatibilityMode get() = CompatibilityMode(libraryAbiVersion)
 
-    open fun signatureDeserializerForFile(fileName: String): IdSignatureDeserializer = error("Unsupported")
+    open fun signatureDeserializerForFile(fileName: String): Map<Int, StringSignature> = error("Unsupported")
 }
 
 // Used to resolve built in symbols like `kotlin.ir.internal.*` or `kotlin.FunctionN`
@@ -248,7 +248,7 @@ class IrModuleDeserializerWithBuiltIns(
         delegate.postProcess()
     }
 
-    override fun signatureDeserializerForFile(fileName: String): IdSignatureDeserializer {
+    override fun signatureDeserializerForFile(fileName: String): Map<Int, StringSignature> {
         return delegate.signatureDeserializerForFile(fileName)
     }
 }
