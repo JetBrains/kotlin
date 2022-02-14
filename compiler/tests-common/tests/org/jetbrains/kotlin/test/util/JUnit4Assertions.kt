@@ -37,7 +37,7 @@ object JUnit4Assertions : Assertions() {
     }
 
     override fun <T> assertSameElements(expected: Collection<T>, actual: Collection<T>, message: (() -> String)?) {
-        KtUsefulTestCase.assertSameElements(message?.invoke() ?: "", expected, actual)
+        KtUsefulTestCase.assertSameElements(message?.invoke() ?: "", actual, expected)
     }
 
     override fun assertAll(exceptions: List<Throwable>) {
