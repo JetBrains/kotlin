@@ -16,9 +16,9 @@
 fun case1() {
     val b = true
     val c = true
-    val a = if (b) {
+    val a = <!INVALID_IF_AS_EXPRESSION!>if<!> (b) {
         "first true"
-    } else <!INVALID_IF_AS_EXPRESSION!>if<!> (c) {
+    } else if (c) {
         "else if true"
     }
 }
@@ -28,5 +28,5 @@ fun case1() {
 fun case2() {
     var b = true
     val c = true
-    val a = if (b) 1 else if (c) 2 else ;
+    val a = <!INVALID_IF_AS_EXPRESSION!>if<!> (b) 1 else if (c) 2 else ;
 }

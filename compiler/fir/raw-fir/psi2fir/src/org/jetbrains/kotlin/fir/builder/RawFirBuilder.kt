@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -1922,7 +1921,7 @@ open class RawFirBuilder(
                     when (val ktElse = ktLastIf.`else`) {
                         null -> break@whenBranches
                         is KtIfExpression -> ktLastIf = ktElse
-                        else ->  {
+                        else -> {
                             branches += buildWhenBranch {
                                 source = ktLastIf.elseKeyword?.toKtPsiSourceElement()
                                 condition = buildElseIfTrueCondition()

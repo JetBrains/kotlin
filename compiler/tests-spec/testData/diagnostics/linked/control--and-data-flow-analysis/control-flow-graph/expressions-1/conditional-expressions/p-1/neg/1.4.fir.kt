@@ -5,7 +5,7 @@
 // TESTCASE NUMBER: 1
 
 fun case1() {
-    val y0else = if (false) true else ;
+    val y0else = <!INVALID_IF_AS_EXPRESSION!>if<!> (false) true else ;
 }
 
 /*
@@ -14,7 +14,7 @@ fun case1() {
  * ISSUES: KT-35510
  */
 fun case2(nothing: Nothing) {
-    val n1else = if (nothing) true else;
+    val n1else = <!INVALID_IF_AS_EXPRESSION!>if<!> (nothing) true else;
 }
 
 /*
@@ -35,5 +35,5 @@ fun case4(nothing: Nothing) {
 // TESTCASE NUMBER: 5
 
 fun case5(nothing: Nothing) {
-    val x = if (false) else if (nothing) { "foo"} else ;
+    val x = <!INVALID_IF_AS_EXPRESSION!>if<!> (false) else if (nothing) { "foo"} else ;
 }
