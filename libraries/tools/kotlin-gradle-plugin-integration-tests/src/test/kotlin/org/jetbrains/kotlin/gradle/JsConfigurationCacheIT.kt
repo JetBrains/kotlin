@@ -79,7 +79,7 @@ abstract class AbstractJsConfigurationCacheIT(protected val irBackend: Boolean) 
     @DisplayName("KT-48241: configuration cache works with test dependencies")
     @GradleTest
     fun testTestDependencies(gradleVersion: GradleVersion) {
-        project("kotlin-js-project-with-test-dependencies", gradleVersion, forceOutput = true) {
+        project("kotlin-js-project-with-test-dependencies", gradleVersion) {
             assertSimpleConfigurationCacheScenarioWorks(
                 "assemble",
                 buildOptions = defaultBuildOptions,

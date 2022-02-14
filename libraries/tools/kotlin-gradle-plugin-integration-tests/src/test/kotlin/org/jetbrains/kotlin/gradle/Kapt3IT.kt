@@ -217,7 +217,7 @@ open class Kapt3IT : Kapt3BaseIT() {
                 kaptOptions = kaptOptions().copy(includeCompileClasspath = true)
             )
         ) {
-            build("build", forceOutput = true) {
+            build("build") {
                 assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin", ":compileJava")
                 assertKaptSuccessful()
                 assertFileExists(projectPath.resolve("build/generated/source/kapt/main/example/TestClassGenerated.java"))
@@ -293,7 +293,7 @@ open class Kapt3IT : Kapt3BaseIT() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(incremental = false)
         ) {
-            build("build", enableGradleDebug = true) {
+            build("build") {
                 assertTasksExecuted(":kaptGenerateStubsKotlin")
                 assertOutputDoesNotContain(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
             }
