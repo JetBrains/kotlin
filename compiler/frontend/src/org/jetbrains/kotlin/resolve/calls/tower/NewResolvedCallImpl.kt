@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 class NewResolvedCallImpl<D : CallableDescriptor>(
     override val resolvedCallAtom: ResolvedCallAtom,
     substitutor: NewTypeSubstitutor?,
-    private var diagnostics: Collection<KotlinCallDiagnostic>,
+    diagnostics: Collection<KotlinCallDiagnostic>,
     override val typeApproximator: TypeApproximator,
     override val languageVersionSettings: LanguageVersionSettings,
 ) : NewAbstractResolvedCall<D>() {
@@ -38,6 +38,9 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
 
     override val argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
         get() = resolvedCallAtom.argumentMappingByOriginal
+
+    override var diagnostics: Collection<KotlinCallDiagnostic> = diagnostics
+        private set
 
     private lateinit var resultingDescriptor: D
     private lateinit var typeArguments: List<UnwrappedType>

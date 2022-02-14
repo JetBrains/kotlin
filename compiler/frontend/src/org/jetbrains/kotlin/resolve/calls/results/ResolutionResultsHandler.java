@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.resolve.BindingTrace;
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.util.CallUtilKt;
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode;
@@ -40,7 +41,7 @@ import static org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.*;
 
 public class ResolutionResultsHandler {
 
-    private final OverloadingConflictResolver<MutableResolvedCall<?>> overloadingConflictResolver;
+    private final OverloadingConflictResolver<ResolvedCall<?>> overloadingConflictResolver;
 
     public ResolutionResultsHandler(
             @NotNull KotlinBuiltIns builtIns,

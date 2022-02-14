@@ -36,6 +36,7 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor> : ResolvedCall<D> {
     abstract val psiKotlinCall: PSIKotlinCall
     abstract val typeApproximator: TypeApproximator
     abstract val freshSubstitutor: FreshVariableNewTypeSubstitutor?
+    abstract val diagnostics: Collection<KotlinCallDiagnostic>
 
     protected open val positionDependentApproximation = false
 

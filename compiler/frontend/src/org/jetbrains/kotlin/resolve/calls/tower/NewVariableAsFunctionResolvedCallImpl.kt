@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
+import org.jetbrains.kotlin.resolve.calls.model.KotlinCallDiagnostic
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallAtom
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
@@ -28,6 +29,7 @@ class NewVariableAsFunctionResolvedCallImpl(
     override val argumentMappingByOriginal = functionCall.argumentMappingByOriginal
     override val kotlinCall = functionCall.kotlinCall
     override val languageVersionSettings = functionCall.languageVersionSettings
+    override val diagnostics: Collection<KotlinCallDiagnostic> = functionCall.diagnostics
 
     override fun getStatus() = functionCall.status
     override fun getCandidateDescriptor() = functionCall.candidateDescriptor

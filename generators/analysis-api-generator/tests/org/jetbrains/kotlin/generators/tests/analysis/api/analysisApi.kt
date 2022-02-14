@@ -136,8 +136,7 @@ private fun TestGroupSuite.generateAnalysisApiComponentsTests() {
             model("resolveCall")
         }
         test(
-            AbstractResolveCandidatesTest::class,
-            generateFe10 = false // TODO: Not yet implemented
+            AbstractResolveCandidatesTest::class
         ) {
             model("resolveCandidates")
         }
