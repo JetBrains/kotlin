@@ -1219,6 +1219,23 @@ class GeneralNativeIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun allowToOverrideDownloadUrl() {
+        with(transformNativeTestProjectWithPluginDsl("native-parallel")) {
+            gradleProperties().appendText(
+                """
+                
+                kotlin.native.reinstall=true
+                kotlin.native.distribution.baseDownloadUrl=https://non-existent.net
+                """.trimIndent()
+            )
+            build("build") {
+                assertFailed()
+                assertContains("Could not HEAD 'https://non-existent.net")
+            }
+        }
+    }
+
     companion object {
         fun List<String>.containsSequentially(vararg elements: String): Boolean {
             check(elements.isNotEmpty())
