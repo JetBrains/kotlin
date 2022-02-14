@@ -11,6 +11,9 @@ import java.io.Serializable
 internal class KotlinMutableExternalModelContainerImpl : KotlinMutableExternalModelContainer(), Serializable {
     private val values = mutableMapOf<KotlinExternalModelKey<*>, Any>()
 
+    override val ids: Set<KotlinExternalModelId<*>>
+        @Synchronized get() = values.keys.map { it.id }.toSet()
+
     @Synchronized
     override fun <T : Any> set(key: KotlinExternalModelKey<T>, value: T) {
         values[key] = value
@@ -46,6 +49,9 @@ private class SerializedKotlinExternalModelContainer(
 ) : KotlinExternalModelContainer(), Serializable {
 
     private val deserializedValues = mutableMapOf<KotlinExternalModelId<*>, Any>()
+
+    override val ids: Set<KotlinExternalModelId<*>>
+        @Synchronized get() = serializedValues.keys + deserializedValues.keys
 
     @Synchronized
     override fun <T : Any> contains(key: KotlinExternalModelKey<T>): Boolean {

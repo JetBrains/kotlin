@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.kpm.idea.InternalKotlinGradlePluginApi
 import java.io.Serializable
 
 abstract class KotlinExternalModelContainer internal constructor() : Serializable {
+    abstract val ids: Set<KotlinExternalModelId<*>>
     abstract operator fun <T : Any> contains(key: KotlinExternalModelKey<T>): Boolean
     abstract operator fun <T : Any> get(key: KotlinExternalModelKey<T>): T?
     fun <T : Any> getOrThrow(key: KotlinExternalModelKey<T>): T = get(key)
@@ -20,6 +21,7 @@ abstract class KotlinExternalModelContainer internal constructor() : Serializabl
     }
 
     object Empty : KotlinExternalModelContainer() {
+        override val ids: Set<KotlinExternalModelId<*>> = emptySet()
         override fun <T : Any> contains(key: KotlinExternalModelKey<T>): Boolean = false
         override fun <T : Any> get(key: KotlinExternalModelKey<T>): T? = null
     }
