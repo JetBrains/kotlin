@@ -12743,7 +12743,7 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/differentDependencyVersion")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("external")
+        @Tag("codegen")
         @UseExtTestCaseGroupProvider()
         public class DifferentDependencyVersion {
             @Test
