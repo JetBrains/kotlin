@@ -1,6 +1,6 @@
 /*
  * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ * Use of this source code is governed by  the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
@@ -11,19 +11,19 @@ import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10ReceiverParameterSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtType
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.KtFe10PsiSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.barebone.parentOfType
 import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKtCallResolver
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.tokens.ValidityToken
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1
 import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -32,17 +32,30 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getDataFlowInfoBefore
+import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
+import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
+import org.jetbrains.kotlin.resolve.calls.context.CheckArgumentTypesMode
+import org.jetbrains.kotlin.resolve.calls.context.ContextDependency
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactoryImpl
+import org.jetbrains.kotlin.resolve.calls.tower.NewAbstractResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.getCall
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
+import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils
+import org.jetbrains.kotlin.types.TypeUtils
+import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal class KtFe10CallResolver(
     override val analysisSession: KtFe10AnalysisSession
@@ -70,7 +83,7 @@ internal class KtFe10CallResolver(
             Errors.TOO_MANY_ARGUMENTS,
             Errors.REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_FUNCTION,
             Errors.REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION,
-            Errors.TYPE_MISMATCH,
+            *Errors.TYPE_MISMATCH_ERRORS.toTypedArray(),
         )
         private val resolutionFailureErrors = setOf(
             Errors.INVISIBLE_MEMBER,
@@ -140,14 +153,118 @@ internal class KtFe10CallResolver(
             }
             is KtUnaryExpression -> {
                 handleAsIncOrDecOperator(this, unwrappedPsi)?.let { return@with it }
+                handleAsCheckNotNullCall(unwrappedPsi)?.let { return@with it }
                 handleAsFunctionCall(this, unwrappedPsi)
             }
             else -> handleAsFunctionCall(this, unwrappedPsi) ?: handleAsPropertyRead(this, unwrappedPsi)
         } ?: handleResolveErrors(this, psi)
     }
 
-    // TODO: See Call.resolveCandidates() in plugins/kotlin/core/src/org/jetbrains/kotlin/idea/core/Utils.kt
-    override fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo> = TODO()
+    override fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo> =
+        with(analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)) {
+            if (psi.isNotResolvable()) return emptyList()
+
+            val resolvedKtCallInfo = resolveCall(psi)
+            val bestCandidateDescriptors =
+                resolvedKtCallInfo?.calls?.filterIsInstance<KtFunctionCall<*>>()
+                    ?.mapNotNullTo(mutableSetOf()) { it.descriptor as? CallableDescriptor }
+                    ?: emptySet()
+
+            val unwrappedPsi = KtPsiUtil.deparenthesize(psi as? KtExpression) ?: psi
+
+            if (unwrappedPsi is KtUnaryExpression) {
+                // TODO: Handle ++ or -- operator
+                handleAsCheckNotNullCall(unwrappedPsi)?.let { return@with it.toKtCallCandidateInfos() }
+            }
+            if (unwrappedPsi is KtBinaryExpression &&
+                (unwrappedPsi.operationToken in OperatorConventions.COMPARISON_OPERATIONS ||
+                        unwrappedPsi.operationToken in OperatorConventions.EQUALS_OPERATIONS)
+            ) {
+                // TODO: Handle compound assignment
+                handleAsFunctionCall(this, unwrappedPsi)?.toKtCallCandidateInfos()?.let { return@with it }
+            }
+
+            val resolutionScope = unwrappedPsi.getResolutionScope(this) ?: return emptyList()
+            val call = unwrappedPsi.getCall(this)?.let {
+                if (it is CallTransformer.CallForImplicitInvoke) it.outerCall else it
+            } ?: return emptyList()
+            val dataFlowInfo = getDataFlowInfoBefore(unwrappedPsi)
+            val bindingTrace = DelegatingBindingTrace(this, "Trace for all candidates", withParentDiagnostics = false)
+            val dataFlowValueFactory = DataFlowValueFactoryImpl(analysisContext.languageVersionSettings)
+
+            val callResolutionContext = BasicCallResolutionContext.create(
+                bindingTrace, resolutionScope, call, TypeUtils.NO_EXPECTED_TYPE, dataFlowInfo,
+                ContextDependency.INDEPENDENT, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
+                /* isAnnotationContext = */ false, analysisContext.languageVersionSettings,
+                dataFlowValueFactory
+            ).replaceCollectAllCandidates(true)
+
+            val result = analysisContext.callResolver.resolveFunctionCall(callResolutionContext)
+            val candidates = result.allCandidates?.let { analysisContext.overloadingConflictResolver.filterOutEquivalentCalls(it) }
+                ?: error("allCandidates is null even when collectAllCandidates = true")
+
+            candidates.flatMap { candidate ->
+                // The current BindingContext does not have the diagnostics for each individual candidate, only for the resolved call.
+                // If there are multiple candidates, we can get each one's diagnostics by reporting it to a new BindingTrace.
+                val candidateTrace = DelegatingBindingTrace(this, "Trace for candidate", withParentDiagnostics = false)
+                if (candidate is NewAbstractResolvedCall<*>) {
+                    analysisContext.kotlinToResolvedCallTransformer.reportDiagnostics(
+                        callResolutionContext,
+                        candidateTrace,
+                        candidate,
+                        candidate.diagnostics
+                    )
+                }
+
+                val candidateKtCallInfo = handleAsFunctionCall(
+                    candidateTrace.bindingContext,
+                    unwrappedPsi,
+                    candidate,
+                    candidateTrace.bindingContext.diagnostics
+                )
+                candidateKtCallInfo.toKtCallCandidateInfos(bestCandidateDescriptors)
+            }
+        }
+
+    private val KtFunctionCall<*>.descriptor: DeclarationDescriptor?
+        get() = when (val symbol = symbol) {
+            is KtFe10PsiSymbol<*, *> -> symbol.descriptor
+            is KtFe10DescSymbol<*> -> symbol.descriptor
+            else -> null
+        }
+
+    private fun KtCallInfo?.toKtCallCandidateInfos(): List<KtCallCandidateInfo> {
+        return when (this) {
+            is KtSuccessCallInfo -> listOf(KtApplicableCallCandidateInfo(call, isInBestCandidates = true))
+            is KtErrorCallInfo -> candidateCalls.map { KtInapplicableCallCandidateInfo(it, isInBestCandidates = true, diagnostic) }
+            null -> emptyList()
+        }
+    }
+
+    private fun KtCallInfo?.toKtCallCandidateInfos(bestCandidateDescriptors: Set<CallableDescriptor>): List<KtCallCandidateInfo> {
+        // TODO: We should prefer to compare symbols instead of descriptors, but we can't do so while symbols are not cached.
+        fun KtCall.isInBestCandidates(): Boolean {
+            val descriptor = this.safeAs<KtFunctionCall<*>>()?.descriptor as? CallableDescriptor
+            return descriptor != null && bestCandidateDescriptors.any { it ->
+                DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent(
+                    it,
+                    descriptor,
+                    allowCopiesFromTheSameDeclaration = true,
+                    kotlinTypeRefiner = analysisContext.kotlinTypeRefiner
+                )
+            }
+        }
+
+        return when (this) {
+            is KtSuccessCallInfo -> {
+                listOf(KtApplicableCallCandidateInfo(call, call.isInBestCandidates()))
+            }
+            is KtErrorCallInfo -> candidateCalls.map {
+                KtInapplicableCallCandidateInfo(it, it.isInBestCandidates(), diagnostic)
+            }
+            null -> emptyList()
+        }
+    }
 
     private fun handleAsCompoundAssignment(context: BindingContext, binaryExpression: KtBinaryExpression): KtCallInfo? {
         val left = binaryExpression.left ?: return null
@@ -231,29 +348,41 @@ internal class KtFe10CallResolver(
         )
     }
 
-    private fun handleAsFunctionCall(context: BindingContext, element: KtElement): KtCallInfo? {
-        val resolvedCall = element.getResolvedCall(context)
-        if (element is KtUnaryExpression && resolvedCall?.candidateDescriptor?.name == ControlStructureTypingUtils.ResolveConstruct.EXCL_EXCL.specialFunctionName) {
-            val baseExpression = element.baseExpression ?: return null
+    private fun handleAsCheckNotNullCall(unaryExpression: KtUnaryExpression): KtCallInfo? {
+        if (unaryExpression.operationToken == KtTokens.EXCLEXCL) {
+            val baseExpression = unaryExpression.baseExpression ?: return null
             return KtSuccessCallInfo(KtCheckNotNullCall(token, baseExpression))
         }
+        return null
+    }
+
+    private fun handleAsFunctionCall(context: BindingContext, element: KtElement): KtCallInfo? {
+        return element.getResolvedCall(context)?.let { handleAsFunctionCall(context, element, it) }
+    }
+
+    private fun handleAsFunctionCall(
+        context: BindingContext,
+        element: KtElement,
+        resolvedCall: ResolvedCall<*>,
+        diagnostics: Diagnostics = context.diagnostics
+    ): KtCallInfo? {
         return if (resolvedCall is VariableAsFunctionResolvedCall) {
-            if (element is KtCallExpression) {
+            if (element is KtCallExpression || element is KtQualifiedExpression) {
                 // TODO: consider demoting extension receiver to the first argument to align with FIR behavior. See test case
                 //  analysis/analysis-api/testData/components/callResolver/resolveCall/functionTypeVariableCall_dispatchReceiver.kt:5 where
                 //  FIR and FE1.0 behaves differently because FIR unifies extension receiver of functional type as the first argument
                 resolvedCall.functionCall.toFunctionKtCall(context)
             } else {
                 resolvedCall.variableCall.toPropertyRead(context)
-            }?.let { createCallInfo(context, element, it, listOf(resolvedCall)) }
+            }?.let { createCallInfo(context, element, it, listOf(resolvedCall), diagnostics) }
         } else {
-            resolvedCall?.toFunctionKtCall(context)?.let { createCallInfo(context, element, it, listOf(resolvedCall)) }
+            resolvedCall.toFunctionKtCall(context)?.let { createCallInfo(context, element, it, listOf(resolvedCall), diagnostics) }
         }
     }
 
-    private fun handleAsPropertyRead(contexe: BindingContext, element: KtElement): KtCallInfo? {
-        val call = element.getResolvedCall(contexe) ?: return null
-        return call.toPropertyRead(contexe)?.let { createCallInfo(contexe, element, it, listOf(call)) }
+    private fun handleAsPropertyRead(context: BindingContext, element: KtElement): KtCallInfo? {
+        val call = element.getResolvedCall(context) ?: return null
+        return call.toPropertyRead(context)?.let { createCallInfo(context, element, it, listOf(call)) }
     }
 
     private fun ResolvedCall<*>.toPropertyRead(context: BindingContext): KtVariableAccessCall? {
@@ -409,10 +538,16 @@ internal class KtFe10CallResolver(
         return result
     }
 
-    private fun createCallInfo(context: BindingContext, psi: KtElement, ktCall: KtCall, resolvedCalls: List<ResolvedCall<*>>): KtCallInfo {
+    private fun createCallInfo(
+        context: BindingContext,
+        psi: KtElement,
+        ktCall: KtCall,
+        resolvedCalls: List<ResolvedCall<*>>,
+        diagnostics: Diagnostics = context.diagnostics
+    ): KtCallInfo {
         val failedResolveCall = resolvedCalls.firstOrNull { !it.status.isSuccess } ?: return KtSuccessCallInfo(ktCall)
 
-        val diagnostic = getDiagnosticToReport(context, psi, ktCall)?.let { KtFe10Diagnostic(it, token) }
+        val diagnostic = getDiagnosticToReport(context, psi, ktCall, diagnostics)?.let { KtFe10Diagnostic(it, token) }
             ?: KtNonBoundToPsiErrorDiagnostic(
                 factoryName = null,
                 "${failedResolveCall.status} with ${failedResolveCall.resultingDescriptor.name}",
@@ -443,8 +578,11 @@ internal class KtFe10CallResolver(
     }
 
     private fun getDiagnosticToReport(
-        context: BindingContext, psi: KtElement, ktCall: KtCall?
-    ) = context.diagnostics.firstOrNull { diagnostic ->
+        context: BindingContext,
+        psi: KtElement,
+        ktCall: KtCall?,
+        diagnostics: Diagnostics = context.diagnostics
+    ) = diagnostics.firstOrNull { diagnostic ->
         if (diagnostic.severity != Severity.ERROR) return@firstOrNull false
         val isResolutionError = diagnostic.factory in resolutionFailureErrors
         val isCallArgError = diagnostic.factory in callArgErrors
@@ -461,7 +599,15 @@ internal class KtFe10CallResolver(
                     reportedPsi is KtValueArgumentList || reportedPsiParent is KtValueArgumentList && reportedPsi == reportedPsiParent.rightParenthesis -> true
             // errors on call args for normal function calls
             isCallArgError &&
-                    reportedPsiParent is KtValueArgument && psi is KtCallElement && reportedPsiParent in psi.valueArguments -> true
+                    reportedPsiParent is KtValueArgument &&
+                    (psi is KtQualifiedExpression && psi.selectorExpression?.safeAs<KtCallExpression>()?.valueArguments?.contains(
+                        reportedPsiParent
+                    ) == true ||
+                            psi is KtCallElement && reportedPsiParent in psi.valueArguments) -> true
+            // errors on receiver of invoke function calls
+            isCallArgError &&
+                    (psi is KtQualifiedExpression && reportedPsiParent == psi.selectorExpression ||
+                            psi is KtCallElement && reportedPsiParent == psi) -> true
             // errors on index args for array access convention
             isCallArgError &&
                     reportedPsiParent is KtContainerNode && reportedPsiParent.parent is KtArrayAccessExpression -> true
