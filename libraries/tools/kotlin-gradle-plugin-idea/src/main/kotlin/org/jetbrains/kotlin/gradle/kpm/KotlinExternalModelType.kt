@@ -39,5 +39,5 @@ internal fun externalModelTypeSignature(type: KType): String {
     require(type.arguments.isEmpty()) { "Parameterized types are not supported. Found $type" }
     val classifier = requireNotNull(type.classifier) { "Expected classifier. Found $type" }
     val clazz = (classifier as? KClass<*>) ?: throw IllegalArgumentException("Expected KClass classifier. Found $classifier")
-    return clazz.qualifiedName ?: throw IllegalArgumentException("Missing qualifiedName in $type")
+    return clazz.java.name ?: throw IllegalArgumentException("Missing qualifiedName in $type")
 }
