@@ -25,6 +25,7 @@ class NewCallableReferenceResolvedCall<D : CallableDescriptor>(
 ) : NewAbstractResolvedCall<D>() {
     override val positionDependentApproximation: Boolean = true
     override val argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument> = emptyMap()
+    override val diagnostics: Collection<KotlinCallDiagnostic> = emptyList()
 
     override val resolvedCallAtom: ResolvedCallableReferenceCallAtom?
         get() = when (resolvedAtom) {

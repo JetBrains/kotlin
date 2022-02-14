@@ -46,4 +46,4 @@ KtErrorCallInfo:
           symbol = value: kotlin.Boolean)
       }
   ]
-  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final operator fun set(a: Int, b: String, value: Boolean): Unit defined in C>
+  diagnostic = ERROR<CONSTANT_EXPECTED_TYPE_MISMATCH: The floating-point literal does not conform to the expected type Boolean>
