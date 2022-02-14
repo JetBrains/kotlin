@@ -41,8 +41,11 @@ class Fir2IrLazySimpleFunction(
 
     override var annotations: List<IrConstructorCall> by createLazyAnnotations()
 
-    override val name: Name
+    override var name: Name
         get() = fir.name
+        set(_) {
+            throw UnsupportedOperationException()
+        }
 
     override var returnType: IrType by lazyVar(lock) {
         fir.returnTypeRef.toIrType(typeConverter)

@@ -26,7 +26,7 @@ class IrLazyValueParameter(
     override var origin: IrDeclarationOrigin,
     override val symbol: IrValueParameterSymbol,
     override val descriptor: ValueParameterDescriptor,
-    override val name: Name,
+    override var name: Name,
     override val index: Int,
     kotlinType: KotlinType,
     varargElementKotlinType: KotlinType?,

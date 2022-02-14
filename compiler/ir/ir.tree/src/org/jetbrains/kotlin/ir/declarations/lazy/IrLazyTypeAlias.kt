@@ -23,7 +23,7 @@ class IrLazyTypeAlias(
     override val symbol: IrTypeAliasSymbol,
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: TypeAliasDescriptor,
-    override val name: Name,
+    override var name: Name,
     override var visibility: DescriptorVisibility,
     override val isActual: Boolean,
     override val stubGenerator: DeclarationStubGenerator,

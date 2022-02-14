@@ -57,8 +57,11 @@ class Fir2IrLazyClass(
     override val descriptor: ClassDescriptor
         get() = symbol.descriptor
 
-    override val name: Name
+    override var name: Name
         get() = fir.name
+        set(_) {
+            throw UnsupportedOperationException()
+        }
 
     @Suppress("SetterBackingFieldAssignment")
     override var visibility: DescriptorVisibility = components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)

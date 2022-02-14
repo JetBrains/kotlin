@@ -27,7 +27,7 @@ class IrLazyConstructor(
     override var origin: IrDeclarationOrigin,
     override val symbol: IrConstructorSymbol,
     override val descriptor: ClassConstructorDescriptor,
-    override val name: Name,
+    override var name: Name,
     override var visibility: DescriptorVisibility,
     override val isInline: Boolean,
     override val isExternal: Boolean,

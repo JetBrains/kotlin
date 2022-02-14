@@ -29,7 +29,7 @@ class IrEnumEntryImpl(
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrEnumEntrySymbol,
-    override val name: Name,
+    override var name: Name,
     override val factory: IrFactory = IrFactoryImpl,
 ) : IrEnumEntry() {
     init {
