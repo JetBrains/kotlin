@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test
 import java.io.File
 
 @Tag("infrastructure")
+@EnforcedHostTarget
 @TestMetadata(TEST_SUITE_PATH)
 @TestDataPath("\$PROJECT_ROOT")
 class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
