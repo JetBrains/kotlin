@@ -82,7 +82,8 @@ public fun Sequence<InputStream>.loadApiFromJvmClasses(visibilityFilter: (String
         }
 }
 
-internal fun List<ClassBinarySignature>.filterOutAnnotated(targetAnnotations: Set<String>): List<ClassBinarySignature> {
+@ExternalApi
+public fun List<ClassBinarySignature>.filterOutAnnotated(targetAnnotations: Set<String>): List<ClassBinarySignature> {
     if (targetAnnotations.isEmpty()) return this
     return filter {
         it.annotations.all { ann -> !targetAnnotations.any { ann.refersToName(it) }  }
