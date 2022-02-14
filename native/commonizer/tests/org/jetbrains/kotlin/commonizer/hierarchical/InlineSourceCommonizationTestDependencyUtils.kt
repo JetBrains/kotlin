@@ -60,7 +60,7 @@ internal fun InlineSourceBuilder.ModuleBuilder.unsafeNumberAnnotationSource() {
     source(
         """
             package kotlinx.cinterop
-            @Target(AnnotationTarget.TYPEALIAS)
+            @Target(AnnotationTarget.TYPEALIAS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
             @Retention(AnnotationRetention.BINARY)
             annotation class UnsafeNumber(val actualPlatformTypes: Array<String>)
         """.trimIndent(),

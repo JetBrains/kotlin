@@ -22,7 +22,11 @@ expect val property20: Char
 
 // Optimistic Number Commonization: KT-48455, KT-48568
 // Mismatched const types should be commonized as expect val's
+@kotlinx.cinterop.UnsafeNumber(["js: kotlin.Short", "jvm: kotlin.Byte"])
 expect val property22: Byte
+@kotlinx.cinterop.UnsafeNumber(["js: kotlin.Int", "jvm: kotlin.Short"])
 expect val property23: Short
+@kotlinx.cinterop.UnsafeNumber(["js: kotlin.Long", "jvm: kotlin.Int"])
 expect val property24: Int
+@kotlinx.cinterop.UnsafeNumber(["js: kotlin.Float", "jvm: kotlin.Double"])
 expect val property26: Float

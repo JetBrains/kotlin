@@ -6,8 +6,7 @@
 package kotlinx.cinterop
 
 /**
- * Marker for typealias that will represent numbers of different bit width on at least two platforms,
- * or function/property that have such numbers in their signature.
+ * Marker for declarations that depend on numeric types of different bit width on at least two platforms.
  *
  * @param actualPlatformTypes: Contains platform types represented as `{konanTarget}: {type fqn}`
  * e.g. ["linux_x64: kotlin.Int", "linux_arm64: kotlin.Long"]
