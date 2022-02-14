@@ -88,7 +88,7 @@ class InfrastructureDumpedTestListingTest : AbstractNativeSimpleTest() {
         assertTrue(dumpedTestListing.isNotEmpty())
 
         // parse test listing obtained from executable file with the help of --ktest_list_tests flag:
-        val testExecutable = TestExecutable(executable.executableFile, executableCompilationResult.loggedData)
+        val testExecutable = TestExecutable.fromCompilationResult(executableTestCase, executableCompilationResult)
         val extractedTestListing = TestRunners.extractTestNames(testExecutable, testRunSettings).toSet()
 
         assertEquals(extractedTestListing, dumpedTestListing)

@@ -28,9 +28,13 @@ internal abstract class LoggedData {
     protected abstract fun computeText(): String
     final override fun toString() = text
 
-    fun withErrorMessage(errorMessage: String): String = buildString {
+    fun withErrorMessage(errorMessage: String, t: Throwable? = null): String = buildString {
         appendLine(errorMessage)
         appendLine()
+        if (t != null) {
+            appendLine(t.stackTraceToString())
+            appendLine()
+        }
         appendLine(this@LoggedData)
     }
 

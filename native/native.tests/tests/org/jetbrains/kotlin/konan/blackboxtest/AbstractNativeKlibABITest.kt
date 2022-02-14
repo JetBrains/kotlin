@@ -88,7 +88,7 @@ abstract class AbstractNativeKlibABITest : AbstractNativeSimpleTest() {
         )
 
         val compilationResult = compilation.result.assertSuccess() // <-- trigger compilation
-        val executable = TestExecutable(executableFile, compilationResult.loggedData)
+        val executable = TestExecutable.fromCompilationResult(testCase, compilationResult)
 
         runExecutableAndVerify(testCase, executable) // <-- run executable and verify
     }

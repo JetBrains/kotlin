@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilati
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationFactory
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
-import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunners.extractTestNames
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Settings
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TreeNode
@@ -34,7 +33,6 @@ internal class TestRunProvider(
 ) : BaseTestRunProvider(), ExtensionContext.Store.CloseableResource {
     private val compilationFactory = TestCompilationFactory()
     private val cachedCompilations = ThreadSafeCache<TestCompilationCacheKey, TestCompilation<Executable>>()
-    private val cachedTestNames = ThreadSafeCache<TestCompilationCacheKey, Collection<TestName>>()
 
     /**
      * Produces a single [TestRun] per [TestCase]. So-called "one test case/one test run" mode.
@@ -64,7 +62,7 @@ internal class TestRunProvider(
     fun getSingleTestRun(
         testCaseId: TestCaseId,
         settings: Settings
-    ): TestRun = withTestExecutable(testCaseId, settings) { testCase, executable, _ ->
+    ): TestRun = withTestExecutable(testCaseId, settings) { testCase, executable ->
         createSingleTestRun(testCase, executable)
     }
 
@@ -101,7 +99,7 @@ internal class TestRunProvider(
     fun getTestRuns(
         testCaseId: TestCaseId,
         settings: Settings
-    ): Collection<TreeNode<TestRun>> = withTestExecutable(testCaseId, settings) { testCase, executable, cacheKey ->
+    ): Collection<TreeNode<TestRun>> = withTestExecutable(testCaseId, settings) { testCase, executable ->
         fun createTestRun(testRunName: String, testName: TestName?) = createTestRun(testCase, executable, testRunName, testName)
 
         when (testCase.kind) {
@@ -111,10 +109,7 @@ internal class TestRunProvider(
                 TreeNode.oneLevel(testRun)
             }
             TestKind.REGULAR, TestKind.STANDALONE -> {
-                val testNames = cachedTestNames.computeIfAbsent(cacheKey) {
-                    extractTestNames(executable, settings)
-                }.filterIrrelevant(testCase)
-
+                val testNames = executable.testNames.filterIrrelevant(testCase)
                 testNames.buildTree(TestName::packageName) { testName ->
                     createTestRun(testName.functionName, testName)
                 }
@@ -125,7 +120,7 @@ internal class TestRunProvider(
     private fun <T> withTestExecutable(
         testCaseId: TestCaseId,
         settings: Settings,
-        action: (TestCase, TestExecutable, TestCompilationCacheKey) -> T
+        action: (TestCase, TestExecutable) -> T
     ): T {
         val testCaseGroup = testCaseGroupProvider.getTestCaseGroup(testCaseId.testCaseGroupId, settings)
             ?: fail { "No test case for $testCaseId" }
@@ -134,32 +129,36 @@ internal class TestRunProvider(
 
         val testCase = testCaseGroup.getByName(testCaseId) ?: fail { "No test case for $testCaseId" }
 
-        val (testCompilation, cacheKey) = when (testCase.kind) {
+        val testCompilation = when (testCase.kind) {
             TestKind.STANDALONE, TestKind.STANDALONE_NO_TR -> {
                 // Create a separate compilation for each standalone test case.
-                val cacheKey = TestCompilationCacheKey.Standalone(testCaseId)
-                val testCompilation = cachedCompilations.computeIfAbsent(cacheKey) {
+                cachedCompilations.computeIfAbsent(
+                    TestCompilationCacheKey.Standalone(testCaseId)
+                ) {
                     compilationFactory.testCasesToExecutable(listOf(testCase), settings)
                 }
-                testCompilation to cacheKey
             }
             TestKind.REGULAR -> {
                 // Group regular test cases by compiler arguments.
                 val testRunnerType = testCase.extras<WithTestRunnerExtras>().runnerType
-                val cacheKey = TestCompilationCacheKey.Grouped(testCaseId.testCaseGroupId, testCase.freeCompilerArgs, testRunnerType)
-                val testCompilation = cachedCompilations.computeIfAbsent(cacheKey) {
+                cachedCompilations.computeIfAbsent(
+                    TestCompilationCacheKey.Grouped(
+                        testCaseGroupId = testCaseId.testCaseGroupId,
+                        freeCompilerArgs = testCase.freeCompilerArgs,
+                        runnerType = testRunnerType
+                    )
+                ) {
                     val testCases = testCaseGroup.getRegularOnly(testCase.freeCompilerArgs, testRunnerType)
                     assertTrue(testCases.isNotEmpty())
                     compilationFactory.testCasesToExecutable(testCases, settings)
                 }
-                testCompilation to cacheKey
             }
         }
 
-        val (artifact, loggedCompilerCall) = testCompilation.result.assertSuccess() // <-- Compilation happens here.
-        val executable = TestExecutable(artifact.executableFile, loggedCompilerCall)
+        val compilationResult = testCompilation.result.assertSuccess() // <-- Compilation happens here.
+        val executable = TestExecutable.fromCompilationResult(testCase, compilationResult)
 
-        return action(testCase, executable, cacheKey)
+        return action(testCase, executable)
     }
 
     private fun Collection<TestName>.filterIrrelevant(testCase: TestCase) =
