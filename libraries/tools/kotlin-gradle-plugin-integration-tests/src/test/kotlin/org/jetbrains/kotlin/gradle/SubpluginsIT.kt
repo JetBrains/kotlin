@@ -24,17 +24,13 @@ class SubpuginsIT : KGPBaseTest() {
             build("compileKotlin", "build") {
                 assertTasksExecuted(":compileKotlin")
                 assertOutputContains("ExampleSubplugin loaded")
-                assertOutputContains("ExampleLegacySubplugin loaded")
                 assertOutputContains("Project component registration: exampleValue")
-                assertOutputContains("Project component registration: exampleLegacyValue")
             }
 
             build("compileKotlin", "build") {
                 assertTasksUpToDate(":compileKotlin")
                 assertOutputContains("ExampleSubplugin loaded")
-                assertOutputContains("ExampleLegacySubplugin loaded")
                 assertOutputDoesNotContain("Project component registration: exampleValue")
-                assertOutputDoesNotContain("Project component registration: exampleLegacyValue")
             }
         }
     }
@@ -176,47 +172,6 @@ class SubpuginsIT : KGPBaseTest() {
                     androidVersion = TestVersions.AGP.AGP_42
                 )
             )
-        }
-    }
-
-    @DisplayName("KT-39809: subplugins legacy loading does not fail the build")
-    @GradleTest
-    fun testKotlinVersionDowngradeWithNewerSubpluginsKt39809(gradleVersion: GradleVersion) {
-        project("multiprojectWithDependency", gradleVersion) {
-
-            val projectA = subProject("projA")
-            val subprojectBuildGradle = projectA.buildGradle
-            val originalScript = subprojectBuildGradle.readText()
-
-            listOf("allopen", "noarg", "sam-with-receiver", "serialization").forEach { plugin ->
-                subprojectBuildGradle.modify {
-                    """
-                    buildscript {
-                        repositories {
-                            mavenLocal()
-                            mavenCentral()
-                        }
-                        dependencies {
-                            classpath("org.jetbrains.kotlin:kotlin-$plugin:${defaultBuildOptions.kotlinVersion}")
-                        }
-                    }
-
-                    apply plugin: "org.jetbrains.kotlin.plugin.${plugin.replace("-", ".")}"
-
-                    $originalScript
-                    """.trimIndent()
-                }
-
-                buildAndFail(
-                    ":projA:compileKotlin",
-                    buildOptions = defaultBuildOptions.copy(kotlinVersion = "1.3.72")
-                ) {
-                    assertOutputContains(
-                        "This version of the kotlin-$plugin Gradle plugin is built for a newer Kotlin version. " +
-                                "Please use an older version of kotlin-$plugin or upgrade the Kotlin Gradle plugin version to make them match."
-                    )
-                }
-            }
         }
     }
 

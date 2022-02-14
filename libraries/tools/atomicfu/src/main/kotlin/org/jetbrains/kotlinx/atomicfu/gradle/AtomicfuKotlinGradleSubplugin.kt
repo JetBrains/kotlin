@@ -16,15 +16,11 @@
 
 package org.jetbrains.kotlinx.atomicfu.gradle
 
-import org.gradle.api.Project
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.gradle.plugin.*
 
 class AtomicfuKotlinGradleSubplugin :
-    KotlinCompilerPluginSupportPlugin,
-    @Suppress("DEPRECATION_ERROR") // implementing to fix KT-39809
-    KotlinGradleSubplugin<AbstractCompile> {
+    KotlinCompilerPluginSupportPlugin {
     companion object {
         const val ATOMICFU_ARTIFACT_NAME = "atomicfu"
     }
@@ -34,25 +30,10 @@ class AtomicfuKotlinGradleSubplugin :
     override fun applyToCompilation(
         kotlinCompilation: KotlinCompilation<*>
     ): Provider<List<SubpluginOption>> =
-        kotlinCompilation.target.project.provider { emptyList<SubpluginOption>() }
+        kotlinCompilation.target.project.provider { emptyList() }
 
     override fun getPluginArtifact(): SubpluginArtifact =
         JetBrainsSubpluginArtifact(ATOMICFU_ARTIFACT_NAME)
 
     override fun getCompilerPluginId() = "org.jetbrains.kotlinx.atomicfu"
-
-    //region Stub implementation for legacy API, KT-39809
-    override fun isApplicable(project: Project, task: AbstractCompile): Boolean = true
-
-    override fun apply(
-        project: Project,
-        kotlinCompile: AbstractCompile,
-        javaCompile: AbstractCompile?,
-        variantData: Any?,
-        androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation<*>?
-    ): List<SubpluginOption> {
-        return emptyList()
-    }
-    //endregion
 }

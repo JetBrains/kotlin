@@ -19,8 +19,6 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.compile.AbstractCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import java.io.File
 
 open class SubpluginOption(val key: String, private val lazyValue: Lazy<String>) {
@@ -73,37 +71,6 @@ open class CompilerPluginConfig {
     fun addPluginArgument(pluginId: String, option: SubpluginOption) {
         optionsByPluginId.getOrPut(pluginId) { mutableListOf() }.add(option)
     }
-}
-
-// Deprecated because most calls require the tasks to be instantiated, which is not compatible with Gradle task configuration avoidance.
-@Deprecated(
-    message = "This interface will be removed due to performance considerations. " +
-            "Please use the KotlinCompilerPluginSupportPlugin interface instead " +
-            "and remove the META-INF/services/org.jetbrains.kotlin.gradle.plugin.KotlinGradleSubplugin entry.",
-    replaceWith = ReplaceWith("KotlinCompilerPluginSupportPlugin"),
-    level = DeprecationLevel.ERROR
-)
-interface KotlinGradleSubplugin<in KotlinCompile : AbstractCompile> {
-    fun isApplicable(project: Project, task: AbstractCompile): Boolean
-
-    fun apply(
-        project: Project,
-        kotlinCompile: KotlinCompile,
-        javaCompile: AbstractCompile?,
-        variantData: Any?,
-        androidProjectHandler: Any?,
-        kotlinCompilation: KotlinCompilation<KotlinCommonOptions>?
-    ): List<SubpluginOption>
-
-    fun getSubpluginKotlinTasks(
-        project: Project,
-        kotlinCompile: KotlinCompile
-    ): List<AbstractCompile> = emptyList()
-
-    fun getCompilerPluginId(): String
-
-    fun getPluginArtifact(): SubpluginArtifact
-    fun getNativeCompilerPluginArtifact(): SubpluginArtifact? = null
 }
 
 /**
