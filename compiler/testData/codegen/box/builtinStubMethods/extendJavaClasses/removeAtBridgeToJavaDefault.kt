@@ -3,12 +3,6 @@
 // SKIP_JDK6
 // FULL_JDK
 
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR_STATUS: java.lang.StackOverflowError
-//    at Test.remove(removeAtBridgeToJavaDefault.kt:7)
-//    at Test.remove(removeAtBridgeToJavaDefault.kt:7)
-//    at Test.remove(removeAtBridgeToJavaDefault.kt:7)
-
 // FILE: removeAtBridgeToJavaDefault.kt
 class Test : IntArrayList()
 

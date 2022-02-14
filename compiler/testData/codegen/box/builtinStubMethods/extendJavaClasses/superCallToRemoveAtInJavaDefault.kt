@@ -3,9 +3,6 @@
 // SKIP_JDK6
 // FULL_JDK
 
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR_STATUS: java.lang.NoSuchMethodError: IntArrayList.removeAt(I)Ljava/lang/Integer;
-
 // FILE: superCallToRemoveAtInJavaDefault.kt
 class Test : IntArrayList() {
     override fun removeAt(index: Int): Int {
