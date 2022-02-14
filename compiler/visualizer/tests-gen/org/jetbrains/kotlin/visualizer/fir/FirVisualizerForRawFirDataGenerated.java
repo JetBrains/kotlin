@@ -332,6 +332,12 @@ public class FirVisualizerForRawFirDataGenerated extends AbstractFirVisualizerTe
         }
 
         @Test
+        @TestMetadata("cascadeIf.kt")
+        public void testCascadeIf() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/cascadeIf.kt");
+        }
+
+        @Test
         @TestMetadata("classReference.kt")
         public void testClassReference() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/expressions/classReference.kt");

@@ -1,0 +1,131 @@
+FILE: cascadeIf.kt
+    public? final? fun foo(first: Boolean, second: Boolean, third: Boolean): Int {
+        when () {
+            first# ->  {
+                ^foo IntegerLiteral(4)
+            }
+            second# ->  {
+                lval x: <implicit> = IntegerLiteral(3)
+                ^foo x#.plus#(IntegerLiteral(2))
+            }
+            else ->  {
+                when () {
+                    third# ->  {
+                        ^foo IntegerLiteral(0)
+                    }
+                    else ->  {
+                        ^foo IntegerLiteral(-1)
+                    }
+                }
+
+            }
+        }
+
+    }
+    public? final? fun example(): R|kotlin/Unit| {
+        lval a: <implicit> = when () {
+            Boolean(true) ->  {
+                Boolean(true)
+            }
+            else ->  {
+                Boolean(false)
+            }
+        }
+
+        lval b: <implicit> = when () {
+            Boolean(true) ->  {
+            }
+            else ->  {
+                Boolean(false)
+            }
+        }
+
+        lval c: <implicit> = when () {
+            Boolean(true) ->  {
+                Boolean(true)
+            }
+        }
+
+        lval d: <implicit> = when () {
+            Boolean(true) ->  {
+                Boolean(true)
+            }
+        }
+
+        lval e: <implicit> = when () {
+            Boolean(true) ->  {
+            }
+            else ->  {
+                Boolean(false)
+            }
+        }
+
+        lval f: <implicit> = when () {
+            Boolean(true) ->  {
+                Boolean(true)
+            }
+            else ->  {
+            }
+        }
+
+        fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            when () {
+                Boolean(true) ->  {
+                    Boolean(true)
+                }
+            }
+
+        }
+        .invoke#()
+        fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            when () {
+                Boolean(true) ->  {
+                    Boolean(true)
+                }
+                else ->  {
+                    Boolean(false)
+                }
+            }
+
+        }
+        .invoke#()
+        fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            when () {
+                Boolean(true) ->  {
+                }
+                else ->  {
+                    Boolean(false)
+                }
+            }
+
+        }
+        .invoke#()
+        fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+            when () {
+                Boolean(true) ->  {
+                    Boolean(true)
+                }
+                else ->  {
+                }
+            }
+
+        }
+        .invoke#()
+        local final? fun t(): Boolean {
+            ^t when () {
+                Boolean(true) ->  {
+                    Boolean(true)
+                }
+            }
+
+        }
+
+        ^example when () {
+            Boolean(true) ->  {
+                Boolean(true)
+            }
+            else ->  {
+            }
+        }
+
+    }

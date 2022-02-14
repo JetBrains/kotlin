@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
-import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -1136,6 +1135,10 @@ class ExpressionsConverter(
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.toFirBlock
      */
     private fun convertLoopBody(body: LighterASTNode?): FirBlock {
+        return convertLoopOrIfBody(body) ?: buildEmptyExpressionBlock()
+    }
+
+    private fun convertLoopOrIfBody(body: LighterASTNode?): FirBlock? {
         var firBlock: FirBlock? = null
         var firStatement: FirStatement? = null
         body?.forEachChildren {
@@ -1145,11 +1148,7 @@ class ExpressionsConverter(
             }
         }
 
-        return when {
-            firStatement != null -> FirSingleExpressionBlock(firStatement!!)
-            firBlock == null -> buildEmptyExpressionBlock()
-            else -> firBlock!!
-        }
+        return firStatement?.let { FirSingleExpressionBlock(it) } ?: firBlock
     }
 
     /**
@@ -1217,6 +1216,51 @@ class ExpressionsConverter(
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitIfExpression
      */
     private fun convertIfExpression(ifExpression: LighterASTNode): FirExpression {
+        var components = parseIfExpression(ifExpression)
+
+        return buildWhenExpression {
+            source = ifExpression.toFirSourceElement()
+            whenBranches@ while (true) {
+                with(components) {
+                    val trueBranch = convertLoopBody(thenBlock)
+                    branches += buildWhenBranch {
+                        source = thenBlock?.toFirSourceElement()
+                        condition = firCondition ?: buildErrorExpression(
+                            null,
+                            ConeSimpleDiagnostic("If statement should have condition", DiagnosticKind.Syntax)
+                        )
+                        result = trueBranch
+                    }
+                }
+                if (components.elseBlock == null) break@whenBranches
+                var cascadeIf = false
+                components.elseBlock?.forEachChildren {
+                    if (it.tokenType == IF) {
+                        cascadeIf = true
+                        components = parseIfExpression(it)
+                    }
+                }
+                if (!cascadeIf) {
+                    with(components) {
+                        val elseBranch = convertLoopOrIfBody(elseBlock)
+                        if (elseBranch != null) {
+                            branches += buildWhenBranch {
+                                source = elseBlock?.toFirSourceElement()
+                                condition = buildElseIfTrueCondition()
+                                result = elseBranch
+                            }
+                        }
+                    }
+                    break@whenBranches
+                }
+            }
+            usedAsExpression = ifExpression.usedAsExpression
+        }
+    }
+
+    private class IfNodeComponents(val firCondition: FirExpression?, val thenBlock: LighterASTNode?, val elseBlock: LighterASTNode?)
+
+    private fun parseIfExpression(ifExpression: LighterASTNode): IfNodeComponents {
         var firCondition: FirExpression? = null
         var thenBlock: LighterASTNode? = null
         var elseBlock: LighterASTNode? = null
@@ -1227,28 +1271,7 @@ class ExpressionsConverter(
                 ELSE -> elseBlock = it
             }
         }
-
-        return buildWhenExpression {
-            source = ifExpression.toFirSourceElement()
-            val trueBranch = convertLoopBody(thenBlock)
-            branches += buildWhenBranch {
-                source = thenBlock?.toFirSourceElement()
-                condition = firCondition ?: buildErrorExpression(
-                    null,
-                    ConeSimpleDiagnostic("If statement should have condition", DiagnosticKind.Syntax)
-                )
-                result = trueBranch
-            }
-            if (elseBlock != null) {
-                val elseBranch = convertLoopBody(elseBlock)
-                branches += buildWhenBranch {
-                    source = elseBlock?.toFirSourceElement()
-                    condition = buildElseIfTrueCondition()
-                    result = elseBranch
-                }
-            }
-            usedAsExpression = ifExpression.usedAsExpression
-        }
+        return IfNodeComponents(firCondition, thenBlock, elseBlock)
     }
 
     private val LighterASTNode.usedAsExpression: Boolean
