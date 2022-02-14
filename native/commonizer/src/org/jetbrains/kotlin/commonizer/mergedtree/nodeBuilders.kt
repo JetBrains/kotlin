@@ -59,7 +59,9 @@ internal fun buildPropertyNode(
     storageManager = storageManager,
     size = size,
     nodeRelationship = nodeRelationship,
-    commonizerProducer = { PropertyCommonizer(FunctionOrPropertyBaseCommonizer(TypeCommonizer(classifiers, settings))) },
+    commonizerProducer = {
+        PropertyCommonizer(FunctionOrPropertyBaseCommonizer(classifiers, settings, TypeCommonizer(classifiers, settings)))
+    },
     nodeProducer = ::CirPropertyNode
 )
 
@@ -75,7 +77,7 @@ internal fun buildFunctionNode(
     nodeRelationship = nodeRelationship,
     commonizerProducer = {
         val typeCommonizer = TypeCommonizer(classifiers, settings)
-        FunctionCommonizer(typeCommonizer, FunctionOrPropertyBaseCommonizer(typeCommonizer)).asCommonizer()
+        FunctionCommonizer(typeCommonizer, FunctionOrPropertyBaseCommonizer(classifiers, settings, typeCommonizer)).asCommonizer()
     },
     nodeProducer = ::CirFunctionNode
 )
