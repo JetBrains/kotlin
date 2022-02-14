@@ -25,6 +25,10 @@ abstract class KotlinExternalModelContainer internal constructor() : Serializabl
         override fun <T : Any> contains(key: KotlinExternalModelKey<T>): Boolean = false
         override fun <T : Any> get(key: KotlinExternalModelKey<T>): T? = null
     }
+
+    override fun toString(): String {
+        return "KotlinExternalModelContainer(${ids.joinToString("; ", "[", "]")}"
+    }
 }
 
 abstract class KotlinMutableExternalModelContainer internal constructor() : KotlinExternalModelContainer() {
