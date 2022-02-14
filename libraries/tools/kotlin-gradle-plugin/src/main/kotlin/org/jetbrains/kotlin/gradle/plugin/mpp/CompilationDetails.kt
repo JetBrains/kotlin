@@ -54,7 +54,7 @@ interface CompilationDetails<T : KotlinCommonOptions> {
 
     fun source(sourceSet: KotlinSourceSet)
 
-    val directlyIncludedKotlinSourceSets: MutableSet<KotlinSourceSet>
+    val directlyIncludedKotlinSourceSets: Set<KotlinSourceSet>
     val defaultSourceSetName: String
 
     @Suppress("UNCHECKED_CAST")
@@ -465,9 +465,8 @@ internal open class VariantMappedCompilationDetails<T : KotlinCommonOptions>(
     override val kotlinDependenciesHolder: HasKotlinDependencies
         get() = variant
 
-    override val directlyIncludedKotlinSourceSets: MutableSet<KotlinSourceSet>
-        // FIXME: this effectively ignores the mutation of the set!
-        get() = compilation.defaultSourceSet.dependsOn.toMutableSet()
+    override val directlyIncludedKotlinSourceSets: Set<KotlinSourceSet>
+        get() = compilation.defaultSourceSet.dependsOn
 }
 
 internal open class VariantMappedCompilationDetailsWithRuntime<T : KotlinCommonOptions>(
