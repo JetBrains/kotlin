@@ -38,16 +38,16 @@ object FirTopLevelPropertiesChecker : FirPropertyChecker() {
         // So, our source of truth should be the full modifier list retrieved from the source.
         val modifierList = source.getModifierList()
 
-        withSuppressedDiagnostics(declaration, context) {
+        withSuppressedDiagnostics(declaration, context) { ctx ->
             checkPropertyInitializer(
                 containingClass = null,
                 declaration,
                 modifierList,
                 isInitialized = declaration.initializer != null,
                 reporter,
-                context
+                ctx
             )
-            checkExpectDeclarationVisibilityAndBody(declaration, source, reporter, context)
+            checkExpectDeclarationVisibilityAndBody(declaration, source, reporter, ctx)
         }
     }
 }

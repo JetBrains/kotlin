@@ -185,7 +185,7 @@ fun checkRepeatedAnnotation(
         val existingTargetsForAnnotation = annotationsMap.getOrPut(annotation.annotationTypeRef.coneType) { arrayListOf() }
 
         withSuppressedDiagnostics(annotation, context) {
-            checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, context, reporter)
+            checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, it, reporter)
         }
 
         existingTargetsForAnnotation.add(useSiteTarget)

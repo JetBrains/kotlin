@@ -41,58 +41,58 @@ object FirSupertypesChecker : FirClassChecker() {
         var classAppeared = false
         val superClassSymbols = hashSetOf<FirRegularClassSymbol>()
         for (superTypeRef in declaration.superTypeRefs) {
-            withSuppressedDiagnostics(superTypeRef, context) {
+            withSuppressedDiagnostics(superTypeRef, context) { ctx ->
                 val coneType = superTypeRef.coneType
                 if (!nullableSupertypeReported && coneType.nullability == ConeNullability.NULLABLE) {
-                    reporter.reportOn(superTypeRef.source, FirErrors.NULLABLE_SUPERTYPE, context)
+                    reporter.reportOn(superTypeRef.source, FirErrors.NULLABLE_SUPERTYPE, ctx)
                     nullableSupertypeReported = true
                 }
                 if (!extensionFunctionSupertypeReported && coneType.isExtensionFunctionType &&
-                    !context.session.languageVersionSettings.supportsFeature(LanguageFeature.FunctionalTypeWithExtensionAsSupertype)
+                    !ctx.session.languageVersionSettings.supportsFeature(LanguageFeature.FunctionalTypeWithExtensionAsSupertype)
                 ) {
-                    reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE, context)
+                    reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_IS_EXTENSION_FUNCTION_TYPE, ctx)
                     extensionFunctionSupertypeReported = true
                 }
                 val lookupTag = coneType.safeAs<ConeClassLikeType>()?.lookupTag ?: return@withSuppressedDiagnostics
-                val superTypeSymbol = lookupTag.toSymbol(context.session)
+                val superTypeSymbol = lookupTag.toSymbol(ctx.session)
 
                 if (superTypeSymbol is FirRegularClassSymbol) {
                     if (!superClassSymbols.add(superTypeSymbol)) {
-                        reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_APPEARS_TWICE, context)
+                        reporter.reportOn(superTypeRef.source, FirErrors.SUPERTYPE_APPEARS_TWICE, ctx)
                     }
                     if (superTypeSymbol.classKind != ClassKind.INTERFACE) {
                         if (classAppeared) {
-                            reporter.reportOn(superTypeRef.source, FirErrors.MANY_CLASSES_IN_SUPERTYPE_LIST, context)
+                            reporter.reportOn(superTypeRef.source, FirErrors.MANY_CLASSES_IN_SUPERTYPE_LIST, ctx)
                         } else {
                             classAppeared = true
                         }
                         if (!interfaceWithSuperclassReported) {
-                            reporter.reportOn(superTypeRef.source, FirErrors.INTERFACE_WITH_SUPERCLASS, context)
+                            reporter.reportOn(superTypeRef.source, FirErrors.INTERFACE_WITH_SUPERCLASS, ctx)
                             interfaceWithSuperclassReported = true
                         }
                     }
                     val isObject = superTypeSymbol.classKind == ClassKind.OBJECT
                     if (!finalSupertypeReported && !isObject && superTypeSymbol.modality == Modality.FINAL) {
-                        reporter.reportOn(superTypeRef.source, FirErrors.FINAL_SUPERTYPE, context)
+                        reporter.reportOn(superTypeRef.source, FirErrors.FINAL_SUPERTYPE, ctx)
                         finalSupertypeReported = true
                     }
                     if (!singletonInSupertypeReported && isObject) {
-                        reporter.reportOn(superTypeRef.source, FirErrors.SINGLETON_IN_SUPERTYPE, context)
+                        reporter.reportOn(superTypeRef.source, FirErrors.SINGLETON_IN_SUPERTYPE, ctx)
                         singletonInSupertypeReported = true
                     }
                 }
 
-                checkAnnotationOnSuperclass(superTypeRef, context, reporter)
+                checkAnnotationOnSuperclass(superTypeRef, ctx, reporter)
 
-                val fullyExpandedType = coneType.fullyExpandedType(context.session)
-                val symbol = fullyExpandedType.toSymbol(context.session)
+                val fullyExpandedType = coneType.fullyExpandedType(ctx.session)
+                val symbol = fullyExpandedType.toSymbol(ctx.session)
 
-                checkClassCannotBeExtendedDirectly(symbol, reporter, superTypeRef, context)
+                checkClassCannotBeExtendedDirectly(symbol, reporter, superTypeRef, ctx)
 
                 if (coneType.typeArguments.isNotEmpty()) {
-                    checkProjectionInImmediateArgumentToSupertype(coneType, superTypeRef, reporter, context)
+                    checkProjectionInImmediateArgumentToSupertype(coneType, superTypeRef, reporter, ctx)
                 } else {
-                    checkExpandedTypeCannotBeInherited(symbol, fullyExpandedType, reporter, superTypeRef, coneType, context)
+                    checkExpandedTypeCannotBeInherited(symbol, fullyExpandedType, reporter, superTypeRef, coneType, ctx)
                 }
             }
         }
@@ -112,7 +112,7 @@ object FirSupertypesChecker : FirClassChecker() {
         for (annotation in superTypeRef.annotations) {
             withSuppressedDiagnostics(annotation, context) {
                 if (annotation.useSiteTarget != null) {
-                    reporter.reportOn(annotation.source, FirErrors.ANNOTATION_ON_SUPERCLASS, context)
+                    reporter.reportOn(annotation.source, FirErrors.ANNOTATION_ON_SUPERCLASS, it)
                 }
             }
         }

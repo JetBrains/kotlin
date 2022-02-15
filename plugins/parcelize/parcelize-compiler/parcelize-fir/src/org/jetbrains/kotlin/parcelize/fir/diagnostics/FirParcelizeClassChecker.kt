@@ -112,7 +112,7 @@ object FirParcelizeClassChecker : FirClassChecker() {
                     } else {
                         SourceElementPositioningStrategies.NAME_IDENTIFIER
                     }
-                    reporter.reportOn(klass.source, KtErrorsParcelize.DEPRECATED_PARCELER, context, positioningStrategy = strategy)
+                    reporter.reportOn(klass.source, KtErrorsParcelize.DEPRECATED_PARCELER, it, positioningStrategy = strategy)
                 }
             }
         }

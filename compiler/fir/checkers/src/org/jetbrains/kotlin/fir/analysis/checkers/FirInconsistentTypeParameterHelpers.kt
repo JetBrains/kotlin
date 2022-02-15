@@ -62,7 +62,7 @@ private fun buildDeepSubstitutionMultimap(
     val session = context.session
     val typeContext = session.typeContext
 
-    fun fillInDeepSubstitutor(typeArguments: Array<out ConeTypeProjection>?, classSymbol: FirRegularClassSymbol) {
+    fun fillInDeepSubstitutor(typeArguments: Array<out ConeTypeProjection>?, classSymbol: FirRegularClassSymbol, context: CheckerContext) {
         if (typeArguments != null) {
             val typeParameterSymbols = classSymbol.typeParameterSymbols
             val count = minOf(typeArguments.size, typeParameterSymbols.size)
@@ -106,14 +106,14 @@ private fun buildDeepSubstitutionMultimap(
             val superClassSymbol = fullyExpandedType.toRegularClassSymbol(session)
             withSuppressedDiagnostics(superTypeRef, context) {
                 if (!fullyExpandedType.isEnum && superClassSymbol != null) {
-                    fillInDeepSubstitutor(fullyExpandedType.typeArguments, superClassSymbol)
+                    fillInDeepSubstitutor(fullyExpandedType.typeArguments, superClassSymbol, it)
                 }
             }
         }
     }
 
     for (firTypeRefClass in firTypeRefClasses) {
-        fillInDeepSubstitutor(firTypeRefClass.first?.coneType?.fullyExpandedType(session)?.typeArguments, firTypeRefClass.second)
+        fillInDeepSubstitutor(firTypeRefClass.first?.coneType?.fullyExpandedType(session)?.typeArguments, firTypeRefClass.second, context)
     }
     return result
 }

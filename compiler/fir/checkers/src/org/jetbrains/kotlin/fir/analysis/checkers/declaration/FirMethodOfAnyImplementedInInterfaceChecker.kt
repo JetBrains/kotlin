@@ -50,7 +50,7 @@ object FirMethodOfAnyImplementedInInterfaceChecker : FirRegularClassChecker(), F
 
             if (methodOfAny) {
                 withSuppressedDiagnostics(function, context) {
-                    reporter.reportOn(function.source, FirErrors.METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, context)
+                    reporter.reportOn(function.source, FirErrors.METHOD_OF_ANY_IMPLEMENTED_IN_INTERFACE, it)
                 }
             }
         }

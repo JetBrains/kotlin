@@ -23,22 +23,22 @@ object FirOptInMarkedDeclarationChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         for (annotation in declaration.annotations) {
             val annotationClass = annotation.getAnnotationClassForOptInMarker(context.session) ?: continue
-            withSuppressedDiagnostics(annotation, context) {
+            withSuppressedDiagnostics(annotation, context) { ctx ->
                 val useSiteTarget = annotation.useSiteTarget
                 if ((declaration is FirPropertyAccessor && declaration.isGetter) || useSiteTarget == PROPERTY_GETTER) {
-                    reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "getter", context)
+                    reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "getter", ctx)
                 }
                 if (useSiteTarget == SETTER_PARAMETER ||
                     (useSiteTarget != PROPERTY && useSiteTarget != PROPERTY_SETTER && declaration is FirValueParameter &&
                             KotlinTarget.VALUE_PARAMETER in annotationClass.getAllowedAnnotationTargets())
                 ) {
-                    reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "parameter", context)
+                    reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "parameter", ctx)
                 }
                 if (declaration is FirProperty && declaration.isLocal) {
-                    reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "variable", context)
+                    reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "variable", ctx)
                 }
                 if (useSiteTarget == FIELD || useSiteTarget == PROPERTY_DELEGATE_FIELD) {
-                    reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "field", context)
+                    reporter.reportOn(annotation.source, FirErrors.OPT_IN_MARKER_ON_WRONG_TARGET, "field", ctx)
                 }
             }
         }

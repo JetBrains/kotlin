@@ -41,12 +41,12 @@ object FirExpressionAnnotationChecker : FirBasicExpressionChecker() {
             val useSiteTarget = annotation.useSiteTarget ?: expression.getDefaultUseSiteTarget(annotation, context)
             val existingTargetsForAnnotation = annotationsMap.getOrPut(annotation.annotationTypeRef.coneType) { arrayListOf() }
 
-            withSuppressedDiagnostics(annotation, context) {
-                if (KotlinTarget.EXPRESSION !in annotation.getAllowedAnnotationTargets(context.session)) {
-                    reporter.reportOn(annotation.source, FirErrors.WRONG_ANNOTATION_TARGET, "expression", context)
+            withSuppressedDiagnostics(annotation, context) { ctx ->
+                if (KotlinTarget.EXPRESSION !in annotation.getAllowedAnnotationTargets(ctx.session)) {
+                    reporter.reportOn(annotation.source, FirErrors.WRONG_ANNOTATION_TARGET, "expression", ctx)
                 }
 
-                checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, context, reporter)
+                checkRepeatedAnnotation(useSiteTarget, existingTargetsForAnnotation, annotation, ctx, reporter)
             }
 
             existingTargetsForAnnotation.add(useSiteTarget)
