@@ -102,9 +102,11 @@ object ConeTypeIntersector {
         val iterator = filteredTypes.iterator()
         while (iterator.hasNext()) {
             val upper = iterator.next()
-            val shouldFilter = filteredTypes.any { lower -> lower !== upper && predicate(lower, upper) }
-
-            if (shouldFilter) iterator.remove()
+            if (filteredTypes.any { lower -> lower !== upper && predicate(lower, upper) } ||
+                upper is ConeErrorType && filteredTypes.size > 1
+            ) {
+                iterator.remove()
+            }
         }
         return filteredTypes
     }

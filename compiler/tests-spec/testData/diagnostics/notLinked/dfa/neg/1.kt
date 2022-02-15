@@ -205,6 +205,7 @@ class Case14 {
     }
 }
 
+@Suppress("UNREACHABLE_CODE")
 fun case_14() {
     val a = Case14()
 
