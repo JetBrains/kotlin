@@ -2647,6 +2647,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("callableReferenceInWhenExpression.kt")
+            public void testCallableReferenceInWhenExpression() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/callableReferenceInWhenExpression.kt");
+            }
+
+            @Test
             @TestMetadata("callableReferenceWithMostSpecificGenericTypeParameter.kt")
             public void testCallableReferenceWithMostSpecificGenericTypeParameter() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/callableReferenceWithMostSpecificGenericTypeParameter.kt");
