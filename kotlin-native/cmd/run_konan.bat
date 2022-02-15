@@ -53,7 +53,7 @@ if not "!ARG!" == "" (
 
 set "KONAN_LIB=%_KONAN_HOME%\konan\lib"
 
-set "KONAN_JAR=%KONAN_LIB%\kotlin-native.jar"
+set "KONAN_JAR=%KONAN_LIB%\kotlin-native-compiler-embeddable.jar"
 set TROVE_JAR="%KONAN_LIB%\trove4j.jar"
 
 set "KONAN_CLASSPATH=%KONAN_JAR%;%TROVE_JAR%"
