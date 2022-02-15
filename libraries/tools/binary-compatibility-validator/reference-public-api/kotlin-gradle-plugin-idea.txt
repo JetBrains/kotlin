@@ -104,6 +104,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinM
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinProjectModel : java/io/Serializable {
 	public abstract fun getCoreLibrariesVersion ()Ljava/lang/String;
 	public abstract fun getExplicitApiModeCliOption ()Ljava/lang/String;
+	public abstract fun getGradlePluginVersion ()Ljava/lang/String;
 	public abstract fun getKotlinNativeHome ()Ljava/io/File;
 	public abstract fun getModules ()Ljava/util/List;
 }
