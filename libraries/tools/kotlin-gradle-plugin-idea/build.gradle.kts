@@ -22,16 +22,16 @@ dependencies {
 
 publish()
 
-tasks.test {
-    /* When -Psnapshot is set, then the test runs against a locally installed snapshot version (./gradlew install) */
-    val isSnapshotTest = project.providers.gradleProperty("snapshot").isPresent
+/* Setup Backwards Compatibility Test */
+run {
+    /* When -Pkgp-idea-snapshot is set, then the test runs against a locally installed snapshot version (./gradlew install) */
+    val isSnapshotTest = project.providers.gradleProperty("kotlin-gradle-plugin-idea.snapshot").isPresent
 
     repositories {
         maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
         if (isSnapshotTest) mavenLocal()
     }
 
-    /* Setup for backwards compatibility test */
     val version = if (isSnapshotTest) properties["defaultSnapshotVersion"].toString()
     else BackwardsCompatibilityTestConfiguration.minimalBackwardsCompatibleVersion
 
@@ -41,12 +41,16 @@ tasks.test {
         minimalBackwardsCompatibleVersionTestClasspath("org.jetbrains.kotlin:kotlin-gradle-plugin-idea:$version")
     }
 
-    dependsOn(minimalBackwardsCompatibleVersionTestClasspath)
+    tasks.test {
+        inputs.files(minimalBackwardsCompatibleVersionTestClasspath)
+        doFirst {
+            if (isSnapshotTest) logger.quiet("Running test against snapshot: $version")
+            else logger.quiet("Running test against $version")
 
-    doFirst {
-        systemProperty(
-            "backwardsCompatibilityClasspath",
-            minimalBackwardsCompatibleVersionTestClasspath.files.joinToString(";") { it.absolutePath }
-        )
+            systemProperty(
+                "backwardsCompatibilityClasspath",
+                minimalBackwardsCompatibleVersionTestClasspath.files.joinToString(";") { it.absolutePath }
+            )
+        }
     }
 }
