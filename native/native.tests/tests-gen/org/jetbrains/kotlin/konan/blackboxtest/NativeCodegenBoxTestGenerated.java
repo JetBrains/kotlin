@@ -73,6 +73,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 runTest("compiler/testData/codegen/box/annotations/resolveWithLowPriorityAnnotation.kt");
             }
 
+            @Test
+            @TestMetadata("unsafeNumberAnnotationTargets.kt")
+            public void testUnsafeNumberAnnotationTargets() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/unsafeNumberAnnotationTargets.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
             @TestDataPath("$PROJECT_ROOT")

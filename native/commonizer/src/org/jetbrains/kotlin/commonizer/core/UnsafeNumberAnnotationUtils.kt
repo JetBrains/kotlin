@@ -16,21 +16,30 @@ internal fun <T : CirHasAnnotations> createUnsafeNumberAnnotationIfNecessary(
     targets: List<CommonizerTarget>,
     settings: CommonizerSettings,
     values: List<T>,
-    getIdOfPotentiallyUnsafeType: T.() -> CirEntityId?,
+    getTypeIdFromDeclarationForCheck: (declaration: T) -> CirEntityId?,
 ): CirAnnotation? {
     val isOptimisticCommonizationEnabled = settings.getSetting(OptimisticNumberCommonizationEnabledKey)
 
     if (!isOptimisticCommonizationEnabled)
         return null
 
-    val typeIds = values.map { annotated -> annotated.getIdOfPotentiallyUnsafeType() }
+    val typeIds = values.map { annotated -> getTypeIdFromDeclarationForCheck(annotated) }
 
     // All typealias have to be potentially substitutable (aka have to be some kind of number type)
     if (!typeIds.all { it != null && OptimisticNumbersTypeCommonizer.isOptimisticallySubstitutable(it) }) {
         return null
     }
 
+    return createUnsafeNumberAnnotation(targets, values, getTypeIdFromDeclarationForCheck)
+}
+
+private fun <T : CirHasAnnotations> createUnsafeNumberAnnotation(
+    targets: List<CommonizerTarget>,
+    values: List<T>,
+    getTypeIdFromDeclaration: (declaration: T) -> CirEntityId?,
+): CirAnnotation? {
     val actualPlatformTypes = mutableMapOf<String, CirEntityId>()
+
     values.forEachIndexed forEach@{ index, annotated ->
         val existingAnnotation = annotated.annotations.firstIsInstanceOrNull<UnsafeNumberAnnotation>()
         if (existingAnnotation != null) {
@@ -39,7 +48,7 @@ internal fun <T : CirHasAnnotations> createUnsafeNumberAnnotationIfNecessary(
         }
 
         targets[index].allLeaves().forEach { target ->
-            actualPlatformTypes[target.name] = annotated.getIdOfPotentiallyUnsafeType()
+            actualPlatformTypes[target.name] = getTypeIdFromDeclaration(annotated)
                 ?: throw IllegalStateException("Expect class or type alias type")
         }
     }

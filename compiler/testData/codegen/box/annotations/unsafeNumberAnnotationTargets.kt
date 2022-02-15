@@ -1,3 +1,5 @@
+// TARGET_BACKEND: NATIVE
+
 import kotlinx.cinterop.UnsafeNumber
 
 @UnsafeNumber([])

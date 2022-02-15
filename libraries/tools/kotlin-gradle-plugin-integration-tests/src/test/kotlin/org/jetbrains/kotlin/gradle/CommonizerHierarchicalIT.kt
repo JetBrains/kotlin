@@ -143,16 +143,6 @@ class CommonizerHierarchicalIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun `test acceptable @UnsafeNumber annotation targets are correct`() {
-        with(Project("unsafeNumberUsage")) {
-            build("nativeMainKlibrary") {
-                assertNotContains("This annotation is not applicable to target")
-                assertSuccessful()
-            }
-        }
-    }
-
     private object Os {
         private val os = OperatingSystem.current()
         val canCompileApple get() = os.isMacOsX

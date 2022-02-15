@@ -50,14 +50,10 @@ class FunctionOrPropertyBaseCommonizer(
         }
 
         val additionalUnsafeNumberAnnotation =
-            createUnsafeNumberAnnotationIfNecessary(classifiers.classifierIndices.targets, settings, values) {
-                returnType.let {
-                    when (it) {
-                        is CirFlexibleType -> it.lowerBound.safeAs<CirClassOrTypeAliasType>()?.classifierId
-                        else -> it.safeAs<CirClassOrTypeAliasType>()?.classifierId
-                    }
-                }
-            }
+            createUnsafeNumberAnnotationIfNecessary(
+                classifiers.classifierIndices.targets, settings, values,
+                getTypeIdFromDeclarationForCheck = ::getFunctionOrPropertyReturnTypeId,
+            )
 
         return FunctionOrProperty(
             name = values.first().name,
@@ -69,6 +65,15 @@ class FunctionOrPropertyBaseCommonizer(
             typeParameters = TypeParameterListCommonizer(typeCommonizer).commonize(values.map { it.typeParameters }) ?: return null,
             additionalAnnotations = listOfNotNull(additionalUnsafeNumberAnnotation)
         )
+    }
+}
+
+private fun getFunctionOrPropertyReturnTypeId(functionOrProperty: CirFunctionOrProperty): CirEntityId? {
+    return functionOrProperty.returnType.let { returnType ->
+        when (returnType) {
+            is CirFlexibleType -> returnType.lowerBound.safeAs<CirClassOrTypeAliasType>()?.classifierId
+            else -> returnType.safeAs<CirClassOrTypeAliasType>()?.classifierId
+        }
     }
 }
 

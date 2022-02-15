@@ -6,12 +6,8 @@
 package org.jetbrains.kotlin.commonizer.core
 
 import org.jetbrains.kotlin.commonizer.CommonizerSettings
-import org.jetbrains.kotlin.commonizer.CommonizerTarget
-import org.jetbrains.kotlin.commonizer.OptimisticNumberCommonizationEnabledKey
-import org.jetbrains.kotlin.commonizer.allLeaves
 import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirKnownClassifiers
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class TypeAliasCommonizer(
     typeCommonizer: TypeCommonizer,
@@ -41,9 +37,10 @@ class TypeAliasCommonizer(
             underlyingType = underlyingType,
             expandedType = underlyingType.expandedType(),
             annotations = listOfNotNull(
-                createUnsafeNumberAnnotationIfNecessary(classifiers.classifierIndices.targets, settings, values) {
-                    expandedType.classifierId
-                }
+                createUnsafeNumberAnnotationIfNecessary(
+                    classifiers.classifierIndices.targets, settings, values,
+                    getTypeIdFromDeclarationForCheck = { typeAlias -> typeAlias.expandedType.classifierId }
+                )
             )
         )
     }
