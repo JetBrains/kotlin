@@ -20007,6 +20007,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("expectObjectWithAbstractMember.kt")
+            public void testExpectObjectWithAbstractMember() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/multiplatform/expectObjectWithAbstractMember.kt");
+            }
+
+            @Test
             @TestMetadata("headerFunInNonHeaderClass.kt")
             public void testHeaderFunInNonHeaderClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/multiplatform/headerFunInNonHeaderClass.kt");
@@ -20315,6 +20321,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("dontOverrideMethodsFromInterfaceInCommonCode.kt")
                 public void testDontOverrideMethodsFromInterfaceInCommonCode() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/dontOverrideMethodsFromInterfaceInCommonCode.kt");
+                }
+
+                @Test
+                @TestMetadata("equalsOverrideInActualInterface.kt")
+                public void testEqualsOverrideInActualInterface() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/equalsOverrideInActualInterface.kt");
                 }
 
                 @Test

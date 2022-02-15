@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Modality.*
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.collectEnumEntries
@@ -31,7 +32,10 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.enumMapOf
+import org.jetbrains.kotlin.utils.addToStdlib.enumSetOf
 import org.jetbrains.kotlin.utils.keysToMap
+import java.util.*
 
 object FirExpectActualResolver {
     @OptIn(ExperimentalStdlibApi::class)
@@ -330,11 +334,13 @@ object FirExpectActualResolver {
             !areCompatibleModalities(
                 expectDeclaration.modality,
                 actualDeclaration.modality,
-                (expectDeclaration.dispatchReceiverType?.toSymbol(expectSession) as? FirRegularClassSymbol)?.modality,
+                expectContainingClass?.modality,
                 actualContainingClass?.modality
             )
         ) {
-            return ExpectActualCompatibility.Incompatible.Modality
+            if (expectDeclaration.dispatchReceiverType?.isAny != true) {
+                return ExpectActualCompatibility.Incompatible.Modality
+            }
         }
 
         if (!areDeclarationsWithCompatibleVisibilities(expectDeclaration.resolvedStatus, actualDeclaration.resolvedStatus)) {
@@ -460,19 +466,39 @@ object FirExpectActualResolver {
         expectContainingClassModality: Modality? = null,
         actualContainingClassModality: Modality? = null
     ): Boolean {
-        val result = (expectModality == actualModality) ||
-                (expectModality == Modality.FINAL && (actualModality == Modality.OPEN || actualModality == Modality.ABSTRACT))
-        if (result) return true
-        if (expectContainingClassModality == null || actualContainingClassModality == null) return result
-        return expectModality == expectContainingClassModality && actualModality == actualContainingClassModality
+        val expectEffectiveModality = effectiveModality(expectModality, expectContainingClassModality)
+        val actualEffectiveModality = effectiveModality(actualModality, actualContainingClassModality)
+
+        val result = actualEffectiveModality in compatibleModalityMap.getValue(expectEffectiveModality)
+        return result
     }
+
+    /*
+     * If containing class is final then all declarations in it effectively final
+     */
+    private fun effectiveModality(declarationModality: Modality?, containingClassModality: Modality?): Modality? {
+        return when (containingClassModality) {
+            FINAL -> FINAL
+            else -> declarationModality
+        }
+    }
+
+    /*
+     * Key is expect modality, value is a set of compatible actual modalities
+     */
+    private val compatibleModalityMap: EnumMap<Modality, EnumSet<Modality>> = enumMapOf(
+        ABSTRACT to enumSetOf(ABSTRACT, OPEN),
+        OPEN to enumSetOf(OPEN),
+        FINAL to enumSetOf(ABSTRACT, OPEN, FINAL),
+        SEALED to enumSetOf(SEALED),
+    )
 
     private fun areDeclarationsWithCompatibleVisibilities(
         expectStatus: FirDeclarationStatus,
         actualStatus: FirDeclarationStatus
     ): Boolean {
         val compare = Visibilities.compare(expectStatus.visibility, actualStatus.visibility)
-        return if (expectStatus.modality != Modality.FINAL) {
+        return if (expectStatus.modality != FINAL) {
             // For overridable declarations visibility should match precisely, see KT-19664
             compare == 0
         } else {
