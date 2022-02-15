@@ -28996,15 +28996,9 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
-                @TestMetadata("whileWithAssertInConditionAndBreakAfter.kt")
-                public void testWhileWithAssertInConditionAndBreakAfter() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/smartCasts/loops/whileWithAssertInConditionAndBreakAfter.kt");
-                }
-
-                @Test
-                @TestMetadata("whileWithAssertInConditionAndBreakBefore.kt")
-                public void testWhileWithAssertInConditionAndBreakBefore() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/smartCasts/loops/whileWithAssertInConditionAndBreakBefore.kt");
+                @TestMetadata("whileWithAssertInConditionAndBreak.kt")
+                public void testWhileWithAssertInConditionAndBreak() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/loops/whileWithAssertInConditionAndBreak.kt");
                 }
             }
 
