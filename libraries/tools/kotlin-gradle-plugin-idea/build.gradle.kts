@@ -3,7 +3,7 @@ plugins {
 }
 
 object BackwardsCompatibilityTestConfiguration {
-    const val minimalBackwardsCompatibleVersion = "1.7.0-dev-1868"
+    const val minimalBackwardsCompatibleVersion = "1.7.0-dev-1892"
 }
 
 kotlin.sourceSets.configureEach {
