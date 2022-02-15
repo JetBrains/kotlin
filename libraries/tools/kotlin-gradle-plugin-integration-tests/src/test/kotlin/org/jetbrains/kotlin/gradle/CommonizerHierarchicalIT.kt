@@ -143,6 +143,16 @@ class CommonizerHierarchicalIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `test KT-51332 optimistic commonization`() {
+        with(Project("optimisticCommonization")) {
+            build(":compileCommonMainKotlinMetadata") {
+                assertNotContains("Unresolved reference")
+                assertSuccessful()
+            }
+        }
+    }
+
     private object Os {
         private val os = OperatingSystem.current()
         val canCompileApple get() = os.isMacOsX
