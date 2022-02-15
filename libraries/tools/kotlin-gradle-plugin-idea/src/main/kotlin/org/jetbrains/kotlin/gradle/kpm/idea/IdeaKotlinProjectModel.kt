@@ -9,6 +9,7 @@ import java.io.File
 import java.io.Serializable
 
 interface IdeaKotlinProjectModel : Serializable {
+    val gradlePluginVersion: String
     val coreLibrariesVersion: String
     val explicitApiModeCliOption: String?
     val kotlinNativeHome: File
@@ -17,6 +18,7 @@ interface IdeaKotlinProjectModel : Serializable {
 
 @InternalKotlinGradlePluginApi
 data class IdeaKotlinProjectModelImpl(
+    override val gradlePluginVersion: String,
     override val coreLibrariesVersion: String,
     override val explicitApiModeCliOption: String?,
     override val kotlinNativeHome: File,

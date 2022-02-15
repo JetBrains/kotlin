@@ -4,6 +4,7 @@ import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilder
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import java.io.File
 
@@ -16,6 +17,7 @@ class IdeaKotlinProjectModelBuilder : ToolingModelBuilder {
 
 internal fun KotlinPm20ProjectExtension.toIdeaKotlinProjectModel(): IdeaKotlinProjectModel {
     return IdeaKotlinProjectModelImpl(
+        gradlePluginVersion = project.getKotlinPluginVersion(),
         coreLibrariesVersion = coreLibrariesVersion,
         explicitApiModeCliOption = explicitApi?.cliOption,
         kotlinNativeHome = File(project.konanHome).absoluteFile,
