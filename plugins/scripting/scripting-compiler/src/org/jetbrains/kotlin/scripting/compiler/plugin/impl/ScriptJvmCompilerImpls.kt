@@ -244,12 +244,12 @@ private fun generate(
         ClassBuilderFactories.BINARIES,
         analysisResult.moduleDescriptor,
         analysisResult.bindingContext,
-        sourceFiles,
         kotlinCompilerConfiguration
     ).diagnosticReporter(
         diagnosticsReporter
     ).build().also {
         KotlinCodegenFacade.compileCorrectFiles(
+            sourceFiles,
             it,
             if (kotlinCompilerConfiguration.getBoolean(JVMConfigurationKeys.IR))
                 JvmIrCodegenFactory(

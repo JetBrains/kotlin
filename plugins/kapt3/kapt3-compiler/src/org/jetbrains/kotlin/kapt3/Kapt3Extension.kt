@@ -273,7 +273,6 @@ abstract class AbstractKapt3Extension(
             builderFactory,
             module,
             bindingContext,
-            files,
             compilerConfiguration
         ).targetId(targetId)
             .isIrBackend(isIrBackend)
@@ -281,6 +280,7 @@ abstract class AbstractKapt3Extension(
 
         val (classFilesCompilationTime) = measureTimeMillis {
             KotlinCodegenFacade.compileCorrectFiles(
+                files,
                 generationState,
                 if (isIrBackend)
                     JvmIrCodegenFactory(compilerConfiguration, compilerConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG))

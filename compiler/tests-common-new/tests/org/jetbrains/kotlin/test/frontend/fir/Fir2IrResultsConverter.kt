@@ -62,8 +62,7 @@ class Fir2IrResultsConverter(
 
         val generationState = GenerationState.Builder(
             project, ClassBuilderFactories.TEST,
-            container.get(), dummyBindingContext, ktFiles,
-            configuration
+            container.get(), dummyBindingContext, configuration
         ).isIrBackend(
             true
         ).jvmBackendClassResolver(
@@ -77,6 +76,7 @@ class Fir2IrResultsConverter(
             codegenFactory,
             JvmIrCodegenFactory.JvmIrBackendInput(
                 irModuleFragment,
+                ktFiles,
                 symbolTable,
                 phaseConfig,
                 irProviders,

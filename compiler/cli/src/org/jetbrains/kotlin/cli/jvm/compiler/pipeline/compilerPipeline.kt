@@ -220,8 +220,7 @@ fun generateCodeFromIr(
 
     val generationState = GenerationState.Builder(
         (environment.projectEnvironment as VfsBasedProjectEnvironment).project, ClassBuilderFactories.BINARIES,
-        input.irModuleFragment.descriptor, dummyBindingContext, emptyList()/* !! */,
-        input.configuration
+        input.irModuleFragment.descriptor, dummyBindingContext, input.configuration
     ).targetId(
         input.targetId
     ).moduleName(
@@ -242,7 +241,7 @@ fun generateCodeFromIr(
 
     generationState.beforeCompile()
     codegenFactory.generateModuleInFrontendIRMode(
-        generationState, input.irModuleFragment, input.symbolTable, input.extensions,
+        generationState, emptyList() /* !! */, input.irModuleFragment, input.symbolTable, input.extensions,
         FirJvmBackendExtension(input.firSession, input.components)
     ) {
         performanceManager?.notifyIRLoweringFinished()

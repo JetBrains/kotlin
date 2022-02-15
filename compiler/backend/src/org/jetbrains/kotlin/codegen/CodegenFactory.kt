@@ -56,7 +56,7 @@ interface CodegenFactory {
         val skipBodies: Boolean,
     ) {
         companion object {
-            fun fromGenerationState(state: GenerationState): IrConversionInput =
+            fun fromGenerationStateAndFiles(state: GenerationState, files: Collection<KtFile>): IrConversionInput =
                 with(state) {
                     IrConversionInput(
                         project, files, configuration, module, originalFrontendBindingContext, languageVersionSettings, ignoreErrors,
@@ -84,22 +84,23 @@ interface CodegenFactory {
 }
 
 object DefaultCodegenFactory : CodegenFactory {
-    private object DummyOldBackendInput : CodegenFactory.BackendInput
+    private class OldBackendInput(val ktFiles: Collection<KtFile>) : CodegenFactory.BackendInput
 
     private class DummyOldCodegenInput(override val state: GenerationState) : CodegenFactory.CodegenInput
 
-    override fun convertToIr(input: CodegenFactory.IrConversionInput): CodegenFactory.BackendInput = DummyOldBackendInput
+    override fun convertToIr(input: CodegenFactory.IrConversionInput): CodegenFactory.BackendInput = OldBackendInput(input.files)
 
     override fun getModuleChunkBackendInput(
         wholeBackendInput: CodegenFactory.BackendInput,
         sourceFiles: Collection<KtFile>,
-    ): CodegenFactory.BackendInput = DummyOldBackendInput
+    ): CodegenFactory.BackendInput = OldBackendInput(sourceFiles)
 
     override fun invokeLowerings(state: GenerationState, input: CodegenFactory.BackendInput): CodegenFactory.CodegenInput {
+        input as OldBackendInput
         val filesInPackages = MultiMap<FqName, KtFile>()
         val filesInMultifileClasses = MultiMap<FqName, KtFile>()
 
-        for (file in state.files) {
+        for (file in input.ktFiles) {
             val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file)
 
             if (fileClassInfo.withJvmMultifileClass) {

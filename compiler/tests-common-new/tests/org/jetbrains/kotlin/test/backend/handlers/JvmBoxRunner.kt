@@ -55,7 +55,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
     }
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
-        val ktFiles = info.classFileFactory.inputFiles.ifEmpty { return }
+        val ktFiles = info.ktFiles.ifEmpty { return }
         val reportProblems = !testServices.codegenSuppressionChecker.failuresInModuleAreIgnored(module)
         val classLoader = createAndVerifyClassLoader(module, info.classFileFactory, reportProblems)
         try {

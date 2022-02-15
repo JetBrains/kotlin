@@ -59,6 +59,7 @@ open class JvmIrCodegenFactory(
 ) : CodegenFactory {
     data class JvmIrBackendInput(
         val irModuleFragment: IrModuleFragment,
+        val ktFiles: List<KtFile>,
         val symbolTable: SymbolTable,
         val phaseConfig: PhaseConfig?,
         val irProviders: List<IrProvider>,
@@ -214,6 +215,7 @@ open class JvmIrCodegenFactory(
         }
         return JvmIrBackendInput(
             irModuleFragment,
+            input.files.toList(),
             symbolTable,
             phaseConfig,
             irProviders,
@@ -248,7 +250,7 @@ open class JvmIrCodegenFactory(
     }
 
     override fun invokeLowerings(state: GenerationState, input: CodegenFactory.BackendInput): CodegenFactory.CodegenInput {
-        val (irModuleFragment, symbolTable, customPhaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart) =
+        val (irModuleFragment, _, symbolTable, customPhaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart) =
             input as JvmIrBackendInput
         val irSerializer = if (
             state.configuration.get(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE) != JvmSerializeIrMode.NONE
@@ -287,6 +289,7 @@ open class JvmIrCodegenFactory(
 
     fun generateModuleInFrontendIRMode(
         state: GenerationState,
+        ktFiles: List<KtFile>,
         irModuleFragment: IrModuleFragment,
         symbolTable: SymbolTable,
         extensions: JvmGeneratorExtensionsImpl,
@@ -297,7 +300,7 @@ open class JvmIrCodegenFactory(
         generateModule(
             state,
             JvmIrBackendInput(
-                irModuleFragment, symbolTable, phaseConfig, irProviders, extensions, backendExtension,
+                irModuleFragment, ktFiles, symbolTable, phaseConfig, irProviders, extensions, backendExtension,
                 notifyCodegenStart
             )
         )

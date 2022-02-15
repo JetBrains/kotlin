@@ -94,9 +94,9 @@ public class CodegenBinding {
         return properties == null ? null : CollectionsKt.filterIsInstance(properties, LocalVariableDescriptor.class);
     }
 
-    public static void initTrace(@NotNull GenerationState state) {
+    public static void initTrace(@NotNull GenerationState state, Collection<KtFile> files) {
         CodegenAnnotatingVisitor visitor = new CodegenAnnotatingVisitor(state);
-        for (KtFile file : allFilesInPackages(state.getBindingContext(), state.getFiles())) {
+        for (KtFile file : allFilesInPackages(state.getBindingContext(), files)) {
             file.accept(visitor);
             if (file instanceof KtCodeFragment) {
                 PsiElement context = file.getContext();
