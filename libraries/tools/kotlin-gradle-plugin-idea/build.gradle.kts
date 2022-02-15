@@ -19,8 +19,12 @@ dependencies {
 publish()
 
 tasks.test {
+    repositories {
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
+    }
+
     /* Setup for backwards compatibility test */
-    val minimalBackwardsCompatibleVersion = "1.7.0-dev-1825"
+    val minimalBackwardsCompatibleVersion = "1.7.0-dev-1868"
     val minimalBackwardsCompatibleVersionTestClasspath by configurations.creating
     dependencies {
         minimalBackwardsCompatibleVersionTestClasspath("org.jetbrains.kotlin:kotlin-gradle-plugin-idea:$minimalBackwardsCompatibleVersion")
