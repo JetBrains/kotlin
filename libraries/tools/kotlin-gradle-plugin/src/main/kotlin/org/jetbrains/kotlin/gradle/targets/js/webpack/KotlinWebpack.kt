@@ -18,6 +18,7 @@ import org.gradle.deployment.internal.DeploymentHandle
 import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.archivesName
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
+import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.injected
 import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
@@ -218,6 +220,10 @@ constructor(
     private val webpackConfigAppliers: MutableList<(KotlinWebpackConfig) -> Unit> =
         mutableListOf()
 
+    private val platformType by project.provider {
+        compilation.platformType
+    }
+
     private fun createRunner(): KotlinWebpackRunner {
         val config = KotlinWebpackConfig(
             mode = mode,
@@ -235,6 +241,13 @@ constructor(
             resolveFromModulesFirst = resolveFromModulesFirst,
             webpackMajorVersion = webpackMajorVersion
         )
+
+        if (platformType == KotlinPlatformType.wasm) {
+            config.experiments += listOf(
+                "asyncWebAssembly",
+                "topLevelAwait"
+            )
+        }
 
         webpackConfigAppliers
             .forEach { it(config) }
