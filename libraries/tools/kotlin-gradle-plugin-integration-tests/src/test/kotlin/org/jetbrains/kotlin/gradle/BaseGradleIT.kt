@@ -53,7 +53,7 @@ abstract class BaseGradleIT {
      * `var` makes it configurable per test
      * `open` makes it configurable per test suite
      */
-    protected open var isKpmModelMappingEnabled = System
+    internal open var isKpmModelMappingEnabled = System
         .getProperty("kotlin.gradle.kpm.enableModelMapping")
         .toBoolean()
 
