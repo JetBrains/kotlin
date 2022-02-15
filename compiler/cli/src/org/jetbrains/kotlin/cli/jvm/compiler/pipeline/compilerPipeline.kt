@@ -222,8 +222,6 @@ fun generateCodeFromIr(
         (environment.projectEnvironment as VfsBasedProjectEnvironment).project, ClassBuilderFactories.BINARIES,
         input.irModuleFragment.descriptor, dummyBindingContext, emptyList()/* !! */,
         input.configuration
-    ).codegenFactory(
-        codegenFactory
     ).targetId(
         input.targetId
     ).moduleName(

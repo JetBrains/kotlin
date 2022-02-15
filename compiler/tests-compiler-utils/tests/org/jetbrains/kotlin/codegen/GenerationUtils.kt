@@ -125,8 +125,6 @@ object GenerationUtils {
 
         val generationState = GenerationState.Builder(
             project, classBuilderFactory, moduleFragment.descriptor, dummyBindingContext, files, configuration
-        ).codegenFactory(
-            codegenFactory
         ).isIrBackend(
             true
         ).jvmBackendClassResolver(
@@ -191,13 +189,14 @@ object GenerationUtils {
         val generationState = GenerationState.Builder(
             project, classBuilderFactory, analysisResult.moduleDescriptor, analysisResult.bindingContext,
             files, configuration
-        ).codegenFactory(
-            if (isIrBackend)
-                JvmIrCodegenFactory(configuration, configuration.get(CLIConfigurationKeys.PHASE_CONFIG))
-            else DefaultCodegenFactory
         ).isIrBackend(isIrBackend).apply(configureGenerationState).build()
         if (analysisResult.shouldGenerateCode) {
-            KotlinCodegenFacade.compileCorrectFiles(generationState)
+            KotlinCodegenFacade.compileCorrectFiles(
+                generationState,
+                if (isIrBackend)
+                    JvmIrCodegenFactory(configuration, configuration.get(CLIConfigurationKeys.PHASE_CONFIG))
+                else DefaultCodegenFactory
+            )
         }
         return generationState
     }

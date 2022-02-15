@@ -64,8 +64,6 @@ class Fir2IrResultsConverter(
             project, ClassBuilderFactories.TEST,
             container.get(), dummyBindingContext, ktFiles,
             configuration
-        ).codegenFactory(
-            codegenFactory
         ).isIrBackend(
             true
         ).jvmBackendClassResolver(
@@ -76,6 +74,7 @@ class Fir2IrResultsConverter(
 
         return IrBackendInput.JvmIrBackendInput(
             generationState,
+            codegenFactory,
             JvmIrCodegenFactory.JvmIrBackendInput(
                 irModuleFragment,
                 symbolTable,

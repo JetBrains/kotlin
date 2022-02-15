@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.KtFile;
 import java.util.Collection;
 
 public class KotlinCodegenFacade {
-    public static void compileCorrectFiles(@NotNull GenerationState state) {
+    public static void compileCorrectFiles(@NotNull GenerationState state, CodegenFactory codegenFactory) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
         state.beforeCompile();
@@ -33,11 +33,11 @@ public class KotlinCodegenFacade {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
         CodegenFactory.IrConversionInput psi2irInput = CodegenFactory.IrConversionInput.Companion.fromGenerationState(state);
-        CodegenFactory.BackendInput backendInput = state.getCodegenFactory().convertToIr(psi2irInput);
+        CodegenFactory.BackendInput backendInput = codegenFactory.convertToIr(psi2irInput);
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        state.getCodegenFactory().generateModule(state, backendInput);
+        codegenFactory.generateModule(state, backendInput);
 
         CodegenFactory.Companion.doCheckCancelled(state);
         state.getFactory().done();

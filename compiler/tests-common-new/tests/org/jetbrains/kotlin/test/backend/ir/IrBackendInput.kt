@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
+import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.backend.js.KotlinFileSerializedData
@@ -33,6 +34,7 @@ sealed class IrBackendInput : ResultingArtifact.BackendInput<IrBackendInput>() {
 
     data class JvmIrBackendInput(
         val state: GenerationState,
+        val codegenFactory: JvmIrCodegenFactory,
         val backendInput: JvmIrCodegenFactory.JvmIrBackendInput
     ) : IrBackendInput() {
         override val irModuleFragment: IrModuleFragment
