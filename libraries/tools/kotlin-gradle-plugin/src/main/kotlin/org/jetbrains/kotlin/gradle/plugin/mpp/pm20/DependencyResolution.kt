@@ -116,11 +116,10 @@ class GradleModuleDependencyResolver(
 internal fun buildSyntheticPlainModule(
     resolvedComponentResult: ResolvedComponentResult,
     singleVariantName: String,
-    project: Project
 ): ExternalPlainKotlinModule {
     val moduleDependency = resolvedComponentResult.toModuleDependency()
     return ExternalPlainKotlinModule(BasicKotlinModule(moduleDependency.moduleIdentifier).apply {
-        BasicKotlinModuleVariant(this@apply, singleVariantName, DefaultLanguageSettingsBuilder(project)).apply {
+        BasicKotlinModuleVariant(this@apply, singleVariantName, DefaultLanguageSettingsBuilder()).apply {
             fragments.add(this)
             this.declaredModuleDependencies.addAll(
                 resolvedComponentResult.dependencies

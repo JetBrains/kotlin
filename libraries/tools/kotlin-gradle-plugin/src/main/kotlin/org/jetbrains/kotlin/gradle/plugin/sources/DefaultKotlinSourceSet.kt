@@ -64,7 +64,7 @@ class DefaultKotlinSourceSet(
         filter.include("**/*.kts")
     }
 
-    override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder(project)
+    override val languageSettings: LanguageSettingsBuilder = DefaultLanguageSettingsBuilder()
 
     override val resources: SourceDirectorySet = createDefaultSourceDirectorySet(project, "$name resources")
 

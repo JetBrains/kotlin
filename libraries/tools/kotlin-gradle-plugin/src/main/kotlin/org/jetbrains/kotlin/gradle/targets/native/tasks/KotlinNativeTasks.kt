@@ -371,10 +371,6 @@ constructor(
     val enabledLanguageFeatures: Set<String>
         @Input get() = languageSettings.enabledLanguageFeatures
 
-    @Deprecated("Unsupported and will be removed in next major releases", replaceWith = ReplaceWith("optInAnnotationsInUse"))
-    val experimentalAnnotationsInUse: Set<String>
-        @Internal get() = languageSettings.experimentalAnnotationsInUse
-
     val optInAnnotationsInUse: Set<String>
         @Input get() = languageSettings.optInAnnotationsInUse
     // endregion.
