@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.utils.SmartList
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty1
@@ -63,13 +64,24 @@ data class ArgumentParseErrors(
 )
 
 // Parses arguments into the passed [result] object. Errors related to the parsing will be collected into [CommonToolArguments.errors].
-fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, result: A) {
+fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, result: A, overrideArguments: Boolean = false) {
     val errors = result.errors ?: ArgumentParseErrors().also { result.errors = it }
     val preprocessed = preprocessCommandLineArguments(args, errors)
-    parsePreprocessedCommandLineArguments(preprocessed, result, errors)
+    parsePreprocessedCommandLineArguments(preprocessed, result, errors, overrideArguments)
 }
 
-private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(args: List<String>, result: A, errors: ArgumentParseErrors) {
+fun <A : CommonToolArguments> parseCommandLineArgumentsFromEnvironment(arguments: A) {
+    val settingsFromEnvironment = CompilerSystemProperties.LANGUAGE_VERSION_SETTINGS.value?.takeIf { it.isNotEmpty() }
+        ?.split(Regex("""\s""")) ?: return
+    parseCommandLineArguments(settingsFromEnvironment, arguments, overrideArguments = true)
+}
+
+private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
+    args: List<String>,
+    result: A,
+    errors: ArgumentParseErrors,
+    overrideArguments: Boolean
+) {
     data class ArgumentField(val property: KMutableProperty1<A, Any?>, val argument: Argument)
 
     @Suppress("UNCHECKED_CAST")
@@ -183,14 +195,36 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(args
             errors.duplicateArguments[argument.value] = value
         }
 
-        updateField(property, result, value, argument.delimiter)
+        updateField(property, result, value, argument.delimiter, overrideArguments)
     }
 
     result.freeArgs += freeArgs
-    result.internalArguments += internalArguments
+    result.updateInternalArguments(internalArguments, overrideArguments)
 }
 
-private fun <A : CommonToolArguments> updateField(property: KMutableProperty1<A, Any?>, result: A, value: Any, delimiter: String) {
+private fun <A : CommonToolArguments> A.updateInternalArguments(
+    newInternalArguments: ArrayList<InternalArgument>,
+    overrideArguments: Boolean
+) {
+    val filteredExistingArguments = if (overrideArguments) {
+        internalArguments.filter { existingArgument ->
+            existingArgument !is ManualLanguageFeatureSetting ||
+                    newInternalArguments.none {
+                        it is ManualLanguageFeatureSetting && it.languageFeature == existingArgument.languageFeature
+                    }
+        }
+    } else internalArguments
+
+    internalArguments = filteredExistingArguments + newInternalArguments
+}
+
+private fun <A : CommonToolArguments> updateField(
+    property: KMutableProperty1<A, Any?>,
+    result: A,
+    value: Any,
+    delimiter: String,
+    overrideArguments: Boolean
+) {
     when (property.returnType.classifier) {
         Boolean::class, String::class -> property.set(result, value)
         Array<String>::class -> {
@@ -201,7 +235,7 @@ private fun <A : CommonToolArguments> updateField(property: KMutableProperty1<A,
             }
             @Suppress("UNCHECKED_CAST")
             val oldValue = property.get(result) as Array<String>?
-            property.set(result, if (oldValue != null) arrayOf(*oldValue, *newElements) else newElements)
+            property.set(result, if (oldValue != null && !overrideArguments) arrayOf(*oldValue, *newElements) else newElements)
         }
         else -> throw IllegalStateException("Unsupported argument type: ${property.returnType}")
     }

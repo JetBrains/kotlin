@@ -38,6 +38,7 @@ enum class CompilerSystemProperties(val property: String, val alwaysDirectAccess
     COMPILE_INCREMENTAL_WITH_CLASSPATH_SNAPSHOTS("kotlin.incremental.classpath.snapshot.enabled"),
     COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM("kotlin.incremental.useClasspathSnapshot"),
     KOTLIN_COLORS_ENABLED_PROPERTY("kotlin.colors.enabled"),
+    LANGUAGE_VERSION_SETTINGS("kotlin.language.settings"),
 
     OS_NAME("os.name", alwaysDirectAccess = true),
     TMP_DIR("java.io.tmpdir"),

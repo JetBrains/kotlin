@@ -19,6 +19,44 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @RunWith(JUnit3RunnerWithInners.class)
 public class CliTestGenerated extends AbstractCliTest {
+    @TestMetadata("compiler/testData/cli/jvm/readingConfigFromEnvironment")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ReadingConfigFromEnvironment extends AbstractCliTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doJvmTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInReadingConfigFromEnvironment() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/cli/jvm/readingConfigFromEnvironment"), Pattern.compile("^(.+)\\.args$"), null, false);
+        }
+
+        @TestMetadata("appendingArgs.args")
+        public void testAppendingArgs() throws Exception {
+            runTest("compiler/testData/cli/jvm/readingConfigFromEnvironment/appendingArgs.args");
+        }
+
+        @TestMetadata("overridingArgs.args")
+        public void testOverridingArgs() throws Exception {
+            runTest("compiler/testData/cli/jvm/readingConfigFromEnvironment/overridingArgs.args");
+        }
+
+        @TestMetadata("overridingLv.args")
+        public void testOverridingLv() throws Exception {
+            runTest("compiler/testData/cli/jvm/readingConfigFromEnvironment/overridingLv.args");
+        }
+
+        @TestMetadata("overridingXx.args")
+        public void testOverridingXx() throws Exception {
+            runTest("compiler/testData/cli/jvm/readingConfigFromEnvironment/overridingXx.args");
+        }
+
+        @TestMetadata("simple.args")
+        public void testSimple() throws Exception {
+            runTest("compiler/testData/cli/jvm/readingConfigFromEnvironment/simple.args");
+        }
+    }
+
     @TestMetadata("compiler/testData/cli/jvm")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
