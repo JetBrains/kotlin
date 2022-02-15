@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.constructedClassType
-import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.utils.SmartList
 
 class IrConstantPrimitiveImpl(
@@ -44,10 +43,6 @@ class IrConstantObjectImpl constructor(
     override var type: IrType = constructor.owner.constructedClassType,
 ) : IrConstantObject() {
     override val valueArguments = SmartList(initArguments)
-
-    override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
-        return visitor.visitConstantObject(this, data)
-    }
 
     override fun contentEquals(other: IrConstantValue): Boolean =
         other is IrConstantObject &&
