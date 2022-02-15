@@ -282,8 +282,12 @@ fun main(args: Array<String>) {
         }
     })
 
-    val platformSpecificBenchs = if (parameters["target"] == "Mac_OS_X") ",FrameworkBenchmarksAnalyzer,SpaceFramework_iosX64" else
-        if (parameters["target"] == "Linux") ",kotlinx.coroutines" else ""
+    val platformSpecificBenchs = when (parameters["target"]) {
+        "Mac_OS_X" -> ",FrameworkBenchmarksAnalyzer,SpaceFramework_iosX64"
+        "Mac_OS_X_Arm64" -> ",FrameworkBenchmarksAnalyzer"
+        "Linux" -> ",kotlinx.coroutines"
+        else -> ""
+    }
 
     var execData = listOf<String>() to listOf<List<Double?>>()
     var compileData = listOf<String>() to listOf<List<Double?>>()
