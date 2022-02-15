@@ -623,7 +623,9 @@ abstract class KotlinCompile @Inject constructor(
 
     private val jvmSourceRoots by project.provider {
         // serialize in the task state for configuration caching; avoid building anew in task execution, as it may access the project model
-        SourceRoots.ForJvm.create(source, sourceRootsContainer, sourceFilesExtensions.get())
+        SourceRoots.ForJvm.create(source, sourceRootsContainer, sourceFilesExtensions.get(), { files ->
+            project.files(files)
+        })
     }
 
     /** A package prefix that is used for locating Java sources in a directory structure with non-full-depth packages.

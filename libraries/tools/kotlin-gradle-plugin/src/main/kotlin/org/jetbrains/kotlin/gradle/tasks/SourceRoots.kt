@@ -32,15 +32,24 @@ internal sealed class SourceRoots(val kotlinSourceFiles: FileCollection) {
             fun create(
                 taskSource: FileTree,
                 sourceRoots: FilteringSourceRootsContainer,
-                sourceFilesExtensions: List<String>
+                sourceFilesExtensions: List<String>,
+                fileCollectionFactory: (Set<File>) -> FileCollection
             ): ForJvm {
+                val javaSourceFiles = taskSource.filter { it.isJavaFile() }.files
+                val sourceRootsFiles = sourceRoots.sourceRoots.files
+                val javaSourceRoots = sourceRootsFiles.filterJavaRoots(javaSourceFiles)
+
                 return ForJvm(
                     taskSource.filter { it.isKotlinFile(sourceFilesExtensions) },
-                    sourceRoots.sourceRoots.filterJavaRoots(
-                        taskSource.filter { it.isJavaFile() }
-                    )
+                    fileCollectionFactory(javaSourceRoots)
                 )
             }
+
+            private fun Set<File>.filterJavaRoots(
+                sourceDirs: Set<File>
+            ): Set<File> = filter { sourceRoot ->
+                sourceDirs.map { it.parentFile }.any { sourceRoot.isParentOf(it) }
+            }.toSet()
 
             private fun FileCollection.filterJavaRoots(
                 sourceDirs: FileCollection
