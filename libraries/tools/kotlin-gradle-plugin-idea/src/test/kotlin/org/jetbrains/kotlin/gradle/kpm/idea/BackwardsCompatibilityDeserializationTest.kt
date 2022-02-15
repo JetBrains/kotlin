@@ -7,12 +7,13 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import createProxyInstance
+import deserialize
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.configurationcache.extensions.serviceOf
 import org.gradle.kotlin.dsl.create
 import org.gradle.testfixtures.ProjectBuilder
-import org.gradle.tooling.internal.adapter.ProtocolToModelAdapter
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelKey
 import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelSerializer.Companion.serializable
@@ -24,7 +25,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinLinuxX64Variant
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.jvm
 import org.junit.Test
-import java.io.*
+import serialize
+import unwrapProxyInstance
+import java.io.File
+import java.io.Serializable
 import java.net.URLClassLoader
 import kotlin.test.*
 
@@ -61,17 +65,17 @@ class BackwardsCompatibilityDeserializationTest {
         val model = buildModel(project)
         val deserializedModel = deserializeModelWithBackwardsCompatibleClasses(model)
 
-        /* Use reflection magic (aka ProtocolToModelAdapter) to proxy the deserialized model */
+        /* Use proxy instances to assert the deserialized model */
         run {
-            val adaptedDeserializedModel = ProtocolToModelAdapter().adapt(IdeaKotlinProjectModel::class.java, deserializedModel)
+            val deserializedModelProxy = createProxyInstance<IdeaKotlinProjectModel>(deserializedModel)
 
-            val mainModule = adaptedDeserializedModel.modules.firstOrNull { it.moduleIdentifier.moduleClassifier == null }
+            val deserializedMainModuleProxy = deserializedModelProxy.modules.firstOrNull { it.moduleIdentifier.moduleClassifier == null }
                 ?: fail("Missing main module")
 
-            val testModule = adaptedDeserializedModel.modules.firstOrNull { it.moduleIdentifier.moduleClassifier == "test" }
+            val deserializedTestModuleProxy = deserializedModelProxy.modules.firstOrNull { it.moduleIdentifier.moduleClassifier == "test" }
                 ?: fail("Missing test module")
 
-            listOf(mainModule, testModule).forEach { module ->
+            listOf(deserializedMainModuleProxy, deserializedTestModuleProxy).forEach { module ->
                 assertEquals(
                     model.modules.flatMap { it.fragments }.map { it.name }.toSet(),
                     module.fragments.map { it.name }.toSet(),
@@ -100,17 +104,21 @@ class BackwardsCompatibilityDeserializationTest {
 
         val model = buildModel(project)
         val deserializedModel = deserializeModelWithBackwardsCompatibleClasses(model)
-        val adaptedDeserializedModel = ProtocolToModelAdapter().adapt(IdeaKotlinProjectModel::class.java, deserializedModel)
+        val deserializedModelProxy = createProxyInstance<IdeaKotlinProjectModel>(deserializedModel)
 
-        val mainModule = adaptedDeserializedModel.modules.find { it.moduleIdentifier.moduleClassifier == null }
+        val deserializedMainModuleProxy = deserializedModelProxy.modules.find { it.moduleIdentifier.moduleClassifier == null }
             ?: fail("Missing main module")
 
-        val commonFragment = mainModule.fragments.find { it.name == "common" }
+        val deserializedCommonFragmentProxy = deserializedMainModuleProxy.fragments.find { it.name == "common" }
             ?: fail("Missing common fragment")
 
-        assertEquals(1, commonFragment.external.ids.size)
-        assertEquals(RetainedModel(2411), commonFragment.external[retainedModelKey])
-        assertNull(commonFragment.external[unretainedModelKey])
+        run {
+            val deserializedCommonFragment = unwrapProxyInstance(deserializedCommonFragmentProxy)
+            val external = deserializedCommonFragment.serialize().deserialize<IdeaKotlinFragment>().external
+            assertEquals(1, external.ids.size)
+            assertEquals(RetainedModel(2411), external[retainedModelKey])
+            assertNull(external[unretainedModelKey])
+        }
     }
 }
 
@@ -133,21 +141,12 @@ private fun buildModel(project: Project): IdeaKotlinProjectModel {
 }
 
 private fun deserializeModelWithBackwardsCompatibleClasses(model: IdeaKotlinProjectModel): Any {
-    val serializedModel = ByteArrayOutputStream().run {
-        ObjectOutputStream(this).use { stream -> stream.writeObject(model) }
-        toByteArray()
-    }
+    val backwardsCompatibilityClassLoader = getClassLoaderForBackwardsCompatibilityTest()
+    val backwardsCompatibilityModel = model.serialize().deserialize(backwardsCompatibilityClassLoader)
 
-    val backwardsCompatibilityTestClassLoader = getClassLoaderForBackwardsCompatibilityTest()
-    val backwardsCompatibilityObjectInputStream = object : ObjectInputStream(ByteArrayInputStream(serializedModel)) {
-        override fun resolveClass(desc: ObjectStreamClass): Class<*> {
-            return backwardsCompatibilityTestClassLoader.loadClass(desc.name)
-        }
-    }
-    val backwardsCompatibilityModel = backwardsCompatibilityObjectInputStream.use { it.readObject() }
     assertSame(
         backwardsCompatibilityModel.javaClass.classLoader,
-        backwardsCompatibilityTestClassLoader,
+        backwardsCompatibilityClassLoader,
         "Expected deserialized model being loaded by 'backwardsCompatibilityTestClassLoader'"
     )
 
