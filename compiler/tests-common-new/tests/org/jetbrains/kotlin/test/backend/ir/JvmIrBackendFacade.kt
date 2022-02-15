@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.backend.common.BackendException
-import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.test.backend.classic.JavaCompilerFacade
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.ArtifactKinds
@@ -40,6 +39,6 @@ class JvmIrBackendFacade(
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
         javaCompilerFacade.compileJavaFiles(module, configuration, state.factory)
 
-        return BinaryArtifacts.Jvm(state.factory)
+        return BinaryArtifacts.Jvm(state.factory, inputArtifact.backendInput.ktFiles)
     }
 }

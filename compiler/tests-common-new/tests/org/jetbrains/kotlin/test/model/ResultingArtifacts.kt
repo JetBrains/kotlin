@@ -13,10 +13,11 @@ import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.ir.backend.js.LoweredIr
 import org.jetbrains.kotlin.js.facade.TranslationResult
+import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 object BinaryArtifacts {
-    class Jvm(val classFileFactory: ClassFileFactory) : ResultingArtifact.Binary<Jvm>() {
+    class Jvm(val classFileFactory: ClassFileFactory, val ktFiles: Collection<KtFile>) : ResultingArtifact.Binary<Jvm>() {
         override val kind: BinaryKind<Jvm>
             get() = ArtifactKinds.Jvm
     }

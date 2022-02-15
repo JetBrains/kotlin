@@ -37,12 +37,11 @@ class ClassicJvmBackendFacade(
             ClassBuilderFactories.TEST,
             analysisResult.moduleDescriptor,
             analysisResult.bindingContext,
-            psiFiles.toList(),
             configuration
         ).build()
 
-        KotlinCodegenFacade.compileCorrectFiles(generationState, DefaultCodegenFactory)
+        KotlinCodegenFacade.compileCorrectFiles(psiFiles, generationState, DefaultCodegenFactory)
         javaCompilerFacade.compileJavaFiles(module, configuration, generationState.factory)
-        return BinaryArtifacts.Jvm(generationState.factory)
+        return BinaryArtifacts.Jvm(generationState.factory, psiFiles)
     }
 }

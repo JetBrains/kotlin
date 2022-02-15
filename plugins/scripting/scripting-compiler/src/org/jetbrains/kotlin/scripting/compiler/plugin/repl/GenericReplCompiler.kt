@@ -96,12 +96,12 @@ open class GenericReplCompiler(
                 ClassBuilderFactories.BINARIES,
                 compilerState.analyzerEngine.module,
                 compilerState.analyzerEngine.trace.bindingContext,
-                listOf(psiFile),
                 compilerConfiguration
             ).build()
 
             generationState.scriptSpecific.earlierScriptsForReplInterpreter = compilerState.history.map { it.item }
             generationState.beforeCompile()
+            generationState.oldBEInitTrace(listOf(psiFile))
             KotlinCodegenFacade.generatePackage(
                 generationState,
                 psiFile.script!!.containingKtFile.packageFqName,

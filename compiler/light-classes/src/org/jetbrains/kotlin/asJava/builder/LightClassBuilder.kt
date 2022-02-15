@@ -46,21 +46,21 @@ fun buildLightClass(
     try {
         val classBuilderFactory = KotlinLightClassBuilderFactory(createJavaFileStub(packageFqName, files))
         val state = GenerationState.Builder(
-                project,
-                classBuilderFactory,
-                context.module,
-                context.bindingContext,
-                files.toList(),
-                context.languageVersionSettings?.let {
-                    CompilerConfiguration().apply {
-                        languageVersionSettings = it
-                        put(JVMConfigurationKeys.JVM_TARGET, context.jvmTarget)
-                        isReadOnly = true
-                    }
-                } ?: CompilerConfiguration.EMPTY
+            project,
+            classBuilderFactory,
+            context.module,
+            context.bindingContext,
+            context.languageVersionSettings?.let {
+                CompilerConfiguration().apply {
+                    languageVersionSettings = it
+                    put(JVMConfigurationKeys.JVM_TARGET, context.jvmTarget)
+                    isReadOnly = true
+                }
+            } ?: CompilerConfiguration.EMPTY
 
         ).generateDeclaredClassFilter(generateClassFilter).wantsDiagnostics(false).build()
         state.beforeCompile()
+        state.oldBEInitTrace(files)
 
         generate(state, files)
 

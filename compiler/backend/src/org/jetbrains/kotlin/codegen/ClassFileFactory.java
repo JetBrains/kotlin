@@ -368,9 +368,4 @@ public class ClassFileFactory implements OutputFileCollection {
             generators.remove(classInternalName + ".class");
         }
     }
-
-    @TestOnly
-    public List<KtFile> getInputFiles() {
-        return state.getFiles();
-    }
 }

@@ -318,7 +318,6 @@ object KotlinToJVMBytecodeCompiler {
             ClassBuilderFactories.BINARIES,
             result.moduleDescriptor,
             result.bindingContext,
-            sourceFiles,
             configuration
         )
             .withModule(module)
@@ -331,6 +330,7 @@ object KotlinToJVMBytecodeCompiler {
         performanceManager?.notifyGenerationStarted()
 
         state.beforeCompile()
+        state.oldBEInitTrace(sourceFiles)
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
 

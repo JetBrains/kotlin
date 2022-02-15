@@ -51,12 +51,11 @@ class ClassicFrontend2IrConverter(
 
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
 
-        val files = psiFiles.values.toList()
         val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
         val codegenFactory = JvmIrCodegenFactory(configuration, phaseConfig)
         val state = GenerationState.Builder(
             project, ClassBuilderFactories.TEST, analysisResult.moduleDescriptor, analysisResult.bindingContext,
-            files, configuration
+            configuration
         ).isIrBackend(true)
             .ignoreErrors(CodegenTestDirectives.IGNORE_ERRORS in module.directives)
             .diagnosticReporter(DiagnosticReporterFactory.createReporter())
@@ -65,7 +64,7 @@ class ClassicFrontend2IrConverter(
         return IrBackendInput.JvmIrBackendInput(
             state,
             codegenFactory,
-            codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationState(state))
+            codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(state, psiFiles.values))
         )
     }
 

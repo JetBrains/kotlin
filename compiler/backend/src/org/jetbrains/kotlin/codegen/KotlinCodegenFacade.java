@@ -23,16 +23,22 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.psi.KtFile;
 
 import java.util.Collection;
+import java.util.List;
 
 public class KotlinCodegenFacade {
-    public static void compileCorrectFiles(@NotNull GenerationState state, CodegenFactory codegenFactory) {
+    public static void compileCorrectFiles(
+            Collection<KtFile> files,
+            @NotNull GenerationState state,
+            CodegenFactory codegenFactory
+    ) {
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
         state.beforeCompile();
+        state.oldBEInitTrace(files);
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
 
-        CodegenFactory.IrConversionInput psi2irInput = CodegenFactory.IrConversionInput.Companion.fromGenerationState(state);
+        CodegenFactory.IrConversionInput psi2irInput = CodegenFactory.IrConversionInput.Companion.fromGenerationStateAndFiles(state, files);
         CodegenFactory.BackendInput backendInput = codegenFactory.convertToIr(psi2irInput);
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();

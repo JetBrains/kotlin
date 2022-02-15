@@ -124,7 +124,7 @@ object GenerationUtils {
         )
 
         val generationState = GenerationState.Builder(
-            project, classBuilderFactory, moduleFragment.descriptor, dummyBindingContext, files, configuration
+            project, classBuilderFactory, moduleFragment.descriptor, dummyBindingContext, configuration
         ).isIrBackend(
             true
         ).jvmBackendClassResolver(
@@ -132,8 +132,9 @@ object GenerationUtils {
         ).build()
 
         generationState.beforeCompile()
+        generationState.oldBEInitTrace(files)
         codegenFactory.generateModuleInFrontendIRMode(
-            generationState, moduleFragment, symbolTable, extensions, FirJvmBackendExtension(session, components),
+            generationState, files, moduleFragment, symbolTable, extensions, FirJvmBackendExtension(session, components),
         ) {}
 
         generationState.factory.done()
@@ -188,10 +189,11 @@ object GenerationUtils {
                     configuration.getBoolean(JVMConfigurationKeys.USE_KAPT_WITH_JVM_IR)
         val generationState = GenerationState.Builder(
             project, classBuilderFactory, analysisResult.moduleDescriptor, analysisResult.bindingContext,
-            files, configuration
+            configuration
         ).isIrBackend(isIrBackend).apply(configureGenerationState).build()
         if (analysisResult.shouldGenerateCode) {
             KotlinCodegenFacade.compileCorrectFiles(
+                files,
                 generationState,
                 if (isIrBackend)
                     JvmIrCodegenFactory(configuration, configuration.get(CLIConfigurationKeys.PHASE_CONFIG))
