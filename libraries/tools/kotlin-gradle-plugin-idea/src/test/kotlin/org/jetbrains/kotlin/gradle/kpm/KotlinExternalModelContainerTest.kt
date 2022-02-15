@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.kpm
 
+import deserialize
+import serialize
 import java.io.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -58,14 +60,7 @@ class KotlinExternalModelContainerTest {
         container[unretainedModelKeyFoo] = UnretainedModel(5)
         container[unretainedModelKeyBar] = UnretainedModel(6)
 
-        val serializedContainer = ByteArrayOutputStream().use { baos ->
-            ObjectOutputStream(baos).use { oos -> oos.writeObject(container) }
-            baos.toByteArray()
-        }
-
-        val deserializedContainer = ObjectInputStream(ByteArrayInputStream(serializedContainer)).use { ois ->
-            ois.readObject() as KotlinExternalModelContainer
-        }
+        val deserializedContainer = container.serialize().deserialize<KotlinExternalModelContainer>()
 
         assertEquals(RetainedModel(1), deserializedContainer[retainedModelKey])
         assertEquals(RetainedModel(2), deserializedContainer[retainedModelKeyFoo])
@@ -73,5 +68,20 @@ class KotlinExternalModelContainerTest {
         assertNull(deserializedContainer[unretainedModelKey])
         assertNull(deserializedContainer[unretainedModelKeyFoo])
         assertNull(deserializedContainer[unretainedModelKeyBar])
+    }
+
+    @Test
+    fun `test - serializing container twice`() {
+        val container = KotlinExternalModelContainer.mutable()
+        container[retainedModelKey] = RetainedModel(1)
+        container[unretainedModelKey] = UnretainedModel(4)
+
+        val deserializedContainer = container.serialize().deserialize<KotlinExternalModelContainer>()
+        assertEquals(RetainedModel(1), deserializedContainer[retainedModelKey])
+        assertNull(deserializedContainer[unretainedModelKey])
+
+        val twiceDeserializedContainer = deserializedContainer.serialize().deserialize<KotlinExternalModelContainer>()
+        assertEquals(RetainedModel(1), twiceDeserializedContainer[retainedModelKey])
+        assertNull(twiceDeserializedContainer[unretainedModelKey])
     }
 }

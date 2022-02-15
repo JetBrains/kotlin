@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.kpm
 
-import org.jetbrains.kotlin.gradle.kpm.idea.InternalKotlinGradlePluginApi
 import java.io.Serializable
 
 internal class KotlinMutableExternalModelContainerImpl : KotlinMutableExternalModelContainer(), Serializable {
@@ -32,15 +31,11 @@ internal class KotlinMutableExternalModelContainerImpl : KotlinMutableExternalMo
 
     @Synchronized
     private fun writeReplace(): Any {
-        val serializedValues = values.filterKeys { it.serializer != null }
-            .mapValues { (key, value) ->
-                @Suppress("unchecked_cast")
-                val serializer = checkNotNull(key.serializer) as KotlinExternalModelSerializer<Any>
-                serializer.serialize(value)
-            }.mapKeys { (key, _) -> key.id }
-            .toMutableMap()
+        return SerializedKotlinExternalModelContainerCarrier(serialize(values))
+    }
 
-        return SerializedKotlinExternalModelContainer(serializedValues)
+    companion object {
+        private const val serialVersionUID = 0L
     }
 }
 
@@ -48,28 +43,54 @@ private class SerializedKotlinExternalModelContainer(
     private val serializedValues: MutableMap<KotlinExternalModelId<*>, ByteArray>
 ) : KotlinExternalModelContainer(), Serializable {
 
-    private val deserializedValues = mutableMapOf<KotlinExternalModelId<*>, Any>()
+    private val deserializedValues = mutableMapOf<KotlinExternalModelKey<*>, Any>()
 
     override val ids: Set<KotlinExternalModelId<*>>
-        @Synchronized get() = serializedValues.keys + deserializedValues.keys
+        @Synchronized get() = serializedValues.keys + deserializedValues.keys.map { it.id }
 
     @Synchronized
     override fun <T : Any> contains(key: KotlinExternalModelKey<T>): Boolean {
-        return key.id in deserializedValues || key.id in serializedValues
+        return key.id in serializedValues || key in deserializedValues
     }
 
     @Synchronized
     @Suppress("unchecked_cast")
     override fun <T : Any> get(key: KotlinExternalModelKey<T>): T? {
-        deserializedValues[key.id]?.let { return it as T }
+        deserializedValues[key]?.let { return it as T }
         val serializedValue = serializedValues.remove(key.id) ?: return null
         val deserializedValue = key.serializer?.deserialize(serializedValue) ?: return null
-        deserializedValues[key.id] = deserializedValue
+        deserializedValues[key] = deserializedValue
         return deserializedValue
     }
 
-    @InternalKotlinGradlePluginApi
+    @Synchronized
+    private fun writeReplace(): Any {
+        return SerializedKotlinExternalModelContainerCarrier(serializedValues + serialize(deserializedValues))
+    }
+
     companion object {
         private const val serialVersionUID = 0L
     }
+}
+
+private class SerializedKotlinExternalModelContainerCarrier(
+    private val serializedValues: Map<KotlinExternalModelId<*>, ByteArray>
+) : Serializable {
+
+    private fun readResolve(): Any {
+        return SerializedKotlinExternalModelContainer(serializedValues.toMutableMap())
+    }
+
+    companion object {
+        private const val serialVersionUID = 0L
+    }
+}
+
+private fun serialize(values: Map<KotlinExternalModelKey<*>, Any>): Map<KotlinExternalModelId<*>, ByteArray> {
+    return values.filterKeys { it.serializer != null }
+        .mapValues { (key, value) ->
+            @Suppress("unchecked_cast")
+            val serializer = checkNotNull(key.serializer) as KotlinExternalModelSerializer<Any>
+            serializer.serialize(value)
+        }.mapKeys { (key, _) -> key.id }
 }
