@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.kpm
 
 import deserialize
 import serialize
-import java.io.*
+import java.io.Serializable
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -83,5 +83,27 @@ class KotlinExternalModelContainerTest {
         val twiceDeserializedContainer = deserializedContainer.serialize().deserialize<KotlinExternalModelContainer>()
         assertEquals(RetainedModel(1), twiceDeserializedContainer[retainedModelKey])
         assertNull(twiceDeserializedContainer[unretainedModelKey])
+    }
+
+    @Test
+    fun `test - accessing deserialized container without serializer`() {
+        val container = KotlinExternalModelContainer.mutable()
+        container[retainedModelKey] = RetainedModel(1)
+        container[retainedModelKeyFoo] = RetainedModel(2)
+
+        val deserializedContainer = container.serialize().deserialize<KotlinExternalModelContainer>()
+        assertEquals(RetainedModel(1), deserializedContainer[retainedModelKey])
+
+        /* Accessing something already deserialized without deserializer: Returning null, because the keys do not match */
+        assertNull(deserializedContainer[KotlinExternalModelKey(retainedModelKey.id)])
+
+        /* Accessing something not deserialized without deserializer: Cannot deserialize: Null to be lenient */
+        assertNull(deserializedContainer[KotlinExternalModelKey(retainedModelKeyFoo.id)])
+
+        /* Accessing something previously requested but now with deserializer */
+        assertEquals(RetainedModel(2), deserializedContainer[retainedModelKeyFoo])
+
+        /* Now accessing retainedModelFoo without serializer should behave like above */
+        assertNull(deserializedContainer[KotlinExternalModelKey(retainedModelKeyFoo.id)])
     }
 }

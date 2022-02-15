@@ -57,9 +57,10 @@ private class SerializedKotlinExternalModelContainer(
     @Suppress("unchecked_cast")
     override fun <T : Any> get(key: KotlinExternalModelKey<T>): T? {
         deserializedValues[key]?.let { return it as T }
-        val serializedValue = serializedValues.remove(key.id) ?: return null
+        val serializedValue = serializedValues[key.id] ?: return null
         val deserializedValue = key.serializer?.deserialize(serializedValue) ?: return null
         deserializedValues[key] = deserializedValue
+        serializedValues.remove(key.id)
         return deserializedValue
     }
 
