@@ -1113,17 +1113,28 @@ class NewMultiplatformIT : BaseGradleIT() {
             gradleBuildScript("app-jvm").modify { it.replace("com.example:sample-lib:", "com.example:sample-lib-jvm6:") }
             gradleBuildScript("app-js").modify { it.replace("com.example:sample-lib:", "com.example:sample-lib-nodejs:") }
 
-            build("assemble", "run") {
-                assertSuccessful()
-                assertTasksExecuted(":app-common:compileKotlinCommon", ":app-jvm:compileKotlin", ":app-jvm:run", ":app-js:compileKotlin2Js")
-            }
+            val taskNamesToRun = ifModelMappingUsedOrElse(
+                ifUsed = arrayOf(":app-jvm:assemble", ":app-jvm:run", ":app-js:assemble"),
+                orElse = arrayOf("assemble", "run"),
+                reason = "KPM can't build the old-style metadata artifact needed by the pre-1.3 MPP common consumer"
+            )
 
-            // Then run again without even reading the metadata from the repo:
-            projectDir.resolve("settings.gradle").modify { it.replace("enableFeaturePreview('GRADLE_METADATA')", "") }
-
-            build("assemble", "run", "--rerun-tasks") {
+            build(*taskNamesToRun) {
                 assertSuccessful()
-                assertTasksExecuted(":app-common:compileKotlinCommon", ":app-jvm:compileKotlin", ":app-jvm:run", ":app-js:compileKotlin2Js")
+                val taskNamesToCheck = ifModelMappingUsedOrElse(
+                    ifUsed = arrayOf(
+                        ":app-jvm:compileKotlin",
+                        ":app-jvm:run",
+                        ":app-js:compileKotlin2Js"
+                    ),
+                    orElse = arrayOf(
+                        ":app-common:compileKotlinCommon",
+                        ":app-jvm:compileKotlin",
+                        ":app-jvm:run",
+                        ":app-js:compileKotlin2Js"
+                    )
+                )
+                assertTasksExecuted(*taskNamesToCheck)
             }
         }
 
@@ -1136,13 +1147,6 @@ class NewMultiplatformIT : BaseGradleIT() {
             }
 
             build("run") {
-                assertSuccessful()
-                assertTasksExecuted(":compileJava", ":run")
-            }
-
-            // Then run again without even reading the metadata from the repo:
-            projectDir.resolve("settings.gradle").modify { it.replace("enableFeaturePreview('GRADLE_METADATA')", "") }
-            build("run", "--rerun-tasks") {
                 assertSuccessful()
                 assertTasksExecuted(":compileJava", ":run")
             }
