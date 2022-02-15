@@ -50,7 +50,6 @@ class GradleKotlinDependencyGraphResolver(
                 ?: buildSyntheticPlainModule(
                     component,
                     component.variants.singleOrNull()?.displayName ?: "default",
-                    requestingModule.project
                 )
 
         fun nodeFromModule(componentResult: ResolvedComponentResult, kotlinModule: KotlinModule): GradleDependencyGraphNode {
