@@ -47,6 +47,8 @@ import org.jetbrains.kotlin.types.Variance
 object ConeTypeCompatibilityChecker {
 
     private val javaClassClassId = ClassId.fromString("java/lang/Class")
+    private val kotlinClassClassId = ClassId.fromString("kotlin/reflect/KClass")
+
 
     /**
      * The result returned by [ConeTypeCompatibilityChecker]. Note the order of enum entries matters.
@@ -134,6 +136,9 @@ object ConeTypeCompatibilityChecker {
             return Compatibility.COMPATIBLE
         }
 
+        // TODO: Due to KT-49358, we skip any checks on Java and Kotlin refection class.
+        if (upperBounds.any { it.classId == javaClassClassId || it.classId == kotlinClassClassId }) return Compatibility.COMPATIBLE
+
         val leafClassesOrInterfaces = computeLeafClassesOrInterfaces(upperBoundClasses)
         this.areClassesOrInterfacesCompatible(leafClassesOrInterfaces, compatibilityUpperBound)?.let { return it }
 
@@ -148,9 +153,6 @@ object ConeTypeCompatibilityChecker {
         }
 
         if (upperBounds.size < 2) return Compatibility.COMPATIBLE
-
-        // TODO: Due to KT-49358, we skip any checks on Java class.
-        if (upperBounds.any { it.classId == javaClassClassId }) return Compatibility.COMPATIBLE
 
         // Base types are compatible. Now we check type parameters.
 
