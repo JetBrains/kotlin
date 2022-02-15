@@ -12,4 +12,4 @@ KtErrorCallInfo:
           valueParameters = []
       argumentMapping = {}
   ]
-  diagnostic = ERROR<INVISIBLE_REFERENCE: Symbol /Obj.Obj is invisible>
+  diagnostic = ERROR<INVISIBLE_REFERENCE: Symbol private constructor(): R|Obj| is invisible>

@@ -23,10 +23,11 @@ import org.jetbrains.kotlin.fir.types.render
 import org.jetbrains.kotlin.name.CallableId
 
 object FirDiagnosticRenderers {
+    @OptIn(SymbolInternals::class)
     val SYMBOL = Renderer { symbol: FirBasedSymbol<*> ->
         when (symbol) {
-            is FirClassLikeSymbol<*> -> symbol.classId.asString()
-            is FirCallableSymbol<*> -> symbol.callableId.toString()
+            is FirClassLikeSymbol<*>,
+            is FirCallableSymbol<*> -> symbol.fir.render(FirRenderer.RenderMode.DeclarationHeader)
             is FirTypeParameterSymbol -> symbol.name.asString()
             else -> "???"
         }
