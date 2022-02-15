@@ -165,11 +165,11 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
             ClassBuilderFactories.BINARIES,
             compilationState.analyzerEngine.module,
             compilationState.analyzerEngine.trace.bindingContext,
-            sourceFiles,
             compilationState.environment.configuration
         ).build().also { generationState ->
             generationState.scriptSpecific.earlierScriptsForReplInterpreter = state.history.map { it.item }
             generationState.beforeCompile()
+            generationState.oldBEInitTrace(sourceFiles)
         }
         KotlinCodegenFacade.generatePackage(generationState, snippetKtFile.script!!.containingKtFile.packageFqName, sourceFiles)
 
@@ -194,14 +194,13 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
             ClassBuilderFactories.BINARIES,
             compilationState.analyzerEngine.module,
             compilationState.analyzerEngine.trace.bindingContext,
-            sourceFiles,
             compilationState.environment.configuration
         )
             .build()
 
         codegenFactory.generateModule(
             generationState,
-            codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationState(generationState)),
+            codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(generationState, sourceFiles)),
         )
 
         return generationState

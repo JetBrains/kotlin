@@ -70,10 +70,9 @@ class JvmAbiAnalysisHandlerExtension(
             AbiBinaries,
             module,
             bindingContext,
-            files.toList(),
             compilerConfiguration
         ).targetId(targetId).build()
-        KotlinCodegenFacade.compileCorrectFiles(generationState, DefaultCodegenFactory)
+        KotlinCodegenFacade.compileCorrectFiles(files, generationState, DefaultCodegenFactory)
 
         val outputDir = compilerConfiguration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)!!
         val outputs = ArrayList<AbiOutput>()

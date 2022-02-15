@@ -59,7 +59,6 @@ class GenerationState private constructor(
     builderFactory: ClassBuilderFactory,
     val module: ModuleDescriptor,
     val originalFrontendBindingContext: BindingContext,
-    val files: List<KtFile>,
     val configuration: CompilerConfiguration,
     val generateDeclaredClassFilter: GenerateClassFilter,
     val targetId: TargetId?,
@@ -78,7 +77,6 @@ class GenerationState private constructor(
         private val builderFactory: ClassBuilderFactory,
         private val module: ModuleDescriptor,
         private val bindingContext: BindingContext,
-        private val files: List<KtFile>,
         private val configuration: CompilerConfiguration
     ) {
         private var generateDeclaredClassFilter: GenerateClassFilter = GenerateClassFilter.GENERATE_ALL
@@ -129,7 +127,7 @@ class GenerationState private constructor(
 
         fun build() =
             GenerationState(
-                project, builderFactory, module, bindingContext, files, configuration,
+                project, builderFactory, module, bindingContext, configuration,
                 generateDeclaredClassFilter, targetId,
                 moduleName, outDirectory, onIndependentPartCompilationEnd, wantsDiagnostics,
                 jvmBackendClassResolver, isIrBackend, ignoreErrors,
@@ -375,9 +373,11 @@ class GenerationState private constructor(
 
     fun beforeCompile() {
         markUsed()
+    }
 
+    fun oldBEInitTrace(ktFiles: Collection<KtFile>) {
         if (!isIrBackend) {
-            CodegenBinding.initTrace(this)
+            CodegenBinding.initTrace(this, ktFiles)
         }
     }
 
