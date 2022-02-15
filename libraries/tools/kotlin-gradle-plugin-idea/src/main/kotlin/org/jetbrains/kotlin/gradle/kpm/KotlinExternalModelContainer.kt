@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.kpm
 import org.jetbrains.kotlin.gradle.kpm.idea.InternalKotlinGradlePluginApi
 import java.io.Serializable
 
-sealed class KotlinExternalModelContainer() : Serializable {
+sealed class KotlinExternalModelContainer : Serializable {
     abstract val ids: Set<KotlinExternalModelId<*>>
     abstract operator fun <T : Any> contains(key: KotlinExternalModelKey<T>): Boolean
     abstract operator fun <T : Any> get(key: KotlinExternalModelKey<T>): T?
