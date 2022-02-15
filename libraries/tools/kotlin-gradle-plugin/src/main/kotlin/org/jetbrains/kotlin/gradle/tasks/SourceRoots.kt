@@ -50,12 +50,6 @@ internal sealed class SourceRoots(val kotlinSourceFiles: FileCollection) {
             ): Set<File> = filter { sourceRoot ->
                 sourceDirs.map { it.parentFile }.any { sourceRoot.isParentOf(it) }
             }.toSet()
-
-            private fun FileCollection.filterJavaRoots(
-                sourceDirs: FileCollection
-            ): FileCollection = filter { sourceRoot ->
-                sourceDirs.asSequence().map { it.parentFile }.any { sourceRoot.isParentOf(it) }
-            }
         }
 
         override fun log(taskName: String, logger: Logger) {
