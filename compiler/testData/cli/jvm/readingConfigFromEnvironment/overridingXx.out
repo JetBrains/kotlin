@@ -1,0 +1,13 @@
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:-ApproximateIntegerLiteralTypesInReceiverPosition
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
+compiler/testData/cli/jvm/readingConfigFromEnvironment/overridingXx.kt:1:9: warning: parameter 'ttlMillis' is never used
+fun foo(ttlMillis: Long = 5 * 60 * 1000) {}
+        ^
+OK

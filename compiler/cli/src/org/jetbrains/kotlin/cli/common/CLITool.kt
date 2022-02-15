@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cli.common
 import org.fusesource.jansi.AnsiConsole
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArgumentsFromEnvironment
 import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.INFO
@@ -47,6 +48,7 @@ abstract class CLITool<A : CommonToolArguments> {
     ): ExitCode {
         val arguments = createArguments()
         parseCommandLineArguments(args.asList(), arguments)
+        parseCommandLineArgumentsFromEnvironment(arguments)
         val collector = PrintingMessageCollector(errStream, messageRenderer, arguments.verbose)
 
         try {

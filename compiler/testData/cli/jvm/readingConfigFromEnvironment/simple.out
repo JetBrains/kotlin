@@ -1,0 +1,10 @@
+compiler/testData/cli/jvm/readingConfigFromEnvironment/simple.kt:2:15: error: [NONE_APPLICABLE] None of the following functions can be called with the arguments supplied:
+public final operator fun plus(other: Byte): Int defined in kotlin.Int
+public final operator fun plus(other: Double): Double defined in kotlin.Int
+public final operator fun plus(other: Float): Float defined in kotlin.Int
+public final operator fun plus(other: Int): Int defined in kotlin.Int
+public final operator fun plus(other: Long): Long defined in kotlin.Int
+public final operator fun plus(other: Short): Int defined in kotlin.Int
+    val x = 1 + ""
+              ^
+COMPILATION_ERROR
