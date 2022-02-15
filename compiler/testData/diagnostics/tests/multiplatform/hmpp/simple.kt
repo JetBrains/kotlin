@@ -5,7 +5,6 @@
  * Js backend is ignored because they use old test infrastructure which doesn't support HMPP
  */
 
-// !LANGUAGE: +MultiPlatformProjects
 
 // IGNORE_BACKEND_FIR: JVM_IR
 // TARGET_BACKEND: JVM

@@ -146,4 +146,10 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
             LANGUAGE with "+ExplicitBackingFields"
         }
     }
+
+    forTestsMatching("compiler/testData/diagnostics/tests/multiplatform/*") {
+        defaultDirectives {
+            LANGUAGE with "+MultiPlatformProjects"
+        }
+    }
 }

@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +MultiPlatformProjects
 // !DIAGNOSTICS: -NOTHING_TO_INLINE
 // MODULE: m1-common
 // FILE: common.kt

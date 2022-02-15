@@ -117,6 +117,12 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
             }
         }
 
+        forTestsMatching("compiler/testData/diagnostics/tests/multiplatform/*") {
+            defaultDirectives {
+                LANGUAGE with "+MultiPlatformProjects"
+            }
+        }
+
         // ----------------------- constant evaluation tests -----------------------
         forTestsMatching("compiler/testData/diagnostics/tests/constantEvaluator/*") {
             defaultDirectives {

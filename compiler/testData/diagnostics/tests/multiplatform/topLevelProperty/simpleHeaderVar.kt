@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +MultiPlatformProjects
 // MODULE: m1-common
 // FILE: common.kt
 expect var foo: String

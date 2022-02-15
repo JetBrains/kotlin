@@ -1,4 +1,3 @@
-// !LANGUAGE: +MultiPlatformProjects
 
 <!DEPRECATED_MODIFIER, INCOMPATIBLE_MODIFIERS!>header<!> <!INCOMPATIBLE_MODIFIERS!>impl<!> class First
 

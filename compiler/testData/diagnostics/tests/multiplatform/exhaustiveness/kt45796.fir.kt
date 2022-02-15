@@ -1,4 +1,3 @@
-// !LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-45796
 
 // MODULE: m1-common
