@@ -1,6 +1,6 @@
 package org.jetbrains.dokka.validity
 
-interface PreGenerationChecker : () -> PreGenerationCheckerOutput {
+fun interface PreGenerationChecker : () -> PreGenerationCheckerOutput {
 
     override fun invoke(): PreGenerationCheckerOutput
 }

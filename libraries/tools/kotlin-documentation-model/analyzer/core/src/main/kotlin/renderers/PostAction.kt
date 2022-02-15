@@ -1,3 +1,3 @@
 package org.jetbrains.dokka.renderers
 
-interface PostAction : () -> Unit
+fun interface PostAction : () -> Unit
