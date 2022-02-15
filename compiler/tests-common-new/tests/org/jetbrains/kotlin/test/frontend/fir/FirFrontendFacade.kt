@@ -93,6 +93,7 @@ class FirFrontendFacade(
             lookupTracker = null,
             providerAndScopeForIncrementalCompilation = null,
             extensionRegistrars = FirExtensionRegistrar.getInstances(project),
+            needRegisterJavaElementFinder = true,
             dependenciesConfigurator = {
                 dependencies(configuration.jvmModularRoots.map { it.toPath() })
                 dependencies(configuration.jvmClasspathRoots.map { it.toPath() })

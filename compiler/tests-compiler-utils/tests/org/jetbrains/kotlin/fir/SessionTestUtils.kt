@@ -43,6 +43,7 @@ fun createSessionForTests(
     lookupTracker = null,
     providerAndScopeForIncrementalCompilation = null,
     extensionRegistrars = emptyList(),
+    needRegisterJavaElementFinder = true,
     dependenciesConfigurator = {
         friendDependencies(friendsPaths)
     }
@@ -69,6 +70,7 @@ fun createSessionForTests(
         lookupTracker = null,
         providerAndScopeForIncrementalCompilation = null,
         extensionRegistrars = emptyList(),
+        needRegisterJavaElementFinder = true,
         dependenciesConfigurator = {
             friendDependencies(friendsPaths)
         }

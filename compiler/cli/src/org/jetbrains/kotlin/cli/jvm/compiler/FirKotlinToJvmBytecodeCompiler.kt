@@ -201,6 +201,7 @@ object FirKotlinToJvmBytecodeCompiler {
             platform: TargetPlatform,
             analyzerServices: PlatformDependentAnalyzerServices,
             sourceScope: AbstractProjectFileSearchScope,
+            needRegisterJavaElementFinder: Boolean,
             dependenciesConfigurator: DependencyListForCliModule.Builder.() -> Unit = {}
         ): FirSession {
             return createSessionWithDependencies(
@@ -215,6 +216,7 @@ object FirKotlinToJvmBytecodeCompiler {
                 lookupTracker = moduleConfiguration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
                 providerAndScopeForIncrementalCompilation,
                 firExtensionRegistrars,
+                needRegisterJavaElementFinder,
                 dependenciesConfigurator = {
                     dependencies(moduleConfiguration.jvmClasspathRoots.map { it.toPath() })
                     dependencies(moduleConfiguration.jvmModularRoots.map { it.toPath() })
@@ -238,7 +240,8 @@ object FirKotlinToJvmBytecodeCompiler {
                 "${module.getModuleName()}-common",
                 CommonPlatforms.defaultCommonPlatform,
                 CommonPlatformAnalyzerServices,
-                commonSourcesScope
+                commonSourcesScope,
+                needRegisterJavaElementFinder = false
             )
         }
 
@@ -246,7 +249,8 @@ object FirKotlinToJvmBytecodeCompiler {
             module.getModuleName(),
             JvmPlatforms.unspecifiedJvmPlatform,
             JvmPlatformAnalyzerServices,
-            sourceScope
+            sourceScope,
+            needRegisterJavaElementFinder = true
         ) {
             if (commonSession != null) {
                 sourceDependsOnDependencies(listOf(commonSession.moduleData))

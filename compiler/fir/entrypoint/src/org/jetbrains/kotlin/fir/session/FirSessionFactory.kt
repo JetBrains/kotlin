@@ -85,6 +85,7 @@ object FirSessionFactory {
         lookupTracker: LookupTracker?,
         providerAndScopeForIncrementalCompilation: ProviderAndScopeForIncrementalCompilation?,
         extensionRegistrars: List<FirExtensionRegistrar>,
+        needRegisterJavaElementFinder: Boolean,
         dependenciesConfigurator: DependencyListForCliModule.Builder.() -> Unit = {},
         noinline sessionConfigurator: FirSessionConfigurator.() -> Unit = {},
     ): FirSession {
@@ -117,6 +118,7 @@ object FirSessionFactory {
             extensionRegistrars,
             languageVersionSettings = languageVersionSettings,
             lookupTracker = lookupTracker,
+            needRegisterJavaElementFinder,
             init = sessionConfigurator
         )
     }
@@ -130,6 +132,7 @@ object FirSessionFactory {
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         lookupTracker: LookupTracker? = null,
+        needRegisterJavaElementFinder: Boolean,
         init: FirSessionConfigurator.() -> Unit = {}
     ): FirSession {
         return FirCliSession(sessionProvider, FirSession.Kind.Source).apply session@{
@@ -191,8 +194,9 @@ object FirSessionFactory {
                 FirDependenciesSymbolProvider::class,
                 dependenciesSymbolProvider
             )
-
-            projectEnvironment.registerAsJavaElementFinder(this)
+            if (needRegisterJavaElementFinder) {
+                projectEnvironment.registerAsJavaElementFinder(this)
+            }
         }
     }
 
