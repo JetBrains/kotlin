@@ -3,7 +3,7 @@ plugins {
 }
 
 object BackwardsCompatibilityTestConfiguration {
-    const val minimalBackwardsCompatibleVersion = "1.7.0-dev-1892"
+    const val minimalBackwardsCompatibleVersion = "1.7.0-dev-1924"
 }
 
 kotlin.sourceSets.configureEach {
@@ -28,7 +28,6 @@ run {
     val isSnapshotTest = project.providers.gradleProperty("kotlin-gradle-plugin-idea.snapshot").isPresent
 
     repositories {
-        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
         if (isSnapshotTest) mavenLocal()
     }
 
