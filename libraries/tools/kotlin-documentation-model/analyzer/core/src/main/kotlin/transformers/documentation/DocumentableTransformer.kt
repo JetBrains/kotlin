@@ -4,6 +4,6 @@ import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.plugability.DokkaContext
 
-interface DocumentableTransformer {
+fun interface DocumentableTransformer {
     operator fun invoke(original: DModule, context: DokkaContext): DModule
 }

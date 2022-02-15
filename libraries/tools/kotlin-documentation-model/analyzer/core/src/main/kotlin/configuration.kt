@@ -61,7 +61,7 @@ enum class Platform(val key: String) {
     }
 }
 
-interface DokkaConfigurationBuilder<T : Any> {
+fun interface DokkaConfigurationBuilder<T : Any> {
     fun build(): T
 }
 
