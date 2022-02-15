@@ -30312,6 +30312,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 public void testOnTypeParameter() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/suppress/oneWarning/onTypeParameter.kt");
                 }
+
+                @Test
+                @TestMetadata("suppressOnDeclarationItself.kt")
+                public void testSuppressOnDeclarationItself() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/suppress/oneWarning/suppressOnDeclarationItself.kt");
+                }
             }
         }
 

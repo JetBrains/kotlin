@@ -169,17 +169,17 @@ object FirMemberPropertiesChecker : FirClassChecker() {
         // So, our source of truth should be the full modifier list retrieved from the source.
         val modifierList = property.source.getModifierList()
 
-        withSuppressedDiagnostics(property, context) {
+        withSuppressedDiagnostics(property, context) { ctx ->
             checkPropertyInitializer(
                 containingDeclaration,
                 property,
                 modifierList,
                 isInitialized,
                 reporter,
-                context,
+                ctx,
                 reachable
             )
-            checkExpectDeclarationVisibilityAndBody(property, source, reporter, context)
+            checkExpectDeclarationVisibilityAndBody(property, source, reporter, ctx)
 
             val hasAbstractModifier = KtTokens.ABSTRACT_KEYWORD in modifierList
             val isAbstract = property.isAbstract || hasAbstractModifier
@@ -189,7 +189,7 @@ object FirMemberPropertiesChecker : FirClassChecker() {
                 (property.getter == null || property.getter is FirDefaultPropertyAccessor)
             ) {
                 property.source?.let {
-                    reporter.reportOn(it, FirErrors.PRIVATE_PROPERTY_IN_INTERFACE, context)
+                    reporter.reportOn(it, FirErrors.PRIVATE_PROPERTY_IN_INTERFACE, ctx)
                 }
             }
 
@@ -201,16 +201,16 @@ object FirMemberPropertiesChecker : FirClassChecker() {
                             FirErrors.ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS,
                             property.symbol,
                             containingDeclaration.symbol,
-                            context
+                            ctx
                         )
                         return
                     }
                 }
                 property.initializer?.source?.let {
-                    reporter.reportOn(it, FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER, context)
+                    reporter.reportOn(it, FirErrors.ABSTRACT_PROPERTY_WITH_INITIALIZER, ctx)
                 }
                 property.delegate?.source?.let {
-                    reporter.reportOn(it, FirErrors.ABSTRACT_DELEGATED_PROPERTY, context)
+                    reporter.reportOn(it, FirErrors.ABSTRACT_DELEGATED_PROPERTY, ctx)
                 }
             }
 
@@ -219,10 +219,10 @@ object FirMemberPropertiesChecker : FirClassChecker() {
                 containingDeclaration.isInterface &&
                 !hasAbstractModifier &&
                 property.isAbstract &&
-                !isInsideExpectClass(containingDeclaration, context)
+                !isInsideExpectClass(containingDeclaration, ctx)
             ) {
                 property.source?.let {
-                    reporter.reportOn(it, FirErrors.REDUNDANT_OPEN_IN_INTERFACE, context)
+                    reporter.reportOn(it, FirErrors.REDUNDANT_OPEN_IN_INTERFACE, ctx)
                 }
             }
         }

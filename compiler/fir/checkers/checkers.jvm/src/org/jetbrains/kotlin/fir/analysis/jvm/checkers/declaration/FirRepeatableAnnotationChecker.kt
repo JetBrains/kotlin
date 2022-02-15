@@ -88,13 +88,13 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
             val javaRepeatable = annotations.find { it.classId == StandardClassIds.Annotations.Java.Repeatable }
             if (javaRepeatable != null) {
                 withSuppressedDiagnostics(javaRepeatable, context) {
-                    checkJavaRepeatableAnnotationDeclaration(javaRepeatable, declaration, context, reporter)
+                    checkJavaRepeatableAnnotationDeclaration(javaRepeatable, declaration, it, reporter)
                 }
             } else {
                 val kotlinRepeatable = annotations.find { it.classId == StandardClassIds.Annotations.Repeatable }
                 if (kotlinRepeatable != null) {
                     withSuppressedDiagnostics(kotlinRepeatable, context) {
-                        checkKotlinRepeatableAnnotationDeclaration(kotlinRepeatable, declaration, context, reporter)
+                        checkKotlinRepeatableAnnotationDeclaration(kotlinRepeatable, declaration, it, reporter)
                     }
                 }
             }

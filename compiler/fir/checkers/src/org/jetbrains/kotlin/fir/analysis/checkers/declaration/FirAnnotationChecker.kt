@@ -53,12 +53,12 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
             }
 
             withSuppressedDiagnostics(annotation, context) {
-                checkAnnotationTarget(declaration, annotation, context, reporter)
+                checkAnnotationTarget(declaration, annotation, it, reporter)
             }
         }
         if (deprecatedSinceKotlin != null) {
             withSuppressedDiagnostics(deprecatedSinceKotlin, context) {
-                checkDeprecatedCalls(deprecatedSinceKotlin, deprecated, context, reporter)
+                checkDeprecatedCalls(deprecatedSinceKotlin, deprecated, it, reporter)
             }
         }
 
