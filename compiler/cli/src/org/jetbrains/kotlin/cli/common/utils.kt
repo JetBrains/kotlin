@@ -27,7 +27,11 @@ import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.utils.KotlinPaths
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
+import java.util.zip.ZipOutputStream
 import kotlin.system.exitProcess
 
 fun incrementalCompilationIsEnabled(arguments: CommonCompilerArguments): Boolean {
@@ -98,3 +102,4 @@ fun MessageCollector.toLogger(): Logger =
             report(CompilerMessageSeverity.LOGGING, message)
         }
     }
+

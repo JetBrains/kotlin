@@ -106,6 +106,7 @@ public abstract class AbstractCliTest extends TestCaseWithTmpdir {
 
         File environmentTestConfig = new File(fileName.replaceFirst("\\.args$", ".env"));
         if (environmentTestConfig.exists()) {
+            compiler.setReadingSettingsFromEnvironmentAllowed(true);
             CompilerSystemProperties.LANGUAGE_VERSION_SETTINGS.setValue(FilesKt.readText(environmentTestConfig, Charsets.UTF_8));
         }
 
