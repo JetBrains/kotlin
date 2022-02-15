@@ -40,4 +40,4 @@ KtErrorCallInfo:
           ]
       argumentMapping = {}
   ]
-  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions are applicable: [/Sub.Sub, /Sub.Sub]>
+  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions are applicable: [public constructor(p: R|kotlin/Int|): R|Sub|, public constructor(i: R|kotlin/Int|, j: R|kotlin/Int|): R|Sub|]>

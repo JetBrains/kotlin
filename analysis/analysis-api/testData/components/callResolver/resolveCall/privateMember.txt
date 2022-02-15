@@ -14,4 +14,4 @@ KtErrorCallInfo:
           valueParameters = []
       argumentMapping = {}
   ]
-  diagnostic = ERROR<INVISIBLE_REFERENCE: Symbol /A.foo is invisible>
+  diagnostic = ERROR<INVISIBLE_REFERENCE: Symbol private final fun foo(): R|kotlin/Unit| is invisible>

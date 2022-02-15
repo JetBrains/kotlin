@@ -70,4 +70,4 @@ KtErrorCallInfo:
           symbol = c: kotlin.String)
       }
   ]
-  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions are applicable: [/function, /function, /function]>
+  diagnostic = ERROR<NONE_APPLICABLE: None of the following functions are applicable: [public final fun function(a: R|kotlin/Char|): R|kotlin/Unit|, public final fun function(b: R|kotlin/Boolean|): R|kotlin/Unit|, public final fun function(c: R|kotlin/String|): R|kotlin/Unit|]>
