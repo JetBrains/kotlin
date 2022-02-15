@@ -133,7 +133,7 @@ object KotlinToJVMBytecodeCompiler {
         val outputs = ArrayList<GenerationState>(chunk.size)
 
         for (input in codegenInputs) {
-            outputs += runCodegen(input, input.state, result.bindingContext, diagnosticsReporter, environment.configuration)
+            outputs += runCodegen(input, input.state, codegenFactory, result.bindingContext, diagnosticsReporter, environment.configuration)
         }
 
         return writeOutputs(environment.project, projectConfiguration, chunk, outputs, mainClassFqName)
@@ -206,7 +206,7 @@ object KotlinToJVMBytecodeCompiler {
             environment, environment.configuration, result, environment.getSourceFiles(), null, codegenFactory, backendInput,
             diagnosticsReporter
         )
-        return runCodegen(input, input.state, result.bindingContext, diagnosticsReporter, environment.configuration)
+        return runCodegen(input, input.state, codegenFactory, result.bindingContext, diagnosticsReporter, environment.configuration)
     }
 
     private fun convertToIr(environment: KotlinCoreEnvironment, result: AnalysisResult): Pair<CodegenFactory, CodegenFactory.BackendInput> {
@@ -321,7 +321,6 @@ object KotlinToJVMBytecodeCompiler {
             sourceFiles,
             configuration
         )
-            .codegenFactory(codegenFactory)
             .withModule(module)
             .onIndependentPartCompilationEnd(createOutputFilesFlushingCallbackIfPossible(configuration))
             .diagnosticReporter(diagnosticsReporter)
@@ -343,6 +342,7 @@ object KotlinToJVMBytecodeCompiler {
     private fun runCodegen(
         codegenInput: CodegenFactory.CodegenInput,
         state: GenerationState,
+        codegenFactory: CodegenFactory,
         bindingContext: BindingContext,
         diagnosticsReporter: BaseDiagnosticsCollector,
         configuration: CompilerConfiguration,
@@ -352,7 +352,7 @@ object KotlinToJVMBytecodeCompiler {
         val performanceManager = configuration[CLIConfigurationKeys.PERF_MANAGER]
 
         performanceManager?.notifyIRGenerationStarted()
-        state.codegenFactory.invokeCodegen(codegenInput)
+        codegenFactory.invokeCodegen(codegenInput)
 
         CodegenFactory.doCheckCancelled(state)
         state.factory.done()

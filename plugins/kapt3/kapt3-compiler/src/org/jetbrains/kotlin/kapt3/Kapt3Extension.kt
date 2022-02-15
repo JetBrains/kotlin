@@ -277,15 +277,15 @@ abstract class AbstractKapt3Extension(
             compilerConfiguration
         ).targetId(targetId)
             .isIrBackend(isIrBackend)
-            .codegenFactory(
+            .build()
+
+        val (classFilesCompilationTime) = measureTimeMillis {
+            KotlinCodegenFacade.compileCorrectFiles(
+                generationState,
                 if (isIrBackend)
                     JvmIrCodegenFactory(compilerConfiguration, compilerConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG))
                 else DefaultCodegenFactory
             )
-            .build()
-
-        val (classFilesCompilationTime) = measureTimeMillis {
-            KotlinCodegenFacade.compileCorrectFiles(generationState)
         }
 
         val compiledClasses = builderFactory.compiledClasses

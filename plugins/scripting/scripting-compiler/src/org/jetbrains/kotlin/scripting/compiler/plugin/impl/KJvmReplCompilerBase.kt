@@ -197,7 +197,6 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
             sourceFiles,
             compilationState.environment.configuration
         )
-            .codegenFactory(codegenFactory)
             .build()
 
         codegenFactory.generateModule(
