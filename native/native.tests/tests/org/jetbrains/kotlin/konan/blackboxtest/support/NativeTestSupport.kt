@@ -212,7 +212,7 @@ private object NativeTestSupport {
     }
 
     private fun computeTestMode(enforcedProperties: EnforcedProperties): TestMode =
-        ClassLevelProperty.TEST_MODE.readValue(enforcedProperties, TestMode.values(), default = TestMode.WITH_MODULES)
+        ClassLevelProperty.TEST_MODE.readValue(enforcedProperties, TestMode.values(), default = TestMode.TWO_STAGE_MULTI_MODULE)
 
     private fun computeTimeouts(enforcedProperties: EnforcedProperties): Timeouts {
         val executionTimeout = ClassLevelProperty.EXECUTION_TIMEOUT.readValue(

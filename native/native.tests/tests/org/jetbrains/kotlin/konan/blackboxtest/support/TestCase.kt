@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.konan.blackboxtest.support
 
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependencies
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.TestMode
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -73,9 +72,6 @@ internal class TestFile<M : TestModule> private constructor(
 /**
  * Represents a module in terms of Kotlin compiler. Includes one or more [TestFile]s. Can be compiled to executable file, KLIB
  * or any other artifact supported by the Kotlin/Native compiler.
- *
- * Please note that in certain test modes (ex: [TestMode.ONE_STAGE], [TestMode.TWO_STAGE]) modules represented by [TestModule] entities
- * are ignored, and all [TestFile]s are compiled together with just the single compiler invocation.
  *
  * [TestModule.Exclusive] represents a collection of [TestFile]s used exclusively for an individual [TestCase].
  * [TestModule.Shared] represents a "shared" module, i.e. the auxiliary module that can be used in multiple [TestCase]s.
