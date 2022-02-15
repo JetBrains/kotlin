@@ -246,16 +246,17 @@ private fun generate(
         analysisResult.bindingContext,
         sourceFiles,
         kotlinCompilerConfiguration
-    ).codegenFactory(
-        if (kotlinCompilerConfiguration.getBoolean(JVMConfigurationKeys.IR))
-            JvmIrCodegenFactory(
-                kotlinCompilerConfiguration,
-                kotlinCompilerConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG),
-            ) else DefaultCodegenFactory
     ).diagnosticReporter(
         diagnosticsReporter
     ).build().also {
-        KotlinCodegenFacade.compileCorrectFiles(it)
+        KotlinCodegenFacade.compileCorrectFiles(
+            it,
+            if (kotlinCompilerConfiguration.getBoolean(JVMConfigurationKeys.IR))
+                JvmIrCodegenFactory(
+                    kotlinCompilerConfiguration,
+                    kotlinCompilerConfiguration.get(CLIConfigurationKeys.PHASE_CONFIG),
+                ) else DefaultCodegenFactory
+        )
         FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(
             diagnosticsReporter,
             messageCollector,

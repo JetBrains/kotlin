@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
-import org.jetbrains.kotlin.codegen.ClassBuilder
-import org.jetbrains.kotlin.codegen.ClassBuilderFactory
-import org.jetbrains.kotlin.codegen.ClassBuilderMode
-import org.jetbrains.kotlin.codegen.KotlinCodegenFacade
+import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -76,7 +73,7 @@ class JvmAbiAnalysisHandlerExtension(
             files.toList(),
             compilerConfiguration
         ).targetId(targetId).build()
-        KotlinCodegenFacade.compileCorrectFiles(generationState)
+        KotlinCodegenFacade.compileCorrectFiles(generationState, DefaultCodegenFactory)
 
         val outputDir = compilerConfiguration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)!!
         val outputs = ArrayList<AbiOutput>()

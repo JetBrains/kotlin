@@ -39,9 +39,9 @@ class ClassicJvmBackendFacade(
             analysisResult.bindingContext,
             psiFiles.toList(),
             configuration
-        ).codegenFactory(DefaultCodegenFactory).build()
+        ).build()
 
-        KotlinCodegenFacade.compileCorrectFiles(generationState)
+        KotlinCodegenFacade.compileCorrectFiles(generationState, DefaultCodegenFactory)
         javaCompilerFacade.compileJavaFiles(module, configuration, generationState.factory)
         return BinaryArtifacts.Jvm(generationState.factory)
     }

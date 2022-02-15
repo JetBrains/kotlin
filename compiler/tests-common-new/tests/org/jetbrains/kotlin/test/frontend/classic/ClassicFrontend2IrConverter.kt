@@ -57,14 +57,14 @@ class ClassicFrontend2IrConverter(
         val state = GenerationState.Builder(
             project, ClassBuilderFactories.TEST, analysisResult.moduleDescriptor, analysisResult.bindingContext,
             files, configuration
-        ).codegenFactory(codegenFactory)
-            .isIrBackend(true)
+        ).isIrBackend(true)
             .ignoreErrors(CodegenTestDirectives.IGNORE_ERRORS in module.directives)
             .diagnosticReporter(DiagnosticReporterFactory.createReporter())
             .build()
 
         return IrBackendInput.JvmIrBackendInput(
             state,
+            codegenFactory,
             codegenFactory.convertToIr(CodegenFactory.IrConversionInput.fromGenerationState(state))
         )
     }

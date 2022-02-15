@@ -62,7 +62,6 @@ class GenerationState private constructor(
     val files: List<KtFile>,
     val configuration: CompilerConfiguration,
     val generateDeclaredClassFilter: GenerateClassFilter,
-    val codegenFactory: CodegenFactory,
     val targetId: TargetId?,
     moduleName: String?,
     val outDirectory: File?,
@@ -85,10 +84,6 @@ class GenerationState private constructor(
         private var generateDeclaredClassFilter: GenerateClassFilter = GenerateClassFilter.GENERATE_ALL
         fun generateDeclaredClassFilter(v: GenerateClassFilter) =
             apply { generateDeclaredClassFilter = v }
-
-        private var codegenFactory: CodegenFactory = DefaultCodegenFactory
-        fun codegenFactory(v: CodegenFactory) =
-            apply { codegenFactory = v }
 
         private var targetId: TargetId? = null
         fun targetId(v: TargetId?) =
@@ -135,7 +130,7 @@ class GenerationState private constructor(
         fun build() =
             GenerationState(
                 project, builderFactory, module, bindingContext, files, configuration,
-                generateDeclaredClassFilter, codegenFactory, targetId,
+                generateDeclaredClassFilter, targetId,
                 moduleName, outDirectory, onIndependentPartCompilationEnd, wantsDiagnostics,
                 jvmBackendClassResolver, isIrBackend, ignoreErrors,
                 diagnosticReporter ?: DiagnosticReporterFactory.createReporter(),

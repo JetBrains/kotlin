@@ -28,9 +28,8 @@ class JvmIrBackendFacade(
             "JvmIrBackendFacade expects IrBackendInput.JvmIrBackendInput as input"
         }
         val state = inputArtifact.state
-        val codegenFactory = state.codegenFactory as JvmIrCodegenFactory
         try {
-            codegenFactory.generateModule(state, inputArtifact.backendInput)
+            inputArtifact.codegenFactory.generateModule(state, inputArtifact.backendInput)
         } catch (e: BackendException) {
             if (CodegenTestDirectives.IGNORE_ERRORS in module.directives) {
                 return null
