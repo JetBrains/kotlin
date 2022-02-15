@@ -10299,6 +10299,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("expectedSomeTypesOnBranchForWhenExpressionOfErroneousType.kt")
+            public void testExpectedSomeTypesOnBranchForWhenExpressionOfErroneousType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/exceptions/expectedSomeTypesOnBranchForWhenExpressionOfErroneousType.kt");
+            }
+
+            @Test
             @TestMetadata("kt24158.kt")
             public void testKt24158() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/exceptions/kt24158.kt");

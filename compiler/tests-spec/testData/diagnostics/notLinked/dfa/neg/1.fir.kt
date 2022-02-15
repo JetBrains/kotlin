@@ -184,8 +184,8 @@ fun case_13(x: <!UNRESOLVED_REFERENCE!>otherpackage.Case13<!>?) =
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>if ((x == null !is Boolean) !== true) {
         throw Exception()
     } else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Symbol not found for otherpackage.Case13? & kotlin.Boolean & ERROR CLASS: Symbol not found for otherpackage.Case13?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Symbol not found for otherpackage.Case13? & kotlin.Boolean & ERROR CLASS: Symbol not found for otherpackage.Case13?")!>x<!>.equals(x)
+        <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Symbol not found for otherpackage.Case13? & kotlin.Boolean")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("ERROR CLASS: Symbol not found for otherpackage.Case13? & kotlin.Boolean")!>x<!>.equals(x)
     }<!>
 
 // TESTCASE NUMBER: 14
@@ -196,6 +196,7 @@ class Case14 {
     }
 }
 
+@Suppress("UNREACHABLE_CODE")
 fun case_14() {
     val a = Case14()
 
