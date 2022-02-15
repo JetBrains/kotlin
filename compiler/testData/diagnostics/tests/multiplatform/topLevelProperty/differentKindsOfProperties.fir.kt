@@ -1,4 +1,4 @@
-// !LANGUAGE: +MultiPlatformProjects +LateinitTopLevelProperties
+// !LANGUAGE: +LateinitTopLevelProperties
 // MODULE: m1-common
 // FILE: common.kt
 

@@ -1,4 +1,3 @@
-// !LANGUAGE: +MultiPlatformProjects
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // ISSUE: KT-44474
 
