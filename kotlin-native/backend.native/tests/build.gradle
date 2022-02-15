@@ -5262,6 +5262,12 @@ tasks.register("library_ir_provider_mismatch", KonanDriverTest) {
     }
 }
 
+standaloneTest("kt51302") {
+    enabled = project.target.name == project.hostName
+    source = "serialization/KT-51302/main.kt"
+    flags = ["-l", "$projectDir/serialization/KT-51302/kt51302_dependency"]
+}
+
 standaloneTest("fake_override_0") {
     def sources = "$projectDir/link/fake_overrides"
     def dir = buildDir.absolutePath
