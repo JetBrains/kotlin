@@ -12,11 +12,11 @@ interface IdeaKotlinLanguageSettings : Serializable {
     val languageVersion: String?
     val apiVersion: String?
     val isProgressiveMode: Boolean
-    val enabledLanguageFeatures: Collection<String>
-    val optInAnnotationsInUse: Collection<String>
-    val compilerPluginArguments: Collection<String>
-    val compilerPluginClasspath: Collection<File>
-    val freeCompilerArgs: Collection<String>
+    val enabledLanguageFeatures: Set<String>
+    val optInAnnotationsInUse: Set<String>
+    val compilerPluginArguments: List<String>
+    val compilerPluginClasspath: List<File>
+    val freeCompilerArgs: List<String>
 }
 
 @InternalKotlinGradlePluginApi
@@ -24,11 +24,11 @@ data class IdeaKotlinLanguageSettingsImpl(
     override val languageVersion: String?,
     override val apiVersion: String?,
     override val isProgressiveMode: Boolean,
-    override val enabledLanguageFeatures: Collection<String>,
-    override val optInAnnotationsInUse: Collection<String>,
-    override val compilerPluginArguments: Collection<String>,
-    override val compilerPluginClasspath: Collection<File>,
-    override val freeCompilerArgs: Collection<String>
+    override val enabledLanguageFeatures: Set<String>,
+    override val optInAnnotationsInUse: Set<String>,
+    override val compilerPluginArguments: List<String>,
+    override val compilerPluginClasspath: List<File>,
+    override val freeCompilerArgs: List<String>
 ) : IdeaKotlinLanguageSettings {
 
     @InternalKotlinGradlePluginApi

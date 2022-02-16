@@ -11,10 +11,10 @@ import java.io.Serializable
 interface IdeaKotlinFragment : Serializable {
     val name: String
     val languageSettings: IdeaKotlinLanguageSettings?
-    val dependencies: Collection<IdeaKotlinFragmentDependency>
-    val directRefinesDependencies: Collection<IdeaKotlinFragment>
-    val sourceDirectories: Collection<IdeaKotlinSourceDirectory>
-    val resourceDirectories: Collection<IdeaKotlinResourceDirectory>
+    val dependencies: List<IdeaKotlinFragmentDependency>
+    val directRefinesDependencies: List<IdeaKotlinFragment>
+    val sourceDirectories: List<IdeaKotlinSourceDirectory>
+    val resourceDirectories: List<IdeaKotlinResourceDirectory>
     val external: KotlinExternalModelContainer
 }
 
@@ -22,10 +22,10 @@ interface IdeaKotlinFragment : Serializable {
 data class IdeaKotlinFragmentImpl(
     override val name: String,
     override val languageSettings: IdeaKotlinLanguageSettings?,
-    override val dependencies: Collection<IdeaKotlinFragmentDependency>,
-    override val directRefinesDependencies: Collection<IdeaKotlinFragment>,
-    override val sourceDirectories: Collection<IdeaKotlinSourceDirectory>,
-    override val resourceDirectories: Collection<IdeaKotlinResourceDirectory>,
+    override val dependencies: List<IdeaKotlinFragmentDependency>,
+    override val directRefinesDependencies: List<IdeaKotlinFragment>,
+    override val sourceDirectories: List<IdeaKotlinSourceDirectory>,
+    override val resourceDirectories: List<IdeaKotlinResourceDirectory>,
     override val external: KotlinExternalModelContainer
 ) : IdeaKotlinFragment {
 
