@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
+
 
 object Foo {
     const val aString: String = "foo"
