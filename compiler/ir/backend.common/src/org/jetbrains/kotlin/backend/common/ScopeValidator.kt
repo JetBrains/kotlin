@@ -41,7 +41,7 @@ class ScopeValidator(
             }
         }
 
-        fun visitVariableAccess(element: IrElement, variable: IrValueDeclaration) {
+        fun visitValueAccess(element: IrElement, variable: IrValueDeclaration) {
             if (variable !in this.values) {
                 reportError(element, "Value ${variable.render()} not accessible")
             }
@@ -130,7 +130,7 @@ class ScopeValidator(
         }
 
         override fun visitValueAccess(expression: IrValueAccessExpression, data: Visibles) {
-            data.visitVariableAccess(expression, expression.symbol.owner)
+            data.visitValueAccess(expression, expression.symbol.owner)
             super.visitValueAccess(expression, data)
         }
 
