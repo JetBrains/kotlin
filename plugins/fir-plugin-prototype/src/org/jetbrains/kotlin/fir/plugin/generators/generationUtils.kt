@@ -9,10 +9,7 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirPluginKey
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
@@ -39,6 +36,7 @@ fun FirDeclarationGenerationExtension.buildMaterializeFunction(
     key: FirPluginKey
 ): FirSimpleFunction {
     return buildSimpleFunction {
+        resolvePhase = FirResolvePhase.BODY_RESOLVE
         moduleData = session.moduleData
         origin = key.origin
         status = FirResolvedDeclarationStatusImpl(
@@ -66,6 +64,7 @@ fun FirDeclarationGenerationExtension.buildMaterializeFunction(
 fun FirDeclarationGenerationExtension.buildConstructor(classId: ClassId, isInner: Boolean, key: FirPluginKey): FirConstructor {
     val lookupTag = ConeClassLikeLookupTagImpl(classId)
     return buildPrimaryConstructor {
+        resolvePhase = FirResolvePhase.BODY_RESOLVE
         moduleData = session.moduleData
         origin = key.origin
         returnTypeRef = buildResolvedTypeRef {
