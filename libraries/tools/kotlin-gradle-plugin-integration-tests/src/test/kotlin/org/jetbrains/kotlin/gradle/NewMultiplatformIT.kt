@@ -1946,6 +1946,32 @@ class NewMultiplatformIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun testResolveMetadataCompileClasspathKt50925() {
+        Project("lib", directoryPrefix =  "kt-50925-resolve-metadata-compile-classpath").apply {
+            setupWorkingDir()
+            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+            build("publish", options = defaultBuildOptions().copy(enableCompatibilityMetadataVariant = false)) {
+                assertSuccessful()
+            }
+        }
+
+        Project("app", directoryPrefix = "kt-50925-resolve-metadata-compile-classpath").apply {
+            setupWorkingDir()
+            gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+            testResolveAllConfigurations { unresolvedConfigurations ->
+                assertTrue(unresolvedConfigurations.isEmpty(), "Unresolved configurations: $unresolvedConfigurations")
+
+                assertContains(">> :metadataCompileClasspath --> lib-metadata-1.0.jar")
+                assertContains(">> :metadataCompileClasspath --> subproject-metadata.jar")
+                assertContains(">> :metadataCommonMainCompileClasspath --> lib-metadata-1.0.jar")
+                assertContains(">> :metadataCommonMainCompileClasspath --> subproject-metadata.jar")
+            }
+        }
+    }
+
     private fun detectNativeEnabledCompilation(): String = when {
         HostManager.hostIsLinux -> "linuxX64"
         HostManager.hostIsMingw -> "mingwX64"
