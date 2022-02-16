@@ -96,17 +96,6 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     }
 
     @GradleTest
-    @DisplayName("Should use custom JDK to compile sources")
-    fun testCustomJdk(gradleVersion: GradleVersion) {
-        project("customJdk", gradleVersion) {
-            buildAndFail("build") {
-                assertOutputContains("Unresolved reference: stream")
-                assertOutputDoesNotContain("Unresolved reference: AutoCloseable")
-            }
-        }
-    }
-
-    @GradleTest
     @DisplayName("Compile task destination dir should be configured on configuration phase")
     fun testDestinationDirReferencedDuringEvaluation(gradleVersion: GradleVersion) {
         project("destinationDirReferencedDuringEvaluation", gradleVersion) {

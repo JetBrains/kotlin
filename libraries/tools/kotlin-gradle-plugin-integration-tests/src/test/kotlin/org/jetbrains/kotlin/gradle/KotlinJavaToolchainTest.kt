@@ -28,7 +28,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             gradleVersion = gradleVersion
         ) {
             build("assemble") {
-                assertOutputDoesNotContain("'kotlinOptions.jdkHome' is deprecated and will be ignored in Kotlin 1.7!")
                 assertJdkHomeIsUsingJdk(getUserJdk().javaHomeRealPath)
             }
         }
@@ -300,32 +299,6 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                     ":kaptKotlin",
                     ":compileKotlin"
                 )
-            }
-        }
-    }
-
-    @DisplayName("User provided jdkHome Kotlin option should produce deprecation warning on Gradle builds")
-    @GradleTest
-    internal fun jdkHomeIsDeprecated(gradleVersion: GradleVersion) {
-        project(
-            projectName = "simple".fullProjectName,
-            gradleVersion = gradleVersion
-        ) {
-            //language=Groovy
-            buildGradle.append(
-                """
-                import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-                
-                tasks.withType(KotlinCompile).configureEach {
-                    kotlinOptions {
-                        jdkHome = "${getJdk9Path()}"
-                    }
-                }
-                """.trimIndent()
-            )
-            build("assemble") {
-                assertJdkHomeIsUsingJdk(getJdk9().javaHomeRealPath)
-                assertOutputContains("'kotlinOptions.jdkHome' is deprecated and will be ignored in Kotlin 1.7!")
             }
         }
     }

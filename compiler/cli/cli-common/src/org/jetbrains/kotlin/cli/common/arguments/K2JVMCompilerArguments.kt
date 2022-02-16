@@ -30,12 +30,6 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-include-runtime", description = "Include Kotlin runtime into the resulting JAR")
     var includeRuntime: Boolean by FreezableVar(false)
 
-    @GradleDeprecatedOption(
-        message = "This option is not working well with Gradle caching and will be removed in the future.",
-        removeAfter = "1.7",
-        level = DeprecationLevel.WARNING
-    )
-    @GradleOption(DefaultValues.StringNullDefault::class)
     @Argument(
         value = "-jdk-home",
         valueDescription = "<path>",

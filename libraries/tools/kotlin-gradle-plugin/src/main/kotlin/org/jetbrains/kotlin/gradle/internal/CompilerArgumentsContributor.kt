@@ -103,50 +103,6 @@ internal open class KotlinJvmCompilerArgumentsContributor(
         }
         args.destinationAsFile = destinationDir
 
-        warnJdkHomeNotUsed(kotlinOptions)
-
         kotlinOptions.forEach { it.updateArguments(args) }
-    }
-
-    private fun warnJdkHomeNotUsed(kotlinOptions: List<KotlinJvmOptionsImpl>) {
-        kotlinOptions
-            .firstOrNull {
-                @Suppress("DEPRECATION")
-                it.jdkHome != null
-            }
-            ?.run {
-                logger.warn(
-                    """
-                    'kotlinOptions.jdkHome' is deprecated and will be ignored in Kotlin 1.7! 
-                    
-                    Consider using JavaToolchain on Gradle 6.7+:
-                    kotlin {
-                        jvmToolchain {
-                            languageVersion.set(JavaLanguageVersion.of(<MAJOR_JDK_VERSION>))
-                        }
-                    }
-                    
-                    Or on older versions of Gradle:
-                    - Kotlin DSL:
-                    project.tasks
-                        .withType<UsesKotlinJavaToolchain>()
-                        .configureEach {
-                            it.kotlinJavaToolchain.jdk.use(
-                                "/path/to/your/jdk",
-                                JavaVersion.<JDK_VERSION>
-                            )
-                        }
-                    - Groovy DSL
-                    project.tasks
-                        .withType(UsesKotlinJavaToolchain.class)
-                        .configureEach {
-                             it.kotlinJavaToolchain.jdk.use(
-                                 '/path/to/your/jdk',
-                                 JavaVersion.<JDK_VERSION>
-                             )
-                        }
-                    """.trimIndent()
-                )
-            }
     }
 }

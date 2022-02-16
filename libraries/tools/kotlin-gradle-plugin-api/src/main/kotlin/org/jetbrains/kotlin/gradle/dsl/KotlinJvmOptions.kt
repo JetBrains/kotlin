@@ -12,13 +12,6 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      var javaParameters: kotlin.Boolean
 
     /**
-     * Include a custom JDK from the specified location into the classpath instead of the default JAVA_HOME
-     * Default value: null
-     */
-    @Deprecated(message = "This option is not working well with Gradle caching and will be removed in the future.", level = DeprecationLevel.WARNING)
-     var jdkHome: kotlin.String?
-
-    /**
      * Target version of the generated JVM bytecode (1.6 (DEPRECATED), 1.8, 9, 10, ..., 18), default is 1.8
      * Possible values: "1.6", "1.8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18"
      * Default value: null
