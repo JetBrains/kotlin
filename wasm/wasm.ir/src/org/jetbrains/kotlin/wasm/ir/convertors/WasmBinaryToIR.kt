@@ -97,7 +97,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                                     val type = functionTypes[b.readVarUInt32AsInt()]
                                     importedFunctions += WasmFunction.Imported(
                                         name = "",
-                                        type = type,
+                                        type = WasmSymbol(type),
                                         importPair = importPair,
                                     ).also { importsInOrder.add(it) }
                                 }
@@ -141,7 +141,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                             definedFunctions.add(
                                 WasmFunction.Defined(
                                     "",
-                                    functionType,
+                                    WasmSymbol(functionType),
                                     locals = functionType.parameterTypes.mapIndexed { index, wasmType ->
                                         WasmLocal(index, "", wasmType, true)
                                     }.toMutableList()
@@ -330,6 +330,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
         return WasmModule(
             functionTypes = functionTypes,
             gcTypes = gcTypes,
+            gcTypesInRecursiveGroup = false,
             importsInOrder = importsInOrder,
             importedFunctions = importedFunctions,
             importedMemories = importedMemories,
@@ -450,7 +451,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
             (-0x20).toByte() -> {
                 val types = mapVector { readValueType() }
                 val returnTypes = mapVector { readValueType() }
-                return WasmFunctionType("", types, returnTypes)
+                return WasmFunctionType(types, returnTypes)
             }
 
             else -> TODO()
@@ -466,7 +467,6 @@ class WasmBinaryToIR(val b: MyByteReader) {
         WasmI8,
         WasmI16,
         WasmFuncRef,
-        WasmExternRef,
         WasmAnyRef,
         WasmEqRef
     ).associateBy { it.code }
@@ -490,7 +490,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
 
         return when (code.toInt()) {
             0x70 -> WasmFuncRef
-            0x6F -> WasmExternRef
+            0x6F -> WasmAnyRef
             else -> error("Unsupported heap type ${code.toString(16)}")
         }
     }

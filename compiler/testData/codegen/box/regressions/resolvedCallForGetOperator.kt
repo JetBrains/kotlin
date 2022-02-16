@@ -1,3 +1,6 @@
+// V8 Crash https://bugs.chromium.org/p/v8/issues/detail?id=12640
+// IGNORE_BACKEND: WASM
+
 // WITH_STDLIB
 
 val targetNameLists: Map<String, String> = mapOf("1"         to "OK")

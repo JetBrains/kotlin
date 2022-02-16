@@ -1,3 +1,6 @@
+// V8 Crash https://bugs.chromium.org/p/v8/issues/detail?id=12640
+// IGNORE_BACKEND: WASM
+
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // WITH_STDLIB

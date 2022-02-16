@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
-import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.wasm.lower.WasmSignature
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
@@ -35,11 +34,7 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
     val stringLiteralId =
         ReferencableElements<String, Int>()
 
-    val runtimeTypes =
-        ReferencableAndDefinable<IrClassSymbol, WasmGlobal>()
-
     val tagFuncType = WasmFunctionType(
-        "ex_handling_tag",
         listOf(
             WasmRefNullType(WasmHeapType.Type(gcTypes.reference(irBuiltIns.throwableClass)))
         ),
@@ -124,9 +119,18 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
     fun linkWasmCompiledFragments(): WasmModule {
         bind(functions.unbound, functions.defined)
         bind(globals.unbound, globals.defined)
-        bind(functionTypes.unbound, functionTypes.defined)
+
         bind(gcTypes.unbound, gcTypes.defined)
-        bind(runtimeTypes.unbound, runtimeTypes.defined)
+
+        // Associate function types to a single canonical function type
+        val canonicalFunctionTypes =
+            functionTypes.elements.associateWithTo(LinkedHashMap()) { it }
+
+        functionTypes.unbound.forEach { (irSymbol, wasmSymbol) ->
+            if (irSymbol !in functionTypes.defined)
+                error("Can't link symbol ${irSymbolDebugDump(irSymbol)}")
+            wasmSymbol.bind(canonicalFunctionTypes.getValue(functionTypes.defined.getValue(irSymbol)))
+        }
 
         val klassIds = mutableMapOf<IrClassSymbol, Int>()
         var currentDataSectionAddress = 0
@@ -261,8 +265,8 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
             )
         }
 
-        val masterInitFunctionType = WasmFunctionType("__init_t", emptyList(), emptyList())
-        val masterInitFunction = WasmFunction.Defined("__init", masterInitFunctionType)
+        val masterInitFunctionType = WasmFunctionType(emptyList(), emptyList())
+        val masterInitFunction = WasmFunction.Defined("__init", WasmSymbol(masterInitFunctionType))
         with(WasmIrExpressionBuilder(masterInitFunction.instructions)) {
             initFunctions.sortedBy { it.priority }.forEach {
                 buildCall(WasmSymbol(it.function))
@@ -284,18 +288,28 @@ class WasmCompiledModuleFragment(val irBuiltIns: IrBuiltIns) {
 
         val importedFunctions = functions.elements.filterIsInstance<WasmFunction.Imported>()
 
-        // Sorting by depth for a valid init order
-        val sortedRttGlobals = runtimeTypes.elements.sortedBy { (it.type as WasmRtt).depth }
+        fun wasmTypeDeclarationOrderKey(declaration: WasmTypeDeclaration): Int {
+            return when (declaration) {
+                is WasmArrayDeclaration -> 0
+                is WasmFunctionType -> 0
+                is WasmStructDeclaration ->
+                    // Subtype depth
+                    declaration.superType?.let { wasmTypeDeclarationOrderKey(it.owner) + 1 } ?: 0
+            }
+        }
+
+        val sortedGcTypes = gcTypes.elements.sortedBy(::wasmTypeDeclarationOrderKey)
 
         val module = WasmModule(
-            functionTypes = functionTypes.elements + tagFuncType + masterInitFunctionType,
-            gcTypes = gcTypes.elements,
+            functionTypes = canonicalFunctionTypes.values.toList() + tagFuncType + masterInitFunctionType,
+            gcTypes = sortedGcTypes,
+            gcTypesInRecursiveGroup = true,
             importsInOrder = importedFunctions,
             importedFunctions = importedFunctions,
             definedFunctions = functions.elements.filterIsInstance<WasmFunction.Defined>() + masterInitFunction,
             tables = listOf(table) + interfaceMethodTables.elements,
             memories = listOf(memory),
-            globals = globals.elements + sortedRttGlobals,
+            globals = globals.elements,
             exports = exports,
             startFunction = null,  // Module is initialized via export call
             elements = listOf(elements) + interfaceTableElements,

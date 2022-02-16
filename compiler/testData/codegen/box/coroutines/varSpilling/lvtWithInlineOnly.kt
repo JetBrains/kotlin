@@ -2,6 +2,9 @@
 // FULL_JDK
 // IGNORE_BACKEND: JS_IR
 
+// V8 Crash https://bugs.chromium.org/p/v8/issues/detail?id=12640
+// IGNORE_BACKEND: WASM
+
 import kotlin.coroutines.*
 
 fun ticker(
