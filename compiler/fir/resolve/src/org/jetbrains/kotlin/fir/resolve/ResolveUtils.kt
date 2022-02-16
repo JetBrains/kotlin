@@ -463,9 +463,6 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(session: FirSession): Forbidd
             }
         }
     }
-    if (status.isExpect) {
-        return ForbiddenNamedArgumentsTarget.EXPECTED_CLASS_MEMBER
-    }
     return when (origin) {
         FirDeclarationOrigin.Source, FirDeclarationOrigin.Precompiled, FirDeclarationOrigin.Library -> null
         FirDeclarationOrigin.Delegated -> delegatedWrapperData?.wrapped?.getAsForbiddenNamedArgumentsTarget(session)
