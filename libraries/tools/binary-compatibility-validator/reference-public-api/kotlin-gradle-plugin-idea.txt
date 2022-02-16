@@ -56,13 +56,13 @@ public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinC
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragment : java/io/Serializable {
-	public abstract fun getDependencies ()Ljava/util/Collection;
-	public abstract fun getDirectRefinesDependencies ()Ljava/util/Collection;
+	public abstract fun getDependencies ()Ljava/util/List;
+	public abstract fun getDirectRefinesDependencies ()Ljava/util/List;
 	public abstract fun getExternal ()Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelContainer;
 	public abstract fun getLanguageSettings ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettings;
 	public abstract fun getName ()Ljava/lang/String;
-	public abstract fun getResourceDirectories ()Ljava/util/Collection;
-	public abstract fun getSourceDirectories ()Ljava/util/Collection;
+	public abstract fun getResourceDirectories ()Ljava/util/List;
+	public abstract fun getSourceDirectories ()Ljava/util/List;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragmentDependency : java/io/Serializable {
@@ -70,12 +70,12 @@ public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinF
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinLanguageSettings : java/io/Serializable {
 	public abstract fun getApiVersion ()Ljava/lang/String;
-	public abstract fun getCompilerPluginArguments ()Ljava/util/Collection;
-	public abstract fun getCompilerPluginClasspath ()Ljava/util/Collection;
-	public abstract fun getEnabledLanguageFeatures ()Ljava/util/Collection;
-	public abstract fun getFreeCompilerArgs ()Ljava/util/Collection;
+	public abstract fun getCompilerPluginArguments ()Ljava/util/List;
+	public abstract fun getCompilerPluginClasspath ()Ljava/util/List;
+	public abstract fun getEnabledLanguageFeatures ()Ljava/util/Set;
+	public abstract fun getFreeCompilerArgs ()Ljava/util/List;
 	public abstract fun getLanguageVersion ()Ljava/lang/String;
-	public abstract fun getOptInAnnotationsInUse ()Ljava/util/Collection;
+	public abstract fun getOptInAnnotationsInUse ()Ljava/util/Set;
 	public abstract fun isProgressiveMode ()Z
 }
 
