@@ -21,13 +21,17 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
         with(module) {
             // type section
             appendSection(1u) {
+                if (module.gcTypesInRecursiveGroup) {
+                    appendVectorSize(1)
+                    b.writeByte(0x4f)
+                }
                 appendVectorSize(functionTypes.size + gcTypes.size)
                 functionTypes.forEach { appendFunctionTypeDeclaration(it) }
                 gcTypes.forEach {
                     when (it) {
                         is WasmStructDeclaration -> appendStructTypeDeclaration(it)
                         is WasmArrayDeclaration -> appendArrayTypeDeclaration(it)
-                        is WasmFunctionType -> {}
+                        is WasmFunctionType -> error("Function type in GC types")
                     }
                 }
             }
@@ -277,6 +281,12 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
     }
 
     private fun appendStructTypeDeclaration(type: WasmStructDeclaration) {
+        val superType = type.superType
+        if (superType != null) {
+            b.writeVarInt7(-0x30)
+            appendVectorSize(1)
+            appendModuleFieldReference(superType.owner)
+        }
         b.writeVarInt7(-0x21)
         b.writeVarUInt32(type.fields.size)
         type.fields.forEach {
@@ -290,7 +300,7 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
     }
 
     val WasmFunctionType.index: Int
-        get() = module.functionTypes.indexOf(this)
+        get() = id!!
 
     private fun appendLimits(limits: WasmLimits) {
         b.writeVarUInt1(limits.maxSize != null)
@@ -303,11 +313,11 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
         b.writeString(function.importPair.moduleName)
         b.writeString(function.importPair.declarationName)
         b.writeByte(0)  // Function external kind.
-        b.writeVarUInt32(function.type.index)
+        b.writeVarUInt32(function.type.owner.index)
     }
 
     private fun appendDefinedFunction(function: WasmFunction.Defined) {
-        b.writeVarUInt32(function.type.index)
+        b.writeVarUInt32(function.type.owner.index)
     }
 
     private fun appendTable(table: WasmTable) {
@@ -483,7 +493,6 @@ class WasmIrToBinary(outputStream: OutputStream, val module: WasmModule, val mod
             appendHeapType(type.heapType)
         }
         if (type is WasmRtt) {
-            b.writeVarUInt32(type.depth)
             appendModuleFieldReference(type.type.owner)
         }
     }

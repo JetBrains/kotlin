@@ -246,12 +246,26 @@ class WasmIrToText : SExpressionBuilder() {
         }
     }
 
+    private inline fun maybeSubType(superType: WasmTypeDeclaration?, body: () -> Unit) {
+        if (superType != null) {
+            sameLineList("sub") {
+                appendModuleFieldReference(superType)
+                body()
+            }
+        } else {
+            body()
+        }
+    }
+
+
     private fun appendStructTypeDeclaration(type: WasmStructDeclaration) {
         newLineList("type") {
             appendModuleFieldReference(type)
-            sameLineList("struct") {
-                type.fields.forEach {
-                    appendStructField(it)
+            maybeSubType(type.superType?.owner) {
+                sameLineList("struct") {
+                    type.fields.forEach {
+                        appendStructField(it)
+                    }
                 }
             }
         }
@@ -287,9 +301,9 @@ class WasmIrToText : SExpressionBuilder() {
             appendModuleFieldReference(function)
             sameLineList("type") { appendModuleFieldReference(function.type) }
             function.locals.forEach { if (it.isParameter) appendLocal(it) }
-            if (function.type.resultTypes.isNotEmpty()) {
+            if (function.type.owner.resultTypes.isNotEmpty()) {
                 sameLineList("result") {
-                    function.type.resultTypes.forEach { appendType(it) }
+                    function.type.owner.resultTypes.forEach { appendType(it) }
                 }
             }
             function.locals.forEach { if (!it.isParameter) appendLocal(it) }
@@ -438,6 +452,7 @@ class WasmIrToText : SExpressionBuilder() {
     fun appendReferencedType(type: WasmType) {
         when (type) {
             is WasmFuncRef -> appendElement("func")
+            is WasmAnyRef -> appendElement("any")
             is WasmExternRef -> appendElement("extern")
             else -> TODO()
         }
@@ -457,7 +472,6 @@ class WasmIrToText : SExpressionBuilder() {
 
             is WasmRtt ->
                 sameLineList("rtt") {
-                    appendElement(type.depth.toString())
                     appendModuleFieldReference(type.type.owner)
                 }
 
@@ -487,6 +501,10 @@ class WasmIrToText : SExpressionBuilder() {
         val id = field.id
             ?: error("${field::class} ${field.name} ID is unlinked")
         if (id != 0) appendElement(id.toString())
+    }
+
+    fun appendModuleFieldReference(field: WasmSymbolReadOnly<WasmNamedModuleField>) {
+        appendModuleFieldReference(field.owner)
     }
 
     fun appendModuleFieldReference(field: WasmNamedModuleField) {

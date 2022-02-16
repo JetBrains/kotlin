@@ -46,7 +46,8 @@ internal class WasmUsefulDeclarationProcessor(
             }
             context.wasmSymbols.wasmClassId,
             context.wasmSymbols.wasmInterfaceId,
-            context.wasmSymbols.wasmRefCast -> {
+            context.wasmSymbols.wasmRefCast,
+            context.wasmSymbols.refTest -> {
                 call.getTypeArgument(0)?.getClass()?.enqueue(from, "generic intrinsic ${call.symbol.owner.name}")
                 true
             }
