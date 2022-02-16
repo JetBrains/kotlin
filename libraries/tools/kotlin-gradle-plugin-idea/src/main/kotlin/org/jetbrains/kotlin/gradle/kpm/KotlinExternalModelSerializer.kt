@@ -15,12 +15,14 @@ interface KotlinExternalModelSerializer<T : Any> {
     @InternalKotlinGradlePluginApi
     companion object {
         inline fun <reified T : Serializable> serializable(): KotlinExternalModelSerializer<T> =
-            KotlinSerializableExternalModelSerializer(T::class.java)
+            serializable(T::class.java)
+
+        fun <T : Serializable> serializable(clazz: Class<T>): KotlinExternalModelSerializer<T> =
+            KotlinSerializableExternalModelSerializer(clazz)
     }
 }
 
-@PublishedApi
-internal class KotlinSerializableExternalModelSerializer<T : Serializable>(
+private class KotlinSerializableExternalModelSerializer<T : Serializable>(
     private val clazz: Class<T>
 ) : KotlinExternalModelSerializer<T> {
     override fun serialize(value: T): ByteArray {
