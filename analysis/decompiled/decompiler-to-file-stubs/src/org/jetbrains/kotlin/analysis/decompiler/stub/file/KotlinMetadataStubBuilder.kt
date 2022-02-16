@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.decompiler.stub.file
 
 import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
@@ -33,7 +34,7 @@ open class KotlinMetadataStubBuilder(
 
     override fun buildFileStub(content: FileContent): PsiFileStub<*>? {
         val virtualFile = content.file
-        assert(virtualFile.fileType == fileType) { "Unexpected file type ${virtualFile.fileType}" }
+        assert(FileTypeRegistry.getInstance().isFileOfType(virtualFile, fileType)) { "Unexpected file type ${virtualFile.fileType}" }
         val file = readFile(virtualFile, content.content) ?: return null
 
         when (file) {

@@ -3,6 +3,7 @@
 package org.jetbrains.kotlin.analysis.decompiler.psi
 
 import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.FileViewProvider
 import com.intellij.psi.PsiManager
@@ -40,7 +41,7 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
 
     abstract fun readFile(bytes: ByteArray, file: VirtualFile): KotlinMetadataStubBuilder.FileWithMetadata?
 
-    override fun accepts(file: VirtualFile) = file.fileType == fileType
+    override fun accepts(file: VirtualFile) = FileTypeRegistry.getInstance().isFileOfType(file, fileType)
 
     override fun getStubBuilder() = metadataStubBuilder
 
