@@ -21,10 +21,6 @@ internal fun KotlinGradleFragment.toIdeaKotlinFragment(
     }
 }
 
-internal fun KotlinGradleVariant.toIdeaKotlinVariant(
-    cache: FragmentInterner = mutableMapOf()
-): IdeaKotlinVariant = toIdeaKotlinVariant(cache) as IdeaKotlinVariant
-
 private fun KotlinGradleFragment.buildIdeaKotlinFragment(cache: FragmentInterner): IdeaKotlinFragment {
     return IdeaKotlinFragmentImpl(
         name = name,
