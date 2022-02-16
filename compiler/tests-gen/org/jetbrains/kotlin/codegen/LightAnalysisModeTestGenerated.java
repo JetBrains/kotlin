@@ -16040,7 +16040,7 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
 
         @TestMetadata("kt51254.kt")
         public void ignoreKt51254() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/kt51254.kt");
+            runTest("compiler/testData/codegen/box/inlineClasses/kt51254.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
         }
 
         @TestMetadata("mappingOfBoxedFlexibleInlineClassTypeGeneric.kt")

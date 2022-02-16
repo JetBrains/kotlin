@@ -1,7 +1,8 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JVM, WASM, JS, JS_IR
+// WORKS_WHEN_VALUE_CLASS
+// IGNORE_BACKEND: JVM
 
-@JvmInline
+OPTIONAL_JVM_INLINE_ANNOTATION
 value class Inlined(val value: Int)
 
 sealed interface A <T: Inlined> {
