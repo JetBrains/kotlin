@@ -511,7 +511,11 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             diagnostic = ConeSimpleDiagnostic("Inc/dec without operand", DiagnosticKind.Syntax)
         }
 
-        if (unwrappedReceiver.elementType == DOT_QUALIFIED_EXPRESSION || unwrappedReceiver.elementType == SAFE_ACCESS_EXPRESSION) {
+        if (
+            unwrappedReceiver.elementType == DOT_QUALIFIED_EXPRESSION ||
+            unwrappedReceiver.elementType == SAFE_ACCESS_EXPRESSION ||
+            unwrappedReceiver.elementType == HASH_QUALIFIED_EXPRESSION
+        ) {
             return generateIncrementOrDecrementBlockForQualifiedAccess(
                 wholeExpression,
                 operationReference,
@@ -905,7 +909,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                         labelName = left.getLabelName()
                     }
                 }
-                DOT_QUALIFIED_EXPRESSION, SAFE_ACCESS_EXPRESSION -> {
+                DOT_QUALIFIED_EXPRESSION, HASH_QUALIFIED_EXPRESSION, SAFE_ACCESS_EXPRESSION -> {
                     val firMemberAccess = left.convertQualified()
                     return if (firMemberAccess != null) {
                         explicitReceiver = firMemberAccess.explicitReceiver

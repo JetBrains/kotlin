@@ -51,6 +51,7 @@ object ElementTypeUtils {
     private val expressionSet = listOf(
         REFERENCE_EXPRESSION,
         DOT_QUALIFIED_EXPRESSION,
+        HASH_QUALIFIED_EXPRESSION,
         LAMBDA_EXPRESSION,
         FUN
     )
