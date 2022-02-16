@@ -1,0 +1,144 @@
+KtFile: directBackingFieldAccess.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  CLASS
+    PsiElement(class)('class')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('A')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      PROPERTY
+        PsiElement(var)('var')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('number')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('String')
+        PsiWhiteSpace('\n        ')
+        BACKING_FIELD
+          PsiElement(field)('field')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          INTEGER_CONSTANT
+            PsiElement(INTEGER_LITERAL)('10')
+        PsiWhiteSpace('\n        ')
+        PROPERTY_ACCESSOR
+          PsiElement(get)('get')
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          DOT_QUALIFIED_EXPRESSION
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('field')
+            PsiElement(DOT)('.')
+            CALL_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('toString')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                PsiElement(RPAR)(')')
+        PsiWhiteSpace('\n        ')
+        PROPERTY_ACCESSOR
+          PsiElement(set)('set')
+          PsiElement(LPAR)('(')
+          VALUE_PARAMETER_LIST
+            VALUE_PARAMETER
+              PsiElement(IDENTIFIER)('newValue')
+          PsiElement(RPAR)(')')
+          PsiWhiteSpace(' ')
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiWhiteSpace('\n            ')
+            BINARY_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('field')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              DOT_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('newValue')
+                PsiElement(DOT)('.')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('length')
+            PsiWhiteSpace('\n        ')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('updateNumber')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          BINARY_EXPRESSION
+            HASH_QUALIFIED_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('number')
+              PsiElement(HASH)('#')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('field')
+            PsiWhiteSpace(' ')
+            OPERATION_REFERENCE
+              PsiElement(PLUSEQ)('+=')
+            PsiWhiteSpace(' ')
+            INTEGER_CONSTANT
+              PsiElement(INTEGER_LITERAL)('100')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('represent')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('String')
+        PsiWhiteSpace(' ')
+        BLOCK
+          PsiElement(LBRACE)('{')
+          PsiWhiteSpace('\n        ')
+          RETURN
+            PsiElement(return)('return')
+            PsiWhiteSpace(' ')
+            BINARY_EXPRESSION
+              STRING_TEMPLATE
+                PsiElement(OPEN_QUOTE)('"')
+                LITERAL_STRING_TEMPLATE_ENTRY
+                  PsiElement(REGULAR_STRING_PART)('field = ')
+                PsiElement(CLOSING_QUOTE)('"')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(PLUS)('+')
+              PsiWhiteSpace(' ')
+              HASH_QUALIFIED_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('number')
+                PsiElement(HASH)('#')
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('field')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')
