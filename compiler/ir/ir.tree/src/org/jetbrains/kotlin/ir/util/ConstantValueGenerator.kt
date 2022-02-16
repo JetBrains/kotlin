@@ -170,7 +170,8 @@ abstract class ConstantValueGenerator(
             primaryConstructorSymbol,
             valueArgumentsCount = primaryConstructorDescriptor.valueParameters.size,
             typeArgumentsCount = annotationClassDescriptor.declaredTypeParameters.size,
-            constructorTypeArgumentsCount = 0
+            constructorTypeArgumentsCount = 0,
+            source = annotationDescriptor.source
         )
 
         val substitutor = TypeConstructorSubstitution.create(annotationType).buildSubstitutor()
