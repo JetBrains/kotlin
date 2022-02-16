@@ -42,6 +42,7 @@ def kotlinTestJsTestOutputFile = "${project(':kotlin-test:kotlin-test-js').build
 
 sourceSets {
     builtins {
+        if (!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync)
         kotlin {
             srcDir builtinsSrcDir2
             srcDir "${jsCommonDir}/runtime"
@@ -50,6 +51,7 @@ sourceSets {
     }
 
     main {
+        if (!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync)
         kotlin {
             srcDir builtinsSrcDir
             srcDir jsCommonSrcDir
@@ -58,6 +60,7 @@ sourceSets {
     }
 
     test {
+        if (!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync)
         kotlin {
             srcDir jsTestSrcDir
             srcDir jsCommonTestSrcDir
