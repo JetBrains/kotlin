@@ -47,6 +47,7 @@ import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
+import java.nio.file.NoSuchFileException
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -247,26 +248,54 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 append("-test")
             }
         }
+        val dir = System.getProperty("kotlin.jps.dir.for.module.files")?.let { Paths.get(it) }?.takeIf { Files.isDirectory(it) }
 
         fun createTempFile(dir: Path?, prefix: String?, suffix: String?): Path =
             if (dir != null) Files.createTempFile(dir, prefix, suffix) else Files.createTempFile(prefix, suffix)
 
-        val dir = System.getProperty("kotlin.jps.dir.for.module.files")?.let { Paths.get(it) }?.takeIf { Files.isDirectory(it) }
+        fun throwException(e: Exception, dir: Path?, message: String? = null): Path {
+            val msg = buildString {
+                append("Could not create module file when building chunk $chunk")
+                if (dir != null) {
+                    append(" in dir $dir")
+                }
+                if (message != null) append(message)
+            }
+            throw RuntimeException(msg, e)
+        }
+
         return try {
-            createTempFile(dir, "kjps", readableSuffix + ".script.xml")
+            createTempFile(dir, "kjps", "$readableSuffix.script.xml")
+        } catch (e: NoSuchFileException) {
+            val parentDir = File(e.file).parentFile
+            if (parentDir != null && !parentDir.exists()) {
+                try {
+                    parentDir.mkdirs()
+                } catch (e: IOException) {
+                    val message: String?
+                    if (dir == null) {
+                        val tmpPath = System.getProperty("java.io.tmpdir", null).trim().ifEmpty { null }
+                        message = "java.io.tmpdir is set to $tmpPath and it does not exist. Attempt to create it failed with exception"
+                    } else {
+                        message = "kotlin.jps.dir.for.module.files is set to $dir and it does not exist. " +
+                                "Attempt to create it failed with exception"
+                    }
+                    throwException(e, dir, message)
+                }
+            }
+
+            try {
+                createTempFile(dir, "kjps", ".script.xml")
+            } catch (e: IOException) {
+                throwException(e, dir)
+            }
         } catch (e: IOException) {
             // sometimes files cannot be created, because file name is too long (Windows, Mac OS)
             // see https://bugs.openjdk.java.net/browse/JDK-8148023
             try {
                 createTempFile(dir, "kjps", ".script.xml")
             } catch (e: IOException) {
-                val message = buildString {
-                    append("Could not create module file when building chunk $chunk")
-                    if (dir != null) {
-                        append(" in dir $dir")
-                    }
-                }
-                throw RuntimeException(message, e)
+                throwException(e, dir)
             }
         }.toFile()
     }
