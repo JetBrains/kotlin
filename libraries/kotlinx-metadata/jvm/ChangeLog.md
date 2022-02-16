@@ -1,5 +1,9 @@
 # kotlinx-metadata-jvm
 
+## 0.4.2
+
+- Add experimental internal API to read metadata of `.kotlin_builtins`/`.kotlin_metadata` files.
+
 ## 0.4.1
 
 - Add `KmProperty.syntheticMethodForDelegate` for optimized delegated properties (KT-39055).
