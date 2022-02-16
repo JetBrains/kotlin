@@ -125,6 +125,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("explicitBackingField.kt")
+    public void testExplicitBackingField() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/explicitBackingField.kt");
+    }
+
+    @Test
     @TestMetadata("extensionFunction.kt")
     public void testExtensionFunction() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/extensionFunction.kt");
