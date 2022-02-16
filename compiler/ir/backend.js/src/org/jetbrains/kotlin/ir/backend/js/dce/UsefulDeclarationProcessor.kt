@@ -8,12 +8,16 @@ package org.jetbrains.kotlin.ir.backend.js.dce
 import org.jetbrains.kotlin.backend.common.ir.isMemberOfOpenClass
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
-import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.utils.hasJsPolyfill
+import org.jetbrains.kotlin.ir.backend.js.utils.isAssociatedObjectAnnotatedAnnotation
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.constructedClass
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
+import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.ir.util.resolveFakeOverride
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import java.util.*
 
@@ -31,12 +35,7 @@ abstract class UsefulDeclarationProcessor(
     protected abstract val bodyVisitor: BodyVisitorBase
 
     protected abstract inner class BodyVisitorBase : IrElementVisitor<Unit, IrDeclaration> {
-
-        override fun visitValueAccess(expression: IrValueAccessExpression, data: IrDeclaration) = visitVariableAccess(expression, data)
-        override fun visitGetValue(expression: IrGetValue, data: IrDeclaration) = visitVariableAccess(expression, data)
-        override fun visitSetValue(expression: IrSetValue, data: IrDeclaration) = visitVariableAccess(expression, data)
-
-        private fun visitVariableAccess(expression: IrValueAccessExpression, data: IrDeclaration) {
+        override fun visitValueAccess(expression: IrValueAccessExpression, data: IrDeclaration) {
             visitDeclarationReference(expression, data)
             expression.symbol.owner.enqueue(data, "variable access")
         }
