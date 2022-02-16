@@ -27,18 +27,31 @@ fun getMergedScriptText(script: SourceCode, configuration: ScriptCompilationConf
             val curPos = if (prevFragment == null) 0 else prevFragment.range.end.absolutePos!!
             if (prevFragment != null && prevFragment.range.end.absolutePos!! > fragmentStartPos) throw RuntimeException("Unsorted or overlapping fragments: previous: $prevFragment, current: $fragment")
             if (curPos < fragmentStartPos) {
-                sb.append(
-                    originalScriptText.subSequence(
-                        curPos,
-                        fragmentStartPos
-                    ).map { if (it == '\r' || it == '\n') it else ' ' }) // preserving lines layout
+                originalScriptText
+                    .cleanContentPreservingLinesLayout(curPos, fragmentStartPos)
+                    .forEach(sb::append)
             }
             sb.append(originalScriptText.subSequence(fragmentStartPos, fragmentEndPos))
             prevFragment = fragment
         }
+        val positionOfLastAppended = prevFragment?.range?.end?.absolutePos
+        if (positionOfLastAppended != null && positionOfLastAppended < originalScriptText.length) {
+            originalScriptText
+                .cleanContentPreservingLinesLayout(positionOfLastAppended)
+                .forEach(sb::append)
+        }
         sb.toString()
     }
 }
+
+/**
+ * Replaces every character with ' ' except end of line
+ */
+private fun String.cleanContentPreservingLinesLayout(
+    start: Int = 0,
+    end: Int = this.length
+) = subSequence(start, end)
+    .map { if (it == '\r' || it == '\n') it else ' ' }
 
 abstract class FileBasedScriptSource() : ExternalSourceCode {
     abstract val file: File
