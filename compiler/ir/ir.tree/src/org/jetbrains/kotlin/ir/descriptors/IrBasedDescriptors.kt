@@ -52,7 +52,7 @@ abstract class IrBasedDeclarationDescriptor<T : IrDeclaration>(val owner: T) : D
             symbol.owner.valueParameters.map { it.name to getValueArgument(it.index) }
                 .filter { it.second != null }
                 .associate { it.first to it.second!!.toConstantValue() },
-            /*TODO*/ SourceElement.NO_SOURCE
+            source
         )
     }
 

@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 abstract class IrConstructorCall : IrFunctionAccessExpression() {
     abstract override val symbol: IrConstructorSymbol
+
+    abstract val source: SourceElement
 
     abstract val constructorTypeArgumentsCount: Int
 
