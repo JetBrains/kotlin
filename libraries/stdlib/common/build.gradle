@@ -13,6 +13,7 @@ def commonTestSrcDir = "../test"
 
 sourceSets {
     main {
+        if (!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync)
         kotlin {
             srcDir 'src'
             srcDir commonSrcDir
@@ -23,6 +24,7 @@ sourceSets {
         }
     }
     test {
+        if (!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync)
         kotlin {
             srcDir commonTestSrcDir
             srcDir 'test'
