@@ -8,23 +8,43 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.gradle.kpm.KotlinExternalModelContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleFragmentInternal
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinGradleVariant
+
+private typealias FragmentInterner = MutableMap<KotlinGradleFragment, IdeaKotlinFragment>
 
 internal fun KotlinGradleFragment.toIdeaKotlinFragment(
-    cache: MutableMap<KotlinGradleFragment, IdeaKotlinFragment> = mutableMapOf()
+    cache: FragmentInterner = mutableMapOf()
 ): IdeaKotlinFragment {
     return cache.getOrPut(this) {
-        IdeaKotlinFragmentImpl(
-            name = name,
-            languageSettings = languageSettings.toIdeaKotlinLanguageSettings(),
-            dependencies = emptyList(),
-            directRefinesDependencies = directRefinesDependencies.map { refinesFragment ->
-                refinesFragment.toIdeaKotlinFragment(cache)
-            },
-            sourceDirectories = kotlinSourceRoots.sourceDirectories.files.toList().map { file ->
-                IdeaKotlinSourceDirectoryImpl(file)
-            },
-            resourceDirectories = emptyList(),
-            external = (this as? KotlinGradleFragmentInternal)?.external ?: KotlinExternalModelContainer.Empty
-        )
+        if (this is KotlinGradleVariant) buildIdeaKotlinVariant(cache)
+        else buildIdeaKotlinFragment(cache)
     }
+}
+
+internal fun KotlinGradleVariant.toIdeaKotlinVariant(
+    cache: FragmentInterner = mutableMapOf()
+): IdeaKotlinVariant = toIdeaKotlinVariant(cache) as IdeaKotlinVariant
+
+private fun KotlinGradleFragment.buildIdeaKotlinFragment(cache: FragmentInterner): IdeaKotlinFragment {
+    return IdeaKotlinFragmentImpl(
+        name = name,
+        languageSettings = languageSettings.toIdeaKotlinLanguageSettings(),
+        dependencies = emptyList(),
+        directRefinesDependencies = directRefinesDependencies.map { refinesFragment ->
+            refinesFragment.toIdeaKotlinFragment(cache)
+        },
+        sourceDirectories = kotlinSourceRoots.sourceDirectories.files.toList().map { file ->
+            IdeaKotlinSourceDirectoryImpl(file)
+        },
+        resourceDirectories = emptyList(),
+        external = (this as? KotlinGradleFragmentInternal)?.external ?: KotlinExternalModelContainer.Empty
+    )
+}
+
+private fun KotlinGradleVariant.buildIdeaKotlinVariant(cache: FragmentInterner): IdeaKotlinVariant {
+    return IdeaKotlinVariantImpl(
+        fragment = buildIdeaKotlinFragment(cache),
+        variantAttributes = variantAttributes.mapKeys { (key, _) -> key.uniqueName },
+        compilationOutputs = compilationOutputs.toIdeaKotlinCompilationOutputs()
+    )
 }

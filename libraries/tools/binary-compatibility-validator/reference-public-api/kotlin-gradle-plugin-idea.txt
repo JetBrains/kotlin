@@ -50,6 +50,11 @@ public abstract class org/jetbrains/kotlin/gradle/kpm/KotlinMutableExternalModel
 	public abstract fun set (Lorg/jetbrains/kotlin/gradle/kpm/KotlinExternalModelKey;Ljava/lang/Object;)V
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinCompilationOutput : java/io/Serializable {
+	public abstract fun getClassesDirs ()Ljava/util/Set;
+	public abstract fun getResourcesDir ()Ljava/io/File;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragment : java/io/Serializable {
 	public abstract fun getDependencies ()Ljava/util/Collection;
 	public abstract fun getDirectRefinesDependencies ()Ljava/util/Collection;
@@ -85,7 +90,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinM
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModule : java/io/Serializable {
-	public abstract fun getFragments ()Ljava/util/Collection;
+	public abstract fun getFragments ()Ljava/util/List;
 	public abstract fun getModuleIdentifier ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinModuleIdentifier;
 }
 
@@ -107,6 +112,11 @@ public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinR
 
 public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinSourceDirectory : java/io/Serializable {
 	public abstract fun getFile ()Ljava/io/File;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinVariant : java/io/Serializable, org/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinFragment {
+	public abstract fun getCompilationOutputs ()Lorg/jetbrains/kotlin/gradle/kpm/idea/IdeaKotlinCompilationOutput;
+	public abstract fun getVariantAttributes ()Ljava/util/Map;
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/gradle/kpm/idea/InternalKotlinGradlePluginApi : java/lang/annotation/Annotation {

@@ -9,13 +9,13 @@ import java.io.Serializable
 
 interface IdeaKotlinModule : Serializable {
     val moduleIdentifier: IdeaKotlinModuleIdentifier
-    val fragments: Collection<IdeaKotlinFragment>
-}
+    val fragments: List<IdeaKotlinFragment>
+} 
 
 @InternalKotlinGradlePluginApi
 data class IdeaKotlinModuleImpl(
     override val moduleIdentifier: IdeaKotlinModuleIdentifier,
-    override val fragments: Collection<IdeaKotlinFragment>
+    override val fragments: List<IdeaKotlinFragment>
 ) : IdeaKotlinModule {
 
     @InternalKotlinGradlePluginApi
