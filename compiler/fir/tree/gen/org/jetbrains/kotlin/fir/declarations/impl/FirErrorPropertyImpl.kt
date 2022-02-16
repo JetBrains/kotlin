@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
+import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -43,6 +44,7 @@ internal class FirErrorPropertyImpl(
     override var deprecation: DeprecationsPerUseSite?,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
+    override val contextReceivers: MutableList<FirContextReceiver>,
     override val name: Name,
     override var backingField: FirBackingField?,
     override val annotations: MutableList<FirAnnotation>,
@@ -67,6 +69,7 @@ internal class FirErrorPropertyImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
+        contextReceivers.forEach { it.accept(visitor, data) }
         backingField?.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
     }
@@ -124,6 +127,7 @@ internal class FirErrorPropertyImpl(
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirErrorPropertyImpl {
+        contextReceivers.transformInplace(transformer, data)
         transformAnnotations(transformer, data)
         return this
     }

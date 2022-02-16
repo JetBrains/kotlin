@@ -26,6 +26,9 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
 
     val statement by element(Expression, annotationContainer)
     val expression by element(Expression, statement)
+
+    val contextReceiver by element(Declaration)
+
     val declaration by sealedElement(Declaration, annotationContainer)
     val typeParameterRefsOwner by sealedElement(Declaration)
     val typeParametersOwner by sealedElement(Declaration, typeParameterRefsOwner)

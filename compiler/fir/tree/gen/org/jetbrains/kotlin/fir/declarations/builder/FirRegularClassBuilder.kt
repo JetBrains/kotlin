@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -53,6 +54,7 @@ open class FirRegularClassBuilder : FirClassBuilder, FirTypeParameterRefsOwnerBu
     open lateinit var symbol: FirRegularClassSymbol
     open var companionObjectSymbol: FirRegularClassSymbol? = null
     override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
+    open val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
 
     override fun build(): FirRegularClass {
         return FirRegularClassImpl(
@@ -72,6 +74,7 @@ open class FirRegularClassBuilder : FirClassBuilder, FirTypeParameterRefsOwnerBu
             symbol,
             companionObjectSymbol,
             superTypeRefs,
+            contextReceivers,
         )
     }
 
@@ -107,5 +110,6 @@ inline fun buildRegularClassCopy(original: FirRegularClass, init: FirRegularClas
     copyBuilder.symbol = original.symbol
     copyBuilder.companionObjectSymbol = original.companionObjectSymbol
     copyBuilder.superTypeRefs.addAll(original.superTypeRefs)
+    copyBuilder.contextReceivers.addAll(original.contextReceivers)
     return copyBuilder.apply(init).build()
 }

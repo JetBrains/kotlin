@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
+import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -44,6 +45,7 @@ internal class FirDefaultSetterValueParameter(
     override var deprecation: DeprecationsPerUseSite?,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
+    override val contextReceivers: MutableList<FirContextReceiver>,
     override var initializer: FirExpression?,
     override var delegate: FirExpression?,
     override val isVar: Boolean,
@@ -71,6 +73,7 @@ internal class FirDefaultSetterValueParameter(
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
+        contextReceivers.forEach { it.accept(visitor, data) }
         initializer?.accept(visitor, data)
         delegate?.accept(visitor, data)
         getter?.accept(visitor, data)
@@ -144,6 +147,7 @@ internal class FirDefaultSetterValueParameter(
     }
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirDefaultSetterValueParameter {
+        contextReceivers.transformInplace(transformer, data)
         transformAnnotations(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         defaultValue = defaultValue?.transform(transformer, data)

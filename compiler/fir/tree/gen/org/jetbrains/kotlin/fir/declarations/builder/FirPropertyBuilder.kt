@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
+import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -54,6 +55,7 @@ class FirPropertyBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder,
     var deprecation: DeprecationsPerUseSite? = null
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeSimpleKotlinType? = null
+    val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
     lateinit var name: Name
     var initializer: FirExpression? = null
     var delegate: FirExpression? = null
@@ -81,6 +83,7 @@ class FirPropertyBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder,
             deprecation,
             containerSource,
             dispatchReceiverType,
+            contextReceivers,
             name,
             initializer,
             delegate,
@@ -124,6 +127,7 @@ inline fun buildPropertyCopy(original: FirProperty, init: FirPropertyBuilder.() 
     copyBuilder.deprecation = original.deprecation
     copyBuilder.containerSource = original.containerSource
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType
+    copyBuilder.contextReceivers.addAll(original.contextReceivers)
     copyBuilder.name = original.name
     copyBuilder.initializer = original.initializer
     copyBuilder.delegate = original.delegate

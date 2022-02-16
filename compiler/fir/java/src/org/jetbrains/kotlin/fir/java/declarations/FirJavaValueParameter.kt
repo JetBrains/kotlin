@@ -97,6 +97,9 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val dispatchReceiverType: ConeSimpleKotlinType?
         get() = null
 
+    override val contextReceivers: List<FirContextReceiver>
+        get() = emptyList()
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         returnTypeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }

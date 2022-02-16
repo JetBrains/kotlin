@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -45,6 +46,7 @@ internal class FirAnonymousFunctionImpl(
     override var deprecation: DeprecationsPerUseSite?,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
+    override val contextReceivers: MutableList<FirContextReceiver>,
     override var controlFlowGraphReference: FirControlFlowGraphReference?,
     override val valueParameters: MutableList<FirValueParameter>,
     override var body: FirBlock?,
@@ -70,6 +72,7 @@ internal class FirAnonymousFunctionImpl(
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
+        contextReceivers.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
@@ -83,6 +86,7 @@ internal class FirAnonymousFunctionImpl(
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
+        contextReceivers.transformInplace(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
         transformBody(transformer, data)

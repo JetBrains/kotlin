@@ -36,6 +36,7 @@ abstract class FirSimpleFunction : FirFunction(), FirContractDescriptionOwner, F
     abstract override val deprecation: DeprecationsPerUseSite?
     abstract override val containerSource: DeserializedContainerSource?
     abstract override val dispatchReceiverType: ConeSimpleKotlinType?
+    abstract override val contextReceivers: List<FirContextReceiver>
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val valueParameters: List<FirValueParameter>
     abstract override val body: FirBlock?

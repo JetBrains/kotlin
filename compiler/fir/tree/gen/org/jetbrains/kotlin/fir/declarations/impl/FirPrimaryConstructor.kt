@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
@@ -45,6 +46,7 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
     override var deprecation: DeprecationsPerUseSite?,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
+    override val contextReceivers: MutableList<FirContextReceiver>,
     override val valueParameters: MutableList<FirValueParameter>,
     override val annotations: MutableList<FirAnnotation>,
     override val symbol: FirConstructorSymbol,
@@ -63,6 +65,7 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
         receiverTypeRef?.accept(visitor, data)
+        contextReceivers.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         annotations.forEach { it.accept(visitor, data) }
@@ -75,6 +78,7 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
         transformReceiverTypeRef(transformer, data)
+        contextReceivers.transformInplace(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
         transformAnnotations(transformer, data)

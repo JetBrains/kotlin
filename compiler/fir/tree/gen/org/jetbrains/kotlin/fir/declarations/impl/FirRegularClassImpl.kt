@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.declarations.DeprecationsPerUseSite
+import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -47,6 +48,7 @@ internal class FirRegularClassImpl(
     override val symbol: FirRegularClassSymbol,
     override var companionObjectSymbol: FirRegularClassSymbol?,
     override val superTypeRefs: MutableList<FirTypeRef>,
+    override val contextReceivers: MutableList<FirContextReceiver>,
 ) : FirRegularClass() {
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val hasLazyNestedClassifiers: Boolean get() = false
@@ -62,6 +64,7 @@ internal class FirRegularClassImpl(
         annotations.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         superTypeRefs.forEach { it.accept(visitor, data) }
+        contextReceivers.forEach { it.accept(visitor, data) }
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirRegularClassImpl {
@@ -71,6 +74,7 @@ internal class FirRegularClassImpl(
         transformAnnotations(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformSuperTypeRefs(transformer, data)
+        contextReceivers.transformInplace(transformer, data)
         return this
     }
 

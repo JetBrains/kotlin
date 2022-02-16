@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
-import org.jetbrains.kotlin.name.Name
 
 @OptIn(FirImplementationDetail::class)
 abstract class FirDefaultPropertyAccessor(
@@ -54,6 +53,7 @@ abstract class FirDefaultPropertyAccessor(
     deprecation = null,
     containerSource = null,
     dispatchReceiverType = null,
+    contextReceivers = mutableListOf(),
     valueParameters,
     body = null,
     contractDescription = FirEmptyContractDescription,

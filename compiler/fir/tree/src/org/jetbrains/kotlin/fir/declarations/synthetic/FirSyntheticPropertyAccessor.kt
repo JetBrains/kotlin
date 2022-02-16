@@ -75,6 +75,9 @@ class FirSyntheticPropertyAccessor(
         bind(this@FirSyntheticPropertyAccessor)
     }
 
+    override val contextReceivers: List<FirContextReceiver>
+        get() = emptyList()
+
     // NB: unused
     override val propertySymbol: FirPropertySymbol? = null
 
