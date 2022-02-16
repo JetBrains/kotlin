@@ -33450,6 +33450,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Test
+        @TestMetadata("greater.kt")
+        public void testGreater() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/greater.kt");
+        }
+
+        @Test
         @TestMetadata("hugeUnresolvedKotlinxHtml.kt")
         public void testHugeUnresolvedKotlinxHtml() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/hugeUnresolvedKotlinxHtml.kt");
